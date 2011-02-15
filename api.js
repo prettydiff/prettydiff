@@ -134,46 +134,51 @@ http.createServer(function (req, res) {
                             client,
                             request,
                             domain;
-                        x = x.split("://");
-                        domain = x[1].substr(0, x[1].indexOf("/"));
-                        path = x[1].substr(x[1].indexOf("/") + 1);
-                        scheme = x[0].toLowerCase();
-                        if (path === "") {
-                            path = "/";
-                        }
-                        if (domain.indexOf(":") !== -1) {
-                            domain = domain.split(":");
-                            port = Number(domain[1]);
-                            domain = domain[0];
-                        }
-                        if (port === undefined || port === "" || port === "NaN") {
-                            if (scheme === "https") {
-                                port = 443;
-                            } else if (scheme === "ftp") {
-                                port = 21;
-                            } else if (scheme === "ssh") {
-                                port = 22;
-                            } else {
-                                port = 80;
+                        if (x.indexOf("://") === -1) {
+                            error = "Error: diff path does not appear to be an absolute URI.";
+                            exitfunc();
+                        } else {
+                            x = x.split("://");
+                            domain = x[1].substr(0, x[1].indexOf("/"));
+                            path = x[1].substr(x[1].indexOf("/") + 1);
+                            scheme = x[0].toLowerCase();
+                            if (path === "") {
+                                path = "/";
                             }
+                            if (domain.indexOf(":") !== -1) {
+                                domain = domain.split(":");
+                                port = Number(domain[1]);
+                                domain = domain[0];
+                            }
+                            if (port === undefined || port === "" || port === "NaN") {
+                                if (scheme === "https") {
+                                    port = 443;
+                                } else if (scheme === "ftp") {
+                                    port = 21;
+                                } else if (scheme === "ssh") {
+                                    port = 22;
+                                } else {
+                                    port = 80;
+                                }
+                            }
+                            client = new http.createClient(port, domain);
+                            request = client.request("GET", path, {
+                                "host": domain
+                            });
+                            request.end();
+                            request.on('response', function (response) {
+                                status = response.statusCode;
+                                //console.log('HEADERS: ' + JSON.stringify(response.headers));
+                                response.setEncoding('utf8');
+                                response.on('data', function (chunk) {
+                                    pathbody.push(chunk);
+                                });
+                                response.on('end', function () {
+                                    diff = pathbody.join("");
+                                    exitfunc();
+                                });
+                            });
                         }
-                        client = new http.createClient(port, domain);
-                        request = client.request("GET", path, {
-                            "host": domain
-                        });
-                        request.end();
-                        request.on('response', function (response) {
-                            status = response.statusCode;
-                            //console.log('HEADERS: ' + JSON.stringify(response.headers));
-                            response.setEncoding('utf8');
-                            response.on('data', function (chunk) {
-                                pathbody.push(chunk);
-                            });
-                            response.on('end', function () {
-                                diff = pathbody.join("");
-                                exitfunc();
-                            });
-                        });
                     },
                     getsourcepath = function (x) {
                         pathbody = [];
@@ -184,49 +189,63 @@ http.createServer(function (req, res) {
                             client,
                             request,
                             domain;
-                        x = x.split("://");
-                        domain = x[1].substr(0, x[1].indexOf("/"));
-                        path = x[1].substr(x[1].indexOf("/") + 1);
-                        scheme = x[0].toLowerCase();
-                        if (path === "") {
-                            path = "/";
-                        }
-                        if (domain.indexOf(":") !== -1) {
-                            domain = domain.split(":");
-                            port = Number(domain[1]);
-                            domain = domain[0];
-                        }
-                        if (port === undefined || port === "" || port === "NaN") {
-                            if (scheme === "https") {
-                                port = 443;
-                            } else if (scheme === "ftp") {
-                                port = 21;
-                            } else if (scheme === "ssh") {
-                                port = 22;
-                            } else {
-                                port = 80;
+                        if (x.indexOf("://") === -1) {
+                            error = "Error: source path does not appear to be an absolute URI.";
+                            exitfunc();
+                        } else {
+                            x = x.split("://");
+                            domain = x[1].substr(0, x[1].indexOf("/"));
+                            path = x[1].substr(x[1].indexOf("/") + 1);
+                            scheme = x[0].toLowerCase();
+                            if (path === "") {
+                                path = "/";
                             }
-                        }
-                        client = new http.createClient(port, domain);
-                        request = client.request("GET", path, {
-                            "host": domain
-                        });
-                        request.end();
-                        request.on('response', function (response) {
-                            status = response.statusCode;
-                            //console.log('HEADERS: ' + JSON.stringify(response.headers));
-                            response.setEncoding('utf8');
-                            response.on('data', function (chunk) {
-                                pathbody.push(chunk);
+                            if (domain.indexOf(":") !== -1) {
+                                domain = domain.split(":");
+                                port = Number(domain[1]);
+                                domain = domain[0];
+                            }
+                            if (port === undefined || port === "" || port === "NaN") {
+                                if (scheme === "https") {
+                                    port = 443;
+                                } else if (scheme === "ftp") {
+                                    port = 21;
+                                } else if (scheme === "ssh") {
+                                    port = 22;
+                                } else {
+                                    port = 80;
+                                }
+                            }
+                            client = new http.createClient(port, domain);
+                            request = client.request("GET", path, {
+                                "host": domain
                             });
-                            response.on('end', function () {
-                                source = pathbody.join("");
-                                if (mode === "diff" && apichunk.join("").indexOf("pdiff_diffpath") !== -1) {
-                                    diffpath = apichunk.join("").split("pdiff_diffpath\"\r\n\r\n");
-                                    diffpath = diffpath[1].split("pdiff_");
-                                    diffpath = diffpath[0].replace(/(\r\n)?\-{29}\d+\r\nContent\-Disposition\: form\-data; name\="/g, "");
-                                    if (diffpath !== "") {
-                                        getdiffpath(diffpath);
+                            request.end();
+                            request.on('response', function (response) {
+                                status = response.statusCode;
+                                //console.log('HEADERS: ' + JSON.stringify(response.headers));
+                                response.setEncoding('utf8');
+                                response.on('data', function (chunk) {
+                                    pathbody.push(chunk);
+                                });
+                                response.on('end', function () {
+                                    source = pathbody.join("");
+                                    if (mode === "diff" && apichunk.join("").indexOf("pdiff_diffpath") !== -1) {
+                                        diffpath = apichunk.join("").split("pdiff_diffpath\"\r\n\r\n");
+                                        diffpath = diffpath[1].split("pdiff_");
+                                        diffpath = diffpath[0].replace(/(\r\n)?\-{29}\d+\r\nContent\-Disposition\: form\-data; name\="/g, "");
+                                        if (diffpath !== "") {
+                                            getdiffpath(diffpath);
+                                        } else {
+                                            if (mode === "diff" && diff === "") {
+                                                if (diffres === "" && difffile === undefined || new RegExp(/^(\s*)$/).test(difffile) === true) {
+                                                    error = "Error: mode is set to 'diff', but no diff code detected.";
+                                                } else {
+                                                    diff = difffile;
+                                                }
+                                            }
+                                            exitfunc();
+                                        }
                                     } else {
                                         if (mode === "diff" && diff === "") {
                                             if (diffres === "" && difffile === undefined || new RegExp(/^(\s*)$/).test(difffile) === true) {
@@ -237,18 +256,9 @@ http.createServer(function (req, res) {
                                         }
                                         exitfunc();
                                     }
-                                } else {
-                                    if (mode === "diff" && diff === "") {
-                                        if (diffres === "" && difffile === undefined || new RegExp(/^(\s*)$/).test(difffile) === true) {
-                                            error = "Error: mode is set to 'diff', but no diff code detected.";
-                                        } else {
-                                            diff = difffile;
-                                        }
-                                    }
-                                    exitfunc();
-                                }
+                                });
                             });
-                        });
+                        }
                     },
                     exitfunc = function () {
                         if (lang === "text" && (mode === "beautify" || mode === "minify")) {
@@ -298,7 +308,7 @@ http.createServer(function (req, res) {
                                 if (accept.indexOf("application/xhtml+xml") !== -1) {
                                     doctype = '<?xml version="1.0" encoding="UTF-8" ?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN" "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd"><html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">';
                                     charset = "application/xhtml+xml";
-									output[0] = output[0].replace(/\&/g, "&amp;").replace(/</g, "&lt;").replace(/</g, "&gt;");
+                                    output[0] = output[0].replace(/\&/g, "&amp;").replace(/</g, "&lt;").replace(/</g, "&gt;");
                                 }
                                 if (mode === "beautify") {
                                     if (lang === "javascript") {
