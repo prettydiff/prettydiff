@@ -114,6 +114,7 @@ http.createServer(function (req, res) {
                     csvchar = ",",
                     out = "web",
                     email,
+                    indent = "",
                     insize = "4",
                     inchar = " ",
                     comments = "indent",
@@ -135,7 +136,7 @@ http.createServer(function (req, res) {
                             request,
                             domain;
                         if (x.indexOf("://") === -1) {
-                            error = "Error: diff path does not appear to be an absolute URI.";
+                            error = "Error: diff path does not appear to be an absolute URI.\n" + x;
                             exitfunc();
                         } else {
                             x = x.split("://");
@@ -190,7 +191,7 @@ http.createServer(function (req, res) {
                             request,
                             domain;
                         if (x.indexOf("://") === -1) {
-                            error = "Error: source path does not appear to be an absolute URI.";
+                            error = "Error: source path does not appear to be an absolute URI.\n" + x;
                             exitfunc();
                         } else {
                             x = x.split("://");
@@ -299,7 +300,7 @@ http.createServer(function (req, res) {
                                 res.write("Pretty Diff API has encountered an unexpected error.  The error has been reported and will be fixed soon.");
                                 res.end();
                             });
-                            output = prettydiff.api([source, diff, mode, lang, csvchar, diffout, insize, inchar, comments, style, html, context, quote, semicolon, diffview, sourcelabel, difflabel]);
+                            output = prettydiff.api([source, diff, mode, lang, csvchar, diffout, insize, inchar, comments, indent, style, html, context, quote, semicolon, diffview, sourcelabel, difflabel, ""]);
                             htmlHeading = function () {
                                 var filegif,
                                     accept = String(req.headers.accept).split(";")[0],
@@ -482,6 +483,8 @@ http.createServer(function (req, res) {
                         } else if (name === "diffpath") {
                             diffpath = data;
                         }
+                    } else if (name === "indent") {
+                        indent = data.toLowerCase();
                     } else if (name === "mode") {
                         data = data.toLowerCase();
                         if (data === "minify" || data === "diff") {

@@ -87,6 +87,8 @@ var js_beautify = function (js_source_text, indent_size, indent_char, preserve_n
         n_newlines,
         rvalue,
         lines,
+        vartainted,
+        vartested,
         space_before = true,
         space_after = true,
 
@@ -773,6 +775,17 @@ var js_beautify = function (js_source_text, indent_size, indent_char, preserve_n
                 } else {
 
                     if (token_text === 'function') {
+                        // These next two conditions are necessary to
+                        // provide extra indentation for the contents of
+                        // functions assigned to a variable that are in
+                        // turn a variable in a higher function.
+                        if (flags.var_line) {
+                            vartainted = true;
+                        }
+                        if (vartested === true) {
+                            vartested = 'function';
+                        }
+
                         if (last_text === ':') {
                             flags.indentation_level += 1;
                             functest = true;
@@ -843,6 +856,9 @@ var js_beautify = function (js_source_text, indent_size, indent_char, preserve_n
                     if (token_text === 'var') {
                         flags.var_line = true;
                         flags.var_line_reindented = false;
+                        if (vartainted) {
+                            vartested = true;
+                        }
                     }
                     if (token_text === 'if') {
                         flags.if_line = true;
@@ -886,7 +902,11 @@ var js_beautify = function (js_source_text, indent_size, indent_char, preserve_n
             if (token_text === ',') {
                 n[2] += 1;
                 if (flags.var_line) {
-                    flags.var_line_reindented = true;
+                    if (last_text !== "}") {
+                        flags.var_line_reindented = true;
+                    } else {
+                        vartested = false;
+                    }
                     print_token();
                     print_newline();
                 } else if (last_type === 'TK_END_BLOCK' && flags.mode !== "(EXPRESSION)") {
