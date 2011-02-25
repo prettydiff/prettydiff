@@ -377,7 +377,6 @@ var diffview = function (baseTextLines, newTextLines, baseTextName, newTextName,
                 ax,
                 bx,
                 zx,
-                em = new RegExp(/<em>/g),
                 entity,
                 compare,
 
@@ -471,11 +470,12 @@ var diffview = function (baseTextLines, newTextLines, baseTextName, newTextName,
                 //character length of given lines of code so that many
                 //separate matches can be specified perline.
                 compare = function () {
+                    var em = new RegExp(/<em>/g);
                     for (i = k; i < zx; i += 1) {
                         if (ax[i] === bx[i]) {
                             r = i;
                         } else {
-                            if (ax[i] !== bx[i] && em.test(ax[i]) === false && em.test(bx[i]) === false && em.test(ax[i - 1]) === false && em.test(bx[i - 1]) === false) {
+                            if (n !== 1 && ax[i] !== bx[i] && !em.test(ax[i]) && !em.test(bx[i]) && !em.test(ax[i - 1]) && !em.test(bx[i - 1])) {
                                 if (ax[i] !== undefined && bx[i] !== undefined) {
                                     ax[i] = "<em>" + ax[i];
                                     bx[i] = "<em>" + bx[i];
