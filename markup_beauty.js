@@ -227,7 +227,7 @@ var markup_beauty = function (source, indent_size, indent_character, indent_comm
                             //do not contain angle brackets.  This is a
                             //switch to test for such.
                             n = 1;
-                        } else if ((x.charAt(b - 1) !== "\\" && (x.charAt(a) === "\"" && x.charAt(b) === "\"") || (x.charAt(a) === "'" && x.charAt(b) === "'")) || b === c - 1) {
+                        } else if ((x.charAt(b - 1) !== "\\" && ((x.charAt(a) === "\"" && x.charAt(b) === "\"") || (x.charAt(a) === "'" && x.charAt(b) === "'"))) || b === c - 1) {
                             //The "l" variable is used as an on/off
                             //switch to allow content, but not
                             //sequentially.  Tags with quotes following
@@ -239,7 +239,7 @@ var markup_beauty = function (source, indent_size, indent_character, indent_comm
                                 k -= 1;
                             } else if (k === h) {
                                 for (e = i + 1; e > a; e += 1) {
-                                    if (new RegExp(/\s/).test(x.charAt(e)) === false) {
+                                    if (!/\s/.test(x.charAt(e))) {
                                         break;
                                     }
                                 }
@@ -282,7 +282,7 @@ var markup_beauty = function (source, indent_size, indent_character, indent_comm
             } else if (x.charAt(a + 1) === "<" && x.charAt(a) !== ">") {
                 //Acount for content outside of tags
                 for (b = a; b > 0; b -= 1) {
-                    if (new RegExp(/\s/).test(x.charAt(b)) === false && x.charAt(b) !== ">") {
+                    if (!/\s/.test(x.charAt(b)) && x.charAt(b) !== ">") {
                         h += 1;
                         k += 1;
                         j = a;
@@ -329,9 +329,9 @@ var markup_beauty = function (source, indent_size, indent_character, indent_comm
                     x[e] = "[";
                     for (b = e; b > j; b -= 1) {
                         h += 1;
-                        if (new RegExp(/\s/).test(x[b]) === true) {
+                        if (/\s/.test(x[b])) {
                             for (k = b - 1; k > j; k -= 1) {
-                                if (new RegExp(/\s/).test(x[k]) === false) {
+                                if (!/\s/.test(x[k])) {
 
                                     //This condition accounts for white
                                     //space normalization around equal
@@ -342,7 +342,7 @@ var markup_beauty = function (source, indent_size, indent_character, indent_comm
                                     //tokenization
                                     if (x[k] !== "=") {
                                         h += 1;
-                                    } else if (new RegExp(/\s/).test(x[k - 1]) === true) {
+                                    } else if (/\s/.test(x[k - 1])) {
                                         h -= 1;
                                     }
                                     b = k;
@@ -351,7 +351,7 @@ var markup_beauty = function (source, indent_size, indent_character, indent_comm
                             }
                         }
                     }
-                    if (new RegExp(/\s/).test(x[i]) === true) {
+                    if (/\s/.test(x[i])) {
                         h -= 1;
                     }
                     inner.push(["<", h, g]);
@@ -359,12 +359,12 @@ var markup_beauty = function (source, indent_size, indent_character, indent_comm
                     x[e] = "]";
                     for (b = e; b > j; b -= 1) {
                         h += 1;
-                        if (new RegExp(/\s/).test(x[b]) === true) {
+                        if (/\s/.test(x[b])) {
                             for (k = b - 1; k > j; k -= 1) {
-                                if (new RegExp(/\s/).test(x[k]) === false) {
+                                if (!/\s/.test(x[k])) {
                                     if (x[k] !== "=") {
                                         h += 1;
-                                    } else if (new RegExp(/\s/).test(x[k - 1]) === true) {
+                                    } else if (/\s/.test(x[k - 1])) {
                                         h -= 1;
                                     }
                                     b = k;
@@ -373,7 +373,7 @@ var markup_beauty = function (source, indent_size, indent_character, indent_comm
                             }
                         }
                     }
-                    if (new RegExp(/\s/).test(x[i]) === true) {
+                    if (/\s/.test(x[i])) {
                         h -= 1;
                     }
                     inner.push([">", h, g]);
@@ -1172,8 +1172,8 @@ var markup_beauty = function (source, indent_size, indent_character, indent_comm
         algorithm = (function () {
             var test = 0,
             test1 = 0,
-            scriptStart = new RegExp(/^(\s*<\!\-\-)/),
-            scriptEnd = new RegExp(/(\-\->\s*)$/);
+            scriptStart = (/^(\s*<\!\-\-)/),
+            scriptEnd = (/(\-\->\s*)$/);
             for (i = 0; i < loop; i += 1) {
                 if (i === 0) {
                     level.push(0);
@@ -1191,16 +1191,13 @@ var markup_beauty = function (source, indent_size, indent_character, indent_comm
                         //comment can confuse markupmin, so they have to
                         //be temporarily removed.  This logic is
                         //repeated for CSS styles.
-                        if (scriptStart.test(build[i]) === true) {
+                        if (scriptStart.test(build[i])) {
                             test = 1;
                         }
-                        if (scriptEnd.test(build[i]) === true) {
+                        if (scriptEnd.test(build[i])) {
                             test1 = 1;
                         }
-                        build[i] = js_beautify(build[i].replace(scriptStart, "").replace(scriptEnd, ""), {
-                            indent_size : indent_size,
-                            indent_char : indent_character
-                        });
+                        build[i] = js_beautify(build[i].replace(scriptStart, "").replace(scriptEnd, ""), 4, " ", true, 1, 0, true, false, false, indent_comment);
                         if (test === 1) {
                             build[i] = "<!--\n" + build[i];
                         }
@@ -1209,10 +1206,10 @@ var markup_beauty = function (source, indent_size, indent_character, indent_comm
                         }
                         build[i] = build[i].replace(/(\/\/(\s)+\-\->(\s)*)$/, "//-->");
                     } else if (token[i - 1] === "T_style") {
-                        if (scriptStart.test(build[i]) === true) {
+                        if (scriptStart.test(build[i])) {
                             test = 1;
                         }
-                        if (scriptEnd.test(build[i]) === true) {
+                        if (scriptEnd.test(build[i])) {
                             test1 = 1;
                         }
                         build[i] = cleanCSS(build[i].replace(scriptStart, "").replace(scriptEnd, ""), indent_size, indent_character, true);
@@ -1622,7 +1619,7 @@ var markup_beauty = function (source, indent_size, indent_character, indent_comm
         c.splice(11, 0, "<tr><th colspan='7'>Server Side Tags</th></tr>");
         c.splice(8, 0, "<tr><th>Total Content" + h(1) + "<tr><th colspan='7'>Parsing Declarations</th></tr>");
         c.splice(4, 0, "<tr><th>Total Common Tags" + h(0) + "<tr><th colspan='7'>Content</th></tr>");
-        c.splice(0, 0, "<div id='doc'>" + zipf() + "<table class='analysis' summary='Analysis of markup pieces.'><caption>Analysis of markup pieces.</caption><thead><tr><th>Type</th><th>Quantity of Tags</th><th>Percentage Quantity in Section</th><th>Percentage Quantity of Total</th><th>** Character Size</th><th>Percentage Size in Section</th><th>Percentage Size of Total</th></tr></thead><tbody><tr><th>Total Pieces</th><td>" + cinfo.length + "</td><td>100.00%</td><td>100%</td><td>" + summary.join("").length + "</td><td>100%</td><td>100%</td></tr><tr><th colspan='7'>Common Tags</th></tr>");
+        c.splice(0, 0, "<div id='doc'>" + zipf() + "<table class='analysis' summary='Analysis of markup pieces.'><caption>Analysis of markup pieces.</caption><thead><tr><th>Type</th><th>Quantity of Tags</th><th>Percentage Quantity in Section</th><th>Percentage Quantity of Total</th><th>** Character Size</th><th>Percentage Size in Section</th><th>Percentage Size of Total</th></tr></thead><tbody><tr><th>Total Pieces</th><td>" + cinfo.length + "</td><td>100.00%</td><td>100.00%</td><td>" + summary.join("").length + "</td><td>100.00%</td><td>100.00%</td></tr><tr><th colspan='7'>Common Tags</th></tr>");
         c.push("</tbody></table></div><p>* The number of requests is determined from the input submitted only and does not count the additional HTTP requests supplied from dynamically executed code, frames, iframes, css, or other external entities.</p><p>** Character size is measured from the individual pieces of tags and content specifically between minification and beautification.</p><p>*** The number of starting &lt;script&gt; and &lt;style&gt; tags is subtracted from the total number of start tags. The combination of those three values from the table above should equal the number of end tags or the code is in error.</p>" + n);
         if (b[0] + b[15] + b[16] !== b[1]) {
             n = "s";

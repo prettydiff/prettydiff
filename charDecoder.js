@@ -64,10 +64,10 @@ var charDecoder = function (input) {
     c = input,
     x = [],
     y = [],
-    uni = new RegExp(/u\+[0-9a-f]{4,5}\+/),
-    unit = new RegExp(/u\![0-9a-f]{4,5}\+/),
-    htmln = new RegExp(/\&\#[0-9]{1,6}\;/),
-    htmlt = new RegExp(/\&\![0-9]{1,6}\;/);
+    uni = (/u\+[0-9a-f]{4,5}\+/),
+    unit = (/u\![0-9a-f]{4,5}\+/),
+    htmln = (/\&\#[0-9]{1,6}\;/),
+    htmlt = (/\&\![0-9]{1,6}\;/);
     if (c.search(unit) === -1 && c.search(uni) === -1 && c.search(htmlt) === -1 && c.search(htmln) === -1) {
         return input;
     }

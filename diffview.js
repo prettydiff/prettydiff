@@ -236,7 +236,9 @@ var diffview = function (baseTextLines, newTextLines, baseTextName, newTextName,
                                 "\f": true,
                                 "\r": true
                             };
-                            return c in whitespace;
+                            if (whitespace.hasOwnProperty(c)) {
+                                return whitespace[c];
+                            }
                         };
                     opcodes = null;
                     var chain_b = (function () {
@@ -267,20 +269,22 @@ var diffview = function (baseTextLines, newTextLines, baseTextName, newTextName,
                         }
                         if (isjunk) {
                             for (elt in populardict) {
-                                if (isjunk(elt)) {
+                                if (populardict.hasOwnProperty(elt) && isjunk(elt)) {
                                     junkdict[elt] = 1;
                                     delete populardict[elt];
                                 }
                             }
                             for (elt in b2j) {
-                                if (isjunk(elt)) {
+                                if (b2j.hasOwnProperty(elt) && isjunk(elt)) {
                                     junkdict[elt] = 1;
                                     delete b2j[elt];
                                 }
                             }
                         }
                         isbjunk = function (key) {
-                            return key in junkdict;
+                            if (junkdict.hasOwnProperty(key)) {
+                                return junkdict[key];
+                            }
                         };
                     }()),
                         result = (function () {
@@ -470,7 +474,7 @@ var diffview = function (baseTextLines, newTextLines, baseTextName, newTextName,
                 //character length of given lines of code so that many
                 //separate matches can be specified perline.
                 compare = function () {
-                    var em = new RegExp(/<em>/g);
+                    var em = /<em>/g;
                     for (i = k; i < zx; i += 1) {
                         if (ax[i] === bx[i]) {
                             r = i;

@@ -73,7 +73,7 @@ var js_beautify = function (js_source_text, indent_size, indent_char, preserve_n
         last_last_word = '',
         flags,
         functestval = 0,
-        var_var_test,
+        var_var_test = false,
         comma_test = true,
         colon_func_test,
         flag_store = [],
@@ -230,7 +230,7 @@ var js_beautify = function (js_source_text, indent_size, indent_char, preserve_n
         fix_object_own_line = function () {
             var b = output.length - 2;
             for (; b > 0; b -= 1) {
-                if (/^(\s+)$/.test(output[b]) === true) {
+                if (/^(\s+)$/.test(output[b])) {
                     output[b] = '';
                 } else if (in_array(output[b], punct)) {
                     output[b + 1] = ' ';
@@ -647,6 +647,7 @@ var js_beautify = function (js_source_text, indent_size, indent_char, preserve_n
                 if (functestval > 1) {
                     flags.indentation_level += 1;
                     var_var_test = true;
+                    comma_test = true;
                 }
                 if (last_type !== 'TK_OPERATOR' && last_type !== 'TK_START_EXPR') {
                     if (last_type === 'TK_START_BLOCK') {
@@ -667,7 +668,6 @@ var js_beautify = function (js_source_text, indent_size, indent_char, preserve_n
         } else if (token_type === 'TK_END_BLOCK') {
             n[4] += 1;
             restore_mode();
-            comma_test = false;
             functestval = 0;
             if (opt_braces_on_own_line) {
                 if (last_text === "{" && in_array(last_last_text, punct)) {
@@ -857,15 +857,18 @@ var js_beautify = function (js_source_text, indent_size, indent_char, preserve_n
                         // }, in lists get a newline treatment
                         print_newline();
                     }
+                    if (token_text === 'var') {
+                        if (!var_var_test && comma_test && last_type === 'TK_START_BLOCK') {
+                            flags.indentation_level += 1;
+                            output.push(indent_string);
+                            var_var_test = true;
+                        }
+                        flags.var_line = true;
+                        flags.var_line_reindented = false;
+                    }
                     print_token();
                     if (token_text === 'typeof') {
                         print_single_space();
-                    }
-                    last_last_word = last_word;
-                    last_word = token_text;
-                    if (token_text === 'var') {
-                        flags.var_line = true;
-                        flags.var_line_reindented = false;
                     }
                     if (token_text === 'if') {
                         flags.if_line = true;
@@ -873,11 +876,13 @@ var js_beautify = function (js_source_text, indent_size, indent_char, preserve_n
                     if (token_text === 'else') {
                         flags.if_line = false;
                     }
+                    last_last_word = last_word;
+                    last_word = token_text;
                 }
             }
         } else if (token_type === 'TK_SEMICOLON') {
             n[3] += 1;
-            if (colon_func_test && last_text === '}' && last_last_text === ';') {
+            if (colon_func_test && last_type === 'TK_END_BLOCK' && (last_last_text === '}' || last_last_text === ')' || last_last_text === ']' || last_last_text === ';')) {
                 colon_func_test = false;
                 flags.indentation_level -= 1;
             }

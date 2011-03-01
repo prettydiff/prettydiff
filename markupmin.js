@@ -65,8 +65,9 @@ markupmin is composed of these child objects:
 */
 var markupmin = function (x, comments, presume_html) {
     "use strict";
-    var i, a, b, c, y, Y, verbose = new RegExp(/^\s+$/),
-    white = new RegExp(/\s/),
+    var i, a, b, c, y, Y,
+    verbose = (/^\s+$/),
+    white = (/\s/),
     html = ["br", "meta", "link", "img", "hr", "base", "basefont", "area", "col", "frame", "input", "param"],
 
     //This closure performs checks for excessive whitespace inside
@@ -144,7 +145,7 @@ var markupmin = function (x, comments, presume_html) {
         }
         m = e[0];
         e.splice(0, 1);
-        if (white.test(e[0]) === true) {
+        if (white.test(e[0])) {
             e.splice(0, 1);
         }
         for (; f < Y; f += 1) {
@@ -171,7 +172,7 @@ var markupmin = function (x, comments, presume_html) {
         }
         Y = e.length;
         for (c = 0; c < Y; c += 1) {
-            if (white.test(e.charAt(c)) === true) {
+            if (white.test(e.charAt(c))) {
                 e = e.substr(c + 1);
             } else {
                 break;
@@ -263,7 +264,7 @@ var markupmin = function (x, comments, presume_html) {
     x = [];
     Y = i.length;
     for (a = 0; a < Y; a += 1) {
-        if (verbose.test(i[a]) === false || (verbose.test(i[a]) === true && verbose.test(i[a + 1]) === false)) {
+        if (!verbose.test(i[a]) || (verbose.test(i[a]) && !verbose.test(i[a + 1]))) {
             x.push(i[a]);
         }
     }
@@ -279,7 +280,7 @@ var markupmin = function (x, comments, presume_html) {
         if (presume_html === true) {
             b = "";
             for (i = 1; i < x[a].length; i += 1) {
-                if (new RegExp(/[a-z]/i).test(x[a].charAt(i)) === true) {
+                if (/[a-z]/i.test(x[a].charAt(i))) {
                     b += x[a].charAt(i);
                 } else {
                     break;
@@ -296,14 +297,14 @@ var markupmin = function (x, comments, presume_html) {
         //This removes spaces between elements except between two
         //closing tags following content or any space around a singleton
         //tag.
-        if (verbose.test(x[a - 1]) === true) {
+        if (verbose.test(x[a - 1])) {
             if (c !== 1 && (x[a].charAt(0) === "<" && x[a].charAt(1) === "/" && x[a - 1] !== " " && x[a - 2].charAt(0) === "<" && x[a - 2].charAt(1) === "/" && x[a - 3].charAt(0) !== "<") && (x[a].charAt(0) === "<" && x[a].charAt(x[a].length - 2) !== "/") && (x[a].charAt(0) === "<" && x[a].charAt(x[a].length - 2) !== "/" && x[a - 2].charAt(0) === "<" && x[a - 2].charAt(1) === "/")) {
                 x[a - 1] = "";
             }
         }
     }
     x = x.join('').replace(/-->\s+/g, '-->').replace(/\s+<\?php/g, ' <?php').replace(/\s+<%/g, ' <%').replace(/\s*>\s+/g, '> ').replace(/\s+<\s*/g, ' <').replace(/\s+\/>/g, '/>').replace(/\s+>/g, ">");
-    if (white.test(x.charAt(0)) === true) {
+    if (white.test(x.charAt(0))) {
         x = x.slice(1, x.length);
     }
     return x;
