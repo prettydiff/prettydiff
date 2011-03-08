@@ -71,6 +71,8 @@ var jsmin = function (comment, input, level, type, alter) {
     error = "",
     a = '',
     b = '',
+	geti,
+	getl,
     EOF = -1,
     LETTERS = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz',
     DIGITS = '0123456789',
@@ -296,13 +298,13 @@ var jsmin = function (comment, input, level, type, alter) {
     //or linefeed.
     get = function () {
         var c = theLookahead;
-        if (get.i === get.l) {
+        if (geti === getl) {
             return EOF;
         }
         theLookahead = EOF;
         if (c === EOF) {
-            c = input.charAt(get.i);
-            get.i += 1;
+            c = input.charAt(geti);
+            geti += 1;
         }
         if (c >= ' ' || c === '\n') {
             return c;
@@ -499,8 +501,8 @@ var jsmin = function (comment, input, level, type, alter) {
         OTHERS = '_$//';
     }
     ALNUM = LETTERS + DIGITS + OTHERS;
-    get.i = 0;
-    get.l = input.length;
+    geti = 0;
+    getl = input.length;
     if (type === "css") {
         input = input.replace(/[\w]+:\/\//g, schemeesc);
     }

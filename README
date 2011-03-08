@@ -37,6 +37,11 @@ Created by Austin Cheney originally on 3 Mar 2009.
 This code may not be used or redistributed unless the following
 conditions are met:
 
+There is no licensing associated with diffview.css.  Please use,
+redistribute, and alter to your content.  However, diffview.css provided
+from Pretty Diff is different from and not aligned with the following
+diffview.js originally from Snowtide Informatics.
+
 * The use of diffview.js and prettydiff.js must contain the following
 copyright:
    Copyright (c) 2007, Snowtide Informatics Systems, Inc.

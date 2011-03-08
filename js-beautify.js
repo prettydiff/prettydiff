@@ -74,14 +74,12 @@ var js_beautify = function (js_source_text, indent_size, indent_char, preserve_n
         flags,
         functestval = 0,
         var_var_test = false,
-        comma_test = true,
-        colon_func_test,
+        comma_test,
         flag_store = [],
         indent_string = '',
         wordchar = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z', 'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z', '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', '_', '$'],
         punct = ['+', '-', '*', '/', '%', '&', '++', '--', '=', '+=', '-=', '*=', '/=', '%=', '==', '===', '!=', '!==', '>', '<', '>=', '<=', '>>', '<<', '>>>', '>>>=', '>>=', '<<=', '&&', '&=', '|', '||', '!', '!!', ',', ':', '?', '^', '^=', '|=', '::'],
         parser_pos,
-        digits = ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9'],
         prefix,
         token_type,
         do_block_just_closed = false,
@@ -358,7 +356,7 @@ var js_beautify = function (js_source_text, indent_size, indent_char, preserve_n
                 if (parser_pos !== input_length && c.match(/^[0-9]+[Ee]$/) && (input.charAt(parser_pos) === '-' || input.charAt(parser_pos) === '+')) {
                     sign = input.charAt(parser_pos);
                     parser_pos += 1;
-                    t = get_next_token(parser_pos);
+                    t = this(parser_pos);
                     c += sign + t[0];
                     return [c, 'TK_WORD'];
                 }
@@ -499,7 +497,7 @@ var js_beautify = function (js_source_text, indent_size, indent_char, preserve_n
             // around line 1935
             if (c === '#') {
                 sharp = '#';
-                if (parser_pos < input_length && in_array(input.charAt(parser_pos), digits)) {
+                if (parser_pos < input_length && (input.charAt(parser_pos) === '0' || input.charAt(parser_pos) === '1' || input.charAt(parser_pos) === '2' || input.charAt(parser_pos) === '3' || input.charAt(parser_pos) === '4' || input.charAt(parser_pos) === '5' || input.charAt(parser_pos) === '6' || input.charAt(parser_pos) === '7' || input.charAt(parser_pos) === '8' || input.charAt(parser_pos) === '9')) {
                     do {
                         c = input.charAt(parser_pos);
                         sharp += c;
@@ -765,6 +763,13 @@ var js_beautify = function (js_source_text, indent_size, indent_char, preserve_n
                 o[0] += 1;
                 o[1] += token_text.length;
             }
+            if (token_text !== 'var' && last_text === ';') {
+                comma_test = false;
+            }
+            if (last_text === '{' && last_last_text === ':') {
+                output.push(indent_string);
+                flags.indentation_level += 1;
+            }
             if (do_block_just_closed) {
                 // do {} ## while ()
                 print_single_space();
@@ -794,10 +799,6 @@ var js_beautify = function (js_source_text, indent_size, indent_char, preserve_n
                             functestval += 1;
                         } else if (!comma_test) {
                             functestval -= 1;
-                        }
-                        if (last_text === ':') {
-                            flags.indentation_level += 1;
-                            colon_func_test = true;
                         }
                         if ((just_added_newline || last_text === ';') && last_text !== '{') {
                             // make sure there is a nice clean space of
@@ -882,9 +883,8 @@ var js_beautify = function (js_source_text, indent_size, indent_char, preserve_n
             }
         } else if (token_type === 'TK_SEMICOLON') {
             n[3] += 1;
-            if (colon_func_test && last_type === 'TK_END_BLOCK' && (last_last_text === '}' || last_last_text === ')' || last_last_text === ']' || last_last_text === ';')) {
-                colon_func_test = false;
-                flags.indentation_level -= 1;
+            if (last_text === '}') {
+                comma_test = true;
             }
             print_token();
             flags.var_line = false;
@@ -917,7 +917,7 @@ var js_beautify = function (js_source_text, indent_size, indent_char, preserve_n
             }
             if (token_text === ',') {
                 n[2] += 1;
-                if (flags.mode !== '(EXPRESSION)') {
+                if (flags.mode !== '(EXPRESSION)' && last_last_text !== ':') {
                     comma_test = false;
                 }
                 if (flags.var_line) {
@@ -928,7 +928,7 @@ var js_beautify = function (js_source_text, indent_size, indent_char, preserve_n
                     print_newline();
                 } else if (last_type === 'TK_END_BLOCK' && flags.mode !== '(EXPRESSION)') {
                     print_token();
-                    if (flags.mode === 'OBJECT' && last_text === '}') {
+                    if (last_text === '}') {
                         print_newline();
                     } else {
                         print_single_space();
@@ -1100,7 +1100,7 @@ var js_beautify = function (js_source_text, indent_size, indent_char, preserve_n
         last_type = token_type;
         last_text = token_text;
     }
-    rvalue = output.join('').replace(/^(\s+)/, '').replace(/(\s+)$/, '').replace(/\s*\}\(function/g, funcfix);
+    rvalue = output.join('').replace(/^(\s+)/, '').replace(/(\s+)$/, '').replace(/\s*\}\(function/g, funcfix).replace(/:\s*\(?function/g, ': function');
     js_summary = function () {
         var a,
             b,
