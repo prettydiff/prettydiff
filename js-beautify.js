@@ -947,11 +947,6 @@ var js_beautify = function (js_source_text, indent_size, indent_char, preserve_n
                 // need to return the favor
                 print_single_space();
                 print_token();
-            } else if (token_text === ':' && flags.in_case) {
-                // colon really asks for separate treatment
-                print_token();
-                print_newline();
-                flags.in_case = false;
             } else if (token_text === '::') {
                 // no spaces around exotic namespacing syntax operator
                 print_token();
@@ -976,11 +971,8 @@ var js_beautify = function (js_source_text, indent_size, indent_char, preserve_n
             } else if (token_text === '.') {
                 // decimal digits or object.property
                 space_before = false;
-            } else if (token_text === ':' && is_ternary_op()) {
-                flags.mode = 'OBJECT';
-                space_before = false;
             }
-            if (token_text !== ',' && token_text !== ":" && (token_text !== '-' || (token_text === '-' && last_text !== 'continue' && last_text !== 'try' && last_text !== 'throw' && last_text !== 'return' && last_text !== 'var' && last_text !== 'if' && last_text !== 'switch' && last_text !== 'case' && last_text !== 'default' && last_text !== 'for' && last_text !== 'while' && last_text !== 'break' && last_text !== 'function'))) {
+            if (token_text !== ',' && token_text !== ':' && (token_text !== '-' || (token_text === '-' && last_text !== 'continue' && last_text !== 'try' && last_text !== 'throw' && last_text !== 'return' && last_text !== 'var' && last_text !== 'if' && last_text !== 'switch' && last_text !== 'case' && last_text !== 'default' && last_text !== 'for' && last_text !== 'while' && last_text !== 'break' && last_text !== 'function'))) {
                 if (space_before) {
                     print_single_space();
                 }
@@ -989,7 +981,11 @@ var js_beautify = function (js_source_text, indent_size, indent_char, preserve_n
                     print_single_space();
                 }
             } else if (token_text === ":") {
-                if (is_ternary_op()) {
+                if (flags.in_case) {
+                    print_token();
+                    print_newline();
+                    flags.in_case = false;
+                } else if (is_ternary_op()) {
                     print_single_space();
                     print_token();
                     print_single_space();
