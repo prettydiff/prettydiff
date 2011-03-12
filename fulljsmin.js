@@ -67,434 +67,452 @@ var jsmin = function (comment, input, level, type, alter) {
     if (comment.length > 0) {
         comment += '\n';
     }
-    var ret, atchar = input.match(/\@charset\s+("|')[\w\-]+("|');?/gi),
-    error = "",
-    a = '',
-    b = '',
-	geti,
-	getl,
-    EOF = -1,
-    LETTERS = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz',
-    DIGITS = '0123456789',
-    OTHERS,
-    ALNUM,
-    theLookahead = EOF,
+    var ret,
+        atchar = input.match(/\@charset\s+("|')[\w\-]+("|');?/gi),
+        error = "",
+        a = '',
+        b = '',
+        geti,
+        getl,
+        EOF = -1,
+        LETTERS = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz',
+        DIGITS = '0123456789',
+        OTHERS,
+        ALNUM,
+        theLookahead = EOF,
 
-    //reduction provides a logical compression to flatten redundantly
-    //applied CSS properties
-    reduction = function (x) {
-        var a, e, f, g, m, p, b = x.length,
-        c = "",
-        d = [],
+        //reduction provides a logical compression to flatten redundantly
+        //applied CSS properties
+        reduction = function (x) {
+            var a,
+                e,
+                f,
+                g,
+                m,
+                p,
+                b = x.length,
+                c = "",
+                d = [],
 
-        //colorLow is used in a replace method to convert CSS hex colors
-        //from uppercase alpha characters to lowercase and in some cases
-        //shorten hex color codes from 6 characters to 3.
-        colorLow = function (x) {
-            x = x.toLowerCase();
-            if (x.length === 7 && x.charAt(1) === x.charAt(2) && x.charAt(3) === x.charAt(4) && x.charAt(5) === x.charAt(6)) {
-                x = "#" + x.charAt(1) + x.charAt(3) + x.charAt(5);
-            }
-            return x;
-        };
-        for (a = 0; a < b; a += 1) {
-            c += x[a];
-            if (x[a] === "{" || x[a + 1] === "}") {
-                d.push(c);
-                c = "";
-            }
-        }
-        if (x[a - 1] === "}") {
-            d.push("}");
-        }
-        b = d.length;
-        for (a = 0; a < b - 1; a += 1) {
-            if (d[a].charAt(d[a].length - 1) !== "{") {
-                if (d[a].charAt(d[a].length - 1) === ";") {
-                    d[a] = d[a].substr(0, d[a].length - 1);
-                }
-                c = d[a].replace(/\:/g, "$").replace(/#[a-zA-Z0-9]{3,6}(?!(\w*\)))/g, colorLow).split(";").sort();
-                f = c.length;
-                for (e = 0; e < f; e += 1) {
-                    c[e] = c[e].split("$");
-                }
-                g = -1;
-                m = 0;
-                p = 0;
-                for (e = 0; e < f; e += 1) {
-                    if (c[e - 1] && c[e - 1][0] === c[e][0]) {
-                        c[e - 1] = "";
+                //colorLow is used in a replace method to convert CSS hex colors
+                //from uppercase alpha characters to lowercase and in some cases
+                //shorten hex color codes from 6 characters to 3.
+                colorLow = function (x) {
+                    x = x.toLowerCase();
+                    if (x.length === 7 && x.charAt(1) === x.charAt(2) && x.charAt(3) === x.charAt(4) && x.charAt(5) === x.charAt(6)) {
+                        x = "#" + x.charAt(1) + x.charAt(3) + x.charAt(5);
                     }
-                    if (c[e][0] !== "margin" && c[e][0].indexOf("margin") !== -1) {
-                        m += 1;
-                        if (m === 4) {
-                            c[e][0] = "margin";
-                            c[e][1] = c[e][1] + " " + c[e - 1][1] + " " + c[e - 3][1] + " " + c[e - 2][1];
-                            c[e - 3] = "";
-                            c[e - 2] = "";
+                    return x;
+                };
+            for (a = 0; a < b; a += 1) {
+                c += x[a];
+                if (x[a] === "{" || x[a + 1] === "}") {
+                    d.push(c);
+                    c = "";
+                }
+            }
+            if (x[a - 1] === "}") {
+                d.push("}");
+            }
+            b = d.length;
+            for (a = 0; a < b - 1; a += 1) {
+                if (d[a].charAt(d[a].length - 1) !== "{") {
+                    if (d[a].charAt(d[a].length - 1) === ";") {
+                        d[a] = d[a].substr(0, d[a].length - 1);
+                    }
+                    c = d[a].replace(/\:/g, "$").replace(/#[a-zA-Z0-9]{3,6}(?!(\w*\)))/g, colorLow).split(";").sort();
+                    f = c.length;
+                    for (e = 0; e < f; e += 1) {
+                        c[e] = c[e].split("$");
+                    }
+                    g = -1;
+                    m = 0;
+                    p = 0;
+                    for (e = 0; e < f; e += 1) {
+                        if (c[e - 1] && c[e - 1][0] === c[e][0]) {
                             c[e - 1] = "";
-                            if (c[e - 4] && c[e - 4][0] === "margin") {
-                                c[e - 4] = "";
+                        }
+                        if (c[e][0] !== "margin" && c[e][0].indexOf("margin") !== -1) {
+                            m += 1;
+                            if (m === 4) {
+                                c[e][0] = "margin";
+                                c[e][1] = c[e][1] + " " + c[e - 1][1] + " " + c[e - 3][1] + " " + c[e - 2][1];
+                                c[e - 3] = "";
+                                c[e - 2] = "";
+                                c[e - 1] = "";
+                                if (c[e - 4] && c[e - 4][0] === "margin") {
+                                    c[e - 4] = "";
+                                }
+                            }
+                        } else if (c[e][0] !== "padding" && c[e][0].indexOf("padding") !== -1) {
+                            p += 1;
+                            if (p === 4) {
+                                c[e][0] = "padding";
+                                c[e][1] = c[e][1] + " " + c[e - 1][1] + " " + c[e - 3][1] + " " + c[e - 2][1];
+                                c[e - 3] = "";
+                                c[e - 2] = "";
+                                c[e - 1] = "";
+                                if (c[e - 4] && c[e - 4][0] === "padding") {
+                                    c[e - 4] = "";
+                                }
                             }
                         }
-                    } else if (c[e][0] !== "padding" && c[e][0].indexOf("padding") !== -1) {
-                        p += 1;
-                        if (p === 4) {
-                            c[e][0] = "padding";
-                            c[e][1] = c[e][1] + " " + c[e - 1][1] + " " + c[e - 3][1] + " " + c[e - 2][1];
-                            c[e - 3] = "";
-                            c[e - 2] = "";
-                            c[e - 1] = "";
-                            if (c[e - 4] && c[e - 4][0] === "padding") {
-                                c[e - 4] = "";
+                        if (g === -1 && c[e + 1] && c[e][0].charAt(0) !== "-" && (c[e][0].indexOf("cue") !== -1 || c[e][0].indexOf("list-style") !== -1 || c[e][0].indexOf("outline") !== -1 || c[e][0].indexOf("overflow") !== -1 || c[e][0].indexOf("pause") !== -1) && (c[e][0] === c[e + 1][0].substring(0, c[e + 1][0].lastIndexOf("-")) || c[e][0].substring(0, c[e][0].lastIndexOf("-")) === c[e + 1][0].substring(0, c[e + 1][0].lastIndexOf("-")))) {
+                            g = e;
+                            if (c[g][0].indexOf("-") !== -1) {
+                                c[g][0] = c[g][0].substring(0, c[g][0].lastIndexOf("-"));
                             }
+                        } else if (g !== -1 && c[g][0] === c[e][0].substring(0, c[e][0].lastIndexOf("-"))) {
+                            if (c[g][0] === "cue" || c[g][0] === "pause") {
+                                c[g][1] = c[e][1] + " " + c[g][1];
+                            } else {
+                                c[g][1] = c[g][1] + " " + c[e][1];
+                            }
+                            c[e] = "";
+                        } else if (g !== -1) {
+                            g = -1;
                         }
                     }
-                    if (g === -1 && c[e + 1] && c[e][0].charAt(0) !== "-" && (c[e][0].indexOf("background") !== -1 || c[e][0].indexOf("cue") !== -1 || c[e][0].indexOf("list-style") !== -1 || c[e][0].indexOf("outline") !== -1 || c[e][0].indexOf("overflow") !== -1 || c[e][0].indexOf("pause") !== -1) && (c[e][0] === c[e + 1][0].substring(0, c[e + 1][0].lastIndexOf("-")) || c[e][0].substring(0, c[e][0].lastIndexOf("-")) === c[e + 1][0].substring(0, c[e + 1][0].lastIndexOf("-")))) {
-                        g = e;
-                        if (c[g][0].indexOf("-") !== -1) {
-                            c[g][0] = c[g][0].substring(0, c[g][0].lastIndexOf("-"));
+                    for (e = 0; e < f; e += 1) {
+                        if (c[e] !== "") {
+                            c[e] = c[e].join(":");
                         }
-                    } else if (g !== -1 && c[g][0] === c[e][0].substring(0, c[e][0].lastIndexOf("-"))) {
-                        if (c[g][0] === "cue" || c[g][0] === "pause") {
-                            c[g][1] = c[e][1] + " " + c[g][1];
-                        } else {
-                            c[g][1] = c[g][1] + " " + c[e][1];
-                        }
-                        c[e] = "";
-                    } else if (g !== -1) {
-                        g = -1;
                     }
+                    d[a] = c.join(";").replace(/;+/g, ";").replace(/^;/, "");
                 }
-                for (e = 0; e < f; e += 1) {
-                    if (c[e] !== "") {
-                        c[e] = c[e].join(":");
+            }
+            return d.join("");
+        },
+
+        //isAlphanum -- return true if the character is a letter, digit,
+        //underscore, dollar sign, or non-ASCII character.
+        isAlphanum = function (c) {
+            return c !== EOF && (ALNUM.has(c) || c.charCodeAt(0) > 126);
+        },
+
+        //fixURI forcefully writes double quote characters around URI
+        //fragments in CSS.  If parenthesis characters are characters of the
+        //URI they must be escaped with a backslash, "\)", in accordance
+        //with the CSS specification, or they will damage the output.
+        fixURI = function (x) {
+            var a;
+            x = x.split("url(");
+            for (a = 1; a < x.length; a += 1) {
+                if (x[a].charAt(0) !== "\"" && x[a].charAt(0) !== "'") {
+                    x[a] = x[a].split(")");
+                    if (x[a][0].charAt(x[a][0].length - 1) !== "\"" && x[a][0].charAt(x[a][0].length - 1) !== "'") {
+                        x[a][0] = x[a][0] + "\"";
+                    } else if (x[a][0].charAt(x[a][0].length - 1) === "'" || x[a][0].charAt(x[a][0].length - 1) === "\"") {
+                        x[a][0] = x[a][0].substr(0, x[a][0].length - 1) + "\"";
                     }
+                    x[a] = "url(\"" + x[a].join(')');
+                } else if (x[a].charAt(0) === "\"") {
+                    x[a] = x[a].split(")");
+                    if (x[a][0].charAt(x[a][0].length - 1) !== "\"" && x[a][0].charAt(x[a][0].length - 1) !== "'") {
+                        x[a][0] = x[a][0] + "\"";
+                    } else if (x[a][0].charAt(x[a][0].length - 1) === "'" || x[a][0].charAt(x[a][0].length - 1) === "\"") {
+                        x[a][0] = x[a][0].substr(0, x[a][0].length - 1) + "\"";
+                    }
+                    x[a] = "url(" + x[a].join(')');
+                } else {
+                    x[a] = x[a].substr(1, x[a].length - 1).split(")");
+                    if (x[a][0].charAt(x[a][0].length - 1) !== "\"" && x[a][0].charAt(x[a][0].length - 1) !== "'") {
+                        x[a][0] = x[a][0] + "\"";
+                    } else if (x[a][0].charAt(x[a][0].length - 1) === "'" || x[a][0].charAt(x[a][0].length - 1) === "\"") {
+                        x[a][0] = x[a][0].substr(0, x[a][0].length - 1) + "\"";
+                    }
+                    x[a] = "url(\"" + x[a].join(')');
                 }
-                d[a] = c.join(";").replace(/;+/g, ";").replace(/^;/, "");
             }
-        }
-        return d.join("");
-    },
+            return x.join('');
+        },
 
-    //isAlphanum -- return true if the character is a letter, digit,
-    //underscore, dollar sign, or non-ASCII character.
-    isAlphanum = function (c) {
-        return c !== EOF && (ALNUM.has(c) || c.charCodeAt(0) > 126);
-    },
+        //rgbToHex is used in a replace method to convert CSS colors from
+        //RGB definitions to hex definitions
+        rgbToHex = function (x) {
+            var a,
+                y = function (z) {
+                    z = Number(z).toString(16);
+                    if (z.length === 1) {
+                        z = "0" + z;
+                    }
+                    return z;
+                };
+            a = "#" + x.replace(/\d+/g, y).replace(/rgb\(/, "").replace(/,/g, "").replace(/\)/, "").replace(/\s*/g, "");
+            return a;
+        },
 
-    //fixURI forcefully writes double quote characters around URI
-    //fragments in CSS.  If parenthesis characters are characters of the
-    //URI they must be escaped with a backslash, "\)", in accordance
-    //with the CSS specification, or they will damage the output.
-    fixURI = function (x) {
-        var a;
-        x = x.split("url(");
-        for (a = 1; a < x.length; a += 1) {
-            if (x[a].charAt(0) !== "\"" && x[a].charAt(0) !== "'") {
-                x[a] = x[a].split(")");
-                if (x[a][0].charAt(x[a][0].length - 1) !== "\"" && x[a][0].charAt(x[a][0].length - 1) !== "'") {
-                    x[a][0] = x[a][0] + "\"";
-                } else if (x[a][0].charAt(x[a][0].length - 1) === "'" || x[a][0].charAt(x[a][0].length - 1) === "\"") {
-                    x[a][0] = x[a][0].substr(0, x[a][0].length - 1) + "\"";
-                }
-                x[a] = "url(\"" + x[a].join(')');
-            } else if (x[a].charAt(0) === "\"") {
-                x[a] = x[a].split(")");
-                if (x[a][0].charAt(x[a][0].length - 1) !== "\"" && x[a][0].charAt(x[a][0].length - 1) !== "'") {
-                    x[a][0] = x[a][0] + "\"";
-                } else if (x[a][0].charAt(x[a][0].length - 1) === "'" || x[a][0].charAt(x[a][0].length - 1) === "\"") {
-                    x[a][0] = x[a][0].substr(0, x[a][0].length - 1) + "\"";
-                }
-                x[a] = "url(" + x[a].join(')');
-            } else {
-                x[a] = x[a].substr(1, x[a].length - 1).split(")");
-                if (x[a][0].charAt(x[a][0].length - 1) !== "\"" && x[a][0].charAt(x[a][0].length - 1) !== "'") {
-                    x[a][0] = x[a][0] + "\"";
-                } else if (x[a][0].charAt(x[a][0].length - 1) === "'" || x[a][0].charAt(x[a][0].length - 1) === "\"") {
-                    x[a][0] = x[a][0].substr(0, x[a][0].length - 1) + "\"";
-                }
-                x[a] = "url(\"" + x[a].join(')');
+        //These next two functions prevent JSMin from seeing URIs in CSS as
+        //JavaScript line level comments
+        schemeesc = function (x) {
+            return x.replace(/:\/\//, ":xx");
+        },
+        schemefix = function (x) {
+            return x.replace(/:xx/, "://");
+        },
+
+        //sameDist is used in a replace method to shorten redundant CSS
+        //distances to the fewest number of non-redundant increments
+        sameDist = function (x) {
+            if (x === "0") {
+                return x;
             }
-        }
-        return x.join('');
-    },
-
-    //rgbToHex is used in a replace method to convert CSS colors from
-    //RGB definitions to hex definitions
-    rgbToHex = function (x) {
-        var a, y = function (z) {
-            z = Number(z).toString(16);
-            if (z.length === 1) {
-                z = "0" + z;
+            var a = "";
+            if (x.charAt(0) === " ") {
+                a = " ";
+                x = x.substr(1, x.length);
             }
-            return z;
-        };
-        a = "#" + x.replace(/\d+/g, y).replace(/rgb\(/, "").replace(/,/g, "").replace(/\)/, "").replace(/\s*/g, "");
-        return a;
-    },
-
-    //These next two functions prevent JSMin from seeing URIs in CSS as
-    //JavaScript line level comments
-    schemeesc = function (x) {
-        return x.replace(/:\/\//, ":xx");
-    },
-    schemefix = function (x) {
-        return x.replace(/:xx/, "://");
-    },
-
-    //sameDist is used in a replace method to shorten redundant CSS
-    //distances to the fewest number of non-redundant increments
-    sameDist = function (x) {
-        if (x === "0") {
-            return x;
-        }
-        var a = "";
-        if (x.charAt(0) === " ") {
-            a = " ";
-            x = x.substr(1, x.length);
-        }
-        x = x.split(" ");
-        if (x.length === 4) {
-            if (x[0] === x[1] && x[1] === x[2] && x[2] === x[3]) {
+            x = x.split(" ");
+            if (x.length === 4) {
+                if (x[0] === x[1] && x[1] === x[2] && x[2] === x[3]) {
+                    x[1] = "";
+                    x[2] = "";
+                    x[3] = "";
+                } else if (x[0] === x[2] && x[1] === x[3] && x[0] !== x[1]) {
+                    x[2] = "";
+                    x[3] = "";
+                } else if (x[0] !== x[2] && x[1] === x[3]) {
+                    x[3] = "";
+                }
+            } else if (x.length === 3 && x[0] === x[2] && x[0] !== x[1]) {
+                x[2] = "";
+            } else if (x.length === 2 && a !== " " && x[0] === x[1]) {
                 x[1] = "";
-                x[2] = "";
-                x[3] = "";
-            } else if (x[0] === x[2] && x[1] === x[3] && x[0] !== x[1]) {
-                x[2] = "";
-                x[3] = "";
-            } else if (x[0] !== x[2] && x[1] === x[3]) {
-                x[3] = "";
             }
-        } else if (x.length === 3 && x[0] === x[2] && x[0] !== x[1]) {
-            x[2] = "";
-        } else if (x.length === 2 && a !== " " && x[0] === x[1]) {
-            x[1] = "";
-        }
-        return a + x.join(" ").replace(/\s+/g, " ").replace(/\s+$/, "");
-    },
+            return a + x.join(" ").replace(/\s+/g, " ").replace(/\s+$/, "");
+        },
+        singleZero = function (x) {
+            var a = x.substr(0, x.indexOf(":") + 1);
+            if (a === "radius:") {
+                return x;
+            }
+            if (x.charAt(x.length - 1) !== "0" || (x.charAt(x.length - 1) === "0" && x.charAt(x.length - 2) !== " ")) {
+                return x;
+            }
+            return a + "0";
+        },
 
-    //endZero is used in a replace method to convert "20.0" to "20" in
-    //CSS
-    endZero = function (x) {
-        var a = x.indexOf(".");
-        return x.substr(0, a);
-    },
+        //endZero is used in a replace method to convert "20.0" to "20" in
+        //CSS
+        endZero = function (x) {
+            var a = x.indexOf(".");
+            return x.substr(0, a);
+        },
 
-    //startZero is used in a replace method to convert "0.02" to ".02"
-    //in CSS
-    startZero = function (x) {
-        var a = x.indexOf(".");
-        return x.charAt(0) + x.substr(a, x.length);
-    },
+        //startZero is used in a replace method to convert "0.02" to ".02"
+        //in CSS
+        startZero = function (x) {
+            var a = x.indexOf(".");
+            return x.charAt(0) + x.substr(a, x.length);
+        },
 
-    //This function prevents percentage numbers from running together
-    fixpercent = function (x) {
-        return x.replace(/%/, "% ");
-    },
+        //This function prevents percentage numbers from running together
+        fixpercent = function (x) {
+            return x.replace(/%/, "% ");
+        },
 
-    //get -- return the next character. Watch out for lookahead. If
-    //the character is a control character, translate it to a space
-    //or linefeed.
-    get = function () {
-        var c = theLookahead;
-        if (geti === getl) {
-            return EOF;
-        }
-        theLookahead = EOF;
-        if (c === EOF) {
-            c = input.charAt(geti);
-            geti += 1;
-        }
-        if (c >= ' ' || c === '\n') {
-            return c;
-        }
-        if (c === '\r') {
-            return '\n';
-        }
-        return ' ';
-    },
-
-    //peek -- get the next character without getting it.
-    peek = function () {
-        theLookahead = get();
-        return theLookahead;
-    },
-
-    //next -- get the next character, excluding comments. peek() is
-    //used to see if a '/' is followed by a '/' or '*'.
-    next = function () {
-        var c = get();
-        if (c === '/') {
-            switch (peek()) {
-            case '/':
-                for (;;) {
-                    c = get();
-                    if (c <= '\n') {
-                        return c;
-                    }
-                }
-                break;
-            case '*':
-                get();
-                for (;;) {
-                    switch (get()) {
-                    case "'":
-                        c = get().replace(/'/, '');
-                        break;
-                    case '"':
-                        c = get().replace(/"/, '');
-                        break;
-                    case '*':
-                        if (peek() === '/') {
-                            get();
-                            return ' ';
-                        }
-                        break;
-                    case EOF:
-                        error = 'Error: Unterminated JavaScript comment.';
-                        return error;
-                    }
-                }
-                break;
-            default:
+        //get -- return the next character. Watch out for lookahead. If
+        //the character is a control character, translate it to a space
+        //or linefeed.
+        get = function () {
+            var c = theLookahead;
+            if (geti === getl) {
+                return EOF;
+            }
+            theLookahead = EOF;
+            if (c === EOF) {
+                c = input.charAt(geti);
+                geti += 1;
+            }
+            if (c >= ' ' || c === '\n') {
                 return c;
             }
-        }
-        return c;
-    },
+            if (c === '\r') {
+                return '\n';
+            }
+            return ' ';
+        },
 
-    //action -- do something! What you do is determined by the
-    //argument:
-    //   1   Output A. Copy B to A. Get the next B.
-    //   2   Copy B to A. Get the next B. (Delete A).
-    //   3   Get the next B. (Delete B).
-    //action treats a string as a single character. Wow!
-    //action recognizes a regular expression if it is preceded by
-    //( or , or =.
-    action = function (d) {
-        var r = [];
-        if (d === 1) {
-            r.push(a);
-        }
-        if (d < 3) {
-            a = b;
-            if (a === '\'' || a === '"') {
-                for (;;) {
-                    r.push(a);
-                    a = get();
-                    if (a === b) {
-                        break;
-                    }
-                    if (a <= '\n') {
-                        if (type === "css") {
-                            error = 'Error: This does not appear to be CSS. Try submitting as plain text or markup.';
-                        } else {
-                            error = 'Error: This does not appear to be JavaScript. Try submitting as plain text or markup.';
+        //peek -- get the next character without getting it.
+        peek = function () {
+            theLookahead = get();
+            return theLookahead;
+        },
+
+        //next -- get the next character, excluding comments. peek() is
+        //used to see if a '/' is followed by a '/' or '*'.
+        next = function () {
+            var c = get();
+            if (c === '/') {
+                switch (peek()) {
+                case '/':
+                    for (;;) {
+                        c = get();
+                        if (c <= '\n') {
+                            return c;
                         }
-                        return error;
                     }
-                    if (a === '\\') {
-                        r.push(a);
-                        a = get();
+                    break;
+                case '*':
+                    get();
+                    for (;;) {
+                        switch (get()) {
+                        case "'":
+                            c = get().replace(/'/, '');
+                            break;
+                        case '"':
+                            c = get().replace(/"/, '');
+                            break;
+                        case '*':
+                            if (peek() === '/') {
+                                get();
+                                return ' ';
+                            }
+                            break;
+                        case EOF:
+                            error = 'Error: Unterminated JavaScript comment.';
+                            return error;
+                        }
                     }
-                }
-            }
-        }
-        b = next();
-        if (b === '/' && '(,=:[!&|'.has(a)) {
-            r.push(a);
-            r.push(b);
-            for (;;) {
-                a = get();
-                if (a === '/') {
-                    break;
-                } else if (a === '\\') {
-                    r.push(a);
-                    a = get();
-                } else if (a <= '\n') {
-                    error = 'Error: unterminated JavaScript Regular Expression literal';
-                    return error;
-                }
-                r.push(a);
-            }
-            b = next();
-        }
-        return r.join('');
-    },
-
-    //m -- Copy the input to the output, deleting the characters
-    //which are insignificant to JavaScript. Comments will be
-    //removed. Tabs will be replaced with spaces. Carriage returns
-    //will be replaced with linefeeds.
-    //Most spaces and linefeeds will be removed.
-    m = function () {
-        if (error !== "") {
-            return error;
-        }
-        var r = [];
-        a = '\n';
-        r.push(action(3));
-        while (a !== EOF) {
-            if (a === ' ' && !(type === 'css' && b === '#')) {
-                if (isAlphanum(b)) {
-                    r.push(action(1));
-                } else {
-                    r.push(action(2));
-                }
-            } else if (a === '\n') {
-                switch (b) {
-                case '{':
-                case '[':
-                case '(':
-                case '+':
-                case '-':
-                    r.push(action(1));
-                    break;
-                case ' ':
-                    r.push(action(3));
                     break;
                 default:
+                    return c;
+                }
+            }
+            return c;
+        },
+
+        //action -- do something! What you do is determined by the
+        //argument:
+        //   1   Output A. Copy B to A. Get the next B.
+        //   2   Copy B to A. Get the next B. (Delete A).
+        //   3   Get the next B. (Delete B).
+        //action treats a string as a single character. Wow!
+        //action recognizes a regular expression if it is preceded by
+        //( or , or =.
+        action = function (d) {
+            var r = [];
+            if (d === 1) {
+                r.push(a);
+            }
+            if (d < 3) {
+                a = b;
+                if (a === '\'' || a === '"') {
+                    for (;;) {
+                        r.push(a);
+                        a = get();
+                        if (a === b) {
+                            break;
+                        }
+                        if (a <= '\n') {
+                            if (type === "css") {
+                                error = 'Error: This does not appear to be CSS. Try submitting as plain text or markup.';
+                            } else {
+                                error = 'Error: This does not appear to be JavaScript. Try submitting as plain text or markup.';
+                            }
+                            return error;
+                        }
+                        if (a === '\\') {
+                            r.push(a);
+                            a = get();
+                        }
+                    }
+                }
+            }
+            b = next();
+            if (b === '/' && '(,=:[!&|'.has(a)) {
+                r.push(a);
+                r.push(b);
+                for (;;) {
+                    a = get();
+                    if (a === '/') {
+                        break;
+                    } else if (a === '\\') {
+                        r.push(a);
+                        a = get();
+                    } else if (a <= '\n') {
+                        error = 'Error: unterminated JavaScript Regular Expression literal';
+                        return error;
+                    }
+                    r.push(a);
+                }
+                b = next();
+            }
+            return r.join('');
+        },
+
+        //m -- Copy the input to the output, deleting the characters
+        //which are insignificant to JavaScript. Comments will be
+        //removed. Tabs will be replaced with spaces. Carriage returns
+        //will be replaced with linefeeds.
+        //Most spaces and linefeeds will be removed.
+        m = function () {
+            if (error !== "") {
+                return error;
+            }
+            var r = [];
+            a = '\n';
+            r.push(action(3));
+            while (a !== EOF) {
+                if (a === ' ' && !(type === 'css' && b === '#')) {
                     if (isAlphanum(b)) {
                         r.push(action(1));
                     } else {
-                        if (level === 1 && b !== '\n') {
+                        r.push(action(2));
+                    }
+                } else if (a === '\n') {
+                    switch (b) {
+                    case '{':
+                    case '[':
+                    case '(':
+                    case '+':
+                    case '-':
+                        r.push(action(1));
+                        break;
+                    case ' ':
+                        r.push(action(3));
+                        break;
+                    default:
+                        if (isAlphanum(b)) {
                             r.push(action(1));
                         } else {
-                            r.push(action(2));
+                            if (level === 1 && b !== '\n') {
+                                r.push(action(1));
+                            } else {
+                                r.push(action(2));
+                            }
                         }
                     }
-                }
-            } else {
-                switch (b) {
-                case ' ':
-                    if (isAlphanum(a)) {
+                } else {
+                    switch (b) {
+                    case ' ':
+                        if (isAlphanum(a)) {
+                            r.push(action(1));
+                            break;
+                        }
+                        r.push(action(3));
+                        break;
+                    case '\n':
+                        if (level === 1 && a !== '\n') {
+                            r.push(action(1));
+                        } else if (a === '}') {
+                            if (level === 3) {
+                                r.push(action(3));
+                            } else {
+                                r.push(action(1));
+                            }
+                        } else {
+                            r.push(action(3));
+                        }
+                        break;
+                    default:
                         r.push(action(1));
                         break;
                     }
-                    r.push(action(3));
-                    break;
-                case '\n':
-                    if (level === 1 && a !== '\n') {
-                        r.push(action(1));
-                    } else if (a === '}') {
-                        if (level === 3) {
-                            r.push(action(3));
-                        } else {
-                            r.push(action(1));
-                        }
-                    } else {
-                        r.push(action(3));
-                    }
-                    break;
-                default:
-                    r.push(action(1));
-                    break;
                 }
             }
-        }
-        return r.join('');
-    };
+            return r.join('');
+        };
     if (type === "css") {
         OTHERS = '-._\\';
     } else {
@@ -510,7 +528,7 @@ var jsmin = function (comment, input, level, type, alter) {
     if (type === "css") {
         ret = ret.replace(/[\w]+:xx/g, schemefix).replace(/\: #/g, ":#").replace(/\; #/g, ";#").replace(/\, #/g, ",#").replace(/\s+/g, " ").replace(/\} /g, '}').replace(/\{ /g, '{').replace(/http:xx/g, "http://").replace(/\\\)/g, "~PDpar~").replace(/\)/g, ") ").replace(/\) ;/g, ");").replace(/\%(?=\w)/, "% ").replace(/\d%\d/g, fixpercent);
         if (alter === true) {
-            ret = reduction(ret).replace(/@charset("|')?[\w\-]+("|')?;?/gi, "").replace(/(#|\.)?[\w]*\{\}/gi, "").replace(/:[\w\s\!\.\-%]*\d+\.0*(?!\d)/g, endZero).replace(/(:| )0+\.\d+/g, startZero).replace(/\s?((\.\d+|\d+\.\d+|\d+)[a-zA-Z]+|0 )+((\.\d+|\d+\.\d+|\d+)[a-zA-Z]+)|0/g, sameDist).replace(/:\.?0(\%|px|in|cm|mm|em|ex|pt|pc)/g, ":0").replace(/ \.?0(\%|px|in|cm|mm|em|ex|pt|pc)/g, " 0").replace(/bottom:none/g, "bottom:0").replace(/top:none/g, "top:0").replace(/left:none/g, "left:0").replace(/right:none/, "right:0").replace(/:0 0 0 0/g, ":0").replace(/:0 0 0(?!(\s*\d))/g, ":0").replace(/:0 0(?!(\s*\d))/g, ":0").replace(/ 0 0 0 0/g, " 0").replace(/rgb\(\d+,\d+,\d+\)/g, rgbToHex).replace(/background\-position:0;/gi, "background-position:0 0;").replace(/;+/g, ";").replace(/\s*[\w\-]+:\s*\}/g, "}").replace(/\s*[\w\-]+:\s*;/g, "").replace(/;\}/g, "}").replace(/\{\s+\}/g, "{}");
+            ret = reduction(ret).replace(/@charset("|')?[\w\-]+("|')?;?/gi, "").replace(/(#|\.)?[\w]*\{\}/gi, "").replace(/:[\w\s\!\.\-%]*\d+\.0*(?!\d)/g, endZero).replace(/(:| )0+\.\d+/g, startZero).replace(/\s?((\.\d+|\d+\.\d+|\d+)[a-zA-Z]+|0 )+((\.\d+|\d+\.\d+|\d+)[a-zA-Z]+)|0/g, sameDist).replace(/:\.?0(\%|px|in|cm|mm|em|ex|pt|pc)/g, ":0").replace(/ \.?0(\%|px|in|cm|mm|em|ex|pt|pc)/g, " 0").replace(/bottom:none/g, "bottom:0").replace(/top:none/g, "top:0").replace(/left:none/g, "left:0").replace(/right:none/, "right:0").replace(/:0 0 0 0/g, ":0").replace(/[a-z]*:(0\s*)+\-?\.?\d?/g, singleZero).replace(/ 0 0 0 0/g, " 0").replace(/rgb\(\d+,\d+,\d+\)/g, rgbToHex).replace(/background\-position:0;/gi, "background-position:0 0;").replace(/;+/g, ";").replace(/\s*[\w\-]+:\s*\}/g, "}").replace(/\s*[\w\-]+:\s*;/g, "").replace(/;\}/g, "}").replace(/\{\s+\}/g, "{}");
 
             //This logic is used to pull the first "@charset" definition
             //to the extreme top and remove all others
