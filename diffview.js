@@ -60,7 +60,7 @@
  *       the rendering of character entities as they pass through
  *       the DOM, so that the string literal value is preserved.
  */
-var diffview = function (baseTextLines, newTextLines, baseTextName, newTextName, contextSize, inline, output, lang) {
+var diffview = function (baseTextLines, newTextLines, baseTextName, newTextName, contextSize, inline, lang) {
     "use strict";
     var thead = "<table class='diff'><thead><tr><th></th>" + ((inline === true) ? "<th></th><th class='texttitle'>" + baseTextName + " vs. " + newTextName + "</th></tr></thead><tbody>" : "<th class='texttitle'>" + baseTextName + "</th><th></th><th class='texttitle'>" + newTextName + "</th></tr></thead><tbody>"),
         tbody = [],
@@ -227,19 +227,18 @@ var diffview = function (baseTextLines, newTextLines, baseTextName, newTextName,
                     return matching_blocks;
                 },
                 set_seq2 = (function () {
-                    isjunk = isjunk ? isjunk :
-                        function (c) {
-                            var whitespace = {
-                                " ": true,
-                                "\t": true,
-                                "\n": true,
-                                "\f": true,
-                                "\r": true
-                            };
-                            if (whitespace.hasOwnProperty(c)) {
-                                return whitespace[c];
-                            }
+                    isjunk = isjunk ? isjunk : function (c) {
+                        var whitespace = {
+                            " ": true,
+                            "\t": true,
+                            "\n": true,
+                            "\f": true,
+                            "\r": true
                         };
+                        if (whitespace.hasOwnProperty(c)) {
+                            return whitespace[c];
+                        }
+                    };
                     opcodes = null;
                     var chain_b = (function () {
                         var i,
@@ -341,11 +340,7 @@ var diffview = function (baseTextLines, newTextLines, baseTextName, newTextName,
         addCells = function (row, tidx, tend, textLines, change) {
             if (tidx < tend) {
                 if (change !== "replace") {
-                    if (output === "webdownload") {
-                        textLines = textLines[tidx].replace(/\$#gt;/g, "&amp;gt;").replace(/\$#lt;/g, "&amp;lt;");
-                    } else {
-                        textLines = textLines[tidx].replace(/\$#gt;/g, "&gt;").replace(/\$#lt;/g, "&lt;");
-                    }
+                    textLines = textLines[tidx].replace(/\$#gt;/g, "&gt;").replace(/\$#lt;/g, "&lt;");
                 }
                 row.push("<th>" + (tidx + 1).toString().replace(/\&/g, "&amp;").replace(/>/g, "&gt;").replace(/</g, "&lt;") + "</th>");
                 row.push("<td class='" + change + "'>" + textLines + "</td>");
@@ -361,11 +356,7 @@ var diffview = function (baseTextLines, newTextLines, baseTextName, newTextName,
             if (tidx === null) {
                 tidx = tidx2;
             }
-            if (output === "webdownload") {
-                row.push("<td class='" + change + "'>" + textLines[tidx].replace(/\$#gt;/g, "&amp;gt;").replace(/\$#lt;/g, "&amp;lt;") + "</td></tr>");
-            } else {
-                row.push("<td class='" + change + "'>" + textLines[tidx].replace(/\$#gt;/g, "&gt;").replace(/\$#lt;/g, "&lt;") + "</td></tr>");
-            }
+            row.push("<td class='" + change + "'>" + textLines[tidx].replace(/\$#gt;/g, "&gt;").replace(/\$#lt;/g, "&lt;") + "</td></tr>");
         },
         //This function is the heart behind the per character logic of the
         //Pretty Diff engine.  The logic from diff lib performs comparisons
@@ -536,13 +527,8 @@ var diffview = function (baseTextLines, newTextLines, baseTextName, newTextName,
                 }
 
                 //Final computation before charcomp is finished.
-                if (output === "webdownload") {
-                    c = ax.join("").replace(/\$#lt;/g, "&amp;lt;").replace(/\$#gt;/g, "&amp;gt;").replace(/$#34;/g, "\"").replace(/$#39;/g, "'").replace(/ /g, "&#160;");
-                    d = bx.join("").replace(/\$#lt;/g, "&amp;lt;").replace(/\$#gt;/g, "&amp;gt;").replace(/$#34;/g, "\"").replace(/$#39;/g, "'").replace(/ /g, "&#160;");
-                } else {
-                    c = ax.join("").replace(/\$#lt;/g, "&lt;").replace(/\$#gt;/g, "&gt;").replace(/$#34;/g, "\"").replace(/$#39;/g, "'").replace(/ /g, "&#160;");
-                    d = bx.join("").replace(/\$#lt;/g, "&lt;").replace(/\$#gt;/g, "&gt;").replace(/$#34;/g, "\"").replace(/$#39;/g, "'").replace(/ /g, "&#160;");
-                }
+                c = ax.join("").replace(/\$#lt;/g, "&lt;").replace(/\$#gt;/g, "&gt;").replace(/$#34;/g, "\"").replace(/$#39;/g, "'").replace(/ /g, "&#160;");
+                d = bx.join("").replace(/\$#lt;/g, "&lt;").replace(/\$#gt;/g, "&gt;").replace(/$#34;/g, "\"").replace(/$#39;/g, "'").replace(/ /g, "&#160;");
             }
             return [c, d];
         };
@@ -643,28 +629,15 @@ var diffview = function (baseTextLines, newTextLines, baseTextName, newTextName,
                         errorout -= 1;
                     } else if (baseTextLines[b] !== undefined && newTextLines[n] !== undefined) {
                         z = [];
-                        if (output === "webdownload") {
-                            z[0] = baseTextLines[b].replace(/\$#gt;/g, "&amp;gt;").replace(/\$#lt;/g, "&amp;lt;");
-                            z[1] = newTextLines[n].replace(/\$#gt;/g, "&amp;gt;").replace(/\$#lt;/g, "&amp;lt;");
-                        } else {
-                            z[0] = baseTextLines[b].replace(/\$#gt;/g, "&gt;").replace(/\$#lt;/g, "&lt;");
-                            z[1] = newTextLines[n].replace(/\$#gt;/g, "&gt;").replace(/\$#lt;/g, "&lt;");
-                        }
+                        z[0] = baseTextLines[b].replace(/\$#gt;/g, "&gt;").replace(/\$#lt;/g, "&lt;");
+                        z[1] = newTextLines[n].replace(/\$#gt;/g, "&gt;").replace(/\$#lt;/g, "&lt;");
                     } else if (baseTextLines[b] === undefined || newTextLines[n] === undefined) {
                         z = [];
                         if (baseTextLines[b] !== undefined) {
-                            if (output === "webdownload") {
-                                z[0] = baseTextLines[b].replace(/\$#gt;/g, "&amp;gt;").replace(/\$#lt;/g, "&amp;lt;");
-                            } else {
-                                z[0] = baseTextLines[b].replace(/\$#gt;/g, "&gt;").replace(/\$#lt;/g, "&lt;");
-                            }
+                            z[0] = baseTextLines[b].replace(/\$#gt;/g, "&gt;").replace(/\$#lt;/g, "&lt;");
                             z[1] = "";
                         } else if (newTextLines[n] !== undefined) {
-                            if (output === "webdownload") {
-                                z[1] = newTextLines[n].replace(/\$#gt;/g, "&amp;gt;").replace(/\$#lt;/g, "&amp;lt;");
-                            } else {
-                                z[1] = newTextLines[n].replace(/\$#gt;/g, "&gt;").replace(/\$#lt;/g, "&lt;");
-                            }
+                            z[1] = newTextLines[n].replace(/\$#gt;/g, "&gt;").replace(/\$#lt;/g, "&lt;");
                             z[0] = "";
                         }
                     }

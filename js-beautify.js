@@ -1,39 +1,39 @@
 /*
-JS Beautifier
----------------
-
-Written by Einar Lielmanis, <einar@jsbeautifier.org>
-http://jsbeautifier.org/
-
-Originally converted to javascript by Vital, <vital76@gmail.com>
-Rewritten by Austin Cheney on 30 Jan 2011 for use with:
-  http://prettydiff.com/prettydiff.js
-
-You are free to use this in any way you want, in case you find this
-useful or working for you.
-
-Arguments:
-* indent_size (default 4) — indentation size,
-* indent_char (default space) — character to indent with,
-* preserve_newlines (default true) — whether existing line breaks should
-  be preserved,
-* max_preserve_newlines (default unlimited) - maximum number of line
-  breaks to be preserved in one chunk,
-* indent_level (default 0) — initial indentation level, you probably
-  won't need this ever
-* space_after_anon_function (default false) — if true, then space is
-  added between "function ()" (jslint is happy about this); if false,
-  then the common "function()" output is used.
-* braces_on_own_line (default false) - ANSI / Allman brace style, each
-  opening/closing brace gets its own line.
-* keep_array_indentation    --- unknown
-* indent_comm - whether or not comments should be indented.  Values are
-  "indent" or "noindent"
-
-js_summary is not provided a scope by js_beautify.  It is intended for
-use as a closure to provide an analysis report for use external to the
-js_beautify function.
-*/
+ JS Beautifier
+ ---------------
+ 
+ Written by Einar Lielmanis, <einar@jsbeautifier.org>
+ http://jsbeautifier.org/
+ 
+ Originally converted to javascript by Vital, <vital76@gmail.com>
+ Rewritten by Austin Cheney on 30 Jan 2011 for use with:
+ http://prettydiff.com/prettydiff.js
+ 
+ You are free to use this in any way you want, in case you find this
+ useful or working for you.
+ 
+ Arguments:
+ * indent_size (default 4) — indentation size,
+ * indent_char (default space) — character to indent with,
+ * preserve_newlines (default true) — whether existing line breaks should
+ be preserved,
+ * max_preserve_newlines (default unlimited) - maximum number of line
+ breaks to be preserved in one chunk,
+ * indent_level (default 0) — initial indentation level, you probably
+ won't need this ever
+ * space_after_anon_function (default false) — if true, then space is
+ added between "function ()" (jslint is happy about this); if false,
+ then the common "function()" output is used.
+ * braces_on_own_line (default false) - ANSI / Allman brace style, each
+ opening/closing brace gets its own line.
+ * keep_array_indentation    --- unknown
+ * indent_comm - whether or not comments should be indented.  Values are
+ "indent" or "noindent"
+ 
+ js_summary is not provided a scope by js_beautify.  It is intended for
+ use as a closure to provide an analysis report for use external to the
+ js_beautify function.
+ */
 
 var js_beautify = function (js_source_text, indent_size, indent_char, preserve_newlines, max_preserve_newlines, indent_level, space_after_anon_function, braces_on_own_line, keep_array_indentation, indent_comm) {
     'use strict';
@@ -1020,31 +1020,16 @@ var js_beautify = function (js_source_text, indent_size, indent_char, preserve_n
                 print_newline();
             } else {
                 lines = token_text.split(/\x0a|\x0d\x0a/);
-                if (/^\/\*\*/.test(token_text)) {
-                    // javadoc: reformat and reindent
+
+                // javadoc: reformat and reindent
+                print_newline();
+                output.push(lines[0]);
+                for (i = 1; i < lines.length; i += 1) {
                     print_newline();
-                    output.push(lines[0]);
-                    for (i = 1; i < lines.length; i += 1) {
-                        print_newline();
-                        output.push(' ');
-                        output.push(trim(lines[i]));
-                    }
-                } else {
-                    // simple block comment: leave intact
-                    if (lines.length > 1) {
-                        // multiline comment block starts with a new
-                        // line
-                        print_newline();
-                        trim_output();
-                    } else {
-                        // single-line /* comment */ stays where it is
-                        print_single_space();
-                    }
-                    for (i = 0; i < lines.length; i += 1) {
-                        output.push(lines[i]);
-                        output.push('\n');
-                    }
+                    output.push(' ');
+                    output.push(trim(lines[i]));
                 }
+
                 print_newline();
             }
         } else if (token_type === 'TK_INLINE_COMMENT') {
