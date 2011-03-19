@@ -55,12 +55,18 @@ http.createServer(function (req, res) {
                         contenttype: "text/plain",
                         body: "Bug report submission.\n\nDescription:\n" + description + "\n\nSource:\n" + source + "\n\nEmail:\n" + email
                     });
+                    res.writeHead(200, "OK", {
+                        'Content-Type': 'text/plain'
+                    });
+                    res.write('Bug submitted.');
+                    res.end();
+                } else {
+                    res.writeHead(200, "OK", {
+                        'Content-Type': 'text/plain'
+                    });
+                    res.write('Error: Description must be at least 24 characters long.');
+                    res.end();
                 }
-                res.writeHead(200, "OK", {
-                    'Content-Type': 'text/plain'
-                });
-                res.write('Bug submitted.');
-                res.end();
             });
         } else if (req.method.toLowerCase() === "get") {
             res.writeHead(405, "Method not supported", {
