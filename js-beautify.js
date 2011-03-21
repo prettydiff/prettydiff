@@ -35,7 +35,7 @@
  js_beautify function.
  */
 
-var js_beautify = function (js_source_text, indent_size, indent_char, preserve_newlines, max_preserve_newlines, indent_level, space_after_anon_function, braces_on_own_line, keep_array_indentation, indent_comm) {
+var js_beautify = function (js_source_text, indent_size, indent_char, preserve_newlines, max_preserve_newlines, indent_level, space_after_anon_function, braces_on_own_line, keep_array_indentation, indent_comm, ignore_content) {
     'use strict';
     // verify with JSLint
     var j = [0, 0],
@@ -102,6 +102,7 @@ var js_beautify = function (js_source_text, indent_size, indent_char, preserve_n
         opt_space_after_anon_function = (space_after_anon_function !== true) ? false : true,
         opt_braces_on_own_line = (braces_on_own_line !== 'allman') ? false : true,
         opt_keep_array_indentation = (keep_array_indentation !== true) ? false : true,
+        opt_null_content = (ignore_content !== true) ? false : true,
         trim_output = function (eat_newlines) {
             eat_newlines = (eat_newlines === undefined) ? false : eat_newlines;
             while (output.length && (output[output.length - 1] === ' ' || output[output.length - 1] === indent_string || (eat_newlines && (output[output.length - 1] === '\n' || output[output.length - 1] === '\r')))) {
@@ -903,7 +904,11 @@ var js_beautify = function (js_source_text, indent_size, indent_char, preserve_n
             } else if (last_type === 'TK_WORD') {
                 print_single_space();
             }
-            print_token();
+            if (opt_null_content) {
+                output.push(token_text.charAt(0) + 'text' + token_text.charAt(0));
+            } else {
+                print_token();
+            }
         } else if (token_type === 'TK_EQUALS') {
             n[0] += 1;
             n[1] += 1;
