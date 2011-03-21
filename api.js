@@ -64,7 +64,7 @@ http.createServer(function (req, res) {
                     res.writeHead(200, "OK", {
                         'Content-Type': 'text/plain'
                     });
-                    res.write('Error: Description must be at least 24 characters long.');
+                    res.write('Error: Bug description must be at least 24 characters long.');
                     res.end();
                 }
             });
@@ -127,6 +127,7 @@ http.createServer(function (req, res) {
                     style = "indent",
                     html = false,
                     context = "",
+                    content = false,
                     quote = false,
                     semicolon = false,
                     diffview = "sidebyside",
@@ -306,7 +307,7 @@ http.createServer(function (req, res) {
                                 res.write("Pretty Diff API has encountered an unexpected error.  The error has been reported and will be fixed soon.");
                                 res.end();
                             });
-                            output = prettydiff.api([source, diff, mode, lang, csvchar, diffout, insize, inchar, comments, indent, style, html, context, quote, semicolon, diffview, sourcelabel, difflabel, ""]);
+                            output = prettydiff.api([source, diff, mode, lang, csvchar, diffout, insize, inchar, comments, indent, style, html, context, content, quote, semicolon, diffview, sourcelabel, difflabel, ""]);
                             htmlHeading = function () {
                                 var filegif,
                                     accept = String(req.headers.accept).split(";")[0],
@@ -315,7 +316,7 @@ http.createServer(function (req, res) {
                                 if (accept.indexOf("application/xhtml+xml") !== -1) {
                                     doctype = '<?xml version="1.0" encoding="UTF-8" ?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN" "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd"><html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">';
                                     charset = "application/xhtml+xml";
-                                    output[0] = output[0].replace(/\&/g, "&amp;").replace(/</g, "&lt;").replace(/</g, "&gt;");
+                                    //output[0] = output[0].replace(/\&/g, "&amp;").replace(/</g, "&lt;").replace(/</g, "&gt;");
                                 }
                                 if (mode === "beautify") {
                                     if (lang === "javascript") {
@@ -529,6 +530,10 @@ http.createServer(function (req, res) {
                     } else if (name === "html") {
                         if (data.toLowerCase() === "html-yes") {
                             html = true;
+                        }
+                    } else if (name === "content") {
+                        if (data.toLowerCase() === "content-yes") {
+                            content = true;
                         }
                     } else if (name === "quote" || name === "semicolon") {
                         data = data.toLowerCase();
