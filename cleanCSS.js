@@ -260,7 +260,7 @@ var cleanCSS = function (x, size, character, comment, alter) {
                     break;
                 }
             }
-            if (b === x.length) {
+            if (b === x.length || x.substring(b + 1, x.length - 1) === d[d.length - 1]) {
                 d.push("}");
             } else {
                 d.push(x.substring(b + 1, x.length));
@@ -280,7 +280,7 @@ var cleanCSS = function (x, size, character, comment, alter) {
                     do {
                         c = c.replace(crex, creg);
                     } while (crex.test(c));
-                    c = c.replace(/\*\//g, "*/;").replace(/\:(?!(\/\/))/g, "$").replace(/#[a-zA-Z0-9]{3,6}(?!(\w*\)))/g, colorLow).split(";");
+                    c = c.replace(/\*\//g, "*/;").replace(/\:(?!(\/\/))/g, "$").replace(/#[a-fA-F0-9]{3,6}(?!(\w*\)))/g, colorLow).split(";");
                     f = c.length;
                     m = [];
                     p = [];

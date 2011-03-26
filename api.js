@@ -307,7 +307,7 @@ http.createServer(function (req, res) {
                                 res.write("Pretty Diff API has encountered an unexpected error.  The error has been reported and will be fixed soon.");
                                 res.end();
                             });
-                            output = prettydiff.api([source, diff, mode, lang, csvchar, diffout, insize, inchar, comments, indent, style, html, context, content, quote, semicolon, diffview, sourcelabel, difflabel, ""]);
+                            output = prettydiff.api([source, diff, mode, lang, csvchar, insize, inchar, comments, indent, style, html, context, content, quote, semicolon, diffview, sourcelabel, difflabel, ""]);
                             htmlHeading = function () {
                                 var filegif,
                                     accept = String(req.headers.accept).split(";")[0],
@@ -529,7 +529,7 @@ http.createServer(function (req, res) {
                         }
                     } else if (name === "html") {
                         if (data.toLowerCase() === "html-yes") {
-                            html = true;
+                            html = "html-yes";
                         }
                     } else if (name === "content") {
                         if (data.toLowerCase() === "content-yes") {
