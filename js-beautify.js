@@ -67,6 +67,9 @@ var js_beautify = function (js_source_text, indent_size, indent_char, preserve_n
         output = [],
         token_text,
         last_type = 'TK_START_EXPR',
+        var_last_type = '',
+        var_last_last_type = '',
+        var_end_count = -1,
         last_text = '',
         last_last_text = '',
         last_word = '',
@@ -600,7 +603,7 @@ var js_beautify = function (js_source_text, indent_size, indent_char, preserve_n
                 set_mode('(EXPRESSION)');
             }
             if (token_text !== '[' || (token_text === '[' && (last_type !== 'TK_WORD' && last_text !== ')'))) {
-                if (last_text === ';' || last_type === 'TK_START_BLOCK') {
+                if (flags.mode !== '(EXPRESSION)' && (last_text === ';' || last_type === 'TK_START_BLOCK')) {
                     print_newline();
                 } else if (last_type !== 'TK_END_EXPR' && last_type !== 'TK_START_EXPR' && last_type !== 'TK_END_BLOCK' && last_text !== '.') {
                     if ((last_type !== 'TK_WORD' && last_type !== 'TK_OPERATOR') || (last_word === 'function' && opt_space_after_anon_function)) {
@@ -633,6 +636,9 @@ var js_beautify = function (js_source_text, indent_size, indent_char, preserve_n
                 set_mode('DO_BLOCK');
             } else {
                 set_mode('BLOCK');
+            }
+            if (var_last_last_type === 'TK_START_BLOCK' && !isNaN(var_end_count)) {
+                var_end_count += 1;
             }
             if (opt_braces_on_own_line) {
                 if (last_type !== 'TK_OPERATOR') {
@@ -668,11 +674,29 @@ var js_beautify = function (js_source_text, indent_size, indent_char, preserve_n
             n[4] += 1;
             restore_mode();
             functestval = 0;
+
+            //var_end_count, var_last_type, and var_last_last_type are
+            //part of a patch to fix JSLint compliant indentation for
+            //object types associated as a list of vars.
+            if (var_end_count === 0) {
+                var_end_count = "x";
+            } else if (var_last_last_type === 'TK_START_BLOCK' && !isNaN(var_end_count)) {
+                var_end_count -= 1;
+            }
             if (opt_braces_on_own_line) {
                 if (last_text === "{" && in_array(last_last_text, punct)) {
                     fix_object_own_line();
                 } else {
+                    if (var_end_count === 'y') {
+                        //flags.indentation_level -= 1;
+                        var_last_last_type = '';
+                        var_end_count = 'a';
+                    }
                     print_newline();
+                    if (var_end_count === 'x') {
+                        output.push(indent_string);
+                        var_end_count = 'y';
+                    }
                 }
                 print_token();
             } else {
@@ -693,7 +717,16 @@ var js_beautify = function (js_source_text, indent_size, indent_char, preserve_n
                     print_newline();
                     opt_keep_array_indentation = true;
                 } else {
+                    if (var_end_count === 'y') {
+                        //flags.indentation_level -= 1;
+                        var_last_last_type = '';
+                        var_end_count = 'a';
+                    }
                     print_newline();
+                    if (var_end_count === 'x') {
+                        output.push(indent_string);
+                        var_end_count = 'y';
+                    }
                 }
                 if (var_var_test && (comma_test || (!flags.var_line))) {
                     output.push(indent_string);
@@ -767,7 +800,7 @@ var js_beautify = function (js_source_text, indent_size, indent_char, preserve_n
             if (token_text !== 'var' && last_text === ';') {
                 comma_test = false;
             }
-            if (last_text === '{' && last_last_text === ':') {
+            if (last_text === '{' && last_last_text === ':' && comma_test === true) {
                 output.push(indent_string);
                 flags.indentation_level += 1;
             }
@@ -794,7 +827,6 @@ var js_beautify = function (js_source_text, indent_size, indent_char, preserve_n
                     print_token();
                     flags.in_case = true;
                 } else {
-
                     if (token_text === 'function') {
                         if (comma_test && (flags.var_line || (!flags.var_line && last_last_word === 'var'))) {
                             functestval += 1;
@@ -860,10 +892,24 @@ var js_beautify = function (js_source_text, indent_size, indent_char, preserve_n
                         print_newline();
                     }
                     if (token_text === 'var') {
-                        if (!var_var_test && comma_test && last_type === 'TK_START_BLOCK') {
+                        if (!var_var_test && last_type === 'TK_START_BLOCK' && comma_test) {
                             flags.indentation_level += 1;
                             output.push(indent_string);
                             var_var_test = true;
+                        } else if (last_type === 'TK_START_BLOCK') {
+                            if (var_last_type === 'TK_START_BLOCK') {
+                                if (last_type === 'TK_START_BLOCK') {
+                                    flags.indentation_level += 1;
+                                    output.push(indent_string);
+                                    var_last_type = '';
+                                    var_last_last_type = 'TK_START_BLOCK';
+                                    var_end_count = 0;
+                                }
+                            } else {
+                                var_last_type = 'TK_START_BLOCK';
+                            }
+                        } else if (last_type === 'TK_START_BLOCK' && var_last_type === '') {
+                            var_last_type = 'TK_START_BLOCK';
                         }
                         flags.var_line = true;
                         flags.var_line_reindented = false;
@@ -890,6 +936,7 @@ var js_beautify = function (js_source_text, indent_size, indent_char, preserve_n
             print_token();
             flags.var_line = false;
             flags.var_line_reindented = false;
+            var_last_type = '';
         } else if (token_type === 'TK_STRING') {
             l[0] += 1;
             if ((token_text.charAt(0) === "\"" && token_text.charAt(token_text.length - 1) === "\"") || (token_text.charAt(0) === "'" && token_text.charAt(token_text.length - 1) === "'")) {
@@ -920,12 +967,13 @@ var js_beautify = function (js_source_text, indent_size, indent_char, preserve_n
                 n[0] += 1;
                 n[1] += token_text.length;
             }
+            var_last_type = '';
             if (token_text === ',') {
                 n[2] += 1;
                 if (flags.mode !== '(EXPRESSION)' && last_last_text !== ':') {
                     comma_test = false;
                 }
-                if (flags.var_line) {
+                if (flags.var_line && flags.mode !== '(EXPRESSION)') {
                     if (last_text !== '}') {
                         flags.var_line_reindented = true;
                     }
@@ -938,7 +986,7 @@ var js_beautify = function (js_source_text, indent_size, indent_char, preserve_n
                     } else {
                         print_single_space();
                     }
-                } else if (flags.mode === 'BLOCK' || flags.mode === 'OBJECT' || is_ternary_op()) {
+                } else if (flags.mode !== '(EXPRESSION)' && (flags.mode === 'BLOCK' || flags.mode === 'OBJECT' || is_ternary_op())) {
                     print_token();
                     print_newline();
                 } else {
