@@ -11,15 +11,15 @@
  
  http://www.travelocity.com/
  http://mailmarkup.org/
- ***********************************************************************/
+ **********************************************************************/
 
 /*
  If the comments argument is supplied with the value "comments" this
- function presumes it is being used as a tool of beautification.  In this
- case JSMin is not used or needed and the next statements are irrelevant.
- This is a minification application for markup languages.  Its only
- requirement is that the modified jsmin.js be included prior to the
- inclusion of this code.  The required jsmin.js is customized to
+ function presumes it is being used as a tool of beautification.  In
+ this case JSMin is not used or needed and the next statements are
+ irrelevant.  This is a minification application for markup languages.
+ Its only requirement is that the modified jsmin.js be included prior to
+ the inclusion of this code.  The required jsmin.js is customized to
  independently support CSS and JavaScript minification.  It must be
  obtained from the following location.
  http://prettydiff.com/fulljsmin.js
@@ -63,7 +63,7 @@
  opening and closing of tags, except those adjacent to content, is
  removed.
  */
-var markupmin = function (x, comments, presume_html) {
+var markupmin = function (x, comments, presume_html, top_comments) {
     "use strict";
     var i,
         a,
@@ -170,9 +170,9 @@ var markupmin = function (x, comments, presume_html) {
             e = e.join('');
             if (comments !== "beautify") {
                 if (z === "style") {
-                    e = jsmin('', e, 3, 'css', true);
+                    e = jsmin('', e, 3, 'css', true, top_comments);
                 } else {
-                    e = jsmin('', e.replace(/^(\s*<\!\-\-)/, "").replace(/(\-\->\s*)$/, ""), 3, 'javascript', false);
+                    e = jsmin('', e.replace(/^(\s*<\!\-\-)/, "").replace(/(\-\->\s*)$/, ""), 3, 'javascript', false, top_comments);
                 }
             }
             Y = e.length;

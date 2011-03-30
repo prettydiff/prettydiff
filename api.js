@@ -125,6 +125,7 @@ http.createServer(function (req, res) {
                     inchar = " ",
                     comments = "indent",
                     style = "indent",
+					topcoms = false,
                     html = false,
                     context = "",
                     content = false,
@@ -544,6 +545,8 @@ http.createServer(function (req, res) {
                                 semicolon = true;
                             }
                         }
+					} else if (name === "topcoms" && data === "true") {
+						topcoms = true;
                     } else if (name === "diffview") {
                         if (data.toLowerCase() === "inline") {
                             diffview = "inline";
