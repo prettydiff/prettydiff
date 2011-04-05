@@ -450,13 +450,6 @@ var diffview = function (baseTextLines, newTextLines, baseTextName, newTextName,
                 };
                 ax = entity(ax);
                 bx = entity(bx);
-                for (i = 0; i < zx; i += 1) {
-                    if (ax[i] === "&amp;" && bx[i] !== "&amp;") {
-                        bx.splice(i, 0, "", "", "", "");
-                    } else if (bx[i] === "&amp;" && ax[i] !== "&amp;") {
-                        ax.splice(i, 0, "", "", "", "");
-                    }
-                }
 
                 //This function actually determines if the same
                 //character positions in two compared arrays match.  If
