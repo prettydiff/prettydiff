@@ -60,7 +60,7 @@
  *       the rendering of character entities as they pass through
  *       the DOM, so that the string literal value is preserved.
  */
-var diffview = function (baseTextLines, newTextLines, baseTextName, newTextName, contextSize, inline, lang) {
+var diffview = function (baseTextLines, newTextLines, baseTextName, newTextName, contextSize, inline) {
     "use strict";
     var thead = "<table class='diff'><thead><tr><th></th>" + ((inline === true) ? "<th></th><th class='texttitle'>" + baseTextName + " vs. " + newTextName + "</th></tr></thead><tbody>" : "<th class='texttitle'>" + baseTextName + "</th><th></th><th class='texttitle'>" + newTextName + "</th></tr></thead><tbody>"),
         tbody = [],
@@ -339,9 +339,7 @@ var diffview = function (baseTextLines, newTextLines, baseTextName, newTextName,
 
         addCells = function (row, tidx, tend, textLines, change) {
             if (tidx < tend) {
-                if (change !== "replace") {
-                    textLines = textLines[tidx].replace(/\$#gt;/g, "&gt;").replace(/\$#lt;/g, "&lt;");
-                }
+                textLines = textLines.replace(/\$#gt;/g, "&gt;").replace(/\$#lt;/g, "&lt;");
                 row.push("<th>" + (tidx + 1).toString().replace(/\&/g, "&amp;").replace(/>/g, "&gt;").replace(/</g, "&lt;") + "</th>");
                 row.push("<td class='" + change + "'>" + textLines + "</td>");
                 return tidx + 1;
@@ -523,8 +521,8 @@ var diffview = function (baseTextLines, newTextLines, baseTextName, newTextName,
                 }
 
                 //Final computation before charcomp is finished.
-                c = ax.join("").replace(/\$#lt;/g, "&lt;").replace(/\$#gt;/g, "&gt;").replace(/$#34;/g, "\"").replace(/$#39;/g, "'");
-                d = bx.join("").replace(/\$#lt;/g, "&lt;").replace(/\$#gt;/g, "&gt;").replace(/$#34;/g, "\"").replace(/$#39;/g, "'");
+                c = ax.join("").replace(/$#34;/g, "\"").replace(/$#39;/g, "'");
+                d = bx.join("").replace(/$#34;/g, "\"").replace(/$#39;/g, "'");
             }
             return [c, d];
         };
@@ -607,7 +605,6 @@ var diffview = function (baseTextLines, newTextLines, baseTextName, newTextName,
                 } else if (change === "delete") {
                     addCellsInline(node, b, null, baseTextLines, change);
                 } else if (b < be || n < ne) {
-                    baseTextLines[b] = baseTextLines[b].replace(/\$#gt;/g, "&gt;").replace(/\$#lt;/g, "&lt;");
                     addCellsInline(node, b, n, baseTextLines, change);
                 }
                 b += 1;
@@ -623,25 +620,34 @@ var diffview = function (baseTextLines, newTextLines, baseTextName, newTextName,
                     if (b < be && n < ne && baseTextLines[b] !== newTextLines[n]) {
                         z = charcomp(baseTextLines[b], newTextLines[n]);
                         errorout -= 1;
+                        b = addCells(node, b, be, z[0], change);
+                        n = addCells(node, n, ne, z[1], change);
                     } else if (baseTextLines[b] !== undefined && newTextLines[n] !== undefined) {
-                        z = [];
-                        z[0] = baseTextLines[b].replace(/\$#gt;/g, "&gt;").replace(/\$#lt;/g, "&lt;");
-                        z[1] = newTextLines[n].replace(/\$#gt;/g, "&gt;").replace(/\$#lt;/g, "&lt;");
+                        if (b < be) {
+                            b = addCells(node, b, be, baseTextLines[b], 'delete');
+                        } else {
+                            b = addCells(node, b, be, baseTextLines[b], change);
+                        }
+                        if (n < ne) {
+                            n = addCells(node, n, ne, newTextLines[n], 'insert');
+                        } else {
+                            n = addCells(node, n, ne, newTextLines[n], change);
+                        }
                     } else if (baseTextLines[b] === undefined || newTextLines[n] === undefined) {
                         z = [];
                         if (baseTextLines[b] !== undefined) {
-                            z[0] = baseTextLines[b].replace(/\$#gt;/g, "&gt;").replace(/\$#lt;/g, "&lt;");
+                            z[0] = baseTextLines[b];
                             z[1] = "";
-                        } else if (newTextLines[n] !== undefined) {
-                            z[1] = newTextLines[n].replace(/\$#gt;/g, "&gt;").replace(/\$#lt;/g, "&lt;");
+                        } else {
+                            z[1] = newTextLines[n];
                             z[0] = "";
                         }
+                        b = addCells(node, b, be, z[0], change);
+                        n = addCells(node, n, ne, z[1], change);
                     }
-                    b = addCells(node, b, be, z[0], change);
-                    n = addCells(node, n, ne, z[1], change);
                 } else {
-                    b = addCells(node, b, be, baseTextLines, change);
-                    n = addCells(node, n, ne, newTextLines, change);
+                    b = addCells(node, b, be, baseTextLines[b], change);
+                    n = addCells(node, n, ne, newTextLines[n], change);
                 }
                 node.push("</tr>");
             }
