@@ -64,7 +64,7 @@ var diffview = function (baseTextLines, newTextLines, baseTextName, newTextName,
     "use strict";
     var thead = "<table class='diff'><thead><tr><th></th>" + ((inline === true) ? "<th></th><th class='texttitle'>" + baseTextName + " vs. " + newTextName + "</th></tr></thead><tbody>" : "<th class='texttitle'>" + baseTextName + "</th><th></th><th class='texttitle'>" + newTextName + "</th></tr></thead><tbody>"),
         tbody = [],
-        tfoot = "<tr><th class='author' colspan='" + ((inline === true) ? "3" : "4") + "'>Original diff view created as DOM objects by <a href='http://snowtide.com/jsdifflib'>jsdifflib</a>. Diff view recreated as a JavaScript array by <a href='http://mailmarkup.org/'>Austin Cheney</a>.</th></tr></tfoot></table>",
+        tfoot = "</tbody><tfoot><tr><th class='author' colspan='" + ((inline === true) ? "3" : "4") + "'>Original diff view created as DOM objects by <a href='http://snowtide.com/jsdifflib'>jsdifflib</a>. Diff view recreated as a JavaScript array by <a href='http://mailmarkup.org/'>Austin Cheney</a>.</th></tr></tfoot></table>",
         node = [],
         rows = [],
         idx,
@@ -82,7 +82,7 @@ var diffview = function (baseTextLines, newTextLines, baseTextName, newTextName,
         jump,
 
         //This is the difference algorithm
-        difference = function (a, b, isjunk) {
+        difference = function (a, b) {
             var isbjunk,
                 matching_blocks = [],
                 b2j = [],
@@ -227,18 +227,6 @@ var diffview = function (baseTextLines, newTextLines, baseTextName, newTextName,
                     return matching_blocks;
                 },
                 set_seq2 = (function () {
-                    isjunk = isjunk ? isjunk : function (c) {
-                        var whitespace = {
-                            " ": true,
-                            "\t": true,
-                            "\n": true,
-                            "\f": true,
-                            "\r": true
-                        };
-                        if (whitespace.hasOwnProperty(c)) {
-                            return whitespace[c];
-                        }
-                    };
                     opcodes = null;
                     var chain_b = (function () {
                         var i,
@@ -264,20 +252,6 @@ var diffview = function (baseTextLines, newTextLines, baseTextName, newTextName,
                         for (elt in populardict) {
                             if (populardict.hasOwnProperty(elt)) {
                                 delete b2j[elt];
-                            }
-                        }
-                        if (isjunk) {
-                            for (elt in populardict) {
-                                if (populardict.hasOwnProperty(elt) && isjunk(elt)) {
-                                    junkdict[elt] = 1;
-                                    delete populardict[elt];
-                                }
-                            }
-                            for (elt in b2j) {
-                                if (b2j.hasOwnProperty(elt) && isjunk(elt)) {
-                                    junkdict[elt] = 1;
-                                    delete b2j[elt];
-                                }
                             }
                         }
                         isbjunk = function (key) {
@@ -655,5 +629,5 @@ var diffview = function (baseTextLines, newTextLines, baseTextName, newTextName,
     }
     rows.push(node.join(""));
     tbody.push(rows.join(""));
-    return (thead + tbody.join("") + "</tbody><tfoot>" + tfoot).replace(/\%#lt;/g, "$#lt;").replace(/\%#gt;/g, "$#gt;");
+    return (thead + tbody.join("") + tfoot).replace(/\%#lt;/g, "$#lt;").replace(/\%#gt;/g, "$#gt;");
 };

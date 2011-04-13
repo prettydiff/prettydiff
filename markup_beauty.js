@@ -128,10 +128,10 @@ var markup_beauty = function (source, indent_size, indent_character, mode, inden
         x = source,
         loop,
 
-        //innerset Function is the logic that intelligently identifies the
-        //angle brackets nested inside quotes and converts them to square
-        //brackets to prevent interference of beautification.  This is the
-        //logic that allows JSP beautification to occur.
+        //innerset Function is the logic that intelligently identifies
+        //the angle brackets nested inside quotes and converts them to
+        //square brackets to prevent interference of beautification.
+        //This is the logic that allows JSP beautification to occur.
         innerset = (function () {
             var a,
                 b,
@@ -144,6 +144,8 @@ var markup_beauty = function (source, indent_size, indent_character, mode, inden
                 n,
                 o,
                 p,
+                q = [">"],
+                r = 0,
                 h = -1,
                 i = 0,
                 k = -1,
@@ -151,7 +153,7 @@ var markup_beauty = function (source, indent_size, indent_character, mode, inden
                 d = [];
             for (a = 0; a < c; a += 1) {
 
-                //if a PHP, ASP, script, or style found then pass over it
+                //if a PHP, ASP, script, or style found then pass over
                 if (x.substr(a, 7).toLowerCase() === "<script") {
                     for (b = a + 7; b < c; b += 1) {
                         if (x.charAt(b) + x.charAt(b + 1) + x.charAt(b + 2).toLowerCase() + x.charAt(b + 3).toLowerCase() + x.charAt(b + 4).toLowerCase() + x.charAt(b + 5).toLowerCase() + x.charAt(b + 6).toLowerCase() + x.charAt(b + 7).toLowerCase() + x.charAt(b + 8) === "</script>") {
@@ -177,7 +179,7 @@ var markup_beauty = function (source, indent_size, indent_character, mode, inden
                         }
                     }
                 } else if (x.charAt(a) === "<" && x.charAt(a + 1) === "%") {
-                    for (b = a + 5; b < c; b += 1) {
+                    for (b = a + 2; b < c; b += 1) {
                         if (x.charAt(b - 1) === "%" && x.charAt(b) === ">") {
                             a = b;
                             h += 1;
@@ -185,6 +187,43 @@ var markup_beauty = function (source, indent_size, indent_character, mode, inden
                         }
                     }
 
+                    //This section identifies SGML tags and identifies
+                    //the location of contained angle brackets.
+                } else if (x.charAt(a) === "<" && x.charAt(a + 1) === "!" && /[A-Z]|\[/.test(x.charAt(a + 2))) {
+                    for (b = a + 3; b < c; b += 1) {
+                        if (x.charAt(b) === ">" && q[q.length - 1] === ">" && q.length === 1) {
+                            h += 1;
+                            if (r !== 0) {
+                                d.push([a, b, h, a]);
+                            }
+                            r = 0;
+                            a = b;
+                            q = [">"];
+                            break;
+                        } else if (x.charAt(b) === "<") {
+                            q.push(">");
+                            r = b;
+                        } else if (x.charAt(b) === ">" && q.length > 1) {
+                            q.pop();
+                            r = b;
+                        } else if (x.charAt(b) === "[") {
+                            q.push("]");
+                        } else if (x.charAt(b) === "]") {
+                            q.pop();
+                        } else if (x.charAt(b) === "\"") {
+                            if (q[q.length - 1] === "\"") {
+                                q.pop();
+                            } else {
+                                q.push("\"");
+                            }
+                        } else if (x.charAt(b) === "'") {
+                            if (q[q.length - 1] === "'") {
+                                q.pop();
+                            } else {
+                                q.push("'");
+                            }
+                        }
+                    }
                     //Don't even bother with empty qutoes: "" or ''
                 } else if (x.charAt(a) === x.charAt(a + 1) && (x.charAt(a) === "\"" || x.charAt(a) === "'")) {
                     a += 1;
@@ -208,8 +247,8 @@ var markup_beauty = function (source, indent_size, indent_character, mode, inden
                         n = 0;
                         for (b = a + 1; b < c; b += 1) {
 
-                            //Ignore closing quotes if they reside inside a
-                            //script, style, ASP, or PHP block
+                            //Ignore closing quotes if they reside
+                            //inside a script, style, ASP, or PHP block
                             if (x.substr(b, 7).toLowerCase() === "<script") {
                                 for (p = b + 7; p < c; p += 1) {
                                     if (x.charAt(p) + x.charAt(p + 1) + x.charAt(p + 2).toLowerCase() + x.charAt(p + 3).toLowerCase() + x.charAt(p + 4).toLowerCase() + x.charAt(p + 5).toLowerCase() + x.charAt(p + 6).toLowerCase() + x.charAt(p + 7).toLowerCase() + x.charAt(p + 8) === "</script>") {
@@ -240,17 +279,19 @@ var markup_beauty = function (source, indent_size, indent_character, mode, inden
                                 }
                             } else if (x.charAt(b) === ">" || x.charAt(b) === "<") {
 
-                                //if there is no reason to push every set of
-                                //quotes into the "d" array if those quotes
-                                //do not contain angle brackets.  This is a
-                                //switch to test for such.
+                                //if there is no reason to push every
+                                //set of quotes into the "d" array if
+                                //those quotes do not contain angle
+                                //brackets.  This is a switch to test
+                                //for such.
                                 n = 1;
                             } else if ((x.charAt(b - 1) !== "\\" && ((x.charAt(a) === "\"" && x.charAt(b) === "\"") || (x.charAt(a) === "'" && x.charAt(b) === "'"))) || b === c - 1) {
                                 //The "l" variable is used as an on/off
                                 //switch to allow content, but not
-                                //sequentially.  Tags with quotes following
-                                //content with quotes need to be decremented
-                                //to correct an inflated count
+                                //sequentially.  Tags with quotes 
+                                //following content with quotes need to
+                                //be decremented to correct an inflated
+                                //count
                                 if (k !== h && l === 1) {
                                     l = 0;
                                     h -= 1;
@@ -262,8 +303,8 @@ var markup_beauty = function (source, indent_size, indent_character, mode, inden
                                         }
                                     }
                                     j = e;
-                                    //This condition is for nonsequential
-                                    //content pieces
+                                    //This condition is for
+                                    //nonsequential content pieces
                                     if (i < a && l !== 1) {
                                         l = 1;
                                         h += 1;
@@ -283,7 +324,7 @@ var markup_beauty = function (source, indent_size, indent_character, mode, inden
                         }
                     }
                 } else if (x.charAt(a) === "<") {
-                    //If a HTML/XML comment is encountered then skip ahead
+                    //If a HTML/XML comment is encountered then skip
                     if (x.charAt(a + 1) === "!" && x.charAt(a + 2) === "-" && x.charAt(a + 3) === "-") {
                         for (b = a + 4; b < x.length; b += 1) {
                             if (x.charAt(b) === "-" && x.charAt(b + 1) === "-" && x.charAt(b + 2) === ">") {
@@ -292,7 +333,8 @@ var markup_beauty = function (source, indent_size, indent_character, mode, inden
                         }
                         h += 1;
                         a = b + 2;
-                        //If not a HTML/XML comment increase the tag count
+                        //If not a HTML/XML comment increase the tag
+                        //count
                     } else {
                         h += 1;
                         j = a;
@@ -323,10 +365,10 @@ var markup_beauty = function (source, indent_size, indent_character, mode, inden
             x = x.split('');
 
             //Code hand off must occur between quote discovery and tag
-            //count.  Hand off must allow for discovery to be repacked into
-            //numbers relevant to postcomputation and not to input.
-            //This hand off produces the "inner" array for consumption by
-            //the innerfix array.
+            //count.  Hand off must allow for discovery to be repacked
+            //into numbers relevant to postcomputation and not to input.
+            //This hand off produces the "inner" array for consumption
+            //by the innerfix array.
             for (a = 0; a < c; a += 1) {
                 i = d[a][0] + 1;
                 f = d[a][1];
@@ -334,14 +376,15 @@ var markup_beauty = function (source, indent_size, indent_character, mode, inden
                 j = d[a][3];
 
                 //This loop converts quotes angle brackets to square
-                //brackets and simultaneously builds out the "inner" array.
-                //The inner array contains the reference locations of the
-                //converted angle brackets so the program can put the angle
-                //brackets back after JavaScript and CSS are beautified.
+                //brackets and simultaneously builds out the "inner"
+                //arrry.  The inner array contains the reference
+                //locations of the converted angle brackets so the
+                //program can put the angle brackets back after
+                //JavaScript and CSS are beautified.
                 for (e = i; e < f; e += 1) {
 
-                    //h is the character index of a converted angle bracket
-                    //in a given tag
+                    //h is the character index of a converted angle
+                    //bracket in a given tag
                     h = 0;
                     if (x[e] === "<") {
                         x[e] = "[";
@@ -351,13 +394,13 @@ var markup_beauty = function (source, indent_size, indent_character, mode, inden
                                 for (k = b - 1; k > j; k -= 1) {
                                     if (!/\s/.test(x[k])) {
 
-                                        //This condition accounts for white
-                                        //space normalization around equal
-                                        //characters that is supplied by
-                                        //markupmin, otherwise h is
-                                        //incremented for runs of white
-                                        //space characters accounting for
-                                        //tokenization
+                                        //This condition accounts for
+                                        //white space normalization
+                                        //around equal characters that
+                                        //is supplied by markupmin,
+                                        //otherwise h is incremented for
+                                        //runs of white space characters
+                                        //accounting for tokenization
                                         if (x[k] !== "=") {
                                             h += 1;
                                         } else if (/\s/.test(x[k - 1])) {
@@ -410,8 +453,8 @@ var markup_beauty = function (source, indent_size, indent_character, mode, inden
             var q,
                 a,
 
-                //This function looks for the end of a designated tag and
-                //then returns the entire tag as a single output.
+                //This function looks for the end of a designated tag
+                //and then returns the entire tag as a single output.
                 b = function (end) {
                     var d,
                         e,
@@ -420,9 +463,9 @@ var markup_beauty = function (source, indent_size, indent_character, mode, inden
                         z = end.charAt(end.length - 2),
                         y = end.split('').reverse(),
 
-                        //The first loop looks for the end position of a tag.
-                        //The second loop verifies the first loop did not stop
-                        //too early.
+                        //The first loop looks for the end position of a
+                        //tag.  The second loop verifies the first loop
+                        //did not stop too early.
                         g = function () {
                             for (; c < loop; c += 1) {
                                 if (z !== "-" && z !== "?" && z !== "%" && x[c] === ">") {
@@ -453,8 +496,8 @@ var markup_beauty = function (source, indent_size, indent_character, mode, inden
                         } while (e !== true);
                     } else if (e === true) {
 
-                        //Concat the characters from the now know end point
-                        //to build the tag.
+                        //Concat the characters from the now known end
+                        //point to build the tag.
                         Z = c + 1;
                         for (d = i; d < Z; d += 1) {
                             f = f + x[d];
@@ -471,15 +514,16 @@ var markup_beauty = function (source, indent_size, indent_character, mode, inden
                     return f;
                 },
 
-                //This function builds content into isolated usable units.
-                //This is for content while elements() is for tags.
+                //This function builds content into isolated usable
+                //content units.  This is for content while elements()
+                //is for tags.
                 cgather = function (z) {
                     var c,
                         d = '';
                     q = "";
                     for (c = i; c < loop; c += 1) {
 
-                        //This logic verifies if the end script tag is quoted
+                        //Verifies if the end script tag is quoted
                         if (q === "" && x[c - 1] !== "\\" && (x[c] === "'" || x[c] === "\"")) {
                             q = x[c];
                         } else if (x[c - 1] !== "\\" && ((q === "'" && x[c] === "'") || (q === "\"" && x[c] === "\""))) {
@@ -506,18 +550,19 @@ var markup_beauty = function (source, indent_size, indent_character, mode, inden
                         } else if (d.charAt(d.length - 1) === " ") {
                             d = "text ";
                         } else {
-                            d = "text"
+                            d = "text";
                         }
                     }
                     return d;
                 },
 
-                //The type_define function sorts markup code into various
-                //designated types.  The build array holds the particular
-                //code while the token array holds the designation for that
-                //code.  The argument supplied to the "b" function is the
-                //syntax ending for a given tag type.
-                //I have designed these types but others can be added:
+                //The type_define function sorts markup code into
+                //various designated types.  The build array holds the
+                //particular code while the token array holds the
+                //designation for that code.  The argument supplied to
+                //the "b" function is the syntax ending for a given tag
+                //type.  I have designed these types but others can be
+                //added:
                 //   * SGML and XML tag comments
                 //   * SSI Apache instructions
                 //   * SGML declarations, such as the HTML Doctype
@@ -530,15 +575,15 @@ var markup_beauty = function (source, indent_size, indent_character, mode, inden
                 //   * singelton tags, such as <br/>, <meta/>, <link/>
                 //   * starting tags of a tag pair
                 //
-                //   !Tags starting with only <? are not considered, so by
-                //default these are treated as a start tag.  Use the correct
-                //PHP tags!!!!
-                //   !Singelton tags must end with "/>" or they will also be
-                //regarded as start tags.  This code is vocabulary
-                //independent and I do not read minds.
+                //   !Tags starting with only <? are not considered, so
+                //by default these are treated as a start tag.  Use the
+                //correct PHP tags!!!!
+                //   !Singelton tags must end with "/>" or they will
+                //also be regarded as start tags.  This code is
+                //vocabulary independent and I do not read minds.
                 type_define = (function () {
 
-                    //The source data is minified before it is beautified.
+                    //Source data is minified before it is beautified.
                     x = markupmin(x, mode, presume_html).split('');
                     loop = x.length;
 
@@ -693,11 +738,11 @@ var markup_beauty = function (source, indent_size, indent_character, mode, inden
             loop = cinfo.length;
             var a,
 
-                //This function looks back to the most previous indented tag
-                //that is not an end tag and returns a count based upon the
-                //number between the current tag and this previous indented tag.
-                //If the argument has a value of "start" then indentation is
-                //increased by 1.
+                //This function looks back to the most previous indented
+                //tag that is not an end tag and returns a count based
+                //upon the number between the current tag and this
+                //previous indented tag.  If the argument has a value of
+                //"start" then indentation is increased by 1.
                 c = function (x) {
                     var k,
                         m = 0;
@@ -728,7 +773,8 @@ var markup_beauty = function (source, indent_size, indent_character, mode, inden
                 e = function () {
                     var yy = 1,
 
-                        //This executed if the previous start is not indented.
+                        //This is executed if the previous start is not
+                        //indented.
                         z = function (y) {
                             for (; y > 0; y -= 1) {
                                 if (level[y] !== "x") {
@@ -737,30 +783,36 @@ var markup_beauty = function (source, indent_size, indent_character, mode, inden
                             }
                         },
 
-                        //If the prior item is an end tag or content ending with
-                        //a space black box voodoo magic must occur.
+                        //If prior item is an end tag or content ending
+                        //with space black box voodoo magic must occur.
                         w = function () {
                             var k,
                                 q,
                                 y = i - 1,
 
-                                //This function finds the prior existing indented
-                                //start tag.  This start tag may not be the current
-                                //end tag's matching pair.  If the tag prior to this
-                                //indented start tag is not an end tag this function
-                                //escapes and later logic is used.
+                                //This function finds the prior existing
+                                //indented start tag.  This start tag
+                                //may not be the current end tag's 
+                                //matching pair.  If the tag prior to
+                                //this indented start tag is not an end
+                                //tag this function escapes and later
+                                //logic is used.
                                 u = function () {
-                                    //t() is executed if the prior indented start tag
-                                    //exists directly after an end tag.  This function
-                                    //is necessary to determine if indentation must be
-                                    //subtracted from the prior indented start tag.
+                                    //t() is executed if the prior
+                                    //indented start tag exists directly
+                                    //after an end tag.  This function
+                                    //is necessary to determine if
+                                    //indentation must be subtracted
+                                    //from the prior indented start tag.
                                     var t = function () {
                                         var s,
                                             l = 0;
 
-                                        //Finds the prior start tag followed by a start
-                                        //tag where both have indentation.  This creates
-                                        //a frame of reference for performing reflexive
+                                        //Finds the prior start tag
+                                        //followed by a start tag where
+                                        //both have indentation.  This
+                                        //creates a frame of reference
+                                        //for performing reflexive
                                         //calculation.
                                         for (s = i - 1; s > 0; s -= 1) {
                                             if ((cinfo[s] === "start" && cinfo[s + 1] === "start" && level[s] === level[s + 1] - 1) || (cinfo[s] === "start" && cinfo[s - 1] !== "start" && level[s] === level[s - 1])) {
@@ -768,24 +820,27 @@ var markup_beauty = function (source, indent_size, indent_character, mode, inden
                                             }
                                         }
 
-                                        //The incrementor is increased if indented
-                                        //content found followed by unindented end tag
-                                        //by looping up from the frame of reference.
+                                        //Incrementor is increased if
+                                        //indented content found
+                                        //followed by unindented end tag
+                                        //by looping up from the frame
+                                        //of reference.
                                         for (k = s + 1; k < i; k += 1) {
                                             if (cinfo[k] === "mixed_start" && cinfo[k + 1] === "end") {
                                                 l += 1;
                                             }
                                         }
 
-                                        //If the prior logic fails and frame of
-                                        //reference follows an indented end tag the
+                                        //If prior logic fails and frame
+                                        //of reference follows an
+                                        //indented end tag the
                                         //incrementor is increased.
                                         if (cinfo[s - 1] === "end" && level[s - 1] !== "x" && l === 0) {
                                             l += 1;
                                         }
 
-                                        //All the prior logic can fail and so a
-                                        //redundant check was added.
+                                        //All prior logic can fail and
+                                        //so redundant check was added.
                                         if (l !== 0) {
                                             if (level[i - 1] === "x") {
                                                 return l - 1;
@@ -832,8 +887,9 @@ var markup_beauty = function (source, indent_size, indent_character, mode, inden
                                     }
                                 },
 
-                                //This seeks to find a frame of reference by looking
-                                //for the first start tag outside a counted pair not
+                                //This seeks to find a frame of
+                                //reference by looking for the first
+                                //start tag outside a counted pair not
                                 //counting the current end tag.
                                 r = function () {
                                     var l = 0;
@@ -849,7 +905,7 @@ var markup_beauty = function (source, indent_size, indent_character, mode, inden
                                     }
                                 };
 
-                            //If the prior two elements are an empty pair.
+                            //If the prior two elements are empty pair.
                             if (cinfo[i - 1] === "end" && level[i - 1] !== "x") {
                                 if (cinfo[i - 2] === "start" && level[i - 2] === "x") {
                                     for (k = i - 2; k > 0; k -= 1) {
@@ -868,13 +924,14 @@ var markup_beauty = function (source, indent_size, indent_character, mode, inden
                                     return level.push(level[i - 1] - 1);
                                 }
 
-                                //If the prior two elements are not an empty
-                                //pair voodoo magic must occur.
+                                //If the prior two elements are not an
+                                //empty pair voodoo magic must occur.
                             } else {
 
-                                //u() makes a context decision based upon the
-                                //placement of the current end tag relevant to
-                                //the prior indented start tag.
+                                //u() makes a context decision based
+                                //upon the placement of the current end
+                                //tag relevant to the prior indented
+                                //start tag.
                                 u();
                                 if (q === "r") {
                                     return;
@@ -935,7 +992,8 @@ var markup_beauty = function (source, indent_size, indent_character, mode, inden
                         }
                         yy = 0;
                         for (a = i - 1; a > 0; a -= 1) {
-                            //Find the previous indention and if not a start
+                            //Find the previous indention and if not a
+                            //start
                             if (cinfo[a] === "singleton" && level[a] === "x" && ((cinfo[a - 1] === "singleton" && level[a - 1] !== "x") || cinfo[a - 1] !== "singleton")) {
                                 yy += 1;
                             }
@@ -947,10 +1005,12 @@ var markup_beauty = function (source, indent_size, indent_character, mode, inden
                                 } else {
                                     return level.push(level[a] - 1);
                                 }
-                                //Find the previous start that is not indented
+                                //Find the previous start that is not
+                                //indented
                             } else if (cinfo[a] === "start" && level[a] === "x") {
                                 return z(a);
-                                //If the previous tag is an indented start
+                                //If the previous tag is an indented
+                                //start
                             } else if (cinfo[i - 1] === "start") {
                                 return level.push(level[a]);
                             }
@@ -967,8 +1027,8 @@ var markup_beauty = function (source, indent_size, indent_character, mode, inden
 
                     //The n() function is only a container.  It sets the
                     //values of k, l, m.  If not a comment k = i - 1,
-                    //and if not a comment l = k - i, and if not a comment
-                    //m = l - 1.
+                    //and if not a comment l = k - i, and if not a
+                    //comment m = l - 1.
                     var k,
                         l,
                         m,
@@ -1009,8 +1069,8 @@ var markup_beauty = function (source, indent_size, indent_character, mode, inden
                             }
                         }()),
 
-                        //This is executed if the prior non-comment item is not
-                        //any form of content and is indented.
+                        //This is executed if the prior non-comment item
+                        //is not any form of content and is indented.
                         p = function () {
                             var j,
                                 v = 1,
@@ -1069,11 +1129,13 @@ var markup_beauty = function (source, indent_size, indent_character, mode, inden
                             return c("start");
                         };
 
-                    //A one time fail safe to prevent a referential anomoly.
+                    //A one time fail safe to prevent a referential
+                    //anomoly.
                     if (i - 1 === 0 && cinfo[0] === "start") {
                         return level.push(1);
 
-                        //For a tag to become void of whitespace cushioning
+                        //For a tag to become void of whitespace
+                        //cushioning
                     } else if (cinfo[k] === "mixed_start" || cinfo[k] === "content" || cinfo[i - 1] === "mixed_start" || cinfo[i - 1] === "content" || (cinfo[i] === "singleton" && (cinfo[i - 1] === "start" || cinfo[i - 1] === "singleton") && build[i].charAt(0) !== " ")) {
                         return level.push("x");
 
@@ -1081,7 +1143,8 @@ var markup_beauty = function (source, indent_size, indent_character, mode, inden
                     } else if ((cinfo[i - 1] === "comment" && level[i - 1] === 0) || ((cinfo[m] === "mixed_start" || cinfo[m] === "content") && cinfo[l] === "end" && (cinfo[k] === "mixed_end" || cinfo[k] === "mixed_both"))) {
                         return c("start");
 
-                        //if the prior item is an indented comment then go with it
+                        //if the prior item is an indented comment then
+                        //go with it
                     } else if (cinfo[i - 1] === "comment" && level[i - 1] !== "x") {
                         return level.push(level[i - 1]);
                     } else if ((cinfo[k] === "start" && level[k] === "x") || (cinfo[k] !== "mixed_end" && cinfo[k] !== "mixed_both" && level[k] === "x")) {
@@ -1141,10 +1204,10 @@ var markup_beauty = function (source, indent_size, indent_character, mode, inden
                             }
                         }
                     } else if (cinfo[k] === "start" && level[k] !== "x") {
-                        //This section looks for the most previous level that is
-                        //not set for the noted cinfo values.  Once that value
-                        //is found it is added to the level array increased plus
-                        //1.
+                        //This looks for the most previous level that is
+                        //not set for the noted cinfo values.  Once that
+                        //value is found it is added to the level array
+                        //increased plus 1.
                         for (a = i - 1; a > -1; a -= 1) {
                             if (cinfo[a] !== "comment" && cinfo[a] !== "content" && cinfo[a] !== "external" && cinfo[a] !== "mixed_end") {
                                 if (cinfo[i + 1] && build[i].charAt(0) !== " " && (cinfo[i + 1] === "content" || cinfo[i + 1] === "mixed_end")) {
@@ -1170,10 +1233,11 @@ var markup_beauty = function (source, indent_size, indent_character, mode, inden
                         build[i] = "";
                         return level.push("x");
                     } else {
-                        //This section corrects a calculation malfunction that
-                        //only occurs to start type elements if they occur
-                        //directly prior to a comment.  This function is
-                        //executed through h().
+                        //This section corrects a calculation
+                        //malfunction that only occurs to start type
+                        //elements if they occur directly prior to a
+                        //comment.  This function is executed through
+                        //h().
                         if (cinfo[i - 1] !== "comment") {
                             f(i);
                         } else {
@@ -1187,9 +1251,9 @@ var markup_beauty = function (source, indent_size, indent_character, mode, inden
                     }
                 },
 
-                //innerfix function undoes all the changes made by the innerfix
-                //function.  This is what allows nested tags, such as JSP tags
-                //to be beautified.
+                //innerfix function undoes all the changes made by the
+                //innerfix function.  This is what allows nested tags,
+                //such as JSP tags to be beautified.
                 innerfix = (function () {
                     var a,
                         b,
@@ -1215,8 +1279,8 @@ var markup_beauty = function (source, indent_size, indent_character, mode, inden
                     }
                 }()),
 
-                //This logic only serves to assign the previously defined
-                //subfunctions to each of the cinfo values.
+                //This logic only serves to assign the previously
+                //defined subfunctions to each of the cinfo values.
                 algorithm = (function () {
                     var test = 0,
                         test1 = 0,
@@ -1233,12 +1297,12 @@ var markup_beauty = function (source, indent_size, indent_character, mode, inden
                             level.push(0);
                             if (token[i - 1] === "T_script") {
 
-                                //If the script begins with an HTML comment then
-                                //that comment must be accounted for, removed,
-                                //and returned.  Starting script with an HTML
-                                //comment can confuse markupmin, so they have to
-                                //be temporarily removed.  This logic is
-                                //repeated for CSS styles.
+                                //If script begins with an HTML comment
+                                //then the comment must be removed, and
+                                //returned.  Starting script with a HTML
+                                //comment can confuse markupmin, so it
+                                //has to be temporarily removed.  This
+                                //logic is repeated for CSS styles.
                                 if (scriptStart.test(build[i])) {
                                     test = 1;
                                 }
@@ -1273,11 +1337,11 @@ var markup_beauty = function (source, indent_size, indent_character, mode, inden
                         } else if (cinfo[i] === "parse") {
                             h();
                         } else if (cinfo[i] === "mixed_both") {
-                            //The next merely removes the space at the front and
-                            //back
+                            //The next line merely removes the space at
+                            //front and back
                             h();
                         } else if (cinfo[i] === "mixed_start") {
-                            //The next line removes the space at the front
+                            //The next line removes space at the front
                             h();
                         } else if (cinfo[i] === "mixed_end") {
                             //The next line removes the space at the end
@@ -1315,8 +1379,8 @@ var markup_beauty = function (source, indent_size, indent_character, mode, inden
                 },
 
                 //This function writes the indentation output for cinfo
-                //values of "end".  This function is different in that some
-                //end elements do not receive indentation.
+                //values of "end".  This function is different in that
+                //some end elements do not receive indentation.
                 end_math = function (x) {
                     var b;
                     if (cinfo[i - 1] !== "start") {
