@@ -1,50 +1,50 @@
 /* jsmin.js - 2006-08-31
-Author: Franck Marcia
-This work is an adaptation of jsminc.c published by Douglas Crockford.
-Permission is hereby granted to use the Javascript version under the
-same conditions as the jsmin.c on which it is based.
-
-jsmin.c
-2006-05-04
-
-Copyright (c) 2002 Douglas Crockford  (www.crockford.com)
-
-Permission is hereby granted, free of charge, to any person obtaining a
-copy of this software and associated documentation files (the
-"Software"), to deal in the Software without restriction, including
-without limitation the rights to use, copy, modify, merge, publish,
-distribute, sublicense, and/or sell copies of the Software, and to
-permit persons to whom the Software is furnished to do so, subject to
-the following conditions:
-
-The above copyright notice and this permission notice shall be included
-in all copies or substantial portions of the Software.
-
-The Software shall be used for Good, not Evil.
-
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
-OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
-MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.
-IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY
-CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT,
-TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE
-SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
-
-Arguements:
-
-   * comment allows a user to pass in an extraneous string that is
-     returned to the front of the input.
-   * input is the source code to manipulate.
-   * level is the degree of minification strengthness.  For Pretty Diff
-     the level is set to the highest value for the strongest possible
-     minification.
-   * type sets the code language for input.  If the value is "css" then
-     jsmin presumes CSS language, otherwise jsmin defaults to JavaScript
-   * alter is used for CSS processing only.  This argument determines
-     whether or not the source code should be alter so to achieve a
-     stronger minification resuling in smaller output.
-
-*/
+ Author: Franck Marcia
+ This work is an adaptation of jsminc.c published by Douglas Crockford.
+ Permission is hereby granted to use the Javascript version under the
+ same conditions as the jsmin.c on which it is based.
+ 
+ jsmin.c
+ 2006-05-04
+ 
+ Copyright (c) 2002 Douglas Crockford  (www.crockford.com)
+ 
+ Permission is hereby granted, free of charge, to any person obtaining a
+ copy of this software and associated documentation files (the
+ "Software"), to deal in the Software without restriction, including
+ without limitation the rights to use, copy, modify, merge, publish,
+ distribute, sublicense, and/or sell copies of the Software, and to
+ permit persons to whom the Software is furnished to do so, subject to
+ the following conditions:
+ 
+ The above copyright notice and this permission notice shall be included
+ in all copies or substantial portions of the Software.
+ 
+ The Software shall be used for Good, not Evil.
+ 
+ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
+ OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
+ MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.
+ IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY
+ CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT,
+ TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE
+ SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+ 
+ Arguements:
+ 
+ * comment allows a user to pass in an extraneous string that is
+ returned to the front of the input.
+ * input is the source code to manipulate.
+ * level is the degree of minification strengthness.  For Pretty Diff
+ the level is set to the highest value for the strongest possible
+ minification.
+ * type sets the code language for input.  If the value is "css" then
+ jsmin presumes CSS language, otherwise jsmin defaults to JavaScript
+ * alter is used for CSS processing only.  This argument determines
+ whether or not the source code should be alter so to achieve a
+ stronger minification resuling in smaller output.
+ 
+ */
 String.prototype.has = function (c) {
     return this.indexOf(c) > -1;
 };
@@ -79,6 +79,7 @@ var jsmin = function (comment, input, level, type, alter) {
         DIGITS = '0123456789',
         OTHERS,
         ALNUM,
+        fcom = [],
         theLookahead = EOF,
 
         //reduction provides a logical compression to flatten redundantly
@@ -245,10 +246,10 @@ var jsmin = function (comment, input, level, type, alter) {
         //These next two functions prevent JSMin from seeing URIs in CSS as
         //JavaScript line level comments
         schemeesc = function (x) {
-            return x.replace(/:\/\//, ":xx");
+            return x.replace("//", "prettydiffjsminscheme");
         },
         schemefix = function (x) {
-            return x.replace(/:xx/, "://");
+            return x.replace("prettydiffjsminscheme", "//");
         },
 
         //sameDist is used in a replace method to shorten redundant CSS
@@ -450,7 +451,38 @@ var jsmin = function (comment, input, level, type, alter) {
             if (error !== "") {
                 return error;
             }
-            var r = [];
+            var firstComment = (function () {
+                if (fcomment !== true || (/^\s*\/\*/.test(input) !== true && /^\s*\/\//.test(input) !== true)) {
+                    return;
+                }
+                var a,
+                    b = input.length,
+                    c = '';
+                for (a = 0; a < b; a += 1) {
+                    if (c === '') {
+                        if (input.charAt(a) === "/" && input.charAt(a + 1) && (input.charAt(a + 1) === "*" || input.charAt(a + 1) === "/")) {
+                            c = input.substr(a, 2);
+                            fcom.push(input.charAt(a));
+                        } else if (/\s/.test(input.charAt(a)) !== true) {
+                            return;
+                        }
+                    } else {
+                        fcom.push(input.charAt(a));
+                        if (input.charAt(a) === "*" && c === "/*" && input.charAt(a + 1) && input.charAt(a + 1) === "/") {
+                            fcom.push("/\n");
+                            if (input.charAt(a + 2) && input.charAt(a + 2) === "\n") {
+                                a += 2;
+                            } else {
+                                a += 1;
+                            }
+                            c = '';
+                        } else if ((input.charAt(a) === "\n" || input.charAt(a) === "\r") && c === "//") {
+                            c = '';
+                        }
+                    }
+                }
+            }()),
+                r = [];
             a = '\n';
             r.push(action(3));
             while (a !== EOF) {
@@ -522,11 +554,14 @@ var jsmin = function (comment, input, level, type, alter) {
     geti = 0;
     getl = input.length;
     if (type === "css") {
-        input = input.replace(/[\w]+:\/\//g, schemeesc);
+        input = input.replace(/(([\w]+:)|(url\(("|')?))\/\//g, schemeesc);
     }
     ret = m(input);
+    if (/(\}\s*)$/.test(input) && !/(\}\s*)$/.test(ret)) {
+        ret = ret + "}";
+    }
     if (type === "css") {
-        ret = ret.replace(/[\w]+:xx/g, schemefix).replace(/\: #/g, ":#").replace(/\; #/g, ";#").replace(/\, #/g, ",#").replace(/\s+/g, " ").replace(/\} /g, '}').replace(/\{ /g, '{').replace(/http:xx/g, "http://").replace(/\\\)/g, "~PDpar~").replace(/\)/g, ") ").replace(/\) ;/g, ");").replace(/\%(?=\w)/, "% ").replace(/\d%\d/g, fixpercent);
+        ret = ret.replace(/(:|(url\(("|')?))prettydiffjsminscheme/g, schemefix).replace(/\: #/g, ":#").replace(/\; #/g, ";#").replace(/\, #/g, ",#").replace(/\s+/g, " ").replace(/\} /g, '}').replace(/\{ /g, '{').replace(/\\\)/g, "~PDpar~").replace(/\)/g, ") ").replace(/\) ;/g, ");").replace(/\d%[a-z0-9]/g, fixpercent);
         if (alter === true) {
             ret = reduction(ret).replace(/@charset("|')?[\w\-]+("|')?;?/gi, "").replace(/(#|\.)?[\w]*\{\}/gi, "").replace(/:[\w\s\!\.\-%]*\d+\.0*(?!\d)/g, endZero).replace(/(:| )0+\.\d+/g, startZero).replace(/\s?((\.\d+|\d+\.\d+|\d+)[a-zA-Z]+|0 )+((\.\d+|\d+\.\d+|\d+)[a-zA-Z]+)|0/g, sameDist).replace(/:\.?0(\%|px|in|cm|mm|em|ex|pt|pc)/g, ":0").replace(/ \.?0(\%|px|in|cm|mm|em|ex|pt|pc)/g, " 0").replace(/bottom:none/g, "bottom:0").replace(/top:none/g, "top:0").replace(/left:none/g, "left:0").replace(/right:none/, "right:0").replace(/:0 0 0 0/g, ":0").replace(/[a-z]*:(0\s*)+\-?\.?\d?/g, singleZero).replace(/ 0 0 0 0/g, " 0").replace(/rgb\(\d+,\d+,\d+\)/g, rgbToHex).replace(/background\-position:0;/gi, "background-position:0 0;").replace(/;+/g, ";").replace(/\s*[\w\-]+:\s*\}/g, "}").replace(/\s*[\w\-]+:\s*;/g, "").replace(/;\}/g, "}").replace(/\{\s+\}/g, "{}");
 
@@ -549,6 +584,6 @@ var jsmin = function (comment, input, level, type, alter) {
     if (error !== "") {
         return error;
     } else {
-        return comment + ret;
+        return comment + fcom.join('') + ret;
     }
 };
