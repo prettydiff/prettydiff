@@ -48,7 +48,7 @@
 String.prototype.has = function (c) {
     return this.indexOf(c) > -1;
 };
-var jsmin = function (comment, input, level, type, alter) {
+var jsmin = function (comment, input, level, type, alter, fcomment) {
     "use strict";
     if (input === undefined) {
         input = comment;
@@ -371,7 +371,7 @@ var jsmin = function (comment, input, level, type, alter) {
                             }
                             break;
                         case EOF:
-                            error = 'Error: Unterminated JavaScript comment.';
+                            error = 'Error: Unterminated block comment.';
                             return error;
                         }
                     }
@@ -551,11 +551,11 @@ var jsmin = function (comment, input, level, type, alter) {
         OTHERS = '_$//';
     }
     ALNUM = LETTERS + DIGITS + OTHERS;
-    geti = 0;
-    getl = input.length;
     if (type === "css") {
         input = input.replace(/(([\w]+:)|(url\(("|')?))\/\//g, schemeesc);
     }
+    geti = 0;
+    getl = input.length;
     ret = m(input);
     if (/(\}\s*)$/.test(input) && !/(\}\s*)$/.test(ret)) {
         ret = ret + "}";
