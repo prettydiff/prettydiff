@@ -1,3 +1,4 @@
+/*global markupmin, js_beautify, cleanCSS, markup_summary*/
 /*
  This code may be used internally to Travelocity without limitation,
  exclusion, or restriction.  If this code is used externally the
@@ -494,7 +495,9 @@ var markup_beauty = function (source, indent_size, indent_character, mode, inden
                         do {
                             g();
                         } while (e !== true);
-                    } else if (e === true) {
+                    }
+
+                    if (e === true) {
 
                         //Concat the characters from the now known end
                         //point to build the tag.
@@ -519,14 +522,37 @@ var markup_beauty = function (source, indent_size, indent_character, mode, inden
                 //is for tags.
                 cgather = function (z) {
                     var c,
-                        d = '';
+                        d = '',
+                        e;
                     q = "";
                     for (c = i; c < loop; c += 1) {
 
                         //Verifies if the end script tag is quoted
-                        if (q === "" && x[c - 1] !== "\\" && (x[c] === "'" || x[c] === "\"")) {
-                            q = x[c];
-                        } else if (x[c - 1] !== "\\" && ((q === "'" && x[c] === "'") || (q === "\"" && x[c] === "\""))) {
+                        if (q === "" && x[c - 1] !== "\\") {
+                            if (x[c] === "/" && x[c + 1] && x[c + 1] === "/") {
+                                q = "//";
+                            } else if (x[c] === "'" || x[c] === "\"" || x[c] === "/") {
+                                //It is necessary to determine if this is division
+                                //or the opening of a regular expression.  If
+                                //division then ignore and move on.  I am presuming
+                                //division is only when the forward slash follows a
+                                //closing container or word character.
+                                if (x[c] === "/") {
+                                    for (e = c - 1; e > 0; e -= 1) {
+                                        if (!/\s/.test(x[e])) {
+                                            break;
+                                        }
+                                    }
+                                    if (x[e] === ")" || x[e] === "]" || x[e] === "}" || /\w/.test(x[e])) {
+                                        q = "";
+                                    } else {
+                                        q = "/";
+                                    }
+                                } else {
+                                    q = x[c];
+                                }
+                            }
+                        } else if (x[c - 1] !== "\\" && ((q === "'" && x[c] === "'") || (q === "\"" && x[c] === "\"") || (q === "/" && x[c] === "/") || (q === "//" && x[c] === "\n"))) {
                             q = "";
                         }
                         if (((z === "script" && q === "") || z === "style") && x[c] === "<" && x[c + 1] === "/" && x[c + 2].toLowerCase() === "s") {
@@ -617,14 +643,16 @@ var markup_beauty = function (source, indent_size, indent_character, mode, inden
                             token.push("T_tag_end");
                         } else if (x[i] === "<" && (x[i + 1] !== "!" || x[i + 1] !== "?" || x[i + 1] !== "/" || x[i + 1] !== "%")) {
                             for (a = i; a < loop; a += 1) {
-                                if (x[a] === "/" && x[a + 1] === ">") {
-                                    build.push(b('/>'));
-                                    token.push("T_singleton");
-                                    break;
-                                } else if (x[a] !== "/" && x[a + 1] === ">") {
-                                    build.push(b('>'));
-                                    token.push("T_tag_start");
-                                    break;
+                                if (x[a] !== "?" && x[a] !== "%") {
+                                    if (x[a] === "/" && x[a + 1] === ">") {
+                                        build.push(b('/>'));
+                                        token.push("T_singleton");
+                                        break;
+                                    } else if (x[a + 1] === ">") {
+                                        build.push(b('>'));
+                                        token.push("T_tag_start");
+                                        break;
+                                    }
                                 }
                             }
                         } else if (x[i - 1] === ">" && (x[i] !== "<" || (x[i] !== " " && x[i + 1] !== "<"))) {
