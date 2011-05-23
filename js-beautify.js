@@ -77,6 +77,7 @@ var js_beautify = function (js_source_text, indent_size, indent_char, preserve_n
         flags,
         functestval = 0,
         var_var_test = false,
+        commafix = false,
         comma_test,
         flag_store = [],
         indent_string = '',
@@ -695,6 +696,7 @@ var js_beautify = function (js_source_text, indent_size, indent_char, preserve_n
                     print_newline();
                     if (var_end_count === 'x') {
                         output.push(indent_string);
+                        flags.indentation_level += 1;
                         var_end_count = 'y';
                     }
                 }
@@ -725,6 +727,7 @@ var js_beautify = function (js_source_text, indent_size, indent_char, preserve_n
                     print_newline();
                     if (var_end_count === 'x') {
                         output.push(indent_string);
+                        flags.indentation_level += 1;
                         var_end_count = 'y';
                     }
                 }
@@ -800,9 +803,13 @@ var js_beautify = function (js_source_text, indent_size, indent_char, preserve_n
             if (token_text !== 'var' && last_text === ';') {
                 comma_test = false;
             }
-            if (last_text === '{' && last_last_text === ':' && comma_test === true) {
+            if (last_text === ';' && last_last_text === '}' && var_end_count === 'y') {
+                flags.indentation_level -= 1;
+            }
+            if (token_text !== 'var' && last_text === '{' && ((last_last_text === ':' && comma_test === true) || (last_last_text === ')' && var_last_type === 'TK_START_BLOCK'))) {
                 output.push(indent_string);
                 flags.indentation_level += 1;
+                var_end_count += 1;
             }
             if (do_block_just_closed) {
                 // do {} ## while ()
@@ -969,6 +976,20 @@ var js_beautify = function (js_source_text, indent_size, indent_char, preserve_n
             }
             var_last_type = '';
             if (token_text === ',') {
+                if (var_end_count === 'y' && last_type !== 'TK_END_BLOCK') {
+                    flags.indentation_level -= 1;
+                }
+                if (commafix) {
+                    commafix = false;
+                    if (last_text === '}') {
+                        flags.var_line_reindented = true;
+                    }
+                    flags.indentation_level -= 1;
+                }
+                if (last_text === '}' && last_last_text === '{' && last_last_word === 'var' && flags.var_line) {
+                    flags.indentation_level += 1;
+                    commafix = true;
+                }
                 n[2] += 1;
                 if (flags.mode !== '(EXPRESSION)' && last_last_text !== ':') {
                     comma_test = false;
