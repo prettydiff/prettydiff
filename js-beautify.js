@@ -731,13 +731,13 @@ var js_beautify = function (js_source_text, indent_size, indent_char, preserve_n
                         var_end_count = 'y';
                     }
                 }
-                if (var_var_test && (comma_test || (!flags.var_line))) {
-                    output.push(indent_string);
-                    print_token();
-                    var_var_test = false;
-                } else {
-                    print_token();
+                if (!comma_test && var_var_test && !flags.var_line_reindented) {
+                    if ((flags.mode === '(EXPRESSION)' && !flags.var_line) || (flags.mode === 'BLOCK' && flags.var_line)) {
+                        output.push(indent_string);
+                        var_var_test = false;
+                    }
                 }
+                print_token();
             }
         } else if (token_type === 'TK_WORD') {
             // no, it's not you. even I have problems understanding how
@@ -840,6 +840,9 @@ var js_beautify = function (js_source_text, indent_size, indent_char, preserve_n
                         } else if (!comma_test) {
                             functestval -= 1;
                         }
+                        if (comma_test && flags.var_line && last_last_word === 'var' && !var_var_test && functestval === 0) {
+                            flags.var_line_reindented = true;
+                        }
                         if ((just_added_newline || last_text === ';') && last_text !== '{') {
                             // make sure there is a nice clean space of
                             // at least one blank line before a new
@@ -900,9 +903,13 @@ var js_beautify = function (js_source_text, indent_size, indent_char, preserve_n
                     }
                     if (token_text === 'var') {
                         if (!var_var_test && last_type === 'TK_START_BLOCK' && comma_test) {
-                            flags.indentation_level += 1;
-                            output.push(indent_string);
-                            var_var_test = true;
+                            if (var_last_type === '') {
+                                flags.indentation_level += 1;
+                                output.push(indent_string);
+                            }
+                            if (functestval >= 0) {
+                                var_var_test = true;
+                            }
                         } else if (last_type === 'TK_START_BLOCK') {
                             if (var_last_type === 'TK_START_BLOCK') {
                                 if (last_type === 'TK_START_BLOCK') {
@@ -920,6 +927,7 @@ var js_beautify = function (js_source_text, indent_size, indent_char, preserve_n
                         }
                         flags.var_line = true;
                         flags.var_line_reindented = false;
+                        comma_test = true;
                     }
                     print_token();
                     if (token_text === 'typeof') {
@@ -984,20 +992,17 @@ var js_beautify = function (js_source_text, indent_size, indent_char, preserve_n
                     if (last_text === '}') {
                         flags.var_line_reindented = true;
                     }
-                    flags.indentation_level -= 1;
                 }
                 if (last_text === '}' && last_last_text === '{' && last_last_word === 'var' && flags.var_line) {
-                    flags.indentation_level += 1;
                     commafix = true;
+                    flags.var_line_reindented = true;
                 }
                 n[2] += 1;
                 if (flags.mode !== '(EXPRESSION)' && last_last_text !== ':') {
                     comma_test = false;
                 }
                 if (flags.var_line && flags.mode !== '(EXPRESSION)') {
-                    if (last_text !== '}') {
-                        flags.var_line_reindented = true;
-                    }
+                    flags.var_line_reindented = true;
                     print_token();
                     print_newline();
                 } else if (last_type === 'TK_END_BLOCK' && flags.mode !== '(EXPRESSION)') {
@@ -1174,6 +1179,26 @@ var js_beautify = function (js_source_text, indent_size, indent_char, preserve_n
                 } else {
                     return ((x / y) * 100).toFixed(2) + "%";
                 }
+            },
+            drawRow = function (w, x, y, z, Z) {
+                var a = ["<tr><th>Keyword '"];
+                a.push(w);
+                a.push("'</th><td ");
+                a.push(x);
+                a.push(">");
+                a.push(y);
+                a.push("</td><td>");
+                a.push(zero(y, m[54]));
+                a.push("</td><td>");
+                a.push(zero(y, Z[0]));
+                a.push("</td><td>");
+                a.push(z);
+                a.push("</td><td>");
+                a.push(zero(z, m[55]));
+                a.push("</td><td>");
+                a.push(zero(z, Z[1]));
+                a.push("</td></tr>");
+                return a.join("");
             };
         if (rvalue.length <= input_length) {
             b = input_length;
@@ -1280,33 +1305,33 @@ var js_beautify = function (js_source_text, indent_size, indent_char, preserve_n
         output.push("<tr><th>Operators</th><td>" + n[0] + "</td><td>" + zero(n[0], n[5]) + "</td><td>" + zero(n[0], z[0]) + "</td><td>" + n[1] + "</td><td>" + zero(n[1], n[6]) + "</td><td>" + zero(n[1], z[1]) + "</td></tr>");
         output.push("<tr><th>Total Syntax Characters</th><td>" + n[5] + "</td><td>100.00%</td><td>" + zero(n[5], z[0]) + "</td><td>" + n[6] + "</td><td>100.00%</td><td>" + zero(n[6], z[1]) + "</td></tr>");
         output.push("<tr><th colspan='7'>Keywords</th></tr>");
-        output.push("<tr><th>Keyword 'alert'</th><td" + q[0] + ">" + m[0] + "</td><td>" + zero(m[0], m[54]) + "</td><td>" + zero(m[0], z[0]) + "</td><td>" + m[1] + "</td><td>" + zero(m[1], m[55]) + "</td><td>" + zero(m[1], z[1]) + "</td></tr>");
-        output.push("<tr><th>Keyword 'break'</th><td>" + m[2] + "</td><td>" + zero(m[2], m[54]) + "</td><td>" + zero(m[2], z[0]) + "</td><td>" + m[3] + "</td><td>" + zero(m[3], m[55]) + "</td><td>" + zero(m[3], z[1]) + "</td></tr>");
-        output.push("<tr><th>Keyword 'case'</th><td>" + m[4] + "</td><td>" + zero(m[4], m[54]) + "</td><td>" + zero(m[4], z[0]) + "</td><td>" + m[5] + "</td><td>" + zero(m[5], m[55]) + "</td><td>" + zero(m[5], z[1]) + "</td></tr>");
-        output.push("<tr><th>Keyword 'catch'</th><td>" + m[48] + "</td><td>" + zero(m[48], m[54]) + "</td><td>" + zero(m[48], z[0]) + "</td><td>" + m[49] + "</td><td>" + zero(m[49], m[55]) + "</td><td>" + zero(m[49], z[1]) + "</td></tr>");
-        output.push("<tr><th>Keyword 'continue'</th><td" + q[1] + ">" + m[6] + "</td><td>" + zero(m[6], m[54]) + "</td><td>" + zero(m[6], z[0]) + "</td><td>" + m[7] + "</td><td>" + zero(m[7], m[55]) + "</td><td>" + zero(m[7], z[1]) + "</td></tr>");
-        output.push("<tr><th>Keyword 'default'</th><td>" + m[8] + "</td><td>" + zero(m[8], m[54]) + "</td><td>" + zero(m[8], z[0]) + "</td><td>" + m[9] + "</td><td>" + zero(m[9], m[55]) + "</td><td>" + zero(m[9], z[1]) + "</td></tr>");
-        output.push("<tr><th>Keyword 'delete'</th><td>" + m[10] + "</td><td>" + zero(m[10], m[54]) + "</td><td>" + zero(m[10], z[0]) + "</td><td>" + m[11] + "</td><td>" + zero(m[11], m[55]) + "</td><td>" + zero(m[11], z[1]) + "</td></tr>");
-        output.push("<tr><th>Keyword 'do'</th><td>" + m[12] + "</td><td>" + zero(m[12], m[54]) + "</td><td>" + zero(m[12], z[0]) + "</td><td>" + m[13] + "</td><td>" + zero(m[13], m[55]) + "</td><td>" + zero(m[13], z[1]) + "</td></tr>");
-        output.push("<tr><th>Keyword 'document'</th><td>" + m[44] + "</td><td>" + zero(m[44], m[54]) + "</td><td>" + zero(m[44], z[0]) + "</td><td>" + m[45] + "</td><td>" + zero(m[45], m[55]) + "</td><td>" + zero(m[45], z[1]) + "</td></tr>");
-        output.push("<tr><th>Keyword 'else'</th><td>" + m[14] + "</td><td>" + zero(m[14], m[54]) + "</td><td>" + zero(m[14], z[0]) + "</td><td>" + m[15] + "</td><td>" + zero(m[15], m[55]) + "</td><td>" + zero(m[15], z[1]) + "</td></tr>");
-        output.push("<tr><th>Keyword 'eval'</th><td" + q[2] + ">" + m[16] + "</td><td>" + zero(m[16], m[54]) + "</td><td>" + zero(m[16], z[0]) + "</td><td>" + m[17] + "</td><td>" + zero(m[17], m[55]) + "</td><td>" + zero(m[17], z[1]) + "</td></tr>");
-        output.push("<tr><th>Keyword 'for'</th><td>" + m[18] + "</td><td>" + zero(m[18], m[54]) + "</td><td>" + zero(m[18], z[0]) + "</td><td>" + m[19] + "</td><td>" + zero(m[19], m[55]) + "</td><td>" + zero(m[19], z[1]) + "</td></tr>");
-        output.push("<tr><th>Keyword 'function'</th><td>" + m[20] + "</td><td>" + zero(m[20], m[54]) + "</td><td>" + zero(m[20], z[0]) + "</td><td>" + m[21] + "</td><td>" + zero(m[21], m[55]) + "</td><td>" + zero(m[21], z[1]) + "</td></tr>");
-        output.push("<tr><th>Keyword 'if'</th><td>" + m[22] + "</td><td>" + zero(m[22], m[54]) + "</td><td>" + zero(m[22], z[0]) + "</td><td>" + m[23] + "</td><td>" + zero(m[23], m[55]) + "</td><td>" + zero(m[23], z[1]) + "</td></tr>");
-        output.push("<tr><th>Keyword 'in'</th><td>" + m[24] + "</td><td>" + zero(m[24], m[54]) + "</td><td>" + zero(m[24], z[0]) + "</td><td>" + m[25] + "</td><td>" + zero(m[25], m[55]) + "</td><td>" + zero(m[25], z[1]) + "</td></tr>");
-        output.push("<tr><th>Keyword 'label'</th><td>" + m[26] + "</td><td>" + zero(m[26], m[54]) + "</td><td>" + zero(m[26], z[0]) + "</td><td>" + m[27] + "</td><td>" + zero(m[27], m[55]) + "</td><td>" + zero(m[27], z[1]) + "</td></tr>");
-        output.push("<tr><th>Keyword 'new'</th><td>" + m[28] + "</td><td>" + zero(m[28], m[54]) + "</td><td>" + zero(m[28], z[0]) + "</td><td>" + m[29] + "</td><td>" + zero(m[29], m[55]) + "</td><td>" + zero(m[29], z[1]) + "</td></tr>");
-        output.push("<tr><th>Keyword 'return'</th><td>" + m[30] + "</td><td>" + zero(m[30], m[54]) + "</td><td>" + zero(m[30], z[0]) + "</td><td>" + m[31] + "</td><td>" + zero(m[31], m[55]) + "</td><td>" + zero(m[31], z[1]) + "</td></tr>");
-        output.push("<tr><th>Keyword 'switch'</th><td>" + m[32] + "</td><td>" + zero(m[32], m[54]) + "</td><td>" + zero(m[32], z[0]) + "</td><td>" + m[33] + "</td><td>" + zero(m[33], m[55]) + "</td><td>" + zero(m[33], z[1]) + "</td></tr>");
-        output.push("<tr><th>Keyword 'this'</th><td>" + m[34] + "</td><td>" + zero(m[34], m[54]) + "</td><td>" + zero(m[34], z[0]) + "</td><td>" + m[35] + "</td><td>" + zero(m[35], m[55]) + "</td><td>" + zero(m[35], z[1]) + "</td></tr>");
-        output.push("<tr><th>Keyword 'throw'</th><td>" + m[50] + "</td><td>" + zero(m[50], m[54]) + "</td><td>" + zero(m[50], z[0]) + "</td><td>" + m[51] + "</td><td>" + zero(m[51], m[55]) + "</td><td>" + zero(m[51], z[1]) + "</td></tr>");
-        output.push("<tr><th>Keyword 'typeof'</th><td>" + m[36] + "</td><td>" + zero(m[36], m[54]) + "</td><td>" + zero(m[36], z[0]) + "</td><td>" + m[37] + "</td><td>" + zero(m[37], m[55]) + "</td><td>" + zero(m[37], z[1]) + "</td></tr>");
-        output.push("<tr><th>Keyword 'var'</th><td>" + m[38] + "</td><td>" + zero(m[38], m[54]) + "</td><td>" + zero(m[38], z[0]) + "</td><td>" + m[39] + "</td><td>" + zero(m[39], m[55]) + "</td><td>" + zero(m[39], z[1]) + "</td></tr>");
-        output.push("<tr><th>Keyword 'while'</th><td>" + m[40] + "</td><td>" + zero(m[40], m[54]) + "</td><td>" + zero(m[40], z[0]) + "</td><td>" + m[41] + "</td><td>" + zero(m[41], m[55]) + "</td><td>" + zero(m[41], z[1]) + "</td></tr>");
-        output.push("<tr><th>Keyword 'with'</th><td" + q[3] + ">" + m[42] + "</td><td>" + zero(m[42], m[54]) + "</td><td>" + zero(m[42], z[0]) + "</td><td>" + m[43] + "</td><td>" + zero(m[43], m[55]) + "</td><td>" + zero(m[43], z[1]) + "</td></tr>");
-        output.push("<tr><th>Keyword 'window'</th><td>" + m[46] + "</td><td>" + zero(m[46], m[54]) + "</td><td>" + zero(m[46], z[0]) + "</td><td>" + m[47] + "</td><td>" + zero(m[47], m[55]) + "</td><td>" + zero(m[47], z[1]) + "</td></tr>");
-        output.push("<tr><th>Keyword 'try'</th><td>" + m[52] + "</td><td>" + zero(m[52], m[54]) + "</td><td>" + zero(m[52], z[0]) + "</td><td>" + m[53] + "</td><td>" + zero(m[53], m[55]) + "</td><td>" + zero(m[53], z[1]) + "</td></tr>");
+        output.push(drawRow("alert", q[0], m[0], m[1], z));
+        output.push(drawRow("break", "", m[2], m[3], z));
+        output.push(drawRow("case", "", m[4], m[5], z));
+        output.push(drawRow("catch", "", m[48], m[49], z));
+        output.push(drawRow("continue", q[1], m[6], m[7], z));
+        output.push(drawRow("default", "", m[8], m[9], z));
+        output.push(drawRow("delete", "", m[10], m[11], z));
+        output.push(drawRow("do", "", m[12], m[13], z));
+        output.push(drawRow("document", "", m[44], m[45], z));
+        output.push(drawRow("else", "", m[14], m[15], z));
+        output.push(drawRow("eval", q[2], m[16], m[17], z));
+        output.push(drawRow("for", "", m[18], m[19], z));
+        output.push(drawRow("function", "", m[20], m[21], z));
+        output.push(drawRow("if", "", m[22], m[23], z));
+        output.push(drawRow("in", "", m[24], m[25], z));
+        output.push(drawRow("label", "", m[26], m[27], z));
+        output.push(drawRow("new", "", m[28], m[29], z));
+        output.push(drawRow("return", "", m[30], m[31], z));
+        output.push(drawRow("switch", "", m[32], m[33], z));
+        output.push(drawRow("this", "", m[34], m[35], z));
+        output.push(drawRow("throw", "", m[50], m[51], z));
+        output.push(drawRow("typeof", "", m[36], m[37], z));
+        output.push(drawRow("var", "", m[38], m[39], z));
+        output.push(drawRow("while", "", m[40], m[41], z));
+        output.push(drawRow("with", q[3], m[42], m[43], z));
+        output.push(drawRow("window", "", m[46], m[47], z));
+        output.push(drawRow("try", "", m[52], m[53], z));
         output.push("<tr><th>Total Keywords</th><td>" + m[54] + "</td><td>100.00%</td><td>" + zero(m[55], z[0]) + "</td><td>" + m[55] + "</td><td>100.00%</td><td>" + zero(m[55], z[1]) + "</td></tr>");
         output.push("<tr><th colspan='7'>Variables and Other Keywords</th></tr>");
         output.push("<tr><th>Variable Instances</th><td>" + o[0] + "</td><td>100.00%</td><td>" + zero(o[0], z[0]) + "</td><td>" + o[1] + "</td><td>100.00%</td><td>" + zero(o[1], z[1]) + "</td></tr>");

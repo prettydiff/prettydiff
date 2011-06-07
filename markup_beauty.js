@@ -12,30 +12,31 @@
  
  http://www.travelocity.com/
  http://mailmarkup.org/
- ***********************************************************************/
+ **********************************************************************/
 
 /*
  This application serves to beautify markup languages.  The intent of
  this application is to be language independant so long as the language
  is tag based using "<" as the tag opening delimiter and ">" as the tag
- ending delimiter.  The input does not have to be well formed or valid by
- any means so long as it can be determined where a tag begins and where a
- tag ends.  Additionally, the code also supports nested tags, such as
- JSTL tags <c:out value="<em>text</em>"/>.
+ ending delimiter.  The input does not have to be well formed or valid
+ by any means so long as it can be determined where a tag begins and
+ where a tag ends.  Additionally, the code also supports nested tags,
+ such as JSTL tags <c:out value="<em>text</em>"/>.
  
  The only HTML specific area inferred by this application is that the
- contents of "script" tags are presumed to be JavaScript and the contents
- of "style" tags are presumed to be CSS.
+ contents of "script" tags are presumed to be JavaScript and the
+ contents of "style" tags are presumed to be CSS.
  
  Since this code is entirely language independant it does not make
  assumptions on vocabulary.  This means singleton tags, tags that occur
- in a singular use opposed to tags that exist as a pair with one to serve
- as an opening and the other to serve as the closing tag, are only
- identified if they end with "/>".  Otherwise singleton tags are presumed
- to be opening tags will indent following tags as such.
+ in a singular use opposed to tags that exist as a pair with one to
+ serve as an opening and the other to serve as the closing tag, are only
+ identified if they end with "/>".  Otherwise singleton tags are
+ presumed to be opening tags will indent following tags as such.
  
  This code was created for three reasons:
- 1) Create an application that is more open and friendly to customization
+ 1) Create an application that is more open and friendly to
+ customization.
  
  2) Provide an application that recognizes many various tag grammars
  The default recognized tag types are:
@@ -113,7 +114,7 @@
  statements to prodive statistics for analysis of processed markup and
  to alter users if to possibly flaws in the input that may likely
  interefere with processing of beautification.
- ------------------------------------------------------------------------
+ -----------------------------------------------------------------------
  */
 var markup_beauty = function (source, indent_size, indent_character, mode, indent_comment, indent_script, presume_html, ignore_content) {
     "use strict";
@@ -833,58 +834,58 @@ var markup_beauty = function (source, indent_size, indent_character, mode, inden
                                     //indentation must be subtracted
                                     //from the prior indented start tag.
                                     var t = function () {
-                                        var s,
-                                            l = 0;
+                                            var s,
+                                                l = 0;
 
-                                        //Finds the prior start tag
-                                        //followed by a start tag where
-                                        //both have indentation.  This
-                                        //creates a frame of reference
-                                        //for performing reflexive
-                                        //calculation.
-                                        for (s = i - 1; s > 0; s -= 1) {
-                                            if ((cinfo[s] === "start" && cinfo[s + 1] === "start" && level[s] === level[s + 1] - 1) || (cinfo[s] === "start" && cinfo[s - 1] !== "start" && level[s] === level[s - 1])) {
-                                                break;
-                                            }
-                                        }
-
-                                        //Incrementor is increased if
-                                        //indented content found
-                                        //followed by unindented end tag
-                                        //by looping up from the frame
-                                        //of reference.
-                                        for (k = s + 1; k < i; k += 1) {
-                                            if (cinfo[k] === "mixed_start" && cinfo[k + 1] === "end") {
-                                                l += 1;
-                                            }
-                                        }
-
-                                        //If prior logic fails and frame
-                                        //of reference follows an
-                                        //indented end tag the
-                                        //incrementor is increased.
-                                        if (cinfo[s - 1] === "end" && level[s - 1] !== "x" && l === 0) {
-                                            l += 1;
-                                        }
-
-                                        //All prior logic can fail and
-                                        //so redundant check was added.
-                                        if (l !== 0) {
-                                            if (level[i - 1] === "x") {
-                                                return l - 1;
-                                            } else {
-                                                return l;
-                                            }
-                                        } else {
-                                            for (; s < i; s += 1) {
-                                                if (cinfo[s] === "start") {
-                                                    l += 1;
-                                                } else if (cinfo[s] === "end") {
-                                                    l -= 1;
+                                            //Finds the prior start tag
+                                            //followed by a start tag where
+                                            //both have indentation.  This
+                                            //creates a frame of reference
+                                            //for performing reflexive
+                                            //calculation.
+                                            for (s = i - 1; s > 0; s -= 1) {
+                                                if ((cinfo[s] === "start" && cinfo[s + 1] === "start" && level[s] === level[s + 1] - 1) || (cinfo[s] === "start" && cinfo[s - 1] !== "start" && level[s] === level[s - 1])) {
+                                                    break;
                                                 }
                                             }
-                                            return l;
-                                        }
+
+                                            //Incrementor is increased if
+                                            //indented content found
+                                            //followed by unindented end tag
+                                            //by looping up from the frame
+                                            //of reference.
+                                            for (k = s + 1; k < i; k += 1) {
+                                                if (cinfo[k] === "mixed_start" && cinfo[k + 1] === "end") {
+                                                    l += 1;
+                                                }
+                                            }
+
+                                            //If prior logic fails and frame
+                                            //of reference follows an
+                                            //indented end tag the
+                                            //incrementor is increased.
+                                            if (cinfo[s - 1] === "end" && level[s - 1] !== "x" && l === 0) {
+                                                l += 1;
+                                            }
+
+                                            //All prior logic can fail and
+                                            //so redundant check was added.
+                                            if (l !== 0) {
+                                                if (level[i - 1] === "x") {
+                                                    return l - 1;
+                                                } else {
+                                                    return l;
+                                                }
+                                            } else {
+                                                for (; s < i; s += 1) {
+                                                    if (cinfo[s] === "start") {
+                                                        l += 1;
+                                                    } else if (cinfo[s] === "end") {
+                                                        l -= 1;
+                                                    }
+                                                }
+                                                return l;
+                                            }
                                     };
                                     for (; y > 0; y -= 1) {
                                         if (cinfo[y] !== "mixed_end" || (cinfo[y] === "start" && level[y] !== "x")) {
@@ -1512,7 +1513,7 @@ var markup_beauty = function (source, indent_size, indent_character, mode, inden
                 }
                 return x;
             },
-            zipf = function () {
+            zipf = (function () {
                 var a,
                     b,
                     k,
@@ -1521,6 +1522,7 @@ var markup_beauty = function (source, indent_size, indent_character, mode, inden
                     x = "",
                     h = [],
                     g = [],
+                    i = [],
                     punctuation = function (y) {
                         return y.replace(/(\,|\.|\?|\!|\:) /, " ");
                     };
@@ -1583,8 +1585,15 @@ var markup_beauty = function (source, indent_size, indent_character, mode, inden
                     g[a] = "<tr><th>" + (a + 1) + "</th><td>" + g[a][1] + "</td><td>" + g[a][0] + "</td><td>" + h[a] + "</td><td>" + ((g[a][0] / x.length) * 100).toFixed(2) + "%</td></tr>";
                 }
                 g[g.length - 1] = "";
-                return "<table class='analysis' summary=\"Zipf's Law\"><caption>This table demonstrates <em>Zipf's Law</em> by listing the 10 most occuring words in the content and the number of times they occurred.</caption><thead><tr><th>Word Rank</th><th>Most Occurring Word by Rank</th><th>Number of Instances</th><th>Ratio Increased Over Next Most Frequence Occurance</th><th>Percentage from " + insertComma(x.length) + " Total Word</th></tr></thead><tbody>" + g.join("") + "</tbody></table>";
-            };
+                i.push("<table class='analysis' summary=\"Zipf's Law\"><caption>This table demonstrates <em>Zipf's Law</em> by listing the 10 most occuring words in the content and the number of times they occurred.</caption>");
+                i.push("<thead><tr><th>Word Rank</th><th>Most Occurring Word by Rank</th><th>Number of Instances</th><th>Ratio Increased Over Next Most Frequence Occurance</th><th>Percentage from ");
+                i.push(insertComma(x.length));
+                i.push(" Total Word</th></tr></thead><tbody>");
+                i.push(g.join(""));
+                i.push("</tbody></table>");
+                return i.join('');
+            }());
+        z = cinfo.length;
         for (a = 0; a < z; a += 1) {
             switch (cinfo[a]) {
             case "end":
@@ -1767,8 +1776,18 @@ var markup_beauty = function (source, indent_size, indent_character, mode, inden
         c.splice(11, 0, "<tr><th colspan='7'>Server Side Tags</th></tr>");
         c.splice(8, 0, "<tr><th>Total Content" + h(1) + "<tr><th colspan='7'>Parsing Declarations</th></tr>");
         c.splice(4, 0, "<tr><th>Total Common Tags" + h(0) + "<tr><th colspan='7'>Content</th></tr>");
-        c.splice(0, 0, "<div id='doc'>" + zipf() + "<table class='analysis' summary='Analysis of markup pieces.'><caption>Analysis of markup pieces.</caption><thead><tr><th>Type</th><th>Quantity of Tags</th><th>Percentage Quantity in Section</th><th>Percentage Quantity of Total</th><th>** Character Size</th><th>Percentage Size in Section</th><th>Percentage Size of Total</th></tr></thead><tbody><tr><th>Total Pieces</th><td>" + cinfo.length + "</td><td>100.00%</td><td>100.00%</td><td>" + summary.join("").length + "</td><td>100.00%</td><td>100.00%</td></tr><tr><th colspan='7'>Common Tags</th></tr>");
-        c.push("</tbody></table></div><p>* The number of requests is determined from the input submitted only and does not count the additional HTTP requests supplied from dynamically executed code, frames, iframes, css, or other external entities.</p><p>** Character size is measured from the individual pieces of tags and content specifically between minification and beautification.</p><p>*** The number of starting &lt;script&gt; and &lt;style&gt; tags is subtracted from the total number of start tags. The combination of those three values from the table above should equal the number of end tags or the code is in error.</p>" + n);
+        a = ["<div id='doc'>"];
+        a.push(zipf);
+        a.push("<table class='analysis' summary='Analysis of markup pieces.'><caption>Analysis of markup pieces.</caption><thead><tr><th>Type</th><th>Quantity of Tags</th><th>Percentage Quantity in Section</th><th>Percentage Quantity of Total</th><th>** Character Size</th><th>Percentage Size in Section</th><th>Percentage Size of Total</th></tr></thead><tbody><tr><th>Total Pieces</th><td>");
+        a.push(cinfo.length);
+        a.push("</td><td>100.00%</td><td>100.00%</td><td>");
+        a.push(summary.join("").length);
+        a.push("</td><td>100.00%</td><td>100.00%</td></tr><tr><th colspan='7'>Common Tags</th></tr>");
+        c.splice(0, 0, a.join(''));
+        c.push("</tbody></table></div><p>* The number of requests is determined from the input submitted only and does not count the additional HTTP requests supplied from dynamically executed code, frames, iframes, css, or other external entities.</p><p>**");
+        c.push("Character size is measured from the individual pieces of tags and content specifically between minification and beautification.</p><p>*** The number of starting &lt;script&gt; and &lt;style&gt; tags is subtracted from the total number of start tags.");
+        c.push("The combination of those three values from the table above should equal the number of end tags or the code is in error.</p>");
+        c.push(n);
         if (b[0] + b[15] + b[16] !== b[1]) {
             n = "s";
             a = (b[0] + b[15] + b[16]) - b[1];
@@ -1810,8 +1829,25 @@ var markup_beauty = function (source, indent_size, indent_character, mode, inden
             l = ", or <strong>" + l + "</strong> if inline script code and style tags are removed";
             h = ", or <strong>" + h + "</strong> if inline script code and style tags are removed";
         }
-        c.splice(0, 0, "<p>If the input is content it receives an efficiency score of <strong>" + k + "</strong>" + l + ". The efficiency score if this input is a large form or application is <strong>" + g + "</strong>" + h + ". Efficient markup achieves scores higher than 2.00 and excellent markup achieves scores higher than 4.00. The score reflects the highest number of tags to pieces of content where the weight of those tags is as small as possible compared to the weight of the content. The score is a performance metric only and is not associated with validity or well-formedness, but semantic code typically achieves the highest scores. All values are rounded to the nearest hundreth.</p><p><strong>Total input size:</strong> <em>" + insertComma(e) + "</em> characters</p><p><strong>Total output size:</strong> <em>" + insertComma(d) + "</em> characters</p><p><strong>* Total number of HTTP requests in supplied HTML:</strong> <em>" + m.length + "</em></p>");
-        return c.join('');
+        e = insertComma(e);
+        d = insertComma(d);
+        a = ["<p>If the input is content it receives an efficiency score of <strong>"];
+        a.push(k);
+        a.push("</strong>");
+        a.push(l);
+        a.push(". The efficiency score if this input is a large form or application is <strong>");
+        a.push(g);
+        a.push("</strong>");
+        a.push(h);
+        a.push(". Efficient markup achieves scores higher than 2.00 and excellent markup achieves scores higher than 4.00. The score reflects the highest number of tags to pieces of content where the weight of those tags is as small as possible compared to the weight of the content.");
+        a.push("The score is a performance metric only and is not associated with validity or well-formedness, but semantic code typically achieves the highest scores. All values are rounded to the nearest hundreth.</p><p><strong>Total input size:</strong> <em>");
+        a.push(e);
+        a.push("</em> characters</p><p><strong>Total output size:</strong> <em>");
+        a.push(d);
+        a.push("</em> characters</p><p><strong>* Total number of HTTP requests in supplied HTML:</strong> <em>");
+        a.push(m.length);
+        a.push("</em></p>");
+        return a.join('') + c.join('');
     };
     return build.join('').replace(/\n(\s)+\n/g, "\n\n");
 };
