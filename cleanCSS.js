@@ -1,32 +1,32 @@
 /*
-cleanCSS.js is originally written by Anthony Lieuallen
-    http://tools.arantius.com/tabifier
-
-This code is used with permission from the original author and is
-modified to meet the strict demands imposed by the Pretty Diff tool and
-JSLint.
-
-http://prettydiff.com/
-http://jslint.com/
-
-css_summary is a function that is not provided a scope by the cleanCSS
-function.  It is intended to be provided as a closure that it can access
-the interiors of cleanCSS, but remain accessible outside cleanCSS.  This
-function returns the number of HTTP requests from the beautified CSS and
-what those requests are.
-
-Arguements:
-
-   * x is the source code input
-   * size is the character size of an indentation
-   * character is the character that makes up an indentation
-   * comment determines whether or not code comments should be indented
-     to match the code or whitespace collapsed and left justified if
-     passed the value "noindent"
-   * alter is whether or not the source code should be manipulated to
-     correct some violations
-------------------------------------------------------------------------
-*/
+ cleanCSS.js is originally written by Anthony Lieuallen
+ http://tools.arantius.com/tabifier
+ 
+ This code is used with permission from the original author and is
+ modified to meet the strict demands imposed by the Pretty Diff tool and
+ JSLint.
+ 
+ http://prettydiff.com/
+ http://jslint.com/
+ 
+ css_summary is a function that is not provided a scope by the cleanCSS
+ function.  It is intended to be provided as a closure that it can
+ access the interiors of cleanCSS, but remain accessible outside
+ cleanCSS.  This function returns the number of HTTP requests from the
+ beautified CSS and what those requests are.
+ 
+ Arguements:
+ 
+ * x is the source code input
+ * size is the character size of an indentation
+ * character is the character that makes up an indentation
+ * comment determines whether or not code comments should be indented
+ to match the code or whitespace collapsed and left justified if
+ passed the value "noindent"
+ * alter is whether or not the source code should be manipulated to
+ correct some violations
+ -----------------------------------------------------------------------
+ */
 var cleanCSS = function (x, size, character, comment, alter) {
     "use strict";
     var q = x.length,
@@ -38,11 +38,11 @@ var cleanCSS = function (x, size, character, comment, alter) {
         tab = '',
 
         //fixURI forcefully inserts double quote characters into URI
-        //fragments.  If parenthesis characters are included as part of the
-        //URI fragment they must be escaped with a backslash character in
-        //accordance with the CSS specification: "\( \)".  If parenthesis is
-        //included as part of the URI string and not escaped fixURI will
-        //break your code.
+        //fragments.  If parenthesis characters are included as part of
+        //the URI fragment they must be escaped with a backslash
+        //character in accordance with the CSS specification: "\( \)".
+        //If parenthesis iscincluded as part of the URI string and not
+        //escaped fixURI will break your code.
         fixURI = function (y) {
             var a;
             y = y.replace(/\\\)/g, "~PDpar~").split("url(");
@@ -82,8 +82,8 @@ var cleanCSS = function (x, size, character, comment, alter) {
             }
         }()),
 
-        //sameDist is used by a replace method to remove redundant distance
-        //values amongst a single property declaration.
+        //sameDist is used by a replace method to remove redundant
+        //distance values amongst a single property declaration.
         sameDist = function (y) {
             if (y === "0") {
                 return y;
@@ -109,11 +109,24 @@ var cleanCSS = function (x, size, character, comment, alter) {
             return ": " + y.join(" ").replace(/\s+/g, " ").replace(/\s+$/, "");
         },
 
-        //endZero is used by a replace method to remove extraneous decimal
-        //characters if they are followed by 0 or more zero characters.
+        //endZero is used by a replace method to remove extraneous
+        //decimal characters if they are followed by 0 or more zero
+        //characters.
         endZero = function (y) {
             var a = y.indexOf(".");
             return y.substr(0, a);
+        },
+
+        //runZero suppresses continuous runs of 0 to a single 0 if they
+        //are not preceeded by a period (.), number sign (#), or a hex
+        //digit (0-9, a-f)
+        runZero = function (y) {
+            var a = y.charAt(0);
+            if (a === "#" || a === "." || /[a-f0-9]/.test(a)) {
+                return y;
+            } else {
+                return a + "0";
+            }
         },
 
         //startZero is used to add a leading zero character to positive
@@ -122,8 +135,8 @@ var cleanCSS = function (x, size, character, comment, alter) {
             return y.replace(/ \./g, " 0.");
         },
 
-        //emptyend is used to remove properties that are absent a value and
-        //semicolon at the end of a property list
+        //emptyend is used to remove properties that are absent a value
+        //and semicolon at the end of a property list
         emptyend = function (y) {
             var b = y.match(/^(\s*)/)[0],
                 c = b.substr(0, b.length - tab.length);
@@ -131,25 +144,24 @@ var cleanCSS = function (x, size, character, comment, alter) {
         },
 
         //a space is added after every colon.  This function remove the
-        //space after the colon separating the scheme from the heirarchy of
-        //URI strings.
+        //space after the colon separating the scheme from the heirarchy
+        //of URI strings.
         fixscheme = function (y) {
             return y.replace(/:\s+/, ":");
         },
 
-        //This function prevents percentage numbers from running together
+        //This prevents percentage numbers from running together
         fixpercent = function (y) {
             return y.replace(/%/, "% ");
         },
 
-        //this removes semicolons that appear between closing curly braces
+        //removes semicolons that appear between closing curly braces
         nestblock = function (y) {
             return y.replace(/\s*;\n/, "\n");
         },
 
-        //cleanAsync is the core of cleanCSS.  This function applies most of
-        //the new line characters and all the indentation.  This is also the
-        //slowest part of cleanCSS.
+        //cleanAsync is the core of cleanCSS.  This function applies
+        //most of the new line characters and all the indentation.
         cleanAsync = function () {
             var i,
                 b = x.length,
@@ -185,10 +197,10 @@ var cleanCSS = function (x, size, character, comment, alter) {
             }
         },
 
-        //This function is used to provide some minor algorithms to combine
-        //some CSS properties than can be combined and provides some
-        //advanced beautification.  This function does not condense the font
-        //or border properties at this time.
+        //This function is used to provide some minor algorithms to
+        //combine some CSS properties than can be combined and provides
+        //some advanced beautification.  This function does not condense
+        //the font or border properties at this time.
         reduction = function () {
             var a,
                 e,
@@ -200,9 +212,9 @@ var cleanCSS = function (x, size, character, comment, alter) {
                 c = "",
                 d = [],
 
-                //colorLow is used by a replace method to convert hex color
-                //codes to lowercase alpha characters and in some cases reduce
-                //the character count from 6 to 3.
+                //colorLow is used by a replace method to convert hex
+                //color codes to lowercase alpha characters and in some
+                //cases reduce the character count from 6 to 3.
                 colorLow = function (y) {
                     y = y.toLowerCase();
                     if (y.length === 7 && y.charAt(1) === y.charAt(2) && y.charAt(3) === y.charAt(4) && y.charAt(5) === y.charAt(6)) {
@@ -368,7 +380,9 @@ var cleanCSS = function (x, size, character, comment, alter) {
         b = x.length;
         for (a = 0; a < b; a += 1) {
             if (x[a].search(/\s*\/\*/) !== 0) {
-                x[a] = x[a].replace(/@charset\s*("|')?[\w\-]+("|')?;?\s*/gi, "").replace(/:[\w\s\!\.\-%]*\d+\.0*(?!\d)/g, endZero).replace(/:[\w\s\!\.\-%]* \.\d+/g, startZero).replace(/ \.?0((?=;)|(?= )|%|in|cm|mm|em|ex|pt|pc)/g, " 0px").replace(/: ((\.\d+|\d+\.\d+|\d+)[a-zA-Z]+|0 )+((\.\d+|\d+\.\d+|\d+)[a-zA-Z]+)|0/g, sameDist).replace(/background\-position: 0px;/g, "background-position: 0px 0px;").replace(/\s+\*\//g, "*/").replace(/PrettyDiff\|/g, "; ").replace(/\s*[\w\-]+:\s*\}/g, emptyend).replace(/\s*[\w\-]+:\s*;/g, "").replace(/\{\s+\}/g, "{}").replace(/url\("\w+: \/\//g, fixscheme).replace(/\}\s*;\s*\}/g, nestblock).replace(/:\s+#/g, ": #").replace(/(\s+;+\n)+/g, "\n");
+                x[a] = x[a].replace(/@charset\s*("|')?[\w\-]+("|')?;?\s*/gi, "").replace(/(\S|\s)0+/g, runZero).replace(/:[\w\s\!\.\-%]*\d+\.0*(?!\d)/g, endZero).replace(/:[\w\s\!\.\-%]* \.\d+/g, startZero).replace(/ \.?0((?=;)|(?= )|%|in|cm|mm|em|ex|pt|pc)/g, " 0px");
+                x[a] = x[a].replace(/: ((\.\d+|\d+\.\d+|\d+)[a-zA-Z]+|0 )+((\.\d+|\d+\.\d+|\d+)[a-zA-Z]+)|0/g, sameDist).replace(/background\-position: 0px;/g, "background-position: 0px 0px;").replace(/\s+\*\//g, "*/");
+                x[a] = x[a].replace(/PrettyDiff\|/g, "; ").replace(/\s*[\w\-]+:\s*\}/g, emptyend).replace(/\s*[\w\-]+:\s*;/g, "").replace(/\{\s+\}/g, "{}").replace(/url\("\w+: \/\//g, fixscheme).replace(/\}\s*;\s*\}/g, nestblock).replace(/:\s+#/g, ": #").replace(/(\s+;+\n)+/g, "\n");
             }
         }
         x = x.join("*/");
