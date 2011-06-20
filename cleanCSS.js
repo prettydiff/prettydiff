@@ -1,3 +1,4 @@
+/*prettydiff.com api.topcoms:true,api.insize:4,api.inchar:" " */
 /*
  cleanCSS.js is originally written by Anthony Lieuallen
  http://tools.arantius.com/tabifier
@@ -401,7 +402,7 @@ var cleanCSS = function (x, size, character, comment, alter) {
     if (comment === "noindent") {
         x = x.replace(/\s+\/\*/g, "\n/*").replace(/\n\s+\*\//g, "\n*/");
     }
-    css_summary = function () {
+    (function () {
         var a = 0,
             b = [],
             c = x.split("\n"),
@@ -466,7 +467,7 @@ var cleanCSS = function (x, size, character, comment, alter) {
         if (g.charAt(0) === ",") {
             g = g.slice(1, g.length);
         }
-        return "<p><strong>Total input size:</strong> <em>" + f + "</em> characters</p><p><strong>Total output size:</strong> <em>" + g + "</em> characters</p><p><strong>Number of HTTP requests:</strong> <em>" + h + "</em></p>" + b;
-    };
+        summary = "<p><strong>Total input size:</strong> <em>" + f + "</em> characters</p><p><strong>Total output size:</strong> <em>" + g + "</em> characters</p><p><strong>Number of HTTP requests:</strong> <em>" + h + "</em></p>" + b;
+    }());
     return x;
 };

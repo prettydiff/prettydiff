@@ -1,3 +1,4 @@
+/*prettydiff.com api.topcoms:true,api.insize:4,api.inchar:" " */
 /*global markupmin, js_beautify, cleanCSS, markup_summary*/
 /*
  This code may be used internally to Travelocity without limitation,
@@ -9,7 +10,7 @@
  This is written by Austin Cheney on 7 May 2009.  Anybody may use this
  code without permission so long as this comment exists verbatim in each
  instance of its use.
- 
+
  http://www.travelocity.com/
  http://mailmarkup.org/
  **********************************************************************/
@@ -22,22 +23,22 @@
  by any means so long as it can be determined where a tag begins and
  where a tag ends.  Additionally, the code also supports nested tags,
  such as JSTL tags <c:out value="<em>text</em>"/>.
- 
+
  The only HTML specific area inferred by this application is that the
  contents of "script" tags are presumed to be JavaScript and the
  contents of "style" tags are presumed to be CSS.
- 
+
  Since this code is entirely language independant it does not make
  assumptions on vocabulary.  This means singleton tags, tags that occur
  in a singular use opposed to tags that exist as a pair with one to
  serve as an opening and the other to serve as the closing tag, are only
  identified if they end with "/>".  Otherwise singleton tags are
  presumed to be opening tags will indent following tags as such.
- 
+
  This code was created for three reasons:
  1) Create an application that is more open and friendly to
  customization.
- 
+
  2) Provide an application that recognizes many various tag grammars
  The default recognized tag types are:
  * SGML comments "<!-- x -->"
@@ -53,12 +54,12 @@
  * start tags "<div>"
  * closing tags "</div>"
  * singleton tags "<link/>" or "<link />"
- 
+
  !! It should be noted that at this time the contents of ASP and PHP
  tags are completely preserved.  The only impact is that the opening
  line of these tags is indented exactly like a singleton tag up to the
  first line break.
- 
+
  3) This provides beautification that does not insert extra whitespace
  into the default whitespace parsed, tokenized, output.  This is
  accomplished by defining content as four different types:
@@ -66,7 +67,7 @@
  * mixed_start - This type begins but not ends with whitespace
  * mixed_end - This type ends but not begins with whitespace
  * mixed_both - This type ends and begins with whitespace
- 
+
  External Requirements:
  1) cleanCSS function - This stand alone application is the
  beautification engine used for the contents of "style" tags
@@ -78,7 +79,7 @@
  3a) markupmin requires the jsmin function for its standard
  minification, but that portion of markupmin is not used by
  markup_beauty
- 
+
  Arguments:
  1) source - This is the source content to parse.
  2) indent_size - This is the number of characters that make up a single
@@ -102,14 +103,14 @@
  and not string "true", then tags with certain tag names are converted
  to singleton types after the type assignment is performed.  This
  correction occurs regardless of syntax.
- 
+
  markup_summary
  The markup_summary function is defined at the very bottom of
  markup_beauty, but is not scoped by markup_beauty.  It is intended
  for use as closure to markup_beauty, because the variable name
  markup_summary is intended for use outside of markup_beauty, but it
  requires access to the variables and arrays of markup_beauty.
- 
+
  Markup Summary is a small HTML table and some conditional warning
  statements to prodive statistics for analysis of processed markup and
  to alter users if to possibly flaws in the input that may likely
@@ -126,7 +127,7 @@ var markup_beauty = function (source, indent_size, indent_character, mode, inden
         cinfo = [],
         level = [],
         inner = [],
-        summary = [],
+        sum = [],
         x = source,
         loop,
 
@@ -290,7 +291,7 @@ var markup_beauty = function (source, indent_size, indent_character, mode, inden
                             } else if ((x.charAt(b - 1) !== "\\" && ((x.charAt(a) === "\"" && x.charAt(b) === "\"") || (x.charAt(a) === "'" && x.charAt(b) === "'"))) || b === c - 1) {
                                 //The "l" variable is used as an on/off
                                 //switch to allow content, but not
-                                //sequentially.  Tags with quotes 
+                                //sequentially.  Tags with quotes
                                 //following content with quotes need to
                                 //be decremented to correct an inflated
                                 //count
@@ -672,7 +673,7 @@ var markup_beauty = function (source, indent_size, indent_character, mode, inden
                 }());
             //summary is a replica of the build array prior to any
             //beautification for use in the markup_summary function
-            summary = summary.concat(build);
+            sum = sum.concat(build);
         }()),
 
         //This function provides structual relevant descriptions for
@@ -821,7 +822,7 @@ var markup_beauty = function (source, indent_size, indent_character, mode, inden
 
                                 //This function finds the prior existing
                                 //indented start tag.  This start tag
-                                //may not be the current end tag's 
+                                //may not be the current end tag's
                                 //matching pair.  If the tag prior to
                                 //this indented start tag is not an end
                                 //tag this function escapes and later
@@ -1479,10 +1480,10 @@ var markup_beauty = function (source, indent_size, indent_character, mode, inden
                 }
             }
         }());
-    markup_summary = function () {
+    (function () {
         var a,
             b = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-            c,
+            c = [],
             d = build.join('').length,
             e = source.length,
             f,
@@ -1494,6 +1495,82 @@ var markup_beauty = function (source, indent_size, indent_character, mode, inden
             l,
             m = [],
             n = [],
+            o = [],
+            p = function (x) {
+                var u = function (x) {
+                        if (j[x] === 0) {
+                            return "0.00%";
+                        } else {
+                            return "100.00%";
+                        }
+                    },
+                    v = function (x) {
+                        if (f[x] === 0) {
+                            return "0.00%";
+                        } else {
+                            return "100.00%";
+                        }
+                    },
+                    w,
+                    y,
+                    z;
+                switch (x) {
+                case 0:
+                    if ((f[x] / cinfo.length) < 0.7) {
+                        y = "bad";
+                    } else {
+                        y = "good";
+                    }
+                    if ((j[x] / sum.join("").length) > 0.4) {
+                        z = "bad";
+                    } else {
+                        z = "good";
+                    }
+                    break;
+                case 1:
+                    if ((f[x] / cinfo.length) < 0.25) {
+                        y = "bad";
+                    } else {
+                        y = "good";
+                    }
+                    if ((j[x] / sum.join("").length) < 0.6) {
+                        z = "bad";
+                    } else {
+                        z = "good";
+                    }
+                    break;
+                case 2:
+                    if ((f[x] / cinfo.length) > 0.05) {
+                        y = "bad";
+                    } else {
+                        y = "good";
+                    }
+                    if ((j[x] / sum.join("").length) > 0.05) {
+                        z = "bad";
+                    } else {
+                        z = "good";
+                    }
+                    break;
+                }
+                w = ["</th><td>"];
+                w.push(f[x]);
+                w.push("</td><td>");
+                w.push(v(x));
+                w.push("</td><td class='");
+                w.push(y);
+                w.push("'>");
+                w.push(((f[x] / cinfo.length) * 100).toFixed(2));
+                w.push("%</td><td>");
+                w.push(j[x]);
+                w.push("</td><td>");
+                w.push(u(x));
+                w.push("</td><td class='");
+                w.push(z);
+                w.push("'>");
+                w.push(((j[x] / sum.join("").length) * 100).toFixed(2));
+                w.push("%</td></tr>");
+                return w.join("");
+            },
             z = cinfo.length,
             insertComma = function (x) {
                 if (typeof (x) === "number") {
@@ -1523,6 +1600,7 @@ var markup_beauty = function (source, indent_size, indent_character, mode, inden
                     h = [],
                     g = [],
                     i = [],
+                    j = 0,
                     punctuation = function (y) {
                         return y.replace(/(\,|\.|\?|\!|\:) /, " ");
                     };
@@ -1532,9 +1610,9 @@ var markup_beauty = function (source, indent_size, indent_character, mode, inden
                     } else if (cinfo[a] === "mixed_start") {
                         x += build[a];
                     } else if (cinfo[a] === "mixed_both") {
-                        x += build[a].substr(0, build[a].length - 1);
+                        x += build[a].substr(0, build[a].length);
                     } else if (cinfo[a] === "mixed_end") {
-                        x += " " + build[a].substr(0, build[a].length - 1);
+                        x += " " + build[a].substr(0, build[a].length);
                     }
                 }
                 if (x.length === 0) {
@@ -1547,10 +1625,12 @@ var markup_beauty = function (source, indent_size, indent_character, mode, inden
                 for (a = 0; a < z; a += 1) {
                     if (w[a] !== "") {
                         h.push([1, w[a]]);
+                        j += 1;
                         for (b = a + 1; b < z; b += 1) {
                             if (w[b] === w[a]) {
                                 h[h.length - 1][0] += 1;
                                 w[b] = "";
+                                j += 1;
                             }
                         }
                     }
@@ -1578,16 +1658,21 @@ var markup_beauty = function (source, indent_size, indent_character, mode, inden
                 } else if (g.length > 10) {
                     b = 10;
                 } else {
-                    b = g.length - 1;
+                    b = g.length;
                 }
                 for (a = 0; a < b; a += 1) {
-                    h[a] = (g[a][0] / g[a + 1][0]).toFixed(2);
-                    g[a] = "<tr><th>" + (a + 1) + "</th><td>" + g[a][1] + "</td><td>" + g[a][0] + "</td><td>" + h[a] + "</td><td>" + ((g[a][0] / x.length) * 100).toFixed(2) + "%</td></tr>";
+                    h[a] = (g[a + 1]) ? (g[a][0] / g[a + 1][0]).toFixed(2) : "1.00";
+                    g[a] = "<tr><th>" + (a + 1) + "</th><td>" + g[a][1] + "</td><td>" + g[a][0] + "</td><td>" + h[a] + "</td><td>" + ((g[a][0] / j) * 100).toFixed(2) + "%</td></tr>";
                 }
-                g[g.length - 1] = "";
+                if (g[10]) {
+                    g[10] = "";
+                }
+                if (b > 10) {
+                    g[g.length - 1] = "";
+                }
                 i.push("<table class='analysis' summary=\"Zipf's Law\"><caption>This table demonstrates <em>Zipf's Law</em> by listing the 10 most occuring words in the content and the number of times they occurred.</caption>");
                 i.push("<thead><tr><th>Word Rank</th><th>Most Occurring Word by Rank</th><th>Number of Instances</th><th>Ratio Increased Over Next Most Frequence Occurance</th><th>Percentage from ");
-                i.push(insertComma(x.length));
+                i.push(insertComma(j));
                 i.push(" Total Word</th></tr></thead><tbody>");
                 i.push(g.join(""));
                 i.push("</tbody></table>");
@@ -1598,86 +1683,91 @@ var markup_beauty = function (source, indent_size, indent_character, mode, inden
             switch (cinfo[a]) {
             case "end":
                 b[1] += 1;
-                i[1] += summary[a].length;
+                i[1] += sum[a].length;
+                if (sum[a].charAt(0) === " " && cinfo[a - 1] === "singleton") {
+                    i[1] -= 1;
+                    i[2] += 1;
+                }
                 break;
             case "singleton":
                 b[2] += 1;
-                i[2] += summary[a].length;
+                i[2] += sum[a].length;
                 if (((build[a].indexOf("<embed ") !== -1 || build[a].indexOf("<img ") !== -1 || build[a].indexOf("<iframe ") !== -1) && (build[a].indexOf("src") !== -1 && build[a].indexOf("src=\"\"") === -1 && build[a].indexOf("src=''") === -1)) || (build[a].indexOf("<link ") !== -1 && build[a].indexOf("rel") !== -1 && build[a].indexOf("canonical") === -1)) {
                     m.push(build[a]);
                 }
                 break;
             case "comment":
                 b[3] += 1;
-                i[3] += summary[a].length;
+                i[3] += sum[a].length;
                 break;
             case "content":
                 b[4] += 1;
-                i[4] += summary[a].length;
+                i[4] += sum[a].length;
                 break;
             case "mixed_start":
                 b[5] += 1;
-                i[5] += summary[a].length;
+                i[5] += (sum[a].length - 1);
                 break;
             case "mixed_end":
                 b[6] += 1;
-                i[6] += summary[a].length;
+                i[6] += (sum[a].length - 1);
                 break;
             case "mixed_both":
                 b[7] += 1;
-                i[7] += summary[a].length;
+                i[7] += (sum[a].length - 2);
                 break;
             case "parse":
                 b[10] += 1;
-                i[10] += summary[a].length;
+                i[10] += sum[a].length;
                 break;
             case "external":
                 b[17] += 1;
-                i[17] += summary[a].length;
-                if (((build[a].indexOf("<sc") !== -1 || build[a].indexOf("<embed ") !== -1 || build[a].indexOf("<img ") !== -1 || build[a].indexOf("<iframe ") !== -1) && (build[a].indexOf("src") !== -1 && build[a].indexOf("src=\"\"") === -1 && build[a].indexOf("src=''") === -1)) || (build[a].indexOf("<link ") !== -1 && build[a].indexOf("rel") !== -1 && build[a].indexOf("canonical") === -1)) {
+                i[17] += sum[a].length;
+                if (((build[a].indexOf("<script") !== -1 || build[a].indexOf("<embed ") !== -1 || build[a].indexOf("<img ") !== -1 || build[a].indexOf("<iframe ") !== -1) && (build[a].indexOf("src") !== -1 && build[a].indexOf("src=\"\"") === -1 && build[a].indexOf("src=''") === -1)) || (build[a].indexOf("<link ") !== -1 && build[a].indexOf("rel") !== -1 && build[a].indexOf("canonical") === -1)) {
                     m.push(build[a]);
                 }
                 break;
-            }
-            switch (token[a]) {
-            case "T_tag_start":
-                b[0] += 1;
-                i[0] += summary[a].length;
-                if (((build[a].indexOf("<embed ") !== -1 || build[a].indexOf("<img ") !== -1 || build[a].indexOf("<iframe ") !== -1) && (build[a].indexOf("src") !== -1 && build[a].indexOf("src=\"\"") === -1 && build[a].indexOf("src=''") === -1)) || (build[a].indexOf("<link ") !== -1 && build[a].indexOf("rel") !== -1 && build[a].indexOf("canonical") === -1)) {
-                    m.push(build[a]);
+            default:
+                switch (token[a]) {
+                case "T_tag_start":
+                    b[0] += 1;
+                    i[0] += sum[a].length;
+                    if (((build[a].indexOf("<embed ") !== -1 || build[a].indexOf("<img ") !== -1 || build[a].indexOf("<iframe ") !== -1) && (build[a].indexOf("src") !== -1 && build[a].indexOf("src=\"\"") === -1 && build[a].indexOf("src=''") === -1)) || (build[a].indexOf("<link ") !== -1 && build[a].indexOf("rel") !== -1 && build[a].indexOf("canonical") === -1)) {
+                        m.push(build[a]);
+                    }
+                    break;
+                case "T_sgml":
+                    b[8] += 1;
+                    i[8] += sum[a].length;
+                    break;
+                case "T_xml":
+                    b[9] += 1;
+                    i[9] += sum[a].length;
+                    break;
+                case "T_ssi":
+                    b[11] += 1;
+                    i[11] += sum[a].length;
+                    break;
+                case "T_asp":
+                    b[12] += 1;
+                    i[12] += sum[a].length;
+                    break;
+                case "T_php":
+                    b[13] += 1;
+                    i[13] += sum[a].length;
+                    break;
+                case "T_script":
+                    b[15] += 1;
+                    i[15] += sum[a].length;
+                    if (build[a].indexOf(" src") !== -1) {
+                        m.push(build[a]);
+                    }
+                    break;
+                case "T_style":
+                    b[16] += 1;
+                    i[16] += sum[a].length;
+                    break;
                 }
-                break;
-            case "T_sgml":
-                b[8] += 1;
-                i[8] += summary[a].length;
-                break;
-            case "T_xml":
-                b[9] += 1;
-                i[9] += summary[a].length;
-                break;
-            case "T_ssi":
-                b[11] += 1;
-                i[11] += summary[a].length;
-                break;
-            case "T_asp":
-                b[12] += 1;
-                i[12] += summary[a].length;
-                break;
-            case "T_php":
-                b[13] += 1;
-                i[13] += summary[a].length;
-                break;
-            case "T_script":
-                b[15] += 1;
-                i[15] += summary[a].length;
-                if (build[a].indexOf(" src") !== -1) {
-                    m.push(build[a]);
-                }
-                break;
-            case "T_style":
-                b[16] += 1;
-                i[16] += summary[a].length;
-                break;
             }
         }
         f = [b[0] + b[1] + b[2] + b[3], b[4] + b[5] + b[6] + b[7], b[15] + b[16] + b[17], b[11] + b[12] + b[13]];
@@ -1686,8 +1776,34 @@ var markup_beauty = function (source, indent_size, indent_character, mode, inden
         k = [j[0], j[0], j[0], j[0], j[1], j[1], j[1], j[1], i[10], i[10], i[10], j[3], j[3], j[3], j[3], j[2], j[2], j[2]];
         b[2] = b[2] - f[3];
         i[2] = i[2] - j[3];
+        if (b[0] + b[15] + b[16] !== b[1]) {
+            n = "s";
+            a = (b[0] + b[15] + b[16]) - b[1];
+            if (a > 0) {
+                if (a === 1) {
+                    n = "";
+                }
+                a = a + " more start tag" + n + " than end tag" + n + "! ";
+            } else {
+                if (a === -1) {
+                    n = "";
+                }
+                a = (a * -1) + " more end tag" + n + " than start tag" + n + "! ";
+            }
+            c.push("<p><em>" + a + "The combined total number of start tags, script tags, and style tags should equal the number of end tags. For HTML try the 'Presume SGML type HTML' option.</em></p>");
+        } else {
+            c.push("");
+        }
+        o.push("<div id='doc'>");
+        o.push(zipf);
+        o.push("<table class='analysis' summary='Analysis of markup pieces.'><caption>Analysis of markup pieces.</caption><thead><tr><th>Type</th><th>Quantity of Tags/Content</th><th>Percentage Quantity in Section</th><th>Percentage Quantity of Total</th><th>** Character Size</th><th>Percentage Size in Section</th><th>Percentage Size of Total</th></tr></thead><tbody><tr><th>Total Pieces</th><td>");
+        o.push(cinfo.length);
+        o.push("</td><td>100.00%</td><td>100.00%</td><td>");
+        o.push(sum.join("").length);
+        o.push("</td><td>100.00%</td><td>100.00%</td></tr><tr><th colspan='7'>Common Tags</th></tr>");
+        o = o.join("");
         c = ["*** Start Tags", "End Tags", "Singleton Tags", "Comments", "Flat String", "String with Space at Start", "String with Space at End", "String with Space at Start and End", "SGML", "XML", "Total Parsing Declarations", "SSI", "ASP", "PHP", "Total Server Side Tags", "*** Script Tags", "*** Style Tags", "JavaScript/CSS Code"];
-        z = c.length;
+        z = b.length;
         for (a = 0; a < z; a += 1) {
             if (g[a] === 0) {
                 h = "0.00%";
@@ -1703,108 +1819,59 @@ var markup_beauty = function (source, indent_size, indent_character, mode, inden
             } else {
                 l = ((i[a] / k[a]) * 100).toFixed(2) + "%";
             }
-            c[a] = "<tr><th>" + c[a] + "</th><td>" + b[a].toString() + "</td><td>" + h + "</td><td>" + ((b[a] / cinfo.length) * 100).toFixed(2) + "%</td><td>" + i[a] + "</td><td>" + l + "</td><td>" + ((i[a] / summary.join("").length) * 100).toFixed(2) + "%</td></tr>";
+            c[a] = ["<tr><th>" + c[a]];
+            c[a].push("</th><td>");
+            c[a].push(b[a]);
+            c[a].push("</td><td>");
+            c[a].push(h);
+            c[a].push("</td><td>");
+            c[a].push(((b[a] / cinfo.length) * 100).toFixed(2));
+            c[a].push("%</td><td>");
+            c[a].push(i[a]);
+            c[a].push("</td><td>");
+            c[a].push(l);
+            c[a].push("</td><td>");
+            c[a].push(((i[a] / sum.join("").length) * 100).toFixed(2));
+            c[a].push("%</td></tr>");
+            if (a === 3) {
+                c[a].push("<tr><th>Total Common Tags");
+                c[a].push(p(0));
+                c[a].push("<tr><th colspan='7'>Content</th></tr>");
+            } else if (a === 7) {
+                c[a].push("<tr><th>Total Content");
+                c[a].push(p(1));
+                c[a].push("<tr><th colspan='7'>Parsing Declarations</th></tr>");
+            } else if (a === 10) {
+                c[a].push("<tr><th colspan='7'>Server Side Tags</th></tr>");
+            } else if (a === 14) {
+                c[a].push("<tr><th colspan='7'>Style and Script Code/Tags</th></tr>");
+            } else if (a === 17) {
+                c[a].push("<tr><th>Total Script and Style Tags/Code");
+                c[a].push(p(2));
+            }
+            c[a] = c[a].join("");
         }
-        g = function (x) {
-            if (f[x] === 0) {
-                return "0.00%";
-            } else {
-                return "100.00%";
-            }
-        };
-        k = function (x) {
-            if (j[x] === 0) {
-                return "0.00%";
-            } else {
-                return "100.00%";
-            }
-        };
-        h = function (x) {
-            var y,
-                z;
-            switch (x) {
-            case 0:
-                if ((f[x] / cinfo.length) < 0.7) {
-                    y = "bad";
-                } else {
-                    y = "good";
-                }
-                if ((j[x] / summary.join("").length) > 0.4) {
-                    z = "bad";
-                } else {
-                    z = "good";
-                }
-                break;
-            case 1:
-                if ((f[x] / cinfo.length) < 0.25) {
-                    y = "bad";
-                } else {
-                    y = "good";
-                }
-                if ((j[x] / summary.join("").length) < 0.6) {
-                    z = "bad";
-                } else {
-                    z = "good";
-                }
-                break;
-            case 2:
-                if ((f[x] / cinfo.length) > 0.05) {
-                    y = "bad";
-                } else {
-                    y = "good";
-                }
-                if ((j[x] / summary.join("").length) > 0.05) {
-                    z = "bad";
-                } else {
-                    z = "good";
-                }
-                break;
-            }
-            return "</th><td>" + f[x] + "</td><td>" + g(x) + "</td><td class='" + y + "'>" + ((f[x] / cinfo.length) * 100).toFixed(2) + "%</td><td>" + j[x] + "</td><td>" + k(x) + "</td><td class='" + z + "'>" + ((j[x] / summary.join("").length) * 100).toFixed(2) + "%</td></tr>";
-        };
+        c.splice(0, 0, o);
         z = m.length;
+        n = [];
         for (a = 0; a < z; a += 1) {
-            n[a] = "<li>" + m[a].replace(/\&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/\"/g, "&quot;") + "</li>";
+            if (m[a]) {
+                n[a] = ["<li>"];
+                n[a].push(m[a].replace(/\&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;").replace(/'/g, "&rsquo;"));
+                n[a].push("</li>");
+                n[a] = n[a].join("");
+            }
         }
         if (n.length > 0) {
             n = "<h4>HTML elements making HTTP requests:</h4><ul>" + n.join("") + "</ul>";
         } else {
             n = "";
         }
-        c.splice(18, 0, "<tr><th>Total Script and Style Tags/Code" + h(2));
-        c.splice(15, 0, "<tr><th colspan='7'>Style and Script Code/Tags</th></tr>");
-        c.splice(11, 0, "<tr><th colspan='7'>Server Side Tags</th></tr>");
-        c.splice(8, 0, "<tr><th>Total Content" + h(1) + "<tr><th colspan='7'>Parsing Declarations</th></tr>");
-        c.splice(4, 0, "<tr><th>Total Common Tags" + h(0) + "<tr><th colspan='7'>Content</th></tr>");
-        a = ["<div id='doc'>"];
-        a.push(zipf);
-        a.push("<table class='analysis' summary='Analysis of markup pieces.'><caption>Analysis of markup pieces.</caption><thead><tr><th>Type</th><th>Quantity of Tags</th><th>Percentage Quantity in Section</th><th>Percentage Quantity of Total</th><th>** Character Size</th><th>Percentage Size in Section</th><th>Percentage Size of Total</th></tr></thead><tbody><tr><th>Total Pieces</th><td>");
-        a.push(cinfo.length);
-        a.push("</td><td>100.00%</td><td>100.00%</td><td>");
-        a.push(summary.join("").length);
-        a.push("</td><td>100.00%</td><td>100.00%</td></tr><tr><th colspan='7'>Common Tags</th></tr>");
-        c.splice(0, 0, a.join(''));
         c.push("</tbody></table></div><p>* The number of requests is determined from the input submitted only and does not count the additional HTTP requests supplied from dynamically executed code, frames, iframes, css, or other external entities.</p><p>**");
         c.push("Character size is measured from the individual pieces of tags and content specifically between minification and beautification.</p><p>*** The number of starting &lt;script&gt; and &lt;style&gt; tags is subtracted from the total number of start tags.");
         c.push("The combination of those three values from the table above should equal the number of end tags or the code is in error.</p>");
         c.push(n);
-        if (b[0] + b[15] + b[16] !== b[1]) {
-            n = "s";
-            a = (b[0] + b[15] + b[16]) - b[1];
-            if (a > 0) {
-                if (a === 1) {
-                    n = "";
-                }
-                a = a + " more start tag" + n + " than end tag" + n + "! ";
-            } else {
-                if (a === -1) {
-                    n = "";
-                }
-                a = (a * -1) + " more end tag" + n + " than start tag" + n + "! ";
-            }
-            c.splice(0, 0, "<p><em>" + a + "The combined total number of start tags, script tags, and style tags should equal the number of end tags. For HTML try the 'Presume SGML type HTML' option.</em></p>");
-        }
-        n = (summary.join("").length / 7500).toFixed(0);
+        n = (sum.join("").length / 7500).toFixed(0);
         if (n > 0) {
             n = (m.length - n) * 4;
         } else {
@@ -1816,7 +1883,7 @@ var markup_beauty = function (source, indent_size, indent_character, mode, inden
         }
         b = (((f[0] + f[2] - n) / cinfo.length) / (f[1] / cinfo.length));
         a = function (x, y) {
-            return (((j[0] + x) / summary.join("").length) / ((j[1] * y) / summary.join("").length));
+            return (((j[0] + x) / sum.join("").length) / ((j[1] * y) / sum.join("").length));
         };
         k = (b / a(j[2], 1)).toPrecision(2);
         l = (b / a(i[15], 1)).toPrecision(2);
@@ -1847,7 +1914,7 @@ var markup_beauty = function (source, indent_size, indent_character, mode, inden
         a.push("</em> characters</p><p><strong>* Total number of HTTP requests in supplied HTML:</strong> <em>");
         a.push(m.length);
         a.push("</em></p>");
-        return a.join('') + c.join('');
-    };
+        summary = a.join('') + c.join('');
+    }());
     return build.join('').replace(/\n(\s)+\n/g, "\n\n");
 };

@@ -96,6 +96,7 @@ http.createServer(function (req, res) {
             });
             req.on('end', function () {
                 var apidata = apichunk.join("").replace(/(\r\n)?\-{29}\d+\r\nContent\-Disposition\: form\-data; name\="/g, "").substr(6).split("pdiff_"),
+                    api = {},
                     filename = "txt",
                     filenamea = "",
                     a,
@@ -112,28 +113,8 @@ http.createServer(function (req, res) {
                     output,
                     name,
                     data = "",
-                    source = "",
-                    diff = "",
-                    diffout = "",
-                    mode = "beautify",
-                    lang = "javascript",
-                    csvchar = ",",
                     out = "web",
                     email,
-                    indent = "",
-                    insize = "4",
-                    inchar = " ",
-                    comments = "indent",
-                    style = "indent",
-					topcoms = false,
-                    html = false,
-                    context = "",
-                    content = false,
-                    quote = false,
-                    semicolon = false,
-                    diffview = "sidebyside",
-                    sourcelabel,
-                    difflabel,
                     getdiffpath = function (x) {
                         pathbody = [];
                         var status,
@@ -300,7 +281,7 @@ http.createServer(function (req, res) {
                                     from: "api@prettydiff.com",
                                     subject: "Pretty Diff - Auto Error",
                                     contenttype: "text/plain",
-                                    body: err.stack + "\n\nsource: " + source + "\n\ndiff: " + diff + "\n\nmode: " + mode + "\n\nlang: " + lang + "\n\nout: " + out + "\n\nemail: " + email + "\n\ncsvchar: " + csvchar + "\n\ninsize" + insize + "\n\ninchar" + inchar + "\n\ncomments: " + comments + "\n\nstyle: " + style + "\n\nhtml: " + html + "\n\ncontext: " + context + "\n\nquote: " + quote + "\n\nsemicolon: " + semicolon + "\n\ndiffview: " + diffview + "\n\nsourcelabel: " + sourcelabel + "\n\ndifflabel: " + difflabel
+                                    body: err.stack + "\n\nsource: " + api.source + "\n\ndiff: " + api.diff + "\n\nmode: " + api.mode + "\n\nlang: " + api.lang + "\n\nout: " + out + "\n\nemail: " + email + "\n\ncsvchar: " + api.csvchar + "\n\ninsize" + api.insize + "\n\ninchar" + api.inchar + "\n\ncomments: " + api.comments + "\n\nstyle: " + api.style + "\n\nhtml: " + api.html + "\n\ncontext: " + api.context + "\n\nquote: " + api.quote + "\n\nsemicolon: " + api.semicolon + "\n\ndiffview: " + api.diffview + "\n\nsourcelabel: " + api.sourcelabel + "\n\ndifflabel: " + api.difflabel
                                 });
                                 res.writeHead(200, "OK", {
                                     'Content-Type': 'text/plain'
@@ -308,7 +289,7 @@ http.createServer(function (req, res) {
                                 res.write("Pretty Diff API has encountered an unexpected error.  The error has been reported and will be fixed soon.");
                                 res.end();
                             });
-                            output = prettydiff.api([source, diff, mode, lang, csvchar, insize, inchar, comments, indent, style, html, context, content, quote, semicolon, diffview, sourcelabel, difflabel, ""]);
+                            output = prettydiff.api(api);
                             htmlHeading = function () {
                                 var filegif,
                                     accept = String(req.headers.accept).split(";")[0],
@@ -458,6 +439,23 @@ http.createServer(function (req, res) {
                             res.end();
                         }
                     };
+                api.mode = "beautify";
+                api.lang = "javascript";
+                api.csvchar = ",";
+                api.indent = "";
+                api.insize = "4";
+                api.inchar = " ";
+                api.comments = "indent";
+                api.style = "indent";
+                api.topcoms = false;
+                api.html = false;
+                api.context = "";
+                api.content = false;
+                api.quote = false;
+                api.semicolon = false;
+                api.diffview = "sidebyside";
+                api.sourcelabel = "base";
+                api.difflabel = "new";
                 for (a = 0; a < b; a += 1) {
                     if (apidata[a].indexOf("sourcefile") === 0) {
                         name = "sourcefile";
@@ -479,31 +477,31 @@ http.createServer(function (req, res) {
                     }
                     if ((name === "source" || name === "diff" || name === "csvchar" || name === "inchar" || name === "sourcelabel" || name === "difflabel" || name === "sourcepath" || name === "diffpath") && data !== "") {
                         if (name === "source") {
-                            source = data;
+                            api.source = data;
                         } else if (name === "diff") {
-                            diff = data;
+                            api.diff = data;
                         } else if (name === "csvchar") {
-                            csvchar = data;
+                            api.csvchar = data;
                         } else if (name === "inchar") {
-                            inchar = data;
+                            api.inchar = data;
                         } else if (name === "sourcelabel") {
-                            sourcelabel = data;
+                            api.sourcelabel = data;
                         } else if (name === "difflabel") {
-                            difflabel = data.replace(/(\r\n)?\-{29}\d+\-{2}(\r\n)?/g, "");
+                            api.difflabel = data.replace(/(\r\n)?\-{29}\d+\-{2}(\r\n)?/g, "");
                         } else if (name === "diffpath") {
                             diffpath = data;
                         }
                     } else if (name === "indent") {
-                        indent = data.toLowerCase();
+                        api.indent = data.toLowerCase();
                     } else if (name === "mode") {
                         data = data.toLowerCase();
                         if (data === "minify" || data === "diff") {
-                            mode = data;
+                            api.mode = data;
                         }
                     } else if (name === "lang") {
                         data = data.toLowerCase();
                         if (data === "css" || data === "csv" || data === "markup" || data === "text" || data === "auto") {
-                            lang = data;
+                            api.lang = data;
                         }
                     } else if (name === "out") {
                         data = data.toLowerCase();
@@ -515,41 +513,41 @@ http.createServer(function (req, res) {
                     } else if (name === "insize" || name === "context") {
                         if (Number(data) === Number(data)) {
                             if (name === "insize") {
-                                insize = data;
+                                api.insize = data;
                             } else {
-                                context = data;
+                                api.context = data;
                             }
                         }
                     } else if (name === "comments" || name === "style") {
                         if (data.toLowerCase() === "noindent") {
                             if (name === "comments") {
-                                comments = "noindent";
+                                api.comments = "noindent";
                             } else if (name === "style") {
-                                style = "noindent";
+                                api.style = "noindent";
                             }
                         }
                     } else if (name === "html") {
                         if (data.toLowerCase() === "html-yes") {
-                            html = "html-yes";
+                            api.html = "html-yes";
                         }
                     } else if (name === "content") {
                         if (data.toLowerCase() === "content-yes") {
-                            content = true;
+                            api.content = true;
                         }
                     } else if (name === "quote" || name === "semicolon") {
                         data = data.toLowerCase();
                         if (data === "true") {
                             if (name === "quote") {
-                                quote = true;
+                                api.quote = true;
                             } else {
-                                semicolon = true;
+                                api.semicolon = true;
                             }
                         }
-					} else if (name === "topcoms" && data === "true") {
-						topcoms = true;
+                    } else if (name === "topcoms" && data === "true") {
+                        api.topcoms = true;
                     } else if (name === "diffview") {
                         if (data.toLowerCase() === "inline") {
-                            diffview = "inline";
+                            api.diffview = "inline";
                         }
                     }
                 }
