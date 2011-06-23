@@ -3,12 +3,12 @@
  This work is an adaptation of jsminc.c published by Douglas Crockford.
  Permission is hereby granted to use the Javascript version under the
  same conditions as the jsmin.c on which it is based.
- 
+
  jsmin.c
  2006-05-04
- 
+
  Copyright (c) 2002 Douglas Crockford  (www.crockford.com)
- 
+
  Permission is hereby granted, free of charge, to any person obtaining a
  copy of this software and associated documentation files (the
  "Software"), to deal in the Software without restriction, including
@@ -16,12 +16,12 @@
  distribute, sublicense, and/or sell copies of the Software, and to
  permit persons to whom the Software is furnished to do so, subject to
  the following conditions:
- 
+
  The above copyright notice and this permission notice shall be included
  in all copies or substantial portions of the Software.
- 
+
  The Software shall be used for Good, not Evil.
- 
+
  THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
  OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
  MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.
@@ -29,9 +29,9 @@
  CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT,
  TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE
  SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
- 
+
  Arguements:
- 
+
  * comment allows a user to pass in an extraneous string that is
  returned to the front of the input.
  * input is the source code to manipulate.
@@ -43,7 +43,7 @@
  * alter is used for CSS processing only.  This argument determines
  whether or not the source code should be alter so to achieve a
  stronger minification resuling in smaller output.
- 
+
  */
 String.prototype.has = function (c) {
     return this.indexOf(c) > -1;
@@ -243,15 +243,6 @@ var jsmin = function (comment, input, level, type, alter, fcomment) {
             return a;
         },
 
-        //These next two functions prevent JSMin from seeing URIs in CSS as
-        //JavaScript line level comments
-        schemeesc = function (x) {
-            return x.replace("//", "prettydiffjsminscheme");
-        },
-        schemefix = function (x) {
-            return x.replace("prettydiffjsminscheme", "//");
-        },
-
         //sameDist is used in a replace method to shorten redundant CSS
         //distances to the fewest number of non-redundant increments
         sameDist = function (x) {
@@ -353,7 +344,7 @@ var jsmin = function (comment, input, level, type, alter, fcomment) {
         //used to see if a '/' is followed by a '/' or '*'.
         next = function () {
             var c = get();
-            if (c === '/') {
+            if (c === '/' && (type === 'javascript' || (type === 'css' && peek() !== '/'))) {
                 switch (peek()) {
                 case '/':
                     for (;;) {
@@ -416,9 +407,9 @@ var jsmin = function (comment, input, level, type, alter, fcomment) {
                         }
                         if (a <= '\n') {
                             if (type === "css") {
-                                error = 'Error: This does not appear to be CSS. Try submitting as plain text or markup.';
+                                error = 'Error: This does not appear to be CSS.';
                             } else {
-                                error = 'Error: This does not appear to be JavaScript. Try submitting as plain text or markup.';
+                                error = 'Error: This does not appear to be JavaScript.';
                             }
                             return error;
                         }
@@ -560,9 +551,6 @@ var jsmin = function (comment, input, level, type, alter, fcomment) {
         OTHERS = '_$//';
     }
     ALNUM = LETTERS + DIGITS + OTHERS;
-    if (type === "css") {
-        input = input.replace(/(([\w]+:)|(url\(("|')?))\/\//g, schemeesc);
-    }
     geti = 0;
     getl = input.length;
     ret = m(input);
@@ -570,7 +558,7 @@ var jsmin = function (comment, input, level, type, alter, fcomment) {
         ret = ret + "}";
     }
     if (type === "css") {
-        ret = ret.replace(/(:|(url\(("|')?))prettydiffjsminscheme/g, schemefix).replace(/\: #/g, ":#").replace(/\; #/g, ";#").replace(/\, #/g, ",#").replace(/\s+/g, " ").replace(/\} /g, '}').replace(/\{ /g, '{').replace(/\\\)/g, "~PDpar~").replace(/\)/g, ") ").replace(/\) ;/g, ");").replace(/\d%[a-z0-9]/g, fixpercent);
+        ret = ret.replace(/\: #/g, ":#").replace(/\; #/g, ";#").replace(/\, #/g, ",#").replace(/\s+/g, " ").replace(/\} /g, '}').replace(/\{ /g, '{').replace(/\\\)/g, "~PDpar~").replace(/\)/g, ") ").replace(/\) ;/g, ");").replace(/\d%[a-z0-9]/g, fixpercent);
         if (alter === true) {
             ret = reduction(ret).replace(/@charset("|')?[\w\-]+("|')?;?/gi, "").replace(/(#|\.)?[\w]*\{\}/gi, "").replace(/(\S|\s)0+/g, runZero).replace(/:[\w\s\!\.\-%]*\d+\.0*(?!\d)/g, endZero).replace(/(:| )0+\.\d+/g, startZero).replace(/\s?((\.\d+|\d+\.\d+|\d+)[a-zA-Z]+|0 )+((\.\d+|\d+\.\d+|\d+)[a-zA-Z]+)|0/g, sameDist);
             ret = ret.replace(/:\.?0(\%|px|in|cm|mm|em|ex|pt|pc)/g, ":0").replace(/ \.?0(\%|px|in|cm|mm|em|ex|pt|pc)/g, " 0").replace(/bottom:none/g, "bottom:0").replace(/top:none/g, "top:0").replace(/left:none/g, "left:0").replace(/right:none/, "right:0").replace(/:0 0 0 0/g, ":0");
