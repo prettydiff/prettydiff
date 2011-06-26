@@ -164,6 +164,21 @@ var markup_beauty = function (args) {
         x = args.source,
         loop,
 
+        //cdatafix temporarily transforms angle brackets in cdata
+        //declarations to prevent contamination.  This mutation is
+        //corrected at the top of the code_type function.
+        cdatafix = (function () {
+            var a = function (y) {
+                        y = y.replace(/</g, "\nprettydiffcdatas");
+                        return y;
+                    },
+                b = function (y) {
+                    y = y.replace(/>/g, "\nprettydiffcdatae");
+                    return y;
+                };
+            x = x.replace(/\/+<!\[+[A-Z]+\[+/g, a).replace(/\/+\]+>/g, b);
+        }()),
+
         //innerset Function is the logic that intelligently identifies
         //the angle brackets nested inside quotes and converts them to
         //square brackets to prevent interference of beautification.
@@ -704,9 +719,7 @@ var markup_beauty = function (args) {
                         }
                     }
                 }());
-            //summary is a replica of the build array prior to any
-            //beautification for use in the markup_summary function
-            sum = sum.concat(build);
+
         }()),
 
         //This function provides structual relevant descriptions for
@@ -714,6 +727,7 @@ var markup_beauty = function (args) {
         code_type = (function () {
             Z = token.length;
             for (i = 0; i < Z; i += 1) {
+                build[i] = build[i].replace(/\s*prettydiffcdatas/g, "<").replace(/\s*prettydiffcdatae/g, ">");
                 if (token[i] === "T_sgml" || token[i] === "T_xml") {
                     cinfo.push("parse");
                 } else if (token[i] === "T_asp" || token[i] === "T_php" || token[i] === "T_ssi") {
@@ -746,6 +760,9 @@ var markup_beauty = function (args) {
                     cinfo.push("end");
                 }
             }
+            //summary is a replica of the build array prior to any
+            //beautification for use in the markup_summary function
+            sum = sum.concat(build);
         }()),
 
         //The tag_check function creates the tab stops from the values
@@ -753,7 +770,9 @@ var markup_beauty = function (args) {
         //If no values are supplied or are supplied improperly a
         //reasonable default is created.
         tab_check = (function () {
-            var a, b = args.insize, c = args.inchar;
+            var a,
+                b = args.insize,
+                c = args.inchar;
             for (a = 0; a < b; a += 1) {
                 tab += c;
             }
@@ -915,7 +934,7 @@ var markup_beauty = function (args) {
                                                 }
                                                 return l;
                                             }
-                                    };
+                                        };
                                     for (; y > 0; y -= 1) {
                                         if (cinfo[y] !== "mixed_end" || (cinfo[y] === "start" && level[y] !== "x")) {
                                             if (cinfo[y - 1] === "end") {
@@ -1340,12 +1359,20 @@ var markup_beauty = function (args) {
                 //This logic only serves to assign the previously
                 //defined subfunctions to each of the cinfo values.
                 algorithm = (function () {
-                    var test = 0,
-                        test1 = 0,
+                    var test,
+                        test1,
+                        cdata,
+                        cdata1,
+                        cdataStart = (/^(\s*\/+<!\[+[A-Z]+\[+)/),
+                        cdataEnd = (/(\/+\]+>\s*)$/),
                         scriptStart = (/^(\s*<\!\-\-)/),
                         scriptEnd = (/(\-\->\s*)$/),
                         ops = {};
                     for (i = 0; i < loop; i += 1) {
+                        test = 0;
+                        test1 = 0;
+                        cdata = [""];
+                        cdata1 = [""];
                         if (i === 0) {
                             level.push(0);
                         } else if (cinfo[i] === "comment" && args.comments !== 'noindent') {
@@ -1362,13 +1389,24 @@ var markup_beauty = function (args) {
                                 //comment can confuse markupmin, so it
                                 //has to be temporarily removed.  This
                                 //logic is repeated for CSS styles.
+                                //CDATA blocks are also removed because
+                                //they are line comments in JavaScript
+                                //and may harm CSS
                                 if (scriptStart.test(build[i])) {
                                     test = 1;
+                                    build[i] = build[i].replace(scriptStart, "");
+                                } else if (cdataStart.test(build[i])) {
+                                    cdata = cdataStart.exec(build[i]);
+                                    build[i] = build[i].replace(cdataStart, "");
                                 }
                                 if (scriptEnd.test(build[i])) {
                                     test1 = 1;
+                                    build[i].replace(scriptEnd, "");
+                                } else if (cdataEnd.test(build[i])) {
+                                    cdata1 = cdataEnd.exec(build[i]);
+                                    build[i] = build[i].replace(cdataEnd, "");
                                 }
-                                ops.source = build[i].replace(scriptStart, "").replace(scriptEnd, "");
+                                ops.source = build[i];
                                 ops.insize = args.insize;
                                 ops.inchar = args.inchar;
                                 ops.preserve = true;
@@ -1381,24 +1419,40 @@ var markup_beauty = function (args) {
                                 build[i] = js_beautify(ops);
                                 if (test === 1) {
                                     build[i] = "<!--\n" + build[i];
+                                } else if (cdata !== "") {
+                                    build[i] = cdata[0] + "\n" + build[i];
                                 }
                                 if (test1 === 1) {
                                     build[i] = build[i] + "\n-->";
+                                } else if (cdata1 !== "") {
+                                    build[i] = build[i] + "\n" + cdata1[0];
                                 }
                                 build[i] = build[i].replace(/(\/\/(\s)+\-\->(\s)*)$/, "//-->");
                             } else if (token[i - 1] === "T_style") {
                                 if (scriptStart.test(build[i])) {
                                     test = 1;
+                                    build[i] = build[i].replace(scriptStart, "");
+                                } else if (cdataStart.test(build[i])) {
+                                    cdata = cdataStart.exec(build[i]);
+                                    build[i] = build[i].replace(cdataStart, "");
                                 }
                                 if (scriptEnd.test(build[i])) {
                                     test1 = 1;
+                                    build[i].replace(scriptEnd, "");
+                                } else if (cdataEnd.test(build[i])) {
+                                    cdata1 = cdataEnd.exec(build[i]);
+                                    build[i] = build[i].replace(cdataEnd, "");
                                 }
-                                build[i] = cleanCSS(build[i].replace(scriptStart, "").replace(scriptEnd, ""), args.insize, args.inchar, true);
+                                build[i] = cleanCSS(build[i], args.insize, args.inchar, true);
                                 if (test === 1) {
                                     build[i] = "<!--\n" + build[i];
+                                } else if (cdata !== "") {
+                                    build[i] = cdata[0] + "\n" + build[i];
                                 }
                                 if (test1 === 1) {
                                     build[i] = build[i] + "\n-->";
+                                } else if (cdata1 !== "") {
+                                    build[i] = build[i] + "\n" + cdata1[0];
                                 }
                             }
                         } else if (cinfo[i] === "content") {
