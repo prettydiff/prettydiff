@@ -1,5 +1,4 @@
 /*prettydiff.com api.topcoms:true,api.insize:4,api.inchar:" " */
-
 /*global markupmin, js_beautify, cleanCSS, markup_summary*/
 /*
  This code may be used internally to Travelocity without limitation,
@@ -113,6 +112,12 @@
  to singleton types after the type assignment is performed.  This
  correction occurs regardless of syntax.
 
+ 8) args.content
+
+ 9) args.force_indent - If this argument is supplied the boolean value
+ true then all parts of the source code are always indented without
+ regard for white space tokens.
+
  summary
  Variable summary is used in an unassigned anonymous function at the
  very bottom of markup_beauty, but is not scoped by markup_beauty.  It
@@ -128,33 +133,41 @@
  */
 var markup_beauty = function (args) {
     "use strict";
-    if (!args.source || args.source === "") {
-        return "Error: Source code is missing from markup_beauty.";
-    }
-    if (!args.insize || isNaN(args.insize)) {
-        args.insize = 4;
-    }
-    if (typeof args.inchar !== "string" || args.inchar.length < 1) {
-        args.inchar = " ";
-    }
-    if (!args.mode || args.mode !== "diff") {
-        args.mode = "beautify";
-    }
-    if (!args.comments || args.comments !== "indent") {
-        args.comments = "noindent";
-    }
-    if (!args.style || args.style !== "indent") {
-        args.style = "noindent";
-    }
-    if (!args.html || args.html !== true) {
-        args.html = false;
-    }
-    if (!args.content || args.content !== true) {
-        args.content = false;
+    (function () {
+        if (!args.source || typeof args.source !== "string") {
+            args.source = "";
+        }
+        if (!args.insize || isNaN(args.insize)) {
+            args.insize = 4;
+        }
+        if (typeof args.inchar !== "string" || args.inchar.length < 1) {
+            args.inchar = " ";
+        }
+        if (!args.mode || args.mode !== "diff") {
+            args.mode = "beautify";
+        }
+        if (!args.comments || args.comments !== "indent") {
+            args.comments = "noindent";
+        }
+        if (!args.style || args.style !== "indent") {
+            args.style = "noindent";
+        }
+        if (typeof args.html !== "boolean") {
+            args.html = false;
+        }
+        if (typeof args.content !== "boolean") {
+            args.content = false;
+        }
+        if (typeof args.force_indent !== "boolean") {
+            args.force_indent = false;
+        }
+    }());
+    if (args.source === "") {
+        return "Error: Source code is missing from markup_beauty.js";
     }
     var i,
         Z,
-        tab = '',
+        tab = "",
         token = [],
         build = [],
         cinfo = [],
@@ -169,9 +182,9 @@ var markup_beauty = function (args) {
         //corrected at the top of the code_type function.
         cdatafix = (function () {
             var a = function (y) {
-                        y = y.replace(/</g, "\nprettydiffcdatas");
-                        return y;
-                    },
+                    y = y.replace(/</g, "\nprettydiffcdatas");
+                    return y;
+                },
                 b = function (y) {
                     y = y.replace(/>/g, "\nprettydiffcdatae");
                     return y;
@@ -413,7 +426,7 @@ var markup_beauty = function (args) {
                 }
             }
             c = d.length;
-            x = x.split('');
+            x = x.split("");
 
             //Code hand off must occur between quote discovery and tag
             //count.  Hand off must allow for discovery to be repacked
@@ -494,7 +507,7 @@ var markup_beauty = function (args) {
             }
             //x must be joined back into a string so that it can pass
             //through the markupmin function.
-            x = x.join('');
+            x = x.join("");
         }()),
 
         //This function builds full tags and content into array elements
@@ -509,10 +522,10 @@ var markup_beauty = function (args) {
                 b = function (end) {
                     var d,
                         e,
-                        f = '',
+                        f = "",
                         c = i,
                         z = end.charAt(end.length - 2),
-                        y = end.split('').reverse(),
+                        y = end.split("").reverse(),
 
                         //The first loop looks for the end position of a
                         //tag.  The second loop verifies the first loop
@@ -544,7 +557,8 @@ var markup_beauty = function (args) {
                     if (e !== true) {
                         do {
                             g();
-                        } while (e !== true);
+                        }
+                        while (e !== true);
                     }
 
                     if (e === true) {
@@ -572,7 +586,7 @@ var markup_beauty = function (args) {
                 //is for tags.
                 cgather = function (z) {
                     var c,
-                        d = '',
+                        d = "",
                         e;
                     q = "";
                     for (c = i; c < loop; c += 1) {
@@ -660,46 +674,46 @@ var markup_beauty = function (args) {
                 type_define = (function () {
 
                     //Source data is minified before it is beautified.
-                    x = markupmin(x, args.mode, args.html).split('');
+                    x = markupmin(x, args.mode, args.html).split("");
                     loop = x.length;
 
                     for (i = 0; i < loop; i += 1) {
                         if (x[i] === "<" && x[i + 1] === "!" && x[i + 2] === "-" && x[i + 3] === "-" && x[i + 4] !== "#") {
-                            build.push(b('-->'));
+                            build.push(b("-->"));
                             token.push("T_comment");
                         } else if (x[i] === "<" && x[i + 1] === "!" && x[i + 2] === "-" && x[i + 3] === "-" && x[i + 4] === "#") {
-                            build.push(b('-->'));
+                            build.push(b("-->"));
                             token.push("T_ssi");
                         } else if (x[i] === "<" && x[i + 1] === "!" && x[i + 2] !== "-") {
-                            build.push(b('>'));
+                            build.push(b(">"));
                             token.push("T_sgml");
                         } else if (x[i] === "<" && x[i + 1] === "?" && x[i + 2].toLowerCase() === "x" && x[i + 3].toLowerCase() === "m" && x[i + 4].toLowerCase() === "l") {
-                            build.push(b('?>'));
+                            build.push(b("?>"));
                             token.push("T_xml");
                         } else if (x[i] === "<" && x[i + 1] === "?" && x[i + 2].toLowerCase() === "p" && x[i + 3].toLowerCase() === "h" && x[i + 4].toLowerCase() === "p") {
-                            build.push(b('?>'));
+                            build.push(b("?>"));
                             token.push("T_php");
                         } else if (x[i] === "<" && x[i + 1].toLowerCase() === "s" && x[i + 2].toLowerCase() === "c" && x[i + 3].toLowerCase() === "r" && x[i + 4].toLowerCase() === "i" && x[i + 5].toLowerCase() === "p" && x[i + 6].toLowerCase() === "t") {
-                            build.push(b('>'));
+                            build.push(b(">"));
                             token.push("T_script");
                         } else if (x[i] === "<" && x[i + 1].toLowerCase() === "s" && x[i + 2].toLowerCase() === "t" && x[i + 3].toLowerCase() === "y" && x[i + 4].toLowerCase() === "l" && x[i + 5].toLowerCase() === "e") {
-                            build.push(b('>'));
+                            build.push(b(">"));
                             token.push("T_style");
                         } else if (x[i] === "<" && x[i + 1] === "%") {
-                            build.push(b('%>'));
+                            build.push(b("%>"));
                             token.push("T_asp");
                         } else if (x[i] === "<" && x[i + 1] === "/") {
-                            build.push(b('>'));
+                            build.push(b(">"));
                             token.push("T_tag_end");
                         } else if (x[i] === "<" && (x[i + 1] !== "!" || x[i + 1] !== "?" || x[i + 1] !== "/" || x[i + 1] !== "%")) {
                             for (a = i; a < loop; a += 1) {
                                 if (x[a] !== "?" && x[a] !== "%") {
                                     if (x[a] === "/" && x[a + 1] === ">") {
-                                        build.push(b('/>'));
+                                        build.push(b("/>"));
                                         token.push("T_singleton");
                                         break;
                                     } else if (x[a + 1] === ">") {
-                                        build.push(b('>'));
+                                        build.push(b(">"));
                                         token.push("T_tag_start");
                                         break;
                                     }
@@ -882,59 +896,59 @@ var markup_beauty = function (args) {
                                     //indentation must be subtracted
                                     //from the prior indented start tag.
                                     var t = function () {
-                                            var s,
-                                                l = 0;
+                                        var s,
+                                            l = 0;
 
-                                            //Finds the prior start tag
-                                            //followed by a start tag where
-                                            //both have indentation.  This
-                                            //creates a frame of reference
-                                            //for performing reflexive
-                                            //calculation.
-                                            for (s = i - 1; s > 0; s -= 1) {
-                                                if ((cinfo[s] === "start" && cinfo[s + 1] === "start" && level[s] === level[s + 1] - 1) || (cinfo[s] === "start" && cinfo[s - 1] !== "start" && level[s] === level[s - 1])) {
-                                                    break;
-                                                }
+                                        //Finds the prior start tag
+                                        //followed by a start tag where
+                                        //both have indentation.  This
+                                        //creates a frame of reference
+                                        //for performing reflexive
+                                        //calculation.
+                                        for (s = i - 1; s > 0; s -= 1) {
+                                            if ((cinfo[s] === "start" && cinfo[s + 1] === "start" && level[s] === level[s + 1] - 1) || (cinfo[s] === "start" && cinfo[s - 1] !== "start" && level[s] === level[s - 1])) {
+                                                break;
                                             }
+                                        }
 
-                                            //Incrementor is increased if
-                                            //indented content found
-                                            //followed by unindented end tag
-                                            //by looping up from the frame
-                                            //of reference.
-                                            for (k = s + 1; k < i; k += 1) {
-                                                if (cinfo[k] === "mixed_start" && cinfo[k + 1] === "end") {
-                                                    l += 1;
-                                                }
-                                            }
-
-                                            //If prior logic fails and frame
-                                            //of reference follows an
-                                            //indented end tag the
-                                            //incrementor is increased.
-                                            if (cinfo[s - 1] === "end" && level[s - 1] !== "x" && l === 0) {
+                                        //Incrementor is increased if
+                                        //indented content found
+                                        //followed by unindented end tag
+                                        //by looping up from the frame
+                                        //of reference.
+                                        for (k = s + 1; k < i; k += 1) {
+                                            if (cinfo[k] === "mixed_start" && cinfo[k + 1] === "end") {
                                                 l += 1;
                                             }
+                                        }
 
-                                            //All prior logic can fail and
-                                            //so redundant check was added.
-                                            if (l !== 0) {
-                                                if (level[i - 1] === "x") {
-                                                    return l - 1;
-                                                } else {
-                                                    return l;
-                                                }
+                                        //If prior logic fails and frame
+                                        //of reference follows an
+                                        //indented end tag the
+                                        //incrementor is increased.
+                                        if (cinfo[s - 1] === "end" && level[s - 1] !== "x" && l === 0) {
+                                            l += 1;
+                                        }
+
+                                        //All prior logic can fail and
+                                        //so redundant check was added.
+                                        if (l !== 0) {
+                                            if (level[i - 1] === "x") {
+                                                return l - 1;
                                             } else {
-                                                for (; s < i; s += 1) {
-                                                    if (cinfo[s] === "start") {
-                                                        l += 1;
-                                                    } else if (cinfo[s] === "end") {
-                                                        l -= 1;
-                                                    }
-                                                }
                                                 return l;
                                             }
-                                        };
+                                        } else {
+                                            for (; s < i; s += 1) {
+                                                if (cinfo[s] === "start") {
+                                                    l += 1;
+                                                } else if (cinfo[s] === "end") {
+                                                    l -= 1;
+                                                }
+                                            }
+                                            return l;
+                                        }
+                                    };
                                     for (; y > 0; y -= 1) {
                                         if (cinfo[y] !== "mixed_end" || (cinfo[y] === "start" && level[y] !== "x")) {
                                             if (cinfo[y - 1] === "end") {
@@ -1345,13 +1359,13 @@ var markup_beauty = function (args) {
                             if (build[d].charAt(0) === " ") {
                                 c += 1;
                             }
-                            build[d] = build[d].split('');
+                            build[d] = build[d].split("");
                             if (b === "<" && build[d][c] === "[") {
                                 build[d][c] = "<";
                             } else if (b === ">" && build[d][c] === "]") {
                                 build[d][c] = ">";
                             }
-                            build[d] = build[d].join('');
+                            build[d] = build[d].join("");
                         }
                     }
                 }()),
@@ -1375,10 +1389,23 @@ var markup_beauty = function (args) {
                         cdata1 = [""];
                         if (i === 0) {
                             level.push(0);
-                        } else if (cinfo[i] === "comment" && args.comments !== 'noindent') {
-                            h();
-                        } else if (cinfo[i] === "comment" && args.comments === 'noindent') {
-                            level.push(0);
+                        } else if (args.force_indent) {
+                            if (cinfo[i] === "end") {
+                                if (cinfo[i - 1] === "start") {
+                                    level.push(level[i - 1]);
+                                } else {
+                                    level.push(level[i - 1] - 1);
+                                }
+                            } else {
+                                if (cinfo[i - 1] === "start") {
+                                    level.push(level[i - 1] + 1);
+                                } else {
+                                    level.push(level[i - 1]);
+                                }
+                                if (cinfo[i] === "mixed_end") {
+                                    build[i] = build[i].slice(0, build[i].length - 1);
+                                }
+                            }
                         } else if (cinfo[i] === "external") {
                             level.push(0);
                             if (token[i - 1] === "T_script") {
@@ -1455,27 +1482,33 @@ var markup_beauty = function (args) {
                                     build[i] = build[i] + "\n" + cdata1[0];
                                 }
                             }
-                        } else if (cinfo[i] === "content") {
-                            level.push("x");
-                        } else if (cinfo[i] === "parse") {
-                            h();
-                        } else if (cinfo[i] === "mixed_both") {
-                            //The next line merely removes the space at
-                            //front and back
-                            h();
-                        } else if (cinfo[i] === "mixed_start") {
-                            //The next line removes space at the front
-                            h();
-                        } else if (cinfo[i] === "mixed_end") {
-                            //The next line removes the space at the end
-                            build[i] = build[i].slice(0, build[i].length - 1);
-                            level.push("x");
-                        } else if (cinfo[i] === "start") {
-                            h();
-                        } else if (cinfo[i] === "end") {
-                            e();
-                        } else if (cinfo[i] === "singleton") {
-                            h();
+                        } else {
+                            if (cinfo[i] === "comment" && args.comments !== "noindent") {
+                                h();
+                            } else if (cinfo[i] === "comment" && args.comments === "noindent") {
+                                level.push(0);
+                            } else if (cinfo[i] === "content") {
+                                level.push("x");
+                            } else if (cinfo[i] === "parse") {
+                                h();
+                            } else if (cinfo[i] === "mixed_both") {
+                                //The next line merely removes the space at
+                                //front and back
+                                h();
+                            } else if (cinfo[i] === "mixed_start") {
+                                //The next line removes space at the front
+                                h();
+                            } else if (cinfo[i] === "mixed_end") {
+                                //The next line removes the space at the end
+                                build[i] = build[i].slice(0, build[i].length - 1);
+                                level.push("x");
+                            } else if (cinfo[i] === "start") {
+                                h();
+                            } else if (cinfo[i] === "end") {
+                                e();
+                            } else if (cinfo[i] === "singleton") {
+                                h();
+                            }
                         }
                     }
                 }());
@@ -1486,7 +1519,7 @@ var markup_beauty = function (args) {
         //indentation is designated by the values in the level array.
         write_tabs = (function () {
             var a,
-                indent = '',
+                indent = "",
 
                 //This function writes the standard indentation output
                 tab_math = function (x) {
@@ -1497,7 +1530,7 @@ var markup_beauty = function (args) {
                         x = x.slice(0, x.length - 1);
                     }
                     x = "\n" + indent + x;
-                    indent = '';
+                    indent = "";
                     return x;
                 },
 
@@ -1516,7 +1549,7 @@ var markup_beauty = function (args) {
                             indent += tab;
                         }
                         x = "\n" + indent + x;
-                        indent = '';
+                        indent = "";
                     }
                     return x;
                 },
@@ -1548,7 +1581,7 @@ var markup_beauty = function (args) {
                         }
                     }
                     x = "\n" + indent + x.replace(/\n/g, "\n" + indent);
-                    indent = '';
+                    indent = "";
                     return x;
                 };
 
@@ -1556,7 +1589,7 @@ var markup_beauty = function (args) {
             //three functions.
             loop = build.length;
             for (i = 1; i < loop; i += 1) {
-                if (cinfo[i] === "end" && (cinfo[i - 1] !== "content" && cinfo[i - 1] !== "mixed_start")) {
+                if (cinfo[i] === "end" && (args.force_indent || (cinfo[i - 1] !== "content" && cinfo[i - 1] !== "mixed_start"))) {
                     if (build[i].charAt(0) === " ") {
                         build[i] = build[i].substr(1);
                     }
@@ -1565,7 +1598,7 @@ var markup_beauty = function (args) {
                     }
                 } else if (cinfo[i] === "external" && args.style === "indent") {
                     build[i] = script_math(build[i]);
-                } else if (level[i] !== "x" && (cinfo[i - 1] !== "content" && cinfo[i - 1] !== "mixed_start")) {
+                } else if (level[i] !== "x" && (cinfo[i - 1] !== "content" && (cinfo[i - 1] !== "mixed_start" || args.force_indent))) {
                     if (build[i].charAt(0) === " ") {
                         build[i] = build[i].substr(1);
                     }
@@ -1577,7 +1610,7 @@ var markup_beauty = function (args) {
         var a,
             b = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
             c = [],
-            d = build.join('').length,
+            d = build.join("").length,
             e = args.source.length,
             f,
             g,
@@ -1591,12 +1624,12 @@ var markup_beauty = function (args) {
             o = [],
             p = function (x) {
                 var u = function (x) {
-                        if (j[x] === 0) {
-                            return "0.00%";
-                        } else {
-                            return "100.00%";
-                        }
-                    },
+                    if (j[x] === 0) {
+                        return "0.00%";
+                    } else {
+                        return "100.00%";
+                    }
+                },
                     v = function (x) {
                         if (f[x] === 0) {
                             return "0.00%";
@@ -1769,7 +1802,7 @@ var markup_beauty = function (args) {
                 i.push(" Total Word</th></tr></thead><tbody>");
                 i.push(g.join(""));
                 i.push("</tbody></table>");
-                return i.join('');
+                return i.join("");
             }());
         z = cinfo.length;
         for (a = 0; a < z; a += 1) {
@@ -2007,7 +2040,7 @@ var markup_beauty = function (args) {
         a.push("</em> characters</p><p><strong>* Total number of HTTP requests in supplied HTML:</strong> <em>");
         a.push(m.length);
         a.push("</em></p>");
-        summary = a.join('') + c.join('');
+        summary = a.join("") + c.join("");
     }());
-    return build.join('').replace(/\n(\s)+\n/g, "\n\n");
+    return build.join("").replace(/\n(\s)+\n/g, "\n\n");
 };
