@@ -8,7 +8,7 @@
  This is written by Austin Cheney on 7 May 2009.  Anybody may use this
  code without permission so long as this comment exists verbatim in each
  instance of its use.
- 
+
  http://www.travelocity.com/
  http://mailmarkup.org/
  **********************************************************************/
@@ -23,9 +23,9 @@
  independently support CSS and JavaScript minification.  It must be
  obtained from the following location.
  http://prettydiff.com/fulljsmin.js
- 
+
  Minification is achieved according to this pattern:
- 
+
  1) It looks for syntax characters inside tags.  Whitespace is
  tokenized inside tags and removes all whitespace directly next to
  a syntax character except quotes that do not occur directly next
@@ -40,11 +40,31 @@
  replace method, to tokenize additional spaces introduced by the
  prior logic except single spaces adjacent to singleton tags or
  content.
- 
+
+
+ Arguments:
+ * x = source code
+
+ * comments = whether or not to preserve comments.  Accepted values are
+ "comments" and "beautify".  The only difference is that "beautify"
+ will preserve the comments with inline CSS and JavaScript for use
+ with the markup_beauty.js application.
+
+ * presume_html = This lets the application know to expect HTML with
+ singleton tags that look like starting tags, such as "<br>" instead
+ of "<br/>".  The tag names usedbythis argument are located in the array
+ named "HTML" at the top of this code.  This argument accepts a Boolean
+ value.
+
+ * top_comments is passed through to the modified fulljsmin.js.  This
+ informs JSMin to preserve all comments before the first line of code
+ in CSS and JavaScript code.  This argument accepts a Boolean value.
+
+
  markupmin is composed of these child objects:
  * it: This self initiating function performs a single pass through
  the data looking for markup tags, script blocks, style blocks, and
- comments.  
+ comments. 
  * markupspace: This function is executed by the it function when a
  tag is encountered that is not a comment, style block, or script
  block.  This function serves to remove all spaces around syntax
@@ -58,7 +78,7 @@
  tag and passes them to jsmin.  The opening tag and output of jsmin
  is returned only after the original opening tag and tag content are
  removed.
- 
+
  At the end all other white space is tokenized and spaces around the
  opening and closing of tags, except those adjacent to content, is
  removed.
@@ -79,17 +99,17 @@ var markupmin = function (x, comments, presume_html, top_comments) {
         //markup tags.  Whitespace around certain syntax characters is
         //collapsed and all remaining whitespace is tokenized.
         markupspace = function () {
-            var d = '';
+            var d = "";
             Y = x.length;
             for (a = i; a < Y; a += 1) {
                 if (x[a] === ">") {
                     break;
                 } else {
                     d = d + x[a];
-                    x[a] = '';
+                    x[a] = "";
                 }
             }
-            d = d.replace(/\s+/g, " ").replace(/\s*,\s+/g, ", ").replace(/\s*\/\s*/g, "/").replace(/\s*\.\s*/g, ".").replace(/\s*=\s*/g, "=").replace(/\s*:\s*/g, ":").replace(/ \="/g, '="').replace(/ \='/g, "='") + ">";
+            d = d.replace(/\s+/g, " ").replace(/\s*,\s+/g, ", ").replace(/\s*\/\s*/g, "/").replace(/\s*\.\s*/g, ".").replace(/\s*=\s*/g, "=").replace(/\s*:\s*/g, ":").replace(/ \="/g, "=\"").replace(/ \='/g, "='") + ">";
             i = a;
             x[i] = d;
         },
@@ -100,7 +120,7 @@ var markupmin = function (x, comments, presume_html, top_comments) {
         //which is fine because they would not be parsed by a browser
         //anyways.
         markupcomment = function () {
-            c = '';
+            c = "";
             Y = x.length;
             for (b = i; b < Y; b += 1) {
                 if (x[b] === "-" && x[b + 1] === "-" && x[b + 2] === ">") {
@@ -130,7 +150,7 @@ var markupmin = function (x, comments, presume_html, top_comments) {
             }
             var e = [],
                 f,
-                h = '',
+                h = "",
                 j = "</" + z,
                 m;
             Y = x.length;
@@ -156,23 +176,23 @@ var markupmin = function (x, comments, presume_html, top_comments) {
             for (; f < Y; f += 1) {
                 if (x[f] !== ">") {
                     h = h + x[f];
-                    x[f] = '';
+                    x[f] = "";
                 } else {
                     break;
                 }
             }
             h = h + ">";
             i = f;
-            if (e.join('') === "") {
+            if (e.join("") === "") {
                 x[i] = m + h;
                 return;
             }
-            e = e.join('');
+            e = e.join("");
             if (comments !== "beautify") {
                 if (z === "style") {
-                    e = jsmin('', e, 3, 'css', true, top_comments);
+                    e = jsmin("", e, 3, "css", true, top_comments);
                 } else {
-                    e = jsmin('', e.replace(/^(\s*<\!\-\-)/, "").replace(/(\-\->\s*)$/, ""), 3, 'javascript', false, top_comments);
+                    e = jsmin("", e.replace(/^(\s*<\!\-\-)/, "").replace(/(\-\->\s*)$/, ""), 3, "javascript", false, top_comments);
                 }
             }
             Y = e.length;
@@ -187,7 +207,7 @@ var markupmin = function (x, comments, presume_html, top_comments) {
         },
 
         preserve = function (end) {
-            b = '';
+            b = "";
             Y = x.length;
             for (c = i; c < Y; c += 1) {
                 if (x[c - 1] + x[c] === end) {
@@ -196,35 +216,35 @@ var markupmin = function (x, comments, presume_html, top_comments) {
             }
             for (a = i; a < c; a += 1) {
                 b += x[a];
-                x[a] = '';
+                x[a] = "";
             }
             x[i] = b;
             i = c;
         },
 
         content = function () {
-            b = '';
+            b = "";
             Y = x.length;
             for (a = i; a < Y; a += 1) {
                 if (x[a] === "<") {
                     break;
                 } else {
                     b = b + x[a];
-                    x[a] = '';
+                    x[a] = "";
                 }
             }
             i = a - 1;
             x[i] = b.replace(/\s+/g, " ");
         },
 
-        //This self invocating function is the action piece of markupmin. 
+        //This self invocating function is the action piece of markupmin.
         //It is a single loop that execute the closures described above when
         //comments, tags, style blocks, and/or script blocks are
         //encountered.  No logic is performed on content, aside from
         //whitespace tokenization.
         it = (function () {
             y = x;
-            x = x.split('');
+            x = x.split("");
             for (i = 0; i < x.length; i += 1) {
 
                 //If markupmin is requested by markup_beauty then do not
@@ -308,7 +328,7 @@ var markupmin = function (x, comments, presume_html, top_comments) {
             }
         }
     }
-    x = x.join('').replace(/-->\s+/g, '-->').replace(/\s+<\?php/g, ' <?php').replace(/\s+<%/g, ' <%').replace(/\s*>\s+/g, '> ').replace(/\s+<\s*/g, ' <').replace(/\s+\/>/g, '/>').replace(/\s+>/g, ">");
+    x = x.join("").replace(/-->\s+/g, "--> ").replace(/\s+<\?php/g, " <?php").replace(/\s+<%/g, " <%").replace(/\s*>\s+/g, "> ").replace(/\s+<\s*/g, " <").replace(/\s+\/>/g, "/>").replace(/\s+>/g, ">");
     if (white.test(x.charAt(0))) {
         x = x.slice(1, x.length);
     }

@@ -52,7 +52,7 @@ var js_beautify = function (args) {
         if (!args.source || typeof args.source !== "string") {
             args.source = "";
         }
-        if (!args.insize || isNaN(args.insize)) {
+        if (args.insize === undefined || isNaN(args.insize)) {
             args.insize = 4;
         }
         if (!args.inchar || args.inchar.length < 1 || typeof args.inchar !== "string") {

@@ -137,7 +137,7 @@ var markup_beauty = function (args) {
         if (!args.source || typeof args.source !== "string") {
             args.source = "";
         }
-        if (!args.insize || isNaN(args.insize)) {
+        if (args.insize === undefined || isNaN(args.insize)) {
             args.insize = 4;
         }
         if (typeof args.inchar !== "string" || args.inchar.length < 1) {
