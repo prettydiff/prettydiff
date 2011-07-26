@@ -70,7 +70,7 @@ var js_beautify = function (args) {
         if (!args.space || args.space !== true) {
             args.space = false;
         }
-        if (!args.braces || typeof args.braches !== "boolean") {
+        if (!args.braces || typeof args.braces !== "boolean") {
             if (args.braces === "allman") {
                 args.braces = true;
             } else {
