@@ -595,6 +595,8 @@ var markup_beauty = function (args) {
                         if (q === "" && x[c - 1] !== "\\") {
                             if (x[c] === "/" && x[c + 1] && x[c + 1] === "/") {
                                 q = "//";
+                            } else if (x[c] === "/" && x[c + 1] && x[c + 1] === "*") {
+                                q = "/*";
                             } else if (x[c] === "'" || x[c] === "\"" || x[c] === "/") {
                                 //It is necessary to determine if this is division
                                 //or the opening of a regular expression.  If
@@ -616,7 +618,7 @@ var markup_beauty = function (args) {
                                     q = x[c];
                                 }
                             }
-                        } else if (x[c - 1] !== "\\" && ((q === "'" && x[c] === "'") || (q === "\"" && x[c] === "\"") || (q === "/" && x[c] === "/") || (q === "//" && x[c] === "\n"))) {
+                        } else if (x[c - 1] !== "\\" && ((q === "'" && x[c] === "'") || (q === "\"" && x[c] === "\"") || (q === "/" && x[c] === "/") || (q === "//" && x[c] === "\n") || (q === "/*" && x[c - 1] === "*" && x[c] === "/"))) {
                             q = "";
                         }
                         if (((z === "script" && q === "") || z === "style") && x[c] === "<" && x[c + 1] === "/" && x[c + 2].toLowerCase() === "s") {

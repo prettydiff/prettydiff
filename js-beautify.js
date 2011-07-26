@@ -102,6 +102,7 @@ var js_beautify = function (args) {
         o = [0, 0],
         w = [0, 0, 0, 0],
         i,
+        insize = args.insize,
         input = args.source,
         input_length = args.source.length,
         t,
@@ -622,9 +623,9 @@ var js_beautify = function (args) {
             }
             return [c, "TK_UNKNOWN"];
         };
-    while (args.insize > 0) {
+    while (insize > 0) {
         indent_string += args.inchar;
-        args.insize -= 1;
+        insize -= 1;
     }
     set_mode("BLOCK");
     parser_pos = 0;
