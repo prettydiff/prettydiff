@@ -1311,6 +1311,8 @@ var markup_beauty = function (args) {
                             }
                         }
                         return level.push(0);
+                    } else if (build[i].charAt(0) !== " " && (cinfo[i - 1] === "singleton" || cinfo[i - 1] === "content" || cinfo[i - 1] === "mixed_start")) {
+                        return level.push("x");
                     } else {
                         return c("start");
                     }
@@ -1409,8 +1411,25 @@ var markup_beauty = function (args) {
                                 }
                             }
                         } else if (cinfo[i] === "external") {
-                            level.push(0);
-                            if (token[i - 1] === "T_script") {
+                            if (/\s*<\!\-\-\s*\-\->\s*/.test(build[i])) {
+
+                                //If the contents of a script or style
+                                //tag are only a single HTML comment
+                                //then lets treat it as a comment
+                                if (build[i].charAt(0) === " ") {
+                                    build[i] = build[i].substr(1);
+                                }
+                                if (build[i].charAt(build[i].length - 1) === " ") {
+                                    build[i] = build[i].substr(0, build[i].length - 1);
+                                }
+                                cinfo[i] = "comment";
+                                token[i] = "T_comment";
+                                if (args.comments !== "noindent") {
+                                    level.push(level[i - 1] + 1);
+                                } else {
+                                    level.push(0);
+                                }
+                            } else if (token[i - 1] === "T_script") {
 
                                 //If script begins with an HTML comment
                                 //then the comment must be removed, and
@@ -1421,6 +1440,7 @@ var markup_beauty = function (args) {
                                 //CDATA blocks are also removed because
                                 //they are line comments in JavaScript
                                 //and may harm CSS
+                                level.push(0);
                                 if (scriptStart.test(build[i])) {
                                     test = 1;
                                     build[i] = build[i].replace(scriptStart, "");
@@ -1458,6 +1478,7 @@ var markup_beauty = function (args) {
                                 }
                                 build[i] = build[i].replace(/(\/\/(\s)+\-\->(\s)*)$/, "//-->");
                             } else if (token[i - 1] === "T_style") {
+                                level.push(0);
                                 if (scriptStart.test(build[i])) {
                                     test = 1;
                                     build[i] = build[i].replace(scriptStart, "");
