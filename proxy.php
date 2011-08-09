@@ -1,7 +1,7 @@
 <?php
 $referer = $_SERVER['HTTP_REFERER'];
 $refpos = strpos($referer, 'prettydiff.com');
-if ($refpos === 7 || $refpos === 11) {
+if ($refpos === 0 || $refpos === 7 || $refpos === 11) {
     $x = $_GET['x'];
     //$r = file_get_contents($x);
     //echo($r);

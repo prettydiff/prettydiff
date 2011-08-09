@@ -341,7 +341,8 @@ var js_beautify = function (args) {
                 resulting_string,
                 in_char_class,
                 sharp,
-                whitespace_count = 0;
+                whitespace_count = 0,
+                dot = true;
             n_newlines = 0;
             if (parser_pos >= input_length) {
                 return ["", "TK_EOF"];
@@ -431,13 +432,24 @@ var js_beautify = function (args) {
                         }
                     }
                 }
-                // small and surprisingly unugly hack for 1E-10
-                // representation
-                if (parser_pos !== input_length && c.match(/^[0-9]+[Ee]$/) && (input.charAt(parser_pos) === "-" || input.charAt(parser_pos) === "+")) {
-                    sign = input.charAt(parser_pos);
-                    parser_pos += 1;
-                    t = this(parser_pos);
-                    c += sign + t[0];
+                if (parser_pos !== input_length && c.match(/^\d+[Ee]$/) && (input.charAt(parser_pos) === "-" || input.charAt(parser_pos) === "+")) {
+                    sign = [input.charAt(parser_pos)];
+                    while (parser_pos < input_length) {
+                        parser_pos += 1;
+                        if (input.charAt(parser_pos).match(/\d|\./)) {
+                            if (input.charAt(parser_pos).match(/\./)) {
+                                if (dot) {
+                                    dot = false;
+                                } else {
+                                    sign.push(" ");
+                                }
+                            }
+                            sign.push(input.charAt(parser_pos));
+                        } else {
+                            break;
+                        }
+                    }
+                    c += sign.join("");
                     return [c, "TK_WORD"];
                 }
                 // hack for "in" operator
