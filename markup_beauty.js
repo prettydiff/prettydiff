@@ -618,7 +618,7 @@ var markup_beauty = function (args) {
                                     q = x[c];
                                 }
                             }
-                        } else if (x[c - 1] !== "\\" && ((q === "'" && x[c] === "'") || (q === "\"" && x[c] === "\"") || (q === "/" && x[c] === "/") || (q === "//" && x[c] === "\n") || (q === "/*" && x[c - 1] === "*" && x[c] === "/"))) {
+                        } else if (x[c - 1] !== "\\" && ((q === "'" && x[c] === "'") || (q === "\"" && x[c] === "\"") || (q === "/" && x[c] === "/") || (q === "//" && (x[c] === "\n" || (x[c - 4] && x[c - 4] === "/" && x[c - 3] === "/" && x[c - 2] === "-" && x[c - 1] === "-" && x[c] === ">"))) || (q === "/*" && x[c - 1] === "*" && x[c] === "/"))) {
                             q = "";
                         }
                         if (((z === "script" && q === "") || z === "style") && x[c] === "<" && x[c + 1] === "/" && x[c + 2].toLowerCase() === "s") {
@@ -680,7 +680,7 @@ var markup_beauty = function (args) {
                     loop = x.length;
 
                     for (i = 0; i < loop; i += 1) {
-                        if (x[i] === "<" && x[i + 1] === "!" && x[i + 2] === "-" && x[i + 3] === "-" && x[i + 4] !== "#") {
+                        if (x[i] === "<" && x[i + 1] === "!" && x[i + 2] === "-" && x[i + 3] === "-" && x[i + 4] !== "#" && token[token.length - 1] !== "T_script" && token[token.length - 1] !== "T_style") {
                             build.push(b("-->"));
                             token.push("T_comment");
                         } else if (x[i] === "<" && x[i + 1] === "!" && x[i + 2] === "-" && x[i + 3] === "-" && x[i + 4] === "#") {
@@ -707,7 +707,7 @@ var markup_beauty = function (args) {
                         } else if (x[i] === "<" && x[i + 1] === "/") {
                             build.push(b(">"));
                             token.push("T_tag_end");
-                        } else if (x[i] === "<" && (x[i + 1] !== "!" || x[i + 1] !== "?" || x[i + 1] !== "/" || x[i + 1] !== "%")) {
+                        } else if (x[i] === "<" && token[token.length - 1] !== "T_script" && token[token.length - 1] !== "T_style" && (x[i + 1] !== "!" || x[i + 1] !== "?" || x[i + 1] !== "/" || x[i + 1] !== "%")) {
                             for (a = i; a < loop; a += 1) {
                                 if (x[a] !== "?" && x[a] !== "%") {
                                     if (x[a] === "/" && x[a + 1] === ">") {
@@ -1425,7 +1425,7 @@ var markup_beauty = function (args) {
                                 cinfo[i] = "comment";
                                 token[i] = "T_comment";
                                 if (args.comments !== "noindent") {
-                                    level.push(level[i - 1] + 1);
+                                    h();
                                 } else {
                                     level.push(0);
                                 }
@@ -1448,7 +1448,7 @@ var markup_beauty = function (args) {
                                     cdata = cdataStart.exec(build[i]);
                                     build[i] = build[i].replace(cdataStart, "");
                                 }
-                                if (scriptEnd.test(build[i])) {
+                                if (scriptEnd.test(build[i]) && !/(\/\/\-\->\s*)$/.test(build[i])) {
                                     test1 = 1;
                                     build[i].replace(scriptEnd, "");
                                 } else if (cdataEnd.test(build[i])) {
@@ -1476,7 +1476,7 @@ var markup_beauty = function (args) {
                                 } else if (cdata1 !== "") {
                                     build[i] = build[i] + "\n" + cdata1[0];
                                 }
-                                build[i] = build[i].replace(/(\/\/(\s)+\-\->(\s)*)$/, "//-->");
+                                build[i] = build[i].replace(/(\/\/(\s)+\-\->(\s)*)$/, "//-->").replace(/^\s*/, "").replace(/\s*$/, "");
                             } else if (token[i - 1] === "T_style") {
                                 level.push(0);
                                 if (scriptStart.test(build[i])) {
@@ -1504,6 +1504,7 @@ var markup_beauty = function (args) {
                                 } else if (cdata1 !== "") {
                                     build[i] = build[i] + "\n" + cdata1[0];
                                 }
+                                build[i] = build[i].replace(/^\s*/, "").replace(/\s*$/, "");
                             }
                         } else {
                             if (cinfo[i] === "comment" && args.comments !== "noindent") {
@@ -2006,7 +2007,7 @@ var markup_beauty = function (args) {
         for (a = 0; a < z; a += 1) {
             if (m[a]) {
                 n[a] = ["<li>"];
-                n[a].push(m[a].replace(/\&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;").replace(/'/g, "&rsquo;"));
+                n[a].push(m[a].replace(/\&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;"));
                 n[a].push("</li>");
                 n[a] = n[a].join("");
             }
