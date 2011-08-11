@@ -1,16 +1,16 @@
 /***
  Completely rewritten by Austin Cheney on 2009-04-29 to avoid accessing
  the DOM.
- 
+
  This is part of jsdifflib v1.0. <http://snowtide.com/jsdifflib>
- 
+
  Copyright (c) 2007, Snowtide Informatics Systems, Inc.
  All rights reserved.
- 
+
  Redistribution and use in source and binary forms, with or without
  modification, are permitted provided that the following conditions are
  met:
- 
+
  * Redistributions of source code must retain the above copyright
  notice, this list of conditions and the following disclaimer.
  * Redistributions in binary form must reproduce the above copyright
@@ -21,32 +21,33 @@
  of its contributors may be used to endorse or promote products
  derived from this software without specific prior written
  permission.
- 
+
  THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS
  IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED
  TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A
- PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER
- OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL,
- EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,
- PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR
- PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF
- LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING
- NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
- SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT
+ OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+ SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
+ LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,
+ DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY
+ THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+ (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  ***/
 /* Author: Chas Emerick <cemerick@snowtide.com> */
-/* diffview rebuilt by Austin Cheney */
-/* charcomp created by Austin Cheney */
+/* completely rewritten by Austin Cheney */
 /**
- * Builds and returns a visual diff view.  The single parameter,
- * 'params', should contain the following values:
+ * Output - an array of three indexes:
+ * 1) Diff result as a HTML table
+ * 2) Number of errors after the number of error lines used for total
+ *    total error count when added to the next index
+ * 3) Number of error lines in the HTML table
  *
+ * Arguments:
  * - baseTextLines: the array of strings that was used as the base
  *       text input to SequenceMatcher
  * - newTextLines: the array of strings that was used as the new
  *       text input to SequenceMatcher
- * - opcodes: the array of arrays returned by
- *       SequenceMatcher.get_opcodes()
  * - baseTextName: the title to be displayed above the base text
  *       listing in the diff view; defaults to "Base Text"
  * - newTextName: the title to be displayed above the new text
@@ -55,10 +56,6 @@
  *       differences; by default, all lines are shown
  * - inline: if 0, a side-by-side diff view is generated
  *       (default); if 1, an inline diff view is generated
- * - output: if this is provided a value of "webdownload" an extra
- *       depth of character escapes are performed to compensate for
- *       the rendering of character entities as they pass through
- *       the DOM, so that the string literal value is preserved.
  */
 var diffview = function (baseTextLines, newTextLines, baseTextName, newTextName, contextSize, inline) {
     "use strict";
@@ -80,10 +77,17 @@ var diffview = function (baseTextLines, newTextLines, baseTextName, newTextName,
         rowcnt,
         i,
         jump,
+        errorout = 0,
+        diffline = 0,
 
         //This is the difference algorithm
         difference = function (a, b) {
-            var isbjunk,
+            var junkdict = {},
+                isbjunk = function (key) {
+                    if (junkdict.hasOwnProperty(key)) {
+                        return junkdict[key];
+                    }
+                },
                 matching_blocks = [],
                 b2j = [],
                 opcodes = [],
@@ -229,37 +233,31 @@ var diffview = function (baseTextLines, newTextLines, baseTextName, newTextName,
                 set_seq2 = (function () {
                     opcodes = null;
                     var chain_b = (function () {
-                        var i,
-                            elt,
-                            indices,
-                            n = b.length,
-                            populardict = {},
-                            junkdict = {};
-                        for (i = 0; i < b.length; i += 1) {
-                            elt = b[i];
-                            if (b2j[elt]) {
-                                indices = b2j[elt];
-                                if (n >= 200 && indices.length * 100 > n) {
-                                    populardict[elt] = 1;
-                                    delete b2j[elt];
+                            var i,
+                                elt,
+                                indices,
+                                n = b.length,
+                                populardict = {};
+                            for (i = 0; i < b.length; i += 1) {
+                                elt = b[i];
+                                if (b2j[elt]) {
+                                    indices = b2j[elt];
+                                    if (n >= 200 && indices.length * 100 > n) {
+                                        populardict[elt] = 1;
+                                        delete b2j[elt];
+                                    } else {
+                                        indices.push(i);
+                                    }
                                 } else {
-                                    indices.push(i);
+                                    b2j[elt] = [i];
                                 }
-                            } else {
-                                b2j[elt] = [i];
                             }
-                        }
-                        for (elt in populardict) {
-                            if (populardict.hasOwnProperty(elt)) {
-                                delete b2j[elt];
+                            for (elt in populardict) {
+                                if (populardict.hasOwnProperty(elt)) {
+                                    delete b2j[elt];
+                                }
                             }
-                        }
-                        isbjunk = function (key) {
-                            if (junkdict.hasOwnProperty(key)) {
-                                return junkdict[key];
-                            }
-                        };
-                    }()),
+                        }()),
                         result = (function () {
                             var idx,
                                 block,
@@ -276,13 +274,13 @@ var diffview = function (baseTextLines, newTextLines, baseTextName, newTextName,
                                     ai = block[0];
                                     bj = block[1];
                                     size = block[2];
-                                    tag = '';
+                                    tag = "";
                                     if (i < ai && j < bj) {
-                                        tag = 'replace';
+                                        tag = "replace";
                                     } else if (i < ai) {
-                                        tag = 'delete';
+                                        tag = "delete";
                                     } else if (j < bj) {
-                                        tag = 'insert';
+                                        tag = "insert";
                                     }
                                     if (tag) {
                                         answer.push([tag, i, ai, j, bj]);
@@ -290,7 +288,7 @@ var diffview = function (baseTextLines, newTextLines, baseTextName, newTextName,
                                     i = ai + size;
                                     j = bj + size;
                                     if (size) {
-                                        answer.push(['equal', ai, i, bj, j]);
+                                        answer.push(["equal", ai, i, bj, j]);
                                     }
                                 }
                             }
@@ -354,22 +352,20 @@ var diffview = function (baseTextLines, newTextLines, baseTextName, newTextName,
                 a = c.replace(/\'/g, "$#39;").replace(/\"/g, "$#34;").replace(/\&nbsp;/g, " ").replace(/\&#160;/g, " "),
                 b = d.replace(/\'/g, "$#39;").replace(/\"/g, "$#34;").replace(/\&nbsp;/g, " ").replace(/\&#160;/g, " ");
 
+            errorout -= 1;
+
             //This is simply a fail safe.  The logic in diffview should
             //prevent indentical items from entering charcomp, but....
             if (a === b) {
                 return;
             } else {
-                ax = a.split('');
-                bx = b.split('');
-                if (ax.length >= bx.length) {
-                    zx = ax.length;
-                } else if (bx.length > ax.length) {
-                    zx = bx.length;
-                }
+                ax = a.split("");
+                bx = b.split("");
+                zx = Math.max(ax.length, bx.length);
 
                 //This is a massive amount of code for a very simple
                 //task.  Entities that have been split per character
-                //along with their containing data must be reconstituted 
+                //along with their containing data must be reconstituted
                 //so that they can be accurately interpreted as a single
                 //array index.
                 entity = function (z) {
@@ -377,13 +373,13 @@ var diffview = function (baseTextLines, newTextLines, baseTextName, newTextName,
                         b = [];
                     for (n = 0; n < a; n += 1) {
                         if (z[n] + z[n + 1] + z[n + 2] + z[n + 3] + z[n + 4] === "$#gt;") {
-                            z[n] = '$#gt;';
+                            z[n] = "$#gt;";
                             z[n + 1] = "";
                             z[n + 2] = "";
                             z[n + 3] = "";
                             z[n + 4] = "";
                         } else if (z[n] + z[n + 1] + z[n + 2] + z[n + 3] + z[n + 4] === "$#lt;") {
-                            z[n] = '$#lt;';
+                            z[n] = "$#lt;";
                             z[n + 1] = "";
                             z[n + 2] = "";
                             z[n + 3] = "";
@@ -453,10 +449,10 @@ var diffview = function (baseTextLines, newTextLines, baseTextName, newTextName,
                                     errorout += 1;
                                 }
                                 n = 1;
-                            } else if (ax[i] === undefined && (bx[i] === '' || bx[i] === ' ')) {
-                                ax[i] = ' ';
-                            } else if (bx[i] === undefined && (ax[i] === '' || ax[i] === ' ')) {
-                                bx[i] = ' ';
+                            } else if (ax[i] === undefined && (bx[i] === "" || bx[i] === " ")) {
+                                ax[i] = " ";
+                            } else if (bx[i] === undefined && (ax[i] === "" || ax[i] === " ")) {
+                                bx[i] = " ";
                             }
                             break;
                         }
@@ -549,7 +545,7 @@ var diffview = function (baseTextLines, newTextLines, baseTextName, newTextName,
                 }
             }
             if (change !== "equal") {
-                errorout += 1;
+                diffline += 1;
             }
 
             //Draw the output for the inline type of diff
@@ -565,7 +561,6 @@ var diffview = function (baseTextLines, newTextLines, baseTextName, newTextName,
                         z = charcomp(baseTextLines[b], newTextLines[n]);
                         baseTextLines[b] = z[0];
                         newTextLines[n] = z[1];
-                        errorout -= 1;
                     }
                     if (b < be) {
                         addCellsInline(node, b, null, baseTextLines, "delete");
@@ -593,17 +588,16 @@ var diffview = function (baseTextLines, newTextLines, baseTextName, newTextName,
                 if (change === "replace") {
                     if (b < be && n < ne && baseTextLines[b] !== newTextLines[n]) {
                         z = charcomp(baseTextLines[b], newTextLines[n]);
-                        errorout -= 1;
                         b = addCells(node, b, be, z[0], change);
                         n = addCells(node, n, ne, z[1], change);
                     } else if (baseTextLines[b] !== undefined && newTextLines[n] !== undefined) {
                         if (b < be) {
-                            b = addCells(node, b, be, baseTextLines[b], 'delete');
+                            b = addCells(node, b, be, baseTextLines[b], "delete");
                         } else {
                             b = addCells(node, b, be, baseTextLines[b], change);
                         }
                         if (n < ne) {
-                            n = addCells(node, n, ne, newTextLines[n], 'insert');
+                            n = addCells(node, n, ne, newTextLines[n], "insert");
                         } else {
                             n = addCells(node, n, ne, newTextLines[n], change);
                         }
@@ -629,5 +623,5 @@ var diffview = function (baseTextLines, newTextLines, baseTextName, newTextName,
     }
     rows.push(node.join(""));
     tbody.push(rows.join(""));
-    return (thead + tbody.join("") + tfoot).replace(/\%#lt;/g, "$#lt;").replace(/\%#gt;/g, "$#gt;");
+    return [(thead + tbody.join("") + tfoot).replace(/\%#lt;/g, "$#lt;").replace(/\%#gt;/g, "$#gt;"), errorout, diffline];
 };

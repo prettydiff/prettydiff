@@ -969,7 +969,11 @@ var markup_beauty = function (args) {
                                                     } else if (cinfo[i - 1] === "mixed_end" && t() === 0) {
                                                         return level.push(level[y] - 1);
                                                     } else {
-                                                        return level.push(level[y] - t());
+                                                        if (level[i - 1] === "x" && (cinfo[i - 2] !== "end" || (cinfo[i - 2] === "end" && level[i - 2] !== "x"))) {
+                                                            return level.push(level[y] + t());
+                                                        } else {
+                                                            return level.push(level[y] - t());
+                                                        }
                                                     }
                                                 }
                                             } else {
@@ -1450,7 +1454,7 @@ var markup_beauty = function (args) {
                                 }
                                 if (scriptEnd.test(build[i]) && !/(\/\/\-\->\s*)$/.test(build[i])) {
                                     test1 = 1;
-                                    build[i].replace(scriptEnd, "");
+                                    build[i] = build[i].replace(scriptEnd, "");
                                 } else if (cdataEnd.test(build[i])) {
                                     cdata1 = cdataEnd.exec(build[i]);
                                     build[i] = build[i].replace(cdataEnd, "");
