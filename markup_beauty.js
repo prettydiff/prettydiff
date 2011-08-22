@@ -133,41 +133,10 @@
  */
 var markup_beauty = function (args) {
     "use strict";
-    (function () {
-        if (!args.source || typeof args.source !== "string") {
-            args.source = "";
-        }
-        if (args.insize === undefined || isNaN(args.insize)) {
-            args.insize = 4;
-        }
-        if (typeof args.inchar !== "string" || args.inchar.length < 1) {
-            args.inchar = " ";
-        }
-        if (!args.mode || args.mode !== "diff") {
-            args.mode = "beautify";
-        }
-        if (!args.comments || args.comments !== "indent") {
-            args.comments = "noindent";
-        }
-        if (!args.style || args.style !== "indent") {
-            args.style = "noindent";
-        }
-        if (typeof args.html !== "boolean") {
-            args.html = false;
-        }
-        if (typeof args.content !== "boolean") {
-            args.content = false;
-        }
-        if (typeof args.force_indent !== "boolean") {
-            args.force_indent = false;
-        }
-    }());
     if (args.source === "") {
         return "Error: Source code is missing from markup_beauty.js";
     }
-    var i,
-        Z,
-        tab = "",
+    var tab = "",
         token = [],
         build = [],
         cinfo = [],
@@ -175,7 +144,35 @@ var markup_beauty = function (args) {
         inner = [],
         sum = [],
         x = args.source,
-        loop,
+        start = (function () {
+            if (!args.source || typeof args.source !== "string") {
+                args.source = "";
+            }
+            if (args.insize === undefined || isNaN(args.insize)) {
+                args.insize = 4;
+            }
+            if (typeof args.inchar !== "string" || args.inchar.length < 1) {
+                args.inchar = " ";
+            }
+            if (!args.mode || args.mode !== "diff") {
+                args.mode = "beautify";
+            }
+            if (!args.comments || args.comments !== "indent") {
+                args.comments = "noindent";
+            }
+            if (!args.style || args.style !== "indent") {
+                args.style = "noindent";
+            }
+            if (typeof args.html !== "boolean") {
+                args.html = false;
+            }
+            if (typeof args.content !== "boolean") {
+                args.content = false;
+            }
+            if (typeof args.force_indent !== "boolean") {
+                args.force_indent = false;
+            }
+        }()),
 
         //cdatafix temporarily transforms angle brackets in cdata
         //declarations to prevent contamination.  This mutation is
@@ -516,6 +513,9 @@ var markup_beauty = function (args) {
         elements = (function () {
             var q,
                 a,
+                loop,
+                i,
+                Z,
 
                 //This function looks for the end of a designated tag
                 //and then returns the entire tag as a single output.
@@ -741,7 +741,8 @@ var markup_beauty = function (args) {
         //This function provides structual relevant descriptions for
         //content and groups tags into categories.
         code_type = (function () {
-            Z = token.length;
+            var i,
+                Z = token.length;
             for (i = 0; i < Z; i += 1) {
                 build[i] = build[i].replace(/\s*prettydiffcdatas/g, "<").replace(/\s*prettydiffcdatae/g, ">");
                 if (token[i] === "T_sgml" || token[i] === "T_xml") {
@@ -801,8 +802,9 @@ var markup_beauty = function (args) {
                 return;
             }
             var a,
-                b;
-            loop = cinfo.length;
+                b,
+                i,
+                loop = cinfo.length;
             for (i = 0; i < loop; i += 1) {
                 if (cinfo[i] === "start") {
                     a = build[i].indexOf(" ");
@@ -828,8 +830,9 @@ var markup_beauty = function (args) {
         //use the cinfo array definitions but could be rewritten to use
         //the token array.
         tab_level = (function () {
-            loop = cinfo.length;
-            var a,
+            var i,
+                loop = cinfo.length,
+                a,
 
                 //This function looks back to the most previous indented
                 //tag that is not an end tag and returns a count based
@@ -1546,8 +1549,10 @@ var markup_beauty = function (args) {
         //build array that need to be indented.  The length of
         //indentation is designated by the values in the level array.
         write_tabs = (function () {
-            var a,
+            var i,
+                a,
                 indent = "",
+                loop = build.length,
 
                 //This function writes the standard indentation output
                 tab_math = function (x) {
@@ -1615,7 +1620,6 @@ var markup_beauty = function (args) {
 
             //This is the logic for assigning execution of the prior
             //three functions.
-            loop = build.length;
             for (i = 1; i < loop; i += 1) {
                 if (cinfo[i] === "end" && (args.force_indent || (cinfo[i - 1] !== "content" && cinfo[i - 1] !== "mixed_start"))) {
                     if (build[i].charAt(0) === " ") {
