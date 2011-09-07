@@ -109,7 +109,7 @@ var markupmin = function (x, comments, presume_html, top_comments) {
                     x[a] = "";
                 }
             }
-            d = d.replace(/\s+/g, " ").replace(/\s*,\s+/g, ", ").replace(/\s*\/\s*/g, "/").replace(/\s*\.\s*/g, ".").replace(/\s*=\s*/g, "=").replace(/\s*:\s*/g, ":").replace(/ \="/g, "=\"").replace(/ \='/g, "='") + ">";
+            d = d.replace(/\s+/g, " ").replace(/\s*,\s+/g, ", ").replace(/\s*\/\s*/g, "/").replace(/\s*=\s*/g, "=").replace(/\s*:\s*/g, ":").replace(/ \="/g, "=\"").replace(/ \='/g, "='") + ">";
             i = a;
             x[i] = d;
         },
