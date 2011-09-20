@@ -133,6 +133,7 @@ var jsmin = function (comment, input, level, type, alter, fcomment) {
                                 break;
                             }
                             if (c[e].charAt(0) === "_") {
+                                c[e] = c[e].split("$");
                                 c.push(c[e]);
                                 c.splice(e, 1);
                             }
