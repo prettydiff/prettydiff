@@ -1229,7 +1229,7 @@ var js_beautify = function (args) {
             last_type = token_type;
             last_text = token_text;
         }
-        rvalue = output.join("").replace(/var prettydiffvar\,\s*/g, "var ").replace(/^(\s+)/, "").replace(/(\s+)$/, "").replace(/\s*\}\(function/g, funcfix).replace(/:\s*\(?function/g, ": function").replace(/\n( |\t)+\n/g, "\n\n").replace(/ \n/g, "\n");
+        rvalue = output.join("").replace(/var prettydiffvar\,\s*/g, "var ").replace(/^(\s+)/, "").replace(/(\s+)$/, "").replace(/\s*\}\(function/g, funcfix).replace(/:\s*function/g, ": function").replace(/:\s*\(function/g, ": (function").replace(/\n( |\t)+\n/g, "\n\n").replace(/ \n/g, "\n");
         (function () {
             var a,
                 b,

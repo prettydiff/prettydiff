@@ -21,7 +21,7 @@
  in all copies or substantial portions of the Software.
 
  The Software shall be used for Good, not Evil.
- 
+
  Extended by Austin Cheney to lend support for minification of CSS for
  Pretty Diff tool at http://prettydiff.com/
 
@@ -53,23 +53,25 @@ String.prototype.has = function (c) {
 };
 var jsmin = function (comment, input, level, type, alter, fcomment) {
         "use strict";
-        if (input === undefined) {
-            input = comment;
-            comment = "";
-            level = 2;
-        } else {
-            if (level === undefined || level < 1 || level > 3) {
+        (function () {
+            if (input === undefined) {
+                input = comment;
+                comment = "";
                 level = 2;
+            } else {
+                if (level === undefined || level < 1 || level > 3) {
+                    level = 2;
+                }
+                if (type === "javascript") {
+                    input = input.replace(/\/\/(\s)*-->/g, "//-->");
+                } else if (type !== "css") {
+                    return "Error: The type argument is not provided a value of either 'css' or 'javascript'.";
+                }
             }
-            if (type === "javascript") {
-                input = input.replace(/\/\/(\s)*-->/g, "//-->");
-            } else if (type !== "css") {
-                return "Error: The type argument is not provided a value of either 'css' or 'javascript'.";
+            if (comment.length > 0) {
+                comment += "\n";
             }
-        }
-        if (comment.length > 0) {
-            comment += "\n";
-        }
+        }());
         var ret,
             atchar = input.match(/\@charset\s+("|')[\w\-]+("|');?/gi),
             error = "",
@@ -85,8 +87,8 @@ var jsmin = function (comment, input, level, type, alter, fcomment) {
             fcom = [],
             theLookahead = EOF,
 
-            //reduction provides a logical compression to flatten redundantly
-            //applied CSS properties
+            //reduction provides a logical compression to flatten
+            //redundantly applied CSS properties
             reduction = function (x) {
                 var a,
                     e,
@@ -98,9 +100,10 @@ var jsmin = function (comment, input, level, type, alter, fcomment) {
                     c = "",
                     d = [],
 
-                    //colorLow is used in a replace method to convert CSS hex colors
-                    //from uppercase alpha characters to lowercase and in some cases
-                    //shorten hex color codes from 6 characters to 3.
+                    //colorLow is used in a replace method to convert
+                    //CSS hex colors from uppercase alpha characters to
+                    //lowercase and in some cases shorten hex color
+                    //codes from 6 characters to 3.
                     colorLow = function (x) {
                         x = x.toLowerCase();
                         if (x.length === 7 && x.charAt(1) === x.charAt(2) && x.charAt(3) === x.charAt(4) && x.charAt(5) === x.charAt(6)) {
@@ -198,16 +201,17 @@ var jsmin = function (comment, input, level, type, alter, fcomment) {
                 return d.join("");
             },
 
-            //isAlphanum -- return true if the character is a letter, digit,
-            //underscore, dollar sign, or non-ASCII character.
+            //isAlphanum -- return true if the character is a letter,
+            //digit, underscore, dollar sign, or non-ASCII character.
             isAlphanum = function (c) {
                 return c !== EOF && (ALNUM.has(c) || c.charCodeAt(0) > 126);
             },
 
-            //fixURI forcefully writes double quote characters around URI
-            //fragments in CSS.  If parenthesis characters are characters of the
-            //URI they must be escaped with a backslash, "\)", in accordance
-            //with the CSS specification, or they will damage the output.
+            //fixURI forcefully writes double quote characters around
+            //URI fragments in CSS.  If parenthesis characters are
+            //characters of the URI they must be escaped with a
+            //backslash, "\)", in accordance with the CSS specification,
+            //or they will damage the output.
             fixURI = function (x) {
                 var a;
                 x = x.split("url(");
@@ -241,8 +245,14 @@ var jsmin = function (comment, input, level, type, alter, fcomment) {
                 return x.join("");
             },
 
-            //rgbToHex is used in a replace method to convert CSS colors from
-            //RGB definitions to hex definitions
+            //fixNegative is used to correct the collision between a
+            //number or increment and a hyphen
+            fixNegative = function (x) {
+                return x.replace(/\-/, " -");
+            },
+
+            //rgbToHex is used in a replace method to convert CSS colors
+            //from RGB definitions to hex definitions
             rgbToHex = function (x) {
                 var a,
                     y = function (z) {
@@ -256,8 +266,9 @@ var jsmin = function (comment, input, level, type, alter, fcomment) {
                 return a;
             },
 
-            //sameDist is used in a replace method to shorten redundant CSS
-            //distances to the fewest number of non-redundant increments
+            //sameDist is used in a replace method to shorten redundant
+            //CSS distances to the fewest number of non-redundant
+            //increments
             sameDist = function (x) {
                 if (x === "0") {
                     return x;
@@ -294,16 +305,16 @@ var jsmin = function (comment, input, level, type, alter, fcomment) {
                 return a + "0";
             },
 
-            //endZero is used in a replace method to convert "20.0" to "20" in
-            //CSS
+            //endZero is used in a replace method to convert "20.0" to
+            //"20" in CSS
             endZero = function (x) {
                 var a = x.indexOf(".");
                 return x.substr(0, a);
             },
 
-            //runZero suppresses continuous runs of 0 to a single 0 if they
-            //are not preceeded by a period (.), number sign (#), or a hex
-            //digit (0-9, a-f)
+            //runZero suppresses continuous runs of 0 to a single 0 if
+            //they are not preceeded by a period (.), number sign (#),
+            //or a hex digit (0-9, a-f)
             runZero = function (x) {
                 var a = x.charAt(0);
                 if (a === "#" || a === "." || /[a-f0-9]/.test(a)) {
@@ -313,21 +324,22 @@ var jsmin = function (comment, input, level, type, alter, fcomment) {
                 }
             },
 
-            //startZero is used in a replace method to convert "0.02" to ".02"
-            //in CSS
+            //startZero is used in a replace method to convert "0.02" to
+            //".02" in CSS
             startZero = function (x) {
                 var a = x.indexOf(".");
                 return x.charAt(0) + x.substr(a, x.length);
             },
 
-            //This function prevents percentage numbers from running together
+            //This function prevents percentage numbers from running
+            //together
             fixpercent = function (x) {
                 return x.replace(/%/, "% ");
             },
 
-            //get -- return the next character. Watch out for lookahead. If
-            //the character is a control character, translate it to a space
-            //or linefeed.
+            //get -- return the next character. Watch out for lookahead.
+            //If the character is a control character, translate it to a
+            //space or linefeed.
             get = function () {
                 var c = theLookahead;
                 if (geti === getl) {
@@ -353,8 +365,8 @@ var jsmin = function (comment, input, level, type, alter, fcomment) {
                 return theLookahead;
             },
 
-            //next -- get the next character, excluding comments. peek() is
-            //used to see if a "/" is followed by a "/" or "*".
+            //next -- get the next character, excluding comments. peek()
+            //is used to see if a "/" is followed by a "/" or "*".
             next = function () {
                 var c = get();
                 if (c === "/" && (type === "javascript" || (type === "css" && peek() !== "/"))) {
@@ -402,8 +414,8 @@ var jsmin = function (comment, input, level, type, alter, fcomment) {
             //   2   Copy B to A. Get the next B. (Delete A).
             //   3   Get the next B. (Delete B).
             //action treats a string as a single character. Wow!
-            //action recognizes a regular expression if it is preceded by
-            //( or , or =.
+            //action recognizes a regular expression if it is preceded
+            //by ( or , or =.
             action = function (d) {
                 var r = [];
                 if (d === 1) {
@@ -457,9 +469,9 @@ var jsmin = function (comment, input, level, type, alter, fcomment) {
 
             //m -- Copy the input to the output, deleting the characters
             //which are insignificant to JavaScript. Comments will be
-            //removed. Tabs will be replaced with spaces. Carriage returns
-            //will be replaced with linefeeds.
-            //Most spaces and linefeeds will be removed.
+            //removed. Tabs will be replaced with spaces. Carriage
+            //returns will be replaced with linefeeds.  Most spaces and
+            //linefeeds will be removed.
             m = function () {
                 if (error !== "") {
                     return error;
@@ -574,7 +586,7 @@ var jsmin = function (comment, input, level, type, alter, fcomment) {
             ret = ret.replace(/\: #/g, ":#").replace(/\; #/g, ";#").replace(/\, #/g, ",#").replace(/\s+/g, " ").replace(/\} /g, "}").replace(/\{ /g, "{").replace(/\\\)/g, "~PDpar~").replace(/\)/g, ") ").replace(/\) ;/g, ");").replace(/\d%[a-z0-9]/g, fixpercent);
             if (alter === true) {
                 ret = reduction(ret).replace(/@charset("|')?[\w\-]+("|')?;?/gi, "").replace(/(#|\.)?[\w]*\{\}/gi, "").replace(/(\S|\s)0+/g, runZero).replace(/:[\w\s\!\.\-%]*\d+\.0*(?!\d)/g, endZero).replace(/(:| )0+\.\d+/g, startZero).replace(/\s?((\.\d+|\d+\.\d+|\d+)[a-zA-Z]+|0 )+((\.\d+|\d+\.\d+|\d+)[a-zA-Z]+)|0/g, sameDist);
-                ret = ret.replace(/:\.?0(\%|px|in|cm|mm|em|ex|pt|pc)/g, ":0").replace(/ \.?0(\%|px|in|cm|mm|em|ex|pt|pc)/g, " 0").replace(/bottom:none/g, "bottom:0").replace(/top:none/g, "top:0").replace(/left:none/g, "left:0").replace(/right:none/, "right:0").replace(/:0 0 0 0/g, ":0");
+                ret = ret.replace(/:\.?0(\%|px|in|cm|mm|em|ex|pt|pc)/g, ":0").replace(/ \.?0(\%|px|in|cm|mm|em|ex|pt|pc)/g, " 0").replace(/bottom:none/g, "bottom:0").replace(/top:none/g, "top:0").replace(/left:none/g, "left:0").replace(/right:none/, "right:0").replace(/:0 0 0 0/g, ":0").replace(/:(\s*([0-9]+\.)?[0-9]+(%|in|cm|mm|em|ex|pt|pc|px)?)+\-([0-9]*\.)?[0-9]/g, fixNegative);
                 ret = ret.replace(/[a-z]*:(0\s*)+\-?\.?\d?/g, singleZero).replace(/ 0 0 0 0/g, " 0").replace(/rgb\(\d+,\d+,\d+\)/g, rgbToHex).replace(/background\-position:0;/gi, "background-position:0 0;").replace(/;+/g, ";").replace(/\s*[\w\-]+:\s*\}/g, "}").replace(/\s*[\w\-]+:\s*;/g, "").replace(/;\}/g, "}").replace(/\{\s+\}/g, "{}");
 
                 //This logic is used to pull the first "@charset" definition
