@@ -1303,6 +1303,7 @@ var markup_beauty = function (args) {
                                 }
                             }
                         }
+                        return c("start");
                     } else if (cinfo[k] === "start" && level[k] !== "x") {
                         //This looks for the most previous level that is
                         //not set for the noted cinfo values.  Once that
@@ -1642,7 +1643,7 @@ var markup_beauty = function (args) {
         var a,
             b = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
             c = [],
-            d = build.join("").replace(/\u200b/g, "").length,
+            d = build.join("").length,
             e = args.source.length,
             f,
             g,
@@ -2074,5 +2075,5 @@ var markup_beauty = function (args) {
         a.push("</em></p>");
         summary = a.join("") + c.join("");
     }());
-    return build.join("").replace(/\n(\s)+\n/g, "\n\n").replace(/\u200b/g, "");
+    return build.join("").replace(/\n(\s)+\n/g, "\n\n");
 };
