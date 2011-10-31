@@ -351,9 +351,19 @@ var markupmin = function (x, comments, presume_html, top_comments) {
                 }
             }
         }
+<<<<<<< HEAD
         x = x.join("").replace(/-->\s+/g, "--> ").replace(/\s+<\?php/g, " <?php").replace(/\s+<%/g, " <%").replace(/\s*>\s+/g, "> ").replace(/\s+<\s*/g, " <").replace(/\s+\/>/g, "/>").replace(/\s+>/g, ">");
         if (white.test(x.charAt(0))) {
             x = x.slice(1, x.length);
         }
         return x;
     };
+=======
+    }
+    x = x.join("").replace(/\u200b/g, "").replace(/-->\s+/g, "--> ").replace(/\s+<\?php/g, " <?php").replace(/\s+<%/g, " <%").replace(/\s*>\s+/g, "> ").replace(/\s+<\s*/g, " <").replace(/\s+\/>/g, "/>").replace(/\s+>/g, ">");
+    if (white.test(x.charAt(0))) {
+        x = x.slice(1, x.length);
+    }
+    return x;
+};
+>>>>>>> parent of e6c952e... rolling back zero width space suppression
