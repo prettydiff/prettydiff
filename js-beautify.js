@@ -276,8 +276,8 @@ var js_beautify = function (args) {
                 }
             },
             fix_object_own_line = function () {
-                var b = output.length - 2;
-                for (; b > 0; b -= 1) {
+                var b;
+                for (b = output.length - 2; b > 0; b -= 1) {
                     if (/^(\s+)$/.test(output[b])) {
                         output[b] = "";
                     } else if (in_array(output[b], punct)) {

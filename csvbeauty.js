@@ -40,7 +40,8 @@ var csvbeauty = function (source, ch) {
     } else {
         ch = charDecoder(ch);
     }
-    var err, a = 0,
+    var err,
+    a,
     c = [],
     error = "Error: Unterminated String begging at character number ",
     str = (function () {
@@ -48,7 +49,7 @@ var csvbeauty = function (source, ch) {
         source = source.replace(/"{2}/g, "{csvquote}");
         src = source;
         source = source.split("");
-        for (; a < source.length; a += 1) {
+        for (a = 0; a < source.length; a += 1) {
             if (source[a] === "\"") {
                 for (b = a + 1; b < source.length; b += 1) {
                     if (source[b] === "\"") {

@@ -265,8 +265,7 @@ var cleanCSS = function (x, size, character, comment, alter) {
                         break;
                     }
                 }
-                a = d.length - 1;
-                for (; a > 0; a -= 1) {
+                for (a = d.length - 1; a > 0; a -= 1) {
                     if (d[a] === "}") {
                         b += 1;
                     } else {
@@ -417,7 +416,7 @@ var cleanCSS = function (x, size, character, comment, alter) {
             x = x.replace(/\s+\/\*/g, "\n/*").replace(/\n\s+\*\//g, "\n*/");
         }
         (function () {
-            var a = 0,
+            var a,
                 b = [],
                 c = x.split("\n"),
                 d = c.length,
@@ -425,9 +424,9 @@ var cleanCSS = function (x, size, character, comment, alter) {
                 f = q.toString().split("").reverse(),
                 g = x.length.toString().split("").reverse(),
                 h = 0;
-            for (; a < d; a += 1) {
+            for (a = 0; a < d; a += 1) {
                 if (c[a].charAt(0) === "/" && c[a].charAt(1) === "*") {
-                    for (; a < d; a += 1) {
+                    for (a; a < d; a += 1) {
                         if (c[a].charAt(c[a].length - 2) === "*" && c[a].charAt(c[a].length - 1) === "/") {
                             break;
                         }

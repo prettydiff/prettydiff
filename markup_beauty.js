@@ -520,10 +520,10 @@ var markup_beauty = function (args) {
                     //This function looks for the end of a designated tag
                     //and then returns the entire tag as a single output.
                     b = function (end) {
-                        var d,
+                        var c = i,
+						d,
                             e,
                             f = "",
-                            c = i,
                             z = end.charAt(end.length - 2),
                             y = end.split("").reverse(),
 
@@ -531,7 +531,7 @@ var markup_beauty = function (args) {
                             //tag.  The second loop verifies the first loop
                             //did not stop too early.
                             g = function () {
-                                for (; c < loop; c += 1) {
+                                for (c; c < loop; c += 1) {
                                     if (z !== "-" && z !== "?" && z !== "%" && x[c] === ">") {
                                         break;
                                     } else if (x[c - 1] + x[c] === z + ">") {
@@ -891,10 +891,10 @@ var markup_beauty = function (args) {
                     e = function () {
                         var yy = 1,
 
-                            //This is executed if the previous start is not
-                            //indented.
+                            //This is executed if the previous start is
+                            //not indented.
                             z = function (y) {
-                                for (; y > 0; y -= 1) {
+                                for (y; y > 0; y -= 1) {
                                     if (level[y] !== "x") {
                                         return level.push(level[y] + 1);
                                     }
@@ -902,11 +902,12 @@ var markup_beauty = function (args) {
                             },
 
                             //If prior item is an end tag or content ending
-                            //with space black box voodoo magic must occur.
+                            //ending with space black box voodoo magic
+                            //must occur.
                             w = function () {
                                 var k,
                                     q,
-                                    y = i - 1,
+                                    y,
 
                                     //This function finds the prior existing
                                     //indented start tag.  This start tag
@@ -966,7 +967,7 @@ var markup_beauty = function (args) {
                                                         return l;
                                                     }
                                                 } else {
-                                                    for (; s < i; s += 1) {
+                                                    for (s; s < i; s += 1) {
                                                         if (cinfo[s] === "start") {
                                                             l += 1;
                                                         } else if (cinfo[s] === "end") {
@@ -976,7 +977,7 @@ var markup_beauty = function (args) {
                                                     return l;
                                                 }
                                             };
-                                        for (; y > 0; y -= 1) {
+                                        for (y = i - 1; y > 0; y -= 1) {
                                             if (cinfo[y] !== "mixed_end" || (cinfo[y] === "start" && level[y] !== "x")) {
                                                 if (cinfo[y - 1] === "end") {
                                                     q = "r";
@@ -1325,7 +1326,6 @@ var markup_beauty = function (args) {
                                     }
                                 }
                             }
-<<<<<<< HEAD
                             return c("start");
                         } else if (cinfo[k] === "start" && level[k] !== "x") {
                             //This looks for the most previous level that is
@@ -1339,20 +1339,6 @@ var markup_beauty = function (args) {
                                     } else {
                                         return level.push(level[a] + 1);
                                     }
-=======
-                        }
-                    } else if (cinfo[k] === "start" && level[k] !== "x") {
-                        //This looks for the most previous level that is
-                        //not set for the noted cinfo values.  Once that
-                        //value is found it is added to the level array
-                        //increased plus 1.
-                        for (a = i - 1; a > -1; a -= 1) {
-                            if (cinfo[a] !== "comment" && cinfo[a] !== "content" && cinfo[a] !== "external" && cinfo[a] !== "mixed_end") {
-                                if (cinfo[i + 1] && build[i].charAt(0) !== " " && (cinfo[i + 1] === "content" || cinfo[i + 1] === "mixed_end")) {
-                                    return level.push("x");
-                                } else {
-                                    return level.push(level[a] + 1);
->>>>>>> parent of e6c952e... rolling back zero width space suppression
                                 }
                             }
                             return level.push(0);
@@ -1780,38 +1766,9 @@ var markup_beauty = function (args) {
                     for (a = 2; a < z; a += 3) {
                         x[a] = "," + x[a];
                     }
-<<<<<<< HEAD
                     x = x.reverse().join("");
                     if (x.charAt(0) === ",") {
                         x = x.slice(1, x.length);
-=======
-                    build[i] = tab_math(build[i]);
-                }
-            }
-        }());
-    (function () {
-        var a,
-            b = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-            c = [],
-            d = build.join("").replace(/\u200b/g, "").length,
-            e = args.source.length,
-            f,
-            g,
-            h,
-            i = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-            j,
-            k,
-            l,
-            m = [],
-            n = [],
-            o = [],
-            p = function (x) {
-                var u = function (x) {
-                    if (j[x] === 0) {
-                        return "0.00%";
-                    } else {
-                        return "100.00%";
->>>>>>> parent of e6c952e... rolling back zero width space suppression
                     }
                     return x;
                 },
@@ -2121,7 +2078,6 @@ var markup_beauty = function (args) {
                 l = ", or <strong>" + l + "</strong> if inline script code and style tags are removed";
                 h = ", or <strong>" + h + "</strong> if inline script code and style tags are removed";
             }
-<<<<<<< HEAD
             e = insertComma(e);
             d = insertComma(d);
             a = ["<p>If the input is content it receives an efficiency score of <strong>"];
@@ -2144,62 +2100,3 @@ var markup_beauty = function (args) {
         }());
         return build.join("").replace(/\n(\s)+\n/g, "\n\n");
     };
-=======
-        }
-        if (n.length > 0) {
-            n = "<h4>HTML elements making HTTP requests:</h4><ul>" + n.join("") + "</ul>";
-        } else {
-            n = "";
-        }
-        c.push("</tbody></table></div><p>* The number of requests is determined from the input submitted only and does not count the additional HTTP requests supplied from dynamically executed code, frames, iframes, css, or other external entities.</p><p>**");
-        c.push("Character size is measured from the individual pieces of tags and content specifically between minification and beautification.</p><p>*** The number of starting &lt;script&gt; and &lt;style&gt; tags is subtracted from the total number of start tags.");
-        c.push("The combination of those three values from the table above should equal the number of end tags or the code is in error.</p>");
-        c.push(n);
-        n = (sum.join("").length / 7500).toFixed(0);
-        if (n > 0) {
-            n = (m.length - n) * 4;
-        } else {
-            n = 0;
-        }
-        if (j[1] === 0) {
-            f[1] = 0.00000001;
-            j[1] = 0.00000001;
-        }
-        b = (((f[0] + f[2] - n) / cinfo.length) / (f[1] / cinfo.length));
-        a = function (x, y) {
-            return (((j[0] + x) / sum.join("").length) / ((j[1] * y) / sum.join("").length));
-        };
-        k = (b / a(j[2], 1)).toPrecision(2);
-        l = (b / a(i[15], 1)).toPrecision(2);
-        g = (b / a(j[2], 4)).toPrecision(2);
-        h = (b / a(i[15], 4)).toPrecision(2);
-        if (k === l) {
-            l = "";
-            h = "";
-        } else {
-            l = ", or <strong>" + l + "</strong> if inline script code and style tags are removed";
-            h = ", or <strong>" + h + "</strong> if inline script code and style tags are removed";
-        }
-        e = insertComma(e);
-        d = insertComma(d);
-        a = ["<p>If the input is content it receives an efficiency score of <strong>"];
-        a.push(k);
-        a.push("</strong>");
-        a.push(l);
-        a.push(". The efficiency score if this input is a large form or application is <strong>");
-        a.push(g);
-        a.push("</strong>");
-        a.push(h);
-        a.push(". Efficient markup achieves scores higher than 2.00 and excellent markup achieves scores higher than 4.00. The score reflects the highest number of tags to pieces of content where the weight of those tags is as small as possible compared to the weight of the content.");
-        a.push("The score is a performance metric only and is not associated with validity or well-formedness, but semantic code typically achieves the highest scores. All values are rounded to the nearest hundreth.</p><p><strong>Total input size:</strong> <em>");
-        a.push(e);
-        a.push("</em> characters</p><p><strong>Total output size:</strong> <em>");
-        a.push(d);
-        a.push("</em> characters</p><p><strong>* Total number of HTTP requests in supplied HTML:</strong> <em>");
-        a.push(m.length);
-        a.push("</em></p>");
-        summary = a.join("") + c.join("");
-    }());
-    return build.join("").replace(/\n(\s)+\n/g, "\n\n").replace(/\u200b/g, "");
-};
->>>>>>> parent of e6c952e... rolling back zero width space suppression
