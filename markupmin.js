@@ -244,7 +244,7 @@ var markupmin = function (x, comments, presume_html, top_comments) {
             //script blocks are encountered.  No logic is performed on
             //content, aside from whitespace tokenization.
             it = (function () {
-                var a = [],
+                var a,
                     b,
                     c = x.length;
                 y = x;
@@ -254,6 +254,7 @@ var markupmin = function (x, comments, presume_html, top_comments) {
                     //If markupmin is requested by markup_beauty then do
                     //not process scripts or styles.
                     if ((y.slice(i, i + 7)).toLowerCase() === "<script") {
+                        a = [];
                         for (b = i + 8; b < c; b += 1) {
                             if (y.charAt(b) === ">") {
                                 break;
@@ -268,6 +269,7 @@ var markupmin = function (x, comments, presume_html, top_comments) {
                             markupscript("script");
                         }
                     } else if ((y.slice(i, i + 6)).toLowerCase() === "<style") {
+                        a = [];
                         for (b = i + 7; b < c; b += 1) {
                             if (y.charAt(b) === ">") {
                                 break;
