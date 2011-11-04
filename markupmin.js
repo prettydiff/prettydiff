@@ -146,15 +146,21 @@ var markupmin = function (x, comments, presume_html, top_comments) {
             //This function passes the content of script and style
             //blocks off to jsmin.
             markupscript = function (z) {
-                if (jsmin === undefined) {
-                    return;
-                }
                 var e = [],
                     f,
                     h = "",
                     j = "</" + z,
                     m,
-                    Y = x.length;
+                    Y = x.length,
+                    cdataStart = (/^(\s*\/+<!\[+[A-Z]+\[+)/),
+                    cdataEnd = (/(\/+\]+>\s*)$/),
+                    scriptStart = (/^(\s*<\!\-\-)/),
+                    scriptEnd = (/(\/+\-\->\s*)$/),
+                    cs,
+                    ce;
+                if (jsmin === undefined) {
+                    return;
+                }
                 for (c = i; c < Y; c += 1) {
                     if ((y.slice(c, c + j.length)).toLowerCase() === j) {
                         f = c;
@@ -190,10 +196,24 @@ var markupmin = function (x, comments, presume_html, top_comments) {
                 }
                 e = e.join("");
                 if (comments !== "beautify") {
-                    if (z === "style") {
-                        e = jsmin("", e, 3, "css", true, top_comments);
+                    if (cdataStart.test(e)) {
+                        cs = e.match(cdataStart)[0];
+                        e = e.replace(cdataStart, "");
                     } else {
-                        e = jsmin("", e.replace(/^(\s*<\!\-\-)/, "").replace(/(\-\->\s*)$/, ""), 3, "javascript", false, top_comments);
+                        cs = e.match(scriptStart)[0];
+                        e = e.replace(scriptStart, "");
+                    }
+                    if (cdataEnd.test(e)) {
+                        ce = e.match(cdataEnd)[0];
+                        e = e.replace(cdataEnd, "");
+                    } else {
+                        ce = e.match(scriptEnd)[0];
+                        e = e.replace(scriptEnd, "");
+                    }
+                    if (z === "style") {
+                        e = cs + jsmin("", e, 3, "css", true, top_comments) + ce;
+                    } else {
+                        e = cs + jsmin("", e, 3, "javascript", false, top_comments) + ce;
                     }
                 }
                 Y = e.length;
