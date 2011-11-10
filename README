@@ -5,7 +5,7 @@
 
 Inventory:
    prettydiff.js - primary application for client and server processing
-   api.js - server side API processor
+   api.js - server side API processor (No long maintained)
    pd.js - DOM interpreter and HTML tool manipulator
    charDecoder.js - component
    cleanCSS.js  - component
@@ -34,134 +34,124 @@ Inventory:
 
 
 Created by Austin Cheney originally on 3 Mar 2009.
-This code may not be used or redistributed unless the following
-conditions are met:
+ This code may not be used or redistributed unless the following
+ conditions are met:
 
-There is no licensing associated with diffview.css.  Please use,
-redistribute, and alter to your content.  However, diffview.css provided
-from Pretty Diff is different from and not aligned with the following
-diffview.js originally from Snowtide Informatics.
+ There is no licensing associated with diffview.css.  Please use,
+ redistribute, and alter to your content.  However, diffview.css
+ provided from Pretty Diff is different from and not aligned with
+ diffview.css originally from Snowtide Informatics.
 
-* The use of diffview.js and prettydiff.js must contain the following
-copyright:
-   Copyright (c) 2007, Snowtide Informatics Systems, Inc.
-   All rights reserved.
+ * The use of diffview.js and prettydiff.js must contain the following
+ copyright:
+ Copyright (c) 2007, Snowtide Informatics Systems, Inc.
+ All rights reserved.
 
-   * Redistributions of source code must retain the above copyright
-     notice, this list of conditions and the following disclaimer.
-   * Redistributions in binary form must reproduce the above copyright
-     notice, this list of conditions and the following disclaimer in the
-     documentation and/or other materials provided with the
-     distribution.
-   * Neither the name of the Snowtide Informatics Systems nor the names
-     of its contributors may be used to endorse or promote products
-     derived from this software without specific prior written
-     permission.
+ * Redistributions of source code must retain the above copyright
+ notice, this list of conditions and the following disclaimer.
+ * Redistributions in binary form must reproduce the above copyright
+ notice, this list of conditions and the following disclaimer in the
+ documentation and/or other materials provided with the
+ distribution.
+ * Neither the name of the Snowtide Informatics Systems nor the names
+ of its contributors may be used to endorse or promote products
+ derived from this software without specific prior written
+ permission.
 
-   - used as diffview function
-      <http://prettydiff.com/diffview.js>
+ - used as diffview function
+ <http://prettydiff.com/diffview.js>
 
-* The author of the fulljsmin.js and date of creation must be stated as:
-   Franck Marcia - 31 Aug 2006
+ * The author of fulljsmin.js and date of creation must be stated as:
+ Franck Marcia - 31 Aug 2006
 
-   - used as jsmin function:
-      <http://prettydiff.com/fulljsmin.js>
+ - used as jsmin function:
+ <http://prettydiff.com/fulljsmin.js>
 
-* The fulljsmin.js is used with permission from the author of jsminc.c
-and such must be stated as:
-   Copyright (c) 2002 Douglas Crockford  (www.crockford.com)
+ * The fulljsmin.js is used with permission from the author of jsminc.c
+ and such must be stated as:
+ Copyright (c) 2002 Douglas Crockford  (www.crockford.com)
 
-* The author of js-beautify.js must be stated as:
-   Written by Einars Lielmanis, <einars@gmail.com>
-   http://elfz.laacz.lv/beautify/
- 
-   Originally converted to javascript by Vital, <vital76@gmail.com>
-   http://my.opera.com/Vital/blog/2007/11/21/
-      javascript-beautify-on-javascript-translated
+ * The author of js-beautify.js must be stated as:
+ Written by Einars Lielmanis, <einars@gmail.com>
+ http://elfz.laacz.lv/beautify/
 
-   - used as js_beautify function
-      <http://prettydiff.com/js-beautify.js>
+ Originally converted to javascript by Vital, <vital76@gmail.com>
+ http://my.opera.com/Vital/blog/2007/11/21/
+ javascript-beautify-on-javascript-translated
 
-* cleanCSS.js is originally written by Anthony Lieuallen
-    http://tools.arantius.com/tabifier
+ - used as js_beautify function
+ <http://prettydiff.com/js-beautify.js>
 
-   - used as cleanCSS function
-      <http://prettydiff.com/cleanCSS.js>
+ * cleanCSS.js is originally written by Anthony Lieuallen
+ http://tools.arantius.com/tabifier
 
-* charcomp.js is written by Austin Cheney.  Use of this function
-   requires that credit be given to Austin Cheney.
-   http://prettydiff.com/
+ - used as cleanCSS function
+ <http://prettydiff.com/cleanCSS.js>
 
-   - used as charcomp function
-      <http://prettydiff.com/charcomp.js>
+ * charDecoder.js is written by Austin Cheney.  Use of this function
+ requires that credit be given to Austin Cheney.
+ http://prettydiff.com/
 
-* charDecoder.js is written by Austin Cheney.  Use of this function
-   requires that credit be given to Austin Cheney.
-   http://prettydiff.com/
+ - used as charDecoder function
+ <http://prettydiff.com/charDecoder.js>
 
-   - used as charDecoder function
-      <http://prettydiff.com/charDecoder.js>
+ * csvbeauty.js is written by Austin Cheney.  Use of this function
+ requires that credit be given to Austin Cheney.
+ http://prettydiff.com/
 
-* csvbeauty.js is written by Austin Cheney.  Use of this function
-   requires that credit be given to Austin Cheney.
-   http://mailmarkup.org/
+ - used as csvbeauty function
+ <http://prettydiff.com/csvbeauty.js>
 
-   - used as csvbeauty function
-      <http://prettydiff.com/csvbeauty.js>
+ * csvmin.js is written by Austin Cheney.  Use of this function requires
+ that credit be given to Austin Cheney.
+ http://prettydiff.com/
 
-* csvmin.js is written by Austin Cheney.  Use of this function requires
-   that credit be given to Austin Cheney.
-   http://prettydiff.com/
+ - used as csvmin function
+ <http://prettydiff.com/csvmin.js>
 
-   - used as csvmin function
-      <http://prettydiff.com/csvmin.js>
+ * markupmin.js is written by Austin Cheney.  Use of this function
+ requires that credit be given to Austin Cheney.
+ http://prettydiff.com/
 
-* markupmin.js is written by Austin Cheney.  Use of this function
-   requires that credit be given to Austin Cheney.
-   http://prettydiff.com/
+ - used as markupmin function
+ <http://prettydiff.com/markupmin.js>
 
-   - used as markupmin function
-      <http://prettydiff.com/markupmin.js>
+ * markup_beauty.js is written by Austin Cheney.  Use of this function
+ requires that credit be given to Austin Cheney.
+ http://prettydiff.com/
 
-* markup_beauty.js is written by Austin Cheney.  Use of this function
-   requires that credit be given to Austin Cheney.
-   http://prettydiff.com/
+ - used as markup-beauty function
+ <http://prettydiff.com/markup_beauty.js>
 
-   - used as markup-beauty function
-      <http://prettydiff.com/markup_beauty.js>
+ * o object literal is in the pd.js file and exists to provide a one
+ time and external means of access to the DOM.
 
-* $ function is written by Dustin Diaz.
-   http://www.dustindiaz.com/
+ -----------------------------------------------------------------------
+ * The code mentioned above has significantly expanded documentation in
+ each of the respective function's external JS file as linked from the
+ documentation page:
+ <http://prettydiff.com/documentation.php>
 
-* o object literal is in the pd.js file and exists to provide a one time
-   and external means of access to the DOM.
+ * The compilation of cssClean, csvbeauty, csvmin, jsmin, jsdifflib,
+ markup_beauty, markupmin, and js-beautify in this manner is a result of
+ the prettydiff() function contained in prettydiff.js.  The per
+ character highlighting is the result of the charcomp() function also
+ contained in prettydiff.js. Any use or redistribution of these
+ functions must mention the following:
+ Prettydiff created by Austin Cheney originally on 3 Mar 2009.
+ <http://prettydiff.com/>
 
-------------------------------------------------------------------------
-* The code mentioned above has significantly expanded documentation in
-each of the respective function's external JS file as linked from the
-documentation page:
-   <http://prettydiff.com/documentation.php>
+ Contact the author at:
+ austin.cheney@us.army.mil
 
-* The compilation of cssClean, csvbeauty, csvmin, jsmin, jsdifflib,
-markup_beauty, markupmin, and js-beautify in this manner is a result of
-the prettydiff() function contained in prettydiff.js.  The per character
-highlighting is the result of the charcomp() and its linediff() function
-also contained in prettydiff.js. Any use or redistribution of these
-functions must mention the following:
-   Prettydiff created by Austin Cheney originally on 3 Mar 2009.
-   <http://mailmarkup.org/>
-
-   Contact the author at:
-   austin.cheney@us.army.mil
-
-* In addition to the previously stated requirements any use of any
-component, aside from directly using the full files in their entirety,
-must restate the license mentioned at the top of each concerned file.
+ * In addition to the previously stated requirements any use of any
+ component, aside from directly using the full files in their entirety,
+ must restate the license mentioned at the top of each concerned file.
 
 
-If each and all these conditions are met use and redistribution of
-prettydiff and its required assets is unlimited without author
-permission.
+ If each and all these conditions are met use and redistribution of
+ prettydiff and its required assets is unlimited without author
+ permission.
 
 
     @licend  The above is the entire license notice
