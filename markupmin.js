@@ -199,14 +199,14 @@ var markupmin = function (x, comments, presume_html, top_comments) {
                     if (cdataStart.test(e)) {
                         cs = e.match(cdataStart)[0];
                         e = e.replace(cdataStart, "");
-                    } else {
+                    } else if (scriptStart.test(e)) {
                         cs = e.match(scriptStart)[0];
                         e = e.replace(scriptStart, "");
                     }
                     if (cdataEnd.test(e)) {
                         ce = e.match(cdataEnd)[0];
                         e = e.replace(cdataEnd, "");
-                    } else {
+                    } else if (scriptEnd.test(e)) {
                         ce = e.match(scriptEnd)[0];
                         e = e.replace(scriptEnd, "");
                     }
