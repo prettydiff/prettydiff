@@ -390,13 +390,13 @@ var cleanCSS = function (x, size, character, comment, alter) {
         }
         cleanAsync();
         if (alter === true) {
-            x = x.split("*/");
+            x = x.replace(/PrettyDiff\|/g, "; ").split("*/");
             b = x.length;
             for (a = 0; a < b; a += 1) {
                 if (x[a].search(/\s*\/\*/) !== 0) {
                     x[a] = x[a].replace(/@charset\s*("|')?[\w\-]+("|')?;?\s*/gi, "").replace(/(\S|\s)0+/g, runZero).replace(/:[\w\s\!\.\-%]*\d+\.0*(?!\d)/g, endZero).replace(/:[\w\s\!\.\-%]* \.\d+/g, startZero).replace(/ \.?0((?=;)|(?= )|%|in|cm|mm|em|ex|pt|pc)/g, " 0px");
                     x[a] = x[a].replace(/: ((\.\d+|\d+\.\d+|\d+)[a-zA-Z]+|0 )+((\.\d+|\d+\.\d+|\d+)[a-zA-Z]+)|0/g, sameDist).replace(/background\-position: 0px;/g, "background-position: 0px 0px;").replace(/\s+\*\//g, "*/");
-                    x[a] = x[a].replace(/PrettyDiff\|/g, "; ").replace(/\s*[\w\-]+:\s*\}/g, emptyend).replace(/\s*[\w\-]+:\s*;/g, "").replace(/\{\s+\}/g, "{}").replace(/url\("\w+: \/\//g, fixscheme).replace(/\}\s*;\s*\}/g, nestblock).replace(/:\s+#/g, ": #").replace(/(\s+;+\n)+/g, "\n");
+                    x[a] = x[a].replace(/\s*[\w\-]+:\s*\}/g, emptyend).replace(/\s*[\w\-]+:\s*;/g, "").replace(/\{\s+\}/g, "{}").replace(/url\("\w+: \/\//g, fixscheme).replace(/\}\s*;\s*\}/g, nestblock).replace(/:\s+#/g, ": #").replace(/(\s+;+\n)+/g, "\n");
                 }
             }
             x = x.join("*/");
