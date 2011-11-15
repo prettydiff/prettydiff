@@ -61,7 +61,7 @@ var diffview = function (baseTextLines, newTextLines, baseTextName, newTextName,
         "use strict";
         var thead = "<table class='diff'><thead><tr>" + ((inline === true) ? "<th class='texttitle' colspan='3'>" + baseTextName + " vs. " + newTextName + "</th></tr></thead><tbody>" : "<th class='texttitle' colspan='2'>" + baseTextName + "</th><th class='texttitle' colspan='2'>" + newTextName + "</th></tr></thead><tbody>"),
             tbody = [],
-            tfoot = "</tbody><tfoot><tr><th class='author' colspan='" + ((inline === true) ? "3" : "4") + "'>Original diff view created as DOM objects by <a href='http://snowtide.com/jsdifflib'>jsdifflib</a>. Diff view recreated as a JavaScript array by <a href='http://mailmarkup.org/'>Austin Cheney</a>.</th></tr></tfoot></table>",
+            tfoot = "</tbody><tfoot><tr><th class='author' colspan='" + ((inline === true) ? "3" : "4") + "'>Original diff view created as DOM objects by <a href='https://github.com/cemerick/jsdifflib'>jsdifflib</a>. Diff view recreated as a JavaScript array by <a href='http://prettydiff.com/'>Austin Cheney</a>.</th></tr></tfoot></table>",
             node = [],
             rows = [],
             idx,
@@ -428,7 +428,9 @@ var diffview = function (baseTextLines, newTextLines, baseTextName, newTextName,
                     //separate matches can be specified perline.
                     compare = function () {
                         var em = /<em>/g,
-                            n = 0;
+                            n = 0,
+                            o,
+                            p;
                         for (i = k; i < zx; i += 1) {
                             if (ax[i] === bx[i]) {
                                 r = i;
@@ -457,34 +459,94 @@ var diffview = function (baseTextLines, newTextLines, baseTextName, newTextName,
                             }
                         }
                         for (j = i + 1; j < zx; j += 1) {
-                            if (n === 1 && ax[j] === bx[j]) {
-                                ax[j - 1] = ax[j - 1] + "</em>";
-                                bx[j - 1] = bx[j - 1] + "</em>";
-                                k = j;
-                                n = 0;
-                                break;
-                            } else if (ax[j] !== undefined && bx[j] === undefined) {
+                            //minor bug to investigate
+                            //</a> vs </a j> as terminal input
+                            if (ax[j] !== undefined && bx[j] === undefined) {
                                 bx[j] = " ";
                             } else if (ax[j] === undefined && bx[j] !== undefined) {
                                 ax[j] = " ";
-                            } else if (n === 1 && ax[j - 1] === bx[j]) {
-                                if (ax[j - 2].indexOf("<em>") !== -1) {
-                                    ax[j - 2] = ax[j - 2].replace(/<em>/, "<em> </em>");
-                                    bx[j - 2] = bx[j - 2] + "</em>";
-                                    n = 0;
+                            } else if (n === 1) {
+                                for (o = j; o < zx; o += 1) {
+                                    if (ax[j - 1] === "<em>" + bx[o] && em.test(bx[j - 1])) {
+                                        ax[j - 1] = ax[j - 1].replace(em, "");
+                                        ax.splice(j - 1, 0, "<em></em>");
+                                        bx[o - 1] = bx[o - 1] + "</em>";
+                                        n = 0;
+                                        k = o;
+                                        if (o - j > 0) {
+                                            p = [];
+                                            for (o; o > j; o -= 1) {
+                                                p.push("");
+                                            }
+                                            ax = p.concat(ax);
+                                        }
+                                        break;
+                                    } else if (bx[j - 1] === "<em>" + ax[o] && em.test(ax[j - 1])) {
+                                        bx[j - 1] = bx[j - 1].replace(em, "");
+                                        bx.splice(j - 1, 0, "<em></em>");
+                                        ax[o - 1] = ax[o - 1] + "</em>";
+                                        n = 0;
+                                        k = o;
+                                        if (o - j > 0) {
+                                            p = [];
+                                            for (o; o > j; o -= 1) {
+                                                p.push("");
+                                            }
+                                            bx = p.concat(bx);
+                                        }
+                                        break;
+                                    } else if (ax[o] === bx[j]) {
+                                        if (ax.length > bx.length && ax[o - 1] === bx[j - 1].replace(/<em>/, "")) {
+                                            ax[o - 2] = ax[o - 2] + "</em>";
+                                            bx[j - 2] = bx[j - 2] + "<em></em>";
+                                            bx[j - 1] = bx[j - 1].replace(/<em>/, "");
+                                        } else {
+                                            ax[o - 1] = ax[o - 1] + "</em>";
+                                            bx[j - 1] = bx[j - 1] + "</em>";
+                                        }
+                                        k = o;
+                                        if (o - j > 0) {
+                                            p = [];
+                                            for (o; o > j; o -= 1) {
+                                                p.push("");
+                                            }
+                                            bx = p.concat(bx);
+                                        }
+                                        n = 0;
+                                        break;
+                                    } else if (bx[o] === ax[j]) {
+                                        if (bx.length > ax.length && bx[o - 1].replace(/<em>/, "") === ax[j - 1]) {
+                                            bx[o - 2] = bx[o - 2] + "</em>";
+                                            ax[j - 2] = ax[j - 2] + "<em></em>";
+                                            ax[j - 1] = ax[j - 1].replace(/<em>/, "");
+                                        } else {
+                                            bx[o - 1] = bx[o - 1] + "</em>";
+                                            ax[j - 1] = ax[j - 1] + "</em>";
+                                        }
+                                        k = o;
+                                        if (o - j > 0) {
+                                            p = [];
+                                            for (o; o > j; o -= 1) {
+                                                p.push("");
+                                            }
+                                            ax = p.concat(ax);
+                                        }
+                                        n = 0;
+                                        break;
+                                    }
                                 }
-                                ax.splice(j - 2, 0, "");
-                                zx += 1;
-                                j -= 1;
-                            } else if (n === 1 && bx[j - 1] === ax[j]) {
-                                if (bx[j - 2].indexOf("<em>") !== -1) {
-                                    bx[j - 2] = bx[j - 2].replace(/<em>/, "<em> </em>");
-                                    ax[j - 2] = ax[j - 2] + "</em>";
-                                    n = 0;
+                                if (n === 1) {
+                                    for (o = j; o < zx; o += 1) {
+                                        if (ax[o] === bx[o]) {
+                                            ax[o - 1] = ax[o - 1] + "</em>";
+                                            bx[o - 1] = bx[o - 1] + "</em>";
+                                            k = o;
+                                            n = 0;
+                                            break;
+                                        }
+                                    }
                                 }
-                                bx.splice(j - 2, 0, "");
-                                zx += 1;
-                                j -= 1;
+                                break;
                             }
                         }
                         if (j === zx && n === 1) {
@@ -573,7 +635,7 @@ var diffview = function (baseTextLines, newTextLines, baseTextName, newTextName,
 
                         //All diff lines receive a change value of
                         //"replace" for both inline and side by side
-						//diffs.
+                        //diffs.
                     } else if (change === "replace") {
                         if (b < be && n < ne && baseTextLines[b] !== newTextLines[n]) {
                             z = charcomp(baseTextLines[b], newTextLines[n]);

@@ -2002,16 +2002,16 @@ var markup_beauty = function (args) {
                     if (a === 1) {
                         n = "";
                     }
-                    a = a + " more start tag" + n + " than end tag" + n + "! ";
+                    a = a + " more start tag" + n + " than end tag" + n + "!";
                 } else {
                     if (a === -1) {
                         n = "";
                     }
-                    a = (a * -1) + " more end tag" + n + " than start tag" + n + "! ";
+                    a = (a * -1) + " more end tag" + n + " than start tag" + n + "!";
                 }
-                c.push("<p><em>" + a + "The combined total number of start tags, script tags, and style tags should equal the number of end tags. For HTML try the 'Presume SGML type HTML' option.</em></p>");
+                o.push("<p><strong>" + a + "</strong> The combined total number of start tags, script tags, and style tags should equal the number of end tags. For HTML try the 'Presume SGML type HTML' option.</p>");
             } else {
-                c.push("");
+                o.push("");
             }
             o.push("<div id='doc'>");
             o.push(zipf);
