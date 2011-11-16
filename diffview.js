@@ -459,8 +459,6 @@ var diffview = function (baseTextLines, newTextLines, baseTextName, newTextName,
                             }
                         }
                         for (j = i + 1; j < zx; j += 1) {
-                            //minor bug to investigate
-                            //</a> vs </a j> as terminal input
                             if (ax[j] !== undefined && bx[j] === undefined) {
                                 bx[j] = " ";
                             } else if (ax[j] === undefined && bx[j] !== undefined) {

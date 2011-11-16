@@ -956,7 +956,7 @@ var js_beautify = function (args) {
                             }
                         } else if (last_type !== "TK_START_EXPR" && last_text !== "=" && last_text !== "," && (token_text === "continue" || token_text === "try" || token_text === "throw" || token_text === "return" || token_text === "var" || token_text === "if" || token_text === "switch" || token_text === "case" || token_text === "default" || token_text === "for" || token_text === "while" || token_text === "break" || token_text === "function" || prefix === "NEWLINE")) {
                             if (last_text === "return" || last_text === "throw" || (last_type !== "TK_END_EXPR" && last_text !== ":" && (last_type !== "TK_START_EXPR" || token_text !== "var"))) {
-                                if (token_text === "if" && last_word === "else" && last_text !== "{") {
+                                if ((token_text === "if" && last_word === "else" && last_text !== "{") || (token_text === "function" && last_type === "TK_OPERATOR")) {
                                     print_single_space();
                                 } else if (token_text === "while" && last_text === "}") {
                                     trim_output(true);
