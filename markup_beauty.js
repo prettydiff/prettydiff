@@ -218,16 +218,28 @@ var markup_beauty = function (args) {
                     if (x.substr(a, 7).toLowerCase() === "<script") {
                         for (b = a + 7; b < c; b += 1) {
                             if (x.charAt(b) + x.charAt(b + 1) + x.charAt(b + 2).toLowerCase() + x.charAt(b + 3).toLowerCase() + x.charAt(b + 4).toLowerCase() + x.charAt(b + 5).toLowerCase() + x.charAt(b + 6).toLowerCase() + x.charAt(b + 7).toLowerCase() + x.charAt(b + 8) === "</script>") {
+                                //h counts the index of the future build
+                                //array
+                                if (/></.test(x.substr(a, b))) {
+                                    h += 2;
+                                } else {
+                                    h += 3;
+                                }
                                 a = b + 8;
-                                h += 1;
                                 break;
                             }
                         }
                     } else if (x.substr(a, 6).toLowerCase() === "<style") {
                         for (b = a + 6; b < c; b += 1) {
                             if (x.charAt(b) + x.charAt(b + 1) + x.charAt(b + 2).toLowerCase() + x.charAt(b + 3).toLowerCase() + x.charAt(b + 4).toLowerCase() + x.charAt(b + 5).toLowerCase() + x.charAt(b + 6).toLowerCase() + x.charAt(b + 7) === "</style>") {
+                                //h counts the index of the future build
+                                //array
+                                if (/></.test(x.substr(a, b))) {
+                                    h += 2;
+                                } else {
+                                    h += 3;
+                                }
                                 a = b + 7;
-                                h += 1;
                                 break;
                             }
                         }
