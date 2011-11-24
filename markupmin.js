@@ -156,8 +156,8 @@ var markupmin = function (x, comments, presume_html, top_comments) {
                     cdataEnd = (/(\/+\]+>\s*)$/),
                     scriptStart = (/^(\s*<\!\-\-)/),
                     scriptEnd = (/(\/+\-\->\s*)$/),
-                    cs,
-                    ce;
+                    cs = "",
+                    ce = "";
                 if (jsmin === undefined) {
                     return;
                 }
