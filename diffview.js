@@ -417,6 +417,7 @@ var diffview = function (baseTextLines, newTextLines, baseTextName, newTextName,
                     };
                     ax = entity(ax);
                     bx = entity(bx);
+                    n = 0;
 
                     //This function actually determines if the same
                     //character positions in two compared arrays match.
@@ -428,14 +429,13 @@ var diffview = function (baseTextLines, newTextLines, baseTextName, newTextName,
                     //separate matches can be specified perline.
                     compare = function () {
                         var em = /<em>/g,
-                            n = 0,
                             o,
                             p;
                         for (i = k; i < zx; i += 1) {
                             if (ax[i] === bx[i]) {
                                 r = i;
                             } else {
-                                if (n !== 1 && ax[i] !== bx[i] && !em.test(ax[i]) && !em.test(bx[i]) && !em.test(ax[i - 1]) && !em.test(bx[i - 1])) {
+                                if (n === 0 && ax[i] !== bx[i] && !em.test(ax[i]) && !em.test(bx[i]) && !em.test(ax[i - 1]) && !em.test(bx[i - 1])) {
                                     if (ax[i] !== undefined && bx[i] !== undefined) {
                                         ax[i] = "<em>" + ax[i];
                                         bx[i] = "<em>" + bx[i];
@@ -534,8 +534,20 @@ var diffview = function (baseTextLines, newTextLines, baseTextName, newTextName,
                                     }
                                 }
                                 if (n === 1) {
-                                    for (o = j; o < zx; o += 1) {
-                                        if (ax[o] === bx[o]) {
+                                    for (o = j + 1; o < zx - 1; o += 1) {
+                                        if (typeof ax[o - 1] === "undefined" && ax[j + 1] === bx[o]) {
+                                            ax[j] += "</em>";
+                                            bx[o - 1] += "</em>";
+                                            k = o + 1;
+                                            n = 0;
+                                            break;
+                                        } else if (typeof bx[o - 1] === "undefined" && bx[j + 1] === ax[o]) {
+                                            bx[j] += "</em>";
+                                            ax[o - 1] += "</em>";
+                                            k = o + 1;
+                                            n = 0;
+                                            break;
+                                        } else if (ax[o] === bx[o]) {
                                             ax[o - 1] = ax[o - 1] + "</em>";
                                             bx[o - 1] = bx[o - 1] + "</em>";
                                             k = o;
@@ -544,10 +556,10 @@ var diffview = function (baseTextLines, newTextLines, baseTextName, newTextName,
                                         }
                                     }
                                 }
-                                break;
                             }
                         }
                         if (j === zx && n === 1) {
+                            n = 0;
                             if (ax[j - 1].lastIndexOf("</em>") !== ax[j - 1].length - 5) {
                                 ax[j - 1] = ax[j - 1] + "</em>";
                             }
