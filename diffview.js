@@ -436,33 +436,38 @@ var diffview = function (baseTextLines, newTextLines, baseTextName, newTextName,
                                 r = i;
                             } else {
                                 if (n === 0 && ax[i] !== bx[i] && !em.test(ax[i]) && !em.test(bx[i]) && !em.test(ax[i - 1]) && !em.test(bx[i - 1])) {
-                                    if (ax[i] !== undefined && bx[i] !== undefined) {
-                                        ax[i] = "<em>" + ax[i];
-                                        bx[i] = "<em>" + bx[i];
-                                        errorout += 1;
-                                    } else if (ax[i] === undefined && bx[i] !== undefined) {
-                                        ax[i] = "<em> ";
-                                        bx[i] = "<em>" + bx[i];
-                                        errorout += 1;
-                                    } else if (ax[i] !== undefined && bx[i] === undefined) {
-                                        ax[i] = "<em>" + ax[i];
-                                        bx[i] = "<em> ";
-                                        errorout += 1;
+                                    if (typeof ax[i - 2] === "string" && /(<\/em>)$/.test(ax[i - 2]) && ax[i - 1] === " ") {
+                                        ax[i - 2] = ax[i - 2].replace(/(<\/em>)$/, "");
+                                        bx[i - 2] = bx[i - 2].replace(/(<\/em>)$/, "");
+                                    } else {
+                                        if (ax[i] !== undefined && bx[i] !== undefined) {
+                                            ax[i] = "<em>" + ax[i];
+                                            bx[i] = "<em>" + bx[i];
+                                            errorout += 1;
+                                        } else if (ax[i] === undefined && bx[i] !== undefined) {
+                                            ax[i] = "<em>";
+                                            bx[i] = "<em>" + bx[i];
+                                            errorout += 1;
+                                        } else if (ax[i] !== undefined && bx[i] === undefined) {
+                                            ax[i] = "<em>" + ax[i];
+                                            bx[i] = "<em>";
+                                            errorout += 1;
+                                        }
                                     }
                                     n = 1;
                                 } else if (ax[i] === undefined && (bx[i] === "" || bx[i] === " ")) {
-                                    ax[i] = " ";
+                                    ax[i] = "";
                                 } else if (bx[i] === undefined && (ax[i] === "" || ax[i] === " ")) {
-                                    bx[i] = " ";
+                                    bx[i] = "";
                                 }
                                 break;
                             }
                         }
                         for (j = i + 1; j < zx; j += 1) {
                             if (ax[j] !== undefined && bx[j] === undefined) {
-                                bx[j] = " ";
+                                bx[j] = "";
                             } else if (ax[j] === undefined && bx[j] !== undefined) {
-                                ax[j] = " ";
+                                ax[j] = "";
                             } else if (n === 1) {
                                 for (o = j; o < zx; o += 1) {
                                     if (ax[j - 1] === "<em>" + bx[o] && em.test(bx[j - 1])) {
@@ -494,7 +499,7 @@ var diffview = function (baseTextLines, newTextLines, baseTextName, newTextName,
                                         }
                                         break;
                                     } else if (ax[o] === bx[j]) {
-                                        if (ax.length > bx.length && ax[o - 1] === bx[j - 1].replace(/<em>/, "")) {
+                                        if (ax.length > bx.length && ax[o - 1].substr(4) === bx[j - 1]) {
                                             ax[o - 2] = ax[o - 2] + "</em>";
                                             bx[j - 2] = bx[j - 2] + "<em></em>";
                                             bx[j - 1] = bx[j - 1].replace(/<em>/, "");
@@ -513,7 +518,7 @@ var diffview = function (baseTextLines, newTextLines, baseTextName, newTextName,
                                         n = 0;
                                         break;
                                     } else if (bx[o] === ax[j]) {
-                                        if (bx.length > ax.length && bx[o - 1].replace(/<em>/, "") === ax[j - 1]) {
+                                        if (bx.length > ax.length && bx[o - 1].substr(4) === ax[j - 1]) {
                                             bx[o - 2] = bx[o - 2] + "</em>";
                                             ax[j - 2] = ax[j - 2] + "<em></em>";
                                             ax[j - 1] = ax[j - 1].replace(/<em>/, "");
@@ -557,15 +562,7 @@ var diffview = function (baseTextLines, newTextLines, baseTextName, newTextName,
                                     }
                                 }
                             }
-                        }
-                        if (j === zx && n === 1) {
-                            n = 0;
-                            if (ax[j - 1].lastIndexOf("</em>") !== ax[j - 1].length - 5) {
-                                ax[j - 1] = ax[j - 1] + "</em>";
-                            }
-                            if (bx[j - 1].lastIndexOf("</em>") !== bx[j - 1].length - 5) {
-                                bx[j - 1] = bx[j - 1] + "</em>";
-                            }
+                            zx = Math.max(ax.length, bx.length);
                         }
                     };
 
@@ -576,12 +573,18 @@ var diffview = function (baseTextLines, newTextLines, baseTextName, newTextName,
                     for (p = 0; p < zx; p += 1) {
                         if (r + 1 !== zx) {
                             compare();
+                        } else {
+                            break;
                         }
                     }
 
                     //Final computation before charcomp is finished.
                     c = ax.join("").replace(/$#34;/g, "\"").replace(/$#39;/g, "'");
                     d = bx.join("").replace(/$#34;/g, "\"").replace(/$#39;/g, "'");
+                    if (n === 1) {
+                        c += "</em>";
+                        d += "</em>";
+                    }
                 }
                 return [c, d];
             };

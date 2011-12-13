@@ -86,6 +86,7 @@ var jsmin = function (comment, input, level, type, alter, fcomment) {
             ALNUM,
             fcom = [],
             alterj = false,
+            asiflag = true,
             theLookahead = EOF,
 
             //isAlphanum -- return true if the character is a letter,
@@ -93,6 +94,10 @@ var jsmin = function (comment, input, level, type, alter, fcomment) {
             isAlphanum = function (c) {
                 return c !== EOF && (ALNUM.has(c) || c.charCodeAt(0) > 126);
             },
+
+            //jsasiq is a response to a regular expression and only
+            //serves to verify the white space in question contains a
+            //new line character
             jsasiq = function (x) {
                 if (x.indexOf("\n") === -1) {
                     return x;
@@ -102,6 +107,14 @@ var jsmin = function (comment, input, level, type, alter, fcomment) {
                     return x.join("");
                 }
             },
+
+            //asifix determines whether "}" or ")" need to be followed
+            //by a semicolon during automatic semicolon insertion.  This
+            //part cannot be performed with simple minification
+            //reduction or a regular expression due to nesting.  Instead
+            //this one aspect of automatic semicolon must be treated
+            //as a logical irregularity of a regular syntax, much like
+            //deducing XML.
             asiFix = function (x) {
                 var a,
                     b,
@@ -146,79 +159,85 @@ var jsmin = function (comment, input, level, type, alter, fcomment) {
                         x[a - 1] = "";
                         x[a - 2] = " ";
                     } else if (f === "" && (x[a] === "}" || x[a] === ")") && (a === b - 1 || x[a + 1] === "}" || isAlphanum(x[a + 1]))) {
-                        d = -1;
-                        e = "";
-                        g = "";
-                        if (x[a] === "}") {
-                            g = "}";
-                            h = "{";
+                        if (typeof x[a - 3] === "string" && x[a - 2] === "=" && x[a - 1] === "{" && x[a] === "}" && (isAlphanum(x[a - 3]) || x[a - 3] === "]" || x[a - 3] === ")")) {
+                            x[a] += ";";
                         } else {
-                            g = ")";
-                            h = "(";
-                        }
-                        for (c = a - 1; c > -1; c -= 1) {
-                            if ((c > 1 && x[c - 1] === "\\" && x[c - 2] !== "\\") || (c === 1 && x[c - 1] === "\\")) {
-                                c -= 1;
+                            d = -1;
+                            e = "";
+                            g = "";
+                            if (x[a] === "}") {
+                                g = "}";
+                                h = "{";
                             } else {
-                                if (x[c].charAt(0) === g && e === "") {
-                                    d -= 1;
-                                } else if (x[c] === h && e === "") {
-                                    d += 1;
-                                } else if (x[c] === "\"" && e === "") {
-                                    e = "\"";
-                                } else if (x[c] === "'" && e === "") {
-                                    e = "'";
-                                } else if (x[c] === "pd" && e === "") {
-                                    e = "/";
-                                } else if (x[c] === "\"" && e === "\"") {
-                                    e = "";
-                                } else if (x[c] === "'" && e === "'") {
-                                    e = "";
-                                } else if (x[c] === "pd" && e === "/") {
-                                    e = "";
-                                }
+                                g = ")";
+                                h = "(";
                             }
-                            if (d === 0) {
-                                if (x[c - 1] === ")" && g === "}") {
-                                    c -= 2;
-                                    d = -1;
-                                    e = "";
-                                    for (c; c > -1; c -= 1) {
-                                        if ((c > 1 && x[c - 1] === "\\" && x[c - 2] !== "\\") || (c === 1 && x[c - 1] === "\\")) {
-                                            c -= 1;
-                                        } else {
-                                            if (x[c] === ")" && e === "") {
-                                                d -= 1;
-                                            } else if (x[c] === "(" && e === "") {
-                                                d += 1;
-                                            } else if (x[c] === "\"" && e === "") {
-                                                e = "\"";
-                                            } else if (x[c] === "'" && e === "") {
-                                                e = "'";
-                                            } else if (x[c] === "pd" && e === "") {
-                                                e = "/";
-                                            } else if (x[c] === "\"" && e === "\"") {
-                                                e = "";
-                                            } else if (x[c] === "'" && e === "'") {
-                                                e = "";
-                                            } else if (x[c] === "pd" && e === "/") {
-                                                e = "";
-                                            }
-                                        }
-                                        if (d === 0) {
-                                            c -= 1;
-                                            if (typeof x[c - 9] === "string" && x[c - 8] === "=" && x[c - 7] === "f" && x[c - 6] === "u" && x[c - 5] === "n" && x[c - 4] === "c" && x[c - 3] === "t" && x[c - 2] === "i" && x[c - 1] === "o" && x[c] === "n" && isAlphanum(x[c - 9])) {
-                                                x[a] += ";";
-                                            }
-                                            break;
-                                        }
-                                    }
-                                    break;
-                                } else if (typeof x[c - 2] === "string" && x[c - 1] === "=" && (x[a - 1].length === 1 || x[a - 1] === "pd") && (isAlphanum(x[c - 2] || x[c - 2] === "]" || x[c - 2] === ")"))) {
-                                    x[a] += ";"; //console.log(x[a]+x[a+1]+"|"+x[c-2]+x[c-1]+x[c]);
-                                    break;
+                            for (c = a - 1; c > -1; c -= 1) {
+                                if ((c > 1 && x[c - 1] === "\\" && x[c - 2] !== "\\") || (c === 1 && x[c - 1] === "\\")) {
+                                    c -= 1;
                                 } else {
-                                    break;
+                                    if (x[c].charAt(0) === g && e === "") {
+                                        d -= 1;
+                                    } else if (x[c] === h && e === "") {
+                                        d += 1;
+                                    } else if (x[c] === "\"" && e === "") {
+                                        e = "\"";
+                                    } else if (x[c] === "'" && e === "") {
+                                        e = "'";
+                                    } else if (x[c] === "pd" && e === "") {
+                                        e = "/";
+                                    } else if (x[c] === "\"" && e === "\"") {
+                                        e = "";
+                                    } else if (x[c] === "'" && e === "'") {
+                                        e = "";
+                                    } else if (x[c] === "pd" && e === "/") {
+                                        e = "";
+                                    }
+                                }
+                                if (d === 0 && (c !== a - 1 || (c === a - 1 && typeof x[c - 1] === "string" && x[c - 1] !== x[a]))) {
+                                    if (x[c - 1] === ")" && g === "}") {
+                                        c -= 2;
+                                        d = -1;
+                                        e = "";
+                                        for (c; c > -1; c -= 1) {
+                                            if ((c > 1 && x[c - 1] === "\\" && x[c - 2] !== "\\") || (c === 1 && x[c - 1] === "\\")) {
+                                                c -= 1;
+                                            } else {
+                                                if (x[c] === ")" && e === "") {
+                                                    d -= 1;
+                                                } else if (x[c] === "(" && e === "") {
+                                                    d += 1;
+                                                } else if (x[c] === "\"" && e === "") {
+                                                    e = "\"";
+                                                } else if (x[c] === "'" && e === "") {
+                                                    e = "'";
+                                                } else if (x[c] === "pd" && e === "") {
+                                                    e = "/";
+                                                } else if (x[c] === "\"" && e === "\"") {
+                                                    e = "";
+                                                } else if (x[c] === "'" && e === "'") {
+                                                    e = "";
+                                                } else if (x[c] === "pd" && e === "/") {
+                                                    e = "";
+                                                }
+                                            }
+                                            if (d === 0) {
+                                                c -= 1;
+                                                if (typeof x[c - 9] === "string" && x[c - 8] === "=" && x[c - 7] === "f" && x[c - 6] === "u" && x[c - 5] === "n" && x[c - 4] === "c" && x[c - 3] === "t" && x[c - 2] === "i" && x[c - 1] === "o" && x[c] === "n" && (isAlphanum(x[c - 9]) || x[c - 9] === "]" || x[c - 9] === ")")) {
+                                                    x[a] += ";";
+                                                }
+                                                break;
+                                            }
+                                        }
+                                        break;
+                                    } else if (typeof x[c - 2] === "string" && x[c - 1] === "=" && (x[a - 1].length === 1 || x[a - 1] === "pd") && (isAlphanum(x[c - 2] || x[c - 2] === "]" || x[c - 2] === ")"))) {
+                                        if (typeof x[a + 1] !== "string" || x[a + 1] !== "/") {
+                                            x[a] += ";";
+                                        }
+                                        break;
+                                    } else {
+                                        break;
+                                    }
                                 }
                             }
                         }
@@ -231,7 +250,7 @@ var jsmin = function (comment, input, level, type, alter, fcomment) {
                         x[a + 1] = "";
                     }
                 }
-                return x.join("").replace(/\\;"/g, "\"").replace(/\\;'/g, "'");
+                return x.join("").replace(/\"/g, "\"").replace(/\'/g, "'");
             },
 
             //reduction provides a logical compression to flatten
@@ -645,7 +664,8 @@ var jsmin = function (comment, input, level, type, alter, fcomment) {
                             }
                         }
                     }()),
-                    r = [];
+                    r = [],
+                    s;
                 if (error !== "") {
                     return error;
                 }
@@ -657,8 +677,11 @@ var jsmin = function (comment, input, level, type, alter, fcomment) {
                             r.push(action(1));
                         } else {
                             r.push(action(2));
-                            if (alterj && (isAlphanum(r[r.length - 1]) || r[r.length - 1] === "'" || r[r.length - 1] === "\"") && a === "}") {
-                                r.push(";");
+                            if (alterj) {
+                                s = r[r.length - 1];
+                                if ((isAlphanum(s) || s === "'" || s === "\"" || s === "]" || s === ")") && a === "}") {
+                                    r.push(";");
+                                }
                             }
                         }
                     } else if (a === "\n") {
@@ -697,6 +720,7 @@ var jsmin = function (comment, input, level, type, alter, fcomment) {
                             if (level === 1 && a !== "\n") {
                                 r.push(action(1));
                             } else if (a === "}") {
+                                asiflag = true;
                                 if (level === 3) {
                                     r.push(action(3));
                                 } else {
@@ -704,8 +728,14 @@ var jsmin = function (comment, input, level, type, alter, fcomment) {
                                 }
                             } else if (isAlphanum(a)) {
                                 r.push(action(1));
-                                if (alterj && isAlphanum(r[r.length - 1]) && a === "\n" && b === "}") {
-                                    r.push(";");
+                                if (alterj) {
+                                    s = r[r.length - 1];
+                                    if (s === ":") {
+                                        asiflag = false;
+                                    }
+                                    if (asiflag && (isAlphanum(s) || s === "]" || s === ")") && a === "\n" && (b === "}" || b === " ")) {
+                                        r.push(";");
+                                    }
                                 }
                             } else {
                                 r.push(action(3));
@@ -713,8 +743,16 @@ var jsmin = function (comment, input, level, type, alter, fcomment) {
                             break;
                         default:
                             r.push(action(1));
-                            if (alterj && (isAlphanum(r[r.length - 1]) || r[r.length - 1] === "'" || r[r.length - 1] === "\"") && a === "}") {
-                                r.push(";");
+                            if (alterj) {
+                                s = r[r.length - 1];
+                                if (s === "{") {
+                                    asiflag = true;
+                                } else if (s === ":") {
+                                    asiflag = false;
+                                }
+                                if (asiflag && (((s === "]" || s === ")") && isAlphanum(a) && a !== "/") || (a === "}" && (isAlphanum(s) || s === "'" || s === "\"")))) {
+                                    r.push(";");
+                                }
                             }
                             break;
                         }
@@ -727,7 +765,7 @@ var jsmin = function (comment, input, level, type, alter, fcomment) {
         } else {
             if (alter && level === 2) {
                 alterj = true;
-                input = input.replace(/("|')\s+["'a-zA-Z_$]/g, jsasiq);
+                input = input.replace(/\r\n?/g, "\n").replace(/("|')\s+["'a-zA-Z_$]/g, jsasiq);
             }
             OTHERS = "_$//";
         }
@@ -748,8 +786,8 @@ var jsmin = function (comment, input, level, type, alter, fcomment) {
                 ret = ret.replace(/:\.?0(\%|px|in|cm|mm|em|ex|pt|pc)/g, ":0").replace(/ \.?0(\%|px|in|cm|mm|em|ex|pt|pc)/g, " 0").replace(/bottom:none/g, "bottom:0").replace(/top:none/g, "top:0").replace(/left:none/g, "left:0").replace(/right:none/, "right:0").replace(/:0 0 0 0/g, ":0").replace(/:(\s*([0-9]+\.)?[0-9]+(%|in|cm|mm|em|ex|pt|pc|px)?)+\-([0-9]*\.)?[0-9]/g, fixNegative);
                 ret = ret.replace(/[a-z]*:(0\s*)+\-?\.?\d?/g, singleZero).replace(/ 0 0 0 0/g, " 0").replace(/rgb\(\d+,\d+,\d+\)/g, rgbToHex).replace(/background\-position:0;/gi, "background-position:0 0;").replace(/;+/g, ";").replace(/\s*[\w\-]+:\s*\}/g, "}").replace(/\s*[\w\-]+:\s*;/g, "").replace(/;\}/g, "}").replace(/\{\s+\}/g, "{}");
 
-                //This logic is used to pull the first "@charset" definition
-                //to the extreme top and remove all others
+                //This logic is used to pull the first "@charset"
+                // definition to the extreme top and remove all others
                 if (atchar === null) {
                     atchar = [""];
                 } else if (atchar[0].charAt(atchar[0].length - 1) !== ";") {
@@ -759,7 +797,10 @@ var jsmin = function (comment, input, level, type, alter, fcomment) {
             }
             ret = ret.replace(/~PDpar~/g, "\\)");
         } else if (alterj) {
-            ret = ret.replace(/(\s+)$/, "").replace(/\n/g, ";").replace(/\};/g, "}").replace(/x{2}-->/g, "//-->");
+            if (ret.charAt(ret.length - 1) !== ";") {
+                ret += ";";
+            }
+            ret = ret.replace(/(\s+)$/, "").replace(/\n/g, ";").replace(/\}\u003b/g, "}").replace(/x{2}-->/g, "//-->");
             ret = asiFix(ret);
         } else {
             ret = ret.replace(/^\s+/, "").replace(/x{2}-->/g, "//-->");
