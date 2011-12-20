@@ -1802,8 +1802,12 @@ var markup_beauty = function (args) {
                     w.push("%</td></tr>");
                     return w.join("");
                 },
+                q = "",
+                r,
+                s = [],
                 z = cinfo.length,
                 insertComma = function (x) {
+                    var z;
                     if (typeof (x) === "number") {
                         x = x.toString();
                     }
@@ -1831,27 +1835,30 @@ var markup_beauty = function (args) {
                         h = [],
                         g = [],
                         i = [],
+                        l = [],
                         j = 0,
                         punctuation = function (y) {
                             return y.replace(/(\,|\.|\?|\!|\:) /, " ");
                         };
                     for (a = 0; a < z; a += 1) {
                         if (cinfo[a] === "content") {
-                            x += " " + build[a];
+                            l.push(" ");
+                            l.push(build[a]);
                         } else if (cinfo[a] === "mixed_start") {
-                            x += build[a];
+                            l.push(build[a]);
                         } else if (cinfo[a] === "mixed_both") {
-                            x += build[a].substr(0, build[a].length);
+                            l.push(build[a].substr(0, build[a].length));
                         } else if (cinfo[a] === "mixed_end") {
-                            x += " " + build[a].substr(0, build[a].length);
+                            l.push(" ");
+                            l.push(build[a].substr(0, build[a].length));
                         }
                     }
+                    x = l.join("");
                     if (x.length === 0) {
                         return "";
                     }
                     x = x.substr(1, x.length).toLowerCase();
-                    w = x.replace(/\&nbsp;?/gi, " ").replace(/[a-z](\,|\.|\?|\!|\:) /gi, punctuation).replace(/(\(|\)|"|\{|\}|\[|\])/g, "").replace(/ +/g, " ").split(" ");
-                    x = x.split(" ");
+                    w = x.replace(/\&nbsp;?/gi, " ").replace(/[a-z](\,|\.|\?|\!|\:) /gi, punctuation).replace(/(\(|\)|"|\{|\}|\[|\])/g, "").replace(/\s+/g, " ").split(" ");
                     z = w.length;
                     for (a = 0; a < z; a += 1) {
                         if (w[a] !== "") {
@@ -1893,7 +1900,7 @@ var markup_beauty = function (args) {
                     }
                     for (a = 0; a < b; a += 1) {
                         h[a] = (g[a + 1]) ? (g[a][0] / g[a + 1][0]).toFixed(2) : "1.00";
-                        g[a] = "<tr><th>" + (a + 1) + "</th><td>" + g[a][1] + "</td><td>" + g[a][0] + "</td><td>" + h[a] + "</td><td>" + ((g[a][0] / j) * 100).toFixed(2) + "%</td></tr>";
+                        g[a] = "<tr><th>" + (a + 1) + "</th><td>" + g[a][1].replace(/&/g, "&amp;") + "</td><td>" + g[a][0] + "</td><td>" + h[a] + "</td><td>" + ((g[a][0] / j) * 100).toFixed(2) + "%</td></tr>";
                     }
                     if (g[10]) {
                         g[10] = "";
@@ -1901,10 +1908,17 @@ var markup_beauty = function (args) {
                     if (b > 10) {
                         g[g.length - 1] = "";
                     }
-                    i.push("<table class='analysis' summary=\"Zipf's Law\"><caption>This table demonstrates <em>Zipf's Law</em> by listing the 10 most occuring words in the content and the number of times they occurred.</caption>");
+                    i.push("<table class='analysis' summary='Zipf&#39;s Law'><caption>This table demonstrates <em>Zipf&#39;s Law</em> by listing the 10 most occuring words in the content and the number of times they occurred.</caption>");
                     i.push("<thead><tr><th>Word Rank</th><th>Most Occurring Word by Rank</th><th>Number of Instances</th><th>Ratio Increased Over Next Most Frequence Occurance</th><th>Percentage from ");
                     i.push(insertComma(j));
-                    i.push(" Total Word</th></tr></thead><tbody>");
+                    if (j > 1) {
+                        i.push(" Total");
+                    }
+                    i.push(" Word");
+                    if (j > 1) {
+                        i.push("s");
+                    }
+                    i.push("</th></tr></thead><tbody>");
                     i.push(g.join(""));
                     i.push("</tbody></table>");
                     return i.join("");
@@ -2007,23 +2021,34 @@ var markup_beauty = function (args) {
             k = [j[0], j[0], j[0], j[0], j[1], j[1], j[1], j[1], i[10], i[10], i[10], j[3], j[3], j[3], j[3], j[2], j[2], j[2]];
             b[2] = b[2] - f[3];
             i[2] = i[2] - j[3];
+            s.push("<p><strong>");
             if (b[0] + b[15] + b[16] !== b[1]) {
-                n = "s";
+                q = "s";
                 a = (b[0] + b[15] + b[16]) - b[1];
                 if (a > 0) {
                     if (a === 1) {
-                        n = "";
+                        q = "";
                     }
-                    a = a + " more start tag" + n + " than end tag" + n + "!";
+                    s.push(a);
+                    s.push(" more start tag");
+                    s.push(q);
+                    s.push(" than end tag");
+                    s.push(q);
+                    s.push("!");
                 } else {
                     if (a === -1) {
-                        n = "";
+                        q = "";
                     }
-                    a = (a * -1) + " more end tag" + n + " than start tag" + n + "!";
+                    s.push(a * -1);
+                    s.push(" more end tag");
+                    s.push(q);
+                    s.push(" than start tag");
+                    s.push(q);
+                    s.push("!");
                 }
-                o.push("<p><strong>" + a + "</strong> The combined total number of start tags, script tags, and style tags should equal the number of end tags. For HTML try the 'Presume SGML type HTML' option.</p>");
+                s.push("</strong> The combined total number of start tags, script tags, and style tags should equal the number of end tags. For HTML this problem may be solved by selecting the '<em>Presume SGML type HTML</em>' option.</p>");
             } else {
-                o.push("");
+                s = [""];
             }
             o.push("<div id='doc'>");
             o.push(zipf);
@@ -2032,7 +2057,6 @@ var markup_beauty = function (args) {
             o.push("</td><td>100.00%</td><td>100.00%</td><td>");
             o.push(sum.join("").length);
             o.push("</td><td>100.00%</td><td>100.00%</td></tr><tr><th colspan='7'>Common Tags</th></tr>");
-            o = o.join("");
             c = ["*** Start Tags", "End Tags", "Singleton Tags", "Comments", "Flat String", "String with Space at Start", "String with Space at End", "String with Space at Start and End", "SGML", "XML", "Total Parsing Declarations", "SSI", "ASP", "PHP", "Total Server Side Tags", "*** Script Tags", "*** Style Tags", "JavaScript/CSS Code"];
             z = b.length;
             for (a = 0; a < z; a += 1) {
@@ -2082,44 +2106,44 @@ var markup_beauty = function (args) {
                 }
                 c[a] = c[a].join("");
             }
-            c.splice(0, 0, o);
+            o.push(c.join(""));
             z = m.length;
             n = [];
             for (a = 0; a < z; a += 1) {
                 if (m[a]) {
                     n[a] = ["<li>"];
-                    n[a].push(m[a].replace(/\&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;"));
+                    n[a].push(m[a].replace(/\&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&#34;"));
                     n[a].push("</li>");
                     n[a] = n[a].join("");
                 }
             }
             if (n.length > 0) {
-                n = "<h4>HTML elements making HTTP requests:</h4><ul>" + n.join("") + "</ul>";
+                q = "<h4>HTML elements making HTTP requests:</h4><ul>" + n.join("") + "</ul>";
             } else {
-                n = "";
+                q = "";
             }
-            c.push("</tbody></table></div><p>* The number of requests is determined from the input submitted only and does not count the additional HTTP requests supplied from dynamically executed code, frames, iframes, css, or other external entities.</p><p>**");
-            c.push("Character size is measured from the individual pieces of tags and content specifically between minification and beautification.</p><p>*** The number of starting &lt;script&gt; and &lt;style&gt; tags is subtracted from the total number of start tags.");
-            c.push("The combination of those three values from the table above should equal the number of end tags or the code is in error.</p>");
-            c.push(n);
-            n = (sum.join("").length / 7500).toFixed(0);
-            if (n > 0) {
-                n = (m.length - n) * 4;
+            o.push("</tbody></table></div><p>* The number of requests is determined from the input submitted only and does not count the additional HTTP requests supplied from dynamically executed code, frames, iframes, css, or other external entities.</p><p>**");
+            o.push("Character size is measured from the individual pieces of tags and content specifically between minification and beautification.</p><p>*** The number of starting &lt;script&gt; and &lt;style&gt; tags is subtracted from the total number of start tags.");
+            o.push("The combination of those three values from the table above should equal the number of end tags or the code is in error.</p>");
+            o.push(q);
+            a = (sum.join("").length / 7500).toFixed(0);
+            if (a > 0) {
+                a = (m.length - a) * 4;
             } else {
-                n = 0;
+                a = 0;
             }
             if (j[1] === 0) {
                 f[1] = 0.00000001;
                 j[1] = 0.00000001;
             }
-            b = (((f[0] + f[2] - n) / cinfo.length) / (f[1] / cinfo.length));
-            a = function (x, y) {
+            b = (((f[0] + f[2] - a) / cinfo.length) / (f[1] / cinfo.length));
+            r = function (x, y) {
                 return (((j[0] + x) / sum.join("").length) / ((j[1] * y) / sum.join("").length));
             };
-            k = (b / a(j[2], 1)).toPrecision(2);
-            l = (b / a(i[15], 1)).toPrecision(2);
-            g = (b / a(j[2], 4)).toPrecision(2);
-            h = (b / a(i[15], 4)).toPrecision(2);
+            k = (b / r(j[2], 1)).toPrecision(2);
+            l = (b / r(i[15], 1)).toPrecision(2);
+            g = (b / r(j[2], 4)).toPrecision(2);
+            h = (b / r(i[15], 4)).toPrecision(2);
             if (k === l) {
                 l = "";
                 h = "";
@@ -2129,23 +2153,23 @@ var markup_beauty = function (args) {
             }
             e = insertComma(e);
             d = insertComma(d);
-            a = ["<p>If the input is content it receives an efficiency score of <strong>"];
-            a.push(k);
-            a.push("</strong>");
-            a.push(l);
-            a.push(". The efficiency score if this input is a large form or application is <strong>");
-            a.push(g);
-            a.push("</strong>");
-            a.push(h);
-            a.push(". Efficient markup achieves scores higher than 2.00 and excellent markup achieves scores higher than 4.00. The score reflects the highest number of tags to pieces of content where the weight of those tags is as small as possible compared to the weight of the content.");
-            a.push("The score is a performance metric only and is not associated with validity or well-formedness, but semantic code typically achieves the highest scores. All values are rounded to the nearest hundreth.</p><p><strong>Total input size:</strong> <em>");
-            a.push(e);
-            a.push("</em> characters</p><p><strong>Total output size:</strong> <em>");
-            a.push(d);
-            a.push("</em> characters</p><p><strong>* Total number of HTTP requests in supplied HTML:</strong> <em>");
-            a.push(m.length);
-            a.push("</em></p>");
-            summary = a.join("") + c.join("");
+            n = ["<p>If the input is content it receives an efficiency score of <strong>"];
+            n.push(k);
+            n.push("</strong>");
+            n.push(l);
+            n.push(". The efficiency score if this input is a large form or application is <strong>");
+            n.push(g);
+            n.push("</strong>");
+            n.push(h);
+            n.push(". Efficient markup achieves scores higher than 2.00 and excellent markup achieves scores higher than 4.00. The score reflects the highest number of tags to pieces of content where the weight of those tags is as small as possible compared to the weight of the content.");
+            n.push("The score is a performance metric only and is not associated with validity or well-formedness, but semantic code typically achieves the highest scores. All values are rounded to the nearest hundreth.</p><p><strong>Total input size:</strong> <em>");
+            n.push(e);
+            n.push("</em> characters</p><p><strong>Total output size:</strong> <em>");
+            n.push(d);
+            n.push("</em> characters</p><p><strong>* Total number of HTTP requests in supplied HTML:</strong> <em>");
+            n.push(m.length);
+            n.push("</em></p>");
+            summary = s.join("") + n.join("") + o.join("");
         }());
         return build.join("").replace(/\n(\s)+\n/g, "\n\n");
     };
