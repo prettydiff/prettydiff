@@ -734,7 +734,9 @@ var markup_beauty = function (args) {
                                 //text/ecmascript
                                 //application/ecmascript
                                 a = build[build.length - 1].toLowerCase().replace(/'/g, "\"");
-                                if (a.indexOf(" type=\"") === -1 || a.indexOf(" type=\"text/javascript\"") !== -1 || a.indexOf(" type=\"application/javascript\"") !== -1 || a.indexOf(" type=\"application/x-javascript\"") !== -1 || a.indexOf(" type=\"text/ecmascript\"") !== -1 || a.indexOf(" type=\"application/ecmascript\"") !== -1) {
+                                if (a.charAt(a.length - 2) === "/") {
+                                    token.push("T_singleton");
+                                } else if (a.indexOf(" type=\"") === -1 || a.indexOf(" type=\"text/javascript\"") !== -1 || a.indexOf(" type=\"application/javascript\"") !== -1 || a.indexOf(" type=\"application/x-javascript\"") !== -1 || a.indexOf(" type=\"text/ecmascript\"") !== -1 || a.indexOf(" type=\"application/ecmascript\"") !== -1) {
                                     token.push("T_script");
                                 } else {
                                     token.push("T_tag_start");
