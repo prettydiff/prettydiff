@@ -326,7 +326,7 @@ var cleanCSS = function (x, size, character, comment, alter) {
                         m = 0;
                         p = 0;
                         for (e = 0; e < f; e += 1) {
-                            if (c[e - 1] && c[e - 1][0] === c[e][0]) {
+                            if (c[e - 1] && c[e - 1][0] === c[e][0] && /\-[a-z]/.test(c[e - 1][1]) === false) {
                                 c[e - 1] = "";
                             }
                             if (c[e][0] !== "margin" && c[e][0].indexOf("margin") !== -1) {
