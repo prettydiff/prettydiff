@@ -48,9 +48,6 @@
  stronger minification resuling in smaller output.
 
  */
-String.prototype.has = function (c) {
-    return this.indexOf(c) > -1;
-};
 var jsmin = function (comment, input, level, type, alter, fcomment) {
         "use strict";
         var start = (function () {
@@ -92,7 +89,7 @@ var jsmin = function (comment, input, level, type, alter, fcomment) {
             //isAlphanum -- return true if the character is a letter,
             //digit, underscore, dollar sign, or non-ASCII character.
             isAlphanum = function (c) {
-                return c !== EOF && (ALNUM.has(c) || c.charCodeAt(0) > 126);
+                return c !== EOF && (ALNUM.indexOf(c) > -1 || c.charCodeAt(0) > 126);
             },
 
             //jsasiq is a response to a regular expression and only
@@ -606,7 +603,7 @@ var jsmin = function (comment, input, level, type, alter, fcomment) {
                     }
                 }
                 b = next();
-                if (b === "/" && "(,=:[!&|".has(a)) {
+                if (b === "/" && "(,=:[!&|".indexOf(a) > -1) {
                     r.push(a);
                     r.push(b);
                     for (;;) {
