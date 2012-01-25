@@ -713,7 +713,7 @@ var markup_beauty = function (args) {
                             } else if (x[i] === "<" && x[i + 1] === "!" && x[i + 2] === "-" && x[i + 3] === "-" && x[i + 4] === "#") {
                                 build.push(b("-->"));
                                 token.push("T_ssi");
-                            } else if (x[i] === "<" && x[i + 1] === "!" && x[i + 2] !== "-") {
+                            } else if (x[i] === "<" && x[i + 1] === "!" && x[i + 2] !== "-" && token[token.length - 1] !== "T_script") {
                                 build.push(b(">"));
                                 token.push("T_sgml");
                             } else if (x[i] === "<" && x[i + 1] === "?" && x[i + 2].toLowerCase() === "x" && x[i + 3].toLowerCase() === "m" && x[i + 4].toLowerCase() === "l") {
@@ -1456,8 +1456,8 @@ var markup_beauty = function (args) {
                             test1,
                             cdata,
                             cdata1,
-                            cdataStart = (/^(\s*\/+<!\[+[A-Z]+\[+)/),
-                            cdataEnd = (/(\/+\]+>\s*)$/),
+                            cdataStart = (/^(\s*\/*<\!\[+[A-Z]+\[+)/),
+                            cdataEnd = (/(\/*\]+>\s*)$/),
                             scriptStart = (/^(\s*<\!\-\-)/),
                             scriptEnd = (/(\-\->\s*)$/),
                             ops = {};
