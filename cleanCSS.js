@@ -126,7 +126,7 @@ var cleanCSS = function (x, size, character, comment, alter) {
                 if (a === "#" || a === "." || /[a-f0-9]/.test(a)) {
                     return y;
                 } else {
-                    return a + "0";
+                    return a + "0;";
                 }
             },
 
@@ -141,14 +141,11 @@ var cleanCSS = function (x, size, character, comment, alter) {
             emptyend = function (y) {
                 var b = y.match(/^(\s*)/)[0],
                     c = b.substr(0, b.length - tab.length);
-                return c + "}";
-            },
-
-            //a space is added after every colon.  This function remove the
-            //space after the colon separating the scheme from the heirarchy
-            //of URI strings.
-            fixscheme = function (y) {
-                return y.replace(/:\s+/, ":");
+                if (y.charAt(y.length - 1) === "}") {
+                    return c + "}";
+                } else {
+                    return c.replace(/(\s+)$/, "");
+                }
             },
 
             //This prevents percentage numbers from running together
@@ -165,30 +162,43 @@ var cleanCSS = function (x, size, character, comment, alter) {
             //most of the new line characters and all the indentation.
             cleanAsync = function () {
                 var i,
+                    j,
                     b = x.length,
                     tabs = [],
                     tabb = "",
-                    out = [tab];
+                    out = [tab],
+                    y = x.split("");
                 for (i = 0; i < b; i += 1) {
-                    if ("{" === x.charAt(i)) {
+                    if ("{" === y[i]) {
                         tabs.push(tab);
                         tabb = tabs.join("");
                         out.push(" {\n" + tabb);
-                    } else if ("\n" === x.charAt(i)) {
+                    } else if ("\n" === y[i]) {
                         out.push("\n" + tabb);
-                    } else if ("}" === x.charAt(i)) {
+                    } else if ("}" === y[i]) {
                         out[out.length - 1] = out[out.length - 1].replace(/\s*$/, "");
                         tabs = tabs.slice(0, tabs.length - 1);
                         tabb = tabs.join("");
-                        if (x.charAt(i + 1) + x.charAt(i + 2) !== "*/") {
+                        if (y[i + 1] + y[i + 2] !== "*/") {
                             out.push("\n" + tabb + "}\n" + tabb);
                         } else {
                             out.push("\n" + tabb + "}");
                         }
-                    } else if (";" === x.charAt(i) && "}" !== x.charAt(i + 1)) {
+                    } else if (y[i - 1] === "," && (/\s/).test(y[i]) === false) {
+                        out.push(" ");
+                        out.push(y[i]);
+                    } else if (";" === y[i] && "}" !== y[i + 1]) {
                         out.push(";\n" + tabb);
+                    } else if (i > 3 && y[i - 3] === "u" && y[i - 2] === "r" && y[i - 1] === "l" && y[i] === "(") {
+                        for (j = i; j < b; j += 1) {
+                            out.push(y[j]);
+                            if (y[j] === ")" && y[j - 1] !== "\\") {
+                                i = j;
+                                break;
+                            }
+                        }
                     } else {
-                        out.push(x.charAt(i));
+                        out.push(y[i]);
                     }
                 }
                 if (i >= b) {
@@ -212,6 +222,8 @@ var cleanCSS = function (x, size, character, comment, alter) {
                     b = x.length,
                     c = "",
                     d = [],
+                    h = [],
+                    test = false,
 
                     //colorLow is used by a replace method to convert hex
                     //color codes to lowercase alpha characters and in some
@@ -285,14 +297,32 @@ var cleanCSS = function (x, size, character, comment, alter) {
                 }
                 for (a = 0; a < b - 1; a += 1) {
                     if (d[a].charAt(d[a].length - 1) !== "{") {
+                        if (d[a].indexOf("url(") > -1) {
+                            h = d[a].split("");
+                            f = h.length;
+                            for (e = 3; e < f; e += 1) {
+                                if (h[e - 3] === "u" && h[e - 2] === "r" && h[e - 1] === "l" && h[e] === "(") {
+                                    test = true;
+                                }
+                                if (test) {
+                                    if (h[e - 1] !== "\\" && h[e] === ")") {
+                                        test = false;
+                                    } else if (h[e] === ";") {
+                                        h[e] = "~PrettyDiffSemi~";
+                                    } else if (h[e] === ":") {
+                                        h[e] = "~PrettyDiffColon~";
+                                    }
+                                }
+                            }
+                            d[a] = h.join("");
+                        }
                         if (d[a].charAt(d[a].length - 1) === ";") {
                             d[a] = d[a].substr(0, d[a].length - 1);
                         }
                         c = d[a].replace(ccex, cceg);
                         do {
                             c = c.replace(crex, creg);
-                        }
-                        while (crex.test(c));
+                        } while (crex.test(c));
                         c = c.replace(/\*\//g, "*/;").replace(/\:(?!(\/\/))/g, "$").replace(/#[a-fA-F0-9]{3,6}(?!(\w*\)))/g, colorLow).split(";");
                         f = c.length;
                         m = [];
@@ -375,7 +405,7 @@ var cleanCSS = function (x, size, character, comment, alter) {
                                 c[e] = c[e].join(": ");
                             }
                         }
-                        d[a] = c.join(";") + ";";
+                        d[a] = (c.join(";") + ";").replace(/^;/, "");
                     }
                 }
                 x = d.join("").replace(/\*\/\s*;\s*/g, "*/\n").replace(/(\s*[\w\-]+:)$/g, "\n}");
@@ -384,7 +414,7 @@ var cleanCSS = function (x, size, character, comment, alter) {
         if ("\n" === x.charAt(0)) {
             x = x.substr(1);
         }
-        x = x.replace(/[ \t\r\v\f]+/g, " ").replace(/\n /g, "\n").replace(/\s?([;:{},+>])\s?/g, "$1").replace(/\{(\.*):(\.*)\}/g, "{$1: $2}").replace(/,/g, ", ").replace(/\b\*/g, " *").replace(/\*\/\s?/g, "*/\n").replace(/\d%\d/g, fixpercent);
+        x = x.replace(/[ \t\r\v\f]+/g, " ").replace(/\n /g, "\n").replace(/\s?([;:{},+>])\s?/g, "$1").replace(/\{(\.*):(\.*)\}/g, "{$1: $2}").replace(/\b\*/g, " *").replace(/\*\/\s?/g, "*/\n").replace(/\d%\d/g, fixpercent);
         if (alter === true) {
             reduction();
         }
@@ -394,9 +424,9 @@ var cleanCSS = function (x, size, character, comment, alter) {
             b = x.length;
             for (a = 0; a < b; a += 1) {
                 if (x[a].search(/\s*\/\*/) !== 0) {
-                    x[a] = x[a].replace(/@charset\s*("|')?[\w\-]+("|')?;?\s*/gi, "").replace(/(\S|\s)0+/g, runZero).replace(/:[\w\s\!\.\-%]*\d+\.0*(?!\d)/g, endZero).replace(/:[\w\s\!\.\-%]* \.\d+/g, startZero).replace(/ \.?0((?=;)|(?= )|%|in|cm|mm|em|ex|pt|pc)/g, " 0px");
+                    x[a] = x[a].replace(/@charset\s*("|')?[\w\-]+("|')?;?\s*/gi, "").replace(/(\S|\s)0+(%|in|cm|mm|em|ex|pt|pc)?;/g, runZero).replace(/:[\w\s\!\.\-%]*\d+\.0*(?!\d)/g, endZero).replace(/:[\w\s\!\.\-%]* \.\d+/g, startZero).replace(/ \.?0((?=;)|(?= )|%|in|cm|mm|em|ex|pt|pc)/g, " 0px");
                     x[a] = x[a].replace(/: ((\.\d+|\d+\.\d+|\d+)[a-zA-Z]+|0 )+((\.\d+|\d+\.\d+|\d+)[a-zA-Z]+)|0/g, sameDist).replace(/background\-position: 0px;/g, "background-position: 0px 0px;").replace(/\s+\*\//g, "*/");
-                    x[a] = x[a].replace(/\s*[\w\-]+:\s*\}/g, emptyend).replace(/\s*[\w\-]+:\s*;/g, "").replace(/\{\s+\}/g, "{}").replace(/url\("\w+: \/\//g, fixscheme).replace(/\}\s*;\s*\}/g, nestblock).replace(/:\s+#/g, ": #").replace(/(\s+;+\n)+/g, "\n");
+                    x[a] = x[a].replace(/\s*[\w\-]+\:\s*(\}|;)/g, emptyend).replace(/\{\s+\}/g, "{}").replace(/\}\s*;\s*\}/g, nestblock).replace(/:\s+#/g, ": #").replace(/(\s+;+\n)+/g, "\n");
                 }
             }
             x = x.join("*/");
@@ -410,7 +440,7 @@ var cleanCSS = function (x, size, character, comment, alter) {
             } else {
                 atchar[0] = atchar[0] + "\n";
             }
-            x = atchar[0].replace(/@charset/i, "@charset") + fixURI(x);
+            x = atchar[0].replace(/@charset/i, "@charset") + fixURI(x).replace(/~PrettyDiffColon~/g, ":").replace(/~PrettyDiffSemi~/g, ";");
         }
         if (comment === "noindent") {
             x = x.replace(/\s+\/\*/g, "\n/*").replace(/\n\s+\*\//g, "\n*/");
