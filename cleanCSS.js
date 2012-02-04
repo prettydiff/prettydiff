@@ -236,27 +236,8 @@ var cleanCSS = function (x, size, character, comment, alter) {
                         return y;
                     },
                     ccex = (/[\w\s:#\-\=\!\(\)"'\[\]\.%-\_\?\/\\]\/\*/),
-                    crex = (/\/\*[\w\s:#\-\=\!\(\)"'\[\]\.%-\_\?\/\\]*;[\w\s:#\-\=\!\(\)"'\[\]\.%\_\?\/\\;]*\*\//),
                     cceg = function (a) {
                         return a.replace(/\s*\/\*/, ";/*");
-                    },
-                    creg = function (a) {
-                        if (!crex.test(a)) {
-                            return a;
-                        }
-                        var b = a.length,
-                            c;
-                        a = a.split("");
-
-                        for (c = 0; c < b; c += 1) {
-                            if (a[c] === ";") {
-                                a[c] = "PrettyDiff|";
-                            }
-                            if (a[c] === "*" && a[c + 1] && a[c + 1] === "/") {
-                                return a.join("");
-                            }
-                        }
-                        return a.join("");
                     };
                 for (a = 0; a < b; a += 1) {
                     c += x.charAt(a);
@@ -292,11 +273,8 @@ var cleanCSS = function (x, size, character, comment, alter) {
                 b = d.length;
                 for (a = 0; a < b; a += 1) {
                     if (d[a].charAt(d[a].length - 1) === "{") {
-                        d[a] = d[a].replace(/,\s*/g, ",\n");
-                    }
-                }
-                for (a = 0; a < b - 1; a += 1) {
-                    if (d[a].charAt(d[a].length - 1) !== "{") {
+                        d[a] = d[a].replace(/,\s*/g, ",\n").replace(/>/g, " > ");
+                    } else {
                         if (d[a].indexOf("url(") > -1) {
                             h = d[a].split("");
                             f = h.length;
@@ -320,9 +298,24 @@ var cleanCSS = function (x, size, character, comment, alter) {
                             d[a] = d[a].substr(0, d[a].length - 1);
                         }
                         c = d[a].replace(ccex, cceg);
-                        do {
-                            c = c.replace(crex, creg);
-                        } while (crex.test(c));
+                        (function () {
+                            var a = c.split(""),
+                                b = c.length,
+                                d = 0,
+                                e = false;
+                            for (d = 1; d < b; d += 1) {
+                                if (a[d] === "*" && a[d - 1] === "/" && !e) {
+                                    e = true
+                                } else if (e) {
+                                    if (a[d] === ";") {
+                                        a[d] = "~PrettyDiffS~";
+                                    } else if (a[d] === "/" && a[d - 1] === "*") {
+                                        e = false;
+                                    }
+                                }
+                            }
+                            c = a.join("");
+                        }());
                         c = c.replace(/\*\//g, "*/;").replace(/\:(?!(\/\/))/g, "$").replace(/#[a-fA-F0-9]{3,6}(?!(\w*\)))/g, colorLow).split(";");
                         f = c.length;
                         m = [];
@@ -408,19 +401,19 @@ var cleanCSS = function (x, size, character, comment, alter) {
                         d[a] = (c.join(";") + ";").replace(/^;/, "");
                     }
                 }
-                x = d.join("").replace(/\*\/\s*;\s*/g, "*/\n").replace(/(\s*[\w\-]+:)$/g, "\n}");
+                x = d.join("").replace(/\*\/\s*;\s*/g, "*/\n").replace(/(\s*[\w\-]+:)$/g, "\n}").replace(/\s*;$/, "");
             };
 
         if ("\n" === x.charAt(0)) {
             x = x.substr(1);
         }
-        x = x.replace(/[ \t\r\v\f]+/g, " ").replace(/\n /g, "\n").replace(/\s?([;:{},+>])\s?/g, "$1").replace(/\{(\.*):(\.*)\}/g, "{$1: $2}").replace(/\b\*/g, " *").replace(/\*\/\s?/g, "*/\n").replace(/\d%\d/g, fixpercent);
+        x = x.replace(/[ \t\r\v\f]+/g, " ").replace(/\n /g, "\n").replace(/\s?([;:{},+>])\s?/g, "$1").replace(/\{(\.*):(\.*)\}/g, "{$1: $2}").replace(/\b\*/g, " *").replace(/\*\/\s?/g, "*/\n").replace(/\d%\d/g, fixpercent).replace(/\/\*\s+/g, "/* ");
         if (alter === true) {
             reduction();
         }
         cleanAsync();
         if (alter === true) {
-            x = x.replace(/PrettyDiff\|/g, "; ").split("*/");
+            x = x.replace(/~PrettyDiffS~/g, "; ").split("*/");
             b = x.length;
             for (a = 0; a < b; a += 1) {
                 if (x[a].search(/\s*\/\*/) !== 0) {
