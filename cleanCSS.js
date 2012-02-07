@@ -298,24 +298,6 @@ var cleanCSS = function (x, size, character, comment, alter) {
                             d[a] = d[a].substr(0, d[a].length - 1);
                         }
                         c = d[a].replace(ccex, cceg);
-                        (function () {
-                            var a = c.split(""),
-                                b = c.length,
-                                d = 0,
-                                e = false;
-                            for (d = 1; d < b; d += 1) {
-                                if (a[d] === "*" && a[d - 1] === "/" && !e) {
-                                    e = true
-                                } else if (e) {
-                                    if (a[d] === ";") {
-                                        a[d] = "~PrettyDiffS~";
-                                    } else if (a[d] === "/" && a[d - 1] === "*") {
-                                        e = false;
-                                    }
-                                }
-                            }
-                            c = a.join("");
-                        }());
                         c = c.replace(/\*\//g, "*/;").replace(/\:(?!(\/\/))/g, "$").replace(/#[a-fA-F0-9]{3,6}(?!(\w*\)))/g, colorLow).split(";");
                         f = c.length;
                         m = [];
@@ -407,13 +389,36 @@ var cleanCSS = function (x, size, character, comment, alter) {
         if ("\n" === x.charAt(0)) {
             x = x.substr(1);
         }
-        x = x.replace(/[ \t\r\v\f]+/g, " ").replace(/\n /g, "\n").replace(/\s?([;:{},+>])\s?/g, "$1").replace(/\{(\.*):(\.*)\}/g, "{$1: $2}").replace(/\b\*/g, " *").replace(/\*\/\s?/g, "*/\n").replace(/\d%\d/g, fixpercent).replace(/\/\*\s+/g, "/* ");
+
+        //This anonymous function escapes commas and semicolons found in
+        //comments
+        (function () {
+            var c = x.split(""),
+                b = c.length,
+                f = 0,
+                e = false;
+            for (f = 1; f < b; f += 1) {
+                if (c[f] === "*" && c[f - 1] === "/" && !e) {
+                    e = true;
+                } else if (e) {
+                    if (c[f] === ",") {
+                        c[f] = "~PrettyDiffComma~";
+                    } else if (c[f] === ";") {
+                        c[f] = "~PrettyDiffSemi~";
+                    } else if (c[f] === "/" && c[f - 1] === "*") {
+                        e = false;
+                    }
+                }
+            }
+            x = c.join("");
+        }());
+        x = x.replace(/[ \t\r\v\f]+/g, " ").replace(/\n (?!\*)/g, "\n").replace(/\s?([;:{}+>])\s?/g, "$1").replace(/\{(\.*):(\.*)\}/g, "{$1: $2}").replace(/\b\*/g, " *").replace(/\*\/\s?/g, "*/\n").replace(/\d%\d/g, fixpercent);
         if (alter === true) {
             reduction();
         }
         cleanAsync();
         if (alter === true) {
-            x = x.replace(/~PrettyDiffS~/g, "; ").split("*/");
+            x = x.split("*/");
             b = x.length;
             for (a = 0; a < b; a += 1) {
                 if (x[a].search(/\s*\/\*/) !== 0) {
@@ -424,8 +429,8 @@ var cleanCSS = function (x, size, character, comment, alter) {
             }
             x = x.join("*/");
 
-            //This logic is used to push the first "@charset" declaration to
-            //the top of the page.
+            //This logic is used to push the first "@charset"
+            //declaration to the top of the page.
             if (atchar === null) {
                 atchar = [""];
             } else if (atchar[0].charAt(atchar[0].length - 1) !== ";") {
@@ -433,7 +438,7 @@ var cleanCSS = function (x, size, character, comment, alter) {
             } else {
                 atchar[0] = atchar[0] + "\n";
             }
-            x = atchar[0].replace(/@charset/i, "@charset") + fixURI(x).replace(/~PrettyDiffColon~/g, ":").replace(/~PrettyDiffSemi~/g, ";");
+            x = atchar[0].replace(/@charset/i, "@charset") + fixURI(x).replace(/~PrettyDiffColon~/g, ":").replace(/~PrettyDiffSemi~/g, ";").replace(/~PrettyDiffComma~/g, ",");
         }
         if (comment === "noindent") {
             x = x.replace(/\s+\/\*/g, "\n/*").replace(/\n\s+\*\//g, "\n*/");
