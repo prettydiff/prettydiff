@@ -93,9 +93,6 @@ var js_beautify = function (args) {
                 }
             }
         }());
-        if (args.source === "") {
-            return "Error: no source code supplied to js_beauty.js";
-        }
         var j = [0, 0],
             k = [0, 0],
             l = [0, 0, 0],
@@ -603,6 +600,9 @@ var js_beautify = function (args) {
                 }
                 return [c, "TK_UNKNOWN"];
             };
+        if (args.source === "") {
+            return "Error: no source code supplied to js_beautify.js";
+        }
         while (insize > 0) {
             indent_string += args.inchar;
             insize -= 1;
@@ -1177,8 +1177,12 @@ var js_beautify = function (args) {
                     output.push(lines[0]);
                     for (i = 1; i < lines.length; i += 1) {
                         print_newline();
-                        output.push(" ");
-                        output.push(trim(lines[i]));
+                        if (/;|\}|\)|((\!|\=)\=)/.test(lines[i]) || ((/^(\s*("|'))/).test(lines[i]) && (/(("|')\s*)$/).test(lines[i]))) {
+                            output.push(lines[i]);
+                        } else {
+                            output.push(" ");
+                            output.push(trim(lines[i]));
+                        }
                     }
 
                     print_newline();
