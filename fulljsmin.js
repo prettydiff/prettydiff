@@ -581,6 +581,10 @@ var jsmin = function (comment, input, level, type, alter, fcomment) {
                 if (d < 3) {
                     a = b;
                     if (a === "'" || a === "\"") {
+                        if (d === 1 && (r[0] === ")" || r[0] === "]")) {
+                            a = ";";
+                            return r[0];
+                        }
                         for (;;) {
                             r.push(a);
                             a = get();
