@@ -1,52 +1,51 @@
 /*global charDecoder*/
 /*
-This code may be used internally to Travelocity without limitation,
-exclusion, or restriction.  If this code is used externally the
-following comment must be included everywhere this code is used.
-*/
+ This code may be used internally to Travelocity without limitation,
+ exclusion, or restriction.  If this code is used externally the
+ following comment must be included everywhere this code is used.
+ */
 
 /***********************************************************************
-This is written by Austin Cheney on 21 Apr 2010.  Anybody may use this
-code without permission so long as this comment exists verbatim in each
-instance of its use.
+ This is written by Austin Cheney on 21 Apr 2010.  Anybody may use this
+ code without permission so long as this comment exists verbatim in each
+ instance of its use.
 
-http://www.travelocity.com/
-http://mailmarkup.org/
-***********************************************************************/
+ http://www.travelocity.com/
+ http://mailmarkup.org/
+ http://prettydiff.com/
+ **********************************************************************/
 
 /*
-This code merely returns code transformed by csvbeauty back into its
-former state.
-*/
+ This code merely returns code transformed by csvbeauty back into its
+ former state.
+ */
+/*global charDecoder*/
+/*
+ This code may be used internally to Travelocity without limitation,
+ exclusion, or restriction.  If this code is used externally the
+ following comment must be included everywhere this code is used.
+ */
+
+
+/*
+ This code merely returns code transformed by csvbeauty back into its
+ former state.
+ */
 var csvmin = function (source, ch) {
-    "use strict";
-    var a, b, c, err, d = "",
-    error = "Error: Unterminated String begging at character number ",
-    src = function () {
-        for (a = 0; a < source.length; a += 1) {
-            c = [];
-            if (source[a].indexOf("\"") !== -1) {
-                source[a] = source[a].split("");
-                for (b = 0; b < source[a].length; b += 1) {
-                    if (source[a][b] === "\"") {
-                        c.push(b);
-                    }
-                }
-                if (c.length === 1) {
-                    d = error;
-                    source[a] = source[a].join("");
-                    err = source[a].slice(c[0], c[0] + 9);
-                    return;
-                } else if (c.length > 2) {
-                    for (d = 1; d < c.length - 1; d += 1) {
-                        source[a][c[d]] = "\"\"";
-                    }
-                }
-                source[a] = source[a].join("");
-            }
+        "use strict";
+        if (ch === "") {
+            ch = ",";
+        } else {
+            ch = charDecoder(ch);
         }
-	},
-    multiline = function (x) {
+        (function () {
+            var a = 0,
+                b = e.length,
+                c = [],
+                d = "",
+                e = 0,
+                f = [],
+                multiline = function (x) {
                     var w = [],
                         y,
                         z = x.length - 2;
@@ -56,29 +55,50 @@ var csvmin = function (source, ch) {
                         for (y = 0; y < z; y += 1) {
                             w.push(ch);
                         }
-                        return w.join('') + "{ }";
+                        return w.join("") + "{ }";
                     }
-                };
-            if (ch === "") {
-                ch = ",";
-            } else {
-                ch = charDecoder(ch);
+                },
+                g = source.replace(/\n\n\{\-\}\n\n/g, "{-}").replace(/\n{2,}/g, multiline).split("\n"),
+                err = "",
+                error = "Error: Unterminated String begging at character number ";
+            for (a = 0; a < b; a += 1) {
+                c = [];
+                if (g[a].indexOf("\"") !== -1) {
+                    f = g[a].split("");
+                    e = f.length;
+                    for (b = 0; b < e; b += 1) {
+                        if (f[b] === "\"") {
+                            c.push(b);
+                        }
+                    }
+                    if (c.length === 1) {
+                        d = error;
+                        g[a] = f.join("");
+                        err = g[a].slice(c[0], c[0] + 9);
+                        return;
+                    } else if (c.length > 2) {
+                        e = c.length - 1;
+                        for (d = 1; d < e; d += 1) {
+                            f[c[d]] = "\"\"";
+                        }
+                    }
+                    g[a] = f.join("");
+                }
             }
-            source = source.replace(/\n\n\{\-\}\n\n/g, "{-}").replace(/\n{2,}/g, multiline).split("\n");
-            src();
-    if (d === error) {
-        return error + (source.join(ch).indexOf(source[a]) + c[0]) + " or value number " + (a + 1) + ", '" + err + "'.";
-    }
-    if (source[source.length - 1] === "{|}") {
-                source[source.length - 1] = "";
+            if (d === error) {
+                return error + (g.join(ch).indexOf(g[a]) + c[0]) + " or value number " + (a + 1) + ", '" + err + "'.";
             }
-            source = source.join(ch).replace(/\n/g, ch);
-            do {
-        source = source.replace("{ }", "\n");
-    } while (source.indexOf("{ }") !== -1);
-    source = source.replace(/\n{2}/g, "\n");
-    if (source.indexOf("{|}") === source.length - 3) {
-        source = source.slice(0, source.length - 3) + ch;
-    }
-    return source.replace(/\{\-\}/g, "\n");
-};
+            if (g[g.length - 1] === "{|}") {
+                g[g.length - 1] = "";
+            }
+            source = g.join(ch).replace(/\n/g, ch);
+        }());
+        do {
+            source = source.replace("{ }", "\n");
+        } while (source.indexOf("{ }") !== -1);
+        source = source.replace(/\n{2}/g, "\n");
+        if (source.indexOf("{|}") === source.length - 3) {
+            source = source.slice(0, source.length - 3) + ch;
+        }
+        return source.replace(/\{\-\}/g, "\n");
+    };
