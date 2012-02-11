@@ -211,9 +211,9 @@ var markupmin = function (x, comments, presume_html, top_comments) {
                         e = e.replace(scriptEnd, "");
                     }
                     if (z === "style") {
-                        e = cs + jsmin("", e, 3, "css", true, top_comments) + ce;
+                        e = cs + jsmin(e, 3, "css", true, top_comments) + ce;
                     } else {
-                        e = cs + jsmin("", e, 3, "javascript", false, top_comments) + ce;
+                        e = cs + jsmin(e, 3, "javascript", false, top_comments) + ce;
                     }
                 }
                 Y = e.length;

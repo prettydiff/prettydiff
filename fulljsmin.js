@@ -48,12 +48,11 @@
  stronger minification resuling in smaller output.
 
  */
-var jsmin = function (comment, input, level, type, alter, fcomment) {
+var jsmin = function (input, level, type, alter, fcomment) {
         "use strict";
         var start = (function () {
                 if (typeof input === "undefined") {
                     input = "";
-                    comment = "";
                     level = 2;
                 } else {
                     if (level === undefined || level < 1 || level > 3) {
@@ -64,9 +63,6 @@ var jsmin = function (comment, input, level, type, alter, fcomment) {
                     } else if (type !== "css") {
                         input = "Error: The type argument is not provided a value of either 'css' or 'javascript'.";
                     }
-                }
-                if (comment.length > 0) {
-                    comment += "\n";
                 }
             }()),
             ret,
@@ -112,155 +108,155 @@ var jsmin = function (comment, input, level, type, alter, fcomment) {
             //this one aspect of automatic semicolon must be treated
             //as a logical irregularity of a regular syntax, much like
             //deducing XML.
-            asiFix = function (x) {
-                var a,
-                    b,
-                    c,
-                    d,
-                    e,
-                    f = "",
-                    g,
-                    h;
-                x = x.split("");
-                b = x.length;
-                for (a = 0; a < b; a += 1) {
-                    if (x[a] === "\\") {
-                        a += 1;
-                    } else if (x[a] === "\"" && f === "") {
-                        f = "\"";
-                    } else if (x[a] === "'" && f === "") {
-                        f = "'";
-                    } else if (x[a] === "/" && f === "" && !isAlphanum(x[a - 1]) && x[a - 1] !== ")" && x[a - 1] !== "]") {
-                        if (x[a - 1] === " ") {
-                            x[a - 1] = "";
-                            if (!isAlphanum(x[a - 2])) {
-                                f = "/";
-                                x[a] = "pd";
-                            } else if (x[a + 1] === " ") {
-                                x[a + 1] = "";
-                            }
-                        } else {
-                            f = "/";
-                            x[a] = "pd";
-                        }
-                    } else if (x[a] === "/" && f === "" && x[a + 1] === " " && isAlphanum(x[a - 1])) {
-                        x[a + 1] = "";
-                    } else if (x[a] === "\"" && f === "\"") {
-                        f = "";
-                    } else if (x[a] === "'" && f === "'") {
-                        f = "";
-                    } else if (x[a] === "/" && f === "/") {
-                        f = "";
-                        x[a] = "pd";
-                    } else if ((f === "'" || f === "\"") && x[a - 2] === "\\" && x[a - 1] === ";") {
-                        x[a - 1] = "";
-                        x[a - 2] = " ";
-                    } else if (f === "" && (x[a] === "}" || x[a] === ")") && (a === b - 1 || x[a + 1] === "}" || isAlphanum(x[a + 1]))) {
-                        if (typeof x[a - 3] === "string" && x[a - 2] === "=" && x[a - 1] === "{" && x[a] === "}" && (isAlphanum(x[a - 3]) || x[a - 3] === "]" || x[a - 3] === ")")) {
-                            x[a] += ";";
-                        } else {
-                            d = -1;
-                            e = "";
-                            g = "";
-                            if (x[a] === "}") {
-                                g = "}";
-                                h = "{";
-                            } else {
-                                g = ")";
-                                h = "(";
-                            }
-                            for (c = a - 1; c > -1; c -= 1) {
-                                if ((c > 1 && x[c - 1] === "\\" && x[c - 2] !== "\\") || (c === 1 && x[c - 1] === "\\")) {
-                                    c -= 1;
-                                } else {
-                                    if (x[c].charAt(0) === g && e === "") {
-                                        d -= 1;
-                                    } else if (x[c] === h && e === "") {
-                                        d += 1;
-                                    } else if (x[c] === "\"" && e === "") {
-                                        e = "\"";
-                                    } else if (x[c] === "'" && e === "") {
-                                        e = "'";
-                                    } else if (x[c] === "pd" && e === "") {
-                                        e = "/";
-                                    } else if (x[c] === "\"" && e === "\"") {
-                                        e = "";
-                                    } else if (x[c] === "'" && e === "'") {
-                                        e = "";
-                                    } else if (x[c] === "pd" && e === "/") {
-                                        e = "";
+            asiFix = function (y) {
+                        var a = 0,
+							x = y.split(""),
+                            b = x.length,
+                            c = 0,
+                            d = 0,
+                            e = "",
+                            f = "",
+                            g = "",
+                            h = "";
+                        for (a = 0; a < b; a += 1) {
+                            if (x[a] === "\\") {
+                                a += 1;
+                            } else if (x[a] === "\"" && f === "") {
+                                f = "\"";
+                            } else if (x[a] === "'" && f === "") {
+                                f = "'";
+                            } else if (x[a] === "/" && f === "" && !isAlphanum(x[a - 1]) && x[a - 1] !== ")" && x[a - 1] !== "]") {
+                                if (x[a - 1] === " ") {
+                                    x[a - 1] = "";
+                                    if (!isAlphanum(x[a - 2])) {
+                                        f = "/";
+                                        x[a] = "pd";
+                                    } else if (x[a + 1] === " ") {
+                                        x[a + 1] = "";
                                     }
+                                } else {
+                                    f = "/";
+                                    x[a] = "pd";
                                 }
-                                if (d === 0 && (c !== a - 1 || (c === a - 1 && typeof x[c - 1] === "string" && x[c - 1] !== x[a]))) {
-                                    if (x[c - 1] === ")" && g === "}") {
-                                        c -= 2;
-                                        d = -1;
-                                        e = "";
-                                        for (c; c > -1; c -= 1) {
-                                            if ((c > 1 && x[c - 1] === "\\" && x[c - 2] !== "\\") || (c === 1 && x[c - 1] === "\\")) {
-                                                c -= 1;
-                                            } else {
-                                                if (x[c] === ")" && e === "") {
-                                                    d -= 1;
-                                                } else if (x[c] === "(" && e === "") {
-                                                    d += 1;
-                                                } else if (x[c] === "\"" && e === "") {
-                                                    e = "\"";
-                                                } else if (x[c] === "'" && e === "") {
-                                                    e = "'";
-                                                } else if (x[c] === "pd" && e === "") {
-                                                    e = "/";
-                                                } else if (x[c] === "\"" && e === "\"") {
-                                                    e = "";
-                                                } else if (x[c] === "'" && e === "'") {
-                                                    e = "";
-                                                } else if (x[c] === "pd" && e === "/") {
-                                                    e = "";
-                                                }
+                            } else if (x[a] === "/" && f === "" && x[a + 1] === " " && isAlphanum(x[a - 1])) {
+                                x[a + 1] = "";
+                            } else if (x[a] === "\"" && f === "\"") {
+                                f = "";
+                            } else if (x[a] === "'" && f === "'") {
+                                f = "";
+                            } else if (x[a] === "/" && f === "/") {
+                                f = "";
+                                x[a] = "pd";
+                            } else if ((f === "'" || f === "\"") && x[a - 2] === "\\" && x[a - 1] === ";") {
+                                x[a - 1] = "";
+                                x[a - 2] = " ";
+                            } else if (f === "" && (x[a] === "}" || x[a] === ")") && (a === b - 1 || x[a + 1] === "}" || isAlphanum(x[a + 1]))) {
+                                if (typeof x[a - 3] === "string" && x[a - 2] === "=" && x[a - 1] === "{" && x[a] === "}" && (isAlphanum(x[a - 3]) || x[a - 3] === "]" || x[a - 3] === ")")) {
+                                    x[a] += ";";
+                                } else {
+                                    d = -1;
+                                    e = "";
+                                    g = "";
+                                    if (x[a] === "}") {
+                                        g = "}";
+                                        h = "{";
+                                    } else {
+                                        g = ")";
+                                        h = "(";
+                                    }
+                                    for (c = a - 1; c > -1; c -= 1) {
+                                        if ((c > 1 && x[c - 1] === "\\" && x[c - 2] !== "\\") || (c === 1 && x[c - 1] === "\\")) {
+                                            c -= 1;
+                                        } else {
+                                            if (x[c].charAt(0) === g && e === "") {
+                                                d -= 1;
+                                            } else if (x[c] === h && e === "") {
+                                                d += 1;
+                                            } else if (x[c] === "\"" && e === "") {
+                                                e = "\"";
+                                            } else if (x[c] === "'" && e === "") {
+                                                e = "'";
+                                            } else if (x[c] === "pd" && e === "") {
+                                                e = "/";
+                                            } else if (x[c] === "\"" && e === "\"") {
+                                                e = "";
+                                            } else if (x[c] === "'" && e === "'") {
+                                                e = "";
+                                            } else if (x[c] === "pd" && e === "/") {
+                                                e = "";
                                             }
-                                            if (d === 0) {
-                                                c -= 1;
-                                                if (typeof x[c - 9] === "string" && x[c - 8] === "=" && x[c - 7] === "f" && x[c - 6] === "u" && x[c - 5] === "n" && x[c - 4] === "c" && x[c - 3] === "t" && x[c - 2] === "i" && x[c - 1] === "o" && x[c] === "n" && (isAlphanum(x[c - 9]) || x[c - 9] === "]" || x[c - 9] === ")")) {
+                                        }
+                                        if (d === 0 && (c !== a - 1 || (c === a - 1 && typeof x[c - 1] === "string" && x[c - 1] !== x[a]))) {
+                                            if (x[c - 1] === ")" && g === "}") {
+                                                c -= 2;
+                                                d = -1;
+                                                e = "";
+                                                for (c; c > -1; c -= 1) {
+                                                    if ((c > 1 && x[c - 1] === "\\" && x[c - 2] !== "\\") || (c === 1 && x[c - 1] === "\\")) {
+                                                        c -= 1;
+                                                    } else {
+                                                        if (x[c] === ")" && e === "") {
+                                                            d -= 1;
+                                                        } else if (x[c] === "(" && e === "") {
+                                                            d += 1;
+                                                        } else if (x[c] === "\"" && e === "") {
+                                                            e = "\"";
+                                                        } else if (x[c] === "'" && e === "") {
+                                                            e = "'";
+                                                        } else if (x[c] === "pd" && e === "") {
+                                                            e = "/";
+                                                        } else if (x[c] === "\"" && e === "\"") {
+                                                            e = "";
+                                                        } else if (x[c] === "'" && e === "'") {
+                                                            e = "";
+                                                        } else if (x[c] === "pd" && e === "/") {
+                                                            e = "";
+                                                        }
+                                                    }
+                                                    if (d === 0) {
+                                                        c -= 1;
+                                                        if (typeof x[c - 9] === "string" && x[c - 8] === "=" && x[c - 7] === "f" && x[c - 6] === "u" && x[c - 5] === "n" && x[c - 4] === "c" && x[c - 3] === "t" && x[c - 2] === "i" && x[c - 1] === "o" && x[c] === "n" && (isAlphanum(x[c - 9]) || x[c - 9] === "]" || x[c - 9] === ")")) {
+                                                            x[a] += ";";
+                                                        }
+                                                        break;
+                                                    }
+                                                }
+                                                break;
+                                            } else if (typeof x[c - 2] === "string" && x[c - 1] === "=" && (x[a - 1].length === 1 || x[a - 1] === "pd") && (isAlphanum(x[c - 2] || x[c - 2] === "]" || x[c - 2] === ")"))) {
+                                                if (typeof x[a + 1] !== "string" || x[a + 1] !== "/") {
                                                     x[a] += ";";
                                                 }
                                                 break;
+                                            } else {
+                                                break;
                                             }
                                         }
-                                        break;
-                                    } else if (typeof x[c - 2] === "string" && x[c - 1] === "=" && (x[a - 1].length === 1 || x[a - 1] === "pd") && (isAlphanum(x[c - 2] || x[c - 2] === "]" || x[c - 2] === ")"))) {
-                                        if (typeof x[a + 1] !== "string" || x[a + 1] !== "/") {
-                                            x[a] += ";";
-                                        }
-                                        break;
-                                    } else {
-                                        break;
                                     }
                                 }
                             }
                         }
-                    }
-                }
-                for (a = 0; a < b; a += 1) {
-                    if (x[a] === "pd") {
-                        x[a] = "/";
-                    } else if (x[a] === "/" && typeof x[a + 1] === "string" && x[a + 1] === " ") {
-                        x[a + 1] = "";
-                    }
-                }
-                return x.join("").replace(/\"/g, "\"").replace(/\'/g, "'");
-            },
-
+                        for (a = 0; a < b; a += 1) {
+                            if (x[a] === "pd") {
+                                x[a] = "/";
+                            } else if (x[a] === "/" && typeof x[a + 1] === "string" && x[a + 1] === " ") {
+                                x[a + 1] = "";
+                            }
+                        }
+                        return x.join("").replace(/\"/g, "\"").replace(/\'/g, "'");
+                    },
+                    
             //reduction provides a logical compression to flatten
             //redundantly applied CSS properties
             reduction = function (x) {
-                var a,
-                    e,
-                    f,
-                    g,
-                    m,
-                    p,
+                var a = 0,
+                    e = 0,
+                    f = 0,
+                    g = -1,
+                    m = 0,
+                    p = 0,
+					q = "",
                     b = x.length,
-                    c = "",
+                    c = [],
                     d = [],
 
                     //colorLow is used in a replace method to convert
@@ -275,10 +271,10 @@ var jsmin = function (comment, input, level, type, alter, fcomment) {
                         return x;
                     };
                 for (a = 0; a < b; a += 1) {
-                    c += x[a];
+                    c.push(x[a]);
                     if (x[a] === "{" || x[a + 1] === "}") {
-                        d.push(c);
-                        c = "";
+                        d.push(c.join(""));
+                        c = [];
                     }
                 }
                 if (x[a - 1] === "}") {
@@ -292,9 +288,9 @@ var jsmin = function (comment, input, level, type, alter, fcomment) {
                         }
                         c = d[a].replace(/\:/g, "$").replace(/#[a-zA-Z0-9]{3,6}(?!(\w*\)))/g, colorLow).split(";").sort();
                         f = c.length;
-                        m = c[c.length - 1];
+                        q = c[c.length - 1];
                         for (e = 0; e < f; e += 1) {
-                            if (c[e] === m) {
+                            if (c[e] === q) {
                                 c[e] = c[e].split("$");
                                 break;
                             }
@@ -305,9 +301,6 @@ var jsmin = function (comment, input, level, type, alter, fcomment) {
                             }
                             c[e] = c[e].split("$");
                         }
-                        g = -1;
-                        m = 0;
-                        p = 0;
                         for (e = 0; e < f; e += 1) {
                             if (c[e - 1] && c[e - 1][0] === c[e][0] && /\-[a-z]/.test(c[e - 1][1]) === false) {
                                 c[e - 1] = "";
@@ -369,9 +362,9 @@ var jsmin = function (comment, input, level, type, alter, fcomment) {
             //characters of the URI they must be escaped with a
             //backslash, "\)", in accordance with the CSS specification,
             //or they will damage the output.
-            fixURI = function (x) {
+            fixURI = function (y) {
                 var a;
-                x = x.split("url(");
+                x = y.split("url(");
                 for (a = 1; a < x.length; a += 1) {
                     if (x[a].charAt(0) !== "\"" && x[a].charAt(0) !== "'") {
                         x[a] = x[a].split(")");
@@ -426,16 +419,16 @@ var jsmin = function (comment, input, level, type, alter, fcomment) {
             //sameDist is used in a replace method to shorten redundant
             //CSS distances to the fewest number of non-redundant
             //increments
-            sameDist = function (x) {
-                if (x === "0") {
-                    return x;
+            sameDist = function (y) {
+                var a = "", x = [];
+                if (y === "0") {
+                    return y;
                 }
-                var a = "";
-                if (x.charAt(0) === " ") {
+                if (y.charAt(0) === " ") {
                     a = " ";
-                    x = x.substr(1, x.length);
+                    y = y.substr(1, y.length);
                 }
-                x = x.split(" ");
+                x = y.split(" ");
                 if (x.length === 4) {
                     if (x[0] === x[1] && x[1] === x[2] && x[2] === x[3]) {
                         x[1] = "";
@@ -638,7 +631,7 @@ var jsmin = function (comment, input, level, type, alter, fcomment) {
                         if (fcomment !== true || (/^\s*\/\*/.test(input) !== true && /^\s*\/\//.test(input) !== true)) {
                             return;
                         }
-                        var a,
+                        var a = 0,
                             b = input.length,
                             c = "";
                         for (a = 0; a < b; a += 1) {
@@ -666,7 +659,7 @@ var jsmin = function (comment, input, level, type, alter, fcomment) {
                         }
                     }()),
                     r = [],
-                    s;
+                    s = "";
                 if (error !== "") {
                     return error;
                 }
@@ -809,6 +802,6 @@ var jsmin = function (comment, input, level, type, alter, fcomment) {
         if (error !== "") {
             return error;
         } else {
-            return comment + fcom.join("") + ret;
+            return fcom.join("") + ret;
         }
     };
