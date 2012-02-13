@@ -40,7 +40,7 @@ var csvmin = function (source, ch) {
         }
         (function () {
             var a = 0,
-                b = e.length,
+                b = source.length,
                 c = [],
                 d = "",
                 e = 0,

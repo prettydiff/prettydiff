@@ -254,11 +254,11 @@ var jsmin = function (input, level, type, alter, fcomment) {
                     g = -1,
                     m = 0,
                     p = 0,
-                    q = "",
                     b = x.length,
                     c = [],
                     d = [],
                     h = [],
+                    test = false,
 
                     //colorLow is used in a replace method to convert
                     //CSS hex colors from uppercase alpha characters to
@@ -638,12 +638,12 @@ var jsmin = function (input, level, type, alter, fcomment) {
             //linefeeds will be removed.
             m = function () {
                 var firstComment = (function () {
-                        if (fcomment !== true || (/^\s*\/\*/.test(input) !== true && /^\s*\/\//.test(input) !== true)) {
-                            return;
-                        }
                         var a = 0,
                             b = input.length,
                             c = "";
+                        if (fcomment !== true || (/^\s*\/\*/.test(input) !== true && /^\s*\/\//.test(input) !== true)) {
+                            return;
+                        }
                         for (a = 0; a < b; a += 1) {
                             if (c === "") {
                                 if (input.charAt(a) === "/" && input.charAt(a + 1) && (input.charAt(a + 1) === "*" || input.charAt(a + 1) === "/")) {
