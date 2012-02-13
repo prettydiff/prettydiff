@@ -1102,7 +1102,9 @@ var js_beautify = function (args) {
                     if (flags.var_line && flags.mode !== "(EXPRESSION)") {
                         flags.var_line_reindented = true;
                         print_token();
-                        print_newline();
+                        if (last_word !== "prettydiffvar") {
+                            print_newline();
+                        }
                     } else if (last_type === "TK_END_BLOCK" && flags.mode !== "(EXPRESSION)") {
                         print_token();
                         if (last_text === "}") {
