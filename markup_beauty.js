@@ -13,6 +13,7 @@
 
  http://www.travelocity.com/
  http://mailmarkup.org/
+ http://prettydiff.com/
  **********************************************************************/
 
 /*
@@ -194,374 +195,385 @@ var markup_beauty = function (args) {
             //of beautification.  This is the logic that allows JSP
             //beautification to occur.
             innerset = (function () {
-                var a,
-                    b,
-                    e,
-                    f,
-                    g,
-                    j,
-                    l,
-                    m,
-                    n,
-                    o,
-                    p,
-                    q = [">"],
-                    r = 0,
-                    h = -1,
-                    i = 0,
-                    k = -1,
-                    c = args.source.length,
-                    d = [];
-                for (a = 0; a < c; a += 1) {
+                var d = (function () {
+                        var a = 0,
+                            b = 0,
+                            c = args.source.length,
+                            d = [],
+                            e = 0,
+                            h = -1,
+                            i = 0,
+                            j = 0,
+                            k = -1,
+                            l = 0,
+                            m = 0,
+                            n = false,
+                            o = false,
+                            p = 0,
+                            q = [">"],
+                            r = false;
+                        for (a = 0; a < c; a += 1) {
 
-                    //if PHP, ASP, script, or style found then pass over
-                    if (x.substr(a, 7).toLowerCase() === "<script") {
-                        for (b = a + 7; b < c; b += 1) {
-                            if (x.charAt(b) + x.charAt(b + 1) + x.charAt(b + 2).toLowerCase() + x.charAt(b + 3).toLowerCase() + x.charAt(b + 4).toLowerCase() + x.charAt(b + 5).toLowerCase() + x.charAt(b + 6).toLowerCase() + x.charAt(b + 7).toLowerCase() + x.charAt(b + 8) === "</script>") {
-                                //h counts the index of the future build
-                                //array
-                                if (/></.test(x.substr(a, b))) {
-                                    h += 2;
-                                } else {
-                                    h += 3;
+                            //if PHP, ASP, script, or style found then pass over
+                            if (x.substr(a, 7).toLowerCase() === "<script") {
+                                for (b = a + 7; b < c; b += 1) {
+                                    if (x.charAt(b) + x.charAt(b + 1) + x.charAt(b + 2).toLowerCase() + x.charAt(b + 3).toLowerCase() + x.charAt(b + 4).toLowerCase() + x.charAt(b + 5).toLowerCase() + x.charAt(b + 6).toLowerCase() + x.charAt(b + 7).toLowerCase() + x.charAt(b + 8) === "</script>") {
+                                        //h counts the index of the future build
+                                        //array
+                                        if (/></.test(x.substr(a, b))) {
+                                            h += 2;
+                                        } else {
+                                            h += 3;
+                                        }
+                                        a = b + 8;
+                                        break;
+                                    }
                                 }
-                                a = b + 8;
-                                break;
-                            }
-                        }
-                    } else if (x.substr(a, 6).toLowerCase() === "<style") {
-                        for (b = a + 6; b < c; b += 1) {
-                            if (x.charAt(b) + x.charAt(b + 1) + x.charAt(b + 2).toLowerCase() + x.charAt(b + 3).toLowerCase() + x.charAt(b + 4).toLowerCase() + x.charAt(b + 5).toLowerCase() + x.charAt(b + 6).toLowerCase() + x.charAt(b + 7) === "</style>") {
-                                //h counts the index of the future build
-                                //array
-                                if (/></.test(x.substr(a, b))) {
-                                    h += 2;
-                                } else {
-                                    h += 3;
+                            } else if (x.substr(a, 6).toLowerCase() === "<style") {
+                                for (b = a + 6; b < c; b += 1) {
+                                    if (x.charAt(b) + x.charAt(b + 1) + x.charAt(b + 2).toLowerCase() + x.charAt(b + 3).toLowerCase() + x.charAt(b + 4).toLowerCase() + x.charAt(b + 5).toLowerCase() + x.charAt(b + 6).toLowerCase() + x.charAt(b + 7) === "</style>") {
+                                        //h counts the index of the future build
+                                        //array
+                                        if (/></.test(x.substr(a, b))) {
+                                            h += 2;
+                                        } else {
+                                            h += 3;
+                                        }
+                                        a = b + 7;
+                                        break;
+                                    }
                                 }
-                                a = b + 7;
-                                break;
-                            }
-                        }
-                    } else if (x.substr(a, 5) === "<?php") {
-                        for (b = a + 5; b < c; b += 1) {
-                            if (x.charAt(b - 1) === "?" && x.charAt(b) === ">") {
-                                a = b;
-                                h += 1;
-                                break;
-                            }
-                        }
-                    } else if (x.charAt(a) === "<" && x.charAt(a + 1) === "%") {
-                        for (b = a + 2; b < c; b += 1) {
-                            if (x.charAt(b - 1) === "%" && x.charAt(b) === ">") {
-                                a = b;
-                                h += 1;
-                                break;
-                            }
-                        }
+                            } else if (x.substr(a, 5) === "<?php") {
+                                for (b = a + 5; b < c; b += 1) {
+                                    if (x.charAt(b - 1) === "?" && x.charAt(b) === ">") {
+                                        a = b;
+                                        h += 1;
+                                        break;
+                                    }
+                                }
+                            } else if (x.charAt(a) === "<" && x.charAt(a + 1) === "%") {
+                                for (b = a + 2; b < c; b += 1) {
+                                    if (x.charAt(b - 1) === "%" && x.charAt(b) === ">") {
+                                        a = b;
+                                        h += 1;
+                                        break;
+                                    }
+                                }
 
-                        //This section identifies SGML tags and the
-                        //location of internally contained angle
-                        //brackets.
-                    } else if (x.charAt(a) === "<" && x.charAt(a + 1) === "!" && /[A-Z]|\[/.test(x.charAt(a + 2))) {
-                        for (b = a + 3; b < c; b += 1) {
-                            if (x.charAt(b) === ">" && q[q.length - 1] === ">" && q.length === 1) {
-                                h += 1;
-                                if (r !== 0) {
-                                    d.push([a, b, h, a]);
+                                //This section identifies SGML tags and the
+                                //location of internally contained angle
+                                //brackets.
+                            } else if (x.charAt(a) === "<" && x.charAt(a + 1) === "!" && /[A-Z]|\[/.test(x.charAt(a + 2))) {
+                                for (b = a + 3; b < c; b += 1) {
+                                    if (x.charAt(b) === ">" && q[q.length - 1] === ">" && q.length === 1) {
+                                        h += 1;
+                                        if (r) {
+                                            d.push([a, b, h, a]);
+                                        }
+                                        r = false;
+                                        a = b;
+                                        q = [">"];
+                                        break;
+                                    } else if (x.charAt(b) === "<") {
+                                        q.push(">");
+                                        r = true;
+                                    } else if (x.charAt(b) === ">" && q.length > 1) {
+                                        q.pop();
+                                        r = true;
+                                    } else if (x.charAt(b) === "[") {
+                                        q.push("]");
+                                    } else if (x.charAt(b) === "]") {
+                                        q.pop();
+                                    } else if (x.charAt(b) === "\"") {
+                                        if (q[q.length - 1] === "\"") {
+                                            q.pop();
+                                        } else {
+                                            q.push("\"");
+                                        }
+                                    } else if (x.charAt(b) === "'") {
+                                        if (q[q.length - 1] === "'") {
+                                            q.pop();
+                                        } else {
+                                            q.push("'");
+                                        }
+                                    }
                                 }
-                                r = 0;
-                                a = b;
-                                q = [">"];
-                                break;
-                            } else if (x.charAt(b) === "<") {
-                                q.push(">");
-                                r = b;
-                            } else if (x.charAt(b) === ">" && q.length > 1) {
-                                q.pop();
-                                r = b;
-                            } else if (x.charAt(b) === "[") {
-                                q.push("]");
-                            } else if (x.charAt(b) === "]") {
-                                q.pop();
-                            } else if (x.charAt(b) === "\"") {
-                                if (q[q.length - 1] === "\"") {
-                                    q.pop();
-                                } else {
-                                    q.push("\"");
+                                //Don't even bother with empty qutoes: "" or ''
+                            } else if (x.charAt(a) === x.charAt(a + 1) && (x.charAt(a) === "\"" || x.charAt(a) === "'")) {
+                                a += 1;
+                            } else if (x.charAt(a - 1) === "=" && (x.charAt(a) === "\"" || x.charAt(a) === "'")) {
+
+                                //This first bit with the "m" and "o" variables
+                                //instructs the principle loop of innerset to
+                                //ignore quote characters that fall outside of
+                                //tags.
+                                o = false;
+                                for (m = a - 1; m > 0; m -= 1) {
+                                    if ((x.charAt(m) === "\"" && x.charAt(a) === "\"") || (x.charAt(m) === "'" && x.charAt(a) === "'") || x.charAt(m) === "<") {
+                                        break;
+                                    } else if (x.charAt(m) === ">") {
+                                        o = true;
+                                        break;
+                                    }
                                 }
-                            } else if (x.charAt(b) === "'") {
-                                if (q[q.length - 1] === "'") {
-                                    q.pop();
-                                } else {
-                                    q.push("'");
-                                }
-                            }
-                        }
-                        //Don't even bother with empty qutoes: "" or ''
-                    } else if (x.charAt(a) === x.charAt(a + 1) && (x.charAt(a) === "\"" || x.charAt(a) === "'")) {
-                        a += 1;
-                    } else if (x.charAt(a - 1) === "=" && (x.charAt(a) === "\"" || x.charAt(a) === "'")) {
 
-                        //This first bit with the "m" and "o" variables
-                        //instructs the principle loop of innerset to
-                        //ignore quote characters that fall outside of
-                        //tags.
-                        o = -1;
-                        for (m = a - 1; m > 0; m -= 1) {
-                            if ((x.charAt(m) === "\"" && x.charAt(a) === "\"") || (x.charAt(m) === "'" && x.charAt(a) === "'") || x.charAt(m) === "<") {
-                                break;
-                            } else if (x.charAt(m) === ">") {
-                                o = m;
-                                break;
-                            }
-                        }
+                                if (!o) {
+                                    //n is reset to be used as a switch.
+                                    n = false;
+                                    for (b = a + 1; b < c; b += 1) {
 
-                        if (o === -1) {
-                            //n is reset to be used as a switch.
-                            n = 0;
-                            for (b = a + 1; b < c; b += 1) {
+                                        //Ignore closing quotes if they reside
+                                        //inside a script, style, ASP, or PHP
+                                        //block.
+                                        if (x.substr(b, 7).toLowerCase() === "<script") {
+                                            for (p = b + 7; p < c; p += 1) {
+                                                if (x.charAt(p) + x.charAt(p + 1) + x.charAt(p + 2).toLowerCase() + x.charAt(p + 3).toLowerCase() + x.charAt(p + 4).toLowerCase() + x.charAt(p + 5).toLowerCase() + x.charAt(p + 6).toLowerCase() + x.charAt(p + 7).toLowerCase() + x.charAt(p + 8) === "</script>") {
+                                                    b = p + 8;
+                                                    break;
+                                                }
+                                            }
+                                        } else if (x.substr(b, 6).toLowerCase() === "<style") {
+                                            for (p = b + 6; p < c; p += 1) {
+                                                if (x.charAt(p) + x.charAt(p + 1) + x.charAt(p + 2).toLowerCase() + x.charAt(p + 3).toLowerCase() + x.charAt(p + 4).toLowerCase() + x.charAt(p + 5).toLowerCase() + x.charAt(p + 6).toLowerCase() + x.charAt(p + 7) === "</style>") {
+                                                    b = p + 7;
+                                                    break;
+                                                }
+                                            }
+                                        } else if (x.substr(b, 5) === "<?php") {
+                                            for (p = b + 5; p < c; p += 1) {
+                                                if (x.charAt(p - 1) === "?" && x.charAt(p) === ">") {
+                                                    b = p;
+                                                    break;
+                                                }
+                                            }
+                                        } else if (x.charAt(b) === "<" && x.charAt(b + 1) === "%") {
+                                            for (p = b + 5; p < c; p += 1) {
+                                                if (x.charAt(p - 1) === "%" && x.charAt(p) === ">") {
+                                                    b = p;
+                                                    break;
+                                                }
+                                            }
+                                        } else if (x.charAt(b) === ">" || x.charAt(b) === "<") {
 
-                                //Ignore closing quotes if they reside
-                                //inside a script, style, ASP, or PHP
-                                //block.
-                                if (x.substr(b, 7).toLowerCase() === "<script") {
-                                    for (p = b + 7; p < c; p += 1) {
-                                        if (x.charAt(p) + x.charAt(p + 1) + x.charAt(p + 2).toLowerCase() + x.charAt(p + 3).toLowerCase() + x.charAt(p + 4).toLowerCase() + x.charAt(p + 5).toLowerCase() + x.charAt(p + 6).toLowerCase() + x.charAt(p + 7).toLowerCase() + x.charAt(p + 8) === "</script>") {
-                                            b = p + 8;
+                                            //There is no reason to push every
+                                            //set of quotes into the "d" array
+                                            //if those quotes do not contain
+                                            //angle brackets.  This is a switch
+                                            //to test for such.
+                                            n = true;
+                                        } else if ((x.charAt(b - 1) !== "\\" && ((x.charAt(a) === "\"" && x.charAt(b) === "\"") || (x.charAt(a) === "'" && x.charAt(b) === "'"))) || b === c - 1) {
+                                            //The "l" variable is used as an
+                                            //on/off switch to allow content,
+                                            //but not sequentially.  Tags with
+                                            //quotes following content with
+                                            //quotes need to be decremented to
+                                            //correct an inflated count
+                                            if (k !== h && l === 1) {
+                                                l = 0;
+                                                h -= 1;
+                                                k -= 1;
+                                            } else if (k === h) {
+                                                for (e = i + 1; e > a; e += 1) {
+                                                    if (!/\s/.test(x.charAt(e))) {
+                                                        break;
+                                                    }
+                                                }
+                                                j = e;
+                                                //This condition is for
+                                                //nonsequential content pieces
+                                                if (i < a && l !== 1) {
+                                                    l = 1;
+                                                    h += 1;
+                                                    k += 1;
+                                                }
+                                            }
+                                            //a = index of opening quotes from a
+                                            //    quote pair
+                                            //b = index of closing quotes from a
+                                            //    quote pair
+                                            //h = tag and content count
+                                            //j = the index where tag "h" starts
+                                            if (n) {
+                                                d.push([a, b, h, j]);
+                                            }
+                                            a = b;
                                             break;
                                         }
                                     }
-                                } else if (x.substr(b, 6).toLowerCase() === "<style") {
-                                    for (p = b + 6; p < c; p += 1) {
-                                        if (x.charAt(p) + x.charAt(p + 1) + x.charAt(p + 2).toLowerCase() + x.charAt(p + 3).toLowerCase() + x.charAt(p + 4).toLowerCase() + x.charAt(p + 5).toLowerCase() + x.charAt(p + 6).toLowerCase() + x.charAt(p + 7) === "</style>") {
-                                            b = p + 7;
+                                }
+                            } else if (x.charAt(a) === "<") {
+                                //If a HTML/XML comment is encountered then skip
+                                if (x.charAt(a + 1) === "!" && x.charAt(a + 2) === "-" && x.charAt(a + 3) === "-") {
+                                    for (b = a + 4; b < x.length; b += 1) {
+                                        if (x.charAt(b) === "-" && x.charAt(b + 1) === "-" && x.charAt(b + 2) === ">") {
                                             break;
                                         }
                                     }
-                                } else if (x.substr(b, 5) === "<?php") {
-                                    for (p = b + 5; p < c; p += 1) {
-                                        if (x.charAt(p - 1) === "?" && x.charAt(p) === ">") {
-                                            b = p;
-                                            break;
+                                    h += 1;
+                                    a = b + 2;
+                                    //If not a HTML/XML comment increase the tag
+                                    //count
+                                } else {
+                                    h += 1;
+                                    j = a;
+                                }
+                            } else if (x.charAt(a + 1) === "<" && x.charAt(a) !== ">") {
+                                //Acount for content outside of tags
+                                for (b = a; b > 0; b -= 1) {
+                                    if (!/\s/.test(x.charAt(b)) && x.charAt(b) !== ">") {
+                                        h += 1;
+                                        k += 1;
+                                        j = a;
+                                        break;
+                                    } else if (x.charAt(b) === ">") {
+                                        if (h !== k) {
+                                            k += 1;
+                                            i = a;
                                         }
+                                        break;
                                     }
-                                } else if (x.charAt(b) === "<" && x.charAt(b + 1) === "%") {
-                                    for (p = b + 5; p < c; p += 1) {
-                                        if (x.charAt(p - 1) === "%" && x.charAt(p) === ">") {
-                                            b = p;
-                                            break;
-                                        }
-                                    }
-                                } else if (x.charAt(b) === ">" || x.charAt(b) === "<") {
+                                }
+                                //Count for the closing of tags
+                            } else if (x.charAt(a) === ">") {
+                                k += 1;
+                                i = a;
+                            }
+                        }
+                        return d;
+                    }());
+                (function () {
+                    var a = 0,
+                        b = 0,
+                        c = d.length,
+                        e = 0,
+                        f = 0,
+                        g = 0,
+                        h = 0,
+                        i = 0,
+                        j = 0,
+                        k = 0,
+                        y = x.split("");
 
-                                    //There is no reason to push every
-                                    //set of quotes into the "d" array
-                                    //if those quotes do not contain
-                                    //angle brackets.  This is a switch
-                                    //to test for such.
-                                    n = 1;
-                                } else if ((x.charAt(b - 1) !== "\\" && ((x.charAt(a) === "\"" && x.charAt(b) === "\"") || (x.charAt(a) === "'" && x.charAt(b) === "'"))) || b === c - 1) {
-                                    //The "l" variable is used as an
-                                    //on/off switch to allow content,
-                                    //but not sequentially.  Tags with
-                                    //quotes following content with
-                                    //quotes need to be decremented to
-                                    //correct an inflated count
-                                    if (k !== h && l === 1) {
-                                        l = 0;
-                                        h -= 1;
-                                        k -= 1;
-                                    } else if (k === h) {
-                                        for (e = i + 1; e > a; e += 1) {
-                                            if (!/\s/.test(x.charAt(e))) {
+                    //Code hand off must occur between quote discovery and
+                    //tag count.  Hand off must allow for discovery to be
+                    //repacked into numbers relevant to postcomputation and
+                    //not to input.  This hand off produces the "inner"
+                    //array for consumption by the innerfix array.
+                    for (a = 0; a < c; a += 1) {
+                        i = d[a][0] + 1;
+                        f = d[a][1];
+                        g = d[a][2];
+                        j = d[a][3];
+
+                        //This loop converts quotes angle brackets to square
+                        //brackets and simultaneously builds out the "inner"
+                        //arrry.  The inner array contains the reference
+                        //locations of the converted angle brackets so the
+                        //program can put the angle brackets back after
+                        //JavaScript and CSS are beautified.
+                        for (e = i; e < f; e += 1) {
+
+                            //h is the character index of a converted angle
+                            //bracket in a given tag
+                            h = 0;
+                            if (y[e] === "<") {
+                                y[e] = "[";
+                                for (b = e; b > j; b -= 1) {
+                                    h += 1;
+                                    if (/\s/.test(y[b])) {
+                                        for (k = b - 1; k > j; k -= 1) {
+                                            if (!/\s/.test(y[k])) {
+
+                                                //This condition accounts
+                                                //for white space
+                                                //normalization around equal
+                                                //characters that is
+                                                //supplied by markupmin,
+                                                //otherwise h is incremented
+                                                //for runs of white space
+                                                //characters prior to
+                                                //accounting for
+                                                //tokenization.
+                                                if (y[k] !== "=") {
+                                                    h += 1;
+                                                } else if (/\s/.test(y[k - 1])) {
+                                                    h -= 1;
+                                                }
+                                                b = k;
                                                 break;
                                             }
                                         }
-                                        j = e;
-                                        //This condition is for
-                                        //nonsequential content pieces
-                                        if (i < a && l !== 1) {
-                                            l = 1;
-                                            h += 1;
-                                            k += 1;
-                                        }
                                     }
-                                    //a = index of opening quotes from a
-                                    //    quote pair
-                                    //b = index of closing quotes from a
-                                    //    quote pair
-                                    //h = tag and content count
-                                    //j = the index where tag "h" starts
-                                    if (n === 1) {
-                                        d.push([a, b, h, j]);
-                                    }
-                                    a = b;
-                                    break;
                                 }
-                            }
-                        }
-                    } else if (x.charAt(a) === "<") {
-                        //If a HTML/XML comment is encountered then skip
-                        if (x.charAt(a + 1) === "!" && x.charAt(a + 2) === "-" && x.charAt(a + 3) === "-") {
-                            for (b = a + 4; b < x.length; b += 1) {
-                                if (x.charAt(b) === "-" && x.charAt(b + 1) === "-" && x.charAt(b + 2) === ">") {
-                                    break;
+                                if (/\s/.test(y[i])) {
+                                    h -= 1;
                                 }
-                            }
-                            h += 1;
-                            a = b + 2;
-                            //If not a HTML/XML comment increase the tag
-                            //count
-                        } else {
-                            h += 1;
-                            j = a;
-                        }
-                    } else if (x.charAt(a + 1) === "<" && x.charAt(a) !== ">") {
-                        //Acount for content outside of tags
-                        for (b = a; b > 0; b -= 1) {
-                            if (!/\s/.test(x.charAt(b)) && x.charAt(b) !== ">") {
-                                h += 1;
-                                k += 1;
-                                j = a;
-                                break;
-                            } else if (x.charAt(b) === ">") {
-                                if (h !== k) {
-                                    k += 1;
-                                    i = a;
-                                }
-                                break;
-                            }
-                        }
-                        //Count for the closing of tags
-                    } else if (x.charAt(a) === ">") {
-                        k += 1;
-                        i = a;
-                    }
-                }
-                c = d.length;
-                x = x.split("");
-
-                //Code hand off must occur between quote discovery and
-                //tag count.  Hand off must allow for discovery to be
-                //repacked into numbers relevant to postcomputation and
-                //not to input.  This hand off produces the "inner"
-                //array for consumption by the innerfix array.
-                for (a = 0; a < c; a += 1) {
-                    i = d[a][0] + 1;
-                    f = d[a][1];
-                    g = d[a][2];
-                    j = d[a][3];
-
-                    //This loop converts quotes angle brackets to square
-                    //brackets and simultaneously builds out the "inner"
-                    //arrry.  The inner array contains the reference
-                    //locations of the converted angle brackets so the
-                    //program can put the angle brackets back after
-                    //JavaScript and CSS are beautified.
-                    for (e = i; e < f; e += 1) {
-
-                        //h is the character index of a converted angle
-                        //bracket in a given tag
-                        h = 0;
-                        if (x[e] === "<") {
-                            x[e] = "[";
-                            for (b = e; b > j; b -= 1) {
-                                h += 1;
-                                if (/\s/.test(x[b])) {
-                                    for (k = b - 1; k > j; k -= 1) {
-                                        if (!/\s/.test(x[k])) {
-
-                                            //This condition accounts
-                                            //for white space
-                                            //normalization around equal
-                                            //characters that is
-                                            //supplied by markupmin,
-                                            //otherwise h is incremented
-                                            //for runs of white space
-                                            //characters prior to
-                                            //accounting for
-                                            //tokenization.
-                                            if (x[k] !== "=") {
-                                                h += 1;
-                                            } else if (/\s/.test(x[k - 1])) {
-                                                h -= 1;
+                                inner.push(["<", h, g]);
+                            } else if (y[e] === ">") {
+                                y[e] = "]";
+                                for (b = e; b > j; b -= 1) {
+                                    h += 1;
+                                    if (/\s/.test(y[b])) {
+                                        for (k = b - 1; k > j; k -= 1) {
+                                            if (!/\s/.test(y[k])) {
+                                                if (y[k] !== "=") {
+                                                    h += 1;
+                                                } else if (/\s/.test(y[k - 1])) {
+                                                    h -= 1;
+                                                }
+                                                b = k;
+                                                break;
                                             }
-                                            b = k;
-                                            break;
                                         }
                                     }
                                 }
-                            }
-                            if (/\s/.test(x[i])) {
-                                h -= 1;
-                            }
-                            inner.push(["<", h, g]);
-                        } else if (x[e] === ">") {
-                            x[e] = "]";
-                            for (b = e; b > j; b -= 1) {
-                                h += 1;
-                                if (/\s/.test(x[b])) {
-                                    for (k = b - 1; k > j; k -= 1) {
-                                        if (!/\s/.test(x[k])) {
-                                            if (x[k] !== "=") {
-                                                h += 1;
-                                            } else if (/\s/.test(x[k - 1])) {
-                                                h -= 1;
-                                            }
-                                            b = k;
-                                            break;
-                                        }
-                                    }
+                                if (/\s/.test(y[i])) {
+                                    h -= 1;
                                 }
+                                inner.push([">", h, g]);
                             }
-                            if (/\s/.test(x[i])) {
-                                h -= 1;
-                            }
-                            inner.push([">", h, g]);
                         }
                     }
-                }
-                //x must be joined back into a string so that it can
-                //pass through the markupmin function.
-                x = x.join("");
+                    //x must be joined back into a string so that it can
+                    //pass through the markupmin function.
+                    x = y.join("");
+                }());
             }()),
 
             //This function builds full tags and content into an array
             //named build and names the tag types or content into
             //elements of a separate array that I have named token.
             elements = (function () {
-                var q,
-                    a,
-                    loop,
-                    i,
-                    Z,
+                var i = 0,
+                    y = markupmin(x, args.mode, args.html).split(""),
 
                     //This function looks for the end of a designated
                     //tag and then returns the entire tag as a single
                     //output.
                     b = function (end) {
                         var c = i,
-                            d,
-                            e,
-                            f = "",
-                            z = end.charAt(end.length - 2),
-                            y = end.split("").reverse(),
+                            d = 0,
+                            e = false,
+                            f = [],
+                            Z = 0,
 
                             //The first loop looks for the end position
                             //of a tag.  The second loop verifies the
                             //first loop did not stop too early.
                             g = function () {
+                                var loop = y.length,
+                                    d = 0,
+                                    h = end.split("").reverse(),
+                                    z = end.charAt(end.length - 2);
                                 for (c; c < loop; c += 1) {
-                                    if (z !== "-" && z !== "?" && z !== "%" && x[c] === ">") {
+                                    if (z !== "-" && z !== "?" && z !== "%" && y[c] === ">") {
                                         break;
-                                    } else if (x[c - 1] + x[c] === z + ">") {
+                                    } else if (y[c - 1] + y[c] === z + ">") {
                                         break;
                                     }
                                 }
-                                Z = y.length;
-                                for (d = 0; d < Z; d += 1) {
-                                    if (x[c - d] !== y[d]) {
+                                for (d = 0; d < loop; d += 1) {
+                                    if (y[c - d] !== h[d]) {
                                         e = false;
                                         c += 1;
                                         break;
@@ -575,19 +587,19 @@ var markup_beauty = function (args) {
                         //tag was actually captured and stopped because
                         //of an early ">" character.  This check is
                         //necessary for comments, ASP, and PHP tags.
-                        if (e !== true) {
+                        if (!e) {
                             do {
                                 g();
-                            } while (e !== true);
+                            } while (!e);
                         }
 
-                        if (e === true) {
+                        if (e) {
 
                             //Concat the characters from the now known
                             //end point to build the tag.
                             Z = c + 1;
                             for (d = i; d < Z; d += 1) {
-                                f = f + x[d];
+                                f.push(y[d]);
                             }
                         }
 
@@ -595,30 +607,33 @@ var markup_beauty = function (args) {
                         //logic to determine if a singleton tag must be
                         //treated as content or as an element with
                         //indentation.
-                        if (x[i - 2] === ">" && x[i - 1] === " ") {
-                            f = " " + f;
+                        if (y[i - 2] === ">" && y[i - 1] === " ") {
+                            i = c - 1;
+                            return " " + f.join("");
+                        } else {
+                            i = c - 1;
+                            return f;
                         }
-                        i = c - 1;
-                        return f;
                     },
 
                     //This function builds content into isolated usable
                     //content units.  This is for content while, which
                     //include external code, elements() is for tags.
                     cgather = function (z) {
-                        var c,
+                        var c = 0,
                             d = "",
-                            e;
-                        q = "";
+                            e = 0,
+                            q = "",
+                            loop = y.length;
                         for (c = i; c < loop; c += 1) {
 
                             //Verifies if the end script tag is quoted
-                            if (q === "" && x[c - 1] !== "\\") {
-                                if (x[c] === "/" && x[c + 1] && x[c + 1] === "/") {
+                            if (q === "" && y[c - 1] !== "\\") {
+                                if (y[c] === "/" && y[c + 1] && y[c + 1] === "/") {
                                     q = "//";
-                                } else if (x[c] === "/" && x[c + 1] && x[c + 1] === "*") {
+                                } else if (y[c] === "/" && y[c + 1] && y[c + 1] === "*") {
                                     q = "/*";
-                                } else if (x[c] === "'" || x[c] === "\"" || x[c] === "/") {
+                                } else if (y[c] === "'" || y[c] === "\"" || y[c] === "/") {
                                     //It is necessary to determine if
                                     //a forward slash character is
                                     //division or the opening of a
@@ -628,34 +643,34 @@ var markup_beauty = function (args) {
                                     //the forward slash follows a
                                     //closing container or word
                                     //character.
-                                    if (x[c] === "/") {
+                                    if (y[c] === "/") {
                                         for (e = c - 1; e > 0; e -= 1) {
-                                            if (!/\s/.test(x[e])) {
+                                            if (!/\s/.test(y[e])) {
                                                 break;
                                             }
                                         }
-                                        if (x[e] === ")" || x[e] === "]" || x[e] === "}" || /\w/.test(x[e])) {
+                                        if (y[e] === ")" || y[e] === "]" || y[e] === "}" || /\w/.test(y[e])) {
                                             q = "";
                                         } else {
                                             q = "/";
                                         }
                                     } else {
-                                        q = x[c];
+                                        q = y[c];
                                     }
                                 }
-                            } else if (x[c - 1] !== "\\" && ((q === "'" && x[c] === "'") || (q === "\"" && x[c] === "\"") || (q === "/" && x[c] === "/") || (q === "//" && (x[c] === "\n" || (x[c - 4] && x[c - 4] === "/" && x[c - 3] === "/" && x[c - 2] === "-" && x[c - 1] === "-" && x[c] === ">"))) || (q === "/*" && x[c - 1] === "*" && x[c] === "/"))) {
+                            } else if (y[c - 1] !== "\\" && ((q === "'" && y[c] === "'") || (q === "\"" && y[c] === "\"") || (q === "/" && y[c] === "/") || (q === "//" && (y[c] === "\n" || (y[c - 4] && y[c - 4] === "/" && y[c - 3] === "/" && y[c - 2] === "-" && y[c - 1] === "-" && y[c] === ">"))) || (q === "/*" && y[c - 1] === "*" && y[c] === "/"))) {
                                 q = "";
                             }
-                            if (((z === "script" && q === "") || z === "style") && x[c] === "<" && x[c + 1] === "/" && x[c + 2].toLowerCase() === "s") {
-                                if (z === "script" && (x[c + 3].toLowerCase() === "c" && x[c + 4].toLowerCase() === "r" && x[c + 5].toLowerCase() === "i" && x[c + 6].toLowerCase() === "p" && x[c + 7].toLowerCase() === "t")) {
+                            if (((z === "script" && q === "") || z === "style") && y[c] === "<" && y[c + 1] === "/" && y[c + 2].toLowerCase() === "s") {
+                                if (z === "script" && (y[c + 3].toLowerCase() === "c" && y[c + 4].toLowerCase() === "r" && y[c + 5].toLowerCase() === "i" && y[c + 6].toLowerCase() === "p" && y[c + 7].toLowerCase() === "t")) {
                                     break;
-                                } else if (z === "style" && (x[c + 3].toLowerCase() === "t" && x[c + 4].toLowerCase() === "y" && x[c + 5].toLowerCase() === "l" && x[c + 6].toLowerCase() === "e")) {
+                                } else if (z === "style" && (y[c + 3].toLowerCase() === "t" && y[c + 4].toLowerCase() === "y" && y[c + 5].toLowerCase() === "l" && y[c + 6].toLowerCase() === "e")) {
                                     break;
                                 }
-                            } else if (z === "other" && x[c] === "<") {
+                            } else if (z === "other" && y[c] === "<") {
                                 break;
                             } else {
-                                d = d + x[c];
+                                d = d + y[c];
                             }
                         }
                         i = c - 1;
@@ -701,28 +716,27 @@ var markup_beauty = function (args) {
                     //also be regarded as start tags.  This code is
                     //vocabulary independent and I do not read minds.
                     type_define = (function () {
-                        var a;
-                        //Source data is minified before it is beautified.
-                        x = markupmin(x, args.mode, args.html).split("");
-                        loop = x.length;
+                        var a = "",
+                            c = [],
+                            loop = y.length;
 
                         for (i = 0; i < loop; i += 1) {
-                            if (x[i] === "<" && x[i + 1] === "!" && x[i + 2] === "-" && x[i + 3] === "-" && x[i + 4] !== "#" && token[token.length - 1] !== "T_script" && token[token.length - 1] !== "T_style") {
+                            if (y[i] === "<" && y[i + 1] === "!" && y[i + 2] === "-" && y[i + 3] === "-" && y[i + 4] !== "#" && token[token.length - 1] !== "T_script" && token[token.length - 1] !== "T_style") {
                                 build.push(b("-->"));
                                 token.push("T_comment");
-                            } else if (x[i] === "<" && x[i + 1] === "!" && x[i + 2] === "-" && x[i + 3] === "-" && x[i + 4] === "#") {
+                            } else if (y[i] === "<" && y[i + 1] === "!" && y[i + 2] === "-" && y[i + 3] === "-" && y[i + 4] === "#") {
                                 build.push(b("-->"));
                                 token.push("T_ssi");
-                            } else if (x[i] === "<" && x[i + 1] === "!" && x[i + 2] !== "-" && token[token.length - 1] !== "T_script") {
+                            } else if (y[i] === "<" && y[i + 1] === "!" && y[i + 2] !== "-" && token[token.length - 1] !== "T_script") {
                                 build.push(b(">"));
                                 token.push("T_sgml");
-                            } else if (x[i] === "<" && x[i + 1] === "?" && x[i + 2].toLowerCase() === "x" && x[i + 3].toLowerCase() === "m" && x[i + 4].toLowerCase() === "l") {
+                            } else if (y[i] === "<" && y[i + 1] === "?" && y[i + 2].toLowerCase() === "x" && y[i + 3].toLowerCase() === "m" && y[i + 4].toLowerCase() === "l") {
                                 build.push(b("?>"));
                                 token.push("T_xml");
-                            } else if (x[i] === "<" && x[i + 1] === "?" && x[i + 2].toLowerCase() === "p" && x[i + 3].toLowerCase() === "h" && x[i + 4].toLowerCase() === "p") {
+                            } else if (y[i] === "<" && y[i + 1] === "?" && y[i + 2].toLowerCase() === "p" && y[i + 3].toLowerCase() === "h" && y[i + 4].toLowerCase() === "p") {
                                 build.push(b("?>"));
                                 token.push("T_php");
-                            } else if (x[i] === "<" && x[i + 1].toLowerCase() === "s" && x[i + 2].toLowerCase() === "c" && x[i + 3].toLowerCase() === "r" && x[i + 4].toLowerCase() === "i" && x[i + 5].toLowerCase() === "p" && x[i + 6].toLowerCase() === "t") {
+                            } else if (y[i] === "<" && y[i + 1].toLowerCase() === "s" && y[i + 2].toLowerCase() === "c" && y[i + 3].toLowerCase() === "r" && y[i + 4].toLowerCase() === "i" && y[i + 5].toLowerCase() === "p" && y[i + 6].toLowerCase() === "t") {
                                 build.push(b(">"));
                                 //contents of a script tag are
                                 //JavaScript if value of type attribute
@@ -741,7 +755,7 @@ var markup_beauty = function (args) {
                                 } else {
                                     token.push("T_tag_start");
                                 }
-                            } else if (x[i] === "<" && x[i + 1].toLowerCase() === "s" && x[i + 2].toLowerCase() === "t" && x[i + 3].toLowerCase() === "y" && x[i + 4].toLowerCase() === "l" && x[i + 5].toLowerCase() === "e") {
+                            } else if (y[i] === "<" && y[i + 1].toLowerCase() === "s" && y[i + 2].toLowerCase() === "t" && y[i + 3].toLowerCase() === "y" && y[i + 4].toLowerCase() === "l" && y[i + 5].toLowerCase() === "e") {
                                 build.push(b(">"));
                                 //contents of a style tag are CSS if
                                 //value of type attribute is:
@@ -753,34 +767,34 @@ var markup_beauty = function (args) {
                                 } else {
                                     token.push("T_tag_start");
                                 }
-                            } else if (x[i] === "<" && x[i + 1] === "%") {
+                            } else if (y[i] === "<" && y[i + 1] === "%") {
                                 build.push(b("%>"));
                                 token.push("T_asp");
-                            } else if (x[i] === "<" && x[i + 1] === "/") {
+                            } else if (y[i] === "<" && y[i + 1] === "/") {
                                 build.push(b(">"));
                                 token.push("T_tag_end");
-                            } else if (x[i] === "<" && token[token.length - 1] !== "T_script" && token[token.length - 1] !== "T_style" && (x[i + 1] !== "!" || x[i + 1] !== "?" || x[i + 1] !== "/" || x[i + 1] !== "%")) {
-                                for (a = i; a < loop; a += 1) {
-                                    if (x[a] !== "?" && x[a] !== "%") {
-                                        if (x[a] === "/" && x[a + 1] === ">") {
+                            } else if (y[i] === "<" && token[token.length - 1] !== "T_script" && token[token.length - 1] !== "T_style" && (y[i + 1] !== "!" || y[i + 1] !== "?" || y[i + 1] !== "/" || y[i + 1] !== "%")) {
+                                for (c = i; c < loop; c += 1) {
+                                    if (y[c] !== "?" && y[c] !== "%") {
+                                        if (y[c] === "/" && y[c + 1] === ">") {
                                             build.push(b("/>"));
                                             token.push("T_singleton");
                                             break;
-                                        } else if (x[a + 1] === ">") {
+                                        } else if (y[c + 1] === ">") {
                                             build.push(b(">"));
                                             token.push("T_tag_start");
                                             break;
                                         }
                                     }
                                 }
-                            } else if (x[i - 1] === ">" && (x[i] !== "<" || (x[i] !== " " && x[i + 1] !== "<"))) {
+                            } else if (y[i - 1] === ">" && (y[i] !== "<" || (y[i] !== " " && y[i + 1] !== "<"))) {
                                 if (token[token.length - 1] === "T_script") {
                                     build.push(cgather("script"));
                                     token.push("T_content");
                                 } else if (token[token.length - 1] === "T_style") {
                                     build.push(cgather("style"));
                                     token.push("T_content");
-                                } else if (x[i - 1] + x[i] + x[i + 1] !== "> <") {
+                                } else if (y[i - 1] + y[i] + y[i + 1] !== "> <") {
                                     build.push(cgather("other"));
                                     token.push("T_content");
                                 }
@@ -793,7 +807,7 @@ var markup_beauty = function (args) {
             //This function provides structual relevant descriptions for
             //content and groups tags into categories.
             code_type = (function () {
-                var i,
+                var i = 0,
                     Z = token.length;
                 for (i = 0; i < Z; i += 1) {
                     build[i] = build[i].replace(/\s*prettydiffcdatas/g, "<").replace(/\s*prettydiffcdatae/g, ">");
@@ -831,7 +845,7 @@ var markup_beauty = function (args) {
                 }
                 //summary is a replica of the build array prior to any
                 //beautification for use in the markup_summary function
-                sum = sum.concat(build);
+                sum = [].concat(build);
             }()),
 
             //The tag_check function creates the tab stops from the
@@ -839,24 +853,26 @@ var markup_beauty = function (args) {
             //arguments. If no values are supplied or are supplied
             //improperly a reasonable default is created.
             tab_check = (function () {
-                var a,
+                var a = 0,
                     b = args.insize,
-                    c = args.inchar;
+                    c = args.inchar,
+                    d = [];
                 for (a = 0; a < b; a += 1) {
-                    tab += c;
+                    d.push(c);
                 }
-                return tab;
+                tab = d.join("");
             }()),
 
             //this function cheats the structure and looks at tag names
             cheat = (function () {
+                var a = 0,
+                    b = "",
+                    i = 0,
+                    loop = 0;
                 if (!args.html) {
                     return;
                 }
-                var a,
-                    b,
-                    i,
-                    loop = cinfo.length;
+                loop = cinfo.length;
                 for (i = 0; i < loop; i += 1) {
                     if (cinfo[i] === "start") {
                         a = build[i].indexOf(" ");
@@ -882,9 +898,7 @@ var markup_beauty = function (args) {
             //to use the cinfo array definitions but could be rewritten
             //to use the token array.
             tab_level = (function () {
-                var i,
-                    loop = cinfo.length,
-                    a,
+                var i = 0,
 
                     //This function looks back to the most previous
                     //indented tag that is not an end tag and returns a
@@ -893,7 +907,7 @@ var markup_beauty = function (args) {
                     //argument has a value of "start" then indentation
                     //is increased by 1.
                     c = function (x) {
-                        var k,
+                        var k = 0,
                             m = 0;
                         if (x === "start") {
                             m += 1;
@@ -920,11 +934,7 @@ var markup_beauty = function (args) {
                     //This function is used by end tags to determine
                     //indentation.
                     e = function () {
-                        var yy = 1,
-
-                            //This is executed if the previous start is
-                            //not indented.
-                            z = function (y) {
+                        var z = function (y) {
                                 for (y; y > 0; y -= 1) {
                                     if (level[y] !== "x") {
                                         return level.push(level[y] + 1);
@@ -936,9 +946,8 @@ var markup_beauty = function (args) {
                             //ending with space black box voodoo magic
                             //must occur.
                             w = function () {
-                                var k,
-                                    q,
-                                    y,
+                                var k = 0,
+                                    q = false,
 
                                     //This function finds the prior
                                     //existing indented start tag.  This
@@ -956,8 +965,10 @@ var markup_beauty = function (args) {
                                         //determine if indentation must
                                         //be subtracted from the prior
                                         //indented start tag.
-                                        var t = function () {
-                                                var s,
+                                        var y = 0,
+                                            t = function () {
+                                                var k = 0,
+                                                    s = 0,
                                                     l = 0;
 
                                                 //Finds the prior start
@@ -1020,7 +1031,7 @@ var markup_beauty = function (args) {
                                         for (y = i - 1; y > 0; y -= 1) {
                                             if (cinfo[y] !== "mixed_end" || (cinfo[y] === "start" && level[y] !== "x")) {
                                                 if (cinfo[y - 1] === "end") {
-                                                    q = "r";
+                                                    q = true;
                                                     if (cinfo[i - 1] === "mixed_both" && level[i - 1] === level[y] - t()) {
                                                         return level.push(level[y] - (t() + 1));
                                                     } else if (cinfo[i - 2] === "start" && (cinfo[i - 1] === "mixed_end" || cinfo[i - 1] === "mixed_both")) {
@@ -1043,7 +1054,7 @@ var markup_beauty = function (args) {
                                                         }
                                                     }
                                                 } else {
-                                                    q = y;
+                                                    q = false;
                                                     return;
                                                 }
                                             }
@@ -1055,7 +1066,8 @@ var markup_beauty = function (args) {
                                     //start tag outside a counted pair
                                     //not counting the current end tag.
                                     r = function () {
-                                        var l = 0;
+                                        var l = 0,
+                                            k = 0;
                                         for (k = i; k > 0; k -= 1) {
                                             if (cinfo[k] === "end") {
                                                 l += 1;
@@ -1098,35 +1110,38 @@ var markup_beauty = function (args) {
                                     //end tag relevant to the prior
                                     //indented start tag.
                                     u();
-                                    if (q === "r") {
+                                    if (q) {
                                         return;
                                     } else {
-                                        y = 0;
-                                        for (q = r(); q > 0; q -= 1) {
-                                            if (cinfo[q] === "start") {
-                                                y += 1;
-                                            } else if (cinfo[q] === "end") {
-                                                y -= 1;
-                                            }
-                                            if (level[q] !== "x") {
-                                                if (cinfo[q] === "end" && cinfo[q - 1] === "start" && level[q - 1] !== "x") {
-                                                    return level.push(level[q]);
-                                                } else if (level[i - 1] === "x" && build[i].charAt(0) !== " " && cinfo[i - 1] !== "mixed_end" && (cinfo[i - 2] !== "end" || level[i - 2] !== "x") && (cinfo[i - 3] !== "end" || level[i - 3] !== "x")) {
-                                                    return level.push("x");
-                                                } else {
-                                                    return level.push(level[q] + (y - 1));
+                                        return (function () {
+                                            var y = 0,
+                                                q = 0;
+                                            for (q = r(); q > 0; q -= 1) {
+                                                if (cinfo[q] === "start") {
+                                                    y += 1;
+                                                } else if (cinfo[q] === "end") {
+                                                    y -= 1;
+                                                }
+                                                if (level[q] !== "x") {
+                                                    if (cinfo[q] === "end" && cinfo[q - 1] === "start" && level[q - 1] !== "x") {
+                                                        return level.push(level[q]);
+                                                    } else if (level[i - 1] === "x" && build[i].charAt(0) !== " " && cinfo[i - 1] !== "mixed_end" && (cinfo[i - 2] !== "end" || level[i - 2] !== "x") && (cinfo[i - 3] !== "end" || level[i - 3] !== "x")) {
+                                                        return level.push("x");
+                                                    } else {
+                                                        return level.push(level[q] + (y - 1));
+                                                    }
                                                 }
                                             }
-                                        }
-                                        y = 0;
-                                        for (q = i; q > -1; q -= 1) {
-                                            if (cinfo[q] === "start") {
-                                                y += 1;
-                                            } else if (cinfo[q] === "end") {
-                                                y -= 1;
+                                            y = 0;
+                                            for (q = i; q > -1; q -= 1) {
+                                                if (cinfo[q] === "start") {
+                                                    y += 1;
+                                                } else if (cinfo[q] === "end") {
+                                                    y -= 1;
+                                                }
                                             }
-                                        }
-                                        return level.push(y);
+                                            return level.push(y);
+                                        }());
                                     }
                                 }
                             };
@@ -1136,51 +1151,57 @@ var markup_beauty = function (args) {
                         } else if (cinfo[i - 1] === "mixed_start" || cinfo[i - 1] === "content") {
                             return level.push("x");
                         } else if (cinfo[i - 1] === "external") {
-                            yy = -1;
-                            for (a = i - 2; a > 0; a -= 1) {
-                                if (cinfo[a] === "start") {
+                            return (function () {
+                                var a = 0,
+                                    yy = -1;
+                                for (a = i - 2; a > 0; a -= 1) {
+                                    if (cinfo[a] === "start") {
+                                        yy += 1;
+                                    } else if (cinfo[a] === "end") {
+                                        yy -= 1;
+                                    }
+                                    if (level[a] !== "x") {
+                                        break;
+                                    }
+                                }
+                                if (cinfo[a] === "end") {
                                     yy += 1;
-                                } else if (cinfo[a] === "end") {
-                                    yy -= 1;
                                 }
-                                if (level[a] !== "x") {
-                                    break;
-                                }
-                            }
-                            if (cinfo[a] === "end") {
-                                yy += 1;
-                            }
-                            return level.push(level[a] + yy);
+                                return level.push(level[a] + yy);
+                            }());
                         } else if (build[i].charAt(0) !== " ") {
                             if ((cinfo[i - 1] === "singleton" || cinfo[i - 1] === "content") && level[i - 1] === "x") {
                                 return level.push("x");
                             }
-                            yy = 0;
-                            for (a = i - 1; a > 0; a -= 1) {
-                                //Find the previous indention and if not
-                                //a start
-                                if (cinfo[a] === "singleton" && level[a] === "x" && ((cinfo[a - 1] === "singleton" && level[a - 1] !== "x") || cinfo[a - 1] !== "singleton")) {
-                                    yy += 1;
-                                }
-                                if (level[a] !== 0 && level[a] !== "x" && cinfo[i - 1] !== "start") {
-                                    if (cinfo[a] === "mixed_both" || cinfo[a] === "mixed_start") {
-                                        return level.push(level[a] - yy);
-                                    } else if (level[a] === yy || (cinfo[a] === "singleton" && (cinfo[a - 1] === "content" || cinfo[a - 1] === "mixed_start"))) {
-                                        return level.push(level[a]);
-                                    } else {
-                                        return level.push(level[a] - 1);
+                            return (function () {
+                                var a = 0,
+                                    yy = 0;
+                                for (a = i - 1; a > 0; a -= 1) {
+                                    //Find the previous indention and if not
+                                    //a start
+                                    if (cinfo[a] === "singleton" && level[a] === "x" && ((cinfo[a - 1] === "singleton" && level[a - 1] !== "x") || cinfo[a - 1] !== "singleton")) {
+                                        yy += 1;
                                     }
-                                    //Find the previous start that is
-                                    //not indented
-                                } else if (cinfo[a] === "start" && level[a] === "x") {
-                                    return z(a);
-                                    //If the previous tag is an indented
-                                    //start
-                                } else if (cinfo[i - 1] === "start") {
-                                    return level.push(level[a]);
+                                    if (level[a] !== 0 && level[a] !== "x" && cinfo[i - 1] !== "start") {
+                                        if (cinfo[a] === "mixed_both" || cinfo[a] === "mixed_start") {
+                                            return level.push(level[a] - yy);
+                                        } else if (level[a] === yy || (cinfo[a] === "singleton" && (cinfo[a - 1] === "content" || cinfo[a - 1] === "mixed_start"))) {
+                                            return level.push(level[a]);
+                                        } else {
+                                            return level.push(level[a] - 1);
+                                        }
+                                        //Find the previous start that is
+                                        //not indented
+                                    } else if (cinfo[a] === "start" && level[a] === "x") {
+                                        return z(a);
+                                        //If the previous tag is an indented
+                                        //start
+                                    } else if (cinfo[i - 1] === "start") {
+                                        return level.push(level[a]);
+                                    }
                                 }
-                            }
-                            return level.push(0);
+                                return level.push(0);
+                            }());
                         } else {
                             return c("end");
                         }
@@ -1194,11 +1215,11 @@ var markup_beauty = function (args) {
                         //the values of k, l, m.  If not a comment
                         //k = i - 1, and if not a comment l = k - i, and
                         //if not a comment m = l - 1.
-                        var k,
-                            l,
-                            m,
+                        var k = 0,
+                            l = 0,
+                            m = 0,
                             n = (function () {
-                                var j;
+                                var j = 0;
                                 if (z === 1) {
                                     k = 0;
                                     l = 0;
@@ -1238,7 +1259,7 @@ var markup_beauty = function (args) {
                             //item is not any form of content and is
                             //indented.
                             p = function () {
-                                var j,
+                                var j = 0,
                                     v = 1,
                                     u = -1;
                                 for (j = k; j > 0; j -= 1) {
@@ -1330,62 +1351,68 @@ var markup_beauty = function (args) {
                                 return level.push(level[k]);
                             }
                         } else if (cinfo[m] !== "mixed_start" && cinfo[m] !== "content" && (cinfo[k] === "mixed_end" || cinfo[k] === "mixed_both")) {
-                            l = 0;
-                            p = 0;
-                            m = 0;
-                            for (a = k; a > 0; a -= 1) {
-                                if (cinfo[a] === "end") {
-                                    l += 1;
-                                }
-                                if (cinfo[a] === "start") {
-                                    p += 1;
-                                }
-                                if (level[a] === 0 && a !== 0) {
-                                    m = a;
-                                }
-                                if (cinfo[k] === "mixed_both" && level[a] !== "x") {
-                                    return level.push(level[a]);
-                                } else if (cinfo[a] !== "comment" && cinfo[a] !== "content" && cinfo[a] !== "external" && cinfo[a] !== "mixed_end" && level[a] !== "x") {
-                                    if (cinfo[a] === "start" && level[a] !== "x") {
-                                        if (cinfo[i - 1] !== "end") {
-                                            return level.push(level[a] + (p - l));
-                                        } else if ((level[a] === level[a - 1] && cinfo[a - 1] !== "end" && level[a + 1] !== "x") || (cinfo[i - 2] === "start" && level[i - 2] !== "x" && level[i - 1] === "x")) {
-                                            return level.push(level[a] + 1);
-                                        } else if (p <= 1) {
-                                            return level.push(level[a]);
-                                        }
-                                    } else if (l > 0) {
-                                        if (p > 1) {
-                                            if (m !== 0) {
-                                                return c("start");
-                                            } else {
+                            return (function () {
+                                var a = 0,
+                                    l = 0,
+                                    p = 0,
+                                    m = 0;
+                                for (a = k; a > 0; a -= 1) {
+                                    if (cinfo[a] === "end") {
+                                        l += 1;
+                                    }
+                                    if (cinfo[a] === "start") {
+                                        p += 1;
+                                    }
+                                    if (level[a] === 0 && a !== 0) {
+                                        m = a;
+                                    }
+                                    if (cinfo[k] === "mixed_both" && level[a] !== "x") {
+                                        return level.push(level[a]);
+                                    } else if (cinfo[a] !== "comment" && cinfo[a] !== "content" && cinfo[a] !== "external" && cinfo[a] !== "mixed_end" && level[a] !== "x") {
+                                        if (cinfo[a] === "start" && level[a] !== "x") {
+                                            if (cinfo[i - 1] !== "end") {
+                                                return level.push(level[a] + (p - l));
+                                            } else if ((level[a] === level[a - 1] && cinfo[a - 1] !== "end" && level[a + 1] !== "x") || (cinfo[i - 2] === "start" && level[i - 2] !== "x" && level[i - 1] === "x")) {
                                                 return level.push(level[a] + 1);
+                                            } else if (p <= 1) {
+                                                return level.push(level[a]);
+                                            }
+                                        } else if (l > 0) {
+                                            if (p > 1) {
+                                                if (m !== 0) {
+                                                    return c("start");
+                                                } else {
+                                                    return level.push(level[a] + 1);
+                                                }
+                                            } else {
+                                                return level.push(level[a] - l + 1);
                                             }
                                         } else {
-                                            return level.push(level[a] - l + 1);
+                                            return level.push(level[a] + p);
                                         }
-                                    } else {
-                                        return level.push(level[a] + p);
                                     }
                                 }
-                            }
-                            return c("start");
+                                return c("start");
+                            }());
                         } else if (cinfo[k] === "start" && level[k] !== "x") {
                             //This looks for the most previous level
                             //that is not set for the noted cinfo
                             //values.  Once that value is found it is
                             //increased plus 1 and added to the level
                             //array.
-                            for (a = i - 1; a > -1; a -= 1) {
-                                if (cinfo[a] !== "comment" && cinfo[a] !== "content" && cinfo[a] !== "external" && cinfo[a] !== "mixed_end") {
-                                    if (cinfo[i + 1] && build[i].charAt(0) !== " " && (cinfo[i + 1] === "content" || cinfo[i + 1] === "mixed_end")) {
-                                        return level.push("x");
-                                    } else {
-                                        return level.push(level[a] + 1);
+                            return (function () {
+                                var a = 0;
+                                for (a = i - 1; a > -1; a -= 1) {
+                                    if (cinfo[a] !== "comment" && cinfo[a] !== "content" && cinfo[a] !== "external" && cinfo[a] !== "mixed_end") {
+                                        if (cinfo[i + 1] && build[i].charAt(0) !== " " && (cinfo[i + 1] === "content" || cinfo[i + 1] === "mixed_end")) {
+                                            return level.push("x");
+                                        } else {
+                                            return level.push(level[a] + 1);
+                                        }
                                     }
                                 }
-                            }
-                            return level.push(0);
+                                return level.push(0);
+                            }());
                         } else if (build[i].charAt(0) !== " " && (cinfo[i - 1] === "singleton" || cinfo[i - 1] === "content" || cinfo[i - 1] === "mixed_start")) {
                             return level.push("x");
                         } else {
@@ -1425,11 +1452,12 @@ var markup_beauty = function (args) {
                     //the innerset function.  This is what allows nested
                     //tags, such as JSP tags to be beautified.
                     innerfix = (function () {
-                        var a,
-                            b,
-                            c,
-                            d,
-                            e = inner.length;
+                        var a = 0,
+                            b = "",
+                            c = 0,
+                            d = 0,
+                            e = inner.length,
+                            f = [];
                         for (a = 0; a < e; a += 1) {
                             b = inner[a][0];
                             c = inner[a][1];
@@ -1438,13 +1466,13 @@ var markup_beauty = function (args) {
                                 if (build[d].charAt(0) === " ") {
                                     c += 1;
                                 }
-                                build[d] = build[d].split("");
-                                if (b === "<" && build[d][c] === "[") {
-                                    build[d][c] = "<";
-                                } else if (b === ">" && build[d][c] === "]") {
-                                    build[d][c] = ">";
+                                f = build[d].split("");
+                                if (b === "<" && f[c] === "[") {
+                                    f[c] = "<";
+                                } else if (b === ">" && f[c] === "]") {
+                                    f[c] = ">";
                                 }
-                                build[d] = build[d].join("");
+                                build[d] = f.join("");
                             }
                         }
                     }()),
@@ -1452,18 +1480,19 @@ var markup_beauty = function (args) {
                     //This logic only serves to assign the previously
                     //defined subfunctions to each of the cinfo values.
                     algorithm = (function () {
-                        var test,
-                            test1,
-                            cdata,
-                            cdata1,
+                        var test = false,
+                            test1 = false,
+                            cdata = [],
+                            cdata1 = [],
                             cdataStart = (/^(\s*\/*<\!\[+[A-Z]+\[+)/),
                             cdataEnd = (/(\/*\]+>\s*)$/),
                             scriptStart = (/^(\s*<\!\-\-)/),
                             scriptEnd = (/(\-\->\s*)$/),
-                            ops = {};
+                            ops = {},
+                            loop = cinfo.length;
                         for (i = 0; i < loop; i += 1) {
-                            test = 0;
-                            test1 = 0;
+                            test = false;
+                            test1 = false;
                             cdata = [""];
                             cdata1 = [""];
                             if (i === 0) {
@@ -1519,14 +1548,14 @@ var markup_beauty = function (args) {
                                     //JavaScript and may harm CSS
                                     level.push(0);
                                     if (scriptStart.test(build[i])) {
-                                        test = 1;
+                                        test = true;
                                         build[i] = build[i].replace(scriptStart, "");
                                     } else if (cdataStart.test(build[i])) {
                                         cdata = cdataStart.exec(build[i]);
                                         build[i] = build[i].replace(cdataStart, "");
                                     }
                                     if (scriptEnd.test(build[i]) && !/(\/\/\-\->\s*)$/.test(build[i])) {
-                                        test1 = 1;
+                                        test1 = true;
                                         build[i] = build[i].replace(scriptEnd, "");
                                     } else if (cdataEnd.test(build[i])) {
                                         cdata1 = cdataEnd.exec(build[i]);
@@ -1543,42 +1572,42 @@ var markup_beauty = function (args) {
                                     ops.inarray = false;
                                     ops.comments = args.comments;
                                     build[i] = js_beautify(ops);
-                                    if (test === 1) {
+                                    if (test) {
                                         build[i] = "<!--\n" + build[i];
-                                    } else if (cdata !== "") {
+                                    } else if (cdata[0] !== "") {
                                         build[i] = cdata[0] + "\n" + build[i];
                                     }
-                                    if (test1 === 1) {
+                                    if (test1) {
                                         build[i] = build[i] + "\n-->";
-                                    } else if (cdata1 !== "") {
+                                    } else if (cdata1[0] !== "") {
                                         build[i] = build[i] + "\n" + cdata1[0];
                                     }
                                     build[i] = build[i].replace(/(\/\/(\s)+\-\->(\s)*)$/, "//-->").replace(/^\s*/, "").replace(/\s*$/, "");
                                 } else if (token[i - 1] === "T_style") {
                                     level.push(0);
                                     if (scriptStart.test(build[i])) {
-                                        test = 1;
+                                        test = true;
                                         build[i] = build[i].replace(scriptStart, "");
                                     } else if (cdataStart.test(build[i])) {
                                         cdata = cdataStart.exec(build[i]);
                                         build[i] = build[i].replace(cdataStart, "");
                                     }
                                     if (scriptEnd.test(build[i]) && !/(\/\/\-\->\s*)$/.test(build[i])) {
-                                        test1 = 1;
+                                        test1 = true;
                                         build[i].replace(scriptEnd, "");
                                     } else if (cdataEnd.test(build[i])) {
                                         cdata1 = cdataEnd.exec(build[i]);
                                         build[i] = build[i].replace(cdataEnd, "");
                                     }
                                     build[i] = cleanCSS(build[i], args.insize, args.inchar, args.comments, true);
-                                    if (test === 1) {
+                                    if (test) {
                                         build[i] = "<!--\n" + build[i];
-                                    } else if (cdata !== "") {
+                                    } else if (cdata[0] !== "") {
                                         build[i] = cdata[0] + "\n" + build[i];
                                     }
-                                    if (test1 === 1) {
+                                    if (test1) {
                                         build[i] = build[i] + "\n-->";
-                                    } else if (cdata1 !== "") {
+                                    } else if (cdata1[0] !== "") {
                                         build[i] = build[i] + "\n" + cdata1[0];
                                     }
                                     build[i] = build[i].replace(/^\s*/, "").replace(/\s*$/, "");
@@ -1622,22 +1651,22 @@ var markup_beauty = function (args) {
             //indentation is designated by the values in the level
             //array.
             write_tabs = (function () {
-                var i,
-                    a,
-                    indent = "",
+                var i = 0,
                     loop = build.length,
 
                     //This function writes the standard indentation
                     //output
                     tab_math = function (x) {
-                        for (a = 0; a < level[i]; a += 1) {
-                            indent += tab;
+                        var a = 0,
+                            b = (typeof level[i] === "number") ? level[i] : 0,
+                            indent = [];
+                        for (a = 0; a < b; a += 1) {
+                            indent.push(tab);
                         }
                         if (cinfo[i] === "mixed_both") {
                             x = x.slice(0, x.length - 1);
                         }
-                        x = "\n" + indent + x;
-                        indent = "";
+                        x = "\n" + indent.join("") + x;
                         return x;
                     },
 
@@ -1646,26 +1675,27 @@ var markup_beauty = function (args) {
                     //in that some end elements do not receive
                     //indentation.
                     end_math = function (x) {
-                        var b;
-                        if (cinfo[i - 1] !== "start") {
-                            for (b = i; b > 0; b -= 1) {
-                                if (level[b] !== "x") {
-                                    break;
-                                }
+                        var a = 0,
+                            b = 0,
+                            indent = [];
+                        for (b = i; b > 0; b -= 1) {
+                            if (level[b] !== "x") {
+                                break;
                             }
-                            for (a = 1; a < level[b] + 1; a += 1) {
-                                indent += tab;
-                            }
-                            x = "\n" + indent + x;
-                            indent = "";
                         }
+                        for (a = 0; a < level[b]; a += 1) {
+                            indent.push(tab);
+                        }
+                        x = "\n" + indent.join("") + x;
                         return x;
                     },
 
                     script_math = function (x) {
-                        var b,
-                            c;
-                        a = 0;
+                        var a = 0,
+                            b = 0,
+                            c = 0,
+                            d = "",
+                            indent = [];
                         if (level[i - 1] === "x") {
                             for (b = i - 1; b > 0; b -= 1) {
                                 if (cinfo[b] === "start") {
@@ -1681,16 +1711,15 @@ var markup_beauty = function (args) {
                                 a += 1;
                             }
                             for (c = 0; c < level[b] + a; c += 1) {
-                                indent += tab;
+                                indent.push(tab);
                             }
                         } else {
                             for (c = 0; c < level[i - 1] + 1; c += 1) {
-                                indent += tab;
+                                indent.push(tab);
                             }
                         }
-                        x = "\n" + indent + x.replace(/\n/g, "\n" + indent);
-                        indent = "";
-                        return x;
+                        d = indent.join("");
+                        return "\n" + d + x.replace(/\n/g, "\n" + d);
                     };
 
                 //This is the logic for assigning execution of the prior
@@ -1700,7 +1729,7 @@ var markup_beauty = function (args) {
                         if (build[i].charAt(0) === " ") {
                             build[i] = build[i].substr(1);
                         }
-                        if (level[i] !== "x") {
+                        if (level[i] !== "x" && cinfo[i - 1] !== "start") {
                             build[i] = end_math(build[i]);
                         }
                     } else if (cinfo[i] === "external" && args.style === "indent") {
@@ -1714,71 +1743,187 @@ var markup_beauty = function (args) {
                 }
             }());
         (function () {
-            var a,
-                b = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-                c = [],
-                d = build.join("").length,
-                e = args.source.length,
-                f,
-                g,
-                h,
-                i = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-                j,
-                k,
-                l,
+            var insertComma = function (x) {
+                    var z = 0,
+                        a = 0,
+                        b = [];
+                    if (typeof (x) === "number") {
+                        x = x.toString();
+                    }
+                    if (typeof (x) !== "string") {
+                        return x;
+                    }
+                    b = x.split("").reverse();
+                    z = b.length;
+                    for (a = 2; a < z; a += 3) {
+                        b[a] = "," + b[a];
+                    }
+                    x = b.reverse().join("");
+                    if (x.charAt(0) === ",") {
+                        x = x.slice(1, x.length);
+                    }
+                    return x;
+                },
                 m = [],
-                n = [],
-                o = [],
+                g = cinfo.length,
+                f = sum.join("").length,
+                b = (function () {
+                    var a = 0,
+                        b = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+                        c = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+                        d = [],
+                        e = [],
+                        f = [],
+                        h = [];
+                    for (a = 0; a < g; a += 1) {
+                        switch (cinfo[a]) {
+                        case "end":
+                            b[1] += 1;
+                            c[1] += sum[a].length;
+                            if (sum[a].charAt(0) === " " && cinfo[a - 1] === "singleton") {
+                                c[1] -= 1;
+                                c[2] += 1;
+                            }
+                            break;
+                        case "singleton":
+                            b[2] += 1;
+                            c[2] += sum[a].length;
+                            if (((build[a].indexOf("<embed ") !== -1 || build[a].indexOf("<img ") !== -1 || build[a].indexOf("<iframe ") !== -1) && (build[a].indexOf("src") !== -1 && build[a].indexOf("src=\"\"") === -1 && build[a].indexOf("src=''") === -1)) || (build[a].indexOf("<link ") !== -1 && build[a].indexOf("rel") !== -1 && build[a].indexOf("canonical") === -1)) {
+                                m.push(build[a]);
+                            }
+                            break;
+                        case "comment":
+                            b[3] += 1;
+                            c[3] += sum[a].length;
+                            break;
+                        case "content":
+                            b[4] += 1;
+                            c[4] += sum[a].length;
+                            break;
+                        case "mixed_start":
+                            b[5] += 1;
+                            c[5] += (sum[a].length - 1);
+                            break;
+                        case "mixed_end":
+                            b[6] += 1;
+                            c[6] += (sum[a].length - 1);
+                            break;
+                        case "mixed_both":
+                            b[7] += 1;
+                            c[7] += (sum[a].length - 2);
+                            break;
+                        case "parse":
+                            b[10] += 1;
+                            c[10] += sum[a].length;
+                            break;
+                        case "external":
+                            b[17] += 1;
+                            c[17] += sum[a].length;
+                            if (((build[a].indexOf("<script") !== -1 || build[a].indexOf("<embed ") !== -1 || build[a].indexOf("<img ") !== -1 || build[a].indexOf("<iframe ") !== -1) && (build[a].indexOf("src") !== -1 && build[a].indexOf("src=\"\"") === -1 && build[a].indexOf("src=''") === -1)) || (build[a].indexOf("<link ") !== -1 && build[a].indexOf("rel") !== -1 && build[a].indexOf("canonical") === -1)) {
+                                m.push(build[a]);
+                            }
+                            break;
+                        default:
+                            switch (token[a]) {
+                            case "T_tag_start":
+                                b[0] += 1;
+                                c[0] += sum[a].length;
+                                if (((build[a].indexOf("<embed ") !== -1 || build[a].indexOf("<img ") !== -1 || build[a].indexOf("<iframe ") !== -1) && (build[a].indexOf("src") !== -1 && build[a].indexOf("src=\"\"") === -1 && build[a].indexOf("src=''") === -1)) || (build[a].indexOf("<link ") !== -1 && build[a].indexOf("rel") !== -1 && build[a].indexOf("canonical") === -1)) {
+                                    m.push(build[a]);
+                                }
+                                break;
+                            case "T_sgml":
+                                b[8] += 1;
+                                c[8] += sum[a].length;
+                                break;
+                            case "T_xml":
+                                b[9] += 1;
+                                c[9] += sum[a].length;
+                                break;
+                            case "T_ssi":
+                                b[11] += 1;
+                                c[11] += sum[a].length;
+                                break;
+                            case "T_asp":
+                                b[12] += 1;
+                                c[12] += sum[a].length;
+                                break;
+                            case "T_php":
+                                b[13] += 1;
+                                c[13] += sum[a].length;
+                                break;
+                            case "T_script":
+                                b[15] += 1;
+                                c[15] += sum[a].length;
+                                if (build[a].indexOf(" src") !== -1) {
+                                    m.push(build[a]);
+                                }
+                                break;
+                            case "T_style":
+                                b[16] += 1;
+                                c[16] += sum[a].length;
+                                break;
+                            }
+                        }
+                    } //i  (c)
+                    d = [b[0] + b[1] + b[2] + b[3], b[4] + b[5] + b[6] + b[7], b[15] + b[16] + b[17], b[11] + b[12] + b[13]]; //f  (d)
+                    e = [c[0] + c[1] + c[2] + c[3], c[4] + c[5] + c[6] + c[7], c[15] + c[16] + c[17], c[11] + c[12] + c[13]];
+                    f = [d[0], d[0], d[0], d[0], d[1], d[1], d[1], d[1], b[10], b[10], b[10], d[3], d[3], d[3], d[3], d[2], d[2], d[2]]; //g  (f)
+                    h = [e[0], e[0], e[0], e[0], e[1], e[1], e[1], e[1], c[10], c[10], c[10], e[3], e[3], e[3], e[3], e[2], e[2], e[2]]; //k  (g)
+                    b[2] = b[2] - d[3];
+                    c[2] = c[2] - e[3];
+                    return [b, c, d, e, f, h];
+                }()),
                 p = function (x) {
                     var u = function (x) {
-                            if (j[x] === 0) {
+                            if (b[3][x] === 0) {
                                 return "0.00%";
                             } else {
                                 return "100.00%";
                             }
                         },
                         v = function (x) {
-                            if (f[x] === 0) {
+                            if (b[2][x] === 0) {
                                 return "0.00%";
                             } else {
                                 return "100.00%";
                             }
                         },
-                        w,
-                        y,
-                        z;
+                        w = [],
+                        y = "",
+                        z = "";
                     switch (x) {
                     case 0:
-                        if ((f[x] / cinfo.length) < 0.7) {
+                        if ((b[2][x] / g) < 0.7) {
                             y = "bad";
                         } else {
                             y = "good";
                         }
-                        if ((j[x] / sum.join("").length) > 0.4) {
+                        if ((b[3][x] / f) > 0.4) {
                             z = "bad";
                         } else {
                             z = "good";
                         }
                         break;
                     case 1:
-                        if ((f[x] / cinfo.length) < 0.25) {
+                        if ((b[2][x] / g) < 0.25) {
                             y = "bad";
                         } else {
                             y = "good";
                         }
-                        if ((j[x] / sum.join("").length) < 0.6) {
+                        if ((b[3][x] / f) < 0.6) {
                             z = "bad";
                         } else {
                             z = "good";
                         }
                         break;
                     case 2:
-                        if ((f[x] / cinfo.length) > 0.05) {
+                        if ((b[2][x] / g) > 0.05) {
                             y = "bad";
                         } else {
                             y = "good";
                         }
-                        if ((j[x] / sum.join("").length) > 0.05) {
+                        if ((b[3][x] / f) > 0.05) {
                             z = "bad";
                         } else {
                             z = "good";
@@ -1786,392 +1931,299 @@ var markup_beauty = function (args) {
                         break;
                     }
                     w = ["</th><td>"];
-                    w.push(f[x]);
+                    w.push(b[2][x]);
                     w.push("</td><td>");
                     w.push(v(x));
                     w.push("</td><td class='");
                     w.push(y);
                     w.push("'>");
-                    w.push(((f[x] / cinfo.length) * 100).toFixed(2));
+                    w.push(((b[2][x] / g) * 100).toFixed(2));
                     w.push("%</td><td>");
-                    w.push(j[x]);
+                    w.push(b[3][x]);
                     w.push("</td><td>");
                     w.push(u(x));
                     w.push("</td><td class='");
                     w.push(z);
                     w.push("'>");
-                    w.push(((j[x] / sum.join("").length) * 100).toFixed(2));
+                    w.push(((b[3][x] / f) * 100).toFixed(2));
                     w.push("%</td></tr>");
                     return w.join("");
                 },
-                q = "",
-                r,
-                s = [],
-                z = cinfo.length,
-                insertComma = function (x) {
-                    var z;
-                    if (typeof (x) === "number") {
-                        x = x.toString();
-                    }
-                    if (typeof (x) !== "string") {
-                        return x;
-                    }
-                    x = x.split("").reverse();
-                    z = x.length;
-                    for (a = 2; a < z; a += 3) {
-                        x[a] = "," + x[a];
-                    }
-                    x = x.reverse().join("");
-                    if (x.charAt(0) === ",") {
-                        x = x.slice(1, x.length);
-                    }
-                    return x;
-                },
-                zipf = (function () {
-                    var a,
-                        b,
-                        k,
-                        w,
-                        z = cinfo.length,
-                        x = "",
-                        h = [],
-                        g = [],
-                        i = [],
-                        l = [],
-                        j = 0,
-                        punctuation = function (y) {
-                            return y.replace(/(\,|\.|\?|\!|\:) /, " ");
-                        };
-                    for (a = 0; a < z; a += 1) {
-                        if (cinfo[a] === "content") {
-                            l.push(" ");
-                            l.push(build[a]);
-                        } else if (cinfo[a] === "mixed_start") {
-                            l.push(build[a]);
-                        } else if (cinfo[a] === "mixed_both") {
-                            l.push(build[a].substr(0, build[a].length));
-                        } else if (cinfo[a] === "mixed_end") {
-                            l.push(" ");
-                            l.push(build[a].substr(0, build[a].length));
+                o = (function () {
+                    var a = 0,
+                        c = "",
+                        d = [],
+                        e = [],
+                        h = (function () {
+                            var a = 0,
+                                c = ["*** Start Tags", "End Tags", "Singleton Tags", "Comments", "Flat String", "String with Space at Start", "String with Space at End", "String with Space at Start and End", "SGML", "XML", "Total Parsing Declarations", "SSI", "ASP", "PHP", "Total Server Side Tags", "*** Script Tags", "*** Style Tags", "JavaScript/CSS Code"],
+                                d = [],
+                                h = "",
+                                l = "",
+                                z = b[0].length;
+                            for (a = 0; a < z; a += 1) {
+                                if (b[4][a] === 0) {
+                                    h = "0.00%";
+                                } else if (b[0][a] === b[4][a]) {
+                                    h = "100.00%";
+                                } else {
+                                    h = ((b[0][a] / b[4][a]) * 100).toFixed(2) + "%";
+                                }
+                                if (b[5][a] === 0) {
+                                    l = "0.00%";
+                                } else if (b[1][a] === b[5][a]) {
+                                    l = "100.00%";
+                                } else {
+                                    l = ((b[1][a] / b[5][a]) * 100).toFixed(2) + "%";
+                                }
+                                d = ["<tr><th>" + c[a]];
+                                d.push("</th><td>");
+                                d.push(b[0][a]);
+                                d.push("</td><td>");
+                                d.push(h);
+                                d.push("</td><td>");
+                                d.push(((b[0][a] / g) * 100).toFixed(2));
+                                d.push("%</td><td>");
+                                d.push(b[1][a]);
+                                d.push("</td><td>");
+                                d.push(l);
+                                d.push("</td><td>");
+                                d.push(((b[1][a] / f) * 100).toFixed(2));
+                                d.push("%</td></tr>");
+                                if (a === 3) {
+                                    d.push("<tr><th>Total Common Tags");
+                                    d.push(p(0));
+                                    d.push("<tr><th colspan='7'>Content</th></tr>");
+                                } else if (a === 7) {
+                                    d.push("<tr><th>Total Content");
+                                    d.push(p(1));
+                                    d.push("<tr><th colspan='7'>Parsing Declarations</th></tr>");
+                                } else if (a === 10) {
+                                    d.push("<tr><th colspan='7'>Server Side Tags</th></tr>");
+                                } else if (a === 14) {
+                                    d.push("<tr><th colspan='7'>Style and Script Code/Tags</th></tr>");
+                                } else if (a === 17) {
+                                    d.push("<tr><th>Total Script and Style Tags/Code");
+                                    d.push(p(2));
+                                }
+                                c[a] = d.join("");
+                            }
+                            return c.join("");
+                        }()),
+                        i = ["<div id='doc'>"],
+                        z = m.length;
+                    i.push(function () {
+                        var a = 0,
+                            b = 0,
+                            z = g,
+                            h = [],
+                            i = [],
+                            j = 0,
+                            k = 0,
+                            l = [],
+                            m = [],
+                            w = [],
+                            x = "",
+                            punctuation = function (y) {
+                                return y.replace(/(\,|\.|\?|\!|\:) /, " ");
+                            };
+                        for (a = 0; a < z; a += 1) {
+                            if (cinfo[a] === "content") {
+                                l.push(" ");
+                                l.push(build[a]);
+                            } else if (cinfo[a] === "mixed_start") {
+                                l.push(build[a]);
+                            } else if (cinfo[a] === "mixed_both") {
+                                l.push(build[a].substr(0, build[a].length));
+                            } else if (cinfo[a] === "mixed_end") {
+                                l.push(" ");
+                                l.push(build[a].substr(0, build[a].length));
+                            }
                         }
-                    }
-                    x = l.join("");
-                    if (x.length === 0) {
-                        return "";
-                    }
-                    x = x.substr(1, x.length).toLowerCase();
-                    w = x.replace(/\&nbsp;?/gi, " ").replace(/[a-z](\,|\.|\?|\!|\:) /gi, punctuation).replace(/(\(|\)|"|\{|\}|\[|\])/g, "").replace(/\s+/g, " ").split(" ");
-                    z = w.length;
-                    for (a = 0; a < z; a += 1) {
-                        if (w[a] !== "") {
-                            h.push([1, w[a]]);
-                            j += 1;
-                            for (b = a + 1; b < z; b += 1) {
-                                if (w[b] === w[a]) {
-                                    h[h.length - 1][0] += 1;
-                                    w[b] = "";
-                                    j += 1;
+                        x = l.join("");
+                        if (x.length === 0) {
+                            return "";
+                        }
+                        x = x.substr(1, x.length).toLowerCase();
+                        w = x.replace(/\&nbsp;?/gi, " ").replace(/[a-z](\,|\.|\?|\!|\:) /gi, punctuation).replace(/(\(|\)|"|\{|\}|\[|\])/g, "").replace(/\s+/g, " ").split(" ");
+                        z = w.length;
+                        for (a = 0; a < z; a += 1) {
+                            if (w[a] !== "") {
+                                h.push([1, w[a]]);
+                                j += 1;
+                                for (b = a + 1; b < z; b += 1) {
+                                    if (w[b] === w[a]) {
+                                        h[h.length - 1][0] += 1;
+                                        w[b] = "";
+                                        j += 1;
+                                    }
                                 }
                             }
                         }
-                    }
-                    z = h.length;
-                    for (a = 0; a < z; a += 1) {
-                        k = a;
-                        for (b = a + 1; b < z; b += 1) {
-                            if (h[b][0] > h[k][0] && h[b][1] !== "") {
-                                k = b;
+                        z = h.length;
+                        for (a = 0; a < z; a += 1) {
+                            k = a;
+                            for (b = a + 1; b < z; b += 1) {
+                                if (h[b][0] > h[k][0] && h[b][1] !== "") {
+                                    k = b;
+                                }
+                            }
+                            m.push(h[k]);
+                            if (h[k] !== h[a]) {
+                                h[k] = h[a];
+                            } else {
+                                h[k] = [0, ""];
+                            }
+                            if (m.length === 11) {
+                                break;
                             }
                         }
-                        g.push(h[k]);
-                        if (h[k] !== h[a]) {
-                            h[k] = h[a];
+                        if (m.length < 2) {
+                            return "";
+                        } else if (m.length > 10) {
+                            b = 10;
                         } else {
-                            h[k] = [0, ""];
+                            b = m.length;
                         }
-                        if (g.length === 11) {
-                            break;
+                        for (a = 0; a < b; a += 1) {
+                            h[a] = (m[a + 1]) ? (m[a][0] / m[a + 1][0]).toFixed(2) : "1.00";
+                            m[a] = "<tr><th>" + (a + 1) + "</th><td>" + m[a][1].replace(/&/g, "&amp;") + "</td><td>" + m[a][0] + "</td><td>" + h[a] + "</td><td>" + ((m[a][0] / j) * 100).toFixed(2) + "%</td></tr>";
+                        }
+                        if (m[10]) {
+                            m[10] = "";
+                        }
+                        if (b > 10) {
+                            m[m.length - 1] = "";
+                        }
+                        i.push("<table class='analysis' summary='Zipf&#39;s Law'><caption>This table demonstrates <em>Zipf&#39;s Law</em> by listing the 10 most occuring words in the content and the number of times they occurred.</caption>");
+                        i.push("<thead><tr><th>Word Rank</th><th>Most Occurring Word by Rank</th><th>Number of Instances</th><th>Ratio Increased Over Next Most Frequence Occurance</th><th>Percentage from ");
+                        i.push(insertComma(j));
+                        if (j > 1) {
+                            i.push(" Total");
+                        }
+                        i.push(" Word");
+                        if (j > 1) {
+                            i.push("s");
+                        }
+                        i.push("</th></tr></thead><tbody>");
+                        i.push(m.join(""));
+                        i.push("</tbody></table>");
+                        return i.join("");
+                    }());
+                    i.push("<table class='analysis' summary='Analysis of markup pieces.'><caption>Analysis of markup pieces.</caption><thead><tr><th>Type</th><th>Quantity of Tags/Content</th><th>Percentage Quantity in Section</th><th>Percentage Quantity of Total</th><th>** Character Size</th><th>Percentage Size in Section</th><th>Percentage Size of Total</th></tr></thead><tbody><tr><th>Total Pieces</th><td>");
+                    i.push(g);
+                    i.push("</td><td>100.00%</td><td>100.00%</td><td>");
+                    i.push(f);
+                    i.push("</td><td>100.00%</td><td>100.00%</td></tr><tr><th colspan='7'>Common Tags</th></tr>");
+                    i.push(h);
+                    d = [];
+                    for (a = 0; a < z; a += 1) {
+                        if (m[a]) {
+                            e = ["<li>"];
+                            e.push(m[a].replace(/\&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&#34;"));
+                            e.push("</li>");
+                            d[a] = e.join("");
                         }
                     }
-                    if (g.length < 2) {
-                        return "";
-                    } else if (g.length > 10) {
-                        b = 10;
+                    if (d.length > 0) {
+                        c = "<h4>HTML elements making HTTP requests:</h4><ul>" + d.join("") + "</ul>";
                     } else {
-                        b = g.length;
+                        c = "";
                     }
-                    for (a = 0; a < b; a += 1) {
-                        h[a] = (g[a + 1]) ? (g[a][0] / g[a + 1][0]).toFixed(2) : "1.00";
-                        g[a] = "<tr><th>" + (a + 1) + "</th><td>" + g[a][1].replace(/&/g, "&amp;") + "</td><td>" + g[a][0] + "</td><td>" + h[a] + "</td><td>" + ((g[a][0] / j) * 100).toFixed(2) + "%</td></tr>";
-                    }
-                    if (g[10]) {
-                        g[10] = "";
-                    }
-                    if (b > 10) {
-                        g[g.length - 1] = "";
-                    }
-                    i.push("<table class='analysis' summary='Zipf&#39;s Law'><caption>This table demonstrates <em>Zipf&#39;s Law</em> by listing the 10 most occuring words in the content and the number of times they occurred.</caption>");
-                    i.push("<thead><tr><th>Word Rank</th><th>Most Occurring Word by Rank</th><th>Number of Instances</th><th>Ratio Increased Over Next Most Frequence Occurance</th><th>Percentage from ");
-                    i.push(insertComma(j));
-                    if (j > 1) {
-                        i.push(" Total");
-                    }
-                    i.push(" Word");
-                    if (j > 1) {
-                        i.push("s");
-                    }
-                    i.push("</th></tr></thead><tbody>");
-                    i.push(g.join(""));
-                    i.push("</tbody></table>");
+                    i.push("</tbody></table></div><p>* The number of requests is determined from the input submitted only and does not count the additional HTTP requests supplied from dynamically executed code, frames, iframes, css, or other external entities.</p><p>**");
+                    i.push("Character size is measured from the individual pieces of tags and content specifically between minification and beautification.</p><p>*** The number of starting &lt;script&gt; and &lt;style&gt; tags is subtracted from the total number of start tags.");
+                    i.push("The combination of those three values from the table above should equal the number of end tags or the code is in error.</p>");
+                    i.push(c);
                     return i.join("");
+                }()),
+                r = function (x, y) {
+                    return (((b[3][0] + x) / f) / ((b[3][1] * y) / f));
+                },
+                n = (function () {
+                    var a = "",
+                        c = f / 7500,
+                        d = build.join("").length,
+                        e = args.source.length,
+                        h = 0,
+                        i = ["<p>If the input is content it receives an efficiency score of <strong>"],
+                        k = "",
+                        l = "",
+                        t = "",
+                        u = "";
+                    a = c.toFixed(0);
+                    if (c > 0) {
+                        c = (m.length - a) * 4;
+                    } else {
+                        c = 0;
+                    }
+                    if (b[3][1] === 0) {
+                        b[2][1] = 0.00000001;
+                        b[3][1] = 0.00000001;
+                    }
+                    h = (((b[2][0] + b[2][2] - c) / g) / (b[2][1] / g));
+                    k = (h / r(b[3][2], 1)).toPrecision(2);
+                    l = (h / r(b[1][15], 1)).toPrecision(2);
+                    t = (h / r(b[3][2], 4)).toPrecision(2);
+                    u = (h / r(b[1][15], 4)).toPrecision(2);
+                    if (k === l) {
+                        l = "";
+                        u = "";
+                    } else {
+                        l = ", or <strong>" + l + "</strong> if inline script code and style tags are removed";
+                        u = ", or <strong>" + u + "</strong> if inline script code and style tags are removed";
+                    }
+                    i.push(k);
+                    i.push("</strong>");
+                    i.push(l);
+                    i.push(". The efficiency score if this input is a large form or application is <strong>");
+                    i.push(t);
+                    i.push("</strong>");
+                    i.push(u);
+                    i.push(". Efficient markup achieves scores higher than 2.00 and excellent markup achieves scores higher than 4.00. The score reflects the highest number of tags to pieces of content where the weight of those tags is as small as possible compared to the weight of the content.");
+                    i.push("The score is a performance metric only and is not associated with validity or well-formedness, but semantic code typically achieves the highest scores. All values are rounded to the nearest hundreth.</p><p><strong>Total input size:</strong> <em>");
+                    i.push(insertComma(e));
+                    i.push("</em> characters</p><p><strong>Total output size:</strong> <em>");
+                    i.push(insertComma(d));
+                    i.push("</em> characters</p><p><strong>* Total number of HTTP requests in supplied HTML:</strong> <em>");
+                    i.push(m.length);
+                    i.push("</em></p>");
+                    return i.join("");
+                }()),
+                s = (function () {
+                    var a = 0,
+                        c = ["<p><strong>"],
+                        q = "";
+                    if (b[0][0] + b[0][15] + b[0][16] !== b[0][1]) {
+                        q = "s";
+                        a = (b[0][0] + b[0][15] + b[0][16]) - b[0][1];
+                        if (a > 0) {
+                            if (a === 1) {
+                                q = "";
+                            }
+                            c.push(a);
+                            c.push(" more start tag");
+                            c.push(q);
+                            c.push(" than end tag");
+                            c.push(q);
+                            c.push("!");
+                        } else {
+                            if (a === -1) {
+                                q = "";
+                            }
+                            c.push(a * -1);
+                            c.push(" more end tag");
+                            c.push(q);
+                            c.push(" than start tag");
+                            c.push(q);
+                            c.push("!");
+                        }
+                        c.push("</strong> The combined total number of start tags, script tags, and style tags should equal the number of end tags. For HTML this problem may be solved by selecting the '<em>Presume SGML type HTML</em>' option.</p>");
+                    } else {
+                        return "";
+                    }
+                    return c.join("");
                 }());
-            z = cinfo.length;
-            for (a = 0; a < z; a += 1) {
-                switch (cinfo[a]) {
-                case "end":
-                    b[1] += 1;
-                    i[1] += sum[a].length;
-                    if (sum[a].charAt(0) === " " && cinfo[a - 1] === "singleton") {
-                        i[1] -= 1;
-                        i[2] += 1;
-                    }
-                    break;
-                case "singleton":
-                    b[2] += 1;
-                    i[2] += sum[a].length;
-                    if (((build[a].indexOf("<embed ") !== -1 || build[a].indexOf("<img ") !== -1 || build[a].indexOf("<iframe ") !== -1) && (build[a].indexOf("src") !== -1 && build[a].indexOf("src=\"\"") === -1 && build[a].indexOf("src=''") === -1)) || (build[a].indexOf("<link ") !== -1 && build[a].indexOf("rel") !== -1 && build[a].indexOf("canonical") === -1)) {
-                        m.push(build[a]);
-                    }
-                    break;
-                case "comment":
-                    b[3] += 1;
-                    i[3] += sum[a].length;
-                    break;
-                case "content":
-                    b[4] += 1;
-                    i[4] += sum[a].length;
-                    break;
-                case "mixed_start":
-                    b[5] += 1;
-                    i[5] += (sum[a].length - 1);
-                    break;
-                case "mixed_end":
-                    b[6] += 1;
-                    i[6] += (sum[a].length - 1);
-                    break;
-                case "mixed_both":
-                    b[7] += 1;
-                    i[7] += (sum[a].length - 2);
-                    break;
-                case "parse":
-                    b[10] += 1;
-                    i[10] += sum[a].length;
-                    break;
-                case "external":
-                    b[17] += 1;
-                    i[17] += sum[a].length;
-                    if (((build[a].indexOf("<script") !== -1 || build[a].indexOf("<embed ") !== -1 || build[a].indexOf("<img ") !== -1 || build[a].indexOf("<iframe ") !== -1) && (build[a].indexOf("src") !== -1 && build[a].indexOf("src=\"\"") === -1 && build[a].indexOf("src=''") === -1)) || (build[a].indexOf("<link ") !== -1 && build[a].indexOf("rel") !== -1 && build[a].indexOf("canonical") === -1)) {
-                        m.push(build[a]);
-                    }
-                    break;
-                default:
-                    switch (token[a]) {
-                    case "T_tag_start":
-                        b[0] += 1;
-                        i[0] += sum[a].length;
-                        if (((build[a].indexOf("<embed ") !== -1 || build[a].indexOf("<img ") !== -1 || build[a].indexOf("<iframe ") !== -1) && (build[a].indexOf("src") !== -1 && build[a].indexOf("src=\"\"") === -1 && build[a].indexOf("src=''") === -1)) || (build[a].indexOf("<link ") !== -1 && build[a].indexOf("rel") !== -1 && build[a].indexOf("canonical") === -1)) {
-                            m.push(build[a]);
-                        }
-                        break;
-                    case "T_sgml":
-                        b[8] += 1;
-                        i[8] += sum[a].length;
-                        break;
-                    case "T_xml":
-                        b[9] += 1;
-                        i[9] += sum[a].length;
-                        break;
-                    case "T_ssi":
-                        b[11] += 1;
-                        i[11] += sum[a].length;
-                        break;
-                    case "T_asp":
-                        b[12] += 1;
-                        i[12] += sum[a].length;
-                        break;
-                    case "T_php":
-                        b[13] += 1;
-                        i[13] += sum[a].length;
-                        break;
-                    case "T_script":
-                        b[15] += 1;
-                        i[15] += sum[a].length;
-                        if (build[a].indexOf(" src") !== -1) {
-                            m.push(build[a]);
-                        }
-                        break;
-                    case "T_style":
-                        b[16] += 1;
-                        i[16] += sum[a].length;
-                        break;
-                    }
-                }
-            }
-            f = [b[0] + b[1] + b[2] + b[3], b[4] + b[5] + b[6] + b[7], b[15] + b[16] + b[17], b[11] + b[12] + b[13]];
-            j = [i[0] + i[1] + i[2] + i[3], i[4] + i[5] + i[6] + i[7], i[15] + i[16] + i[17], i[11] + i[12] + i[13]];
-            g = [f[0], f[0], f[0], f[0], f[1], f[1], f[1], f[1], b[10], b[10], b[10], f[3], f[3], f[3], f[3], f[2], f[2], f[2]];
-            k = [j[0], j[0], j[0], j[0], j[1], j[1], j[1], j[1], i[10], i[10], i[10], j[3], j[3], j[3], j[3], j[2], j[2], j[2]];
-            b[2] = b[2] - f[3];
-            i[2] = i[2] - j[3];
-            s.push("<p><strong>");
-            if (b[0] + b[15] + b[16] !== b[1]) {
-                q = "s";
-                a = (b[0] + b[15] + b[16]) - b[1];
-                if (a > 0) {
-                    if (a === 1) {
-                        q = "";
-                    }
-                    s.push(a);
-                    s.push(" more start tag");
-                    s.push(q);
-                    s.push(" than end tag");
-                    s.push(q);
-                    s.push("!");
-                } else {
-                    if (a === -1) {
-                        q = "";
-                    }
-                    s.push(a * -1);
-                    s.push(" more end tag");
-                    s.push(q);
-                    s.push(" than start tag");
-                    s.push(q);
-                    s.push("!");
-                }
-                s.push("</strong> The combined total number of start tags, script tags, and style tags should equal the number of end tags. For HTML this problem may be solved by selecting the '<em>Presume SGML type HTML</em>' option.</p>");
-            } else {
-                s = [""];
-            }
-            o.push("<div id='doc'>");
-            o.push(zipf);
-            o.push("<table class='analysis' summary='Analysis of markup pieces.'><caption>Analysis of markup pieces.</caption><thead><tr><th>Type</th><th>Quantity of Tags/Content</th><th>Percentage Quantity in Section</th><th>Percentage Quantity of Total</th><th>** Character Size</th><th>Percentage Size in Section</th><th>Percentage Size of Total</th></tr></thead><tbody><tr><th>Total Pieces</th><td>");
-            o.push(cinfo.length);
-            o.push("</td><td>100.00%</td><td>100.00%</td><td>");
-            o.push(sum.join("").length);
-            o.push("</td><td>100.00%</td><td>100.00%</td></tr><tr><th colspan='7'>Common Tags</th></tr>");
-            c = ["*** Start Tags", "End Tags", "Singleton Tags", "Comments", "Flat String", "String with Space at Start", "String with Space at End", "String with Space at Start and End", "SGML", "XML", "Total Parsing Declarations", "SSI", "ASP", "PHP", "Total Server Side Tags", "*** Script Tags", "*** Style Tags", "JavaScript/CSS Code"];
-            z = b.length;
-            for (a = 0; a < z; a += 1) {
-                if (g[a] === 0) {
-                    h = "0.00%";
-                } else if (b[a] === g[a]) {
-                    h = "100.00%";
-                } else {
-                    h = ((b[a] / g[a]) * 100).toFixed(2) + "%";
-                }
-                if (k[a] === 0) {
-                    l = "0.00%";
-                } else if (i[a] === k[a]) {
-                    l = "100.00%";
-                } else {
-                    l = ((i[a] / k[a]) * 100).toFixed(2) + "%";
-                }
-                c[a] = ["<tr><th>" + c[a]];
-                c[a].push("</th><td>");
-                c[a].push(b[a]);
-                c[a].push("</td><td>");
-                c[a].push(h);
-                c[a].push("</td><td>");
-                c[a].push(((b[a] / cinfo.length) * 100).toFixed(2));
-                c[a].push("%</td><td>");
-                c[a].push(i[a]);
-                c[a].push("</td><td>");
-                c[a].push(l);
-                c[a].push("</td><td>");
-                c[a].push(((i[a] / sum.join("").length) * 100).toFixed(2));
-                c[a].push("%</td></tr>");
-                if (a === 3) {
-                    c[a].push("<tr><th>Total Common Tags");
-                    c[a].push(p(0));
-                    c[a].push("<tr><th colspan='7'>Content</th></tr>");
-                } else if (a === 7) {
-                    c[a].push("<tr><th>Total Content");
-                    c[a].push(p(1));
-                    c[a].push("<tr><th colspan='7'>Parsing Declarations</th></tr>");
-                } else if (a === 10) {
-                    c[a].push("<tr><th colspan='7'>Server Side Tags</th></tr>");
-                } else if (a === 14) {
-                    c[a].push("<tr><th colspan='7'>Style and Script Code/Tags</th></tr>");
-                } else if (a === 17) {
-                    c[a].push("<tr><th>Total Script and Style Tags/Code");
-                    c[a].push(p(2));
-                }
-                c[a] = c[a].join("");
-            }
-            o.push(c.join(""));
-            z = m.length;
-            n = [];
-            for (a = 0; a < z; a += 1) {
-                if (m[a]) {
-                    n[a] = ["<li>"];
-                    n[a].push(m[a].replace(/\&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&#34;"));
-                    n[a].push("</li>");
-                    n[a] = n[a].join("");
-                }
-            }
-            if (n.length > 0) {
-                q = "<h4>HTML elements making HTTP requests:</h4><ul>" + n.join("") + "</ul>";
-            } else {
-                q = "";
-            }
-            o.push("</tbody></table></div><p>* The number of requests is determined from the input submitted only and does not count the additional HTTP requests supplied from dynamically executed code, frames, iframes, css, or other external entities.</p><p>**");
-            o.push("Character size is measured from the individual pieces of tags and content specifically between minification and beautification.</p><p>*** The number of starting &lt;script&gt; and &lt;style&gt; tags is subtracted from the total number of start tags.");
-            o.push("The combination of those three values from the table above should equal the number of end tags or the code is in error.</p>");
-            o.push(q);
-            a = (sum.join("").length / 7500).toFixed(0);
-            if (a > 0) {
-                a = (m.length - a) * 4;
-            } else {
-                a = 0;
-            }
-            if (j[1] === 0) {
-                f[1] = 0.00000001;
-                j[1] = 0.00000001;
-            }
-            b = (((f[0] + f[2] - a) / cinfo.length) / (f[1] / cinfo.length));
-            r = function (x, y) {
-                return (((j[0] + x) / sum.join("").length) / ((j[1] * y) / sum.join("").length));
-            };
-            k = (b / r(j[2], 1)).toPrecision(2);
-            l = (b / r(i[15], 1)).toPrecision(2);
-            g = (b / r(j[2], 4)).toPrecision(2);
-            h = (b / r(i[15], 4)).toPrecision(2);
-            if (k === l) {
-                l = "";
-                h = "";
-            } else {
-                l = ", or <strong>" + l + "</strong> if inline script code and style tags are removed";
-                h = ", or <strong>" + h + "</strong> if inline script code and style tags are removed";
-            }
-            e = insertComma(e);
-            d = insertComma(d);
-            n = ["<p>If the input is content it receives an efficiency score of <strong>"];
-            n.push(k);
-            n.push("</strong>");
-            n.push(l);
-            n.push(". The efficiency score if this input is a large form or application is <strong>");
-            n.push(g);
-            n.push("</strong>");
-            n.push(h);
-            n.push(". Efficient markup achieves scores higher than 2.00 and excellent markup achieves scores higher than 4.00. The score reflects the highest number of tags to pieces of content where the weight of those tags is as small as possible compared to the weight of the content.");
-            n.push("The score is a performance metric only and is not associated with validity or well-formedness, but semantic code typically achieves the highest scores. All values are rounded to the nearest hundreth.</p><p><strong>Total input size:</strong> <em>");
-            n.push(e);
-            n.push("</em> characters</p><p><strong>Total output size:</strong> <em>");
-            n.push(d);
-            n.push("</em> characters</p><p><strong>* Total number of HTTP requests in supplied HTML:</strong> <em>");
-            n.push(m.length);
-            n.push("</em></p>");
-            summary = s.join("") + n.join("") + o.join("");
+            summary = s + n + o;
         }());
         return build.join("").replace(/\n(\s)+\n/g, "\n\n");
     };

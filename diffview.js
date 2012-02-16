@@ -165,17 +165,21 @@ var diffview = function (baseTextLines, newTextLines, baseTextName, newTextName,
                                         }
                                     }
                                     j2len = newj2len;
-                                } while (besti > alo && bestj > blo && !isbjunk(b[bestj - 1]) && a[besti - 1] === b[bestj - 1]) {
+                                }
+                                while (besti > alo && bestj > blo && !isbjunk(b[bestj - 1]) && a[besti - 1] === b[bestj - 1]) {
                                     besti -= 1;
                                     bestj -= 1;
                                     bestsize += 1;
-                                } while (besti + bestsize < ahi && bestj + bestsize < bhi && !isbjunk(b[bestj + bestsize]) && a[besti + bestsize] === b[bestj + bestsize]) {
+                                }
+                                while (besti + bestsize < ahi && bestj + bestsize < bhi && !isbjunk(b[bestj + bestsize]) && a[besti + bestsize] === b[bestj + bestsize]) {
                                     bestsize += 1;
-                                } while (besti > alo && bestj > blo && isbjunk(b[bestj - 1]) && a[besti - 1] === b[bestj - 1]) {
+                                }
+                                while (besti > alo && bestj > blo && isbjunk(b[bestj - 1]) && a[besti - 1] === b[bestj - 1]) {
                                     besti -= 1;
                                     bestj -= 1;
                                     bestsize += 1;
-                                } while (besti + bestsize < ahi && bestj + bestsize < bhi && isbjunk(b[bestj + bestsize]) && a[besti + bestsize] === b[bestj + bestsize]) {
+                                }
+                                while (besti + bestsize < ahi && bestj + bestsize < bhi && isbjunk(b[bestj + bestsize]) && a[besti + bestsize] === b[bestj + bestsize]) {
                                     bestsize += 1;
                                 }
                                 return [besti, bestj, bestsize];
@@ -417,7 +421,7 @@ var diffview = function (baseTextLines, newTextLines, baseTextName, newTextName,
                     };
                     ax = entity(ax);
                     bx = entity(bx);
-                    n = 0;
+                    n = false;
 
                     //This function actually determines if the same
                     //character positions in two compared arrays match.
@@ -435,7 +439,7 @@ var diffview = function (baseTextLines, newTextLines, baseTextName, newTextName,
                             if (ax[i] === bx[i]) {
                                 r = i;
                             } else {
-                                if (n === 0 && ax[i] !== bx[i] && !em.test(ax[i]) && !em.test(bx[i]) && !em.test(ax[i - 1]) && !em.test(bx[i - 1])) {
+                                if (!n && ax[i] !== bx[i] && !em.test(ax[i]) && !em.test(bx[i]) && !em.test(ax[i - 1]) && !em.test(bx[i - 1])) {
                                     if (typeof ax[i - 2] === "string" && /(<\/em>)$/.test(ax[i - 2]) && ax[i - 1] === " ") {
                                         ax[i - 2] = ax[i - 2].replace(/(<\/em>)$/, "");
                                         bx[i - 2] = bx[i - 2].replace(/(<\/em>)$/, "");
@@ -454,7 +458,7 @@ var diffview = function (baseTextLines, newTextLines, baseTextName, newTextName,
                                             errorout += 1;
                                         }
                                     }
-                                    n = 1;
+                                    n = true;
                                 } else if (ax[i] === undefined && (bx[i] === "" || bx[i] === " ")) {
                                     ax[i] = "";
                                 } else if (bx[i] === undefined && (ax[i] === "" || ax[i] === " ")) {
@@ -464,17 +468,16 @@ var diffview = function (baseTextLines, newTextLines, baseTextName, newTextName,
                             }
                         }
                         for (j = i + 1; j < zx; j += 1) {
-                            if (ax[j] !== undefined && bx[j] === undefined) {
+                            if (typeof ax[j] !== "undefined" && typeof bx[j] === "undefined") {
                                 bx[j] = "";
-                            } else if (ax[j] === undefined && bx[j] !== undefined) {
+                            } else if (typeof ax[j] === "undefined" && typeof bx[j] !== "undefined") {
                                 ax[j] = "";
-                            } else if (n === 1) {
+                            } else if (n) {
                                 for (o = j; o < zx; o += 1) {
                                     if (ax[j - 1] === "<em>" + bx[o] && em.test(bx[j - 1])) {
                                         ax[j - 1] = ax[j - 1].replace(em, "");
                                         ax.splice(j - 1, 0, "<em></em>");
                                         bx[o - 1] = bx[o - 1] + "</em>";
-                                        n = 0;
                                         k = o;
                                         if (o - j > 0) {
                                             p = [];
@@ -483,12 +486,12 @@ var diffview = function (baseTextLines, newTextLines, baseTextName, newTextName,
                                             }
                                             ax = p.concat(ax);
                                         }
+                                        n = false;
                                         break;
                                     } else if (bx[j - 1] === "<em>" + ax[o] && em.test(ax[j - 1])) {
                                         bx[j - 1] = bx[j - 1].replace(em, "");
                                         bx.splice(j - 1, 0, "<em></em>");
                                         ax[o - 1] = ax[o - 1] + "</em>";
-                                        n = 0;
                                         k = o;
                                         if (o - j > 0) {
                                             p = [];
@@ -497,6 +500,7 @@ var diffview = function (baseTextLines, newTextLines, baseTextName, newTextName,
                                             }
                                             bx = p.concat(bx);
                                         }
+                                        n = false;
                                         break;
                                     } else if (ax[o] === bx[j]) {
                                         if (ax.length > bx.length && ax[o - 1].substr(4) === bx[j - 1]) {
@@ -515,7 +519,7 @@ var diffview = function (baseTextLines, newTextLines, baseTextName, newTextName,
                                             }
                                             bx = p.concat(bx);
                                         }
-                                        n = 0;
+                                        n = false;
                                         break;
                                     } else if (bx[o] === ax[j]) {
                                         if (bx.length > ax.length && bx[o - 1].substr(4) === ax[j - 1]) {
@@ -534,29 +538,29 @@ var diffview = function (baseTextLines, newTextLines, baseTextName, newTextName,
                                             }
                                             ax = p.concat(ax);
                                         }
-                                        n = 0;
+                                        n = false;
                                         break;
                                     }
                                 }
-                                if (n === 1) {
+                                if (n) {
                                     for (o = j + 1; o < zx - 1; o += 1) {
                                         if (typeof ax[o - 1] === "undefined" && ax[j + 1] === bx[o]) {
                                             ax[j] += "</em>";
                                             bx[o - 1] += "</em>";
                                             k = o + 1;
-                                            n = 0;
+                                            n = false;
                                             break;
                                         } else if (typeof bx[o - 1] === "undefined" && bx[j + 1] === ax[o]) {
                                             bx[j] += "</em>";
                                             ax[o - 1] += "</em>";
                                             k = o + 1;
-                                            n = 0;
+                                            n = false;
                                             break;
                                         } else if (ax[o] === bx[o]) {
                                             ax[o - 1] = ax[o - 1] + "</em>";
                                             bx[o - 1] = bx[o - 1] + "</em>";
                                             k = o;
-                                            n = 0;
+                                            n = false;
                                             break;
                                         }
                                     }
@@ -581,9 +585,13 @@ var diffview = function (baseTextLines, newTextLines, baseTextName, newTextName,
                     //Final computation before charcomp is finished.
                     c = ax.join("").replace(/$#34;/g, "\"").replace(/$#39;/g, "'");
                     d = bx.join("").replace(/$#34;/g, "\"").replace(/$#39;/g, "'");
-                    if (n === 1) {
-                        c += "</em>";
-                        d += "</em>";
+                    if (n) {
+                        if (c.split("<em>").length > c.split("</em>").length) {
+                            c += "</em>";
+                        }
+                        if (d.split("<em>").length > d.split("</em>").length) {
+                            d += "</em>";
+                        }
                     }
                 }
                 return [c, d];

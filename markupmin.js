@@ -11,6 +11,7 @@
 
  http://www.travelocity.com/
  http://mailmarkup.org/
+ http://prettydiff.com/
  **********************************************************************/
 
 /*
@@ -83,36 +84,29 @@
  opening and closing of tags, except those adjacent to content, is
  removed.
  */
-var markupmin = function (x, comments, presume_html, top_comments) {
+var markupmin = function (y, comments, presume_html, top_comments) {
         "use strict";
-        var i,
-            a,
-            b,
-            c,
-            y,
-            Y,
-            verbose = (/^\s+$/),
-            white = (/\s/),
-            html = ["br", "meta", "link", "img", "hr", "base", "basefont", "area", "col", "frame", "input", "param"],
+        var i = 0,
+            x = y.split(""),
 
             //This closure performs checks for excessive whitespace
             //inside markup tags.  Whitespace around certain syntax
             //characters is collapsed and all remaining whitespace is
             //tokenized.
             markupspace = function () {
-                var d = "",
+                var a = 0,
+                    c = [],
                     Y = x.length;
                 for (a = i; a < Y; a += 1) {
                     if (x[a] === ">") {
                         break;
                     } else {
-                        d = d + x[a];
+                        c.push(x[a]);
                         x[a] = "";
                     }
                 }
-                d = d.replace(/\s+/g, " ").replace(/\s*,\s+/g, ", ").replace(/\s*\/\s*/g, "/").replace(/\s*=\s*/g, "=").replace(/\s*:\s*/g, ":").replace(/ \="/g, "=\"").replace(/ \='/g, "='") + ">";
                 i = a;
-                x[i] = d;
+                x[i] = c.join("").replace(/\s+/g, " ").replace(/\s*,\s+/g, ", ").replace(/\s*\/\s*/g, "/").replace(/\s*=\s*/g, "=").replace(/\s*:\s*/g, ":").replace(/ \="/g, "=\"").replace(/ \='/g, "='") + ">";
             },
 
             //This function looks for markup comments and removes all
@@ -121,8 +115,9 @@ var markupmin = function (x, comments, presume_html, top_comments) {
             //characters will be removed, which is fine because they
             //would not be parsed by a browser anyways.
             markupcomment = function () {
-                var Y = x.length;
-                c = "";
+                var Y = x.length,
+                    b = 0,
+                    c = [];
                 for (b = i; b < Y; b += 1) {
                     if (x[b] === "-" && x[b + 1] === "-" && x[b + 2] === ">") {
                         x[b] = "";
@@ -130,27 +125,29 @@ var markupmin = function (x, comments, presume_html, top_comments) {
                         x[b + 2] = "";
                         i = b + 2;
                         break;
-                    } else if (comments !== "comments" && comments !== "beautify") {
-                        x[b] = "";
                     } else {
-                        c = c + x[b];
+                        if (comments === "beautify" || comments === "comments") {
+
+                            c.push(x[b]);
+                        }
                         x[b] = "";
                     }
                 }
                 if (comments === "comments" || comments === "beautify") {
-                    c = " " + c + "-->";
-                    x[i] = c;
+                    x[i] = " " + c.join("") + "-->";
                 }
             },
 
             //This function passes the content of script and style
             //blocks off to jsmin.
             markupscript = function (z) {
-                var e = [],
-                    f,
+                var c = 0,
+                    e = [],
+                    f = 0,
+                    g = "",
                     h = "",
                     j = "</" + z,
-                    m,
+                    m = "",
                     Y = x.length,
                     cdataStart = (/^(\s*\/+<!\[+[A-Z]+\[+)/),
                     cdataEnd = (/(\/+\]+>\s*)$/),
@@ -158,7 +155,7 @@ var markupmin = function (x, comments, presume_html, top_comments) {
                     scriptEnd = (/(\/+\-\->\s*)$/),
                     cs = "",
                     ce = "";
-                if (jsmin === undefined) {
+                if (typeof jsmin === "undefined") {
                     return;
                 }
                 for (c = i; c < Y; c += 1) {
@@ -177,7 +174,7 @@ var markupmin = function (x, comments, presume_html, top_comments) {
                 }
                 m = e[0];
                 e.splice(0, 1);
-                if (white.test(e[0])) {
+                if ((/\s/).test(e[0])) {
                     e.splice(0, 1);
                 }
                 for (f; f < Y; f += 1) {
@@ -194,68 +191,71 @@ var markupmin = function (x, comments, presume_html, top_comments) {
                     x[i] = m + h;
                     return;
                 }
-                e = e.join("");
+                g = e.join("");
                 if (comments !== "beautify") {
-                    if (cdataStart.test(e)) {
-                        cs = e.match(cdataStart)[0];
-                        e = e.replace(cdataStart, "");
-                    } else if (scriptStart.test(e)) {
-                        cs = e.match(scriptStart)[0];
-                        e = e.replace(scriptStart, "");
+                    if (cdataStart.test(g)) {
+                        cs = g.match(cdataStart)[0];
+                        g = g.replace(cdataStart, "");
+                    } else if (scriptStart.test(g)) {
+                        cs = g.match(scriptStart)[0];
+                        g = g.replace(scriptStart, "");
                     }
-                    if (cdataEnd.test(e)) {
-                        ce = e.match(cdataEnd)[0];
-                        e = e.replace(cdataEnd, "");
-                    } else if (scriptEnd.test(e)) {
-                        ce = e.match(scriptEnd)[0];
-                        e = e.replace(scriptEnd, "");
+                    if (cdataEnd.test(g)) {
+                        ce = g.match(cdataEnd)[0];
+                        g = g.replace(cdataEnd, "");
+                    } else if (scriptEnd.test(g)) {
+                        ce = g.match(scriptEnd)[0];
+                        g = g.replace(scriptEnd, "");
                     }
                     if (z === "style") {
-                        e = cs + jsmin(e, 3, "css", true, top_comments) + ce;
+                        g = cs + jsmin(g, 3, "css", true, top_comments) + ce;
                     } else {
-                        e = cs + jsmin(e, 3, "javascript", false, top_comments) + ce;
+                        g = cs + jsmin(g, 3, "javascript", false, top_comments) + ce;
                     }
                 }
-                Y = e.length;
+                Y = g.length;
                 for (c = 0; c < Y; c += 1) {
-                    if (white.test(e.charAt(c))) {
-                        e = e.substr(c + 1);
+                    if ((/\s/).test(g.charAt(c))) {
+                        g = g.substr(c + 1);
                     } else {
                         break;
                     }
                 }
-                x[i] = m + e + h;
+                x[i] = m + g + h;
             },
 
             preserve = function (end) {
-                var Y = x.length;
-                b = "";
+                var Y = x.length,
+                    a = 0,
+                    b = [],
+                    c = 0;
                 for (c = i; c < Y; c += 1) {
                     if (x[c - 1] + x[c] === end) {
                         break;
                     }
                 }
                 for (a = i; a < c; a += 1) {
-                    b += x[a];
+                    b.push(x[a]);
                     x[a] = "";
                 }
-                x[i] = b;
+                x[i] = b.join("");
                 i = c;
             },
 
             content = function () {
-                var Y = x.length;
-                b = "";
+                var Y = x.length,
+                    a = 0,
+                    b = [];
                 for (a = i; a < Y; a += 1) {
                     if (x[a] === "<") {
                         break;
                     } else {
-                        b = b + x[a];
+                        b.push(x[a]);
                         x[a] = "";
                     }
                 }
                 i = a - 1;
-                x[i] = b.replace(/\s+/g, " ");
+                x[i] = b.join("").replace(/\s+/g, " ");
             },
 
             //This self invocating function is the action piece of
@@ -264,11 +264,10 @@ var markupmin = function (x, comments, presume_html, top_comments) {
             //script blocks are encountered.  No logic is performed on
             //content, aside from whitespace tokenization.
             it = (function () {
-                var a,
-                    b,
-                    c = x.length;
-                y = x;
-                x = x.split("");
+                var a = [],
+                    b = 0,
+                    c = x.length,
+                    d = "";
                 for (i = 0; i < x.length; i += 1) {
 
                     //If markupmin is requested by markup_beauty then do
@@ -281,11 +280,11 @@ var markupmin = function (x, comments, presume_html, top_comments) {
                             }
                             a.push(y.charAt(b));
                         }
-                        a = a.join("").toLowerCase().replace(/'/g, "\"");
+                        d = a.join("").toLowerCase().replace(/'/g, "\"");
                         if (comments !== "beautify" && comments !== "diff") {
                             markupspace();
                         }
-                        if (a.indexOf("type=\"") === -1 || a.indexOf("type=\"text/javascript\"") !== -1 || a.indexOf("type=\"application/javascript\"") !== -1 || a.indexOf("type=\"application/x-javascript\"") !== -1 || a.indexOf("type=\"text/ecmascript\"") !== -1 || a.indexOf("type=\"application/ecmascript\"") !== -1) {
+                        if (d.indexOf("type=\"") === -1 || d.indexOf("type=\"text/javascript\"") !== -1 || d.indexOf("type=\"application/javascript\"") !== -1 || d.indexOf("type=\"application/x-javascript\"") !== -1 || d.indexOf("type=\"text/ecmascript\"") !== -1 || d.indexOf("type=\"application/ecmascript\"") !== -1) {
                             markupscript("script");
                         }
                     } else if ((y.slice(i, i + 6)).toLowerCase() === "<style") {
@@ -296,11 +295,11 @@ var markupmin = function (x, comments, presume_html, top_comments) {
                             }
                             a.push(y.charAt(b));
                         }
-                        a = a.join("").toLowerCase().replace(/'/g, "\"");
+                        d = a.join("").toLowerCase().replace(/'/g, "\"");
                         if (comments !== "beautify" && comments !== "diff") {
                             markupspace();
                         }
-                        if (a.indexOf("type=\"") === -1 || a.indexOf("type=\"text/css\"") !== -1) {
+                        if (d.indexOf("type=\"") === -1 || d.indexOf("type=\"text/css\"") !== -1) {
                             markupscript("style");
                         }
                     } else if (y.slice(i, i + 4) === "<!--" && x[i + 4] !== "#") {
@@ -318,63 +317,77 @@ var markupmin = function (x, comments, presume_html, top_comments) {
                     }
                 }
             }());
-        //The following loop pushes not empty indexes from the "x" array
-        //into another temporary array: "i".
-        i = [];
-        Y = x.length;
-        for (a = 0; a < Y; a += 1) {
-            if (x[a] !== "") {
-                i.push(x[a]);
-            }
-        }
-        //The following loop pushes indexes from temporary array "i"
-        //into the newly emptied array "x" that are not consecutive runs
-        //of white space.
-        x = [];
-        Y = i.length;
-        for (a = 0; a < Y; a += 1) {
-            if (!verbose.test(i[a]) || (verbose.test(i[a]) && !verbose.test(i[a + 1]))) {
-                x.push(i[a]);
-            }
-        }
-        //The following loop converts indexes in the array that contain
-        //only whitespace to an empty string if that index does not
-        //align with a syntax formatted singleton.
-        Y = x.length;
-        for (a = 2; a < Y; a += 1) {
-            c = 0;
 
-            //This is a cheat to look at vocabulary to determine if a
-            //tag is a singleton opposed to looking at only syntax.
-            if (presume_html === true) {
-                b = "";
-                for (i = 1; i < x[a].length; i += 1) {
-                    if (/[a-z]/i.test(x[a].charAt(i))) {
-                        b += x[a].charAt(i);
-                    } else {
-                        break;
+        return (function () {
+            var a = 0,
+                b = [],
+                c = false,
+                d = 0,
+                f = 0,
+                g = "",
+                i = [],
+                Y = x.length,
+                html = ["br", "meta", "link", "img", "hr", "base", "basefont", "area", "col", "frame", "input", "param"],
+                e = html.length;
+
+            //The following loop pushes not empty indexes from the "x" array
+            //into another temporary array: "i".
+            for (a = 0; a < Y; a += 1) {
+                if (x[a] !== "") {
+                    i.push(x[a]);
+                }
+            }
+            //The following loop pushes indexes from temporary array "i"
+            //into the newly emptied array "x" that are not consecutive runs
+            //of white space.
+            x = [];
+            Y = i.length;
+            for (a = 0; a < Y; a += 1) {
+                c = (/^\s+$/).test(i[a]);
+                if (!c || (c && !(/^\s+$/).test(i[a + 1]))) {
+                    x.push(i[a]);
+                }
+            }
+            //The following loop converts indexes in the array that contain
+            //only whitespace to an empty string if that index does not
+            //align with a syntax formatted singleton.
+            Y = x.length;
+            for (a = 2; a < Y; a += 1) {
+                c = false;
+
+                //This is a cheat to look at vocabulary to determine if a
+                //tag is a singleton opposed to looking at only syntax.
+                if (presume_html === true) {
+                    b = [];
+                    f = x[a].length;
+                    for (d = 1; d < f; d += 1) {
+                        if (/[a-z]/i.test(x[a].charAt(d))) {
+                            b.push(x[a].charAt(d));
+                        } else {
+                            break;
+                        }
+                    }
+                    for (d = 0; d < e; d += 1) {
+                        if (b.join("") === html[d] && x[a].charAt(0) === "<") {
+                            c = true;
+                            break;
+                        }
                     }
                 }
-                for (i = 0; i < html.length; i += 1) {
-                    if (b === html[i] && x[a].charAt(0) === "<") {
-                        c = 1;
-                        break;
+
+                //This removes spaces between elements except between two
+                //closing tags following content or any space around a
+                //singleton tag.
+                if ((/^\s+$/).test(x[a - 1])) {
+                    if (!c && (x[a].charAt(0) === "<" && x[a].charAt(1) === "/" && x[a - 1] !== " " && x[a - 2].charAt(0) === "<" && x[a - 2].charAt(1) === "/" && x[a - 3].charAt(0) !== "<") && (x[a].charAt(0) === "<" && x[a].charAt(x[a].length - 2) !== "/") && (x[a].charAt(0) === "<" && x[a].charAt(x[a].length - 2) !== "/" && x[a - 2].charAt(0) === "<" && x[a - 2].charAt(1) === "/")) {
+                        x[a - 1] = "";
                     }
                 }
             }
-
-            //This removes spaces between elements except between two
-            //closing tags following content or any space around a
-            //singleton tag.
-            if (verbose.test(x[a - 1])) {
-                if (c !== 1 && (x[a].charAt(0) === "<" && x[a].charAt(1) === "/" && x[a - 1] !== " " && x[a - 2].charAt(0) === "<" && x[a - 2].charAt(1) === "/" && x[a - 3].charAt(0) !== "<") && (x[a].charAt(0) === "<" && x[a].charAt(x[a].length - 2) !== "/") && (x[a].charAt(0) === "<" && x[a].charAt(x[a].length - 2) !== "/" && x[a - 2].charAt(0) === "<" && x[a - 2].charAt(1) === "/")) {
-                    x[a - 1] = "";
-                }
+            g = x.join("").replace(/-->\s+/g, "--> ").replace(/\s+<\?php/g, " <?php").replace(/\s+<%/g, " <%").replace(/\s*>\s+/g, "> ").replace(/\s+<\s*/g, " <").replace(/\s+\/>/g, "/>").replace(/\s+>/g, ">");
+            if ((/\s/).test(g.charAt(0))) {
+                g = g.slice(1, g.length);
             }
-        }
-        x = x.join("").replace(/-->\s+/g, "--> ").replace(/\s+<\?php/g, " <?php").replace(/\s+<%/g, " <%").replace(/\s*>\s+/g, "> ").replace(/\s+<\s*/g, " <").replace(/\s+\/>/g, "/>").replace(/\s+>/g, ">");
-        if (white.test(x.charAt(0))) {
-            x = x.slice(1, x.length);
-        }
-        return x;
+            return g;
+        }());
     };

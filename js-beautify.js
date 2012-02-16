@@ -116,8 +116,8 @@ var js_beautify = function (args) {
             last_word = "",
             last_last_word = "",
             flags = {
-                previous_mode: flags ? flags.mode : "BLOCK",
-                mode: mode,
+                previous_mode: (flags) ? flags.mode : "BLOCK",
+                mode: "BLOCK",
                 var_line: false,
                 var_line_reindented: false,
                 in_html_comment: false,
@@ -125,7 +125,7 @@ var js_beautify = function (args) {
                 in_case: false,
                 eat_next_space: false,
                 indentation_baseline: -1,
-                indentation_level: (flags ? flags.indentation_level + ((flags.var_line && flags.var_line_reindented) ? 1 : 0) : args.inlevel)
+                indentation_level: ((flags) ? flags.indentation_level + ((flags.var_line && flags.var_line_reindented) ? 1 : 0) : args.inlevel)
             },
             functestval = 0,
             var_var_test = false,
@@ -153,7 +153,7 @@ var js_beautify = function (args) {
                 output.push(lines[0]);
                 for (i = 1; i < j; i += 1) {
                     print_newline();
-                    if (/(;\n)|\}|\)|((\!|\=)\=)/.test(lines[i]) || ((/^(\s*("|'))/).test(lines[i]) && (/(("|')\s*;?)$/).test(lines[i]))) {
+                    if ((/\}|((\!|\=)\=)/).test(lines[i]) || (/(;|(\)\s*\{\s*))$/).test(lines[i]) || ((/^(\s*("|'))/).test(lines[i]) && (/(("|')\s*;?)$/).test(lines[i]))) {
                         output.push(lines[i]);
                     } else {
                         output.push(" ");
@@ -236,7 +236,7 @@ var js_beautify = function (args) {
             set_mode = function (mode) {
                 flag_store.push(flags);
                 flags = {
-                    previous_mode: flags ? flags.mode : "BLOCK",
+                    previous_mode: (flags) ? flags.mode : "BLOCK",
                     mode: mode,
                     var_line: false,
                     var_line_reindented: false,
@@ -245,14 +245,14 @@ var js_beautify = function (args) {
                     in_case: false,
                     eat_next_space: false,
                     indentation_baseline: -1,
-                    indentation_level: (flags ? flags.indentation_level + ((flags.var_line && flags.var_line_reindented) ? 1 : 0) : args.inlevel)
+                    indentation_level: ((flags) ? flags.indentation_level + ((flags.var_line && flags.var_line_reindented) ? 1 : 0) : args.inlevel)
                 };
             },
             is_expression = function (mode) {
                 return mode === "[EXPRESSION]" || mode === "[INDENTED-EXPRESSION]" || mode === "(EXPRESSION)";
             },
             restore_mode = function () {
-                do_block_just_closed = flags.mode === "DO_BLOCK";
+                do_block_just_closed = (flags.mode === "DO_BLOCK");
                 if (flag_store.length > 0) {
                     flags = flag_store.pop();
                 }
