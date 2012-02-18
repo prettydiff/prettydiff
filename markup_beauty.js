@@ -551,68 +551,31 @@ var markup_beauty = function (args) {
                     //tag and then returns the entire tag as a single
                     //output.
                     b = function (end) {
-                        var c = i,
+                        var a = [],
+                            b = end.length,
+                            c = end.split("").reverse(),
                             d = 0,
-                            e = false,
-                            f = [],
-                            Z = 0,
-
-                            //The first loop looks for the end position
-                            //of a tag.  The second loop verifies the
-                            //first loop did not stop too early.
-                            g = function () {
-                                var loop = y.length,
-                                    d = 0,
-                                    h = end.split("").reverse(),
-                                    z = end.charAt(end.length - 2);
-                                for (c; c < loop; c += 1) {
-                                    if (z !== "-" && z !== "?" && z !== "%" && y[c] === ">") {
-                                        break;
-                                    } else if (y[c - 1] + y[c] === z + ">") {
-                                        break;
-                                    }
-                                }
-                                for (d = 0; d < loop; d += 1) {
-                                    if (y[c - d] !== h[d]) {
-                                        e = false;
-                                        c += 1;
-                                        break;
-                                    }
-                                    e = true;
-                                }
-                            };
-                        g();
-
-                        //This is a check to ensure the entire intended
-                        //tag was actually captured and stopped because
-                        //of an early ">" character.  This check is
-                        //necessary for comments, ASP, and PHP tags.
-                        if (!e) {
-                            do {
-                                g();
-                            } while (!e);
+                            e = "",
+                            loop = y.length;
+                        if (i > 0 && y[i - 1] === " ") {
+                            e = " ";
                         }
-
-                        if (e) {
-
-                            //Concat the characters from the now known
-                            //end point to build the tag.
-                            Z = c + 1;
-                            for (d = i; d < Z; d += 1) {
-                                f.push(y[d]);
+                        for (i; i < loop; i += 1) {
+                            a.push(y[i]);
+                            if (a[a.length - 1] === c[0]) {
+                                if (b === 1) {
+                                    return e + a.join("");
+                                } else {
+                                    for (d = 0; d < b; d += 1) {
+                                        if (c[d] !== a[a.length - (d + 1)]) {
+                                            break;
+                                        }
+                                    }
+                                    if (d === b) {
+                                        return e + a.join("");
+                                    }
+                                }
                             }
-                        }
-
-                        //This logic provides the ability for later
-                        //logic to determine if a singleton tag must be
-                        //treated as content or as an element with
-                        //indentation.
-                        if (y[i - 2] === ">" && y[i - 1] === " ") {
-                            i = c - 1;
-                            return " " + f.join("");
-                        } else {
-                            i = c - 1;
-                            return f;
                         }
                     },
 
