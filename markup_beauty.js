@@ -546,6 +546,7 @@ var markup_beauty = function (args) {
             elements = (function () {
                 var i = 0,
                     y = markupmin(x, args.mode, args.html).split(""),
+                    a = "",
 
                     //This function looks for the end of a designated
                     //tag and then returns the entire tag as a single
@@ -577,7 +578,10 @@ var markup_beauty = function (args) {
                                 }
                             }
                         }
+                        return e + a.join("");
                     },
+
+                    c = [],
 
                     //This function builds content into isolated usable
                     //content units.  This is for content while, which
@@ -651,8 +655,10 @@ var markup_beauty = function (args) {
                         return d;
                     },
 
-                    //The type_define function sorts markup code into
-                    //various designated types.  The build array holds
+					loop = y.length;
+					
+                    //This loop sorts markup code into various
+                    //designated types.  The build array holds
                     //particular code while the token array holds the
                     //designation for that code.  The argument supplied
                     //to the "b" function is the syntax ending for a
@@ -678,11 +684,6 @@ var markup_beauty = function (args) {
                     //   !Singelton tags must end with "/>" or they will
                     //also be regarded as start tags.  This code is
                     //vocabulary independent and I do not read minds.
-                    type_define = (function () {
-                        var a = "",
-                            c = [],
-                            loop = y.length;
-
                         for (i = 0; i < loop; i += 1) {
                             if (y[i] === "<" && y[i + 1] === "!" && y[i + 2] === "-" && y[i + 3] === "-" && y[i + 4] !== "#" && token[token.length - 1] !== "T_script" && token[token.length - 1] !== "T_style") {
                                 build.push(b("-->"));
@@ -763,8 +764,6 @@ var markup_beauty = function (args) {
                                 }
                             }
                         }
-                    }());
-
             }()),
 
             //This function provides structual relevant descriptions for
