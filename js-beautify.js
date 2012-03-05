@@ -131,6 +131,8 @@ var js_beautify = function (args) {
             var_var_test = false,
             commafix = false,
             comma_test = false,
+            forblock = false,
+            forcount = 0,
             flag_store = [flags],
             indent_string = "",
             wordchar = ["a", "b", "c", "d", "e", "f", "g", "h", "i", "j", "k", "l", "m", "n", "o", "p", "q", "r", "s", "t", "u", "v", "w", "x", "y", "z", "A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M", "N", "O", "P", "Q", "R", "S", "T", "U", "V", "W", "X", "Y", "Z", "0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "_", "$"],
@@ -702,6 +704,9 @@ var js_beautify = function (args) {
                     }
                     print_token();
                 }
+                if (forblock && token_text === "(") {
+                    forcount += 1;
+                }
             } else if (token_type === "TK_END_EXPR") {
                 n[4] += 1;
                 if (last_last_text === "}") {
@@ -720,6 +725,12 @@ var js_beautify = function (args) {
                 } else {
                     restore_mode();
                     print_token();
+                }
+                if (forblock && token_text === ")") {
+                    forcount -= 1;
+                    if (forcount === 0) {
+                        forblock = false;
+                    }
                 }
             } else if (token_type === "TK_START_BLOCK") {
                 n[4] += 1;
@@ -762,6 +773,8 @@ var js_beautify = function (args) {
                 }
                 flags.indentation_level += 1;
                 print_token();
+                forblock = false;
+                forcount = 0;
             } else if (token_type === "TK_END_BLOCK") {
                 n[4] += 1;
                 restore_mode();
@@ -992,7 +1005,7 @@ var js_beautify = function (args) {
                             } else if (last_text !== ")" && last_text !== ":" && (token_text === "continue" || token_text === "try" || token_text === "throw" || token_text === "return" || token_text === "var" || token_text === "if" || token_text === "switch" || token_text === "case" || token_text === "default" || token_text === "for" || token_text === "while" || token_text === "break" || token_text === "function")) {
                                 print_newline();
                             }
-                        } else if (prefix === "SPACE") {
+                        } else if (prefix === "SPACE" || (forblock && last_text === ";")) {
                             print_single_space();
                         } else if (last_text === ";" || (is_array(flags.mode) && last_text === "," && last_last_text === "}")) {
                             // }, in lists get a newline treatment
@@ -1033,6 +1046,9 @@ var js_beautify = function (args) {
                         }
                         if (token_text === "else") {
                             flags.if_line = false;
+                        }
+                        if (token_text === "for") {
+                            forblock = true;
                         }
                     }
                     last_last_word = last_word;
