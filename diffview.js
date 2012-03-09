@@ -72,7 +72,6 @@ var diffview = function (args) {
         //2.  charcomp - performs the 'largest common subsequence' upon
         //    characters of two compared lines.
         //3.  The construction of the output into the 'node' array
-
         (function () {
             if (typeof args.baseTextLines !== "string") {
                 args.baseTextLines = "Error: Cannot build diff view; baseTextLines is not defined.";
@@ -172,11 +171,12 @@ var diffview = function (args) {
                     a = bta,
                     b = nta,
                     matching_blocks = [],
-                    b2j = [],
+                    bxj = [],
                     opcodes = [],
                     answer = [],
                     get_matching_blocks = function () {
-                        var idx = "",
+                        var c = 0,
+                            d = 0,
                             alo = 0,
                             ahi = 0,
                             blo = 0,
@@ -197,7 +197,6 @@ var diffview = function (args) {
                             queue = [
                                 [0, la, 0, lb]
                             ],
-                            block = 0,
                             non_adjacent = [],
                             ntuplecomp = function (a, b) {
                                 var i = 0,
@@ -213,41 +212,41 @@ var diffview = function (args) {
                                 return (a.length === b.length) ? 0 : ((a.length < b.length) ? -1 : 1);
                             },
                             find_longest_match = function (alo, ahi, blo, bhi) {
-                                var i = 0,
+                                var c = 0,
+                                    d = bxj.length,
+                                    i = 0,
                                     j = 0,
                                     k = 0,
-                                    newj2len = {},
-                                    jdict = [],
+                                    l = [0, 0],
                                     jkey = "",
                                     besti = alo,
                                     bestj = blo,
-                                    bestsize = 0,
-                                    j2len = {},
-                                    nothing = [],
-                                    dictget = function (dict, key, defaultValue) {
-                                        return (dict && dict[key]) ? dict[key] : defaultValue;
-                                    };
+                                    bestsize = 0;
                                 for (i = alo; i < ahi; i += 1) {
-                                    newj2len = {};
-                                    jdict = dictget(b2j, a[i], nothing);
-                                    for (jkey in jdict) {
-                                        if (jdict.hasOwnProperty(jkey)) {
-                                            j = jdict[jkey];
-                                            if (j >= blo) {
-                                                if (j >= bhi) {
-                                                    break;
-                                                }
-                                                k = dictget(j2len, j - 1, 0) + 1;
-                                                newj2len[j] = k;
-                                                if (k > bestsize) {
-                                                    besti = i - k + 1;
-                                                    bestj = j - k + 1;
-                                                    bestsize = k;
-                                                }
-                                            }
+                                    for (c = 0; c < d; c += 1) {
+                                        if (bxj[c][1] === a[i]) {
+                                            j = bxj[c][0];
+                                            break;
                                         }
                                     }
-                                    j2len = newj2len;
+                                    if (c !== d) {
+                                        if (j >= blo) {
+                                            if (j >= bhi) {
+                                                break;
+                                            }
+                                            if (l[0] === j - 1) {
+                                                k = l[1] + 1;
+                                            } else {
+                                                k = 1;
+                                            }
+                                            if (k > bestsize) {
+                                                besti = i - k + 1;
+                                                bestj = j - k + 1;
+                                                bestsize = k;
+                                            }
+                                        }
+                                        l = [j, k];
+                                    }
                                 }
                                 while (besti > alo && bestj > blo && !isbjunk(b[bestj - 1]) && a[besti - 1] === b[bestj - 1]) {
                                     besti -= 1;
@@ -288,22 +287,20 @@ var diffview = function (args) {
                             }
                         }
                         matching_blocks.sort(ntuplecomp);
-                        for (idx in matching_blocks) {
-                            if (matching_blocks.hasOwnProperty(idx)) {
-                                block = matching_blocks[idx];
-                                i2 = block[0];
-                                j2 = block[1];
-                                k2 = block[2];
-                                if (i1 + k1 === i2 && j1 + k1 === j2) {
-                                    k1 += k2;
-                                } else {
-                                    if (k1) {
-                                        non_adjacent.push([i1, j1, k1]);
-                                    }
-                                    i1 = i2;
-                                    j1 = j2;
-                                    k1 = k2;
+                        d = matching_blocks.length;
+                        for (c = 0; c < d; c += 1) {
+                            i2 = matching_blocks[c][0];
+                            j2 = matching_blocks[c][1];
+                            k2 = matching_blocks[c][2];
+                            if (i1 + k1 === i2 && j1 + k1 === j2) {
+                                k1 += k2;
+                            } else {
+                                if (k1) {
+                                    non_adjacent.push([i1, j1, k1]);
                                 }
+                                i1 = i2;
+                                j1 = j2;
+                                k1 = k2;
                             }
                         }
                         if (k1) {
@@ -317,62 +314,54 @@ var diffview = function (args) {
                         opcodes = null;
                         var chain_b = (function () {
                                 var i = 0,
+                                    c = 0,
                                     elt = "",
-                                    indices = [],
-                                    n = b.length,
-                                    populardict = {};
-                                for (i = 0; i < b.length; i += 1) {
+                                    n = b.length;
+                                for (i = 0; i < n; i += 1) {
                                     elt = b[i];
-                                    if (b2j[elt]) {
-                                        indices = b2j[elt];
-                                        if (n >= 200 && indices.length * 100 > n) {
-                                            populardict[elt] = 1;
-                                            delete b2j[elt];
-                                        } else {
-                                            indices.push(i);
+                                    for (c = bxj.length - 1; c > -1; c -= 1) {
+                                        if (bxj[c][1] === elt) {
+                                            break;
+                                        }
+                                    }
+                                    if (c > -1) {
+                                        if (n >= 200 && 100 > n) {
+                                            bxj.splice(c, 1);
                                         }
                                     } else {
-                                        b2j[elt] = [i];
-                                    }
-                                }
-                                for (elt in populardict) {
-                                    if (populardict.hasOwnProperty(elt)) {
-                                        delete b2j[elt];
+                                        bxj.push([i, elt]);
                                     }
                                 }
                             }()),
                             result = (function () {
-                                var idx = "",
-                                    block = [],
-                                    ai = 0,
+                                var ai = 0,
                                     bj = 0,
                                     size = 0,
                                     tag = "",
+                                    c = 0,
                                     i = 0,
                                     j = 0,
-                                    blocks = get_matching_blocks();
-                                for (idx in blocks) {
-                                    if (blocks.hasOwnProperty(idx)) {
-                                        block = blocks[idx];
-                                        ai = block[0];
-                                        bj = block[1];
-                                        size = block[2];
-                                        tag = "";
-                                        if (i < ai && j < bj) {
-                                            tag = "replace";
-                                        } else if (i < ai) {
-                                            tag = "delete";
-                                        } else if (j < bj) {
-                                            tag = "insert";
-                                        }
-                                        if (tag) {
-                                            answer.push([tag, i, ai, j, bj]);
-                                        }
-                                        i = ai + size;
-                                        j = bj + size;
-                                        if (size > 0) {
-                                            answer.push(["equal", ai, i, bj, j]);
-                                        }
+                                    blocks = get_matching_blocks(),
+                                    d = blocks.length;
+                                for (c = 0; c < d; c += 1) {
+                                    ai = blocks[c][0];
+                                    bj = blocks[c][1];
+                                    size = blocks[c][2];
+                                    tag = "";
+                                    if (i < ai && j < bj) {
+                                        tag = "replace";
+                                    } else if (i < ai) {
+                                        tag = "delete";
+                                    } else if (j < bj) {
+                                        tag = "insert";
+                                    }
+                                    if (tag !== "") {
+                                        answer.push([tag, i, ai, j, bj]);
+                                    }
+                                    i = ai + size;
+                                    j = bj + size;
+                                    if (size > 0) {
+                                        answer.push(["equal", ai, i, bj, j]);
                                     }
                                 }
                             }());
@@ -404,6 +393,18 @@ var diffview = function (args) {
                 rowcnt = 0,
                 i = 0,
                 jump = 0,
+                tb = (tab === "") ? "" : new RegExp("^((" + tab.replace(/\\/g, "\\") + ")+)"),
+                noTab = function (str) {
+                    var a = 0,
+                        b = str.length,
+                        c = [];
+                    for (a = 0; a < b; a += 1) {
+                        c.push(str[a].replace(tb, ""));
+                    }
+                    return c;
+                },
+                btab = (tab === "") ? [] : noTab(bta),
+                ntab = (tab === "") ? [] : noTab(nta),
                 opleng = opcodes.length,
                 change = "",
                 btest = false,
@@ -411,14 +412,12 @@ var diffview = function (args) {
                 code = [],
                 z = [],
 
-                //tb is the tab variable translated into a regex
-                tb = (tab === "") ? "" : new RegExp("^((" + tab.replace(/\\/g, "\\") + ")+)"),
-
                 //this is the character comparison logic that performs
                 //the 'largest common subsequence' between two lines of
                 //code
                 charcomp = function (c, d) {
                     var n = false,
+                        k = 0,
                         p = 0,
                         r = 0,
                         ax = [],
@@ -555,7 +554,6 @@ var diffview = function (args) {
                         var em = /<em>/g,
                             i = 0,
                             j = 0,
-                            k = 0,
                             o = 0,
                             p = [];
 
@@ -792,10 +790,12 @@ var diffview = function (args) {
                     //this is a check against false positives incurred
                     //by increasing or reducing of nesting.  At this
                     //time it only checks one level deep.
-                    if (!btest && typeof bta[b + 1] === "string" && typeof nta[n] === "string" && bta[b + 1].replace(tb, "") === nta[n].replace(tb, "") && (typeof nta[n - 1] !== "string" || (bta[b].replace(tb, "") !== nta[n - 1].replace(tb, "")))) {
-                        btest = true;
-                    } else if (!ntest && typeof nta[n + 1] === "string" && typeof bta[b] === "string" && nta[n + 1].replace(tb, "") === bta[b].replace(tb, "") && (typeof bta[b - 1] !== "string" || (nta[n].replace(tb, "") !== bta[b - 1].replace(tb, "")))) {
-                        ntest = true;
+                    if (tab !== "") {
+                        if (!btest && typeof bta[b + 1] === "string" && typeof nta[n] === "string" && btab[b + 1] === ntab[n] && btab[b] !== ntab[n] && (typeof nta[n - 1] !== "string" || (btab[b] !== ntab[n - 1]))) {
+                            btest = true;
+                        } else if (!ntest && typeof nta[n + 1] === "string" && typeof bta[b] === "string" && ntab[n + 1] === btab[b] && ntab[n] !== btab[b] && (typeof bta[b - 1] !== "string" || (ntab[n] !== btab[b - 1]))) {
+                            ntest = true;
+                        }
                     }
 
                     //this is the final of the three primary components
