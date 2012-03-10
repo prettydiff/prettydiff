@@ -555,7 +555,8 @@ var diffview = function (args) {
                             i = 0,
                             j = 0,
                             o = 0,
-                            p = [];
+                            p = [],
+                            q = false;
 
                         //build out static indexes for undefined areas
                         //and find where the differences start
@@ -564,51 +565,40 @@ var diffview = function (args) {
                                 r = i;
                             } else {
                                 if (!n && ax[i] !== bx[i] && !em.test(ax[i]) && !em.test(bx[i]) && !em.test(ax[i - 1]) && !em.test(bx[i - 1])) {
-                                    if (typeof ax[i - 2] === "string" && /(<\/em>)$/.test(ax[i - 2]) && ax[i - 1] === " ") {
-                                        ax[i - 2] = ax[i - 2].replace(/(<\/em>)$/, "");
-                                        bx[i - 2] = bx[i - 2].replace(/(<\/em>)$/, "");
-                                    } else {
-                                        if (ax[i] !== undefined && bx[i] !== undefined) {
-                                            ax[i] = "<em>" + ax[i];
-                                            bx[i] = "<em>" + bx[i];
-                                            errorout += 1;
-                                        } else if (ax[i] === undefined && bx[i] !== undefined) {
-                                            ax[i] = "<em>";
-                                            bx[i] = "<em>" + bx[i];
-                                            errorout += 1;
-                                        } else if (ax[i] !== undefined && bx[i] === undefined) {
-                                            ax[i] = "<em>" + ax[i];
-                                            bx[i] = "<em>";
-                                            errorout += 1;
-                                        }
+
+                                    if (typeof ax[i - 1] === "string" && typeof bx[i - 1] === "string") {
+                                        ax[i - 1] = ax[i - 1] + "<em>";
+                                        bx[i - 1] = bx[i - 1] + "<em>";
+                                        errorout += 1;
+                                        n = true;
+                                        break;
+                                    } else if (typeof ax[i - 1] !== "string" && typeof bx[i - 1] === "string") {
+                                        ax[i - 1] = "<em>";
+                                        bx[i - 1] = bx[i] + "<em>";
+                                        errorout += 1;
+                                        n = true;
+                                        break;
+                                    } else if (typeof ax[i - 1] === "string" && typeof bx[i - 1] !== "string") {
+                                        ax[i - 1] = ax[i] + "<em>";
+                                        bx[i - 1] = "<em>";
+                                        errorout += 1;
+                                        n = true;
+                                        break;
                                     }
-                                    n = true;
                                 } else if (ax[i] === undefined && (bx[i] === "" || bx[i] === " ")) {
                                     ax[i] = "";
                                 } else if (bx[i] === undefined && (ax[i] === "" || ax[i] === " ")) {
                                     bx[i] = "";
                                 }
-                                break;
                             }
                         }
 
                         //this is voodoo magic.
                         for (j = i + 1; j < zx; j += 1) {
-                            if (typeof ax[j] !== "undefined" && typeof bx[j] === "undefined") {
+                            if (typeof ax[j] === "string" && typeof bx[j] !== "string") {
                                 bx[j] = "";
-                            } else if (typeof ax[j] === "undefined" && typeof bx[j] !== "undefined") {
+                            } else if (typeof ax[j] !== "string" && typeof bx[j] === "string") {
                                 ax[j] = "";
-                            } else if (n && (ax[j] === bx[j] || ax[j + 1] === bx[j + 1])) {
-                                if (ax[j] === bx[j]) {
-                                    ax[j - 1] = ax[j - 1] + "</em>";
-                                    bx[j - 1] = bx[j - 1] + "</em>";
-                                } else {
-                                    ax[j] = ax[j] + "</em>";
-                                    bx[j] = bx[j] + "</em>";
-                                }
-                                n = false;
-                                k = j + 1;
-                                break;
                             } else if (n) {
                                 for (o = j; o < zx; o += 1) {
                                     if (ax[j - 1] === "<em>" + bx[o] && em.test(bx[j - 1]) && (j - 2 < 0 || ax[j - 2] !== bx[o + 1])) {
@@ -639,7 +629,7 @@ var diffview = function (args) {
                                         }
                                         n = false;
                                         break;
-                                    } else if (bx[j] === ax[o]) {
+                                    } else if (bx[j] === ax[o] && ((ax[o - 1] !== ")" && ax[o - 1] !== "}" && ax[o - 1] !== "]" && ax[o - 1] !== ">" && bx[j - 1] !== ")" && bx[j - 1] !== "}" && bx[j - 1] !== "]" && bx[j - 1] !== ">") || (o === zx - 1 || bx[j + 1] === ax[o + 1]))) {
                                         if (bx[j - 1] === "<em>" + ax[o - 1]) {
                                             bx[j - 1] = bx[j - 1].replace(/<em>/, "<em></em>");
                                             ax[o - 1] = ax[o - 1] + "</em>";
@@ -651,9 +641,12 @@ var diffview = function (args) {
                                             ax[o - 2] = ax[o - 2] + "</em>";
                                             bx[j - 2] = bx[j - 2] + "<em></em>";
                                             bx[j - 1] = bx[j - 1].replace(/<em>/, "");
-                                        } else {
+                                        } else if (ax[o - 1] !== bx[j - 1] && !em.test(ax[o - 1])) {
                                             ax[o - 1] = ax[o - 1] + "</em>";
                                             bx[j - 1] = bx[j - 1] + "</em>";
+                                        } else {
+                                            ax[o - 1] = "</em>" + ax[o - 1];
+                                            bx[j - 1] = "</em>" + bx[j - 1];
                                         }
                                         k = o;
                                         if (o - j > 0) {
@@ -665,7 +658,7 @@ var diffview = function (args) {
                                         }
                                         n = false;
                                         break;
-                                    } else if (ax[j] === bx[o]) {
+                                    } else if (ax[j] === bx[o] && ((bx[o - 1] !== ")" && bx[o - 1] !== "}" && bx[o - 1] !== "]" && bx[o - 1] !== ">" && ax[j - 1] !== ")" && ax[j - 1] !== "}" && ax[j - 1] !== "]" && ax[j - 1] !== ">") || (o === zx - 1 || ax[j + 1] === bx[o + 1]))) {
                                         if (ax[j - 1] === "<em>" + bx[o - 1]) {
                                             ax[j - 1] = ax[j - 1].replace(/<em>/, "<em></em>");
                                             bx[o - 1] = bx[o - 1] + "</em>";
@@ -677,9 +670,12 @@ var diffview = function (args) {
                                             bx[o - 2] = bx[o - 2] + "</em>";
                                             ax[j - 2] = ax[j - 2] + "<em></em>";
                                             ax[j - 1] = ax[j - 1].replace(/<em>/, "");
-                                        } else {
+                                        } else if (bx[o - 1] !== ax[j - 1] && !em.test(bx[o - 1])) {
                                             bx[o - 1] = bx[o - 1] + "</em>";
                                             ax[j - 1] = ax[j - 1] + "</em>";
+                                        } else {
+                                            bx[o - 1] = "</em>" + bx[o - 1];
+                                            ax[j - 1] = "</em>" + ax[j - 1];
                                         }
                                         k = o;
                                         if (o - j > 0) {
@@ -700,25 +696,22 @@ var diffview = function (args) {
                                 //need this.
                                 if (n) {
                                     for (o = j + 1; o < zx - 1; o += 1) {
-                                        if (typeof ax[o - 1] !== "string" && ax[j + 1] === bx[o]) {
-                                            ax[j] += "</em>";
-                                            bx[o - 1] += "</em>";
-                                            k = o + 1;
-                                            n = false;
-                                            break;
-                                        } else if (typeof bx[o - 1] !== "string" && bx[j + 1] === ax[o]) {
-                                            bx[j] += "</em>";
-                                            ax[o - 1] += "</em>";
-                                            k = o + 1;
-                                            n = false;
-                                            break;
+                                        if (typeof ax[o] !== "string") {
+                                            ax.push("");
+                                        } else if (typeof bx[o] !== "string") {
+                                            bx.push("");
                                         } else if (ax[o] === bx[o] && typeof ax[o - 1] === "string" && typeof bx[o - 1] === "string") {
                                             ax[o - 1] = ax[o - 1] + "</em>";
                                             bx[o - 1] = bx[o - 1] + "</em>";
                                             k = o;
                                             n = false;
+                                            q = true;
                                             break;
                                         }
+                                    }
+                                    if (q) {
+                                        q = false;
+                                        break;
                                     }
                                 }
                             }
