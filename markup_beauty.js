@@ -566,15 +566,14 @@ var markup_beauty = function (args) {
                             if (a[a.length - 1] === c[0]) {
                                 if (b === 1) {
                                     return e + a.join("");
-                                } else {
-                                    for (d = 0; d < b; d += 1) {
-                                        if (c[d] !== a[a.length - (d + 1)]) {
-                                            break;
-                                        }
+                                }
+                                for (d = 0; d < b; d += 1) {
+                                    if (c[d] !== a[a.length - (d + 1)]) {
+                                        break;
                                     }
-                                    if (d === b) {
-                                        return e + a.join("");
-                                    }
+                                }
+                                if (d === b) {
+                                    return e + a.join("");
                                 }
                             }
                         }
@@ -655,115 +654,115 @@ var markup_beauty = function (args) {
                         return d;
                     },
 
-					loop = y.length;
-					
-                    //This loop sorts markup code into various
-                    //designated types.  The build array holds
-                    //particular code while the token array holds the
-                    //designation for that code.  The argument supplied
-                    //to the "b" function is the syntax ending for a
-                    //given tag type.  I have designed these types but
-                    //others can be added:
-                    //   * SGML and XML tag comments
-                    //   * SSI Apache instructions
-                    //   * SGML declarations, such as the HTML Doctype
-                    //   * XML processing declarations
-                    //   * PHP tags - These tags must be opened with
-                    //         <?php and not <?.
-                    //   * SCRIPT tags for html
-                    //   * STYLE tags for html
-                    //   * ASP tags
-                    //   * ending tags of a tag pair
-                    //   * singelton tags, such as
-                    //         <br/>, <meta/>, <link/>
-                    //   * starting tags of a tag pair
-                    //
-                    //   !Tags starting with only <? are not considered,
-                    //so by default these are treated as a start tag.
-                    //Use the correct PHP tags!!!!
-                    //   !Singelton tags must end with "/>" or they will
-                    //also be regarded as start tags.  This code is
-                    //vocabulary independent and I do not read minds.
-                        for (i = 0; i < loop; i += 1) {
-                            if (y[i] === "<" && y[i + 1] === "!" && y[i + 2] === "-" && y[i + 3] === "-" && y[i + 4] !== "#" && token[token.length - 1] !== "T_script" && token[token.length - 1] !== "T_style") {
-                                build.push(b("-->"));
-                                token.push("T_comment");
-                            } else if (y[i] === "<" && y[i + 1] === "!" && y[i + 2] === "-" && y[i + 3] === "-" && y[i + 4] === "#") {
-                                build.push(b("-->"));
-                                token.push("T_ssi");
-                            } else if (y[i] === "<" && y[i + 1] === "!" && y[i + 2] !== "-" && token[token.length - 1] !== "T_script") {
-                                build.push(b(">"));
-                                token.push("T_sgml");
-                            } else if (y[i] === "<" && y[i + 1] === "?" && y[i + 2].toLowerCase() === "x" && y[i + 3].toLowerCase() === "m" && y[i + 4].toLowerCase() === "l") {
-                                build.push(b("?>"));
-                                token.push("T_xml");
-                            } else if (y[i] === "<" && y[i + 1] === "?" && y[i + 2].toLowerCase() === "p" && y[i + 3].toLowerCase() === "h" && y[i + 4].toLowerCase() === "p") {
-                                build.push(b("?>"));
-                                token.push("T_php");
-                            } else if (y[i] === "<" && y[i + 1].toLowerCase() === "s" && y[i + 2].toLowerCase() === "c" && y[i + 3].toLowerCase() === "r" && y[i + 4].toLowerCase() === "i" && y[i + 5].toLowerCase() === "p" && y[i + 6].toLowerCase() === "t") {
-                                build.push(b(">"));
-                                //contents of a script tag are
-                                //JavaScript if value of type attribute
-                                //is:
-                                //* not present
-                                //text/javascript
-                                //application/javascript
-                                //application/x-javascript
-                                //text/ecmascript
-                                //application/ecmascript
-                                a = build[build.length - 1].toLowerCase().replace(/'/g, "\"");
-                                if (a.charAt(a.length - 2) === "/") {
+                    loop = y.length;
+
+                //This loop sorts markup code into various
+                //designated types.  The build array holds
+                //particular code while the token array holds the
+                //designation for that code.  The argument supplied
+                //to the "b" function is the syntax ending for a
+                //given tag type.  I have designed these types but
+                //others can be added:
+                //   * SGML and XML tag comments
+                //   * SSI Apache instructions
+                //   * SGML declarations, such as the HTML Doctype
+                //   * XML processing declarations
+                //   * PHP tags - These tags must be opened with
+                //         <?php and not <?.
+                //   * SCRIPT tags for html
+                //   * STYLE tags for html
+                //   * ASP tags
+                //   * ending tags of a tag pair
+                //   * singelton tags, such as
+                //         <br/>, <meta/>, <link/>
+                //   * starting tags of a tag pair
+                //
+                //   !Tags starting with only <? are not considered,
+                //so by default these are treated as a start tag.
+                //Use the correct PHP tags!!!!
+                //   !Singelton tags must end with "/>" or they will
+                //also be regarded as start tags.  This code is
+                //vocabulary independent and I do not read minds.
+                for (i = 0; i < loop; i += 1) {
+                    if (y[i] === "<" && y[i + 1] === "!" && y[i + 2] === "-" && y[i + 3] === "-" && y[i + 4] !== "#" && token[token.length - 1] !== "T_script" && token[token.length - 1] !== "T_style") {
+                        build.push(b("-->"));
+                        token.push("T_comment");
+                    } else if (y[i] === "<" && y[i + 1] === "!" && y[i + 2] === "-" && y[i + 3] === "-" && y[i + 4] === "#") {
+                        build.push(b("-->"));
+                        token.push("T_ssi");
+                    } else if (y[i] === "<" && y[i + 1] === "!" && y[i + 2] !== "-" && token[token.length - 1] !== "T_script") {
+                        build.push(b(">"));
+                        token.push("T_sgml");
+                    } else if (y[i] === "<" && y[i + 1] === "?" && y[i + 2].toLowerCase() === "x" && y[i + 3].toLowerCase() === "m" && y[i + 4].toLowerCase() === "l") {
+                        build.push(b("?>"));
+                        token.push("T_xml");
+                    } else if (y[i] === "<" && y[i + 1] === "?" && y[i + 2].toLowerCase() === "p" && y[i + 3].toLowerCase() === "h" && y[i + 4].toLowerCase() === "p") {
+                        build.push(b("?>"));
+                        token.push("T_php");
+                    } else if (y[i] === "<" && y[i + 1].toLowerCase() === "s" && y[i + 2].toLowerCase() === "c" && y[i + 3].toLowerCase() === "r" && y[i + 4].toLowerCase() === "i" && y[i + 5].toLowerCase() === "p" && y[i + 6].toLowerCase() === "t") {
+                        build.push(b(">"));
+                        //contents of a script tag are
+                        //JavaScript if value of type attribute
+                        //is:
+                        //* not present
+                        //text/javascript
+                        //application/javascript
+                        //application/x-javascript
+                        //text/ecmascript
+                        //application/ecmascript
+                        a = build[build.length - 1].toLowerCase().replace(/'/g, "\"");
+                        if (a.charAt(a.length - 2) === "/") {
+                            token.push("T_singleton");
+                        } else if (a.indexOf(" type=\"") === -1 || a.indexOf(" type=\"text/javascript\"") !== -1 || a.indexOf(" type=\"application/javascript\"") !== -1 || a.indexOf(" type=\"application/x-javascript\"") !== -1 || a.indexOf(" type=\"text/ecmascript\"") !== -1 || a.indexOf(" type=\"application/ecmascript\"") !== -1) {
+                            token.push("T_script");
+                        } else {
+                            token.push("T_tag_start");
+                        }
+                    } else if (y[i] === "<" && y[i + 1].toLowerCase() === "s" && y[i + 2].toLowerCase() === "t" && y[i + 3].toLowerCase() === "y" && y[i + 4].toLowerCase() === "l" && y[i + 5].toLowerCase() === "e") {
+                        build.push(b(">"));
+                        //contents of a style tag are CSS if
+                        //value of type attribute is:
+                        //* not present
+                        //text/css
+                        a = build[build.length - 1].toLowerCase().replace(/'/g, "\"");
+                        if (a.indexOf(" type=\"") === -1 || a.indexOf(" type=\"text/css\"") !== -1) {
+                            token.push("T_style");
+                        } else {
+                            token.push("T_tag_start");
+                        }
+                    } else if (y[i] === "<" && y[i + 1] === "%") {
+                        build.push(b("%>"));
+                        token.push("T_asp");
+                    } else if (y[i] === "<" && y[i + 1] === "/") {
+                        build.push(b(">"));
+                        token.push("T_tag_end");
+                    } else if (y[i] === "<" && token[token.length - 1] !== "T_script" && token[token.length - 1] !== "T_style" && (y[i + 1] !== "!" || y[i + 1] !== "?" || y[i + 1] !== "/" || y[i + 1] !== "%")) {
+                        for (c = i; c < loop; c += 1) {
+                            if (y[c] !== "?" && y[c] !== "%") {
+                                if (y[c] === "/" && y[c + 1] === ">") {
+                                    build.push(b("/>"));
                                     token.push("T_singleton");
-                                } else if (a.indexOf(" type=\"") === -1 || a.indexOf(" type=\"text/javascript\"") !== -1 || a.indexOf(" type=\"application/javascript\"") !== -1 || a.indexOf(" type=\"application/x-javascript\"") !== -1 || a.indexOf(" type=\"text/ecmascript\"") !== -1 || a.indexOf(" type=\"application/ecmascript\"") !== -1) {
-                                    token.push("T_script");
-                                } else {
+                                    break;
+                                } else if (y[c + 1] === ">") {
+                                    build.push(b(">"));
                                     token.push("T_tag_start");
-                                }
-                            } else if (y[i] === "<" && y[i + 1].toLowerCase() === "s" && y[i + 2].toLowerCase() === "t" && y[i + 3].toLowerCase() === "y" && y[i + 4].toLowerCase() === "l" && y[i + 5].toLowerCase() === "e") {
-                                build.push(b(">"));
-                                //contents of a style tag are CSS if
-                                //value of type attribute is:
-                                //* not present
-                                //text/css
-                                a = build[build.length - 1].toLowerCase().replace(/'/g, "\"");
-                                if (a.indexOf(" type=\"") === -1 || a.indexOf(" type=\"text/css\"") !== -1) {
-                                    token.push("T_style");
-                                } else {
-                                    token.push("T_tag_start");
-                                }
-                            } else if (y[i] === "<" && y[i + 1] === "%") {
-                                build.push(b("%>"));
-                                token.push("T_asp");
-                            } else if (y[i] === "<" && y[i + 1] === "/") {
-                                build.push(b(">"));
-                                token.push("T_tag_end");
-                            } else if (y[i] === "<" && token[token.length - 1] !== "T_script" && token[token.length - 1] !== "T_style" && (y[i + 1] !== "!" || y[i + 1] !== "?" || y[i + 1] !== "/" || y[i + 1] !== "%")) {
-                                for (c = i; c < loop; c += 1) {
-                                    if (y[c] !== "?" && y[c] !== "%") {
-                                        if (y[c] === "/" && y[c + 1] === ">") {
-                                            build.push(b("/>"));
-                                            token.push("T_singleton");
-                                            break;
-                                        } else if (y[c + 1] === ">") {
-                                            build.push(b(">"));
-                                            token.push("T_tag_start");
-                                            break;
-                                        }
-                                    }
-                                }
-                            } else if (y[i - 1] === ">" && (y[i] !== "<" || (y[i] !== " " && y[i + 1] !== "<"))) {
-                                if (token[token.length - 1] === "T_script") {
-                                    build.push(cgather("script"));
-                                    token.push("T_content");
-                                } else if (token[token.length - 1] === "T_style") {
-                                    build.push(cgather("style"));
-                                    token.push("T_content");
-                                } else if (y[i - 1] + y[i] + y[i + 1] !== "> <") {
-                                    build.push(cgather("other"));
-                                    token.push("T_content");
+                                    break;
                                 }
                             }
                         }
+                    } else if (y[i - 1] === ">" && (y[i] !== "<" || (y[i] !== " " && y[i + 1] !== "<"))) {
+                        if (token[token.length - 1] === "T_script") {
+                            build.push(cgather("script"));
+                            token.push("T_content");
+                        } else if (token[token.length - 1] === "T_style") {
+                            build.push(cgather("style"));
+                            token.push("T_content");
+                        } else if (y[i - 1] + y[i] + y[i + 1] !== "> <") {
+                            build.push(cgather("other"));
+                            token.push("T_content");
+                        }
+                    }
+                }
             }()),
 
             //This function provides structual relevant descriptions for
@@ -881,14 +880,15 @@ var markup_beauty = function (args) {
                                 m -= 1;
                             } else if (cinfo[k] === "start" && level[k] !== "x") {
                                 return level.push(level[k] + m);
-                            } else if (k === 0) {
+                            }
+                            if (k === 0) {
                                 if (cinfo[k] !== "start") {
                                     return level.push(0);
-                                } else if (cinfo[i] === "mixed_start" || cinfo[i] === "content" || (cinfo[i] === "singleton" && build[i].charAt(0) !== " ")) {
-                                    return level.push("x");
-                                } else {
-                                    return level.push(1);
                                 }
+                                if (cinfo[i] === "mixed_start" || cinfo[i] === "content" || (cinfo[i] === "singleton" && build[i].charAt(0) !== " ")) {
+                                    return level.push("x");
+                                }
+                                return level.push(1);
                             }
                         }
                     },
@@ -976,19 +976,17 @@ var markup_beauty = function (args) {
                                                 if (l !== 0) {
                                                     if (level[i - 1] === "x") {
                                                         return l - 1;
-                                                    } else {
-                                                        return l;
-                                                    }
-                                                } else {
-                                                    for (s; s < i; s += 1) {
-                                                        if (cinfo[s] === "start") {
-                                                            l += 1;
-                                                        } else if (cinfo[s] === "end") {
-                                                            l -= 1;
-                                                        }
                                                     }
                                                     return l;
                                                 }
+                                                for (s; s < i; s += 1) {
+                                                    if (cinfo[s] === "start") {
+                                                        l += 1;
+                                                    } else if (cinfo[s] === "end") {
+                                                        l -= 1;
+                                                    }
+                                                }
+                                                return l;
                                             };
                                         for (y = i - 1; y > 0; y -= 1) {
                                             if (cinfo[y] !== "mixed_end" || (cinfo[y] === "start" && level[y] !== "x")) {
@@ -996,24 +994,24 @@ var markup_beauty = function (args) {
                                                     q = true;
                                                     if (cinfo[i - 1] === "mixed_both" && level[i - 1] === level[y] - t()) {
                                                         return level.push(level[y] - (t() + 1));
-                                                    } else if (cinfo[i - 2] === "start" && (cinfo[i - 1] === "mixed_end" || cinfo[i - 1] === "mixed_both")) {
+                                                    }
+                                                    if (cinfo[i - 2] === "start" && (cinfo[i - 1] === "mixed_end" || cinfo[i - 1] === "mixed_both")) {
                                                         return level.push(level[y]);
-                                                    } else if (level[y] !== "x") {
+                                                    }
+                                                    if (level[y] !== "x") {
                                                         if (cinfo[y] === "mixed_both" && y !== i - t()) {
                                                             if (y === i - 1) {
                                                                 return level.push(level[y] - 1);
-                                                            } else {
-                                                                return level.push(level[y] + t());
                                                             }
-                                                        } else if (cinfo[i - 1] === "mixed_end" && t() === 0) {
-                                                            return level.push(level[y] - 1);
-                                                        } else {
-                                                            if (level[i - 1] === "x" && (cinfo[i - 2] !== "end" || (cinfo[i - 2] === "end" && level[i - 2] !== "x"))) {
-                                                                return level.push(level[y] + t());
-                                                            } else {
-                                                                return level.push(level[y] - t());
-                                                            }
+                                                            return level.push(level[y] + t());
                                                         }
+                                                        if (cinfo[i - 1] === "mixed_end" && t() === 0) {
+                                                            return level.push(level[y] - 1);
+                                                        }
+                                                        if (level[i - 1] === "x" && (cinfo[i - 2] !== "end" || (cinfo[i - 2] === "end" && level[i - 2] !== "x"))) {
+                                                            return level.push(level[y] + t());
+                                                        }
+                                                        return level.push(level[y] - t());
                                                     }
                                                 } else {
                                                     q = false;
@@ -1053,66 +1051,65 @@ var markup_beauty = function (args) {
                                         }
                                         if (cinfo[k] === "start") {
                                             return c("end");
-                                        } else {
-                                            return level.push(level[k] - 1);
                                         }
-                                    } else if (cinfo[i - 2] === "start" && level[i - 2] !== "x") {
-                                        return level.push(level[i - 2] - 1);
-                                    } else {
-                                        return level.push(level[i - 1] - 1);
+                                        return level.push(level[k] - 1);
                                     }
+                                    if (cinfo[i - 2] === "start" && level[i - 2] !== "x") {
+                                        return level.push(level[i - 2] - 1);
+                                    }
+                                    return level.push(level[i - 1] - 1);
 
                                     //If the prior two elements are not
                                     //an empty pair voodoo magic must
                                     //occur.
-                                } else {
-
-                                    //u() makes a context decision based
-                                    //upon the placement of the current
-                                    //end tag relevant to the prior
-                                    //indented start tag.
-                                    u();
-                                    if (q) {
-                                        return;
-                                    } else {
-                                        return (function () {
-                                            var y = 0,
-                                                q = 0;
-                                            for (q = r(); q > 0; q -= 1) {
-                                                if (cinfo[q] === "start") {
-                                                    y += 1;
-                                                } else if (cinfo[q] === "end") {
-                                                    y -= 1;
-                                                }
-                                                if (level[q] !== "x") {
-                                                    if (cinfo[q] === "end" && cinfo[q - 1] === "start" && level[q - 1] !== "x") {
-                                                        return level.push(level[q]);
-                                                    } else if (level[i - 1] === "x" && build[i].charAt(0) !== " " && cinfo[i - 1] !== "mixed_end" && (cinfo[i - 2] !== "end" || level[i - 2] !== "x") && (cinfo[i - 3] !== "end" || level[i - 3] !== "x")) {
-                                                        return level.push("x");
-                                                    } else {
-                                                        return level.push(level[q] + (y - 1));
-                                                    }
-                                                }
-                                            }
-                                            y = 0;
-                                            for (q = i; q > -1; q -= 1) {
-                                                if (cinfo[q] === "start") {
-                                                    y += 1;
-                                                } else if (cinfo[q] === "end") {
-                                                    y -= 1;
-                                                }
-                                            }
-                                            return level.push(y);
-                                        }());
-                                    }
                                 }
+
+                                //u() makes a context decision based
+                                //upon the placement of the current
+                                //end tag relevant to the prior
+                                //indented start tag.
+                                u();
+                                if (q) {
+                                    return;
+                                }
+                                return (function () {
+                                    var y = 0,
+                                        q = 0;
+                                    for (q = r(); q > 0; q -= 1) {
+                                        if (cinfo[q] === "start") {
+                                            y += 1;
+                                        } else if (cinfo[q] === "end") {
+                                            y -= 1;
+                                        }
+                                        if (level[q] !== "x") {
+                                            if (cinfo[q] === "end" && cinfo[q - 1] === "start" && level[q - 1] !== "x") {
+                                                return level.push(level[q]);
+                                            }
+                                            if (level[i - 1] === "x" && build[i].charAt(0) !== " " && cinfo[i - 1] !== "mixed_end" && (cinfo[i - 2] !== "end" || level[i - 2] !== "x") && (cinfo[i - 3] !== "end" || level[i - 3] !== "x")) {
+                                                return level.push("x");
+                                            }
+                                            return level.push(level[q] + (y - 1));
+                                        }
+                                    }
+                                    y = 0;
+                                    for (q = i; q > -1; q -= 1) {
+                                        if (cinfo[q] === "start") {
+                                            y += 1;
+                                        } else if (cinfo[q] === "end") {
+                                            y -= 1;
+                                        }
+                                    }
+                                    return level.push(y);
+                                }());
                             };
 
                         if (cinfo[i - 1] === "end" || cinfo[i - 1] === "mixed_both" || cinfo[i - 1] === "mixed_end") {
                             return w();
-                        } else if (cinfo[i - 1] === "mixed_start" || cinfo[i - 1] === "content") {
+                        }
+                        if (cinfo[i - 1] === "mixed_start" || cinfo[i - 1] === "content") {
                             return level.push("x");
-                        } else if (cinfo[i - 1] === "external") {
+                        }
+                        if (cinfo[i - 1] === "external") {
                             return (function () {
                                 var a = 0,
                                     yy = -1;
@@ -1131,7 +1128,8 @@ var markup_beauty = function (args) {
                                 }
                                 return level.push(level[a] + yy);
                             }());
-                        } else if (build[i].charAt(0) !== " ") {
+                        }
+                        if (build[i].charAt(0) !== " ") {
                             if ((cinfo[i - 1] === "singleton" || cinfo[i - 1] === "content") && level[i - 1] === "x") {
                                 return level.push("x");
                             }
@@ -1147,26 +1145,28 @@ var markup_beauty = function (args) {
                                     if (level[a] !== 0 && level[a] !== "x" && cinfo[i - 1] !== "start") {
                                         if (cinfo[a] === "mixed_both" || cinfo[a] === "mixed_start") {
                                             return level.push(level[a] - yy);
-                                        } else if (level[a] === yy || (cinfo[a] === "singleton" && (cinfo[a - 1] === "content" || cinfo[a - 1] === "mixed_start"))) {
-                                            return level.push(level[a]);
-                                        } else {
-                                            return level.push(level[a] - 1);
                                         }
+                                        if (level[a] === yy || (cinfo[a] === "singleton" && (cinfo[a - 1] === "content" || cinfo[a - 1] === "mixed_start"))) {
+                                            return level.push(level[a]);
+                                        }
+                                        return level.push(level[a] - 1);
                                         //Find the previous start that is
                                         //not indented
-                                    } else if (cinfo[a] === "start" && level[a] === "x") {
+                                    }
+                                    if (cinfo[a] === "start" && level[a] === "x") {
                                         return z(a);
                                         //If the previous tag is an indented
                                         //start
-                                    } else if (cinfo[i - 1] === "start") {
+                                    }
+                                    if (cinfo[i - 1] === "start") {
                                         return level.push(level[a]);
                                     }
                                 }
                                 return level.push(0);
                             }());
-                        } else {
-                            return c("end");
                         }
+                        return c("end");
+
                     },
 
                     //This function is used by cinfo values of "start"
@@ -1246,7 +1246,8 @@ var markup_beauty = function (args) {
                                         if (k > 0) {
                                             if (level[j + 1] === "x") {
                                                 return level.push(((u) * -1) - 1);
-                                            } else if (cinfo[j] !== "external" && (args.comments !== "noindent" || (args.comments === "noindent" && cinfo[j] !== "comment"))) {
+                                            }
+                                            if (cinfo[j] !== "external" && (args.comments !== "noindent" || (args.comments === "noindent" && cinfo[j] !== "comment"))) {
                                                 return level.push((u + 1) * -1);
                                             }
                                         } else {
@@ -1260,18 +1261,18 @@ var markup_beauty = function (args) {
                                     if (level[j] !== "x" && level[i - 1] !== "x") {
                                         if (cinfo[j] === "start" || cinfo[j] === "end") {
                                             return level.push(level[j] + v);
-                                        } else {
-                                            return level.push(level[j] + v - 1);
                                         }
-                                    } else if (u === -1 && level[j] === "x") {
+                                        return level.push(level[j] + v - 1);
+                                    }
+                                    if (u === -1 && level[j] === "x") {
                                         break;
                                     } else if (u === 1 && level[j] !== "x" && cinfo[j] !== "mixed_start" && cinfo[j] !== "content") {
                                         if (cinfo[j - 1] === "mixed_end" || (level[i - 1] === "x" && cinfo[i - 1] === "end" && cinfo[j] !== "end")) {
                                             return level.push(level[j] - u - 1);
-                                        } else {
-                                            return level.push(level[j] - u);
                                         }
-                                    } else if (u === 0 && level[j] !== "x") {
+                                        return level.push(level[j] - u);
+                                    }
+                                    if (u === 0 && level[j] !== "x") {
                                         return c("start");
                                     }
                                 }
@@ -1285,34 +1286,40 @@ var markup_beauty = function (args) {
 
                             //For a tag to become void of whitespace
                             //cushioning
-                        } else if (cinfo[k] === "mixed_start" || cinfo[k] === "content" || cinfo[i - 1] === "mixed_start" || cinfo[i - 1] === "content" || (cinfo[i] === "singleton" && (cinfo[i - 1] === "start" || cinfo[i - 1] === "singleton") && build[i].charAt(0) !== " ")) {
+                        }
+                        if (cinfo[k] === "mixed_start" || cinfo[k] === "content" || cinfo[i - 1] === "mixed_start" || cinfo[i - 1] === "content" || (cinfo[i] === "singleton" && (cinfo[i - 1] === "start" || cinfo[i - 1] === "singleton") && build[i].charAt(0) !== " ")) {
                             return level.push("x");
 
                             //Simple regular tabbing
-                        } else if ((cinfo[i - 1] === "comment" && level[i - 1] === 0) || ((cinfo[m] === "mixed_start" || cinfo[m] === "content") && cinfo[l] === "end" && (cinfo[k] === "mixed_end" || cinfo[k] === "mixed_both"))) {
+                        }
+                        if ((cinfo[i - 1] === "comment" && level[i - 1] === 0) || ((cinfo[m] === "mixed_start" || cinfo[m] === "content") && cinfo[l] === "end" && (cinfo[k] === "mixed_end" || cinfo[k] === "mixed_both"))) {
                             return c("start");
 
                             //if the prior item is an indented comment
                             //then go with it
-                        } else if (cinfo[i - 1] === "comment" && level[i - 1] !== "x") {
+                        }
+                        if (cinfo[i - 1] === "comment" && level[i - 1] !== "x") {
                             return level.push(level[i - 1]);
-                        } else if ((cinfo[k] === "start" && level[k] === "x") || (cinfo[k] !== "mixed_end" && cinfo[k] !== "mixed_both" && level[k] === "x")) {
+                        }
+                        if ((cinfo[k] === "start" && level[k] === "x") || (cinfo[k] !== "mixed_end" && cinfo[k] !== "mixed_both" && level[k] === "x")) {
                             if (level[i - 1] === "x" && build[i].charAt(0) !== " " && cinfo[i - 1] !== "start" && build[i - 1].charAt(build[i - 1].length - 1) !== " ") {
                                 if ((cinfo[i - 1] === "end" && cinfo[i - 2] === "end") || (cinfo[i - 1] === "end" && cinfo[i] !== "end" && cinfo[i + 1] !== "mixed_start" && cinfo[i + 1] !== "content")) {
                                     return c("start");
-                                } else {
-                                    return level.push("x");
                                 }
-                            } else {
-                                return p();
+                                return level.push("x");
+
                             }
-                        } else if (cinfo[k] === "end" && level[k] !== "x" && (cinfo[k - 1] !== "start" || (cinfo[k - 1] === "start" && level[k - 1] !== "x"))) {
+                            return p();
+
+                        }
+                        if (cinfo[k] === "end" && level[k] !== "x" && (cinfo[k - 1] !== "start" || (cinfo[k - 1] === "start" && level[k - 1] !== "x"))) {
                             if (level[k] < 0) {
                                 return c("start");
-                            } else {
-                                return level.push(level[k]);
                             }
-                        } else if (cinfo[m] !== "mixed_start" && cinfo[m] !== "content" && (cinfo[k] === "mixed_end" || cinfo[k] === "mixed_both")) {
+                            return level.push(level[k]);
+
+                        }
+                        if (cinfo[m] !== "mixed_start" && cinfo[m] !== "content" && (cinfo[k] === "mixed_end" || cinfo[k] === "mixed_both")) {
                             return (function () {
                                 var a = 0,
                                     l = 0,
@@ -1330,33 +1337,37 @@ var markup_beauty = function (args) {
                                     }
                                     if (cinfo[k] === "mixed_both" && level[a] !== "x") {
                                         return level.push(level[a]);
-                                    } else if (cinfo[a] !== "comment" && cinfo[a] !== "content" && cinfo[a] !== "external" && cinfo[a] !== "mixed_end" && level[a] !== "x") {
+                                    }
+                                    if (cinfo[a] !== "comment" && cinfo[a] !== "content" && cinfo[a] !== "external" && cinfo[a] !== "mixed_end" && level[a] !== "x") {
                                         if (cinfo[a] === "start" && level[a] !== "x") {
                                             if (cinfo[i - 1] !== "end") {
                                                 return level.push(level[a] + (p - l));
-                                            } else if ((level[a] === level[a - 1] && cinfo[a - 1] !== "end" && level[a + 1] !== "x") || (cinfo[i - 2] === "start" && level[i - 2] !== "x" && level[i - 1] === "x")) {
+                                            }
+                                            if ((level[a] === level[a - 1] && cinfo[a - 1] !== "end" && level[a + 1] !== "x") || (cinfo[i - 2] === "start" && level[i - 2] !== "x" && level[i - 1] === "x")) {
                                                 return level.push(level[a] + 1);
-                                            } else if (p <= 1) {
+                                            }
+                                            if (p <= 1) {
                                                 return level.push(level[a]);
                                             }
                                         } else if (l > 0) {
                                             if (p > 1) {
                                                 if (m !== 0) {
                                                     return c("start");
-                                                } else {
-                                                    return level.push(level[a] + 1);
                                                 }
-                                            } else {
-                                                return level.push(level[a] - l + 1);
+                                                return level.push(level[a] + 1);
+
                                             }
-                                        } else {
-                                            return level.push(level[a] + p);
+                                            return level.push(level[a] - l + 1);
+
                                         }
+                                        return level.push(level[a] + p);
+
                                     }
                                 }
                                 return c("start");
                             }());
-                        } else if (cinfo[k] === "start" && level[k] !== "x") {
+                        }
+                        if (cinfo[k] === "start" && level[k] !== "x") {
                             //This looks for the most previous level
                             //that is not set for the noted cinfo
                             //values.  Once that value is found it is
@@ -1368,18 +1379,19 @@ var markup_beauty = function (args) {
                                     if (cinfo[a] !== "comment" && cinfo[a] !== "content" && cinfo[a] !== "external" && cinfo[a] !== "mixed_end") {
                                         if (cinfo[i + 1] && build[i].charAt(0) !== " " && (cinfo[i + 1] === "content" || cinfo[i + 1] === "mixed_end")) {
                                             return level.push("x");
-                                        } else {
-                                            return level.push(level[a] + 1);
                                         }
+                                        return level.push(level[a] + 1);
+
                                     }
                                 }
                                 return level.push(0);
                             }());
-                        } else if (build[i].charAt(0) !== " " && (cinfo[i - 1] === "singleton" || cinfo[i - 1] === "content" || cinfo[i - 1] === "mixed_start")) {
-                            return level.push("x");
-                        } else {
-                            return c("start");
                         }
+                        if (build[i].charAt(0) !== " " && (cinfo[i - 1] === "singleton" || cinfo[i - 1] === "content" || cinfo[i - 1] === "mixed_start")) {
+                            return level.push("x");
+                        }
+                        return c("start");
+
                     },
 
                     //This merely verifies if a singleton element is
@@ -1388,26 +1400,27 @@ var markup_beauty = function (args) {
                         var z;
                         if (cinfo[i] !== "start" && level[i - 1] === "x" && cinfo[i - 1] !== "content" && build[i].charAt(0) !== " " && cinfo[i - 1] !== "mixed_start" && cinfo[i - 1] !== "mixed_end") {
                             return level.push("x");
-                        } else if (cinfo[i] !== "start" && build[i] === " ") {
+                        }
+                        if (cinfo[i] !== "start" && build[i] === " ") {
                             build[i] = "";
                             return level.push("x");
-                        } else {
-                            //This section corrects a calculation
-                            //malfunction that only occurs to start type
-                            //elements if they occur directly prior to a
-                            //comment.  This function is executed
-                            //through h().
-                            if (cinfo[i - 1] !== "comment") {
-                                f(i);
-                            } else {
-                                for (z = i - 1; z > 0; z -= 1) {
-                                    if (cinfo[z] !== "comment") {
-                                        break;
-                                    }
-                                }
-                                f(z + 1);
-                            }
                         }
+                        //This section corrects a calculation
+                        //malfunction that only occurs to start type
+                        //elements if they occur directly prior to a
+                        //comment.  This function is executed
+                        //through h().
+                        if (cinfo[i - 1] !== "comment") {
+                            f(i);
+                        } else {
+                            for (z = i - 1; z > 0; z -= 1) {
+                                if (cinfo[z] !== "comment") {
+                                    break;
+                                }
+                            }
+                            f(z + 1);
+                        }
+
                     },
 
                     //innerfix function undoes all the changes made by
@@ -1544,7 +1557,7 @@ var markup_beauty = function (args) {
                                     } else if (cdata1[0] !== "") {
                                         build[i] = build[i] + "\n" + cdata1[0];
                                     }
-                                    build[i] = build[i].replace(/(\/\/(\s)+\-\->(\s)*)$/, "//-->").replace(/^\s*/, "").replace(/\s*$/, "");
+                                    build[i] = build[i].replace(/(\/\/(\s)+\-\->(\s)*)$/, "//-->").replace(/^(\s*)/, "").replace(/(\s*)$/, "");
                                 } else if (token[i - 1] === "T_style") {
                                     level.push(0);
                                     if (scriptStart.test(build[i])) {
@@ -1572,7 +1585,7 @@ var markup_beauty = function (args) {
                                     } else if (cdata1[0] !== "") {
                                         build[i] = build[i] + "\n" + cdata1[0];
                                     }
-                                    build[i] = build[i].replace(/^\s*/, "").replace(/\s*$/, "");
+                                    build[i] = build[i].replace(/^(\s*)/, "").replace(/(\s*)$/, "");
                                 }
                             } else {
                                 if (cinfo[i] === "comment" && args.comments !== "noindent") {
@@ -1827,7 +1840,7 @@ var markup_beauty = function (args) {
                                 break;
                             }
                         }
-                    } //i  (c)
+                    }
                     d = [b[0] + b[1] + b[2] + b[3], b[4] + b[5] + b[6] + b[7], b[15] + b[16] + b[17], b[11] + b[12] + b[13]]; //f  (d)
                     e = [c[0] + c[1] + c[2] + c[3], c[4] + c[5] + c[6] + c[7], c[15] + c[16] + c[17], c[11] + c[12] + c[13]];
                     f = [d[0], d[0], d[0], d[0], d[1], d[1], d[1], d[1], b[10], b[10], b[10], d[3], d[3], d[3], d[3], d[2], d[2], d[2]]; //g  (f)
@@ -1840,16 +1853,14 @@ var markup_beauty = function (args) {
                     var u = function (x) {
                             if (b[3][x] === 0) {
                                 return "0.00%";
-                            } else {
-                                return "100.00%";
                             }
+                            return "100.00%";
                         },
                         v = function (x) {
                             if (b[2][x] === 0) {
                                 return "0.00%";
-                            } else {
-                                return "100.00%";
                             }
+                            return "100.00%";
                         },
                         w = [],
                         y = "",
@@ -1974,7 +1985,7 @@ var markup_beauty = function (args) {
                         }()),
                         i = ["<div id='doc'>"],
                         z = m.length;
-                    i.push(function () {
+                    i.push((function () {
                         var a = 0,
                             b = 0,
                             z = g,
@@ -2042,7 +2053,8 @@ var markup_beauty = function (args) {
                         }
                         if (m.length < 2) {
                             return "";
-                        } else if (m.length > 10) {
+                        }
+                        if (m.length > 10) {
                             b = 10;
                         } else {
                             b = m.length;
@@ -2071,7 +2083,7 @@ var markup_beauty = function (args) {
                         i.push(m.join(""));
                         i.push("</tbody></table>");
                         return i.join("");
-                    }());
+                    }()));
                     i.push("<table class='analysis' summary='Analysis of markup pieces.'><caption>Analysis of markup pieces.</caption><thead><tr><th>Type</th><th>Quantity of Tags/Content</th><th>Percentage Quantity in Section</th><th>Percentage Quantity of Total</th><th>** Character Size</th><th>Percentage Size in Section</th><th>Percentage Size of Total</th></tr></thead><tbody><tr><th>Total Pieces</th><td>");
                     i.push(g);
                     i.push("</td><td>100.00%</td><td>100.00%</td><td>");

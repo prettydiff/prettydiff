@@ -33,8 +33,8 @@
 
 var csvbeauty = function (source, ch) {
         "use strict";
-        var err,
-            a,
+        var err = "",
+            a = 0,
             b = 0,
             c = [],
             error = "Error: Unterminated string begging at character number ",
@@ -76,12 +76,12 @@ var csvbeauty = function (source, ch) {
         }
         if (ch.length > source.length) {
             return source;
-        } else if (source === error) {
+        }
+        if (source === error) {
             if (a !== source.length - 1) {
                 return source + a + ", '" + err + "'.";
-            } else {
-                return source + a + ".";
             }
+            return source + a + ".";
         }
         source = source.replace(/\n/g, "\n\n{-}\n\n");
         if (source.charAt(source.length - ch.length) === ch) {

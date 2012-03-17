@@ -116,7 +116,7 @@ var js_beautify = function (args) {
             last_word = "",
             last_last_word = "",
             flags = {
-                previous_mode: (flags) ? flags.mode : "BLOCK",
+                previous_mode: "BLOCK",
                 mode: "BLOCK",
                 var_line: false,
                 var_line_reindented: false,
@@ -125,7 +125,7 @@ var js_beautify = function (args) {
                 in_case: false,
                 eat_next_space: false,
                 indentation_baseline: -1,
-                indentation_level: ((flags) ? flags.indentation_level + ((flags.var_line && flags.var_line_reindented) ? 1 : 0) : args.inlevel)
+                indentation_level: args.inlevel || 0
             },
             functestval = 0,
             var_var_test = false,
@@ -147,6 +147,37 @@ var js_beautify = function (args) {
             space_before = true,
             space_after = true,
             pseudo_block = false,
+            is_array = function (mode) {
+                return mode === "[EXPRESSION]" || mode === "[INDENTED-EXPRESSION]";
+            },
+            trim = function (s) {
+                return s.replace(/^\s\s*|\s\s*$/, "");
+            },
+            print_newline = function (ignore_repeated) {
+                var i = 0;
+                flags.eat_next_space = false;
+                if (args.inarray && is_array(flags.mode)) {
+                    return;
+                }
+                ignore_repeated = (ignore_repeated === undefined) ? true : ignore_repeated;
+                flags.if_line = false;
+                if (!output.length) {
+                    return; // no newline on start of file
+                }
+                while (output[output.length - 1] === " " || output[output.length - 1] === indent_string) {
+                    output.pop();
+                }
+                if (output[output.length - 1] !== "\n" || !ignore_repeated) {
+                    just_added_newline = true;
+                    output.push("\n");
+                }
+                for (i = 0; i < flags.indentation_level; i += 1) {
+                    output.push(indent_string);
+                }
+                if (flags.var_line && flags.var_line_reindented) {
+                    output.push(indent_string);
+                }
+            },
             block_comment = function (x) {
                 var lines = x.split(/\x0a|\x0d\x0a/),
                     j = lines.length,
@@ -183,37 +214,6 @@ var js_beautify = function (args) {
                 eat_newlines = (eat_newlines === undefined) ? false : eat_newlines;
                 while (output.length && (output[output.length - 1] === " " || output[output.length - 1] === indent_string || (eat_newlines && (output[output.length - 1] === "\n" || output[output.length - 1] === "\r")))) {
                     output.pop();
-                }
-            },
-            is_array = function (mode) {
-                return mode === "[EXPRESSION]" || mode === "[INDENTED-EXPRESSION]";
-            },
-            trim = function (s) {
-                return s.replace(/^\s\s*|\s\s*$/, "");
-            },
-            print_newline = function (ignore_repeated) {
-                var i = 0;
-                flags.eat_next_space = false;
-                if (args.inarray && is_array(flags.mode)) {
-                    return;
-                }
-                ignore_repeated = (ignore_repeated === undefined) ? true : ignore_repeated;
-                flags.if_line = false;
-                if (!output.length) {
-                    return; // no newline on start of file
-                }
-                while (output[output.length - 1] === " " || output[output.length - 1] === indent_string) {
-                    output.pop();
-                }
-                if (output[output.length - 1] !== "\n" || !ignore_repeated) {
-                    just_added_newline = true;
-                    output.push("\n");
-                }
-                for (i = 0; i < flags.indentation_level; i += 1) {
-                    output.push(indent_string);
-                }
-                if (flags.var_line && flags.var_line_reindented) {
-                    output.push(indent_string);
                 }
             },
             print_single_space = function () {
@@ -285,9 +285,8 @@ var js_beautify = function (args) {
                     } else if (output[i] === "?" && level === 0) {
                         if (colon_count === 0) {
                             return true;
-                        } else {
-                            colon_count -= 1;
                         }
+                        colon_count -= 1;
                     } else if (output[i] === "{" || output[i] === "(" || output[i] === "[") {
                         if (output[i] === "{" && level === 0) {
                             return false;
@@ -495,9 +494,8 @@ var js_beautify = function (args) {
                         parser_pos += 2;
                         if (inline_comment) {
                             return ["/*" + comment + "*/", "TK_INLINE_COMMENT"];
-                        } else {
-                            return ["/*" + comment + "*/", "TK_BLOCK_COMMENT"];
                         }
+                        return ["/*" + comment + "*/", "TK_BLOCK_COMMENT"];
                     }
                     // peek for comment // ...
                     if (input.charAt(parser_pos) === "/") {
@@ -627,9 +625,8 @@ var js_beautify = function (args) {
                     }
                     if (c === "=") {
                         return [c, "TK_EQUALS"];
-                    } else {
-                        return [c, "TK_OPERATOR"];
                     }
+                    return [c, "TK_OPERATOR"];
                 }
                 return [c, "TK_UNKNOWN"];
             };
@@ -1277,9 +1274,8 @@ var js_beautify = function (args) {
                 zero = function (x, y) {
                     if (y === 0) {
                         return "0.00%";
-                    } else {
-                        return ((x / y) * 100).toFixed(2) + "%";
                     }
+                    return ((x / y) * 100).toFixed(2) + "%";
                 },
                 drawRow = function (w, x, y, z, Z) {
                     var a = ["<tr><th>Keyword '"];

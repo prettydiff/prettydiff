@@ -122,9 +122,8 @@ var cleanCSS = function (x, size, character, comment, alter) {
                 var a = y.charAt(0);
                 if (a === "#" || a === "." || /[a-f0-9]/.test(a)) {
                     return y;
-                } else {
-                    return a + "0;";
                 }
+                return a + "0;";
             },
 
             //startZero is used to add a leading zero character to positive
@@ -140,9 +139,8 @@ var cleanCSS = function (x, size, character, comment, alter) {
                     c = b.substr(0, b.length - tab.length);
                 if (y.charAt(y.length - 1) === "}") {
                     return c + "}";
-                } else {
-                    return c.replace(/(\s+)$/, "");
                 }
+                return c.replace(/(\s+)$/, "");
             },
 
             //This prevents percentage numbers from running together

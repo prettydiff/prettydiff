@@ -51,12 +51,11 @@ var csvmin = function (source, ch) {
                         z = x.length - 2;
                     if (x.length === 2) {
                         return "{ }";
-                    } else {
-                        for (y = 0; y < z; y += 1) {
-                            w.push(ch);
-                        }
-                        return w.join("") + "{ }";
                     }
+                    for (y = 0; y < z; y += 1) {
+                        w.push(ch);
+                    }
+                    return w.join("") + "{ }";
                 },
                 g = source.replace(/\n\n\{\-\}\n\n/g, "{-}").replace(/\n{2,}/g, multiline).split("\n"),
                 err = "",
@@ -76,7 +75,8 @@ var csvmin = function (source, ch) {
                         g[a] = f.join("");
                         err = g[a].slice(c[0], c[0] + 9);
                         return;
-                    } else if (c.length > 2) {
+                    }
+                    if (c.length > 2) {
                         e = c.length - 1;
                         for (d = 1; d < e; d += 1) {
                             f[c[d]] = "\"\"";

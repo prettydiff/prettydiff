@@ -94,11 +94,10 @@ var jsmin = function (input, level, type, alter, fcomment) {
             jsasiq = function (x) {
                 if (x.indexOf("\n") === -1) {
                     return x;
-                } else {
-                    x = x.split("");
-                    x[0] = x[0] + ";";
-                    return x.join("");
                 }
+                x = x.split("");
+                x[0] = x[0] + ";";
+                return x.join("");
             },
 
             //asifix determines whether "}" or ")" need to be followed
@@ -479,9 +478,8 @@ var jsmin = function (input, level, type, alter, fcomment) {
                 var a = x.charAt(0);
                 if (a === "#" || a === "." || /[a-f0-9]/.test(a)) {
                     return x;
-                } else {
-                    return a + "0";
                 }
+                return a + "0";
             },
 
             //startZero is used in a replace method to convert "0.02" to
@@ -811,7 +809,6 @@ var jsmin = function (input, level, type, alter, fcomment) {
         }
         if (error !== "") {
             return error;
-        } else {
-            return fcom.join("") + ret;
         }
+        return fcom.join("") + ret;
     };
