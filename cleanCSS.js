@@ -323,7 +323,7 @@ var cleanCSS = function (x, size, character, comment, alter) {
                             if (c[e - 1] && c[e - 1][0] === c[e][0] && /\-[a-z]/.test(c[e - 1][1]) === false) {
                                 c[e - 1] = "";
                             }
-                            if (c[e][0] !== "margin" && c[e][0].indexOf("margin") !== -1) {
+                            if (c[e][0] !== "margin" && c[e][0].indexOf("margin") !== -1 && e > 2) {
                                 m += 1;
                                 if (m === 4) {
                                     c[e][0] = "margin";
@@ -331,11 +331,11 @@ var cleanCSS = function (x, size, character, comment, alter) {
                                     c[e - 3] = "";
                                     c[e - 2] = "";
                                     c[e - 1] = "";
-                                    if (c[e - 4] && c[e - 4][0] === "margin") {
+                                    if (typeof c[e - 4] !== "undefined" && c[e - 4][0] === "margin") {
                                         c[e - 4] = "";
                                     }
                                 }
-                            } else if (c[e][0] !== "padding" && c[e][0].indexOf("padding") !== -1) {
+                            } else if (c[e][0] !== "padding" && c[e][0].indexOf("padding") !== -1 && e > 2) {
                                 p += 1;
                                 if (p === 4) {
                                     c[e][0] = "padding";
@@ -343,7 +343,7 @@ var cleanCSS = function (x, size, character, comment, alter) {
                                     c[e - 3] = "";
                                     c[e - 2] = "";
                                     c[e - 1] = "";
-                                    if (c[e - 4] && c[e - 4][0] === "padding") {
+                                    if (typeof c[e - 4] !== "undefined" && c[e - 4][0] === "padding") {
                                         c[e - 4] = "";
                                     }
                                 }

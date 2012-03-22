@@ -317,7 +317,7 @@ var jsmin = function (input, level, type, alter, fcomment) {
                         c = [].concat(h);
                         f = c.length;
                         for (e = 0; e < f; e += 1) {
-                            if (c[e - 1] && c[e - 1][0] === c[e][0] && /\-[a-z]/.test(c[e - 1][1]) === false) {
+                            if (typeof c[e - 1] !== "undefined" && c[e - 1][0] === c[e][0] && /\-[a-z]/.test(c[e - 1][1]) === false) {
                                 c[e - 1] = "";
                             }
                             if (c[e][0] !== "margin" && c[e][0].indexOf("margin") !== -1) {
@@ -362,7 +362,7 @@ var jsmin = function (input, level, type, alter, fcomment) {
                             }
                         }
                         for (e = 0; e < f; e += 1) {
-                            if (c[e] !== "") {
+                            if (typeof c[e] !== "string" && typeof c[e] !== "undefined") {
                                 c[e] = c[e].join(":");
                             }
                         }
