@@ -1,9 +1,35 @@
-    @source: http://prettydiff.com/documentation.php
+Pretty Diff
+===========
 
-    @licstart  The following is the entire license notice for the 
-    JavaScript code in this page.
+Node.js
+-------
+
+At the end of the Pretty Diff function include this code:
+if (typeof exports !== "string") {
+    exports.api = function(x) {
+        "use strict";
+        return prettydiff(x);
+    };
+}
+
+In your Node.js script include Pretty Diff with this code:
+var prettydiff = require("prettydiff");
+
+WSH
+---
+
+Create a WSH script file using XML syntax and with a file extension of
+"WSF".  This file must have a tag for each supported argument, must be
+capable of reading from a file, and retrieving dependencies.  An example
+for the markup_beauty.js script can be obtained at:
+http://prettydiff.com/wsh.wsf
+
+That example file would be executed using the following on CLI:
+> wsh.wsf /source:"my_source_file" /html:true /insize:8
 
 Inventory:
+----------
+
    prettydiff.js - primary application for client and server processing
    api.js - server side API processor (No long maintained)
    pd.js - DOM interpreter and HTML tool manipulator
@@ -31,7 +57,13 @@ Inventory:
    The core files: api.js, pd.js, and prettydiff.js include no code
    documentation.
 
+License:
+--------
 
+    @source: http://prettydiff.com/documentation.php
+
+    @licstart  The following is the entire license notice for the 
+    JavaScript code in this page.
 
 Created by Austin Cheney originally on 3 Mar 2009.
  This code may not be used or redistributed unless the following
