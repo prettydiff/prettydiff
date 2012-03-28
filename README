@@ -48,7 +48,7 @@ Inventory:
    independent of the Pretty Diff application.  The component code is
    already included in prettydiff.js, so it is not needed in addition to
    prettydiff.js.  The only files not included with prettydiff.js are
-   pd.js and api.js.
+   diffview.css, pd.js, and api.js.
 
    * For usage documentation please visit
    http://prettydiff.com/documentation.php

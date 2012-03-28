@@ -30,6 +30,24 @@ That example file would be executed using the following on CLI:
 
     wsh.wsf /source:"my_source_file" /html:true /insize:8
 
+Pre-Inventory:
+--------------
+
+  * The component files are provided for access to individual functions
+   independent of the Pretty Diff application.  The component code is
+   already included in prettydiff.js, so it is not needed in addition to
+   prettydiff.js.  The only files not included with prettydiff.js are:
+   * pd.js
+   * api.js
+   * diffview.css
+
+  * For usage documentation please visit
+   http://prettydiff.com/documentation.php
+   
+  * For code documentation please visit the respective component files.
+   The core files: api.js, pd.js, and prettydiff.js include no code
+   documentation.
+
 Inventory:
 ----------
 
@@ -46,19 +64,6 @@ Inventory:
   * js-beautify.js  - component
   * markup_beauty.js  - component
   * markupmin.js - component
-
-   * The component files are provided for access to individual functions
-   independent of the Pretty Diff application.  The component code is
-   already included in prettydiff.js, so it is not needed in addition to
-   prettydiff.js.  The only files not included with prettydiff.js are
-   pd.js and api.js.
-
-   * For usage documentation please visit
-   http://prettydiff.com/documentation.php
-   
-   * For code documentation please visit the respective component files.
-   The core files: api.js, pd.js, and prettydiff.js include no code
-   documentation.
 
 License:
 --------
