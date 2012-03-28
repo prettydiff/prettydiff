@@ -5,15 +5,15 @@ Node.js
 -------
 
 At the end of the Pretty Diff function include this code:
-if (typeof exports !== "string") {
-    exports.api = function(x) {
-        "use strict";
-        return prettydiff(x);
-    };
-}
+    if (typeof exports !== "string") {
+        exports.api = function(x) {
+            "use strict";
+            return prettydiff(x);
+        };
+    }
 
 In your Node.js script include Pretty Diff with this code:
-var prettydiff = require("prettydiff");
+    var prettydiff = require("prettydiff");
 
 WSH
 ---
@@ -25,7 +25,7 @@ for the markup_beauty.js script can be obtained at:
 http://prettydiff.com/wsh.wsf
 
 That example file would be executed using the following on CLI:
-> wsh.wsf /source:"my_source_file" /html:true /insize:8
+    wsh.wsf /source:"my_source_file" /html:true /insize:8
 
 Inventory:
 ----------
@@ -60,9 +60,9 @@ Inventory:
 License:
 --------
 
-    @source: http://prettydiff.com/documentation.php
+   @source: http://prettydiff.com/documentation.php
 
-    @licstart  The following is the entire license notice for the 
+   @licstart  The following is the entire license notice for the 
     JavaScript code in this page.
 
 Created by Austin Cheney originally on 3 Mar 2009.
@@ -186,5 +186,5 @@ Created by Austin Cheney originally on 3 Mar 2009.
  permission.
 
 
-    @licend  The above is the entire license notice
-    for the JavaScript code in this page.
+   @licend  The above is the entire license notice
+   for the JavaScript code in this page.
