@@ -5,6 +5,7 @@ Node.js
 -------
 
 At the end of the Pretty Diff function include this code:
+
     if (typeof exports !== "string") {
         exports.api = function(x) {
             "use strict";
@@ -13,6 +14,7 @@ At the end of the Pretty Diff function include this code:
     }
 
 In your Node.js script include Pretty Diff with this code:
+
     var prettydiff = require("prettydiff");
 
 WSH
@@ -25,6 +27,7 @@ for the markup_beauty.js script can be obtained at:
 http://prettydiff.com/wsh.wsf
 
 That example file would be executed using the following on CLI:
+
     wsh.wsf /source:"my_source_file" /html:true /insize:8
 
 Inventory:
