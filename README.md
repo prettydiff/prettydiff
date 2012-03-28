@@ -33,19 +33,19 @@ That example file would be executed using the following on CLI:
 Inventory:
 ----------
 
-   prettydiff.js - primary application for client and server processing
-   api.js - server side API processor (No long maintained)
-   pd.js - DOM interpreter and HTML tool manipulator
-   charDecoder.js - component
-   cleanCSS.js  - component
-   csvbeauty.js  - component
-   csvmin.js  - component
-   diffview.css  - component
-   diffview.js  - component
-   fulljsmin.js  - component
-   js-beautify.js  - component
-   markup_beauty.js  - component
-   markupmin.js - component
+  * prettydiff.js - primary application for client and server processing
+  * api.js - server side API processor (No long maintained)
+  * pd.js - DOM interpreter and HTML tool manipulator
+  * charDecoder.js - component
+  * cleanCSS.js  - component
+  * csvbeauty.js  - component
+  * csvmin.js  - component
+  * diffview.css  - component
+  * diffview.js  - component
+  * fulljsmin.js  - component
+  * js-beautify.js  - component
+  * markup_beauty.js  - component
+  * markupmin.js - component
 
    * The component files are provided for access to individual functions
    independent of the Pretty Diff application.  The component code is
