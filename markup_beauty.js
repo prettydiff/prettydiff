@@ -113,7 +113,9 @@
  to singleton types after the type assignment is performed.  This
  correction occurs regardless of syntax.
 
- 8) args.content
+ 8) args.content - This argument is only used in "diff" mode and not
+ "beautify" mode.  This argument nullifies text nodes so as to allow a
+ comparison of tags only.
 
  9) args.force_indent - If this argument is supplied the boolean value
  true then all parts of the source code are always indented without
@@ -848,7 +850,7 @@ var markup_beauty = function (args) {
                         } else {
                             b = build[i].slice(1, a).toLowerCase();
                         }
-                        if (b === "br" || b === "meta" || b === "link" || b === "img" || b === "hr" || b === "base" || b === "basefont" || b === "area" || b === "col" || b === "frame" || b === "input" || b === "param") {
+                        if (b === "area" || b === "base" || b === "basefont" || b === "br" || b === "col" || b === "embed" || b === "eventsource" || b === "frame" || b === "hr" || b === "img" || b === "input" || b === "keygen" || b === "link" || b === "meta" || b === "param" || b === "progress" || b === "source" || b === "wbr") {
                             cinfo[i] = "singleton";
                             token[i] = "T_singleton";
                         }

@@ -327,7 +327,7 @@ var markupmin = function (y, comments, presume_html, top_comments) {
                 g = "",
                 i = [],
                 Y = x.length,
-                html = ["br", "meta", "link", "img", "hr", "base", "basefont", "area", "col", "frame", "input", "param"],
+                html = ["area", "base", "basefont", "br", "col", "embed", "eventsource", "frame", "hr", "img", "input", "keygen", "link", "meta", "param", "progress", "source", "wbr"],
                 e = html.length;
 
             //The following loop pushes not empty indexes from the "x" array
