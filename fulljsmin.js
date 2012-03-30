@@ -608,7 +608,7 @@ var jsmin = function (input, level, type, alter, fcomment) {
                     }
                 }
                 b = next();
-                if (b === "/" && "(,=:[!&|".indexOf(a) > -1) {
+                if (b === "/" && "(,=:[!&|".indexOf(a) > -1 && type !== "css") {
                     r.push(a);
                     r.push(b);
                     for (;;) {
