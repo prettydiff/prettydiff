@@ -1,7 +1,10 @@
 ﻿/*prettydiff.com api.topcoms: true*/
 /*global document, localStorage, window, prettydiff, XMLHttpRequest, location*/
 var exports = "",
-    pd,
+    pd = {},
+
+    //test for localStorage and assign the result of the test
+    ls = (typeof localStorage === "object" && localStorage !== null) ? true : false,
     _gaq = _gaq || [],
     $$ = function (x) {
         "use strict";
@@ -10,6 +13,8 @@ var exports = "",
         }
         return document.getElementById(x);
     },
+
+    //o Stores a reference to everything that is needed from the DOM
     o = {
         au: $$("ctype-auto"),
         ba: $$("beau-tab"),
@@ -145,6 +150,8 @@ var exports = "",
         option: $$("option_comment"),
         zindex: 10
     },
+
+    //recycle bundles arguments in preparation for executing prettydiff
     recycle = function (e) {
         "use strict";
         var api = {},
@@ -153,13 +160,17 @@ var exports = "",
             event = e || window.event,
             lang = "",
             stat = [];
-        if (typeof event === "object" && event.type === "keyup" && (event.altKey || event.ctrlKey || event.shiftKey)) {
+
+        //do not execute from shift, alt, ctrl, or arrow keys
+        if (typeof event === "object" && event.type === "keyup" && (event.altKey || event.ctrlKey || event.shiftKey || event.keyCode === 37 || event.keyCode === 38 || event.keyCode === 39 || event.keyCode === 40)) {
             return;
         }
-        if (typeof localStorage === "object" && localStorage !== null) {
+        if (ls) {
             o.stat.usage += 1;
             o.stusage.innerHTML = o.stat.usage;
         }
+
+        //set defaults for all arguments
         api.comments = "indent";
         api.content = false;
         api.diff = "";
@@ -174,6 +185,8 @@ var exports = "",
         api.semicolon = false;
         api.style = "indent";
         api.topcoms = false;
+
+        //gather updated dom nodes
         o.bb = $$("modebeautify");
         o.jd = $$("jsindentd-all");
         o.js = $$("jsindent-all");
@@ -190,6 +203,8 @@ var exports = "",
         } else if (o.pt.checked === true) {
             api.lang = "text";
         }
+
+        //determine operations based upon mode of operations
         if (o.bb.checked) {
             o.hy = $$("html-yes");
             o.ba = $$("beau-tab");
@@ -232,7 +247,7 @@ var exports = "",
             }
             api.source = o.bi.value;
             api.mode = "beautify";
-            if (typeof localStorage === "object" && localStorage !== null) {
+            if (ls) {
                 localStorage.setItem("bi", api.source);
             }
         } else if (o.mm.checked) {
@@ -247,7 +262,7 @@ var exports = "",
             }
             api.source = o.mi.value;
             api.mode = "minify";
-            if (typeof localStorage === "object" && localStorage !== null) {
+            if (ls) {
                 localStorage.setItem("mi", api.source);
             }
         } else if (o.dd) {
@@ -324,7 +339,7 @@ var exports = "",
             api.source = o.bo.value;
             api.diff = o.nx.value;
             api.mode = "diff";
-            if (typeof localStorage === "object" && localStorage !== null) {
+            if (ls) {
                 localStorage.setItem("bo", api.source);
                 localStorage.setItem("nx", api.diff);
                 localStorage.setItem("bl", api.sourcelabel);
@@ -373,6 +388,8 @@ var exports = "",
                 }
             }());
         }
+
+        //this is where prettydiff is executed
         output = prettydiff(api);
         o.zindex += 1;
         if (o.bb.checked) {
@@ -382,7 +399,7 @@ var exports = "",
                 o.rg.style.zIndex = o.zindex;
                 o.rg.style.display = "block";
             }
-            if (typeof localStorage === "object" && localStorage !== null) {
+            if (ls) {
                 localStorage.setItem("bi", o.bi.value);
                 o.stat.beau += 1;
                 o.stbeau.innerHTML = o.stat.beau;
@@ -402,7 +419,7 @@ var exports = "",
             if (o.re.getElementsByTagName("p")[0].style.display === "none") {
                 pd.minimize(o.re.getElementsByTagName("button")[1]);
             }
-            if (typeof localStorage === "object" && localStorage !== null) {
+            if (ls) {
                 localStorage.setItem("bo", o.bo.value);
                 localStorage.setItem("nx", o.nx.value);
                 localStorage.setItem("bl", o.bl.value);
@@ -417,13 +434,13 @@ var exports = "",
                 o.ri.style.zIndex = o.zindex;
                 o.ri.style.display = "block";
             }
-            if (typeof localStorage === "object" && localStorage !== null) {
+            if (ls) {
                 localStorage.setItem("mi", o.mi.value);
                 o.stat.minn += 1;
                 o.stminn.innerHTML = o.stat.minn;
             }
         }
-        if (typeof localStorage === "object" && localStorage !== null) {
+        if (ls) {
             if (o.au.checked) {
                 lang = (/Language set to <strong>auto<\/strong>\. Presumed language is <em>\w+<\/em>\./).exec(output[1]).join("");
                 lang = lang.substring(lang.indexOf("<em>") + 4, lang.indexOf("</em>"));
@@ -460,10 +477,24 @@ var exports = "",
             localStorage.setItem("statdata", stat.join("|"));
         }
     };
+
+//pd object contains all the interactive functions.  pd is just a
+//collection to keep all these functions organized and together
 pd = {
+
+    //stores position information of floating report windows without
+    //looking to localStorage each and every time
     position: {},
+
+    //stores option information without looking into localStorage each
+    //and every time
     optionString: [],
+
+    //stores webtool information without looking into localStorage each
+    //and every time
     webtool: [],
+
+    //intelligently raise the z-index of the report windows
     top: function (x) {
         "use strict";
         var a = o.zindex,
@@ -472,6 +503,8 @@ pd = {
         o.zindex = c;
         x.style.zIndex = c;
     },
+
+    //close the report windows
     close: function (x) {
         "use strict";
         var a = x.parentNode.parentNode;
@@ -482,6 +515,8 @@ pd = {
         pd.position[a.getAttribute("id")].display = "none";
         pd.options(a);
     },
+
+    //minimize report windows to the default size and location
     minimize: function (x) {
         "use strict";
         var a = x.parentNode,
@@ -568,6 +603,8 @@ pd = {
         }
         pd.options(b);
     },
+
+    //maximize report window to available browser window
     maximize: function (x) {
         "use strict";
         var a = x.parentNode.parentNode,
@@ -627,6 +664,8 @@ pd = {
         }
         pd.options(a);
     },
+
+    //resize report window to custom width and height on drag
     resize: function (e, x) {
         "use strict";
         var a = x.parentNode.parentNode,
@@ -660,6 +699,8 @@ pd = {
         document.onmousemove = boxsize;
         document.onmousedown = null;
     },
+
+    //toggle between parsed html diff report and raw text representation
     save: function (x) {
         "use strict";
         var a = o.rf.innerHTML,
@@ -702,6 +743,8 @@ pd = {
         o.rf.innerHTML = b.join("");
         pd.options(x.parentNode);
     },
+
+    //basic drag and drop for the report windows
     grab: function (e, x) {
         "use strict";
         var a = x.parentNode,
@@ -740,6 +783,8 @@ pd = {
         document.onmousedown = null;
         pd.options(a);
     },
+
+    //maximize textareas and hide options
     hideOptions: function (x) {
         "use strict";
         if (!o.dt) {
@@ -835,6 +880,9 @@ pd = {
         pd.options(x);
         return false;
     },
+
+    //toggle between tool modes and vertical/horizontal orientation of
+    //textareas
     prettyvis: function (a) {
         "use strict";
         var optioncheck = function () {
@@ -948,6 +996,8 @@ pd = {
         }
         pd.options(a);
     },
+
+    //alters available options depending upon language selection
     codeOps: function (x) {
         "use strict";
         o.bb = $$("modebeautify");
@@ -994,6 +1044,9 @@ pd = {
             o.db.style.display = "none";
         }
     },
+
+    //provides interaction to simulate a text input into a radio button
+    //set with appropriate accessbility response
     indentchar: function (x) {
         "use strict";
         o.bc = $$("beau-char");
@@ -1035,11 +1088,13 @@ pd = {
             o.dc.value = o.dcv;
         }
     },
+
+    //store tool changes into localStorage in effort to maintain state
     options: function (x) {
         "use strict";
         var a = {},
             b = 0;
-        if (typeof localStorage !== "object" || localStorage === null) {
+        if (!ls) {
             return;
         }
         if (localStorage.hasOwnProperty("webtool")) {
@@ -1275,6 +1330,11 @@ pd = {
         } else {
             localStorage.setItem("optionString", pd.optionString.join("prettydiffcsep").replace(/(prettydiffcsep)+/g, "prettydiffcsep").replace(/%/g, "prettydiffper"));
         }
+
+        //IMPORTANT the index for this loop must be one less than the
+        //length on the parsed webtool storage. This limit prevents
+        //excessive writing to the array which is corrupted each time
+        //pd.options is executed
         for (b = 0; b < 30; b += 1) {
             if (typeof pd.webtool[b] !== "string") {
                 pd.webtool[b] = "p";
@@ -1282,6 +1342,8 @@ pd = {
         }
         localStorage.setItem("webtool", pd.webtool.join("prettydiffcsep").replace(/(prettydiffcsep)+/g, "prettydiffcsep").replace(/%/g, "prettydiffper"));
     },
+
+    //reset tool to default configuration
     reset: function () {
         "use strict";
         var a = o.re.getElementsByTagName("button");
@@ -1308,7 +1370,7 @@ pd = {
         o.ri.style.zIndex = "2";
         o.ri.getElementsByTagName("p")[0].style.display = "none";
         o.rl.style.display = "none";
-        if (localStorage === null || typeof localStorage !== "object") {
+        if (!ls) {
             o.rk.style.display = "none";
         } else {
             o.rk.style.display = "block";
@@ -1418,10 +1480,15 @@ pd = {
         if (o.df) {
             o.df.checked = true;
         }
-        if (typeof localStorage === "object" && localStorage !== null && localStorage.hasOwnProperty("webtool")) {
+        if (ls && localStorage.hasOwnProperty("webtool")) {
             delete localStorage.webtool;
         }
+        if (ls && localStorage.hasOwnProperty("optionString")) {
+            delete localStorage.optionString;
+        }
     },
+
+    //alter tool on page load in reflection to saved state
     reload: function () {
         "use strict";
         var a = "",
@@ -1459,7 +1526,7 @@ pd = {
         o.rg.style.zIndex = "2";
         o.ri.style.zIndex = "2";
         o.rk.style.zIndex = "2";
-        if (typeof localStorage === "object" && localStorage !== null && (localStorage.hasOwnProperty("optionString") || localStorage.hasOwnProperty("webtool") || localStorage.hasOwnProperty("statdata"))) {
+        if (ls && (localStorage.hasOwnProperty("optionString") || localStorage.hasOwnProperty("webtool") || localStorage.hasOwnProperty("statdata"))) {
             if (localStorage.hasOwnProperty("optionString")) {
                 o.option.innerHTML = "/*prettydiff.com " + (localStorage.getItem("optionString").replace(/prettydiffper/g, "%").replace(/(prettydiffcsep)+/g, ", ").replace(/(\,\s+\,\s+)+/g, ", ") + " */").replace(/((\,? )+\*\/)$/, " */");
                 a = localStorage.getItem("optionString").replace(/prettydiffper/g, "%").split("prettydiffcsep");
@@ -1998,7 +2065,7 @@ pd = {
             recycle();
             return;
         }
-        if (typeof localStorage === "object" && localStorage !== null) {
+        if (ls) {
             if (localStorage.hasOwnProperty("bi")) {
                 o.bi.value = localStorage.getItem("bi");
             }
