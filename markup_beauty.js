@@ -1379,7 +1379,7 @@ var markup_beauty = function (args) {
                                 var a = 0;
                                 for (a = i - 1; a > -1; a -= 1) {
                                     if (cinfo[a] !== "comment" && cinfo[a] !== "content" && cinfo[a] !== "external" && cinfo[a] !== "mixed_end") {
-                                        if (cinfo[i + 1] && build[i].charAt(0) !== " " && (cinfo[i + 1] === "mixed_end" || (build[i + 1].charAt(0) !== " " && (cinfo[i + 1] === "singleton" || cinfo[i + 1 === "content"])))) {
+                                        if (cinfo[i + 1] && build[i].charAt(0) !== " " && (cinfo[i + 1] === "mixed_end" || cinfo[i + 1] === "content" || (build[i + 1].charAt(0) !== " " && cinfo[i + 1] === "singleton"))) {
                                             return level.push("x");
                                         }
                                         return level.push(level[a] + 1);
