@@ -319,6 +319,8 @@ var cleanCSS = function (x, size, character, comment, alter) {
                         }
                         c = h.concat(c);
                         f = c.length;
+                        m = 0;
+                        p = 0;
                         for (e = 0; e < f; e += 1) {
                             if (c[e - 1] && c[e - 1][0] === c[e][0] && /\-[a-z]/.test(c[e - 1][1]) === false) {
                                 c[e - 1] = "";
@@ -368,6 +370,8 @@ var cleanCSS = function (x, size, character, comment, alter) {
                         for (e = 0; e < f; e += 1) {
                             if (c[e] !== "") {
                                 h.push(c[e].join(": "));
+                            } else {
+                                h.push(c[e].replace(/\$/g, ": "));
                             }
                         }
                         d[a] = (h.join(";") + ";").replace(/^;/, "");

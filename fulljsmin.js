@@ -307,6 +307,7 @@ var jsmin = function (input, level, type, alter, fcomment) {
                         }
                         c = d[a].replace(/:/g, "$").replace(/#[a-zA-Z0-9]{3,6}(?!(\w*\)))/g, colorLow).split(";").sort();
                         f = c.length;
+                        h = [];
                         for (e = 0; e < f; e += 1) {
                             if (c[e].charAt(0) === "_") {
                                 c.push(c[e]);
@@ -316,6 +317,8 @@ var jsmin = function (input, level, type, alter, fcomment) {
                         }
                         c = [].concat(h);
                         f = c.length;
+                        m = 0;
+                        p = 0;
                         for (e = 0; e < f; e += 1) {
                             if (typeof c[e - 1] !== "undefined" && c[e - 1][0] === c[e][0] && /\-[a-z]/.test(c[e - 1][1]) === false) {
                                 c[e - 1] = "";

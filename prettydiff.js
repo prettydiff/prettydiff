@@ -592,6 +592,7 @@ var prettydiff = function (api) {
                                 }
                                 c = d[a].replace(/:/g, "$").replace(/#[a-zA-Z0-9]{3,6}(?!(\w*\)))/g, colorLow).split(";").sort();
                                 f = c.length;
+                                h = [];
                                 for (e = 0; e < f; e += 1) {
                                     if (c[e].charAt(0) === "_") {
                                         c.push(c[e]);
@@ -601,6 +602,8 @@ var prettydiff = function (api) {
                                 }
                                 c = [].concat(h);
                                 f = c.length;
+                                m = 0;
+                                p = 0;
                                 for (e = 0; e < f; e += 1) {
                                     if (typeof c[e - 1] !== "undefined" && c[e - 1][0] === c[e][0] && /\-[a-z]/.test(c[e - 1][1]) === false) {
                                         c[e - 1] = "";
@@ -1287,6 +1290,8 @@ var prettydiff = function (api) {
                                 }
                                 c = h.concat(c);
                                 f = c.length;
+                                m = 0;
+                                p = 0;
                                 for (e = 0; e < f; e += 1) {
                                     if (c[e - 1] && c[e - 1][0] === c[e][0] && /\-[a-z]/.test(c[e - 1][1]) === false) {
                                         c[e - 1] = "";
@@ -1334,8 +1339,10 @@ var prettydiff = function (api) {
                                 }
                                 h = [];
                                 for (e = 0; e < f; e += 1) {
-                                    if (c[e] !== "") {
+                                    if (typeof c[e] !== "string") {
                                         h.push(c[e].join(": "));
+                                    } else {
+                                        h.push(c[e].replace(/\$/g, ": "));
                                     }
                                 }
                                 d[a] = (h.join(";") + ";").replace(/^;/, "");
