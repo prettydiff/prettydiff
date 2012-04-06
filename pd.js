@@ -129,7 +129,7 @@ var exports = "",
         csvp: $$("csvcharp"),
         disp: $$("displayOps"),
         dops: $$("diffops"),
-		lang: "auto",
+        lang: "auto",
         mops: $$("miniops"),
         stat: {
             visit: 0,
@@ -443,7 +443,7 @@ var exports = "",
             }
         }
         if (ls) {
-            if (o.au.checked) {
+            if (o.au.checked && typeof output[1] === "string") {
                 lang = (/Language set to <strong>auto<\/strong>\. Presumed language is <em>\w+<\/em>\./).exec(output[1]).join("");
                 lang = lang.substring(lang.indexOf("<em>") + 4, lang.indexOf("</em>"));
                 if (lang === "JavaScript" || lang === "JSON") {
@@ -456,15 +456,15 @@ var exports = "",
                     o.stat.markup += 1;
                     o.stmarkup.innerHTML = o.stat.markup;
                 }
-				o.lang = lang;
+                o.lang = lang;
             } else if (o.cv.checked) {
                 o.stat.csv += 1;
                 o.stcsv.innerHTML = o.stat.csv;
-				o.lang = "csv";
+                o.lang = "csv";
             } else if (o.pt.checked) {
                 o.stat.text += 1;
                 o.sttext.innerHTML = o.stat.text;
-				o.lang = "text";
+                o.lang = "text";
             }
             stat.push(o.stat.visit);
             stat.push(o.stat.usage);
@@ -1102,10 +1102,10 @@ pd = {
         if (!ls) {
             return;
         }
-        if (localStorage.hasOwnProperty("webtool")) {
+        if (localStorage.hasOwnProperty("webtool") && localStorage.getItem("webtool") !== null) {
             pd.webtool = localStorage.getItem("webtool").replace(/prettydiffper/g, "%").split("prettydiffcsep");
         }
-        if (localStorage.hasOwnProperty("optionString")) {
+        if (localStorage.hasOwnProperty("optionString") && localStorage.getItem("optionString") !== null) {
             pd.optionString = localStorage.getItem("optionString").replace(/prettydiffper/g, "%").split("prettydiffcsep");
         }
         o.bb = $$("modebeautify");
@@ -1532,7 +1532,7 @@ pd = {
         o.ri.style.zIndex = "2";
         o.rk.style.zIndex = "2";
         if (ls && (localStorage.hasOwnProperty("optionString") || localStorage.hasOwnProperty("webtool") || localStorage.hasOwnProperty("statdata"))) {
-            if (localStorage.hasOwnProperty("optionString")) {
+            if (localStorage.hasOwnProperty("optionString") && localStorage.getItem("optionString") !== null) {
                 o.option.innerHTML = "/*prettydiff.com " + (localStorage.getItem("optionString").replace(/prettydiffper/g, "%").replace(/(prettydiffcsep)+/g, ", ").replace(/(\,\s+\,\s+)+/g, ", ") + " */").replace(/((\,? )+\*\/)$/, " */");
                 a = localStorage.getItem("optionString").replace(/prettydiffper/g, "%").split("prettydiffcsep");
                 c = a.length;
@@ -1724,7 +1724,7 @@ pd = {
                     }
                 }
             }
-            if (localStorage.hasOwnProperty("webtool")) {
+            if (localStorage.hasOwnProperty("webtool") && localStorage.getItem("webtool") !== null) {
                 a = localStorage.getItem("webtool").replace(/prettydiffper/g, "%").split("prettydiffcsep");
                 c = a.length;
                 for (b = 0; b < c; b += 1) {
@@ -1864,7 +1864,7 @@ pd = {
                     o.rl.style.display = "block";
                 }
             }
-            if (localStorage.hasOwnProperty("statdata")) {
+            if (localStorage.hasOwnProperty("statdata") && localStorage.getItem("statdata") !== null) {
                 stat = localStorage.getItem("statdata").split("|");
                 o.stat.visit = Number(stat[0]) + 1;
                 stat[0] = o.stat.visit.toString();
@@ -1905,7 +1905,7 @@ pd = {
                 o.stfdate.innerHTML = k;
                 o.stat.fdate = k;
                 stat = [1, 0, k, 1, 0, 0, 0, 0, 0, 0, 0, 0, Date.parse(j)];
-                if (localStorage.hasOwnProperty("pageCount")) {
+                if (localStorage.hasOwnProperty("pageCount") && localStorage.getItem("pageCount") !== null) {
                     l = Number(localStorage.getItem("pageCount")) + 1;
                     o.stvisit.innerHTML = l;
                     o.stat.visit = l;
@@ -2071,22 +2071,22 @@ pd = {
             return;
         }
         if (ls) {
-            if (localStorage.hasOwnProperty("bi")) {
+            if (localStorage.hasOwnProperty("bi") && localStorage.getItem("bi") !== null) {
                 o.bi.value = localStorage.getItem("bi");
             }
-            if (localStorage.hasOwnProperty("mi")) {
+            if (localStorage.hasOwnProperty("mi") && localStorage.getItem("mi") !== null) {
                 o.mi.value = localStorage.getItem("mi");
             }
-            if (o.bo && localStorage.hasOwnProperty("bo")) {
+            if (o.bo && localStorage.hasOwnProperty("bo") && localStorage.getItem("bo") !== null) {
                 o.bo.value = localStorage.getItem("bo");
             }
-            if (o.nx && localStorage.hasOwnProperty("nx")) {
+            if (o.nx && localStorage.hasOwnProperty("nx") && localStorage.getItem("nx") !== null) {
                 o.nx.value = localStorage.getItem("nx");
             }
-            if (o.bl && localStorage.hasOwnProperty("bl")) {
+            if (o.bl && localStorage.hasOwnProperty("bl") && localStorage.getItem("bl") !== null) {
                 o.bl.value = localStorage.getItem("bl");
             }
-            if (o.nl && localStorage.hasOwnProperty("nl")) {
+            if (o.nl && localStorage.hasOwnProperty("nl") && localStorage.getItem("ni") !== null) {
                 o.nl.value = localStorage.getItem("nl");
             }
         }
@@ -2122,5 +2122,5 @@ if (bounce) {
             }()),
             sFormattedMessage = "[" + file + " (" + line + ")] " + message + "\n" + mode + "\n" + o.lang + "\n\n" + code;
         _gaq.push(["_trackEvent", "Exceptions", "Application", sFormattedMessage, null, true]);
-    }
+    };
 }());
