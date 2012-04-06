@@ -6,6 +6,7 @@ var exports = "",
     //test for localStorage and assign the result of the test
     ls = (typeof localStorage === "object" && localStorage !== null) ? true : false,
     _gaq = _gaq || [],
+    bounce = true,
     $$ = function (x) {
         "use strict";
         if (typeof document.getElementById === "undefined") {
@@ -128,6 +129,7 @@ var exports = "",
         csvp: $$("csvcharp"),
         disp: $$("displayOps"),
         dops: $$("diffops"),
+		lang: "auto",
         mops: $$("miniops"),
         stat: {
             visit: 0,
@@ -358,7 +360,7 @@ var exports = "",
                         return;
                     }
                     if (b !== 0 && b !== -1) {
-                        xhr.open('GET', 'proxy.php?x=' + api.diff.replace(/(\s*)$/, "").replace(/%26/g, "&").replace(/%3F/, "?"), false);
+                        xhr.open("GET", "proxy.php?x=" + api.diff.replace(/(\s*)$/, "").replace(/%26/g, "&").replace(/%3F/, "?"), false);
                         xhr.send();
                         if (xhr.status === 200 || xhr.status === 0) {
                             api.diff = xhr.responseText;
@@ -380,7 +382,7 @@ var exports = "",
                     return;
                 }
                 if (b !== 0 && b !== -1) {
-                    xhr.open('GET', 'proxy.php?x=' + api.source.replace(/(\s*)$/, "").replace(/%26/g, "&").replace(/%3F/, "?"), false);
+                    xhr.open("GET", "proxy.php?x=" + api.source.replace(/(\s*)$/, "").replace(/%26/g, "&").replace(/%3F/, "?"), false);
                     xhr.send();
                     if (xhr.status === 200 || xhr.status === 0) {
                         api.source = xhr.responseText;
@@ -454,12 +456,15 @@ var exports = "",
                     o.stat.markup += 1;
                     o.stmarkup.innerHTML = o.stat.markup;
                 }
+				o.lang = lang;
             } else if (o.cv.checked) {
                 o.stat.csv += 1;
                 o.stcsv.innerHTML = o.stat.csv;
+				o.lang = "csv";
             } else if (o.pt.checked) {
                 o.stat.text += 1;
                 o.sttext.innerHTML = o.stat.text;
+				o.lang = "text";
             }
             stat.push(o.stat.visit);
             stat.push(o.stat.usage);
@@ -683,13 +688,13 @@ pd = {
             },
             boxsize = function (f) {
                 f = f || window.event;
-                b.style.width = ((bx + ((f.clientX - 4) - b.mouseX)) / 10) + 'em';
+                b.style.width = ((bx + ((f.clientX - 4) - b.mouseX)) / 10) + "em";
                 if (a === o.re) {
-                    c.style.width = (((bx + (f.clientX - b.mouseX)) / 10) - 13.01) + 'em';
+                    c.style.width = (((bx + (f.clientX - b.mouseX)) / 10) - 13.01) + "em";
                 } else {
-                    c.style.width = (((bx + (f.clientX - b.mouseX)) / 10) - 10.01) + 'em';
+                    c.style.width = (((bx + (f.clientX - b.mouseX)) / 10) - 10.01) + "em";
                 }
-                b.style.height = ((by + ((f.clientY - 36) - b.mouseY)) / 10) + 'em';
+                b.style.height = ((by + ((f.clientY - 36) - b.mouseY)) / 10) + "em";
                 document.onmouseup = drop;
             };
         pd.top(a);
@@ -733,9 +738,9 @@ pd = {
             a = a.replace(/ xmlns\="http:\/\/www\.w3\.org\/1999\/xhtml"/g, "").replace(/&lt;/g, "<").replace(/&gt;/g, ">").replace(/&amp;/g, "&");
             d = a.split(c);
             b.push(d[0]);
-            c = (d[1].indexOf('table class="diff"') === -1) ? "table class='diff'" : 'table class="diff"';
+            c = (d[1].indexOf("table class=\"diff\"") === -1) ? "table class='diff'" : "table class=\"diff\"";
             d[1] = d[1].split(c)[1];
-            d[1] = '<table class="diff"' + (d[1].substring(0, d[1].length - 25));
+            d[1] = "<table class=\"diff\"" + (d[1].substring(0, d[1].length - 25));
             b.push(d[1]);
             x.innerHTML = "S";
             x.setAttribute("title", "Convert diff report to text that can be saved.");
@@ -762,8 +767,8 @@ pd = {
             },
             boxmove = function (f) {
                 f = f || window.event;
-                a.style.left = ((ax + (f.clientX - a.mouseX)) / 10) + 'em';
-                a.style.top = ((ay + (f.clientY - a.mouseY)) / 10) + 'em';
+                a.style.left = ((ax + (f.clientX - a.mouseX)) / 10) + "em";
+                a.style.top = ((ay + (f.clientY - a.mouseY)) / 10) + "em";
                 document.onmouseup = drop;
             };
         if (b === "none") {
@@ -2089,6 +2094,10 @@ pd = {
 };
 _gaq.push(["_setAccount", "UA-27834630-1"]);
 _gaq.push(["_trackPageview"]);
+if (bounce) {
+    $$("webtool").onclick = _gaq.push(["_trackEvent", "Logging", "NoBounce", "NoBounce", null, false]);
+    bounce = false;
+}
 (function () {
     "use strict";
     var ga = document.createElement("script"),
@@ -2097,4 +2106,21 @@ _gaq.push(["_trackPageview"]);
     ga.setAttribute("async", true);
     ga.setAttribute("src", ("https:" === document.location.protocol ? "https://ssl" : "http://www") + ".google-analytics.com/ga.js");
     s.parentNode.insertBefore(ga, s);
+    window.onerror = function (message, file, line) {
+        var code = "",
+            mode = (function () {
+                if ($$("modebeautify").checked) {
+                    code = $$("beautyinput").value;
+                    return "beautify";
+                }
+                if ($$("modeminify").checked) {
+                    code = $$("minifyinput").value;
+                    return "minify";
+                }
+                code = $$("baseText").value + "\n\n" + $$("newText").value;
+                return "diff";
+            }()),
+            sFormattedMessage = "[" + file + " (" + line + ")] " + message + "\n" + mode + "\n" + o.lang + "\n\n" + code;
+        _gaq.push(["_trackEvent", "Exceptions", "Application", sFormattedMessage, null, true]);
+    }
 }());
