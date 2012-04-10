@@ -161,6 +161,7 @@ var exports = "",
             domain = /^(https?:\/\/|file:\/\/\/)/,
             event = e || window.event,
             lang = "",
+            lango = {},
             stat = [];
 
         //do not execute from shift, alt, ctrl, or arrow keys
@@ -444,19 +445,22 @@ var exports = "",
         }
         if (ls) {
             if (o.au.checked && typeof output[1] === "string") {
-                lang = (/Language set to <strong>auto<\/strong>\. Presumed language is <em>\w+<\/em>\./).exec(output[1]).join("");
-                lang = lang.substring(lang.indexOf("<em>") + 4, lang.indexOf("</em>"));
-                if (lang === "JavaScript" || lang === "JSON") {
-                    o.stat.js += 1;
-                    o.stjs.innerHTML = o.stat.js;
-                } else if (lang === "CSS") {
-                    o.stat.css += 1;
-                    o.stcss.innerHTML = o.stat.css;
-                } else if (lang === "HTML" || lang === "markup") {
-                    o.stat.markup += 1;
-                    o.stmarkup.innerHTML = o.stat.markup;
+                lango = (/Language set to <strong>auto<\/strong>\. Presumed language is <em>\w+<\/em>\./).exec(output[1]);
+                if (lango !== null) {
+                    lang = lango.toString();
+                    lang = lang.substring(lang.indexOf("<em>") + 4, lang.indexOf("</em>"));
+                    if (lang === "JavaScript" || lang === "JSON") {
+                        o.stat.js += 1;
+                        o.stjs.innerHTML = o.stat.js;
+                    } else if (lang === "CSS") {
+                        o.stat.css += 1;
+                        o.stcss.innerHTML = o.stat.css;
+                    } else if (lang === "HTML" || lang === "markup") {
+                        o.stat.markup += 1;
+                        o.stmarkup.innerHTML = o.stat.markup;
+                    }
+                    o.lang = lang;
                 }
-                o.lang = lang;
             } else if (o.cv.checked) {
                 o.stat.csv += 1;
                 o.stcsv.innerHTML = o.stat.csv;
@@ -2117,10 +2121,13 @@ if (bounce) {
                     code = $$("minifyinput").value;
                     return "minify";
                 }
-                code = $$("baseText").value + "\n\n" + $$("newText").value;
+                code = $$("baseText").value + " " + $$("newText").value;
                 return "diff";
             }()),
-            sFormattedMessage = "[" + file + " (" + line + ")] " + message + "\n" + mode + "\n" + o.lang + "\n\n" + code;
-        _gaq.push(["_trackEvent", "Exceptions", "Application", sFormattedMessage, null, true]);
+            sFormattedMessage = "";
+        if (line > 0) {
+            sFormattedMessage = "[" + file + " (" + line + ")] " + message + " " + mode + " " + o.lang + " " + code;
+            _gaq.push(["_trackEvent", "Exceptions", "Application", sFormattedMessage, null, true]);
+        }
     };
 }());

@@ -5373,9 +5373,14 @@ var prettydiff = function (api) {
                                         r = i;
                                     } else {
                                         if (!n && ax[i] !== bx[i] && !em.test(ax[i]) && !em.test(bx[i]) && !em.test(ax[i - 1]) && !em.test(bx[i - 1])) {
-                                            if (typeof ax[i - 1] === "string" && typeof bx[i - 1] === "string") {
-                                                ax[i - 1] = ax[i - 1] + "<em>";
-                                                bx[i - 1] = bx[i - 1] + "<em>";
+                                            if (i === 0 || (typeof ax[i - 1] === "string" && typeof bx[i - 1] === "string")) {
+                                                if (i === 0) {
+                                                    ax[i] = "<em>" + ax[i];
+                                                    bx[i] = "<em>" + bx[i];
+                                                } else {
+                                                    ax[i - 1] = ax[i - 1] + "<em>";
+                                                    bx[i - 1] = bx[i - 1] + "<em>";
+                                                }
                                                 errorout += 1;
                                                 n = true;
                                                 break;
@@ -5450,8 +5455,16 @@ var prettydiff = function (api) {
                                                     ax[o - 1] = ax[o - 1] + "</em>";
                                                     bx[j - 1] = bx[j - 1] + "</em>";
                                                 } else {
-                                                    ax[o - 1] = "</em>" + ax[o - 1];
-                                                    bx[j - 1] = "</em>" + bx[j - 1];
+                                                    if (o === 1) {
+                                                        ax[o - 1] = ax[o - 1] + "</em>";
+                                                    } else {
+                                                        ax[o - 1] = "</em>" + ax[o - 1];
+                                                    }
+                                                    if (j === 1) {
+                                                        bx[j - 1] = bx[j - 1] + "</em>";
+                                                    } else {
+                                                        bx[j - 1] = "</em>" + bx[j - 1];
+                                                    }
                                                 }
                                                 k = o;
                                                 if (o - j > 0) {
@@ -5479,8 +5492,16 @@ var prettydiff = function (api) {
                                                     bx[o - 1] = bx[o - 1] + "</em>";
                                                     ax[j - 1] = ax[j - 1] + "</em>";
                                                 } else {
-                                                    bx[o - 1] = "</em>" + bx[o - 1];
-                                                    ax[j - 1] = "</em>" + ax[j - 1];
+                                                    if (o === 1) {
+                                                        bx[o - 1] = bx[o - 1] + "</em>";
+                                                    } else {
+                                                        bx[o - 1] = "</em>" + bx[o - 1];
+                                                    }
+                                                    if (j === 1) {
+                                                        ax[j - 1] = ax[j - 1] + "</em>";
+                                                    } else {
+                                                        ax[j - 1] = "</em>" + ax[j - 1];
+                                                    }
                                                 }
                                                 k = o;
                                                 if (o - j > 0) {
