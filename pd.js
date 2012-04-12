@@ -348,12 +348,12 @@ var exports = "",
                 localStorage.setItem("bl", api.sourcelabel);
                 localStorage.setItem("nl", api.difflabel);
             }
-            if (domain.test(api.diff) && typeof XMLHttpRequest !== "undefined") {
+            if (domain.test(api.diff) && (typeof XMLHttpRequest === "object" || typeof (new ActiveXObject === "object"))) {
                 (function () {
                     var a = (api.diff.indexOf("file:///") === 0) ? api.diff.split(":///")[1] : api.diff.split("://")[1],
                         b = a ? a.indexOf("/") : 0,
                         c,
-                        xhr = new XMLHttpRequest();
+                        xhr = new XMLHttpRequest() || new ActiveXObject("Microsoft.XMLHTTP");
                     if (location && location.href) {
                         c = location.href.split("://")[0];
                     }
@@ -370,12 +370,12 @@ var exports = "",
                 }());
             }
         }
-        if (domain.test(api.source) && typeof XMLHttpRequest !== "undefined") {
+        if (domain.test(api.source) && (typeof XMLHttpRequest === "object" || typeof (new ActiveXObject === "object"))) {
             (function () {
                 var a = (api.source.indexOf("file:///") === 0) ? api.source.split(":///")[1] : api.source.split("://")[1],
                     b = a ? a.indexOf("/") : 0,
                     c,
-                    xhr = new XMLHttpRequest();
+                    xhr = new XMLHttpRequest() || new ActiveXObject("Microsoft.XMLHTTP");
                 if (location && location.href) {
                     c = location.href.split("://")[0];
                 }
@@ -2099,7 +2099,10 @@ pd = {
 _gaq.push(["_setAccount", "UA-27834630-1"]);
 _gaq.push(["_trackPageview"]);
 if (bounce) {
-    $$("webtool").onclick = _gaq.push(["_trackEvent", "Logging", "NoBounce", "NoBounce", null, false]);
+    $$("webtool").onclick = function () {
+        "use strict";
+        _gaq.push(["_trackEvent", "Logging", "NoBounce", "NoBounce", null, false]);
+    };
     bounce = false;
 }
 (function () {
