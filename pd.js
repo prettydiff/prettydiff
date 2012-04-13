@@ -348,7 +348,7 @@ var exports = "",
                 localStorage.setItem("bl", api.sourcelabel);
                 localStorage.setItem("nl", api.difflabel);
             }
-            if (domain.test(api.diff) && (typeof XMLHttpRequest === "object" || typeof (new ActiveXObject === "object"))) {
+            if (domain.test(api.diff) && (typeof XMLHttpRequest === "function" || typeof XMLHttpRequest === "object" || typeof ActiveXObject === "function")) {
                 (function () {
                     var a = (api.diff.indexOf("file:///") === 0) ? api.diff.split(":///")[1] : api.diff.split("://")[1],
                         b = a ? a.indexOf("/") : 0,
@@ -370,7 +370,7 @@ var exports = "",
                 }());
             }
         }
-        if (domain.test(api.source) && (typeof XMLHttpRequest === "object" || typeof (new ActiveXObject === "object"))) {
+        if (domain.test(api.source) && (typeof XMLHttpRequest === "function" || typeof XMLHttpRequest === "object" || typeof ActiveXObject === "function")) {
             (function () {
                 var a = (api.source.indexOf("file:///") === 0) ? api.source.split(":///")[1] : api.source.split("://")[1],
                     b = a ? a.indexOf("/") : 0,
