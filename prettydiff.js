@@ -665,8 +665,9 @@ var prettydiff = function (api) {
                             c = "",
                             x = y.replace(/\\\)/g, "~PDpar~").split("url("),
                             d = x.length,
-                            e = "\"";
+                            e = "";
                         for (a = 1; a < d; a += 1) {
+                            e = "\"";
                             if (x[a].charAt(0) === "\"") {
                                 e = "";
                             } else if (x[a].charAt(0) === "'") {
@@ -1058,8 +1059,9 @@ var prettydiff = function (api) {
                             c = "",
                             x = y.replace(/\\\)/g, "~PDpar~").split("url("),
                             d = x.length,
-                            e = "\"";
+                            e = "";
                         for (a = 1; a < d; a += 1) {
+                            e = "\"";
                             if (x[a].charAt(0) === "\"") {
                                 e = "";
                             } else if (x[a].charAt(0) === "'") {
