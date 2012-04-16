@@ -989,7 +989,7 @@ var prettydiff = function (api) {
                                         } else if (s === ":") {
                                             asiflag = false;
                                         }
-                                        if (asiflag && (((s === "]" || s === ")") && isAlphanum(a) && a !== "/") || (a === "}" && (isAlphanum(s) || s === "'" || s === "\"")))) {
+                                        if (asiflag && (((s === "]" || s === ")") && (isAlphanum(a) || a === "!") && a !== "/") || (a === "}" && (isAlphanum(s) || s === "'" || s === "\"")))) {
                                             r.push(";");
                                         }
                                     }
