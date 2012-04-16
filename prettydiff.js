@@ -604,6 +604,7 @@ var prettydiff = function (api) {
                                 f = c.length;
                                 m = 0;
                                 p = 0;
+                                g = -1;
                                 for (e = 0; e < f; e += 1) {
                                     if (typeof c[e - 1] !== "undefined" && c[e - 1][0] === c[e][0] && /\-[a-z]/.test(c[e - 1][1]) === false) {
                                         c[e - 1] = "";
@@ -635,7 +636,7 @@ var prettydiff = function (api) {
                                     }
                                     if (g === -1 && c[e + 1] && c[e][0].charAt(0) !== "-" && (c[e][0].indexOf("cue") !== -1 || c[e][0].indexOf("list-style") !== -1 || c[e][0].indexOf("outline") !== -1 || c[e][0].indexOf("overflow") !== -1 || c[e][0].indexOf("pause") !== -1) && (c[e][0] === c[e + 1][0].substring(0, c[e + 1][0].lastIndexOf("-")) || c[e][0].substring(0, c[e][0].lastIndexOf("-")) === c[e + 1][0].substring(0, c[e + 1][0].lastIndexOf("-")))) {
                                         g = e;
-                                        if (c[g][0].indexOf("-") !== -1) {
+                                        if (c[g][0].indexOf("-") !== -1 && c[g][0] !== "list-style") {
                                             c[g][0] = c[g][0].substring(0, c[g][0].lastIndexOf("-"));
                                         }
                                     } else if (g !== -1 && c[g][0] === c[e][0].substring(0, c[e][0].lastIndexOf("-"))) {
@@ -1294,6 +1295,7 @@ var prettydiff = function (api) {
                                 f = c.length;
                                 m = 0;
                                 p = 0;
+                                g = -1;
                                 for (e = 0; e < f; e += 1) {
                                     if (c[e - 1] && c[e - 1][0] === c[e][0] && /\-[a-z]/.test(c[e - 1][1]) === false) {
                                         c[e - 1] = "";
@@ -1325,7 +1327,7 @@ var prettydiff = function (api) {
                                     }
                                     if (g === -1 && c[e + 1] && c[e][0].charAt(0) !== "-" && (c[e][0].indexOf("cue") !== -1 || c[e][0].indexOf("list-style") !== -1 || c[e][0].indexOf("outline") !== -1 || c[e][0].indexOf("overflow") !== -1 || c[e][0].indexOf("pause") !== -1) && (c[e][0] === c[e + 1][0].substring(0, c[e + 1][0].lastIndexOf("-")) || c[e][0].substring(0, c[e][0].lastIndexOf("-")) === c[e + 1][0].substring(0, c[e + 1][0].lastIndexOf("-")))) {
                                         g = e;
-                                        if (c[g][0].indexOf("-") !== -1) {
+                                        if (c[g][0].indexOf("-") !== -1 && c[g][0] !== "list-style") {
                                             c[g][0] = c[g][0].substring(0, c[g][0].lastIndexOf("-"));
                                         }
                                     } else if (g !== -1 && c[g][0] === c[e][0].substring(0, c[e][0].lastIndexOf("-"))) {
