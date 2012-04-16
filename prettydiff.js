@@ -972,7 +972,7 @@ var prettydiff = function (api) {
                                             if (s === ":") {
                                                 asiflag = false;
                                             }
-                                            if (asiflag && (isAlphanum(s) || s === "]" || s === ")") && a === "\n" && (b === "}" || b === " ")) {
+                                            if (asiflag && (isAlphanum(s) || s === "]" || s === ")") && a === "\n" && (b === "}" || b === " " || b === "!")) {
                                                 r.push(";");
                                             }
                                         }
