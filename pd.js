@@ -2128,6 +2128,16 @@ if (bounce) {
                 return "diff";
             }()),
             sFormattedMessage = "";
+        if (message === "prettydiff is not defined" && ls) {
+            if (mode === "minify") {
+                localStorage.setItem("mi", "");
+            } else if (mode === "beautify") {
+                localStorage.setItem("bi", "");
+            } else {
+                localStorage.setItem("bo", "");
+                localStorage.setItem("nx", "");
+            }
+        }
         if (line > 0) {
             sFormattedMessage = "[" + file + " (" + line + ")] " + message + " " + mode + " " + o.lang + " " + code;
             _gaq.push(["_trackEvent", "Exceptions", "Application", sFormattedMessage, null, true]);

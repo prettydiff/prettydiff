@@ -755,6 +755,12 @@ var prettydiff = function (api) {
                     fixpercent = function (x) {
                         return x.replace(/%/, "% ");
                     },
+                    bangFix = function (x) {
+                        if (x.indexOf("\n") > -1) {
+                            return ");!";
+                        }
+                        return x;
+                    },
                     get = function () {
                         var c = theLookahead;
                         if (geti === getl) {
@@ -972,7 +978,7 @@ var prettydiff = function (api) {
                                             if (s === ":") {
                                                 asiflag = false;
                                             }
-                                            if (asiflag && (isAlphanum(s) || s === "]" || s === ")") && a === "\n" && (b === "}" || b === " " || b === "!")) {
+                                            if (asiflag && (isAlphanum(s) || s === "]" || s === ")") && a === "\n" && (b === "}" || b === " ")) {
                                                 r.push(";");
                                             }
                                         }
@@ -989,7 +995,7 @@ var prettydiff = function (api) {
                                         } else if (s === ":") {
                                             asiflag = false;
                                         }
-                                        if (asiflag && (((s === "]" || s === ")") && (isAlphanum(a) || a === "!") && a !== "/") || (a === "}" && (isAlphanum(s) || s === "'" || s === "\"")))) {
+                                        if (asiflag && (((s === "]" || s === ")") && isAlphanum(a) && a !== "/") || (a === "}" && (isAlphanum(s) || s === "'" || s === "\"")))) {
                                             r.push(";");
                                         }
                                     }
@@ -1004,7 +1010,7 @@ var prettydiff = function (api) {
                 } else {
                     if (alter && level === 2) {
                         alterj = true;
-                        input = input.replace(/\r\n?/g, "\n").replace(/("|')\s+["'a-zA-Z_$]/g, jsasiq);
+                        input = input.replace(/\r\n?/g, "\n").replace(/("|')\s+["'a-zA-Z_$]/g, jsasiq).replace(/\)\s+\!(?!\=)/g, bangFix);
                     }
                     OTHERS = "_$//";
                 }
