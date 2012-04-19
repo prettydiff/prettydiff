@@ -522,16 +522,16 @@ pd = {
             e = $$("options").offsetTop,
             f = b.getAttribute("id"),
             g = (b === o.re) ? a.getElementsByTagName("button")[1] : a.getElementsByTagName("button")[0];
-		
-		//shrink
-		if (x.innerHTML === "\u2193") {
+
+        //shrink
+        if (x.innerHTML === "\u2193") {
             if (!pd.position[f]) {
-                    pd.position[f] = {};
-                }
-                pd.position[f].top = (b.offsetTop / 10);
-                pd.position[f].left = (b.offsetLeft / 10);
-                pd.position[f].height = (c.clientHeight / 10) - 3.7;
-                pd.position[f].width = (c.clientWidth / 10) - 0.4;
+                pd.position[f] = {};
+            }
+            pd.position[f].top = (b.offsetTop / 10);
+            pd.position[f].left = (b.offsetLeft / 10);
+            pd.position[f].height = (c.clientHeight / 10) - 3.7;
+            pd.position[f].width = (c.clientWidth / 10) - 0.4;
             g.innerHTML = "\u2191";
             b.style.left = "auto";
             a.style.display = "none";
@@ -558,10 +558,10 @@ pd = {
             d.style.width = "20em";
             d.style.margin = "0em 0em -3.2em 0.1em";
             x.innerHTML = "\u2191";
-		
-		//grow
+
+            //grow
         } else {
-			pd.top(b);
+            pd.top(b);
             g.innerHTML = "\u2191";
             a.style.display = "block";
             b.style.borderWidth = ".1em";
@@ -761,7 +761,7 @@ pd = {
             },
             boxmove = function (f) {
                 f = f || window.event;
-				a.style.right = "auto";
+                a.style.right = "auto";
                 a.style.left = ((ax + (f.clientX - a.mouseX)) / 10) + "em";
                 a.style.top = ((ay + (f.clientY - a.mouseY)) / 10) + "em";
                 document.onmouseup = drop;
@@ -772,7 +772,7 @@ pd = {
             } else {
                 c = a.getElementsByTagName("button")[0];
             }
-			a.style.left = "auto";
+            a.style.left = "auto";
             pd.minimize(c);
             return;
         }
@@ -1219,77 +1219,57 @@ pd = {
             o.rf = $$("diffreportbody");
             if (o.rf.style.display === "none") {
                 pd.webtool[3] = "diffreportzindex: 2";
-                pd.webtool[9] = "diffreportmin: 1";
+                pd.webtool[4] = "diffreportmin: 1";
             } else {
                 pd.webtool[3] = "diffreportzindex: " + o.re.style.zIndex;
-                pd.webtool[9] = "";
+                pd.webtool[4] = "";
             }
             pd.webtool[5] = "diffreportleft: " + o.re.offsetLeft;
             pd.webtool[6] = "diffreporttop: " + o.re.offsetTop;
-            pd.webtool[7] = "diffreportwidth: " + ((o.rf.clientWidth / 10) - 0.4);
-            pd.webtool[8] = "diffreportheight: " + ((o.rf.clientHeight / 10) - 3.7);
-            if (x.style.display === "none") {
-                pd.webtool[4] = "diffreportclose: 1";
-            } else {
-                pd.webtool[4] = "";
-            }
+            pd.webtool[7] = "diffreportwidth: " + ((o.rf.clientWidth / 10) - 0.3);
+            pd.webtool[8] = "diffreportheight: " + ((o.rf.clientHeight / 10) - 3.6);
         } else if (x === o.rg) {
             o.rg = $$("beaureport");
             o.rh = $$("beaureportbody");
             if (o.rh.style.display === "none") {
-                pd.webtool[10] = "beaureportzindex: 2";
-                pd.webtool[16] = "beaureportmin: 1";
+                pd.webtool[9] = "beaureportzindex: 2";
+                pd.webtool[10] = "beaureportmin: 1";
             } else {
-                pd.webtool[10] = "beaureportzindex: " + o.rg.style.zIndex;
-                pd.webtool[16] = "";
+                pd.webtool[9] = "beaureportzindex: " + o.rg.style.zIndex;
+                pd.webtool[10] = "";
             }
-            pd.webtool[12] = "beaureportleft: " + o.rg.offsetLeft;
-            pd.webtool[13] = "beaureporttop: " + o.rg.offsetTop;
-            pd.webtool[14] = "beaureportwidth: " + ((o.rh.clientWidth / 10) - 0.4);
-            pd.webtool[15] = "beaureportheight: " + ((o.rh.clientHeight / 10) - 3.7);
-            if (x.style.display === "none") {
-                pd.webtool[11] = "beaureportclose: 1";
-            } else {
-                pd.webtool[11] = "";
-            }
+            pd.webtool[11] = "beaureportleft: " + o.rg.offsetLeft;
+            pd.webtool[12] = "beaureporttop: " + o.rg.offsetTop;
+            pd.webtool[13] = "beaureportwidth: " + ((o.rh.clientWidth / 10) - 0.3);
+            pd.webtool[14] = "beaureportheight: " + ((o.rh.clientHeight / 10) - 3.6);
         } else if (x === o.ri) {
             o.ri = $$("minreport");
             o.rj = $$("minreportbody");
             if (o.rj.style.display === "none") {
-                pd.webtool[17] = "minnreportzindex: 2";
-                pd.webtool[18] = "minnreportmin: 1";
+                pd.webtool[15] = "minnreportzindex: 2";
+                pd.webtool[16] = "minnreportmin: 1";
             } else {
-                pd.webtool[17] = "minnreportzindex: " + o.ri.style.zIndex;
-                pd.webtool[18] = "";
+                pd.webtool[15] = "minnreportzindex: " + o.ri.style.zIndex;
+                pd.webtool[16] = "";
             }
-            pd.webtool[19] = "minnreportleft: " + o.ri.offsetLeft;
-            pd.webtool[20] = "minnreporttop: " + o.ri.offsetTop;
-            pd.webtool[21] = "minnreportwidth: " + ((o.rj.clientWidth / 10) - 0.4);
-            pd.webtool[22] = "minnreportheight: " + ((o.rj.clientHeight / 10) - 3.7);
-            if (x.style.display === "none") {
-                pd.webtool[23] = "minnreportclose: 1";
-            } else {
-                pd.webtool[23] = "";
-            }
+            pd.webtool[17] = "minnreportleft: " + o.ri.offsetLeft;
+            pd.webtool[18] = "minnreporttop: " + o.ri.offsetTop;
+            pd.webtool[19] = "minnreportwidth: " + ((o.rj.clientWidth / 10) - 0.3);
+            pd.webtool[20] = "minnreportheight: " + ((o.rj.clientHeight / 10) - 3.6);
         } else if (x === o.rk) {
             o.rk = $$("statreport");
             o.rl = $$("statreportbody");
             if (o.rl.style.display === "none") {
-                pd.webtool[24] = "statreportzindex: 2";
-                pd.webtool[25] = "statreportmin: 1";
+                pd.webtool[21] = "statreportzindex: 2";
+                pd.webtool[22] = "statreportmin: 1";
             } else {
-                pd.webtool[24] = "statreportzindex: " + o.rk.style.zIndex;
-                pd.webtool[25] = "";
+                pd.webtool[21] = "statreportzindex: " + o.rk.style.zIndex;
+                pd.webtool[22] = "";
             }
-            pd.webtool[26] = "statreportleft: " + o.rk.offsetLeft;
-            pd.webtool[27] = "statreporttop: " + o.rk.offsetTop;
-            pd.webtool[28] = "statreportwidth: " + ((o.rl.clientWidth / 10) - 0.4);
-            pd.webtool[29] = "statreportheight: " + ((o.rl.clientHeight / 10) - 3.7);
-            if (x.style.display === "none") {
-                pd.webtool[30] = "statreportclose: 1";
-            } else {
-                pd.webtool[30] = "";
-            }
+            pd.webtool[23] = "statreportleft: " + o.rk.offsetLeft;
+            pd.webtool[24] = "statreporttop: " + o.rk.offsetTop;
+            pd.webtool[25] = "statreportwidth: " + ((o.rl.clientWidth / 10) - 0.3);
+            pd.webtool[26] = "statreportheight: " + ((o.rl.clientHeight / 10) - 3.6);
         }
         if (o.sh) {
             if (o.sh.innerHTML === "Normal view") {
@@ -1334,7 +1314,7 @@ pd = {
         //length on the parsed webtool storage. This limit prevents
         //excessive writing to the array which is corrupted each time
         //pd.options is executed
-        for (b = 0; b < 30; b += 1) {
+        for (b = 0; b < 26; b += 1) {
             if (typeof pd.webtool[b] !== "string") {
                 pd.webtool[b] = "p";
             }
@@ -1753,7 +1733,7 @@ pd = {
                                     o.re.style.top = (d[1] / 10) + "em";
                                 } else if (d[0] === "diffreportwidth") {
                                     o.rf.style.width = d[1] + "em";
-                                    o.re.getElementsByTagName("h2")[0].style.width = (d[1] - 12.76) + "em";
+                                    o.re.getElementsByTagName("h2")[0].style.width = (d[1] - 9.65) + "em";
                                 } else if (d[0] === "diffreportheight") {
                                     o.rf.style.height = d[1] + "em";
                                 } else if (d[0] === "diffreportmin") {
@@ -1763,8 +1743,6 @@ pd = {
                                     o.re.style.left = "auto";
                                     o.re.style.top = ((top / 10) + 1) + "em";
                                     dma = false;
-                                } else if (d[0] === "diffreportclose") {
-                                    o.re.style.display = "none";
                                 } else if (d[0] === "diffreportzindex") {
                                     o.re.style.zIndex = d[1];
                                 }
@@ -1776,7 +1754,7 @@ pd = {
                                     o.rg.style.top = (d[1] / 10) + "em";
                                 } else if (d[0] === "beaureportwidth") {
                                     o.rh.style.width = d[1] + "em";
-                                    o.rg.getElementsByTagName("h2")[0].style.width = (d[1] - 9.76) + "em";
+                                    o.rg.getElementsByTagName("h2")[0].style.width = (d[1] - 6.65) + "em";
                                 } else if (d[0] === "beaureportheight") {
                                     o.rh.style.height = d[1] + "em";
                                 } else if (d[0] === "beaureportmin") {
@@ -1786,8 +1764,6 @@ pd = {
                                     o.rg.style.left = "auto";
                                     o.rg.style.top = ((top / 10) + 1) + "em";
                                     bma = false;
-                                } else if (d[0] === "beaureportclose") {
-                                    o.rg.style.display = "none";
                                 } else if (d[0] === "beaureportzindex") {
                                     o.rg.style.zIndex = d[1];
                                 }
@@ -1799,7 +1775,7 @@ pd = {
                                     o.ri.style.top = (d[1] / 10) + "em";
                                 } else if (d[0] === "minnreportwidth") {
                                     o.rj.style.width = d[1] + "em";
-                                    o.ri.getElementsByTagName("h2")[0].style.width = (d[1] - 9.76) + "em";
+                                    o.ri.getElementsByTagName("h2")[0].style.width = (d[1] - 6.65) + "em";
                                 } else if (d[0] === "minnreportheight") {
                                     o.rj.style.height = d[1] + "em";
                                 } else if (d[0] === "minnreportmin") {
@@ -1809,8 +1785,6 @@ pd = {
                                     o.ri.style.left = "auto";
                                     o.ri.style.top = ((top / 10) + 1) + "em";
                                     mma = false;
-                                } else if (d[0] === "minnreportclose") {
-                                    o.ri.style.display = "none";
                                 } else if (d[0] === "minnreportzindex") {
                                     o.ri.style.zIndex = d[1];
                                 }
@@ -1822,7 +1796,7 @@ pd = {
                                     o.rk.style.top = (d[1] / 10) + "em";
                                 } else if (d[0] === "statreportwidth") {
                                     o.rl.style.width = d[1] + "em";
-                                    o.rk.getElementsByTagName("h2")[0].style.width = (d[1] - 9.76) + "em";
+                                    o.rk.getElementsByTagName("h2")[0].style.width = (d[1] - 6.65) + "em";
                                 } else if (d[0] === "statreportheight") {
                                     o.rl.style.height = d[1] + "em";
                                 } else if (d[0] === "statreportmin") {
@@ -1832,8 +1806,6 @@ pd = {
                                     o.rk.style.left = "auto";
                                     o.rk.style.top = ((top / 10) + 1) + "em";
                                     sma = false;
-                                } else if (d[0] === "statreportclose") {
-                                    o.rk.style.display = "none";
                                 } else if (d[0] === "statreportzindex") {
                                     o.rk.style.zIndex = d[1];
                                 }
@@ -1842,21 +1814,25 @@ pd = {
                     }
                 }
                 if (dm && dma) {
+                    o.re.style.right = "auto";
                     o.re.getElementsByTagName("p")[0].style.display = "block";
                     o.re.getElementsByTagName("p")[0].getElementsByTagName("button")[1].innerHTML = "\u2193";
                     o.rf.style.display = "block";
                 }
                 if (bm && bma) {
+                    o.rg.style.right = "auto";
                     o.rg.getElementsByTagName("p")[0].style.display = "block";
                     o.rg.getElementsByTagName("p")[0].getElementsByTagName("button")[0].innerHTML = "\u2193";
                     o.rh.style.display = "block";
                 }
                 if (mm && mma) {
+                    o.ri.style.right = "auto";
                     o.ri.getElementsByTagName("p")[0].style.display = "block";
                     o.ri.getElementsByTagName("p")[0].getElementsByTagName("button")[0].innerHTML = "\u2193";
                     o.rj.style.display = "block";
                 }
                 if (sm && sma) {
+                    o.rk.style.right = "auto";
                     o.rk.getElementsByTagName("p")[0].style.display = "block";
                     o.rk.getElementsByTagName("p")[0].getElementsByTagName("button")[0].innerHTML = "\u2193";
                     o.rl.style.display = "block";
