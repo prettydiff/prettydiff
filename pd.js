@@ -4,7 +4,7 @@ var exports = "",
     pd = {},
 
     //test for localStorage and assign the result of the test
-    ls = (typeof localStorage === "object" && localStorage !== null) ? true : false,
+    ls = (typeof localStorage === "object" && localStorage !== null && typeof localStorage.getItem === "function" && typeof localStorage.hasOwnProperty === "function") ? true : false,
     _gaq = _gaq || [],
     bounce = true,
     $$ = function (x) {
@@ -421,6 +421,7 @@ var exports = "",
             if (o.re.getElementsByTagName("p")[0].style.display === "none") {
                 pd.minimize(o.re.getElementsByTagName("button")[1]);
             }
+            o.re.style.right = "auto";
             if (ls) {
                 localStorage.setItem("bo", o.bo.value);
                 localStorage.setItem("nx", o.nx.value);
@@ -706,36 +707,40 @@ pd = {
             b = [],
             c = "",
             d = [];
-        pd.top(o.rf);
+        pd.top(o.re);
         if (/Please try using the option labeled ((&lt;)|<)em((&gt;)|>)Plain Text \(diff only\)((&lt;)|<)\/em((&gt;)|>)\./.test(a)) {
             o.rf.innerHTML = "<p><strong>Error:</strong> Please try using the option labeled <em>Plain Text (diff only)</em>. <span style='display:block'>The input does not appear to be markup, CSS, or JavaScript.</span></p>";
             return;
         }
         if (x.innerHTML === "S") {
             o.ps.checked = true;
-            c = "<table";
-            d = a.split(c);
-            c = c + d[1];
-            a = d[0];
-            b.push(a);
-            b.push(" <p>This is the generated diff output. Please copy the text output, paste into a text file, and save as a &quot;.html&quot; file.</p> <textarea rows='40' cols='80' id='textreport'>");
-            b.push("&lt;?xml version='1.0' encoding='UTF-8' ?&gt;&lt;!DOCTYPE html PUBLIC '-//W3C//DTD XHTML 1.1//EN' 'http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd'&gt;&lt;html xmlns='http://www.w3.org/1999/xhtml' xml:lang='en'&gt;&lt;head&gt;&lt;title&gt;Pretty Diff - The difference tool&lt;/title&gt;&lt;meta name='robots' content='index, follow'/&gt; &lt;meta name='DC.title' content='Pretty Diff - The difference tool'/&gt; &lt;link rel='canonical' href='http://prettydiff.com/' type='application/xhtml+xml'/&gt;&lt;meta http-equiv='Content-Type' content='application/xhtml+xml;charset=UTF-8'/&gt;&lt;meta http-equiv='Content-Style-Type' content='text/css'/&gt;&lt;style type='text/css'&gt;body{background-color:#a8b8c8;color:#000;font-family:'Arial';font-size:10px;}button{display:block;font-size:2em;font-weight:bold;margin:1em auto;padding:1em 2em;}button:hover{background:#ccf;}button:active{background:#c00;}h1{font-size:2em;}h1 span{color:#c00;font-size:.5em;}p{clear:both;font-size:1.2em;margin-top:.2em;}#diffoutput{width:100%;}p em{color:#c00;font-weight:bold;}table.diff{border-collapse:collapse;border:.1em solid darkgray;font-size:1em;white-space:pre;}table.diff tbody{font-family:'Courier New',Courier,'Lucida Console',monospace;font-size:1.1em;}table.diff tbody th{font-family:verdana,arial,'Bitstream Vera Sans',helvetica,sans-serif;background:#eed;font-weight:normal;border:.1em solid #bbc;color:#886;padding:.5em .6em 0em 2.4em;text-align:right;vertical-align:top;}table.diff thead{border-bottom:.1em solid #bbc;background:#efefef;font-family:Verdana;}table.diff thead th.texttitle{text-align:left;}table.diff tbody td{letter-spacing:.1em;padding:.5em .5em 0em .5em;vertical-align:top;}table.diff tbody td em{font-style:normal;padding:.05em 0em;margin:0-.09em;}table.diff .empty{background-color:#ddd;}table.diff .replace{background-color:#fd8;}table.diff .replace em{background-color:#ffd;border:.1em solid #963;color:#630;}table.diff .delete{background-color:#e99;}table.diff .delete em{background-color:#fdd;border:.1em solid #700;color:#600;}table.diff .equal{background-color:#fff;}table.diff .skip{background-color:#efefef;border:.1em solid #aaa;border-right:.1em solid #bbc;}table.diff .insert{background-color:#9e9;}table.diff .insert em{background-color:#efc;border:1px solid #070;color:#050;}table.diff th.author{text-align:right;border-top:.1em solid #bbc;background:#efefef;}@media print{html{font-size:.8em;}html table.diff{font-size:.8em;white-space:normal;}}&lt;/style&gt;&lt;/head&gt;&lt;body&gt;&lt;h1&gt;&lt;a href='http://prettydiff.com/'&gt;Pretty Diff - The difference tool&lt;/a&gt;&lt;/h1&gt;");
-            b.push(a.replace(/\&/g, "&amp;").replace(/>/g, "&gt;").replace(/</g, "&lt;"));
-            b.push("&lt;p&gt;Accessibility note. &amp;lt;em&amp;gt; tags in the output represent character differences per lines compared.&lt;/p&gt;");
-            b.push(c.replace(/\&/g, "&amp;").replace(/>/g, "&gt;").replace(/</g, "&lt;"));
-            b.push("&lt;/body&gt;&lt;/html&gt;</textarea>");
+            if (a !== "") {
+                c = "<table";
+                d = a.split(c);
+                c = c + d[1];
+                a = d[0];
+                b.push(a);
+                b.push(" <p>This is the generated diff output. Please copy the text output, paste into a text file, and save as a &quot;.html&quot; file.</p> <textarea rows='40' cols='80' id='textreport'>");
+                b.push("&lt;?xml version='1.0' encoding='UTF-8' ?&gt;&lt;!DOCTYPE html PUBLIC '-//W3C//DTD XHTML 1.1//EN' 'http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd'&gt;&lt;html xmlns='http://www.w3.org/1999/xhtml' xml:lang='en'&gt;&lt;head&gt;&lt;title&gt;Pretty Diff - The difference tool&lt;/title&gt;&lt;meta name='robots' content='index, follow'/&gt; &lt;meta name='DC.title' content='Pretty Diff - The difference tool'/&gt; &lt;link rel='canonical' href='http://prettydiff.com/' type='application/xhtml+xml'/&gt;&lt;meta http-equiv='Content-Type' content='application/xhtml+xml;charset=UTF-8'/&gt;&lt;meta http-equiv='Content-Style-Type' content='text/css'/&gt;&lt;style type='text/css'&gt;body{background-color:#a8b8c8;color:#000;font-family:'Arial';font-size:10px;}button{display:block;font-size:2em;font-weight:bold;margin:1em auto;padding:1em 2em;}button:hover{background:#ccf;}button:active{background:#c00;}h1{font-size:2em;}h1 span{color:#c00;font-size:.5em;}p{clear:both;font-size:1.2em;margin-top:.2em;}#diffoutput{width:100%;}p em{color:#c00;font-weight:bold;}table.diff{border-collapse:collapse;border:.1em solid darkgray;font-size:1em;white-space:pre;}table.diff tbody{font-family:'Courier New',Courier,'Lucida Console',monospace;font-size:1.1em;}table.diff tbody th{font-family:verdana,arial,'Bitstream Vera Sans',helvetica,sans-serif;background:#eed;font-weight:normal;border:.1em solid #bbc;color:#886;padding:.5em .6em 0em 2.4em;text-align:right;vertical-align:top;}table.diff thead{border-bottom:.1em solid #bbc;background:#efefef;font-family:Verdana;}table.diff thead th.texttitle{text-align:left;}table.diff tbody td{letter-spacing:.1em;padding:.5em .5em 0em .5em;vertical-align:top;}table.diff tbody td em{font-style:normal;padding:.05em 0em;margin:0-.09em;}table.diff .empty{background-color:#ddd;}table.diff .replace{background-color:#fd8;}table.diff .replace em{background-color:#ffd;border:.1em solid #963;color:#630;}table.diff .delete{background-color:#e99;}table.diff .delete em{background-color:#fdd;border:.1em solid #700;color:#600;}table.diff .equal{background-color:#fff;}table.diff .skip{background-color:#efefef;border:.1em solid #aaa;border-right:.1em solid #bbc;}table.diff .insert{background-color:#9e9;}table.diff .insert em{background-color:#efc;border:1px solid #070;color:#050;}table.diff th.author{text-align:right;border-top:.1em solid #bbc;background:#efefef;}@media print{html{font-size:.8em;}html table.diff{font-size:.8em;white-space:normal;}}&lt;/style&gt;&lt;/head&gt;&lt;body&gt;&lt;h1&gt;&lt;a href='http://prettydiff.com/'&gt;Pretty Diff - The difference tool&lt;/a&gt;&lt;/h1&gt;");
+                b.push(a.replace(/\&/g, "&amp;").replace(/>/g, "&gt;").replace(/</g, "&lt;"));
+                b.push("&lt;p&gt;Accessibility note. &amp;lt;em&amp;gt; tags in the output represent character differences per lines compared.&lt;/p&gt;");
+                b.push(c.replace(/\&/g, "&amp;").replace(/>/g, "&gt;").replace(/</g, "&lt;"));
+                b.push("&lt;/body&gt;&lt;/html&gt;</textarea>");
+            }
             x.innerHTML = "H";
             x.setAttribute("title", "Convert diff report to an HTML table.");
         } else {
             o.ps.checked = false;
             c = "<p>This is the generated diff output. Please copy the text output, paste into a text file, and save as a \".html\" file.</p>";
-            a = a.replace(/ xmlns\="http:\/\/www\.w3\.org\/1999\/xhtml"/g, "").replace(/&lt;/g, "<").replace(/&gt;/g, ">").replace(/&amp;/g, "&");
-            d = a.split(c);
-            b.push(d[0]);
-            c = (d[1].indexOf("table class=\"diff\"") === -1) ? "table class='diff'" : "table class=\"diff\"";
-            d[1] = d[1].split(c)[1];
-            d[1] = "<table class=\"diff\"" + (d[1].substring(0, d[1].length - 25));
-            b.push(d[1]);
+            if (a !== "") {
+                a = a.replace(/ xmlns\="http:\/\/www\.w3\.org\/1999\/xhtml"/g, "").replace(/&lt;/g, "<").replace(/&gt;/g, ">").replace(/&amp;/g, "&");
+                d = a.split(c);
+                b.push(d[0]);
+                c = (d[1].indexOf("table class=\"diff\"") === -1) ? "table class='diff'" : "table class=\"diff\"";
+                d[1] = d[1].split(c)[1];
+                d[1] = "<table class=\"diff\"" + (d[1].substring(0, d[1].length - 25));
+                b.push(d[1]);
+            }
             x.innerHTML = "S";
             x.setAttribute("title", "Convert diff report to text that can be saved.");
         }
@@ -1271,6 +1276,15 @@ pd = {
             pd.webtool[25] = "statreportwidth: " + ((o.rl.clientWidth / 10) - 0.3);
             pd.webtool[26] = "statreportheight: " + ((o.rl.clientHeight / 10) - 3.6);
         }
+        if (typeof pd.webtool[3] !== "string") {
+            pd.options(o.re);
+        } else if (typeof pd.webtool[9] !== "string") {
+            pd.options(o.rg);
+        } else if (typeof pd.webtool[15] !== "string") {
+            pd.options(o.ri);
+        } else if (typeof pd.webtool[21] !== "string") {
+            pd.options(o.rk);
+        }
         if (o.sh) {
             if (o.sh.innerHTML === "Normal view") {
                 pd.webtool[0] = "showhide: hide";
@@ -1315,8 +1329,8 @@ pd = {
         //excessive writing to the array which is corrupted each time
         //pd.options is executed
         for (b = 0; b < 26; b += 1) {
-            if (typeof pd.webtool[b] !== "string") {
-                pd.webtool[b] = "p";
+            if (pd.webtool[b] === "") {
+                pd.webtool[b] = "pdempty";
             }
         }
         localStorage.setItem("webtool", pd.webtool.join("prettydiffcsep").replace(/(prettydiffcsep)+/g, "prettydiffcsep").replace(/%/g, "prettydiffper"));
@@ -1334,21 +1348,21 @@ pd = {
         o.re.style.display = "block";
         o.re.style.left = "auto";
         o.re.style.right = "68em";
-        o.re.style.top = "64.1em";
+        o.re.style.top = "62.1em";
         o.re.style.zIndex = "2";
         o.re.getElementsByTagName("p")[0].style.display = "none";
         o.rh.style.display = "none";
         o.rg.style.display = "block";
         o.rg.style.left = "auto";
         o.rg.style.right = "46em";
-        o.rg.style.top = "64.1em";
+        o.rg.style.top = "62.1em";
         o.rg.style.zIndex = "2";
         o.rg.getElementsByTagName("p")[0].style.display = "none";
         o.rj.style.display = "none";
         o.ri.style.display = "block";
         o.ri.style.left = "auto";
         o.ri.style.right = "24em";
-        o.ri.style.top = "64.1em";
+        o.ri.style.top = "62.1em";
         o.ri.style.zIndex = "2";
         o.ri.getElementsByTagName("p")[0].style.display = "none";
         o.rl.style.display = "none";
@@ -1358,7 +1372,7 @@ pd = {
             o.rk.style.display = "block";
             o.rk.style.left = "auto";
             o.rk.style.right = "2em";
-            o.rk.style.top = "64.1em";
+            o.rk.style.top = "62.1em";
             o.rk.style.zIndex = "2";
             o.rk.getElementsByTagName("p")[0].style.display = "none";
         }
