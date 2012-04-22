@@ -5020,8 +5020,19 @@ var prettydiff = function (api) {
                                     return junkdict[key];
                                 }
                             },
-                            a = bta,
-                            b = nta,
+                            a = [],
+                            b = [],
+                            reverse = false,
+                            lentest = (function () {
+                                if (bta.length > nta.length) {
+                                    reverse = true;
+                                    a = nta;
+                                    b = bta;
+                                } else {
+                                    a = bta;
+                                    b = nta;
+                                }
+                            }()),
                             matching_blocks = [],
                             bxj = [],
                             opcodes = [],
@@ -5050,18 +5061,18 @@ var prettydiff = function (api) {
                                         [0, la, 0, lb]
                                     ],
                                     non_adjacent = [],
-                                    ntuplecomp = function (a, b) {
+                                    ntuplecomp = function (x, y) {
                                         var i = 0,
-                                            mlen = Math.max(a.length, b.length);
+                                            mlen = Math.max(x.length, y.length);
                                         for (i = 0; i < mlen; i += 1) {
-                                            if (a[i] < b[i]) {
+                                            if (x[i] < y[i]) {
                                                 return -1;
                                             }
-                                            if (a[i] > b[i]) {
+                                            if (x[i] > y[i]) {
                                                 return 1;
                                             }
                                         }
-                                        return (a.length === b.length) ? 0 : ((a.length < b.length) ? -1 : 1);
+                                        return (x.length === y.length) ? 0 : ((x.length < y.length) ? -1 : 1);
                                     },
                                     find_longest_match = function (alo, ahi, blo, bhi) {
                                         var c = 0,
@@ -5193,8 +5204,12 @@ var prettydiff = function (api) {
                                             c = 0,
                                             i = 0,
                                             j = 0,
+                                            x = "",
+                                            y = "",
+                                            z = "",
                                             blocks = get_matching_blocks(),
-                                            d = blocks.length;
+                                            d = blocks.length,
+                                            fixTest = false;
                                         for (c = 0; c < d; c += 1) {
                                             ai = blocks[c][0];
                                             bj = blocks[c][1];
@@ -5203,17 +5218,33 @@ var prettydiff = function (api) {
                                             if (i < ai && j < bj) {
                                                 tag = "replace";
                                             } else if (i < ai) {
-                                                tag = "delete";
+                                                if (reverse) {
+                                                    tag = "insert";
+                                                } else {
+                                                    tag = "delete";
+                                                }
                                             } else if (j < bj) {
-                                                tag = "insert";
+                                                if (reverse) {
+                                                    tag = "delete";
+                                                } else {
+                                                    tag = "insert";
+                                                }
                                             }
                                             if (tag !== "") {
-                                                answer.push([tag, i, ai, j, bj]);
+                                                if (reverse) {
+                                                    answer.push([tag, j, bj, i, ai]);
+                                                } else {
+                                                    answer.push([tag, i, ai, j, bj]);
+                                                }
                                             }
                                             i = ai + size;
                                             j = bj + size;
                                             if (size > 0) {
-                                                answer.push(["equal", ai, i, bj, j]);
+                                                if (reverse) {
+                                                    answer.push(["equal", bj, j, ai, i]);
+                                                } else {
+                                                    answer.push(["equal", ai, i, bj, j]);
+                                                }
                                             }
                                         }
                                     }());
@@ -5712,7 +5743,7 @@ var prettydiff = function (api) {
                                     node.push("<th>");
                                     node.push(b + 1);
                                     node.push("</th><td class='delete'>");
-                                    node.push(bta[b]);
+                                    node.push(bta[b]); //console.log(bta[b - 1]+"\n"+bta[b]+"\n\n");
                                     node.push("</td>");
                                     node.push("<th></th><td class='empty'></td>");
                                     btest = false;

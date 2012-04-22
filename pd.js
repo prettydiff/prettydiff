@@ -1309,7 +1309,17 @@ pd = {
                 a.setAttribute("title", "Convert diff report to an HTML table.");
             }
         }
-        o.option.innerHTML = ("/*prettydiff.com " + (pd.optionString.join(", ").replace(/(\,\s+\,\s+)+/g, ", ") + " */").replace(/((\,? )+\*\/)$/, " */")).replace(/^(\/\*prettydiff\.com (\, )+)/, "/*prettydiff.com ").replace(/(\,\s+\,\s+)+/g, ", ");
+        for (b = 0; b < 15; b += 1) {
+            if (typeof pd.optionString[b] !== "string" || pd.optionString[b] === "") {
+                pd.optionString[b] = "pdempty";
+            }
+        }
+        if (typeof o.option.innerHTML === "string") {
+            o.option.innerHTML = ("/*prettydiff.com " + (pd.optionString.join(", ").replace(/pdempty(\, )?/g, "").replace(/(\,\s+\,\s+)+/g, ", ") + " */").replace(/((\,? )+\*\/)$/, " */")).replace(/^(\/\*prettydiff\.com (\, )+)/, "/*prettydiff.com ").replace(/(\,\s+\,\s+)+/g, ", ");
+        }
+        if (typeof o.option.value === "string") {
+            o.option.value = ("/*prettydiff.com " + (pd.optionString.join(", ").replace(/pdempty(\, )?/g, "").replace(/(\,\s+\,\s+)+/g, ", ") + " */").replace(/((\,? )+\*\/)$/, " */")).replace(/^(\/\*prettydiff\.com (\, )+)/, "/*prettydiff.com ").replace(/(\,\s+\,\s+)+/g, ", ");
+        }
         if (pd.optionString[0] === "" || pd.optionString[0] === undefined) {
             if (o.bb.checked) {
                 pd.optionString[0] = "api.mode: beautify";
@@ -1351,6 +1361,7 @@ pd = {
         o.re.style.top = "62.1em";
         o.re.style.zIndex = "2";
         o.re.getElementsByTagName("p")[0].style.display = "none";
+        o.re.getElementsByTagName("h2")[0].style.width = "20em";
         o.rh.style.display = "none";
         o.rg.style.display = "block";
         o.rg.style.left = "auto";
@@ -1358,6 +1369,7 @@ pd = {
         o.rg.style.top = "62.1em";
         o.rg.style.zIndex = "2";
         o.rg.getElementsByTagName("p")[0].style.display = "none";
+        o.rg.getElementsByTagName("h2")[0].style.width = "20em";
         o.rj.style.display = "none";
         o.ri.style.display = "block";
         o.ri.style.left = "auto";
@@ -1365,6 +1377,7 @@ pd = {
         o.ri.style.top = "62.1em";
         o.ri.style.zIndex = "2";
         o.ri.getElementsByTagName("p")[0].style.display = "none";
+        o.ri.getElementsByTagName("h2")[0].style.width = "20em";
         o.rl.style.display = "none";
         if (!ls) {
             o.rk.style.display = "none";
@@ -1375,6 +1388,7 @@ pd = {
             o.rk.style.top = "62.1em";
             o.rk.style.zIndex = "2";
             o.rk.getElementsByTagName("p")[0].style.display = "none";
+            o.rk.getElementsByTagName("h2")[0].style.width = "20em";
         }
         o.bi.style.height = "";
         o.mi.style.height = "";
