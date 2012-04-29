@@ -5204,19 +5204,54 @@ var prettydiff = function (api) {
                                             c = 0,
                                             i = 0,
                                             j = 0,
-                                            x = "",
-                                            y = "",
-                                            z = "",
                                             blocks = get_matching_blocks(),
                                             d = blocks.length,
-                                            fixTest = false;
+                                            closerMatch = function (x, y, z) {
+                                                var diffspot = function (a, b) {
+                                                        var c = a.replace(/^(\s+)/, "").split(""),
+                                                            d = Math.min(c.length, b.length),
+                                                            e = 0;
+                                                        for (e = 0; e < d; e += 1) {
+                                                            if (c[e] !== b[e]) {
+                                                                return e;
+                                                            }
+                                                        }
+                                                        return e;
+                                                    },
+                                                    zz = z.replace(/^(\s+)/, "").split(""),
+                                                    test = diffspot(y, zz) - diffspot(x, zz);
+                                                if (test > 0) {
+                                                    return true;
+                                                }
+                                                return false;
+                                            };
                                         for (c = 0; c < d; c += 1) {
                                             ai = blocks[c][0];
                                             bj = blocks[c][1];
                                             size = blocks[c][2];
                                             tag = "";
                                             if (i < ai && j < bj) {
-                                                tag = "replace";
+                                                if (i - j !== ai - bj && j - bj < 3 && i - ai < 3) {
+                                                    if (reverse && i - ai > j - bj) {
+                                                        if (closerMatch(b[j], b[j + 1], a[i])) {
+                                                            answer.push(["delete", j, j + 1, i, i]);
+                                                            answer.push(["replace", j + 1, bj, i, ai]);
+                                                        } else {
+                                                            answer.push(["replace", j, bj, i, ai]);
+                                                        }
+                                                    } else if (!reverse && bj - j > ai - i) {
+                                                        if (closerMatch(b[j], b[j + 1], a[i])) {
+                                                            answer.push(["insert", i, i, j, j + 1]);
+                                                            answer.push(["replace", i, ai, j + 1, bj]);
+                                                        } else {
+                                                            answer.push(["replace", i, ai, j, bj]);
+                                                        }
+                                                    } else {
+                                                        tag = "replace";
+                                                    }
+                                                } else {
+                                                    tag = "replace";
+                                                }
                                             } else if (i < ai) {
                                                 if (reverse) {
                                                     tag = "insert";
@@ -5627,9 +5662,9 @@ var prettydiff = function (api) {
                             }
                             node.push("<tr>");
                             if (tab !== "") {
-                                if (!btest && typeof bta[b + 1] === "string" && typeof nta[n] === "string" && btab[b + 1] === ntab[n] && btab[b] !== ntab[n] && (typeof nta[n - 1] !== "string" || (btab[b] !== ntab[n - 1]))) {
+                                if (!btest && bta[be] !== nta[ne] && typeof bta[b + 1] === "string" && typeof nta[n] === "string" && btab[b + 1] === ntab[n] && btab[b] !== ntab[n] && (typeof nta[n - 1] !== "string" || btab[b] !== ntab[n - 1])) {
                                     btest = true;
-                                } else if (!ntest && typeof nta[n + 1] === "string" && typeof bta[b] === "string" && ntab[n + 1] === btab[b] && ntab[n] !== btab[b] && (typeof bta[b - 1] !== "string" || (ntab[n] !== btab[b - 1]))) {
+                                } else if (!ntest && bta[be] !== nta[ne] && typeof nta[n + 1] === "string" && typeof bta[b] === "string" && ntab[n + 1] === btab[b] && ntab[n] !== btab[b] && (typeof bta[b - 1] !== "string" || ntab[n] !== btab[b - 1])) {
                                     ntest = true;
                                 }
                             }
@@ -5694,7 +5729,7 @@ var prettydiff = function (api) {
                                         z = charcomp(bta[b], nta[n]);
                                     } else {
                                         z = [];
-                                    }
+                                    } //[change, b, be, n, ne]
                                     if (b < be) {
                                         node.push("<th>");
                                         node.push(b + 1);
@@ -5743,7 +5778,7 @@ var prettydiff = function (api) {
                                     node.push("<th>");
                                     node.push(b + 1);
                                     node.push("</th><td class='delete'>");
-                                    node.push(bta[b]); //console.log(bta[b - 1]+"\n"+bta[b]+"\n\n");
+                                    node.push(bta[b]);
                                     node.push("</td>");
                                     node.push("<th></th><td class='empty'></td>");
                                     btest = false;
