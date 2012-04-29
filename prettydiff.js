@@ -702,9 +702,8 @@ var prettydiff = function (api) {
                         return a;
                     },
                     sameDist = function (y) {
-                        var z = [],
+                        var z = y.split(":"),
                             x = [];
-                        z = y.split(":")
                         if (z[0].indexOf("background") > -1 || z.length > 2) {
                             return y;
                         }
@@ -1091,8 +1090,7 @@ var prettydiff = function (api) {
                     }()),
                     sameDist = function (x) {
                         var y = [],
-                            z = [];
-                        z = x.split(": ");
+                            z = x.split(": ");
                         if (z[0].indexOf("background") > -1 || z.length > 2) {
                             return x;
                         }
