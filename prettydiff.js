@@ -1,5 +1,5 @@
 /*prettydiff.com api.topcoms: true, api.insize: 4, api.inchar: " " */
-/*global o, exports, location */
+/*global o, exports */
 /*
  @source: http://prettydiff.com/documentation.php
 
@@ -131,17 +131,6 @@
  in this page.
 
  */
-/***
- Node.js compatiblity:
- Copy the following code to the extreme end of this file.
-
-if (typeof exports !== "string") {
-    exports.api = function (x) {
-        "use strict";
-        return prettydiff(x);
-    };
-}
- ***/
 var prettydiff = function (api) {
         "use strict";
         var startTime = (function () {
@@ -549,9 +538,20 @@ var prettydiff = function (api) {
                             h = [],
                             test = false,
                             colorLow = function (y) {
+                                var a = y.charAt(0),
+                                    b = false;
+                                if (y.length === 8 || y.length === 5) {
+                                    y = y.substr(1);
+                                    b = true;
+                                }
                                 y = y.toLowerCase();
                                 if (y.length === 7 && y.charAt(1) === y.charAt(2) && y.charAt(3) === y.charAt(4) && y.charAt(5) === y.charAt(6)) {
                                     y = "#" + y.charAt(1) + y.charAt(3) + y.charAt(5);
+                                }
+                                if (a !== "$" && b && !(/\s/).test(a)) {
+                                    y = a + " " + y;
+                                } else if (a === "$") {
+                                    y = "$" + y;
                                 }
                                 return y;
                             };
@@ -590,7 +590,7 @@ var prettydiff = function (api) {
                                 if (d[a].charAt(d[a].length - 1) === ";") {
                                     d[a] = d[a].substr(0, d[a].length - 1);
                                 }
-                                c = d[a].replace(/:/g, "$").replace(/#[a-zA-Z0-9]{3,6}(?!(\w*\)))/g, colorLow).split(";").sort();
+                                c = d[a].replace(/:/g, "$").replace(/(\w|\W)?#[a-zA-Z0-9]{3,6}(?!(\w*\)))/g, colorLow).split(";").sort();
                                 f = c.length;
                                 h = [];
                                 for (e = 0; e < f; e += 1) {
@@ -1203,9 +1203,20 @@ var prettydiff = function (api) {
                             i = [],
                             test = false,
                             colorLow = function (y) {
+                                var a = y.charAt(0),
+                                    b = false;
+                                if (y.length === 8 || y.length === 5) {
+                                    y = y.substr(1);
+                                    b = true;
+                                }
                                 y = y.toLowerCase();
                                 if (y.length === 7 && y.charAt(1) === y.charAt(2) && y.charAt(3) === y.charAt(4) && y.charAt(5) === y.charAt(6)) {
                                     y = "#" + y.charAt(1) + y.charAt(3) + y.charAt(5);
+                                }
+                                if (b && !(/\s/).test(a)) {
+                                    y = a + " " + y;
+                                } else if (b && (/\s/).test(a)) {
+                                    y = a + y;
                                 }
                                 return y;
                             },
@@ -1272,7 +1283,7 @@ var prettydiff = function (api) {
                                     d[a] = d[a].substr(0, d[a].length - 1);
                                 }
                                 q = d[a].replace(ccex, cceg);
-                                c = q.replace(/\*\//g, "*/;").replace(/:/g, "$").replace(/#[a-fA-F0-9]{3,6}(?!(\w*\)))/g, colorLow).split(";");
+                                c = q.replace(/\*\//g, "*/;").replace(/:/g, "$").replace(/(\w|\W)?#[a-fA-F0-9]{3,6}(?!(\w*\)))/g, colorLow).split(";");
                                 f = c.length;
                                 h = [];
                                 i = [];
@@ -6376,3 +6387,9 @@ var prettydiff = function (api) {
             };
         return core(api);
     };
+if (typeof exports === "object") {
+    exports.api = function (x) {
+        "use strict";
+        return prettydiff(x);
+    };
+}

@@ -163,8 +163,8 @@ var exports = "",
             lango = {},
             stat = [];
 
-        //do not execute from shift, alt, home, end, or arrow keys
-        if (typeof event === "object" && event.type === "keyup" && (event.altKey || event.ctrlKey || event.shiftKey || event.keyCode === 16 || event.keyCode === 18 || event.keyCode === 35 || event.keyCode === 36 || event.keyCode === 37 || event.keyCode === 38 || event.keyCode === 39 || event.keyCode === 40)) {
+        //do not execute from alt, home, end, or arrow keys
+        if (typeof event === "object" && event.type === "keyup" && (event.altKey || event.keyCode === 18 || event.keyCode === 35 || event.keyCode === 36 || event.keyCode === 37 || event.keyCode === 38 || event.keyCode === 39 || event.keyCode === 40)) {
             return;
         }
         if (ls) {
