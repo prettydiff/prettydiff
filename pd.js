@@ -1,4 +1,4 @@
-﻿/*prettydiff.com api.topcoms: true*/
+/*prettydiff.com api.topcoms: true*/
 /*global document, localStorage, window, prettydiff, XMLHttpRequest, location*/
 var exports = "",
     pd = {},
@@ -1871,7 +1871,11 @@ pd = {
                 o.stat.visit = Number(stat[0]) + 1;
                 stat[0] = o.stat.visit.toString();
                 o.stvisit.innerHTML = stat[0];
-                k = (Date.parse(new Date()) - Number(stat[stat.length - 1]));
+                i = new Date();
+                if (stat[2] === "") {
+                    stat[2] = i.toDateString();
+                }
+                k = (Date.parse(i) - Number(stat[stat.length - 1]));
                 if (k < 86400000) {
                     k = 1;
                 } else {
@@ -1946,7 +1950,9 @@ pd = {
             o.dd = $$("modediff");
             o.mm = $$("modeminify");
             o.au = $$("ctype-auto");
-            o.rk.style.display = "none";
+            if (!ls) {
+                o.rk.style.display = "none";
+            }
             if (o.cv.checked) {
                 o.csvp.style.display = "block";
             }
