@@ -216,38 +216,38 @@ var prettydiff = function (api) {
                     a = 0,
                     b = 0,
                     c = [],
-                    error = "Error: Unterminated string begging at character number ",
-                    str = (function () {
-                        var b = 0,
-                            d = 0,
-                            e = 0,
-                            src = "";
-                        source = source.replace(/"{2}/g, "{csvquote}");
-                        src = source;
-                        source = source.split("");
-                        e = source.length;
-                        for (a = 0; a < e; a += 1) {
-                            if (source[a] === "\"") {
-                                d = source.length;
-                                for (b = a + 1; b < d; b += 1) {
-                                    if (source[b] === "\"") {
-                                        c.push(src.slice(a, b + 1));
-                                        source[a] = "{csvstring}";
-                                        source[b] = "";
-                                        a = b + 1;
-                                        break;
-                                    }
+                    error = "Error: Unterminated string begging at character number ";
+                (function () {
+                    var b = 0,
+                        d = 0,
+                        e = 0,
+                        src = "";
+                    source = source.replace(/"{2}/g, "{csvquote}");
+                    src = source;
+                    source = source.split("");
+                    e = source.length;
+                    for (a = 0; a < e; a += 1) {
+                        if (source[a] === "\"") {
+                            d = source.length;
+                            for (b = a + 1; b < d; b += 1) {
+                                if (source[b] === "\"") {
+                                    c.push(src.slice(a, b + 1));
+                                    source[a] = "{csvstring}";
                                     source[b] = "";
+                                    a = b + 1;
+                                    break;
                                 }
-                                if (b === source.length) {
-                                    err = source.join("").slice(a, a + 9);
-                                    source = error;
-                                    return;
-                                }
+                                source[b] = "";
+                            }
+                            if (b === source.length) {
+                                err = source.join("").slice(a, a + 9);
+                                source = error;
+                                return;
                             }
                         }
-                        source = source.join("").replace(/\{csvquote\}/g, "\"\"");
-                    }());
+                    }
+                    source = source.join("").replace(/\{csvquote\}/g, "\"\"");
+                }());
                 if (ch === "") {
                     ch = ",";
                 } else {
@@ -346,34 +346,29 @@ var prettydiff = function (api) {
                 }
                 return source.replace(/\{\-\}/g, "\n");
             },
-            jsmin = function (input, level, type, alter, fcomment) {
-                var start = (function () {
-                        if (typeof input === "undefined") {
-                            input = "";
-                            level = 2;
-                        } else {
-                            if (level === undefined || level < 1 || level > 3) {
-                                level = 2;
-                            }
-                            if (type === "javascript") {
-                                input = input.replace(/\/\/(\s)*-->/g, "//-->");
-                            } else if (type !== "css") {
-                                input = "Error: The type argument is not provided a value of either 'css' or 'javascript'.";
-                            }
-                        }
-                    }()),
-                    ret,
+            jsmin = function (args) {
+                (function () {
+                    if (args.type === "javascript") {
+                        args.source = args.source.replace(/\/\/(\s)*-->/g, "//-->");
+                    }
+                }());
+                var input = (typeof args.source !== "string" || args.source === "") ? "Error: no source supplied to jsmin." : args.source,
+                    level = (args.level === 1 || args.level === 2 || args.level === 3) ? args.level : 2,
+                    type = (args.type === "javascript" || args.type === "css") ? args.type : "javascript",
+                    alter = (args.alter === true) ? true : false,
+                    fcomment = (args.fcomment === true) ? true : false,
+                    ret = "",
                     atchar = input.match(/\@charset\s+("|')[\w\-]+("|');?/gi),
                     error = "",
                     a = "",
                     b = "",
-                    geti,
-                    getl,
+                    geti = 0,
+                    getl = 0,
                     EOF = -1,
                     LETTERS = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz",
                     DIGITS = "0123456789",
-                    OTHERS,
-                    ALNUM,
+                    OTHERS = "",
+                    ALNUM = "",
                     fcom = [],
                     alterj = false,
                     asiflag = true,
@@ -874,38 +869,38 @@ var prettydiff = function (api) {
                         return r.join("");
                     },
                     m = function () {
-                        var firstComment = (function () {
-                                var a = 0,
-                                    b = input.length,
-                                    c = "";
-                                if (fcomment !== true || (/^\s*\/\*/.test(input) !== true && /^\s*\/\//.test(input) !== true)) {
-                                    return;
-                                }
-                                for (a = 0; a < b; a += 1) {
-                                    if (c === "") {
-                                        if (input.charAt(a) === "/" && input.charAt(a + 1) && (input.charAt(a + 1) === "*" || input.charAt(a + 1) === "/")) {
-                                            c = input.substr(a, 2);
-                                            fcom.push(input.charAt(a));
-                                        } else if (/\s/.test(input.charAt(a)) !== true) {
-                                            return;
-                                        }
-                                    } else {
+                        (function () {
+                            var a = 0,
+                                b = input.length,
+                                c = "";
+                            if (fcomment !== true || (/^\s*\/\*/.test(input) !== true && /^\s*\/\//.test(input) !== true)) {
+                                return;
+                            }
+                            for (a = 0; a < b; a += 1) {
+                                if (c === "") {
+                                    if (input.charAt(a) === "/" && input.charAt(a + 1) && (input.charAt(a + 1) === "*" || input.charAt(a + 1) === "/")) {
+                                        c = input.substr(a, 2);
                                         fcom.push(input.charAt(a));
-                                        if (input.charAt(a) === "*" && c === "/*" && input.charAt(a + 1) && input.charAt(a + 1) === "/") {
-                                            fcom.push("/\n");
-                                            if (input.charAt(a + 2) && input.charAt(a + 2) === "\n") {
-                                                a += 2;
-                                            } else {
-                                                a += 1;
-                                            }
-                                            c = "";
-                                        } else if ((input.charAt(a) === "\n" || input.charAt(a) === "\r") && c === "//") {
-                                            c = "";
+                                    } else if (/\s/.test(input.charAt(a)) !== true) {
+                                        return;
+                                    }
+                                } else {
+                                    fcom.push(input.charAt(a));
+                                    if (input.charAt(a) === "*" && c === "/*" && input.charAt(a + 1) && input.charAt(a + 1) === "/") {
+                                        fcom.push("/\n");
+                                        if (input.charAt(a + 2) && input.charAt(a + 2) === "\n") {
+                                            a += 2;
+                                        } else {
+                                            a += 1;
                                         }
+                                        c = "";
+                                    } else if ((input.charAt(a) === "\n" || input.charAt(a) === "\r") && c === "//") {
+                                        c = "";
                                     }
                                 }
-                            }()),
-                            r = [],
+                            }
+                        }());
+                        var r = [],
                             s = "";
                         if (error !== "") {
                             return error;
@@ -1048,8 +1043,13 @@ var prettydiff = function (api) {
                 }
                 return fcom.join("") + ret;
             },
-            cleanCSS = function (x, size, character, comment, alter) {
-                var q = x.length,
+            cleanCSS = function (args) {
+                var x = (typeof args.source !== "string" || args.source === "") ? "Error: no source supplied to cleanCSS." : args.source,
+                    size = (typeof args.size !== "number" || args.size < 0) ? 4 : args.size,
+                    character = (typeof args.character !== "string") ? " " : args.character,
+                    comment = (args.comment === "noindent") ? "noindent" : "",
+                    alter = (args.alter === true) ? true : false,
+                    q = x.length,
                     a = 0,
                     b = 0,
                     c = [],
@@ -1082,12 +1082,6 @@ var prettydiff = function (api) {
                         }
                         return x.join("").replace(/~PDpar~/g, "\\)");
                     },
-                    tabmaker = (function () {
-                        var i;
-                        for (i = 0; i < nsize; i += 1) {
-                            tab += character;
-                        }
-                    }()),
                     sameDist = function (x) {
                         var y = [],
                             z = x.split(": ");
@@ -1367,6 +1361,14 @@ var prettydiff = function (api) {
                         }
                         return d.join("").replace(/\*\/\s*;\s*/g, "*/\n").replace(/(\s*[\w\-]+:)$/g, "\n}").replace(/\s*;$/, "");
                     };
+                (function () {
+                    var i,
+                        j = [];
+                    for (i = 0; i < nsize; i += 1) {
+                        j.push(character);
+                    }
+                    tab = j.join("");
+                }());
                 if ("\n" === x.charAt(0)) {
                     x = x.substr(1);
                 }
@@ -2970,9 +2972,12 @@ var prettydiff = function (api) {
                 }());
                 return rvalue;
             },
-            markupmin = function (y, comments, presume_html, top_comments) {
+            markupmin = function (args) {
                 var i = 0,
-                    x = y.split(""),
+                    x = (typeof args.source === "string") ? args.source.split("") : "Error: no content supplied to markup.",
+                    comments = (args.comments !== "comments" && args.comments !== "beautify" && args.comments !== "diff") ? "" : args.comments,
+                    presume_html = (args.presume_html === true) ? true : false,
+                    top_comments = (args.top_comments === true) ? true : false,
                     markupspace = function () {
                         var a = 0,
                             c = [],
@@ -3024,8 +3029,9 @@ var prettydiff = function (api) {
                             scriptStart = (/^(\s*<\!\-\-)/),
                             scriptEnd = (/(\/+\-\->\s*)$/),
                             cs = "",
-                            ce = "";
-                        if (typeof jsmin === "undefined") {
+                            ce = "",
+                            y = args.source;
+                        if (typeof jsmin !== "function") {
                             return;
                         }
                         for (c = i; c < Y; c += 1) {
@@ -3078,9 +3084,21 @@ var prettydiff = function (api) {
                                 g = g.replace(scriptEnd, "");
                             }
                             if (z === "style") {
-                                g = cs + jsmin(g, 3, "css", true, top_comments) + ce;
+                                g = cs + jsmin({
+                                    source: g,
+                                    level: 3,
+                                    type: "css",
+                                    alter: true,
+                                    fcomment: top_comments
+                                }) + ce;
                             } else {
-                                g = cs + jsmin(g, 3, "javascript", false, top_comments) + ce;
+                                g = cs + jsmin({
+                                    source: g,
+                                    level: 2,
+                                    type: "javascript",
+                                    alter: true,
+                                    fcomment: top_comments
+                                }) + ce;
                             }
                         }
                         Y = g.length;
@@ -3124,58 +3142,59 @@ var prettydiff = function (api) {
                         }
                         i = a - 1;
                         x[i] = b.join("").replace(/\s+/g, " ");
-                    },
-                    it = (function () {
-                        var a = [],
-                            b = 0,
-                            c = x.length,
-                            d = "";
-                        for (i = 0; i < x.length; i += 1) {
-                            if ((y.slice(i, i + 7)).toLowerCase() === "<script") {
-                                a = [];
-                                for (b = i + 8; b < c; b += 1) {
-                                    if (y.charAt(b) === ">") {
-                                        break;
-                                    }
-                                    a.push(y.charAt(b));
+                    };
+                (function () {
+                    var a = [],
+                        b = 0,
+                        c = x.length,
+                        d = "",
+                        y = args.source;
+                    for (i = 0; i < x.length; i += 1) {
+                        if ((y.slice(i, i + 7)).toLowerCase() === "<script") {
+                            a = [];
+                            for (b = i + 8; b < c; b += 1) {
+                                if (y.charAt(b) === ">") {
+                                    break;
                                 }
-                                d = a.join("").toLowerCase().replace(/'/g, "\"");
-                                if (comments !== "beautify" && comments !== "diff") {
-                                    markupspace();
-                                }
-                                if (d.indexOf("type=\"") === -1 || d.indexOf("type=\"text/javascript\"") !== -1 || d.indexOf("type=\"application/javascript\"") !== -1 || d.indexOf("type=\"application/x-javascript\"") !== -1 || d.indexOf("type=\"text/ecmascript\"") !== -1 || d.indexOf("type=\"application/ecmascript\"") !== -1) {
-                                    markupscript("script");
-                                }
-                            } else if ((y.slice(i, i + 6)).toLowerCase() === "<style") {
-                                a = [];
-                                for (b = i + 7; b < c; b += 1) {
-                                    if (y.charAt(b) === ">") {
-                                        break;
-                                    }
-                                    a.push(y.charAt(b));
-                                }
-                                d = a.join("").toLowerCase().replace(/'/g, "\"");
-                                if (comments !== "beautify" && comments !== "diff") {
-                                    markupspace();
-                                }
-                                if (d.indexOf("type=\"") === -1 || d.indexOf("type=\"text/css\"") !== -1) {
-                                    markupscript("style");
-                                }
-                            } else if (y.slice(i, i + 4) === "<!--" && x[i + 4] !== "#") {
-                                markupcomment();
-                            } else if (y.slice(i, i + 5) === "<?php") {
-                                preserve("?>");
-                            } else if (y.slice(i, i + 2) === "<%") {
-                                preserve("%>");
-                            } else if ((x[i] === "<" && x[i + 1] !== "!") || (x[i] === "<" && x[i + 1] === "!" && x[i + 2] !== "-")) {
-                                markupspace();
-                            } else if (x[i] === undefined) {
-                                x[i] = "";
-                            } else if (x[i - 1] !== undefined && x[i - 1].charAt(x[i - 1].length - 1) === ">") {
-                                content();
+                                a.push(y.charAt(b));
                             }
+                            d = a.join("").toLowerCase().replace(/'/g, "\"");
+                            if (comments !== "beautify" && comments !== "diff") {
+                                markupspace();
+                            }
+                            if (d.indexOf("type=\"") === -1 || d.indexOf("type=\"text/javascript\"") !== -1 || d.indexOf("type=\"application/javascript\"") !== -1 || d.indexOf("type=\"application/x-javascript\"") !== -1 || d.indexOf("type=\"text/ecmascript\"") !== -1 || d.indexOf("type=\"application/ecmascript\"") !== -1) {
+                                markupscript("script");
+                            }
+                        } else if ((y.slice(i, i + 6)).toLowerCase() === "<style") {
+                            a = [];
+                            for (b = i + 7; b < c; b += 1) {
+                                if (y.charAt(b) === ">") {
+                                    break;
+                                }
+                                a.push(y.charAt(b));
+                            }
+                            d = a.join("").toLowerCase().replace(/'/g, "\"");
+                            if (comments !== "beautify" && comments !== "diff") {
+                                markupspace();
+                            }
+                            if (d.indexOf("type=\"") === -1 || d.indexOf("type=\"text/css\"") !== -1) {
+                                markupscript("style");
+                            }
+                        } else if (y.slice(i, i + 4) === "<!--" && x[i + 4] !== "#") {
+                            markupcomment();
+                        } else if (y.slice(i, i + 5) === "<?php") {
+                            preserve("?>");
+                        } else if (y.slice(i, i + 2) === "<%") {
+                            preserve("%>");
+                        } else if ((x[i] === "<" && x[i + 1] !== "!") || (x[i] === "<" && x[i + 1] === "!" && x[i + 2] !== "-")) {
+                            markupspace();
+                        } else if (x[i] === undefined) {
+                            x[i] = "";
+                        } else if (x[i - 1] !== undefined && x[i - 1].charAt(x[i - 1].length - 1) === ">") {
+                            content();
                         }
-                    }());
+                    }
+                }());
                 return (function () {
                     var a = 0,
                         b = [],
@@ -3185,7 +3204,7 @@ var prettydiff = function (api) {
                         g = "",
                         i = [],
                         Y = x.length,
-                        html = ["br", "meta", "link", "img", "hr", "base", "basefont", "area", "col", "frame", "input", "param"],
+                        html = ["area", "base", "basefont", "br", "col", "embed", "eventsource", "frame", "hr", "img", "input", "keygen", "link", "meta", "param", "progress", "source", "wbr"],
                         e = html.length;
                     for (a = 0; a < Y; a += 1) {
                         if (x[a] !== "") {
@@ -3234,6 +3253,35 @@ var prettydiff = function (api) {
                 }());
             },
             markup_beauty = function (args) {
+                (function () {
+                    if (!args.source || typeof args.source !== "string") {
+                        args.source = "";
+                    }
+                    if (args.insize === undefined || isNaN(args.insize)) {
+                        args.insize = 4;
+                    }
+                    if (typeof args.inchar !== "string" || args.inchar.length < 1) {
+                        args.inchar = " ";
+                    }
+                    if (!args.mode || args.mode !== "diff") {
+                        args.mode = "beautify";
+                    }
+                    if (!args.comments || args.comments !== "indent") {
+                        args.comments = "noindent";
+                    }
+                    if (!args.style || args.style !== "indent") {
+                        args.style = "noindent";
+                    }
+                    if (typeof args.html !== "boolean") {
+                        args.html = false;
+                    }
+                    if (typeof args.content !== "boolean") {
+                        args.content = false;
+                    }
+                    if (typeof args.force_indent !== "boolean") {
+                        args.force_indent = false;
+                    }
+                }());
                 var tab = "",
                     token = [],
                     build = [],
@@ -3241,1239 +3289,1224 @@ var prettydiff = function (api) {
                     level = [],
                     inner = [],
                     sum = [],
-                    x = args.source,
-                    start = (function () {
-                        if (!args.source || typeof args.source !== "string") {
-                            args.source = "";
-                        }
-                        if (args.insize === undefined || isNaN(args.insize)) {
-                            args.insize = 4;
-                        }
-                        if (typeof args.inchar !== "string" || args.inchar.length < 1) {
-                            args.inchar = " ";
-                        }
-                        if (!args.mode || args.mode !== "diff") {
-                            args.mode = "beautify";
-                        }
-                        if (!args.comments || args.comments !== "indent") {
-                            args.comments = "noindent";
-                        }
-                        if (!args.style || args.style !== "indent") {
-                            args.style = "noindent";
-                        }
-                        if (typeof args.html !== "boolean") {
-                            args.html = false;
-                        }
-                        if (typeof args.content !== "boolean") {
-                            args.content = false;
-                        }
-                        if (typeof args.force_indent !== "boolean") {
-                            args.force_indent = false;
-                        }
-                    }()),
-                    cdatafix = (function () {
-                        var a = function (y) {
-                                y = y.replace(/</g, "\nprettydiffcdatas");
-                                return y;
-                            },
-                            b = function (y) {
-                                y = y.replace(/>/g, "\nprettydiffcdatae");
-                                return y;
-                            };
-                        x = x.replace(/\/+<!\[+[A-Z]+\[+/g, a).replace(/\/+\]+>/g, b);
-                    }()),
-                    innerset = (function () {
-                        var d = (function () {
-                                var a = 0,
-                                    b = 0,
-                                    c = args.source.length,
-                                    d = [],
-                                    e = 0,
-                                    h = -1,
-                                    i = 0,
-                                    j = 0,
-                                    k = -1,
-                                    l = 0,
-                                    m = 0,
-                                    n = false,
-                                    o = false,
-                                    p = 0,
-                                    q = [">"],
-                                    r = false;
-                                for (a = 0; a < c; a += 1) {
-                                    if (x.substr(a, 7).toLowerCase() === "<script") {
-                                        for (b = a + 7; b < c; b += 1) {
-                                            if (x.charAt(b) + x.charAt(b + 1) + x.charAt(b + 2).toLowerCase() + x.charAt(b + 3).toLowerCase() + x.charAt(b + 4).toLowerCase() + x.charAt(b + 5).toLowerCase() + x.charAt(b + 6).toLowerCase() + x.charAt(b + 7).toLowerCase() + x.charAt(b + 8) === "</script>") {
-                                                if (/></.test(x.substr(a, b))) {
-                                                    h += 2;
-                                                } else {
-                                                    h += 3;
-                                                }
-                                                a = b + 8;
-                                                break;
-                                            }
-                                        }
-                                    } else if (x.substr(a, 6).toLowerCase() === "<style") {
-                                        for (b = a + 6; b < c; b += 1) {
-                                            if (x.charAt(b) + x.charAt(b + 1) + x.charAt(b + 2).toLowerCase() + x.charAt(b + 3).toLowerCase() + x.charAt(b + 4).toLowerCase() + x.charAt(b + 5).toLowerCase() + x.charAt(b + 6).toLowerCase() + x.charAt(b + 7) === "</style>") {
-                                                if (/></.test(x.substr(a, b))) {
-                                                    h += 2;
-                                                } else {
-                                                    h += 3;
-                                                }
-                                                a = b + 7;
-                                                break;
-                                            }
-                                        }
-                                    } else if (x.substr(a, 5) === "<?php") {
-                                        for (b = a + 5; b < c; b += 1) {
-                                            if (x.charAt(b - 1) === "?" && x.charAt(b) === ">") {
-                                                a = b;
-                                                h += 1;
-                                                break;
-                                            }
-                                        }
-                                    } else if (x.charAt(a) === "<" && x.charAt(a + 1) === "%") {
-                                        for (b = a + 2; b < c; b += 1) {
-                                            if (x.charAt(b - 1) === "%" && x.charAt(b) === ">") {
-                                                a = b;
-                                                h += 1;
-                                                break;
-                                            }
-                                        }
-                                    } else if (x.charAt(a) === "<" && x.charAt(a + 1) === "!" && /[A-Z]|\[/.test(x.charAt(a + 2))) {
-                                        for (b = a + 3; b < c; b += 1) {
-                                            if (x.charAt(b) === ">" && q[q.length - 1] === ">" && q.length === 1) {
-                                                h += 1;
-                                                if (r) {
-                                                    d.push([a, b, h, a]);
-                                                }
-                                                r = false;
-                                                a = b;
-                                                q = [">"];
-                                                break;
-                                            } else if (x.charAt(b) === "<") {
-                                                q.push(">");
-                                                r = true;
-                                            } else if (x.charAt(b) === ">" && q.length > 1) {
-                                                q.pop();
-                                                r = true;
-                                            } else if (x.charAt(b) === "[") {
-                                                q.push("]");
-                                            } else if (x.charAt(b) === "]") {
-                                                q.pop();
-                                            } else if (x.charAt(b) === "\"") {
-                                                if (q[q.length - 1] === "\"") {
-                                                    q.pop();
-                                                } else {
-                                                    q.push("\"");
-                                                }
-                                            } else if (x.charAt(b) === "'") {
-                                                if (q[q.length - 1] === "'") {
-                                                    q.pop();
-                                                } else {
-                                                    q.push("'");
-                                                }
-                                            }
-                                        }
-                                    } else if (x.charAt(a) === x.charAt(a + 1) && (x.charAt(a) === "\"" || x.charAt(a) === "'")) {
-                                        a += 1;
-                                    } else if (x.charAt(a - 1) === "=" && (x.charAt(a) === "\"" || x.charAt(a) === "'")) {
-                                        o = false;
-                                        for (m = a - 1; m > 0; m -= 1) {
-                                            if ((x.charAt(m) === "\"" && x.charAt(a) === "\"") || (x.charAt(m) === "'" && x.charAt(a) === "'") || x.charAt(m) === "<") {
-                                                break;
-                                            } else if (x.charAt(m) === ">") {
-                                                o = true;
-                                                break;
-                                            }
-                                        }
-                                        if (!o) {
-                                            n = false;
-                                            for (b = a + 1; b < c; b += 1) {
-                                                if (x.substr(b, 7).toLowerCase() === "<script") {
-                                                    for (p = b + 7; p < c; p += 1) {
-                                                        if (x.charAt(p) + x.charAt(p + 1) + x.charAt(p + 2).toLowerCase() + x.charAt(p + 3).toLowerCase() + x.charAt(p + 4).toLowerCase() + x.charAt(p + 5).toLowerCase() + x.charAt(p + 6).toLowerCase() + x.charAt(p + 7).toLowerCase() + x.charAt(p + 8) === "</script>") {
-                                                            b = p + 8;
-                                                            break;
-                                                        }
-                                                    }
-                                                } else if (x.substr(b, 6).toLowerCase() === "<style") {
-                                                    for (p = b + 6; p < c; p += 1) {
-                                                        if (x.charAt(p) + x.charAt(p + 1) + x.charAt(p + 2).toLowerCase() + x.charAt(p + 3).toLowerCase() + x.charAt(p + 4).toLowerCase() + x.charAt(p + 5).toLowerCase() + x.charAt(p + 6).toLowerCase() + x.charAt(p + 7) === "</style>") {
-                                                            b = p + 7;
-                                                            break;
-                                                        }
-                                                    }
-                                                } else if (x.substr(b, 5) === "<?php") {
-                                                    for (p = b + 5; p < c; p += 1) {
-                                                        if (x.charAt(p - 1) === "?" && x.charAt(p) === ">") {
-                                                            b = p;
-                                                            break;
-                                                        }
-                                                    }
-                                                } else if (x.charAt(b) === "<" && x.charAt(b + 1) === "%") {
-                                                    for (p = b + 5; p < c; p += 1) {
-                                                        if (x.charAt(p - 1) === "%" && x.charAt(p) === ">") {
-                                                            b = p;
-                                                            break;
-                                                        }
-                                                    }
-                                                } else if (x.charAt(b) === ">" || x.charAt(b) === "<") {
-                                                    n = true;
-                                                } else if ((x.charAt(b - 1) !== "\\" && ((x.charAt(a) === "\"" && x.charAt(b) === "\"") || (x.charAt(a) === "'" && x.charAt(b) === "'"))) || b === c - 1) {
-                                                    if (k !== h && l === 1) {
-                                                        l = 0;
-                                                        h -= 1;
-                                                        k -= 1;
-                                                    } else if (k === h) {
-                                                        for (e = i + 1; e > a; e += 1) {
-                                                            if (!/\s/.test(x.charAt(e))) {
-                                                                break;
-                                                            }
-                                                        }
-                                                        j = e;
-                                                        if (i < a && l !== 1) {
-                                                            l = 1;
-                                                            h += 1;
-                                                            k += 1;
-                                                        }
-                                                    }
-                                                    if (n) {
-                                                        d.push([a, b, h, j]);
-                                                    }
-                                                    a = b;
-                                                    break;
-                                                }
-                                            }
-                                        }
-                                    } else if (x.charAt(a) === "<") {
-                                        if (x.charAt(a + 1) === "!" && x.charAt(a + 2) === "-" && x.charAt(a + 3) === "-") {
-                                            for (b = a + 4; b < x.length; b += 1) {
-                                                if (x.charAt(b) === "-" && x.charAt(b + 1) === "-" && x.charAt(b + 2) === ">") {
-                                                    break;
-                                                }
-                                            }
-                                            h += 1;
-                                            a = b + 2;
-                                        } else {
-                                            h += 1;
-                                            j = a;
-                                        }
-                                    } else if (x.charAt(a + 1) === "<" && x.charAt(a) !== ">") {
-                                        for (b = a; b > 0; b -= 1) {
-                                            if (!/\s/.test(x.charAt(b)) && x.charAt(b) !== ">") {
-                                                h += 1;
-                                                k += 1;
-                                                j = a;
-                                                break;
-                                            } else if (x.charAt(b) === ">") {
-                                                if (h !== k) {
-                                                    k += 1;
-                                                    i = a;
-                                                }
-                                                break;
-                                            }
-                                        }
-                                    } else if (x.charAt(a) === ">") {
-                                        k += 1;
-                                        i = a;
-                                    }
-                                }
-                                return d;
-                            }());
-                        (function () {
+                    x = args.source;
+                (function () {
+                    var a = function (y) {
+                            y = y.replace(/</g, "\nprettydiffcdatas");
+                            return y;
+                        },
+                        b = function (y) {
+                            y = y.replace(/>/g, "\nprettydiffcdatae");
+                            return y;
+                        };
+                    x = x.replace(/\/+<!\[+[A-Z]+\[+/g, a).replace(/\/+\]+>/g, b);
+                }());
+                (function () {
+                    var d = (function () {
                             var a = 0,
                                 b = 0,
-                                c = d.length,
+                                c = args.source.length,
+                                d = [],
                                 e = 0,
-                                f = 0,
-                                g = 0,
-                                h = 0,
+                                h = -1,
                                 i = 0,
                                 j = 0,
-                                k = 0,
-                                y = x.split("");
+                                k = -1,
+                                l = 0,
+                                m = 0,
+                                n = false,
+                                o = false,
+                                p = 0,
+                                q = [">"],
+                                r = false;
                             for (a = 0; a < c; a += 1) {
-                                i = d[a][0] + 1;
-                                f = d[a][1];
-                                g = d[a][2];
-                                j = d[a][3];
-                                for (e = i; e < f; e += 1) {
-                                    h = 0;
-                                    if (y[e] === "<") {
-                                        y[e] = "[";
-                                        for (b = e; b > j; b -= 1) {
-                                            h += 1;
-                                            if (/\s/.test(y[b])) {
-                                                for (k = b - 1; k > j; k -= 1) {
-                                                    if (!/\s/.test(y[k])) {
-                                                        if (y[k] !== "=") {
-                                                            h += 1;
-                                                        } else if (/\s/.test(y[k - 1])) {
-                                                            h -= 1;
-                                                        }
-                                                        b = k;
-                                                        break;
-                                                    }
-                                                }
-                                            }
-                                        }
-                                        if (/\s/.test(y[i])) {
-                                            h -= 1;
-                                        }
-                                        inner.push(["<", h, g]);
-                                    } else if (y[e] === ">") {
-                                        y[e] = "]";
-                                        for (b = e; b > j; b -= 1) {
-                                            h += 1;
-                                            if (/\s/.test(y[b])) {
-                                                for (k = b - 1; k > j; k -= 1) {
-                                                    if (!/\s/.test(y[k])) {
-                                                        if (y[k] !== "=") {
-                                                            h += 1;
-                                                        } else if (/\s/.test(y[k - 1])) {
-                                                            h -= 1;
-                                                        }
-                                                        b = k;
-                                                        break;
-                                                    }
-                                                }
-                                            }
-                                        }
-                                        if (/\s/.test(y[i])) {
-                                            h -= 1;
-                                        }
-                                        inner.push([">", h, g]);
-                                    }
-                                }
-                            }
-                            x = y.join("");
-                        }());
-                    }()),
-                    elements = (function () {
-                        var i = 0,
-                            y = markupmin(x, args.mode, args.html).split(""),
-                            a = "",
-                            b = function (end) {
-                                var a = [],
-                                    b = end.length,
-                                    c = end.split("").reverse(),
-                                    d = 0,
-                                    e = "",
-                                    loop = y.length;
-                                if (i > 0 && y[i - 1] === " ") {
-                                    e = " ";
-                                }
-                                for (i; i < loop; i += 1) {
-                                    a.push(y[i]);
-                                    if (a[a.length - 1] === c[0]) {
-                                        if (b === 1) {
-                                            return e + a.join("");
-                                        }
-                                        for (d = 0; d < b; d += 1) {
-                                            if (c[d] !== a[a.length - (d + 1)]) {
-                                                break;
-                                            }
-                                        }
-                                        if (d === b) {
-                                            return e + a.join("");
-                                        }
-                                    }
-                                }
-                                return e + a.join("");
-                            },
-                            c = [],
-                            cgather = function (z) {
-                                var c = 0,
-                                    d = "",
-                                    e = 0,
-                                    q = "",
-                                    loop = y.length;
-                                for (c = i; c < loop; c += 1) {
-                                    if (q === "" && y[c - 1] !== "\\") {
-                                        if (y[c] === "/" && y[c + 1] && y[c + 1] === "/") {
-                                            q = "//";
-                                        } else if (y[c] === "/" && y[c + 1] && y[c + 1] === "*") {
-                                            q = "/*";
-                                        } else if (y[c] === "'" || y[c] === "\"" || y[c] === "/") {
-                                            if (y[c] === "/") {
-                                                for (e = c - 1; e > 0; e -= 1) {
-                                                    if (!/\s/.test(y[e])) {
-                                                        break;
-                                                    }
-                                                }
-                                                if (y[e] === ")" || y[e] === "]" || y[e] === "}" || /\w/.test(y[e])) {
-                                                    q = "";
-                                                } else {
-                                                    q = "/";
-                                                }
+                                if (x.substr(a, 7).toLowerCase() === "<script") {
+                                    for (b = a + 7; b < c; b += 1) {
+                                        if (x.charAt(b) + x.charAt(b + 1) + x.charAt(b + 2).toLowerCase() + x.charAt(b + 3).toLowerCase() + x.charAt(b + 4).toLowerCase() + x.charAt(b + 5).toLowerCase() + x.charAt(b + 6).toLowerCase() + x.charAt(b + 7).toLowerCase() + x.charAt(b + 8) === "</script>") {
+                                            if (/></.test(x.substr(a, b))) {
+                                                h += 2;
                                             } else {
-                                                q = y[c];
+                                                h += 3;
                                             }
-                                        }
-                                    } else if (y[c - 1] !== "\\" && ((q === "'" && y[c] === "'") || (q === "\"" && y[c] === "\"") || (q === "/" && y[c] === "/") || (q === "//" && (y[c] === "\n" || (y[c - 4] && y[c - 4] === "/" && y[c - 3] === "/" && y[c - 2] === "-" && y[c - 1] === "-" && y[c] === ">"))) || (q === "/*" && y[c - 1] === "*" && y[c] === "/"))) {
-                                        q = "";
-                                    }
-                                    if (((z === "script" && q === "") || z === "style") && y[c] === "<" && y[c + 1] === "/" && y[c + 2].toLowerCase() === "s") {
-                                        if (z === "script" && (y[c + 3].toLowerCase() === "c" && y[c + 4].toLowerCase() === "r" && y[c + 5].toLowerCase() === "i" && y[c + 6].toLowerCase() === "p" && y[c + 7].toLowerCase() === "t")) {
-                                            break;
-                                        } else if (z === "style" && (y[c + 3].toLowerCase() === "t" && y[c + 4].toLowerCase() === "y" && y[c + 5].toLowerCase() === "l" && y[c + 6].toLowerCase() === "e")) {
-                                            break;
-                                        }
-                                    } else if (z === "other" && y[c] === "<") {
-                                        break;
-                                    } else {
-                                        d = d + y[c];
-                                    }
-                                }
-                                i = c - 1;
-                                if (args.content) {
-                                    if (d.charAt(0) === " " && d.charAt(d.length - 1) === " ") {
-                                        d = " text ";
-                                    } else if (d.charAt(0) === " ") {
-                                        d = " text";
-                                    } else if (d.charAt(d.length - 1) === " ") {
-                                        d = "text ";
-                                    } else {
-                                        d = "text";
-                                    }
-                                }
-                                return d;
-                            },
-                            loop = y.length;
-                        for (i = 0; i < loop; i += 1) {
-                            if (y[i] === "<" && y[i + 1] === "!" && y[i + 2] === "-" && y[i + 3] === "-" && y[i + 4] !== "#" && token[token.length - 1] !== "T_script" && token[token.length - 1] !== "T_style") {
-                                build.push(b("-->"));
-                                token.push("T_comment");
-                            } else if (y[i] === "<" && y[i + 1] === "!" && y[i + 2] === "-" && y[i + 3] === "-" && y[i + 4] === "#") {
-                                build.push(b("-->"));
-                                token.push("T_ssi");
-                            } else if (y[i] === "<" && y[i + 1] === "!" && y[i + 2] !== "-" && token[token.length - 1] !== "T_script") {
-                                build.push(b(">"));
-                                token.push("T_sgml");
-                            } else if (y[i] === "<" && y[i + 1] === "?" && y[i + 2].toLowerCase() === "x" && y[i + 3].toLowerCase() === "m" && y[i + 4].toLowerCase() === "l") {
-                                build.push(b("?>"));
-                                token.push("T_xml");
-                            } else if (y[i] === "<" && y[i + 1] === "?" && y[i + 2].toLowerCase() === "p" && y[i + 3].toLowerCase() === "h" && y[i + 4].toLowerCase() === "p") {
-                                build.push(b("?>"));
-                                token.push("T_php");
-                            } else if (y[i] === "<" && y[i + 1].toLowerCase() === "s" && y[i + 2].toLowerCase() === "c" && y[i + 3].toLowerCase() === "r" && y[i + 4].toLowerCase() === "i" && y[i + 5].toLowerCase() === "p" && y[i + 6].toLowerCase() === "t") {
-                                build.push(b(">"));
-                                a = build[build.length - 1].toLowerCase().replace(/'/g, "\"");
-                                if (a.charAt(a.length - 2) === "/") {
-                                    token.push("T_singleton");
-                                } else if (a.indexOf(" type=\"") === -1 || a.indexOf(" type=\"text/javascript\"") !== -1 || a.indexOf(" type=\"application/javascript\"") !== -1 || a.indexOf(" type=\"application/x-javascript\"") !== -1 || a.indexOf(" type=\"text/ecmascript\"") !== -1 || a.indexOf(" type=\"application/ecmascript\"") !== -1) {
-                                    token.push("T_script");
-                                } else {
-                                    token.push("T_tag_start");
-                                }
-                            } else if (y[i] === "<" && y[i + 1].toLowerCase() === "s" && y[i + 2].toLowerCase() === "t" && y[i + 3].toLowerCase() === "y" && y[i + 4].toLowerCase() === "l" && y[i + 5].toLowerCase() === "e") {
-                                build.push(b(">"));
-                                a = build[build.length - 1].toLowerCase().replace(/'/g, "\"");
-                                if (a.indexOf(" type=\"") === -1 || a.indexOf(" type=\"text/css\"") !== -1) {
-                                    token.push("T_style");
-                                } else {
-                                    token.push("T_tag_start");
-                                }
-                            } else if (y[i] === "<" && y[i + 1] === "%") {
-                                build.push(b("%>"));
-                                token.push("T_asp");
-                            } else if (y[i] === "<" && y[i + 1] === "/") {
-                                build.push(b(">"));
-                                token.push("T_tag_end");
-                            } else if (y[i] === "<" && token[token.length - 1] !== "T_script" && token[token.length - 1] !== "T_style" && (y[i + 1] !== "!" || y[i + 1] !== "?" || y[i + 1] !== "/" || y[i + 1] !== "%")) {
-                                for (c = i; c < loop; c += 1) {
-                                    if (y[c] !== "?" && y[c] !== "%") {
-                                        if (y[c] === "/" && y[c + 1] === ">") {
-                                            build.push(b("/>"));
-                                            token.push("T_singleton");
-                                            break;
-                                        } else if (y[c + 1] === ">") {
-                                            build.push(b(">"));
-                                            token.push("T_tag_start");
+                                            a = b + 8;
                                             break;
                                         }
                                     }
-                                }
-                            } else if (y[i - 1] === ">" && (y[i] !== "<" || (y[i] !== " " && y[i + 1] !== "<"))) {
-                                if (token[token.length - 1] === "T_script") {
-                                    build.push(cgather("script"));
-                                    token.push("T_content");
-                                } else if (token[token.length - 1] === "T_style") {
-                                    build.push(cgather("style"));
-                                    token.push("T_content");
-                                } else if (y[i - 1] + y[i] + y[i + 1] !== "> <") {
-                                    build.push(cgather("other"));
-                                    token.push("T_content");
-                                }
-                            }
-                        }
-                    }()),
-                    code_type = (function () {
-                        var i = 0,
-                            Z = token.length;
-                        for (i = 0; i < Z; i += 1) {
-                            build[i] = build[i].replace(/\s*prettydiffcdatas/g, "<").replace(/\s*prettydiffcdatae/g, ">");
-                            if (token[i] === "T_sgml" || token[i] === "T_xml") {
-                                cinfo.push("parse");
-                            } else if (token[i] === "T_asp" || token[i] === "T_php" || token[i] === "T_ssi") {
-                                cinfo.push("singleton");
-                            } else if (token[i] === "T_comment") {
-                                cinfo.push("comment");
-                            } else if ((token[i] === "T_content" && build[i] !== " ") && token[i - 1] === "T_script") {
-                                cinfo.push("external");
-                            } else if (token[i] === "T_content" && token[i - 1] === "T_style") {
-                                cinfo.push("external");
-                            } else if (token[i] === "T_content" && build[i].charAt(0) === " " && build[i].charAt(build[i].length - 1) === " ") {
-                                cinfo.push("mixed_both");
-                            } else if (token[i] === "T_content" && build[i].charAt(0) === " " && build[i].charAt(build[i].length - 1) !== " ") {
-                                cinfo.push("mixed_start");
-                            } else if (token[i] === "T_content" && build[i].charAt(0) !== " " && build[i].charAt(build[i].length - 1) === " ") {
-                                cinfo.push("mixed_end");
-                            } else if (token[i] === "T_content") {
-                                cinfo.push("content");
-                            } else if (token[i] === "T_tag_start") {
-                                cinfo.push("start");
-                            } else if (token[i] === "T_style") {
-                                build[i] = build[i].replace(/\s+/g, " ");
-                                cinfo.push("start");
-                            } else if (token[i] === "T_script") {
-                                build[i] = build[i].replace(/\s+/g, " ");
-                                cinfo.push("start");
-                            } else if (token[i] === "T_singleton") {
-                                cinfo.push("singleton");
-                            } else if (token[i] === "T_tag_end") {
-                                cinfo.push("end");
-                            }
-                        }
-                        sum = [].concat(build);
-                    }()),
-                    tab_check = (function () {
-                        var a = 0,
-                            b = args.insize,
-                            c = args.inchar,
-                            d = [];
-                        for (a = 0; a < b; a += 1) {
-                            d.push(c);
-                        }
-                        tab = d.join("");
-                    }()),
-                    cheat = (function () {
-                        var a = 0,
-                            b = "",
-                            i = 0,
-                            loop = 0;
-                        if (!args.html) {
-                            return;
-                        }
-                        loop = cinfo.length;
-                        for (i = 0; i < loop; i += 1) {
-                            if (cinfo[i] === "start") {
-                                a = build[i].indexOf(" ");
-                                if (build[i].length === 3) {
-                                    b = build[i].charAt(1).toLowerCase();
-                                } else if (a === -1) {
-                                    b = build[i].slice(1, cinfo[i].length - 2).toLowerCase();
-                                } else if (a === 0) {
-                                    b = build[i].slice(1, build[i].length);
-                                    a = b.indexOf(" ");
-                                    b = b.slice(1, a).toLowerCase();
-                                } else {
-                                    b = build[i].slice(1, a).toLowerCase();
-                                }
-                                if (b === "br" || b === "meta" || b === "link" || b === "img" || b === "hr" || b === "base" || b === "basefont" || b === "area" || b === "col" || b === "frame" || b === "input" || b === "param") {
-                                    cinfo[i] = "singleton";
-                                    token[i] = "T_singleton";
-                                }
-                            }
-                        }
-                    }()),
-                    tab_level = (function () {
-                        var i = 0,
-                            c = function (x) {
-                                var k = 0,
-                                    m = 0;
-                                if (x === "start") {
-                                    m += 1;
-                                }
-                                for (k = i - 1; k > -1; k -= 1) {
-                                    if (cinfo[k] === "start" && level[k] === "x") {
-                                        m += 1;
-                                    } else if (cinfo[k] === "end") {
-                                        m -= 1;
-                                    } else if (cinfo[k] === "start" && level[k] !== "x") {
-                                        return level.push(level[k] + m);
-                                    }
-                                    if (k === 0) {
-                                        if (cinfo[k] !== "start") {
-                                            return level.push(0);
-                                        }
-                                        if (cinfo[i] === "mixed_start" || cinfo[i] === "content" || (cinfo[i] === "singleton" && build[i].charAt(0) !== " ")) {
-                                            return level.push("x");
-                                        }
-                                        return level.push(1);
-                                    }
-                                }
-                            },
-                            e = function () {
-                                var z = function (y) {
-                                        for (y; y > 0; y -= 1) {
-                                            if (level[y] !== "x") {
-                                                return level.push(level[y] + 1);
-                                            }
-                                        }
-                                    },
-                                    w = function () {
-                                        var k = 0,
-                                            q = false,
-                                            u = function () {
-                                                var y = 0,
-                                                    t = function () {
-                                                        var k = 0,
-                                                            s = 0,
-                                                            l = 0;
-                                                        for (s = i - 1; s > 0; s -= 1) {
-                                                            if ((cinfo[s] === "start" && cinfo[s + 1] === "start" && level[s] === level[s + 1] - 1) || (cinfo[s] === "start" && cinfo[s - 1] !== "start" && level[s] === level[s - 1])) {
-                                                                break;
-                                                            }
-                                                        }
-                                                        for (k = s + 1; k < i; k += 1) {
-                                                            if (cinfo[k] === "mixed_start" && cinfo[k + 1] === "end") {
-                                                                l += 1;
-                                                            }
-                                                        }
-                                                        if (cinfo[s - 1] === "end" && level[s - 1] !== "x" && l === 0) {
-                                                            l += 1;
-                                                        }
-                                                        if (l !== 0) {
-                                                            if (level[i - 1] === "x") {
-                                                                return l - 1;
-                                                            }
-                                                            return l;
-                                                        }
-                                                        for (s; s < i; s += 1) {
-                                                            if (cinfo[s] === "start") {
-                                                                l += 1;
-                                                            } else if (cinfo[s] === "end") {
-                                                                l -= 1;
-                                                            }
-                                                        }
-                                                        return l;
-                                                    };
-                                                for (y = i - 1; y > 0; y -= 1) {
-                                                    if (cinfo[y] !== "mixed_end" || (cinfo[y] === "start" && level[y] !== "x")) {
-                                                        if (cinfo[y - 1] === "end") {
-                                                            q = true;
-                                                            if (cinfo[i - 1] === "mixed_both" && level[i - 1] === level[y] - t()) {
-                                                                return level.push(level[y] - (t() + 1));
-                                                            }
-                                                            if (cinfo[i - 2] === "start" && (cinfo[i - 1] === "mixed_end" || cinfo[i - 1] === "mixed_both")) {
-                                                                return level.push(level[y]);
-                                                            }
-                                                            if (level[y] !== "x") {
-                                                                if (cinfo[y] === "mixed_both" && y !== i - t()) {
-                                                                    if (y === i - 1) {
-                                                                        return level.push(level[y] - 1);
-                                                                    }
-                                                                    return level.push(level[y] + t());
-                                                                }
-                                                                if (cinfo[i - 1] === "mixed_end" && t() === 0) {
-                                                                    return level.push(level[y] - 1);
-                                                                }
-                                                                if (level[i - 1] === "x" && (cinfo[i - 2] !== "end" || (cinfo[i - 2] === "end" && level[i - 2] !== "x"))) {
-                                                                    return level.push(level[y] + t());
-                                                                }
-                                                                return level.push(level[y] - t());
-                                                            }
-                                                        } else {
-                                                            q = false;
-                                                            return;
-                                                        }
-                                                    }
-                                                }
-                                            },
-                                            r = function () {
-                                                var l = 0,
-                                                    k = 0;
-                                                for (k = i; k > 0; k -= 1) {
-                                                    if (cinfo[k] === "end") {
-                                                        l += 1;
-                                                    } else if (cinfo[k] === "start") {
-                                                        l -= 1;
-                                                    }
-                                                    if (l === 0) {
-                                                        return k;
-                                                    }
-                                                }
-                                            };
-                                        if (cinfo[i - 1] === "end" && level[i - 1] !== "x") {
-                                            if (cinfo[i - 2] === "start" && level[i - 2] === "x") {
-                                                for (k = i - 2; k > 0; k -= 1) {
-                                                    if (level[k] !== "x") {
-                                                        break;
-                                                    }
-                                                }
-                                                if (cinfo[k] === "start") {
-                                                    return c("end");
-                                                }
-                                                return level.push(level[k] - 1);
-                                            }
-                                            if (cinfo[i - 2] === "start" && level[i - 2] !== "x") {
-                                                return level.push(level[i - 2] - 1);
-                                            }
-                                            return level.push(level[i - 1] - 1);
-                                        }
-                                        u();
-                                        if (q) {
-                                            return;
-                                        }
-                                        return (function () {
-                                            var y = 0,
-                                                q = 0;
-                                            for (q = r(); q > 0; q -= 1) {
-                                                if (cinfo[q] === "start") {
-                                                    y += 1;
-                                                } else if (cinfo[q] === "end") {
-                                                    y -= 1;
-                                                }
-                                                if (level[q] !== "x") {
-                                                    if (cinfo[q] === "end" && cinfo[q - 1] === "start" && level[q - 1] !== "x") {
-                                                        return level.push(level[q]);
-                                                    }
-                                                    if (level[i - 1] === "x" && build[i].charAt(0) !== " " && cinfo[i - 1] !== "mixed_end" && (cinfo[i - 2] !== "end" || level[i - 2] !== "x") && (cinfo[i - 3] !== "end" || level[i - 3] !== "x")) {
-                                                        return level.push("x");
-                                                    }
-                                                    return level.push(level[q] + (y - 1));
-                                                }
-                                            }
-                                            y = 0;
-                                            for (q = i; q > -1; q -= 1) {
-                                                if (cinfo[q] === "start") {
-                                                    y += 1;
-                                                } else if (cinfo[q] === "end") {
-                                                    y -= 1;
-                                                }
-                                            }
-                                            return level.push(y);
-                                        }());
-                                    };
-                                if (cinfo[i - 1] === "end" || cinfo[i - 1] === "mixed_both" || cinfo[i - 1] === "mixed_end") {
-                                    return w();
-                                }
-                                if (cinfo[i - 1] === "mixed_start" || cinfo[i - 1] === "content") {
-                                    return level.push("x");
-                                }
-                                if (cinfo[i - 1] === "external") {
-                                    return (function () {
-                                        var a = 0,
-                                            yy = -1;
-                                        for (a = i - 2; a > 0; a -= 1) {
-                                            if (cinfo[a] === "start") {
-                                                yy += 1;
-                                            } else if (cinfo[a] === "end") {
-                                                yy -= 1;
-                                            }
-                                            if (level[a] !== "x") {
-                                                break;
-                                            }
-                                        }
-                                        if (cinfo[a] === "end") {
-                                            yy += 1;
-                                        }
-                                        return level.push(level[a] + yy);
-                                    }());
-                                }
-                                if (build[i].charAt(0) !== " ") {
-                                    if ((cinfo[i - 1] === "singleton" || cinfo[i - 1] === "content") && level[i - 1] === "x") {
-                                        return level.push("x");
-                                    }
-                                    return (function () {
-                                        var a = 0,
-                                            yy = 0;
-                                        for (a = i - 1; a > 0; a -= 1) {
-                                            if (cinfo[a] === "singleton" && level[a] === "x" && ((cinfo[a - 1] === "singleton" && level[a - 1] !== "x") || cinfo[a - 1] !== "singleton")) {
-                                                yy += 1;
-                                            }
-                                            if (level[a] !== 0 && level[a] !== "x" && cinfo[i - 1] !== "start") {
-                                                if (cinfo[a] === "mixed_both" || cinfo[a] === "mixed_start") {
-                                                    return level.push(level[a] - yy);
-                                                }
-                                                if (level[a] === yy || (cinfo[a] === "singleton" && (cinfo[a - 1] === "content" || cinfo[a - 1] === "mixed_start"))) {
-                                                    return level.push(level[a]);
-                                                }
-                                                return level.push(level[a] - 1);
-                                            }
-                                            if (cinfo[a] === "start" && level[a] === "x") {
-                                                return z(a);
-                                            }
-                                            if (cinfo[i - 1] === "start") {
-                                                return level.push(level[a]);
-                                            }
-                                        }
-                                        return level.push(0);
-                                    }());
-                                }
-                                return c("end");
-                            },
-                            f = function (z) {
-                                var k = 0,
-                                    l = 0,
-                                    m = 0,
-                                    n = (function () {
-                                        var j = 0;
-                                        if (z === 1) {
-                                            k = 0;
-                                            l = 0;
-                                            m = 0;
-                                        } else {
-                                            for (j = z - 1; j > 0; j -= 1) {
-                                                if (cinfo[j] !== "comment") {
-                                                    k = j;
-                                                    break;
-                                                }
-                                            }
-                                            if (k === 1) {
-                                                l = 0;
-                                                m = 0;
+                                } else if (x.substr(a, 6).toLowerCase() === "<style") {
+                                    for (b = a + 6; b < c; b += 1) {
+                                        if (x.charAt(b) + x.charAt(b + 1) + x.charAt(b + 2).toLowerCase() + x.charAt(b + 3).toLowerCase() + x.charAt(b + 4).toLowerCase() + x.charAt(b + 5).toLowerCase() + x.charAt(b + 6).toLowerCase() + x.charAt(b + 7) === "</style>") {
+                                            if (/></.test(x.substr(a, b))) {
+                                                h += 2;
                                             } else {
-                                                for (j = k - 1; j > 0; j -= 1) {
-                                                    if (cinfo[j] !== "comment") {
-                                                        l = j;
+                                                h += 3;
+                                            }
+                                            a = b + 7;
+                                            break;
+                                        }
+                                    }
+                                } else if (x.substr(a, 5) === "<?php") {
+                                    for (b = a + 5; b < c; b += 1) {
+                                        if (x.charAt(b - 1) === "?" && x.charAt(b) === ">") {
+                                            a = b;
+                                            h += 1;
+                                            break;
+                                        }
+                                    }
+                                } else if (x.charAt(a) === "<" && x.charAt(a + 1) === "%") {
+                                    for (b = a + 2; b < c; b += 1) {
+                                        if (x.charAt(b - 1) === "%" && x.charAt(b) === ">") {
+                                            a = b;
+                                            h += 1;
+                                            break;
+                                        }
+                                    }
+                                } else if (x.charAt(a) === "<" && x.charAt(a + 1) === "!" && /[A-Z]|\[/.test(x.charAt(a + 2))) {
+                                    for (b = a + 3; b < c; b += 1) {
+                                        if (x.charAt(b) === ">" && q[q.length - 1] === ">" && q.length === 1) {
+                                            h += 1;
+                                            if (r) {
+                                                d.push([a, b, h, a]);
+                                            }
+                                            r = false;
+                                            a = b;
+                                            q = [">"];
+                                            break;
+                                        } else if (x.charAt(b) === "<") {
+                                            q.push(">");
+                                            r = true;
+                                        } else if (x.charAt(b) === ">" && q.length > 1) {
+                                            q.pop();
+                                            r = true;
+                                        } else if (x.charAt(b) === "[") {
+                                            q.push("]");
+                                        } else if (x.charAt(b) === "]") {
+                                            q.pop();
+                                        } else if (x.charAt(b) === "\"") {
+                                            if (q[q.length - 1] === "\"") {
+                                                q.pop();
+                                            } else {
+                                                q.push("\"");
+                                            }
+                                        } else if (x.charAt(b) === "'") {
+                                            if (q[q.length - 1] === "'") {
+                                                q.pop();
+                                            } else {
+                                                q.push("'");
+                                            }
+                                        }
+                                    }
+                                } else if (x.charAt(a) === x.charAt(a + 1) && (x.charAt(a) === "\"" || x.charAt(a) === "'")) {
+                                    a += 1;
+                                } else if (x.charAt(a - 1) === "=" && (x.charAt(a) === "\"" || x.charAt(a) === "'")) {
+                                    o = false;
+                                    for (m = a - 1; m > 0; m -= 1) {
+                                        if ((x.charAt(m) === "\"" && x.charAt(a) === "\"") || (x.charAt(m) === "'" && x.charAt(a) === "'") || x.charAt(m) === "<") {
+                                            break;
+                                        } else if (x.charAt(m) === ">") {
+                                            o = true;
+                                            break;
+                                        }
+                                    }
+                                    if (!o) {
+                                        n = false;
+                                        for (b = a + 1; b < c; b += 1) {
+                                            if (x.substr(b, 7).toLowerCase() === "<script") {
+                                                for (p = b + 7; p < c; p += 1) {
+                                                    if (x.charAt(p) + x.charAt(p + 1) + x.charAt(p + 2).toLowerCase() + x.charAt(p + 3).toLowerCase() + x.charAt(p + 4).toLowerCase() + x.charAt(p + 5).toLowerCase() + x.charAt(p + 6).toLowerCase() + x.charAt(p + 7).toLowerCase() + x.charAt(p + 8) === "</script>") {
+                                                        b = p + 8;
                                                         break;
                                                     }
                                                 }
-                                                if (l === 1) {
-                                                    m = 0;
-                                                } else {
-                                                    for (j = l - 1; j > 0; j -= 1) {
-                                                        if (cinfo[j] !== "comment") {
-                                                            m = j;
+                                            } else if (x.substr(b, 6).toLowerCase() === "<style") {
+                                                for (p = b + 6; p < c; p += 1) {
+                                                    if (x.charAt(p) + x.charAt(p + 1) + x.charAt(p + 2).toLowerCase() + x.charAt(p + 3).toLowerCase() + x.charAt(p + 4).toLowerCase() + x.charAt(p + 5).toLowerCase() + x.charAt(p + 6).toLowerCase() + x.charAt(p + 7) === "</style>") {
+                                                        b = p + 7;
+                                                        break;
+                                                    }
+                                                }
+                                            } else if (x.substr(b, 5) === "<?php") {
+                                                for (p = b + 5; p < c; p += 1) {
+                                                    if (x.charAt(p - 1) === "?" && x.charAt(p) === ">") {
+                                                        b = p;
+                                                        break;
+                                                    }
+                                                }
+                                            } else if (x.charAt(b) === "<" && x.charAt(b + 1) === "%") {
+                                                for (p = b + 5; p < c; p += 1) {
+                                                    if (x.charAt(p - 1) === "%" && x.charAt(p) === ">") {
+                                                        b = p;
+                                                        break;
+                                                    }
+                                                }
+                                            } else if (x.charAt(b) === ">" || x.charAt(b) === "<") {
+                                                n = true;
+                                            } else if ((x.charAt(b - 1) !== "\\" && ((x.charAt(a) === "\"" && x.charAt(b) === "\"") || (x.charAt(a) === "'" && x.charAt(b) === "'"))) || b === c - 1) {
+                                                if (k !== h && l === 1) {
+                                                    l = 0;
+                                                    h -= 1;
+                                                    k -= 1;
+                                                } else if (k === h) {
+                                                    for (e = i + 1; e > a; e += 1) {
+                                                        if (!/\s/.test(x.charAt(e))) {
                                                             break;
                                                         }
                                                     }
-                                                }
-                                            }
-                                        }
-                                    }()),
-                                    p = function () {
-                                        var j = 0,
-                                            v = 1,
-                                            u = -1;
-                                        for (j = k; j > 0; j -= 1) {
-                                            if (cinfo[j] === "start") {
-                                                u -= 1;
-                                                if (level[j] === "x") {
-                                                    v += 1;
-                                                }
-                                            } else if (cinfo[j] === "end") {
-                                                u += 1;
-                                                v -= 1;
-                                            }
-                                            if (level[j] === 0) {
-                                                k = 0;
-                                                for (l = i - 1; l > j; l -= 1) {
-                                                    if (cinfo[l] === "start") {
+                                                    j = e;
+                                                    if (i < a && l !== 1) {
+                                                        l = 1;
+                                                        h += 1;
                                                         k += 1;
-                                                    } else if (cinfo[l] === "end") {
-                                                        k -= 1;
                                                     }
                                                 }
-                                                if (k > 0) {
-                                                    if (level[j + 1] === "x") {
-                                                        return level.push(((u) * -1) - 1);
-                                                    }
-                                                    if (cinfo[j] !== "external" && (args.comments !== "noindent" || (args.comments === "noindent" && cinfo[j] !== "comment"))) {
-                                                        return level.push((u + 1) * -1);
-                                                    }
-                                                } else {
-                                                    for (k = i - 1; k > 0; k -= 1) {
-                                                        if (level[k] !== "x") {
-                                                            return level.push(level[k]);
-                                                        }
-                                                    }
+                                                if (n) {
+                                                    d.push([a, b, h, j]);
                                                 }
-                                            }
-                                            if (level[j] !== "x" && level[i - 1] !== "x") {
-                                                if (cinfo[j] === "start" || cinfo[j] === "end") {
-                                                    return level.push(level[j] + v);
-                                                }
-                                                return level.push(level[j] + v - 1);
-                                            }
-                                            if (u === -1 && level[j] === "x") {
+                                                a = b;
                                                 break;
-                                            } else if (u === 1 && level[j] !== "x" && cinfo[j] !== "mixed_start" && cinfo[j] !== "content") {
-                                                if (cinfo[j - 1] === "mixed_end" || (level[i - 1] === "x" && cinfo[i - 1] === "end" && cinfo[j] !== "end")) {
-                                                    return level.push(level[j] - u - 1);
-                                                }
-                                                return level.push(level[j] - u);
-                                            }
-                                            if (u === 0 && level[j] !== "x") {
-                                                return c("start");
                                             }
                                         }
-                                        return c("start");
-                                    };
-                                if (i - 1 === 0 && cinfo[0] === "start") {
-                                    return level.push(1);
-                                }
-                                if (cinfo[k] === "mixed_start" || cinfo[k] === "content" || cinfo[i - 1] === "mixed_start" || cinfo[i - 1] === "content" || (cinfo[i] === "singleton" && (cinfo[i - 1] === "start" || cinfo[i - 1] === "singleton") && build[i].charAt(0) !== " ")) {
-                                    return level.push("x");
-                                }
-                                if ((cinfo[i - 1] === "comment" && level[i - 1] === 0) || ((cinfo[m] === "mixed_start" || cinfo[m] === "content") && cinfo[l] === "end" && (cinfo[k] === "mixed_end" || cinfo[k] === "mixed_both"))) {
-                                    return c("start");
-                                }
-                                if (cinfo[i - 1] === "comment" && level[i - 1] !== "x") {
-                                    return level.push(level[i - 1]);
-                                }
-                                if ((cinfo[k] === "start" && level[k] === "x") || (cinfo[k] !== "mixed_end" && cinfo[k] !== "mixed_both" && level[k] === "x")) {
-                                    if (level[i - 1] === "x" && build[i].charAt(0) !== " " && cinfo[i - 1] !== "start" && build[i - 1].charAt(build[i - 1].length - 1) !== " ") {
-                                        if ((cinfo[i - 1] === "end" && cinfo[i - 2] === "end") || (cinfo[i - 1] === "end" && cinfo[i] !== "end" && cinfo[i + 1] !== "mixed_start" && cinfo[i + 1] !== "content")) {
-                                            return c("start");
-                                        }
-                                        return level.push("x");
                                     }
-                                    return p();
-                                }
-                                if (cinfo[k] === "end" && level[k] !== "x" && (cinfo[k - 1] !== "start" || (cinfo[k - 1] === "start" && level[k - 1] !== "x"))) {
-                                    if (level[k] < 0) {
-                                        return c("start");
+                                } else if (x.charAt(a) === "<") {
+                                    if (x.charAt(a + 1) === "!" && x.charAt(a + 2) === "-" && x.charAt(a + 3) === "-") {
+                                        for (b = a + 4; b < x.length; b += 1) {
+                                            if (x.charAt(b) === "-" && x.charAt(b + 1) === "-" && x.charAt(b + 2) === ">") {
+                                                break;
+                                            }
+                                        }
+                                        h += 1;
+                                        a = b + 2;
+                                    } else {
+                                        h += 1;
+                                        j = a;
                                     }
-                                    return level.push(level[k]);
-                                }
-                                if (cinfo[m] !== "mixed_start" && cinfo[m] !== "content" && (cinfo[k] === "mixed_end" || cinfo[k] === "mixed_both")) {
-                                    return (function () {
-                                        var a = 0,
-                                            l = 0,
-                                            p = 0,
-                                            m = 0;
-                                        for (a = k; a > 0; a -= 1) {
-                                            if (cinfo[a] === "end") {
-                                                l += 1;
+                                } else if (x.charAt(a + 1) === "<" && x.charAt(a) !== ">") {
+                                    for (b = a; b > 0; b -= 1) {
+                                        if (!/\s/.test(x.charAt(b)) && x.charAt(b) !== ">") {
+                                            h += 1;
+                                            k += 1;
+                                            j = a;
+                                            break;
+                                        } else if (x.charAt(b) === ">") {
+                                            if (h !== k) {
+                                                k += 1;
+                                                i = a;
                                             }
-                                            if (cinfo[a] === "start") {
-                                                p += 1;
-                                            }
-                                            if (level[a] === 0 && a !== 0) {
-                                                m = a;
-                                            }
-                                            if (cinfo[k] === "mixed_both" && level[a] !== "x") {
-                                                return level.push(level[a]);
-                                            }
-                                            if (cinfo[a] !== "comment" && cinfo[a] !== "content" && cinfo[a] !== "external" && cinfo[a] !== "mixed_end" && level[a] !== "x") {
-                                                if (cinfo[a] === "start" && level[a] !== "x") {
-                                                    if (cinfo[i - 1] !== "end") {
-                                                        return level.push(level[a] + (p - l));
-                                                    }
-                                                    if ((level[a] === level[a - 1] && cinfo[a - 1] !== "end" && level[a + 1] !== "x") || (cinfo[i - 2] === "start" && level[i - 2] !== "x" && level[i - 1] === "x")) {
-                                                        return level.push(level[a] + 1);
-                                                    }
-                                                    if (p <= 1) {
-                                                        return level.push(level[a]);
-                                                    }
-                                                } else if (l > 0) {
-                                                    if (p > 1) {
-                                                        if (m !== 0) {
-                                                            return c("start");
-                                                        }
-                                                        return level.push(level[a] + 1);
-                                                    }
-                                                    return level.push(level[a] - l + 1);
-                                                }
-                                                return level.push(level[a] + p);
-                                            }
-                                        }
-                                        return c("start");
-                                    }());
-                                }
-                                if (cinfo[k] === "start" && level[k] !== "x") {
-                                    return (function () {
-                                        var a = 0;
-                                        for (a = i - 1; a > -1; a -= 1) {
-                                            if (cinfo[a] !== "comment" && cinfo[a] !== "content" && cinfo[a] !== "external" && cinfo[a] !== "mixed_end") {
-                                                if (cinfo[i + 1] && build[i].charAt(0) !== " " && (cinfo[i + 1] === "mixed_end" || cinfo[i + 1] === "content" || (build[i + 1].charAt(0) !== " " && cinfo[i + 1] === "singleton"))) {
-                                                    return level.push("x");
-                                                }
-                                                return level.push(level[a] + 1);
-                                            }
-                                        }
-                                        return level.push(0);
-                                    }());
-                                }
-                                if (build[i].charAt(0) !== " " && (cinfo[i - 1] === "singleton" || cinfo[i - 1] === "content" || cinfo[i - 1] === "mixed_start")) {
-                                    return level.push("x");
-                                }
-                                return c("start");
-                            },
-                            h = function () {
-                                var z;
-                                if (cinfo[i] !== "start" && level[i - 1] === "x" && cinfo[i - 1] !== "content" && build[i].charAt(0) !== " " && cinfo[i - 1] !== "mixed_start" && cinfo[i - 1] !== "mixed_end") {
-                                    return level.push("x");
-                                }
-                                if (cinfo[i] !== "start" && build[i] === " ") {
-                                    build[i] = "";
-                                    return level.push("x");
-                                }
-                                if (cinfo[i - 1] !== "comment") {
-                                    f(i);
-                                } else {
-                                    for (z = i - 1; z > 0; z -= 1) {
-                                        if (cinfo[z] !== "comment") {
                                             break;
                                         }
                                     }
-                                    f(z + 1);
+                                } else if (x.charAt(a) === ">") {
+                                    k += 1;
+                                    i = a;
                                 }
-                            },
-                            innerfix = (function () {
-                                var a = 0,
-                                    b = "",
-                                    c = 0,
-                                    d = 0,
-                                    e = inner.length,
-                                    f = [];
-                                for (a = 0; a < e; a += 1) {
-                                    b = inner[a][0];
-                                    c = inner[a][1];
-                                    d = inner[a][2];
-                                    if (typeof build[d] !== "undefined") {
-                                        if (build[d].charAt(0) === " ") {
-                                            c += 1;
+                            }
+                            return d;
+                        }());
+                    (function () {
+                        var a = 0,
+                            b = 0,
+                            c = d.length,
+                            e = 0,
+                            f = 0,
+                            g = 0,
+                            h = 0,
+                            i = 0,
+                            j = 0,
+                            k = 0,
+                            y = x.split("");
+                        for (a = 0; a < c; a += 1) {
+                            i = d[a][0] + 1;
+                            f = d[a][1];
+                            g = d[a][2];
+                            j = d[a][3];
+                            for (e = i; e < f; e += 1) {
+                                h = 0;
+                                if (y[e] === "<") {
+                                    y[e] = "[";
+                                    for (b = e; b > j; b -= 1) {
+                                        h += 1;
+                                        if (/\s/.test(y[b])) {
+                                            for (k = b - 1; k > j; k -= 1) {
+                                                if (!/\s/.test(y[k])) {
+                                                    if (y[k] !== "=") {
+                                                        h += 1;
+                                                    } else if (/\s/.test(y[k - 1])) {
+                                                        h -= 1;
+                                                    }
+                                                    b = k;
+                                                    break;
+                                                }
+                                            }
                                         }
-                                        f = build[d].split("");
-                                        if (b === "<" && f[c] === "[") {
-                                            f[c] = "<";
-                                        } else if (b === ">" && f[c] === "]") {
-                                            f[c] = ">";
+                                    }
+                                    if (/\s/.test(y[i])) {
+                                        h -= 1;
+                                    }
+                                    inner.push(["<", h, g]);
+                                } else if (y[e] === ">") {
+                                    y[e] = "]";
+                                    for (b = e; b > j; b -= 1) {
+                                        h += 1;
+                                        if (/\s/.test(y[b])) {
+                                            for (k = b - 1; k > j; k -= 1) {
+                                                if (!/\s/.test(y[k])) {
+                                                    if (y[k] !== "=") {
+                                                        h += 1;
+                                                    } else if (/\s/.test(y[k - 1])) {
+                                                        h -= 1;
+                                                    }
+                                                    b = k;
+                                                    break;
+                                                }
+                                            }
                                         }
-                                        build[d] = f.join("");
+                                    }
+                                    if (/\s/.test(y[i])) {
+                                        h -= 1;
+                                    }
+                                    inner.push([">", h, g]);
+                                }
+                            }
+                        }
+                        x = y.join("");
+                    }());
+                }());
+                (function () {
+                    var i = 0,
+                        y = markupmin({
+                            source: x,
+                            comments: args.mode,
+                            presume_html: args.html
+                        }).split(""),
+                        a = "",
+                        b = function (end) {
+                            var a = [],
+                                b = end.length,
+                                c = end.split("").reverse(),
+                                d = 0,
+                                e = "",
+                                loop = y.length;
+                            if (i > 0 && y[i - 1] === " ") {
+                                e = " ";
+                            }
+                            for (i; i < loop; i += 1) {
+                                a.push(y[i]);
+                                if (a[a.length - 1] === c[0]) {
+                                    if (b === 1) {
+                                        return e + a.join("");
+                                    }
+                                    for (d = 0; d < b; d += 1) {
+                                        if (c[d] !== a[a.length - (d + 1)]) {
+                                            break;
+                                        }
+                                    }
+                                    if (d === b) {
+                                        return e + a.join("");
                                     }
                                 }
-                            }()),
-                            algorithm = (function () {
-                                var test = false,
-                                    test1 = false,
-                                    cdata = [],
-                                    cdata1 = [],
-                                    cdataStart = (/^(\s*\/*<\!\[+[A-Z]+\[+)/),
-                                    cdataEnd = (/(\/*\]+>\s*)$/),
-                                    scriptStart = (/^(\s*<\!\-\-)/),
-                                    scriptEnd = (/(\-\->\s*)$/),
-                                    ops = {},
-                                    loop = cinfo.length;
-                                for (i = 0; i < loop; i += 1) {
-                                    test = false;
-                                    test1 = false;
-                                    cdata = [""];
-                                    cdata1 = [""];
-                                    if (i === 0) {
-                                        level.push(0);
-                                    } else if (args.force_indent) {
-                                        if (cinfo[i] === "end") {
-                                            if (cinfo[i - 1] === "start") {
-                                                level.push(level[i - 1]);
+                            }
+                            return e + a.join("");
+                        },
+                        c = [],
+                        cgather = function (z) {
+                            var c = 0,
+                                d = "",
+                                e = 0,
+                                q = "",
+                                loop = y.length;
+                            for (c = i; c < loop; c += 1) {
+                                if (q === "" && y[c - 1] !== "\\") {
+                                    if (y[c] === "/" && y[c + 1] && y[c + 1] === "/") {
+                                        q = "//";
+                                    } else if (y[c] === "/" && y[c + 1] && y[c + 1] === "*") {
+                                        q = "/*";
+                                    } else if (y[c] === "'" || y[c] === "\"" || y[c] === "/") {
+                                        if (y[c] === "/") {
+                                            for (e = c - 1; e > 0; e -= 1) {
+                                                if (!/\s/.test(y[e])) {
+                                                    break;
+                                                }
+                                            }
+                                            if (y[e] === ")" || y[e] === "]" || y[e] === "}" || /\w/.test(y[e])) {
+                                                q = "";
                                             } else {
-                                                level.push(level[i - 1] - 1);
+                                                q = "/";
                                             }
                                         } else {
-                                            if (cinfo[i - 1] === "start") {
-                                                level.push(level[i - 1] + 1);
-                                            } else {
-                                                level.push(level[i - 1]);
+                                            q = y[c];
+                                        }
+                                    }
+                                } else if (y[c - 1] !== "\\" && ((q === "'" && y[c] === "'") || (q === "\"" && y[c] === "\"") || (q === "/" && y[c] === "/") || (q === "//" && (y[c] === "\n" || (y[c - 4] && y[c - 4] === "/" && y[c - 3] === "/" && y[c - 2] === "-" && y[c - 1] === "-" && y[c] === ">"))) || (q === "/*" && y[c - 1] === "*" && y[c] === "/"))) {
+                                    q = "";
+                                }
+                                if (((z === "script" && q === "") || z === "style") && y[c] === "<" && y[c + 1] === "/" && y[c + 2].toLowerCase() === "s") {
+                                    if (z === "script" && (y[c + 3].toLowerCase() === "c" && y[c + 4].toLowerCase() === "r" && y[c + 5].toLowerCase() === "i" && y[c + 6].toLowerCase() === "p" && y[c + 7].toLowerCase() === "t")) {
+                                        break;
+                                    } else if (z === "style" && (y[c + 3].toLowerCase() === "t" && y[c + 4].toLowerCase() === "y" && y[c + 5].toLowerCase() === "l" && y[c + 6].toLowerCase() === "e")) {
+                                        break;
+                                    }
+                                } else if (z === "other" && y[c] === "<") {
+                                    break;
+                                } else {
+                                    d = d + y[c];
+                                }
+                            }
+                            i = c - 1;
+                            if (args.content) {
+                                if (d.charAt(0) === " " && d.charAt(d.length - 1) === " ") {
+                                    d = " text ";
+                                } else if (d.charAt(0) === " ") {
+                                    d = " text";
+                                } else if (d.charAt(d.length - 1) === " ") {
+                                    d = "text ";
+                                } else {
+                                    d = "text";
+                                }
+                            }
+                            return d;
+                        },
+                        loop = y.length;
+                    for (i = 0; i < loop; i += 1) {
+                        if (y[i] === "<" && y[i + 1] === "!" && y[i + 2] === "-" && y[i + 3] === "-" && y[i + 4] !== "#" && token[token.length - 1] !== "T_script" && token[token.length - 1] !== "T_style") {
+                            build.push(b("-->"));
+                            token.push("T_comment");
+                        } else if (y[i] === "<" && y[i + 1] === "!" && y[i + 2] === "-" && y[i + 3] === "-" && y[i + 4] === "#") {
+                            build.push(b("-->"));
+                            token.push("T_ssi");
+                        } else if (y[i] === "<" && y[i + 1] === "!" && y[i + 2] !== "-" && token[token.length - 1] !== "T_script") {
+                            build.push(b(">"));
+                            token.push("T_sgml");
+                        } else if (y[i] === "<" && y[i + 1] === "?" && y[i + 2].toLowerCase() === "x" && y[i + 3].toLowerCase() === "m" && y[i + 4].toLowerCase() === "l") {
+                            build.push(b("?>"));
+                            token.push("T_xml");
+                        } else if (y[i] === "<" && y[i + 1] === "?" && y[i + 2].toLowerCase() === "p" && y[i + 3].toLowerCase() === "h" && y[i + 4].toLowerCase() === "p") {
+                            build.push(b("?>"));
+                            token.push("T_php");
+                        } else if (y[i] === "<" && y[i + 1].toLowerCase() === "s" && y[i + 2].toLowerCase() === "c" && y[i + 3].toLowerCase() === "r" && y[i + 4].toLowerCase() === "i" && y[i + 5].toLowerCase() === "p" && y[i + 6].toLowerCase() === "t") {
+                            build.push(b(">"));
+                            a = build[build.length - 1].toLowerCase().replace(/'/g, "\"");
+                            if (a.charAt(a.length - 2) === "/") {
+                                token.push("T_singleton");
+                            } else if (a.indexOf(" type=\"") === -1 || a.indexOf(" type=\"text/javascript\"") !== -1 || a.indexOf(" type=\"application/javascript\"") !== -1 || a.indexOf(" type=\"application/x-javascript\"") !== -1 || a.indexOf(" type=\"text/ecmascript\"") !== -1 || a.indexOf(" type=\"application/ecmascript\"") !== -1) {
+                                token.push("T_script");
+                            } else {
+                                token.push("T_tag_start");
+                            }
+                        } else if (y[i] === "<" && y[i + 1].toLowerCase() === "s" && y[i + 2].toLowerCase() === "t" && y[i + 3].toLowerCase() === "y" && y[i + 4].toLowerCase() === "l" && y[i + 5].toLowerCase() === "e") {
+                            build.push(b(">"));
+                            a = build[build.length - 1].toLowerCase().replace(/'/g, "\"");
+                            if (a.indexOf(" type=\"") === -1 || a.indexOf(" type=\"text/css\"") !== -1) {
+                                token.push("T_style");
+                            } else {
+                                token.push("T_tag_start");
+                            }
+                        } else if (y[i] === "<" && y[i + 1] === "%") {
+                            build.push(b("%>"));
+                            token.push("T_asp");
+                        } else if (y[i] === "<" && y[i + 1] === "/") {
+                            build.push(b(">"));
+                            token.push("T_tag_end");
+                        } else if (y[i] === "<" && token[token.length - 1] !== "T_script" && token[token.length - 1] !== "T_style" && (y[i + 1] !== "!" || y[i + 1] !== "?" || y[i + 1] !== "/" || y[i + 1] !== "%")) {
+                            for (c = i; c < loop; c += 1) {
+                                if (y[c] !== "?" && y[c] !== "%") {
+                                    if (y[c] === "/" && y[c + 1] === ">") {
+                                        build.push(b("/>"));
+                                        token.push("T_singleton");
+                                        break;
+                                    } else if (y[c + 1] === ">") {
+                                        build.push(b(">"));
+                                        token.push("T_tag_start");
+                                        break;
+                                    }
+                                }
+                            }
+                        } else if (y[i - 1] === ">" && (y[i] !== "<" || (y[i] !== " " && y[i + 1] !== "<"))) {
+                            if (token[token.length - 1] === "T_script") {
+                                build.push(cgather("script"));
+                                token.push("T_content");
+                            } else if (token[token.length - 1] === "T_style") {
+                                build.push(cgather("style"));
+                                token.push("T_content");
+                            } else if (y[i - 1] + y[i] + y[i + 1] !== "> <") {
+                                build.push(cgather("other"));
+                                token.push("T_content");
+                            }
+                        }
+                    }
+                }());
+                (function () {
+                    var i = 0,
+                        Z = token.length;
+                    for (i = 0; i < Z; i += 1) {
+                        build[i] = build[i].replace(/\s*prettydiffcdatas/g, "<").replace(/\s*prettydiffcdatae/g, ">");
+                        if (token[i] === "T_sgml" || token[i] === "T_xml") {
+                            cinfo.push("parse");
+                        } else if (token[i] === "T_asp" || token[i] === "T_php" || token[i] === "T_ssi") {
+                            cinfo.push("singleton");
+                        } else if (token[i] === "T_comment") {
+                            cinfo.push("comment");
+                        } else if ((token[i] === "T_content" && build[i] !== " ") && token[i - 1] === "T_script") {
+                            cinfo.push("external");
+                        } else if (token[i] === "T_content" && token[i - 1] === "T_style") {
+                            cinfo.push("external");
+                        } else if (token[i] === "T_content" && build[i].charAt(0) === " " && build[i].charAt(build[i].length - 1) === " ") {
+                            cinfo.push("mixed_both");
+                        } else if (token[i] === "T_content" && build[i].charAt(0) === " " && build[i].charAt(build[i].length - 1) !== " ") {
+                            cinfo.push("mixed_start");
+                        } else if (token[i] === "T_content" && build[i].charAt(0) !== " " && build[i].charAt(build[i].length - 1) === " ") {
+                            cinfo.push("mixed_end");
+                        } else if (token[i] === "T_content") {
+                            cinfo.push("content");
+                        } else if (token[i] === "T_tag_start") {
+                            cinfo.push("start");
+                        } else if (token[i] === "T_style") {
+                            build[i] = build[i].replace(/\s+/g, " ");
+                            cinfo.push("start");
+                        } else if (token[i] === "T_script") {
+                            build[i] = build[i].replace(/\s+/g, " ");
+                            cinfo.push("start");
+                        } else if (token[i] === "T_singleton") {
+                            cinfo.push("singleton");
+                        } else if (token[i] === "T_tag_end") {
+                            cinfo.push("end");
+                        }
+                    }
+                    sum = [].concat(build);
+                }());
+                (function () {
+                    var a = 0,
+                        b = args.insize,
+                        c = args.inchar,
+                        d = [];
+                    for (a = 0; a < b; a += 1) {
+                        d.push(c);
+                    }
+                    tab = d.join("");
+                }());
+                (function () {
+                    var a = 0,
+                        b = "",
+                        i = 0,
+                        loop = 0;
+                    if (!args.html) {
+                        return;
+                    }
+                    loop = cinfo.length;
+                    for (i = 0; i < loop; i += 1) {
+                        if (cinfo[i] === "start") {
+                            a = build[i].indexOf(" ");
+                            if (build[i].length === 3) {
+                                b = build[i].charAt(1).toLowerCase();
+                            } else if (a === -1) {
+                                b = build[i].slice(1, cinfo[i].length - 2).toLowerCase();
+                            } else if (a === 0) {
+                                b = build[i].slice(1, build[i].length);
+                                a = b.indexOf(" ");
+                                b = b.slice(1, a).toLowerCase();
+                            } else {
+                                b = build[i].slice(1, a).toLowerCase();
+                            }
+                            if (b === "area" || b === "base" || b === "basefont" || b === "br" || b === "col" || b === "embed" || b === "eventsource" || b === "frame" || b === "hr" || b === "img" || b === "input" || b === "keygen" || b === "link" || b === "meta" || b === "param" || b === "progress" || b === "source" || b === "wbr") {
+                                cinfo[i] = "singleton";
+                                token[i] = "T_singleton";
+                            }
+                        }
+                    }
+                }());
+                (function () {
+                    var i = 0,
+                        c = function (x) {
+                            var k = 0,
+                                m = 0;
+                            if (x === "start") {
+                                m += 1;
+                            }
+                            for (k = i - 1; k > -1; k -= 1) {
+                                if (cinfo[k] === "start" && level[k] === "x") {
+                                    m += 1;
+                                } else if (cinfo[k] === "end") {
+                                    m -= 1;
+                                } else if (cinfo[k] === "start" && level[k] !== "x") {
+                                    return level.push(level[k] + m);
+                                }
+                                if (k === 0) {
+                                    if (cinfo[k] !== "start") {
+                                        return level.push(0);
+                                    }
+                                    if (cinfo[i] === "mixed_start" || cinfo[i] === "content" || (cinfo[i] === "singleton" && build[i].charAt(0) !== " ")) {
+                                        return level.push("x");
+                                    }
+                                    return level.push(1);
+                                }
+                            }
+                        },
+                        e = function () {
+                            var z = function (y) {
+                                    for (y; y > 0; y -= 1) {
+                                        if (level[y] !== "x") {
+                                            return level.push(level[y] + 1);
+                                        }
+                                    }
+                                },
+                                w = function () {
+                                    var k = 0,
+                                        q = false,
+                                        u = function () {
+                                            var y = 0,
+                                                t = function () {
+                                                    var k = 0,
+                                                        s = 0,
+                                                        l = 0;
+                                                    for (s = i - 1; s > 0; s -= 1) {
+                                                        if ((cinfo[s] === "start" && cinfo[s + 1] === "start" && level[s] === level[s + 1] - 1) || (cinfo[s] === "start" && cinfo[s - 1] !== "start" && level[s] === level[s - 1])) {
+                                                            break;
+                                                        }
+                                                    }
+                                                    for (k = s + 1; k < i; k += 1) {
+                                                        if (cinfo[k] === "mixed_start" && cinfo[k + 1] === "end") {
+                                                            l += 1;
+                                                        }
+                                                    }
+                                                    if (cinfo[s - 1] === "end" && level[s - 1] !== "x" && l === 0) {
+                                                        l += 1;
+                                                    }
+                                                    if (l !== 0) {
+                                                        if (level[i - 1] === "x") {
+                                                            return l - 1;
+                                                        }
+                                                        return l;
+                                                    }
+                                                    for (s; s < i; s += 1) {
+                                                        if (cinfo[s] === "start") {
+                                                            l += 1;
+                                                        } else if (cinfo[s] === "end") {
+                                                            l -= 1;
+                                                        }
+                                                    }
+                                                    return l;
+                                                };
+                                            for (y = i - 1; y > 0; y -= 1) {
+                                                if (cinfo[y] !== "mixed_end" || (cinfo[y] === "start" && level[y] !== "x")) {
+                                                    if (cinfo[y - 1] === "end") {
+                                                        q = true;
+                                                        if (cinfo[i - 1] === "mixed_both" && level[i - 1] === level[y] - t()) {
+                                                            return level.push(level[y] - (t() + 1));
+                                                        }
+                                                        if (cinfo[i - 2] === "start" && (cinfo[i - 1] === "mixed_end" || cinfo[i - 1] === "mixed_both")) {
+                                                            return level.push(level[y]);
+                                                        }
+                                                        if (level[y] !== "x") {
+                                                            if (cinfo[y] === "mixed_both" && y !== i - t()) {
+                                                                if (y === i - 1) {
+                                                                    return level.push(level[y] - 1);
+                                                                }
+                                                                return level.push(level[y] + t());
+                                                            }
+                                                            if (cinfo[i - 1] === "mixed_end" && t() === 0) {
+                                                                return level.push(level[y] - 1);
+                                                            }
+                                                            if (level[i - 1] === "x" && (cinfo[i - 2] !== "end" || (cinfo[i - 2] === "end" && level[i - 2] !== "x"))) {
+                                                                return level.push(level[y] + t());
+                                                            }
+                                                            return level.push(level[y] - t());
+                                                        }
+                                                    } else {
+                                                        q = false;
+                                                        return;
+                                                    }
+                                                }
                                             }
-                                            if (cinfo[i] === "mixed_end") {
-                                                build[i] = build[i].slice(0, build[i].length - 1);
+                                        },
+                                        r = function () {
+                                            var l = 0,
+                                                k = 0;
+                                            for (k = i; k > 0; k -= 1) {
+                                                if (cinfo[k] === "end") {
+                                                    l += 1;
+                                                } else if (cinfo[k] === "start") {
+                                                    l -= 1;
+                                                }
+                                                if (l === 0) {
+                                                    return k;
+                                                }
+                                            }
+                                        };
+                                    if (cinfo[i - 1] === "end" && level[i - 1] !== "x") {
+                                        if (cinfo[i - 2] === "start" && level[i - 2] === "x") {
+                                            for (k = i - 2; k > 0; k -= 1) {
+                                                if (level[k] !== "x") {
+                                                    break;
+                                                }
+                                            }
+                                            if (cinfo[k] === "start") {
+                                                return c("end");
+                                            }
+                                            return level.push(level[k] - 1);
+                                        }
+                                        if (cinfo[i - 2] === "start" && level[i - 2] !== "x") {
+                                            return level.push(level[i - 2] - 1);
+                                        }
+                                        return level.push(level[i - 1] - 1);
+                                    }
+                                    u();
+                                    if (q) {
+                                        return;
+                                    }
+                                    return (function () {
+                                        var y = 0,
+                                            q = 0;
+                                        for (q = r(); q > 0; q -= 1) {
+                                            if (cinfo[q] === "start") {
+                                                y += 1;
+                                            } else if (cinfo[q] === "end") {
+                                                y -= 1;
+                                            }
+                                            if (level[q] !== "x") {
+                                                if (cinfo[q] === "end" && cinfo[q - 1] === "start" && level[q - 1] !== "x") {
+                                                    return level.push(level[q]);
+                                                }
+                                                if (level[i - 1] === "x" && build[i].charAt(0) !== " " && cinfo[i - 1] !== "mixed_end" && (cinfo[i - 2] !== "end" || level[i - 2] !== "x") && (cinfo[i - 3] !== "end" || level[i - 3] !== "x")) {
+                                                    return level.push("x");
+                                                }
+                                                return level.push(level[q] + (y - 1));
                                             }
                                         }
-                                    } else if (cinfo[i] === "external") {
-                                        if (/\s*<\!\-\-\s*\-\->\s*/.test(build[i])) {
-                                            if (build[i].charAt(0) === " ") {
-                                                build[i] = build[i].substr(1);
+                                        y = 0;
+                                        for (q = i; q > -1; q -= 1) {
+                                            if (cinfo[q] === "start") {
+                                                y += 1;
+                                            } else if (cinfo[q] === "end") {
+                                                y -= 1;
                                             }
-                                            if (build[i].charAt(build[i].length - 1) === " ") {
-                                                build[i] = build[i].substr(0, build[i].length - 1);
-                                            }
-                                            cinfo[i] = "comment";
-                                            token[i] = "T_comment";
-                                            if (args.comments !== "noindent") {
-                                                h();
-                                            } else {
-                                                level.push(0);
-                                            }
-                                        } else if (token[i - 1] === "T_script") {
-                                            level.push(0);
-                                            if (scriptStart.test(build[i])) {
-                                                test = true;
-                                                build[i] = build[i].replace(scriptStart, "");
-                                            } else if (cdataStart.test(build[i])) {
-                                                cdata = cdataStart.exec(build[i]);
-                                                build[i] = build[i].replace(cdataStart, "");
-                                            }
-                                            if (scriptEnd.test(build[i]) && !/(\/\/\-\->\s*)$/.test(build[i])) {
-                                                test1 = true;
-                                                build[i] = build[i].replace(scriptEnd, "");
-                                            } else if (cdataEnd.test(build[i])) {
-                                                cdata1 = cdataEnd.exec(build[i]);
-                                                build[i] = build[i].replace(cdataEnd, "");
-                                            }
-                                            ops.source = build[i];
-                                            ops.insize = args.insize;
-                                            ops.inchar = args.inchar;
-                                            ops.preserve = true;
-                                            ops.preserve_max = 1;
-                                            ops.inlevel = 0;
-                                            ops.space = true;
-                                            ops.braces = args.indent;
-                                            ops.inarray = false;
-                                            ops.comments = args.comments;
-                                            build[i] = js_beautify(ops);
-                                            if (test) {
-                                                build[i] = "<!--\n" + build[i];
-                                            } else if (cdata[0] !== "") {
-                                                build[i] = cdata[0] + "\n" + build[i];
-                                            }
-                                            if (test1) {
-                                                build[i] = build[i] + "\n-->";
-                                            } else if (cdata1[0] !== "") {
-                                                build[i] = build[i] + "\n" + cdata1[0];
-                                            }
-                                            build[i] = build[i].replace(/(\/\/(\s)+\-\->(\s)*)$/, "//-->").replace(/^(\s*)/, "").replace(/(\s*)$/, "");
-                                        } else if (token[i - 1] === "T_style") {
-                                            level.push(0);
-                                            if (scriptStart.test(build[i])) {
-                                                test = true;
-                                                build[i] = build[i].replace(scriptStart, "");
-                                            } else if (cdataStart.test(build[i])) {
-                                                cdata = cdataStart.exec(build[i]);
-                                                build[i] = build[i].replace(cdataStart, "");
-                                            }
-                                            if (scriptEnd.test(build[i]) && !/(\/\/\-\->\s*)$/.test(build[i])) {
-                                                test1 = true;
-                                                build[i].replace(scriptEnd, "");
-                                            } else if (cdataEnd.test(build[i])) {
-                                                cdata1 = cdataEnd.exec(build[i]);
-                                                build[i] = build[i].replace(cdataEnd, "");
-                                            }
-                                            build[i] = cleanCSS(build[i], args.insize, args.inchar, args.comments, true);
-                                            if (test) {
-                                                build[i] = "<!--\n" + build[i];
-                                            } else if (cdata[0] !== "") {
-                                                build[i] = cdata[0] + "\n" + build[i];
-                                            }
-                                            if (test1) {
-                                                build[i] = build[i] + "\n-->";
-                                            } else if (cdata1[0] !== "") {
-                                                build[i] = build[i] + "\n" + cdata1[0];
-                                            }
-                                            build[i] = build[i].replace(/^(\s*)/, "").replace(/(\s*)$/, "");
                                         }
+                                        return level.push(y);
+                                    }());
+                                };
+                            if (cinfo[i - 1] === "end" || cinfo[i - 1] === "mixed_both" || cinfo[i - 1] === "mixed_end") {
+                                return w();
+                            }
+                            if (cinfo[i - 1] === "mixed_start" || cinfo[i - 1] === "content") {
+                                return level.push("x");
+                            }
+                            if (cinfo[i - 1] === "external") {
+                                return (function () {
+                                    var a = 0,
+                                        yy = -1;
+                                    for (a = i - 2; a > 0; a -= 1) {
+                                        if (cinfo[a] === "start") {
+                                            yy += 1;
+                                        } else if (cinfo[a] === "end") {
+                                            yy -= 1;
+                                        }
+                                        if (level[a] !== "x") {
+                                            break;
+                                        }
+                                    }
+                                    if (cinfo[a] === "end") {
+                                        yy += 1;
+                                    }
+                                    return level.push(level[a] + yy);
+                                }());
+                            }
+                            if (build[i].charAt(0) !== " ") {
+                                if ((cinfo[i - 1] === "singleton" || cinfo[i - 1] === "content") && level[i - 1] === "x") {
+                                    return level.push("x");
+                                }
+                                return (function () {
+                                    var a = 0,
+                                        yy = 0;
+                                    for (a = i - 1; a > 0; a -= 1) {
+                                        if (cinfo[a] === "singleton" && level[a] === "x" && ((cinfo[a - 1] === "singleton" && level[a - 1] !== "x") || cinfo[a - 1] !== "singleton")) {
+                                            yy += 1;
+                                        }
+                                        if (level[a] !== 0 && level[a] !== "x" && cinfo[i - 1] !== "start") {
+                                            if (cinfo[a] === "mixed_both" || cinfo[a] === "mixed_start") {
+                                                return level.push(level[a] - yy);
+                                            }
+                                            if (level[a] === yy || (cinfo[a] === "singleton" && (cinfo[a - 1] === "content" || cinfo[a - 1] === "mixed_start"))) {
+                                                return level.push(level[a]);
+                                            }
+                                            return level.push(level[a] - 1);
+                                        }
+                                        if (cinfo[a] === "start" && level[a] === "x") {
+                                            return z(a);
+                                        }
+                                        if (cinfo[i - 1] === "start") {
+                                            return level.push(level[a]);
+                                        }
+                                    }
+                                    return level.push(0);
+                                }());
+                            }
+                            return c("end");
+                        },
+                        f = function (z) {
+                            var k = 0,
+                                l = 0,
+                                m = 0,
+                                p = function () {
+                                    var j = 0,
+                                        v = 1,
+                                        u = -1;
+                                    for (j = k; j > 0; j -= 1) {
+                                        if (cinfo[j] === "start") {
+                                            u -= 1;
+                                            if (level[j] === "x") {
+                                                v += 1;
+                                            }
+                                        } else if (cinfo[j] === "end") {
+                                            u += 1;
+                                            v -= 1;
+                                        }
+                                        if (level[j] === 0) {
+                                            k = 0;
+                                            for (l = i - 1; l > j; l -= 1) {
+                                                if (cinfo[l] === "start") {
+                                                    k += 1;
+                                                } else if (cinfo[l] === "end") {
+                                                    k -= 1;
+                                                }
+                                            }
+                                            if (k > 0) {
+                                                if (level[j + 1] === "x") {
+                                                    return level.push(((u) * -1) - 1);
+                                                }
+                                                if (cinfo[j] !== "external" && (args.comments !== "noindent" || (args.comments === "noindent" && cinfo[j] !== "comment"))) {
+                                                    return level.push((u + 1) * -1);
+                                                }
+                                            } else {
+                                                for (k = i - 1; k > 0; k -= 1) {
+                                                    if (level[k] !== "x") {
+                                                        return level.push(level[k]);
+                                                    }
+                                                }
+                                            }
+                                        }
+                                        if (level[j] !== "x" && level[i - 1] !== "x") {
+                                            if (cinfo[j] === "start" || cinfo[j] === "end") {
+                                                return level.push(level[j] + v);
+                                            }
+                                            return level.push(level[j] + v - 1);
+                                        }
+                                        if (u === -1 && level[j] === "x") {
+                                            break;
+                                        } else if (u === 1 && level[j] !== "x" && cinfo[j] !== "mixed_start" && cinfo[j] !== "content") {
+                                            if (cinfo[j - 1] === "mixed_end" || (level[i - 1] === "x" && cinfo[i - 1] === "end" && cinfo[j] !== "end")) {
+                                                return level.push(level[j] - u - 1);
+                                            }
+                                            return level.push(level[j] - u);
+                                        }
+                                        if (u === 0 && level[j] !== "x") {
+                                            return c("start");
+                                        }
+                                    }
+                                    return c("start");
+                                };
+                            (function () {
+                                var j = 0;
+                                if (z === 1) {
+                                    k = 0;
+                                    l = 0;
+                                    m = 0;
+                                } else {
+                                    for (j = z - 1; j > 0; j -= 1) {
+                                        if (cinfo[j] !== "comment") {
+                                            k = j;
+                                            break;
+                                        }
+                                    }
+                                    if (k === 1) {
+                                        l = 0;
+                                        m = 0;
                                     } else {
-                                        if (cinfo[i] === "comment" && args.comments !== "noindent") {
-                                            h();
-                                        } else if (cinfo[i] === "comment" && args.comments === "noindent") {
-                                            level.push(0);
-                                        } else if (cinfo[i] === "content") {
-                                            level.push("x");
-                                        } else if (cinfo[i] === "parse") {
-                                            h();
-                                        } else if (cinfo[i] === "mixed_both") {
-                                            h();
-                                        } else if (cinfo[i] === "mixed_start") {
-                                            h();
-                                        } else if (cinfo[i] === "mixed_end") {
-                                            build[i] = build[i].slice(0, build[i].length - 1);
-                                            level.push("x");
-                                        } else if (cinfo[i] === "start") {
-                                            h();
-                                        } else if (cinfo[i] === "end") {
-                                            e();
-                                        } else if (cinfo[i] === "singleton") {
-                                            h();
+                                        for (j = k - 1; j > 0; j -= 1) {
+                                            if (cinfo[j] !== "comment") {
+                                                l = j;
+                                                break;
+                                            }
+                                        }
+                                        if (l === 1) {
+                                            m = 0;
+                                        } else {
+                                            for (j = l - 1; j > 0; j -= 1) {
+                                                if (cinfo[j] !== "comment") {
+                                                    m = j;
+                                                    break;
+                                                }
+                                            }
                                         }
                                     }
                                 }
                             }());
-                    }()),
-                    write_tabs = (function () {
-                        var i = 0,
-                            loop = build.length,
-                            tab_math = function (x) {
-                                var a = 0,
-                                    b = (typeof level[i] === "number") ? level[i] : 0,
-                                    indent = [];
-                                for (a = 0; a < b; a += 1) {
-                                    indent.push(tab);
+                            if (i - 1 === 0 && cinfo[0] === "start") {
+                                return level.push(1);
+                            }
+                            if (cinfo[k] === "mixed_start" || cinfo[k] === "content" || cinfo[i - 1] === "mixed_start" || cinfo[i - 1] === "content" || (cinfo[i] === "singleton" && (cinfo[i - 1] === "start" || cinfo[i - 1] === "singleton") && build[i].charAt(0) !== " ")) {
+                                return level.push("x");
+                            }
+                            if ((cinfo[i - 1] === "comment" && level[i - 1] === 0) || ((cinfo[m] === "mixed_start" || cinfo[m] === "content") && cinfo[l] === "end" && (cinfo[k] === "mixed_end" || cinfo[k] === "mixed_both"))) {
+                                return c("start");
+                            }
+                            if (cinfo[i - 1] === "comment" && level[i - 1] !== "x") {
+                                return level.push(level[i - 1]);
+                            }
+                            if ((cinfo[k] === "start" && level[k] === "x") || (cinfo[k] !== "mixed_end" && cinfo[k] !== "mixed_both" && level[k] === "x")) {
+                                if (level[i - 1] === "x" && build[i].charAt(0) !== " " && cinfo[i - 1] !== "start" && build[i - 1].charAt(build[i - 1].length - 1) !== " ") {
+                                    if ((cinfo[i - 1] === "end" && cinfo[i - 2] === "end") || (cinfo[i - 1] === "end" && cinfo[i] !== "end" && cinfo[i + 1] !== "mixed_start" && cinfo[i + 1] !== "content")) {
+                                        return c("start");
+                                    }
+                                    return level.push("x");
                                 }
-                                if (cinfo[i] === "mixed_both") {
-                                    x = x.slice(0, x.length - 1);
+                                return p();
+                            }
+                            if (cinfo[k] === "end" && level[k] !== "x" && (cinfo[k - 1] !== "start" || (cinfo[k - 1] === "start" && level[k - 1] !== "x"))) {
+                                if (level[k] < 0) {
+                                    return c("start");
                                 }
-                                x = "\n" + indent.join("") + x;
-                                return x;
-                            },
-                            end_math = function (x) {
-                                var a = 0,
-                                    b = 0,
-                                    indent = [];
-                                for (b = i; b > 0; b -= 1) {
+                                return level.push(level[k]);
+                            }
+                            if (cinfo[m] !== "mixed_start" && cinfo[m] !== "content" && (cinfo[k] === "mixed_end" || cinfo[k] === "mixed_both")) {
+                                return (function () {
+                                    var a = 0,
+                                        l = 0,
+                                        p = 0,
+                                        m = 0;
+                                    for (a = k; a > 0; a -= 1) {
+                                        if (cinfo[a] === "end") {
+                                            l += 1;
+                                        }
+                                        if (cinfo[a] === "start") {
+                                            p += 1;
+                                        }
+                                        if (level[a] === 0 && a !== 0) {
+                                            m = a;
+                                        }
+                                        if (cinfo[k] === "mixed_both" && level[a] !== "x") {
+                                            return level.push(level[a]);
+                                        }
+                                        if (cinfo[a] !== "comment" && cinfo[a] !== "content" && cinfo[a] !== "external" && cinfo[a] !== "mixed_end" && level[a] !== "x") {
+                                            if (cinfo[a] === "start" && level[a] !== "x") {
+                                                if (cinfo[i - 1] !== "end") {
+                                                    return level.push(level[a] + (p - l));
+                                                }
+                                                if ((level[a] === level[a - 1] && cinfo[a - 1] !== "end" && level[a + 1] !== "x") || (cinfo[i - 2] === "start" && level[i - 2] !== "x" && level[i - 1] === "x")) {
+                                                    return level.push(level[a] + 1);
+                                                }
+                                                if (p <= 1) {
+                                                    return level.push(level[a]);
+                                                }
+                                            } else if (l > 0) {
+                                                if (p > 1) {
+                                                    if (m !== 0) {
+                                                        return c("start");
+                                                    }
+                                                    return level.push(level[a] + 1);
+                                                }
+                                                return level.push(level[a] - l + 1);
+                                            }
+                                            return level.push(level[a] + p);
+                                        }
+                                    }
+                                    return c("start");
+                                }());
+                            }
+                            if (cinfo[k] === "start" && level[k] !== "x") {
+                                return (function () {
+                                    var a = 0;
+                                    for (a = i - 1; a > -1; a -= 1) {
+                                        if (cinfo[a] !== "comment" && cinfo[a] !== "content" && cinfo[a] !== "external" && cinfo[a] !== "mixed_end") {
+                                            if (cinfo[i + 1] && build[i].charAt(0) !== " " && (cinfo[i + 1] === "mixed_end" || cinfo[i + 1] === "content" || (build[i + 1].charAt(0) !== " " && cinfo[i + 1] === "singleton"))) {
+                                                return level.push("x");
+                                            }
+                                            return level.push(level[a] + 1);
+                                        }
+                                    }
+                                    return level.push(0);
+                                }());
+                            }
+                            if (build[i].charAt(0) !== " " && (cinfo[i - 1] === "singleton" || cinfo[i - 1] === "content" || cinfo[i - 1] === "mixed_start")) {
+                                return level.push("x");
+                            }
+                            return c("start");
+                        },
+                        h = function () {
+                            var z;
+                            if (cinfo[i] !== "start" && level[i - 1] === "x" && cinfo[i - 1] !== "content" && build[i].charAt(0) !== " " && cinfo[i - 1] !== "mixed_start" && cinfo[i - 1] !== "mixed_end") {
+                                return level.push("x");
+                            }
+                            if (cinfo[i] !== "start" && build[i] === " ") {
+                                build[i] = "";
+                                return level.push("x");
+                            }
+                            if (cinfo[i - 1] !== "comment") {
+                                f(i);
+                            } else {
+                                for (z = i - 1; z > 0; z -= 1) {
+                                    if (cinfo[z] !== "comment") {
+                                        break;
+                                    }
+                                }
+                                f(z + 1);
+                            }
+                        };
+                    (function () {
+                        var a = 0,
+                            b = "",
+                            c = 0,
+                            d = 0,
+                            e = inner.length,
+                            f = [];
+                        for (a = 0; a < e; a += 1) {
+                            b = inner[a][0];
+                            c = inner[a][1];
+                            d = inner[a][2];
+                            if (typeof build[d] !== "undefined") {
+                                if (build[d].charAt(0) === " ") {
+                                    c += 1;
+                                }
+                                f = build[d].split("");
+                                if (b === "<" && f[c] === "[") {
+                                    f[c] = "<";
+                                } else if (b === ">" && f[c] === "]") {
+                                    f[c] = ">";
+                                }
+                                build[d] = f.join("");
+                            }
+                        }
+                    }());
+                    (function () {
+                        var test = false,
+                            test1 = false,
+                            cdata = [],
+                            cdata1 = [],
+                            cdataStart = (/^(\s*\/*<\!\[+[A-Z]+\[+)/),
+                            cdataEnd = (/(\/*\]+>\s*)$/),
+                            scriptStart = (/^(\s*<\!\-\-)/),
+                            scriptEnd = (/(\-\->\s*)$/),
+                            loop = cinfo.length;
+                        for (i = 0; i < loop; i += 1) {
+                            test = false;
+                            test1 = false;
+                            cdata = [""];
+                            cdata1 = [""];
+                            if (i === 0) {
+                                level.push(0);
+                            } else if (args.force_indent) {
+                                if (cinfo[i] === "end") {
+                                    if (cinfo[i - 1] === "start") {
+                                        level.push(level[i - 1]);
+                                    } else {
+                                        level.push(level[i - 1] - 1);
+                                    }
+                                } else {
+                                    if (cinfo[i - 1] === "start") {
+                                        level.push(level[i - 1] + 1);
+                                    } else {
+                                        level.push(level[i - 1]);
+                                    }
+                                    if (cinfo[i] === "mixed_end") {
+                                        build[i] = build[i].slice(0, build[i].length - 1);
+                                    }
+                                }
+                            } else if (cinfo[i] === "external") {
+                                if (/\s*<\!\-\-\s*\-\->\s*/.test(build[i])) {
+                                    if (build[i].charAt(0) === " ") {
+                                        build[i] = build[i].substr(1);
+                                    }
+                                    if (build[i].charAt(build[i].length - 1) === " ") {
+                                        build[i] = build[i].substr(0, build[i].length - 1);
+                                    }
+                                    cinfo[i] = "comment";
+                                    token[i] = "T_comment";
+                                    if (args.comments !== "noindent") {
+                                        h();
+                                    } else {
+                                        level.push(0);
+                                    }
+                                } else if (token[i - 1] === "T_script") {
+                                    level.push(0);
+                                    if (scriptStart.test(build[i])) {
+                                        test = true;
+                                        build[i] = build[i].replace(scriptStart, "");
+                                    } else if (cdataStart.test(build[i])) {
+                                        cdata = cdataStart.exec(build[i]);
+                                        build[i] = build[i].replace(cdataStart, "");
+                                    }
+                                    if (scriptEnd.test(build[i]) && !/(\/\/\-\->\s*)$/.test(build[i])) {
+                                        test1 = true;
+                                        build[i] = build[i].replace(scriptEnd, "");
+                                    } else if (cdataEnd.test(build[i])) {
+                                        cdata1 = cdataEnd.exec(build[i]);
+                                        build[i] = build[i].replace(cdataEnd, "");
+                                    }
+                                    if (typeof js_beautify === "function") {
+                                        build[i] = js_beautify({
+                                            source: build[i],
+                                            insize: api.insize,
+                                            inchar: api.inchar,
+                                            preserve: true,
+                                            preserve_max: 1,
+                                            inlevel: 0,
+                                            space: true,
+                                            braces: args.indent,
+                                            inarray: false,
+                                            comments: args.comments
+                                        });
+                                    }
+                                    if (test) {
+                                        build[i] = "<!--\n" + build[i];
+                                    } else if (cdata[0] !== "") {
+                                        build[i] = cdata[0] + "\n" + build[i];
+                                    }
+                                    if (test1) {
+                                        build[i] = build[i] + "\n-->";
+                                    } else if (cdata1[0] !== "") {
+                                        build[i] = build[i] + "\n" + cdata1[0];
+                                    }
+                                    build[i] = build[i].replace(/(\/\/(\s)+\-\->(\s)*)$/, "//-->").replace(/^(\s*)/, "").replace(/(\s*)$/, "");
+                                } else if (token[i - 1] === "T_style") {
+                                    level.push(0);
+                                    if (scriptStart.test(build[i])) {
+                                        test = true;
+                                        build[i] = build[i].replace(scriptStart, "");
+                                    } else if (cdataStart.test(build[i])) {
+                                        cdata = cdataStart.exec(build[i]);
+                                        build[i] = build[i].replace(cdataStart, "");
+                                    }
+                                    if (scriptEnd.test(build[i]) && !/(\/\/\-\->\s*)$/.test(build[i])) {
+                                        test1 = true;
+                                        build[i].replace(scriptEnd, "");
+                                    } else if (cdataEnd.test(build[i])) {
+                                        cdata1 = cdataEnd.exec(build[i]);
+                                        build[i] = build[i].replace(cdataEnd, "");
+                                    }
+                                    if (typeof cleanCSS === "function") {
+                                        build[i] = cleanCSS({
+                                            source: build[i],
+                                            size: args.insize,
+                                            character: args.inchar,
+                                            comment: args.comments,
+                                            alter: true
+                                        });
+                                    }
+                                    if (test) {
+                                        build[i] = "<!--\n" + build[i];
+                                    } else if (cdata[0] !== "") {
+                                        build[i] = cdata[0] + "\n" + build[i];
+                                    }
+                                    if (test1) {
+                                        build[i] = build[i] + "\n-->";
+                                    } else if (cdata1[0] !== "") {
+                                        build[i] = build[i] + "\n" + cdata1[0];
+                                    }
+                                    build[i] = build[i].replace(/^(\s*)/, "").replace(/(\s*)$/, "");
+                                }
+                            } else {
+                                if (cinfo[i] === "comment" && args.comments !== "noindent") {
+                                    h();
+                                } else if (cinfo[i] === "comment" && args.comments === "noindent") {
+                                    level.push(0);
+                                } else if (cinfo[i] === "content") {
+                                    level.push("x");
+                                } else if (cinfo[i] === "parse") {
+                                    h();
+                                } else if (cinfo[i] === "mixed_both") {
+                                    h();
+                                } else if (cinfo[i] === "mixed_start") {
+                                    h();
+                                } else if (cinfo[i] === "mixed_end") {
+                                    build[i] = build[i].slice(0, build[i].length - 1);
+                                    level.push("x");
+                                } else if (cinfo[i] === "start") {
+                                    h();
+                                } else if (cinfo[i] === "end") {
+                                    e();
+                                } else if (cinfo[i] === "singleton") {
+                                    h();
+                                }
+                            }
+                        }
+                    }());
+                }());
+                (function () {
+                    var i = 0,
+                        loop = build.length,
+                        tab_math = function (x) {
+                            var a = 0,
+                                b = (typeof level[i] === "number") ? level[i] : 0,
+                                indent = [];
+                            for (a = 0; a < b; a += 1) {
+                                indent.push(tab);
+                            }
+                            if (cinfo[i] === "mixed_both") {
+                                x = x.slice(0, x.length - 1);
+                            }
+                            x = "\n" + indent.join("") + x;
+                            return x;
+                        },
+                        end_math = function (x) {
+                            var a = 0,
+                                b = 0,
+                                indent = [];
+                            for (b = i; b > 0; b -= 1) {
+                                if (level[b] !== "x") {
+                                    break;
+                                }
+                            }
+                            for (a = 0; a < level[b]; a += 1) {
+                                indent.push(tab);
+                            }
+                            x = "\n" + indent.join("") + x;
+                            return x;
+                        },
+                        script_math = function (x) {
+                            var a = 0,
+                                b = 0,
+                                c = 0,
+                                d = "",
+                                indent = [];
+                            if (level[i - 1] === "x") {
+                                for (b = i - 1; b > 0; b -= 1) {
+                                    if (cinfo[b] === "start") {
+                                        a += 1;
+                                    } else if (cinfo[b] === "end") {
+                                        a -= 1;
+                                    }
                                     if (level[b] !== "x") {
                                         break;
                                     }
                                 }
-                                for (a = 0; a < level[b]; a += 1) {
+                                if (cinfo[b] === "end") {
+                                    a += 1;
+                                }
+                                for (c = 0; c < level[b] + a; c += 1) {
                                     indent.push(tab);
                                 }
-                                x = "\n" + indent.join("") + x;
-                                return x;
-                            },
-                            script_math = function (x) {
-                                var a = 0,
-                                    b = 0,
-                                    c = 0,
-                                    d = "",
-                                    indent = [];
-                                if (level[i - 1] === "x") {
-                                    for (b = i - 1; b > 0; b -= 1) {
-                                        if (cinfo[b] === "start") {
-                                            a += 1;
-                                        } else if (cinfo[b] === "end") {
-                                            a -= 1;
-                                        }
-                                        if (level[b] !== "x") {
-                                            break;
-                                        }
-                                    }
-                                    if (cinfo[b] === "end") {
-                                        a += 1;
-                                    }
-                                    for (c = 0; c < level[b] + a; c += 1) {
-                                        indent.push(tab);
-                                    }
-                                } else {
-                                    for (c = 0; c < level[i - 1] + 1; c += 1) {
-                                        indent.push(tab);
-                                    }
+                            } else {
+                                for (c = 0; c < level[i - 1] + 1; c += 1) {
+                                    indent.push(tab);
                                 }
-                                d = indent.join("");
-                                return "\n" + d + x.replace(/\n/g, "\n" + d);
-                            };
-                        for (i = 1; i < loop; i += 1) {
-                            if (cinfo[i] === "end" && (args.force_indent || (cinfo[i - 1] !== "content" && cinfo[i - 1] !== "mixed_start"))) {
-                                if (build[i].charAt(0) === " ") {
-                                    build[i] = build[i].substr(1);
-                                }
-                                if (level[i] !== "x" && cinfo[i - 1] !== "start") {
-                                    build[i] = end_math(build[i]);
-                                }
-                            } else if (cinfo[i] === "external" && args.style === "indent") {
-                                build[i] = script_math(build[i]);
-                            } else if (level[i] !== "x" && (cinfo[i - 1] !== "content" && (cinfo[i - 1] !== "mixed_start" || args.force_indent))) {
-                                if (build[i].charAt(0) === " ") {
-                                    build[i] = build[i].substr(1);
-                                }
-                                build[i] = tab_math(build[i]);
                             }
+                            d = indent.join("");
+                            return "\n" + d + x.replace(/\n/g, "\n" + d);
+                        };
+                    for (i = 1; i < loop; i += 1) {
+                        if (cinfo[i] === "end" && (args.force_indent || (cinfo[i - 1] !== "content" && cinfo[i - 1] !== "mixed_start"))) {
+                            if (build[i].charAt(0) === " ") {
+                                build[i] = build[i].substr(1);
+                            }
+                            if (level[i] !== "x" && cinfo[i - 1] !== "start") {
+                                build[i] = end_math(build[i]);
+                            }
+                        } else if (cinfo[i] === "external" && args.style === "indent") {
+                            build[i] = script_math(build[i]);
+                        } else if (level[i] !== "x" && (cinfo[i - 1] !== "content" && (cinfo[i - 1] !== "mixed_start" || args.force_indent))) {
+                            if (build[i].charAt(0) === " ") {
+                                build[i] = build[i].substr(1);
+                            }
+                            build[i] = tab_math(build[i]);
                         }
-                    }());
+                    }
+                }());
                 (function () {
                     var insertComma = function (x) {
                             var z = 0,
@@ -5032,16 +5065,6 @@ var prettydiff = function (api) {
                             a = [],
                             b = [],
                             reverse = false,
-                            lentest = (function () {
-                                if (bta.length > nta.length) {
-                                    reverse = true;
-                                    a = nta;
-                                    b = bta;
-                                } else {
-                                    a = bta;
-                                    b = nta;
-                                }
-                            }()),
                             matching_blocks = [],
                             bxj = [],
                             opcodes = [],
@@ -5090,7 +5113,6 @@ var prettydiff = function (api) {
                                             j = 0,
                                             k = 0,
                                             l = [0, 0],
-                                            jkey = "",
                                             besti = alo,
                                             bestj = blo,
                                             bestsize = 0;
@@ -5181,118 +5203,128 @@ var prettydiff = function (api) {
                                 non_adjacent.push([la, lb, 0]);
                                 matching_blocks = non_adjacent;
                                 return matching_blocks;
-                            },
-                            set_seq2 = (function () {
-                                opcodes = null;
-                                var chain_b = (function () {
-                                        var i = 0,
-                                            c = 0,
-                                            elt = "",
-                                            n = b.length;
-                                        for (i = 0; i < n; i += 1) {
-                                            elt = b[i];
-                                            for (c = bxj.length - 1; c > -1; c -= 1) {
-                                                if (bxj[c][1] === elt) {
-                                                    break;
+                            };
+                        (function () {
+                            (function () {
+                                if (bta.length > nta.length) {
+                                    reverse = true;
+                                    a = nta;
+                                    b = bta;
+                                } else {
+                                    a = bta;
+                                    b = nta;
+                                }
+                            }());
+                            opcodes = null;
+                            (function () {
+                                var i = 0,
+                                    c = 0,
+                                    elt = "",
+                                    n = b.length;
+                                for (i = 0; i < n; i += 1) {
+                                    elt = b[i];
+                                    for (c = bxj.length - 1; c > -1; c -= 1) {
+                                        if (bxj[c][1] === elt) {
+                                            break;
+                                        }
+                                    }
+                                    if (c > -1) {
+                                        if (n >= 200 && 100 > n) {
+                                            bxj.splice(c, 1);
+                                        }
+                                    } else {
+                                        bxj.push([i, elt]);
+                                    }
+                                }
+                            }());
+                            (function () {
+                                var ai = 0,
+                                    bj = 0,
+                                    size = 0,
+                                    tag = "",
+                                    c = 0,
+                                    i = 0,
+                                    j = 0,
+                                    blocks = get_matching_blocks(),
+                                    d = blocks.length,
+                                    closerMatch = function (x, y, z) {
+                                        var diffspot = function (a, b) {
+                                                var c = a.replace(/^(\s+)/, "").split(""),
+                                                    d = Math.min(c.length, b.length),
+                                                    e = 0;
+                                                for (e = 0; e < d; e += 1) {
+                                                    if (c[e] !== b[e]) {
+                                                        return e;
+                                                    }
                                                 }
-                                            }
-                                            if (c > -1) {
-                                                if (n >= 200 && 100 > n) {
-                                                    bxj.splice(c, 1);
+                                                return e;
+                                            },
+                                            zz = z.replace(/^(\s+)/, "").split(""),
+                                            test = diffspot(y, zz) - diffspot(x, zz);
+                                        if (test > 0) {
+                                            return true;
+                                        }
+                                        return false;
+                                    };
+                                for (c = 0; c < d; c += 1) {
+                                    ai = blocks[c][0];
+                                    bj = blocks[c][1];
+                                    size = blocks[c][2];
+                                    tag = "";
+                                    if (i < ai && j < bj) {
+                                        if (i - j !== ai - bj && j - bj < 3 && i - ai < 3) {
+                                            if (reverse && i - ai > j - bj) {
+                                                if (closerMatch(b[j], b[j + 1], a[i])) {
+                                                    answer.push(["delete", j, j + 1, i, i]);
+                                                    answer.push(["replace", j + 1, bj, i, ai]);
+                                                } else {
+                                                    answer.push(["replace", j, bj, i, ai]);
+                                                }
+                                            } else if (!reverse && bj - j > ai - i) {
+                                                if (closerMatch(b[j], b[j + 1], a[i])) {
+                                                    answer.push(["insert", i, i, j, j + 1]);
+                                                    answer.push(["replace", i, ai, j + 1, bj]);
+                                                } else {
+                                                    answer.push(["replace", i, ai, j, bj]);
                                                 }
                                             } else {
-                                                bxj.push([i, elt]);
+                                                tag = "replace";
                                             }
+                                        } else {
+                                            tag = "replace";
                                         }
-                                    }()),
-                                    result = (function () {
-                                        var ai = 0,
-                                            bj = 0,
-                                            size = 0,
-                                            tag = "",
-                                            c = 0,
-                                            i = 0,
-                                            j = 0,
-                                            blocks = get_matching_blocks(),
-                                            d = blocks.length,
-                                            closerMatch = function (x, y, z) {
-                                                var diffspot = function (a, b) {
-                                                        var c = a.replace(/^(\s+)/, "").split(""),
-                                                            d = Math.min(c.length, b.length),
-                                                            e = 0;
-                                                        for (e = 0; e < d; e += 1) {
-                                                            if (c[e] !== b[e]) {
-                                                                return e;
-                                                            }
-                                                        }
-                                                        return e;
-                                                    },
-                                                    zz = z.replace(/^(\s+)/, "").split(""),
-                                                    test = diffspot(y, zz) - diffspot(x, zz);
-                                                if (test > 0) {
-                                                    return true;
-                                                }
-                                                return false;
-                                            };
-                                        for (c = 0; c < d; c += 1) {
-                                            ai = blocks[c][0];
-                                            bj = blocks[c][1];
-                                            size = blocks[c][2];
-                                            tag = "";
-                                            if (i < ai && j < bj) {
-                                                if (i - j !== ai - bj && j - bj < 3 && i - ai < 3) {
-                                                    if (reverse && i - ai > j - bj) {
-                                                        if (closerMatch(b[j], b[j + 1], a[i])) {
-                                                            answer.push(["delete", j, j + 1, i, i]);
-                                                            answer.push(["replace", j + 1, bj, i, ai]);
-                                                        } else {
-                                                            answer.push(["replace", j, bj, i, ai]);
-                                                        }
-                                                    } else if (!reverse && bj - j > ai - i) {
-                                                        if (closerMatch(b[j], b[j + 1], a[i])) {
-                                                            answer.push(["insert", i, i, j, j + 1]);
-                                                            answer.push(["replace", i, ai, j + 1, bj]);
-                                                        } else {
-                                                            answer.push(["replace", i, ai, j, bj]);
-                                                        }
-                                                    } else {
-                                                        tag = "replace";
-                                                    }
-                                                } else {
-                                                    tag = "replace";
-                                                }
-                                            } else if (i < ai) {
-                                                if (reverse) {
-                                                    tag = "insert";
-                                                } else {
-                                                    tag = "delete";
-                                                }
-                                            } else if (j < bj) {
-                                                if (reverse) {
-                                                    tag = "delete";
-                                                } else {
-                                                    tag = "insert";
-                                                }
-                                            }
-                                            if (tag !== "") {
-                                                if (reverse) {
-                                                    answer.push([tag, j, bj, i, ai]);
-                                                } else {
-                                                    answer.push([tag, i, ai, j, bj]);
-                                                }
-                                            }
-                                            i = ai + size;
-                                            j = bj + size;
-                                            if (size > 0) {
-                                                if (reverse) {
-                                                    answer.push(["equal", bj, j, ai, i]);
-                                                } else {
-                                                    answer.push(["equal", ai, i, bj, j]);
-                                                }
-                                            }
+                                    } else if (i < ai) {
+                                        if (reverse) {
+                                            tag = "insert";
+                                        } else {
+                                            tag = "delete";
                                         }
-                                    }());
+                                    } else if (j < bj) {
+                                        if (reverse) {
+                                            tag = "delete";
+                                        } else {
+                                            tag = "insert";
+                                        }
+                                    }
+                                    if (tag !== "") {
+                                        if (reverse) {
+                                            answer.push([tag, j, bj, i, ai]);
+                                        } else {
+                                            answer.push([tag, i, ai, j, bj]);
+                                        }
+                                    }
+                                    i = ai + size;
+                                    j = bj + size;
+                                    if (size > 0) {
+                                        if (reverse) {
+                                            answer.push(["equal", bj, j, ai, i]);
+                                        } else {
+                                            answer.push(["equal", ai, i, bj, j]);
+                                        }
+                                    }
+                                }
                             }());
+                        }());
                         return answer;
                     }());
                 if (inline) {
@@ -5738,7 +5770,7 @@ var prettydiff = function (api) {
                                         z = charcomp(bta[b], nta[n]);
                                     } else {
                                         z = [];
-                                    } //[change, b, be, n, ne]
+                                    }
                                     if (b < be) {
                                         node.push("<th>");
                                         node.push(b + 1);
@@ -5817,81 +5849,80 @@ var prettydiff = function (api) {
                 return [node.join("").replace(/\$#gt;/g, "&gt;").replace(/\$#lt;/g, "&lt;").replace(/\%#lt;/g, "$#lt;").replace(/\%#gt;/g, "$#gt;"), errorout, diffline];
             },
             core = function (api) {
-                var start = (function () {
-                        if (!api.source || api.source === "") {
-                            api.source = "Source sample is missing.";
+                (function () {
+                    if (!api.source || api.source === "") {
+                        api.source = "Source sample is missing.";
+                    }
+                    if (!api.mode || api.mode === "" || (api.mode !== "minify" && api.mode !== "diff")) {
+                        api.mode = "beautify";
+                    }
+                    if (api.mode === "diff" && (!api.diff || api.diff === "")) {
+                        api.diff = "Diff sample is missing.";
+                    }
+                    if (!api.lang || api.lang === "" || (api.lang !== "css" && api.lang !== "markup" && api.lang !== "csv" && api.lang !== "text")) {
+                        api.lang = "auto";
+                    }
+                    if (typeof api.topcoms !== "boolean") {
+                        api.topcoms = false;
+                    }
+                    if (!api.csvchar || typeof api.csvchar !== "string" || api.csvchar === "") {
+                        api.csvchar = ",";
+                    }
+                    if (!api.comments || api.comments !== "noindent") {
+                        api.comments = "indent";
+                    }
+                    if (typeof api.content !== "boolean") {
+                        api.content = false;
+                    }
+                    if (typeof api.force_indent !== "boolean") {
+                        api.force_indent = false;
+                    }
+                    if (!api.context || isNaN(api.context)) {
+                        api.context = "";
+                    }
+                    if (!api.diffview || api.diffview !== "inline") {
+                        api.diffview = "sidebyside";
+                    }
+                    if (!api.html || typeof api.html !== "boolean") {
+                        if (api.html === "html-yes") {
+                            api.html = true;
+                        } else {
+                            api.html = false;
                         }
-                        if (!api.mode || api.mode === "" || (api.mode !== "minify" && api.mode !== "diff")) {
-                            api.mode = "beautify";
-                        }
-                        if (api.mode === "diff" && (!api.diff || api.diff === "")) {
-                            api.diff = "Diff sample is missing.";
-                        }
-                        if (!api.lang || api.lang === "" || (api.lang !== "css" && api.lang !== "markup" && api.lang !== "csv" && api.lang !== "text")) {
-                            api.lang = "auto";
-                        }
-                        if (typeof api.topcoms !== "boolean") {
-                            api.topcoms = false;
-                        }
-                        if (!api.csvchar || typeof api.csvchar !== "string" || api.csvchar === "") {
-                            api.csvchar = ",";
-                        }
-                        if (!api.comments || api.comments !== "noindent") {
-                            api.comments = "indent";
-                        }
-                        if (typeof api.content !== "boolean") {
-                            api.content = false;
-                        }
-                        if (typeof api.force_indent !== "boolean") {
-                            api.force_indent = false;
-                        }
-                        if (!api.context || isNaN(api.context)) {
-                            api.context = "";
-                        }
-                        if (!api.diffview || api.diffview !== "inline") {
-                            api.diffview = "sidebyside";
-                        }
-                        if (!api.html || typeof api.html !== "boolean") {
-                            if (api.html === "html-yes") {
-                                api.html = true;
-                            } else {
-                                api.html = false;
-                            }
-                        }
-                        if (api.insize === undefined || isNaN(api.insize)) {
-                            api.insize = 4;
-                        }
-                        if (typeof api.inchar !== "string") {
-                            api.inchar = " ";
-                        }
-                        if (!api.indent || api.indent !== "allman") {
-                            api.indent = "";
-                        }
-                        if (typeof api.quote !== "boolean") {
-                            api.quote = false;
-                        }
-                        if (typeof api.semicolon !== "boolean") {
-                            api.semicolon = false;
-                        }
-                        if (!api.style || api.style !== "noindent") {
-                            api.style = "indent";
-                        }
-                        if (typeof api.content !== "boolean") {
-                            api.content = false;
-                        }
-                        if (typeof api.sourcelabel !== "string" || api.sourcelabel.length < 1) {
-                            api.sourcelabel = "base";
-                        }
-                        if (typeof api.difflabel !== "string" || api.difflabel.length < 1) {
-                            api.difflabel = "base";
-                        }
-                    }()),
-                    auto = "",
+                    }
+                    if (api.insize === undefined || isNaN(api.insize)) {
+                        api.insize = 4;
+                    }
+                    if (typeof api.inchar !== "string") {
+                        api.inchar = " ";
+                    }
+                    if (!api.indent || api.indent !== "allman") {
+                        api.indent = "";
+                    }
+                    if (typeof api.quote !== "boolean") {
+                        api.quote = false;
+                    }
+                    if (typeof api.semicolon !== "boolean") {
+                        api.semicolon = false;
+                    }
+                    if (!api.style || api.style !== "noindent") {
+                        api.style = "indent";
+                    }
+                    if (typeof api.content !== "boolean") {
+                        api.content = false;
+                    }
+                    if (typeof api.sourcelabel !== "string" || api.sourcelabel.length < 1) {
+                        api.sourcelabel = "base";
+                    }
+                    if (typeof api.difflabel !== "string" || api.difflabel.length < 1) {
+                        api.difflabel = "base";
+                    }
+                }());
+                var auto = "",
                     autotest = false,
                     spacetest = (/^\s+$/g),
                     apioutput = "",
                     apidiffout = "",
-                    args = {},
                     proctime = function () {
                         var d = "",
                             e = "",
@@ -6199,15 +6230,32 @@ var prettydiff = function (api) {
                 pdcomment();
                 if (api.mode === "minify") {
                     if (api.lang === "css") {
-                        apioutput = jsmin(api.source, 3, "css", true, api.topcoms);
+                        apioutput = jsmin({
+                            source: api.source,
+                            level: 3,
+                            type: "css",
+                            alter: true,
+                            fcomment: api.topcoms
+                        });
                     } else if (api.lang === "csv") {
                         apioutput = csvmin(api.source, api.csvchar);
                     } else if (api.lang === "markup") {
-                        apioutput = markupmin(api.source, "", api.html, api.topcoms);
+                        apioutput = markupmin({
+                            source: api.source,
+                            comments: "",
+                            presume_html: api.html,
+                            top_comments: api.topcoms
+                        });
                     } else if (api.lang === "text") {
                         apioutput = api.source;
                     } else {
-                        apioutput = jsmin(api.source, 2, "javascript", true, api.topcoms);
+                        apioutput = jsmin({
+                            source: api.source,
+                            level: 2,
+                            type: "javascript",
+                            alter: true,
+                            fcomment: api.topcoms
+                        });
                     }
                     return (function () {
                         var sizediff = function () {
@@ -6241,22 +6289,28 @@ var prettydiff = function (api) {
                 }
                 if (api.mode === "beautify") {
                     if (api.lang === "css") {
-                        apioutput = cleanCSS(api.source, api.insize, api.inchar, api.comments, true);
+                        apioutput = cleanCSS({
+                            source: api.source,
+                            size: api.insize,
+                            character: api.inchar,
+                            comment: api.comments,
+                            alter: true
+                        });
                         apidiffout = summary;
                     } else if (api.lang === "csv") {
                         apioutput = csvbeauty(api.source, api.csvchar);
                         apidiffout = "";
                     } else if (api.lang === "markup") {
-                        args = {};
-                        args.source = api.source;
-                        args.insize = api.insize;
-                        args.inchar = api.inchar;
-                        args.mode = "beautify";
-                        args.comments = api.comments;
-                        args.style = api.style;
-                        args.html = api.html;
-                        args.force_indent = api.force_indent;
-                        apioutput = markup_beauty(args);
+                        apioutput = markup_beauty({
+                            source: api.source,
+                            insize: api.insize,
+                            inchar: api.inchar,
+                            mode: "beautify",
+                            comments: api.comments,
+                            style: api.style,
+                            html: api.html,
+                            force_indent: api.force_indent
+                        });
                         apidiffout = summary;
                         if (api.inchar !== "\t") {
                             apioutput = apioutput.replace(/\n[\t]* \/>/g, "");
@@ -6265,18 +6319,18 @@ var prettydiff = function (api) {
                         apioutput = api.source;
                         apidiffout = "";
                     } else {
-                        args = {};
-                        args.source = api.source;
-                        args.insize = api.insize;
-                        args.inchar = api.inchar;
-                        args.preserve = true;
-                        args.preserve_max = 1;
-                        args.inlevel = 0;
-                        args.space = true;
-                        args.braces = api.indent;
-                        args.inarray = false;
-                        args.comments = api.comments;
-                        apioutput = js_beautify(args);
+                        apioutput = js_beautify({
+                            source: api.source,
+                            insize: api.insize,
+                            inchar: api.inchar,
+                            preserve: true,
+                            preserve_max: 1,
+                            inlevel: 0,
+                            space: true,
+                            braces: api.indent,
+                            inarray: false,
+                            comments: api.comments
+                        });
                         apidiffout = summary;
                     }
                     if (!apidiffout) {
@@ -6289,48 +6343,104 @@ var prettydiff = function (api) {
                 }
                 if (api.mode === "diff") {
                     if (api.lang === "css") {
-                        apioutput = jsmin(api.source, 3, "css", false);
-                        apioutput = cleanCSS(apioutput, api.insize, api.inchar, api.comments, false);
-                        apidiffout = jsmin(api.diff, 3, "css", false);
-                        apidiffout = cleanCSS(apidiffout, api.insize, api.inchar, api.comments, false);
+                        apioutput = jsmin({
+                            source: api.source,
+                            level: 3,
+                            type: "css",
+                            alter: false,
+                            fcomment: api.topcoms
+                        });
+                        apioutput = cleanCSS({
+                            source: apioutput,
+                            size: api.insize,
+                            character: api.inchar,
+                            comment: api.comments,
+                            alter: false
+                        });
+                        apidiffout = jsmin({
+                            source: api.diff,
+                            level: 3,
+                            type: "css",
+                            alter: false,
+                            fcomment: false
+                        });
+                        apidiffout = cleanCSS({
+                            source: apidiffout,
+                            size: api.insize,
+                            character: api.inchar,
+                            comment: api.comments,
+                            alter: false
+                        });
                     } else if (api.lang === "csv") {
                         apioutput = csvbeauty(api.source, api.csvchar);
                         apidiffout = csvbeauty(api.diff, api.csvchar);
                     } else if (api.lang === "markup") {
-                        args = {};
-                        args.source = api.source;
-                        args.insize = api.insize;
-                        args.inchar = api.inchar;
-                        args.mode = "diff";
-                        args.comments = api.comments;
-                        args.style = api.style;
-                        args.html = api.html;
-                        args.content = api.content;
-                        args.force_indent = api.force_indent;
-                        apioutput = markup_beauty(args).replace(/\n[\t]* \/>/g, "");
-                        args.source = api.diff;
-                        apidiffout = markup_beauty(args).replace(/\n[\t]* \/>/g, "");
+                        apioutput = markup_beauty({
+                            source: api.source,
+                            insize: api.insize,
+                            inchar: api.inchar,
+                            mode: "diff",
+                            comments: api.comments,
+                            style: api.style,
+                            html: api.html,
+                            content: api.content,
+                            force_indent: api.force_indent
+                        }).replace(/\n[\t]* \/>/g, "");
+                        apidiffout = markup_beauty({
+                            source: api.diff,
+                            insize: api.insize,
+                            inchar: api.inchar,
+                            mode: "diff",
+                            comments: api.comments,
+                            style: api.style,
+                            html: api.html,
+                            content: api.content,
+                            force_indent: api.force_indent
+                        }).replace(/\n[\t]* \/>/g, "");
                     } else if (api.lang === "text") {
                         apioutput = api.source;
                         apidiffout = api.diff;
                     } else {
-                        args = {};
-                        args.insize = api.insize;
-                        args.inchar = api.inchar;
-                        args.preserve = true;
-                        args.preserve_max = 1;
-                        args.inlevel = 0;
-                        args.space = true;
-                        args.braces = api.indent;
-                        args.inarray = false;
-                        args.comments = api.comments;
-                        args.content = api.content;
-                        apioutput = jsmin(api.source, 3, "javascript", false);
-                        args.source = apioutput;
-                        apioutput = js_beautify(args);
-                        apidiffout = jsmin(api.diff, 3, "javascript", false);
-                        args.source = apidiffout;
-                        apidiffout = js_beautify(args);
+                        apioutput = jsmin({
+                            source: api.source,
+                            level: 3,
+                            type: "javascript",
+                            alter: false,
+                            fcomments: false
+                        });
+                        apioutput = js_beautify({
+                            source: apioutput,
+                            insize: api.insize,
+                            inchar: api.inchar,
+                            preserve: true,
+                            preserve_max: 1,
+                            inlevel: 0,
+                            space: true,
+                            braces: api.indent,
+                            inarray: false,
+                            comments: api.comments,
+                            content: api.content
+                        });
+                        apidiffout = jsmin({
+                            source: api.diff,
+                            level: 3,
+                            type: "javascript",
+                            alter: false,
+                            fcomments: false
+                        });
+                        apidiffout = js_beautify({
+                            source: apidiffout,
+                            insize: api.insize,
+                            inchar: api.inchar,
+                            preserve: true,
+                            preserve_max: 1,
+                            inlevel: 0,
+                            space: true,
+                            braces: api.indent,
+                            inarray: false,
+                            comments: api.comments,
+                            content: api.content
+                        });
                     }
                     if (api.quote === true) {
                         apioutput = apioutput.replace(/'/g, "\"");
@@ -6352,24 +6462,24 @@ var prettydiff = function (api) {
                     return (function () {
                         var a = [],
                             s = "s",
-                            t = "s";
+                            t = "s",
+                            achar = "";
                         if (apioutput === "Error: This does not appear to be JavaScript." || apidiffout === "Error: This does not appear to be JavaScript.") {
                             a[1] = ["<p><strong>Error:</strong> Please try using the option labeled <em>Plain Text (diff only)</em>. <span style='display:block'>The input does not appear to be markup, CSS, or JavaScript.</span></p>", 0, 0];
                         } else {
-                            args = {};
-                            args.baseTextLines = apioutput;
-                            args.newTextLines = apidiffout;
-                            args.baseTextName = api.sourcelabel;
-                            args.newTextName = api.difflabel;
-                            args.contextSize = api.context;
-                            args.inline = api.diffview;
-                            if (args.lang === "text") {
-                                args.tchar = "";
-                            } else {
-                                args.tchar = api.inchar;
+                            if (api.lang !== "text") {
+                                achar = api.inchar;
                             }
-                            args.tsize = api.insize;
-                            a[1] = diffview(args);
+                            a[1] = diffview({
+                                baseTextLines: apioutput,
+                                newTextLines: apidiffout,
+                                baseTextName: api.sourcelabel,
+                                newTextName: api.difflabel,
+                                contextSize: api.context,
+                                inline: api.diffview,
+                                tchar: achar,
+                                tsize: api.insize
+                            });
                             if (a[1][2] === 1) {
                                 t = "";
                                 if (a[1][1] === 0) {

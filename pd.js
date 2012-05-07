@@ -1,5 +1,5 @@
 /*prettydiff.com api.topcoms: true*/
-/*global document, localStorage, window, prettydiff, XMLHttpRequest, location*/
+/*global document, localStorage, window, prettydiff, XMLHttpRequest, location, ActiveXObject*/
 var exports = "",
     pd = {},
 
@@ -218,6 +218,7 @@ var exports = "",
             o.is = $$("inscript-yes");
             o.iz = $$("incomment-no");
             o.bg = $$("bforce_indent-yes");
+            o.bx.value = "";
             if (o.bg.checked) {
                 api.force_indent = true;
             }
@@ -256,6 +257,7 @@ var exports = "",
             o.hm = $$("htmlm-yes");
             o.mc = $$("topcoms-yes");
             o.mi = $$("minifyinput");
+            o.mx.value = "";
             if (o.hm.checked) {
                 api.html = "html-yes";
             }
@@ -812,19 +814,19 @@ pd = {
             o.bt.className = "difftall";
             o.nt.className = "difftall";
             if (window.innerHeight) {
-                o.bi.style.height = ((window.innerHeight - 300) / 10) + "em";
-                o.mi.style.height = ((window.innerHeight - 300) / 10) + "em";
-                o.bx.style.height = ((window.innerHeight - 300) / 10) + "em";
-                o.mx.style.height = ((window.innerHeight - 300) / 10) + "em";
-                o.bo.style.height = ((window.innerHeight - 315) / 10) + "em";
-                o.nx.style.height = ((window.innerHeight - 315) / 10) + "em";
+                o.bi.style.height = ((window.innerHeight - 250) / 10) + "em";
+                o.mi.style.height = ((window.innerHeight - 250) / 10) + "em";
+                o.bx.style.height = ((window.innerHeight - 250) / 10) + "em";
+                o.mx.style.height = ((window.innerHeight - 250) / 10) + "em";
+                o.bo.style.height = ((window.innerHeight - 265) / 10) + "em";
+                o.nx.style.height = ((window.innerHeight - 265) / 10) + "em";
             } else {
-                o.bi.style.height = ((window.screen.availHeight - 430) / 10) + "em";
-                o.mi.style.height = ((window.screen.availHeight - 430) / 10) + "em";
-                o.bx.style.height = ((window.screen.availHeight - 430) / 10) + "em";
-                o.mx.style.height = ((window.screen.availHeight - 430) / 10) + "em";
-                o.bo.style.height = ((window.screen.availHeight - 445) / 10) + "em";
-                o.nx.style.height = ((window.screen.availHeight - 445) / 10) + "em";
+                o.bi.style.height = ((window.screen.availHeight - 400) / 10) + "em";
+                o.mi.style.height = ((window.screen.availHeight - 400) / 10) + "em";
+                o.bx.style.height = ((window.screen.availHeight - 400) / 10) + "em";
+                o.mx.style.height = ((window.screen.availHeight - 400) / 10) + "em";
+                o.bo.style.height = ((window.screen.availHeight - 415) / 10) + "em";
+                o.nx.style.height = ((window.screen.availHeight - 415) / 10) + "em";
             }
             o.disp.className = "maximized";
             x.innerHTML = "Normal view";
@@ -832,6 +834,7 @@ pd = {
             o.rg.style.display = "none";
             o.ri.style.display = "none";
             o.rk.style.display = "none";
+            o.re.parentNode.style.display = "none";
         } else if (x.innerHTML === "Normal view") {
             o.op.style.display = "block";
             if (o.bb.checked && o.au.checked) {
@@ -867,6 +870,7 @@ pd = {
             } else {
                 o.rk.style.display = "none";
             }
+            o.re.parentNode.style.display = "block";
             if (!o.dt.checked) {
                 o.bd.className = "wide";
                 o.md.className = "wide";
