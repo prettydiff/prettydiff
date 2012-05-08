@@ -374,7 +374,9 @@ var prettydiff = function (api) {
                     asiflag = true,
                     theLookahead = EOF,
                     isAlphanum = function (c) {
-                        return c !== EOF && (ALNUM.indexOf(c) > -1 || c.charCodeAt(0) > 126);
+                        if (typeof c === "string") {
+                            return c !== EOF && (ALNUM.indexOf(c) > -1 || c.charCodeAt(0) > 126);
+                        }
                     },
                     jsasiq = function (x) {
                         if (x.indexOf("\n") === -1) {
@@ -383,6 +385,13 @@ var prettydiff = function (api) {
                         x = x.split("");
                         x[0] = x[0] + ";";
                         return x.join("");
+                    },
+                    semiword = function (x) {
+                        var a = x.replace(/\s+/, "");
+                        if (x.indexOf("\n") > -1) {
+                            return a + ";";
+                        }
+                        return a + " ";
                     },
                     asiFix = function (y) {
                         var a = 0,
@@ -426,8 +435,8 @@ var prettydiff = function (api) {
                             } else if ((f === "'" || f === "\"") && x[a - 2] === "\\" && x[a - 1] === ";") {
                                 x[a - 1] = "";
                                 x[a - 2] = " ";
-                            } else if (f === "" && (x[a] === "}" || x[a] === ")") && (a === b - 1 || x[a + 1] === "}" || isAlphanum(x[a + 1]))) {
-                                if (typeof x[a - 3] === "string" && x[a - 2] === "=" && x[a - 1] === "{" && x[a] === "}" && (isAlphanum(x[a - 3]) || x[a - 3] === "]" || x[a - 3] === ")")) {
+                            } else if (f === "" && (x[a] === "}" || x[a] === ")")) {
+                                if (x[a + 1] !== "," && x[a + 1] !== ";" && typeof x[a - 3] === "string" && x[a - 2] === "=" && x[a - 1] === "{" && x[a] === "}" && (x[a + 1] !== "\n" || (x[a + 1] === "\n" && x[a + 2] !== "+" && x[a + 2] !== "-")) && (isAlphanum(x[a - 3]) || x[a - 3] === "]" || x[a - 3] === ")")) {
                                     x[a] += ";";
                                 } else {
                                     d = -1;
@@ -491,7 +500,7 @@ var prettydiff = function (api) {
                                                     }
                                                     if (d === 0) {
                                                         c -= 1;
-                                                        if (typeof x[c - 9] === "string" && x[c - 8] === "=" && x[c - 7] === "f" && x[c - 6] === "u" && x[c - 5] === "n" && x[c - 4] === "c" && x[c - 3] === "t" && x[c - 2] === "i" && x[c - 1] === "o" && x[c] === "n" && (isAlphanum(x[c - 9]) || x[c - 9] === "]" || x[c - 9] === ")")) {
+                                                        if (x[a + 1] !== "," && x[a + 1] !== ";" && x[a + 1] !== "." && x[a + 1] !== "?" && x[a + 1] !== "*" && x[a + 1] !== "+" && x[a + 1] !== "-" && typeof x[c - 9] === "string" && x[c - 8] === "=" && x[c - 7] === "f" && x[c - 6] === "u" && x[c - 5] === "n" && x[c - 4] === "c" && x[c - 3] === "t" && x[c - 2] === "i" && x[c - 1] === "o" && x[c] === "n" && (isAlphanum(x[c - 9]) || x[c - 9] === "]" || x[c - 9] === ")")) {
                                                             x[a] += ";";
                                                         }
                                                         break;
@@ -499,7 +508,7 @@ var prettydiff = function (api) {
                                                 }
                                                 break;
                                             } else if (typeof x[c - 2] === "string" && x[c - 1] === "=" && (x[a - 1].length === 1 || x[a - 1] === "pd") && (isAlphanum(x[c - 2] || x[c - 2] === "]" || x[c - 2] === ")"))) {
-                                                if (typeof x[a + 1] !== "string" || x[a + 1] !== "/") {
+                                                if (x[a + 1] !== "," && x[a + 1] !== ";" && x[a + 1] !== "." && x[a + 1] !== "?" && x[a + 1] !== "*" && x[a + 1] !== "+" && x[a + 1] !== "-" && (x[a + 1] !== "\n" || (x[a + 1] === "\n" && x[a + 2] !== "+" && x[a + 2] !== "-")) && (typeof x[a + 1] !== "string" || x[a + 1] !== "/")) {
                                                     x[a] += ";";
                                                 }
                                                 break;
@@ -509,6 +518,8 @@ var prettydiff = function (api) {
                                         }
                                     }
                                 }
+                            } else if (f === "" && x[a] === "\n") {
+                                x[a] = "";
                             }
                         }
                         for (a = 0; a < b; a += 1) {
@@ -983,7 +994,7 @@ var prettydiff = function (api) {
                                         s = r[r.length - 1];
                                         if (s === "{") {
                                             asiflag = true;
-                                        } else if (s === ":") {
+                                        } else if (s.charAt(0) === ":") {
                                             asiflag = false;
                                         }
                                         if (asiflag && (((s === "]" || s === ")") && isAlphanum(a) && a !== "/") || (a === "}" && (isAlphanum(s) || s === "'" || s === "\"")))) {
@@ -1030,11 +1041,11 @@ var prettydiff = function (api) {
                     }
                     ret = ret.replace(/~PDpar~/g, "\\)");
                 } else if (alterj) {
-                    if (ret.charAt(ret.length - 1) !== ";") {
-                        ret += ";";
-                    }
-                    ret = ret.replace(/(\s+)$/, "").replace(/\n/g, ";").replace(/\}\u003b(!=(\(function))/g, "}").replace(/x{2}-->/g, "//-->");
+                    ret = ret.replace(/(\s+)$/, "").replace(/((return)|(continue)|(break)|(throw))\s+/g, semiword).replace(/(\n+)!+(\+|\-)/g, ";").replace(/\}\u003b(!=\))/g, "}").replace(/x{2}-->/g, "//-->");
                     ret = asiFix(ret);
+                    if ((/\w$/).test(ret.charAt(ret.length - 1))) {
+                        ret = ret + ";";
+                    }
                 } else {
                     ret = ret.replace(/^\s+/, "").replace(/x{2}-->/g, "//-->");
                 }
