@@ -17,7 +17,10 @@ var exports = "",
 
     //o Stores a reference to everything that is needed from the DOM
     o = {
+        ao: $$("addOptions"),
+        an: $$("additional_no"),
         au: $$("ctype-auto"),
+        ay: $$("additional_yes"),
         ba: $$("beau-tab"),
         bb: $$("modebeautify"),
         bc: $$("beau-char"),
@@ -792,6 +795,18 @@ pd = {
         pd.options(a);
     },
 
+    //shows and hides the additional options
+    additional: function (x) {
+        "use strict";
+        console.log(o.an);
+        if (x === o.an) {
+            o.ao.style.display = "none";
+        } else if (x === o.ay) {
+            o.ao.style.display = "block";
+        }
+        pd.options(x);
+    },
+
     //maximize textareas and hide options
     hideOptions: function (x) {
         "use strict";
@@ -1046,11 +1061,12 @@ pd = {
         } else {
             o.csvp.style.display = "none";
         }
-        if (x === false) {
+        if (x === o.au) {
             o.db.style.display = "block";
         } else {
             o.db.style.display = "none";
         }
+        pd.options(x);
     },
 
     //provides interaction to simulate a text input into a radio button
@@ -1059,9 +1075,9 @@ pd = {
         "use strict";
         o.bc = $$("beau-char");
         o.dc = $$("diff-char");
-        if (o.bb.checked && x === "beau-char") {
+        if (o.bb.checked && x === o.bc) {
             o.bw.checked = true;
-        } else if (o.dd.checked && x === "diff-char") {
+        } else if (o.dd.checked && x === o.dc) {
             o.dw.checked = true;
         }
         if (o.bb.checked && o.bw.checked) {
@@ -1095,6 +1111,9 @@ pd = {
         if (o.dcv !== "") {
             o.dc.value = o.dcv;
         }
+        if (x !== o.bc && x !== o.dc) {
+			pd.options(x);
+		}
     },
 
     //store tool changes into localStorage in effort to maintain state
@@ -1279,6 +1298,10 @@ pd = {
             pd.webtool[24] = "statreporttop: " + o.rk.offsetTop;
             pd.webtool[25] = "statreportwidth: " + ((o.rl.clientWidth / 10) - 0.3);
             pd.webtool[26] = "statreportheight: " + ((o.rl.clientHeight / 10) - 3.6);
+        } else if (x === o.an) {
+            pd.webtool[27] = "additional: no";
+        } else if (x === o.ay) {
+            pd.webtool[27] = "additional: yes";
         }
         if (typeof pd.webtool[3] !== "string") {
             pd.options(o.re);
@@ -1342,7 +1365,7 @@ pd = {
         //length on the parsed webtool storage. This limit prevents
         //excessive writing to the array which is corrupted each time
         //pd.options is executed
-        for (b = 0; b < 26; b += 1) {
+        for (b = 0; b < 27; b += 1) {
             if (pd.webtool[b] === "") {
                 pd.webtool[b] = "pdempty";
             }
@@ -1543,7 +1566,7 @@ pd = {
         o.rk.style.zIndex = "2";
         if (ls && (localStorage.hasOwnProperty("optionString") || localStorage.hasOwnProperty("webtool") || localStorage.hasOwnProperty("statdata"))) {
             if (localStorage.hasOwnProperty("optionString") && localStorage.getItem("optionString") !== null) {
-                o.option.innerHTML = "/*prettydiff.com " + (localStorage.getItem("optionString").replace(/prettydiffper/g, "%").replace(/(prettydiffcsep)+/g, ", ").replace(/(\,\s+\,\s+)+/g, ", ") + " */").replace(/((\,? )+\*\/)$/, " */");
+                o.option.innerHTML = "/*prettydiff.com " + (localStorage.getItem("optionString").replace(/prettydiffper/g, "%").replace(/(prettydiffcsep)+/g, ", ").replace(/\,\s+pdempty/g, "").replace(/(\,\s+\,\s+)+/g, ", ") + " */").replace(/((\,? )+\*\/)$/, " */");
                 a = localStorage.getItem("optionString").replace(/prettydiffper/g, "%").split("prettydiffcsep");
                 c = a.length;
                 for (b = 0; b < c; b += 1) {
@@ -1742,6 +1765,8 @@ pd = {
                     if (typeof d[1] === "string") {
                         if (d[0] === "showhide" && d[1] === "hide") {
                             pd.hideOptions(o.sh);
+                        } else if (d[0] === "additional" && d[1] === "yes") {
+                            o.ao.style.display = "block";
                         } else if (o.dt && d[0] === "display" && d[1] === "vertical") {
                             o.dt.checked = true;
                             o.bt.className = "difftall";
@@ -1877,6 +1902,7 @@ pd = {
                 o.stvisit.innerHTML = stat[0];
                 i = new Date();
                 if (stat[2] === "") {
+                    stat[stat.length - 1] = Date.parse
                     stat[2] = i.toDateString();
                 }
                 k = (Date.parse(i) - Number(stat[stat.length - 1]));
