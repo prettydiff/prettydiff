@@ -798,7 +798,6 @@ pd = {
     //shows and hides the additional options
     additional: function (x) {
         "use strict";
-        console.log(o.an);
         if (x === o.an) {
             o.ao.style.display = "none";
         } else if (x === o.ay) {
@@ -849,7 +848,7 @@ pd = {
             o.rg.style.display = "none";
             o.ri.style.display = "none";
             o.rk.style.display = "none";
-            o.re.parentNode.style.display = "none";
+            o.ao.style.display = "none";
         } else if (x.innerHTML === "Normal view") {
             o.op.style.display = "block";
             if (o.bb.checked && o.au.checked) {
@@ -885,7 +884,7 @@ pd = {
             } else {
                 o.rk.style.display = "none";
             }
-            o.re.parentNode.style.display = "block";
+            o.ao.style.display = "block";
             if (!o.dt.checked) {
                 o.bd.className = "wide";
                 o.md.className = "wide";
@@ -1112,8 +1111,8 @@ pd = {
             o.dc.value = o.dcv;
         }
         if (x !== o.bc && x !== o.dc) {
-			pd.options(x);
-		}
+            pd.options(x);
+        }
     },
 
     //store tool changes into localStorage in effort to maintain state
@@ -1902,7 +1901,7 @@ pd = {
                 o.stvisit.innerHTML = stat[0];
                 i = new Date();
                 if (stat[2] === "") {
-                    stat[stat.length - 1] = Date.parse
+                    stat[stat.length - 1] = Date.parse;
                     stat[2] = i.toDateString();
                 }
                 k = (Date.parse(i) - Number(stat[stat.length - 1]));
