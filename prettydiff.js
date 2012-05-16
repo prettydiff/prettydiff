@@ -519,7 +519,7 @@ var prettydiff = function (api) {
                                     }
                                 }
                             } else if (f === "" && x[a] === "\n") {
-                                if ((/\w/).test(x[a + 1])) {
+                                if ((/\w/).test(x[a + 1]) && x[a - 1] !== "}" && x[a - 1] !== ")") {
                                     x[a] = ";";
                                 } else {
                                     x[a] = "";
@@ -2079,10 +2079,10 @@ var prettydiff = function (api) {
                                     if (!args.inarray) {
                                         print_newline();
                                     }
-                                } else if (last_text === "[") {
+                                } else if (last_text === "[" || (last_text === "," && last_last_text === "}")) {
                                     if (flags.mode === "[EXPRESSION]") {
                                         flags.mode = "[INDENTED-EXPRESSION]";
-                                        if (!args.inarray) {
+                                        if (!args.inarray && last_text === "[") {
                                             flags.indentation_level += 1;
                                         }
                                     }
@@ -2119,14 +2119,17 @@ var prettydiff = function (api) {
                         if (last_last_text === "}") {
                             pseudo_block = true;
                         }
-                        if (token_text === "]" && args.inarray && last_text === "}") {
+                        if (token_text === "]" && args.inarray && last_text === "}" && last_last_text !== "{") {
                             if (output.length && output[output.length - 1] === indent_string) {
                                 output.pop();
                             }
                             print_token();
                             restore_mode();
-                        } else if (token_text === "]" && flags.mode === "[INDENTED-EXPRESSION]" && last_text === "]") {
+                        } else if (token_text === "]" && (last_text === "}" || (flags.mode === "[INDENTED-EXPRESSION]" && last_text === "]"))) {
                             restore_mode();
+                            if (last_text === "}") {
+                                flags.indentation_level -= 1;
+                            }
                             print_newline();
                             print_token();
                         } else {
@@ -2144,6 +2147,8 @@ var prettydiff = function (api) {
                         pseudo_block = false;
                         if (last_word === "do") {
                             set_mode("DO_BLOCK");
+                        } else if (last_text === "[") {
+                            set_mode("[EXPRESSION]");
                         } else {
                             set_mode("BLOCK");
                         }
@@ -2182,77 +2187,86 @@ var prettydiff = function (api) {
                         forcount = 0;
                     } else if (token_type === "TK_END_BLOCK") {
                         n[4] += 1;
-                        restore_mode();
-                        functestval = 0;
-                        if (var_var_test) {
-                            pseudo_block = true;
+                        if (last_text === "{" && (last_last_text === "," || last_last_text === "[")) {
+                            output[output.length - 1] = "";
+                            if (last_last_text === "[") {
+                                print_newline();
+                            }
+                            output.push("{");
+                            print_token();
                         } else {
-                            pseudo_block = false;
-                        }
-                        if (var_end_count === 0) {
-                            var_end_count = "x";
-                        } else if (var_end_count === -1 && var_var_test && comma_test) {
-                            flags.var_line_reindented = true;
-                        } else if (var_last_last_type === "TK_START_BLOCK" && !isNaN(var_end_count)) {
-                            var_end_count -= 1;
-                        } else if (var_end_count === "a") {
-                            if (flags.var_line && !flags.var_line_reindented) {
+                            restore_mode();
+                            functestval = 0;
+                            if (var_var_test) {
+                                pseudo_block = true;
+                            } else {
+                                pseudo_block = false;
+                            }
+                            if (var_end_count === 0) {
+                                var_end_count = "x";
+                            } else if (var_end_count === -1 && var_var_test && comma_test) {
                                 flags.var_line_reindented = true;
-                                var_end_count = -1;
-                            }
-                        }
-                        if (args.braces) {
-                            if (last_text === "{" && in_array(last_last_text, punct)) {
-                                fix_object_own_line();
-                            } else {
-                                if (var_end_count === "y") {
-                                    var_last_last_type = "";
-                                    var_end_count = "a";
-                                }
-                                print_newline();
-                                if (var_end_count === "x") {
-                                    if (flags.var_line && !comma_test && !var_var_test) {
-                                        flags.var_line_reindented = true;
-                                    }
-                                    var_end_count = "y";
+                            } else if (var_last_last_type === "TK_START_BLOCK" && !isNaN(var_end_count)) {
+                                var_end_count -= 1;
+                            } else if (var_end_count === "a") {
+                                if (flags.var_line && !flags.var_line_reindented) {
+                                    flags.var_line_reindented = true;
+                                    var_end_count = -1;
                                 }
                             }
-                            print_token();
-                        } else {
-                            if (last_type === "TK_START_BLOCK") {
-                                if (just_added_newline) {
-                                    if (output.length && output[output.length - 1] === indent_string) {
-                                        output.pop();
-                                    }
+                            if (args.braces) {
+                                if (last_text === "{" && in_array(last_last_text, punct)) {
+                                    fix_object_own_line();
                                 } else {
-                                    trim_output();
+                                    if (var_end_count === "y") {
+                                        var_last_last_type = "";
+                                        var_end_count = "a";
+                                    }
+                                    print_newline();
+                                    if (var_end_count === "x") {
+                                        if (flags.var_line && !comma_test && !var_var_test) {
+                                            flags.var_line_reindented = true;
+                                        }
+                                        var_end_count = "y";
+                                    }
                                 }
-                            } else if (is_array(flags.mode) && args.inarray) {
-                                args.inarray = false;
-                                print_newline();
-                                args.inarray = true;
+                                print_token();
                             } else {
-                                if (var_end_count === "y") {
-                                    var_last_last_type = "";
-                                    var_end_count = "a";
-                                }
-                                print_newline();
-                                if (var_end_count === "x") {
-                                    if (flags.var_line && !comma_test && !var_var_test) {
-                                        flags.var_line_reindented = true;
+                                if (last_type === "TK_START_BLOCK") {
+                                    if (just_added_newline) {
+                                        if (output.length && output[output.length - 1] === indent_string) {
+                                            output.pop();
+                                        }
+                                    } else {
+                                        trim_output();
                                     }
-                                    var_end_count = "y";
-                                }
-                            }
-                            if (!comma_test && var_var_test && !flags.var_line_reindented) {
-                                if ((flags.mode === "(EXPRESSION)" && !flags.var_line) || (flags.mode === "BLOCK" && flags.var_line)) {
-                                    if (last_text !== "}" && var_end_count === -1 && flags.mode === "(EXPRESSION)") {
-                                        output.push(indent_string);
+                                } else if (is_array(flags.mode) && args.inarray) {
+                                    args.inarray = false;
+                                    print_newline();
+                                    args.inarray = true;
+                                } else {
+                                    if (var_end_count === "y") {
+                                        var_last_last_type = "";
+                                        var_end_count = "a";
                                     }
-                                    var_var_test = false;
+                                    print_newline();
+                                    if (var_end_count === "x") {
+                                        if (flags.var_line && !comma_test && !var_var_test) {
+                                            flags.var_line_reindented = true;
+                                        }
+                                        var_end_count = "y";
+                                    }
                                 }
+                                if (!comma_test && var_var_test && !flags.var_line_reindented) {
+                                    if ((flags.mode === "(EXPRESSION)" && !flags.var_line) || (flags.mode === "BLOCK" && flags.var_line)) {
+                                        if (last_text !== "}" && var_end_count === -1 && flags.mode === "(EXPRESSION)") {
+                                            output.push(indent_string);
+                                        }
+                                        var_var_test = false;
+                                    }
+                                }
+                                print_token();
                             }
-                            print_token();
                         }
                     } else if (token_type === "TK_WORD") {
                         if (token_text === "alert") {
@@ -5396,6 +5410,10 @@ var prettydiff = function (api) {
                                 compare = function () {
                                     return;
                                 },
+                                emerge = function () {
+                                    errorout -= 1;
+                                    return "";
+                                },
                                 a = c.replace(/\'/g, "$#39;").replace(/\"/g, "$#34;").replace(/\&nbsp;/g, " ").replace(/\&#160;/g, " "),
                                 b = d.replace(/\'/g, "$#39;").replace(/\"/g, "$#34;").replace(/\&nbsp;/g, " ").replace(/\&#160;/g, " ");
                             if (a === b) {
@@ -5676,8 +5694,8 @@ var prettydiff = function (api) {
                                     break;
                                 }
                             }
-                            c = ax.join("").replace(/\$#34;/g, "\"").replace(/\$#39;/g, "'");
-                            d = bx.join("").replace(/\$#34;/g, "\"").replace(/\$#39;/g, "'");
+                            c = ax.join("").replace(/\$#34;/g, "\"").replace(/\$#39;/g, "'").replace(/<\/em><em>/g, emerge);
+                            d = bx.join("").replace(/\$#34;/g, "\"").replace(/\$#39;/g, "'").replace(/<\/em><em>/g, "");
                             if (n) {
                                 if (c.split("<em>").length > c.split("</em>").length) {
                                     c += "</em>";
