@@ -562,6 +562,8 @@ var prettydiff = function (api) {
                                     y = a + " " + y;
                                 } else if (a === "$") {
                                     y = "$" + y;
+                                } else if (a === " ") {
+                                    y = " " + y;
                                 }
                                 return y;
                             };
@@ -3826,7 +3828,7 @@ var prettydiff = function (api) {
                             if (build[i].length === 3) {
                                 b = build[i].charAt(1).toLowerCase();
                             } else if (a === -1) {
-                                b = build[i].slice(1, cinfo[i].length - 2).toLowerCase();
+                                b = build[i].slice(1, build[i].length - 1).toLowerCase();
                             } else if (a === 0) {
                                 b = build[i].slice(1, build[i].length);
                                 a = b.indexOf(" ");
@@ -4037,7 +4039,7 @@ var prettydiff = function (api) {
                                 }());
                             }
                             if (build[i].charAt(0) !== " ") {
-                                if ((cinfo[i - 1] === "singleton" || cinfo[i - 1] === "content") && level[i - 1] === "x") {
+                                if (cinfo[i - 1] === "singleton" || cinfo[i - 1] === "content") {
                                     return level.push("x");
                                 }
                                 return (function () {
@@ -5892,8 +5894,11 @@ var prettydiff = function (api) {
                     if (api.mode === "diff" && (!api.diff || api.diff === "")) {
                         api.diff = "Diff sample is missing.";
                     }
-                    if (!api.lang || api.lang === "" || (api.lang !== "css" && api.lang !== "markup" && api.lang !== "csv" && api.lang !== "text")) {
+                    if (!api.lang || api.lang === "" || (api.lang !== "javascript" && api.lang !== "css" && api.lang !== "markup" && api.lang !== "html" && api.lang !== "csv" && api.lang !== "text")) {
                         api.lang = "auto";
+                    } else if (api.lang === "html") {
+                        api.lang = "markup";
+                        api.html = true;
                     }
                     if (typeof api.topcoms !== "boolean") {
                         api.topcoms = false;

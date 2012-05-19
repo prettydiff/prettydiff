@@ -63,7 +63,6 @@ var exports = "",
         he: $$("htmld-no"),
         hm: $$("htmlm-yes"),
         hn: $$("htmlm-no"),
-        ht: $$("htmlspecific"),
         hy: $$("html-yes"),
         hz: $$("html-no"),
         id: $$("inscriptd-yes"),
@@ -112,8 +111,6 @@ var exports = "",
         dqp: $$("diffquanp"),
         dqt: $$("difftypep"),
         htd: $$("htmlspecificd"),
-        ind: $$("scriptindentd"),
-        ins: $$("scriptindent"),
         stvisit: $$("stvisit"),
         stusage: $$("stusage"),
         stfdate: $$("stfdate"),
@@ -132,6 +129,7 @@ var exports = "",
         disp: $$("displayOps"),
         dops: $$("diffops"),
         lang: "auto",
+        alang: "",
         mops: $$("miniops"),
         stat: {
             visit: 0,
@@ -395,7 +393,9 @@ var exports = "",
                 }
             }());
         }
-
+        if (o.alang !== "") {
+            api.lang = o.alang;
+        }
         //this is where prettydiff is executed
         output = prettydiff(api);
         o.zindex += 1;
@@ -1060,7 +1060,7 @@ pd = {
         } else {
             o.csvp.style.display = "none";
         }
-        if (x === o.au) {
+        if (o.au.checked) {
             o.db.style.display = "block";
         } else {
             o.db.style.display = "none";
@@ -1618,12 +1618,8 @@ pd = {
                                     o.au.checked = true;
                                 }
                                 if (o.au.checked) {
-                                    o.ins.style.display = "block";
-                                    o.ht.style.display = "block";
                                     o.bops.style.display = "block";
                                 } else {
-                                    o.ins.style.display = "none";
-                                    o.ht.style.display = "none";
                                     o.bops.style.display = "none";
                                 }
                             } else if (o.dd && (mode === "diff" || mode === "" || !d[1] || d[1] === "diff" || d[1] === "")) {
@@ -1644,11 +1640,9 @@ pd = {
                                     o.db.style.display = "block";
                                 }
                                 if (o.au.checked) {
-                                    o.ind.style.display = "block";
-                                    o.htd.style.display = "block";
+                                    o.db.style.display = "block";
                                 } else {
-                                    o.ind.style.display = "none";
-                                    o.htd.style.display = "none";
+                                    o.db.style.display = "none";
                                 }
                             }
                         } else if (d[0] === "api.lang") {
@@ -2019,13 +2013,6 @@ pd = {
                 } else {
                     o.db.style.display = "block";
                 }
-                if (o.au.checked) {
-                    o.ind.style.display = "block";
-                    o.htd.style.display = "block";
-                } else {
-                    o.ind.style.display = "none";
-                    o.htd.style.display = "none";
-                }
             } else if (o.bb.checked) {
                 if (o.dops) {
                     o.dops.style.display = "none";
@@ -2040,12 +2027,8 @@ pd = {
                     o.nt.style.display = "none";
                 }
                 if (o.au.checked) {
-                    o.ins.style.display = "block";
-                    o.ht.style.display = "block";
                     o.bops.style.display = "block";
                 } else {
-                    o.ins.style.display = "none";
-                    o.ht.style.display = "none";
                     o.bops.style.display = "none";
                 }
             }
@@ -2089,6 +2072,39 @@ pd = {
                     o.nx.value = diff;
                 } else if (d[b].toLowerCase() === "html") {
                     html = true;
+                } else if (d[b].indexOf("l=") === 0) {
+                    f = d[b].toLowerCase().substr(2);
+                    if (f === "auto") {
+                        o.au.click();
+                        o.alang = "auto";
+                    } else if (f === "javascript" || f === "js") {
+                        o.au.click();
+                        o.alang = "javascript";
+                    } else if (f === "html") {
+                        o.au.click();
+                        o.hd.checked = true;
+                        o.hm.checked = true;
+                        o.hy.checked = true;
+                        o.alang = "html";
+                    } else if (f === "markup") {
+                        o.au.click();
+                        o.he.checked = true;
+                        o.hn.checked = true;
+                        o.hz.checked = true;
+                        o.alang = "markup";
+                    } else if (f === "css") {
+                        o.au.click();
+                        o.alang = "css";
+                    } else if (f === "csv") {
+                        o.cv.click();
+                        o.alang = "csv";
+                    } else if (f === "text") {
+                        o.dd.click();
+                        o.pt.click();
+                        o.alang = "text";
+                    } else {
+                        o.alang = "";
+                    }
                 }
             }
         }
@@ -2147,17 +2163,13 @@ if (bounce) {
     ga.setAttribute("src", ("https:" === document.location.protocol ? "https://ssl" : "http://www") + ".google-analytics.com/ga.js");
     s.parentNode.insertBefore(ga, s);
     window.onerror = function (message, file, line) {
-        var code = "",
-            mode = (function () {
+        var mode = (function () {
                 if ($$("modebeautify").checked) {
-                    code = $$("beautyinput").value;
                     return "beautify";
                 }
                 if ($$("modeminify").checked) {
-                    code = $$("minifyinput").value;
                     return "minify";
                 }
-                code = $$("baseText").value + " " + $$("newText").value;
                 return "diff";
             }()),
             sFormattedMessage = "";
@@ -2172,7 +2184,7 @@ if (bounce) {
             }
         }
         if (line > 0) {
-            sFormattedMessage = "[" + file + " (" + line + ")] " + message + " " + mode + " " + o.lang + " " + code;
+            sFormattedMessage = "[" + file + " (" + line + ")] " + message + " " + mode + " " + o.lang;
             _gaq.push(["_trackEvent", "Exceptions", "Application", sFormattedMessage, null, true]);
         }
     };
