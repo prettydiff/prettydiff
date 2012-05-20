@@ -283,15 +283,9 @@ var prettydiff = function (api) {
                     ch = charDecoder(ch);
                 }
                 (function () {
-                    var a = 0,
-                        b = source.length,
-                        c = [],
-                        d = "",
-                        e = 0,
-                        f = [],
-                        multiline = function (x) {
+                    var multiline = function (x) {
                             var w = [],
-                                y,
+                                y = 0,
                                 z = x.length - 2;
                             if (x.length === 2) {
                                 return "{ }";
@@ -301,12 +295,18 @@ var prettydiff = function (api) {
                             }
                             return w.join("") + "{ }";
                         },
+                        a = 0,
+                        c = [],
+                        d = "",
+                        e = 0,
+                        f = [],
                         g = source.replace(/\n\n\{\-\}\n\n/g, "{-}").replace(/\n{2,}/g, multiline).split("\n"),
+                        b = g.length,
                         err = "",
                         error = "Error: Unterminated String begging at character number ";
                     for (a = 0; a < b; a += 1) {
                         c = [];
-                        if (g[a].indexOf("\"") !== -1) {
+                        if (typeof g[a] === "string" && g[a].indexOf("\"") !== -1) {
                             f = g[a].split("");
                             e = f.length;
                             for (b = 0; b < e; b += 1) {
