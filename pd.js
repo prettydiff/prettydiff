@@ -589,19 +589,13 @@ pd = {
                 c.style.height = pd.position[f].height + "em";
             } else {
                 b.style.top = "55em";
+                b.style.left = (b.offsetLeft / 10) + "em";
                 if (b === o.re) {
-                    b.style.right = "64em";
                     d.style.width = "65.24em";
-                } else if (b === o.rg) {
-                    b.style.right = "42em";
-                    d.style.width = "68.24em";
-                } else if (b === o.ri) {
-                    b.style.right = "20em";
-                    d.style.width = "68.24em";
-                } else if (b === o.rk) {
-                    b.style.right = "2em";
+                } else {
                     d.style.width = "68.24em";
                 }
+                b.style.right = "auto";
                 c.width = "75em";
             }
             x.innerHTML = "\u2193";
