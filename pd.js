@@ -1518,6 +1518,33 @@ pd = {
             delete localStorage.optionString;
         }
     },
+    
+    //account for position of minimized reports when window changes size
+    fixminreport: function () {
+        "use strict";
+        o.re = $$("diffreport");
+        o.rf = $$("diffreportbody");
+        o.rg = $$("beaureport");
+        o.rh = $$("beaureportbody");
+        o.ri = $$("minreport");
+        o.rj = $$("minreportbody");
+        if (ls) {
+            o.rk = $$("statreport");
+            o.rl = $$("statreportbody");
+        }
+        if (o.rf.style.display === "none" && o.re.getElementsByTagName("h2")[0].style.width === "20em") {
+            o.re.style.right = "68em";
+        }
+        if (o.rh.style.display === "none" && o.rg.getElementsByTagName("h2")[0].style.width === "20em") {
+            o.re.style.right = "46em";
+        }
+        if (o.rj.style.display === "none" && o.ri.getElementsByTagName("h2")[0].style.width === "20em") {
+            o.re.style.right = "24em";
+        }
+        if (ls && o.rl.style.display === "none" && o.rk.getElementsByTagName("h2")[0].style.width === "20em") {
+            o.re.style.right = "2em";
+        }
+    },
 
     //alter tool on page load in reflection to saved state
     reload: function () {
@@ -2136,6 +2163,10 @@ pd = {
             if (o.nl && localStorage.hasOwnProperty("nl") && localStorage.getItem("ni") !== null) {
                 o.nl.value = localStorage.getItem("nl");
             }
+        }
+        pd.fixminreport();
+        if (typeof window.onresize === "object" || typeof window.onresize === "function") {
+            window.onresize = pd.fixminreport;
         }
     }
 };

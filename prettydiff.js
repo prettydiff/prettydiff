@@ -371,7 +371,6 @@ var prettydiff = function (api) {
                     ALNUM = "",
                     fcom = [],
                     alterj = false,
-                    asiflag = true,
                     theLookahead = EOF,
                     isAlphanum = function (c) {
                         if (typeof c === "string") {
@@ -918,7 +917,9 @@ var prettydiff = function (api) {
                             }
                         }());
                         var r = [],
-                            s = "";
+                            s = "",
+                            asiflag = true,
+                            conflag = false;
                         if (error !== "") {
                             return error;
                         }
@@ -1002,9 +1003,16 @@ var prettydiff = function (api) {
                                             asiflag = true;
                                         } else if (s.charAt(0) === ":") {
                                             asiflag = false;
+                                        } else if ((r[r.length - 4] + r[r.length - 3] + r[r.length - 2] + r[r.length - 1]).indexOf("if(") > -1) {
+                                            asiflag = false;
+                                            conflag = true;
                                         }
                                         if (asiflag && (((s === "]" || s === ")") && isAlphanum(a) && a !== "/") || (a === "}" && (isAlphanum(s) || s === "'" || s === "\"")))) {
                                             r.push(";");
+                                        }
+                                        if (conflag && s === ")") {
+                                            asiflag = true;
+                                            conflag = false;
                                         }
                                     }
                                     break;
