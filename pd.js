@@ -1534,15 +1534,19 @@ pd = {
         }
         if (o.rf.style.display === "none" && o.re.getElementsByTagName("h2")[0].style.width === "20em") {
             o.re.style.right = "68em";
+            o.re.style.left = "auto";
         }
         if (o.rh.style.display === "none" && o.rg.getElementsByTagName("h2")[0].style.width === "20em") {
-            o.re.style.right = "46em";
+            o.rg.style.right = "46em";
+            o.rg.style.left = "auto";
         }
         if (o.rj.style.display === "none" && o.ri.getElementsByTagName("h2")[0].style.width === "20em") {
-            o.re.style.right = "24em";
+            o.ri.style.right = "24em";
+            o.ri.style.left = "auto";
         }
         if (ls && o.rl.style.display === "none" && o.rk.getElementsByTagName("h2")[0].style.width === "20em") {
-            o.re.style.right = "2em";
+            o.rk.style.right = "2em";
+            o.rk.style.left = "auto";
         }
     },
 
