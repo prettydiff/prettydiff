@@ -326,7 +326,7 @@ var exports = "",
             if (o.inline.checked) {
                 api.diffview = "inline";
             }
-            if (isNaN(Number(o.context.value))) {
+            if (o.context.value === "" || isNaN(Number(o.context.value))) {
                 o.context.value = "";
                 api.context = "";
             } else {
