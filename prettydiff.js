@@ -5414,6 +5414,7 @@ var prettydiff = function (api) {
                         change = "",
                         btest = false,
                         ntest = false,
+                        ctest = true,
                         code = [],
                         z = [],
                         charcomp = function (c, d) {
@@ -5734,12 +5735,14 @@ var prettydiff = function (api) {
                         n = code[3];
                         ne = code[4];
                         rowcnt = Math.max(be - b, ne - n);
+                        ctest = true;
                         for (i = 0; i < rowcnt; i += 1) {
                             if (!isNaN(context) && context > -1 && opcodes.length > 1 && ((idx > 0 && i === context) || (idx === 0 && i === 0)) && change === "equal") {
+                                ctest = false;
                                 jump = rowcnt - ((idx === 0 ? 1 : 2) * context);
                                 if (jump > 1) {
                                     node.push("<tr><th>...</th>");
-                                    if (inline) {
+                                    if (!inline) {
                                         node.push("<td class='skip'></td>");
                                     }
                                     node.push("<th>...</th><td class='skip'></td></tr>");
@@ -5840,7 +5843,7 @@ var prettydiff = function (api) {
                                             node.push(bta[b]);
                                         }
                                         node.push("</td>");
-                                    } else {
+                                    } else if (ctest) {
                                         node.push("<th></th><td class='empty'></td>");
                                     }
                                     if (n < ne) {
@@ -5859,7 +5862,7 @@ var prettydiff = function (api) {
                                             node.push(nta[n]);
                                         }
                                         node.push("</td>");
-                                    } else {
+                                    } else if (ctest) {
                                         node.push("<th></th><td class='empty'></td>");
                                     }
                                     if (b < be) {
