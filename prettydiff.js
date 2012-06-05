@@ -5933,7 +5933,7 @@ var prettydiff = function (api) {
                     if (typeof api.force_indent !== "boolean") {
                         api.force_indent = false;
                     }
-                    if (!api.context || isNaN(api.context)) {
+                    if (typeof api.context !== "number" || isNaN(api.context)) {
                         api.context = "";
                     }
                     if (!api.diffview || api.diffview !== "inline") {

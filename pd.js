@@ -326,9 +326,11 @@ var exports = "",
             if (o.inline.checked) {
                 api.diffview = "inline";
             }
-            if (isNaN(o.context.value)) {
+            if (isNaN(Number(o.context.value))) {
                 o.context.value = "";
                 api.context = "";
+            } else {
+                api.context = Number(o.context.value);
             }
             if (o.jd.checked) {
                 api.indent = "allman";
@@ -1595,7 +1597,7 @@ pd = {
                 c = a.length;
                 for (b = 0; b < c; b += 1) {
                     d = a[b].split(": ");
-                    if (d[1]) {
+                    if (typeof d[1] === "string") {
                         f = d[1].charAt(0);
                         g = d[1].length - 1;
                         h = d[1].charAt(d[1].length - 2);
