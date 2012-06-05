@@ -6259,7 +6259,7 @@ var prettydiff = function (api) {
                             }
                         } else if ((/>([a-z0-9\s])*<\/?[a-z]+>/i.test(a) && /^(\s*<)/.test(a) && /(>\s*)$/.test(a)) || (/^(\s*<s((cript)|(tyle)))/i.test(a) && /(<\/s((cript)|(tyle))>\s*)$/i.test(a))) {
                             api.lang = "markup";
-                            if (api.html === true) {
+                            if (api.html === true || /^(\s*<\!doctype html>)/i.test(a) || (/^(\s*<\!DOCTYPE\s+((html)|(HTML))\s+PUBLIC\s+)/.test(a) && /XHTML\s+1\.1/.test(a) === false && /XHTML\s+1\.0\s+(S|s)((trict)|(TRICT))/.test(a) === false)) {
                                 auto = "HTML";
                             } else {
                                 auto = "markup";
