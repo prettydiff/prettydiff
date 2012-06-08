@@ -1299,13 +1299,61 @@ pd = {
             pd.webtool[27] = "additional: yes";
         }
         if (typeof pd.webtool[3] !== "string") {
-            pd.options(o.re);
+            o.re = $$("diffreport");
+            o.rf = $$("diffreportbody");
+            if (o.rf.style.display === "none") {
+                pd.webtool[3] = "diffreportzindex: 2";
+                pd.webtool[4] = "diffreportmin: 1";
+            } else {
+                pd.webtool[3] = "diffreportzindex: " + o.re.style.zIndex;
+                pd.webtool[4] = "";
+            }
+            pd.webtool[5] = "diffreportleft: " + o.re.offsetLeft;
+            pd.webtool[6] = "diffreporttop: " + o.re.offsetTop;
+            pd.webtool[7] = "diffreportwidth: " + ((o.rf.clientWidth / 10) - 0.3);
+            pd.webtool[8] = "diffreportheight: " + ((o.rf.clientHeight / 10) - 3.6);
         } else if (typeof pd.webtool[9] !== "string") {
-            pd.options(o.rg);
+            o.rg = $$("beaureport");
+            o.rh = $$("beaureportbody");
+            if (o.rh.style.display === "none") {
+                pd.webtool[9] = "beaureportzindex: 2";
+                pd.webtool[10] = "beaureportmin: 1";
+            } else {
+                pd.webtool[9] = "beaureportzindex: " + o.rg.style.zIndex;
+                pd.webtool[10] = "";
+            }
+            pd.webtool[11] = "beaureportleft: " + o.rg.offsetLeft;
+            pd.webtool[12] = "beaureporttop: " + o.rg.offsetTop;
+            pd.webtool[13] = "beaureportwidth: " + ((o.rh.clientWidth / 10) - 0.3);
+            pd.webtool[14] = "beaureportheight: " + ((o.rh.clientHeight / 10) - 3.6);
         } else if (typeof pd.webtool[15] !== "string") {
-            pd.options(o.ri);
+            o.ri = $$("minreport");
+            o.rj = $$("minreportbody");
+            if (o.rj.style.display === "none") {
+                pd.webtool[15] = "minnreportzindex: 2";
+                pd.webtool[16] = "minnreportmin: 1";
+            } else {
+                pd.webtool[15] = "minnreportzindex: " + o.ri.style.zIndex;
+                pd.webtool[16] = "";
+            }
+            pd.webtool[17] = "minnreportleft: " + o.ri.offsetLeft;
+            pd.webtool[18] = "minnreporttop: " + o.ri.offsetTop;
+            pd.webtool[19] = "minnreportwidth: " + ((o.rj.clientWidth / 10) - 0.3);
+            pd.webtool[20] = "minnreportheight: " + ((o.rj.clientHeight / 10) - 3.6);
         } else if (typeof pd.webtool[21] !== "string") {
-            pd.options(o.rk);
+            o.rk = $$("statreport");
+            o.rl = $$("statreportbody");
+            if (o.rl.style.display === "none") {
+                pd.webtool[21] = "statreportzindex: 2";
+                pd.webtool[22] = "statreportmin: 1";
+            } else {
+                pd.webtool[21] = "statreportzindex: " + o.rk.style.zIndex;
+                pd.webtool[22] = "";
+            }
+            pd.webtool[23] = "statreportleft: " + o.rk.offsetLeft;
+            pd.webtool[24] = "statreporttop: " + o.rk.offsetTop;
+            pd.webtool[25] = "statreportwidth: " + ((o.rl.clientWidth / 10) - 0.3);
+            pd.webtool[26] = "statreportheight: " + ((o.rl.clientHeight / 10) - 3.6);
         }
         if (o.sh) {
             if (o.sh.innerHTML === "Normal view") {
