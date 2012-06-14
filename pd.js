@@ -124,6 +124,7 @@ var exports = "",
         stcss: $$("stcss"),
         stcsv: $$("stcsv"),
         sttext: $$("sttext"),
+        stlarge: $$("stlarge"),
         bops: $$("beauops"),
         csvp: $$("csvcharp"),
         disp: $$("displayOps"),
@@ -144,7 +145,8 @@ var exports = "",
             css: 0,
             csv: 0,
             text: 0,
-            pdate: ""
+            pdate: "",
+            large: 0
         },
         context: $$("contextSize"),
         inline: $$("inline"),
@@ -159,10 +161,7 @@ var exports = "",
         var api = {},
             output = [],
             domain = /^(https?:\/\/|file:\/\/\/)/,
-            event = e || window.event,
-            lang = "",
-            lango = {},
-            stat = [];
+            event = e || window.event;
 
         //do not execute from alt, home, end, or arrow keys
         if (typeof event === "object" && event.type === "keyup" && (event.altKey || event.keyCode === 18 || event.keyCode === 35 || event.keyCode === 36 || event.keyCode === 37 || event.keyCode === 38 || event.keyCode === 39 || event.keyCode === 40)) {
@@ -451,46 +450,62 @@ var exports = "",
             }
         }
         if (ls) {
-            if (o.au.checked && typeof output[1] === "string") {
-                lango = (/Language set to <strong>auto<\/strong>\. Presumed language is <em>\w+<\/em>\./).exec(output[1]);
-                if (lango !== null) {
-                    lang = lango.toString();
-                    lang = lang.substring(lang.indexOf("<em>") + 4, lang.indexOf("</em>"));
-                    if (lang === "JavaScript" || lang === "JSON") {
-                        o.stat.js += 1;
-                        o.stjs.innerHTML = o.stat.js;
-                    } else if (lang === "CSS") {
-                        o.stat.css += 1;
-                        o.stcss.innerHTML = o.stat.css;
-                    } else if (lang === "HTML" || lang === "markup") {
-                        o.stat.markup += 1;
-                        o.stmarkup.innerHTML = o.stat.markup;
+            (function () {
+                var stat = [],
+                    lang = "",
+                    lango = {},
+                    size = 0;
+                if (o.au.checked && typeof output[1] === "string") {
+                    lango = (/Language set to <strong>auto<\/strong>\. Presumed language is <em>\w+<\/em>\./).exec(output[1]);
+                    if (lango !== null) {
+                        lang = lango.toString();
+                        lang = lang.substring(lang.indexOf("<em>") + 4, lang.indexOf("</em>"));
+                        if (lang === "JavaScript" || lang === "JSON") {
+                            o.stat.js += 1;
+                            o.stjs.innerHTML = o.stat.js;
+                        } else if (lang === "CSS") {
+                            o.stat.css += 1;
+                            o.stcss.innerHTML = o.stat.css;
+                        } else if (lang === "HTML" || lang === "markup") {
+                            o.stat.markup += 1;
+                            o.stmarkup.innerHTML = o.stat.markup;
+                        }
+                        o.lang = lang;
                     }
-                    o.lang = lang;
+                } else if (o.cv.checked) {
+                    o.stat.csv += 1;
+                    o.stcsv.innerHTML = o.stat.csv;
+                    o.lang = "csv";
+                } else if (o.pt.checked) {
+                    o.stat.text += 1;
+                    o.sttext.innerHTML = o.stat.text;
+                    o.lang = "text";
                 }
-            } else if (o.cv.checked) {
-                o.stat.csv += 1;
-                o.stcsv.innerHTML = o.stat.csv;
-                o.lang = "csv";
-            } else if (o.pt.checked) {
-                o.stat.text += 1;
-                o.sttext.innerHTML = o.stat.text;
-                o.lang = "text";
-            }
-            stat.push(o.stat.visit);
-            stat.push(o.stat.usage);
-            stat.push(o.stat.fdate);
-            stat.push(o.stat.avday);
-            stat.push(o.stat.diff);
-            stat.push(o.stat.beau);
-            stat.push(o.stat.minn);
-            stat.push(o.stat.markup);
-            stat.push(o.stat.js);
-            stat.push(o.stat.css);
-            stat.push(o.stat.csv);
-            stat.push(o.stat.text);
-            stat.push(o.stat.pdate);
-            localStorage.setItem("statdata", stat.join("|"));
+                if (api.mode === "diff" && api.diff.length > api.source.length) {
+                    size = api.diff.length;
+                } else {
+                    size = api.source.length;
+                }
+                if (size > o.stat.large) {
+                    o.stat.large = size;
+                    o.stlarge.innerHTML = size;
+                }
+                stat.push(o.stat.visit);
+                stat.push(o.stat.usage);
+                stat.push(o.stat.fdate);
+                stat.push(o.stat.avday);
+                stat.push(o.stat.diff);
+                stat.push(o.stat.beau);
+                stat.push(o.stat.minn);
+                stat.push(o.stat.markup);
+                stat.push(o.stat.js);
+                stat.push(o.stat.css);
+                stat.push(o.stat.csv);
+                stat.push(o.stat.text);
+                stat.push(o.stat.large);
+                stat.push(o.stat.pdate);
+                localStorage.setItem("statdata", stat.join("|"));
+            }());
         }
     };
 
@@ -529,17 +544,23 @@ pd = {
             d = b.getElementsByTagName("h2")[0],
             e = $$("options").offsetTop,
             f = b.getAttribute("id"),
-            g = (b === o.re) ? a.getElementsByTagName("button")[1] : a.getElementsByTagName("button")[0];
+            test = (b === o.re) ? true : false,
+            g = (test) ? a.getElementsByTagName("button")[1] : a.getElementsByTagName("button")[0],
+            h = (test) ? a.getElementsByTagName("button")[2] : a.getElementsByTagName("button")[1];
 
         //shrink
         if (x.innerHTML === "\u2193") {
             if (!pd.position[f]) {
                 pd.position[f] = {};
             }
-            pd.position[f].top = (b.offsetTop / 10);
-            pd.position[f].left = (b.offsetLeft / 10);
-            pd.position[f].height = (c.clientHeight / 10) - 3.7;
-            pd.position[f].width = (c.clientWidth / 10) - 0.4;
+            if (h.innerHTML === "\u2191") {
+                pd.position[f].top = (b.offsetTop / 10);
+                pd.position[f].left = (b.offsetLeft / 10);
+                pd.position[f].height = (c.clientHeight / 10) - 3.7;
+                pd.position[f].width = (c.clientWidth / 10) - 0.4;
+            } else {
+                h.innerHTML = "\u2191";
+            }
             g.innerHTML = "\u2191";
             b.style.left = "auto";
             a.style.display = "none";
@@ -631,9 +652,9 @@ pd = {
             if (window.innerHeight) {
                 c.style.height = ((window.innerHeight / 10) - 7.2) + "em";
                 if (a === o.re) {
-                    b.style.width = ((window.innerWidth / 10) - 16.76) + "em";
-                } else {
                     b.style.width = ((window.innerWidth / 10) - 13.76) + "em";
+                } else {
+                    b.style.width = ((window.innerWidth / 10) - 10.76) + "em";
                 }
                 c.style.width = ((window.innerWidth / 10) - 4) + "em";
             } else {
@@ -653,9 +674,9 @@ pd = {
                 a.style.top = pd.position[f].top + "em";
                 a.style.left = pd.position[f].left + "em";
                 if (a === o.re) {
-                    b.style.width = (pd.position[f].width - 12.76) + "em";
-                } else {
                     b.style.width = (pd.position[f].width - 9.76) + "em";
+                } else {
+                    b.style.width = (pd.position[f].width - 6.76) + "em";
                 }
                 c.style.width = pd.position[f].width + "em";
                 c.style.height = pd.position[f].height + "em";
@@ -1858,7 +1879,7 @@ pd = {
                                     o.re.style.top = (d[1] / 10) + "em";
                                 } else if (d[0] === "diffreportwidth") {
                                     o.rf.style.width = d[1] + "em";
-                                    o.re.getElementsByTagName("h2")[0].style.width = (d[1] - 9.65) + "em";
+                                    o.re.getElementsByTagName("h2")[0].style.width = (d[1] - 9.76) + "em";
                                 } else if (d[0] === "diffreportheight") {
                                     o.rf.style.height = d[1] + "em";
                                 } else if (d[0] === "diffreportmin") {
@@ -1879,7 +1900,7 @@ pd = {
                                     o.rg.style.top = (d[1] / 10) + "em";
                                 } else if (d[0] === "beaureportwidth") {
                                     o.rh.style.width = d[1] + "em";
-                                    o.rg.getElementsByTagName("h2")[0].style.width = (d[1] - 6.65) + "em";
+                                    o.rg.getElementsByTagName("h2")[0].style.width = (d[1] - 6.76) + "em";
                                 } else if (d[0] === "beaureportheight") {
                                     o.rh.style.height = d[1] + "em";
                                 } else if (d[0] === "beaureportmin") {
@@ -1900,7 +1921,7 @@ pd = {
                                     o.ri.style.top = (d[1] / 10) + "em";
                                 } else if (d[0] === "minnreportwidth") {
                                     o.rj.style.width = d[1] + "em";
-                                    o.ri.getElementsByTagName("h2")[0].style.width = (d[1] - 6.65) + "em";
+                                    o.ri.getElementsByTagName("h2")[0].style.width = (d[1] - 6.76) + "em";
                                 } else if (d[0] === "minnreportheight") {
                                     o.rj.style.height = d[1] + "em";
                                 } else if (d[0] === "minnreportmin") {
@@ -1921,7 +1942,7 @@ pd = {
                                     o.rk.style.top = (d[1] / 10) + "em";
                                 } else if (d[0] === "statreportwidth") {
                                     o.rl.style.width = d[1] + "em";
-                                    o.rk.getElementsByTagName("h2")[0].style.width = (d[1] - 6.65) + "em";
+                                    o.rk.getElementsByTagName("h2")[0].style.width = (d[1] - 6.76) + "em";
                                 } else if (d[0] === "statreportheight") {
                                     o.rl.style.height = d[1] + "em";
                                 } else if (d[0] === "statreportmin") {
@@ -1970,10 +1991,9 @@ pd = {
                 o.stvisit.innerHTML = stat[0];
                 i = new Date();
                 if (stat[2] === "") {
-                    stat[stat.length - 1] = Date.parse;
                     stat[2] = i.toDateString();
                 }
-                k = (Date.parse(i) - Number(stat[stat.length - 1]));
+                k = (Date.parse(i) - Date.parse(stat[2]));
                 if (k < 86400000) {
                     k = 1;
                 } else {
@@ -1992,7 +2012,8 @@ pd = {
                 o.stat.css = Number(stat[9]);
                 o.stat.csv = Number(stat[10]);
                 o.stat.text = Number(stat[11]);
-                o.stat.pdate = stat[stat.length - 1];
+                o.stat.pdate = k;
+                o.stat.large = Number(stat[13]);
                 o.stusage.innerHTML = stat[1];
                 o.stfdate.innerHTML = stat[2];
                 o.stavday.innerHTML = stat[3];
@@ -2004,11 +2025,12 @@ pd = {
                 o.stcss.innerHTML = stat[9];
                 o.stcsv.innerHTML = stat[10];
                 o.sttext.innerHTML = stat[11];
+                o.stlarge.innerHTML = stat[12];
             } else {
                 k = j.toLocaleDateString();
                 o.stfdate.innerHTML = k;
                 o.stat.fdate = k;
-                stat = [1, 0, k, 1, 0, 0, 0, 0, 0, 0, 0, 0, Date.parse(j)];
+                stat = [1, 0, k, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0];
                 if (localStorage.hasOwnProperty("pageCount") && localStorage.getItem("pageCount") !== null) {
                     l = Number(localStorage.getItem("pageCount")) + 1;
                     o.stvisit.innerHTML = l;
@@ -2027,6 +2049,7 @@ pd = {
                 o.stat.css = 0;
                 o.stat.csv = 0;
                 o.stat.text = 0;
+                o.stat.large = 0;
                 localStorage.setItem("statdata", stat.join("|"));
             }
             if (o.cv.checked) {
@@ -2224,47 +2247,49 @@ pd = {
         }
     }
 };
-_gaq.push(["_setAccount", "UA-27834630-1"]);
-_gaq.push(["_trackPageview"]);
-if (bounce) {
-    $$("webtool").onclick = function () {
+if (!(/^(file:\/\/)/).test(location.href)) {
+    _gaq.push(["_setAccount", "UA-27834630-1"]);
+    _gaq.push(["_trackPageview"]);
+    if (bounce) {
+        $$("webtool").onclick = function () {
+            "use strict";
+            _gaq.push(["_trackEvent", "Logging", "NoBounce", "NoBounce", null, false]);
+        };
+        bounce = false;
+    }
+    (function () {
         "use strict";
-        _gaq.push(["_trackEvent", "Logging", "NoBounce", "NoBounce", null, false]);
-    };
-    bounce = false;
-}
-(function () {
-    "use strict";
-    var ga = document.createElement("script"),
-        s = document.getElementsByTagName("script")[0];
-    ga.setAttribute("type", s.getAttribute("type"));
-    ga.setAttribute("async", true);
-    ga.setAttribute("src", ("https:" === document.location.protocol ? "https://ssl" : "http://www") + ".google-analytics.com/ga.js");
-    s.parentNode.insertBefore(ga, s);
-    window.onerror = function (message, file, line) {
-        var mode = (function () {
-                if ($$("modebeautify").checked) {
-                    return "beautify";
+        var ga = document.createElement("script"),
+            s = document.getElementsByTagName("script")[0];
+        ga.setAttribute("type", s.getAttribute("type"));
+        ga.setAttribute("async", true);
+        ga.setAttribute("src", ("https:" === document.location.protocol ? "https://ssl" : "http://www") + ".google-analytics.com/ga.js");
+        s.parentNode.insertBefore(ga, s);
+        window.onerror = function (message, file, line) {
+            var mode = (function () {
+                    if ($$("modebeautify").checked) {
+                        return "beautify";
+                    }
+                    if ($$("modeminify").checked) {
+                        return "minify";
+                    }
+                    return "diff";
+                }()),
+                sFormattedMessage = "";
+            if (message === "prettydiff is not defined" && ls) {
+                if (mode === "minify") {
+                    localStorage.setItem("mi", "");
+                } else if (mode === "beautify") {
+                    localStorage.setItem("bi", "");
+                } else {
+                    localStorage.setItem("bo", "");
+                    localStorage.setItem("nx", "");
                 }
-                if ($$("modeminify").checked) {
-                    return "minify";
-                }
-                return "diff";
-            }()),
-            sFormattedMessage = "";
-        if (message === "prettydiff is not defined" && ls) {
-            if (mode === "minify") {
-                localStorage.setItem("mi", "");
-            } else if (mode === "beautify") {
-                localStorage.setItem("bi", "");
-            } else {
-                localStorage.setItem("bo", "");
-                localStorage.setItem("nx", "");
             }
-        }
-        if (line > 0) {
-            sFormattedMessage = "[" + file + " (" + line + ")] " + message + " " + mode + " " + o.lang;
-            _gaq.push(["_trackEvent", "Exceptions", "Application", sFormattedMessage, null, true]);
-        }
-    };
-}());
+            if (line > 0) {
+                sFormattedMessage = "[" + file + " (" + line + ")] " + message + " " + mode + " " + o.lang;
+                _gaq.push(["_trackEvent", "Exceptions", "Application", sFormattedMessage, null, true]);
+            }
+        };
+    }());
+}
