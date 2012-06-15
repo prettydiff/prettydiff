@@ -2353,8 +2353,6 @@ var prettydiff = function (api) {
                         }
                         if (last_word === "do") {
                             set_mode("DO_BLOCK");
-                        } else if (last_text === "[") {
-                            set_mode("[EXPRESSION]");
                         } else {
                             set_mode("BLOCK");
                         }
@@ -2529,7 +2527,7 @@ var prettydiff = function (api) {
                             m[42] += 1;
                         } else if (token_text === "window") {
                             m[46] += 1;
-                        } else {
+                        } else if (token_text !== "prettydiffvar") {
                             o[0] += 1;
                             o[1] += token_text.length;
                         }
