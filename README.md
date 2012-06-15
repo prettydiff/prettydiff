@@ -1,6 +1,9 @@
 Pretty Diff
 ===========
 
+Try it online at http://prettydiff.com/
+---------------------------------------
+
 Node.js
 -------
 
