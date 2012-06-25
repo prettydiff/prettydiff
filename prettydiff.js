@@ -568,9 +568,9 @@ var prettydiff = function (api) {
                             };
                         (function () {
                             var misssemi = function (y) {
-                                    return ";" + y.substr(1);
-                                },
-                                spacefix = function (y) {
+                                    if (y.indexOf("\n") === -1) {
+                                        return y;
+                                    }
                                     return y.replace(/\s+/, ";");
                                 },
                                 b = x.length,
@@ -586,13 +586,11 @@ var prettydiff = function (api) {
                                     }
                                     q = c.join("");
                                     if (q.indexOf("{") > -1) {
-                                        if (q.indexOf(";") === -1) {
-                                            q = q.replace(/\s+\w+(\-\w+)*\{/g, spacefix);
-                                        }
-                                        d.push(q.substring(0, q.lastIndexOf(";") + 1));
-                                        d.push(q.substring(q.lastIndexOf(";") + 1, q.length));
+                                        e = Math.max(q.lastIndexOf("\n"), q.lastIndexOf(";"));
+                                        d.push(q.substring(0, e + 1).replace(/^(\s+)/, "").replace(/(\w|\)|"|')\s+/g, misssemi));
+                                        d.push(q.substring(e + 1));
                                     } else {
-                                        d.push(q.replace(/\s+\w+(\-\w+)*:/g, misssemi));
+                                        d.push(q.replace(/^(\s+)/, "").replace(/\s+\w+(\-\w+)*:/g, misssemi));
                                     }
                                     c = [];
                                 }
@@ -766,7 +764,7 @@ var prettydiff = function (api) {
                                     }
                                 }
                                 d[a] = c.join(";").replace(/;+/g, ";").replace(/^;/, "");
-                                if (d[a] !== "}" && typeof d[a + 1] === "string" && d[a + 1] !== "}" && d[a + 1].indexOf("{") > -1) {
+                                if (d[a] !== "}" && typeof d[a + 1] === "string" && d[a + 1] !== "}" && d[a + 1].indexOf("{") > -1 && !(/(\,\s*)$/).test(d[a])) {
                                     d[a] = d[a] + ";";
                                 }
                             }
@@ -1146,6 +1144,9 @@ var prettydiff = function (api) {
                 ALNUM = LETTERS + DIGITS + OTHERS;
                 geti = 0;
                 getl = input.length;
+                if (type === "css" && alter) {
+                    input = reduction(input);
+                }
                 ret = m(input);
                 if (/(\}\s*)$/.test(input) && !/(\}\s*)$/.test(ret)) {
                     ret = ret + "}";
@@ -1156,9 +1157,9 @@ var prettydiff = function (api) {
                 if (type === "css") {
                     ret = ret.replace(/\: #/g, ":#").replace(/\; #/g, ";#").replace(/\, #/g, ",#").replace(/\s+/g, " ").replace(/\} /g, "}").replace(/\{ /g, "{").replace(/\\\)/g, "~PDpar~").replace(/\)/g, ") ").replace(/\) ;/g, ");").replace(/\d%[a-z0-9]/g, fixpercent);
                     if (alter) {
-                        ret = reduction(ret).replace(/@charset("|')?[\w\-]+("|')?;?/gi, "").replace(/(#|\.)?[\w]*\{\}/gi, "").replace(/(\S|\s)0+/g, runZero).replace(/:[\w\s\!\.\-%]*\d+\.0*(?!\d)/g, endZero).replace(/(:| )0+\.\d+/g, startZero).replace(/\w+(\-\w+)*:((((\-?(\d*\.\d+)|\d+)[a-zA-Z]+)|0) )+(((\-?(\d*\.\d+)|\d+)[a-zA-Z]+)|0)/g, sameDist);
+                        ret = ret.replace(/@charset("|')?[\w\-]+("|')?;?/gi, "").replace(/(#|\.)?[\w]*\{\}/gi, "").replace(/(\S|\s)0+/g, runZero).replace(/:[\w\s\!\.\-%]*\d+\.0*(?!\d)/g, endZero).replace(/(:| )0+\.\d+/g, startZero).replace(/\w+(\-\w+)*:((((\-?(\d*\.\d+)|\d+)[a-zA-Z]+)|0) )+(((\-?(\d*\.\d+)|\d+)[a-zA-Z]+)|0)/g, sameDist);
                         ret = ret.replace(/:\.?0(\%|px|in|cm|mm|em|ex|pt|pc)/g, ":0").replace(/ \.?0(\%|px|in|cm|mm|em|ex|pt|pc)/g, " 0").replace(/bottom:none/g, "bottom:0").replace(/top:none/g, "top:0").replace(/left:none/g, "left:0").replace(/right:none/, "right:0").replace(/:0 0 0 0/g, ":0").replace(/:(\s*([0-9]+\.)?[0-9]+(%|in|cm|mm|em|ex|pt|pc|px)?)+\-([0-9]*\.)?[0-9]/g, fixNegative);
-                        ret = ret.replace(/[a-z]*:(0\s*)+\-?\.?\d?/g, singleZero).replace(/ 0 0 0 0/g, " 0").replace(/rgb\(\d+,\d+,\d+\)/g, rgbToHex).replace(/background\-position:0;/gi, "background-position:0 0;").replace(/;+/g, ";").replace(/\s*[\w\-]+:\s*\}/g, "}").replace(/\s*[\w\-]+:\s*;/g, "").replace(/;\}/g, "}").replace(/\{\s+\}/g, "{}").replace(/\s+\)/g, ")").replace(/\s+\,/g, ",");
+                        ret = ret.replace(/[a-z]*:(0\s*)+\-?\.?\d?/g, singleZero).replace(/ 0 0 0 0/g, " 0").replace(/rgb\(\d+,\d+,\d+\)/g, rgbToHex).replace(/background\-position:0;/gi, "background-position:0 0;").replace(/;+/g, ";").replace(/\s*[\w\-]+:\s*\}/g, "}").replace(/\s*[\w\-]+:\s*;/g, "").replace(/;\}/g, "}").replace(/\{;/g, "{").replace(/\{\s+\}/g, "{}").replace(/\s+\)/g, ")").replace(/\s+\,/g, ",");
                         if (atchar === null) {
                             atchar = [""];
                         } else if (atchar[0].charAt(atchar[0].length - 1) !== ";") {

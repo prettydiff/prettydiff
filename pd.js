@@ -106,6 +106,7 @@ var exports = "",
         rl: $$("statreportbody"),
         sh: $$("hideOptions"),
         to: $$("top"),
+        wb: $$("webtool"),
         bcv: "",
         dcv: "",
         dqp: $$("diffquanp"),
@@ -148,6 +149,7 @@ var exports = "",
             pdate: "",
             large: 0
         },
+        color: "default",
         context: $$("contextSize"),
         inline: $$("inline"),
         sideby: $$("sidebyside"),
@@ -161,7 +163,8 @@ var exports = "",
         var api = {},
             output = [],
             domain = /^(https?:\/\/|file:\/\/\/)/,
-            event = e || window.event;
+            event = e || window.event,
+            pstyle = {};
 
         //do not execute from alt, home, end, or arrow keys
         if (typeof event === "object" && event.type === "keyup" && (event.altKey || event.keyCode === 18 || event.keyCode === 35 || event.keyCode === 36 || event.keyCode === 37 || event.keyCode === 38 || event.keyCode === 39 || event.keyCode === 40)) {
@@ -416,13 +419,16 @@ var exports = "",
             if (/^(<p><strong>Error:<\/strong> Please try using the option labeled ((&lt;)|<)em((&gt;)|>)Plain Text \(diff only\)((&lt;)|<)\/em((&gt;)|>)\.)/.test(output[0])) {
                 o.rf.innerHTML = "<p><strong>Error:</strong> Please try using the option labeled <em>Plain Text (diff only)</em>. <span style='display:block'>The input does not appear to be markup, CSS, or JavaScript.</span></p>";
             } else if (o.ps && o.ps.checked) {
+                pstyle.layout = "";
+                pstyle.cdefault = "";
+                pstyle.coffee = "";
                 output[2] = output[1] + "<p>This is the generated diff output. Please copy the text output, paste into a text file, and save as a &quot;.html&quot; file.</p><textarea rows='40' cols='80' id='textreport'>";
-                output[0] = "<?xml version='1.0' encoding='UTF-8' ?><!DOCTYPE html PUBLIC '-//W3C//DTD XHTML 1.1//EN' 'http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd'><html xmlns='http://www.w3.org/1999/xhtml' xml:lang='en'><head><title>Pretty Diff - The difference tool</title><meta name='robots' content='index, follow'/> <meta name='DC.title' content='Pretty Diff - The difference tool'/> <link rel='canonical' href='http://prettydiff.com/' type='application/xhtml+xml'/><meta http-equiv='Content-Type' content='application/xhtml+xml;charset=UTF-8'/><meta http-equiv='Content-Style-Type' content='text/css'/><style type='text/css'>body{background-color:#a8b8c8;color:#000;font-family:'Arial';font-size:10px;}button{display:block;font-size:2em;font-weight:bold;margin:1em auto;padding:1em 2em;}button:hover{background:#ccf;}button:active{background:#c00;}h1{font-size:2em;}h1 span{color:#c00;font-size:.5em;}p{clear:both;font-size:1.2em;margin-top:.2em;}#diffoutput{width:100%;}p em{color:#c00;font-weight:bold;}table.diff{border-collapse:collapse;border:.1em solid darkgray;font-size:1em;white-space:pre;}table.diff tbody{font-family:'Courier New',Courier,'Lucida Console',monospace;font-size:1.1em;}table.diff tbody th{font-family:verdana,arial,'Bitstream Vera Sans',helvetica,sans-serif;background:#eed;font-weight:normal;border:.1em solid #bbc;color:#886;padding:.5em .6em 0em 2.4em;text-align:right;vertical-align:top;}table.diff thead{border-bottom:.1em solid #bbc;background:#efefef;font-family:Verdana;}table.diff thead th.texttitle{text-align:left;}table.diff tbody td{letter-spacing:.1em;padding:.5em .5em 0em .5em;vertical-align:top;}table.diff tbody td em{font-style:normal;padding:.05em 0em;margin:0-.09em;}table.diff .empty{background-color:#ddd;}table.diff .replace{background-color:#fd8;}table.diff .replace em{background-color:#ffd;border:.1em solid #963;color:#630;}table.diff .delete{background-color:#e99;}table.diff .delete em{background-color:#fdd;border:.1em solid #700;color:#600;}table.diff .equal{background-color:#fff;}table.diff .skip{background-color:#efefef;border:.1em solid #aaa;border-right:.1em solid #bbc;}table.diff .insert{background-color:#9e9;}table.diff .insert em{background-color:#efc;border:1px solid #070;color:#050;}table.diff th.author{text-align:right;border-top:.1em solid #bbc;background:#efefef;}@media print{html{font-size:.8em;}html table.diff{font-size:.8em;white-space:normal;}}</style></head><body><h1><a href='http://prettydiff.com/'>Pretty Diff - The difference tool</a></h1>" + output[1] + "<p>Accessibility note. &lt;em&gt; tags in the output represent character differences per lines compared.</p>" + output[0] + "</body></html>";
+                output[0] = "<?xml version='1.0' encoding='UTF-8' ?><!DOCTYPE html PUBLIC '-//W3C//DTD XHTML 1.1//EN' 'http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd'><html xmlns='http://www.w3.org/1999/xhtml' xml:lang='en'><head><title>Pretty Diff - The difference tool</title><meta name='robots' content='index, follow'/> <meta name='DC.title' content='Pretty Diff - The difference tool'/> <link rel='canonical' href='http://prettydiff.com/' type='application/xhtml+xml'/><meta http-equiv='Content-Type' content='application/xhtml+xml;charset=UTF-8'/><meta http-equiv='Content-Style-Type' content='text/css'/><style type='text/css'>body{font-family:'Arial';font-size:10px}body.default{background:url('images/body.gif') repeat-x #a8b8c8;color:#000}.default a{color:#f00}.default p strong{color:#c00}.default p em{color:#090}.default table.diff{border-color:#bbc}.default table.diff tbody th{background:#eed;border-color:#bbc;color:#886}.default table.diff thead{background:#efefef;border-bottom-color:#bbc}.default table.diff thead th{border-left-color:#bbc}.default table.diff .empty{background-color:#ddd}.default table.diff .replace{background-color:#fd8}.default table.diff .replace em{background-color:#ffd;border-color:#963;color:#630}.default table.diff .delete{background-color:#e99}.default table.diff .delete em{background-color:#fdd;border-color:#700;color:#600}.default table.diff .equal{background-color:#fff}.default table.diff .skip{background-color:#efefef;border-color:#aaa #bbc #aaa #aaa}.default table.diff .insert{background-color:#9e9}.default table.diff .insert em{background-color:#efc;border-color:#070;color:#050}.default table.diff th.author{background:#efefef;border-top-color:#bbc}body.coffee{background:#dcb;color:#321}.coffee a{color:#900}.coffee p strong{color:#900}.coffee p em{color:#262}.coffee table.diff{border-color:#966}.coffee table.diff tbody th{background:#edc;border-color:#966;color:#633}.coffee table.diff thead{background:#cba;border-bottom-color:#966}.coffee table.diff thead th{border-left-color:#966}.coffee table.diff .empty{background-color:#ddd}.coffee table.diff .replace{background-color:#fda}.coffee table.diff .replace em{background-color:#ffd;border-color:#963;color:#630}.coffee table.diff .delete{background-color:#ebb}.coffee table.diff .delete em{background-color:#fee;border-color:#700;color:#600}.coffee table.diff .equal{background-color:#fff8ee}.coffee table.diff .skip{background-color:#eee;border-color:#966}.coffee table.diff .insert{background-color:#cec}.coffee table.diff .insert em{background-color:#efc;border-color:#070;color:#050}.coffee table.diff th.author{background:#cba;border-top-color:#966}h1{float:left;font-size:2em;margin:0 .5em .5em 0}p{clear:both;font-size:1.2em;margin:0 0 1em}.clear{clear:both;display:block}table.diff{border-collapse:collapse}table.diff tbody{font-family:'Courier New',Courier,'Lucida Console',monospace;font-size:1.1em}table.diff tbody th{font-family:verdana,arial,'Bitstream Vera Sans',helvetica,sans-serif;font-weight:normal;padding:.5em .6em 0 2.4em;text-align:right;vertical-align:top}table.diff thead{font-family:Verdana;text-align:left}table.diff thead{border-bottom-style:solid;border-bottom-width:.1em}table.diff thead th{border-left-style:solid;border-left-width:.1em;padding-left:2em}table.diff tbody td{letter-spacing:.1em;padding:.5em .5em 0;vertical-align:top;white-space:pre}table.diff tbody td em{font-style:normal;margin:0 -.09em;padding:.05em 0}table.diff th.author{border-top-style:solid;border-top-width:.1em;padding:.4em;text-align:right}table.diff .replace em,table.diff .delete em,table.diff .insert em,table.diff .skip,table.diff tbody th,table.diff{border-style:solid;border-width:.1em}@media print{p,.options,#beautify,#minify,#diff,ul{display:none}div{width:100%}html td{font-size:.8em;white-space:normal}}</style></head><body class='" + o.color + "'><h1><a href='http://prettydiff.com/'>Pretty Diff - The difference tool</a></h1>" + output[1] + "<p>Accessibility note. &lt;em&gt; tags in the output represent character differences per lines compared.</p>" + output[0] + "</body></html>";
                 o.rf.innerHTML = output[2] + output[0].replace(/\&/g, "&amp;").replace(/>/g, "&gt;").replace(/</g, "&lt;") + "</textarea>";
             } else {
                 o.rf.innerHTML = output[1] + output[0];
             }
-            o.re.style.zIndex = o.zindex;
+            pd.top(o.re);
             o.re.style.display = "block";
             if (o.re.getElementsByTagName("p")[0].style.display === "none") {
                 pd.minimize(o.re.getElementsByTagName("button")[1]);
@@ -535,6 +541,17 @@ pd = {
         x.style.zIndex = c;
     },
 
+    //change the color scheme of the web UI
+    colorScheme: function (x) {
+        "use strict";
+        var a = x.selectedIndex,
+            b = x.getElementsByTagName("option"),
+            c = b[a].innerHTML.toLowerCase().replace(/\s+/g, "");
+        o.wb.className = c;
+        o.color = c;
+        pd.options("colorScheme");
+    },
+
     //minimize report windows to the default size and location
     minimize: function (x) {
         "use strict";
@@ -542,7 +559,7 @@ pd = {
             b = a.parentNode,
             c = b.getElementsByTagName("div")[0],
             d = b.getElementsByTagName("h2")[0],
-            e = $$("options").offsetTop,
+            e = o.op.offsetTop,
             f = b.getAttribute("id"),
             test = (b === o.re) ? true : false,
             g = (test) ? a.getElementsByTagName("button")[1] : a.getElementsByTagName("button")[0],
@@ -1318,8 +1335,12 @@ pd = {
             pd.webtool[27] = "additional: no";
         } else if (x === o.ay) {
             pd.webtool[27] = "additional: yes";
+        } else if (x === "colorScheme") {
+            pd.webtool[28] = "colorScheme: " + o.color;
         }
-        if (typeof pd.webtool[3] !== "string") {
+        if (typeof pd.webtool[28] !== "string") {
+            pd.webtool[28] = "colorScheme: default";
+        } else if (typeof pd.webtool[3] !== "string") {
             o.re = $$("diffreport");
             o.rf = $$("diffreportbody");
             if (o.rf.style.display === "none") {
@@ -1429,8 +1450,8 @@ pd = {
         //length on the parsed webtool storage. This limit prevents
         //excessive writing to the array which is corrupted each time
         //pd.options is executed
-        for (b = 0; b < 27; b += 1) {
-            if (pd.webtool[b] === "") {
+        for (b = 0; b < 28; b += 1) {
+            if (pd.webtool[b] === "" || (typeof pd.webtool[b] === "string" && pd.webtool[b].indexOf("colorScheme") > -1)) {
                 pd.webtool[b] = "pdempty";
             }
         }
@@ -1470,6 +1491,8 @@ pd = {
         o.ri.getElementsByTagName("p")[0].style.display = "none";
         o.ri.getElementsByTagName("h2")[0].style.width = "20em";
         o.rl.style.display = "none";
+        $$("colorScheme").selectedIndex = 0;
+        o.wb.className = "default";
         if (!ls) {
             o.rk.style.display = "none";
         } else {
@@ -1589,10 +1612,11 @@ pd = {
             delete localStorage.optionString;
         }
     },
-    
+
     //account for position of minimized reports when window changes size
     fixminreport: function () {
         "use strict";
+        var top = ((o.op.offsetTop / 10) + 1) + "em";
         o.re = $$("diffreport");
         o.rf = $$("diffreportbody");
         o.rg = $$("beaureport");
@@ -1603,20 +1627,24 @@ pd = {
             o.rk = $$("statreport");
             o.rl = $$("statreportbody");
         }
-        if (o.rf.style.display === "none" && o.re.getElementsByTagName("h2")[0].style.width === "20em") {
+        if (o.rf.style.display === "none" && (o.re.getElementsByTagName("h2")[0].style.width === "20em" || o.re.getElementsByTagName("h2")[0].style.width === "")) {
             o.re.style.right = "68em";
+            o.re.style.top = top;
             o.re.style.left = "auto";
         }
-        if (o.rh.style.display === "none" && o.rg.getElementsByTagName("h2")[0].style.width === "20em") {
+        if (o.rh.style.display === "none" && (o.rg.getElementsByTagName("h2")[0].style.width === "20em" || o.rg.getElementsByTagName("h2")[0].style.width === "")) {
             o.rg.style.right = "46em";
+            o.rg.style.top = top;
             o.rg.style.left = "auto";
         }
-        if (o.rj.style.display === "none" && o.ri.getElementsByTagName("h2")[0].style.width === "20em") {
+        if (o.rj.style.display === "none" && (o.ri.getElementsByTagName("h2")[0].style.width === "20em" || o.ri.getElementsByTagName("h2")[0].style.width === "")) {
             o.ri.style.right = "24em";
+            o.ri.style.top = top;
             o.ri.style.left = "auto";
         }
-        if (ls && o.rl.style.display === "none" && o.rk.getElementsByTagName("h2")[0].style.width === "20em") {
+        if (ls && o.rl.style.display === "none" && (o.rk.getElementsByTagName("h2")[0].style.width === "20em" || o.rk.getElementsByTagName("h2")[0].style.width === "")) {
             o.rk.style.right = "2em";
+            o.rk.style.top = top;
             o.rk.style.left = "auto";
         }
     },
@@ -1624,7 +1652,7 @@ pd = {
     //alter tool on page load in reflection to saved state
     reload: function () {
         "use strict";
-        var a = "",
+        var a = [],
             b = 0,
             c = 0,
             d = [],
@@ -1635,6 +1663,7 @@ pd = {
             j = new Date(),
             k = "",
             l = 0,
+            m = [],
             bm = false,
             dm = false,
             mm = false,
@@ -1648,7 +1677,7 @@ pd = {
             html = false,
             mode = "",
             stat = [],
-            top = $$("options").offsetTop;
+            top = o.op.offsetTop;
         o.bc = $$("beau-char");
         o.dc = $$("diff-char");
         o.re.style.top = ((top / 10) + 1) + "em";
@@ -1852,7 +1881,19 @@ pd = {
                 for (b = 0; b < c; b += 1) {
                     d = a[b].split(": ");
                     if (typeof d[1] === "string") {
-                        if (d[0] === "showhide" && d[1] === "hide") {
+                        if (d[0] === "colorScheme") {
+                            o.wb.className = d[1];
+                            o.color = d[1];
+                            i = $$("colorScheme");
+                            m = i.getElementsByTagName("option");
+                            g = m.length;
+                            for (l = 0; l < g; l += 1) {
+                                if (m[l].innerHTML.replace(/\s+/g, "").toLowerCase() === d[1]) {
+                                    i.selectedIndex = l;
+                                    break;
+                                }
+                            }
+                        } else if (d[0] === "showhide" && d[1] === "hide") {
                             pd.hideOptions(o.sh);
                         } else if (d[0] === "additional" && d[1] === "yes") {
                             o.ao.style.display = "block";
@@ -1888,6 +1929,7 @@ pd = {
                                     o.re.getElementsByTagName("h2")[0].style.width = "20em";
                                     o.re.style.left = "auto";
                                     o.re.style.top = ((top / 10) + 1) + "em";
+                                    o.re.style.borderWidth = "0em";
                                     dma = false;
                                 } else if (d[0] === "diffreportzindex") {
                                     o.re.style.zIndex = d[1];
@@ -1909,6 +1951,7 @@ pd = {
                                     o.rg.getElementsByTagName("h2")[0].style.width = "20em";
                                     o.rg.style.left = "auto";
                                     o.rg.style.top = ((top / 10) + 1) + "em";
+                                    o.rg.style.borderWidth = "0em";
                                     bma = false;
                                 } else if (d[0] === "beaureportzindex") {
                                     o.rg.style.zIndex = d[1];
@@ -1930,6 +1973,7 @@ pd = {
                                     o.ri.getElementsByTagName("h2")[0].style.width = "20em";
                                     o.ri.style.left = "auto";
                                     o.ri.style.top = ((top / 10) + 1) + "em";
+                                    o.ri.style.borderWidth = "0em";
                                     mma = false;
                                 } else if (d[0] === "minnreportzindex") {
                                     o.ri.style.zIndex = d[1];
@@ -1951,6 +1995,7 @@ pd = {
                                     o.rk.getElementsByTagName("h2")[0].style.width = "20em";
                                     o.rk.style.left = "auto";
                                     o.rk.style.top = ((top / 10) + 1) + "em";
+                                    o.rk.style.borderWidth = "0em";
                                     sma = false;
                                 } else if (d[0] === "statreportzindex") {
                                     o.rk.style.zIndex = d[1];
@@ -1961,24 +2006,28 @@ pd = {
                 }
                 if (dm && dma) {
                     o.re.style.right = "auto";
+                    o.re.style.borderWidth = "0.1em";
                     o.re.getElementsByTagName("p")[0].style.display = "block";
                     o.re.getElementsByTagName("p")[0].getElementsByTagName("button")[1].innerHTML = "\u2193";
                     o.rf.style.display = "block";
                 }
                 if (bm && bma) {
                     o.rg.style.right = "auto";
+                    o.rg.style.borderWidth = "0.1em";
                     o.rg.getElementsByTagName("p")[0].style.display = "block";
                     o.rg.getElementsByTagName("p")[0].getElementsByTagName("button")[0].innerHTML = "\u2193";
                     o.rh.style.display = "block";
                 }
                 if (mm && mma) {
                     o.ri.style.right = "auto";
+                    o.ri.style.borderWidth = "0.1em";
                     o.ri.getElementsByTagName("p")[0].style.display = "block";
                     o.ri.getElementsByTagName("p")[0].getElementsByTagName("button")[0].innerHTML = "\u2193";
                     o.rj.style.display = "block";
                 }
                 if (sm && sma) {
                     o.rk.style.right = "auto";
+                    o.rk.style.borderWidth = "0.1em";
                     o.rk.getElementsByTagName("p")[0].style.display = "block";
                     o.rk.getElementsByTagName("p")[0].getElementsByTagName("button")[0].innerHTML = "\u2193";
                     o.rl.style.display = "block";
