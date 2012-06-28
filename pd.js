@@ -39,6 +39,7 @@ var exports = "",
         bz: $$("bo"),
         ch: $$("csvchar"),
         cn: 4,
+        cs: $$("colorScheme"),
         cv: $$("ctype-csv"),
         cz: " ",
         da: $$("diff-tab"),
@@ -149,6 +150,7 @@ var exports = "",
             pdate: "",
             large: 0
         },
+        top: "",
         color: "default",
         context: $$("contextSize"),
         inline: $$("inline"),
@@ -559,7 +561,7 @@ pd = {
             b = a.parentNode,
             c = b.getElementsByTagName("div")[0],
             d = b.getElementsByTagName("h2")[0],
-            e = o.op.offsetTop,
+            e = o.top,
             f = b.getAttribute("id"),
             test = (b === o.re) ? true : false,
             g = (test) ? a.getElementsByTagName("button")[1] : a.getElementsByTagName("button")[0],
@@ -582,7 +584,7 @@ pd = {
             b.style.left = "auto";
             a.style.display = "none";
             b.style.borderWidth = "0em";
-            b.style.top = ((e / 10) + 1) + "em";
+            b.style.top = e;
             b.style.zIndex = "2";
             if (b === o.re) {
                 b.style.right = "68em";
@@ -1491,7 +1493,7 @@ pd = {
         o.ri.getElementsByTagName("p")[0].style.display = "none";
         o.ri.getElementsByTagName("h2")[0].style.width = "20em";
         o.rl.style.display = "none";
-        $$("colorScheme").selectedIndex = 0;
+        o.cs.selectedIndex = 0;
         o.wb.className = "default";
         if (!ls) {
             o.rk.style.display = "none";
@@ -1616,7 +1618,7 @@ pd = {
     //account for position of minimized reports when window changes size
     fixminreport: function () {
         "use strict";
-        var top = ((o.op.offsetTop / 10) + 1) + "em";
+        var top = o.top;
         o.re = $$("diffreport");
         o.rf = $$("diffreportbody");
         o.rg = $$("beaureport");
@@ -1677,18 +1679,179 @@ pd = {
             html = false,
             mode = "",
             stat = [],
-            top = o.op.offsetTop;
+            top = "";
         o.bc = $$("beau-char");
         o.dc = $$("diff-char");
-        o.re.style.top = ((top / 10) + 1) + "em";
-        o.rg.style.top = ((top / 10) + 1) + "em";
-        o.ri.style.top = ((top / 10) + 1) + "em";
-        o.rk.style.top = ((top / 10) + 1) + "em";
         o.re.style.zIndex = "2";
         o.rg.style.zIndex = "2";
         o.ri.style.zIndex = "2";
         o.rk.style.zIndex = "2";
         if (ls && (localStorage.hasOwnProperty("optionString") || localStorage.hasOwnProperty("webtool") || localStorage.hasOwnProperty("statdata"))) {
+            if (localStorage.hasOwnProperty("webtool") && localStorage.getItem("webtool") !== null) {
+                a = localStorage.getItem("webtool").replace(/prettydiffper/g, "%").split("prettydiffcsep");
+                c = a.length;
+                for (b = 0; b < c; b += 1) {
+                    d = a[b].split(": ");
+                    if (typeof d[1] === "string") {
+                        if (d[0] === "colorScheme") {
+                            o.wb.className = d[1];
+                            o.color = d[1];
+                            m = o.cs.getElementsByTagName("option");
+                            g = m.length;
+                            for (l = 0; l < g; l += 1) {
+                                if (m[l].innerHTML.replace(/\s+/g, "").toLowerCase() === d[1]) {
+                                    o.cs.selectedIndex = l;
+                                    break;
+                                }
+                            }
+                        } else if (d[0] === "showhide" && d[1] === "hide") {
+                            pd.hideOptions(o.sh);
+                        } else if (d[0] === "additional" && d[1] === "yes") {
+                            o.ao.style.display = "block";
+                            o.ay.checked = true;
+                        } else if (o.dt && d[0] === "display" && d[1] === "vertical") {
+                            o.dt.checked = true;
+                            o.bt.className = "difftall";
+                            o.nt.className = "difftall";
+                            o.bd.className = "tall";
+                            o.md.className = "tall";
+                        } else if (d[0] === "diffsave" && d[1] === "true") {
+                            o.ps.checked = true;
+                            i = o.re.getElementsByTagName("button")[0];
+                            i.innerHTML = "H";
+                            i.setAttribute("title", "Convert diff report to text that can be saved.");
+                        } else if (d[0] === "api.force_indent" && d[1] === "true") {
+                            o.bg.checked = true;
+                            o.dg.checked = true;
+                        } else if (d[0].indexOf("report") === 4) {
+                            if (d[0].indexOf("diff") === 0) {
+                                dm = true;
+                                if (d[0] === "diffreportleft") {
+                                    o.re.style.left = (d[1] / 10) + "em";
+                                } else if (d[0] === "diffreporttop") {
+                                    o.re.style.top = (d[1] / 10) + "em";
+                                } else if (d[0] === "diffreportwidth") {
+                                    o.rf.style.width = d[1] + "em";
+                                    o.re.getElementsByTagName("h2")[0].style.width = (d[1] - 9.76) + "em";
+                                } else if (d[0] === "diffreportheight") {
+                                    o.rf.style.height = d[1] + "em";
+                                } else if (d[0] === "diffreportmin") {
+                                    o.rf.style.display = "none";
+                                    o.re.getElementsByTagName("p")[0].style.display = "none";
+                                    o.re.getElementsByTagName("h2")[0].style.width = "20em";
+                                    o.re.style.left = "auto";
+                                    o.re.style.top = ((top / 10) + 1) + "em";
+                                    o.re.style.borderWidth = "0em";
+                                    dma = false;
+                                } else if (d[0] === "diffreportzindex") {
+                                    o.re.style.zIndex = d[1];
+                                }
+                            } else if (d[0].indexOf("beau") === 0) {
+                                bm = true;
+                                if (d[0] === "beaureportleft") {
+                                    o.rg.style.left = (d[1] / 10) + "em";
+                                } else if (d[0] === "beaureporttop") {
+                                    o.rg.style.top = (d[1] / 10) + "em";
+                                } else if (d[0] === "beaureportwidth") {
+                                    o.rh.style.width = d[1] + "em";
+                                    o.rg.getElementsByTagName("h2")[0].style.width = (d[1] - 6.76) + "em";
+                                } else if (d[0] === "beaureportheight") {
+                                    o.rh.style.height = d[1] + "em";
+                                } else if (d[0] === "beaureportmin") {
+                                    o.rh.style.display = "none";
+                                    o.rg.getElementsByTagName("p")[0].style.display = "none";
+                                    o.rg.getElementsByTagName("h2")[0].style.width = "20em";
+                                    o.rg.style.left = "auto";
+                                    o.rg.style.top = ((top / 10) + 1) + "em";
+                                    o.rg.style.borderWidth = "0em";
+                                    bma = false;
+                                } else if (d[0] === "beaureportzindex") {
+                                    o.rg.style.zIndex = d[1];
+                                }
+                            } else if (d[0].indexOf("minn") === 0) {
+                                mm = true;
+                                if (d[0] === "minnreportleft") {
+                                    o.ri.style.left = (d[1] / 10) + "em";
+                                } else if (d[0] === "minnreporttop") {
+                                    o.ri.style.top = (d[1] / 10) + "em";
+                                } else if (d[0] === "minnreportwidth") {
+                                    o.rj.style.width = d[1] + "em";
+                                    o.ri.getElementsByTagName("h2")[0].style.width = (d[1] - 6.76) + "em";
+                                } else if (d[0] === "minnreportheight") {
+                                    o.rj.style.height = d[1] + "em";
+                                } else if (d[0] === "minnreportmin") {
+                                    o.rj.style.display = "none";
+                                    o.ri.getElementsByTagName("p")[0].style.display = "none";
+                                    o.ri.getElementsByTagName("h2")[0].style.width = "20em";
+                                    o.ri.style.left = "auto";
+                                    o.ri.style.top = ((top / 10) + 1) + "em";
+                                    o.ri.style.borderWidth = "0em";
+                                    mma = false;
+                                } else if (d[0] === "minnreportzindex") {
+                                    o.ri.style.zIndex = d[1];
+                                }
+                            } else if (d[0].indexOf("stat") === 0) {
+                                sm = true;
+                                if (d[0] === "statreportleft") {
+                                    o.rk.style.left = (d[1] / 10) + "em";
+                                } else if (d[0] === "statreporttop") {
+                                    o.rk.style.top = (d[1] / 10) + "em";
+                                } else if (d[0] === "statreportwidth") {
+                                    o.rl.style.width = d[1] + "em";
+                                    o.rk.getElementsByTagName("h2")[0].style.width = (d[1] - 6.76) + "em";
+                                } else if (d[0] === "statreportheight") {
+                                    o.rl.style.height = d[1] + "em";
+                                } else if (d[0] === "statreportmin") {
+                                    o.rl.style.display = "none";
+                                    o.rk.getElementsByTagName("p")[0].style.display = "none";
+                                    o.rk.getElementsByTagName("h2")[0].style.width = "20em";
+                                    o.rk.style.left = "auto";
+                                    o.rk.style.top = ((top / 10) + 1) + "em";
+                                    o.rk.style.borderWidth = "0em";
+                                    sma = false;
+                                } else if (d[0] === "statreportzindex") {
+                                    o.rk.style.zIndex = d[1];
+                                }
+                            }
+                        }
+                    }
+                }
+                top = ((o.op.offsetTop / 10)) + "em";
+                o.top = top;
+                if (dm && dma) {
+                    o.re.style.right = "auto";
+                    o.re.style.borderWidth = "0.1em";
+                    o.re.getElementsByTagName("p")[0].style.display = "block";
+                    o.re.getElementsByTagName("p")[0].getElementsByTagName("button")[1].innerHTML = "\u2193";
+                    o.rf.style.display = "block";
+                } else {
+        o.re.style.top = top;
+                }
+                if (bm && bma) {
+                    o.rg.style.right = "auto";
+                    o.rg.style.borderWidth = "0.1em";
+                    o.rg.getElementsByTagName("p")[0].style.display = "block";
+                    o.rg.getElementsByTagName("p")[0].getElementsByTagName("button")[0].innerHTML = "\u2193";
+                    o.rh.style.display = "block";
+                } else {
+        o.rg.style.top = top;}
+                if (mm && mma) {
+                    o.ri.style.right = "auto";
+                    o.ri.style.borderWidth = "0.1em";
+                    o.ri.getElementsByTagName("p")[0].style.display = "block";
+                    o.ri.getElementsByTagName("p")[0].getElementsByTagName("button")[0].innerHTML = "\u2193";
+                    o.rj.style.display = "block";
+                } else {
+        o.ri.style.top = top;}
+                if (sm && sma) {
+                    o.rk.style.right = "auto";
+                    o.rk.style.borderWidth = "0.1em";
+                    o.rk.getElementsByTagName("p")[0].style.display = "block";
+                    o.rk.getElementsByTagName("p")[0].getElementsByTagName("button")[0].innerHTML = "\u2193";
+                    o.rl.style.display = "block";
+                } else {
+        o.rk.style.top = top;}
+            }
             if (localStorage.hasOwnProperty("optionString") && localStorage.getItem("optionString") !== null) {
                 o.option.innerHTML = "/*prettydiff.com " + (localStorage.getItem("optionString").replace(/prettydiffper/g, "%").replace(/(prettydiffcsep)+/g, ", ").replace(/\,\s+pdempty/g, "").replace(/(\,\s+\,\s+)+/g, ", ") + " */").replace(/((\,? )+\*\/)$/, " */");
                 a = localStorage.getItem("optionString").replace(/prettydiffper/g, "%").split("prettydiffcsep");
@@ -1873,164 +2036,6 @@ pd = {
                             o.mc.checked = true;
                         }
                     }
-                }
-            }
-            if (localStorage.hasOwnProperty("webtool") && localStorage.getItem("webtool") !== null) {
-                a = localStorage.getItem("webtool").replace(/prettydiffper/g, "%").split("prettydiffcsep");
-                c = a.length;
-                for (b = 0; b < c; b += 1) {
-                    d = a[b].split(": ");
-                    if (typeof d[1] === "string") {
-                        if (d[0] === "colorScheme") {
-                            o.wb.className = d[1];
-                            o.color = d[1];
-                            i = $$("colorScheme");
-                            m = i.getElementsByTagName("option");
-                            g = m.length;
-                            for (l = 0; l < g; l += 1) {
-                                if (m[l].innerHTML.replace(/\s+/g, "").toLowerCase() === d[1]) {
-                                    i.selectedIndex = l;
-                                    break;
-                                }
-                            }
-                        } else if (d[0] === "showhide" && d[1] === "hide") {
-                            pd.hideOptions(o.sh);
-                        } else if (d[0] === "additional" && d[1] === "yes") {
-                            o.ao.style.display = "block";
-                        } else if (o.dt && d[0] === "display" && d[1] === "vertical") {
-                            o.dt.checked = true;
-                            o.bt.className = "difftall";
-                            o.nt.className = "difftall";
-                            o.bd.className = "tall";
-                            o.md.className = "tall";
-                        } else if (d[0] === "diffsave" && d[1] === "true") {
-                            o.ps.checked = true;
-                            i = o.re.getElementsByTagName("button")[0];
-                            i.innerHTML = "H";
-                            i.setAttribute("title", "Convert diff report to text that can be saved.");
-                        } else if (d[0] === "api.force_indent" && d[1] === "true") {
-                            o.bg.checked = true;
-                            o.dg.checked = true;
-                        } else if (d[0].indexOf("report") === 4) {
-                            if (d[0].indexOf("diff") === 0) {
-                                dm = true;
-                                if (d[0] === "diffreportleft") {
-                                    o.re.style.left = (d[1] / 10) + "em";
-                                } else if (d[0] === "diffreporttop") {
-                                    o.re.style.top = (d[1] / 10) + "em";
-                                } else if (d[0] === "diffreportwidth") {
-                                    o.rf.style.width = d[1] + "em";
-                                    o.re.getElementsByTagName("h2")[0].style.width = (d[1] - 9.76) + "em";
-                                } else if (d[0] === "diffreportheight") {
-                                    o.rf.style.height = d[1] + "em";
-                                } else if (d[0] === "diffreportmin") {
-                                    o.rf.style.display = "none";
-                                    o.re.getElementsByTagName("p")[0].style.display = "none";
-                                    o.re.getElementsByTagName("h2")[0].style.width = "20em";
-                                    o.re.style.left = "auto";
-                                    o.re.style.top = ((top / 10) + 1) + "em";
-                                    o.re.style.borderWidth = "0em";
-                                    dma = false;
-                                } else if (d[0] === "diffreportzindex") {
-                                    o.re.style.zIndex = d[1];
-                                }
-                            } else if (d[0].indexOf("beau") === 0) {
-                                bm = true;
-                                if (d[0] === "beaureportleft") {
-                                    o.rg.style.left = (d[1] / 10) + "em";
-                                } else if (d[0] === "beaureporttop") {
-                                    o.rg.style.top = (d[1] / 10) + "em";
-                                } else if (d[0] === "beaureportwidth") {
-                                    o.rh.style.width = d[1] + "em";
-                                    o.rg.getElementsByTagName("h2")[0].style.width = (d[1] - 6.76) + "em";
-                                } else if (d[0] === "beaureportheight") {
-                                    o.rh.style.height = d[1] + "em";
-                                } else if (d[0] === "beaureportmin") {
-                                    o.rh.style.display = "none";
-                                    o.rg.getElementsByTagName("p")[0].style.display = "none";
-                                    o.rg.getElementsByTagName("h2")[0].style.width = "20em";
-                                    o.rg.style.left = "auto";
-                                    o.rg.style.top = ((top / 10) + 1) + "em";
-                                    o.rg.style.borderWidth = "0em";
-                                    bma = false;
-                                } else if (d[0] === "beaureportzindex") {
-                                    o.rg.style.zIndex = d[1];
-                                }
-                            } else if (d[0].indexOf("minn") === 0) {
-                                mm = true;
-                                if (d[0] === "minnreportleft") {
-                                    o.ri.style.left = (d[1] / 10) + "em";
-                                } else if (d[0] === "minnreporttop") {
-                                    o.ri.style.top = (d[1] / 10) + "em";
-                                } else if (d[0] === "minnreportwidth") {
-                                    o.rj.style.width = d[1] + "em";
-                                    o.ri.getElementsByTagName("h2")[0].style.width = (d[1] - 6.76) + "em";
-                                } else if (d[0] === "minnreportheight") {
-                                    o.rj.style.height = d[1] + "em";
-                                } else if (d[0] === "minnreportmin") {
-                                    o.rj.style.display = "none";
-                                    o.ri.getElementsByTagName("p")[0].style.display = "none";
-                                    o.ri.getElementsByTagName("h2")[0].style.width = "20em";
-                                    o.ri.style.left = "auto";
-                                    o.ri.style.top = ((top / 10) + 1) + "em";
-                                    o.ri.style.borderWidth = "0em";
-                                    mma = false;
-                                } else if (d[0] === "minnreportzindex") {
-                                    o.ri.style.zIndex = d[1];
-                                }
-                            } else if (d[0].indexOf("stat") === 0) {
-                                sm = true;
-                                if (d[0] === "statreportleft") {
-                                    o.rk.style.left = (d[1] / 10) + "em";
-                                } else if (d[0] === "statreporttop") {
-                                    o.rk.style.top = (d[1] / 10) + "em";
-                                } else if (d[0] === "statreportwidth") {
-                                    o.rl.style.width = d[1] + "em";
-                                    o.rk.getElementsByTagName("h2")[0].style.width = (d[1] - 6.76) + "em";
-                                } else if (d[0] === "statreportheight") {
-                                    o.rl.style.height = d[1] + "em";
-                                } else if (d[0] === "statreportmin") {
-                                    o.rl.style.display = "none";
-                                    o.rk.getElementsByTagName("p")[0].style.display = "none";
-                                    o.rk.getElementsByTagName("h2")[0].style.width = "20em";
-                                    o.rk.style.left = "auto";
-                                    o.rk.style.top = ((top / 10) + 1) + "em";
-                                    o.rk.style.borderWidth = "0em";
-                                    sma = false;
-                                } else if (d[0] === "statreportzindex") {
-                                    o.rk.style.zIndex = d[1];
-                                }
-                            }
-                        }
-                    }
-                }
-                if (dm && dma) {
-                    o.re.style.right = "auto";
-                    o.re.style.borderWidth = "0.1em";
-                    o.re.getElementsByTagName("p")[0].style.display = "block";
-                    o.re.getElementsByTagName("p")[0].getElementsByTagName("button")[1].innerHTML = "\u2193";
-                    o.rf.style.display = "block";
-                }
-                if (bm && bma) {
-                    o.rg.style.right = "auto";
-                    o.rg.style.borderWidth = "0.1em";
-                    o.rg.getElementsByTagName("p")[0].style.display = "block";
-                    o.rg.getElementsByTagName("p")[0].getElementsByTagName("button")[0].innerHTML = "\u2193";
-                    o.rh.style.display = "block";
-                }
-                if (mm && mma) {
-                    o.ri.style.right = "auto";
-                    o.ri.style.borderWidth = "0.1em";
-                    o.ri.getElementsByTagName("p")[0].style.display = "block";
-                    o.ri.getElementsByTagName("p")[0].getElementsByTagName("button")[0].innerHTML = "\u2193";
-                    o.rj.style.display = "block";
-                }
-                if (sm && sma) {
-                    o.rk.style.right = "auto";
-                    o.rk.style.borderWidth = "0.1em";
-                    o.rk.getElementsByTagName("p")[0].style.display = "block";
-                    o.rk.getElementsByTagName("p")[0].getElementsByTagName("button")[0].innerHTML = "\u2193";
-                    o.rl.style.display = "block";
                 }
             }
             if (localStorage.hasOwnProperty("statdata") && localStorage.getItem("statdata") !== null) {
@@ -2251,6 +2256,17 @@ pd = {
                         o.alang = "text";
                     } else {
                         o.alang = "";
+                    }
+                } else if (d[b].indexOf("c=") === 0) {
+                    f = d[b].toLowerCase().substr(2);
+                    a = o.cs.getElementsByTagName("option");
+                    for (g = a.length - 1; g > -1; g -= 1) {
+                        h = a[g].innerHTML.toLowerCase().replace(/\s+/g, "");
+                        if (f === h) {
+                            o.cs.selectedIndex = g;
+                            o.wb.className = h;
+                            break;
+                        }
                     }
                 }
             }
