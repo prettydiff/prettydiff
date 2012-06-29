@@ -425,7 +425,7 @@ var exports = "",
                 pstyle.cdefault = "";
                 pstyle.coffee = "";
                 output[2] = output[1] + "<p>This is the generated diff output. Please copy the text output, paste into a text file, and save as a &quot;.html&quot; file.</p><textarea rows='40' cols='80' id='textreport'>";
-                output[0] = "<?xml version='1.0' encoding='UTF-8' ?><!DOCTYPE html PUBLIC '-//W3C//DTD XHTML 1.1//EN' 'http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd'><html xmlns='http://www.w3.org/1999/xhtml' xml:lang='en'><head><title>Pretty Diff - The difference tool</title><meta name='robots' content='index, follow'/> <meta name='DC.title' content='Pretty Diff - The difference tool'/> <link rel='canonical' href='http://prettydiff.com/' type='application/xhtml+xml'/><meta http-equiv='Content-Type' content='application/xhtml+xml;charset=UTF-8'/><meta http-equiv='Content-Style-Type' content='text/css'/><style type='text/css'>body{font-family:'Arial';font-size:10px}body.default{background:url('images/body.gif') repeat-x #a8b8c8;color:#000}.default a{color:#f00}.default p strong{color:#c00}.default p em{color:#090}.default table.diff{border-color:#bbc}.default table.diff tbody th{background:#eed;border-color:#bbc;color:#886}.default table.diff thead{background:#efefef;border-bottom-color:#bbc}.default table.diff thead th{border-left-color:#bbc}.default table.diff .empty{background-color:#ddd}.default table.diff .replace{background-color:#fd8}.default table.diff .replace em{background-color:#ffd;border-color:#963;color:#630}.default table.diff .delete{background-color:#e99}.default table.diff .delete em{background-color:#fdd;border-color:#700;color:#600}.default table.diff .equal{background-color:#fff}.default table.diff .skip{background-color:#efefef;border-color:#aaa #bbc #aaa #aaa}.default table.diff .insert{background-color:#9e9}.default table.diff .insert em{background-color:#efc;border-color:#070;color:#050}.default table.diff th.author{background:#efefef;border-top-color:#bbc}body.coffee{background:#dcb;color:#321}.coffee a{color:#900}.coffee p strong{color:#900}.coffee p em{color:#262}.coffee table.diff{border-color:#966}.coffee table.diff tbody th{background:#edc;border-color:#966;color:#633}.coffee table.diff thead{background:#cba;border-bottom-color:#966}.coffee table.diff thead th{border-left-color:#966}.coffee table.diff .empty{background-color:#ddd}.coffee table.diff .replace{background-color:#fda}.coffee table.diff .replace em{background-color:#ffd;border-color:#963;color:#630}.coffee table.diff .delete{background-color:#ebb}.coffee table.diff .delete em{background-color:#fee;border-color:#700;color:#600}.coffee table.diff .equal{background-color:#fff8ee}.coffee table.diff .skip{background-color:#eee;border-color:#966}.coffee table.diff .insert{background-color:#cec}.coffee table.diff .insert em{background-color:#efc;border-color:#070;color:#050}.coffee table.diff th.author{background:#cba;border-top-color:#966}h1{float:left;font-size:2em;margin:0 .5em .5em 0}p{clear:both;font-size:1.2em;margin:0 0 1em}.clear{clear:both;display:block}table.diff{border-collapse:collapse}table.diff tbody{font-family:'Courier New',Courier,'Lucida Console',monospace;font-size:1.1em}table.diff tbody th{font-family:verdana,arial,'Bitstream Vera Sans',helvetica,sans-serif;font-weight:normal;padding:.5em .6em 0 2.4em;text-align:right;vertical-align:top}table.diff thead{font-family:Verdana;text-align:left}table.diff thead{border-bottom-style:solid;border-bottom-width:.1em}table.diff thead th{border-left-style:solid;border-left-width:.1em;padding-left:2em}table.diff tbody td{letter-spacing:.1em;padding:.5em .5em 0;vertical-align:top;white-space:pre}table.diff tbody td em{font-style:normal;margin:0 -.09em;padding:.05em 0}table.diff th.author{border-top-style:solid;border-top-width:.1em;padding:.4em;text-align:right}table.diff .replace em,table.diff .delete em,table.diff .insert em,table.diff .skip,table.diff tbody th,table.diff{border-style:solid;border-width:.1em}@media print{p,.options,#beautify,#minify,#diff,ul{display:none}div{width:100%}html td{font-size:.8em;white-space:normal}}</style></head><body class='" + o.color + "'><h1><a href='http://prettydiff.com/'>Pretty Diff - The difference tool</a></h1>" + output[1] + "<p>Accessibility note. &lt;em&gt; tags in the output represent character differences per lines compared.</p>" + output[0] + "</body></html>";
+                output[0] = "<?xml version='1.0' encoding='UTF-8' ?><!DOCTYPE html PUBLIC '-//W3C//DTD XHTML 1.1//EN' 'http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd'><html xmlns='http://www.w3.org/1999/xhtml' xml:lang='en'><head><title>Pretty Diff - The difference tool</title><meta name='robots' content='index, follow'/> <meta name='DC.title' content='Pretty Diff - The difference tool'/> <link rel='canonical' href='http://prettydiff.com/' type='application/xhtml+xml'/><meta http-equiv='Content-Type' content='application/xhtml+xml;charset=UTF-8'/><meta http-equiv='Content-Style-Type' content='text/css'/><style type='text/css'>body{font-family:'Arial';font-size:10px}body.default{background:url('images/body.gif') repeat-x #a8b8c8;color:#000}body.default button{background:#dfd;border-color:#030;box-shadow:0 .1em .2em rgba(0,32,0,0.75);color:#030}.default a{color:#f00}.default table.diff{border-color:#bbc}.default table.diff tbody th{background:#eed;border-color:#bbc;color:#886}.default table.diff thead{background:#efefef;border-bottom-color:#bbc}.default table.diff thead th{border-left-color:#bbc}.default table.diff .empty{background-color:#ddd}.default table.diff .replace{background-color:#fd8}.default table.diff .replace em{background-color:#ffd;border-color:#963;color:#630}.default table.diff .delete{background-color:#e99}.default table.diff .delete em{background-color:#fdd;border-color:#700;color:#600}.default table.diff .equal{background-color:#fff}.default table.diff .skip{background-color:#efefef;border-color:#aaa #bbc #aaa #aaa}.default table.diff .insert{background-color:#9e9}.default table.diff .insert em{background-color:#efc;border-color:#070;color:#050}.default table.diff th.author{background:#efefef;border-top-color:#bbc}body.coffee{background:#dcb;color:#321}.coffee a{color:#900}.coffee table.diff{border-color:#966}.coffee table.diff tbody th{background:#edc;border-color:#966;color:#633}.coffee table.diff thead{background:#cba;border-bottom-color:#966}.coffee table.diff thead th{border-left-color:#966}.coffee table.diff .empty{background-color:#ddd}.coffee table.diff .replace{background-color:#fda}.coffee table.diff .replace em{background-color:#ffd;border-color:#963;color:#630}.coffee table.diff .delete{background-color:#ebb}.coffee table.diff .delete em{background-color:#fee;border-color:#700;color:#600}.coffee table.diff .equal{background-color:#fff8ee}.coffee table.diff .skip{background-color:#eee;border-color:#966}.coffee table.diff .insert{background-color:#cec}.coffee table.diff .insert em{background-color:#efc;border-color:#070;color:#050}body.dark{background:#333;color:#eee}.dark a{color:#9cf}.dark h2{background:#def;border-color:#006;color:#036}.dark table.diff{border-color:#036}.dark table.diff tbody th{background:#369;border-color:#036;color:#def}.dark table.diff tbody td{border-color:#036}.dark table.diff thead{background:#036;border-bottom-color:#036;color:#def}.dark table.diff thead th{border-left-color:#abc}.dark table.diff .empty{background-color:#456}.dark table.diff .replace{background-color:#468;color:#def}.dark table.diff .replace em{background-color:#dff;border-color:#036;color:#036}.dark table.diff .delete{background-color:#600;color:#fbb}.dark table.diff .delete em{background-color:#fbb;border-color:#600;color:#600}.dark table.diff .equal{background-color:#024;color:#def}.dark table.diff .skip{background-color:#333;border-color:#036}.dark table.diff .insert{background-color:#696;color:#dfd}.dark table.diff .insert em{background-color:#efc;border-color:#060;color:#050}.dark table.diff th.author{background:#036;border-bottom-color:#036;color:#def}body.canvas{background:#e8e8e8;color:#666}.canvas a{color:#450}.canvas h2{background:#f8f8ef;border-color:#664;box-shadow:0 .1em .2em rgba(128,128,92,0.75)}.canvas table.diff{border-color:#664}.canvas table.diff tbody th{background:#c8c8bf;border-color:#664}.canvas table.diff tbody td{background:#f8f8ef;border-color:#664}.canvas table.diff thead{background:#c8c8bf;border-bottom-color:#664;color:#664}.canvas table.diff thead th{border-left-color:#664}.canvas .analysis .bad{background-color:#ecb;color:#744}.canvas .analysis .good{background-color:#cdb;color:#474}.canvas table.diff .empty{background-color:#ccc}.canvas table.diff .replace{background-color:#dda;color:#660}.canvas table.diff .replace em{background-color:#ffd;border-color:#664;color:#880}.canvas table.diff .delete{background-color:#da9;color:#600}.canvas table.diff .delete em{background-color:#fbc;border-color:#600;color:#933}.canvas table.diff .equal{background-color:#f8f8ef;color:#666}.canvas table.diff .skip{background-color:#eee;border-color:#664}.canvas table.diff .insert{background-color:#bd9;color:#040}.canvas table.diff .insert em{background-color:#efc;border-color:#060;color:#464}.canvas table.diff th.author{background:#f8f8ef;border-bottom-color:#664;color:#666}.default p em{color:#090}.default p strong{color:#c00}.coffee p em{color:#262}.coffee p strong{color:#900}.dark p em{color:#360}.dark p strong{color:#900}.canvas p em{color:#472}.canvas p strong{color:#933}h1{float:left;font-size:2em;margin:0 .5em .5em 0}h1 span{font-size:.5em}h2{background:#fff;border-style:solid;border-width:.075em;float:left;font-size:1.8em;font-weight:bold;margin:0 .5em .5em 0;padding:0 .2em}h3{font-size:1.6em}h4{font-size:1.4em}ol li{font-size:1.4em;list-style-type:decimal}ol li li{font-size:1em}ul{margin:-1.4em 0 2em;padding:0}ul li{list-style-type:none}li{clear:both;margin:1em 0 1em 3em}li h4{display:inline;float:left;margin:.4em 0;text-align:left;width:14em}p{clear:both;font-size:1.2em;margin:0 0 1em}.clear{clear:both;display:block}table.diff{border-collapse:collapse}table.diff tbody{font-family:'Courier New',Courier,'Lucida Console',monospace;font-size:1.1em}table.diff tbody th{font-family:verdana,arial,'Bitstream Vera Sans',helvetica,sans-serif;font-weight:normal;padding:.5em .6em 0 2.4em;text-align:right;vertical-align:top}table.diff thead{font-family:Verdana;text-align:left}table.diff thead{border-bottom-style:solid;border-bottom-width:.1em}table.diff thead th{border-left-style:solid;border-left-width:.1em;padding-left:2em}table.diff tbody td{letter-spacing:.1em;padding:.5em .5em 0;vertical-align:top;white-space:pre}table.diff tbody td em{font-style:normal;margin:0 -.09em;padding:.05em 0}table.diff th.author{border-top-style:solid;border-top-width:.1em;padding:.4em;text-align:right}table.diff .replace em,table.diff .delete em,table.diff .insert em,table.diff .skip,table.diff tbody th,table.diff{border-style:solid;border-width:.1em}@media print{div{width:100%}html td{font-size:.8em;white-space:normal}}</style></head><body class='" + o.color + "'><h1><a href='http://prettydiff.com/'>Pretty Diff - The difference tool</a></h1>" + output[1] + "<p>Accessibility note. &lt;em&gt; tags in the output represent character differences per lines compared.</p>" + output[0] + "</body></html>";
                 o.rf.innerHTML = output[2] + output[0].replace(/\&/g, "&amp;").replace(/>/g, "&gt;").replace(/</g, "&lt;") + "</textarea>";
             } else {
                 o.rf.innerHTML = output[1] + output[0];
@@ -1053,6 +1053,26 @@ pd = {
             o.md.className = "tall";
         }
         pd.options(a);
+        (function () {
+            var top = ((o.op.offsetTop / 10)) + "em",
+                a = o.re.getElementsByTagName("button")[1].innerHTML,
+                b = o.rg.getElementsByTagName("button")[0].innerHTML,
+                c = o.ri.getElementsByTagName("button")[0].innerHTML,
+                d = (ls) ? o.rk.getElementsByTagName("button")[0].innerHTML : "";
+            o.top = top;
+            if (o.rf.clientWidth === 0 && a === "\u2191") {
+                o.re.style.top = top;
+            }
+            if (o.rh.clientWidth === 0 && b === "\u2191") {
+                o.rg.style.top = top;
+            }
+            if (o.rj.clientWidth === 0 && c === "\u2191") {
+                o.ri.style.top = top;
+            }
+            if (ls && o.rl.clientWidth === 0 && d === "\u2191") {
+                o.rk.style.top = top;
+            }
+        }());
     },
 
     //alters available options depending upon language selection
@@ -1816,16 +1836,12 @@ pd = {
                         }
                     }
                 }
-                top = ((o.op.offsetTop / 10)) + "em";
-                o.top = top;
                 if (dm && dma) {
                     o.re.style.right = "auto";
                     o.re.style.borderWidth = "0.1em";
                     o.re.getElementsByTagName("p")[0].style.display = "block";
                     o.re.getElementsByTagName("p")[0].getElementsByTagName("button")[1].innerHTML = "\u2193";
                     o.rf.style.display = "block";
-                } else {
-        o.re.style.top = top;
                 }
                 if (bm && bma) {
                     o.rg.style.right = "auto";
@@ -1833,24 +1849,21 @@ pd = {
                     o.rg.getElementsByTagName("p")[0].style.display = "block";
                     o.rg.getElementsByTagName("p")[0].getElementsByTagName("button")[0].innerHTML = "\u2193";
                     o.rh.style.display = "block";
-                } else {
-        o.rg.style.top = top;}
+                }
                 if (mm && mma) {
                     o.ri.style.right = "auto";
                     o.ri.style.borderWidth = "0.1em";
                     o.ri.getElementsByTagName("p")[0].style.display = "block";
                     o.ri.getElementsByTagName("p")[0].getElementsByTagName("button")[0].innerHTML = "\u2193";
                     o.rj.style.display = "block";
-                } else {
-        o.ri.style.top = top;}
+                }
                 if (sm && sma) {
                     o.rk.style.right = "auto";
                     o.rk.style.borderWidth = "0.1em";
                     o.rk.getElementsByTagName("p")[0].style.display = "block";
                     o.rk.getElementsByTagName("p")[0].getElementsByTagName("button")[0].innerHTML = "\u2193";
                     o.rl.style.display = "block";
-                } else {
-        o.rk.style.top = top;}
+                }
             }
             if (localStorage.hasOwnProperty("optionString") && localStorage.getItem("optionString") !== null) {
                 o.option.innerHTML = "/*prettydiff.com " + (localStorage.getItem("optionString").replace(/prettydiffper/g, "%").replace(/(prettydiffcsep)+/g, ", ").replace(/\,\s+pdempty/g, "").replace(/(\,\s+\,\s+)+/g, ", ") + " */").replace(/((\,? )+\*\/)$/, " */");
@@ -2199,6 +2212,26 @@ pd = {
                 o.dc.style.color = "#000";
             }
         }
+        (function () {
+            var top = ((o.op.offsetTop / 10)) + "em",
+                a = o.re.getElementsByTagName("button")[1].innerHTML,
+                b = o.rg.getElementsByTagName("button")[0].innerHTML,
+                c = o.ri.getElementsByTagName("button")[0].innerHTML,
+                d = (ls) ? o.rk.getElementsByTagName("button")[0].innerHTML : "";
+            o.top = top;
+            if (o.rf.clientWidth === 0 && a === "\u2191") {
+                o.re.style.top = top;
+            }
+            if (o.rh.clientWidth === 0 && b === "\u2191") {
+                o.rg.style.top = top;
+            }
+            if (o.rj.clientWidth === 0 && c === "\u2191") {
+                o.ri.style.top = top;
+            }
+            if (ls && o.rl.clientWidth === 0 && d === "\u2191") {
+                o.rk.style.top = top;
+            }
+        }());
         if (location && location.href && location.href.indexOf("?") !== -1) {
             d = location.href.split("?")[1].split("&");
             c = d.length;
