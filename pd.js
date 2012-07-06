@@ -711,8 +711,8 @@ pd = {
             }
             a.style.zIndex = pd.position[f].zindex;
             h.style.display = "block";
+            pd.options(a);
         }
-        pd.options(a);
     },
 
     //resize report window to custom width and height on drag
@@ -849,103 +849,6 @@ pd = {
             o.ao.style.display = "block";
         }
         pd.options(x);
-    },
-
-    //maximize textareas and hide options
-    hideOptions: function (x) {
-        "use strict";
-        if (!o.dt) {
-            return;
-        }
-        o.bb = $$("modebeautify");
-        o.dd = $$("modediff");
-        o.mm = $$("modeminify");
-        o.au = $$("ctype-auto");
-        o.dt = $$("difftall");
-        if (x.innerHTML === "Maximize inputs") {
-            o.op.style.display = "none";
-            o.bops.style.display = "none";
-            o.dops.style.display = "none";
-            o.mops.style.display = "none";
-            o.to.style.display = "none";
-            o.bd.className = "tall";
-            o.md.className = "tall";
-            o.bt.className = "difftall";
-            o.nt.className = "difftall";
-            if (window.innerHeight) {
-                o.bi.style.height = ((window.innerHeight - 250) / 10) + "em";
-                o.mi.style.height = ((window.innerHeight - 250) / 10) + "em";
-                o.bx.style.height = ((window.innerHeight - 250) / 10) + "em";
-                o.mx.style.height = ((window.innerHeight - 250) / 10) + "em";
-                o.bo.style.height = ((window.innerHeight - 265) / 10) + "em";
-                o.nx.style.height = ((window.innerHeight - 265) / 10) + "em";
-            } else {
-                o.bi.style.height = ((window.screen.availHeight - 400) / 10) + "em";
-                o.mi.style.height = ((window.screen.availHeight - 400) / 10) + "em";
-                o.bx.style.height = ((window.screen.availHeight - 400) / 10) + "em";
-                o.mx.style.height = ((window.screen.availHeight - 400) / 10) + "em";
-                o.bo.style.height = ((window.screen.availHeight - 415) / 10) + "em";
-                o.nx.style.height = ((window.screen.availHeight - 415) / 10) + "em";
-            }
-            o.disp.className = "maximized";
-            x.innerHTML = "Normal view";
-            o.re.style.display = "none";
-            o.rg.style.display = "none";
-            o.ri.style.display = "none";
-            o.rk.style.display = "none";
-            o.ao.style.display = "none";
-        } else if (x.innerHTML === "Normal view") {
-            o.op.style.display = "block";
-            if (o.bb.checked && o.au.checked) {
-                o.bops.style.display = "block";
-            } else if (o.dd.checked) {
-                o.dops.style.display = "block";
-            } else if (o.mm.checked && o.au.checked) {
-                o.mops.style.display = "block";
-            }
-            o.bi.style.height = "";
-            o.mi.style.height = "";
-            o.bx.style.height = "";
-            o.mx.style.height = "";
-            o.bo.style.height = "";
-            o.nx.style.height = "";
-            if (typeof pd.position.diffreport === "object" && typeof pd.position.diffreport.display === "string" && pd.position.diffreport.display !== "none") {
-                o.re.style.display = "block";
-            } else {
-                o.re.style.display = "none";
-            }
-            if (typeof pd.position.beaureport === "object" && typeof pd.position.beaureport.display === "string" && pd.position.diffreport.display !== "none") {
-                o.rg.style.display = "block";
-            } else {
-                o.rg.style.display = "none";
-            }
-            if (typeof pd.position.minreport === "object" && typeof pd.position.minreport.display === "string" && pd.position.minreport.display !== "none") {
-                o.ri.style.display = "block";
-            } else {
-                o.ri.style.display = "none";
-            }
-            if (typeof pd.position.statreport === "object" && typeof pd.position.statreport.display === "string" && pd.position.statreport.display !== "none") {
-                o.rk.style.display = "block";
-            } else {
-                o.rk.style.display = "none";
-            }
-            o.ao.style.display = "block";
-            if (!o.dt.checked) {
-                o.bd.className = "wide";
-                o.md.className = "wide";
-                o.bt.className = "wide";
-                o.nt.className = "wide";
-            }
-            o.to.style.display = "block";
-            o.disp.className = "default";
-            x.innerHTML = "Maximize inputs";
-            o.re.style.display = "block";
-            o.rg.style.display = "block";
-            o.ri.style.display = "block";
-            o.rk.style.display = "block";
-        }
-        pd.options(x);
-        return false;
     },
 
     //toggle between tool modes and vertical/horizontal orientation of
@@ -1145,7 +1048,7 @@ pd = {
             o.dw.checked = true;
         }
         if (o.bb.checked && o.bw.checked) {
-            o.bc.setAttribute("class", "checked");
+            o.bc.className = "checked";
             if (o.bc.value === "Click me for custom input") {
                 o.bc.value = "";
             }
@@ -1153,9 +1056,9 @@ pd = {
             if (o.bc.value === "") {
                 o.bc.value = "Click me for custom input";
             }
-            o.bc.setAttribute("class", "unchecked");
+            o.bc.className = "unchecked";
         } else if (o.dd.checked && o.dw.checked) {
-            o.bc.setAttribute("class", "checked");
+            o.bc.className = "checked";
             if (o.dc.value === "Click me for custom input") {
                 o.dc.value = "";
             }
@@ -1163,7 +1066,7 @@ pd = {
             if (o.dc.value === "") {
                 o.dc.value = "Click me for custom input";
             }
-            o.bc.setAttribute("class", "unchecked");
+            o.bc.className = "unchecked";
         }
         if (o.bcv !== "") {
             o.bc.value = o.bcv;
@@ -1485,6 +1388,141 @@ pd = {
         localStorage.setItem("webtool", pd.webtool.join("prettydiffcsep").replace(/(prettydiffcsep)+/g, "prettydiffcsep").replace(/%/g, "prettydiffper"));
     },
 
+    //account for position of minimized reports when window changes size
+    fixminreport: function () {
+        "use strict";
+        var top = o.top;
+        o.re = $$("diffreport");
+        o.rf = $$("diffreportbody");
+        o.rg = $$("beaureport");
+        o.rh = $$("beaureportbody");
+        o.ri = $$("minreport");
+        o.rj = $$("minreportbody");
+        if (ls) {
+            o.rk = $$("statreport");
+            o.rl = $$("statreportbody");
+        }
+        if (o.rf.style.display === "none" && (o.re.getElementsByTagName("h2")[0].style.width === "20em" || o.re.getElementsByTagName("h2")[0].style.width === "")) {
+            o.re.style.right = "68em";
+            o.re.style.top = top;
+            o.re.style.left = "auto";
+        }
+        if (o.rh.style.display === "none" && (o.rg.getElementsByTagName("h2")[0].style.width === "20em" || o.rg.getElementsByTagName("h2")[0].style.width === "")) {
+            o.rg.style.right = "46em";
+            o.rg.style.top = top;
+            o.rg.style.left = "auto";
+        }
+        if (o.rj.style.display === "none" && (o.ri.getElementsByTagName("h2")[0].style.width === "20em" || o.ri.getElementsByTagName("h2")[0].style.width === "")) {
+            o.ri.style.right = "24em";
+            o.ri.style.top = top;
+            o.ri.style.left = "auto";
+        }
+        if (ls && o.rl.style.display === "none" && (o.rk.getElementsByTagName("h2")[0].style.width === "20em" || o.rk.getElementsByTagName("h2")[0].style.width === "")) {
+            o.rk.style.right = "2em";
+            o.rk.style.top = top;
+            o.rk.style.left = "auto";
+        }
+    },
+
+    //maximize textareas and hide options
+    hideOptions: function (x) {
+        "use strict";
+        if (!o.dt) {
+            return;
+        }
+        o.bb = $$("modebeautify");
+        o.dd = $$("modediff");
+        o.mm = $$("modeminify");
+        o.au = $$("ctype-auto");
+        o.dt = $$("difftall");
+        if (x.innerHTML === "Maximize inputs") {
+            o.op.style.display = "none";
+            o.bops.style.display = "none";
+            o.dops.style.display = "none";
+            o.mops.style.display = "none";
+            o.to.style.display = "none";
+            o.bd.className = "tall";
+            o.md.className = "tall";
+            o.bt.className = "difftall";
+            o.nt.className = "difftall";
+            if (window.innerHeight) {
+                o.bi.style.height = ((window.innerHeight - 250) / 10) + "em";
+                o.mi.style.height = ((window.innerHeight - 250) / 10) + "em";
+                o.bx.style.height = ((window.innerHeight - 250) / 10) + "em";
+                o.mx.style.height = ((window.innerHeight - 250) / 10) + "em";
+                o.bo.style.height = ((window.innerHeight - 265) / 10) + "em";
+                o.nx.style.height = ((window.innerHeight - 265) / 10) + "em";
+            } else {
+                o.bi.style.height = ((window.screen.availHeight - 400) / 10) + "em";
+                o.mi.style.height = ((window.screen.availHeight - 400) / 10) + "em";
+                o.bx.style.height = ((window.screen.availHeight - 400) / 10) + "em";
+                o.mx.style.height = ((window.screen.availHeight - 400) / 10) + "em";
+                o.bo.style.height = ((window.screen.availHeight - 415) / 10) + "em";
+                o.nx.style.height = ((window.screen.availHeight - 415) / 10) + "em";
+            }
+            o.disp.className = "maximized";
+            x.innerHTML = "Normal view";
+            o.re.style.display = "none";
+            o.rg.style.display = "none";
+            o.ri.style.display = "none";
+            o.rk.style.display = "none";
+            o.ao.style.display = "none";
+        } else if (x.innerHTML === "Normal view") {
+            o.op.style.display = "block";
+            if (o.bb.checked && o.au.checked) {
+                o.bops.style.display = "block";
+            } else if (o.dd.checked) {
+                o.dops.style.display = "block";
+            } else if (o.mm.checked && o.au.checked) {
+                o.mops.style.display = "block";
+            }
+            o.bi.style.height = "";
+            o.mi.style.height = "";
+            o.bx.style.height = "";
+            o.mx.style.height = "";
+            o.bo.style.height = "";
+            o.nx.style.height = "";
+            if (typeof pd.position.diffreport === "object" && typeof pd.position.diffreport.display === "string" && pd.position.diffreport.display !== "none") {
+                o.re.style.display = "block";
+            } else {
+                o.re.style.display = "none";
+            }
+            if (typeof pd.position.beaureport === "object" && typeof pd.position.beaureport.display === "string" && pd.position.diffreport.display !== "none") {
+                o.rg.style.display = "block";
+            } else {
+                o.rg.style.display = "none";
+            }
+            if (typeof pd.position.minreport === "object" && typeof pd.position.minreport.display === "string" && pd.position.minreport.display !== "none") {
+                o.ri.style.display = "block";
+            } else {
+                o.ri.style.display = "none";
+            }
+            if (typeof pd.position.statreport === "object" && typeof pd.position.statreport.display === "string" && pd.position.statreport.display !== "none") {
+                o.rk.style.display = "block";
+            } else {
+                o.rk.style.display = "none";
+            }
+            o.ao.style.display = "block";
+            if (!o.dt.checked) {
+                o.bd.className = "wide";
+                o.md.className = "wide";
+                o.bt.className = "wide";
+                o.nt.className = "wide";
+            }
+            o.to.style.display = "block";
+            o.disp.className = "default";
+            x.innerHTML = "Maximize inputs";
+            o.re.style.display = "block";
+            o.rg.style.display = "block";
+            o.ri.style.display = "block";
+            o.rk.style.display = "block";
+            o.top = ($$("options").offsetTop / 10) + "em";
+            pd.fixminreport();
+        }
+        pd.options(x);
+        return false;
+    },
+
     //reset tool to default configuration
     reset: function () {
         "use strict";
@@ -1497,7 +1535,6 @@ pd = {
         o.re.style.display = "block";
         o.re.style.left = "auto";
         o.re.style.right = "68em";
-        o.re.style.top = "62.1em";
         o.re.style.zIndex = "2";
         o.re.getElementsByTagName("p")[0].style.display = "none";
         o.re.getElementsByTagName("h2")[0].style.width = "20em";
@@ -1505,7 +1542,6 @@ pd = {
         o.rg.style.display = "block";
         o.rg.style.left = "auto";
         o.rg.style.right = "46em";
-        o.rg.style.top = "62.1em";
         o.rg.style.zIndex = "2";
         o.rg.getElementsByTagName("p")[0].style.display = "none";
         o.rg.getElementsByTagName("h2")[0].style.width = "20em";
@@ -1513,7 +1549,6 @@ pd = {
         o.ri.style.display = "block";
         o.ri.style.left = "auto";
         o.ri.style.right = "24em";
-        o.ri.style.top = "62.1em";
         o.ri.style.zIndex = "2";
         o.ri.getElementsByTagName("p")[0].style.display = "none";
         o.ri.getElementsByTagName("h2")[0].style.width = "20em";
@@ -1526,7 +1561,6 @@ pd = {
             o.rk.style.display = "block";
             o.rk.style.left = "auto";
             o.rk.style.right = "2em";
-            o.rk.style.top = "62.1em";
             o.rk.style.zIndex = "2";
             o.rk.getElementsByTagName("p")[0].style.display = "none";
             o.rk.getElementsByTagName("h2")[0].style.width = "20em";
@@ -1638,42 +1672,7 @@ pd = {
         if (ls && localStorage.hasOwnProperty("optionString")) {
             delete localStorage.optionString;
         }
-    },
-
-    //account for position of minimized reports when window changes size
-    fixminreport: function () {
-        "use strict";
-        var top = o.top;
-        o.re = $$("diffreport");
-        o.rf = $$("diffreportbody");
-        o.rg = $$("beaureport");
-        o.rh = $$("beaureportbody");
-        o.ri = $$("minreport");
-        o.rj = $$("minreportbody");
-        if (ls) {
-            o.rk = $$("statreport");
-            o.rl = $$("statreportbody");
-        }
-        if (o.rf.style.display === "none" && (o.re.getElementsByTagName("h2")[0].style.width === "20em" || o.re.getElementsByTagName("h2")[0].style.width === "")) {
-            o.re.style.right = "68em";
-            o.re.style.top = top;
-            o.re.style.left = "auto";
-        }
-        if (o.rh.style.display === "none" && (o.rg.getElementsByTagName("h2")[0].style.width === "20em" || o.rg.getElementsByTagName("h2")[0].style.width === "")) {
-            o.rg.style.right = "46em";
-            o.rg.style.top = top;
-            o.rg.style.left = "auto";
-        }
-        if (o.rj.style.display === "none" && (o.ri.getElementsByTagName("h2")[0].style.width === "20em" || o.ri.getElementsByTagName("h2")[0].style.width === "")) {
-            o.ri.style.right = "24em";
-            o.ri.style.top = top;
-            o.ri.style.left = "auto";
-        }
-        if (ls && o.rl.style.display === "none" && (o.rk.getElementsByTagName("h2")[0].style.width === "20em" || o.rk.getElementsByTagName("h2")[0].style.width === "")) {
-            o.rk.style.right = "2em";
-            o.rk.style.top = top;
-            o.rk.style.left = "auto";
-        }
+        pd.fixminreport();
     },
 
     //alter tool on page load in reflection to saved state
@@ -1981,44 +1980,44 @@ pd = {
                                 }
                                 if (o.dc) {
                                     o.dc.value = "Click me for custom input";
-                                    o.dc.setAttribute("class", "unchecked");
+                                    o.dc.className = "unchecked";
                                 }
                                 o.bs.checked = true;
                                 o.bc.value = "Click me for custom input";
-                                o.bc.setAttribute("class", "unchecked");
+                                o.bc.className = "unchecked";
                             } else if (d[1] === "\\t") {
                                 if (o.da) {
                                     o.da.checked = true;
                                 }
                                 if (o.dc) {
                                     o.dc.value = "Click me for custom input";
-                                    o.dc.setAttribute("class", "unchecked");
+                                    o.dc.className = "unchecked";
                                 }
                                 o.ba.checked = true;
                                 o.bc.value = "Click me for custom input";
-                                o.bc.setAttribute("class", "unchecked");
+                                o.bc.className = "unchecked";
                             } else if (d[1] === "\\n") {
                                 if (o.dz) {
                                     o.dz.checked = true;
                                 }
                                 if (o.dc) {
                                     o.dc.value = "Click me for custom input";
-                                    o.dc.setAttribute("class", "unchecked");
+                                    o.dc.className = "unchecked";
                                 }
                                 o.bn.checked = true;
                                 o.bc.value = "Click me for custom input";
-                                o.bc.setAttribute("class", "unchecked");
+                                o.bc.className = "unchecked";
                             } else {
                                 if (o.dw) {
                                     o.dw.checked = true;
                                 }
                                 if (o.dc) {
                                     o.dc.value = d[1];
-                                    o.dc.setAttribute("class", "checked");
+                                    o.dc.className = "checked";
                                 }
                                 o.bw.checked = true;
                                 o.bc.value = d[1];
-                                o.bc.setAttribute("class", "checked");
+                                o.bc.className = "checked";
                             }
                         } else if (d[0] === "api.comments" && d[1] === "noindent") {
                             o.iz.checked = true;
