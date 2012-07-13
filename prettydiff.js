@@ -1647,13 +1647,11 @@ var prettydiff = function (api) {
                         c = x.split("\n"),
                         d = c.length,
                         e = [],
-                        f = q.toString().split("").reverse(),
-                        g = x.length.toString().split("").reverse(),
+                        f = q.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ","),
+                        g = x.length.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ","),
                         h = 0,
                         i = "",
-                        j = 0,
-                        k = "",
-                        l = "";
+                        j = 0;
                     for (a = 0; a < d; a += 1) {
                         if (c[a].charAt(0) === "/" && c[a].charAt(1) === "*") {
                             for (a; a < d; a += 1) {
@@ -1692,23 +1690,7 @@ var prettydiff = function (api) {
                     if (d !== 0) {
                         i = "<h4>List of HTTP requests:</h4><ul>" + b.join("") + "</ul>";
                     }
-                    j = f.length;
-                    for (a = 2; a < j; a += 3) {
-                        f[a] = "," + f[a];
-                    }
-                    j = g.length;
-                    for (a = 2; a < j; a += 3) {
-                        g[a] = "," + g[a];
-                    }
-                    k = f.reverse().join("");
-                    l = g.reverse().join("");
-                    if (k.charAt(0) === ",") {
-                        k = k.slice(1, k.length);
-                    }
-                    if (l.charAt(0) === ",") {
-                        l = l.slice(1, l.length);
-                    }
-                    summary = "<p><strong>Total input size:</strong> <em>" + k + "</em> characters</p><p><strong>Total output size:</strong> <em>" + l + "</em> characters</p><p><strong>Number of HTTP requests:</strong> <em>" + h + "</em></p>" + i;
+                    summary = "<p><strong>Total input size:</strong> <em>" + f + "</em> characters</p><p><strong>Total output size:</strong> <em>" + g + "</em> characters</p><p><strong>Number of HTTP requests:</strong> <em>" + h + "</em></p>" + i;
                 }());
                 return x;
             },
@@ -4834,28 +4816,7 @@ var prettydiff = function (api) {
                     }
                 }());
                 (function () {
-                    var insertComma = function (x) {
-                            var z = 0,
-                                a = 0,
-                                b = [];
-                            if (typeof (x) === "number") {
-                                x = x.toString();
-                            }
-                            if (typeof (x) !== "string") {
-                                return x;
-                            }
-                            b = x.split("").reverse();
-                            z = b.length;
-                            for (a = 2; a < z; a += 3) {
-                                b[a] = "," + b[a];
-                            }
-                            x = b.reverse().join("");
-                            if (x.charAt(0) === ",") {
-                                x = x.slice(1, x.length);
-                            }
-                            return x;
-                        },
-                        m = [],
+                    var m = [],
                         g = cinfo.length,
                         f = sum.join("").length,
                         b = (function () {
@@ -5187,7 +5148,7 @@ var prettydiff = function (api) {
                                 }
                                 i.push("<table class='analysis' summary='Zipf&#39;s Law'><caption>This table demonstrates <em>Zipf&#39;s Law</em> by listing the 10 most occuring words in the content and the number of times they occurred.</caption>");
                                 i.push("<thead><tr><th>Word Rank</th><th>Most Occurring Word by Rank</th><th>Number of Instances</th><th>Ratio Increased Over Next Most Frequence Occurance</th><th>Percentage from ");
-                                i.push(insertComma(j));
+                                i.push(j.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ","));
                                 if (j > 1) {
                                     i.push(" Total");
                                 }
@@ -5271,9 +5232,9 @@ var prettydiff = function (api) {
                             i.push(u);
                             i.push(". Efficient markup achieves scores higher than 2.00 and excellent markup achieves scores higher than 4.00. The score reflects the highest number of tags to pieces of content where the weight of those tags is as small as possible compared to the weight of the content.");
                             i.push("The score is a performance metric only and is not associated with validity or well-formedness, but semantic code typically achieves the highest scores. All values are rounded to the nearest hundreth.</p><p><strong>Total input size:</strong> <em>");
-                            i.push(insertComma(e));
+                            i.push(e.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ","));
                             i.push("</em> characters</p><p><strong>Total output size:</strong> <em>");
-                            i.push(insertComma(d));
+                            i.push(d.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ","));
                             i.push("</em> characters</p><p><strong>* Total number of HTTP requests in supplied HTML:</strong> <em>");
                             i.push(m.length);
                             i.push("</em></p>");
@@ -5796,51 +5757,89 @@ var prettydiff = function (api) {
                                     j = 0,
                                     o = 0,
                                     p = [],
-                                    q = false;
+                                    q = false,
+                                    r = 0;
                                 for (i = k; i < zx; i += 1) {
                                     if (ax[i] === bx[i]) {
                                         r = i;
-                                    } else {
-                                        if (!n && ax[i] !== bx[i] && !em.test(ax[i]) && !em.test(bx[i]) && !em.test(ax[i - 1]) && !em.test(bx[i - 1])) {
-                                            if (i === 0 || (typeof ax[i - 1] === "string" && typeof bx[i - 1] === "string")) {
-                                                if (i === 0) {
-                                                    ax[i] = "<em>" + ax[i];
-                                                    bx[i] = "<em>" + bx[i];
-                                                } else {
-                                                    ax[i - 1] = ax[i - 1] + "<em>";
-                                                    bx[i - 1] = bx[i - 1] + "<em>";
-                                                }
-                                                errorout += 1;
-                                                n = true;
-                                                break;
-                                            } else if (typeof ax[i - 1] !== "string" && typeof bx[i - 1] === "string") {
-                                                ax[i - 1] = "<em>";
-                                                bx[i - 1] = bx[i] + "<em>";
-                                                errorout += 1;
-                                                n = true;
-                                                break;
-                                            } else if (typeof ax[i - 1] === "string" && typeof bx[i - 1] !== "string") {
-                                                ax[i - 1] = ax[i] + "<em>";
-                                                bx[i - 1] = "<em>";
-                                                errorout += 1;
-                                                n = true;
-                                                break;
+                                    } else if (!n && ax[i] !== bx[i] && !em.test(ax[i]) && !em.test(bx[i]) && !em.test(ax[i - 1]) && !em.test(bx[i - 1])) {
+                                        if (i === 0 || (typeof ax[i - 1] === "string" && typeof bx[i - 1] === "string")) {
+                                            if (i === 0) {
+                                                ax[i] = "<em>" + ax[i];
+                                                bx[i] = "<em>" + bx[i];
+                                            } else {
+                                                ax[i - 1] = ax[i - 1] + "<em>";
+                                                bx[i - 1] = bx[i - 1] + "<em>";
                                             }
-                                        } else if (ax[i] === undefined && (bx[i] === "" || bx[i] === " ")) {
-                                            ax[i] = "";
-                                        } else if (bx[i] === undefined && (ax[i] === "" || ax[i] === " ")) {
-                                            bx[i] = "";
+                                            errorout += 1;
+                                            n = true;
+                                            break;
+                                        } else if (typeof ax[i - 1] !== "string" && typeof bx[i - 1] === "string") {
+                                            ax[i - 1] = "<em>";
+                                            bx[i - 1] = bx[i] + "<em>";
+                                            errorout += 1;
+                                            n = true;
+                                            break;
+                                        } else if (typeof ax[i - 1] === "string" && typeof bx[i - 1] !== "string") {
+                                            ax[i - 1] = ax[i] + "<em>";
+                                            bx[i - 1] = "<em>";
+                                            errorout += 1;
+                                            n = true;
+                                            break;
                                         }
+                                    } else if (ax[i] === undefined && (bx[i] === "" || bx[i] === " ")) {
+                                        ax[i] = "";
+                                    } else if (bx[i] === undefined && (ax[i] === "" || ax[i] === " ")) {
+                                        bx[i] = "";
                                     }
                                 }
-                                for (j = i + 1; j < zx; j += 1) {
+                                for (j = i; j < zx; j += 1) {
                                     if (typeof ax[j] === "string" && typeof bx[j] !== "string") {
                                         bx[j] = "";
                                     } else if (typeof ax[j] !== "string" && typeof bx[j] === "string") {
                                         ax[j] = "";
                                     } else if (n) {
                                         for (o = j; o < zx; o += 1) {
-                                            if (ax[o] === bx[o] && typeof ax[o] === "string") {
+                                            for (r = o - 1; r > j; r -= 1) {
+                                                if (ax[r] === bx[o]) {
+                                                    if (r > ax.length - 1) {
+                                                        do {
+                                                            ax.push("");
+                                                        } while (r > ax.length - 1);
+                                                    }
+                                                    ax[r - 1] = ax[r - 1] + "</em>";
+                                                    bx[o - 1] = bx[o - 1] + "</em>";
+                                                    k = o;
+                                                    p = [];
+                                                    do {
+                                                        p.push("");
+                                                        o -= 1;
+                                                    } while (o > r);
+                                                    ax = p.concat(ax);
+                                                    n = false;
+                                                    break;
+                                                } else if (bx[r] === ax[o]) {
+                                                    if (r > bx.length - 1) {
+                                                        do {
+                                                            bx.push("");
+                                                        } while (r > bx.length - 1);
+                                                    }
+                                                    bx[r - 1] = bx[r - 1] + "</em>";
+                                                    ax[o - 1] = ax[o - 1] + "</em>";
+                                                    k = o;
+                                                    p = [];
+                                                    do {
+                                                        p.push("");
+                                                        o -= 1;
+                                                    } while (o > r);
+                                                    bx = p.concat(bx);
+                                                    n = false;
+                                                    break;
+                                                }
+                                            }
+                                            if (!n) {
+                                                break;
+                                            } else if (ax[o] === bx[o] && typeof ax[o] === "string") {
                                                 ax[o - 1] = ax[o - 1] + "</em>";
                                                 bx[o - 1] = bx[o - 1] + "</em>";
                                                 k = o;

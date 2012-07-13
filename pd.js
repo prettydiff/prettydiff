@@ -264,8 +264,10 @@ var exports = "",
             }
             api.source = o.bi.value;
             api.mode = "beautify";
-            if (ls) {
+            if (ls && o.bi.value.length < 2096000) {
                 localStorage.setItem("bi", api.source);
+            } else if (ls) {
+                localStorage.setItem("bi", "");
             }
         } else if (o.mm.checked) {
             o.hm = $$("htmlm-yes");
@@ -280,8 +282,10 @@ var exports = "",
             }
             api.source = o.mi.value;
             api.mode = "minify";
-            if (ls) {
+            if (ls && o.mi.value.length < 2096000) {
                 localStorage.setItem("mi", api.source);
+            } else if (ls) {
+                localStorage.setItem("mi", "");
             }
         } else if (o.dd) {
             o.context = $$("contextSize");
@@ -359,11 +363,16 @@ var exports = "",
             api.source = o.bo.value;
             api.diff = o.nx.value;
             api.mode = "diff";
-            if (ls) {
+            if (ls && o.bo.value.length < 2096000 && o.nx.value.length < 2096000) {
                 localStorage.setItem("bo", api.source);
                 localStorage.setItem("nx", api.diff);
                 localStorage.setItem("bl", api.sourcelabel);
                 localStorage.setItem("nl", api.difflabel);
+            } else if (ls) {
+                localStorage.setItem("bo", "");
+                localStorage.setItem("nx", "");
+                localStorage.setItem("bl", "");
+                localStorage.setItem("nl", "");
             }
             if (domain.test(api.diff) && (typeof XMLHttpRequest === "function" || typeof XMLHttpRequest === "object" || typeof ActiveXObject === "function")) {
                 (function () {
@@ -422,7 +431,6 @@ var exports = "",
                 o.rg.style.display = "block";
             }
             if (ls) {
-                localStorage.setItem("bi", o.bi.value);
                 o.stat.beau += 1;
                 o.stbeau.innerHTML = o.stat.beau;
             }
@@ -446,10 +454,6 @@ var exports = "",
             }
             o.re.style.right = "auto";
             if (ls) {
-                localStorage.setItem("bo", o.bo.value);
-                localStorage.setItem("nx", o.nx.value);
-                localStorage.setItem("bl", o.bl.value);
-                localStorage.setItem("nl", o.nl.value);
                 o.stat.diff += 1;
                 o.stdiff.innerHTML = o.stat.diff;
             }
@@ -461,7 +465,6 @@ var exports = "",
                 o.ri.style.display = "block";
             }
             if (ls) {
-                localStorage.setItem("mi", o.mi.value);
                 o.stat.minn += 1;
                 o.stminn.innerHTML = o.stat.minn;
             }
@@ -804,6 +807,9 @@ pd = {
         var a = x.parentNode,
             b = a.getElementsByTagName("p")[0].style.display,
             c = {},
+            d = a.lastChild,
+            h = a.firstChild.lastChild,
+            i = 0,
             ax = a.offsetLeft,
             ay = a.offsetTop,
             drop = function (g) {
@@ -813,6 +819,9 @@ pd = {
                 g = null;
                 pd.options(a);
                 document.onmouseup = null;
+                d.style.opacity = "1";
+                a.style.removeProperty("height");
+                h.style.top = "100%";
             },
             boxmove = function (f) {
                 f = f || window.event;
@@ -832,6 +841,10 @@ pd = {
             return;
         }
         pd.top(a);
+        d.style.opacity = ".5";
+        i = a.clientHeight;
+        h.style.top = (i / 20) + "0em";
+        a.style.height = ".1em";
         e = e || window.event;
         a.mouseX = e.clientX;
         a.mouseY = e.clientY;
