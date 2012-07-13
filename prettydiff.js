@@ -560,7 +560,7 @@ var prettydiff = function (api) {
                                 if (b && !(/\s/).test(a) && a !== ":") {
                                     y = a + " " + y;
                                 } else if (b && a === ":") {
-                                    y = ":" + y;
+                                    y = ":PDpoundPD" + y;
                                 } else if (b && (/\s/).test(a)) {
                                     y = " " + y;
                                 }
@@ -716,7 +716,7 @@ var prettydiff = function (api) {
                                 p = 0;
                                 g = -1;
                                 for (e = 0; e < f; e += 1) {
-                                    if (typeof c[e - 1] !== "undefined" && c[e - 1][0] === c[e][0] && /\-[a-z]/.test(c[e - 1][1]) === false) {
+                                    if (c[e - 1] && c[e - 1][0] === c[e][0] && (/\-[a-z]/).test(c[e - 1][1]) === false && (/\-[a-z]/).test(c[e][1]) === false) {
                                         c[e - 1] = "";
                                     }
                                     if (c[e][0] !== "margin" && c[e][0].indexOf("margin") !== -1) {
@@ -774,7 +774,7 @@ var prettydiff = function (api) {
                             }
                             d[a] = d[a].replace(/\)\s+\{/g, "){");
                         }
-                        return d.join("");
+                        return d.join("").replace(/PDpoundPD#/g, "#");
                     },
                     fixURI = function (y) {
                         var a = 0,
@@ -1350,9 +1350,11 @@ var prettydiff = function (api) {
                                 if (y.length === 7 && y.charAt(1) === y.charAt(2) && y.charAt(3) === y.charAt(4) && y.charAt(5) === y.charAt(6)) {
                                     y = "#" + y.charAt(1) + y.charAt(3) + y.charAt(5);
                                 }
-                                if (b && !(/\s/).test(a)) {
+                                if (a === ":") {
+                                    y = a + "PDpoundPD" + y;
+                                } else if (b && !(/\s/).test(a) && a !== "(") {
                                     y = a + " " + y;
-                                } else if (b && (/\s/).test(a)) {
+                                } else if (b && ((/\s/).test(a) || a === "(")) {
                                     y = a + y;
                                 }
                                 return y;
@@ -1525,7 +1527,7 @@ var prettydiff = function (api) {
                                 p = 0;
                                 g = -1;
                                 for (e = 0; e < f; e += 1) {
-                                    if (c[e - 1] && c[e - 1][0] === c[e][0] && /\-[a-z]/.test(c[e - 1][1]) === false) {
+                                    if (c[e - 1] && c[e - 1][0] === c[e][0] && (/\-[a-z]/).test(c[e - 1][1]) === false && (/\-[a-z]/).test(c[e][1]) === false) {
                                         c[e - 1] = "";
                                     }
                                     if (c[e][0] !== "margin" && c[e][0].indexOf("margin") !== -1) {
@@ -1580,7 +1582,7 @@ var prettydiff = function (api) {
                                 d[a] = (h.join(";") + ";").replace(/^;/, "");
                             }
                         }
-                        return d.join("").replace(/\*\/\s*;\s*/g, "*/\n").replace(/(\s*[\w\-]+:)$/g, "\n}").replace(/\s*;$/, "");
+                        return d.join("").replace(/\*\/\s*;\s*/g, "*/\n").replace(/(\s*[\w\-]+:)$/g, "\n}").replace(/\s*;$/, "").replace(/PDpoundPD#/g, "#");
                     };
                 (function () {
                     var i,
