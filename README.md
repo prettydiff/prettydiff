@@ -1,8 +1,8 @@
 Pretty Diff
 ===========
 
-Try it online at http://prettydiff.com/
----------------------------------------
+Try it online at http://prettydiff.com/ or [join the mailing list](https://groups.google.com/d/forum/pretty-diff "Pretty Diff mailing list").
+---------------------------------------------------------------------
 
 Node.js
 -------
