@@ -1282,7 +1282,7 @@ pd = {
             pd.webtool[28] = "colorScheme: " + o.color;
         }
         if (typeof pd.webtool[28] !== "string") {
-            pd.webtool[28] = "colorScheme: default";
+            pd.webtool[28] = "colorScheme: shadow";
         } else if (typeof pd.webtool[3] !== "string") {
             o.re = $$("diffreport");
             o.rf = $$("diffreportbody");
@@ -1570,7 +1570,7 @@ pd = {
         o.ri.getElementsByTagName("h2")[0].style.width = "17em";
         o.rl.style.display = "none";
         o.cs.selectedIndex = 0;
-        o.wb.className = "default";
+        o.wb.className = "shadow";
         if (!ls) {
             o.rk.style.display = "none";
         } else {
