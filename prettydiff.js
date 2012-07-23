@@ -3670,7 +3670,15 @@ var prettydiff = function (api) {
                                             break;
                                         }
                                     }
-                                } else if (x.charAt(a) === "<" && x.charAt(a + 1) === "!" && /[A-Z]|\[/.test(x.charAt(a + 2))) {
+								} else if (x.charAt(a) === "<" && x.charAt(a + 1) === "!" && x.charAt(a + 2) === "[") {
+                                    for (b = a + 2; b < c; b += 1) {
+                                        if (x.charAt(b - 1) === "]" && x.charAt(b) === ">") {
+                                            a = b;
+                                            h += 1;
+                                            break;
+                                        }
+                                    }
+								} else if (x.charAt(a) === "<" && x.charAt(a + 1) === "!" && /[A-Z]|\[/.test(x.charAt(a + 2))) {
                                     for (b = a + 3; b < c; b += 1) {
                                         if (x.charAt(b) === ">" && q[q.length - 1] === ">" && q.length === 1) {
                                             h += 1;
@@ -4450,7 +4458,7 @@ var prettydiff = function (api) {
                             if (i - 1 === 0 && cinfo[0] === "start") {
                                 return level.push(1);
                             }
-                            if (cinfo[k] === "mixed_start" || cinfo[k] === "content" || cinfo[i - 1] === "mixed_start" || cinfo[i - 1] === "content" || (cinfo[i] === "singleton" && (cinfo[i - 1] === "start" || cinfo[i - 1] === "singleton") && build[i].charAt(0) !== " ")) {
+                            if (cinfo[k] === "mixed_start" || cinfo[k] === "content" || cinfo[i - 1] === "mixed_start" || cinfo[i - 1] === "content" || (cinfo[i] === "singleton" && (cinfo[i - 1] === "start" || cinfo[i - 1] === "singleton" || cinfo[i - 1] === "end") && build[i].charAt(0) !== " ")) {
                                 return level.push("x");
                             }
                             if ((cinfo[i - 1] === "comment" && level[i - 1] === 0) || ((cinfo[m] === "mixed_start" || cinfo[m] === "content") && cinfo[l] === "end" && (cinfo[k] === "mixed_end" || cinfo[k] === "mixed_both"))) {
@@ -4472,7 +4480,7 @@ var prettydiff = function (api) {
                                 if (level[k] < 0) {
                                     return c("start");
                                 }
-                                return level.push(level[k]);
+								return level.push(level[k]);
                             }
                             if (cinfo[m] !== "mixed_start" && cinfo[m] !== "content" && (cinfo[k] === "mixed_end" || cinfo[k] === "mixed_both")) {
                                 return (function () {
