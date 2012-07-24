@@ -1153,8 +1153,8 @@ var prettydiff = function (api) {
                 getl = input.length;
                 ret = m(input);
                 /*if (/(\}\s*)$/.test(input) && !/(\}\s*)$/.test(ret)) {
-                                    ret = ret + "}";
-                                }*/
+                                                    ret = ret + "}";
+                                                }*/
                 if (/\s/.test(ret.charAt(0))) {
                     ret = ret.slice(1, ret.length);
                 }
@@ -3670,7 +3670,7 @@ var prettydiff = function (api) {
                                             break;
                                         }
                                     }
-								} else if (x.charAt(a) === "<" && x.charAt(a + 1) === "!" && x.charAt(a + 2) === "[") {
+                                } else if (x.charAt(a) === "<" && x.charAt(a + 1) === "!" && x.charAt(a + 2) === "[") {
                                     for (b = a + 2; b < c; b += 1) {
                                         if (x.charAt(b - 1) === "]" && x.charAt(b) === ">") {
                                             a = b;
@@ -3678,7 +3678,7 @@ var prettydiff = function (api) {
                                             break;
                                         }
                                     }
-								} else if (x.charAt(a) === "<" && x.charAt(a + 1) === "!" && /[A-Z]|\[/.test(x.charAt(a + 2))) {
+                                } else if (x.charAt(a) === "<" && x.charAt(a + 1) === "!" && /[A-Z]|\[/.test(x.charAt(a + 2))) {
                                     for (b = a + 3; b < c; b += 1) {
                                         if (x.charAt(b) === ">" && q[q.length - 1] === ">" && q.length === 1) {
                                             h += 1;
@@ -4480,7 +4480,7 @@ var prettydiff = function (api) {
                                 if (level[k] < 0) {
                                     return c("start");
                                 }
-								return level.push(level[k]);
+                                return level.push(level[k]);
                             }
                             if (cinfo[m] !== "mixed_start" && cinfo[m] !== "content" && (cinfo[k] === "mixed_end" || cinfo[k] === "mixed_both")) {
                                 return (function () {
@@ -6585,7 +6585,7 @@ var prettydiff = function (api) {
                                 api.lang = "javascript";
                                 auto = "JavaScript";
                             }
-                        } else if ((/>([a-z0-9\s])*<\/?[a-z]+>/i.test(a) && /^(\s*<)/.test(a) && /(>\s*)$/.test(a)) || (/^(\s*<s((cript)|(tyle)))/i.test(a) && /(<\/s((cript)|(tyle))>\s*)$/i.test(a))) {
+                        } else if ((/>[\w\s:]*<\/?[\w\s:]+>/i.test(a) && /^(\s*<)/.test(a) && /(>\s*)$/.test(a)) || (/^(\s*<s((cript)|(tyle)))/i.test(a) && /(<\/s((cript)|(tyle))>\s*)$/i.test(a))) {
                             api.lang = "markup";
                             if (api.html === true || /^(\s*<\!doctype html>)/i.test(a) || (/^(\s*<\!DOCTYPE\s+((html)|(HTML))\s+PUBLIC\s+)/.test(a) && /XHTML\s+1\.1/.test(a) === false && /XHTML\s+1\.0\s+(S|s)((trict)|(TRICT))/.test(a) === false)) {
                                 auto = "HTML";
