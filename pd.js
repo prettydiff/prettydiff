@@ -1462,19 +1462,19 @@ pd = {
             o.bt.className = "difftall";
             o.nt.className = "difftall";
             if (window.innerHeight) {
-                o.bi.style.height = ((window.innerHeight - 250) / 10) + "em";
-                o.mi.style.height = ((window.innerHeight - 250) / 10) + "em";
-                o.bx.style.height = ((window.innerHeight - 250) / 10) + "em";
-                o.mx.style.height = ((window.innerHeight - 250) / 10) + "em";
-                o.bo.style.height = ((window.innerHeight - 265) / 10) + "em";
-                o.nx.style.height = ((window.innerHeight - 265) / 10) + "em";
+                o.bi.style.height = ((Math.floor(window.innerHeight / 1.2) - 115) / 10) + "em";
+                o.mi.style.height = ((Math.floor(window.innerHeight / 1.2) - 115) / 10) + "em";
+                o.bx.style.height = ((Math.floor(window.innerHeight / 1.2) - 115) / 10) + "em";
+                o.mx.style.height = ((Math.floor(window.innerHeight / 1.2) - 115) / 10) + "em";
+                o.bo.style.height = ((Math.floor(window.innerHeight / 1.2) - 135) / 10) + "em";
+                o.nx.style.height = ((Math.floor(window.innerHeight / 1.2) - 135) / 10) + "em";
             } else {
-                o.bi.style.height = ((window.screen.availHeight - 400) / 10) + "em";
-                o.mi.style.height = ((window.screen.availHeight - 400) / 10) + "em";
-                o.bx.style.height = ((window.screen.availHeight - 400) / 10) + "em";
-                o.mx.style.height = ((window.screen.availHeight - 400) / 10) + "em";
-                o.bo.style.height = ((window.screen.availHeight - 415) / 10) + "em";
-                o.nx.style.height = ((window.screen.availHeight - 415) / 10) + "em";
+                o.bi.style.height = ((Math.floor(window.screen.availHeight / 1.2) - 250) / 10) + "em";
+                o.mi.style.height = ((Math.floor(window.screen.availHeight / 1.2) - 250) / 10) + "em";
+                o.bx.style.height = ((Math.floor(window.screen.availHeight / 1.2) - 250) / 10) + "em";
+                o.mx.style.height = ((Math.floor(window.screen.availHeight / 1.2) - 250) / 10) + "em";
+                o.bo.style.height = ((Math.floor(window.screen.availHeight / 1.2) - 275) / 10) + "em";
+                o.nx.style.height = ((Math.floor(window.screen.availHeight / 1.2) - 275) / 10) + "em";
             }
             o.disp.className = "maximized";
             x.innerHTML = "Normal view";

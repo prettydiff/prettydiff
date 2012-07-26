@@ -1153,8 +1153,8 @@ var prettydiff = function (api) {
                 getl = input.length;
                 ret = m(input);
                 /*if (/(\}\s*)$/.test(input) && !/(\}\s*)$/.test(ret)) {
-                                                    ret = ret + "}";
-                                                }*/
+                                                                    ret = ret + "}";
+                                                                }*/
                 if (/\s/.test(ret.charAt(0))) {
                     ret = ret.slice(1, ret.length);
                 }
@@ -3301,7 +3301,7 @@ var prettydiff = function (api) {
                             }
                         }
                         i = a;
-                        x[i] = c.join("").replace(/\s+/g, " ").replace(/\s*,\s+/g, ", ").replace(/\s*\/\s*/g, "/").replace(/\s*=\s*/g, "=").replace(/\s*:\s*/g, ":").replace(/ \="/g, "=\"").replace(/ \='/g, "='") + ">";
+                        x[i] = c.join("").replace(/\s+/g, " ").replace(/\s*,\s+/g, ", ").replace(/\s*\/\s*/g, "/").replace(/\s*=\s*/g, "=").replace(/ \="/g, "=\"").replace(/ \='/g, "='") + ">";
                     },
                     markupcomment = function () {
                         var Y = x.length,
@@ -3592,8 +3592,7 @@ var prettydiff = function (api) {
                         args.force_indent = false;
                     }
                 }());
-                var tab = "",
-                    token = [],
+                var token = [],
                     build = [],
                     cinfo = [],
                     level = [],
@@ -3902,12 +3901,22 @@ var prettydiff = function (api) {
                                 c = end.split("").reverse(),
                                 d = 0,
                                 e = "",
+                                f = true,
                                 loop = y.length;
                             if (i > 0 && y[i - 1] === " ") {
                                 e = " ";
                             }
                             for (i; i < loop; i += 1) {
                                 a.push(y[i]);
+                                if (end === "]>") {
+                                    if (y[i] === "[") {
+                                        f = false;
+                                    }
+                                    if (f && y[i] === ">") {
+                                        c = [">"];
+                                        b = 1;
+                                    }
+                                }
                                 if (a[a.length - 1] === c[0]) {
                                     if (b === 1) {
                                         return e + a.join("");
@@ -3984,14 +3993,20 @@ var prettydiff = function (api) {
                         },
                         loop = y.length;
                     for (i = 0; i < loop; i += 1) {
-                        if (y[i] === "<" && y[i + 1] === "!" && y[i + 2] === "-" && y[i + 3] === "-" && y[i + 4] !== "#" && token[token.length - 1] !== "T_script" && token[token.length - 1] !== "T_style") {
+                        if (token[token.length - 1] === "T_script") {
+                            build.push(cgather("script"));
+                            token.push("T_content");
+                        } else if (token[token.length - 1] === "T_style") {
+                            build.push(cgather("style"));
+                            token.push("T_content");
+                        } else if (y[i] === "<" && y[i + 1] === "!" && y[i + 2] === "-" && y[i + 3] === "-" && y[i + 4] !== "#" && token[token.length - 1] !== "T_style") {
                             build.push(b("-->"));
                             token.push("T_comment");
                         } else if (y[i] === "<" && y[i + 1] === "!" && y[i + 2] === "-" && y[i + 3] === "-" && y[i + 4] === "#") {
                             build.push(b("-->"));
                             token.push("T_ssi");
-                        } else if (y[i] === "<" && y[i + 1] === "!" && y[i + 2] !== "-" && token[token.length - 1] !== "T_script") {
-                            build.push(b(">"));
+                        } else if (y[i] === "<" && y[i + 1] === "!" && y[i + 2] !== "-") {
+                            build.push(b("]>"));
                             token.push("T_sgml");
                         } else if (y[i] === "<" && y[i + 1] === "?" && y[i + 2].toLowerCase() === "x" && y[i + 3].toLowerCase() === "m" && y[i + 4].toLowerCase() === "l") {
                             build.push(b("?>"));
@@ -4089,16 +4104,6 @@ var prettydiff = function (api) {
                         }
                     }
                     sum = [].concat(build);
-                }());
-                (function () {
-                    var a = 0,
-                        b = args.insize,
-                        c = args.inchar,
-                        d = [];
-                    for (a = 0; a < b; a += 1) {
-                        d.push(c);
-                    }
-                    tab = d.join("");
                 }());
                 (function () {
                     var a = 0,
@@ -4746,19 +4751,62 @@ var prettydiff = function (api) {
                     }());
                 }());
                 (function () {
-                    var i = 0,
+                    var tab = (function () {
+                            var a = 0,
+                                b = args.insize,
+                                c = args.inchar,
+                                d = [];
+                            for (a = 0; a < b; a += 1) {
+                                d.push(c);
+                            }
+                            return d.join("");
+                        }()),
+                        i = 0,
                         loop = build.length,
                         tab_math = function (x) {
                             var a = 0,
                                 b = (typeof level[i] === "number") ? level[i] : 0,
-                                indent = [];
+                                c = 0,
+                                indent = [],
+                                indents = "",
+                                parse = [],
+                                pad = function () {
+                                    var s = indents,
+                                        t = c;
+                                    if (t === 0) {
+                                        return s;
+                                    }
+                                    do {
+                                        s += tab
+                                        t -= 1;
+                                    } while (t > 0);
+                                    return s;
+                                };
                             for (a = 0; a < b; a += 1) {
                                 indent.push(tab);
                             }
                             if (cinfo[i] === "mixed_both") {
                                 x = x.slice(0, x.length - 1);
                             }
-                            x = "\n" + indent.join("") + x;
+                            indents = indent.join("");
+                            x = "\n" + indents + x;
+                            if (cinfo[i] === "parse" && /\[\s*</.test(build[i])) {
+                                build[i] = build[i].replace(/\[\s+</g, "[<");
+                                parse = build[i].split("");
+                                b = parse.length;
+                                for (a = 0; a < b; a += 1) {
+                                    if (parse[a] === "[") {
+                                        c += 1;
+                                        parse[a] = "[\n" + pad();
+                                    } else if (parse[a] === "]") {
+                                        c -= 1;
+                                        parse[a] = "\n" + pad() + "]";
+                                    } else if (parse[a] === "<" && (a === 0 || parse[a - 1].charAt(0) !== "[")) {
+                                        parse[a] = "\n" + pad() + "<";
+                                    }
+                                }
+                                x = parse.join("").replace(/\s>/g, ">");
+                            }
                             return x;
                         },
                         end_math = function (x) {
@@ -4807,7 +4855,7 @@ var prettydiff = function (api) {
                             d = indent.join("");
                             return "\n" + d + x.replace(/\n/g, "\n" + d);
                         };
-                    for (i = 1; i < loop; i += 1) {
+                    for (i = 0; i < loop; i += 1) {
                         if (cinfo[i] === "end" && (args.force_indent || (cinfo[i - 1] !== "content" && cinfo[i - 1] !== "mixed_start"))) {
                             if (build[i].charAt(0) === " ") {
                                 build[i] = build[i].substr(1);
@@ -5314,7 +5362,7 @@ var prettydiff = function (api) {
                         }());
                     summary = s + n + o;
                 }());
-                return build.join("").replace(/\n(\s)+\n/g, "\n\n");
+                return build.join("").replace(/\n(\s)+\n/g, "\n\n").replace(/^\s+/, "");
             },
             diffview = function (args) {
                 (function () {
@@ -6585,9 +6633,11 @@ var prettydiff = function (api) {
                                 api.lang = "javascript";
                                 auto = "JavaScript";
                             }
-                        } else if ((/>[\w\s:]*<\/?[\w\s:]+>/i.test(a) && /^(\s*<)/.test(a) && /(>\s*)$/.test(a)) || (/^(\s*<s((cript)|(tyle)))/i.test(a) && /(<\/s((cript)|(tyle))>\s*)$/i.test(a))) {
+                        } else if ((/(>[\w\s:]*)?<(\/|\!)?[\w\s:\-\[]+/.test(a) && /^(\s*<)/.test(a) && /(>\s*)$/.test(a)) || (/^(\s*<s((cript)|(tyle)))/i.test(a) && /(<\/s((cript)|(tyle))>\s*)$/i.test(a))) {
                             api.lang = "markup";
-                            if (api.html === true || /^(\s*<\!doctype html>)/i.test(a) || (/^(\s*<\!DOCTYPE\s+((html)|(HTML))\s+PUBLIC\s+)/.test(a) && /XHTML\s+1\.1/.test(a) === false && /XHTML\s+1\.0\s+(S|s)((trict)|(TRICT))/.test(a) === false)) {
+                            if (/<[a-zA-Z]/.test(a) === false && /<\![A-Z]/.test(a)) {
+                                auto = "SGML";
+                            } else if (api.html === true || /^(\s*<\!doctype html>)/i.test(a) || (/^(\s*<\!DOCTYPE\s+((html)|(HTML))\s+PUBLIC\s+)/.test(a) && /XHTML\s+1\.1/.test(a) === false && /XHTML\s+1\.0\s+(S|s)((trict)|(TRICT))/.test(a) === false)) {
                                 auto = "HTML";
                             } else {
                                 auto = "markup";
