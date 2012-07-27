@@ -1,0 +1,17 @@
+//testing for automatic semicolon insertion
+f
+var a = function () {r}
+return
+
+var a = function () {}
+var b
+var c = 1, d = "", e = f, h = function (){return function () {return}},g = {}
+var c = 1, d = "", e = f, h = function (){return function () {return}+1},g = {}
+function test () {return "1234"}
+function test () {return "1234"}var a = 3
+
+var a = {dog:"123",list:[4,5,6],cat:"wer"},d="adf" //plus next line
+return
+
+
+var a = {dog:"123",list:[4,5,6],cat:"wer"}

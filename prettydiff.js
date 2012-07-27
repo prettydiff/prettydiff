@@ -518,7 +518,7 @@ var prettydiff = function (api) {
                                     }
                                 }
                             } else if (f === "" && x[a] === "\n") {
-                                if ((/\w/).test(x[a + 1]) && x[a - 1] !== "}" && x[a - 1] !== ")") {
+                                if ((/\w/).test(x[a + 1]) && x[a - 1] !== "}" && x[a - 1] !== ")" && x[a - 1].indexOf(";") === -1) {
                                     x[a] = ";";
                                 } else {
                                     x[a] = "";
@@ -1152,9 +1152,6 @@ var prettydiff = function (api) {
                 geti = 0;
                 getl = input.length;
                 ret = m(input);
-                /*if (/(\}\s*)$/.test(input) && !/(\}\s*)$/.test(ret)) {
-                                                                    ret = ret + "}";
-                                                                }*/
                 if (/\s/.test(ret.charAt(0))) {
                     ret = ret.slice(1, ret.length);
                 }
