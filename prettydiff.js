@@ -761,7 +761,7 @@ var prettydiff = function (api) {
                                     }
                                 }
                                 for (e = 0; e < f; e += 1) {
-                                    if (typeof c[e] !== "string" && typeof c[e] !== "undefined") {
+                                    if (typeof c[e] !== "string" && c[e] !== undefined) {
                                         c[e] = c[e].join(":");
                                     } else if (typeof c[e] === "string") {
                                         c[e] = c[e].replace(/~PDCSEP~/g, ":");
@@ -1538,7 +1538,7 @@ var prettydiff = function (api) {
                                             c[e - 3] = "";
                                             c[e - 2] = "";
                                             c[e - 1] = "";
-                                            if (typeof c[e - 4] !== "undefined" && c[e - 4][0] === "margin") {
+                                            if (c[e - 4] !== undefined && c[e - 4][0] === "margin") {
                                                 c[e - 4] = "";
                                             }
                                         }
@@ -1550,7 +1550,7 @@ var prettydiff = function (api) {
                                             c[e - 3] = "";
                                             c[e - 2] = "";
                                             c[e - 1] = "";
-                                            if (typeof c[e - 4] !== "undefined" && c[e - 4][0] === "padding") {
+                                            if (c[e - 4] !== undefined && c[e - 4][0] === "padding") {
                                                 c[e - 4] = "";
                                             }
                                         }
@@ -4590,7 +4590,7 @@ var prettydiff = function (api) {
                             b = inner[a][0];
                             c = inner[a][1];
                             d = inner[a][2];
-                            if (typeof build[d] !== "undefined") {
+                            if (typeof build[d] === "string") {
                                 if (build[d].charAt(0) === " ") {
                                     c += 1;
                                 }
@@ -4786,7 +4786,7 @@ var prettydiff = function (api) {
                                         return s;
                                     }
                                     do {
-                                        s += tab
+                                        s += tab;
                                         t -= 1;
                                     } while (t > 0);
                                     return s;
@@ -4820,7 +4820,7 @@ var prettydiff = function (api) {
                                                 break;
                                             }
                                         }
-                                    } else if (parse[a] === "<" && (a === 0 || parse[a - 1].charAt(0) !== "[" )) {
+                                    } else if (parse[a] === "<" && (a === 0 || parse[a - 1].charAt(0) !== "[")) {
                                         parse[a] = "\n" + pad() + "<";
                                     }
                                 }
@@ -6421,7 +6421,7 @@ var prettydiff = function (api) {
                         if (api.source.indexOf("/*prettydiff.com") === -1 && api.diff.indexOf("/*prettydiff.com") === -1) {
                             return;
                         }
-                        if (c === 15 && typeof api.diff !== "undefined") {
+                        if (c === 15 && typeof api.diff === "string") {
                             c = api.diff.indexOf("/*prettydiff.com") + 16;
                             d = false;
                         } else if (c === 15) {
