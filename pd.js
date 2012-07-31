@@ -580,7 +580,7 @@ pd = {
             h = (test) ? a.getElementsByTagName("button")[2] : a.getElementsByTagName("button")[1];
 
         //shrink
-        if (x.innerHTML === "\u2193") {
+        if (x.innerHTML === "\u035f") {
             if (!pd.position[f]) {
                 pd.position[f] = {};
             }
@@ -652,7 +652,7 @@ pd = {
                 b.style.right = "auto";
                 c.width = "75em";
             }
-            x.innerHTML = "\u2193";
+            x.innerHTML = "\u035f";
         }
         pd.options(b);
     },
@@ -1071,7 +1071,7 @@ pd = {
             }
             o.bc.className = "unchecked";
         } else if (o.dd.checked && o.dw.checked) {
-            o.bc.className = "checked";
+            o.dc.className = "checked";
             if (o.dc.value === "Click me for custom input") {
                 o.dc.value = "";
             }
@@ -1079,7 +1079,7 @@ pd = {
             if (o.dc.value === "") {
                 o.dc.value = "Click me for custom input";
             }
-            o.bc.className = "unchecked";
+            o.dc.className = "unchecked";
         }
         if (o.bcv !== "") {
             o.bc.value = o.bcv;
@@ -1605,13 +1605,13 @@ pd = {
         o.csvp.style.display = "none";
         o.md.style.display = "none";
         if (o.bt) {
-            o.bt.className = "wide";
+            o.bt.className = "difftall";
         }
         if (o.nt) {
-            o.nt.className = "wide";
+            o.nt.className = "difftall";
         }
-        o.bd.className = "wide";
-        o.md.className = "wide";
+        o.bd.className = "tall";
+        o.md.className = "tall";
         o.pt.disabled = true;
         o.au.checked = true;
         o.option.value = "/*prettydiff.com */";
@@ -1636,8 +1636,8 @@ pd = {
         } else {
             o.bb.checked = true;
         }
-        if (o.dp) {
-            o.dp.checked = true;
+        if (o.dt) {
+            o.dt.checked = true;
         }
         if (o.sh) {
             o.sh.innerHTML = "Maximize inputs";
