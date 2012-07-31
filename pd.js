@@ -159,7 +159,6 @@ var exports = "",
             scanvas: "body.canvas{background:#e8e8e8;color:#666}.canvas a{color:#450}.canvas h2{background:#f8f8ef;border-color:#664;box-shadow:0 .1em .2em rgba(128,128,92,0.75)}.canvas table.diff{border-color:#664}.canvas table.diff tbody th{background:#c8c8bf;border-color:#664}.canvas table.diff tbody td{background:#f8f8ef;border-color:#664}.canvas table.diff thead{background:#c8c8bf;border-bottom-color:#664;color:#664}.canvas table.diff thead th{border-left-color:#664}.canvas table.diff .empty{background-color:#ccc}.canvas table.diff .replace{background-color:#dda;color:#660}.canvas table.diff .replace em{background-color:#ffd;border-color:#664;color:#880}.canvas table.diff .delete{background-color:#da9;color:#600}.canvas table.diff .delete em{background-color:#fbc;border-color:#600;color:#933}.canvas table.diff .equal{background-color:#f8f8ef;color:#666}.canvas table.diff .skip{background-color:#eee;border-color:#664}.canvas table.diff .insert{background-color:#bd9;color:#040}.canvas table.diff .insert em{background-color:#efc;border-color:#060;color:#464}.canvas table.diff th.author{background:#f8f8ef;border-bottom-color:#664;color:#666}",
             sshadow: "body.shadow{background:#222;color:#eee}.shadow a{color:#9cf}.shadow button{background:#456;border-color:#789;color:#cde}.shadow button:hover,.shadow button:active{background:#ddd;color:#333}.shadow #update,.shadow #title_text{background:#ddd;border-color:#fff;color:#222}.shadow h1 img{border-color:#fff}.shadow h2{background:#eee;border-color:#333;box-shadow:0 .1em .2em rgba(0,0,0,0.75);color:#222}.shadow table.diff tbody th{background:#bbb;border-color:#999;color:#333}.shadow table.diff thead,.shadow table.diff thead th{background:#555;border-color:#999;color:#ddd}.shadow table.diff tbody td{background:#666;border-color:#999;color:#ddd}.shadow table.diff .empty{background-color:#999}.shadow table.diff .replace{background-color:#664;color:#bb8}.shadow table.diff .replace em{background-color:#440;border-color:#220;color:#cc9}.shadow table.diff .delete{background-color:#300;color:#c66}.shadow table.diff .delete em{background-color:#700;border-color:#c66;color:#f99}.shadow table.diff .equal{background-color:#333;color:#ddd}.shadow table.diff .skip{background-color:#000;border-color:#999}.shadow table.diff .insert{background-color:#040;color:#6c6}.shadow table.diff .insert em{background-color:#363;border-color:#6c0;color:#cfc}.shadow table.diff th.author{background:#555;border-bottom-color:#999;color:#ddd}.shadow table td{border-color:#999}.shadow table.diff{background:#333;border-color:#999;color:#ddd}"
         },
-        top: "",
         color: "shadow",
         context: $$("contextSize"),
         inline: $$("inline"),
@@ -573,7 +572,6 @@ pd = {
             b = a.parentNode,
             c = b.getElementsByTagName("div")[0],
             d = b.getElementsByTagName("h2")[0],
-            e = o.top,
             f = b.getAttribute("id"),
             test = (b === o.re) ? true : false,
             g = (test) ? a.getElementsByTagName("button")[1] : a.getElementsByTagName("button")[0],
@@ -596,16 +594,16 @@ pd = {
             b.style.left = "auto";
             a.style.display = "none";
             b.style.borderWidth = "0em";
-            b.style.top = e;
+            b.style.removeProperty("top");
             b.style.zIndex = "2";
             if (b === o.re) {
-                b.style.right = "59em";
+                b.style.right = "57.7em";
             } else if (b === o.rg) {
-                b.style.right = "40em";
+                b.style.right = "38.7em";
             } else if (b === o.ri) {
-                b.style.right = "21em";
+                b.style.right = "19.7em";
             } else if (b === o.rk) {
-                b.style.right = "2em";
+                b.style.right = ".7em";
             }
             if (o.zindex > 2) {
                 o.zindex -= 3;
@@ -642,7 +640,6 @@ pd = {
                 c.style.width = pd.position[f].width + "em";
                 c.style.height = pd.position[f].height + "em";
             } else {
-                b.style.top = "55em";
                 b.style.left = (b.offsetLeft / 10) + "em";
                 if (b === o.re) {
                     d.style.width = "65.24em";
@@ -808,7 +805,7 @@ pd = {
             b = a.getElementsByTagName("p")[0].style.display,
             c = {},
             d = a.lastChild,
-            h = a.firstChild.lastChild,
+            h = a.firstChild,
             i = 0,
             ax = a.offsetLeft,
             ay = a.offsetTop,
@@ -841,6 +838,22 @@ pd = {
             return;
         }
         pd.top(a);
+        if (d.nodeType !== 1) {
+            do {
+                d = d.previousSibling;
+            } while (d.nodeType !== 1);
+        }
+        if (h.nodeType !== 1) {
+            do {
+                h = h.nextSibling;
+            } while (h.nodeType !== 1);
+        }
+        h = h.lastChild;
+        if (h.nodeType !== 1) {
+            do {
+                h = h.previousSibling;
+            } while (h.nodeType !== 1);
+        }
         d.style.opacity = ".5";
         i = a.clientHeight;
         h.style.top = (i / 20) + "0em";
@@ -978,26 +991,6 @@ pd = {
             o.md.className = "tall";
         }
         pd.options(a);
-        (function () {
-            var top = ((o.op.offsetTop / 10)) + "em",
-                a = o.re.getElementsByTagName("button")[1].innerHTML,
-                b = o.rg.getElementsByTagName("button")[0].innerHTML,
-                c = o.ri.getElementsByTagName("button")[0].innerHTML,
-                d = (ls) ? o.rk.getElementsByTagName("button")[0].innerHTML : "";
-            o.top = top;
-            if (o.rf.clientWidth === 0 && a === "\u2191") {
-                o.re.style.top = top;
-            }
-            if (o.rh.clientWidth === 0 && b === "\u2191") {
-                o.rg.style.top = top;
-            }
-            if (o.rj.clientWidth === 0 && c === "\u2191") {
-                o.ri.style.top = top;
-            }
-            if (ls && o.rl.clientWidth === 0 && d === "\u2191") {
-                o.rk.style.top = top;
-            }
-        }());
     },
 
     //alters available options depending upon language selection
@@ -1109,7 +1102,7 @@ pd = {
         o.bb = $$("modebeautify");
         o.dd = $$("modediff");
         o.mm = $$("modeminify");
-        o.dt = $$("difftall");
+        o.dp = $$("diffwide");
         o.sh = $$("hideOptions");
         o.ps = $$("diff-save");
         if (x === o.bb) {
@@ -1347,10 +1340,10 @@ pd = {
                 pd.webtool[0] = "showhide: show";
             }
         }
-        if (x === o.dp || !o.dt || !o.dt.checked) {
-            pd.webtool[1] = "display: horizontal";
-        } else if (x === o.dt || o.dt.checked) {
+        if (x === o.dt || !o.dp || !o.dp.checked) {
             pd.webtool[1] = "display: vertical";
+        } else if (x === o.dp || o.dp.checked) {
+            pd.webtool[1] = "display: horizontal";
         }
         if (o.ps) {
             a = o.re.getElementsByTagName("button")[0];
@@ -1401,43 +1394,6 @@ pd = {
             }
         }
         localStorage.setItem("webtool", pd.webtool.join("prettydiffcsep").replace(/(prettydiffcsep)+/g, "prettydiffcsep").replace(/%/g, "prettydiffper"));
-    },
-
-    //account for position of minimized reports when window changes size
-    fixminreport: function () {
-        "use strict";
-        var top = ((o.op.offsetTop / 10)) + "em";
-        o.top = top;
-        o.re = $$("diffreport");
-        o.rf = $$("diffreportbody");
-        o.rg = $$("beaureport");
-        o.rh = $$("beaureportbody");
-        o.ri = $$("minreport");
-        o.rj = $$("minreportbody");
-        if (ls) {
-            o.rk = $$("statreport");
-            o.rl = $$("statreportbody");
-        }
-        if (o.rf.style.display === "none" && (o.re.getElementsByTagName("h2")[0].style.width === "17em" || o.re.getElementsByTagName("h2")[0].style.width === "")) {
-            o.re.style.right = "59em";
-            o.re.style.top = top;
-            o.re.style.left = "auto";
-        }
-        if (o.rh.style.display === "none" && (o.rg.getElementsByTagName("h2")[0].style.width === "17em" || o.rg.getElementsByTagName("h2")[0].style.width === "")) {
-            o.rg.style.right = "40em";
-            o.rg.style.top = top;
-            o.rg.style.left = "auto";
-        }
-        if (o.rj.style.display === "none" && (o.ri.getElementsByTagName("h2")[0].style.width === "17em" || o.ri.getElementsByTagName("h2")[0].style.width === "")) {
-            o.ri.style.right = "21em";
-            o.ri.style.top = top;
-            o.ri.style.left = "auto";
-        }
-        if (ls && o.rl.style.display === "none" && (o.rk.getElementsByTagName("h2")[0].style.width === "17em" || o.rk.getElementsByTagName("h2")[0].style.width === "")) {
-            o.rk.style.right = "2em";
-            o.rk.style.top = top;
-            o.rk.style.left = "auto";
-        }
     },
 
     //maximize textareas and hide options
@@ -1532,8 +1488,6 @@ pd = {
             o.rg.style.display = "block";
             o.ri.style.display = "block";
             o.rk.style.display = "block";
-            o.top = ($$("options").offsetTop / 10) + "em";
-            pd.fixminreport();
         }
         pd.options(x);
         return false;
@@ -1688,7 +1642,6 @@ pd = {
         if (ls && localStorage.hasOwnProperty("optionString")) {
             delete localStorage.optionString;
         }
-        pd.fixminreport();
     },
 
     //alter tool on page load in reflection to saved state
@@ -1750,12 +1703,12 @@ pd = {
                             } else if (d[0] === "additional" && d[1] === "yes") {
                                 o.ao.style.display = "block";
                                 o.ay.checked = true;
-                            } else if (o.dt && d[0] === "display" && d[1] === "vertical") {
-                                o.dt.checked = true;
-                                o.bt.className = "difftall";
-                                o.nt.className = "difftall";
-                                o.bd.className = "tall";
-                                o.md.className = "tall";
+                            } else if (o.dp && d[0] === "display" && d[1] === "horizontal") {
+                                o.dp.checked = true;
+                                o.bt.className = "wide";
+                                o.nt.className = "wide";
+                                o.bd.className = "wide";
+                                o.md.className = "wide";
                             } else if (d[0] === "diffsave" && d[1] === "true") {
                                 o.ps.checked = true;
                                 i = o.re.getElementsByTagName("button")[0];
@@ -1861,28 +1814,28 @@ pd = {
                         o.re.style.right = "auto";
                         o.re.style.borderWidth = "0.1em";
                         o.re.getElementsByTagName("p")[0].style.display = "block";
-                        o.re.getElementsByTagName("p")[0].getElementsByTagName("button")[1].innerHTML = "\u2193";
+                        o.re.getElementsByTagName("p")[0].getElementsByTagName("button")[1].innerHTML = "\u035f";
                         o.rf.style.display = "block";
                     }
                     if (bm && bma) {
                         o.rg.style.right = "auto";
                         o.rg.style.borderWidth = "0.1em";
                         o.rg.getElementsByTagName("p")[0].style.display = "block";
-                        o.rg.getElementsByTagName("p")[0].getElementsByTagName("button")[0].innerHTML = "\u2193";
+                        o.rg.getElementsByTagName("p")[0].getElementsByTagName("button")[0].innerHTML = "\u035f";
                         o.rh.style.display = "block";
                     }
                     if (mm && mma) {
                         o.ri.style.right = "auto";
                         o.ri.style.borderWidth = "0.1em";
                         o.ri.getElementsByTagName("p")[0].style.display = "block";
-                        o.ri.getElementsByTagName("p")[0].getElementsByTagName("button")[0].innerHTML = "\u2193";
+                        o.ri.getElementsByTagName("p")[0].getElementsByTagName("button")[0].innerHTML = "\u035f";
                         o.rj.style.display = "block";
                     }
                     if (sm && sma) {
                         o.rk.style.right = "auto";
                         o.rk.style.borderWidth = "0.1em";
                         o.rk.getElementsByTagName("p")[0].style.display = "block";
-                        o.rk.getElementsByTagName("p")[0].getElementsByTagName("button")[0].innerHTML = "\u2193";
+                        o.rk.getElementsByTagName("p")[0].getElementsByTagName("button")[0].innerHTML = "\u035f";
                         o.rl.style.display = "block";
                     }
                 }
@@ -2331,10 +2284,6 @@ pd = {
                 if (o.nl && localStorage.hasOwnProperty("nl") && localStorage.getItem("ni") !== null) {
                     o.nl.value = localStorage.getItem("nl");
                 }
-            }
-            pd.fixminreport();
-            if (typeof window.onresize === "object" || typeof window.onresize === "function") {
-                window.onresize = pd.fixminreport;
             }
         } else if (ls && localStorage.hasOwnProperty("webtool") && localStorage.getItem("webtool") !== null) {
             a = localStorage.getItem("webtool").replace(/prettydiffper/g, "%").split("prettydiffcsep");
