@@ -157,8 +157,10 @@ var exports = "",
             scoffee: "body.coffee{background:#dcb;color:#321}.coffee a{color:#900}.coffee h2{border-color:#600}.coffee table.diff{border-color:#966}.coffee table.diff tbody th{background:#edc;border-color:#966;color:#633}.coffee table.diff thead{background:#cba;border-bottom-color:#966}.coffee table.diff thead th{border-left-color:#966}.coffee table.diff .empty{background-color:#ddd}.coffee table.diff .replace{background-color:#fda}.coffee table.diff .replace em{background-color:#ffd;border-color:#963;color:#630}.coffee table.diff .delete{background-color:#ebb}.coffee table.diff .delete em{background-color:#fee;border-color:#700;color:#600}.coffee table.diff .equal{background-color:#fff8ee}.coffee table.diff .skip{background-color:#eee;border-color:#966}.coffee table.diff .insert{background-color:#cec}.coffee table.diff .insert em{background-color:#efc;border-color:#070;color:#050}.coffee table.diff th.author{background:#cba;border-top-color:#966}",
             sdark: "body.dark{background:#333;color:#eee}.dark a{color:#9cf}.dark h2{background:#def;border-color:#006;color:#036}.dark table.diff{border-color:#036}.dark table.diff tbody th{background:#369;border-color:#036;color:#def}.dark table.diff tbody td{border-color:#036}.dark table.diff thead{background:#036;border-bottom-color:#036;color:#def}.dark table.diff thead th{border-left-color:#abc}.dark table.diff .empty{background-color:#456}.dark table.diff .replace{background-color:#468;color:#def}.dark table.diff .replace em{background-color:#dff;border-color:#036;color:#036}.dark table.diff .delete{background-color:#600;color:#fbb}.dark table.diff .delete em{background-color:#fbb;border-color:#600;color:#600}.dark table.diff .equal{background-color:#024;color:#def}.dark table.diff .skip{background-color:#333;border-color:#036}.dark table.diff .insert{background-color:#696;color:#dfd}.dark table.diff .insert em{background-color:#efc;border-color:#060;color:#050}.dark table.diff th.author{background:#036;border-bottom-color:#036;color:#def}",
             scanvas: "body.canvas{background:#e8e8e8;color:#666}.canvas a{color:#450}.canvas h2{background:#f8f8ef;border-color:#664;box-shadow:0 .1em .2em rgba(128,128,92,0.75)}.canvas table.diff{border-color:#664}.canvas table.diff tbody th{background:#c8c8bf;border-color:#664}.canvas table.diff tbody td{background:#f8f8ef;border-color:#664}.canvas table.diff thead{background:#c8c8bf;border-bottom-color:#664;color:#664}.canvas table.diff thead th{border-left-color:#664}.canvas table.diff .empty{background-color:#ccc}.canvas table.diff .replace{background-color:#dda;color:#660}.canvas table.diff .replace em{background-color:#ffd;border-color:#664;color:#880}.canvas table.diff .delete{background-color:#da9;color:#600}.canvas table.diff .delete em{background-color:#fbc;border-color:#600;color:#933}.canvas table.diff .equal{background-color:#f8f8ef;color:#666}.canvas table.diff .skip{background-color:#eee;border-color:#664}.canvas table.diff .insert{background-color:#bd9;color:#040}.canvas table.diff .insert em{background-color:#efc;border-color:#060;color:#464}.canvas table.diff th.author{background:#f8f8ef;border-bottom-color:#664;color:#666}",
-            sshadow: "body.shadow{background:#222;color:#eee}.shadow a{color:#9cf}.shadow button{background:#456;border-color:#789;color:#cde}.shadow button:hover,.shadow button:active{background:#ddd;color:#333}.shadow #update,.shadow #title_text{background:#ddd;border-color:#fff;color:#222}.shadow h1 img{border-color:#fff}.shadow h2{background:#eee;border-color:#333;box-shadow:0 .1em .2em rgba(0,0,0,0.75);color:#222}.shadow table.diff tbody th{background:#bbb;border-color:#999;color:#333}.shadow table.diff thead,.shadow table.diff thead th{background:#555;border-color:#999;color:#ddd}.shadow table.diff tbody td{background:#666;border-color:#999;color:#ddd}.shadow table.diff .empty{background-color:#999}.shadow table.diff .replace{background-color:#664;color:#bb8}.shadow table.diff .replace em{background-color:#440;border-color:#220;color:#cc9}.shadow table.diff .delete{background-color:#300;color:#c66}.shadow table.diff .delete em{background-color:#700;border-color:#c66;color:#f99}.shadow table.diff .equal{background-color:#333;color:#ddd}.shadow table.diff .skip{background-color:#000;border-color:#999}.shadow table.diff .insert{background-color:#040;color:#6c6}.shadow table.diff .insert em{background-color:#363;border-color:#6c0;color:#cfc}.shadow table.diff th.author{background:#555;border-bottom-color:#999;color:#ddd}.shadow table td{border-color:#999}.shadow table.diff{background:#333;border-color:#999;color:#ddd}"
+            sshadow: "body.shadow{background:#222;color:#eee}.shadow a{color:#9cf}.shadow button{background:#456;border-color:#789;color:#cde}.shadow button:hover,.shadow button:active{background:#ddd;color:#333}.shadow #update,.shadow #title_text{background:#ddd;border-color:#fff;color:#222}.shadow h1 img{border-color:#fff}.shadow h2{background:#eee;border-color:#333;box-shadow:0 .1em .2em rgba(0,0,0,0.75);color:#222}.shadow table.diff tbody th{background:#bbb;border-color:#999;color:#333}.shadow table.diff thead,.shadow table.diff thead th{background:#555;border-color:#999;color:#ddd}.shadow table.diff tbody td{background:#666;border-color:#999;color:#ddd}.shadow table.diff .empty{background-color:#999}.shadow table.diff .replace{background-color:#664;color:#bb8}.shadow table.diff .replace em{background-color:#440;border-color:#220;color:#cc9}.shadow table.diff .delete{background-color:#300;color:#c66}.shadow table.diff .delete em{background-color:#700;border-color:#c66;color:#f99}.shadow table.diff .equal{background-color:#333;color:#ddd}.shadow table.diff .skip{background-color:#000;border-color:#999}.shadow table.diff .insert{background-color:#040;color:#6c6}.shadow table.diff .insert em{background-color:#363;border-color:#6c0;color:#cfc}.shadow table.diff th.author{background:#555;border-bottom-color:#999;color:#ddd}.shadow table td{border-color:#999}.shadow table.diff{background:#333;border-color:#999;color:#ddd}",
+            swhite: "body.white{color:#333}.white a{color:#009}.white h2,.white h3{border-color:#333}.white textarea{border-color:#333}.white textarea:hover{background:#eef8ff}.white table.diff{border-color:#333}.white table.diff tbody th{background:#eed;border-color:#bbc;color:#886}.white table.diff thead{background:#ddd;border-bottom-color:#333}.white table.diff thead th{border-left-color:#333}.white table.diff .empty{background-color:#ddd}.white table.diff .replace{background-color:#fea}.white table.diff .replace em{background-color:#ffd;border-color:#963;color:#630}.white table.diff .delete{background-color:#fbb}.white table.diff .delete em{background-color:#fdd;border-color:#700;color:#600}.white table.diff .equal{background-color:#fff}.white table.diff .skip{background-color:#efefef;border-color:#aaa #bbc #aaa #aaa}.white table.diff .insert{background-color:#bfb}.white table.diff .insert em{background-color:#efc;border-color:#070;color:#050}.white table.diff th.author{background:#efefef;border-top-color:#bbc}"
         },
+        pdlogo: $$("pdlogo"),
         color: "shadow",
         context: $$("contextSize"),
         inline: $$("inline"),
@@ -424,7 +426,7 @@ var exports = "",
         o.zindex += 1;
         if (o.bb.checked) {
             o.bx.value = output[0];
-            if (o.sh.innerHTML === "Maximize inputs") {
+            if (o.sh.innerHTML === "Maximize Inputs") {
                 o.rh.innerHTML = output[1];
                 o.rg.style.zIndex = o.zindex;
                 o.rg.style.display = "block";
@@ -458,7 +460,7 @@ var exports = "",
             }
         } else if (o.mm.checked) {
             o.mx.value = output[0];
-            if (o.sh.innerHTML === "Maximize inputs") {
+            if (o.sh.innerHTML === "Maximize Inputs") {
                 o.rj.innerHTML = output[1];
                 o.ri.style.zIndex = o.zindex;
                 o.ri.style.display = "block";
@@ -559,9 +561,37 @@ pd = {
         "use strict";
         var a = x.selectedIndex,
             b = x.getElementsByTagName("option"),
-            c = b[a].innerHTML.toLowerCase().replace(/\s+/g, "");
+            c = b[a].innerHTML.toLowerCase().replace(/\s+/g, ""),
+            d = "";
         o.wb.className = c;
         o.color = c;
+        if (o.pdlogo !== null) {
+            switch (c) {
+            case "default":
+                d = "234";
+                break;
+            case "coffee":
+                d = "654";
+                break;
+            case "dark":
+                d = "8ad";
+                break;
+            case "canvas":
+                d = "664";
+                break;
+            case "shadow":
+                d = "999";
+                break;
+            case "white":
+                d = "666";
+                break;
+            default:
+                d = "000";
+                break;
+            }
+            o.pdlogo.style.borderColor = "#" + d;
+            o.pdlogo.getElementsByTagName("g")[0].setAttribute("fill", "#" + d);
+        }
         pd.options("colorScheme");
     },
 
@@ -571,7 +601,7 @@ pd = {
         var a = x.parentNode,
             b = a.parentNode,
             c = b.getElementsByTagName("div")[0],
-            d = b.getElementsByTagName("h2")[0],
+            d = b.getElementsByTagName("h3")[0],
             f = b.getAttribute("id"),
             test = (b === o.re) ? true : false,
             g = (test) ? a.getElementsByTagName("button")[1] : a.getElementsByTagName("button")[0],
@@ -658,7 +688,7 @@ pd = {
     maximize: function (x) {
         "use strict";
         var a = x.parentNode.parentNode,
-            b = a.getElementsByTagName("h2")[0],
+            b = a.getElementsByTagName("h3")[0],
             c = a.getElementsByTagName("div")[0],
             d = (document.body.parentNode.scrollTop > document.body.scrollTop) ? document.body.parentNode.scrollTop : document.body.scrollTop,
             e = (document.body.parentNode.scrollLeft > document.body.scrollLeft) ? document.body.parentNode.scrollLeft : document.body.scrollLeft,
@@ -720,7 +750,7 @@ pd = {
         "use strict";
         var a = x.parentNode.parentNode,
             b = a.getElementsByTagName("div")[0],
-            c = a.getElementsByTagName("h2")[0],
+            c = a.getElementsByTagName("h3")[0],
             bx = b.clientWidth,
             by = b.clientHeight,
             drop = function (g) {
@@ -1407,7 +1437,7 @@ pd = {
         o.mm = $$("modeminify");
         o.au = $$("ctype-auto");
         o.dt = $$("difftall");
-        if (x.innerHTML === "Maximize inputs") {
+        if (x.innerHTML === "Maximize Inputs") {
             o.op.style.display = "none";
             o.bops.style.display = "none";
             o.dops.style.display = "none";
@@ -1483,7 +1513,7 @@ pd = {
             }
             o.to.style.display = "block";
             o.disp.className = "default";
-            x.innerHTML = "Maximize inputs";
+            x.innerHTML = "Maximize Inputs";
             o.re.style.display = "block";
             o.rg.style.display = "block";
             o.ri.style.display = "block";
@@ -1507,21 +1537,21 @@ pd = {
         o.re.style.right = "59em";
         o.re.style.zIndex = "2";
         o.re.getElementsByTagName("p")[0].style.display = "none";
-        o.re.getElementsByTagName("h2")[0].style.width = "17em";
+        o.re.getElementsByTagName("h3")[0].style.width = "17em";
         o.rh.style.display = "none";
         o.rg.style.display = "block";
         o.rg.style.left = "auto";
         o.rg.style.right = "40em";
         o.rg.style.zIndex = "2";
         o.rg.getElementsByTagName("p")[0].style.display = "none";
-        o.rg.getElementsByTagName("h2")[0].style.width = "17em";
+        o.rg.getElementsByTagName("h3")[0].style.width = "17em";
         o.rj.style.display = "none";
         o.ri.style.display = "block";
         o.ri.style.left = "auto";
         o.ri.style.right = "1";
         o.ri.style.zIndex = "2";
         o.ri.getElementsByTagName("p")[0].style.display = "none";
-        o.ri.getElementsByTagName("h2")[0].style.width = "17em";
+        o.ri.getElementsByTagName("h3")[0].style.width = "17em";
         o.rl.style.display = "none";
         o.cs.selectedIndex = 0;
         o.wb.className = "shadow";
@@ -1533,7 +1563,7 @@ pd = {
             o.rk.style.right = "2em";
             o.rk.style.zIndex = "2";
             o.rk.getElementsByTagName("p")[0].style.display = "none";
-            o.rk.getElementsByTagName("h2")[0].style.width = "17em";
+            o.rk.getElementsByTagName("h3")[0].style.width = "17em";
         }
         o.bi.style.height = "";
         o.mi.style.height = "";
@@ -1594,7 +1624,7 @@ pd = {
             o.dt.checked = true;
         }
         if (o.sh) {
-            o.sh.innerHTML = "Maximize inputs";
+            o.sh.innerHTML = "Maximize Inputs";
         }
         if (o.ds) {
             o.ds.checked = true;
@@ -1698,6 +1728,7 @@ pd = {
                                         break;
                                     }
                                 }
+                                pd.colorScheme(o.cs);
                             } else if (d[0] === "showhide" && d[1] === "hide") {
                                 pd.hideOptions(o.sh);
                             } else if (d[0] === "additional" && d[1] === "yes") {
@@ -1726,13 +1757,13 @@ pd = {
                                         o.re.style.top = (d[1] / 10) + "em";
                                     } else if (d[0] === "diffreportwidth") {
                                         o.rf.style.width = d[1] + "em";
-                                        o.re.getElementsByTagName("h2")[0].style.width = (d[1] - 9.76) + "em";
+                                        o.re.getElementsByTagName("h3")[0].style.width = (d[1] - 9.76) + "em";
                                     } else if (d[0] === "diffreportheight") {
                                         o.rf.style.height = d[1] + "em";
                                     } else if (d[0] === "diffreportmin") {
                                         o.rf.style.display = "none";
                                         o.re.getElementsByTagName("p")[0].style.display = "none";
-                                        o.re.getElementsByTagName("h2")[0].style.width = "17em";
+                                        o.re.getElementsByTagName("h3")[0].style.width = "17em";
                                         o.re.style.left = "auto";
                                         o.re.style.top = ((top / 10) + 1) + "em";
                                         o.re.style.borderWidth = "0em";
@@ -1748,13 +1779,13 @@ pd = {
                                         o.rg.style.top = (d[1] / 10) + "em";
                                     } else if (d[0] === "beaureportwidth") {
                                         o.rh.style.width = d[1] + "em";
-                                        o.rg.getElementsByTagName("h2")[0].style.width = (d[1] - 6.76) + "em";
+                                        o.rg.getElementsByTagName("h3")[0].style.width = (d[1] - 6.76) + "em";
                                     } else if (d[0] === "beaureportheight") {
                                         o.rh.style.height = d[1] + "em";
                                     } else if (d[0] === "beaureportmin") {
                                         o.rh.style.display = "none";
                                         o.rg.getElementsByTagName("p")[0].style.display = "none";
-                                        o.rg.getElementsByTagName("h2")[0].style.width = "17em";
+                                        o.rg.getElementsByTagName("h3")[0].style.width = "17em";
                                         o.rg.style.left = "auto";
                                         o.rg.style.top = ((top / 10) + 1) + "em";
                                         o.rg.style.borderWidth = "0em";
@@ -1770,13 +1801,13 @@ pd = {
                                         o.ri.style.top = (d[1] / 10) + "em";
                                     } else if (d[0] === "minnreportwidth") {
                                         o.rj.style.width = d[1] + "em";
-                                        o.ri.getElementsByTagName("h2")[0].style.width = (d[1] - 6.76) + "em";
+                                        o.ri.getElementsByTagName("h3")[0].style.width = (d[1] - 6.76) + "em";
                                     } else if (d[0] === "minnreportheight") {
                                         o.rj.style.height = d[1] + "em";
                                     } else if (d[0] === "minnreportmin") {
                                         o.rj.style.display = "none";
                                         o.ri.getElementsByTagName("p")[0].style.display = "none";
-                                        o.ri.getElementsByTagName("h2")[0].style.width = "17em";
+                                        o.ri.getElementsByTagName("h3")[0].style.width = "17em";
                                         o.ri.style.left = "auto";
                                         o.ri.style.top = ((top / 10) + 1) + "em";
                                         o.ri.style.borderWidth = "0em";
@@ -1792,13 +1823,13 @@ pd = {
                                         o.rk.style.top = (d[1] / 10) + "em";
                                     } else if (d[0] === "statreportwidth") {
                                         o.rl.style.width = d[1] + "em";
-                                        o.rk.getElementsByTagName("h2")[0].style.width = (d[1] - 6.76) + "em";
+                                        o.rk.getElementsByTagName("h3")[0].style.width = (d[1] - 6.76) + "em";
                                     } else if (d[0] === "statreportheight") {
                                         o.rl.style.height = d[1] + "em";
                                     } else if (d[0] === "statreportmin") {
                                         o.rl.style.display = "none";
                                         o.rk.getElementsByTagName("p")[0].style.display = "none";
-                                        o.rk.getElementsByTagName("h2")[0].style.width = "17em";
+                                        o.rk.getElementsByTagName("h3")[0].style.width = "17em";
                                         o.rk.style.left = "auto";
                                         o.rk.style.top = ((top / 10) + 1) + "em";
                                         o.rk.style.borderWidth = "0em";
