@@ -1425,6 +1425,45 @@ pd = {
         }
         localStorage.setItem("webtool", pd.webtool.join("prettydiffcsep").replace(/(prettydiffcsep)+/g, "prettydiffcsep").replace(/%/g, "prettydiffper"));
     },
+    
+    fixminreport: function () {
+        "use strict";
+        var a = {}, b = {}, c = {}, d = {};
+        o.re = $$("diffreport");
+        o.rf = $$("diffreportbody");
+        o.rg = $$("beaureport");
+        o.rh = $$("beaureportbody");
+        o.ri = $$("minreport");
+        o.rj = $$("minreportbody");
+        a = o.re.getElementsByTagName("h3")[0];
+        b = o.rg.getElementsByTagName("h3")[0];
+        c = o.ri.getElementsByTagName("h3")[0];
+        if (ls) {
+            o.rk = $$("statreport");
+            o.rl = $$("statreportbody");
+            d = o.rk.getElementsByTagName("h3")[0];
+        }
+        if (o.rf.style.display === "none" && (a.style.width === "17em" || a.style.width === "")) {
+            o.re.style.right = "57.7em";
+            o.re.style.removeProperty("top");
+            o.re.style.removeProperty("left");
+        }
+        if (o.rh.style.display === "none" && (b.style.width === "17em" || b.style.width === "")) {
+            o.rg.style.right = "38.7em";
+            o.rg.style.removeProperty("top");
+            o.rg.style.removeProperty("left");
+        }
+        if (o.rj.style.display === "none" && (c.style.width === "17em" || c.style.width === "")) {
+            o.ri.style.right = "19.7em";
+            o.ri.style.removeProperty("top");
+            o.ri.style.removeProperty("left");
+        }
+        if (ls && o.rl.style.display === "none" && (d.style.width === "17em" || d.style.width === "")) {
+            o.rk.style.right = ".7em";
+            o.rk.style.removeProperty("top");
+            o.rk.style.removeProperty("left");
+        }
+    },
 
     //maximize textareas and hide options
     hideOptions: function (x) {
@@ -1518,6 +1557,7 @@ pd = {
             o.rg.style.display = "block";
             o.ri.style.display = "block";
             o.rk.style.display = "block";
+            pd.fixminreport();
         }
         pd.options(x);
         return false;
@@ -1672,6 +1712,7 @@ pd = {
         if (ls && localStorage.hasOwnProperty("optionString")) {
             delete localStorage.optionString;
         }
+        pd.fixminreport();
     },
 
     //alter tool on page load in reflection to saved state
@@ -2315,6 +2356,10 @@ pd = {
                 if (o.nl && localStorage.hasOwnProperty("nl") && localStorage.getItem("ni") !== null) {
                     o.nl.value = localStorage.getItem("nl");
                 }
+            }
+            pd.fixminreport();
+            if (typeof window.onresize === "object" || typeof window.onresize === "function") {
+                window.onresize = pd.fixminreport;
             }
         } else if (ls && localStorage.hasOwnProperty("webtool") && localStorage.getItem("webtool") !== null) {
             a = localStorage.getItem("webtool").replace(/prettydiffper/g, "%").split("prettydiffcsep");

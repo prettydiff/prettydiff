@@ -717,18 +717,18 @@ var prettydiff = function (api) {
                                 g = -1;
                                 for (e = 0; e < f; e += 1) {
                                     if (c[e - 1] && c[e - 1][0] === c[e][0] && (/\-[a-z]/).test(c[e - 1][1]) === false && (/\-[a-z]/).test(c[e][1]) === false) {
-                                        c[e - 1] = "";
+                                        c[e - 1] = [""];
                                     }
                                     if (c[e][0] !== "margin" && c[e][0].indexOf("margin") !== -1) {
                                         m += 1;
                                         if (m === 4) {
                                             c[e][0] = "margin";
                                             c[e][1] = c[e][1] + " " + c[e - 1][1] + " " + c[e - 3][1] + " " + c[e - 2][1];
-                                            c[e - 3] = "";
-                                            c[e - 2] = "";
-                                            c[e - 1] = "";
+                                            c[e - 3] = [""];
+                                            c[e - 2] = [""];
+                                            c[e - 1] = [""];
                                             if (c[e - 4] && c[e - 4][0] === "margin") {
-                                                c[e - 4] = "";
+                                                c[e - 4] = [""];
                                             }
                                         }
                                     } else if (c[e][0] !== "padding" && c[e][0].indexOf("padding") !== -1) {
@@ -736,11 +736,11 @@ var prettydiff = function (api) {
                                         if (p === 4) {
                                             c[e][0] = "padding";
                                             c[e][1] = c[e][1] + " " + c[e - 1][1] + " " + c[e - 3][1] + " " + c[e - 2][1];
-                                            c[e - 3] = "";
-                                            c[e - 2] = "";
-                                            c[e - 1] = "";
+                                            c[e - 3] = [""];
+                                            c[e - 2] = [""];
+                                            c[e - 1] = [""];
                                             if (c[e - 4] && c[e - 4][0] === "padding") {
-                                                c[e - 4] = "";
+                                                c[e - 4] = [""];
                                             }
                                         }
                                     }
@@ -755,19 +755,20 @@ var prettydiff = function (api) {
                                         } else {
                                             c[g][1] = c[g][1] + " " + c[e][1];
                                         }
-                                        c[e] = "";
+                                        c[e] = [""];
                                     } else if (g !== -1) {
                                         g = -1;
                                     }
                                 }
+                                h = [];
                                 for (e = 0; e < f; e += 1) {
                                     if (typeof c[e] !== "string" && c[e] !== undefined) {
-                                        c[e] = c[e].join(":");
+                                        h[e] = c[e].join(":");
                                     } else if (typeof c[e] === "string") {
-                                        c[e] = c[e].replace(/~PDCSEP~/g, ":");
+                                        h[e] = c[e].replace(/~PDCSEP~/g, ":");
                                     }
                                 }
-                                d[a] = c.join(";").replace(/;+/g, ";").replace(/^;/, "");
+                                d[a] = h.join(";").replace(/;+/g, ";").replace(/^;/, "");
                                 if (d[a] !== "}" && typeof d[a + 1] === "string" && d[a + 1] !== "}" && d[a + 1].indexOf("{") > -1 && !(/(\,\s*)$/).test(d[a])) {
                                     d[a] = d[a] + ";";
                                 }
@@ -1156,7 +1157,7 @@ var prettydiff = function (api) {
                     ret = ret.slice(1, ret.length);
                 }
                 if (type === "css") {
-                    ret = ret.replace(/\: #/g, ":#").replace(/\; #/g, ";#").replace(/\, #/g, ",#").replace(/\s+/g, " ").replace(/\} /g, "}").replace(/\{ /g, "{").replace(/\\\)/g, "~PDpar~").replace(/\)/g, ") ").replace(/\) ;/g, ");").replace(/\d%[a-z0-9]/g, fixpercent);
+                    ret = ret.replace(/\: #/g, ":#").replace(/\; #/g, ";#").replace(/\, #/g, ",#").replace(/\s+/g, " ").replace(/\} /g, "}").replace(/\{ /g, "{").replace(/\\\)/g, "~PDpar~").replace(/\)/g, ") ").replace(/\) ;/g, ");").replace(/\d%\.?[a-z0-9]/g, fixpercent);
                     if (alter) {
                         ret = ret.replace(/@charset("|')?[\w\-]+("|')?;?/gi, "").replace(/(#|\.)?[\w]*\{\}/gi, "").replace(/(\S|\s)0+/g, runZero).replace(/:[\w\s\!\.\-%]*\d+\.0*(?!\d)/g, endZero).replace(/(:| )0+\.\d+/g, startZero).replace(/\w+(\-\w+)*:((((\-?(\d*\.\d+)|\d+)[a-zA-Z]+)|0) )+(((\-?(\d*\.\d+)|\d+)[a-zA-Z]+)|0)/g, sameDist).replace(/\};/g, "}").replace(/^;/, "").replace(/ \}/g, "}");
                         ret = ret.replace(/:\.?0(\%|px|in|cm|mm|em|ex|pt|pc)/g, ":0").replace(/ \.?0(\%|px|in|cm|mm|em|ex|pt|pc)/g, " 0").replace(/bottom:none/g, "bottom:0").replace(/top:none/g, "top:0").replace(/left:none/g, "left:0").replace(/right:none/, "right:0").replace(/:0 0 0 0/g, ":0").replace(/:(\s*([0-9]+\.)?[0-9]+(%|in|cm|mm|em|ex|pt|pc|px)?)+\-([0-9]*\.)?[0-9]/g, fixNegative);
@@ -1525,7 +1526,7 @@ var prettydiff = function (api) {
                                 g = -1;
                                 for (e = 0; e < f; e += 1) {
                                     if (c[e - 1] && c[e - 1][0] === c[e][0] && (/\-[a-z]/).test(c[e - 1][1]) === false && (/\-[a-z]/).test(c[e][1]) === false) {
-                                        c[e - 1] = "";
+                                        c[e - 1] = [""];
                                     }
                                     if (c[e].length > 1) {
                                         c[e][1] = c[e][1].replace(/\//g, " / ").replace(/\*/g, "* ");
@@ -1535,11 +1536,11 @@ var prettydiff = function (api) {
                                         if (m === 4) {
                                             c[e][0] = "margin";
                                             c[e][1] = c[e][1] + " " + c[e - 1][1] + " " + c[e - 3][1] + " " + c[e - 2][1];
-                                            c[e - 3] = "";
-                                            c[e - 2] = "";
-                                            c[e - 1] = "";
+                                            c[e - 3] = [""];
+                                            c[e - 2] = [""];
+                                            c[e - 1] = [""];
                                             if (c[e - 4] !== undefined && c[e - 4][0] === "margin") {
-                                                c[e - 4] = "";
+                                                c[e - 4] = [""];
                                             }
                                         }
                                     } else if (c[e][0] !== "padding" && c[e][0].indexOf("padding") !== -1) {
@@ -1547,11 +1548,11 @@ var prettydiff = function (api) {
                                         if (p === 4) {
                                             c[e][0] = "padding";
                                             c[e][1] = c[e][1] + " " + c[e - 1][1] + " " + c[e - 3][1] + " " + c[e - 2][1];
-                                            c[e - 3] = "";
-                                            c[e - 2] = "";
-                                            c[e - 1] = "";
+                                            c[e - 3] = [""];
+                                            c[e - 2] = [""];
+                                            c[e - 1] = [""];
                                             if (c[e - 4] !== undefined && c[e - 4][0] === "padding") {
-                                                c[e - 4] = "";
+                                                c[e - 4] = [""];
                                             }
                                         }
                                     }
@@ -1566,16 +1567,16 @@ var prettydiff = function (api) {
                                         } else {
                                             c[g][1] = c[g][1] + " " + c[e][1];
                                         }
-                                        c[e] = "";
+                                        c[e] = [""];
                                     } else if (g !== -1) {
                                         g = -1;
                                     }
                                 }
                                 h = [];
                                 for (e = 0; e < f; e += 1) {
-                                    if (typeof c[e] !== "string") {
+                                    if (typeof c[e] !== "string" && c[e] !== undefined) {
                                         h.push(c[e].join(": "));
-                                    } else {
+                                    } else if (typeof c[e] ===  "string") {
                                         h.push(c[e].replace(/~PDCSEP~/g, ": "));
                                     }
                                 }
@@ -1615,7 +1616,7 @@ var prettydiff = function (api) {
                     }
                     x = c.join("");
                 }());
-                x = x.replace(/[ \t\r\v\f]+/g, " ").replace(/\n (?!\*)/g, "\n").replace(/\s?([;:{}+>])\s?/g, "$1").replace(/\{(\.*):(\.*)\}/g, "{$1: $2}").replace(/\b\*/g, " *").replace(/\*\/\s?/g, "*/\n").replace(/\d%\d/g, fixpercent);
+                x = x.replace(/[ \t\r\v\f]+/g, " ").replace(/\n (?!\*)/g, "\n").replace(/\s?([;:{}+>])\s?/g, "$1").replace(/\{(\.*):(\.*)\}/g, "{$1: $2}").replace(/\b\*/g, " *").replace(/\*\/\s?/g, "*/\n").replace(/\d%\.?\d/g, fixpercent);
                 if (alter === true) {
                     x = reduction(x);
                 }
@@ -6177,7 +6178,11 @@ var prettydiff = function (api) {
                                         node.push("<th>");
                                         node.push(b + 1);
                                         node.push("</th><th></th><td class='delete'>");
-                                        node.push(z[0]);
+                                        if (n < ne) {
+                                            node.push(z[0]);
+                                        } else {
+                                            node.push(bta[b]);
+                                        }
                                         node.push("</td></tr>");
                                     }
                                     if (b < be && n < ne) {
@@ -6187,7 +6192,11 @@ var prettydiff = function (api) {
                                         node.push("<th></th><th>");
                                         node.push(n + 1);
                                         node.push("</th><td class='insert'>");
-                                        node.push(z[1]);
+                                        if (b < be) {
+                                            node.push(z[1]);
+                                        } else {
+                                            node.push(nta[n]);
+                                        }
                                         node.push("</td></tr>");
                                     }
                                 } else if (b < be || n < ne) {
@@ -6654,7 +6663,13 @@ var prettydiff = function (api) {
                             }
                         } else if ((/(>[\w\s:]*)?<(\/|\!)?[\w\s:\-\[]+/.test(a) && /^(\s*<)/.test(a) && /(>\s*)$/.test(a)) || (/^(\s*<s((cript)|(tyle)))/i.test(a) && /(<\/s((cript)|(tyle))>\s*)$/i.test(a))) {
                             api.lang = "markup";
-                            if (/<[a-zA-Z]/.test(a) === false && /<\![A-Z]/.test(a)) {
+                            if (/^(\s*<\?xml)/.test(a)) {
+                                if (/XHTML\s+1\.1/.test(a) || /XHTML\s+1\.0\s+(S|s)((trict)|(TRICT))/.test(a)) {
+                                    auto = "XHTML";
+                                } else {
+                                    auto = "XML";
+                                }
+                            } else if (/<[a-zA-Z]/.test(a) === false && /<\![A-Z]/.test(a)) {
                                 auto = "SGML";
                             } else if (api.html === true || /^(\s*<\!doctype html>)/i.test(a) || (/^(\s*<\!DOCTYPE\s+((html)|(HTML))\s+PUBLIC\s+)/.test(a) && /XHTML\s+1\.1/.test(a) === false && /XHTML\s+1\.0\s+(S|s)((trict)|(TRICT))/.test(a) === false)) {
                                 auto = "HTML";
