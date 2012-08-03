@@ -737,7 +737,7 @@ var prettydiff = function (api) {
                                                     i.push(c[r][1]);
                                                     c[r] = ["", ""];
                                                 }
-                                            } while (i.length < 4 || r === 0);
+                                            } while (i.length < 4 && r > 0);
                                             c[e] = ["margin", i[0] + " " + i[1] + " " + i[3] + " " + i[2]];
                                             m = 0;
                                         }
@@ -752,7 +752,7 @@ var prettydiff = function (api) {
                                                     i.push(c[r][1]);
                                                     c[r] = ["", ""];
                                                 }
-                                            } while (i.length < 4 || r === 0);
+                                            } while (i.length < 4 && r > 0);
                                             c[e] = ["padding", i[0] + " " + i[1] + " " + i[3] + " " + i[2]];
                                             p = 0;
                                         }
@@ -771,6 +771,15 @@ var prettydiff = function (api) {
                                         c[e] = ["", ""];
                                     } else if (g !== -1) {
                                         g = -1;
+                                    }
+                                }
+                                for (e = 0; e < f; e += 1) {
+                                    if (c[e].length > 1 && c[e][0] !== "") {
+                                        for (r = e + 1; r < f; r += 1) {
+                                            if (c[r].length > 1 && c[e][0] === c[r][0]) {
+                                                c[e] = ["", ""];
+                                            }
+                                        }
                                     }
                                 }
                                 h = [];
@@ -1561,7 +1570,7 @@ var prettydiff = function (api) {
                                                     i.push(c[r][1]);
                                                     c[r] = ["", ""];
                                                 }
-                                            } while (i.length < 4 || r === 0);
+                                            } while (i.length < 4 && r > 0);
                                             c[e] = ["margin", i[0] + " " + i[1] + " " + i[3] + " " + i[2]];
                                             m = 0;
                                         }
@@ -1576,7 +1585,7 @@ var prettydiff = function (api) {
                                                     i.push(c[r][1]);
                                                     c[r] = ["", ""];
                                                 }
-                                            } while (i.length < 4 || r === 0);
+                                            } while (i.length < 4 && r > 0);
                                             c[e] = ["padding", i[0] + " " + i[1] + " " + i[3] + " " + i[2]];
                                             p = 0;
                                         }
@@ -1595,6 +1604,15 @@ var prettydiff = function (api) {
                                         c[e] = ["", ""];
                                     } else if (g !== -1) {
                                         g = -1;
+                                    }
+                                }
+                                for (e = 0; e < f; e += 1) {
+                                    if (c[e].length > 1 && c[e][0] !== "") {
+                                        for (r = e + 1; r < f; r += 1) {
+                                            if (c[r].length > 1 && c[e][0] === c[r][0]) {
+                                                c[e] = ["", ""];
+                                            }
+                                        }
                                     }
                                 }
                                 h = [];
