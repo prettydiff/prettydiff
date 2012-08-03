@@ -541,10 +541,12 @@ var prettydiff = function (api) {
                             g = -1,
                             m = 0,
                             p = 0,
+                            r = 0,
                             b = x.length,
                             c = [],
                             d = [],
                             h = [],
+                            i = [],
                             test = false,
                             colorLow = function (y) {
                                 var a = y.charAt(0),
@@ -715,33 +717,44 @@ var prettydiff = function (api) {
                                 m = 0;
                                 p = 0;
                                 g = -1;
+                                for (e = 1; e < f; e += 1) {
+                                    if (c[e].length > 1 && c[e][0] === c[e - 1][0]) {
+                                        c[e - 1] = ["", ""];
+                                    }
+                                }
                                 for (e = 0; e < f; e += 1) {
                                     if (c[e - 1] && c[e - 1][0] === c[e][0] && (/\-[a-z]/).test(c[e - 1][1]) === false && (/\-[a-z]/).test(c[e][1]) === false) {
-                                        c[e - 1] = [""];
+                                        c[e - 1] = ["", ""];
                                     }
                                     if (c[e][0] !== "margin" && c[e][0].indexOf("margin") !== -1) {
                                         m += 1;
                                         if (m === 4) {
-                                            c[e][0] = "margin";
-                                            c[e][1] = c[e][1] + " " + c[e - 1][1] + " " + c[e - 3][1] + " " + c[e - 2][1];
-                                            c[e - 3] = [""];
-                                            c[e - 2] = [""];
-                                            c[e - 1] = [""];
-                                            if (c[e - 4] && c[e - 4][0] === "margin") {
-                                                c[e - 4] = [""];
-                                            }
+                                            i = [c[e][1]];
+                                            r = e;
+                                            do {
+                                                r -= 1;
+                                                if (c[r].length > 1 && c[r][1] !== "") {
+                                                    i.push(c[r][1]);
+                                                    c[r] = ["", ""];
+                                                }
+                                            } while (i.length < 4 || r === 0);
+                                            c[e] = ["margin", i[0] + " " + i[1] + " " + i[3] + " " + i[2]];
+                                            m = 0;
                                         }
                                     } else if (c[e][0] !== "padding" && c[e][0].indexOf("padding") !== -1) {
                                         p += 1;
                                         if (p === 4) {
-                                            c[e][0] = "padding";
-                                            c[e][1] = c[e][1] + " " + c[e - 1][1] + " " + c[e - 3][1] + " " + c[e - 2][1];
-                                            c[e - 3] = [""];
-                                            c[e - 2] = [""];
-                                            c[e - 1] = [""];
-                                            if (c[e - 4] && c[e - 4][0] === "padding") {
-                                                c[e - 4] = [""];
-                                            }
+                                            i = [c[e][1]];
+                                            r = e;
+                                            do {
+                                                r -= 1;
+                                                if (c[r].length > 1 && c[r][1] !== "") {
+                                                    i.push(c[r][1]);
+                                                    c[r] = ["", ""];
+                                                }
+                                            } while (i.length < 4 || r === 0);
+                                            c[e] = ["padding", i[0] + " " + i[1] + " " + i[3] + " " + i[2]];
+                                            p = 0;
                                         }
                                     }
                                     if (g === -1 && c[e + 1] && c[e][0].charAt(0) !== "-" && (c[e][0].indexOf("cue") !== -1 || c[e][0].indexOf("list-style") !== -1 || c[e][0].indexOf("outline") !== -1 || c[e][0].indexOf("overflow") !== -1 || c[e][0].indexOf("pause") !== -1) && (c[e][0] === c[e + 1][0].substring(0, c[e + 1][0].lastIndexOf("-")) || c[e][0].substring(0, c[e][0].lastIndexOf("-")) === c[e + 1][0].substring(0, c[e + 1][0].lastIndexOf("-")))) {
@@ -755,14 +768,14 @@ var prettydiff = function (api) {
                                         } else {
                                             c[g][1] = c[g][1] + " " + c[e][1];
                                         }
-                                        c[e] = [""];
+                                        c[e] = ["", ""];
                                     } else if (g !== -1) {
                                         g = -1;
                                     }
                                 }
                                 h = [];
                                 for (e = 0; e < f; e += 1) {
-                                    if (typeof c[e] !== "string" && c[e] !== undefined) {
+                                    if (typeof c[e] !== "string" && c[e] !== undefined && c[e][0] !== "") {
                                         h[e] = c[e].join(":");
                                     } else if (typeof c[e] === "string") {
                                         h[e] = c[e].replace(/~PDCSEP~/g, ":");
@@ -1330,6 +1343,7 @@ var prettydiff = function (api) {
                             g = -1,
                             m = 0,
                             p = 0,
+                            r = 0,
                             q = "",
                             b = x.length,
                             c = [],
@@ -1524,9 +1538,14 @@ var prettydiff = function (api) {
                                 m = 0;
                                 p = 0;
                                 g = -1;
+                                for (e = 1; e < f; e += 1) {
+                                    if (c[e].length > 1 && c[e][0] === c[e - 1][0]) {
+                                        c[e - 1] = ["", ""];
+                                    }
+                                }
                                 for (e = 0; e < f; e += 1) {
                                     if (c[e - 1] && c[e - 1][0] === c[e][0] && (/\-[a-z]/).test(c[e - 1][1]) === false && (/\-[a-z]/).test(c[e][1]) === false) {
-                                        c[e - 1] = [""];
+                                        c[e - 1] = ["", ""];
                                     }
                                     if (c[e].length > 1) {
                                         c[e][1] = c[e][1].replace(/\//g, " / ").replace(/\*/g, "* ");
@@ -1534,26 +1553,32 @@ var prettydiff = function (api) {
                                     if (c[e][0] !== "margin" && c[e][0].indexOf("margin") !== -1) {
                                         m += 1;
                                         if (m === 4) {
-                                            c[e][0] = "margin";
-                                            c[e][1] = c[e][1] + " " + c[e - 1][1] + " " + c[e - 3][1] + " " + c[e - 2][1];
-                                            c[e - 3] = [""];
-                                            c[e - 2] = [""];
-                                            c[e - 1] = [""];
-                                            if (c[e - 4] !== undefined && c[e - 4][0] === "margin") {
-                                                c[e - 4] = [""];
-                                            }
+                                            i = [c[e][1]];
+                                            r = e;
+                                            do {
+                                                r -= 1;
+                                                if (c[r].length > 1 && c[r][1] !== "") {
+                                                    i.push(c[r][1]);
+                                                    c[r] = ["", ""];
+                                                }
+                                            } while (i.length < 4 || r === 0);
+                                            c[e] = ["margin", i[0] + " " + i[1] + " " + i[3] + " " + i[2]];
+                                            m = 0;
                                         }
                                     } else if (c[e][0] !== "padding" && c[e][0].indexOf("padding") !== -1) {
                                         p += 1;
                                         if (p === 4) {
-                                            c[e][0] = "padding";
-                                            c[e][1] = c[e][1] + " " + c[e - 1][1] + " " + c[e - 3][1] + " " + c[e - 2][1];
-                                            c[e - 3] = [""];
-                                            c[e - 2] = [""];
-                                            c[e - 1] = [""];
-                                            if (c[e - 4] !== undefined && c[e - 4][0] === "padding") {
-                                                c[e - 4] = [""];
-                                            }
+                                            i = [c[e][1]];
+                                            r = e;
+                                            do {
+                                                r -= 1;
+                                                if (c[r].length > 1 && c[r][1] !== "") {
+                                                    i.push(c[r][1]);
+                                                    c[r] = ["", ""];
+                                                }
+                                            } while (i.length < 4 || r === 0);
+                                            c[e] = ["padding", i[0] + " " + i[1] + " " + i[3] + " " + i[2]];
+                                            p = 0;
                                         }
                                     }
                                     if (g === -1 && c[e + 1] && c[e][0].charAt(0) !== "-" && (c[e][0].indexOf("cue") !== -1 || c[e][0].indexOf("list-style") !== -1 || c[e][0].indexOf("outline") !== -1 || c[e][0].indexOf("overflow") !== -1 || c[e][0].indexOf("pause") !== -1) && (c[e][0] === c[e + 1][0].substring(0, c[e + 1][0].lastIndexOf("-")) || c[e][0].substring(0, c[e][0].lastIndexOf("-")) === c[e + 1][0].substring(0, c[e + 1][0].lastIndexOf("-")))) {
@@ -1567,16 +1592,16 @@ var prettydiff = function (api) {
                                         } else {
                                             c[g][1] = c[g][1] + " " + c[e][1];
                                         }
-                                        c[e] = [""];
+                                        c[e] = ["", ""];
                                     } else if (g !== -1) {
                                         g = -1;
                                     }
                                 }
                                 h = [];
                                 for (e = 0; e < f; e += 1) {
-                                    if (typeof c[e] !== "string" && c[e] !== undefined) {
+                                    if (typeof c[e] !== "string" && c[e] !== undefined && c[e][0] !== "") {
                                         h.push(c[e].join(": "));
-                                    } else if (typeof c[e] ===  "string") {
+                                    } else if (typeof c[e] === "string") {
                                         h.push(c[e].replace(/~PDCSEP~/g, ": "));
                                     }
                                 }
@@ -6965,7 +6990,7 @@ var prettydiff = function (api) {
             };
         return core(api);
     };
-if (typeof exports === "object") {
+if (typeof exports === "object" && exports !== undefined) {
     exports.api = function (x) {
         "use strict";
         return prettydiff(x);
