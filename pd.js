@@ -19,7 +19,6 @@ var exports = "",
     o = {
         ao: $$("addOptions"),
         an: $$("additional_no"),
-        au: $$("ctype-auto"),
         ay: $$("additional_yes"),
         ba: $$("beau-tab"),
         bb: $$("modebeautify"),
@@ -40,7 +39,6 @@ var exports = "",
         ch: $$("csvchar"),
         cn: 4,
         cs: $$("colorScheme"),
-        cv: $$("ctype-csv"),
         cz: " ",
         da: $$("diff-tab"),
         db: $$("diffbeautify"),
@@ -76,6 +74,7 @@ var exports = "",
         je: $$("jsindentd-knr"),
         js: $$("jsindent-all"),
         jt: $$("jsindent-knr"),
+        la: $$("language"),
         mb: $$("topcoms-no"),
         mc: $$("topcoms-yes"),
         md: $$("Minify"),
@@ -96,7 +95,6 @@ var exports = "",
         nz: $$("no"),
         op: $$("options"),
         ps: $$("diff-save"),
-        pt: $$("ctype-text"),
         re: $$("diffreport"),
         rf: $$("diffreportbody"),
         rg: $$("beaureport"),
@@ -131,8 +129,6 @@ var exports = "",
         csvp: $$("csvcharp"),
         disp: $$("displayOps"),
         dops: $$("diffops"),
-        lang: "auto",
-        alang: "",
         mops: $$("miniops"),
         stat: {
             visit: 0,
@@ -176,7 +172,8 @@ var exports = "",
             output = [],
             domain = /^(https?:\/\/|file:\/\/\/)/,
             event = e || window.event,
-            pstyle = {};
+            pstyle = {},
+            lang = "";
 
         //do not execute from alt, home, end, or arrow keys
         if (typeof event === "object" && event.type === "keyup" && (event.altKey || event.keyCode === 18 || event.keyCode === 35 || event.keyCode === 36 || event.keyCode === 37 || event.keyCode === 38 || event.keyCode === 39 || event.keyCode === 40)) {
@@ -208,18 +205,14 @@ var exports = "",
         o.jd = $$("jsindentd-all");
         o.js = $$("jsindent-all");
         o.ch = $$("csvchar");
-        o.cv = $$("ctype-csv");
         o.dd = $$("modediff");
+        o.la = $$("language");
         o.mm = $$("modeminify");
-        o.pt = $$("ctype-text");
         o.dx = $$("diffcontenty");
         o.sh = $$("hideOptions");
+        o.la = $$("language");
+        api.lang = o.la[o.la.selectedIndex].value;
         api.csvchar = o.ch.value;
-        if (o.cv.checked === true) {
-            api.lang = "csv";
-        } else if (o.pt.checked === true) {
-            api.lang = "text";
-        }
 
         //determine operations based upon mode of operations
         if (o.bb.checked) {
@@ -418,9 +411,7 @@ var exports = "",
                 }
             }());
         }
-        if (o.alang !== "") {
-            api.lang = o.alang;
-        }
+        
         //this is where prettydiff is executed
         output = prettydiff(api);
         o.zindex += 1;
@@ -475,8 +466,9 @@ var exports = "",
                 var stat = [],
                     lang = "",
                     lango = {},
+                    langv = o.la[o.la.selectedIndex].value,
                     size = 0;
-                if (o.au.checked && typeof output[1] === "string") {
+                if (langv === "auto" && typeof output[1] === "string") {
                     lango = (/Language set to <strong>auto<\/strong>\. Presumed language is <em>\w+<\/em>\./).exec(output[1]);
                     if (lango !== null) {
                         lang = lango.toString();
@@ -491,16 +483,22 @@ var exports = "",
                             o.stat.markup += 1;
                             o.stmarkup.innerHTML = o.stat.markup;
                         }
-                        o.lang = lang;
                     }
-                } else if (o.cv.checked) {
+                } else if (langv === "csv") {
                     o.stat.csv += 1;
                     o.stcsv.innerHTML = o.stat.csv;
-                    o.lang = "csv";
-                } else if (o.pt.checked) {
+                } else if (langv === "text") {
                     o.stat.text += 1;
                     o.sttext.innerHTML = o.stat.text;
-                    o.lang = "text";
+                } else if (langv === "javascript") {
+                    o.stat.js += 1;
+                    o.stjs.innerHTML = o.stat.js;
+                } else if (langv === "markup" || langv === "html") {
+                    o.stat.markup += 1;
+                    o.stmarkup.innerHTML = o.stat.markup;
+                } else if (langv === "css") {
+                    o.stat.css += 1;
+                    o.stcss.innerHTML = o.stat.css;
                 }
                 if (api.mode === "diff" && api.diff.length > api.source.length) {
                     size = api.diff.length;
@@ -911,15 +909,22 @@ pd = {
     //textareas
     prettyvis: function (a) {
         "use strict";
-        var optioncheck = function () {
-                o.au.disabled = false;
-                if (o.pt.checked) {
-                    o.au.checked = true;
+        var b = "",
+            c = 0,
+            d = [],
+            optioncheck = function () {
+                var a = 0, b = [];
+                b = o.la.getElementsByTagName("option");
+                for (a = b.length - 1; a > -1; a -= 1) {
+                    if (b[a].value === "text") {
+                        if (o.la.selectedIndex === a) {
+                            o.la.selectedIndex = 0;
+                        }
+                        b[a].disabled = true;
+                    }
                 }
-                o.cv.disabled = false;
-                o.pt.disabled = true;
-                o.pt.checked = false;
             };
+        b = o.la[o.la.selectedIndex].value;
         if (a === o.bb) {
             optioncheck();
             o.bx.setAttribute("name", "paste_code");
@@ -941,7 +946,7 @@ pd = {
                 o.dops.style.display = "none";
             }
             o.mops.style.display = "none";
-            if (o.cv.checked) {
+            if (b === "csv") {
                 o.bops.style.display = "none";
             } else {
                 o.bops.style.display = "block";
@@ -955,10 +960,10 @@ pd = {
             } else if (o.mi.value === "" && o.bo.value !== "") {
                 o.mi.value = o.bo.value;
             }
-            if (o.au.checked) {
-                o.mops.style.display = "block";
-            } else {
+            if (b === "text" || b === "csv") {
                 o.mops.style.display = "none";
+            } else {
+                o.mops.style.display = "block";
             }
             o.md.style.display = "block";
             o.bd.style.display = "none";
@@ -973,9 +978,10 @@ pd = {
             }
             o.bops.style.display = "none";
         } else if (a === o.dd) {
-            o.au.disabled = false;
-            o.cv.disabled = false;
-            o.pt.disabled = false;
+            d = o.la.getElementsByTagName("option");
+            for (c = d.length - 1; c > -1; c -= 1) {
+                d[c].disabled = false;
+            }
             if (o.bo.value === "" && o.bi.value !== "") {
                 o.bo.value = o.bi.value;
             } else if (o.bo.value === "" && o.mi.value !== "") {
@@ -988,7 +994,7 @@ pd = {
             o.dops.style.display = "block";
             o.bops.style.display = "none";
             o.mops.style.display = "none";
-            if (o.cv.checked || o.pt.checked) {
+            if (b === "csv" || b === "text") {
                 o.dqp.style.display = "none";
                 o.dqt.style.display = "none";
                 o.db.style.display = "none";
@@ -1026,14 +1032,20 @@ pd = {
     //alters available options depending upon language selection
     codeOps: function (x) {
         "use strict";
+        var a = "";
         o.bb = $$("modebeautify");
         o.dd = $$("modediff");
         o.mm = $$("modeminify");
-        o.au = $$("ctype-auto");
+        o.la = $$("language");
+        o.ay = $$("additional_yes");
+        if (o.ay.checked) {
+            o.ao.style.display = "block";
+        }
+        a = o.la[o.la.selectedIndex].value;
         if (o.dd.checked) {
             o.mops.style.display = "none";
             o.bops.style.display = "none";
-            if (o.cv.checked || o.pt.checked) {
+            if (a === "text" || a === "csv") {
                 o.dqp.style.display = "none";
                 o.dqt.style.display = "none";
                 o.db.style.display = "none";
@@ -1045,7 +1057,7 @@ pd = {
         } else if (o.bb.checked) {
             o.mops.style.display = "none";
             o.dops.style.display = "none";
-            if (o.cv.checked) {
+            if (a === "csv") {
                 o.bops.style.display = "none";
             } else {
                 o.bops.style.display = "block";
@@ -1053,21 +1065,31 @@ pd = {
         } else if (o.mm.checked) {
             o.bops.style.display = "none";
             o.dops.style.display = "none";
-            if (o.au.checked) {
-                o.mops.style.display = "block";
-            } else {
+            if (a === "csv") {
                 o.mops.style.display = "none";
+                o.ao.style.display = "none";
+            } else {
+                o.mops.style.display = "block";
             }
         }
-        if (o.cv.checked) {
+        if (a === "csv") {
             o.csvp.style.display = "block";
         } else {
             o.csvp.style.display = "none";
         }
-        if (o.au.checked) {
-            o.db.style.display = "block";
-        } else {
+        if (a === "csv" || a === "text") {
             o.db.style.display = "none";
+        } else {
+            o.db.style.display = "block";
+        }
+        if (a === "html") {
+            o.hd.checked = true;
+            o.hm.checked = true;
+            o.hy.checked = true;
+        } else {
+            o.he.checked = true;
+            o.hn.checked = true;
+            o.hz.checked = true;
         }
         pd.options(x);
     },
@@ -1135,18 +1157,14 @@ pd = {
         o.dp = $$("diffwide");
         o.sh = $$("hideOptions");
         o.ps = $$("diff-save");
-        if (x === o.bb) {
-            pd.optionString[0] = "api.mode: beautify";
+        if (x === o.la) {
+            pd.optionString[0] = "api.lang: " + x.selectedIndex;
+        } else if (x === o.bb) {
+            pd.optionString[1] = "api.mode: beautify";
         } else if (x === o.mm) {
-            pd.optionString[0] = "api.mode: minify";
+            pd.optionString[1] = "api.mode: minify";
         } else if (x === o.dd) {
-            pd.optionString[0] = "api.mode: diff";
-        } else if (x === o.au) {
-            pd.optionString[1] = "api.lang: auto";
-        } else if (x === o.pt) {
-            pd.optionString[1] = "api.lang: text";
-        } else if (x === o.cv) {
-            pd.optionString[1] = "api.lang: csv";
+            pd.optionString[1] = "api.mode: diff";
         } else if (x === o.ch) {
             pd.optionString[2] = "api.csvchar: \"" + o.ch.value + "\"";
         } else if (x === o.bq && o.bb.checked && o.bq.value !== "" && !isNaN(Number(o.bq.value))) {
@@ -1468,14 +1486,16 @@ pd = {
     //maximize textareas and hide options
     hideOptions: function (x) {
         "use strict";
+        var a = "";
         if (!o.dt) {
             return;
         }
         o.bb = $$("modebeautify");
         o.dd = $$("modediff");
         o.mm = $$("modeminify");
-        o.au = $$("ctype-auto");
+        o.la = $$("language");
         o.dt = $$("difftall");
+        a = o.la[o.la.selectedIndex].value;
         if (x.innerHTML === "Maximize Inputs") {
             o.op.style.display = "none";
             o.bops.style.display = "none";
@@ -1510,11 +1530,11 @@ pd = {
             o.ao.style.display = "none";
         } else if (x.innerHTML === "Normal view") {
             o.op.style.display = "block";
-            if (o.bb.checked && o.au.checked) {
+            if (o.bb.checked && a !== "csv" && a !== "text") {
                 o.bops.style.display = "block";
             } else if (o.dd.checked) {
                 o.dops.style.display = "block";
-            } else if (o.mm.checked && o.au.checked) {
+            } else if (o.mm.checked && a !== "csv" && a !== "text") {
                 o.mops.style.display = "block";
             }
             o.bi.style.height = "";
@@ -1566,7 +1586,17 @@ pd = {
     //reset tool to default configuration
     reset: function () {
         "use strict";
-        var a = o.re.getElementsByTagName("button");
+        var a = o.re.getElementsByTagName("button"),
+            b = "",
+            c = [],
+            d = 0;
+        c = o.la.getElementsByTagName("option");
+        o.la.selectedIndex = 0;
+        for (d = c.length - 1; d > -1; d -= 1) {
+            if (c[d].value === "text") {
+                c[d].disabled = true;
+            }
+        }
         pd.optionString = [];
         pd.webtool = [];
         a[0].innerHTML = "S";
@@ -1636,8 +1666,6 @@ pd = {
         }
         o.bd.className = "tall";
         o.md.className = "tall";
-        o.pt.disabled = true;
-        o.au.checked = true;
         o.option.value = "/*prettydiff.com */";
         o.bq.value = "4";
         o.bc.value = "Click me for custom input";
@@ -1743,7 +1771,8 @@ pd = {
             html = false,
             mode = "",
             stat = [],
-            top = "";
+            top = "",
+            lang = "";
         if (o.wb.getAttribute("id") === "webtool") {
             o.bc = $$("beau-char");
             o.dc = $$("diff-char");
@@ -1752,6 +1781,200 @@ pd = {
             o.ri.style.zIndex = "2";
             o.rk.style.zIndex = "2";
             if (ls && (localStorage.hasOwnProperty("optionString") || localStorage.hasOwnProperty("webtool") || localStorage.hasOwnProperty("statdata"))) {
+                if (localStorage.hasOwnProperty("optionString") && localStorage.getItem("optionString") !== null) {
+                    o.option.innerHTML = "/*prettydiff.com " + (localStorage.getItem("optionString").replace(/prettydiffper/g, "%").replace(/(prettydiffcsep)+/g, ", ").replace(/\,\s+pdempty/g, "").replace(/(\,\s+\,\s+)+/g, ", ") + " */").replace(/((\,? )+\*\/)$/, " */");
+                    a = localStorage.getItem("optionString").replace(/prettydiffper/g, "%").split("prettydiffcsep");
+                    c = a.length;
+                    for (b = 0; b < c; b += 1) {
+                        d = a[b].split(": ");
+                        if (typeof d[1] === "string") {
+                            f = d[1].charAt(0);
+                            g = d[1].length - 1;
+                            h = d[1].charAt(d[1].length - 2);
+                            if ((f === "\"" || f === "'") && f === d[1].charAt(g) && h !== "\\") {
+                                d[1] = d[1].substring(1, g);
+                            }
+                            if (d[0] === "api.mode") {
+                                if (mode === "minify" || d[1] === "minify") {
+                                    m = o.la.getElementsByTagName("option");
+                                    for (l = m.length - 1; l > -1; l -= 1) {
+                                        if (m[l].value === "text") {
+                                            m[l].disabled = true;
+                                        }
+                                    }
+                                    o.mm.checked = true;
+                                    o.mx.setAttribute("name", "paste_code");
+                                    o.bx.removeAttribute("name");
+                                    if (o.bt) {
+                                        o.bt.style.display = "none";
+                                    }
+                                    if (o.nt) {
+                                        o.nt.style.display = "none";
+                                    }
+                                    o.md.style.display = "block";
+                                    o.bops.style.display = "none";
+                                    if (o.dops) {
+                                        o.dops.style.display = "none";
+                                    }
+                                    if (lang === "text") {
+                                        lang = "auto";
+                                        o.la.selectedIndex = 0;
+                                    }
+                                    if (lang === "text" || lang === "csv") {
+                                        o.mops.style.display = "none";
+                                    } else {
+                                        o.mops.style.display = "block";
+                                    }
+                                } else if (mode === "beautify" || d[1] === "beautify") {
+                                    m = o.la.getElementsByTagName("option");
+                                    for (l = m.length - 1; l > -1; l -= 1) {
+                                        if (m[l].value === "text") {
+                                            m[l].disabled = true;
+                                        }
+                                    }
+                                    o.bb.checked = true;
+                                    if (o.bt) {
+                                        o.bt.style.display = "none";
+                                    }
+                                    if (o.nt) {
+                                        o.nt.style.display = "none";
+                                    }
+                                    o.bd.style.display = "block";
+                                    if (o.dops) {
+                                        o.dops.style.display = "none";
+                                    }
+                                    o.mops.style.display = "none";
+                                    if (lang === "text") {
+                                        lang = "auto";
+                                        o.la.selectedIndex = 0;
+                                    }
+                                    if (lang === "text" || lang === "csv") {
+                                        o.bops.style.display = "none";
+                                    } else {
+                                        o.bops.style.display = "block";
+                                    }
+                                } else if (o.dd && (mode === "diff" || mode === "" || !d[1] || d[1] === "diff" || d[1] === "")) {
+                                    m = o.la.getElementsByTagName("option");
+                                    for (l = m.length - 1; l > -1; l -= 1) {
+                                        m[l].disabled = false;
+                                    }
+                                    o.dd.checked = true;
+                                    o.bx.setAttribute("name", "paste_code");
+                                    o.mx.removeAttribute("name");
+                                    o.bd.style.display = "none";
+                                    o.md.style.display = "none";
+                                    o.bt.style.display = "block";
+                                    o.nt.style.display = "block";
+                                    o.dops.style.display = "block";
+                                    o.bops.style.display = "none";
+                                    o.mops.style.display = "none";
+                                    if (lang === "text" || lang === "csv") {
+                                        o.db.style.display = "none";
+                                    } else {
+                                        o.db.style.display = "block";
+                                    }
+                                }
+                            } else if (d[0] === "api.lang") {
+                                o.la.selectedIndex = d[1];
+                                lang = o.la[o.la.selectedIndex].value;
+                                if (lang === "csv" || (o.dd.checked && lang === "text")) {
+                                    o.db.style.display = "none";
+                                    o.bops.style.display = "none";
+                                    o.mops.style.display = "none";
+                                    if (o.dops && o.dd.checked) {
+                                        o.dops.style.display = "block";
+                                    }
+                                }
+                                if (lang === "html") {
+                                    o.hd.checked = true;
+                                    o.hm.checked = true;
+                                    o.hy.checked = true;
+                                } else {
+                                    o.he.checked = true;
+                                    o.hn.checked = true;
+                                    o.hz.checked = true;
+                                }
+                            } else if (d[0] === "api.csvchar") {
+                                o.ch.value = d[1];
+                            } else if (d[0] === "api.insize") {
+                                o.bq.value = d[1];
+                                if (o.dq) {
+                                    o.dq.value = d[1];
+                                }
+                            } else if (d[0] === "api.inchar") {
+                                if (d[1] === " ") {
+                                    if (o.ds) {
+                                        o.ds.checked = true;
+                                    }
+                                    if (o.dc) {
+                                        o.dc.value = "Click me for custom input";
+                                        o.dc.className = "unchecked";
+                                    }
+                                    o.bs.checked = true;
+                                    o.bc.value = "Click me for custom input";
+                                    o.bc.className = "unchecked";
+                                } else if (d[1] === "\\t") {
+                                    if (o.da) {
+                                        o.da.checked = true;
+                                    }
+                                    if (o.dc) {
+                                        o.dc.value = "Click me for custom input";
+                                        o.dc.className = "unchecked";
+                                    }
+                                    o.ba.checked = true;
+                                    o.bc.value = "Click me for custom input";
+                                    o.bc.className = "unchecked";
+                                } else if (d[1] === "\\n") {
+                                    if (o.dz) {
+                                        o.dz.checked = true;
+                                    }
+                                    if (o.dc) {
+                                        o.dc.value = "Click me for custom input";
+                                        o.dc.className = "unchecked";
+                                    }
+                                    o.bn.checked = true;
+                                    o.bc.value = "Click me for custom input";
+                                    o.bc.className = "unchecked";
+                                } else {
+                                    if (o.dw) {
+                                        o.dw.checked = true;
+                                    }
+                                    if (o.dc) {
+                                        o.dc.value = d[1];
+                                        o.dc.className = "checked";
+                                    }
+                                    o.bw.checked = true;
+                                    o.bc.value = d[1];
+                                    o.bc.className = "checked";
+                                }
+                            } else if (d[0] === "api.comments" && d[1] === "noindent") {
+                                o.iz.checked = true;
+                            } else if (d[0] === "api.indent" && d[1] === "allman") {
+                                o.jd.checked = true;
+                                o.js.checked = true;
+                            } else if (d[0] === "api.style" && d[1] === "noindent") {
+                                o.ie.checked = true;
+                                o.it.checked = true;
+                            } else if (d[0] === "api.html" && d[1] === "html-yes") {
+                                o.hd.checked = true;
+                                o.hm.checked = true;
+                                o.hy.checked = true;
+                            } else if (d[0] === "api.context" && !isNaN(d[1])) {
+                                o.context.value = d[1];
+                            } else if (d[0] === "api.content" && d[1] === "true") {
+                                o.du.checked = true;
+                            } else if (d[0] === "api.quote" && d[1] === "true") {
+                                o.dy.checked = true;
+                            } else if (d[0] === "api.semicolon" && d[1] === "true") {
+                                o.dn.checked = true;
+                            } else if (d[0] === "api.diffview" && d[1] === "inline") {
+                                o.inline.checked = true;
+                            } else if (d[0] === "api.topcoms" && d[1] === "true") {
+                                o.mc.checked = true;
+                            }
+                        }
+                    }
+                }
                 if (localStorage.hasOwnProperty("webtool") && localStorage.getItem("webtool") !== null) {
                     a = localStorage.getItem("webtool").replace(/prettydiffper/g, "%").split("prettydiffcsep");
                     c = a.length;
@@ -1772,7 +1995,7 @@ pd = {
                                 pd.colorScheme(o.cs);
                             } else if (d[0] === "showhide" && d[1] === "hide") {
                                 pd.hideOptions(o.sh);
-                            } else if (d[0] === "additional" && d[1] === "yes") {
+                            } else if (d[0] === "additional" && d[1] === "yes" && lang !== "csv") {
                                 o.ao.style.display = "block";
                                 o.ay.checked = true;
                             } else if (o.dp && d[0] === "display" && d[1] === "horizontal") {
@@ -1911,184 +2134,6 @@ pd = {
                         o.rl.style.display = "block";
                     }
                 }
-                if (localStorage.hasOwnProperty("optionString") && localStorage.getItem("optionString") !== null) {
-                    o.option.innerHTML = "/*prettydiff.com " + (localStorage.getItem("optionString").replace(/prettydiffper/g, "%").replace(/(prettydiffcsep)+/g, ", ").replace(/\,\s+pdempty/g, "").replace(/(\,\s+\,\s+)+/g, ", ") + " */").replace(/((\,? )+\*\/)$/, " */");
-                    a = localStorage.getItem("optionString").replace(/prettydiffper/g, "%").split("prettydiffcsep");
-                    c = a.length;
-                    for (b = 0; b < c; b += 1) {
-                        d = a[b].split(": ");
-                        if (typeof d[1] === "string") {
-                            f = d[1].charAt(0);
-                            g = d[1].length - 1;
-                            h = d[1].charAt(d[1].length - 2);
-                            if ((f === "\"" || f === "'") && f === d[1].charAt(g) && h !== "\\") {
-                                d[1] = d[1].substring(1, g);
-                            }
-                            if (d[0] === "api.mode") {
-                                if (mode === "minify" || d[1] === "minify") {
-                                    o.mm.checked = true;
-                                    o.mx.setAttribute("name", "paste_code");
-                                    o.bx.removeAttribute("name");
-                                    if (o.bt) {
-                                        o.bt.style.display = "none";
-                                    }
-                                    if (o.nt) {
-                                        o.nt.style.display = "none";
-                                    }
-                                    o.md.style.display = "block";
-                                    o.bops.style.display = "none";
-                                    if (o.dops) {
-                                        o.dops.style.display = "none";
-                                    }
-                                    if (o.pt.checked) {
-                                        o.au.checked = true;
-                                    }
-                                    if (o.au.checked) {
-                                        o.mops.style.display = "block";
-                                    } else {
-                                        o.mops.style.display = "none";
-                                    }
-                                } else if (mode === "beautify" || d[1] === "beautify") {
-                                    o.bb.checked = true;
-                                    if (o.bt) {
-                                        o.bt.style.display = "none";
-                                    }
-                                    if (o.nt) {
-                                        o.nt.style.display = "none";
-                                    }
-                                    o.bd.style.display = "block";
-                                    if (o.dops) {
-                                        o.dops.style.display = "none";
-                                    }
-                                    o.mops.style.display = "none";
-                                    if (o.pt.checked) {
-                                        o.au.checked = true;
-                                    }
-                                    if (o.au.checked) {
-                                        o.bops.style.display = "block";
-                                    } else {
-                                        o.bops.style.display = "none";
-                                    }
-                                } else if (o.dd && (mode === "diff" || mode === "" || !d[1] || d[1] === "diff" || d[1] === "")) {
-                                    o.dd.checked = true;
-                                    o.pt.disabled = false;
-                                    o.bx.setAttribute("name", "paste_code");
-                                    o.mx.removeAttribute("name");
-                                    o.bd.style.display = "none";
-                                    o.md.style.display = "none";
-                                    o.bt.style.display = "block";
-                                    o.nt.style.display = "block";
-                                    o.dops.style.display = "block";
-                                    o.bops.style.display = "none";
-                                    o.mops.style.display = "none";
-                                    if (o.pt.checked || o.cv.checked) {
-                                        o.db.style.display = "none";
-                                    } else {
-                                        o.db.style.display = "block";
-                                    }
-                                    if (o.au.checked) {
-                                        o.db.style.display = "block";
-                                    } else {
-                                        o.db.style.display = "none";
-                                    }
-                                }
-                            } else if (d[0] === "api.lang") {
-                                if (d[1] === "csv" || (o.dd.checked && d[1] === "text")) {
-                                    o.db.style.display = "none";
-                                    o.bops.style.display = "none";
-                                    o.mops.style.display = "none";
-                                    if (o.dops && o.dd.checked) {
-                                        o.dops.style.display = "block";
-                                    }
-                                    if (d[1] === "csv") {
-                                        o.cv.checked = true;
-                                    } else {
-                                        o.pt.checked = true;
-                                    }
-                                } else {
-                                    o.au.checked = true;
-                                }
-                            } else if (d[0] === "api.csvchar") {
-                                o.ch.value = d[1];
-                            } else if (d[0] === "api.insize") {
-                                o.bq.value = d[1];
-                                if (o.dq) {
-                                    o.dq.value = d[1];
-                                }
-                            } else if (d[0] === "api.inchar") {
-                                if (d[1] === " ") {
-                                    if (o.ds) {
-                                        o.ds.checked = true;
-                                    }
-                                    if (o.dc) {
-                                        o.dc.value = "Click me for custom input";
-                                        o.dc.className = "unchecked";
-                                    }
-                                    o.bs.checked = true;
-                                    o.bc.value = "Click me for custom input";
-                                    o.bc.className = "unchecked";
-                                } else if (d[1] === "\\t") {
-                                    if (o.da) {
-                                        o.da.checked = true;
-                                    }
-                                    if (o.dc) {
-                                        o.dc.value = "Click me for custom input";
-                                        o.dc.className = "unchecked";
-                                    }
-                                    o.ba.checked = true;
-                                    o.bc.value = "Click me for custom input";
-                                    o.bc.className = "unchecked";
-                                } else if (d[1] === "\\n") {
-                                    if (o.dz) {
-                                        o.dz.checked = true;
-                                    }
-                                    if (o.dc) {
-                                        o.dc.value = "Click me for custom input";
-                                        o.dc.className = "unchecked";
-                                    }
-                                    o.bn.checked = true;
-                                    o.bc.value = "Click me for custom input";
-                                    o.bc.className = "unchecked";
-                                } else {
-                                    if (o.dw) {
-                                        o.dw.checked = true;
-                                    }
-                                    if (o.dc) {
-                                        o.dc.value = d[1];
-                                        o.dc.className = "checked";
-                                    }
-                                    o.bw.checked = true;
-                                    o.bc.value = d[1];
-                                    o.bc.className = "checked";
-                                }
-                            } else if (d[0] === "api.comments" && d[1] === "noindent") {
-                                o.iz.checked = true;
-                            } else if (d[0] === "api.indent" && d[1] === "allman") {
-                                o.jd.checked = true;
-                                o.js.checked = true;
-                            } else if (d[0] === "api.style" && d[1] === "noindent") {
-                                o.ie.checked = true;
-                                o.it.checked = true;
-                            } else if (d[0] === "api.html" && d[1] === "html-yes") {
-                                o.hd.checked = true;
-                                o.hm.checked = true;
-                                o.hy.checked = true;
-                            } else if (d[0] === "api.context" && !isNaN(d[1])) {
-                                o.context.value = d[1];
-                            } else if (d[0] === "api.content" && d[1] === "true") {
-                                o.du.checked = true;
-                            } else if (d[0] === "api.quote" && d[1] === "true") {
-                                o.dy.checked = true;
-                            } else if (d[0] === "api.semicolon" && d[1] === "true") {
-                                o.dn.checked = true;
-                            } else if (d[0] === "api.diffview" && d[1] === "inline") {
-                                o.inline.checked = true;
-                            } else if (d[0] === "api.topcoms" && d[1] === "true") {
-                                o.mc.checked = true;
-                            }
-                        }
-                    }
-                }
                 if (localStorage.hasOwnProperty("statdata") && localStorage.getItem("statdata") !== null) {
                     stat = localStorage.getItem("statdata").split("|");
                     o.stat.visit = Number(stat[0]) + 1;
@@ -2157,10 +2202,10 @@ pd = {
                     o.stat.large = 0;
                     localStorage.setItem("statdata", stat.join("|"));
                 }
-                if (o.cv.checked) {
+                if (lang === "csv") {
                     o.csvp.style.display = "block";
                 }
-                if (o.cv.checked || o.pt.checked) {
+                if (lang === "text" || lang === "csv") {
                     o.db.style.display = "none";
                 }
                 if (o.bw.checked) {
@@ -2175,11 +2220,12 @@ pd = {
                 o.bb = $$("modebeautify");
                 o.dd = $$("modediff");
                 o.mm = $$("modeminify");
-                o.au = $$("ctype-auto");
+                o.la = $$("language");
+                lang = o.la[o.la.selectedIndex].value;
                 if (!ls) {
                     o.rk.style.display = "none";
                 }
-                if (o.cv.checked) {
+                if (lang === "csv") {
                     o.csvp.style.display = "block";
                 }
                 if (o.mm.checked) {
@@ -2197,13 +2243,16 @@ pd = {
                         o.dops.style.display = "none";
                     }
                     o.bops.style.display = "none";
-                    if (o.au.checked) {
-                        o.mops.style.display = "block";
-                    } else {
+                    if (lang === "text" || lang === "csv") {
                         o.mops.style.display = "none";
+                    } else {
+                        o.mops.style.display = "block";
                     }
                 } else if (o.dd && o.dd.checked) {
-                    o.pt.disabled = false;
+                    m = o.la.getElementsByTagName("option");
+                    for (l = m.length - 1; l > -1; l -= 1) {
+                        m[l].disabled = false;
+                    }
                     o.bd.style.display = "none";
                     o.md.style.display = "none";
                     o.bt.style.display = "block";
@@ -2211,7 +2260,7 @@ pd = {
                     o.dops.style.display = "block";
                     o.bops.style.display = "none";
                     o.mops.style.display = "none";
-                    if (o.pt.checked || o.cv.checked) {
+                    if (lang === "text" || lang === "csv") {
                         o.db.style.display = "none";
                     } else {
                         o.db.style.display = "block";
@@ -2229,10 +2278,10 @@ pd = {
                     if (o.nt) {
                         o.nt.style.display = "none";
                     }
-                    if (o.au.checked) {
-                        o.bops.style.display = "block";
+                    if (lang === "text" || lang === "csv") {
+                        o.db.style.display = "none";
                     } else {
-                        o.bops.style.display = "none";
+                        o.db.style.display = "block";
                     }
                 }
                 if (o.dt && o.dt.checked) {
@@ -2278,35 +2327,45 @@ pd = {
                     } else if (d[b].indexOf("l=") === 0) {
                         f = d[b].toLowerCase().substr(2);
                         if (f === "auto") {
-                            o.au.click();
-                            o.alang = "auto";
-                        } else if (f === "javascript" || f === "js") {
-                            o.au.click();
-                            o.alang = "javascript";
+                            pd.codeOps();
+                            lang = "auto"
+                        } else if (f === "javascript" || f === "js" || f === "json") {
+                            pd.codeOps();
+                            lang = "javascript";
+                            f = lang;
                         } else if (f === "html") {
-                            o.au.click();
+                            pd.codeOps();
                             o.hd.checked = true;
                             o.hm.checked = true;
                             o.hy.checked = true;
-                            o.alang = "html";
-                        } else if (f === "markup") {
-                            o.au.click();
+                            lang = "markup";
+                            f = lang;
+                        } else if (f === "markup" || f === "xml" || f === "sgml" || f === "jstl") {
+                            pd.codeOps();
                             o.he.checked = true;
                             o.hn.checked = true;
                             o.hz.checked = true;
-                            o.alang = "markup";
-                        } else if (f === "css") {
-                            o.au.click();
-                            o.alang = "css";
+                            lang = "markup";
+                        } else if (f === "css" || f === "scss") {
+                            pd.codeOps();
+                            lang = "css";
                         } else if (f === "csv") {
-                            o.cv.click();
-                            o.alang = "csv";
+                            pd.codeOps();
+                            lang = "csv";
                         } else if (f === "text") {
                             o.dd.click();
-                            o.pt.click();
-                            o.alang = "text";
+                            lang = "text";
                         } else {
-                            o.alang = "";
+                            lang = "javascript";
+                        }
+                        m = o.la.getElementsByTagName("option");
+                        for (l = m.length - 1; m > -1; m -= 1) {
+                            if (f === "text") {
+                                m[l].disabled = false;
+                            }
+                            if (m[l].value === f) {
+                                o.la.selectedIndex = l;
+                            }
                         }
                     } else if (d[b].indexOf("c=") === 0) {
                         f = d[b].toLowerCase().substr(2);
@@ -2424,7 +2483,7 @@ if (!(/^(file:\/\/)/).test(location.href)) {
                 }
             }
             if (line > 0) {
-                sFormattedMessage = "[" + file + " (" + line + ")] " + message + " " + mode + " " + o.lang;
+                sFormattedMessage = "[" + file + " (" + line + ")] " + message + " " + mode + " " + o.la[o.la.selectedIndex].value;
                 _gaq.push(["_trackEvent", "Exceptions", "Application", sFormattedMessage, null, true]);
             }
         };
