@@ -9,7 +9,7 @@ var exports = "",
     bounce = true,
     $$ = function (x) {
         "use strict";
-        if (typeof document.getElementById === "undefined") {
+        if (document.getElementById === undefined) {
             return;
         }
         return document.getElementById(x);
@@ -172,8 +172,7 @@ var exports = "",
             output = [],
             domain = /^(https?:\/\/|file:\/\/\/)/,
             event = e || window.event,
-            pstyle = {},
-            lang = "";
+            pstyle = {};
 
         //do not execute from alt, home, end, or arrow keys
         if (typeof event === "object" && event.type === "keyup" && (event.altKey || event.keyCode === 18 || event.keyCode === 35 || event.keyCode === 36 || event.keyCode === 37 || event.keyCode === 38 || event.keyCode === 39 || event.keyCode === 40)) {
@@ -236,6 +235,9 @@ var exports = "",
                 o.cz = "\n";
             } else if (o.bw.checked) {
                 o.cz = o.bc.value;
+                if ((/^&/).test(o.cz) && !(/;$/).test(o.cz)) {
+                    o.cz = o.cz.replace("&", "&amp;");
+                }
             } else {
                 o.cz = " ";
             }
@@ -314,6 +316,9 @@ var exports = "",
                 o.cz = "\n";
             } else if (o.dw.checked.checked) {
                 o.cz = o.dc.value;
+                if ((/^&/).test(o.cz) && !(/;$/).test(o.cz)) {
+                    o.cz = o.cz.replace("&", "&amp;");
+                }
             } else {
                 o.cz = " ";
             }
@@ -373,7 +378,7 @@ var exports = "",
                     var a = (api.diff.indexOf("file:///") === 0) ? api.diff.split(":///")[1] : api.diff.split("://")[1],
                         b = a ? a.indexOf("/") : 0,
                         c,
-                        xhr = new XMLHttpRequest() || new ActiveXObject("Microsoft.XMLHTTP");
+                        xhr = (typeof XMLHttpRequest === "function") ? new XMLHttpRequest() : new ActiveXObject("Microsoft.XMLHTTP");
                     if (location && location.href) {
                         c = location.href.split("://")[0];
                     }
@@ -395,7 +400,7 @@ var exports = "",
                 var a = (api.source.indexOf("file:///") === 0) ? api.source.split(":///")[1] : api.source.split("://")[1],
                     b = a ? a.indexOf("/") : 0,
                     c,
-                    xhr = new XMLHttpRequest() || new ActiveXObject("Microsoft.XMLHTTP");
+                    xhr = (typeof XMLHttpRequest === "function") ? new XMLHttpRequest() : new ActiveXObject("Microsoft.XMLHTTP");
                 if (location && location.href) {
                     c = location.href.split("://")[0];
                 }
@@ -411,7 +416,7 @@ var exports = "",
                 }
             }());
         }
-        
+
         //this is where prettydiff is executed
         output = prettydiff(api);
         o.zindex += 1;
@@ -1172,10 +1177,18 @@ pd = {
         } else if (x === o.dq && o.dd.checked && o.dq.value !== "" && !isNaN(Number(o.dq.value))) {
             pd.optionString[3] = "api.insize: " + o.dq.value;
         } else if (x === o.bc && o.bb.checked && o.bw.checked) {
-            pd.optionString[4] = "api.inchar: \"" + o.bc.value + "\"";
-            o.bcv = o.bc.value;
+            o.cz = o.bc.value;
+            if ((/^&/).test(o.cz) && !(/;$/).test(o.cz)) {
+                o.cz = o.cz.replace("&", "&amp;");
+            }
+            pd.optionString[4] = "api.inchar: \"" + o.cz + "\"";
+            o.bcv = o.cz;
         } else if (x === o.bw && o.bb.checked) {
-            pd.optionString[4] = "api.inchar: \"" + o.bc.value + "\"";
+            o.cz = o.bc.value;
+            if ((/^&/).test(o.cz) && !(/;$/).test(o.cz)) {
+                o.cz = o.cz.replace("&", "&amp;");
+            }
+            pd.optionString[4] = "api.inchar: \"" + o.cz + "\"";
         } else if (x === o.bs && o.bb.checked) {
             pd.optionString[4] = "api.inchar: \" \"";
         } else if (x === o.ba && o.bb.checked) {
@@ -1183,10 +1196,18 @@ pd = {
         } else if (x === o.bn && o.bb.checked) {
             pd.optionString[4] = "api.inchar: \"\\n\"";
         } else if (x === o.dc && o.dd.checked && o.dw.checked) {
-            pd.optionString[4] = "api.inchar: \"" + o.dc.value + "\"";
-            o.dcv = o.dc.value;
+            o.cz = o.dc.value;
+            if ((/^&/).test(o.cz) && !(/;$/).test(o.cz)) {
+                o.cz = o.cz.replace("&", "&amp;");
+            }
+            pd.optionString[4] = "api.inchar: \"" + o.cz + "\"";
+            o.dcv = o.cz;
         } else if (x === o.dw && o.dd.checked) {
-            pd.optionString[4] = "api.inchar: \"" + o.dc.value + "\"";
+            o.cz = o.dc.value;
+            if ((/^&/).test(o.cz) && !(/;$/).test(o.cz)) {
+                o.cz = o.cz.replace("&", "&amp;");
+            }
+            pd.optionString[4] = "api.inchar: \"" + o.cz + "\"";
         } else if (x === o.ds && o.dd.checked) {
             pd.optionString[4] = "api.inchar: \" \"";
         } else if (x === o.da && o.dd.checked) {
@@ -1411,6 +1432,9 @@ pd = {
             }
         }
         if (o.option !== null) {
+            if (pd.optionString[4] === "api.inchar: \"&nbsp;\"") {
+                pd.optionString[4] = "api.inchar: \" \"";
+            }
             if (typeof o.option.innerHTML === "string") {
                 o.option.innerHTML = ("/*prettydiff.com " + (pd.optionString.join(", ").replace(/pdempty(\, )?/g, "").replace(/(\,\s+\,\s+)+/g, ", ") + " */").replace(/((\,? )+\*\/)$/, " */")).replace(/^(\/\*prettydiff\.com (\, )+)/, "/*prettydiff.com ").replace(/(\,\s+\,\s+)+/g, ", ");
             }
@@ -1443,7 +1467,7 @@ pd = {
         }
         localStorage.setItem("webtool", pd.webtool.join("prettydiffcsep").replace(/(prettydiffcsep)+/g, "prettydiffcsep").replace(/%/g, "prettydiffper"));
     },
-    
+
     fixminreport: function () {
         "use strict";
         var a = {}, b = {}, c = {}, d = {};
@@ -1587,14 +1611,13 @@ pd = {
     reset: function () {
         "use strict";
         var a = o.re.getElementsByTagName("button"),
-            b = "",
-            c = [],
-            d = 0;
+            b = 0,
+            c = [];
         c = o.la.getElementsByTagName("option");
         o.la.selectedIndex = 0;
-        for (d = c.length - 1; d > -1; d -= 1) {
-            if (c[d].value === "text") {
-                c[d].disabled = true;
+        for (b = c.length - 1; b > -1; b -= 1) {
+            if (c[b].value === "text") {
+                c[b].disabled = true;
             }
         }
         pd.optionString = [];
@@ -2208,14 +2231,6 @@ pd = {
                 if (lang === "text" || lang === "csv") {
                     o.db.style.display = "none";
                 }
-                if (o.bw.checked) {
-                    o.bc.style.backgroundColor = "#eef8ff";
-                    o.bc.style.color = "#000";
-                }
-                if (o.dw && o.dw.checked) {
-                    o.dc.style.backgroundColor = "#eef8ff";
-                    o.dc.style.color = "#000";
-                }
             } else {
                 o.bb = $$("modebeautify");
                 o.dd = $$("modediff");
@@ -2328,7 +2343,7 @@ pd = {
                         f = d[b].toLowerCase().substr(2);
                         if (f === "auto") {
                             pd.codeOps();
-                            lang = "auto"
+                            lang = "auto";
                         } else if (f === "javascript" || f === "js" || f === "json") {
                             pd.codeOps();
                             lang = "javascript";
