@@ -2965,9 +2965,11 @@ var prettydiff = function (api) {
                         }
                         print_token();
                     }
-                    last_last_text = last_text;
-                    last_type = token_type;
-                    last_text = token_text;
+                    if (token_type !== "TK_COMMENT" && token_type !== "TK_INLINE_COMMENT" && token_type !== "TK_BLOCK_COMMENT") {
+                        last_last_text = last_text;
+                        last_type = token_type;
+                        last_text = token_text;
+                    }
                 }
                 rvalue = output.join("").replace(/var prettydiffvar\,\s*/g, "var ").replace(/^(\s+)/, "").replace(/(\s+)$/, "").replace(/\s*\}\(function/g, funcfix).replace(/\n( |\t)+\n/g, "\n\n").replace(/ \n/g, "\n");
                 (function () {
