@@ -1556,7 +1556,7 @@ var prettydiff = function (api) {
                                     if (c[e - 1] && c[e - 1][0] === c[e][0] && (/\-[a-z]/).test(c[e - 1][1]) === false && (/\-[a-z]/).test(c[e][1]) === false) {
                                         c[e - 1] = ["", ""];
                                     }
-                                    if (c[e].length > 1) {
+                                    if (c[e].length > 1 && typeof c[e][1] === "string" && c[e][1].length > 2) {
                                         c[e][1] = c[e][1].replace(/\//g, " / ").replace(/\*/g, "* ");
                                     }
                                     if (c[e][0] !== "margin" && c[e][0].indexOf("margin") !== -1) {
@@ -2306,7 +2306,7 @@ var prettydiff = function (api) {
                                 set_mode("(EXPRESSION)");
                                 print_token();
                             } else if (flags.mode === "[EXPRESSION]" || flags.mode === "[INDENTED-EXPRESSION]") {
-                                if (last_last_text === "]" && last_text === ",") {
+                                if ((last_last_text === "]" || last_last_text === "}") && last_text === ",") {
                                     if (flags.mode === "[EXPRESSION]") {
                                         flags.mode = "[INDENTED-EXPRESSION]";
                                         if (!args.inarray) {
@@ -2372,8 +2372,19 @@ var prettydiff = function (api) {
                         if (last_last_text === "}") {
                             pseudo_block = true;
                         }
-                        if (closedInArray && token_text === "]") {
-                            flags.indentation_level -= 3;
+                        if ((flags.mode === "TK_END_BLOCK" || flags.mode === "[INDENTED-EXPRESSION]") && token_text === "]" && (last_text === "}" || last_text === "]" || last_type === "TK_WORD" || last_type === "TK_STRING") && objectInArray) {
+                            if (last_type === "TK_WORD" || last_type === "TK_STRING" || flags.mode === "[INDENTED-EXPRESSION]") {
+                                flags.indentation_level -= 1;
+                                print_newline();
+                            } else {
+                                print_newline();
+                                flags.indentation_level -= 1;
+                            }
+                        }
+                        if (closedInArray && token_text === "]" && last_last_text !== "[") {
+                            if (flags.mode !== "TK_END_BLOCK") {
+                                flags.indentation_level -= 3;
+                            }
                             flag_store[flag_store.length - 1].indentation_level = flags.indentation_level - 1;
                             if (flags.var_line_reindented) {
                                 set_mode("[INDENTED-EXPRESSION]");
@@ -2423,14 +2434,19 @@ var prettydiff = function (api) {
                                 closedInArray = false;
                             }
                         }
+                        if (!objectInArray) {
+                            closedInArray = false;
+                        }
                     } else if (token_type === "TK_START_BLOCK") {
                         n[4] += 1;
                         pseudo_block = false;
                         if (last_text === "[") {
-                            if (!objectInArray) {
-                                flags.indentation_level += 1;
-                            }
+                            flags.indentation_level += 1;
+                            print_newline();
                             objectInArray = true;
+                        }
+                        if (last_text === ";" || last_text === "}") {
+                            print_newline();
                         }
                         if (last_word === "do") {
                             set_mode("DO_BLOCK");
@@ -2505,7 +2521,11 @@ var prettydiff = function (api) {
                             print_token();
                         } else {
                             if (!objectInArray) {
-                                restore_mode();
+                                if (last_type === "TK_END_BLOCK" && flag_store[flag_store.length - 1].indentation_level > flags.indentation_level) {
+                                    flags.indentation_level -= 1;
+                                } else {
+                                    restore_mode();
+                                }
                             } else {
                                 flags.indentation_level -= 1;
                                 flag_store[flag_store.length - 1].indentation_level = flags.indentation_level - 1;
@@ -2515,8 +2535,12 @@ var prettydiff = function (api) {
                                 } else {
                                     set_mode("TK_END_BLOCK");
                                 }
-                                objectInArray = false;
-                                closedInArray = true;
+                                if (arrayTest === 0) {
+                                    objectInArray = false;
+                                }
+                                if (objectInArray) {
+                                    closedInArray = true;
+                                }
                             }
                             functestval = 0;
                             if (var_var_test) {
@@ -2658,6 +2682,9 @@ var prettydiff = function (api) {
                         if (last_text === ";" && last_last_text === "}" && var_end_count === "y") {
                             flags.indentation_level -= 1;
                         }
+                        if ((last_text === "{" || last_text === "[") && (last_last_text === "{" || last_last_text === "[")) {
+                            flags.indentation_level += 1;
+                        }
                         if (last_text === "{" && ((last_last_text === ":" && comma_test) || (last_last_text === ")" && var_last_type === "TK_START_BLOCK" && !comma_test))) {
                             output.push(indent_string);
                             flags.indentation_level += 1;
@@ -2671,7 +2698,11 @@ var prettydiff = function (api) {
                             print_single_space();
                             do_block_just_closed = false;
                         } else {
-                            if (token_text === "do") {
+                            if (last_text === "," && flags.mode !== "(EXPRESSION)" && (last_last_text === "}" || last_last_text === "]")) {
+                                output.pop();
+                                print_newline();
+                                print_token();
+                            } else if (token_text === "do") {
                                 print_newline();
                                 print_token();
                             } else if (token_text === "case" || token_text === "default") {
@@ -2745,11 +2776,9 @@ var prettydiff = function (api) {
                                         }
                                     } else if (last_type === "TK_START_BLOCK") {
                                         if (var_last_type === "TK_START_BLOCK") {
-                                            if (last_type === "TK_START_BLOCK") {
-                                                var_last_type = "";
-                                                var_last_last_type = "TK_START_BLOCK";
-                                                var_end_count = 0;
-                                            }
+                                            var_last_type = "";
+                                            var_last_last_type = "TK_START_BLOCK";
+                                            var_end_count = 0;
                                         } else {
                                             var_last_type = "TK_START_BLOCK";
                                         }
@@ -2783,6 +2812,9 @@ var prettydiff = function (api) {
                             comma_test = true;
                         }
                         print_token();
+                        if (flags.var_line_reindented && last_text === "]" && last_type === "TK_END_EXPR" && flag_store[flag_store.length - 1].mode === "TK_END_BLOCK") {
+                            flags.indentation_level -= 1;
+                        }
                         flags.var_line = false;
                         flags.var_line_reindented = false;
                         if (functestval < 2) {
@@ -2796,6 +2828,11 @@ var prettydiff = function (api) {
                             l[2] += 2;
                         } else {
                             l[1] += token_text.length;
+                        }
+                        if ((last_text === "{" || last_text === "[") && (last_last_text === "{" || last_last_text === "[")) {
+                            flags.indentation_level += 1;
+                        } else if (last_text === "," && (last_last_text === "}" || last_last_text === "]")) {
+                            print_newline();
                         }
                         white_count(token_text);
                         if (last_type === "TK_START_BLOCK" || last_type === "TK_END_BLOCK" || last_type === "TK_SEMICOLON") {
@@ -2824,7 +2861,7 @@ var prettydiff = function (api) {
                             if (var_end_count === "y" && last_type !== "TK_END_BLOCK") {
                                 flags.indentation_level -= 1;
                             }
-                            if (commafix) {
+                            if (commafix || flags.mode === "TK_END_BLOCK") {
                                 commafix = false;
                                 if (last_text === "}") {
                                     flags.var_line_reindented = true;
@@ -2846,11 +2883,7 @@ var prettydiff = function (api) {
                                 }
                             } else if (last_type === "TK_END_BLOCK" && flags.mode !== "(EXPRESSION)") {
                                 print_token();
-                                if (last_text === "}" && (arrayTest === 0 || objectInArray)) {
-                                    print_newline();
-                                } else {
-                                    print_single_space();
-                                }
+                                print_single_space();
                             } else if (flags.mode !== "(EXPRESSION)" && (arrayTest === 0 || (objectInArray && (flags.mode === "BLOCK" || flags.mode === "TK_END_BLOCK" || flags.mode === "OBJECT" || is_ternary_op())))) {
                                 print_token();
                                 print_newline();

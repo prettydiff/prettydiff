@@ -376,7 +376,7 @@ var exports = "",
                 localStorage.setItem("bl", "");
                 localStorage.setItem("nl", "");
             }
-            if (domain.test(api.diff) && (typeof XMLHttpRequest === "function" || typeof XMLHttpRequest === "object" || typeof ActiveXObject === "function")) {
+            if (domain.test(api.diff) && (typeof XMLHttpRequest === "function" || typeof ActiveXObject === "function")) {
                 (function () {
                     var a = (api.diff.indexOf("file:///") === 0) ? api.diff.split(":///")[1] : api.diff.split("://")[1],
                         b = a ? a.indexOf("/") : 0,
@@ -398,7 +398,7 @@ var exports = "",
                 }());
             }
         }
-        if (domain.test(api.source) && (typeof XMLHttpRequest === "function" || typeof XMLHttpRequest === "object" || typeof ActiveXObject === "function")) {
+        if (domain.test(api.source) && (typeof XMLHttpRequest === "function" || typeof ActiveXObject === "function")) {
             (function () {
                 var a = (api.source.indexOf("file:///") === 0) ? api.source.split(":///")[1] : api.source.split("://")[1],
                     b = a ? a.indexOf("/") : 0,
@@ -575,12 +575,15 @@ var exports = "",
                 c = function () {},
                 d = function () {},
                 f = {};
+            o.dd = $("modediff");
             if (fs && a !== null && typeof a === "object") {
                 b = x.parentNode.parentNode.getElementsByTagName("textarea")[0];
                 c = function (e) {
                     e = e || window.event;
                     b.value = e.target.result;
-                    recycle();
+                    if (!o.dd.checked) {
+                        recycle();
+                    }
                 };
                 d = function (e) {
                     e = e || window.event;
@@ -661,13 +664,13 @@ var exports = "",
                 b.style.top = "auto";
                 b.style.zIndex = "2";
                 if (b === o.re) {
-                    b.style.right = "57.7em";
+                    b.style.right = "57.8em";
                 } else if (b === o.rg) {
-                    b.style.right = "38.7em";
+                    b.style.right = "38.8em";
                 } else if (b === o.ri) {
-                    b.style.right = "19.7em";
+                    b.style.right = "19.8em";
                 } else if (b === o.rk) {
-                    b.style.right = ".7em";
+                    b.style.right = ".8em";
                 }
                 if (o.zindex > 2) {
                     o.zindex -= 3;
@@ -741,13 +744,13 @@ var exports = "",
                 a.style.top = (d / 10) + "em";
                 a.style.left = (e / 10) + "em";
                 if (window.innerHeight) {
-                    c.style.height = ((window.innerHeight / 10) - 7.2) + "em";
+                    c.style.height = ((window.innerHeight / 10) - 5.5) + "em";
                     if (a === o.re) {
                         b.style.width = ((window.innerWidth / 10) - 13.76) + "em";
                     } else {
                         b.style.width = ((window.innerWidth / 10) - 10.76) + "em";
                     }
-                    c.style.width = ((window.innerWidth / 10) - 4) + "em";
+                    c.style.width = ((window.innerWidth / 10) - 4.1) + "em";
                 } else {
                     c.style.height = ((window.screen.availHeight / 10) - 21) + "em";
                     if (a === o.re) {
@@ -755,7 +758,7 @@ var exports = "",
                     } else {
                         b.style.width = ((window.screen.availWidth / 10) - 14.76) + "em";
                     }
-                    c.style.width = ((window.screen.availWidth / 10) - 5) + "em";
+                    c.style.width = ((window.screen.availWidth / 10) - 5.1) + "em";
                 }
                 h.style.display = "none";
             } else {
@@ -1503,22 +1506,22 @@ var exports = "",
                 d = o.rk.getElementsByTagName("h3")[0];
             }
             if (o.rf.style.display === "none" && (a.style.width === "17em" || a.style.width === "")) {
-                o.re.style.right = "57.7em";
+                o.re.style.right = "57.8em";
                 o.re.style.top = "auto";
                 o.re.style.left = "auto";
             }
             if (o.rh.style.display === "none" && (b.style.width === "17em" || b.style.width === "")) {
-                o.rg.style.right = "38.7em";
+                o.rg.style.right = "38.8em";
                 o.rg.style.top = "auto";
                 o.rg.style.left = "auto";
             }
             if (o.rj.style.display === "none" && (c.style.width === "17em" || c.style.width === "")) {
-                o.ri.style.right = "19.7em";
+                o.ri.style.right = "19.8em";
                 o.ri.style.top = "auto";
                 o.ri.style.left = "auto";
             }
             if (ls && o.rl.style.display === "none" && (d.style.width === "17em" || d.style.width === "")) {
-                o.rk.style.right = ".7em";
+                o.rk.style.right = ".8em";
                 o.rk.style.top = "auto";
                 o.rk.style.left = "auto";
             }
@@ -1535,6 +1538,7 @@ var exports = "",
             o.mm = $$("modeminify");
             o.la = $$("language");
             o.dt = $$("difftall");
+            o.ay = $$("additional_yes");
             a = o.la[o.la.selectedIndex].value;
             if (x.innerHTML === "Maximize Inputs") {
                 o.op.style.display = "none";
@@ -1608,7 +1612,9 @@ var exports = "",
                 } else {
                     o.rk.style.display = "none";
                 }
-                o.ao.style.display = "block";
+                if (o.ay.checked) {
+                    o.ao.style.display = "block";
+                }console.log(o.ao);
                 if (!o.dt.checked) {
                     o.bd.className = "wide";
                     o.md.className = "wide";
