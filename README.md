@@ -27,11 +27,11 @@ Create a WSH script file using XML syntax and with a file extension of
 "WSF".  This file must have a tag for each supported argument, must be
 capable of reading from a file, and retrieving dependencies.  An example
 for the markup_beauty.js script can be obtained at:
-http://prettydiff.com/wsh.wsf
+http://prettydiff.com/markup_beauty.wsf
 
-That example file would be executed using the following on CLI:
+Pretty Diff would be executed using the following on CLI:
 
-    wsh.wsf /source:"my_source_file" /html:true /insize:8
+    cscript prettydiff.wsf /source:"myFile.xml" /mode:"beautify"
 
 Pre-Inventory:
 --------------
