@@ -6696,7 +6696,7 @@ var prettydiff = function (api) {
                             f = "",
                             g = false;
                         autotest = true;
-                        if (!/^(\s*<)/.test(a) && !/(>\s*)$/.test(a)) {
+                        if (!/^([\s\w]*<)/.test(a) && !/(>[\s\w]*)$/.test(a)) {
                             for (d = 1; d < c; d += 1) {
                                 if (!e) {
                                     if (b[d] === "*" && b[d - 1] === "/") {
@@ -6739,7 +6739,7 @@ var prettydiff = function (api) {
                                 api.lang = "javascript";
                                 auto = "JavaScript";
                             }
-                        } else if ((/(>[\w\s:]*)?<(\/|\!)?[\w\s:\-\[]+/.test(a) && /^(\s*<)/.test(a) && /(>\s*)$/.test(a)) || (/^(\s*<s((cript)|(tyle)))/i.test(a) && /(<\/s((cript)|(tyle))>\s*)$/i.test(a))) {
+                        } else if ((/(>[\w\s:]*)?<(\/|\!)?[\w\s:\-\[]+/.test(a) && /^([\s\w]*<)/.test(a) && /(>[\s\w]*)$/.test(a)) || (/^(\s*<s((cript)|(tyle)))/i.test(a) && /(<\/s((cript)|(tyle))>\s*)$/i.test(a))) {
                             api.lang = "markup";
                             if (/^(\s*<\?xml)/.test(a)) {
                                 if (/XHTML\s+1\.1/.test(a) || /XHTML\s+1\.0\s+(S|s)((trict)|(TRICT))/.test(a)) {

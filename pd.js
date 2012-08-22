@@ -575,7 +575,7 @@ var exports = "",
                 c = function () {},
                 d = function () {},
                 f = {};
-            o.dd = $("modediff");
+            o.dd = $$("modediff");
             if (fs && a !== null && typeof a === "object") {
                 b = x.parentNode.parentNode.getElementsByTagName("textarea")[0];
                 c = function (e) {
