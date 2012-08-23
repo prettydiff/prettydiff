@@ -570,28 +570,39 @@ var exports = "",
 
         //read from files if the W3C File API is supported
         file: function (x) {
-            var a = x.files[0],
+            var a = x.files,
                 b = {},
                 c = function () {},
                 d = function () {},
-                f = {};
+                f = {},
+                g = [],
+                h = 0,
+                i = 0;
             o.dd = $$("modediff");
-            if (fs && a !== null && typeof a === "object") {
+            if (fs && a[0] !== null && typeof a[0] === "object") {
                 b = x.parentNode.parentNode.getElementsByTagName("textarea")[0];
                 c = function (e) {
-                    e = e || window.event;
-                    b.value = e.target.result;
-                    if (!o.dd.checked) {
-                        recycle();
+                    var event = e || window.event;
+                    g.push(event.target.result);
+                    if (i === h) {
+                        b.value = g.join("\n\n");
+                        if (!o.dd.checked) {
+                            recycle();
+                        }
                     }
                 };
                 d = function (e) {
-                    e = e || window.event;
-                    b.value = "Error reading file. This is the browser's descriptiong: " + e.target.error.name;
+                    var event = e || window.event;
+                    b.value = "Error reading file: " + a[i].name + "\n\nThis is the browser's descriptiong: " + event.target.error.name;
+                    h = -1;
                 };
-                f = new FileReader();
-                f.readAsText(a, "UTF-8");
-                f.onload = c;
+                h = a.length;
+                for (i = 0; i < h; i += 1) {
+                    f = new FileReader();
+                    f.onload = c;
+                    f.onerror = d;
+                    f.readAsText(a[i], "UTF-8");
+                }
             }
         },
 
@@ -937,6 +948,27 @@ var exports = "",
                 o.ao.style.display = "block";
             }
             pd.options(x);
+        },
+
+        //resizes the pretty diff comment onmouseover
+        comment: function (e, x) {
+            var a = Math.floor(o.wb.clientWidth / 13),
+                b = 0,
+                event = e || window.event;
+            if (event.type === "mouseover") {
+                b = x.value.length;
+                x.style.height = Math.ceil((b / 1.6) / a) + ".5em";
+                x.style.paddingTop = "1em";
+                x.style.position = "relative";
+                x.style.width = (a - 4.7) + "em";
+                x.style.zIndex = "5";
+            } else {
+                x.style.height = "2.5em";
+                x.style.paddingTop = "0em";
+                x.style.position = "static";
+                x.style.width = "100%";
+                x.style.zIndex = "1";
+            }
         },
 
         //toggle between tool modes and vertical/horizontal orientation of
@@ -1614,7 +1646,7 @@ var exports = "",
                 }
                 if (o.ay.checked) {
                     o.ao.style.display = "block";
-                }console.log(o.ao);
+                }
                 if (!o.dt.checked) {
                     o.bd.className = "wide";
                     o.md.className = "wide";
