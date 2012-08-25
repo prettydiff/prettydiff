@@ -6,7 +6,10 @@ var exports = "",
 
     //test for localStorage and assign the result of the test
     ls = (typeof localStorage === "object" && localStorage !== null && typeof localStorage.getItem === "function" && typeof localStorage.hasOwnProperty === "function") ? true : false,
+
+    //test for support of the file api
     fs = (typeof FileReader === "function" && typeof new FileReader().readAsText === "function") ? true : false,
+
     _gaq = _gaq || [],
     bounce = true,
     $$ = function (x) {
@@ -569,10 +572,8 @@ var exports = "",
         },
 
         //read from files if the W3C File API is supported
-        file: function (x) {
-            var a = x.files,
-                b = {},
-                c = function () {},
+        file: function (a, b) {
+            var c = function () {},
                 d = function () {},
                 f = {},
                 g = [],
@@ -580,7 +581,9 @@ var exports = "",
                 i = 0;
             o.dd = $$("modediff");
             if (fs && a[0] !== null && typeof a[0] === "object") {
-                b = x.parentNode.parentNode.getElementsByTagName("textarea")[0];
+                if (b.nodeName === "input") {
+                    b = b.parentNode.parentNode.getElementsByTagName("textarea")[0];
+                }
                 c = function (e) {
                     var event = e || window.event;
                     g.push(event.target.result);
@@ -604,6 +607,20 @@ var exports = "",
                     f.readAsText(a[i], "UTF-8");
                 }
             }
+        },
+
+        filenull: function (e) {
+            var event = e || window.event;
+            event.stopPropagation();
+            event.preventDefault();
+        },
+        
+        filedrop: function (e) {
+            var event = e || window.event,
+                files = event.target.files || event.dataTransfer.files;
+            event.stopPropagation();
+            event.preventDefault();
+            pd.file(files, this);
         },
 
         //change the color scheme of the web UI
@@ -1853,12 +1870,6 @@ var exports = "",
                 mode = "",
                 stat = [],
                 lang = "";
-            if (!fs) {
-                document.getElementById("diffbasefile").disabled = true;
-                document.getElementById("diffnewfile").disabled = true;
-                document.getElementById("beautyfile").disabled = true;
-                document.getElementById("minifyfile").disabled = true;
-            }
             if (o.wb.getAttribute("id") === "webtool") {
                 o.bc = $$("beau-char");
                 o.dc = $$("diff-char");
@@ -1866,6 +1877,12 @@ var exports = "",
                 o.rg.style.zIndex = "2";
                 o.ri.style.zIndex = "2";
                 o.rk.style.zIndex = "2";
+                if (!fs) {
+                    document.getElementById("diffbasefile").disabled = true;
+                    document.getElementById("diffnewfile").disabled = true;
+                    document.getElementById("beautyfile").disabled = true;
+                    document.getElementById("minifyfile").disabled = true;
+                }
                 if (ls && (localStorage.hasOwnProperty("optionString") || localStorage.hasOwnProperty("webtool") || localStorage.hasOwnProperty("statdata"))) {
                     if (localStorage.hasOwnProperty("optionString") && localStorage.getItem("optionString") !== null) {
                         o.option.innerHTML = "/*prettydiff.com " + (localStorage.getItem("optionString").replace(/prettydiffper/g, "%").replace(/(prettydiffcsep)+/g, ", ").replace(/\,\s+pdempty/g, "").replace(/(\,\s+\,\s+)+/g, ", ") + " */").replace(/((\,? )+\*\/)$/, " */");
@@ -2516,6 +2533,20 @@ var exports = "",
                     }
                     if (o.nl && localStorage.hasOwnProperty("nl") && localStorage.getItem("ni") !== null) {
                         o.nl.value = localStorage.getItem("nl");
+                    }
+                    if (fs) {
+                        o.bi.ondragover = pd.filenull;
+                        o.mi.ondragover = pd.filenull;
+                        o.bo.ondragover = pd.filenull;
+                        o.nx.ondragover = pd.filenull;
+                        o.bi.ondragleave = pd.filenull;
+                        o.mi.ondragleave = pd.filenull;
+                        o.bo.ondragleave = pd.filenull;
+                        o.nx.ondragleave = pd.filenull;
+                        o.bi.ondrop = pd.filedrop;
+                        o.mi.ondrop = pd.filedrop;
+                        o.bo.ondrop = pd.filedrop;
+                        o.nx.ondrop = pd.filedrop;
                     }
                 }
                 pd.fixminreport();
