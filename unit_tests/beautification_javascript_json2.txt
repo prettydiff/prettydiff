@@ -1,0 +1,18 @@
+HotelDetails.packageInfo = {
+    "selectedHotelInfo": {
+        "billingCurrency": "USD",
+        "rooms": [
+            {
+                "roomIndex": 1,
+                "numOfRoom": 1,
+                "rates": [
+                    {
+                        "rateSummary": {
+                            "priceDifferencePerRoom": 0.00
+                        }
+                    }
+                ]
+            }
+        ]
+    }
+}
