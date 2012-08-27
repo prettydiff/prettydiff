@@ -1806,6 +1806,7 @@ var prettydiff = function (api) {
                     var_end_count = -1,
                     last_text = "",
                     last_last_text = "",
+                    block_last_text = "",
                     last_word = "",
                     last_last_word = "",
                     flags = {
@@ -2508,6 +2509,10 @@ var prettydiff = function (api) {
                             }
                         }
                         print_token();
+                        if (last_text === ":" && block_last_text !== "=") {
+                            flags.indentation_level += 1;
+                        }
+                        block_last_text = last_text;
                         forblock = false;
                         forcount = 0;
                     } else if (token_type === "TK_END_BLOCK") {
@@ -2698,7 +2703,7 @@ var prettydiff = function (api) {
                             print_single_space();
                             do_block_just_closed = false;
                         } else {
-                            if (last_text === "," && flags.mode !== "(EXPRESSION)" && (last_last_text === "}" || last_last_text === "]")) {
+                            if (last_text === "," && flags.mode !== "(EXPRESSION)" && flags.mode !== "[EXPRESSION]" && (last_last_text === "}" || last_last_text === "]")) {
                                 output.pop();
                                 print_newline();
                                 print_token();
