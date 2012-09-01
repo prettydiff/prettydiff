@@ -113,24 +113,20 @@ var exports = "",
         to: $$("top"),
         wb: document.getElementsByTagName("body")[0],
         bcv: "",
+        css: {
+            body: "body{font-family:\"Arial\";font-size:10px}",
+            core: "h1{float:left;font-size:2em;margin:0 .5em .5em 0}h2{background:#fff;border-style:solid;border-width:.075em;float:left;font-size:1.8em;font-weight:bold;margin:0 .5em .5em 0;padding:0 .2em}p{clear:both;font-size:1.2em;margin:0 0 1em}table.diff{border-collapse:collapse}table.diff tbody{font-family:'Courier New',Courier,'Lucida Console',monospace;font-size:1.1em}table.diff tbody th{font-family:verdana,arial,'Bitstream Vera Sans',helvetica,sans-serif;font-weight:normal;padding:.5em .6em 0 2.4em;text-align:right;vertical-align:top}table.diff thead{font-family:Verdana;text-align:left}table.diff thead{border-bottom-style:solid;border-bottom-width:.1em}table.diff thead th{border-left-style:solid;border-left-width:.1em;padding-left:2em}table.diff tbody td{letter-spacing:.1em;padding:.5em .5em 0;vertical-align:top;white-space:pre}table.diff tbody td em{font-style:normal;margin:0 -.09em;padding:.05em 0}table.diff th.author{border-top-style:solid;border-top-width:.1em;padding:.4em;text-align:right}table.diff .replace em,table.diff .delete em,table.diff .insert em,table.diff .skip,table.diff tbody th,table.diff{border-style:solid;border-width:.1em}@media print{p,ul{display:none}div{width:100%}html td{font-size:.8em;white-space:normal}}",
+            sdefault: "body.default{background:url(\"images/body.gif\") repeat-x #a8b8c8;color:#000}.default a{color:#f00}.default h2{border-color:#000}.default table.diff{border-color:#bbc}.default table.diff tbody th{background:#eed;border-color:#bbc;color:#886}.default table.diff thead{background:#efefef;border-bottom-color:#bbc}.default table.diff thead th{border-left-color:#bbc}.default table.diff .empty{background-color:#ddd}.default table.diff .replace{background-color:#fd8}.default table.diff .replace em{background-color:#ffd;border-color:#963;color:#630}.default table.diff .delete{background-color:#e99}.default table.diff .delete em{background-color:#fdd;border-color:#700;color:#600}.default table.diff .equal{background-color:#fff}.default table.diff .skip{background-color:#efefef;border-color:#aaa #bbc #aaa #aaa}.default table.diff .insert{background-color:#9e9}.default table.diff .insert em{background-color:#efc;border-color:#070;color:#050}.default table.diff th.author{background:#efefef;border-top-color:#bbc}",
+            scoffee: "body.coffee{background:#dcb;color:#321}.coffee a{color:#900}.coffee h2{border-color:#600}.coffee table.diff{border-color:#966}.coffee table.diff tbody th{background:#edc;border-color:#966;color:#633}.coffee table.diff thead{background:#cba;border-bottom-color:#966}.coffee table.diff thead th{border-left-color:#966}.coffee table.diff .empty{background-color:#ddd}.coffee table.diff .replace{background-color:#fda}.coffee table.diff .replace em{background-color:#ffd;border-color:#963;color:#630}.coffee table.diff .delete{background-color:#ebb}.coffee table.diff .delete em{background-color:#fee;border-color:#700;color:#600}.coffee table.diff .equal{background-color:#fff8ee}.coffee table.diff .skip{background-color:#eee;border-color:#966}.coffee table.diff .insert{background-color:#cec}.coffee table.diff .insert em{background-color:#efc;border-color:#070;color:#050}.coffee table.diff th.author{background:#cba;border-top-color:#966}",
+            sdark: "body.dark{background:#333;color:#eee}.dark a{color:#9cf}.dark h2{background:#def;border-color:#006;color:#036}.dark table.diff{border-color:#036}.dark table.diff tbody th{background:#369;border-color:#036;color:#def}.dark table.diff tbody td{border-color:#036}.dark table.diff thead{background:#036;border-bottom-color:#036;color:#def}.dark table.diff thead th{border-left-color:#abc}.dark table.diff .empty{background-color:#456}.dark table.diff .replace{background-color:#468;color:#def}.dark table.diff .replace em{background-color:#dff;border-color:#036;color:#036}.dark table.diff .delete{background-color:#600;color:#fbb}.dark table.diff .delete em{background-color:#fbb;border-color:#600;color:#600}.dark table.diff .equal{background-color:#024;color:#def}.dark table.diff .skip{background-color:#333;border-color:#036}.dark table.diff .insert{background-color:#696;color:#dfd}.dark table.diff .insert em{background-color:#efc;border-color:#060;color:#050}.dark table.diff th.author{background:#036;border-bottom-color:#036;color:#def}",
+            scanvas: "body.canvas{background:#e8e8e8;color:#666}.canvas a{color:#450}.canvas h2{background:#f8f8ef;border-color:#664;box-shadow:0 .1em .2em rgba(128,128,92,0.75)}.canvas table.diff{border-color:#664}.canvas table.diff tbody th{background:#c8c8bf;border-color:#664}.canvas table.diff tbody td{background:#f8f8ef;border-color:#664}.canvas table.diff thead{background:#c8c8bf;border-bottom-color:#664;color:#664}.canvas table.diff thead th{border-left-color:#664}.canvas table.diff .empty{background-color:#ccc}.canvas table.diff .replace{background-color:#dda;color:#660}.canvas table.diff .replace em{background-color:#ffd;border-color:#664;color:#880}.canvas table.diff .delete{background-color:#da9;color:#600}.canvas table.diff .delete em{background-color:#fbc;border-color:#600;color:#933}.canvas table.diff .equal{background-color:#f8f8ef;color:#666}.canvas table.diff .skip{background-color:#eee;border-color:#664}.canvas table.diff .insert{background-color:#bd9;color:#040}.canvas table.diff .insert em{background-color:#efc;border-color:#060;color:#464}.canvas table.diff th.author{background:#f8f8ef;border-bottom-color:#664;color:#666}",
+            sshadow: "body.shadow{background:#222;color:#eee}.shadow a{color:#9cf}.shadow button{background:#456;border-color:#789;color:#cde}.shadow button:hover,.shadow button:active{background:#ddd;color:#333}.shadow #update,.shadow #title_text{background:#ddd;border-color:#fff;color:#222}.shadow h1 img{border-color:#fff}.shadow h2{background:#eee;border-color:#333;box-shadow:0 .1em .2em rgba(0,0,0,0.75);color:#222}.shadow table.diff tbody th{background:#bbb;border-color:#999;color:#333}.shadow table.diff thead,.shadow table.diff thead th{background:#555;border-color:#999;color:#ddd}.shadow table.diff tbody td{background:#666;border-color:#999;color:#ddd}.shadow table.diff .empty{background-color:#999}.shadow table.diff .replace{background-color:#664;color:#bb8}.shadow table.diff .replace em{background-color:#440;border-color:#220;color:#cc9}.shadow table.diff .delete{background-color:#300;color:#c66}.shadow table.diff .delete em{background-color:#700;border-color:#c66;color:#f99}.shadow table.diff .equal{background-color:#333;color:#ddd}.shadow table.diff .skip{background-color:#000;border-color:#999}.shadow table.diff .insert{background-color:#040;color:#6c6}.shadow table.diff .insert em{background-color:#363;border-color:#6c0;color:#cfc}.shadow table.diff th.author{background:#555;border-bottom-color:#999;color:#ddd}.shadow table td{border-color:#999}.shadow table.diff{background:#333;border-color:#999;color:#ddd}",
+            swhite: "body.white{color:#333}.white a{color:#009}.white h2,.white h3{border-color:#333}.white textarea{border-color:#333}.white textarea:hover{background:#eef8ff}.white table.diff{border-color:#333}.white table.diff tbody th{background:#eed;border-color:#bbc;color:#886}.white table.diff thead{background:#ddd;border-bottom-color:#333}.white table.diff thead th{border-left-color:#333}.white table.diff .empty{background-color:#ddd}.white table.diff .replace{background-color:#fea}.white table.diff .replace em{background-color:#ffd;border-color:#963;color:#630}.white table.diff .delete{background-color:#fbb}.white table.diff .delete em{background-color:#fdd;border-color:#700;color:#600}.white table.diff .equal{background-color:#fff}.white table.diff .skip{background-color:#efefef;border-color:#aaa #bbc #aaa #aaa}.white table.diff .insert{background-color:#bfb}.white table.diff .insert em{background-color:#efc;border-color:#070;color:#050}.white table.diff th.author{background:#efefef;border-top-color:#bbc}"
+        },
         dcv: "",
         dqp: $$("diffquanp"),
         dqt: $$("difftypep"),
         htd: $$("htmlspecificd"),
-        stvisit: $$("stvisit"),
-        stusage: $$("stusage"),
-        stfdate: $$("stfdate"),
-        stavday: $$("stavday"),
-        stcouse: $$("stcouse"),
-        stdiff: $$("stdiff"),
-        stbeau: $$("stbeau"),
-        stminn: $$("stminn"),
-        stmarkup: $$("stmarkup"),
-        stjs: $$("stjs"),
-        stcss: $$("stcss"),
-        stcsv: $$("stcsv"),
-        sttext: $$("sttext"),
-        stlarge: $$("stlarge"),
         bops: $$("beauops"),
         csvp: $$("csvcharp"),
         disp: $$("displayOps"),
@@ -152,23 +148,33 @@ var exports = "",
             pdate: "",
             large: 0
         },
-        css: {
-            body: "body{font-family:\"Arial\";font-size:10px}",
-            core: "h1{float:left;font-size:2em;margin:0 .5em .5em 0}h2{background:#fff;border-style:solid;border-width:.075em;float:left;font-size:1.8em;font-weight:bold;margin:0 .5em .5em 0;padding:0 .2em}p{clear:both;font-size:1.2em;margin:0 0 1em}table.diff{border-collapse:collapse}table.diff tbody{font-family:'Courier New',Courier,'Lucida Console',monospace;font-size:1.1em}table.diff tbody th{font-family:verdana,arial,'Bitstream Vera Sans',helvetica,sans-serif;font-weight:normal;padding:.5em .6em 0 2.4em;text-align:right;vertical-align:top}table.diff thead{font-family:Verdana;text-align:left}table.diff thead{border-bottom-style:solid;border-bottom-width:.1em}table.diff thead th{border-left-style:solid;border-left-width:.1em;padding-left:2em}table.diff tbody td{letter-spacing:.1em;padding:.5em .5em 0;vertical-align:top;white-space:pre}table.diff tbody td em{font-style:normal;margin:0 -.09em;padding:.05em 0}table.diff th.author{border-top-style:solid;border-top-width:.1em;padding:.4em;text-align:right}table.diff .replace em,table.diff .delete em,table.diff .insert em,table.diff .skip,table.diff tbody th,table.diff{border-style:solid;border-width:.1em}@media print{p,ul{display:none}div{width:100%}html td{font-size:.8em;white-space:normal}}",
-            sdefault: "body.default{background:url(\"images/body.gif\") repeat-x #a8b8c8;color:#000}.default a{color:#f00}.default h2{border-color:#000}.default table.diff{border-color:#bbc}.default table.diff tbody th{background:#eed;border-color:#bbc;color:#886}.default table.diff thead{background:#efefef;border-bottom-color:#bbc}.default table.diff thead th{border-left-color:#bbc}.default table.diff .empty{background-color:#ddd}.default table.diff .replace{background-color:#fd8}.default table.diff .replace em{background-color:#ffd;border-color:#963;color:#630}.default table.diff .delete{background-color:#e99}.default table.diff .delete em{background-color:#fdd;border-color:#700;color:#600}.default table.diff .equal{background-color:#fff}.default table.diff .skip{background-color:#efefef;border-color:#aaa #bbc #aaa #aaa}.default table.diff .insert{background-color:#9e9}.default table.diff .insert em{background-color:#efc;border-color:#070;color:#050}.default table.diff th.author{background:#efefef;border-top-color:#bbc}",
-            scoffee: "body.coffee{background:#dcb;color:#321}.coffee a{color:#900}.coffee h2{border-color:#600}.coffee table.diff{border-color:#966}.coffee table.diff tbody th{background:#edc;border-color:#966;color:#633}.coffee table.diff thead{background:#cba;border-bottom-color:#966}.coffee table.diff thead th{border-left-color:#966}.coffee table.diff .empty{background-color:#ddd}.coffee table.diff .replace{background-color:#fda}.coffee table.diff .replace em{background-color:#ffd;border-color:#963;color:#630}.coffee table.diff .delete{background-color:#ebb}.coffee table.diff .delete em{background-color:#fee;border-color:#700;color:#600}.coffee table.diff .equal{background-color:#fff8ee}.coffee table.diff .skip{background-color:#eee;border-color:#966}.coffee table.diff .insert{background-color:#cec}.coffee table.diff .insert em{background-color:#efc;border-color:#070;color:#050}.coffee table.diff th.author{background:#cba;border-top-color:#966}",
-            sdark: "body.dark{background:#333;color:#eee}.dark a{color:#9cf}.dark h2{background:#def;border-color:#006;color:#036}.dark table.diff{border-color:#036}.dark table.diff tbody th{background:#369;border-color:#036;color:#def}.dark table.diff tbody td{border-color:#036}.dark table.diff thead{background:#036;border-bottom-color:#036;color:#def}.dark table.diff thead th{border-left-color:#abc}.dark table.diff .empty{background-color:#456}.dark table.diff .replace{background-color:#468;color:#def}.dark table.diff .replace em{background-color:#dff;border-color:#036;color:#036}.dark table.diff .delete{background-color:#600;color:#fbb}.dark table.diff .delete em{background-color:#fbb;border-color:#600;color:#600}.dark table.diff .equal{background-color:#024;color:#def}.dark table.diff .skip{background-color:#333;border-color:#036}.dark table.diff .insert{background-color:#696;color:#dfd}.dark table.diff .insert em{background-color:#efc;border-color:#060;color:#050}.dark table.diff th.author{background:#036;border-bottom-color:#036;color:#def}",
-            scanvas: "body.canvas{background:#e8e8e8;color:#666}.canvas a{color:#450}.canvas h2{background:#f8f8ef;border-color:#664;box-shadow:0 .1em .2em rgba(128,128,92,0.75)}.canvas table.diff{border-color:#664}.canvas table.diff tbody th{background:#c8c8bf;border-color:#664}.canvas table.diff tbody td{background:#f8f8ef;border-color:#664}.canvas table.diff thead{background:#c8c8bf;border-bottom-color:#664;color:#664}.canvas table.diff thead th{border-left-color:#664}.canvas table.diff .empty{background-color:#ccc}.canvas table.diff .replace{background-color:#dda;color:#660}.canvas table.diff .replace em{background-color:#ffd;border-color:#664;color:#880}.canvas table.diff .delete{background-color:#da9;color:#600}.canvas table.diff .delete em{background-color:#fbc;border-color:#600;color:#933}.canvas table.diff .equal{background-color:#f8f8ef;color:#666}.canvas table.diff .skip{background-color:#eee;border-color:#664}.canvas table.diff .insert{background-color:#bd9;color:#040}.canvas table.diff .insert em{background-color:#efc;border-color:#060;color:#464}.canvas table.diff th.author{background:#f8f8ef;border-bottom-color:#664;color:#666}",
-            sshadow: "body.shadow{background:#222;color:#eee}.shadow a{color:#9cf}.shadow button{background:#456;border-color:#789;color:#cde}.shadow button:hover,.shadow button:active{background:#ddd;color:#333}.shadow #update,.shadow #title_text{background:#ddd;border-color:#fff;color:#222}.shadow h1 img{border-color:#fff}.shadow h2{background:#eee;border-color:#333;box-shadow:0 .1em .2em rgba(0,0,0,0.75);color:#222}.shadow table.diff tbody th{background:#bbb;border-color:#999;color:#333}.shadow table.diff thead,.shadow table.diff thead th{background:#555;border-color:#999;color:#ddd}.shadow table.diff tbody td{background:#666;border-color:#999;color:#ddd}.shadow table.diff .empty{background-color:#999}.shadow table.diff .replace{background-color:#664;color:#bb8}.shadow table.diff .replace em{background-color:#440;border-color:#220;color:#cc9}.shadow table.diff .delete{background-color:#300;color:#c66}.shadow table.diff .delete em{background-color:#700;border-color:#c66;color:#f99}.shadow table.diff .equal{background-color:#333;color:#ddd}.shadow table.diff .skip{background-color:#000;border-color:#999}.shadow table.diff .insert{background-color:#040;color:#6c6}.shadow table.diff .insert em{background-color:#363;border-color:#6c0;color:#cfc}.shadow table.diff th.author{background:#555;border-bottom-color:#999;color:#ddd}.shadow table td{border-color:#999}.shadow table.diff{background:#333;border-color:#999;color:#ddd}",
-            swhite: "body.white{color:#333}.white a{color:#009}.white h2,.white h3{border-color:#333}.white textarea{border-color:#333}.white textarea:hover{background:#eef8ff}.white table.diff{border-color:#333}.white table.diff tbody th{background:#eed;border-color:#bbc;color:#886}.white table.diff thead{background:#ddd;border-bottom-color:#333}.white table.diff thead th{border-left-color:#333}.white table.diff .empty{background-color:#ddd}.white table.diff .replace{background-color:#fea}.white table.diff .replace em{background-color:#ffd;border-color:#963;color:#630}.white table.diff .delete{background-color:#fbb}.white table.diff .delete em{background-color:#fdd;border-color:#700;color:#600}.white table.diff .equal{background-color:#fff}.white table.diff .skip{background-color:#efefef;border-color:#aaa #bbc #aaa #aaa}.white table.diff .insert{background-color:#bfb}.white table.diff .insert em{background-color:#efc;border-color:#070;color:#050}.white table.diff th.author{background:#efefef;border-top-color:#bbc}"
-        },
-        pdlogo: $$("pdlogo"),
+        stjs: $$("stjs"),
         color: "shadow",
-        context: $$("contextSize"),
+        stcss: $$("stcss"),
+        stcsv: $$("stcsv"),
         inline: $$("inline"),
-        sideby: $$("sidebyside"),
         option: $$("option_comment"),
-        zindex: 10
+        pdlogo: $$("pdlogo"),
+        stbeau: $$("stbeau"),
+        sideby: $$("sidebyside"),
+        stdiff: $$("stdiff"),
+        stminn: $$("stminn"),
+        sttext: $$("sttext"),
+        zindex: 10,
+        context: $$("contextSize"),
+        stavday: $$("stavday"),
+        stcouse: $$("stcouse"),
+        stfdate: $$("stfdate"),
+        stlarge: $$("stlarge"),
+        slength: {
+            bi: 0,
+            mi: 0,
+            bo: 0,
+            nx: 0
+        },
+        stusage: $$("stusage"),
+        stvisit: $$("stvisit"),
+        stmarkup: $$("stmarkup")
     },
 
     //recycle bundles arguments in preparation for executing prettydiff
@@ -266,11 +272,6 @@ var exports = "",
             }
             api.source = o.bi.value;
             api.mode = "beautify";
-            if (ls && o.bi.value.length < 2096000) {
-                localStorage.setItem("bi", api.source);
-            } else if (ls) {
-                localStorage.setItem("bi", "");
-            }
         } else if (o.mm.checked) {
             o.hm = $$("htmlm-yes");
             o.mc = $$("topcoms-yes");
@@ -284,11 +285,6 @@ var exports = "",
             }
             api.source = o.mi.value;
             api.mode = "minify";
-            if (ls && o.mi.value.length < 2096000) {
-                localStorage.setItem("mi", api.source);
-            } else if (ls) {
-                localStorage.setItem("mi", "");
-            }
         } else if (o.dd) {
             o.context = $$("contextSize");
             o.inline = $$("inline");
@@ -368,17 +364,6 @@ var exports = "",
             api.source = o.bo.value;
             api.diff = o.nx.value;
             api.mode = "diff";
-            if (ls && o.bo.value.length < 2096000 && o.nx.value.length < 2096000) {
-                localStorage.setItem("bo", api.source);
-                localStorage.setItem("nx", api.diff);
-                localStorage.setItem("bl", api.sourcelabel);
-                localStorage.setItem("nl", api.difflabel);
-            } else if (ls) {
-                localStorage.setItem("bo", "");
-                localStorage.setItem("nx", "");
-                localStorage.setItem("bl", "");
-                localStorage.setItem("nl", "");
-            }
             if (domain.test(api.diff) && (typeof XMLHttpRequest === "function" || typeof ActiveXObject === "function")) {
                 (function () {
                     var a = (api.diff.indexOf("file:///") === 0) ? api.diff.split(":///")[1] : api.diff.split("://")[1],
@@ -478,7 +463,44 @@ var exports = "",
                     lang = "",
                     lango = {},
                     langv = o.la[o.la.selectedIndex].value,
-                    size = 0;
+                    size = 0,
+                    codesize = 0;
+                if (api.mode === "beautify") {
+                    codesize = api.source.length + o.slength.mi + o.slength.bo + o.slength.nx;
+                    if (api.source.length < 2096000 && codesize < 4800000) {
+                        localStorage.setItem("bi", api.source);
+                        o.slength.bi = api.source.length;
+                    } else {
+                        localStorage.setItem("bi", "");
+                        o.slength.bi = 0;
+                    }
+                } else if (api.mode === "minify") {
+                    codesize = o.slength.bi + api.source.length + o.slength.bo + o.slength.nx;
+                    if (api.source.length < 2096000 && codesize < 4800000) {
+                        localStorage.setItem("mi", api.source);
+                        o.slength.mi = api.source.length;
+                    } else {
+                        localStorage.setItem("mi", "");
+                        o.slength.mi = 0;
+                    }
+                } else if (api.mode === "diff") {
+                    codesize = o.slength.bi + o.slength.mi + api.source.length + api.diff.length;
+                    if (api.source.length < 2096000 && api.diff.length < 2096000 && codesize < 4800000) {
+                        localStorage.setItem("bo", api.source);
+                        localStorage.setItem("nx", api.diff);
+                        localStorage.setItem("bl", api.sourcelabel);
+                        localStorage.setItem("nl", api.difflabel);
+                        o.slength.bo = api.source.length;
+                        o.slength.nx = api.diff.length;
+                    } else {
+                        localStorage.setItem("bo", "");
+                        localStorage.setItem("nx", "");
+                        localStorage.setItem("bl", "");
+                        localStorage.setItem("nl", "");
+                        o.slength.bo = 0;
+                        o.slength.nx = 0;
+                    }
+                }
                 if (langv === "auto" && typeof output[1] === "string") {
                     lango = (/Language set to <strong>auto<\/strong>\. Presumed language is <em>\w+<\/em>\./).exec(output[1]);
                     if (lango !== null) {
@@ -614,7 +636,7 @@ var exports = "",
             event.stopPropagation();
             event.preventDefault();
         },
-        
+
         filedrop: function (e) {
             var event = e || window.event,
                 files = event.target.files || event.dataTransfer.files;
@@ -2518,15 +2540,19 @@ var exports = "",
                 if (ls) {
                     if (localStorage.hasOwnProperty("bi") && localStorage.getItem("bi") !== null) {
                         o.bi.value = localStorage.getItem("bi");
+                        o.slength.bi = o.bi.value.length;
                     }
                     if (localStorage.hasOwnProperty("mi") && localStorage.getItem("mi") !== null) {
                         o.mi.value = localStorage.getItem("mi");
+                        o.slength.mi = o.mi.value.length;
                     }
                     if (o.bo && localStorage.hasOwnProperty("bo") && localStorage.getItem("bo") !== null) {
                         o.bo.value = localStorage.getItem("bo");
+                        o.slength.bo = o.bo.value.length;
                     }
                     if (o.nx && localStorage.hasOwnProperty("nx") && localStorage.getItem("nx") !== null) {
                         o.nx.value = localStorage.getItem("nx");
+                        o.slength.nx = o.nx.value.length;
                     }
                     if (o.bl && localStorage.hasOwnProperty("bl") && localStorage.getItem("bl") !== null) {
                         o.bl.value = localStorage.getItem("bl");

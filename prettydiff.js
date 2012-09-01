@@ -2386,7 +2386,9 @@ var prettydiff = function (api) {
                             if (flags.mode !== "TK_END_BLOCK") {
                                 flags.indentation_level -= 3;
                             }
-                            flag_store[flag_store.length - 1].indentation_level = flags.indentation_level - 1;
+                            if (flag_store.length > 1) {
+                                flag_store[flag_store.length - 1].indentation_level = flags.indentation_level - 1;
+                            }
                             if (flags.var_line_reindented) {
                                 set_mode("[INDENTED-EXPRESSION]");
                                 flags.var_line_reindented = true;
@@ -2526,14 +2528,16 @@ var prettydiff = function (api) {
                             print_token();
                         } else {
                             if (!objectInArray) {
-                                if (last_type === "TK_END_BLOCK" && flag_store[flag_store.length - 1].indentation_level > flags.indentation_level) {
+                                if (last_type === "TK_END_BLOCK" && (flag_store.length === 1 || flag_store[flag_store.length - 1].indentation_level > flags.indentation_level)) {
                                     flags.indentation_level -= 1;
                                 } else {
                                     restore_mode();
                                 }
                             } else {
                                 flags.indentation_level -= 1;
-                                flag_store[flag_store.length - 1].indentation_level = flags.indentation_level - 1;
+                                if (flag_store.length > 1) {
+                                    flag_store[flag_store.length - 1].indentation_level = flags.indentation_level - 1;
+                                }
                                 if (flags.var_line_reindented) {
                                     set_mode("TK_END_BLOCK");
                                     flags.var_line_reindented = true;
@@ -2817,7 +2821,7 @@ var prettydiff = function (api) {
                             comma_test = true;
                         }
                         print_token();
-                        if (flags.var_line_reindented && last_text === "]" && last_type === "TK_END_EXPR" && flag_store[flag_store.length - 1].mode === "TK_END_BLOCK") {
+                        if (flags.var_line_reindented && last_text === "]" && last_type === "TK_END_EXPR" && flag_store.length > 1 && flag_store[flag_store.length - 1].mode === "TK_END_BLOCK") {
                             flags.indentation_level -= 1;
                         }
                         flags.var_line = false;
@@ -2836,7 +2840,7 @@ var prettydiff = function (api) {
                         }
                         if ((last_text === "{" || last_text === "[") && (last_last_text === "{" || last_last_text === "[")) {
                             flags.indentation_level += 1;
-                        } else if (last_text === "," && (last_last_text === "}" || last_last_text === "]")) {
+                        } else if (last_text === "," && flags.mode !== "(EXPRESSION)" && (last_last_text === "}" || last_last_text === "]")) {
                             print_newline();
                         }
                         white_count(token_text);
@@ -4697,7 +4701,81 @@ var prettydiff = function (api) {
                             cdataEnd = (/(\/*\]+>\s*)$/),
                             scriptStart = (/^(\s*<\!\-\-)/),
                             scriptEnd = (/(\-\->\s*)$/),
-                            loop = cinfo.length;
+                            loop = cinfo.length,
+                            attrib = function (tag, end) {
+                                var a = [],
+                                    b = 0,
+                                    c = 0,
+                                    d = "",
+                                    e = tag.indexOf(" ") + 1,
+                                    f = 0,
+                                    g = "",
+                                    h = 0,
+                                    i = (tag.charAt(0) === " ") ? true : false;
+                                if (i) {
+                                    tag = tag.substr(1);
+                                    e = tag.indexOf(" ") + 1;
+                                }
+                                g = tag.substring(0, e);
+                                tag = tag.substring(e, tag.length - end.length) + " ";
+                                b = tag.length;
+                                for (c = 0; c < b; c += 1) {
+                                    if (d === "") {
+                                        if (tag.charAt(c) === "\"") {
+                                            d = "\"";
+                                        } else if (tag.charAt(c) === "'") {
+                                            d = "'";
+                                        } else if (tag.charAt(c) === "[") {
+                                            d = "[";
+                                            h = 1;
+                                        } else if (tag.charAt(c) === "{") {
+                                            d = "{";
+                                            h = 1;
+                                        } else if (tag.charAt(c) === "(") {
+                                            d = "(";
+                                            h = 1;
+                                        } else if (tag.charAt(c) === " " && h === 0) {
+                                            a.push(tag.substring(f, c));
+                                            f = c + 1;
+                                        }
+                                    } else if (d === "\"" && tag.charAt(c) === "\"") {
+                                        d = "";
+                                    } else if (d === "'" && tag.charAt(c) === "'") {
+                                        d = "";
+                                    } else if (d === "[") {
+                                        if (tag.charAt(c) === "]") {
+                                            h -= 1;
+                                            if (h === 0) {
+                                                d = "";
+                                            }
+                                        } else if (tag.charAt(c) === "[") {
+                                            h += 1;
+                                        }
+                                    } else if (d === "{") {
+                                        if (tag.charAt(c) === "}") {
+                                            h -= 1;
+                                            if (h === 0) {
+                                                d = "";
+                                            }
+                                        } else if (tag.charAt(c) === "{") {
+                                            h += 1;
+                                        }
+                                    } else if (d === "(") {
+                                        if (tag.charAt(c) === ")") {
+                                            h -= 1;
+                                            if (h === 0) {
+                                                d = "";
+                                            }
+                                        } else if (tag.charAt(c) === "(") {
+                                            h += 1;
+                                        }
+                                    }
+                                }
+                                if (i) {
+                                    return " " + g + a.sort().join(" ") + end;
+                                }
+                                return g + a.sort().join(" ") + end;
+                            };
                         for (i = 0; i < loop; i += 1) {
                             test = false;
                             test1 = false;
@@ -4756,8 +4834,8 @@ var prettydiff = function (api) {
                                     if (typeof js_beautify === "function") {
                                         build[i] = js_beautify({
                                             source: build[i],
-                                            insize: api.insize,
-                                            inchar: api.inchar,
+                                            insize: args.insize,
+                                            inchar: args.inchar,
                                             preserve: true,
                                             preserve_max: 1,
                                             inlevel: 0,
@@ -4837,6 +4915,13 @@ var prettydiff = function (api) {
                                     e();
                                 } else if (cinfo[i] === "singleton") {
                                     h();
+                                }
+                            }
+                            if ((cinfo[i] === "start" || cinfo[i] === "singleton") && build[i].substr(1).indexOf(" ") > 1) {
+                                if (build[i].lastIndexOf("/>") === build[i].length - 2) {
+                                    build[i] = attrib(build[i], "/>");
+                                } else {
+                                    build[i] = attrib(build[i], ">");
                                 }
                             }
                         }
