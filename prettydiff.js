@@ -138,7 +138,7 @@ var prettydiff = function (api) {
                     t = d.getTime();
                 return t;
             }()),
-            summary,
+            summary = "",
             charDecoder = function (input) {
                 var b = 0,
                     d = 0,
@@ -2379,7 +2379,9 @@ var prettydiff = function (api) {
                                 print_newline();
                             } else {
                                 print_newline();
-                                flags.indentation_level -= 1;
+                                if (!flags.var_line_reindented) {
+                                    flags.indentation_level -= 1;
+                                }
                             }
                         }
                         if (closedInArray && token_text === "]" && last_last_text !== "[") {
@@ -2519,112 +2521,106 @@ var prettydiff = function (api) {
                         forcount = 0;
                     } else if (token_type === "TK_END_BLOCK") {
                         n[4] += 1;
-                        if (last_text === "{" && (last_last_text === "," || last_last_text === "[")) {
-                            output[output.length - 1] = "";
-                            if (last_last_text === "[") {
-                                print_newline();
+                        if (!objectInArray) {
+                            if (last_type === "TK_END_BLOCK" && (flag_store.length === 1 || flag_store[flag_store.length - 1].indentation_level > flags.indentation_level)) {
+                                flags.indentation_level -= 1;
+                            } else {
+                                restore_mode();
                             }
-                            output.push("{");
+                        } else {
+                            flags.indentation_level -= 1;
+                            if (flags.var_line_reindented && flags.mode !== "BLOCK") {
+                                flags.indentation_level -= 1;
+                            }
+                            if (flag_store.length > 1) {
+                                flag_store[flag_store.length - 1].indentation_level = flags.indentation_level - 1;
+                            }
+                            if (flags.var_line_reindented) {
+                                set_mode("TK_END_BLOCK");
+                                flags.var_line_reindented = true;
+                            } else {
+                                set_mode("TK_END_BLOCK");
+                            }
+                            if (arrayTest === 0) {
+                                objectInArray = false;
+                            }
+                            if (objectInArray) {
+                                closedInArray = true;
+                            }
+                        }
+                        functestval = 0;
+                        if (var_var_test) {
+                            pseudo_block = true;
+                        } else {
+                            pseudo_block = false;
+                        }
+                        if (var_end_count === 0) {
+                            var_end_count = "x";
+                        } else if (var_end_count === -1 && var_var_test && comma_test) {
+                            flags.var_line_reindented = true;
+                        } else if (var_last_last_type === "TK_START_BLOCK" && !isNaN(var_end_count)) {
+                            var_end_count -= 1;
+                        } else if (var_end_count === "a") {
+                            if (flags.var_line && !flags.var_line_reindented) {
+                                flags.var_line_reindented = true;
+                                var_end_count = -1;
+                            }
+                        }
+                        if (args.braces) {
+                            if (last_text === "{" && in_array(last_last_text, punct)) {
+                                fix_object_own_line();
+                            } else {
+                                if (var_end_count === "y") {
+                                    var_last_last_type = "";
+                                    var_end_count = "a";
+                                }
+                                print_newline();
+                                if (var_end_count === "x") {
+                                    if (flags.var_line && !comma_test && !var_var_test) {
+                                        flags.var_line_reindented = true;
+                                    }
+                                    var_end_count = "y";
+                                }
+                            }
                             print_token();
                         } else {
-                            if (!objectInArray) {
-                                if (last_type === "TK_END_BLOCK" && (flag_store.length === 1 || flag_store[flag_store.length - 1].indentation_level > flags.indentation_level)) {
-                                    flags.indentation_level -= 1;
+                            if (last_type === "TK_START_BLOCK") {
+                                if (just_added_newline) {
+                                    if (output.length && output[output.length - 1] === indent_string) {
+                                        output.pop();
+                                    }
                                 } else {
-                                    restore_mode();
+                                    trim_output();
                                 }
+                            } else if (is_array(flags.mode) && args.inarray) {
+                                args.inarray = false;
+                                print_newline();
+                                args.inarray = true;
                             } else {
-                                flags.indentation_level -= 1;
-                                if (flag_store.length > 1) {
-                                    flag_store[flag_store.length - 1].indentation_level = flags.indentation_level - 1;
+                                if (var_end_count === "y") {
+                                    var_last_last_type = "";
+                                    var_end_count = "a";
                                 }
-                                if (flags.var_line_reindented) {
-                                    set_mode("TK_END_BLOCK");
-                                    flags.var_line_reindented = true;
-                                } else {
-                                    set_mode("TK_END_BLOCK");
-                                }
-                                if (arrayTest === 0) {
-                                    objectInArray = false;
-                                }
-                                if (objectInArray) {
-                                    closedInArray = true;
+                                print_newline();
+                                if (var_end_count === "x") {
+                                    if (flags.var_line && !comma_test && !var_var_test) {
+                                        flags.var_line_reindented = true;
+                                    }
+                                    var_end_count = "y";
                                 }
                             }
-                            functestval = 0;
-                            if (var_var_test) {
-                                pseudo_block = true;
-                            } else {
-                                pseudo_block = false;
-                            }
-                            if (var_end_count === 0) {
-                                var_end_count = "x";
-                            } else if (var_end_count === -1 && var_var_test && comma_test) {
-                                flags.var_line_reindented = true;
-                            } else if (var_last_last_type === "TK_START_BLOCK" && !isNaN(var_end_count)) {
-                                var_end_count -= 1;
-                            } else if (var_end_count === "a") {
-                                if (flags.var_line && !flags.var_line_reindented) {
-                                    flags.var_line_reindented = true;
-                                    var_end_count = -1;
+                            if (!comma_test && var_var_test && !flags.var_line_reindented) {
+                                if ((flags.mode === "(EXPRESSION)" && !flags.var_line) || (flags.mode === "BLOCK" && flags.var_line)) {
+                                    if (last_text !== "}" && var_end_count === -1 && flags.mode === "(EXPRESSION)") {
+                                        output.push(indent_string);
+                                    }
+                                    var_var_test = false;
                                 }
                             }
-                            if (args.braces) {
-                                if (last_text === "{" && in_array(last_last_text, punct)) {
-                                    fix_object_own_line();
-                                } else {
-                                    if (var_end_count === "y") {
-                                        var_last_last_type = "";
-                                        var_end_count = "a";
-                                    }
-                                    print_newline();
-                                    if (var_end_count === "x") {
-                                        if (flags.var_line && !comma_test && !var_var_test) {
-                                            flags.var_line_reindented = true;
-                                        }
-                                        var_end_count = "y";
-                                    }
-                                }
-                                print_token();
-                            } else {
-                                if (last_type === "TK_START_BLOCK") {
-                                    if (just_added_newline) {
-                                        if (output.length && output[output.length - 1] === indent_string) {
-                                            output.pop();
-                                        }
-                                    } else {
-                                        trim_output();
-                                    }
-                                } else if (is_array(flags.mode) && args.inarray) {
-                                    args.inarray = false;
-                                    print_newline();
-                                    args.inarray = true;
-                                } else {
-                                    if (var_end_count === "y") {
-                                        var_last_last_type = "";
-                                        var_end_count = "a";
-                                    }
-                                    print_newline();
-                                    if (var_end_count === "x") {
-                                        if (flags.var_line && !comma_test && !var_var_test) {
-                                            flags.var_line_reindented = true;
-                                        }
-                                        var_end_count = "y";
-                                    }
-                                }
-                                if (!comma_test && var_var_test && !flags.var_line_reindented) {
-                                    if ((flags.mode === "(EXPRESSION)" && !flags.var_line) || (flags.mode === "BLOCK" && flags.var_line)) {
-                                        if (last_text !== "}" && var_end_count === -1 && flags.mode === "(EXPRESSION)") {
-                                            output.push(indent_string);
-                                        }
-                                        var_var_test = false;
-                                    }
-                                }
-                                print_token();
-                            }
-                            if (!objectInArray && flags.var_line_reindented && arrayTest === 0 && last_last_text === "]" && flags.indentation_level === 1) {
-                                flags.indentation_level = 0;
-                            }
+                            print_token();
+                        }
+                        if (!objectInArray && flags.var_line_reindented && arrayTest === 0 && last_last_text === "]" && flags.indentation_level === 1) {
+                            flags.indentation_level = 0;
                         }
                     } else if (token_type === "TK_WORD") {
                         if (token_text === "alert") {
@@ -2688,7 +2684,7 @@ var prettydiff = function (api) {
                         if (token_text !== "var" && last_text === ";") {
                             comma_test = false;
                         }
-                        if (last_text === ";" && last_last_text === "}" && var_end_count === "y") {
+                        if (last_text === ";" && ((last_last_text === "}" && var_end_count === "y") || (last_last_text === "]" && var_end_count === ""))) {
                             flags.indentation_level -= 1;
                         }
                         if ((last_text === "{" || last_text === "[") && (last_last_text === "{" || last_last_text === "[")) {
@@ -2822,7 +2818,11 @@ var prettydiff = function (api) {
                         }
                         print_token();
                         if (flags.var_line_reindented && last_text === "]" && last_type === "TK_END_EXPR" && flag_store.length > 1 && flag_store[flag_store.length - 1].mode === "TK_END_BLOCK") {
-                            flags.indentation_level -= 1;
+                            if (flags.indentation_level - 1 === flag_store[flag_store.length - 1].indentation_level) {
+                                flags.indentation_level -= 2;
+                            } else {
+                                flags.indentation_level -= 1;
+                            }
                         }
                         flags.var_line = false;
                         flags.var_line_reindented = false;
@@ -2893,7 +2893,7 @@ var prettydiff = function (api) {
                             } else if (last_type === "TK_END_BLOCK" && flags.mode !== "(EXPRESSION)") {
                                 print_token();
                                 print_single_space();
-                            } else if (flags.mode !== "(EXPRESSION)" && (arrayTest === 0 || (objectInArray && (flags.mode === "BLOCK" || flags.mode === "TK_END_BLOCK" || flags.mode === "OBJECT" || is_ternary_op())))) {
+                            } else if ((flags.mode !== "(EXPRESSION)" || (last_last_text === ")" && output[output.length - 3] === "(" && output[output.length - 4] === "}")) && (arrayTest === 0 || (objectInArray && (flags.mode === "BLOCK" || flags.mode === "TK_END_BLOCK" || flags.mode === "OBJECT" || is_ternary_op())))) {
                                 print_token();
                                 print_newline();
                             } else {
