@@ -1,5 +1,5 @@
 /*prettydiff.com api.topcoms: true, api.insize: 4, api.inchar: " " */
-/*global o, exports */
+/*global pd, exports */
 /*
  @source: http://prettydiff.com/documentation.php
 
@@ -153,7 +153,7 @@ var prettydiff = function (api) {
                     unit = (/u\![0-9a-f]{4,5}\+/),
                     htmln = (/\&\#[0-9]{1,6}\;/),
                     htmlt = (/\&\![0-9]{1,6}\;/);
-                if ((!o.rh && !o.rh.innerHTML) || (c.search(unit) === -1 && c.search(uni) === -1 && c.search(htmlt) === -1 && c.search(htmln) === -1)) {
+                if ((!pd.o.rh && !pd.o.rh.innerHTML) || (c.search(unit) === -1 && c.search(uni) === -1 && c.search(htmlt) === -1 && c.search(htmln) === -1)) {
                     return input;
                 }
                 f = input.length;
@@ -205,8 +205,8 @@ var prettydiff = function (api) {
                     if (y[b][1] === "h") {
                         x[b] = parseInt(x[b], 16);
                     }
-                    o.rh.innerHTML = "&#" + parseInt(x[b], 10) + ";";
-                    x[b] = o.rh.innerHTML;
+                    pd.o.rh.innerHTML = "&#" + parseInt(x[b], 10) + ";";
+                    x[b] = pd.o.rh.innerHTML;
                     e.push(x[b]);
                 }
                 return e.join("");
