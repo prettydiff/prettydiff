@@ -64,7 +64,7 @@ Inventory:
   * diffview.css  - component
   * diffview.js  - component
   * fulljsmin.js  - component
-  * js-beautify.js  - component
+  * jspretty.js  - component
   * markup_beauty.js  - component
   * markupmin.js - component
 
@@ -73,10 +73,11 @@ License:
 
    @source: http://prettydiff.com/documentation.php
 
-   @licstart  The following is the entire license notice for the 
-    JavaScript code in this page.
+   @licstart  The following is the entire license notice for the
+   JavaScript code in this page.
 
-Created by Austin Cheney originally on 3 Mar 2009.
+
+ Created by Austin Cheney originally on 3 Mar 2009.
  This code may not be used or redistributed unless the following
  conditions are met:
 
@@ -102,69 +103,65 @@ Created by Austin Cheney originally on 3 Mar 2009.
  permission.
 
  - used as diffview function
- <http://prettydiff.com/diffview.js>
+ <http://prettydiff.com/lib/diffview.js>
 
  * The author of fulljsmin.js and date of creation must be stated as:
  Franck Marcia - 31 Aug 2006
 
  - used as jsmin function:
- <http://prettydiff.com/fulljsmin.js>
+ <http://prettydiff.com/lib/fulljsmin.js>
 
  * The fulljsmin.js is used with permission from the author of jsminc.c
  and such must be stated as:
  Copyright (c) 2002 Douglas Crockford  (www.crockford.com)
 
- * The author of js-beautify.js must be stated as:
- Written by Einars Lielmanis, <einars@gmail.com>
- http://elfz.laacz.lv/beautify/
+ * JSPretty is written by Austin Cheney.  Use of this function requires
+ that credit be given to Austin Cheney.
+ http://prettydiff.com/
 
- Originally converted to javascript by Vital, <vital76@gmail.com>
- http://my.opera.com/Vital/blog/2007/11/21/
- javascript-beautify-on-javascript-translated
-
- - used as js_beautify function
- <http://prettydiff.com/js-beautify.js>
+ - used as jspretty function
+ <http://prettydiff.com/lib/jspretty.js>
 
  * cleanCSS.js is originally written by Anthony Lieuallen
  http://tools.arantius.com/tabifier
 
  - used as cleanCSS function
- <http://prettydiff.com/cleanCSS.js>
+ <http://prettydiff.com/lib/cleanCSS.js>
 
  * charDecoder.js is written by Austin Cheney.  Use of this function
  requires that credit be given to Austin Cheney.
  http://prettydiff.com/
 
  - used as charDecoder function
- <http://prettydiff.com/charDecoder.js>
+ <http://prettydiff.com/lib/charDecoder.js>
 
  * csvbeauty.js is written by Austin Cheney.  Use of this function
  requires that credit be given to Austin Cheney.
  http://prettydiff.com/
 
  - used as csvbeauty function
- <http://prettydiff.com/csvbeauty.js>
+ <http://prettydiff.com/lib/csvbeauty.js>
 
  * csvmin.js is written by Austin Cheney.  Use of this function requires
  that credit be given to Austin Cheney.
  http://prettydiff.com/
 
  - used as csvmin function
- <http://prettydiff.com/csvmin.js>
+ <http://prettydiff.com/lib/csvmin.js>
 
  * markupmin.js is written by Austin Cheney.  Use of this function
  requires that credit be given to Austin Cheney.
  http://prettydiff.com/
 
  - used as markupmin function
- <http://prettydiff.com/markupmin.js>
+ <http://prettydiff.com/lib/markupmin.js>
 
  * markup_beauty.js is written by Austin Cheney.  Use of this function
  requires that credit be given to Austin Cheney.
  http://prettydiff.com/
 
  - used as markup-beauty function
- <http://prettydiff.com/markup_beauty.js>
+ <http://prettydiff.com/lib/markup_beauty.js>
 
  * o object literal is in the pd.js file and exists to provide a one
  time and external means of access to the DOM.
@@ -184,8 +181,8 @@ Created by Austin Cheney originally on 3 Mar 2009.
  Prettydiff created by Austin Cheney originally on 3 Mar 2009.
  <http://prettydiff.com/>
 
- Contact the author at:
- austin.cheney@us.army.mil
+ Join the Pretty Diff mailing list at:
+ https://groups.google.com/d/forum/pretty-diff
 
  * In addition to the previously stated requirements any use of any
  component, aside from directly using the full files in their entirety,
@@ -197,5 +194,6 @@ Created by Austin Cheney originally on 3 Mar 2009.
  permission.
 
 
-   @licend  The above is the entire license notice
-   for the JavaScript code in this page.
+
+   @licend  The above is the entire license notice for the JavaScript
+   code in this page.
