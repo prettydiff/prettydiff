@@ -33,69 +33,65 @@
  permission.
 
  - used as diffview function
- <http://prettydiff.com/diffview.js>
+ <http://prettydiff.com/lib/diffview.js>
 
  * The author of fulljsmin.js and date of creation must be stated as:
  Franck Marcia - 31 Aug 2006
 
  - used as jsmin function:
- <http://prettydiff.com/fulljsmin.js>
+ <http://prettydiff.com/lib/fulljsmin.js>
 
  * The fulljsmin.js is used with permission from the author of jsminc.c
  and such must be stated as:
  Copyright (c) 2002 Douglas Crockford  (www.crockford.com)
 
- * The author of js-beautify.js must be stated as:
- Written by Einars Lielmanis, <einars@gmail.com>
- http://elfz.laacz.lv/beautify/
+ * JSPretty is written by Austin Cheney.  Use of this function requires
+ that credit be given to Austin Cheney.
+ http://prettydiff.com/
 
- Originally converted to javascript by Vital, <vital76@gmail.com>
- http://my.opera.com/Vital/blog/2007/11/21/
- javascript-beautify-on-javascript-translated
-
- - used as js_beautify function
- <http://prettydiff.com/js-beautify.js>
+ - used as jspretty function
+ <http://prettydiff.com/lib/jspretty.js>
 
  * cleanCSS.js is originally written by Anthony Lieuallen
  http://tools.arantius.com/tabifier
 
  - used as cleanCSS function
- <http://prettydiff.com/cleanCSS.js>
+ <http://prettydiff.com/lib/cleanCSS.js>
 
  * charDecoder.js is written by Austin Cheney.  Use of this function
  requires that credit be given to Austin Cheney.
  http://prettydiff.com/
 
  - used as charDecoder function
- <http://prettydiff.com/charDecoder.js>
+ <http://prettydiff.com/lib/charDecoder.js>
 
  * csvbeauty.js is written by Austin Cheney.  Use of this function
  requires that credit be given to Austin Cheney.
  http://prettydiff.com/
 
  - used as csvbeauty function
- <http://prettydiff.com/csvbeauty.js>
+ <http://prettydiff.com/lib/csvbeauty.js>
 
  * csvmin.js is written by Austin Cheney.  Use of this function requires
  that credit be given to Austin Cheney.
  http://prettydiff.com/
 
  - used as csvmin function
- <http://prettydiff.com/csvmin.js>
+ <http://prettydiff.com/lib/csvmin.js>
 
  * markupmin.js is written by Austin Cheney.  Use of this function
  requires that credit be given to Austin Cheney.
  http://prettydiff.com/
 
  - used as markupmin function
- <http://prettydiff.com/markupmin.js>
+ <http://prettydiff.com/lib/markupmin.js>
 
  * markup_beauty.js is written by Austin Cheney.  Use of this function
  requires that credit be given to Austin Cheney.
  http://prettydiff.com/
 
  - used as markup-beauty function
- <http://prettydiff.com/markup_beauty.js>
+ <http://prettydiff.com/lib/markup_beauty.js>
 
  * o object literal is in the pd.js file and exists to provide a one
  time and external means of access to the DOM.
@@ -1740,1280 +1736,757 @@ var prettydiff = function (api) {
                 }());
                 return x;
             },
-            js_beautify = function (args) {
-                (function () {
-                    if (!args.source || typeof args.source !== "string") {
-                        args.source = "";
-                    } else {
-                        args.source = args.source.replace(/var /g, "var prettydiffvar,");
-                    }
-                    if (args.insize === undefined || isNaN(args.insize)) {
-                        args.insize = 4;
-                    }
-                    if (!args.inchar || args.inchar.length < 1 || typeof args.inchar !== "string") {
-                        args.inchar = " ";
-                    }
-                    if (!args.inlevel || isNaN(args.inlevel)) {
-                        args.inlevel = 0;
-                    }
-                    if (typeof args.preserve !== "boolean") {
-                        args.preserve = true;
-                    }
-                    if (!args.preserve_max || isNaN(args.preserve_max)) {
-                        args.preserve_max = 0;
-                    }
-                    if (!args.space || args.space !== true) {
-                        args.space = false;
-                    }
-                    if (!args.braces || typeof args.braces !== "boolean") {
-                        if (args.braces === "allman") {
-                            args.braces = true;
-                        } else {
-                            args.braces = false;
-                        }
-                    }
-                    if (!args.inarray || args.inarray !== true) {
-                        args.inarray = false;
-                    }
-                    if (!args.content || args.content !== true) {
-                        args.content = false;
-                    }
-                    if (!args.comments || typeof args.comments !== "boolean") {
-                        if (args.comments === "noindent") {
-                            args.comments = true;
-                        } else {
-                            args.comments = false;
-                        }
-                    }
-                }());
-                var j = [0, 0],
+            jspretty = function (args) {
+                var source = (typeof args.source === "string" && args.source.length > 0) ? args.source : "Error: no source code supplied to jsbeauty!",
+                    jsize = (args.insize > 0) ? args.insize : ((Number(args.insize) > 0) ? Number(args.insize) : 4),
+                    jchar = (typeof args.inchar === "string" && args.inchar.length > 0) ? args.inchar : " ",
+                    jpres = (typeof args.preserve === "boolean") ? args.preserve : true,
+                    jlevel = (args.inlevel > -1) ? args.inlevel : ((Number(args.inlevel) > -1) ? Number(args.inlevel) : 0),
+                    jspace = (typeof args.space === "boolean") ? args.space : true,
+                    jbrace = (args.braces === "allman") ? true : false,
+                    jcomment = (args.comments === "noindent") ? true : false,
+                    token = [],
+                    types = [],
+                    level = [],
+                    lines = [],
+                    j = [0, 0],
                     k = [0, 0],
                     l = [0, 0, 0],
                     m = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
                     n = [0, 0, 0, 0, 0],
                     o = [0, 0],
+                    p = [0, 0],
+                    q = [0, 0],
                     w = [0, 0, 0, 0],
-                    i = 0,
-                    insize = args.insize,
-                    input = args.source,
-                    input_length = args.source.length + 1,
-                    t = [],
-                    output = [],
-                    token_text = "",
-                    last_type = "TK_START_EXPR",
-                    var_last_type = "",
-                    var_last_last_type = "",
-                    var_end_count = -1,
-                    last_text = "",
-                    last_last_text = "",
-                    block_last_text = "",
-                    last_word = "",
-                    last_last_word = "",
-                    flags = {
-                        previous_mode: "BLOCK",
-                        mode: "BLOCK",
-                        var_line: false,
-                        var_line_reindented: false,
-                        in_html_comment: false,
-                        if_line: false,
-                        in_case: false,
-                        eat_next_space: false,
-                        indentation_baseline: -1,
-                        indentation_level: args.inlevel || 0
-                    },
-                    functestval = 0,
-                    var_var_test = false,
-                    commafix = false,
-                    comma_test = false,
-                    forblock = false,
-                    forcount = 0,
-                    flag_store = [flags],
-                    indent_string = "",
-                    wordchar = ["a", "b", "c", "d", "e", "f", "g", "h", "i", "j", "k", "l", "m", "n", "o", "p", "q", "r", "s", "t", "u", "v", "w", "x", "y", "z", "A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M", "N", "O", "P", "Q", "R", "S", "T", "U", "V", "W", "X", "Y", "Z", "0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "_", "$"],
-                    punct = ["+", "-", "*", "/", "%", "&", "++", "--", "=", "+=", "-=", "*=", "/=", "%=", "==", "===", "!=", "!==", ">", "<", ">=", "<=", ">>", "<<", ">>>", ">>>=", ">>=", "<<=", "&&", "&=", "|", "||", "!", "!!", ",", ":", "?", "^", "^=", "|=", "::"],
-                    parser_pos = 0,
-                    prefix = "",
-                    token_type = "",
-                    do_block_just_closed = false,
-                    wanted_newline = false,
-                    just_added_newline = false,
-                    rvalue = "",
-                    space_before = true,
-                    space_after = true,
-                    pseudo_block = false,
-                    arrayTest = 0,
-                    objectInArray = false,
-                    closedInArray = false,
-                    is_array = function (mode) {
-                        return mode === "[EXPRESSION]" || mode === "[INDENTED-EXPRESSION]";
-                    },
-                    trim = function (s) {
-                        return s.replace(/^\s\s*|\s\s*$/, "");
-                    },
-                    print_newline = function (ignore_repeated) {
-                        var i = 0;
-                        flags.eat_next_space = false;
-                        if (args.inarray && is_array(flags.mode)) {
-                            return;
-                        }
-                        ignore_repeated = (ignore_repeated === undefined) ? true : ignore_repeated;
-                        flags.if_line = false;
-                        if (!output.length) {
-                            return;
-                        }
-                        while (output[output.length - 1] === " " || output[output.length - 1] === indent_string) {
-                            output.pop();
-                        }
-                        if (output[output.length - 1] !== "\n" || !ignore_repeated) {
-                            just_added_newline = true;
-                            output.push("\n");
-                        }
-                        for (i = 0; i < flags.indentation_level; i += 1) {
-                            output.push(indent_string);
-                        }
-                        if (flags.var_line && flags.var_line_reindented) {
-                            output.push(indent_string);
-                        }
-                    },
-                    block_comment = function (x) {
-                        var lines = x.split(/\x0a|\x0d\x0a/),
-                            j = lines.length,
-                            i = 0;
-                        print_newline();
-                        output.push(lines[0]);
-                        for (i = 1; i < j; i += 1) {
-                            print_newline();
-                            if ((/\}|((\!|\=)\=)/).test(lines[i]) || (/(;|(\)\s*\{\s*))$/).test(lines[i]) || ((/^(\s*("|'))/).test(lines[i]) && (/(("|')\s*;?)$/).test(lines[i]))) {
-                                output.push(lines[i]);
-                            } else {
-                                output.push(" ");
-                                output.push(trim(lines[i]));
-                            }
-                        }
-                        print_newline();
-                    },
-                    white_count = function (x) {
-                        var y = 0,
-                            z = x.length;
-                        for (y = 0; y < z; y += 1) {
-                            if (x.charAt(y) === " ") {
-                                w[1] += 1;
-                            } else if (x.charAt(y) === "\t") {
-                                w[2] += 1;
-                            } else if (x.charAt(y) === "\n") {
-                                w[0] += 1;
-                            } else if (args.source.charAt(y) === "\r" || args.source.charAt(y) === "\f" || args.source.charAt(y) === "\v") {
-                                w[3] += 1;
-                            }
-                        }
-                    },
-                    trim_output = function (eat_newlines) {
-                        eat_newlines = (eat_newlines === undefined) ? false : eat_newlines;
-                        while (output.length && (output[output.length - 1] === " " || output[output.length - 1] === indent_string || (eat_newlines && (output[output.length - 1] === "\n" || output[output.length - 1] === "\r")))) {
-                            output.pop();
-                        }
-                    },
-                    print_single_space = function () {
-                        var last_output = " ";
-                        if (flags.eat_next_space) {
-                            flags.eat_next_space = false;
-                            return;
-                        }
-                        if (output.length) {
-                            last_output = output[output.length - 1];
-                        }
-                        if (last_output !== " " && last_output !== "\n" && last_output !== indent_string) {
-                            output.push(" ");
-                        }
-                    },
-                    print_token = function () {
-                        just_added_newline = false;
-                        flags.eat_next_space = false;
-                        output.push(token_text);
-                    },
-                    set_mode = function (mode) {
-                        flag_store.push(flags);
-                        flags = {
-                            previous_mode: (flags) ? flags.mode : "BLOCK",
-                            mode: mode,
-                            var_line: false,
-                            var_line_reindented: false,
-                            in_html_comment: false,
-                            if_line: false,
-                            in_case: false,
-                            eat_next_space: false,
-                            indentation_baseline: -1,
-                            indentation_level: ((flags) ? flags.indentation_level + ((flags.var_line && flags.var_line_reindented) ? 1 : 0) : args.inlevel)
-                        };
-                    },
-                    is_expression = function (mode) {
-                        return mode === "[EXPRESSION]" || mode === "[INDENTED-EXPRESSION]" || mode === "(EXPRESSION)";
-                    },
-                    restore_mode = function () {
-                        do_block_just_closed = (flags.mode === "DO_BLOCK");
-                        if (flag_store.length > 0) {
-                            flags = flag_store.pop();
-                        }
-                    },
-                    in_array = function (what, arr) {
-                        var i = 0;
-                        for (i = 0; i < arr.length; i += 1) {
-                            if (arr[i] === what) {
-                                return true;
-                            }
-                        }
-                        return false;
-                    },
-                    is_ternary_op = function () {
-                        var i = 0,
-                            level = 0,
-                            colon_count = 0;
-                        for (i = output.length - 1; i >= 0; i -= 1) {
-                            if (output[i] === ":" && level === 0) {
-                                colon_count += 1;
-                            } else if (output[i] === "?" && level === 0) {
-                                if (colon_count === 0) {
-                                    return true;
-                                }
-                                colon_count -= 1;
-                            } else if (output[i] === "{" || output[i] === "(" || output[i] === "[") {
-                                if (output[i] === "{" && level === 0) {
-                                    return false;
-                                }
-                                level -= 1;
-                            } else if (output[i] === ")" || output[i] === "}" || output[i] === "]") {
-                                level += 1;
-                            }
-                        }
-                    },
-                    fix_object_own_line = function () {
-                        var b = 0;
-                        for (b = output.length - 2; b > 0; b -= 1) {
-                            if (/^(\s+)$/.test(output[b])) {
-                                output[b] = "";
-                            } else if (in_array(output[b], punct)) {
-                                output[b + 1] = " ";
-                                break;
-                            }
-                        }
-                    },
-                    funcfix = function (y) {
-                        var a = (y.indexOf("}") - 1),
-                            b = "",
-                            c = "";
-                        if (y.charAt(0) === "\n") {
-                            b = "\n";
-                            c = y.substr(1, a);
-                        } else {
-                            c = y.substr(0, a);
-                        }
-                        return b + c + "}\n" + c + "(function";
-                    },
-                    get_next_token = function () {
-                        var c = "",
-                            i = 0,
-                            comment = "",
-                            inline_comment = false,
-                            keep_whitespace = false,
-                            sep = "",
-                            esc = false,
-                            resulting_string = "",
-                            in_char_class = false,
-                            whitespace_count = 0;
-                        if (parser_pos >= input_length) {
-                            return ["", "TK_EOF"];
-                        }
-                        wanted_newline = false;
-                        c = input.charAt(parser_pos);
-                        parser_pos += 1;
-                        keep_whitespace = args.inarray && is_array(flags.mode);
-                        if (keep_whitespace) {
-                            whitespace_count = 0;
-                            while (c === "\n" || c === "\r" || c === "\t" || c === " ") {
-                                if (c === "\n") {
-                                    trim_output();
-                                    output.push("\n");
-                                    just_added_newline = true;
-                                    whitespace_count = 0;
-                                } else {
-                                    if (c === "\t") {
-                                        whitespace_count += 4;
-                                    } else if (c !== "\r") {
-                                        whitespace_count += 1;
+                    result = "";
+                if (source === "Error: no source code supplied to jsbeauty!") {
+                    return source;
+                }
+                (function () {
+                    var a = 0,
+                        b = source.length,
+                        c = source.split(""),
+                        t = "",
+                        d = function (start, offset, end) {
+                            var e = 0,
+                                f = 0,
+                                g = 0,
+                                h = end.split(""),
+                                i = h.length - 1,
+                                j = b,
+                                k = false,
+                                l = [start],
+                                m = (h[0] === "\r") ? true : false,
+                                n = a + offset;
+                            for (e = n; e < j; e += 1) {
+                                l.push(c[e]);
+                                if (c[e] === h[i] || (m && (c[e] === "\n" || e === j - 1))) {
+                                    if (i > 0) {
+                                        g = i;
+                                        for (f = e; g > -1; f -= 1) {
+                                            if (c[f] !== h[g]) {
+                                                break;
+                                            }
+                                            g -= 1;
+                                        }
+                                        if (g === -1) {
+                                            k = true;
+                                        }
+                                    } else {
+                                        k = true;
                                     }
-                                }
-                                if (parser_pos >= input_length) {
-                                    return ["", "TK_EOF"];
-                                }
-                                c = input.charAt(parser_pos);
-                                parser_pos += 1;
-                            }
-                            if (flags.indentation_baseline === -1) {
-                                flags.indentation_baseline = whitespace_count;
-                            }
-                            if (just_added_newline) {
-                                for (i = 0; i < flags.indentation_level + 1; i += 1) {
-                                    output.push(indent_string);
-                                }
-                                if (flags.indentation_baseline !== -1) {
-                                    for (i = 0; i < whitespace_count - flags.indentation_baseline; i += 1) {
-                                        output.push(" ");
-                                    }
-                                }
-                            }
-                        } else {
-                            (function () {
-                                var n_newlines = 0;
-                                while (c === "\n" || c === "\r" || c === "\t" || c === " ") {
-                                    if (c === "\n") {
-                                        n_newlines += ((args.preserve_max) ? (n_newlines <= args.preserve_max) ? 1 : 0 : 1);
-                                    }
-                                    if (parser_pos >= input_length) {
-                                        return ["", "TK_EOF"];
-                                    }
-                                    c = input.charAt(parser_pos);
-                                    parser_pos += 1;
-                                }
-                                if (args.preserve) {
-                                    if (n_newlines > 1) {
-                                        for (i = 0; i < n_newlines; i += 1) {
-                                            print_newline(i === 0);
-                                            just_added_newline = true;
+                                    if (e > i + 1 && c[e - i - 1] === "\\") {
+                                        g = 1;
+                                        for (f = e - 2; f > -1; f -= 1) {
+                                            if (c[f] === "\\") {
+                                                g += 1;
+                                            } else {
+                                                break;
+                                            }
+                                        }
+                                        if (g % 2 === 1) {
+                                            k = false;
                                         }
                                     }
-                                }
-                                wanted_newline = n_newlines > 0;
-                            }());
-                            if (parser_pos >= input_length) {
-                                return ["", "TK_EOF"];
-                            }
-                        }
-                        if (in_array(c, wordchar)) {
-                            if (parser_pos < input_length) {
-                                while (in_array(input.charAt(parser_pos), wordchar)) {
-                                    c += input.charAt(parser_pos);
-                                    parser_pos += 1;
-                                    if (parser_pos === input_length) {
+                                    if (k) {
                                         break;
                                     }
                                 }
                             }
-                            if (parser_pos !== input_length && c.match(/^\d+[Ee]$/) && (input.charAt(parser_pos) === "-" || input.charAt(parser_pos) === "+")) {
-                                return (function () {
-                                    var sign = [input.charAt(parser_pos)],
-                                        dot = true;
-                                    while (parser_pos < input_length) {
-                                        parser_pos += 1;
-                                        if (input.charAt(parser_pos).match(/\d|\./)) {
-                                            if (input.charAt(parser_pos).match(/\./)) {
-                                                if (dot) {
-                                                    dot = false;
-                                                } else {
-                                                    sign.push(" ");
+                            if (e < j) {
+                                a = e;
+                                if (start === "//") {
+                                    l.pop();
+                                }
+                                return l.join("");
+                            }
+                            return "";
+                        },
+                        comtest = function () {
+                            var z = 0;
+                            for (z = a - 1; z > -1; z -= 1) {
+                                if (!(/\s/).test(c[z])) {
+                                    return "comment-inline";
+                                }
+                                if (c[z] === "\n" || c[z] === "\r") {
+                                    return "comment";
+                                }
+                            }
+                            return "comment";
+                        },
+                        operator = function () {
+                            var e = ["=", "<", ">", "+", "-", "*", "/", "!", "?", "|", "^", ":", "&"],
+                            f = [c[a]],
+                            g = 0,
+                            h = 0,
+                            i = e.length,
+                            j = b;
+                            if (a < b - 1 && c[a] === "!" && c[a + 1] === "/") {
+                                return "!";
+                            }
+                            for (g = a + 1; g < j; g += 1) {
+                                for (h = 0; h < i; h += 1) {
+                                    if (c[g] === e[h]) {
+                                        f.push(e[h]);
+                                        break;
+                                    }
+                                }
+                                if (h === i) {
+                                    break;
+                                }
+                            }
+                            a = a + (f.length - 1);
+                            return f.join("");
+                        },
+                        regex = function () {
+                            var e = 0,
+                                f = b,
+                                g = ["/"],
+                                h = 0,
+                                i = 0;
+                            for (e = a + 1; e < f; e += 1) {
+                                g.push(c[e]);
+                                if (c[e] === "/") {
+                                    if (c[e - 1] === "\\") {
+                                        i = 0;
+                                        for (h = e - 1; h > 0; h -= 1) {
+                                            if (c[h] === "\\") {
+                                                i += 1;
+                                            } else {
+                                                break;
+                                            }
+                                        }
+                                        if (i % 2 === 0) {
+                                            break;
+                                        }
+                                    } else {
+                                        break;
+                                    }
+                                }
+                            }
+                            if (c[e + 1] === "g" || c[e + 1] === "i" || c[e + 1] === "m" || c[e + 1] === "y") {
+                                g.push(c[e + 1]);
+                                if (c[e + 2] !== c[e + 1] && (c[e + 2] === "g" || c[e + 2] === "i" || c[e + 2] === "m" || c[e + 2] === "y")) {
+                                    g.push(c[e + 2]);
+                                    if (c[e + 3] !== c[e + 1] && c[e + 3] !== c[e + 2] && (c[e + 3] === "g" || c[e + 3] === "i" || c[e + 3] === "m" || c[e + 3] === "y")) {
+                                        g.push(c[e + 3]);
+                                        if (c[e + 4] !== c[e + 1] && c[e + 4] !== c[e + 2] && c[e + 4] !== c[e + 3] && (c[e + 4] === "g" || c[e + 4] === "i" || c[e + 4] === "m" || c[e + 4] === "y")) {
+                                            g.push(c[e + 4]);
+                                            a = e + 4;
+                                        } else {
+                                            a = e + 3;
+                                        }
+                                    } else {
+                                        a = e + 2;
+                                    }
+                                } else {
+                                    a = e + 1;
+                                }
+                            } else {
+                                a = e;
+                            }
+                            return g.join("");
+                        },
+                        numb = function () {
+                            var e = 0,
+                                f = b,
+                                g = [c[a]];
+                            for (e = a + 1; e < f; e += 1) {
+                                if ((/[0-9]/).test(c[e]) || c[e] === "." ) {
+                                    g.push(c[e]);
+                                } else {
+                                    break;
+                                }
+                            }
+                            a = e - 1;
+                            return g.join("");
+                        },
+                        space = function () {
+                            var e = [],
+                                f = 0,
+                                g = b;
+                            for (f = a; f < g; f += 1) {
+                                if (c[f] === "\n") {
+                                    w[0] += 1;
+                                } else if (c[f] === " ") {
+                                    w[1] += 1;
+                                } else if (c[f] === "\t") {
+                                    w[2] += 1;
+                                } else if ((/\s/).test(c[f])) {
+                                    w[3] += 1;
+                                } else {
+                                    break;
+                                }
+                                e.push(c[f]);
+                            }
+                            a = f-1;
+                            g = e.join("").replace(/\n\r/g, "\n").replace(/\r\n/g, "\n").replace(/\r/g, "\n").split("\n").length;
+                            if (jpres && g > 2) {
+                                lines.push(token.length - 1);
+                            }
+                        },
+                        word = function () {
+                            var e = [],
+                                f = a,
+                                g = b;
+                            do {
+                                e.push(c[f]);
+                                f += 1;
+                            } while (f < g && !((/\s/).test(c[f]) || c[f] === ";" || c[f] === "=" || c[f] === "." || c[f] === "," || c[f] === "<" || c[f] === ">" || c[f] === "+" || c[f] === "-" || c[f] === "*" || c[f] === "/" || c[f] === "!" || c[f] === "?" || c[f] === "|" || c[f] === "^" || c[f] === ":" || c[f] === "\"" || c[f] === "'" || c[f] === "\\" || c[f] === "/" || c[f] === "(" || c[f] === ")" || c[f] === "{" || c[f] === "}" || c[f] === "[" || c[f] === "]" || c[f] === "&"));
+                            a = f - 1;
+                            return e.join("");
+                        };
+                    for (a = 0; a < b; a += 1) {
+                        if (c[a] === "/" && (a === b - 1 || c[a + 1] === "*")) {
+                            t = d("/*", 2, "*\/");
+                            k[0] += 1;
+                            k[1] += t.length;
+                            token.push(t);
+                            types.push("comment");
+                        } else if (c[a] === "/" && (a === b - 1 || c[a + 1] === "/")) {
+                            types.push(comtest());
+                            t = d("//", 2, "\r");
+                            j[0] += 1;
+                            j[1] += t.length;
+                            token.push(t);
+                        } else if (c[a] === "/" && (types.length > 0 && types[types.length - 1] !== "word" && types[types.length - 1] !== "literal" && types[types.length - 1] !== "end")) {
+                            t = regex();
+                            p[0] += 1;
+                            p[1] += t.length;
+                            token.push(t);
+                            types.push("regex");
+                        } else if (c[a] === "\"") {
+                            t = d("\"", 1, "\"");
+                            l[0] += 1;
+                            l[1] += t.length - 2;
+                            l[2] += 2;
+                            token.push(t);
+                            types.push("literal");
+                        } else if (c[a] === "'") {
+                            t = d("'", 1, "'");
+                            l[0] += 1;
+                            l[1] += t.length - 2;
+                            l[2] += 2;
+                            token.push(t);
+                            types.push("literal");
+                        } else if (c[a] === "-" && a < b - 1 && c[a + 1] !== "=" && (types[types.length - 1] === "literal" || types[types.length - 1] === "word") && token[token.length - 1] !== "return") {
+                            n[0] += 1;
+                            n[1] += 1;
+                            token.push("-");
+                            types.push("operator");
+                        } else if ((/\d/).test(c[a]) || (a !== b - 2 && c[a] === "-" && c[a + 1] === "." && (/\d/).test(c[a + 2])) || (a !== b - 1 && (c[a] === "-" || c[a] === ".") && (/\d/).test(c[a + 1]))) {
+                            t = numb();
+                            q[0] += 1;
+                            q[1] += t.length;
+                            token.push(t);
+                            types.push("literal");
+                        } else if (c[a] === ",") {
+                            n[2] += 1;
+                            token.push(",");
+                            types.push("separator");
+                        } else if (c[a] === ".") {
+                            n[0] += 1;
+                            n[1] += 1;
+                            token.push(".");
+                            types.push("separator");
+                        } else if (c[a] === ";") {
+                            n[3] += 1;
+                            token.push(";");
+                            types.push("separator");
+                        } else if (c[a] === "(") {
+                            n[4] += 1;
+                            if (types.length === 0 || token[token.length - 1] === "function" || token[token.length - 1] === "for" || token[token.length - 1] === "if" || (a > 0 && (/\s/).test(c[a - 1]))) {
+                                types.push("start");
+                            } else {
+                                types.push("method");
+                            }
+                            token.push("(");
+                        } else if (c[a] === "[") {
+                            n[4] += 1;
+                            token.push("[");
+                            types.push("start");
+                        } else if (c[a] === "{") {
+                            n[4] += 1;
+                            token.push("{");
+                            types.push("start");
+                        } else if (c[a] === ")") {
+                            n[4] += 1;
+                            token.push(")");
+                            types.push("end");
+                        } else if (c[a] === "]") {
+                            n[4] += 1;
+                            token.push("]");
+                            types.push("end");
+                        } else if (c[a] === "}") {
+                            n[4] += 1;
+                            token.push("}");
+                            types.push("end");
+                        } else if (c[a] === "=" || c[a] === "<" || c[a] === ">" || c[a] === "+" || c[a] === "-" || c[a] === "*" || c[a] === "/" || c[a] === "!" || c[a] === "?" || c[a] === "|" || c[a] === "^" || c[a] === ":" || c[a] === "&") {
+                            t = operator();
+                            n[0] += 1;
+                            n[1] += t.length;
+                            token.push(t);
+                            types.push("operator");
+                        } else if ((/\s/).test(c[a])) {
+                            space();
+                        } else {
+                            t = word();
+                            token.push(t);
+                            types.push("word");
+                            if (t === "alert") {
+                                m[0] += 1;
+                            } else if (t === "break") {
+                                m[2] += 1;
+                            } else if (t === "case") {
+                                m[4] += 1;
+                            } else if (t === "catch") {
+                                m[48] += 1;
+                            } else if (t === "continue") {
+                                m[6] += 1;
+                            } else if (t === "default") {
+                                m[8] += 1;
+                            } else if (t === "delete") {
+                                m[10] += 1;
+                            } else if (t === "do") {
+                                m[12] += 1;
+                            } else if (t === "document") {
+                                m[44] += 1;
+                            } else if (t === "else") {
+                                m[14] += 1;
+                            } else if (t === "eval") {
+                                m[16] += 1;
+                            } else if (t === "for") {
+                                m[18] += 1;
+                            } else if (t === "function") {
+                                m[20] += 1;
+                            } else if (t === "if") {
+                                m[22] += 1;
+                            } else if (t === "in") {
+                                m[24] += 1;
+                            } else if (t === "label") {
+                                m[26] += 1;
+                            } else if (t === "new") {
+                                m[28] += 1;
+                            } else if (t === "return") {
+                                m[30] += 1;
+                            } else if (t === "switch") {
+                                m[32] += 1;
+                            } else if (t === "this") {
+                                m[34] += 1;
+                            } else if (t === "throw") {
+                                m[50] += 1;
+                            } else if (t === "try") {
+                                m[52] += 1;
+                            } else if (t === "typeof") {
+                                m[36] += 1;
+                            } else if (t === "var") {
+                                m[38] += 1;
+                            } else if (t === "while") {
+                                m[40] += 1;
+                            } else if (t === "with") {
+                                m[42] += 1;
+                            } else if (t === "window") {
+                                m[46] += 1;
+                            } else {
+                                o[0] += 1;
+                                o[1] += t.length;
+                            }
+                        }
+                    }
+                }());
+                (function () {
+                    var a = 0,
+                        b = token.length,
+                        indent = jlevel,
+                        list = [],
+                        varline = [],
+                        casetest = [],
+                        methtest = [],
+                        fortest = 0,
+                        ctype = "",
+                        ctoke = "",
+                        ltype = types[0],
+                        ltoke = token[0],
+                        separator = function () {
+                            if (ctoke === ".") {
+                                level[level.length - 1] = "x";
+                                return level.push("x");
+                            }
+                            if (ctoke === ",") {
+                                level[level.length - 1] = "x";
+                                (function () {
+                                    var c = 0;
+                                    for (c = a - 1; c > -1; c -= 1) {
+                                        if (types[c] === "start" && token[c] !== "(") {
+                                            list[list.length - 1] = true;
+                                            return;
+                                        }
+                                        if (types[c] === "method" || token[c] === "(") {
+                                            return;
+                                        }
+                                    }
+                                }());
+                                if (methtest[methtest.length - 1] === true) {
+                                    return level.push("s");
+                                }
+                                if (list[list.length - 1] === true) {
+                                    (function () {
+                                        var c = 0,
+                                            d = 0,
+                                            e = false;
+                                        if (ltoke === "]") {
+                                            e = true;
+                                            d += 1;
+                                        }
+                                        for (c = a - 1; c > -1; c -= 1) {
+                                            if (token[c] === "]") {
+                                                d += 1;
+                                            }
+                                            if (token[c] === "[") {
+                                                d -= 1;
+                                            }
+                                            if (types[c] === "word" && token[c] !== "return" && token[c + 1] === "[") {
+                                                level[c] = "x";
+                                            }
+                                            if (d === 0) {
+                                                if (e) {
+                                                    level[c] = indent;
+                                                } else if (types[c] === "word" || types[c] === "literal") {
+                                                    level[c] = "x";
+                                                }
+                                                return;
+                                            }
+                                        }
+                                    }());
+                                    return level.push(indent);
+                                }
+                                if (varline[varline.length - 1] === true) {
+                                    if (ltoke !== "]") {
+                                        (function () {
+                                            var c = 0;
+                                            for (c = a - 1; c > -1; c -= 1) {
+                                                if (types[c] === "method" || types[c] === "start") {
+                                                    if (token[c] === "[" && token[c + 1] !== "]") {
+                                                        level[c] = indent;
+                                                    }
+                                                    return;
                                                 }
                                             }
-                                            sign.push(input.charAt(parser_pos));
-                                        } else {
-                                            break;
-                                        }
+                                        }());
                                     }
-                                    c += sign.join("");
-                                    return [c, "TK_WORD"];
-                                }());
+                                    return level.push(indent);
+                                }
+                                return level.push("s");
                             }
-                            if (c === "in") {
-                                return [c, "TK_OPERATOR"];
-                            }
-                            if (wanted_newline && last_type !== "TK_OPERATOR" && !flags.if_line && (args.preserve || last_text !== "var")) {
-                                print_newline();
-                            }
-                            return [c, "TK_WORD"];
-                        }
-                        if (c === "(" || c === "[") {
-                            return [c, "TK_START_EXPR"];
-                        }
-                        if (c === ")" || c === "]") {
-                            return [c, "TK_END_EXPR"];
-                        }
-                        if (c === "{") {
-                            return [c, "TK_START_BLOCK"];
-                        }
-                        if (c === "}") {
-                            return [c, "TK_END_BLOCK"];
-                        }
-                        if (c === ";") {
-                            return [c, "TK_SEMICOLON"];
-                        }
-                        if (c === "/") {
-                            comment = "";
-                            inline_comment = true;
-                            if (input.charAt(parser_pos) === "*") {
-                                parser_pos += 1;
-                                if (parser_pos < input_length) {
-                                    while (!(input.charAt(parser_pos) === "*" && input.charAt(parser_pos + 1) && input.charAt(parser_pos + 1) === "/") && parser_pos < input_length) {
-                                        c = input.charAt(parser_pos);
-                                        comment += c;
-                                        if (c === "\x0d" || c === "\x0a") {
-                                            inline_comment = false;
-                                        }
-                                        parser_pos += 1;
-                                        if (parser_pos >= input_length) {
-                                            break;
-                                        }
+                            if (ctoke === ";") {
+                                if (fortest === 0) {
+                                    if (varline[varline.length - 1] === true) {
+                                        varline[varline.length - 1] = false;
+                                        indent -= 1;
                                     }
+                                    level[level.length - 1] = "x";
+                                    return level.push(indent);
                                 }
-                                parser_pos += 2;
-                                if (inline_comment) {
-                                    return ["/*" + comment + "*/", "TK_INLINE_COMMENT"];
+                                if (fortest > 0) {
+                                    level[level.length - 1] = "x";
+                                    return level.push("s");
                                 }
-                                return ["/*" + comment + "*/", "TK_BLOCK_COMMENT"];
+                                return level.push("s");
                             }
-                            if (input.charAt(parser_pos) === "/") {
-                                comment = c;
-                                while (input.charAt(parser_pos) !== "\r" && input.charAt(parser_pos) !== "\n") {
-                                    comment += input.charAt(parser_pos);
-                                    parser_pos += 1;
-                                    if (parser_pos >= input_length) {
-                                        break;
-                                    }
-                                }
-                                parser_pos += 1;
-                                if (wanted_newline) {
-                                    print_newline();
-                                }
-                                return [comment, "TK_COMMENT"];
+                        },
+                        start = function () {
+                            varline.push(false);
+                            list.push(false);
+                            if (ctoke !== "(") {
+                                indent += 1;
+                                methtest.push(false);
+                            } else {
+                                methtest.push(true);
                             }
-                        }
-                        if (c === "'" || c === "\"" || (c === "/" && ((last_type === "TK_WORD" && (last_text === "return" || last_text === "do")) || (last_type === "TK_COMMENT" || last_type === "TK_START_EXPR" || last_type === "TK_START_BLOCK" || last_type === "TK_END_BLOCK" || last_type === "TK_OPERATOR" || last_type === "TK_EQUALS" || last_type === "TK_EOF" || last_type === "TK_SEMICOLON")))) {
-                            sep = c;
-                            esc = false;
-                            resulting_string = c;
-                            if (parser_pos < input_length) {
-                                if (sep === "/") {
-                                    in_char_class = false;
-                                    while (esc || in_char_class || input.charAt(parser_pos) !== sep) {
-                                        resulting_string += input.charAt(parser_pos);
-                                        if (!esc) {
-                                            esc = input.charAt(parser_pos) === "\\";
-                                            if (input.charAt(parser_pos) === "[") {
-                                                in_char_class = true;
-                                            } else if (input.charAt(parser_pos) === "]") {
-                                                in_char_class = false;
-                                            }
-                                        } else {
-                                            esc = false;
-                                        }
-                                        parser_pos += 1;
-                                        if (parser_pos >= input_length) {
-                                            return [resulting_string, "TK_STRING"];
-                                        }
-                                    }
-                                } else {
-                                    while (esc || input.charAt(parser_pos) !== sep) {
-                                        resulting_string += input.charAt(parser_pos);
-                                        if (!esc) {
-                                            esc = input.charAt(parser_pos) === "\\";
-                                        } else {
-                                            esc = false;
-                                        }
-                                        parser_pos += 1;
-                                        if (parser_pos >= input_length) {
-                                            return [resulting_string, "TK_STRING"];
-                                        }
-                                    }
-                                }
+                            if (ltoke === "for") {
+                                fortest = 1;
                             }
-                            parser_pos += 1;
-                            resulting_string += sep;
-                            if (sep === "/") {
-                                while (parser_pos < input_length && in_array(input.charAt(parser_pos), wordchar)) {
-                                    resulting_string += input.charAt(parser_pos);
-                                    parser_pos += 1;
+                            if (ctoke === "{") {
+                                casetest.push(false);
+                                if (jbrace && ltype !== "operator") {
+                                    level[level.length - 1] = indent - 1;
+                                } else if (ltoke === ")") {
+                                    level[level.length - 1] = "s";
+                                } else if (ltoke === "{" || ltoke === "[" || ltoke === "}") {
+                                    level[level.length - 1] = indent - 1;
                                 }
+                                return level.push(indent);
                             }
-                            return [resulting_string, "TK_STRING"];
-                        }
-                        if (c === "#") {
-                            if (parser_pos < input_length && (input.charAt(parser_pos) === "0" || input.charAt(parser_pos) === "1" || input.charAt(parser_pos) === "2" || input.charAt(parser_pos) === "3" || input.charAt(parser_pos) === "4" || input.charAt(parser_pos) === "5" || input.charAt(parser_pos) === "6" || input.charAt(parser_pos) === "7" || input.charAt(parser_pos) === "8" || input.charAt(parser_pos) === "9")) {
+                            if (ctoke === "(" && ltoke === "}") {
+                                level[level.length - 1] = indent;
+                                return level.push("x");
+                            }
+                            if (ctoke === "(") {
+                                if (jspace === false && ltoke === "function") {
+                                    level[level.length - 1] = "x";
+                                }
+                                return level.push("x");
+                            }
+                            if (ctoke === "[") {
+                                if (ltoke === "return") {
+                                    level[level.length - 1] = "s";
+                                } else if (ltoke === "]" || ltype === "word") {
+                                    level[level.length - 1] = "x";
+                                } else if (ltoke === "[" || ltoke === "{") {
+                                    level[level.length - 1] = indent - 1;
+                                }
                                 return (function () {
-                                    var sharp = "#";
-                                    do {
-                                        c = input.charAt(parser_pos);
-                                        sharp += c;
-                                        parser_pos += 1;
-                                    } while (parser_pos < input_length && c !== "#" && c !== "=");
-                                    if (c !== "#" && input.charAt(parser_pos) === "[" && input.charAt(parser_pos + 1) === "]") {
-                                        sharp += "[]";
-                                        parser_pos += 2;
-                                    } else if (c !== "#" && input.charAt(parser_pos) === "{" && input.charAt(parser_pos + 1) === "}") {
-                                        sharp += "{}";
-                                        parser_pos += 2;
+                                    var c = 0;
+                                    for (c = a + 1; c < b; c += 1) {
+                                        if (token[c] === "]") {
+                                            return level.push("x");
+                                        }
+                                        if (token[c] === ",") {
+                                            return level.push(indent);
+                                        }
                                     }
-                                    return [sharp, "TK_WORD"];
+                                    return level.push("x");
                                 }());
                             }
-                        }
-                        if (c === "<" && input.substring(parser_pos - 1, parser_pos + 3) === "<!--") {
-                            parser_pos += 3;
-                            flags.in_html_comment = true;
-                            return ["<!--", "TK_COMMENT"];
-                        }
-                        if (c === "-" && flags.in_html_comment && input.substring(parser_pos - 1, parser_pos + 2) === "-->") {
-                            flags.in_html_comment = false;
-                            parser_pos += 2;
-                            if (wanted_newline) {
-                                print_newline();
+                            return level.push("x");
+                        },
+                        end = function () {
+                            varline.pop();
+                            methtest.pop();
+                            if (ctoke !== ")") {
+                                indent -= 1;
                             }
-                            return ["-->", "TK_COMMENT"];
-                        }
-                        if (in_array(c, punct)) {
-                            while (parser_pos < input_length && in_array(c + input.charAt(parser_pos), punct)) {
-                                c += input.charAt(parser_pos);
-                                parser_pos += 1;
-                                if (parser_pos >= input_length) {
-                                    break;
+                            if (ctoke === "}") {
+                                casetest.pop();
+                            }
+                            if (ctoke === "]") {
+                                if (list[list.length - 1] === true) {
+                                    level[level.length - 1] = indent;
+                                } else if (level[level.length - 1] === "s") {
+                                    level[level.length - 1] = "x";
                                 }
-                            }
-                            if (c === "=") {
-                                return [c, "TK_EQUALS"];
-                            }
-                            return [c, "TK_OPERATOR"];
-                        }
-                        return [c, "TK_UNKNOWN"];
-                    };
-                if (args.source === "") {
-                    return "Error: no source code supplied to js_beautify.js";
-                }
-                while (insize > 0) {
-                    indent_string += args.inchar;
-                    insize -= 1;
-                }
-                parser_pos = 0;
-                while (true) {
-                    t = get_next_token(parser_pos);
-                    token_text = t[0];
-                    token_type = t[1];
-                    if (token_type === "TK_EOF") {
-                        break;
-                    } else if (token_type === "TK_START_EXPR") {
-                        n[4] += 1;
-                        pseudo_block = false;
-                        if (token_text === "[") {
-                            arrayTest += 1;
-                            if (last_type === "TK_WORD" || last_text === ")") {
-                                if (last_text === "continue" || last_text === "try" || last_text === "throw" || last_text === "return" || last_text === "var" || last_text === "if" || last_text === "switch" || last_text === "case" || last_text === "default" || last_text === "for" || last_text === "while" || last_text === "break" || last_text === "function") {
-                                    print_single_space();
-                                }
-                                set_mode("(EXPRESSION)");
-                                print_token();
-                            } else if (flags.mode === "[EXPRESSION]" || flags.mode === "[INDENTED-EXPRESSION]") {
-                                if ((last_last_text === "]" || last_last_text === "}") && last_text === ",") {
-                                    if (flags.mode === "[EXPRESSION]") {
-                                        flags.mode = "[INDENTED-EXPRESSION]";
-                                        if (!args.inarray) {
-                                            flags.indentation_level += 1;
+                                (function () {
+                                    var c = 0,
+                                        d = 1;
+                                    for (c = a - 1; c > -1; c -= 1) {
+                                        if (token[c] === "]") {
+                                            d += 1;
+                                        }
+                                        if (token[c] === "[") {
+                                            d -= 1;
+                                        }
+                                        if ((d === 0 && token[c] === ",") || token[c] === ";" || token[c] === "}" || token[c] === "=") {
+                                            level[level.length - 1] = indent;
+                                            break;
+                                        }
+                                        if (token[c] === "]" || token[c] === "[") {
+                                            if (token[c] === "[" && token[c - 1] === "[" && !isNaN(level[c - 1])) {
+                                                return level.push(indent - 1);
+                                            }
+                                            break;
                                         }
                                     }
-                                    set_mode("[EXPRESSION]");
-                                    if (!args.inarray) {
-                                        print_newline();
-                                    }
-                                } else if (last_text === "[" || (last_text === "," && last_last_text === "}")) {
-                                    if (flags.mode === "[EXPRESSION]") {
-                                        flags.mode = "[INDENTED-EXPRESSION]";
-                                        if (!args.inarray && last_text === "[") {
-                                            flags.indentation_level += 1;
+                                    level.push("s");
+                                }());
+                            } else if ((ltoke === "{" && ctoke === "}") || (ltoke === "[" && ctoke === "]")) {
+                                level[level.length - 1] = "x";
+                                level.push("x");
+                            } else if (ctoke === ")" && (ltoke === "(" || ltoke === ")")) {
+                                level[level.length - 1] = "x";
+                                level.push("s");
+                            } else if (ctoke === ")") {
+                                level[level.length - 1] = "x";
+                                level.push("x");
+                                if (fortest > 0) {
+                                    fortest -= 1;
+                                }
+                            } else if (ctoke === "}" || list[list.length - 1] === true) {
+                                level[level.length - 1] = indent;
+                                level.push("x");
+                            } else {
+                                level.push("x");
+                            }
+                            list.pop();
+                        },
+                        operator = function () {
+                            if (ctoke === "!" && ltype === "start") {
+                                level[level.length - 1] = "x";
+                                return level.push("x");
+                            }
+                            if (ctoke === "!") {
+                                return level.push("x");
+                            }
+                            if (ctoke === ":" && casetest[casetest.length - 1] === true) {
+                                if (a < b - 1 && token[a + 1] !== "case" && token[a + 1] !== "default") {
+                                    indent += 1;
+                                }
+                                level[level.length - 1] = "x";
+                                return level.push(indent);
+                            }
+                            if (ctoke === ":") {
+                                return (function () {
+                                    var c = 0;
+                                    for (c = a - 1; c > -1; c -= 1) {
+                                        if (types[c] === "operator" && token[c] !== "+" && token[c] !== "-" && token[c] !== "+=" && token[c] !== "-=" && token[c] !== "/" && token[c] !== "*" && token[c] !== "%") {
+                                            if (token[c] === "?") {
+                                                level[level.length - 1] = "s";
+                                            } else {
+                                                level[level.length - 1] = "x";
+                                            }
+                                            break;
                                         }
                                     }
-                                    set_mode("[EXPRESSION]");
-                                    if (!args.inarray) {
-                                        print_newline();
-                                    }
-                                } else {
-                                    if (flags.var_line_reindented) {
-                                        set_mode("[EXPRESSION]");
-                                        flags.var_line_reindented = true;
-                                    } else {
-                                        set_mode("[EXPRESSION]");
-                                    }
-                                }
-                            } else {
-                                if (flags.var_line_reindented) {
-                                    set_mode("[EXPRESSION]");
-                                    flags.var_line_reindented = true;
-                                } else {
-                                    set_mode("[EXPRESSION]");
-                                }
+                                    level.push("s");
+                                }());
                             }
-                        } else {
-                            if (flags.var_line_reindented) {
-                                set_mode("(EXPRESSION)");
-                                flags.var_line_reindented = true;
-                            } else {
-                                set_mode("(EXPRESSION)");
-                            }
-                        }
-                        if (token_text !== "[" || (token_text === "[" && (last_type !== "TK_WORD" && last_text !== ")"))) {
-                            if (last_text === ";" || last_type === "TK_START_BLOCK") {
-                                print_newline();
-                            } else if (last_type !== "TK_END_EXPR" && last_type !== "TK_START_EXPR" && last_type !== "TK_END_BLOCK" && last_text !== ".") {
-                                if ((last_type !== "TK_WORD" && last_type !== "TK_OPERATOR") || (last_word === "function" && args.space)) {
-                                    print_single_space();
-                                } else if (last_text === "continue" || last_text === "try" || last_text === "throw" || last_text === "return" || last_text === "var" || last_text === "if" || last_text === "switch" || last_text === "case" || last_text === "default" || last_text === "for" || last_text === "while" || last_text === "break" || last_text === "function" || last_text === "catch") {
-                                    print_single_space();
-                                }
-                            }
-                            print_token();
-                        }
-                        if (forblock && token_text === "(") {
-                            forcount += 1;
-                        }
-                    } else if (token_type === "TK_END_EXPR") {
-                        n[4] += 1;
-                        if (last_last_text === "}") {
-                            pseudo_block = true;
-                        }
-                        if ((flags.mode === "TK_END_BLOCK" || flags.mode === "[INDENTED-EXPRESSION]") && token_text === "]" && (last_text === "}" || last_text === "]" || last_type === "TK_WORD" || last_type === "TK_STRING") && objectInArray) {
-                            if (last_type === "TK_WORD" || last_type === "TK_STRING" || flags.mode === "[INDENTED-EXPRESSION]") {
-                                flags.indentation_level -= 1;
-                                print_newline();
-                            } else {
-                                print_newline();
-                                if (!flags.var_line_reindented) {
-                                    flags.indentation_level -= 1;
-                                }
-                            }
-                        }
-                        if (closedInArray && token_text === "]" && last_last_text !== "[") {
-                            if (flags.mode !== "TK_END_BLOCK") {
-                                flags.indentation_level -= 3;
-                            }
-                            if (flag_store.length > 1) {
-                                flag_store[flag_store.length - 1].indentation_level = flags.indentation_level - 1;
-                            }
-                            if (flags.var_line_reindented) {
-                                set_mode("[INDENTED-EXPRESSION]");
-                                flags.var_line_reindented = true;
-                            } else {
-                                set_mode("[INDENTED-EXPRESSION]");
-                            }
-                            closedInArray = false;
-                        }
-                        if (token_text === "]" && (args.inarray || objectInArray)) {
-                            if (last_text === "}" && last_last_text !== "{") {
-                                if (output.length && output[output.length - 1] === indent_string) {
-                                    output.pop();
-                                }
-                                print_token();
-                                restore_mode();
-                            } else {
-                                print_token();
-                            }
-                        } else if (token_text === "]" && (last_text === "}" || (flags.mode === "[INDENTED-EXPRESSION]" && last_text === "]"))) {
-                            if (last_text === "}" && arrayTest === 0) {
-                                flags.indentation_level -= 1;
-                                if (flags.var_line_reindented) {
-                                    set_mode("[INDENTED-EXPRESSION]");
-                                    flags.var_line_reindented = true;
-                                } else {
-                                    set_mode("[INDENTED-EXPRESSION]");
-                                }
-                            } else {
-                                restore_mode();
-                            }
-                            print_token();
-                        } else {
-                            restore_mode();
-                            print_token();
-                        }
-                        if (forblock && token_text === ")") {
-                            forcount -= 1;
-                            if (forcount === 0) {
-                                forblock = false;
-                            }
-                        }
-                        if (token_text === "]") {
-                            arrayTest -= 1;
-                            if (arrayTest === 0) {
-                                objectInArray = false;
-                                closedInArray = false;
-                            }
-                        }
-                        if (!objectInArray) {
-                            closedInArray = false;
-                        }
-                    } else if (token_type === "TK_START_BLOCK") {
-                        n[4] += 1;
-                        pseudo_block = false;
-                        if (last_text === "[") {
-                            flags.indentation_level += 1;
-                            print_newline();
-                            objectInArray = true;
-                        }
-                        if (last_text === ";" || last_text === "}") {
-                            print_newline();
-                        }
-                        if (last_word === "do") {
-                            set_mode("DO_BLOCK");
-                        } else if (flags.var_line_reindented) {
-                            set_mode("BLOCK");
-                            flags.var_line_reindented = true;
-                        } else {
-                            set_mode("BLOCK");
-                        }
-                        if (var_last_last_type === "TK_START_BLOCK" && !isNaN(var_end_count)) {
-                            var_end_count += 1;
-                        }
-                        if (args.braces) {
-                            if (last_type !== "TK_OPERATOR") {
-                                if (last_text === "return") {
-                                    print_single_space();
-                                } else {
-                                    print_newline();
-                                }
-                            }
-                        } else {
-                            if (functestval > 1) {
-                                flags.indentation_level += 1;
-                                var_var_test = true;
-                                comma_test = true;
-                            }
-                            if (last_type !== "TK_OPERATOR" && last_type !== "TK_START_EXPR") {
-                                flags.indentation_level += 1;
-                                if (last_type === "TK_START_BLOCK") {
-                                    print_newline();
-                                } else {
-                                    print_single_space();
-                                }
-                            } else if (arrayTest > 0) {
-                                if (!objectInArray && !closedInArray) {
-                                    if (last_text === ":") {
-                                        flags.indentation_level += 1;
-                                    } else {
-                                        flags.indentation_level += 3;
-                                    }
-                                } else if (closedInArray && last_text === ",") {
-                                    flags.indentation_level += 1;
-                                }
-                                if (last_text === "," && output[output.length - 1] === indent_string) {
-                                    do {
-                                        output.pop();
-                                    } while (output[output.length - 1] !== ",");
-                                    print_single_space();
-                                }
-                                if (flags.var_line_reindented) {
-                                    set_mode("BLOCK");
-                                    flags.var_line_reindented = true;
-                                } else {
-                                    set_mode("BLOCK");
-                                }
-                                objectInArray = true;
-                            } else {
-                                flags.indentation_level += 1;
-                            }
-                        }
-                        print_token();
-                        if (last_text === ":" && block_last_text !== "=") {
-                            flags.indentation_level += 1;
-                        }
-                        block_last_text = last_text;
-                        forblock = false;
-                        forcount = 0;
-                    } else if (token_type === "TK_END_BLOCK") {
-                        n[4] += 1;
-                        if (!objectInArray) {
-                            if (last_type === "TK_END_BLOCK" && (flag_store.length === 1 || flag_store[flag_store.length - 1].indentation_level > flags.indentation_level)) {
-                                flags.indentation_level -= 1;
-                            } else {
-                                restore_mode();
-                            }
-                        } else {
-                            flags.indentation_level -= 1;
-                            if (flags.var_line_reindented && flags.mode !== "BLOCK") {
-                                flags.indentation_level -= 1;
-                            }
-                            if (flag_store.length > 1) {
-                                flag_store[flag_store.length - 1].indentation_level = flags.indentation_level - 1;
-                            }
-                            if (flags.var_line_reindented) {
-                                set_mode("TK_END_BLOCK");
-                                flags.var_line_reindented = true;
-                            } else {
-                                set_mode("TK_END_BLOCK");
-                            }
-                            if (arrayTest === 0) {
-                                objectInArray = false;
-                            }
-                            if (objectInArray) {
-                                closedInArray = true;
-                            }
-                        }
-                        functestval = 0;
-                        if (var_var_test) {
-                            pseudo_block = true;
-                        } else {
-                            pseudo_block = false;
-                        }
-                        if (var_end_count === 0) {
-                            var_end_count = "x";
-                        } else if (var_end_count === -1 && var_var_test && comma_test) {
-                            flags.var_line_reindented = true;
-                        } else if (var_last_last_type === "TK_START_BLOCK" && !isNaN(var_end_count)) {
-                            var_end_count -= 1;
-                        } else if (var_end_count === "a") {
-                            if (flags.var_line && !flags.var_line_reindented) {
-                                flags.var_line_reindented = true;
-                                var_end_count = -1;
-                            }
-                        }
-                        if (args.braces) {
-                            if (last_text === "{" && in_array(last_last_text, punct)) {
-                                fix_object_own_line();
-                            } else {
-                                if (var_end_count === "y") {
-                                    var_last_last_type = "";
-                                    var_end_count = "a";
-                                }
-                                print_newline();
-                                if (var_end_count === "x") {
-                                    if (flags.var_line && !comma_test && !var_var_test) {
-                                        flags.var_line_reindented = true;
-                                    }
-                                    var_end_count = "y";
-                                }
-                            }
-                            print_token();
-                        } else {
-                            if (last_type === "TK_START_BLOCK") {
-                                if (just_added_newline) {
-                                    if (output.length && output[output.length - 1] === indent_string) {
-                                        output.pop();
-                                    }
-                                } else {
-                                    trim_output();
-                                }
-                            } else if (is_array(flags.mode) && args.inarray) {
-                                args.inarray = false;
-                                print_newline();
-                                args.inarray = true;
-                            } else {
-                                if (var_end_count === "y") {
-                                    var_last_last_type = "";
-                                    var_end_count = "a";
-                                }
-                                print_newline();
-                                if (var_end_count === "x") {
-                                    if (flags.var_line && !comma_test && !var_var_test) {
-                                        flags.var_line_reindented = true;
-                                    }
-                                    var_end_count = "y";
-                                }
-                            }
-                            if (!comma_test && var_var_test && !flags.var_line_reindented) {
-                                if ((flags.mode === "(EXPRESSION)" && !flags.var_line) || (flags.mode === "BLOCK" && flags.var_line)) {
-                                    if (last_text !== "}" && var_end_count === -1 && flags.mode === "(EXPRESSION)") {
-                                        output.push(indent_string);
-                                    }
-                                    var_var_test = false;
-                                }
-                            }
-                            print_token();
-                        }
-                        if (!objectInArray && flags.var_line_reindented && arrayTest === 0 && last_last_text === "]" && flags.indentation_level === 1) {
-                            flags.indentation_level = 0;
-                        }
-                    } else if (token_type === "TK_WORD") {
-                        if (token_text === "alert") {
-                            m[0] += 1;
-                        } else if (token_text === "break") {
-                            m[2] += 1;
-                        } else if (token_text === "case") {
-                            m[4] += 1;
-                        } else if (token_text === "catch") {
-                            m[48] += 1;
-                        } else if (token_text === "continue") {
-                            m[6] += 1;
-                        } else if (token_text === "default") {
-                            m[8] += 1;
-                        } else if (token_text === "delete") {
-                            m[10] += 1;
-                        } else if (token_text === "do") {
-                            m[12] += 1;
-                        } else if (token_text === "document") {
-                            m[44] += 1;
-                        } else if (token_text === "else") {
-                            m[14] += 1;
-                        } else if (token_text === "eval") {
-                            m[16] += 1;
-                        } else if (token_text === "for") {
-                            m[18] += 1;
-                        } else if (token_text === "function") {
-                            m[20] += 1;
-                        } else if (token_text === "if") {
-                            m[22] += 1;
-                        } else if (token_text === "in") {
-                            m[24] += 1;
-                        } else if (token_text === "label") {
-                            m[26] += 1;
-                        } else if (token_text === "new") {
-                            m[28] += 1;
-                        } else if (token_text === "return") {
-                            m[30] += 1;
-                        } else if (token_text === "switch") {
-                            m[32] += 1;
-                        } else if (token_text === "this") {
-                            m[34] += 1;
-                        } else if (token_text === "throw") {
-                            m[50] += 1;
-                        } else if (token_text === "try") {
-                            m[52] += 1;
-                        } else if (token_text === "typeof") {
-                            m[36] += 1;
-                        } else if (token_text === "var") {
-                            m[38] += 1;
-                        } else if (token_text === "while") {
-                            m[40] += 1;
-                        } else if (token_text === "with") {
-                            m[42] += 1;
-                        } else if (token_text === "window") {
-                            m[46] += 1;
-                        } else if (token_text !== "prettydiffvar") {
-                            o[0] += 1;
-                            o[1] += token_text.length;
-                        }
-                        if (token_text !== "var" && last_text === ";") {
-                            comma_test = false;
-                        }
-                        if (last_text === ";" && ((last_last_text === "}" && var_end_count === "y") || (last_last_text === "]" && var_end_count === ""))) {
-                            flags.indentation_level -= 1;
-                        }
-                        if ((last_text === "{" || last_text === "[") && (last_last_text === "{" || last_last_text === "[")) {
-                            flags.indentation_level += 1;
-                        }
-                        if (last_text === "{" && ((last_last_text === ":" && comma_test) || (last_last_text === ")" && var_last_type === "TK_START_BLOCK" && !comma_test))) {
-                            output.push(indent_string);
-                            flags.indentation_level += 1;
-                            if (token_text !== "var" && !isNaN(var_end_count)) {
-                                var_end_count += 1;
-                            }
-                        }
-                        if (do_block_just_closed) {
-                            print_single_space();
-                            print_token();
-                            print_single_space();
-                            do_block_just_closed = false;
-                        } else {
-                            if (last_text === "," && flags.mode !== "(EXPRESSION)" && flags.mode !== "[EXPRESSION]" && (last_last_text === "}" || last_last_text === "]")) {
-                                output.pop();
-                                print_newline();
-                                print_token();
-                            } else if (token_text === "do") {
-                                print_newline();
-                                print_token();
-                            } else if (token_text === "case" || token_text === "default") {
-                                if (last_text === ":") {
-                                    if (output.length && output[output.length - 1] === indent_string) {
-                                        output.pop();
-                                    }
-                                } else {
-                                    flags.indentation_level -= 1;
-                                    print_newline();
-                                    flags.indentation_level += 1;
-                                }
-                                print_token();
-                                flags.in_case = true;
-                            } else {
-                                if (token_text === "function") {
-                                    if (comma_test && (flags.var_line || (!flags.var_line && last_last_word === "var"))) {
-                                        functestval += 1;
-                                    } else if (!comma_test) {
-                                        functestval -= 1;
-                                    }
-                                    if (comma_test && flags.var_line && last_last_word === "var" && !var_var_test && functestval === 0) {
-                                        flags.var_line_reindented = true;
-                                    }
-                                }
-                                prefix = "NONE";
-                                if (last_type === "TK_END_BLOCK") {
-                                    if (args.braces || (token_text !== "else" && token_text !== "catch" && token_text !== "finally")) {
-                                        prefix = "NEWLINE";
-                                    } else {
-                                        prefix = "SPACE";
-                                        print_single_space();
-                                    }
-                                } else if (last_type === "TK_STRING" || last_type === "TK_START_BLOCK" || (last_type === "TK_SEMICOLON" && (flags.mode === "BLOCK" || flags.mode === "DO_BLOCK"))) {
-                                    prefix = "NEWLINE";
-                                } else if (last_type === "TK_WORD" || (last_type === "TK_SEMICOLON" && is_expression(flags.mode))) {
-                                    prefix = "SPACE";
-                                } else if (last_type === "TK_END_EXPR") {
-                                    print_single_space();
-                                    prefix = "NEWLINE";
-                                }
-                                if (flags.if_line && last_type === "TK_END_EXPR") {
-                                    flags.if_line = false;
-                                }
-                                if (token_text === "else" || token_text === "catch" || token_text === "finally") {
-                                    if (last_type !== "TK_END_BLOCK" || args.braces) {
-                                        print_newline();
-                                    } else {
-                                        trim_output(true);
-                                        print_single_space();
-                                    }
-                                } else if (last_type !== "TK_START_EXPR" && last_text !== "=" && last_text !== "," && (token_text === "continue" || token_text === "try" || token_text === "throw" || token_text === "return" || token_text === "var" || token_text === "if" || token_text === "switch" || token_text === "case" || token_text === "default" || token_text === "for" || token_text === "while" || token_text === "break" || token_text === "function" || prefix === "NEWLINE")) {
-                                    if (last_text === "return" || last_text === "throw" || (last_type !== "TK_END_EXPR" && last_text !== ":" && (last_type !== "TK_START_EXPR" || token_text !== "var"))) {
-                                        if ((token_text === "if" && last_word === "else" && last_text !== "{") || (token_text === "function" && (last_type === "TK_OPERATOR" || last_text === "return"))) {
-                                            print_single_space();
-                                        } else {
-                                            print_newline();
+                            level[level.length - 1] = "s";
+                            level.push("s");
+                        },
+                        word = function () {
+                            if (ltoke === "}" && ctoke === "while") {
+                                (function () {
+                                    var c = 0,
+                                        d = 0;
+                                    for (c = a - 1; c > -1; c -= 1) {
+                                        if (token[c] === "}") {
+                                            d += 1;
                                         }
-                                    } else if (last_text !== ")" && last_text !== ":" && (token_text === "continue" || token_text === "try" || token_text === "throw" || token_text === "return" || token_text === "var" || token_text === "if" || token_text === "switch" || token_text === "case" || token_text === "default" || token_text === "for" || token_text === "while" || token_text === "break" || token_text === "function")) {
-                                        print_newline();
-                                    }
-                                } else if (prefix === "SPACE" || (forblock && last_text === ";")) {
-                                    print_single_space();
-                                } else if (last_text === ";" || (is_array(flags.mode) && last_text === "," && last_last_text === "}")) {
-                                    print_newline();
-                                }
-                                if (token_text === "var") {
-                                    if (!var_var_test && last_type === "TK_START_BLOCK" && comma_test) {
-                                        if (functestval >= 0) {
-                                            var_var_test = true;
+                                        if (token[c] === "{") {
+                                            d -= 1;
                                         }
-                                    } else if (last_type === "TK_START_BLOCK") {
-                                        if (var_last_type === "TK_START_BLOCK") {
-                                            var_last_type = "";
-                                            var_last_last_type = "TK_START_BLOCK";
-                                            var_end_count = 0;
-                                        } else {
-                                            var_last_type = "TK_START_BLOCK";
+                                        if (d === 0) {
+                                            if (token[c - 1] === "do") {
+                                                level[level.length - 1] = "s";
+                                                return;
+                                            }
+                                            level[level.length - 1] = indent;
+                                            return;
                                         }
-                                    } else if (last_type === "TK_START_BLOCK" && var_last_type === "") {
-                                        var_last_type = "TK_START_BLOCK";
                                     }
-                                    flags.var_line = true;
-                                    flags.var_line_reindented = false;
-                                    comma_test = true;
+                                }());
+                            } else if (ltoke === "}" && ctoke === "else") {
+                                level[level.length - 1] = "s";
+                            } else if (ctoke === "var") {
+                                varline[varline.length - 1] = true;
+                                indent += 1;
+                            } else if ((ctoke === "default" || ctoke === "case") && casetest[casetest.length - 1] === false) {
+                                if (ltoke === "{") {
+                                    level[level.length - 1] -= 1;
                                 }
-                                print_token();
-                                if (token_text === "typeof") {
-                                    print_single_space();
+                                if (ltoke === "{") {
+                                    indent -= 1;
                                 }
-                                if (token_text === "if") {
-                                    flags.if_line = true;
+                                casetest[casetest.length - 1] = true;
+                            } else if (ctoke === "break" && casetest[casetest.length - 1] === true) {
+                                level[level.length - 1] = indent;
+                                if (a < b - 2 && token[a + 2] !== "}") {
+                                    indent -= 1;
                                 }
-                                if (token_text === "else") {
-                                    flags.if_line = false;
-                                }
-                                if (token_text === "for") {
-                                    forblock = true;
-                                }
+                                casetest[casetest.length - 1] = false;
+                            } else if (ltoke === "}" && level[level.length - 1] === "x") {
+                                level[level.length - 1] = indent;
                             }
-                            last_last_word = last_word;
-                            last_word = token_text;
+                            level.push("s");
+                        };
+                    for (a = 0; a < b; a += 1) {
+                        ctype = types[a];
+                        ctoke = token[a];
+                        if (ctype === "comment") {
+                            level[level.length - 1] = indent;
+                            level.push(indent);
                         }
-                    } else if (token_type === "TK_SEMICOLON") {
-                        n[3] += 1;
-                        if (last_text === "}") {
-                            comma_test = true;
+                        if (ctype === "comment-inline") {
+                            level[level.length - 1] = "s";
                         }
-                        print_token();
-                        if (flags.var_line_reindented && last_text === "]" && last_type === "TK_END_EXPR" && flag_store.length > 1 && flag_store[flag_store.length - 1].mode === "TK_END_BLOCK") {
-                            if (flags.indentation_level - 1 === flag_store[flag_store.length - 1].indentation_level) {
-                                flags.indentation_level -= 2;
-                            } else {
-                                flags.indentation_level -= 1;
-                            }
+                        if (ctype === "regex") {
+                            level.push("x");
                         }
-                        flags.var_line = false;
-                        flags.var_line_reindented = false;
-                        if (functestval < 2) {
-                            var_var_test = false;
+                        if (ctype === "literal") {
+                            level.push("s");
                         }
-                        var_last_type = "";
-                    } else if (token_type === "TK_STRING") {
-                        l[0] += 1;
-                        if ((token_text.charAt(0) === "\"" && token_text.charAt(token_text.length - 1) === "\"") || (token_text.charAt(0) === "'" && token_text.charAt(token_text.length - 1) === "'")) {
-                            l[1] += token_text.length - 2;
-                            l[2] += 2;
-                        } else {
-                            l[1] += token_text.length;
+                        if (ctype === "separator") {
+                            separator();
                         }
-                        if ((last_text === "{" || last_text === "[") && (last_last_text === "{" || last_last_text === "[")) {
-                            flags.indentation_level += 1;
-                        } else if (last_text === "," && flags.mode !== "(EXPRESSION)" && (last_last_text === "}" || last_last_text === "]")) {
-                            print_newline();
+                        if (ctype === "method") {
+                            level[level.length - 1] = "x";
+                            level.push("x");
+                            list.push(false);
+                            varline.push(false);
+                            methtest.push(true);
                         }
-                        white_count(token_text);
-                        if (last_type === "TK_START_BLOCK" || last_type === "TK_END_BLOCK" || last_type === "TK_SEMICOLON") {
-                            print_newline();
-                        } else if (last_type === "TK_WORD") {
-                            print_single_space();
+                        if (ctype === "start") {
+                            start();
                         }
-                        if (args.content) {
-                            output.push(token_text.charAt(0) + "text" + token_text.charAt(0));
-                        } else {
-                            print_token();
+                        if (ctype === "end") {
+                            end();
                         }
-                    } else if (token_type === "TK_EQUALS") {
-                        n[0] += 1;
-                        n[1] += 1;
-                        print_single_space();
-                        print_token();
-                        print_single_space();
-                    } else if (token_type === "TK_OPERATOR") {
-                        if (token_text !== ",") {
-                            n[0] += 1;
-                            n[1] += token_text.length;
+                        if (ctype === "operator") {
+                            operator();
                         }
-                        var_last_type = "";
-                        if (token_text === ",") {
-                            if (var_end_count === "y" && last_type !== "TK_END_BLOCK") {
-                                flags.indentation_level -= 1;
-                            }
-                            if (commafix || flags.mode === "TK_END_BLOCK") {
-                                commafix = false;
-                                if (last_text === "}") {
-                                    flags.var_line_reindented = true;
-                                }
-                            }
-                            if (last_text === "}" && last_last_text === "{" && last_last_word === "var" && flags.var_line) {
-                                commafix = true;
-                                flags.var_line_reindented = true;
-                            }
-                            n[2] += 1;
-                            if (flags.mode !== "(EXPRESSION)" && last_last_text !== ":") {
-                                comma_test = false;
-                            }
-                            if (flags.var_line && flags.mode !== "(EXPRESSION)") {
-                                flags.var_line_reindented = true;
-                                print_token();
-                                if (last_word !== "prettydiffvar") {
-                                    print_newline();
-                                }
-                            } else if (last_type === "TK_END_BLOCK" && flags.mode !== "(EXPRESSION)") {
-                                print_token();
-                                print_single_space();
-                            } else if ((flags.mode !== "(EXPRESSION)" || (last_last_text === ")" && output[output.length - 3] === "(" && output[output.length - 4] === "}")) && (arrayTest === 0 || (objectInArray && (flags.mode === "BLOCK" || flags.mode === "TK_END_BLOCK" || flags.mode === "OBJECT" || is_ternary_op())))) {
-                                print_token();
-                                print_newline();
-                            } else {
-                                print_token();
-                                print_single_space();
-                            }
-                        } else if (last_text === "return" || last_text === "throw") {
-                            print_single_space();
-                            print_token();
-                        } else if (token_text === "::") {
-                            print_token();
-                        } else if (token_text === "--" || token_text === "++" || token_text === "!" || ((token_text === "-" || token_text === "+") && (last_type === "TK_START_BLOCK" || last_type === "TK_START_EXPR" || last_type === "TK_EQUALS" || last_type === "TK_OPERATOR" || last_text === "continue" || last_text === "try" || last_text === "throw" || last_text === "return" || last_text === "var" || last_text === "if" || last_text === "switch" || last_text === "case" || last_text === "default" || last_text === "for" || last_text === "while" || last_text === "break" || last_text === "function"))) {
-                            space_before = false;
-                            space_after = false;
-                            if (last_text === ";" && is_expression(flags.mode)) {
-                                space_before = true;
-                            }
-                            if (last_type === "TK_WORD" && (last_text === "continue" || last_text === "try" || last_text === "throw" || last_text === "return" || last_text === "var" || last_text === "if" || last_text === "switch" || last_text === "case" || last_text === "default" || last_text === "for" || last_text === "while" || last_text === "break" || last_text === "function")) {
-                                space_before = true;
-                            }
-                            if (flags.mode === "BLOCK" && (last_text === "{" || last_text === ";")) {
-                                print_newline();
-                            }
-                        } else if (token_text === ".") {
-                            space_before = false;
+                        if (ctype === "word") {
+                            word();
                         }
-                        if (token_text !== "," && token_text !== ":" && (token_text !== "-" || (token_text === "-" && last_text !== "continue" && last_text !== "try" && last_text !== "throw" && last_text !== "return" && last_text !== "var" && last_text !== "if" && last_text !== "switch" && last_text !== "case" && last_text !== "default" && last_text !== "for" && last_text !== "while" && last_text !== "break" && last_text !== "function"))) {
-                            if (space_before) {
-                                print_single_space();
-                            }
-                            print_token();
-                            if (space_after) {
-                                print_single_space();
-                            }
-                        } else if (token_text === ":") {
-                            if (flags.in_case) {
-                                print_token();
-                                print_newline();
-                                flags.in_case = false;
-                            } else if (is_ternary_op()) {
-                                print_single_space();
-                                print_token();
-                                print_single_space();
-                                flags.mode = "OBJECT";
-                            } else if (flags.in_case) {
-                                print_single_space();
-                                print_token();
-                                print_single_space();
-                            } else if (last_last_text !== "case" && last_last_text !== "default" && last_text !== "case" && last_text !== "default") {
-                                print_token();
-                                print_single_space();
-                            }
-                        }
-                        space_before = true;
-                        space_after = true;
-                    } else if (token_type === "TK_BLOCK_COMMENT") {
-                        j[0] += 1;
-                        j[1] += token_text.length;
-                        white_count(token_text);
-                        if (args.comments) {
-                            for (i = output.length - 1; i > 0; i -= 1) {
-                                if (output[i] === indent_string || output[i] === " ") {
-                                    output[i] = "";
-                                } else {
-                                    break;
-                                }
-                            }
-                            output.push("\n");
-                            print_token();
-                            output.push("\n");
-                        } else {
-                            block_comment(token_text);
-                        }
-                    } else if (token_type === "TK_INLINE_COMMENT") {
-                        j[0] += 1;
-                        j[1] += token_text.length;
-                        white_count(token_text);
-                        print_token();
-                        if (is_expression(flags.mode)) {
-                            print_single_space();
-                        } else if (args.comments) {
-                            output.push("\n");
-                        } else {
-                            print_newline();
-                        }
-                    } else if (token_type === "TK_COMMENT") {
-                        k[0] += 1;
-                        k[1] += token_text.length;
-                        white_count(token_text);
-                        if (args.comments) {
-                            for (i = output.length - 1; i > 0; i -= 1) {
-                                if (output[i] === indent_string) {
-                                    output[i] = "";
-                                } else {
-                                    break;
-                                }
-                            }
-                        } else if (wanted_newline) {
-                            print_newline();
-                        } else {
-                            print_single_space();
-                        }
-                        print_token();
-                        print_newline();
-                    } else if (token_type === "TK_UNKNOWN") {
-                        n[0] += 1;
-                        n[1] += token_text.length;
-                        white_count(token_text);
-                        if (last_text === "return" || last_text === "throw") {
-                            print_single_space();
-                        }
-                        print_token();
+                        ltype = ctype;
+                        ltoke = ctoke;
                     }
-                    if (token_type !== "TK_COMMENT" && token_type !== "TK_INLINE_COMMENT" && token_type !== "TK_BLOCK_COMMENT") {
-                        last_last_text = last_text;
-                        last_type = token_type;
-                        last_text = token_text;
+                }());
+                result = (function () {
+                    var a = 0,
+                        b = token.length,
+                        c = [],
+                        tab = (function () {
+                            var a = jchar,
+                                b = jsize,
+                                c = [];
+                            for (b; b > 0; b -= 1) {
+                                c.push(a);
+                            }
+                            return c.join("");
+                        }()),
+                        nl = function (a) {
+                            var b = ["\n"],
+                                c = 0;
+                            for (c = 0; c < a; c += 1) {
+                                b.push(tab);
+                            }
+                            return b.join("");
+                        };
+                    for (a = 0; a < b; a += 1) {
+                        c.push(token[a]);
+                        if (types[a] === "comment" && jcomment) {
+                            c.push(nl(0));
+                        } else if (level[a] === "s") {
+                            c.push(" ");
+                        } else if (level[a] !== "x") {
+                            c.push(nl(level[a]));
+                        }
+                        if (jpres && a === lines[0]) {
+                            c.push("\n");
+                            lines.pop();
+                        }
                     }
-                }
-                rvalue = output.join("").replace(/var prettydiffvar\,\s*/g, "var ").replace(/^(\s+)/, "").replace(/(\s+)$/, "").replace(/\s*\}\(function/g, funcfix).replace(/\n( |\t)+\n/g, "\n\n").replace(/ \n/g, "\n");
+                    return c.join("");
+                }()).replace(/(\s+)$/, "");
                 (function () {
                     var a = 0,
                         b = 0,
@@ -3022,8 +2495,8 @@ var prettydiff = function (api) {
                         g = 0,
                         h = 0,
                         i = 0,
-                        p = 0,
-                        q = [],
+                        r = 0,
+                        s = [],
                         z = [],
                         output,
                         zero = function (x, y) {
@@ -3052,10 +2525,10 @@ var prettydiff = function (api) {
                             a.push("</td></tr>");
                             return a.join("");
                         };
-                    if (rvalue.length <= input_length) {
-                        b = input_length;
+                    if (result.length <= source.length) {
+                        b = source.length;
                     } else {
-                        b = rvalue.length;
+                        b = result.length;
                     }
                     for (a = 0; a < b; a += 1) {
                         if (args.source.charAt(a) === " ") {
@@ -3065,36 +2538,36 @@ var prettydiff = function (api) {
                         } else if (args.source.charAt(a) === "\n") {
                             e += 1;
                         } else if (args.source.charAt(a) === "\r" || args.source.charAt(a) === "\f" || args.source.charAt(a) === "\v") {
-                            p += 1;
+                            r += 1;
                         }
-                        if (rvalue.charAt(a) === "\n") {
+                        if (result.charAt(a) === "\n") {
                             f += 1;
                         }
                     }
                     if (m[0] > 0) {
-                        q[0] = " class='bad'";
+                        s[0] = " class='bad'";
                     } else {
-                        q[0] = "";
+                        s[0] = "";
                     }
                     if (m[6] > 0) {
-                        q[1] = " class='bad'";
+                        s[1] = " class='bad'";
                     } else {
-                        q[1] = "";
+                        s[1] = "";
                     }
                     if (m[16] > 0) {
-                        q[2] = " class='bad'";
+                        s[2] = " class='bad'";
                     } else {
-                        q[2] = "";
+                        s[2] = "";
                     }
                     if (m[42] > 0) {
-                        q[3] = " class='bad'";
+                        s[3] = " class='bad'";
                     } else {
-                        q[3] = "";
+                        s[3] = "";
                     }
                     g = g - w[1];
                     h = h - w[2];
-                    p = p - w[3];
-                    i = ((e - 1 - w[0]) + g + h + p);
+                    r = r - w[3];
+                    i = ((e - 1 - w[0]) + g + h + r);
                     n.push(l[2] + n[0] + n[2] + n[3] + n[4]);
                     n.push(l[2] + n[1] + n[2] + n[3] + n[4]);
                     j.push(j[0] + k[0]);
@@ -3128,18 +2601,18 @@ var prettydiff = function (api) {
                     m[53] = m[52] * 3;
                     m[54] = m[0] + m[2] + m[4] + m[6] + m[8] + m[10] + m[12] + m[14] + m[16] + m[18] + m[20] + m[22] + m[24] + m[26] + m[28] + m[30] + m[32] + m[34] + m[36] + m[38] + m[40] + m[42] + m[44] + m[46] + m[48] + m[50] + m[52];
                     m[55] = m[1] + m[3] + m[5] + m[7] + m[9] + m[11] + m[13] + m[15] + m[17] + m[19] + m[21] + m[23] + m[25] + m[27] + m[29] + m[31] + m[33] + m[35] + m[37] + m[39] + m[41] + m[43] + m[45] + m[47] + m[49] + m[51] + m[53];
-                    z.push(j[2] + l[0] + n[5] + m[54] + o[0] + i);
-                    z.push(j[3] + l[1] + n[6] + m[55] + o[1] + i);
+                    z.push(j[2] + l[0] + n[5] + m[54] + o[0] + p[0] + q[0] + i);
+                    z.push(j[3] + l[1] + n[6] + m[55] + o[1] + p[1] + q[1] + i);
                     output = ["<div id='doc'>"];
                     output.push("<table class='analysis' summary='JavaScript character size comparison'><caption>JavaScript data report</caption><thead><tr><th>Data Label</th><th>Input</th><th>Output</th><th>Literal Increase</th><th>Percentage Increase</th></tr>");
                     output.push("</thead><tbody><tr><th>Total Character Size</th><td>");
-                    output.push(input_length);
+                    output.push(source.length);
                     output.push("</td><td>");
-                    output.push(rvalue.length);
+                    output.push(result.length);
                     output.push("</td><td>");
-                    output.push(rvalue.length - input_length);
+                    output.push(result.length - source.length);
                     output.push("</td><td>");
-                    output.push((((rvalue.length - input_length) / rvalue.length) * 100).toFixed(2));
+                    output.push((((result.length - source.length) / result.length) * 100).toFixed(2));
                     output.push("%</td></tr><tr><th>Total Lines of Code</th><td>");
                     output.push(e);
                     output.push("</td><td>");
@@ -3224,17 +2697,17 @@ var prettydiff = function (api) {
                     output.push("</td><td>");
                     output.push(zero(h, z[1]));
                     output.push("</td></tr><tr><th>Other Whitespace</th><td>");
-                    output.push(p);
+                    output.push(r);
                     output.push("</td><td>");
-                    output.push(zero(p, i));
+                    output.push(zero(r, i));
                     output.push("</td><td>");
-                    output.push(zero(p, z[0]));
+                    output.push(zero(r, z[0]));
                     output.push("</td><td>");
-                    output.push(p);
+                    output.push(r);
                     output.push("</td><td>");
-                    output.push(zero(p, i));
+                    output.push(zero(r, i));
                     output.push("</td><td>");
-                    output.push(zero(p, z[1]));
+                    output.push(zero(r, z[1]));
                     output.push("</td></tr><tr><th>Total Whitespace</th><td>");
                     output.push(i);
                     output.push("</td><td>100.00%</td><td>");
@@ -3243,14 +2716,50 @@ var prettydiff = function (api) {
                     output.push(i);
                     output.push("</td><td>100.00%</td><td>");
                     output.push(zero(i, z[1]));
-                    output.push("</td></tr><tr><th colspan='7'>Strings</th></tr><tr><th>Strings</th><td>");
+                    output.push("</td></tr><tr><th colspan='7'>Literals</th></tr><tr><th>Strings</th><td>");
                     output.push(l[0]);
-                    output.push("</td><td>100.00%</td><td>");
+                    output.push("</td><td>");
+                    output.push(zero(l[0], l[0] + p[0] + q[0]));
+                    output.push("</td><td>");
                     output.push(zero(l[0], z[0]));
                     output.push("</td><td>");
                     output.push(l[1]);
-                    output.push("</td><td>100.00%</td><td>");
+                    output.push("</td><td>");
+                    output.push(zero(l[1], l[1] + p[1] + q[1]));
+                    output.push("</td><td>");
                     output.push(zero(l[1], z[1]));
+                    output.push("</td></tr><tr><th>Numbers</th><td>");
+                    output.push(q[0]);
+                    output.push("</td><td>");
+                    output.push(zero(q[0], l[0] + p[0] + q[0]));
+                    output.push("</td><td>");
+                    output.push(zero(q[0], z[0]));
+                    output.push("</td><td>");
+                    output.push(q[1]);
+                    output.push("</td><td>");
+                    output.push(zero(q[1], l[1] + p[1] + q[1]));
+                    output.push("</td><td>");
+                    output.push(zero(q[1], z[1]));
+                    output.push("</td></tr><tr><th>Regular Expressions</th><td>");
+                    output.push(p[0]);
+                    output.push("</td><td>");
+                    output.push(zero(p[0], l[0] + p[0] + q[0]));
+                    output.push("</td><td>");
+                    output.push(zero(p[0], z[0]));
+                    output.push("</td><td>");
+                    output.push(p[1]);
+                    output.push("</td><td>");
+                    output.push(zero(p[1], l[1] + p[1] + q[1]));
+                    output.push("</td><td>");
+                    output.push(zero(p[1], z[1]));
+                    output.push("</td></tr><tr><th>Total Literals</th><td>");
+                    output.push(l[0] + p[0] + q[0]);
+                    output.push("</td><td>100.00%</td><td>");
+                    output.push(zero(l[0] + p[0] + q[0], z[0]));
+                    output.push("</td><td>");
+                    output.push(l[1] + p[1] + q[1]);
+                    output.push("</td><td>100.00%</td><td>");
+                    output.push(zero(l[1] + p[1] + q[1], z[1]));
                     output.push("</td></tr><tr><th colspan='7'>Syntax Characters</th></tr><tr><th>Quote Characters</th><td>");
                     output.push(l[2]);
                     output.push("</td><td>");
@@ -3321,17 +2830,17 @@ var prettydiff = function (api) {
                     output.push(zero(n[6], z[1]));
                     output.push("</td></tr>");
                     output.push("<tr><th colspan='7'>Keywords</th></tr>");
-                    output.push(drawRow("alert", q[0], m[0], m[1], z));
+                    output.push(drawRow("alert", s[0], m[0], m[1], z));
                     output.push(drawRow("break", "", m[2], m[3], z));
                     output.push(drawRow("case", "", m[4], m[5], z));
                     output.push(drawRow("catch", "", m[48], m[49], z));
-                    output.push(drawRow("continue", q[1], m[6], m[7], z));
+                    output.push(drawRow("continue", s[1], m[6], m[7], z));
                     output.push(drawRow("default", "", m[8], m[9], z));
                     output.push(drawRow("delete", "", m[10], m[11], z));
                     output.push(drawRow("do", "", m[12], m[13], z));
                     output.push(drawRow("document", "", m[44], m[45], z));
                     output.push(drawRow("else", "", m[14], m[15], z));
-                    output.push(drawRow("eval", q[2], m[16], m[17], z));
+                    output.push(drawRow("eval", s[2], m[16], m[17], z));
                     output.push(drawRow("for", "", m[18], m[19], z));
                     output.push(drawRow("function", "", m[20], m[21], z));
                     output.push(drawRow("if", "", m[22], m[23], z));
@@ -3345,7 +2854,7 @@ var prettydiff = function (api) {
                     output.push(drawRow("typeof", "", m[36], m[37], z));
                     output.push(drawRow("var", "", m[38], m[39], z));
                     output.push(drawRow("while", "", m[40], m[41], z));
-                    output.push(drawRow("with", q[3], m[42], m[43], z));
+                    output.push(drawRow("with", s[3], m[42], m[43], z));
                     output.push(drawRow("window", "", m[46], m[47], z));
                     output.push(drawRow("try", "", m[52], m[53], z));
                     output.push("<tr><th>Total Keywords</th><td>");
@@ -3368,7 +2877,10 @@ var prettydiff = function (api) {
                     output.push("</td></tr></tbody></table></div>");
                     summary = output.join("");
                 }());
-                return rvalue;
+                if (jspace === false) {
+                    result = result.replace(/function \(/g, "function(");
+                }
+                return result;
             },
             markupmin = function (args) {
                 var i = 0,
@@ -3391,16 +2903,22 @@ var prettydiff = function (api) {
                         i = a;
                         x[i] = c.join("").replace(/\s+/g, " ").replace(/\s*,\s+/g, ", ").replace(/\s*\/\s*/g, "/").replace(/\s*=\s*/g, "=").replace(/ \="/g, "=\"").replace(/ \='/g, "='") + ">";
                     },
-                    markupcomment = function () {
+                    markupcomment = function (z) {
                         var Y = x.length,
                             b = 0,
-                            c = [];
+                            c = [],
+                            d = (z) ? "--%>" : "-->";
                         for (b = i; b < Y; b += 1) {
-                            if (x[b] === "-" && x[b + 1] === "-" && x[b + 2] === ">") {
+                            if ((!z && x[b] === "-" && x[b + 1] === "-" && x[b + 2] === ">") || (z && x[b] === "-" && x[b + 1] === "-" && x[b + 2] === "%" && x[b + 3] === ">")) {
                                 x[b] = "";
                                 x[b + 1] = "";
                                 x[b + 2] = "";
-                                i = b + 2;
+                                if (x) {
+                                    x[b + 3] = "";
+                                    i = b + 3;
+                                } else {
+                                    i = b + 2;
+                                }
                                 break;
                             } else {
                                 if (comments === "beautify" || comments === "comments") {
@@ -3410,7 +2928,7 @@ var prettydiff = function (api) {
                             }
                         }
                         if (comments === "comments" || comments === "beautify") {
-                            x[i] = " " + c.join("") + "-->";
+                            x[i] = " " + c.join("") + d;
                         }
                     },
                     markupscript = function (z) {
@@ -3579,7 +3097,9 @@ var prettydiff = function (api) {
                                 markupscript("style");
                             }
                         } else if (y.slice(i, i + 4) === "<!--" && x[i + 4] !== "#") {
-                            markupcomment();
+                            markupcomment(false);
+                        } else if (y.slice(i, i + 4) === "<%--") {
+                            markupcomment(true);
                         } else if (y.slice(i, i + 5) === "<?php") {
                             preserve("?>");
                         } else if (y.slice(i, i + 2) === "<%") {
@@ -4097,6 +3617,9 @@ var prettydiff = function (api) {
                             token.push("T_content");
                         } else if (y[i] === "<" && y[i + 1] === "!" && y[i + 2] === "-" && y[i + 3] === "-" && y[i + 4] !== "#" && token[token.length - 1] !== "T_style") {
                             build.push(b("-->"));
+                            token.push("T_comment");
+                        } else if (y[i] === "<" && y[i + 1] === "%" && y[i + 2] === "-" && y[i + 3] === "-") {
+                            build.push(b("--%>"));
                             token.push("T_comment");
                         } else if (y[i] === "<" && y[i + 1] === "!" && y[i + 2] === "-" && y[i + 3] === "-" && y[i + 4] === "#") {
                             build.push(b("-->"));
@@ -4831,8 +4354,8 @@ var prettydiff = function (api) {
                                         cdata1 = cdataEnd.exec(build[i]);
                                         build[i] = build[i].replace(cdataEnd, "");
                                     }
-                                    if (typeof js_beautify === "function") {
-                                        build[i] = js_beautify({
+                                    if (typeof jspretty === "function") {
+                                        build[i] = jspretty({
                                             source: build[i],
                                             insize: args.insize,
                                             inchar: args.inchar,
@@ -6955,7 +6478,7 @@ var prettydiff = function (api) {
                         apioutput = api.source;
                         apidiffout = "";
                     } else {
-                        apioutput = js_beautify({
+                        apioutput = jspretty({
                             source: api.source,
                             insize: api.insize,
                             inchar: api.inchar,
@@ -7044,7 +6567,7 @@ var prettydiff = function (api) {
                             alter: false,
                             fcomments: false
                         });
-                        apioutput = js_beautify({
+                        apioutput = jspretty({
                             source: apioutput,
                             insize: api.insize,
                             inchar: api.inchar,
@@ -7064,7 +6587,7 @@ var prettydiff = function (api) {
                             alter: false,
                             fcomments: false
                         });
-                        apidiffout = js_beautify({
+                        apidiffout = jspretty({
                             source: apidiffout,
                             insize: api.insize,
                             inchar: api.inchar,

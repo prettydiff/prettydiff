@@ -2352,6 +2352,9 @@ var exports = "",
                 if (lang === "text" || lang === "csv") {
                     pd.o.db.style.display = "none";
                 }
+                if (pd.o.sh.innerHTML === "Normal view") {
+                    pd.o.ao.style.display = "none";
+                }
             } else {
                 pd.o.bb = pd.$$("modebeautify");
                 pd.o.dd = pd.$$("modediff");
@@ -2574,6 +2577,7 @@ var exports = "",
             if (typeof window.onresize === "object" || typeof window.onresize === "function") {
                 window.onresize = pd.fixminreport;
             }
+            pd.o.wb.style.display = "block";
         } else if (pd.ls && localStorage.hasOwnProperty("webtool") && localStorage.getItem("webtool") !== null) {
             a = localStorage.getItem("webtool").replace(/prettydiffper/g, "%").split("prettydiffcsep");
             c = a.length;
