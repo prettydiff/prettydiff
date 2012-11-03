@@ -715,12 +715,16 @@ var prettydiff = function (api) {
                                 g = -1;
                                 for (e = 1; e < f; e += 1) {
                                     if (c[e].length > 1 && c[e][0] === c[e - 1][0]) {
-                                        c[e - 1] = ["", ""];
+                                        c[e - 1] = [
+                                            "", ""
+                                        ];
                                     }
                                 }
                                 for (e = 0; e < f; e += 1) {
                                     if (c[e - 1] && c[e - 1][0] === c[e][0] && (/\-[a-z]/).test(c[e - 1][1]) === false && (/\-[a-z]/).test(c[e][1]) === false) {
-                                        c[e - 1] = ["", ""];
+                                        c[e - 1] = [
+                                            "", ""
+                                        ];
                                     }
                                     if (c[e][0] !== "margin" && c[e][0].indexOf("margin") !== -1) {
                                         m += 1;
@@ -731,10 +735,14 @@ var prettydiff = function (api) {
                                                 r -= 1;
                                                 if (c[r].length > 1 && c[r][1] !== "") {
                                                     i.push(c[r][1]);
-                                                    c[r] = ["", ""];
+                                                    c[r] = [
+                                                        "", ""
+                                                    ];
                                                 }
                                             } while (i.length < 4 && r > 0);
-                                            c[e] = ["margin", i[0] + " " + i[1] + " " + i[3] + " " + i[2]];
+                                            c[e] = [
+                                                "margin", i[0] + " " + i[1] + " " + i[3] + " " + i[2]
+                                            ];
                                             m = 0;
                                         }
                                     } else if (c[e][0] !== "padding" && c[e][0].indexOf("padding") !== -1) {
@@ -746,10 +754,14 @@ var prettydiff = function (api) {
                                                 r -= 1;
                                                 if (c[r].length > 1 && c[r][1] !== "") {
                                                     i.push(c[r][1]);
-                                                    c[r] = ["", ""];
+                                                    c[r] = [
+                                                        "", ""
+                                                    ];
                                                 }
                                             } while (i.length < 4 && r > 0);
-                                            c[e] = ["padding", i[0] + " " + i[1] + " " + i[3] + " " + i[2]];
+                                            c[e] = [
+                                                "padding", i[0] + " " + i[1] + " " + i[3] + " " + i[2]
+                                            ];
                                             p = 0;
                                         }
                                     }
@@ -764,7 +776,9 @@ var prettydiff = function (api) {
                                         } else {
                                             c[g][1] = c[g][1] + " " + c[e][1];
                                         }
-                                        c[e] = ["", ""];
+                                        c[e] = [
+                                            "", ""
+                                        ];
                                     } else if (g !== -1) {
                                         g = -1;
                                     }
@@ -773,7 +787,9 @@ var prettydiff = function (api) {
                                     if (c[e].length > 1 && c[e][0] !== "") {
                                         for (r = e + 1; r < f; r += 1) {
                                             if (c[r].length > 1 && c[e][0] === c[r][0]) {
-                                                c[e] = ["", ""];
+                                                c[e] = [
+                                                    "", ""
+                                                ];
                                             }
                                         }
                                     }
@@ -1545,12 +1561,16 @@ var prettydiff = function (api) {
                                 g = -1;
                                 for (e = 1; e < f; e += 1) {
                                     if (c[e].length > 1 && c[e][0] === c[e - 1][0]) {
-                                        c[e - 1] = ["", ""];
+                                        c[e - 1] = [
+                                            "", ""
+                                        ];
                                     }
                                 }
                                 for (e = 0; e < f; e += 1) {
                                     if (c[e - 1] && c[e - 1][0] === c[e][0] && (/\-[a-z]/).test(c[e - 1][1]) === false && (/\-[a-z]/).test(c[e][1]) === false) {
-                                        c[e - 1] = ["", ""];
+                                        c[e - 1] = [
+                                            "", ""
+                                        ];
                                     }
                                     if (c[e].length > 1 && typeof c[e][1] === "string" && c[e][1].length > 2) {
                                         c[e][1] = c[e][1].replace(/\//g, " / ").replace(/\*/g, "* ");
@@ -1564,10 +1584,14 @@ var prettydiff = function (api) {
                                                 r -= 1;
                                                 if (c[r].length > 1 && c[r][1] !== "") {
                                                     i.push(c[r][1]);
-                                                    c[r] = ["", ""];
+                                                    c[r] = [
+                                                        "", ""
+                                                    ];
                                                 }
                                             } while (i.length < 4 && r > 0);
-                                            c[e] = ["margin", i[0] + " " + i[1] + " " + i[3] + " " + i[2]];
+                                            c[e] = [
+                                                "margin", i[0] + " " + i[1] + " " + i[3] + " " + i[2]
+                                            ];
                                             m = 0;
                                         }
                                     } else if (c[e][0] !== "padding" && c[e][0].indexOf("padding") !== -1) {
@@ -1579,10 +1603,14 @@ var prettydiff = function (api) {
                                                 r -= 1;
                                                 if (c[r].length > 1 && c[r][1] !== "") {
                                                     i.push(c[r][1]);
-                                                    c[r] = ["", ""];
+                                                    c[r] = [
+                                                        "", ""
+                                                    ];
                                                 }
                                             } while (i.length < 4 && r > 0);
-                                            c[e] = ["padding", i[0] + " " + i[1] + " " + i[3] + " " + i[2]];
+                                            c[e] = [
+                                                "padding", i[0] + " " + i[1] + " " + i[3] + " " + i[2]
+                                            ];
                                             p = 0;
                                         }
                                     }
@@ -1597,7 +1625,9 @@ var prettydiff = function (api) {
                                         } else {
                                             c[g][1] = c[g][1] + " " + c[e][1];
                                         }
-                                        c[e] = ["", ""];
+                                        c[e] = [
+                                            "", ""
+                                        ];
                                     } else if (g !== -1) {
                                         g = -1;
                                     }
@@ -1606,7 +1636,9 @@ var prettydiff = function (api) {
                                     if (c[e].length > 1 && c[e][0] !== "") {
                                         for (r = e + 1; r < f; r += 1) {
                                             if (c[r].length > 1 && c[e][0] === c[r][0]) {
-                                                c[e] = ["", ""];
+                                                c[e] = [
+                                                    "", ""
+                                                ];
                                             }
                                         }
                                     }
@@ -1749,19 +1781,39 @@ var prettydiff = function (api) {
                     types = [],
                     level = [],
                     lines = [],
-                    j = [0, 0],
-                    k = [0, 0],
-                    l = [0, 0, 0],
-                    m = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-                    n = [0, 0, 0, 0, 0],
-                    o = [0, 0],
-                    p = [0, 0],
-                    q = [0, 0],
-                    w = [0, 0, 0, 0],
+                    j = [
+                        0, 0
+                    ],
+                    k = [
+                        0, 0
+                    ],
+                    l = [
+                        0, 0, 0
+                    ],
+                    m = [
+                        0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
+                    ],
+                    n = [
+                        0, 0, 0, 0, 0
+                    ],
+                    o = [
+                        0, 0
+                    ],
+                    p = [
+                        0, 0
+                    ],
+                    q = [
+                        0, 0
+                    ],
+                    w = [
+                        0, 0, 0, 0
+                    ],
                     result = "";
                 if (source === "Error: no source code supplied to jsbeauty!") {
                     return source;
                 }
+                //this function tokenizes the source code into an array
+                //of literals and syntax tokens
                 (function () {
                     var a = 0,
                         b = source.length,
@@ -1835,12 +1887,14 @@ var prettydiff = function (api) {
                             return "comment";
                         },
                         operator = function () {
-                            var e = ["=", "<", ">", "+", "-", "*", "/", "!", "?", "|", "^", ":", "&"],
-                            f = [c[a]],
-                            g = 0,
-                            h = 0,
-                            i = e.length,
-                            j = b;
+                            var e = [
+                                    "=", "<", ">", "+", "-", "*", "/", "!", "?", "|", "^", ":", "&"
+                                ],
+                                f = [c[a]],
+                                g = 0,
+                                h = 0,
+                                i = e.length,
+                                j = b;
                             if (a < b - 1 && c[a] === "!" && c[a + 1] === "/") {
                                 return "!";
                             }
@@ -1912,7 +1966,7 @@ var prettydiff = function (api) {
                                 f = b,
                                 g = [c[a]];
                             for (e = a + 1; e < f; e += 1) {
-                                if ((/[0-9]/).test(c[e]) || c[e] === "." ) {
+                                if ((/[0-9]/).test(c[e]) || c[e] === ".") {
                                     g.push(c[e]);
                                 } else {
                                     break;
@@ -1939,7 +1993,7 @@ var prettydiff = function (api) {
                                 }
                                 e.push(c[f]);
                             }
-                            a = f-1;
+                            a = f - 1;
                             g = e.join("").replace(/\n\r/g, "\n").replace(/\r\n/g, "\n").replace(/\r/g, "\n").split("\n").length;
                             if (jpres && g > 2) {
                                 lines.push(token.length - 1);
@@ -2114,14 +2168,16 @@ var prettydiff = function (api) {
                         }
                     }
                 }());
+                //this function is the pretty-print algorithm
                 (function () {
                     var a = 0,
                         b = token.length,
                         indent = jlevel,
+                        obj = false,
                         list = [],
+                        lastlist = false,
                         varline = [],
                         casetest = [],
-                        methtest = [],
                         fortest = 0,
                         ctype = "",
                         ctoke = "",
@@ -2134,59 +2190,44 @@ var prettydiff = function (api) {
                             }
                             if (ctoke === ",") {
                                 level[level.length - 1] = "x";
-                                (function () {
-                                    var c = 0;
-                                    for (c = a - 1; c > -1; c -= 1) {
-                                        if (types[c] === "start" && token[c] !== "(") {
-                                            list[list.length - 1] = true;
-                                            return;
-                                        }
-                                        if (types[c] === "method" || token[c] === "(") {
-                                            return;
-                                        }
-                                    }
-                                }());
-                                if (methtest[methtest.length - 1] === true) {
-                                    return level.push("s");
-                                }
-                                if (list[list.length - 1] === true) {
+                                if (list[list.length - 1] === false) {
                                     (function () {
                                         var c = 0,
-                                            d = 0,
-                                            e = false;
-                                        if (ltoke === "]") {
-                                            e = true;
-                                            d += 1;
-                                        }
+                                            d = 0;
                                         for (c = a - 1; c > -1; c -= 1) {
-                                            if (token[c] === "]") {
+                                            if (token[c] === "]" || token[c] === "}") {
                                                 d += 1;
                                             }
-                                            if (token[c] === "[") {
+                                            if (token[c] === "[" || token[c] === "{") {
                                                 d -= 1;
-                                            }
-                                            if (types[c] === "word" && token[c] !== "return" && token[c + 1] === "[") {
-                                                level[c] = "x";
-                                            }
-                                            if (d === 0) {
-                                                if (e) {
-                                                    level[c] = indent;
-                                                } else if (types[c] === "word" || types[c] === "literal") {
-                                                    level[c] = "x";
+                                                if (d === -1) {
+                                                    if (token[c] === "{") {
+                                                        obj = true;
+                                                    }
+                                                    list[list.length - 1] = true;
+                                                    return;
                                                 }
+                                            }
+                                            if (types[c] === "method" || token[c] === "(") {
                                                 return;
                                             }
                                         }
                                     }());
+                                }
+                                if (list[list.length - 1] === true && obj === true) {
                                     return level.push(indent);
                                 }
                                 if (varline[varline.length - 1] === true) {
-                                    if (ltoke !== "]") {
+                                    if (ltype !== "]") {
                                         (function () {
-                                            var c = 0;
+                                            var c = 0,
+                                                d = false;
                                             for (c = a - 1; c > -1; c -= 1) {
+                                                if (token[c] === "]") {
+                                                    d = true;
+                                                }
                                                 if (types[c] === "method" || types[c] === "start") {
-                                                    if (token[c] === "[" && token[c + 1] !== "]") {
+                                                    if (token[c] === "[" && token[c + 1] !== "]" && d === false) {
                                                         level[c] = indent;
                                                     }
                                                     return;
@@ -2219,9 +2260,6 @@ var prettydiff = function (api) {
                             list.push(false);
                             if (ctoke !== "(") {
                                 indent += 1;
-                                methtest.push(false);
-                            } else {
-                                methtest.push(true);
                             }
                             if (ltoke === "for") {
                                 fortest = 1;
@@ -2272,7 +2310,6 @@ var prettydiff = function (api) {
                         },
                         end = function () {
                             varline.pop();
-                            methtest.pop();
                             if (ctoke !== ")") {
                                 indent -= 1;
                             }
@@ -2280,34 +2317,32 @@ var prettydiff = function (api) {
                                 casetest.pop();
                             }
                             if (ctoke === "]") {
-                                if (list[list.length - 1] === true) {
+                                if (list[list.length - 1] === true || (ltoke === "]" && level[level.length - 2] === indent + 1)) {
                                     level[level.length - 1] = indent;
                                 } else if (level[level.length - 1] === "s") {
                                     level[level.length - 1] = "x";
                                 }
-                                (function () {
-                                    var c = 0,
-                                        d = 1;
-                                    for (c = a - 1; c > -1; c -= 1) {
-                                        if (token[c] === "]") {
-                                            d += 1;
-                                        }
-                                        if (token[c] === "[") {
-                                            d -= 1;
-                                        }
-                                        if ((d === 0 && token[c] === ",") || token[c] === ";" || token[c] === "}" || token[c] === "=") {
-                                            level[level.length - 1] = indent;
-                                            break;
-                                        }
-                                        if (token[c] === "]" || token[c] === "[") {
-                                            if (token[c] === "[" && token[c - 1] === "[" && !isNaN(level[c - 1])) {
-                                                return level.push(indent - 1);
+                                if (list[list.length - 1] === false) {
+                                    (function () {
+                                        var c = 0,
+                                            d = 0;
+                                        for (c = a - 1; c > -1; c -= 1) {
+                                            if (token[c] === "]") {
+                                                d += 1;
                                             }
-                                            break;
+                                            if (token[c] === "[") {
+                                                d -= 1;
+                                                if (d === -1) {
+                                                    if (token[c + 1] !== "[" || lastlist !== true) {
+                                                        level[c] = "x";
+                                                    }
+                                                    return;
+                                                }
+                                            }
                                         }
-                                    }
-                                    level.push("s");
-                                }());
+                                    }());
+                                }
+                                level.push("x");
                             } else if ((ltoke === "{" && ctoke === "}") || (ltoke === "[" && ctoke === "]")) {
                                 level[level.length - 1] = "x";
                                 level.push("x");
@@ -2326,7 +2361,9 @@ var prettydiff = function (api) {
                             } else {
                                 level.push("x");
                             }
+                            lastlist = list[list.length - 1];
                             list.pop();
+                            obj = false;
                         },
                         operator = function () {
                             if (ctoke === "!" && ltype === "start") {
@@ -2363,6 +2400,9 @@ var prettydiff = function (api) {
                             level.push("s");
                         },
                         word = function () {
+                            if (ctoke === "function" && jspace === false && a < b - 1 && token[a + 1] === "(") {
+                                return level.push("x");
+                            }
                             if (ltoke === "}" && ctoke === "while") {
                                 (function () {
                                     var c = 0,
@@ -2405,6 +2445,8 @@ var prettydiff = function (api) {
                                 casetest[casetest.length - 1] = false;
                             } else if (ltoke === "}" && level[level.length - 1] === "x") {
                                 level[level.length - 1] = indent;
+                            } else if (ltoke === "[") {
+                                level[level.length - 1] = indent;
                             }
                             level.push("s");
                         };
@@ -2417,6 +2459,7 @@ var prettydiff = function (api) {
                         }
                         if (ctype === "comment-inline") {
                             level[level.length - 1] = "s";
+                            level.push(indent);
                         }
                         if (ctype === "regex") {
                             level.push("x");
@@ -2432,7 +2475,6 @@ var prettydiff = function (api) {
                             level.push("x");
                             list.push(false);
                             varline.push(false);
-                            methtest.push(true);
                         }
                         if (ctype === "start") {
                             start();
@@ -2450,6 +2492,7 @@ var prettydiff = function (api) {
                         ltoke = ctoke;
                     }
                 }());
+                //the result function generates the out
                 result = (function () {
                     var a = 0,
                         b = token.length,
@@ -2473,6 +2516,12 @@ var prettydiff = function (api) {
                         };
                     for (a = 0; a < b; a += 1) {
                         c.push(token[a]);
+                        if (jpres && a === lines[0]) {
+                            if (types[a] !== "start" || (a < b - 1 && (types[a + 1] !== "end"))) {
+                                c.push("\n");
+                            }
+                            lines.pop();
+                        }
                         if (types[a] === "comment" && jcomment) {
                             c.push(nl(0));
                         } else if (level[a] === "s") {
@@ -2480,13 +2529,10 @@ var prettydiff = function (api) {
                         } else if (level[a] !== "x") {
                             c.push(nl(level[a]));
                         }
-                        if (jpres && a === lines[0]) {
-                            c.push("\n");
-                            lines.pop();
-                        }
                     }
                     return c.join("");
                 }()).replace(/(\s+)$/, "");
+                //the analysis report is generated in this function
                 (function () {
                     var a = 0,
                         b = 0,
@@ -2877,9 +2923,6 @@ var prettydiff = function (api) {
                     output.push("</td></tr></tbody></table></div>");
                     summary = output.join("");
                 }());
-                if (jspace === false) {
-                    result = result.replace(/function \(/g, "function(");
-                }
                 return result;
             },
             markupmin = function (args) {
@@ -3122,7 +3165,9 @@ var prettydiff = function (api) {
                         g = "",
                         i = [],
                         Y = x.length,
-                        html = ["area", "base", "basefont", "br", "col", "embed", "eventsource", "frame", "hr", "img", "input", "keygen", "link", "meta", "param", "progress", "source", "wbr"],
+                        html = [
+                            "area", "base", "basefont", "br", "col", "embed", "eventsource", "frame", "hr", "img", "input", "keygen", "link", "meta", "param", "progress", "source", "wbr"
+                        ],
                         e = html.length;
                     for (a = 0; a < Y; a += 1) {
                         if (x[a] !== "") {
@@ -3298,7 +3343,9 @@ var prettydiff = function (api) {
                                         } else if (x.charAt(b) === ">" && q[q.length - 1] === ">" && q.length === 1) {
                                             h += 1;
                                             if (r) {
-                                                d.push([a, b, h, a]);
+                                                d.push([
+                                                    a, b, h, a
+                                                ]);
                                             }
                                             r = false;
                                             a = b;
@@ -3392,7 +3439,9 @@ var prettydiff = function (api) {
                                                     }
                                                 }
                                                 if (n) {
-                                                    d.push([a, b, h, j]);
+                                                    d.push([
+                                                        a, b, h, j
+                                                    ]);
                                                 }
                                                 a = b;
                                                 break;
@@ -3474,7 +3523,9 @@ var prettydiff = function (api) {
                                     if (/\s/.test(y[i])) {
                                         h -= 1;
                                     }
-                                    inner.push(["<", h, g]);
+                                    inner.push([
+                                        "<", h, g
+                                    ]);
                                 } else if (y[e] === ">") {
                                     y[e] = "]";
                                     for (b = e; b > j; b -= 1) {
@@ -3496,7 +3547,9 @@ var prettydiff = function (api) {
                                     if (/\s/.test(y[i])) {
                                         h -= 1;
                                     }
-                                    inner.push([">", h, g]);
+                                    inner.push([
+                                        ">", h, g
+                                    ]);
                                 }
                             }
                         }
@@ -4590,8 +4643,29 @@ var prettydiff = function (api) {
                         f = sum.join("").length,
                         b = (function () {
                             var a = 0,
-                                b = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-                                c = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+                                b = [
+                                    0,
+                                    0,
+                                    0,
+                                    0,
+                                    0,
+                                    0,
+                                    0,
+                                    0,
+                                    0,
+                                    0,
+                                    0,
+                                    0,
+                                    0,
+                                    0,
+                                    0,
+                                    0,
+                                    0,
+                                    0
+                                ],
+                                c = [
+                                    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
+                                ],
                                 d = [],
                                 e = [],
                                 f = [],
@@ -4687,13 +4761,23 @@ var prettydiff = function (api) {
                                     }
                                 }
                             }
-                            d = [b[0] + b[1] + b[2] + b[3], b[4] + b[5] + b[6] + b[7], b[15] + b[16] + b[17], b[11] + b[12] + b[13]];
-                            e = [c[0] + c[1] + c[2] + c[3], c[4] + c[5] + c[6] + c[7], c[15] + c[16] + c[17], c[11] + c[12] + c[13]];
-                            f = [d[0], d[0], d[0], d[0], d[1], d[1], d[1], d[1], b[10], b[10], b[10], d[3], d[3], d[3], d[3], d[2], d[2], d[2]];
-                            h = [e[0], e[0], e[0], e[0], e[1], e[1], e[1], e[1], c[10], c[10], c[10], e[3], e[3], e[3], e[3], e[2], e[2], e[2]];
+                            d = [
+                                b[0] + b[1] + b[2] + b[3], b[4] + b[5] + b[6] + b[7], b[15] + b[16] + b[17], b[11] + b[12] + b[13]
+                            ];
+                            e = [
+                                c[0] + c[1] + c[2] + c[3], c[4] + c[5] + c[6] + c[7], c[15] + c[16] + c[17], c[11] + c[12] + c[13]
+                            ];
+                            f = [
+                                d[0], d[0], d[0], d[0], d[1], d[1], d[1], d[1], b[10], b[10], b[10], d[3], d[3], d[3], d[3], d[2], d[2], d[2]
+                            ];
+                            h = [
+                                e[0], e[0], e[0], e[0], e[1], e[1], e[1], e[1], c[10], c[10], c[10], e[3], e[3], e[3], e[3], e[2], e[2], e[2]
+                            ];
                             b[2] = b[2] - d[3];
                             c[2] = c[2] - e[3];
-                            return [b, c, d, e, f, h];
+                            return [
+                                b, c, d, e, f, h
+                            ];
                         }()),
                         p = function (x) {
                             var u = function (x) {
@@ -4775,7 +4859,26 @@ var prettydiff = function (api) {
                                 e = [],
                                 h = (function () {
                                     var a = 0,
-                                        c = ["*** Start Tags", "End Tags", "Singleton Tags", "Comments", "Flat String", "String with Space at Start", "String with Space at End", "String with Space at Start and End", "SGML", "XML", "Total Parsing Declarations", "SSI", "ASP", "PHP", "Total Server Side Tags", "*** Script Tags", "*** Style Tags", "JavaScript/CSS Code"],
+                                        c = [
+                                            "*** Start Tags",
+                                            "End Tags",
+                                            "Singleton Tags",
+                                            "Comments",
+                                            "Flat String",
+                                            "String with Space at Start",
+                                            "String with Space at End",
+                                            "String with Space at Start and End",
+                                            "SGML",
+                                            "XML",
+                                            "Total Parsing Declarations",
+                                            "SSI",
+                                            "ASP",
+                                            "PHP",
+                                            "Total Server Side Tags",
+                                            "*** Script Tags",
+                                            "*** Style Tags",
+                                            "JavaScript/CSS Code"
+                                        ],
                                         d = [],
                                         h = "",
                                         l = "",
@@ -4871,7 +4974,9 @@ var prettydiff = function (api) {
                                 z = w.length;
                                 for (a = 0; a < z; a += 1) {
                                     if (w[a] !== "") {
-                                        h.push([1, w[a]]);
+                                        h.push([
+                                            1, w[a]
+                                        ]);
                                         j += 1;
                                         for (b = a + 1; b < z; b += 1) {
                                             if (w[b] === w[a]) {
@@ -4900,7 +5005,9 @@ var prettydiff = function (api) {
                                     if (h[k] !== h[a]) {
                                         h[k] = h[a];
                                     } else {
-                                        h[k] = [0, ""];
+                                        h[k] = [
+                                            0, ""
+                                        ];
                                     }
                                     if (n.length === 11) {
                                         break;
@@ -5172,7 +5279,10 @@ var prettydiff = function (api) {
                                     la = a.length,
                                     lb = b.length,
                                     queue = [
-                                        [0, la, 0, lb]],
+                                        [
+                                            0, la, 0, lb
+                                        ]
+                                    ],
                                     non_adjacent = [],
                                     ntuplecomp = function (x, y) {
                                         var i = 0,
@@ -5193,7 +5303,10 @@ var prettydiff = function (api) {
                                             i = 0,
                                             j = 0,
                                             k = 0,
-                                            l = [0, 0],
+                                            l = [
+                                                0,
+                                                0
+                                            ],
                                             besti = alo,
                                             bestj = blo,
                                             bestsize = 0;
@@ -5220,7 +5333,9 @@ var prettydiff = function (api) {
                                                         bestsize = k;
                                                     }
                                                 }
-                                                l = [j, k];
+                                                l = [
+                                                    j, k
+                                                ];
                                             }
                                         }
                                         while (besti > alo && bestj > blo && !isbjunk(b[bestj - 1]) && a[besti - 1] === b[bestj - 1]) {
@@ -5239,7 +5354,9 @@ var prettydiff = function (api) {
                                         while (besti + bestsize < ahi && bestj + bestsize < bhi && isbjunk(b[bestj + bestsize]) && a[besti + bestsize] === b[bestj + bestsize]) {
                                             bestsize += 1;
                                         }
-                                        return [besti, bestj, bestsize];
+                                        return [
+                                            besti, bestj, bestsize
+                                        ];
                                     };
                                 while (queue.length) {
                                     qi = queue.pop();
@@ -5254,10 +5371,14 @@ var prettydiff = function (api) {
                                     if (k > 0) {
                                         matching_blocks.push(x);
                                         if (alo < i && blo < j) {
-                                            queue.push([alo, i, blo, j]);
+                                            queue.push([
+                                                alo, i, blo, j
+                                            ]);
                                         }
                                         if (i + k < ahi && j + k < bhi) {
-                                            queue.push([i + k, ahi, j + k, bhi]);
+                                            queue.push([
+                                                i + k, ahi, j + k, bhi
+                                            ]);
                                         }
                                     }
                                 }
@@ -5271,7 +5392,9 @@ var prettydiff = function (api) {
                                         k1 += k2;
                                     } else {
                                         if (k1) {
-                                            non_adjacent.push([i1, j1, k1]);
+                                            non_adjacent.push([
+                                                i1, j1, k1
+                                            ]);
                                         }
                                         i1 = i2;
                                         j1 = j2;
@@ -5279,9 +5402,13 @@ var prettydiff = function (api) {
                                     }
                                 }
                                 if (k1) {
-                                    non_adjacent.push([i1, j1, k1]);
+                                    non_adjacent.push([
+                                        i1, j1, k1
+                                    ]);
                                 }
-                                non_adjacent.push([la, lb, 0]);
+                                non_adjacent.push([
+                                    la, lb, 0
+                                ]);
                                 return non_adjacent;
                             };
                         (function () {
@@ -5312,7 +5439,9 @@ var prettydiff = function (api) {
                                             bxj.splice(c, 1);
                                         }
                                     } else {
-                                        bxj.push([i, elt]);
+                                        bxj.push([
+                                            i, elt
+                                        ]);
                                     }
                                 }
                             }());
@@ -5354,17 +5483,29 @@ var prettydiff = function (api) {
                                         if (i - j !== ai - bj && j - bj < 3 && i - ai < 3) {
                                             if (reverse && i - ai > j - bj) {
                                                 if (closerMatch(b[j], b[j + 1], a[i])) {
-                                                    answer.push(["delete", j, j + 1, i, i]);
-                                                    answer.push(["replace", j + 1, bj, i, ai]);
+                                                    answer.push([
+                                                        "delete", j, j + 1, i, i
+                                                    ]);
+                                                    answer.push([
+                                                        "replace", j + 1, bj, i, ai
+                                                    ]);
                                                 } else {
-                                                    answer.push(["replace", j, bj, i, ai]);
+                                                    answer.push([
+                                                        "replace", j, bj, i, ai
+                                                    ]);
                                                 }
                                             } else if (!reverse && bj - j > ai - i) {
                                                 if (closerMatch(b[j], b[j + 1], a[i])) {
-                                                    answer.push(["insert", i, i, j, j + 1]);
-                                                    answer.push(["replace", i, ai, j + 1, bj]);
+                                                    answer.push([
+                                                        "insert", i, i, j, j + 1
+                                                    ]);
+                                                    answer.push([
+                                                        "replace", i, ai, j + 1, bj
+                                                    ]);
                                                 } else {
-                                                    answer.push(["replace", i, ai, j, bj]);
+                                                    answer.push([
+                                                        "replace", i, ai, j, bj
+                                                    ]);
                                                 }
                                             } else {
                                                 tag = "replace";
@@ -5387,18 +5528,26 @@ var prettydiff = function (api) {
                                     }
                                     if (tag !== "") {
                                         if (reverse) {
-                                            answer.push([tag, j, bj, i, ai]);
+                                            answer.push([
+                                                tag, j, bj, i, ai
+                                            ]);
                                         } else {
-                                            answer.push([tag, i, ai, j, bj]);
+                                            answer.push([
+                                                tag, i, ai, j, bj
+                                            ]);
                                         }
                                     }
                                     i = ai + size;
                                     j = bj + size;
                                     if (size > 0) {
                                         if (reverse) {
-                                            answer.push(["equal", bj, j, ai, i]);
+                                            answer.push([
+                                                "equal", bj, j, ai, i
+                                            ]);
                                         } else {
-                                            answer.push(["equal", ai, i, bj, j]);
+                                            answer.push([
+                                                "equal", ai, i, bj, j
+                                            ]);
                                         }
                                     }
                                 }
@@ -5456,7 +5605,9 @@ var prettydiff = function (api) {
                                 a = c.replace(/\'/g, "$#39;").replace(/\"/g, "$#34;").replace(/\&nbsp;/g, " ").replace(/\&#160;/g, " "),
                                 b = d.replace(/\'/g, "$#39;").replace(/\"/g, "$#34;").replace(/\&nbsp;/g, " ").replace(/\&#160;/g, " ");
                             if (a === b) {
-                                return [c, d];
+                                return [
+                                    c, d
+                                ];
                             }
                             if (tb !== "" && a.length !== b.length && a.replace(tb, "") === b.replace(tb, "")) {
                                 return (function () {
@@ -5495,7 +5646,9 @@ var prettydiff = function (api) {
                                     }
                                     c = ax.join("").replace(/\$#34;/g, "\"").replace(/\$#39;/g, "'");
                                     d = bx.join("").replace(/\$#34;/g, "\"").replace(/\$#39;/g, "'");
-                                    return [c, d];
+                                    return [
+                                        c, d
+                                    ];
                                 }());
                             }
                             errorout -= 1;
@@ -5795,7 +5948,9 @@ var prettydiff = function (api) {
                                     d += "</em>";
                                 }
                             }
-                            return [c, d];
+                            return [
+                                c, d
+                            ];
                         };
                     if (inline) {
                         node.push("<th class='texttitle' colspan='3'>");
@@ -5993,7 +6148,6 @@ var prettydiff = function (api) {
                     }
                     node.push("'>Original diff view created by <a href='https://github.com/cemerick/jsdifflib'>jsdifflib</a>. Diff view rewritten by <a href='http://prettydiff.com/'>Austin Cheney</a>.</th></tr></tfoot></table>");
                     return [node.join("").replace(/\$#gt;/g, "&gt;").replace(/\$#lt;/g, "&lt;").replace(/\%#lt;/g, "$#lt;").replace(/\%#gt;/g, "$#gt;"), errorout, diffline];
-
                 }());
             },
             core = function (api) {
@@ -6294,10 +6448,14 @@ var prettydiff = function (api) {
                         }
                     };
                 if (api.source === "Source sample is missing.") {
-                    return ["Error: Source sample is missing.", ""];
+                    return [
+                        "Error: Source sample is missing.", ""
+                    ];
                 }
                 if (api.diff === "Diff sample is missing." && api.mode === "diff") {
-                    return ["Error: Diff sample is missing.", ""];
+                    return [
+                        "Error: Diff sample is missing.", ""
+                    ];
                 }
                 if (api.lang === "auto") {
                     (function () {
@@ -6441,9 +6599,13 @@ var prettydiff = function (api) {
                                 return "<div id='doc'><table class='analysis' summary='Minification efficiency report'><caption>Minification efficiency report</caption><thead><tr><th colspan='2'>Output Size</th><th colspan='2'>Number of Lines From Input</th></tr></thead><tbody><tr><td colspan='2'>" + g + "</td><td colspan='2'>" + (b + 1) + "</td></tr><tr><th>Operating System</th><th>Input Size</th><th>Size Difference</th><th>Percentage of Decrease</th></tr><tr><th>Unix/Linux</th><td>" + d + "</td><td>" + h + "</td><td>" + k + "</td></tr><tr><th>Windows</th><td>" + f + "</td><td>" + i + "</td><td>" + l + "</td></tr></tbody></table></div>";
                             };
                         if (autotest === true) {
-                            return [apioutput, proctime() + auto + sizediff()];
+                            return [
+                                apioutput, proctime() + auto + sizediff()
+                            ];
                         }
-                        return [apioutput, proctime() + sizediff()];
+                        return [
+                            apioutput, proctime() + sizediff()
+                        ];
                     }());
                 }
                 if (api.mode === "beautify") {
@@ -6496,9 +6658,13 @@ var prettydiff = function (api) {
                         apidiffout = "";
                     }
                     if (autotest === true && api.lang !== "csv" && api.lang !== "text") {
-                        return [apioutput, proctime() + auto + apidiffout];
+                        return [
+                            apioutput, proctime() + auto + apidiffout
+                        ];
                     }
-                    return [apioutput, proctime() + apidiffout];
+                    return [
+                        apioutput, proctime() + apidiffout
+                    ];
                 }
                 if (api.mode === "diff") {
                     if (api.lang === "css") {
@@ -6624,7 +6790,9 @@ var prettydiff = function (api) {
                             t = "s",
                             achar = "";
                         if (apioutput === "Error: This does not appear to be JavaScript." || apidiffout === "Error: This does not appear to be JavaScript.") {
-                            a[1] = ["<p><strong>Error:</strong> Please try using the option labeled <em>Plain Text (diff only)</em>. <span style='display:block'>The input does not appear to be markup, CSS, or JavaScript.</span></p>", 0, 0];
+                            a[1] = [
+                                "<p><strong>Error:</strong> Please try using the option labeled <em>Plain Text (diff only)</em>. <span style='display:block'>The input does not appear to be markup, CSS, or JavaScript.</span></p>", 0, 0
+                            ];
                         } else {
                             if (api.lang !== "text") {
                                 achar = api.inchar;
@@ -6648,9 +6816,13 @@ var prettydiff = function (api) {
                         }
                         a[0] = "<p><strong>Number of differences:</strong> <em>" + (a[1][1] + a[1][2]) + "</em> difference" + s + " from <em>" + a[1][2] + "</em> line" + t + " of code.</p>";
                         if (autotest === true) {
-                            return [a[1][0], proctime() + auto + a[0]];
+                            return [
+                                a[1][0], proctime() + auto + a[0]
+                            ];
                         }
-                        return [a[1][0], proctime() + a[0]];
+                        return [
+                            a[1][0], proctime() + a[0]
+                        ];
                     }());
                 }
             };
