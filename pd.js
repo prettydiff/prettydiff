@@ -43,6 +43,10 @@ var exports = "",
         bx: pd.$$("beautyoutput"),
         bw: pd.$$("beau-other"),
         bz: pd.$$("bo"),
+        cd: pd.$$("conditionald-no"),
+        ce: pd.$$("conditionald-yes"),
+        cf: pd.$$("conditionalm-no"),
+        cg: pd.$$("conditionalm-yes"),
         ch: pd.$$("csvchar"),
         ci: pd.$$("codeInput"),
         cn: 4,
@@ -128,7 +132,6 @@ var exports = "",
         dcv: "",
         dqp: pd.$$("diffquanp"),
         dqt: pd.$$("difftypep"),
-        htd: pd.$$("htmlspecificd"),
         bops: pd.$$("beauops"),
         csvp: pd.$$("csvcharp"),
         disp: pd.$$("displayOps"),
@@ -210,7 +213,8 @@ var exports = "",
         api.quote = false;
         api.semicolon = false;
         api.style = "indent";
-        api.topcoms = false;
+        api.topcoms = false,
+        api.conditional = false;
 
         //gather updated dom nodes
         pd.o.bb = pd.$$("modebeautify");
@@ -284,6 +288,9 @@ var exports = "",
             if (pd.o.mc.checked) {
                 api.topcoms = true;
             }
+            if (pd.o.cg.checked) {
+                api.conditional = true;
+            }
             api.source = pd.o.mi.value;
             api.mode = "minify";
         } else if (pd.o.dd) {
@@ -324,6 +331,9 @@ var exports = "",
                 }
             } else {
                 pd.o.cz = " ";
+            }
+            if (pd.o.ce.checked) {
+                api.conditional = true;
             }
             api.inchar = pd.o.cz;
             if (!isNaN(pd.o.dq.value)) {
@@ -1027,8 +1037,6 @@ var exports = "",
         b = pd.o.la[pd.o.la.selectedIndex].value;
         if (a === pd.o.bb) {
             optioncheck();
-            pd.o.bx.setAttribute("name", "paste_code");
-            pd.o.mx.removeAttribute("name");
             if (pd.o.bi.value === "" && pd.o.mi.value !== "") {
                 pd.o.bi.value = pd.o.mi.value;
             } else if (pd.o.bi.value === "" && pd.o.bo.value !== "") {
@@ -1053,8 +1061,6 @@ var exports = "",
             }
         } else if (a === pd.o.mm) {
             optioncheck();
-            pd.o.mx.setAttribute("name", "paste_code");
-            pd.o.bx.removeAttribute("name");
             if (pd.o.mi.value === "" && pd.o.bi.value !== "") {
                 pd.o.mi.value = pd.o.bi.value;
             } else if (pd.o.mi.value === "" && pd.o.bo.value !== "") {
@@ -1364,14 +1370,14 @@ var exports = "",
             pd.optionString[14] = "api.topcoms: false";
         } else if (x === pd.o.mc) {
             pd.optionString[14] = "api.topcoms: true";
-        } else if (x === pd.o.bg) {
+        } else if (x === pd.o.bg || x === pd.o.dg) {
             pd.optionString[15] = "api.force_indent: true";
-        } else if (x === pd.o.dg) {
-            pd.optionString[15] = "api.force_indent: true";
-        } else if (x === pd.o.bf) {
+        } else if (x === pd.o.bf || x === pd.o.df) {
             pd.optionString[15] = "api.force_indent: false";
-        } else if (x === pd.o.df) {
-            pd.optionString[15] = "api.force_indent: false";
+        } else if (x === pd.o.ce || x === pd.o.cg) {
+            pd.optionString[16] = "api.conditional: true";
+        } else if (x === pd.o.cd || x === pd.o.cf) {
+            pd.optionString[16] = "api.conditional: false";
         } else if (x === pd.o.re) {
             pd.o.re = pd.$$("diffreport");
             pd.o.rf = pd.$$("diffreportbody");
@@ -1510,7 +1516,7 @@ var exports = "",
                 a.setAttribute("title", "Convert diff report to an HTML table.");
             }
         }
-        for (b = 0; b < 15; b += 1) {
+        for (b = 0; b < 16; b += 1) {
             if (typeof pd.optionString[b] !== "string" || pd.optionString[b] === "") {
                 pd.optionString[b] = "pdempty";
             }
@@ -1793,6 +1799,8 @@ var exports = "",
         pd.o.hn.checked = true;
         pd.o.jt.checked = true;
         pd.o.bf.checked = true;
+        pd.o.cd.checked = true;
+        pd.o.cf.checked = true;
         if (pd.o.bo) {
             pd.o.bo.style.height = "";
         }
@@ -1923,8 +1931,6 @@ var exports = "",
                                         }
                                     }
                                     pd.o.mm.checked = true;
-                                    pd.o.mx.setAttribute("name", "paste_code");
-                                    pd.o.bx.removeAttribute("name");
                                     if (pd.o.bt) {
                                         pd.o.bt.style.display = "none";
                                     }
@@ -1979,8 +1985,6 @@ var exports = "",
                                         m[l].disabled = false;
                                     }
                                     pd.o.dd.checked = true;
-                                    pd.o.bx.setAttribute("name", "paste_code");
-                                    pd.o.mx.removeAttribute("name");
                                     pd.o.bd.style.display = "none";
                                     pd.o.md.style.display = "none";
                                     pd.o.bt.style.display = "block";
@@ -2091,6 +2095,9 @@ var exports = "",
                                 pd.o.inline.checked = true;
                             } else if (d[0] === "api.topcoms" && d[1] === "true") {
                                 pd.o.mc.checked = true;
+                            } else if (d[0] === "api.conditional" && d[1] === "true") {
+                                pd.o.ce.checked = true;
+                                pd.o.cg.checked = true;
                             }
                         }
                     }
@@ -2368,8 +2375,6 @@ var exports = "",
                     pd.o.csvp.style.display = "block";
                 }
                 if (pd.o.mm.checked) {
-                    pd.o.mx.setAttribute("name", "paste_code");
-                    pd.o.bx.removeAttribute("name");
                     pd.o.bd.style.display = "none";
                     pd.o.md.style.display = "block";
                     if (pd.o.bt) {
