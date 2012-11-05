@@ -2069,7 +2069,7 @@ var prettydiff = function (api) {
                             types.push("separator");
                         } else if (c[a] === "(") {
                             n[4] += 1;
-                            if (types.length === 0 || token[token.length - 1] === "function" || token[token.length - 1] === "for" || token[token.length - 1] === "if" || types[types - 1] === "separator" || (a > 0 && (/\s/).test(c[a - 1]))) {
+                            if (types.length === 0 || token[token.length - 1] === "function" || token[token.length - 1] === "for" || token[token.length - 1] === "if" || token[token.length - 1] === "while" || token[token.length - 1] === "switch" || types[types.length - 1] === "separator" || (a > 0 && (/\s/).test(c[a - 1]))) {
                                 types.push("start");
                             } else {
                                 types.push("method");
