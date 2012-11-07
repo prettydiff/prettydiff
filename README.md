@@ -25,12 +25,13 @@ WSH
 
 Create a WSH script file using XML syntax and with a file extension of
 "WSF".  This file must have a tag for each supported argument, must be
-capable of reading from a file, and retrieving dependencies.  An example
-for the markup_beauty.js script can be obtained at:
-http://prettydiff.com/markup_beauty.wsf
+capable of reading from a file, and retrieving dependencies.
+
+http://prettydiff.com/api/prettydiff.wsf
 
 Pretty Diff would be executed using the following on CLI:
 
+    cscript prettydiff.wsf
     cscript prettydiff.wsf /source:"myFile.xml" /mode:"beautify"
 
 Pre-Inventory:
@@ -39,24 +40,16 @@ Pre-Inventory:
   * The component files are provided for access to individual functions
    independent of the Pretty Diff application.  The component code is
    already included in prettydiff.js, so it is not needed in addition to
-   prettydiff.js.  The only files not included with prettydiff.js are:
-   * pd.js
-   * api.js
-   * diffview.css
+   prettydiff.js.  The only files not included with prettydiff.js are
+   the APIs and the stylesheet - diffview.css.
 
   * For usage documentation please visit
    http://prettydiff.com/documentation.php
-   
-  * For code documentation please visit the respective component files.
-   The core files: api.js, pd.js, and prettydiff.js include no code
-   documentation.
 
 Inventory:
 ----------
 
   * prettydiff.js - primary application for client and server processing
-  * api.js - server side API processor (No long maintained)
-  * pd.js - DOM interpreter and HTML tool manipulator
   * charDecoder.js - component
   * cleanCSS.js  - component
   * csvbeauty.js  - component
@@ -163,8 +156,8 @@ License:
  - used as markup-beauty function
  <http://prettydiff.com/lib/markup_beauty.js>
 
- * o object literal is in the pd.js file and exists to provide a one
- time and external means of access to the DOM.
+ * pd.o object literal is in the api/dom.js file and exists to provide a
+ one time and external means of access to the DOM.
 
  -----------------------------------------------------------------------
  * The code mentioned above has significantly expanded documentation in

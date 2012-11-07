@@ -93,8 +93,9 @@
  - used as markup-beauty function
  <http://prettydiff.com/lib/markup_beauty.js>
 
- * o object literal is in the pd.js file and exists to provide a one
- time and external means of access to the DOM.
+ * pd.o object literal is in the api/dom.js file and exists to provide a
+ one time and external means of access to the DOM for character entity
+ translation.
 
  -----------------------------------------------------------------------
  * The code mentioned above has significantly expanded documentation in
@@ -1819,6 +1820,7 @@ var prettydiff = function (api) {
                         b = source.length,
                         c = source.split(""),
                         t = "",
+                        u = "",
                         d = function (start, offset, end) {
                             var e = 0,
                                 f = 0,
@@ -2002,111 +2004,144 @@ var prettydiff = function (api) {
                         word = function () {
                             var e = [],
                                 f = a,
-                                g = b;
+                                g = b,
+                                h = "";
                             do {
                                 e.push(c[f]);
                                 f += 1;
                             } while (f < g && !((/\s/).test(c[f]) || c[f] === ";" || c[f] === "=" || c[f] === "." || c[f] === "," || c[f] === "<" || c[f] === ">" || c[f] === "+" || c[f] === "-" || c[f] === "*" || c[f] === "/" || c[f] === "!" || c[f] === "?" || c[f] === "|" || c[f] === "^" || c[f] === ":" || c[f] === "\"" || c[f] === "'" || c[f] === "\\" || c[f] === "/" || c[f] === "(" || c[f] === ")" || c[f] === "{" || c[f] === "}" || c[f] === "[" || c[f] === "]" || c[f] === "&"));
                             a = f - 1;
-                            return e.join("");
+                            h = e.join("");
+                            if (h === "function" && u === "method") {
+                                types[types.length - 1] = "start";
+                            }
+                            return h;
                         };
                     for (a = 0; a < b; a += 1) {
                         if (c[a] === "/" && (a === b - 1 || c[a + 1] === "*")) {
                             t = d("/*", 2, "*\/");
+                            u = "comment";
                             k[0] += 1;
                             k[1] += t.length;
                             token.push(t);
-                            types.push("comment");
+                            types.push(u);
                         } else if (c[a] === "/" && (a === b - 1 || c[a + 1] === "/")) {
-                            types.push(comtest());
+                            u = comtest();
+                            types.push(u);
                             t = d("//", 2, "\r");
                             j[0] += 1;
                             j[1] += t.length;
                             token.push(t);
-                        } else if (c[a] === "/" && (types.length > 0 && types[types.length - 1] !== "word" && types[types.length - 1] !== "literal" && types[types.length - 1] !== "end")) {
+                        } else if (c[a] === "/" && (types.length > 0 && u !== "word" && u !== "literal" && u !== "end")) {
                             t = regex();
+                            u = "regex";
                             p[0] += 1;
                             p[1] += t.length;
                             token.push(t);
-                            types.push("regex");
+                            types.push(u);
                         } else if (c[a] === "\"") {
                             t = d("\"", 1, "\"");
+                            u = "literal";
                             l[0] += 1;
                             l[1] += t.length - 2;
                             l[2] += 2;
                             token.push(t);
-                            types.push("literal");
+                            types.push(u);
                         } else if (c[a] === "'") {
                             t = d("'", 1, "'");
+                            u = "literal";
                             l[0] += 1;
                             l[1] += t.length - 2;
                             l[2] += 2;
                             token.push(t);
-                            types.push("literal");
-                        } else if (c[a] === "-" && a < b - 1 && c[a + 1] !== "=" && (types[types.length - 1] === "literal" || types[types.length - 1] === "word") && token[token.length - 1] !== "return") {
+                            types.push(u);
+                        } else if (c[a] === "-" && a < b - 1 && c[a + 1] !== "=" && (u === "literal" || u === "word") && t !== "return") {
                             n[0] += 1;
                             n[1] += 1;
-                            token.push("-");
-                            types.push("operator");
+                            t = "-";
+                            u = "operator";
+                            token.push(t);
+                            types.push(u);
                         } else if ((/\d/).test(c[a]) || (a !== b - 2 && c[a] === "-" && c[a + 1] === "." && (/\d/).test(c[a + 2])) || (a !== b - 1 && (c[a] === "-" || c[a] === ".") && (/\d/).test(c[a + 1]))) {
                             t = numb();
+                            u = "literal";
                             q[0] += 1;
                             q[1] += t.length;
                             token.push(t);
-                            types.push("literal");
+                            types.push(u);
                         } else if (c[a] === ",") {
                             n[2] += 1;
-                            token.push(",");
-                            types.push("separator");
+                            t = ",";
+                            u = "separator";
+                            token.push(t);
+                            types.push(u);
                         } else if (c[a] === ".") {
                             n[0] += 1;
                             n[1] += 1;
-                            token.push(".");
-                            types.push("separator");
+                            t = ".";
+                            u = "separator";
+                            token.push(t);
+                            types.push(u);
                         } else if (c[a] === ";") {
                             n[3] += 1;
-                            token.push(";");
-                            types.push("separator");
+                            t = ";";
+                            u = "separator";
+                            token.push(t);
+                            types.push(u);
                         } else if (c[a] === "(") {
                             n[4] += 1;
-                            if (types.length === 0 || token[token.length - 1] === "function" || token[token.length - 1] === "for" || token[token.length - 1] === "if" || token[token.length - 1] === "while" || token[token.length - 1] === "switch" || types[types.length - 1] === "separator" || (a > 0 && (/\s/).test(c[a - 1]))) {
-                                types.push("start");
+                            if (types.length === 0 || t === "function" || t === "for" || t === "if" || t === "while" || t === "switch" || u === "separator" || (a > 0 && (/\s/).test(c[a - 1]))) {
+                                u = "start";
                             } else {
-                                types.push("method");
+                                u = "method";
                             }
-                            token.push("(");
+                            t = "(";
+                            token.push(t);
+                            types.push(u);
                         } else if (c[a] === "[") {
                             n[4] += 1;
-                            token.push("[");
-                            types.push("start");
+                            t = "[";
+                            u = "start";
+                            token.push(t);
+                            types.push(u);
                         } else if (c[a] === "{") {
                             n[4] += 1;
-                            token.push("{");
-                            types.push("start");
+                            t = "{";
+                            u = "start";
+                            token.push(t);
+                            types.push(u);
                         } else if (c[a] === ")") {
                             n[4] += 1;
-                            token.push(")");
-                            types.push("end");
+                            t = ")";
+                            u = "end";
+                            token.push(t);
+                            types.push(u);
                         } else if (c[a] === "]") {
                             n[4] += 1;
-                            token.push("]");
-                            types.push("end");
+                            t = "]";
+                            u = "end";
+                            token.push(t);
+                            types.push(u);
                         } else if (c[a] === "}") {
                             n[4] += 1;
-                            token.push("}");
-                            types.push("end");
+                            t = "}";
+                            u = "end";
+                            token.push(t);
+                            types.push(u);
                         } else if (c[a] === "=" || c[a] === "<" || c[a] === ">" || c[a] === "+" || c[a] === "-" || c[a] === "*" || c[a] === "/" || c[a] === "!" || c[a] === "?" || c[a] === "|" || c[a] === "^" || c[a] === ":" || c[a] === "&") {
                             t = operator();
+                            u = "operator";
                             n[0] += 1;
                             n[1] += t.length;
                             token.push(t);
-                            types.push("operator");
+                            types.push(u);
                         } else if ((/\s/).test(c[a])) {
                             space();
                         } else {
                             t = word();
+                            u = "word";
                             token.push(t);
-                            types.push("word");
+                            types.push(u);
                             if (t === "alert") {
                                 m[0] += 1;
                             } else if (t === "break") {
@@ -6782,7 +6817,7 @@ var prettydiff = function (api) {
             };
         return core(api);
     };
-if (typeof exports === "object" && exports !== undefined) {
+if (typeof exports === "object" || typeof exports === "function") {
     exports.api = function (x) {
         "use strict";
         return prettydiff(x);

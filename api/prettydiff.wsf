@@ -1,0 +1,330 @@
+﻿<package id="hello_world">
+    <job id="main">
+        <script type="text/javascript" src="../prettydiff.js">
+            /*global WScript, prettydiff*/
+            (function () {
+                "use strict";
+                var args = {},
+                    pd = [],
+                    read = "",
+                    fail = false,
+                    help = (typeof WScript.Arguments.Named("help") === "string") ? true : false,
+                    ext = (WScript.Arguments.Named("extensions") === undefined) ? [""] : (function () {
+                        var a = WScript.Arguments.Named("extensions");
+                        a = a.replace(/\,\s+/g, ",");
+                        return a.split(",");
+                    }()),
+                    outerror = function (x) {
+                        var a = 0,
+                            b = 0,
+                            c = 0,
+                            error = [];
+                        if (fail) {
+                            return;
+                        }
+                        if (WScript.Arguments.Count() === 0 || help) {
+                            error.push("Arguments      - Type    - Definition");
+                            error.push("-------------------------------------");
+                            error.push("* source       - string  - The file source for interpretation. This is required.");
+                            error.push("");
+                            error.push("* help         - string  - This list of argument definitions. The value is unnecessary and is required only to pass in use of the parameter.");
+                            error.push("");
+                            error.push("* mode         - string  - The operation to be performed. Defaults to 'diff'.");
+                            error.push("                 Accepted values: diff, beautify, minify.");
+                            error.push("");
+                            error.push("* diff         - string  - The file to be compared to the source file. This is required if mode is 'diff'.");
+                            error.push("");
+                            error.push("* output       - string  - The file to store the output. If this argument is absent the output will appear on the command line. If the file specified does not exist it will be created.");
+                            error.push("");
+                            error.push("* lang         - string  - The programming language of the source file. Defauls to auto.");
+                            error.push("                 Accepted values: auto, markup, javascript, css, html, csv, text");
+                            error.push("");
+                            error.push("* context      - number  - This shortens the diff output by allowing a specified number of equivalent lines between each line of difference. Defaults to an empty string, which nullifies its use.");
+                            error.push("");
+                            error.push("* sourcelabel  - string  - This allows for a descriptive label of the source file code of the diff HTML output. Defaults to 'base'.");
+                            error.push("");
+                            error.push("* difflabel    - string  - This allows for a descriptive label for the diff file code of the diff HTML output. Defaults to 'new'.");
+                            error.push("");
+                            error.push("* diffview     - string  - This determines whether the diff HTML output should display as a side-by-side comparison or if the differences should display in a single table column. Defaults to 'sidebyside'.");
+                            error.push("                 Accepted values: sidebyside, inline");
+                            error.push("");
+                            error.push("* topcoms      - boolean - If mode is 'minify' this determines whether comments above the first line of code should be kept. Default is false.");
+                            error.push("");
+                            error.push("* csvchar      - string  - The character to be used as a separator if lang is 'csv'. Any string combination is accepted. Defaults to a comma ','.");
+                            error.push("");
+                            error.push("* insize       - number  - The number of characters to comprise a single indentation. Defaults to '4'.");
+                            error.push("");
+                            error.push("* inchar       - string  - The string characters to comprise a single indentation. Any string combination is accepted. Defaults to space ' '.");
+                            error.push("");
+                            error.push("* indent       - string  - If lang is 'javascript' and mode is 'beautify' this determines if opening curly braces will exist on the same line as their condition or be forced onto a new line. Defaults to 'knr'.");
+                            error.push("                 Accepted values: knr, allman");
+                            error.push("");
+                            error.push("* quote        - boolean - If true and mode is 'diff' then all single quote characters will be replaced by double quote characters in both the source and diff file input so as to eliminate some differences from the diff report HTML output.");
+                            error.push("");
+                            error.push("* semicolon    - boolean - If true and mode is 'diff' and lang is 'javascript' all semicolon characters that immediately preceed any white space containing a new line character will be removed so as to elimate some differences from the diff report HTML output.");
+                            error.push("");
+                            error.push("* comments     - string  - If mode is 'beautify' this will determine whether comments should always start at position 0 of each line or if comments should be indented according to the code. Default is 'indent'.");
+                            error.push("                 Accepted values: indent, noindent");
+                            error.push("");
+                            error.push("* style        - string  - If mode is 'beautify' and lang is 'markup' or 'html' this will determine whether the contents of script and style tags should always start at position 0 of each line or if such content should be indented starting from the opening script or style tag. Default is 'indent'.");
+                            error.push("                 Accepted values: indent, noindent");
+                            error.push("");
+                            error.push("* html         - boolean - If lang is 'markup' this will provide an override so that some tags are treated as singletons and not start tags, such as '<br>' opposed to '<br/>'.");
+                            error.push("");
+                            error.push("* content      - boolean - If true and mode is 'diff' this will normalize all string literals in JavaScript to 'text' and all content in markup to 'text' so as to eliminate some differences from the HTML diff report. Default is false.");
+                            error.push("");
+                            error.push("* force_indent - boolean - If lang is 'markup' this will force indentation upon all content and tags without regard for the creation of new text nodes. Default is false.");
+                            error.push("");
+                            error.push("* conditional  - boolean - If true then conditional comments used by Internet Explorer are preserved at minification of markup. Default is false.");
+                            error.push("");
+                            error.push("* output       - string  - The location of the output file. If the file does not exist it will be created. If this argument is missing output will print to screen.");
+                            error.push("");
+                            error.push("* color        - string  - The color scheme of the reports. Default is shadow.");
+                            error.push("                 Accepted values: default, coffee, dark, canvas, shadow, white");
+                            error.push("");
+                            error.push("* readmethod   - string  - The readmethod determines the quantity of files to read. The default value is 'file' which will operate against a single file. The value 'file' requires that you point to an actual file for the source and diff arguments. The values 'directory' and 'subdirectory' require directories for values to source and diff. The value 'directory' will include all files location in the target directory, but not any child directories.");
+                            error.push("                 Accepted values: file, directory, subdirectory");
+                            error.push("");
+                            error.push("* extensions   - string  - If readmethod is 'directory' or 'subdirectory' this will allow access limits to specified file types. This takes a comma separated list: /extensions:\"html,css,xml\"");
+                            error.push("");
+                        }
+                        if ((WScript.Arguments.Count() === 1 && !help) || WScript.Arguments.Count() > 0) {
+                            error.push("");
+                            error.push(x);
+                            error.push("Usage: cscript " + WScript.ScriptName + " /source:\"myFile.xml\" /diff:\"myOtherFile.xml\" /output:\"outFile.xml\"");
+                            error.push("Usage: cscript " + WScript.ScriptName + " /source:\"myFile.xml\" /mode:\"beautify\" /output:\"outFile.xml\"");
+                            error.push("");
+                        }
+                        if (WScript.Fullname.indexOf("cscript.exe") > -1) {
+                            a = error.length;
+                            for (b = 0; b < a; b += 1) {
+                                if (error[b].length > 79) {
+                                    for (c = 79; c > 0; c -= 1) {
+                                        if (error[b].charAt(c) === " ") {
+                                            WScript.StdOut.WriteLine(error[b].substring(0, c));
+                                            error[b] = error[b].substr(c);
+                                            break;
+                                        }
+                                    }
+                                    if (error[b].length > 53) {
+                                        do {
+                                            for (c = 54; c > 0; c -= 1) {
+                                                if (error[b].charAt(c) === " ") {
+                                                    if (c === 54) {
+                                                        WScript.StdOut.Write("                          " + error[b].substring(0, c));
+                                                    } else {
+                                                        WScript.StdOut.WriteLine("                          " + error[b].substring(0, c));
+                                                    }
+                                                    error[b] = error[b].substr(c);
+                                                    break;
+                                                }
+                                            }
+                                        } while (error[b].length > 54);
+                                        if (error[b].length === 54) {
+                                            WScript.StdOut.Write("                          " + error[b]);
+                                        } else {
+                                            WScript.StdOut.WriteLine("                          " + error[b]);
+                                        }
+                                    }
+                                } else {
+                                    WScript.StdOut.WriteLine(error[b]);
+                                }
+                            }
+                        } else {
+                            WScript.Echo(error.join("|prettybreak|").replace(/\s+/g, " ").replace(/\|prettybreak\|/g, "\n").replace(/\s+Accepted/g, "\n   Accepted"));
+                        }
+                        fail = true;
+                    },
+                    openfile = function (x, y) {
+                        var a = WScript.CreateObject("Scripting.FileSystemObject"),
+                            b = {},
+                            c = [],
+                            d = {};
+                        if (a.FileExists(x)) {
+                            d = a.GetFile(x);
+                            b = d.OpenAsTextStream(1, 0);
+                            while (!b.AtEndOfStream) {
+                                c.push(b.ReadLine());
+                            }
+                            b.Close();WScript.Echo(c[0]);
+                            return c.join("\n");
+                        }
+                        if (y === "source") {
+                            outerror("Source file cannot be found.");
+                        }
+                        outerror("Diff file cannot be found.");
+                    },
+                    opendir = function (x, y) {
+                        var a = WScript.CreateObject("Scripting.FileSystemObject"),
+                            c = {},
+                            d = {},
+                            e = {},
+                            f = {},
+                            g = [],
+                            h = ""
+                            i = 0,
+                            j = ext.length,
+                            k = "";
+                        x = x.replace(/\\/g, "\\\\");
+                        if (a.FolderExists(x)) {
+                            d = a.GetFolder(x);
+                            e = d.Files;
+                            f = new Enumerator(e);
+                            for (; !f.atEnd(); f.moveNext()) {
+                                h = f.item().name;
+                                if (ext[0] === "") {
+                                    g.push(h + "\n");
+                                } else {
+                                    for (i = 0; i < j; i += 1) {
+                                        k = "." + ext[i];
+                                        if (h.indexOf(k) === h.length - k.length) {
+                                            g.push(openfile(f.item()));
+                                        }
+                                    }
+                                }
+                            }
+                            return;
+                        }
+                        if (y === "source") {
+                            outerror("Source directory cannot be found.");
+                        }
+                        outerror("Diff directory cannot be found.");
+                    },
+                    output = "",
+                    fso = {},
+                    file = [{}, {}],
+                    shell = {},
+                    color = "",
+                    css = {
+                        body: "body{font-family:\"Arial\";font-size:10px}",
+                        core: "h1{float:left;font-size:2em;margin:0 .5em .5em 0}h2{background:#fff;border-style:solid;border-width:.075em;float:left;font-size:1.8em;font-weight:bold;margin:0 .5em .5em 0;padding:0 .2em}p{clear:both;font-size:1.2em;margin:0 0 1em}table.diff{border-collapse:collapse}table.diff tbody{font-family:'Courier New',Courier,'Lucida Console',monospace;font-size:1.1em}table.diff tbody th{font-family:verdana,arial,'Bitstream Vera Sans',helvetica,sans-serif;font-weight:normal;padding:.5em .6em 0 2.4em;text-align:right;vertical-align:top}table.diff thead{font-family:Verdana;text-align:left}table.diff thead{border-bottom-style:solid;border-bottom-width:.1em}table.diff thead th{border-left-style:solid;border-left-width:.1em;padding-left:2em}table.diff tbody td{letter-spacing:.1em;padding:.5em .5em 0;vertical-align:top;white-space:pre}table.diff tbody td em{font-style:normal;margin:0 -.09em;padding:.05em 0}table.diff th.author{border-top-style:solid;border-top-width:.1em;padding:.4em;text-align:right}table.diff .replace em,table.diff .delete em,table.diff .insert em,table.diff .skip,table.diff tbody th,table.diff{border-style:solid;border-width:.1em}@media print{p,ul{display:none}div{width:100%}html td{font-size:.8em;white-space:normal}}",
+                        sdefault: "body.default{background:url(\"images/body.gif\") repeat-x #a8b8c8;color:#000}.default a{color:#f00}.default h2{border-color:#000}.default table.diff{border-color:#bbc}.default table.diff tbody th{background:#eed;border-color:#bbc;color:#886}.default table.diff thead{background:#efefef;border-bottom-color:#bbc}.default table.diff thead th{border-left-color:#bbc}.default table.diff .empty{background-color:#ddd}.default table.diff .replace{background-color:#fd8}.default table.diff .replace em{background-color:#ffd;border-color:#963;color:#630}.default table.diff .delete{background-color:#e99}.default table.diff .delete em{background-color:#fdd;border-color:#700;color:#600}.default table.diff .equal{background-color:#fff}.default table.diff .skip{background-color:#efefef;border-color:#aaa #bbc #aaa #aaa}.default table.diff .insert{background-color:#9e9}.default table.diff .insert em{background-color:#efc;border-color:#070;color:#050}.default table.diff th.author{background:#efefef;border-top-color:#bbc}",
+                        scoffee: "body.coffee{background:#dcb;color:#321}.coffee a{color:#900}.coffee h2{border-color:#600}.coffee table.diff{border-color:#966}.coffee table.diff tbody th{background:#edc;border-color:#966;color:#633}.coffee table.diff thead{background:#cba;border-bottom-color:#966}.coffee table.diff thead th{border-left-color:#966}.coffee table.diff .empty{background-color:#ddd}.coffee table.diff .replace{background-color:#fda}.coffee table.diff .replace em{background-color:#ffd;border-color:#963;color:#630}.coffee table.diff .delete{background-color:#ebb}.coffee table.diff .delete em{background-color:#fee;border-color:#700;color:#600}.coffee table.diff .equal{background-color:#fff8ee}.coffee table.diff .skip{background-color:#eee;border-color:#966}.coffee table.diff .insert{background-color:#cec}.coffee table.diff .insert em{background-color:#efc;border-color:#070;color:#050}.coffee table.diff th.author{background:#cba;border-top-color:#966}",
+                        sdark: "body.dark{background:#333;color:#eee}.dark a{color:#9cf}.dark h2{background:#def;border-color:#006;color:#036}.dark table.diff{border-color:#036}.dark table.diff tbody th{background:#369;border-color:#036;color:#def}.dark table.diff tbody td{border-color:#036}.dark table.diff thead{background:#036;border-bottom-color:#036;color:#def}.dark table.diff thead th{border-left-color:#abc}.dark table.diff .empty{background-color:#456}.dark table.diff .replace{background-color:#468;color:#def}.dark table.diff .replace em{background-color:#dff;border-color:#036;color:#036}.dark table.diff .delete{background-color:#600;color:#fbb}.dark table.diff .delete em{background-color:#fbb;border-color:#600;color:#600}.dark table.diff .equal{background-color:#024;color:#def}.dark table.diff .skip{background-color:#333;border-color:#036}.dark table.diff .insert{background-color:#696;color:#dfd}.dark table.diff .insert em{background-color:#efc;border-color:#060;color:#050}.dark table.diff th.author{background:#036;border-bottom-color:#036;color:#def}",
+                        scanvas: "body.canvas{background:#e8e8e8;color:#666}.canvas a{color:#450}.canvas h2{background:#f8f8ef;border-color:#664;box-shadow:0 .1em .2em rgba(128,128,92,0.75)}.canvas table.diff{border-color:#664}.canvas table.diff tbody th{background:#c8c8bf;border-color:#664}.canvas table.diff tbody td{background:#f8f8ef;border-color:#664}.canvas table.diff thead{background:#c8c8bf;border-bottom-color:#664;color:#664}.canvas table.diff thead th{border-left-color:#664}.canvas table.diff .empty{background-color:#ccc}.canvas table.diff .replace{background-color:#dda;color:#660}.canvas table.diff .replace em{background-color:#ffd;border-color:#664;color:#880}.canvas table.diff .delete{background-color:#da9;color:#600}.canvas table.diff .delete em{background-color:#fbc;border-color:#600;color:#933}.canvas table.diff .equal{background-color:#f8f8ef;color:#666}.canvas table.diff .skip{background-color:#eee;border-color:#664}.canvas table.diff .insert{background-color:#bd9;color:#040}.canvas table.diff .insert em{background-color:#efc;border-color:#060;color:#464}.canvas table.diff th.author{background:#f8f8ef;border-bottom-color:#664;color:#666}",
+                        sshadow: "body.shadow{background:#222;color:#eee}.shadow a{color:#9cf}.shadow button{background:#456;border-color:#789;color:#cde}.shadow button:hover,.shadow button:active{background:#ddd;color:#333}.shadow #update,.shadow #title_text{background:#ddd;border-color:#fff;color:#222}.shadow h1 img{border-color:#fff}.shadow h2{background:#eee;border-color:#333;box-shadow:0 .1em .2em rgba(0,0,0,0.75);color:#222}.shadow table.diff tbody th{background:#bbb;border-color:#999;color:#333}.shadow table.diff thead,.shadow table.diff thead th{background:#555;border-color:#999;color:#ddd}.shadow table.diff tbody td{background:#666;border-color:#999;color:#ddd}.shadow table.diff .empty{background-color:#999}.shadow table.diff .replace{background-color:#664;color:#bb8}.shadow table.diff .replace em{background-color:#440;border-color:#220;color:#cc9}.shadow table.diff .delete{background-color:#300;color:#c66}.shadow table.diff .delete em{background-color:#700;border-color:#c66;color:#f99}.shadow table.diff .equal{background-color:#333;color:#ddd}.shadow table.diff .skip{background-color:#000;border-color:#999}.shadow table.diff .insert{background-color:#040;color:#6c6}.shadow table.diff .insert em{background-color:#363;border-color:#6c0;color:#cfc}.shadow table.diff th.author{background:#555;border-bottom-color:#999;color:#ddd}.shadow table td{border-color:#999}.shadow table.diff{background:#333;border-color:#999;color:#ddd}",
+                        swhite: "body.white{color:#333}.white a{color:#009}.white h2,.white h3{border-color:#333}.white textarea{border-color:#333}.white textarea:hover{background:#eef8ff}.white table.diff{border-color:#333}.white table.diff tbody th{background:#eed;border-color:#bbc;color:#886}.white table.diff thead{background:#ddd;border-bottom-color:#333}.white table.diff thead th{border-left-color:#333}.white table.diff .empty{background-color:#ddd}.white table.diff .replace{background-color:#fea}.white table.diff .replace em{background-color:#ffd;border-color:#963;color:#630}.white table.diff .delete{background-color:#fbb}.white table.diff .delete em{background-color:#fdd;border-color:#700;color:#600}.white table.diff .equal{background-color:#fff}.white table.diff .skip{background-color:#efefef;border-color:#aaa #bbc #aaa #aaa}.white table.diff .insert{background-color:#bfb}.white table.diff .insert em{background-color:#efc;border-color:#070;color:#050}.white table.diff th.author{background:#efefef;border-top-color:#bbc}"
+                    },
+                    report = [];
+                if (prettydiff === undefined) {
+                    if (WScript.Fullname.indexOf("cscript.exe") > -1) {
+                        WScript.StdOut.WriteLine("The prettydiff function is undefined.");
+                        WScript.StdOut.WriteLine("This likely means the prettydiff.js file cannot be resolved at its specified location.");
+                    } else {
+                        WScript.Echo("The prettydiff function is undefined./nThis likely means the prettydiff.js file cannot be resolved.");
+                    }
+                    fail = true;
+                }
+                read = WScript.Arguments.Named("readmethod") || "file";
+                if (read !== "file" && read !== "directory" && read !== "subdirectory") {
+                    read = "file";
+                }
+                if (typeof WScript.Arguments.Named("source") === "string") {
+                    if (read === "file") {
+                        args.source = [openfile(WScript.Arguments.Named("source"), "source")].toString();
+                    } else if (read === "directory") {
+                        //args.source = opendir(WScript.Arguments.Named("source"), "source");
+                        opendir(WScript.Arguments.Named("source"), "source");
+                    }
+                } else {
+                    outerror("Error: Source file is required.");
+                }
+                if (!fail) {
+                    args.mode = WScript.Arguments.Named("mode") || "diff";
+                    args.lang = WScript.Arguments.Named("lang") || "javascript";
+                    args.context = (isNaN(WScript.Arguments.Named("context"))) ? "" : Number(WScript.Arguments.Named("context"));
+                    args.sourcelabel = WScript.Arguments.Named("sourcelabel") || "base";
+                    args.difflabel = WScript.Arguments.Named("difflabel") || "new";
+                    args.diffview = (WScript.Arguments.Named("diffview") === "inline") ? "inline" : "sidebyside";
+                    args.topcoms = ((WScript.Arguments.Named("topcoms") === "true" || WScript.Arguments.Named("topcoms") === true) ? true : false) || false;
+                    args.csvchar = WScript.Arguments.Named("csvchar") || ",";
+                    args.insize = (isNaN(WScript.Arguments.Named("insize"))) ? 4 : Number(WScript.Arguments.Named("insize"));
+                    args.inchar = WScript.Arguments.Named("inchar") || " ";
+                    args.indent = (WScript.Arguments.Named("indent") === "allman") ? "allman" : "knr";
+                    args.quote = ((WScript.Arguments.Named("quote") === "true" || WScript.Arguments.Named("quote") === true) ? true : false) || false;
+                    args.semicolon = ((WScript.Arguments.Named("semicolon") === "true" || WScript.Arguments.Named("semicolon") === true) ? true : false) || false;
+                    args.comments = (WScript.Arguments.Named("comments") === "noindent") ? "noindent" : "indent";
+                    args.style = (WScript.Arguments.Named("style")) ? "noindent" : "indent";
+                    args.html = ((WScript.Arguments.Named("html") === "true" || WScript.Arguments.Named("html") === true) ? true : false) || false;
+                    args.content = ((WScript.Arguments.Named("content") === "true" || WScript.Arguments.Named("content") === true) ? true : false) || false;
+                    args.force_indent = ((WScript.Arguments.Named("force_indent") === "true" || WScript.Arguments.Named("force_indent") === true) ? true : false) || false;
+                    color = WScript.Arguments.Named("color") || "shadow";
+                    if (args.mode !== "diff" && args.mode !== "beautify" && args.mode !== "minify") {
+                        args.mode = "diff";
+                    }
+                    if (args.lang !== "javascript" && args.lang !== "markup" && args.lang !== "html" && args.lang !== "css" && args.lang !== "csv" && args.lang !== "text") {
+                        args.lang = "javascript";
+                    } else if (args.lang === "html") {
+                        args.html = true;
+                    }
+                    if (args.mode === "diff") {
+                        if (WScript.Arguments.Named("diff") === "string") {
+                            if (read === "file") {
+                                args.diff = [openfile(WScript.Arguments.Named("diff"), "diff")];
+                            }
+                        } else {
+                            outerror("Error: Diff parameter is required unless mode is set to \"beautify\" or \"minify\".");
+                        }
+                    } else {
+                        args.diff = "";
+                    }
+                }
+                if (!fail) {
+                    pd = prettydiff(args);
+                    if (pd[0].indexOf("Error: ") === 0) {
+                        report = [""];
+                    } else {
+                        if (WScript.Fullname.indexOf("cscript.exe") > -1 && args.mode !== "diff") {
+                            report.push("\n\n\n\n");
+                        }
+                        report.push("<?xml version='1.0' encoding='UTF-8' ?><!DOCTYPE html PUBLIC '-//W3C//DTD XHTML 1.1//EN' 'http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd'><html xmlns='http://www.w3.org/1999/xhtml' xml:lang='en'><head><title>Pretty Diff - The difference tool</title><meta name='robots' content='index, follow'/> <meta name='DC.title' content='Pretty Diff - The difference tool'/> <link rel='canonical' href='http://prettydiff.com/' type='application/xhtml+xml'/><meta http-equiv='Content-Type' content='application/xhtml+xml;charset=UTF-8'/><meta http-equiv='Content-Style-Type' content='text/css'/><style type='text/css'>");
+                        report.push(css.body);
+                        report.push(css.core);
+                        report.push(css["s" + color]);
+                        report.push("</style></head><body class='");
+                        report.push(color);
+                        report.push("'><h1><a href='http://prettydiff.com/'>Pretty Diff - The difference tool</a></h1>");
+                        report.push(pd[1]);
+                        if (args.mode === "diff") {
+                            report.push("<p>Accessibility note. &lt;em&gt; tags in the output represent character differences per lines compared.</p>");
+                            report.push(pd[0]);
+                        }
+                        report.push("</body></html>");
+                    }
+                    output = WScript.Arguments.Named("output");
+                    if (typeof output === "string" && output !== "") {
+                        fso = WScript.CreateObject("Scripting.FileSystemObject");
+                        shell = WScript.CreateObject("WScript.Shell");
+                        if (fso.FolderExists(output)) {
+                            file[0] = fso.OpenTextFile(output);
+                        } else {
+                            file[0] = fso.CreateTextFile(output);
+                        }
+                        if (args.mode !== "diff") {
+                            file[0].WriteLine(pd[0]);
+                            file[0].Close();
+                            file[1] = fso.CreateTextFile(output + "-report.html");
+                            file[1].WriteLine(report.join(""));
+                            file[1].Close();
+                        } else {
+                            file[0].WriteLine(report.join(""));
+                            file[0].Close();
+                        }
+                    } else {
+                        if (WScript.Fullname.indexOf("cscript.exe") > -1) {
+                            if (args.mode !== "diff") {
+                                WScript.StdOut.WriteLine(pd[0]);
+                            }
+                            //WScript.StdOut.WriteLine(report.join(""));
+                        } else {
+                            if (args.mode !== "diff") {
+                                WScript.Echo(pd[0]);
+                            }
+                            WScript.Echo(report.join(""));
+                        }
+                    }
+                }
+            }());
+        </script>
+    </job>
+</package>
