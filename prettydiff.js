@@ -2262,7 +2262,9 @@ var prettydiff = function (api) {
                                                     if (token[c] === "{") {
                                                         obj = true;
                                                     }
-                                                    list[list.length - 1] = true;
+                                                    if (varline[varline.length - 1] === false) {
+                                                        list[list.length - 1] = true;
+                                                    }
                                                     return;
                                                 }
                                             }
@@ -2272,8 +2274,27 @@ var prettydiff = function (api) {
                                         }
                                     }());
                                 }
-                                if (list[list.length - 1] === true && obj === true) {
-                                    return level.push(indent);
+                                if (list[list.length - 1] === true) {
+                                    if (obj === true) {
+                                        return level.push(indent);
+                                    }
+                                    return (function () {
+                                        var c = 0,
+                                            d = 0;
+                                        for (c = a - 1; c > -1; c -= 1) {
+                                            if (token[c] === "}" || token[c] === "]") {
+                                                d += 1;
+                                            }
+                                            if (token[c] === "{" || token[c] === "[") {
+                                                d -= 1;
+                                            }
+                                            if (d === -1 && token[c] === "[") {
+                                                level[c] = indent;
+                                                return level.push("s");
+                                            }
+                                        }
+                                        return level.push("s");
+                                    }());
                                 }
                                 if (varline[varline.length - 1] === true && fortest === 0) {
                                     if (ltype !== "]") {
@@ -2423,24 +2444,24 @@ var prettydiff = function (api) {
                                     level[level.length - 1] = "x";
                                 }
                                 if (list[list.length - 1] === false) {
-                                    if (ltoke === "}" || ltoke === "[") {
+                                    if (ltoke === "}") {
                                         level[level.length - 1] = indent;
                                     }
                                     (function () {
                                         var c = 0,
-                                            d = 0;
+                                            d = 1;
                                         for (c = a - 1; c > -1; c -= 1) {
                                             if (token[c] === "]") {
                                                 d += 1;
                                             }
                                             if (token[c] === "[") {
                                                 d -= 1;
-                                                if (d === -1) {
+                                                if (d === 0) {
                                                     if (c > 0 && (token[c + 1] === "{" || token[c + 1] === "[")) {
                                                         level[c] = indent + 1;
                                                         return;
                                                     }
-                                                    if (token[c + 1] !== "[" || lastlist !== true) {
+                                                    if (token[c + 1] !== "[" || lastlist === false) {
                                                         level[c] = "x";
                                                         return;
                                                     }
@@ -2454,9 +2475,6 @@ var prettydiff = function (api) {
                             } else if ((ltoke === "{" && ctoke === "}") || (ltoke === "[" && ctoke === "]")) {
                                 level[level.length - 1] = "x";
                                 level.push("x");
-                            } else if (ctoke === ")" && (ltoke === "(" || ltoke === ")")) {
-                                level[level.length - 1] = "x";
-                                level.push("s");
                             } else if (ctoke === ")") {
                                 level[level.length - 1] = "x";
                                 level.push("s");
@@ -2606,8 +2624,6 @@ var prettydiff = function (api) {
                                 casetest[casetest.length - 1] = false;
                             } else if (ltoke === "}" && level[level.length - 1] === "x") {
                                 level[level.length - 1] = indent;
-                            } else if (ltoke === "[") {
-                                level[level.length - 1] = indent;
                             }
                             level.push("s");
                         };
@@ -2652,8 +2668,10 @@ var prettydiff = function (api) {
                         if (ctype === "word") {
                             word();
                         }
-                        ltype = ctype;
-                        ltoke = ctoke;
+                        if (ctype !== "comment" && ctype !== "comment-inline") {
+                            ltype = ctype;
+                            ltoke = ctoke;
+                        }
                     }
                 }());
                 //the result function generates the output
