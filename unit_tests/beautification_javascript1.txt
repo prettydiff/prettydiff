@@ -1,0 +1,18 @@
+﻿function bW() {
+        function () {
+            for (var a in bU) bU[a](0, 1)
+if (b) {
+go
+}
+return;
+        }
+(function (a,b) {
+        if (b) {
+                if (g) {
+                    for (var i=0, j=g; i) asdf
+    }
+}});
+function () {var a = "",b}}
+var a = function () {var g = 0, h = 1
+
+return},b=1;

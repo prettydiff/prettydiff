@@ -1,7 +1,14 @@
-﻿var a = ["" + c[d]],
+﻿
+var a = ["" + c[d]],
     f[c[d]] = "\"\"",
     queue = [
         [
             0, la, 0, lb
         ]
     ];
+/* test block
+testline
+
+
+testline
+*/

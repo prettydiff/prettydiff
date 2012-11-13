@@ -355,7 +355,7 @@ var exports = "",
             if (pd.o.inline.checked) {
                 api.diffview = "inline";
             }
-            if (pd.o.context.value === "" || isNaN(Number(pd.o.context.value))) {
+            if (pd.o.context.value === "" || (/^(\s+)$/).test(pd.o.context.value) || isNaN(Number(pd.o.context.value))) {
                 pd.o.context.value = "";
                 api.context = "";
             } else {
