@@ -3477,7 +3477,19 @@ var prettydiff = function (api) {
                                 r = false,
                                 s = 0;
                             for (a = 0; a < c; a += 1) {
-                                if (x.substr(a, 7).toLowerCase() === "<script") {
+                                if (mhtml === true && x.substr(a, 4).toLowerCase() === "<pre") {
+                                    for (b = a + 4; b < c; b += 1) {
+                                        if (x.charAt(b) + x.charAt(b + 1) + x.charAt(b + 2).toLowerCase() + x.charAt(b + 3).toLowerCase() + x.charAt(b + 4).toLowerCase() + x.charAt(b + 5) === "</pre>") {
+                                            if (/></.test(x.substr(a, b))) {
+                                                h += 2;
+                                            } else {
+                                                h += 3;
+                                            }
+                                            a = b + 5;
+                                            break;
+                                        }
+                                    }
+                                } else if (x.substr(a, 7).toLowerCase() === "<script") {
                                     for (b = a + 7; b < c; b += 1) {
                                         if (x.charAt(b) + x.charAt(b + 1) + x.charAt(b + 2).toLowerCase() + x.charAt(b + 3).toLowerCase() + x.charAt(b + 4).toLowerCase() + x.charAt(b + 5).toLowerCase() + x.charAt(b + 6).toLowerCase() + x.charAt(b + 7).toLowerCase() + x.charAt(b + 8) === "</script>") {
                                             if (/></.test(x.substr(a, b))) {
@@ -3752,6 +3764,7 @@ var prettydiff = function (api) {
                 }());
                 (function () {
                     var i = 0,
+                        j = 0,
                         y = markupmin({
                             source: x,
                             comments: mmode,
@@ -3878,13 +3891,21 @@ var prettydiff = function (api) {
                         } else if (y[i] === "<" && y[i + 1] === "?" && y[i + 2].toLowerCase() === "x" && y[i + 3].toLowerCase() === "m" && y[i + 4].toLowerCase() === "l") {
                             build.push(b("?>"));
                             token.push("T_xml");
+                        } else if (mhtml === true && y[i] === "<" && y[i + 1].toLowerCase() === "p" && y[i + 2].toLowerCase() === "r" && y[i + 3].toLowerCase() === "e") {
+                            build.push(b("</pre>"));
+                            token.push("T_pre");
                         } else if (y[i] === "<" && y[i + 1] === "?" && y[i + 2].toLowerCase() === "p" && y[i + 3].toLowerCase() === "h" && y[i + 4].toLowerCase() === "p") {
                             build.push(b("?>"));
                             token.push("T_php");
                         } else if (y[i] === "<" && y[i + 1].toLowerCase() === "s" && y[i + 2].toLowerCase() === "c" && y[i + 3].toLowerCase() === "r" && y[i + 4].toLowerCase() === "i" && y[i + 5].toLowerCase() === "p" && y[i + 6].toLowerCase() === "t") {
+                            j = i;
                             build.push(b(">"));
                             a = build[build.length - 1].toLowerCase().replace(/'/g, "\"");
-                            if (a.charAt(a.length - 2) === "/") {
+                            if (a.indexOf(" type=\"syntaxhighlighter\"") !== -1) {
+                                i = j;
+                                build[build.length - 1] = b("</script>");
+                                token.push("T_pre");
+                            } else if (a.charAt(a.length - 2) === "/") {
                                 token.push("T_singleton");
                             } else if (a.indexOf(" type=\"") === -1 || a.indexOf(" type=\"text/javascript\"") !== -1 || a.indexOf(" type=\"application/javascript\"") !== -1 || a.indexOf(" type=\"application/x-javascript\"") !== -1 || a.indexOf(" type=\"text/ecmascript\"") !== -1 || a.indexOf(" type=\"application/ecmascript\"") !== -1) {
                                 token.push("T_script");
@@ -3940,7 +3961,7 @@ var prettydiff = function (api) {
                         build[i] = build[i].replace(/\s*prettydiffcdatas/g, "<").replace(/\s*prettydiffcdatae/g, ">");
                         if (token[i] === "T_sgml" || token[i] === "T_xml") {
                             cinfo.push("parse");
-                        } else if (token[i] === "T_asp" || token[i] === "T_php" || token[i] === "T_ssi") {
+                        } else if (token[i] === "T_asp" || token[i] === "T_php" || token[i] === "T_ssi" || token[i] === "T_pre") {
                             cinfo.push("singleton");
                         } else if (token[i] === "T_comment") {
                             cinfo.push("comment");
@@ -4475,6 +4496,7 @@ var prettydiff = function (api) {
                             scriptStart = (/^(\s*<\!\-\-)/),
                             scriptEnd = (/(\-\->\s*)$/),
                             loop = cinfo.length,
+                            disqualify = (mhtml) ? (/^(\s?<((pre)|(script)))/) : (/^(\s?<script)/),
                             attrib = function (tag, end) {
                                 var a = [],
                                     b = 0,
@@ -4688,7 +4710,7 @@ var prettydiff = function (api) {
                                     h();
                                 }
                             }
-                            if ((cinfo[i] === "start" || cinfo[i] === "singleton") && build[i].substr(1).indexOf(" ") > 1) {
+                            if ((cinfo[i] === "start" || cinfo[i] === "singleton") && disqualify.test(build[i]) === false && build[i].substr(1).indexOf(" ") > 1) {
                                 if (build[i].lastIndexOf("/>") === build[i].length - 2) {
                                     build[i] = attrib(build[i], "/>");
                                 } else {
@@ -4839,24 +4861,7 @@ var prettydiff = function (api) {
                         b = (function () {
                             var a = 0,
                                 b = [
-                                    0,
-                                    0,
-                                    0,
-                                    0,
-                                    0,
-                                    0,
-                                    0,
-                                    0,
-                                    0,
-                                    0,
-                                    0,
-                                    0,
-                                    0,
-                                    0,
-                                    0,
-                                    0,
-                                    0,
-                                    0
+                                    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
                                 ],
                                 c = [
                                     0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
@@ -5055,24 +5060,7 @@ var prettydiff = function (api) {
                                 h = (function () {
                                     var a = 0,
                                         c = [
-                                            "*** Start Tags",
-                                            "End Tags",
-                                            "Singleton Tags",
-                                            "Comments",
-                                            "Flat String",
-                                            "String with Space at Start",
-                                            "String with Space at End",
-                                            "String with Space at Start and End",
-                                            "SGML",
-                                            "XML",
-                                            "Total Parsing Declarations",
-                                            "SSI",
-                                            "ASP",
-                                            "PHP",
-                                            "Total Server Side Tags",
-                                            "*** Script Tags",
-                                            "*** Style Tags",
-                                            "JavaScript/CSS Code"
+                                            "*** Start Tags", "End Tags", "Singleton Tags", "Comments", "Flat String", "String with Space at Start", "String with Space at End", "String with Space at Start and End", "SGML", "XML", "Total Parsing Declarations", "SSI", "ASP", "PHP", "Total Server Side Tags", "*** Script Tags", "*** Style Tags", "JavaScript/CSS Code"
                                         ],
                                         d = [],
                                         h = "",
@@ -5375,55 +5363,30 @@ var prettydiff = function (api) {
                         }());
                     summary = s + n + o;
                 }());
-                return build.join("").replace(/\n(\s)+\n/g, "\n\n").replace(/^\s+/, "");
+                return build.join("").replace(/^\s+/, "");
             },
             diffview = function (args) {
-                (function () {
-                    if (typeof args.baseTextLines !== "string") {
-                        args.baseTextLines = "Error: Cannot build diff view; baseTextLines is not defined.";
-                    }
-                    if (typeof args.newTextLines !== "string") {
-                        args.newTextLines = "Error: Cannot build diff view; newTextLines is not defined.";
-                    }
-                    if (args.inline !== true) {
-                        args.inline = false;
-                    }
-                    if (isNaN(Number(args.contextSize))) {
-                        args.contextSize = "";
-                    }
-                    if (typeof args.baseTextName !== "string") {
-                        args.baseTextName = "Base Source";
-                    }
-                    if (typeof args.newTextName !== "string") {
-                        args.newTextName = "New Source";
-                    }
-                    if (typeof args.tchar !== "string") {
-                        args.tchar = "";
-                    }
-                    if (isNaN(Number(args.tsize))) {
-                        if (args.tchar === "") {
-                            args.tsize = 0;
-                        } else {
-                            args.tsize = 1;
-                        }
-                    }
-                }());
                 var errorout = 0,
                     diffline = 0,
+                    baseTextLines = (typeof args.baseTextLines === "string") ? args.baseTextLines : "Error: Cannot build diff view; baseTextLines is not defined.",
+                    newTextLines = (typeof args.newTextLines === "string") ? args.newTextLines : "Error: Cannot build diff view; newTextLines is not defined.",
+                    baseTextName = (typeof args.baseTextName === "string") ? args.baseTextName : "Base Source",
+                    newTextName = (typeof args.newTextName === "string") ? args.newTextName : "New Source",
+                    context = ((/^([0-9]+)$/).test(args.contextSize)) ? Number(args.contextSize) : -1,
+                    tsize = ((/^([0-9]+)$/).test(args.tsize)) ? Number(args.contextSize) : 4,
+                    tchar = (typeof args.tchar === "string") ? args.tchar : " ",
+                    inline = (args.inline === true) ? true : false,
                     tab = (function () {
-                        var a = Number(args.tsize),
-                            b = 0,
+                        var b = 0,
                             c = [];
-                        if (args.tchar === "") {
+                        if (tchar === "") {
                             return "";
                         }
-                        for (b = 0; b < a; b += 1) {
-                            c.push(args.tchar);
+                        for (b = 0; b < tsize; b += 1) {
+                            c.push(tchar);
                         }
                         return c.join("");
                     }()),
-                    inline = args.inline,
-                    context = (args.contextSize === "") ? -1 : Number(args.contextSize),
                     stringAsLines = function (str) {
                         var lfpos = str.indexOf("\n"),
                             crpos = str.indexOf("\r"),
@@ -5436,10 +5399,8 @@ var prettydiff = function (api) {
                         }
                         return lines.split(linebreak);
                     },
-                    bta = stringAsLines(args.baseTextLines),
-                    nta = stringAsLines(args.newTextLines),
-                    baseTextName = args.baseTextName,
-                    newTextName = args.newTextName,
+                    bta = stringAsLines(baseTextLines),
+                    nta = stringAsLines(newTextLines),
                     opcodes = (function () {
                         var junkdict = {},
                             isbjunk = function (key) {
@@ -5499,8 +5460,7 @@ var prettydiff = function (api) {
                                             j = 0,
                                             k = 0,
                                             l = [
-                                                0,
-                                                0
+                                                0, 0
                                             ],
                                             besti = alo,
                                             bestj = blo,
