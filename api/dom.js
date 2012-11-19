@@ -58,6 +58,8 @@ var exports = "",
         dd: pd.$$("modediff"),
         df: pd.$$("dforce_indent-no"),
         dg: pd.$$("dforce_indent-yes"),
+        dh: pd.$$("diffcommentsy"),
+        di: pd.$$("diffcommentsn"),
         dm: pd.$$("diffscolony"),
         dn: pd.$$("diffscolonn"),
         dp: pd.$$("diffwide"),
@@ -184,7 +186,8 @@ var exports = "",
 
     //recycle bundles arguments in preparation for executing prettydiff
     pd.recycle = function (e) {
-        var api = {},
+        var c = "",
+            api = {},
             output = [],
             domain = /^(https?:\/\/|file:\/\/\/)/,
             event = e || window.event,
@@ -295,12 +298,14 @@ var exports = "",
             api.mode = "minify";
         } else if (pd.o.dd) {
             pd.o.context = pd.$$("contextSize");
+            c = pd.o.context.value;
             pd.o.inline = pd.$$("inline");
             pd.o.bl = pd.$$("baselabel");
             pd.o.nl = pd.$$("newlabel");
             pd.o.hd = pd.$$("htmld-yes");
             pd.o.bo = pd.$$("baseText");
             pd.o.nx = pd.$$("newText");
+            pd.o.dh = pd.$$("diffcommentsy");
             pd.o.dn = pd.$$("diffscolonn");
             pd.o.dy = pd.$$("diffquoten");
             pd.o.da = pd.$$("diff-tab");
@@ -316,6 +321,9 @@ var exports = "",
             api.sourcelabel = pd.o.bl.value;
             if (pd.o.dg.checked) {
                 api.force_indent = true;
+            }
+            if (pd.o.dh.checked) {
+                api.diffcomments = true;
             }
             if (pd.o.du.checked) {
                 api.content = true;
@@ -355,11 +363,11 @@ var exports = "",
             if (pd.o.inline.checked) {
                 api.diffview = "inline";
             }
-            if (pd.o.context.value === "" || (/^(\s+)$/).test(pd.o.context.value) || isNaN(Number(pd.o.context.value))) {
+            if ((/^([0-9]+)$/).test(c) && (c === "0" || c.charAt(0) !== "0")) {
+                api.context = Number(c);
+            } else {
                 pd.o.context.value = "";
                 api.context = "";
-            } else {
-                api.context = Number(pd.o.context.value);
             }
             if (pd.o.jd.checked) {
                 api.indent = "allman";
@@ -1244,7 +1252,8 @@ var exports = "",
     //store tool changes into localStorage in effort to maintain state
     pd.options = function (x) {
         var a = {},
-            b = 0;
+            b = 0,
+            c = "";
         if (!pd.ls) {
             return;
         }
@@ -1345,10 +1354,11 @@ var exports = "",
         } else if (x === pd.o.he && pd.o.dd.checked) {
             pd.optionString[8] = "api.html: html-no";
         } else if (x === pd.o.context) {
-            if (pd.o.context.value === "" || isNaN(pd.o.context.value)) {
-                pd.optionString[9] = "api.context: \"\"";
+            c = pd.o.context.value;
+            if ((/^([0-9]+)$/).test(c) && (c === "0" || c.charAt(0) !== "0")) {
+                pd.optionString[9] = "api.context: " + c;
             } else {
-                pd.optionString[9] = "api.context: " + pd.o.context.value;
+                pd.optionString[9] = "api.context: \"\"";
             }
         } else if (x === pd.o.du) {
             pd.optionString[10] = "api.content: true";
@@ -1378,6 +1388,10 @@ var exports = "",
             pd.optionString[16] = "api.conditional: true";
         } else if (x === pd.o.cd || x === pd.o.cf) {
             pd.optionString[16] = "api.conditional: false";
+        } else if (x === pd.o.dh) {
+            pd.optionString[17] = "api.diffcomments: true";
+        } else if (x === pd.o.di) {
+            pd.optionString[17] = "api.diffcomments: false";
         } else if (x === pd.o.re) {
             pd.o.re = pd.$$("diffreport");
             pd.o.rf = pd.$$("diffreportbody");
@@ -1516,7 +1530,7 @@ var exports = "",
                 a.setAttribute("title", "Convert diff report to an HTML table.");
             }
         }
-        for (b = 0; b < 16; b += 1) {
+        for (b = 0; b < 17; b += 1) {
             if (typeof pd.optionString[b] !== "string" || pd.optionString[b] === "") {
                 pd.optionString[b] = "pdempty";
             }
@@ -1801,6 +1815,7 @@ var exports = "",
         pd.o.bf.checked = true;
         pd.o.cd.checked = true;
         pd.o.cf.checked = true;
+        pd.o.dh.checked = true;
         if (pd.o.bo) {
             pd.o.bo.style.height = "";
         }
@@ -2083,7 +2098,7 @@ var exports = "",
                                 pd.o.hd.checked = true;
                                 pd.o.hm.checked = true;
                                 pd.o.hy.checked = true;
-                            } else if (d[0] === "api.context" && !isNaN(d[1])) {
+                            } else if (d[0] === "api.context" && ((/^([0-9]+)$/).test(d[1]) && (d[1] === "0" || d[1].charAt(0) !== "0"))) {
                                 pd.o.context.value = d[1];
                             } else if (d[0] === "api.content" && d[1] === "true") {
                                 pd.o.du.checked = true;
@@ -2098,6 +2113,8 @@ var exports = "",
                             } else if (d[0] === "api.conditional" && d[1] === "true") {
                                 pd.o.ce.checked = true;
                                 pd.o.cg.checked = true;
+                            } else if (d[0] === "api.diffcomments" && d[1] === "true") {
+                                pd.o.dh.checked = true;
                             }
                         }
                     }
@@ -2361,86 +2378,6 @@ var exports = "",
                 }
                 if (pd.o.sh.innerHTML === "Normal view") {
                     pd.o.ao.style.display = "none";
-                }
-            } else {
-                pd.o.bb = pd.$$("modebeautify");
-                pd.o.dd = pd.$$("modediff");
-                pd.o.mm = pd.$$("modeminify");
-                pd.o.la = pd.$$("language");
-                lang = pd.o.la[pd.o.la.selectedIndex].value;
-                if (!pd.ls) {
-                    pd.o.rk.style.display = "none";
-                }
-                if (lang === "csv") {
-                    pd.o.csvp.style.display = "block";
-                }
-                if (pd.o.mm.checked) {
-                    pd.o.bd.style.display = "none";
-                    pd.o.md.style.display = "block";
-                    if (pd.o.bt) {
-                        pd.o.bt.style.display = "none";
-                    }
-                    if (pd.o.nt) {
-                        pd.o.nt.style.display = "none";
-                    }
-                    if (pd.o.dops) {
-                        pd.o.dops.style.display = "none";
-                    }
-                    pd.o.bops.style.display = "none";
-                    if (lang === "text" || lang === "csv") {
-                        pd.o.mops.style.display = "none";
-                    } else {
-                        pd.o.mops.style.display = "block";
-                    }
-                } else if (pd.o.dd && pd.o.dd.checked) {
-                    m = pd.o.la.getElementsByTagName("option");
-                    for (l = m.length - 1; l > -1; l -= 1) {
-                        m[l].disabled = false;
-                    }
-                    pd.o.bd.style.display = "none";
-                    pd.o.md.style.display = "none";
-                    pd.o.bt.style.display = "block";
-                    pd.o.nt.style.display = "block";
-                    pd.o.dops.style.display = "block";
-                    pd.o.bops.style.display = "none";
-                    pd.o.mops.style.display = "none";
-                    if (lang === "text" || lang === "csv") {
-                        pd.o.db.style.display = "none";
-                    } else {
-                        pd.o.db.style.display = "block";
-                    }
-                } else if (pd.o.bb.checked) {
-                    if (pd.o.dops) {
-                        pd.o.dops.style.display = "none";
-                    }
-                    pd.o.mops.style.display = "none";
-                    pd.o.bd.style.display = "block";
-                    pd.o.md.style.display = "none";
-                    if (pd.o.bt) {
-                        pd.o.bt.style.display = "none";
-                    }
-                    if (pd.o.nt) {
-                        pd.o.nt.style.display = "none";
-                    }
-                    if (lang === "text" || lang === "csv") {
-                        pd.o.db.style.display = "none";
-                    } else {
-                        pd.o.db.style.display = "block";
-                    }
-                }
-                if (pd.o.dt && pd.o.dt.checked) {
-                    pd.o.bt.className = "difftall";
-                    pd.o.nt.className = "difftall";
-                    pd.o.bd.className = "tall";
-                    pd.o.md.className = "tall";
-                }
-                if (pd.o.bw.checked) {
-                    pd.o.bc.style.background = "#eef8ff";
-                    pd.o.bc.style.color = "#000";
-                }
-                if (pd.o.dw && pd.o.dw.checked) {
-                    pd.o.dc.style.background = "#eef8ff";
-                    pd.o.dc.style.color = "#000";
                 }
             }
             if (location && location.href && location.href.indexOf("?") !== -1) {

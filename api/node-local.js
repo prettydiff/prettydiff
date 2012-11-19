@@ -27,6 +27,7 @@ var prettydiff = require('../prettydiff.js'),
         sourcelabel: "base",
         difflabel: "new",
         conditional: false,
+        diffcomments: false,
         readmethod: "screen",
         output: ""
     },
@@ -112,6 +113,9 @@ var prettydiff = require('../prettydiff.js'),
                 }
                 if (d[b][0] === "conditional" && d[b][1] === "true") {
                     options.conditional = true;
+                }
+                if (d[b][0] === "diffcomments" && d[b][1] === "true") {
+                    options.diffcomments = true;
                 }
                 if (d[b][0] === "readmethod" && d[b][1] === "file") {
                     options.readmethod = "file";
@@ -227,6 +231,9 @@ var prettydiff = require('../prettydiff.js'),
         a.push("* conditional  - boolean - If true then conditional comments used by Internet");
         a.push("                           Explorer are preserved at minification of markup.");
         a.push("                           Default is false.");
+        a.push("");
+        a.push("* diffcomments - boolean - If true then comments will be preserved so that both");
+        a.push("                           code and comments are compared by the diff engine.");
         a.push("");
         a.push("* output       - string  - The location of the output file. If the file does");
         a.push("                           not exist it will be created. If this argument is");

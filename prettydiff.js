@@ -2348,7 +2348,7 @@ var prettydiff = function (api) {
                             }
                             if (ctoke === "{") {
                                 casetest.push(false);
-                                if (jbrace && ltype !== "operator") {
+                                if (jbrace && ltype !== "operator" && ltoke !== "return") {
                                     level[level.length - 1] = indent - 1;
                                 } else if (ltoke === ")") {
                                     level[level.length - 1] = "s";
@@ -2720,7 +2720,7 @@ var prettydiff = function (api) {
                         }
                     }
                     return c.join("");
-                }()).replace(/(\s+)$/, "");
+                }()).replace(/(\s+)$/, "").replace(/\n /g, "\n");
                 //the analysis report is generated in this function
                 (function () {
                     var a = 0,
@@ -6332,6 +6332,7 @@ var prettydiff = function (api) {
                     csourcelabel = (typeof api.sourcelabel === "string" && api.sourcelabel.length > 0) ? api.sourcelabel : "base",
                     cdifflabel = (typeof api.difflabel === "string" && api.difflabel.length > 0) ? api.difflabel : "new",
                     ccond = (typeof api.conditional === "boolean") ? api.conditional : false,
+                    cdiffcomments = (typeof api.diffcomments === "boolean") ? api.diffcomments : false,
                     proctime = function () {
                         var d = "",
                             e = "",
@@ -6547,6 +6548,18 @@ var prettydiff = function (api) {
                                     } else if (e[c][1] === "false") {
                                         cforce = false;
                                     }
+                                } else if (e[c][0] === "api.conditional") {
+                                    if (e[c][1] === "true") {
+                                        ccond = true;
+                                    } else if (e[c][1] === "false") {
+                                        ccond = false;
+                                    }
+                                } else if (e[c][0] === "api.diffcomments") {
+                                    if (e[c][1] === "true") {
+                                        cdiffcomments = true;
+                                    } else if (e[c][1] === "false") {
+                                        cdiffcomments = false;
+                                    }
                                 }
                             }
                         }
@@ -6609,8 +6622,13 @@ var prettydiff = function (api) {
                                     auto = "JavaScript";
                                 }
                             } else if (/^(\s*[\$\.#@a-z0-9])|^(\s*\/\*)|^(\s*\*\s*\{)/i.test(a) && !/^(\s*if\s*\()/.test(a) && a.indexOf("{") !== -1 && !(/\=\s*(\{|\[|\()/).test(f) && !(/(\+|\-|\=|\*|\?)\=/).test(f) && !(/function(\s+\w+)*\s*\(/).test(f)) {
-                                clang = "css";
-                                auto = "CSS";
+                                if (/^(\s*return;?\s*{)/.test(a) && /(\};?\s*)$/.test(a)) {
+                                    clang = "javascript";
+                                    auto = "JavaScript";
+                                } else {
+                                    clang = "css";
+                                    auto = "CSS";
+                                }
                             } else if (cmode === "diff") {
                                 clang = "text";
                                 auto = "unknown";
@@ -6777,106 +6795,179 @@ var prettydiff = function (api) {
                 }
                 if (cmode === "diff") {
                     if (clang === "css") {
-                        apioutput = jsmin({
-                            source: csource,
-                            level: 3,
-                            type: "css",
-                            alter: false,
-                            fcomment: ctopcoms
-                        });
-                        apioutput = cleanCSS({
-                            source: apioutput,
-                            size: cinsize,
-                            character: cinchar,
-                            comment: ccomm,
-                            alter: false
-                        });
-                        apidiffout = jsmin({
-                            source: cdiff,
-                            level: 3,
-                            type: "css",
-                            alter: false,
-                            fcomment: false
-                        });
-                        apidiffout = cleanCSS({
-                            source: apidiffout,
-                            size: cinsize,
-                            character: cinchar,
-                            comment: ccomm,
-                            alter: false
-                        });
+                        if (cdiffcomments === true) {
+                            apioutput = cleanCSS({
+                                source: csource,
+                                size: cinsize,
+                                character: cinchar,
+                                comment: ccomm,
+                                alter: false
+                            });
+                            apidiffout = cleanCSS({
+                                source: cdiff,
+                                size: cinsize,
+                                character: cinchar,
+                                comment: ccomm,
+                                alter: false
+                            });
+                        } else {
+                            apioutput = jsmin({
+                                source: csource,
+                                level: 3,
+                                type: "css",
+                                alter: false,
+                                fcomment: ctopcoms
+                            });
+                            apioutput = cleanCSS({
+                                source: apioutput,
+                                size: cinsize,
+                                character: cinchar,
+                                comment: ccomm,
+                                alter: false
+                            });
+                            apidiffout = jsmin({
+                                source: cdiff,
+                                level: 3,
+                                type: "css",
+                                alter: false,
+                                fcomment: false
+                            });
+                            apidiffout = cleanCSS({
+                                source: apidiffout,
+                                size: cinsize,
+                                character: cinchar,
+                                comment: ccomm,
+                                alter: false
+                            });
+                        }
                     } else if (clang === "csv") {
                         apioutput = csvbeauty(csource, ccsvchar);
                         apidiffout = csvbeauty(cdiff, ccsvchar);
                     } else if (clang === "markup") {
-                        apioutput = markup_beauty({
-                            source: csource,
-                            insize: cinsize,
-                            inchar: cinchar,
-                            mode: "diff",
-                            comments: ccomm,
-                            style: cstyle,
-                            html: chtml,
-                            content: ccontent,
-                            force_indent: cforce,
-                            conditional: ccond
-                        }).replace(/\n[\t]* \/>/g, "");
-                        apidiffout = markup_beauty({
-                            source: cdiff,
-                            insize: cinsize,
-                            inchar: cinchar,
-                            mode: "diff",
-                            comments: ccomm,
-                            style: cstyle,
-                            html: chtml,
-                            content: ccontent,
-                            force_indent: cforce,
-                            conditional: ccond
-                        }).replace(/\n[\t]* \/>/g, "");
+                        if (cdiffcomments === true) {
+                            apioutput = markup_beauty({
+                                source: csource,
+                                insize: cinsize,
+                                inchar: cinchar,
+                                mode: "beautify",
+                                comments: ccomm,
+                                style: cstyle,
+                                html: chtml,
+                                content: ccontent,
+                                force_indent: cforce,
+                                conditional: ccond
+                            }).replace(/\n[\t]* \/>/g, "");
+                            apidiffout = markup_beauty({
+                                source: cdiff,
+                                insize: cinsize,
+                                inchar: cinchar,
+                                mode: "beautify",
+                                comments: ccomm,
+                                style: cstyle,
+                                html: chtml,
+                                content: ccontent,
+                                force_indent: cforce,
+                                conditional: ccond
+                            }).replace(/\n[\t]* \/>/g, "");
+                        } else {
+                            apioutput = markup_beauty({
+                                source: csource,
+                                insize: cinsize,
+                                inchar: cinchar,
+                                mode: "diff",
+                                comments: ccomm,
+                                style: cstyle,
+                                html: chtml,
+                                content: ccontent,
+                                force_indent: cforce,
+                                conditional: ccond
+                            }).replace(/\n[\t]* \/>/g, "");
+                            apidiffout = markup_beauty({
+                                source: cdiff,
+                                insize: cinsize,
+                                inchar: cinchar,
+                                mode: "diff",
+                                comments: ccomm,
+                                style: cstyle,
+                                html: chtml,
+                                content: ccontent,
+                                force_indent: cforce,
+                                conditional: ccond
+                            }).replace(/\n[\t]* \/>/g, "");
+                        }
                     } else if (clang === "text") {
                         apioutput = csource;
                         apidiffout = cdiff;
                     } else {
-                        apioutput = jsmin({
-                            source: csource,
-                            level: 3,
-                            type: "javascript",
-                            alter: false,
-                            fcomments: false
-                        });
-                        apioutput = jspretty({
-                            source: apioutput,
-                            insize: cinsize,
-                            inchar: cinchar,
-                            preserve: true,
-                            preserve_max: 1,
-                            inlevel: 0,
-                            space: true,
-                            braces: cindent,
-                            inarray: false,
-                            comments: ccomm,
-                            content: ccontent
-                        });
-                        apidiffout = jsmin({
-                            source: cdiff,
-                            level: 3,
-                            type: "javascript",
-                            alter: false,
-                            fcomments: false
-                        });
-                        apidiffout = jspretty({
-                            source: apidiffout,
-                            insize: cinsize,
-                            inchar: cinchar,
-                            preserve: true,
-                            preserve_max: 1,
-                            inlevel: 0,
-                            space: true,
-                            braces: cindent,
-                            inarray: false,
-                            comments: ccomm,
-                            content: ccontent
-                        });
+                        if (cdiffcomments === true) {
+                            apioutput = jspretty({
+                                source: csource,
+                                insize: cinsize,
+                                inchar: cinchar,
+                                preserve: true,
+                                preserve_max: 1,
+                                inlevel: 0,
+                                space: true,
+                                braces: cindent,
+                                inarray: false,
+                                comments: ccomm,
+                                content: ccontent
+                            });
+                            apidiffout = jspretty({
+                                source: cdiff,
+                                insize: cinsize,
+                                inchar: cinchar,
+                                preserve: true,
+                                preserve_max: 1,
+                                inlevel: 0,
+                                space: true,
+                                braces: cindent,
+                                inarray: false,
+                                comments: ccomm,
+                                content: ccontent
+                            });
+                        } else {
+                            apioutput = jsmin({
+                                source: csource,
+                                level: 3,
+                                type: "javascript",
+                                alter: false,
+                                fcomments: false
+                            });
+                            apioutput = jspretty({
+                                source: apioutput,
+                                insize: cinsize,
+                                inchar: cinchar,
+                                preserve: true,
+                                preserve_max: 1,
+                                inlevel: 0,
+                                space: true,
+                                braces: cindent,
+                                inarray: false,
+                                comments: ccomm,
+                                content: ccontent
+                            });
+                            apidiffout = jsmin({
+                                source: cdiff,
+                                level: 3,
+                                type: "javascript",
+                                alter: false,
+                                fcomments: false
+                            });
+                            apidiffout = jspretty({
+                                source: apidiffout,
+                                insize: cinsize,
+                                inchar: cinchar,
+                                preserve: true,
+                                preserve_max: 1,
+                                inlevel: 0,
+                                space: true,
+                                braces: cindent,
+                                inarray: false,
+                                comments: ccomm,
+                                content: ccontent
+                            });
+                        }
                     }
                     if (cquote === true) {
                         apioutput = apioutput.replace(/'/g, "\"");

@@ -77,6 +77,8 @@
                             error.push("");
                             error.push("* conditional  - boolean - If true then conditional comments used by Internet Explorer are preserved at minification of markup. Default is false.");
                             error.push("");
+                            error.push("* diffcomments - boolean - If true then comments will be preserved so that both code and comments are compared by the diff engine.");
+                            error.push("");
                             error.push("* output       - string  - The location of the output file. If the file does not exist it will be created. If this argument is missing output will print to screen.");
                             error.push("");
                             error.push("* color        - string  - The color scheme of the reports. Default is shadow.");
