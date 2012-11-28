@@ -120,6 +120,8 @@ var exports = "",
         sh: pd.$$("hideOptions"),
         to: pd.$$("top"),
         wb: document.getElementsByTagName("body")[0],
+        wc: pd.$$("beau-wrap"),
+        wd: pd.$$("diff-wrap"),
         bcv: "",
         css: {
             body: "body{font-family:\"Arial\";font-size:10px}",
@@ -242,10 +244,12 @@ var exports = "",
             pd.o.bc = pd.$$("beau-char");
             pd.o.bi = pd.$$("beautyinput");
             pd.o.bq = pd.$$("beau-quan");
+            pd.o.wc = pd.$$("beau-wrap");
             pd.o.is = pd.$$("inscript-yes");
             pd.o.iz = pd.$$("incomment-no");
             pd.o.bg = pd.$$("bforce_indent-yes");
             pd.o.bx.value = "";
+            api.wrap = pd.o.wc.value;
             if (pd.o.bg.checked) {
                 api.force_indent = true;
             }
@@ -313,12 +317,14 @@ var exports = "",
             pd.o.dz = pd.$$("diff-line");
             pd.o.dc = pd.$$("diff-char");
             pd.o.dq = pd.$$("diff-quan");
+            pd.o.wd = pd.$$("diff-wrap");
             pd.o.du = pd.$$("diffcontentn");
             pd.o.id = pd.$$("inscriptd-yes");
             pd.o.ps = pd.$$("diff-save");
             pd.o.dg = pd.$$("dforce_indent-yes");
             api.difflabel = pd.o.nl.value;
             api.sourcelabel = pd.o.bl.value;
+            api.wrap = pd.o.wd.value;
             if (pd.o.dg.checked) {
                 api.force_indent = true;
             }
@@ -1392,6 +1398,10 @@ var exports = "",
             pd.optionString[17] = "api.diffcomments: true";
         } else if (x === pd.o.di) {
             pd.optionString[17] = "api.diffcomments: false";
+        } else if (x === pd.o.wc && !isNaN(pd.o.wc.value)) {
+            pd.optionString[18] = "api.wrap: " + pd.o.wc.value;
+        } else if (x === pd.o.wd && !isNaN(pd.o.wd.value)) {
+            pd.optionString[18] = "api.wrap: " + pd.o.wd.value;
         } else if (x === pd.o.re) {
             pd.o.re = pd.$$("diffreport");
             pd.o.rf = pd.$$("diffreportbody");
@@ -1530,7 +1540,7 @@ var exports = "",
                 a.setAttribute("title", "Convert diff report to an HTML table.");
             }
         }
-        for (b = 0; b < 17; b += 1) {
+        for (b = 0; b < 18; b += 1) {
             if (typeof pd.optionString[b] !== "string" || pd.optionString[b] === "") {
                 pd.optionString[b] = "pdempty";
             }
@@ -1816,6 +1826,8 @@ var exports = "",
         pd.o.cd.checked = true;
         pd.o.cf.checked = true;
         pd.o.dh.checked = true;
+        pd.o.wc.value = "72";
+        pd.o.wd.value = "72";
         if (pd.o.bo) {
             pd.o.bo.style.height = "";
         }
@@ -2115,6 +2127,9 @@ var exports = "",
                                 pd.o.cg.checked = true;
                             } else if (d[0] === "api.diffcomments" && d[1] === "true") {
                                 pd.o.dh.checked = true;
+                            } else if (d[0] === "api.wrap" && !isNaN(d[1])) {
+                                pd.o.wc.value = d[1];
+                                pd.o.wd.value = d[1];
                             }
                         }
                     }

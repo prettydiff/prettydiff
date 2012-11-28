@@ -28,6 +28,7 @@ var prettydiff = require('../prettydiff.js'),
         difflabel: "new",
         conditional: false,
         diffcomments: false,
+        wrap: 0,
         readmethod: "screen",
         output: ""
     },
@@ -116,6 +117,13 @@ var prettydiff = require('../prettydiff.js'),
                 }
                 if (d[b][0] === "diffcomments" && d[b][1] === "true") {
                     options.diffcomments = true;
+                }
+                if (d[b][0] === "wrap") {
+                    if (isNaN(d[b][1])) {
+                        options.wrap = 0;
+                    } else {
+                        options.wrap = Number(d[b][1]);
+                    }
                 }
                 if (d[b][0] === "readmethod" && d[b][1] === "file") {
                     options.readmethod = "file";

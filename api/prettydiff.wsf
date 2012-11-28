@@ -79,16 +79,18 @@
                             error.push("");
                             error.push("* diffcomments - boolean - If true then comments will be preserved so that both code and comments are compared by the diff engine.");
                             error.push("");
+                            error.push("* wrap         - string  - The number of characters text content in a markup document is allowed before wrapping onto a new line.  Default is 0 which disables text wrapping.");
+                            error.push("");
                             error.push("* output       - string  - The location of the output file. If the file does not exist it will be created. If this argument is missing output will print to screen.");
                             error.push("");
                             error.push("* color        - string  - The color scheme of the reports. Default is shadow.");
                             error.push("                 Accepted values: default, coffee, dark, canvas, shadow, white");
                             error.push("");
-                            error.push("* readmethod   - string  - The readmethod determines the quantity of files to read. The default value is 'file' which will operate against a single file. The value 'file' requires that you point to an actual file for the source and diff arguments. The values 'directory' and 'subdirectory' require directories for values to source and diff. The value 'directory' will include all files location in the target directory, but not any child directories.");
-                            error.push("                 Accepted values: file, directory, subdirectory");
-                            error.push("");
-                            error.push("* extensions   - string  - If readmethod is 'directory' or 'subdirectory' this will allow access limits to specified file types. This takes a comma separated list: /extensions:\"html,css,xml\"");
-                            error.push("");
+                            //error.push("* readmethod   - string  - The readmethod determines the quantity of files to read. The default value is 'file' which will operate against a single file. The value 'file' requires that you point to an actual file for the source and diff arguments. The values 'directory' and 'subdirectory' require directories for values to source and diff. The value 'directory' will include all files location in the target directory, but not any child directories.");
+                            //error.push("                 Accepted values: file, directory, subdirectory");
+                            //error.push("");
+                            //error.push("* extensions   - string  - If readmethod is 'directory' or 'subdirectory' this will allow access limits to specified file types. This takes a comma separated list: /extensions:\"html,css,xml\"");
+                            //error.push("");
                         }
                         if ((WScript.Arguments.Count() === 1 && !help) || WScript.Arguments.Count() > 0) {
                             error.push("");
@@ -217,10 +219,10 @@
                     }
                     fail = true;
                 }
-                read = WScript.Arguments.Named("readmethod") || "file";
+                /*read = WScript.Arguments.Named("readmethod") || "file";
                 if (read !== "file" && read !== "directory" && read !== "subdirectory") {
                     read = "file";
-                }
+                }*/
                 if (typeof WScript.Arguments.Named("source") === "string") {
                     if (read === "file") {
                         args.source = [openfile(WScript.Arguments.Named("source"), "source")].toString();
@@ -250,6 +252,9 @@
                     args.html = ((WScript.Arguments.Named("html") === "true" || WScript.Arguments.Named("html") === true) ? true : false) || false;
                     args.content = ((WScript.Arguments.Named("content") === "true" || WScript.Arguments.Named("content") === true) ? true : false) || false;
                     args.force_indent = ((WScript.Arguments.Named("force_indent") === "true" || WScript.Arguments.Named("force_indent") === true) ? true : false) || false;
+                    args.conditional = ((WScript.Arguments.Named("conditional") === "true" || WScript.Arguments.Named("conditional") === true) ? true : false) || false;
+                    args.diffcomments = ((WScript.Arguments.Named("diffcomments") === "true" || WScript.Arguments.Named("diffcomments") === true) ? true : false) || false;
+                    args.wrap = (isNaN(WScript.Arguments.Named("force_indent"))) ? 0 : WScript.Arguments.Named("force_indent");
                     color = WScript.Arguments.Named("color") || "shadow";
                     if (args.mode !== "diff" && args.mode !== "beautify" && args.mode !== "minify") {
                         args.mode = "diff";

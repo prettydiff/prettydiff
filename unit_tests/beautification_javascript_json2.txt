@@ -16,3 +16,7 @@ HotelDetails.packageInfo = {
         ]
     }
 }
+d.o = {e: "",
+f: {g:"", f:""},
+h: 0,
+i : {j:"", k ""}} 
