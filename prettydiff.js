@@ -2571,7 +2571,7 @@ var prettydiff = function prettydiff(api) {
                             level.push("s");
                         },
                         word = function jspretty__algorithm_word() {
-                            if (a - 1 === lines[l][0] && ltype !== "method" && ltype !== "separator" && ltype !== "operator" && ltype !== "start") {
+                            if (a - 1 === lines[l][0] && ltype !== "method" && ltype !== "separator" && ltype !== "operator" && ltype !== "start" && ltoke !== "}") {
                                 ltoke = ";";
                                 ltype = "separator";
                                 if (varline[varline.length - 1] === true) {
@@ -2619,19 +2619,34 @@ var prettydiff = function prettydiff(api) {
                                 if (fortest === 0) {
                                     indent += 1;
                                 }
-                            } else if ((ctoke === "default" || ctoke === "case") && casetest[casetest.length - 1] === false) {
-                                if (ltoke === "{") {
-                                    level[level.length - 1] -= 1;
+                            } else if (ctoke === "default" || ctoke === "case") {
+                                if (casetest[casetest.length - 1] === false) {
+                                    if (ltoke === "{") {
+                                        level[level.length - 1] -= 1;
+                                    }
+                                    if (ltoke === "{") {
+                                        indent -= 1;
+                                    }
+                                    casetest[casetest.length - 1] = true;
                                 }
-                                if (ltoke === "{") {
+                                if (ltoke === "}") {
                                     indent -= 1;
+                                    level[level.length - 1] = indent;
                                 }
-                                casetest[casetest.length - 1] = true;
-                            } else if (ctoke === "break" && casetest[casetest.length - 1] === true) {
+                            } else if ((ctoke === "break" || ctoke === "return") && casetest[casetest.length - 1] === true) {
                                 level[level.length - 1] = indent;
-                                if (a < b - 2 && token[a + 2] !== "}") {
-                                    indent -= 1;
-                                }
+                                (function jspretty__algorithm_word_break() {
+                                    var c = 0;
+                                    for (c = a + 1; c < b; c += 1) {
+                                        if (token[c] === "}") {
+                                            return;
+                                        }
+                                        if (token[c] === "case" || token[c] === "default" || token[c] === "switch") {
+                                            indent -= 1;
+                                            return;
+                                        }
+                                    }
+                                }());
                                 casetest[casetest.length - 1] = false;
                             } else if (ltoke === "}" && level[level.length - 1] === "x") {
                                 level[level.length - 1] = indent;
