@@ -2455,7 +2455,7 @@ var exports = "",
                             lang = "javascript";
                         }
                         m = pd.o.la.getElementsByTagName("option");
-                        for (l = m.length - 1; m > -1; m -= 1) {
+                        for (l = m.length - 1; l > -1; l -= 1) {
                             if (f === "text") {
                                 m[l].disabled = false;
                             }
