@@ -1986,11 +1986,22 @@ var prettydiff = function prettydiff(api) {
                             var e = 0,
                                 f = b,
                                 g = [c[a]];
-                            for (e = a + 1; e < f; e += 1) {
-                                if ((/[0-9]/).test(c[e]) || c[e] === ".") {
-                                    g.push(c[e]);
-                                } else {
-                                    break;
+                            if (a < b - 2 && c[a + 1] === "x" && (/[0-9A-F]/).test(c[a + 2])) {
+                                g.push("x");
+                                for (e = a + 2; e < f; e += 1) {
+                                    if ((/[0-9A-F]/).test(c[e])) {
+                                        g.push(c[e]);
+                                    } else {
+                                        break;
+                                    }
+                                }
+                            } else {
+                                for (e = a + 1; e < f; e += 1) {
+                                    if ((/[0-9]/).test(c[e]) || c[e] === ".") {
+                                        g.push(c[e]);
+                                    } else {
+                                        break;
+                                    }
                                 }
                             }
                             a = e - 1;
