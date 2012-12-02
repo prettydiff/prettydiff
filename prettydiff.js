@@ -6,7 +6,9 @@
  @licstart  The following is the entire license notice for the
  JavaScript code in this page.
 
-
+ Special thanks to Harry Whitfield for the numerous test cases provided
+ against JSPretty.
+ 
  Created by Austin Cheney originally on 3 Mar 2009.
  This code may not be used or redistributed unless the following
  conditions are met:
@@ -1905,13 +1907,17 @@ var prettydiff = function prettydiff(api) {
                                 if (c[a] === ":" && c[a + 1] !== ":") {
                                     return ":";
                                 }
+                                if (c[a] === "-") {
+                                    if (c[a + 1] === "-") {
+                                        a += 1;
+                                        return "--";
+                                    }
+                                    return "-";
+                                }
                             }
                             for (g = a + 1; g < j; g += 1) {
                                 for (h = 0; h < i; h += 1) {
                                     if (c[g] === e[h]) {
-                                        if (h > 0 && c[g] === "-") {
-                                            break;
-                                        }
                                         f.push(e[h]);
                                         break;
                                     }
@@ -2076,7 +2082,7 @@ var prettydiff = function prettydiff(api) {
                             l[2] += 2;
                             token.push(t);
                             types.push(u);
-                        } else if (c[a] === "-" && a < b - 1 && c[a + 1] !== "=" && (u === "literal" || u === "word") && t !== "return") {
+                        } else if (c[a] === "-" && a < b - 1 && c[a + 1] !== "=" && c[a + 1] !== "-" && (u === "literal" || u === "word") && t !== "return") {
                             n[0] += 1;
                             n[1] += 1;
                             t = "-";
