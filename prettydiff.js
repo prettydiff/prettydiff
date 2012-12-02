@@ -1912,6 +1912,10 @@ var prettydiff = function prettydiff(api) {
                                         a += 1;
                                         return "--";
                                     }
+                                    if (c[a + 1] === "=") {
+                                        a += 1;
+                                        return "-=";
+                                    }
                                     return "-";
                                 }
                             }
