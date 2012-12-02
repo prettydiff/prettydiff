@@ -2371,7 +2371,7 @@ var prettydiff = function prettydiff(api) {
                             }
                             if (ltoke === "for") {
                                 fortest = 1;
-                            }
+                            } 
                             if (ctoke === "{") {
                                 ternary = false;
                                 casetest.push(false);
@@ -2708,8 +2708,16 @@ var prettydiff = function prettydiff(api) {
                             level.push(indent);
                         }
                         if (ctype === "comment-inline") {
-                            level[a - 1] = "s";
-                            level.push(indent);
+                            if (a < b - 1 && token[a + 1] === "{") {
+                                token[a + 1] = ctoke;
+                                types[a + 1] = ctype;
+                                token[a] = "{";
+                                types[a] = "start";
+                                a -= 1;
+                            } else {
+                                level[a - 1] = "s";
+                                level.push(indent);
+                            }
                         }
                         if (ctype === "regex") {
                             level.push("x");
