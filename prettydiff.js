@@ -1893,7 +1893,7 @@ var prettydiff = function prettydiff(api) {
                         },
                         operator = function jspretty__tokenize_operator() {
                             var e = [
-                                    "=", "<", ">", "+", "-", "*", "?", "|", "^", ":", "&"
+                                    "=", "<", ">", "+", "*", "?", "|", "^", ":", "&"
                                 ],
                                 f = [c[a]],
                                 g = 0,
@@ -1986,10 +1986,10 @@ var prettydiff = function prettydiff(api) {
                             var e = 0,
                                 f = b,
                                 g = [c[a]];
-                            if (a < b - 2 && c[a + 1] === "x" && (/[0-9A-F]/).test(c[a + 2])) {
+                            if (a < b - 2 && c[a + 1] === "x" && (/[0-9A-Fa-f]/).test(c[a + 2])) {
                                 g.push("x");
                                 for (e = a + 2; e < f; e += 1) {
-                                    if ((/[0-9A-F]/).test(c[e])) {
+                                    if ((/[0-9A-Fa-f]/).test(c[e])) {
                                         g.push(c[e]);
                                     } else {
                                         break;
@@ -2623,7 +2623,14 @@ var prettydiff = function prettydiff(api) {
                             if (ctoke === "function" && jspace === false && a < b - 1 && token[a + 1] === "(") {
                                 return level.push("x");
                             }
-                            if (ltoke === "}" && ctoke === "while") {
+                            if (ltoke === "-" && a > 1) {
+                                if (types[a - 2] === "operator") {
+                                    level[a - 1] = "x";
+                                } else if (types[a - 2] === "start" || types[a - 2] === "method") {
+                                    level[a - 2] = "x";
+                                    level[a - 1] = "x";
+                                }
+                            } else if (ltoke === "}" && ctoke === "while") {
                                 (function jspretty__algorithm_word_curlyBrace() {
                                     var c = 0,
                                         d = 0;
