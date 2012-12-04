@@ -1,6 +1,6 @@
 /*prettydiff.com api.topcoms: true*/
 /*jslint nomen: true */
-/*global document, localStorage, window, prettydiff, XMLHttpRequest, location, ActiveXObject, FileReader*/
+/*global edition, document, localStorage, window, prettydiff, XMLHttpRequest, location, ActiveXObject, FileReader*/
 var exports = "",
     _gaq = _gaq || [],
     pd = {};
@@ -169,6 +169,7 @@ var exports = "",
         stdiff: pd.$$("stdiff"),
         stminn: pd.$$("stminn"),
         sttext: pd.$$("sttext"),
+        update: pd.$$("update"),
         zindex: 10,
         context: pd.$$("contextSize"),
         stavday: pd.$$("stavday"),
@@ -218,7 +219,7 @@ var exports = "",
         api.quote = false;
         api.semicolon = false;
         api.style = "indent";
-        api.topcoms = false,
+        api.topcoms = false;
         api.conditional = false;
 
         //gather updated dom nodes
@@ -1923,6 +1924,19 @@ var exports = "",
             stat = [],
             lang = "";
         if (pd.o.wb.getAttribute("id") === "webtool") {
+            pd.o.update.innerHTML = (function () {
+                var a = String(edition.latest),
+                    b = [a.charAt(0) + a.charAt(1), a.charAt(2) + a.charAt(3), a.charAt(4) + a.charAt(5)],
+                    c = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
+                if (b[1].charAt(0) === "0") {
+                    b[1] = Number(b[1]);
+                }
+                if (b[2].charAt(0) === "0") {
+                    b[2] = b[2].substr(1);
+                }
+                b[1] -= 1;
+                return "Update: " + b[2] + " " + c[b[1]] + " 20" + b[0];
+            }());
             pd.o.bc = pd.$$("beau-char");
             pd.o.dc = pd.$$("diff-char");
             pd.o.re.style.zIndex = "2";
@@ -2555,6 +2569,148 @@ var exports = "",
                     }
                 }
             }
+        }
+        if (pd.o.wb.getAttribute("id") === "doc") {
+            (function () {
+                var a = document.getElementById("components").getElementsByTagName("tbody")[0],
+                    b = a.getElementsByTagName("tr"),
+                    c = {},
+                    d = 0,
+                    e = b.length,
+                    f = [],
+                    g = [],
+                    h = [],
+                    date = 0,
+                    conversion = function (x) {
+                        var a = String(x),
+                            b = [a.charAt(0) + a.charAt(1), a.charAt(2) + a.charAt(3), a.charAt(4) + a.charAt(5)],
+                            c = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+                        if (b[1].charAt(0) === "0") {
+                            b[1] = Number(b[1]);
+                        }
+                        b[1] -= 1;
+                        return b[2] + " " + c[b[1]] + " 20" + b[0];
+                    };
+                for (d = 0; d < e; d += 1) {
+                    c = b[d].getElementsByTagName("td")[3];
+                    switch (b[d].getElementsByTagName("a")[0].innerHTML) {
+                    case "charDecoder.js":
+                        date = edition.charDecoder;
+                        c.innerHTML = conversion(date);
+                        f.push(date);
+                        g.push([date, b[d].innerHTML]);
+                        break;
+                    case "cleanCSS.js":
+                        date = edition.cleanCSS;
+                        c.innerHTML = conversion(date);
+                        f.push(date);
+                        g.push([date, b[d].innerHTML]);
+                        break;
+                    case "csvbeauty.js":
+                        date = edition.csvbeauty;
+                        c.innerHTML = conversion(date);
+                        f.push(date);
+                        g.push([date, b[d].innerHTML]);
+                        break;
+                    case "csvmin.js":
+                        date = edition.csvmin;
+                        c.innerHTML = conversion(date);
+                        f.push(date);
+                        g.push([date, b[d].innerHTML]);
+                        break;
+                    case "diffview.css":
+                        date = edition.css;
+                        c.innerHTML = conversion(date);
+                        f.push(date);
+                        g.push([date, b[d].innerHTML]);
+                        break;
+                    case "diffview.js":
+                        date = edition.diffview;
+                        c.innerHTML = conversion(date);
+                        f.push(date);
+                        g.push([date, b[d].innerHTML]);
+                        break;
+                    case "documentation.xhtml":
+                        date = edition.documentation;
+                        c.innerHTML = conversion(date);
+                        f.push(date);
+                        g.push([date, b[d].innerHTML]);
+                        break;
+                    case "dom.js":
+                        date = edition.api.dom;
+                        c.innerHTML = conversion(date);
+                        f.push(date);
+                        g.push([date, b[d].innerHTML]);
+                        break;
+                    case "fulljsmin.js":
+                        date = edition.jsmin;
+                        c.innerHTML = conversion(date);
+                        f.push(date);
+                        g.push([date, b[d].innerHTML]);
+                        break;
+                    case "jspretty.js":
+                        date = edition.jspretty;
+                        c.innerHTML = conversion(date);
+                        f.push(date);
+                        g.push([date, b[d].innerHTML]);
+                        break;
+                    case "markup_beauty.js":
+                        date = edition.markup_beauty;
+                        c.innerHTML = conversion(date);
+                        f.push(date);
+                        g.push([date, b[d].innerHTML]);
+                        break;
+                    case "markupmin.js":
+                        date = edition.markupmin;
+                        c.innerHTML = conversion(date);
+                        f.push(date);
+                        g.push([date, b[d].innerHTML]);
+                        break;
+                    case "node-local.js":
+                        date = edition.api.nodeLocal;
+                        c.innerHTML = conversion(date);
+                        f.push(date);
+                        g.push([date, b[d].innerHTML]);
+                        break;
+                    case "node-service.js":
+                        date = edition.api.nodeService;
+                        c.innerHTML = conversion(date);
+                        f.push(date);
+                        g.push([date, b[d].innerHTML]);
+                        break;
+                    case "prettydiff.com.xhtml":
+                        date = edition.webtool;
+                        c.innerHTML = conversion(date);
+                        f.push(date);
+                        g.push([date, b[d].innerHTML]);
+                        break;
+                    case "prettydiff.js":
+                        date = edition.prettydiff;
+                        c.innerHTML = conversion(date);
+                        f.push(date);
+                        g.push([date, b[d].innerHTML]);
+                        break;
+                    case "prettydiff.wsf":
+                        date = edition.api.wsh;
+                        c.innerHTML = conversion(date);
+                        f.push(date);
+                        g.push([date, b[d].innerHTML]);
+                        break;
+                    }
+                }
+                e = g.length;
+                g = g.sort(function (a, b) {
+                    return a[1] === b[1];
+                }).reverse().sort(function (a, b) {
+                    return a[0] - b[0];
+                });
+                for (d = g.length - 1; d > -1; d -= 1) {
+                    h.push("<tr>");
+                    h.push(g[d][1]);
+                    h.push("</tr>");
+                }
+                a.innerHTML = h.join("");
+            }());
         }
     };
 }());

@@ -2268,6 +2268,27 @@ var prettydiff = function prettydiff(api) {
                         ltype = types[0],
                         ltoke = token[0],
                         separator = function jspretty__algorithm_separator() {
+                            if (types[a - 1] === "comment-inline") {
+                                (function jspretty__algorithm_commentfix() {
+                                    var c = 0,
+                                        d = b,
+                                        e = token[a - 1];
+                                    level[a - 1] = "x";
+                                    for (c = a; c < d; c += 1) {
+                                        token[c - 1] = token[c];
+                                        types[c - 1] = types[c];
+                                        if (token[c] === ";" || token[c] === "{" || (lines.length > l + 1 && c === lines[l + 1][0])) {
+                                            token[c] = e;
+                                            types[c] = "comment-line";
+                                            a -= 1;
+                                            return;
+                                        }
+                                    }
+                                    token[c - 1] = e;
+                                    types[c - 1] = "comment-line";
+                                    a -= 1;
+                                }());
+                            }
                             if (ctoke === ".") {
                                 level[a - 1] = "x";
                                 return level.push("x");
@@ -2398,7 +2419,7 @@ var prettydiff = function prettydiff(api) {
                                     level[a - 1] = indent;
                                     return level.push("x");
                                 }
-                                if (jspace === false && ltoke === "function") {
+                                if (ltoke === "-" || (jspace === false && ltoke === "function")) {
                                     level[a - 1] = "x";
                                 }
                                 return level.push("x");
@@ -2624,13 +2645,13 @@ var prettydiff = function prettydiff(api) {
                                 return level.push("x");
                             }
                             if (ltoke === "-" && a > 1) {
-                                if (types[a - 2] === "operator") {
+                                if (types[a - 2] === "operator" || token[a - 2] === ",") {
                                     level[a - 1] = "x";
                                 } else if (types[a - 2] === "start" || types[a - 2] === "method") {
                                     level[a - 2] = "x";
                                     level[a - 1] = "x";
                                 }
-                            } else if (ltoke === "}" && ctoke === "while") {
+                            } else if (ctoke === "while" && ltoke === "}") {
                                 (function jspretty__algorithm_word_curlyBrace() {
                                     var c = 0,
                                         d = 0;
@@ -2651,7 +2672,7 @@ var prettydiff = function prettydiff(api) {
                                         }
                                     }
                                 }());
-                            } else if (ltoke === "}" && ctoke === "else") {
+                            } else if ((ctoke === "else" || ctoke === "catch") && ltoke === "}") {
                                 level[a - 1] = "s";
                             } else if (ctoke === "var") {
                                 if (ltype === "end") {
@@ -2716,11 +2737,11 @@ var prettydiff = function prettydiff(api) {
                         }
                         if (ctype === "comment-inline") {
                             if (a < b - 1 && token[a + 1] === "{") {
-                                token[a + 1] = ctoke;
-                                types[a + 1] = ctype;
-                                token[a] = "{";
-                                types[a] = "start";
-                                a -= 1;
+                                    token[a + 1] = ctoke;
+                                    types[a + 1] = ctype;
+                                    token[a] = "{";
+                                    types[a] = "start";
+                                    a -= 1;
                             } else {
                                 level[a - 1] = "s";
                                 level.push(indent);
@@ -2790,9 +2811,11 @@ var prettydiff = function prettydiff(api) {
                         c.push(token[a]);
                         if (jpres && a === lines[d][0]) {
                             if (lines[d][1] === true && (types[a] !== "start" || (a < b - 1 && (types[a + 1] !== "end")))) {
-                                c.push("\n");
-                                if (level[a] === "x") {
+                                if (a < b - 1 && (types[a + 1] === "comment" || types[a + 1] === "comment-inline" || (types[a] !== "separator" && types[a + 1] !== "separator"))) {
                                     c.push("\n");
+                                    if (level[a] === "x") {
+                                        c.push("\n");
+                                    }
                                 }
                             }
                             d += 1;
@@ -7192,7 +7215,35 @@ var prettydiff = function prettydiff(api) {
                 }
             };
         return core(api);
+    },
+
+    //the edition values use the format YYMMDD for dates.
+    edition = {
+        charDecoder: 121127,
+        cleanCSS: 121127,
+        css: 121102,
+        csvbeauty: 121127,
+        csvmin: 121127,
+        diffview: 121127,
+        documentation: 121203,
+        jsmin: 121127,
+        jspretty: 121203,
+        markup_beauty: 121127,
+        markupmin: 121127,
+        prettydiff: 121203,
+        webtool: 121203,
+        api: {
+            dom: 121203,
+            nodeLocal: 121127,
+            nodeService: 121106,
+            wsh: 121127
+        },
+        latest: 0
     };
+edition.latest = (function edition_latest() {
+    "use strict";
+    return Math.max(edition.charDecoder, edition.cleanCSS, edition.css, edition.csvbeauty, edition.csvmin, edition.diffview, edition.documentation, edition.jsmin, edition.jspretty, edition.markup_beauty, edition.markupmin, edition.prettydiff, edition.webtool, edition.api.dom, edition.api.nodeLocal, edition.api.nodeService, edition.api.wsh);
+}());
 if (typeof exports === "object" || typeof exports === "function") {
     exports.api = function commonjs(x) {
         "use strict";
