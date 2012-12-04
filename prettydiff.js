@@ -2097,7 +2097,7 @@ var prettydiff = function prettydiff(api) {
                             l[2] += 2;
                             token.push(t);
                             types.push(u);
-                        } else if (c[a] === "-" && a < b - 1 && c[a + 1] !== "=" && c[a + 1] !== "-" && (u === "literal" || u === "word") && t !== "return") {
+                        } else if (c[a] === "-" && ((a < b - 1 && c[a + 1] !== "=" && c[a + 1] !== "-" && (u === "literal" || u === "word") && t !== "return") || t === ")" || t === "]" || u === "word" || u === "literal")) {
                             n[0] += 1;
                             n[1] += 1;
                             t = "-";
@@ -2419,7 +2419,7 @@ var prettydiff = function prettydiff(api) {
                                     level[a - 1] = indent;
                                     return level.push("x");
                                 }
-                                if (ltoke === "-" || (jspace === false && ltoke === "function")) {
+                                if ((ltoke === "-" && (a < 2 || (token[a - 2] !== ")" && token[a - 2] !== "]" && types[a - 2] !== "word" && types [a - 2] !== "literal"))) || (jspace === false && ltoke === "function")) {
                                     level[a - 1] = "x";
                                 }
                                 return level.push("x");
@@ -7219,19 +7219,19 @@ var prettydiff = function prettydiff(api) {
 
     //the edition values use the format YYMMDD for dates.
     edition = {
-        charDecoder: 121127,
-        cleanCSS: 121127,
-        css: 121102,
-        csvbeauty: 121127,
-        csvmin: 121127,
-        diffview: 121127,
-        documentation: 121203,
-        jsmin: 121127,
-        jspretty: 121203,
-        markup_beauty: 121127,
-        markupmin: 121127,
-        prettydiff: 121203,
-        webtool: 121203,
+        charDecoder: 121127, //charDecoder library
+        cleanCSS: 121127, //cleanCSS library
+        css: 121102, //diffview.css file
+        csvbeauty: 121127, //csvbeauty library
+        csvmin: 121127, //csvmin library
+        diffview: 121127, //diffview library
+        documentation: 121203, //documentation.xhtml
+        jsmin: 121127, //jsmin library (fulljsmin.js)
+        jspretty: 121204, //jspretty library
+        markup_beauty: 121127, //markup_beauty library
+        markupmin: 121127, //markupmin library
+        prettydiff: 121204, //this file
+        webtool: 121203, //prettydiff.com.xhtml
         api: {
             dom: 121203,
             nodeLocal: 121127,
