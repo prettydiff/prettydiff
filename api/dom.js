@@ -1922,8 +1922,9 @@ var exports = "",
             html = false,
             mode = "",
             stat = [],
-            lang = "";
-        if (pd.o.wb.getAttribute("id") === "webtool") {
+            lang = "",
+            page = pd.o.wb.getAttribute("id");
+        if (page === "webtool") {
             pd.o.update.innerHTML = (function () {
                 var a = String(edition.latest),
                     b = [a.charAt(0) + a.charAt(1), a.charAt(2) + a.charAt(3), a.charAt(4) + a.charAt(5)],
@@ -2570,7 +2571,7 @@ var exports = "",
                 }
             }
         }
-        if (pd.o.wb.getAttribute("id") === "doc") {
+        if (page === "doc") {
             (function () {
                 var a = document.getElementById("components").getElementsByTagName("tbody")[0],
                     b = a.getElementsByTagName("tr"),
