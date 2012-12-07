@@ -2467,7 +2467,7 @@ var prettydiff = function prettydiff(api) {
                             } else if (fortest > 0 && ctoke === ")") {
                                 fortest -= 1;
                             }
-                            if (ctoke === "}" && ltoke !== "{" && ltype !== "end" && ltype !== "literal" && ltype !== "separator" && ltoke !== "++" && ltoke !== "--" && varline[varline.length - 1] === false && (a < 2 || token[a - 2] !== ";" || ltoke === "break" || ltoke === "return")) {
+                            if (ctoke === "}" && types[a - 1] !== "comment" && types[a - 1] !== "comment-inline" && ltoke !== "{" && ltype !== "end" && ltype !== "literal" && ltype !== "separator" && ltoke !== "++" && ltoke !== "--" && varline[varline.length - 1] === false && (a < 2 || token[a - 2] !== ";" || ltoke === "break" || ltoke === "return")) {
                                 (function jspretty__algorithm_end_curlyBrace() {
                                     var c = 0,
                                         d = 1,
@@ -2502,7 +2502,10 @@ var prettydiff = function prettydiff(api) {
                             if (ctoke === "}") {
                                 casetest.pop();
                             }
-                            if ((ltoke === "{" && ctoke === "}") || (ltoke === "[" && ctoke === "]")) {
+                            if ((types[a - 1] === "comment" && token[a - 1].substr(0, 2) === "//") || types[a - 1] === "comment-inline") {
+                                level[a - 1] = indent;
+                                level.push("x");
+                            } else if ((ltoke === "{" && ctoke === "}") || (ltoke === "[" && ctoke === "]")) {
                                 level[a - 1] = "x";
                                 level.push("x");
                             } else if (ctoke === "]") {
@@ -2698,7 +2701,7 @@ var prettydiff = function prettydiff(api) {
                                         indent -= 1;
                                     }
                                     casetest[casetest.length - 1] = true;
-                                } else if (ltoke !== ":") {
+                                } else if ((ltoke === ":" && (types[a - 1] === "comment-inline" || types[a - 1] === "comment")) || ltoke !== ":") {
                                     indent -= 1;
                                     level[a - 1] = indent;
                                 }
@@ -7224,10 +7227,10 @@ var prettydiff = function prettydiff(api) {
         diffview: 121127, //diffview library
         documentation: 121203, //documentation.xhtml
         jsmin: 121127, //jsmin library (fulljsmin.js)
-        jspretty: 121205, //jspretty library
+        jspretty: 121206, //jspretty library
         markup_beauty: 121127, //markup_beauty library
         markupmin: 121127, //markupmin library
-        prettydiff: 121205, //this file
+        prettydiff: 121206, //this file
         webtool: 121203, //prettydiff.com.xhtml
         api: {
             dom: 121205,
