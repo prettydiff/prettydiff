@@ -2610,7 +2610,7 @@ var prettydiff = function prettydiff(api) {
                                                 level[a - 1] = "s";
                                                 return level.push("s");
                                             }
-                                            if ((c > 0 && types[c - 1] === "start") || token[c] === ";" || (l > 0 && c === lines[l - 1][0])) {
+                                            if ((c > 0 && types[c - 1] === "start") || token[c] === ";" || (l > 0 && token[c] !== "+" && token[c] !== "-" && token[c] !== "*" && token[c] !== "/" && c === lines[l - 1][0])) {
                                                 obj[obj.length - 1] = true;
                                                 level[a - 1] = "x";
                                                 return level.push("s");
@@ -2790,6 +2790,7 @@ var prettydiff = function prettydiff(api) {
                         b = token.length,
                         c = [],
                         d = 0,
+                        indent = 0,
                         tab = (function jspretty__result_tab() {
                             var a = jchar,
                                 b = jsize,
@@ -2810,7 +2811,11 @@ var prettydiff = function prettydiff(api) {
                     for (a = 0; a < b; a += 1) {
                         c.push(token[a]);
                         if (jpres && a === lines[d][0]) {
-                            if (lines[d][1] === true && (types[a] !== "start" || (a < b - 1 && (types[a + 1] !== "end")))) {
+                            if (token[a] === "+" || token[a] === "-" || token[a] === "*" || token[a] === "/") {
+                                c.push(nl(indent));
+                                c.push(tab);
+                                level[a] = "x";
+                            } else if (lines[d][1] === true && token[a].charAt(0) !== "=" && token[a].charAt(0) !== "!" && (types[a] !== "start" || (a < b - 1 && types[a + 1] !== "end"))) {
                                 if (a < b - 1 && (types[a + 1] === "comment" || types[a + 1] === "comment-inline" || (types[a] !== "separator" && types[a + 1] !== "separator"))) {
                                     c.push("\n");
                                     if (level[a] === "x") {
@@ -2826,6 +2831,7 @@ var prettydiff = function prettydiff(api) {
                             c.push(" ");
                         } else if (level[a] !== "x") {
                             c.push(nl(level[a]));
+                            indent = level[a];
                         }
                     }
                     return c.join("");
@@ -7227,10 +7233,10 @@ var prettydiff = function prettydiff(api) {
         diffview: 121127, //diffview library
         documentation: 121203, //documentation.xhtml
         jsmin: 121127, //jsmin library (fulljsmin.js)
-        jspretty: 121206, //jspretty library
+        jspretty: 121207, //jspretty library
         markup_beauty: 121127, //markup_beauty library
         markupmin: 121127, //markupmin library
-        prettydiff: 121206, //this file
+        prettydiff: 121207, //this file
         webtool: 121203, //prettydiff.com.xhtml
         api: {
             dom: 121205,
