@@ -2695,10 +2695,8 @@ var prettydiff = function prettydiff(api) {
                             } else if (ctoke === "default" || ctoke === "case") {
                                 if (casetest[casetest.length - 1] === false) {
                                     if (ltoke === "{") {
-                                        level[a - 1] -= 1;
-                                    }
-                                    if (ltoke === "{") {
                                         indent -= 1;
+                                        level[a - 1] = indent;
                                     }
                                     casetest[casetest.length - 1] = true;
                                 } else if ((ltoke === ":" && (types[a - 1] === "comment-inline" || types[a - 1] === "comment")) || ltoke !== ":") {
@@ -2711,15 +2709,19 @@ var prettydiff = function prettydiff(api) {
                                     var c = 0;
                                     for (c = a + 1; c < b; c += 1) {
                                         if (token[c] === "}") {
+                                            casetest[casetest.length - 1] = false;
+                                            return;
+                                        }
+                                        if (token[c] === "{" || token[c] === "[") {
                                             return;
                                         }
                                         if (token[c] === "case" || token[c] === "default" || token[c] === "switch") {
                                             indent -= 1;
+                                            casetest[casetest.length - 1] = false;
                                             return;
                                         }
                                     }
                                 }());
-                                casetest[casetest.length - 1] = false;
                             } else if (ltoke === "}" && level[a - 1] === "x") {
                                 level[a - 1] = indent;
                             }
@@ -2812,9 +2814,23 @@ var prettydiff = function prettydiff(api) {
                         c.push(token[a]);
                         if (jpres && a === lines[d][0]) {
                             if (token[a] === "+" || token[a] === "-" || token[a] === "*" || token[a] === "/") {
-                                c.push(nl(indent));
-                                c.push(tab);
-                                level[a] = "x";
+                                if (a < b - 1 && types[a + 1] !== "comment" && types[a + 1] !== "comment-inline") {
+                                    c.push(nl(indent));
+                                    c.push(tab);
+                                    level[a] = "x";
+                                } else {
+                                    indent = level[a];
+                                    if (lines[d][1] === true) {
+                                        c.push("\n");
+                                    }
+                                    c.push(nl(indent));
+                                    c.push(tab);
+                                    c.push(token[a + 1]);
+                                    c.push(nl(indent));
+                                    c.push(tab);
+                                    level[a + 1] = "x";
+                                    a += 1;
+                                }
                             } else if (lines[d][1] === true && token[a].charAt(0) !== "=" && token[a].charAt(0) !== "!" && (types[a] !== "start" || (a < b - 1 && types[a + 1] !== "end"))) {
                                 if (a < b - 1 && (types[a + 1] === "comment" || types[a + 1] === "comment-inline" || (types[a] !== "separator" && types[a + 1] !== "separator"))) {
                                     c.push("\n");
@@ -2830,8 +2846,8 @@ var prettydiff = function prettydiff(api) {
                         } else if (level[a] === "s") {
                             c.push(" ");
                         } else if (level[a] !== "x") {
-                            c.push(nl(level[a]));
                             indent = level[a];
+                            c.push(nl(indent));
                         }
                     }
                     return c.join("");
@@ -7233,10 +7249,10 @@ var prettydiff = function prettydiff(api) {
         diffview: 121127, //diffview library
         documentation: 121203, //documentation.xhtml
         jsmin: 121127, //jsmin library (fulljsmin.js)
-        jspretty: 121207, //jspretty library
+        jspretty: 121208, //jspretty library
         markup_beauty: 121127, //markup_beauty library
         markupmin: 121127, //markupmin library
-        prettydiff: 121207, //this file
+        prettydiff: 121208, //this file
         webtool: 121203, //prettydiff.com.xhtml
         api: {
             dom: 121205,
