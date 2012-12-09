@@ -2260,6 +2260,7 @@ var prettydiff = function prettydiff(api) {
                         list = [],
                         lastlist = false,
                         ternary = false,
+                        question = false,
                         varline = [],
                         casetest = [],
                         fortest = 0,
@@ -2370,6 +2371,7 @@ var prettydiff = function prettydiff(api) {
                                 return level.push("s");
                             }
                             if (ctoke === ";") {
+                                question = false;
                                 level[a - 1] = "x";
                                 if (fortest === 0) {
                                     if (varline[varline.length - 1] === true) {
@@ -2586,8 +2588,11 @@ var prettydiff = function prettydiff(api) {
                                 }
                                 return level.push("x");
                             }
+                            if (ctoke === "?") {
+                                question = true;
+                            }
                             if (ctoke === ":") {
-                                if (casetest[casetest.length - 1] === true) {
+                                if (casetest[casetest.length - 1] === true && question === false) {
                                     if (a < b - 1 && token[a + 1] !== "case" && token[a + 1] !== "default") {
                                         indent += 1;
                                     }
@@ -2696,8 +2701,8 @@ var prettydiff = function prettydiff(api) {
                                 if (casetest[casetest.length - 1] === false) {
                                     if (ltoke === "{") {
                                         indent -= 1;
-                                        level[a - 1] = indent;
                                     }
+                                    level[a - 1] = indent;
                                     casetest[casetest.length - 1] = true;
                                 } else if ((ltoke === ":" && (types[a - 1] === "comment-inline" || types[a - 1] === "comment")) || ltoke !== ":") {
                                     indent -= 1;
@@ -2832,7 +2837,7 @@ var prettydiff = function prettydiff(api) {
                                     a += 1;
                                 }
                             } else if (lines[d][1] === true && token[a].charAt(0) !== "=" && token[a].charAt(0) !== "!" && (types[a] !== "start" || (a < b - 1 && types[a + 1] !== "end"))) {
-                                if (a < b - 1 && (types[a + 1] === "comment" || types[a + 1] === "comment-inline" || (types[a] !== "separator" && types[a + 1] !== "separator"))) {
+                                if (a < b - 1 && (types[a + 1] === "comment" || types[a + 1] === "comment-inline" || (token[a] !== "." && token[a] !== "," && types[a + 1] !== "separator"))) {
                                     c.push("\n");
                                     if (level[a] === "x") {
                                         c.push("\n");
