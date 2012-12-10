@@ -1,4 +1,4 @@
-/*prettydiff.com api.topcoms: true, api.insize: 4, api.inchar: " " */
+﻿/*prettydiff.com api.topcoms: true, api.insize: 4, api.inchar: " " */
 /*global pd, exports */
 /*
  @source: http://prettydiff.com/documentation.php
@@ -2697,6 +2697,8 @@ var prettydiff = function prettydiff(api) {
                                 if (fortest === 0) {
                                     indent += 1;
                                 }
+                            } else if (ctoke === "switch") {
+                                question = false;
                             } else if (ctoke === "default" || ctoke === "case") {
                                 if (casetest[casetest.length - 1] === false) {
                                     if (ltoke === "{") {
@@ -7254,10 +7256,10 @@ var prettydiff = function prettydiff(api) {
         diffview: 121127, //diffview library
         documentation: 121203, //documentation.xhtml
         jsmin: 121127, //jsmin library (fulljsmin.js)
-        jspretty: 121208, //jspretty library
+        jspretty: 121209, //jspretty library
         markup_beauty: 121127, //markup_beauty library
         markupmin: 121127, //markupmin library
-        prettydiff: 121208, //this file
+        prettydiff: 121209, //this file
         webtool: 121203, //prettydiff.com.xhtml
         api: {
             dom: 121205,
