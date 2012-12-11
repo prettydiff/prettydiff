@@ -1985,7 +1985,8 @@ var prettydiff = function prettydiff(api) {
                         numb = function jspretty__tokenize_number() {
                             var e = 0,
                                 f = b,
-                                g = [c[a]];
+                                g = [c[a]],
+                                h = (g[0] === ".") ? true : false;
                             if (a < b - 2 && c[a + 1] === "x" && (/[0-9A-Fa-f]/).test(c[a + 2])) {
                                 g.push("x");
                                 for (e = a + 2; e < f; e += 1) {
@@ -1997,8 +1998,29 @@ var prettydiff = function prettydiff(api) {
                                 }
                             } else {
                                 for (e = a + 1; e < f; e += 1) {
-                                    if ((/[0-9]/).test(c[e]) || c[e] === ".") {
+                                    if ((/[0-9]/).test(c[e]) || (c[e] === "." && h === false)) {
                                         g.push(c[e]);
+                                        if (c[e] === ".") {
+                                            h = true;
+                                        }
+                                    } else {
+                                        break;
+                                    }
+                                }
+                            }
+                            if (e < f - 1 && c[e] === "e") {
+                                g.push("e");
+                                if (c[e + 1] === "-") {
+                                    g.push("-");
+                                    e += 1;
+                                }
+                                h = false;
+                                for (e += 1; e < f; e += 1) {
+                                    if ((/[0-9]/).test(c[e]) || (c[e] === "." && h === false)) {
+                                        g.push(c[e]);
+                                        if (c[e] === ".") {
+                                            h = true;
+                                        }
                                     } else {
                                         break;
                                     }
@@ -7257,10 +7279,10 @@ var prettydiff = function prettydiff(api) {
         diffview: 121127, //diffview library
         documentation: 121203, //documentation.xhtml
         jsmin: 121127, //jsmin library (fulljsmin.js)
-        jspretty: 121210, //jspretty library
+        jspretty: 121211, //jspretty library
         markup_beauty: 121127, //markup_beauty library
         markupmin: 121127, //markupmin library
-        prettydiff: 121210, //this file
+        prettydiff: 121211, //this file
         webtool: 121203, //prettydiff.com.xhtml
         api: {
             dom: 121205,
