@@ -7,18 +7,24 @@ Try it online at http://prettydiff.com/ or [join the mailing list](https://group
 Node.js
 -------
 
-At the end of the Pretty Diff function include this code:
+Node.js support is provided by api/node-local.js.  This file can execute
+in the following modes:
 
-    if (typeof exports !== "string") {
-        exports.api = function(x) {
-            "use strict";
-            return prettydiff(x);
-        };
-    }
+  * screen - code input is on the command line and output is to the command line
+  * filescreen - code input is in a file and the output is to the command line
+  * file - the input and the output reside in files
+  * directory - everything in a directory is processed into a specified output directory except ".", "..", and subdirectories
 
 In your Node.js script include Pretty Diff with this code:
 
     var prettydiff = require("prettydiff");
+
+From the command line execute api/node-local.js similar to these
+examples:
+
+    >node c:\\prettydiff\\api\\node-local.js source:"c:\mydirectory\myfile.js" readmethod:"file" diff:"c:\myotherfile.js"
+
+    >node c:\\prettydiff\\api\\node-local.js source:"c:\mydirectory\myfile.js" mode:"beautify" readmethod:"file" output:"c:\output\otherfile.js"
 
 WSH
 ---
@@ -45,21 +51,6 @@ Pre-Inventory:
 
   * For usage documentation please visit
    http://prettydiff.com/documentation.php
-
-Inventory:
-----------
-
-  * prettydiff.js - primary application for client and server processing
-  * charDecoder.js - component
-  * cleanCSS.js  - component
-  * csvbeauty.js  - component
-  * csvmin.js  - component
-  * diffview.css  - component
-  * diffview.js  - component
-  * fulljsmin.js  - component
-  * jspretty.js  - component
-  * markup_beauty.js  - component
-  * markupmin.js - component
 
 License:
 --------

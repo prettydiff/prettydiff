@@ -2652,6 +2652,9 @@ var prettydiff = function prettydiff(api) {
                                 level[a - 1] = indent;
                                 l += 1;
                             }
+                            if (ltoke === "}") {
+                                level[a - 1] = indent;
+                            }
                             if (ctoke === "function" && jspace === false && a < b - 1 && token[a + 1] === "(") {
                                 return level.push("x");
                             }
@@ -2729,8 +2732,6 @@ var prettydiff = function prettydiff(api) {
                                         }
                                     }
                                 }());
-                            } else if (ltoke === "}" && level[a - 1] === "x") {
-                                level[a - 1] = indent;
                             }
                             level.push("s");
                         };
@@ -7256,16 +7257,16 @@ var prettydiff = function prettydiff(api) {
         diffview: 121127, //diffview library
         documentation: 121203, //documentation.xhtml
         jsmin: 121127, //jsmin library (fulljsmin.js)
-        jspretty: 121209, //jspretty library
+        jspretty: 121210, //jspretty library
         markup_beauty: 121127, //markup_beauty library
         markupmin: 121127, //markupmin library
-        prettydiff: 121209, //this file
+        prettydiff: 121210, //this file
         webtool: 121203, //prettydiff.com.xhtml
         api: {
             dom: 121205,
-            nodeLocal: 121127,
+            nodeLocal: 121210,
             nodeService: 121106,
-            wsh: 121127
+            wsh: 121210
         },
         latest: 0
     };
