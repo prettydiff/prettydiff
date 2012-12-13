@@ -940,6 +940,7 @@ var exports = "",
             d = a.lastChild,
             h = a.firstChild,
             i = 0,
+            j = navigator.userAgent,
             ax = a.offsetLeft,
             ay = a.offsetTop,
             drop = function (g) {
@@ -988,6 +989,9 @@ var exports = "",
             } while (h.nodeType !== 1);
         }
         d.style.opacity = ".5";
+        if (j.indexOf("Opera") > -1 && j.indexOf("Presto") > 0) {
+            d.style.cssFloat = "right";
+        }
         i = a.clientHeight;
         h.style.top = (i / 20) + "0em";
         a.style.height = ".1em";
