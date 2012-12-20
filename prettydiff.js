@@ -2127,8 +2127,13 @@ var prettydiff = function prettydiff(api) {
                             token.push(t);
                             types.push(u);
                         } else if ((/\d/).test(c[a]) || (a !== b - 2 && c[a] === "-" && c[a + 1] === "." && (/\d/).test(c[a + 2])) || (a !== b - 1 && (c[a] === "-" || c[a] === ".") && (/\d/).test(c[a + 1]))) {
-                            t = numb();
-                            u = "literal";
+                            if (u === "end") {
+                                t = "-";
+                                u = "operator";
+                            } else {
+                                t = numb();
+                                u = "literal";
+                            }
                             q[0] += 1;
                             q[1] += t.length;
                             token.push(t);
@@ -5616,7 +5621,7 @@ var prettydiff = function prettydiff(api) {
                     baseTextName = (typeof args.baseTextName === "string") ? args.baseTextName : "Base Source",
                     newTextName = (typeof args.newTextName === "string") ? args.newTextName : "New Source",
                     context = ((/^([0-9]+)$/).test(args.contextSize)) ? Number(args.contextSize) : -1,
-                    tsize = ((/^([0-9]+)$/).test(args.tsize)) ? Number(args.contextSize) : 4,
+                    tsize = ((/^([0-9]+)$/).test(args.tsize)) ? Number(args.tsize) : 4,
                     tchar = (typeof args.tchar === "string") ? args.tchar : " ",
                     inline = (args.inline === true) ? true : false,
                     tab = (function diffview__tab() {
@@ -5989,6 +5994,8 @@ var prettydiff = function prettydiff(api) {
                                 r = 0,
                                 ax = [],
                                 bx = [],
+                                u = [],
+                                v = [],
                                 zx = 0,
                                 entity = function diffview__report_charcomp_emptyE() {
                                     return;
@@ -6099,14 +6106,175 @@ var prettydiff = function prettydiff(api) {
                             ax = entity(ax);
                             bx = entity(bx);
                             n = false;
+                            (function diffview__report_charcomp_spacetest() {
+                                var a = c,
+                                    b = d,
+                                    tt = tab,
+                                    ts = new RegExp("^(" + tt + ")+"),
+                                    e = (a.search(ts) === 0) ? a.match(ts) : [""],
+                                    f = (b.search(ts) === 0) ? b.match(ts) : [""],
+                                    g = [],
+                                    h = [],
+                                    i = 0,
+                                    j = 0,
+                                    l = [0, 0],
+                                    m = false,
+                                    n = [e[0].length, f[0].length];
+                                if (e[0] !== "") {
+                                    a = a.substr(n[0]);
+                                }
+                                if (f[0] !== "") {
+                                    b = b.substr(n[1]);
+                                }
+                                if (n[0] > n[1]) {
+                                    i = n[0] - n[1];
+                                    e[0] = e[0].substring(0, n[0] - i) + "<em>" + e[0].substr(n[0] - i) + "</em>";
+                                    f[0] = f[0] + "<em></em>";
+                                    errorout += 1;
+                                }
+                                if (n[0] < n[1]) {
+                                    i = n[1] - n[0];
+                                    f[0] = f[0].substring(0, n[1] - i) + "<em>" + f[0].substr(n[1] - i) + "</em>";
+                                    e[0] = e[0] + "<em></em>";
+                                    errorout += 1;
+                                }
+                                g = a.split(" ");
+                                h = b.split(" ");
+                                j = Math.max(g.length, h.length);
+                                l[0] += g[0].length;
+                                l[1] += h[0].length;
+                                for (i = 1; i < j; i += 1) {
+                                    if (g[i] !== h[i] && typeof g[i] === "string" && typeof h[i] === "string") {
+                                        if (g[i + 1] === h[i] ) {
+                                            g[i] = "<em> " + g[i] + "</em>";
+                                            h.splice(i, 0, "<em></em>");
+                                            if (g.length >= h.length) {
+                                                j += 1;
+                                            }
+                                            m = true;
+                                            errorout += 1;
+                                        } else if (g[i] === h[i + 1]) {
+                                            h[i] = "<em> " + h[i] + "</em>";
+                                            g.splice(i, 0, "<em></em>");
+                                            if (g.length <= h.length) {
+                                                j += 1;
+                                            }
+                                            m = true;
+                                            errorout += 1;
+                                        } else {
+                                            break;
+                                        }
+                                    } else if (typeof g[i] === "string" && typeof h[i] === "string") {
+                                        g[i] = " " + g[i];
+                                        h[i] = " " + h[i];
+                                    } else {
+                                        break;
+                                    }
+                                    l[0] += g[i].length;
+                                    l[1] += h[i].length;
+                                }
+                                if (m === false) {
+                                    return;
+                                }
+                                if (i === j) {
+                                    if (typeof g[j] === "string") {
+                                        g[j] = " " + g[j];
+                                    }
+                                    if (typeof h[j] === "string") {
+                                        h[j] = " " + h[j];
+                                    }
+                                    if (g.length > h.length) {
+                                        g[j] = "<em>" + g[j];
+                                        g[g.length - 1] = g[g.length - 1] + "</em>";
+                                    } else if (g.length < h.length) {
+                                        h[j] = "<em>" + h[j];
+                                        h[h.length - 1] = h[h.length - 1] + "</em>";
+                                    }
+                                    g.splice(0, 0, e[0]);
+                                    h.splice(0, 0, f[0]);
+                                    ax = g;
+                                    bx = h;
+                                    k = zx;
+                                } else {
+                                    j = Math.max(g.length, h.length);
+                                    for (i; i < j; i += 1) {
+                                        g[i] = (typeof g[i] === "string") ? " " + g[i] : "";
+                                        h[i] = (typeof h[i] === "string") ? " " + h[i] : "";
+                                    }
+                                    ax = g.join("").split("");
+                                    bx = h.join("").split("");
+                                    if (l[0] !== l[1]) {
+                                        do {
+                                            if (l[0] > l[1]) {
+                                                l[1] += 1;
+                                                bx.splice(0, 0, "");
+                                            } else {
+                                                l[0] += 1;
+                                                ax.splice(0, 0, "");
+                                            }
+                                        } while (l[0] !== l[1]);
+                                    }
+                                    ax.splice(0, 0, e[0]);
+                                    bx.splice(0, 0, f[0]);
+                                    k = l[0];
+                                    zx = Math.max(ax.length, bx.length);
+                                }
+                            }());
                             compare = function diffview__report_charcomp_compare() {
                                 var em = /<em>/g,
                                     i = 0,
                                     j = 0,
+                                    m = 0,
                                     o = 0,
                                     p = [],
                                     q = false,
-                                    r = 0;
+                                    s = [],
+                                    t = [],
+                                    w = "",
+                                    x = "";
+                                if (u[u.length - 1] === v[v.length - 2] && u.length > 0 && u[u.length - 1].length > 0) {
+                                    for (i = k; i > -1; i -= 1) {
+                                        if (ax[i].indexOf("</em>") > -1) {
+                                            ax[i] = ax[i].replace("</em>", "");
+                                            bx[i] = bx[i].replace("</em>", "");
+                                            if (q === true) {
+                                                break;
+                                            }
+                                        }
+                                        if (ax[i].indexOf("<em>") > -1) {
+                                            ax[i] = ax[i].replace("<em>", "");
+                                            bx[i] = bx[i].replace("<em>", "");
+                                            q = true;
+                                        }
+                                    }
+                                    ax[k - 2] = ax[k - 2] + "</em>";
+                                    if (bx[i - 1].indexOf("<em>") === bx[i - 1].length - 4) {
+                                        bx[i - 1] = bx[i - 1] + "</em>";
+                                    }
+                                    errorout -= 1;
+                                    q = false;
+                                } else if (v[v.length - 1] === u[u.length - 2] && v.length > 0 && v[v.length - 1].length > 0) {
+                                    for (i = k; i > -1; i -= 1) {
+                                        if (bx[i].indexOf("</em>") > -1) {
+                                            bx[i] = bx[i].replace("</em>", "");
+                                            ax[i] = ax[i].replace("</em>", "");
+                                            if (q === true) {
+                                                break;
+                                            }
+                                        }
+                                        if (bx[i].indexOf("<em>") > -1) {
+                                            bx[i] = bx[i].replace("<em>", "");
+                                            ax[i] = ax[i].replace("<em>", "");
+                                            q = true;
+                                        }
+                                    }
+                                    bx[k - 2] = bx[k - 2] + "</em>";
+                                    if (ax[i - 1].indexOf("<em>") === ax[i - 1].length - 4) {
+                                        ax[i - 1] = ax[i - 1] + "</em>";
+                                    }
+                                    errorout -= 1;
+                                    q = false;
+                                }
                                 for (i = k; i < zx; i += 1) {
                                     if (ax[i] === bx[i]) {
                                         r = i;
@@ -6141,6 +6309,10 @@ var prettydiff = function prettydiff(api) {
                                         bx[i] = "";
                                     }
                                 }
+                                if (i === zx) {
+                                    r = i + 1;
+                                    return;
+                                }
                                 for (j = i; j < zx; j += 1) {
                                     if (typeof ax[j] === "string" && typeof bx[j] !== "string") {
                                         bx[j] = "";
@@ -6148,38 +6320,40 @@ var prettydiff = function prettydiff(api) {
                                         ax[j] = "";
                                     } else if (n) {
                                         for (o = j; o < zx; o += 1) {
-                                            for (r = o - 1; r > j; r -= 1) {
-                                                if (ax[r] === bx[o]) {
-                                                    if (r > ax.length - 1) {
+                                            s.push(ax[o]);
+                                            t.push(bx[o]);
+                                            for (m = o - 1; m > j; m -= 1) {
+                                                if (ax[m] === bx[o]) {
+                                                    if (m > ax.length - 1) {
                                                         do {
                                                             ax.push("");
-                                                        } while (r > ax.length - 1);
+                                                        } while (m > ax.length - 1);
                                                     }
-                                                    ax[r - 1] = ax[r - 1] + "</em>";
+                                                    ax[m - 1] = ax[m - 1] + "</em>";
                                                     bx[o - 1] = bx[o - 1] + "</em>";
                                                     k = o;
                                                     p = [];
                                                     do {
                                                         p.push("");
                                                         o -= 1;
-                                                    } while (o > r);
+                                                    } while (o > m);
                                                     ax = p.concat(ax);
                                                     n = false;
                                                     break;
-                                                } else if (bx[r] === ax[o]) {
-                                                    if (r > bx.length - 1) {
+                                                } else if (bx[m] === ax[o]) {
+                                                    if (m > bx.length - 1) {
                                                         do {
                                                             bx.push("");
-                                                        } while (r > bx.length - 1);
+                                                        } while (m > bx.length - 1);
                                                     }
-                                                    bx[r - 1] = bx[r - 1] + "</em>";
+                                                    bx[m - 1] = bx[m - 1] + "</em>";
                                                     ax[o - 1] = ax[o - 1] + "</em>";
                                                     k = o;
                                                     p = [];
                                                     do {
                                                         p.push("");
                                                         o -= 1;
-                                                    } while (o > r);
+                                                    } while (o > m);
                                                     bx = p.concat(bx);
                                                     n = false;
                                                     break;
@@ -6307,6 +6481,8 @@ var prettydiff = function prettydiff(api) {
                                         }
                                         if (n) {
                                             for (o = j + 1; o < zx - 1; o += 1) {
+                                                s.push(ax[o]);
+                                                t.push(bx[o]);
                                                 if (typeof ax[o] !== "string") {
                                                     ax.push("");
                                                 } else if (typeof bx[o] !== "string") {
@@ -6328,13 +6504,21 @@ var prettydiff = function prettydiff(api) {
                                     }
                                     zx = Math.max(ax.length, bx.length);
                                 }
+                                w = s.join("");
+                                x = t.join("");
+                                if (w !== "" && x !== "") {
+                                    u.push(w);
+                                    v.push(x);
+                                }
+                                if (j === zx) {
+                                    r += 1;
+                                }
                             };
                             for (p = 0; p < zx; p += 1) {
-                                if (r + 1 !== zx) {
-                                    compare();
-                                } else {
+                                if (r > zx - 1) {
                                     break;
                                 }
+                                compare();
                             }
                             c = ax.join("").replace(/\$#34;/g, "\"").replace(/\$#39;/g, "'").replace(/<\/em><em>/g, emerge);
                             d = bx.join("").replace(/\$#34;/g, "\"").replace(/\$#39;/g, "'").replace(/<\/em><em>/g, "");
@@ -7276,16 +7460,16 @@ var prettydiff = function prettydiff(api) {
         css: 121213, //diffview.css file
         csvbeauty: 121127, //csvbeauty library
         csvmin: 121127, //csvmin library
-        diffview: 121127, //diffview library
+        diffview: 121220, //diffview library
         documentation: 121203, //documentation.xhtml
         jsmin: 121127, //jsmin library (fulljsmin.js)
-        jspretty: 121213, //jspretty library
+        jspretty: 121220, //jspretty library
         markup_beauty: 121127, //markup_beauty library
         markupmin: 121127, //markupmin library
-        prettydiff: 121213, //this file
+        prettydiff: 121220, //this file
         webtool: 121203, //prettydiff.com.xhtml
         api: {
-            dom: 121213,
+            dom: 121220,
             nodeLocal: 121210,
             nodeService: 121106,
             wsh: 121210

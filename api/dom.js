@@ -1021,12 +1021,14 @@ var exports = "",
         if (event.type === "mouseover") {
             b = x.value.length;
             x.style.height = Math.ceil((b / 1.6) / a) + ".5em";
+            x.style.marginBottom = "-" + Math.ceil((b / 1.6) / a) + ".5em";
             x.style.paddingTop = "1em";
             x.style.position = "relative";
             x.style.width = (a - 4.7) + "em";
             x.style.zIndex = "5";
         } else {
             x.style.height = "2.5em";
+            x.style.marginBottom = "-1.5em";
             x.style.paddingTop = "0em";
             x.style.position = "static";
             x.style.width = "100%";
