@@ -6320,8 +6320,6 @@ var prettydiff = function prettydiff(api) {
                                         ax[j] = "";
                                     } else if (n) {
                                         for (o = j; o < zx; o += 1) {
-                                            s.push(ax[o]);
-                                            t.push(bx[o]);
                                             for (m = o - 1; m > j; m -= 1) {
                                                 if (ax[m] === bx[o]) {
                                                     if (m > ax.length - 1) {
@@ -6339,6 +6337,8 @@ var prettydiff = function prettydiff(api) {
                                                     } while (o > m);
                                                     ax = p.concat(ax);
                                                     n = false;
+                                                    s.push(ax[o]);
+                                                    t.push(bx[o]);
                                                     break;
                                                 } else if (bx[m] === ax[o]) {
                                                     if (m > bx.length - 1) {
@@ -6356,9 +6356,13 @@ var prettydiff = function prettydiff(api) {
                                                     } while (o > m);
                                                     bx = p.concat(bx);
                                                     n = false;
+                                                    s.push(ax[o]);
+                                                    t.push(bx[o]);
                                                     break;
                                                 }
                                             }
+                                            s.push(ax[o]);
+                                            t.push(bx[o]);
                                             if (!n) {
                                                 break;
                                             } else if (ax[o] === bx[o] && typeof ax[o] === "string") {
@@ -7457,19 +7461,19 @@ var prettydiff = function prettydiff(api) {
     edition = {
         charDecoder: 121127, //charDecoder library
         cleanCSS: 121127, //cleanCSS library
-        css: 121213, //diffview.css file
+        css: 121221, //diffview.css file
         csvbeauty: 121127, //csvbeauty library
         csvmin: 121127, //csvmin library
-        diffview: 121220, //diffview library
+        diffview: 121221, //diffview library
         documentation: 121203, //documentation.xhtml
         jsmin: 121127, //jsmin library (fulljsmin.js)
         jspretty: 121220, //jspretty library
         markup_beauty: 121127, //markup_beauty library
         markupmin: 121127, //markupmin library
-        prettydiff: 121220, //this file
-        webtool: 121203, //prettydiff.com.xhtml
+        prettydiff: 121221, //this file
+        webtool: 121221, //prettydiff.com.xhtml
         api: {
-            dom: 121220,
+            dom: 121221,
             nodeLocal: 121210,
             nodeService: 121106,
             wsh: 121210
