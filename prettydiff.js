@@ -6230,13 +6230,19 @@ var prettydiff = function prettydiff(api) {
                                     q = false,
                                     s = [],
                                     t = [],
-                                    w = "",
-                                    x = "";
-                                if (u[u.length - 1] === v[v.length - 2] && u.length > 0 && u[u.length - 1].length > 0) {
+                                    z = false;
+                                if (u[u.length - 1] !== "" && u[u.length - 1] === v[v.length - 2] && u.length > 0 && u[u.length - 1].length > 0) {
                                     for (i = k; i > -1; i -= 1) {
                                         if (ax[i].indexOf("</em>") > -1) {
                                             ax[i] = ax[i].replace("</em>", "");
-                                            bx[i] = bx[i].replace("</em>", "");
+                                            if (bx[i].indexOf("<em></em>") > -1) {
+                                                bx[i] = bx[i].replace("<em></em>", "");
+                                                z = true;
+                                            } else if (z === true) {
+                                                bx[i + 1] = bx[i + 1].replace("</em>", "<em></em>");
+                                            } else {
+                                                bx[i] = bx[i].replace("</em>", "");
+                                            }
                                             if (q === true) {
                                                 break;
                                             }
@@ -6248,16 +6254,24 @@ var prettydiff = function prettydiff(api) {
                                         }
                                     }
                                     ax[k - 2] = ax[k - 2] + "</em>";
-                                    if (bx[i - 1].indexOf("<em>") === bx[i - 1].length - 4) {
+                                    if (typeof bx[i - 1] === "string" && bx[i - 1].indexOf("<em>") === bx[i - 1].length - 4 && bx[i].indexOf("</em>") < 0) {
                                         bx[i - 1] = bx[i - 1] + "</em>";
                                     }
                                     errorout -= 1;
                                     q = false;
-                                } else if (v[v.length - 1] === u[u.length - 2] && v.length > 0 && v[v.length - 1].length > 0) {
+                                    z = false;
+                                } else if (v[v.length - 1] !== "" && v[v.length - 1] === u[u.length - 2] && v.length > 0 && v[v.length - 1].length > 0) {
                                     for (i = k; i > -1; i -= 1) {
                                         if (bx[i].indexOf("</em>") > -1) {
                                             bx[i] = bx[i].replace("</em>", "");
-                                            ax[i] = ax[i].replace("</em>", "");
+                                            if (ax[i].indexOf("<em></em>") > -1) {
+                                                ax[i] = ax[i].replace("<em></em>", "");
+                                                z = true;
+                                            } else if (z === true) {
+                                                ax[i + 1] = ax[i + 1].replace("</em>", "<em></em>");
+                                            } else {
+                                                ax[i] = ax[i].replace("</em>", "");
+                                            }
                                             if (q === true) {
                                                 break;
                                             }
@@ -6269,11 +6283,12 @@ var prettydiff = function prettydiff(api) {
                                         }
                                     }
                                     bx[k - 2] = bx[k - 2] + "</em>";
-                                    if (ax[i - 1].indexOf("<em>") === ax[i - 1].length - 4) {
+                                    if (typeof ax[i - 1] === "string" && ax[i - 1].indexOf("<em>") === ax[i - 1].length - 4 && ax[i].indexOf("</em>") < 0) {
                                         ax[i - 1] = ax[i - 1] + "</em>";
                                     }
                                     errorout -= 1;
                                     q = false;
+                                    z = false;
                                 }
                                 for (i = k; i < zx; i += 1) {
                                     if (ax[i] === bx[i]) {
@@ -6318,7 +6333,7 @@ var prettydiff = function prettydiff(api) {
                                         bx[j] = "";
                                     } else if (typeof ax[j] !== "string" && typeof bx[j] === "string") {
                                         ax[j] = "";
-                                    } else if (n) {
+                                    } else if (n === true) {
                                         for (o = j; o < zx; o += 1) {
                                             for (m = o - 1; m > j; m -= 1) {
                                                 if (ax[m] === bx[o]) {
@@ -6508,11 +6523,12 @@ var prettydiff = function prettydiff(api) {
                                     }
                                     zx = Math.max(ax.length, bx.length);
                                 }
-                                w = s.join("");
-                                x = t.join("");
-                                if (w !== "" && x !== "") {
-                                    u.push(w);
-                                    v.push(x);
+                                if (j > o) {
+                                    u.push(s.join(""));
+                                    v.push(t.join(""));
+                                } else {
+                                    u.push(ax.slice(i, o).join(""));
+                                    v.push(bx.slice(i, o).join(""));
                                 }
                                 if (j === zx) {
                                     r += 1;
@@ -7464,13 +7480,13 @@ var prettydiff = function prettydiff(api) {
         css: 121221, //diffview.css file
         csvbeauty: 121127, //csvbeauty library
         csvmin: 121127, //csvmin library
-        diffview: 121221, //diffview library
+        diffview: 121222, //diffview library
         documentation: 121203, //documentation.xhtml
         jsmin: 121127, //jsmin library (fulljsmin.js)
         jspretty: 121220, //jspretty library
         markup_beauty: 121127, //markup_beauty library
         markupmin: 121127, //markupmin library
-        prettydiff: 121221, //this file
+        prettydiff: 121222, //this file
         webtool: 121221, //prettydiff.com.xhtml
         api: {
             dom: 121221,
