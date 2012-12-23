@@ -6235,7 +6235,7 @@ var prettydiff = function prettydiff(api) {
                                     x = u[u.length - 1],
                                     y = v[v.length - 1],
                                     z = false;
-                                if (x !== "" && x === v[v.length - 2] && u.length > 0 && x.length > 0 && x.indexOf("</em>") === x.lastIndexOf("</em>") && x.indexOf("<em>") === x.lastIndexOf("<em>")) {
+                                if (x !== "" && x === v[v.length - 2] && u.length > 0 && x.length > 0 && x.indexOf("<em>") < x.indexOf("</em>") && x.lastIndexOf("<em>") < x.lastIndexOf("<\em>")) {
                                     for (i = k; i > -1; i -= 1) {
                                         if (ax[i].indexOf("</em>") > -1) {
                                             ax[i] = ax[i].replace("</em>", "");
@@ -6264,7 +6264,7 @@ var prettydiff = function prettydiff(api) {
                                     errorout -= 1;
                                     q = false;
                                     z = false;
-                                } else if (y !== "" && y === u[u.length - 2] && v.length > 0 && y.length > 0 && y.indexOf("</em>") === y.lastIndexOf("</em>") && y.indexOf("<em>") === y.lastIndexOf("<em>")) {
+                                } else if (y !== "" && y === u[u.length - 2] && v.length > 0 && y.length > 0 && y.indexOf("<em>") < y.indexOf("</em>") && y.lastIndexOf("<em>") < y.lastIndexOf("<\em>")) {
                                     for (i = k; i > -1; i -= 1) {
                                         if (bx[i].indexOf("</em>") > -1) {
                                             bx[i] = bx[i].replace("</em>", "");
