@@ -527,10 +527,6 @@ var prettydiff = function prettydiff(api) {
                         for (a = 0; a < b; a += 1) {
                             if (x[a] === "pd") {
                                 x[a] = "/";
-                                if (typeof x[a + 1] === "string" && x[a + 1] === " ") {
-                                    x[a + 1] = "";
-                                    a += 1;
-                                }
                             }
                         }
                         return x.join("").replace(/\"/g, "\"").replace(/\'/g, "'");
@@ -5996,6 +5992,8 @@ var prettydiff = function prettydiff(api) {
                                 r = 0,
                                 ax = [],
                                 bx = [],
+                                ra = "",
+                                rb = "",
                                 u = [],
                                 v = [],
                                 zx = 0,
@@ -6015,6 +6013,17 @@ var prettydiff = function prettydiff(api) {
                                 return [
                                     c, d
                                 ];
+                            }
+                            if (a.charAt(a.length - 1) === "\r" && b.charAt(b.length - 1) !== "\r") {
+                                a = a.substring(0, a.length - 1);
+                                ra = "<em>\\r</em>";
+                                rb = "<em></em>";
+                                errorout += 1;
+                            } else if (b.charAt(b.length - 1) === "\r" && a.charAt(a.length - 1) !== "\r") {
+                                b = b.substring(0, b.length - 1);
+                                rb = "<em>\\r</em>";
+                                ra = "<em></em>";
+                                errorout += 1;
                             }
                             if (tb !== "" && a.length !== b.length && a.replace(tb, "") === b.replace(tb, "")) {
                                 return (function diffview__report_charcomp_earlyReturn() {
@@ -6554,6 +6563,8 @@ var prettydiff = function prettydiff(api) {
                                     d += "</em>";
                                 }
                             }
+                            c = c + ra;
+                            d = d + rb;
                             return [
                                 c, d
                             ];
