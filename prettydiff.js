@@ -527,8 +527,10 @@ var prettydiff = function prettydiff(api) {
                         for (a = 0; a < b; a += 1) {
                             if (x[a] === "pd") {
                                 x[a] = "/";
-                            } else if (x[a] === "/" && typeof x[a + 1] === "string" && x[a + 1] === " ") {
-                                x[a + 1] = "";
+                                if (typeof x[a + 1] === "string" && x[a + 1] === " ") {
+                                    x[a + 1] = "";
+                                    a += 1;
+                                }
                             }
                         }
                         return x.join("").replace(/\"/g, "\"").replace(/\'/g, "'");
@@ -2070,7 +2072,7 @@ var prettydiff = function prettydiff(api) {
                             do {
                                 e.push(c[f]);
                                 f += 1;
-                            } while (f < g && !((/\s/).test(c[f]) || c[f] === ";" || c[f] === "=" || c[f] === "." || c[f] === "," || c[f] === "<" || c[f] === ">" || c[f] === "+" || c[f] === "-" || c[f] === "*" || c[f] === "/" || c[f] === "!" || c[f] === "?" || c[f] === "|" || c[f] === "^" || c[f] === ":" || c[f] === "\"" || c[f] === "'" || c[f] === "\\" || c[f] === "/" || c[f] === "(" || c[f] === ")" || c[f] === "{" || c[f] === "}" || c[f] === "[" || c[f] === "]" || c[f] === "&"));
+                            } while (f < g && !((/\s/).test(c[f]) || c[f] === ";" || c[f] === "=" || c[f] === "." || c[f] === "," || c[f] === "&" || c[f] === "<" || c[f] === ">" || c[f] === "+" || c[f] === "-" || c[f] === "*" || c[f] === "/" || c[f] === "!" || c[f] === "?" || c[f] === "|" || c[f] === "^" || c[f] === ":" || c[f] === "\"" || c[f] === "'" || c[f] === "\\" || c[f] === "/" || c[f] === "(" || c[f] === ")" || c[f] === "{" || c[f] === "}" || c[f] === "[" || c[f] === "]" || c[f] === "%"));
                             h = e.join("");
                             if (types.length > 1 && h === "function" && types[types.length - 1] === "method" && token[token.length - 2] === "{") {
                                 types[types.length - 1] = "start";
@@ -2161,7 +2163,7 @@ var prettydiff = function prettydiff(api) {
                             n[4] += 1;
                             if (token.length > 2 && token[token.length - 2] === "function") {
                                 u = "method";
-                            } else if (types.length === 0 || t === "function" || t === "for" || t === "if" || t === "while" || t === "switch" || u === "separator" || u === "operator" || (a > 0 && (/\s/).test(c[a - 1]))) {
+                            } else if (types.length === 0 || t === "return" || t === "function" || t === "for" || t === "if" || t === "while" || t === "switch" || u === "separator" || u === "operator" || (a > 0 && (/\s/).test(c[a - 1]))) {
                                 u = "start";
                             } else {
                                 u = "method";
@@ -2199,7 +2201,7 @@ var prettydiff = function prettydiff(api) {
                             u = "end";
                             token.push(t);
                             types.push(u);
-                        } else if (c[a] === "=" || c[a] === "<" || c[a] === ">" || c[a] === "+" || c[a] === "-" || c[a] === "*" || c[a] === "/" || c[a] === "!" || c[a] === "?" || c[a] === "|" || c[a] === "^" || c[a] === ":" || c[a] === "&") {
+                        } else if (c[a] === "=" || c[a] === "&" || c[a] === "<" || c[a] === ">" || c[a] === "+" || c[a] === "-" || c[a] === "*" || c[a] === "/" || c[a] === "!" || c[a] === "?" || c[a] === "|" || c[a] === "^" || c[a] === ":" || c[a] === "%") {
                             t = operator();
                             u = "operator";
                             n[0] += 1;
@@ -6230,8 +6232,10 @@ var prettydiff = function prettydiff(api) {
                                     q = false,
                                     s = [],
                                     t = [],
+                                    x = u[u.length - 1],
+                                    y = v[v.length - 1],
                                     z = false;
-                                if (u[u.length - 1] !== "" && u[u.length - 1] === v[v.length - 2] && u.length > 0 && u[u.length - 1].length > 0) {
+                                if (x !== "" && x === v[v.length - 2] && u.length > 0 && x.length > 0 && x.indexOf("</em>") === x.lastIndexOf("</em>") && x.indexOf("<em>") === x.lastIndexOf("<em>")) {
                                     for (i = k; i > -1; i -= 1) {
                                         if (ax[i].indexOf("</em>") > -1) {
                                             ax[i] = ax[i].replace("</em>", "");
@@ -6260,7 +6264,7 @@ var prettydiff = function prettydiff(api) {
                                     errorout -= 1;
                                     q = false;
                                     z = false;
-                                } else if (v[v.length - 1] !== "" && v[v.length - 1] === u[u.length - 2] && v.length > 0 && v[v.length - 1].length > 0) {
+                                } else if (y !== "" && y === u[u.length - 2] && v.length > 0 && y.length > 0 && y.indexOf("</em>") === y.lastIndexOf("</em>") && y.indexOf("<em>") === y.lastIndexOf("<em>")) {
                                     for (i = k; i > -1; i -= 1) {
                                         if (bx[i].indexOf("</em>") > -1) {
                                             bx[i] = bx[i].replace("</em>", "");
@@ -7477,16 +7481,16 @@ var prettydiff = function prettydiff(api) {
     edition = {
         charDecoder: 121127, //charDecoder library
         cleanCSS: 121127, //cleanCSS library
-        css: 121221, //diffview.css file
+        css: 121223, //diffview.css file
         csvbeauty: 121127, //csvbeauty library
         csvmin: 121127, //csvmin library
-        diffview: 121222, //diffview library
+        diffview: 121223, //diffview library
         documentation: 121203, //documentation.xhtml
-        jsmin: 121127, //jsmin library (fulljsmin.js)
-        jspretty: 121220, //jspretty library
+        jsmin: 121223, //jsmin library (fulljsmin.js)
+        jspretty: 121223, //jspretty library
         markup_beauty: 121127, //markup_beauty library
         markupmin: 121127, //markupmin library
-        prettydiff: 121222, //this file
+        prettydiff: 121223, //this file
         webtool: 121221, //prettydiff.com.xhtml
         api: {
             dom: 121221,
