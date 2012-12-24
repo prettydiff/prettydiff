@@ -1937,6 +1937,17 @@ var exports = "",
             lang = "",
             page = pd.o.wb.getAttribute("id");
         if (page === "webtool") {
+            pd.o.wb.onkeydown = function (event) {
+                var a = event || window.event,
+                    b = a.target || a.srcElement;
+                if (a.keyCode === 8) {
+                    if (b.nodeName === "textarea" || (b.nodeName === "input" && (b.getAttribute("type") === "text" || b.getAttribute("type") === "password"))) {
+                        return true;
+                    } else {
+                        return false;
+                    }
+                }
+            };
             pd.o.update.innerHTML = (function () {
                 var a = String(edition.latest),
                     b = [a.charAt(0) + a.charAt(1), a.charAt(2) + a.charAt(3), a.charAt(4) + a.charAt(5)],
