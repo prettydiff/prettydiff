@@ -186,7 +186,10 @@ var exports = "",
         stmarkup: pd.$$("stmarkup")
     };
 
-    pd.o.sh.innerHTML = pd.o.sh.innerHTML.replace(/\s+/g, " ");
+    if (pd.o.sh !== null) {
+        pd.o.sh.innerHTML = pd.o.sh.innerHTML.replace(/\s+/g, " ");
+    }
+    
     //recycle bundles arguments in preparation for executing prettydiff
     pd.recycle = function (e) {
         var c = "",
@@ -1937,9 +1940,9 @@ var exports = "",
             lang = "",
             page = pd.o.wb.getAttribute("id");
         if (page === "webtool") {
-            pd.o.wb.onkeydown = function (event) {
+            pd.o.wb.onkeypress = function (event) {
                 var a = event || window.event,
-                    b = a.target || a.srcElement;
+                    b = a.srcElement || a.target;
                 if (a.keyCode === 8) {
                     if (b.nodeName === "textarea" || (b.nodeName === "input" && (b.getAttribute("type") === "text" || b.getAttribute("type") === "password"))) {
                         return true;
@@ -2574,7 +2577,7 @@ var exports = "",
             }
             pd.o.wb.style.display = "block";
         } else if (pd.ls && localStorage.hasOwnProperty("webtool") && localStorage.getItem("webtool") !== null) {
-            a = localStorage.getItem("webtool").replace(/prettydiffper/g, "%").split("prettydiffcsep");
+            a = localStorage.getItem("webtool").replace(/prettydiffper/g, "%").split("prettydiffcsep");console.log(a);
             c = a.length;
             for (b = 0; b < c; b += 1) {
                 d = a[b].split(": ");
