@@ -21,7 +21,7 @@
         <meta content="qL8AV9yjL2-ZFGV9ey6wU3t7pTZdpD4lIetUSiNen7E" name="google-site-verification"/>
         <link href="diffview.css" media="all" rel="stylesheet" type="text/css"/>
     </head>
-    <body class="shadow" id="webtool" onload="pd.reload();">
+    <body class="shadow" id="webtool">
         <ul class="default" id="displayOps">
             <li><button id="resetOptions" onclick="pd.reset();return false" title="Clicking this button will clear all stored data and reset all options to the default configuration. I recommend refreshing the page after clicking this button." type="button">Reset
                 Options</button></li>
@@ -53,6 +53,7 @@
                     <li><a href="api/node-local.js">Node.js</a></li>
                     <li><a href="api/prettydiff.wsf">WSH</a></li>
                 </ul>
+                <p id="announcement">If you think this site is ugly then volunteer. Pretty Diff is looking for a visual designer. <a href="mailto:austin.cheney@us.army.mil">Email me</a> to help out.</p>
                 <p id="update">Updated:
                 </p>
                 <span class="clear"></span>
@@ -62,7 +63,7 @@
             tool</h2>
             <div class="box" id="diffreport">
                 <p style="display:none" class="buttons">
-                    <button class="save" onclick="pd.save(this);" title="Convert diff report to text that can be saved.">S</button>
+                    <a href="#" onclick="pd.save(this);"><button class="save" title="Convert diff report to text that can be saved.">S</button></a>
                     <button class="minimize" onclick="pd.minimize(this);" title="Minimize this dialogue ">&uarr;</button>
                     <button class="maximize" onclick="pd.maximize(this);" title="Maximize this dialogue to the browser window.">&uarr;</button>
                     <button class="resize" onmousedown="pd.resize(event, this);" title="Resize this dialogue.">&harr;</button></p>
@@ -467,13 +468,8 @@
                 <a href="http://www.crockford.com/javascript/jsmin.html">jsmin</a>
                 in 
                 <a href="http://fmarcia.info/jsmin/">JavaScript</a>,
-                <a href="http://tools.arantius.com/tabifier">cleanCSS</a>,
-                <a href="http://prettydiff.com/">markupmin</a>,
-                <a href="http://prettydiff.com/">markup_beauty</a>,
-                <a href="http://prettydiff.com/">csvbeauty</a>,
-                <a href="http://prettydiff.com/">csvmin</a>,
-                <a href="http://prettydiff.com/">charDecoder</a>, and
-                <a href="http://jsbeautifier.org/">jsbeautify</a>.</p>
+                <a href="http://tools.arantius.com/tabifier">cleanCSS</a>
+                and other custom written libraries.</p>
             <p>Pretty Diff is used by these great organizations:</p>
             <ul id="thirdparties">
                 <li><a href="http://www.w3.org/" onclick="window.open(this.href, 'thirdparty');return false;"><img alt="World Wide Web Consortium" src="images/logo_w3c.gif"/></a></li>

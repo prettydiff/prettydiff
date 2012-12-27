@@ -124,7 +124,7 @@ var exports = "",
         wd: pd.$$("diff-wrap"),
         bcv: "",
         css: {
-            body: "body{font-family:\"Arial\";font-size:10px}h1{float:left;font-size:2em;margin:0 .5em .5em 0}h2{background:#fff;border-style:solid;border-width:.075em;float:left;font-size:1.8em;font-weight:bold;margin:0 .5em .5em 0;padding:0 .2em}p{clear:both;font-size:1.2em;margin:0 0 1em}table.diff{border-collapse:collapse}table.diff tbody{font-family:'Courier New',Courier,'Lucida Console',monospace;font-size:1.1em}table.diff tbody th{font-family:verdana,arial,'Bitstream Vera Sans',helvetica,sans-serif;font-weight:normal;padding:.5em .6em 0 2.4em;text-align:right;vertical-align:top}table.diff thead{font-family:Verdana;text-align:left}table.diff thead{border-bottom-style:solid;border-bottom-width:.1em}table.diff thead th{border-left-style:solid;border-left-width:.1em;padding-left:2em}table.diff tbody td{letter-spacing:.1em;padding:.5em .5em 0;vertical-align:top;white-space:pre}table.diff tbody td em{font-style:normal;margin:0 -.09em;padding:.05em 0}table.diff th.author{border-top-style:solid;border-top-width:.1em;padding:.4em;text-align:right}table.diff .replace em,table.diff .delete em,table.diff .insert em,table.diff .skip,table.diff tbody th,table.diff{border-style:solid;border-width:.1em}@media print{p,ul{display:none}div{width:100%}html td{font-size:.8em;white-space:normal}}",
+            core: "body{font-family:\"Arial\";font-size:10px}h1{float:left;font-size:2em;margin:0 .5em .5em 0}h2{background:#fff;border-style:solid;border-width:.075em;float:left;font-size:1.8em;font-weight:bold;margin:0 .5em .5em 0;padding:0 .2em}p{clear:both;font-size:1.2em;margin:0 0 1em}table.diff{border-collapse:collapse}table.diff tbody{font-family:'Courier New',Courier,'Lucida Console',monospace;font-size:1.1em}table.diff tbody th{font-family:verdana,arial,'Bitstream Vera Sans',helvetica,sans-serif;font-weight:normal;padding:.5em .6em 0 2.4em;text-align:right;vertical-align:top}table.diff thead{font-family:Verdana;text-align:left}table.diff thead{border-bottom-style:solid;border-bottom-width:.1em}table.diff thead th{border-left-style:solid;border-left-width:.1em;padding-left:2em}table.diff tbody td{letter-spacing:.1em;padding:.5em .5em 0;vertical-align:top;white-space:pre}table.diff tbody td em{font-style:normal;margin:0 -.09em;padding:.05em 0}table.diff th.author{border-top-style:solid;border-top-width:.1em;padding:.4em;text-align:right}table.diff .replace em,table.diff .delete em,table.diff .insert em,table.diff .skip,table.diff tbody th,table.diff{border-style:solid;border-width:.1em}@media print{p,ul{display:none}div{width:100%}html td{font-size:.8em;white-space:normal}}",
             sdefault: "body.default button{background:#dfd;border-color:#030;box-shadow:0 .1em .2em rgba(0,32,0,0.75);color:#030}.default a{color:#f00}.default button:hover{background:#f6fff6}.default button:active{background:#030;color:#dfd}.default #title_text{background:#fff;border-color:#000;box-shadow:0 .15em .3em rgba(0,0,0,0.5);color:#000}.default #introduction h2{border-color:#f00;color:#c00}.default h1 svg{border-color:#600;box-shadow:0 .2em .4em rgba(0,0,0,0.5)}.default h2,.default h3{border-color:#000}.default fieldset{border-color:#caa}.default legend{border-color:#fee;color:#966}.default .button button{background:url(\"images/green.png\") repeat-x 0 100%#dfd}.default .button button:hover{background:#f6fff6}.default .button button:active{background:#030;color:#efe}.default .box{background:#ccc;border-color:#006;box-shadow:0 .4em .8em rgba(0,0,64,0.75)}.default .box button{box-shadow:0 .1em .2em rgba(0,0,64,0.5)}.default .box button.resize{background:#ddf;border-color:#006;color:#006}.default .box button.minimize{background:#ddf;border-color:#006;color:#006}.default .box button.minimize:hover,.default .box button.resize:hover{background:#99f}.default .box button.save{background:#ddf;border-color:#006;color:#006}.default .box button.save:hover{background:#99f}.default .box h3.heading{background:#eef;border-color:#006}.default .box h3.heading:hover{background:#ccf}.default .box .body{background:#d8dde8;border-color:#006;box-shadow:0 0 .4em rgba(0,64,0,0.75)}.default .options{background:url(\"images/backred.gif\") #fee repeat-x 100% 100%;border-color:#600;box-shadow:0 .2em .4em rgba(64,0,0,0.5)}.default .options h2{border-color:#600;box-shadow:0 .1em .2em rgba(102,0,0,0.75)}.default #Beautify h2,.default #Minify h2,.default #diffBase h2,.default #diffNew h2{border-color:#006;box-shadow:0 .1em .2em rgba(0,0,64,0.5)}.default #option_comment{background:#fee;border-color:#600}.default #top em{color:#00f}.default #update{background:#fff;border-color:#000;box-shadow:0 .1em .2em rgba(0,0,0,0.5)}.default .wide,.default .tall,.default #diffBase,.default #diffNew{background:url(\"images/backblue.gif\") #eef repeat-x 100% 100%;border-color:#006;box-shadow:0 .2em .4em rgba(0,0,64,0.5)}.default .file input,.default .labeltext input{border-color:#006}#webtool.default input.unchecked{background:#eef8ff;color:#000}.default .options input[type=text],.default .options select{border-color:#933}.default #beautyoutput,.default #minifyoutput{background:#ddd}.default #diffoutput p em,.default #diffoutput li em{color:#c00}.default .analysis .bad{background-color:#e99;color:#400}.default .analysis .good{background-color:#9e9;color:#040}.default #doc .analysis thead th,.default #doc .analysis th[colspan]{background:#eef}.default div input{border-color:#933}.default textarea{border-color:#339}.default textarea:hover{background:#eef8ff}.default table.diff{border-color:#bbc}.default table.diff tbody th{background:#eed;border-color:#bbc;color:#886}.default table.diff thead{background:#efefef;border-bottom-color:#bbc}.default table.diff thead th{border-left-color:#bbc}.default table.diff .empty{background-color:#ddd}.default table.diff .replace{background-color:#fd8}.default table.diff .replace em{background-color:#ffd;border-color:#963;color:#630}.default table.diff .delete{background-color:#e99}.default table.diff .delete em{background-color:#fdd;border-color:#700;color:#600}.default table.diff .equal{background-color:#fff}.default table.diff .skip{background-color:#efefef;border-color:#aaa #bbc #aaa #aaa}.default table.diff .insert{background-color:#9e9}.default table.diff .insert em{background-color:#efc;border-color:#070;color:#050}.default #doc table,.default .box .body table{background:#fff;border-color:#669}.default #doc strong,.default .box .body strong{color:#c00}.default .box .body em,.default .box .body #doc em{color:#090}.default table.diff th.author{background:#efefef;border-top-color:#bbc}.default #thirdparties img,.default #diffoutput #thirdparties{border-color:#687888}.default #diffoutput #thirdparties{background:#c8d8e8}.default #doc div,#doc.default div{background:#eef;border-color:#669}.default #doc ol,#doc.default ol{background:#fff;border-color:#669}.default #doc div div,#doc.default div div{background:#fff;border-color:#966}.default #doc table,#doc.default table{background:#fff;border-color:#669}.default #doc th,#doc.default th{background:#fed;border-left-color:#669;border-top-color:#669}.default #doc tr:hover,#doc.default tr:hover{background:#fed}.default #doc em,#doc.default em{color:#060}.default #doc div:hover,#doc.default div:hover{background:#def}.default #doc div div:hover,#doc.default div div:hover,#doc.default div ol:hover{background:#fed}.default #pdsamples li{background:#eef;border-color:#006}.default #pdsamples li div{background:url(\"images/backred.gif\") repeat-x 100% 100%#fee;border-color:#600}.default #pdsamples li div a{color:#009}.default #pdsamples li p a{color:#900}",
             scoffee: "html .coffee,body.coffee{background:#dcb;color:#321}.coffee a{color:#900}.coffee button{background:#654;border-color:#321;box-shadow:0 .1em .2em rgba(32,0,0,0.75);color:#fed}.coffee button:hover,.coffee button:active{background:#fed;color:#654}.coffee #update,.coffee #title_text{background:#fff8ee;border-color:#600;box-shadow:0 .15em .3em rgba(32,0,0,0.5);color:#321}.coffee #introduction h2{color:#f00}.coffee h1 svg{border-color:#600;box-shadow:0 .2em .4em rgba(0,0,0,0.5)}.coffee h2,.coffee h3{border-color:#600}.coffee fieldset{background:#dcb;border-color:#654}.coffee legend{background:#fed;border-color:#654}.coffee .box{background:#ccc;border-color:#654;box-shadow:0 .4em .8em rgba(64,0,0,0.75)}.coffee .box button{border-color:#600;box-shadow:0 .1em .2em rgba(64,0,0,0.5);color:#600}.coffee .box button.minimize:hover,.coffee .box button.resize:hover,.coffee .box button.save:hover,.coffee .box button.maximize:hover{background:#654;color:#fed}.coffee .box button.resize{background:#c96}.coffee .box button.minimize{background:#eda}.coffee .box button.save{background:#db0}.coffee .box button.maximize{background:#dd8}.coffee .box h3.heading{background:#987;border-color:#600;color:#fed}.coffee .box h3.heading:hover{background:#654}.coffee .box .body{background:#fed;border-color:#654;box-shadow:0 .4em .8em rgba(64,0,0,0.75)}.coffee .options{background:#fed;border-color:#600;box-shadow:0 .4em .8em rgba(64,0,0,0.5)}.coffee .options h2{border-color:#600;box-shadow:0 .1em .2em rgba(64,0,0,0.75)}.coffee #Beautify h2,.coffee #Minify h2,.coffee #diffBase h2,.coffee #diffNew h2{border-color:#600;box-shadow:0 .1em .2em rgba(64,0,0,0.5)}.coffee #option_comment{border-color:#600;box-shadow:0 .1em .2em rgba(64,0,0,0.5);color:#600}.coffee #top em{color:#f00}.coffee .wide,.coffee .tall,.coffee #diffBase,.coffee #diffNew{background:#fed;border-color:#600;box-shadow:0 .2em .4em rgba(64,0,0,0.5)}.coffee .file input,.coffee .labeltext input{border-color:#600}#webtool.coffee input.unchecked{background:#cba;color:#000}.coffee .options input[type=text],.coffee .options select{border-color:#933}.coffee #beautyoutput,.coffee #minifyoutput{background:#dcb}.coffee #diffoutput p em,.coffee #diffoutput li em{color:#900}.coffee .analysis .bad{background-color:#eb9;color:#400}.coffee .analysis .good{background-color:#be9;color:#040}.coffee #doc .analysis thead th,.coffee #doc .analysis th[colspan]{background:#dcb}.coffee div input{border-color:#933}.coffee textarea{background:#fff8ee;border-color:#a66}.coffee textarea:hover{background:#fff}.coffee table.diff{border-color:#966}.coffee table.diff tbody th{background:#edc;border-color:#966;color:#633}.coffee table.diff thead{background:#cba;border-bottom-color:#966}.coffee table.diff thead th{border-left-color:#966}.coffee table.diff .empty{background-color:#ddd}.coffee table.diff .replace{background-color:#fda}.coffee table.diff .replace em{background-color:#ffd;border-color:#963;color:#630}.coffee table.diff .delete{background-color:#ebb}.coffee table.diff .delete em{background-color:#fee;border-color:#700;color:#600}.coffee table.diff .equal{background-color:#fff8ee}.coffee table.diff .skip{background-color:#eee;border-color:#966}.coffee table.diff .insert{background-color:#cec}.coffee table.diff .insert em{background-color:#efc;border-color:#070;color:#050}.coffee #doc table,.coffee .box .body table{background:#fff8ee;border-color:#966}.coffee #doc strong,.coffee .box .body strong{color:#900}.coffee #doc em,.coffee .box .body em,.coffee .box .body #doc em{color:#262}.coffee table.diff th.author{background:#cba;border-top-color:#966}.coffee #diffoutput #thirdparties{background:#edc;border-color:#600}.coffee #doc div,#doc.coffee div{background:#edc;border-color:#966}.coffee #doc ol,#doc.coffee ol{background:#fff8ee;border-color:#966}.coffee #doc div div,#doc.coffee div div{background:#fff;border-color:#966}.coffee #doc table,#doc.coffee table{background:#fff8ee;border-color:#966}.coffee #doc th,#doc.coffee th{background:#eed;border-left-color:#966;border-top-color:#966}.coffee #doc tr:hover,#doc.coffee tr:hover{background:#fed}.coffee #doc div:hover,#doc.coffee div:hover{background:#dcb}.coffee #doc div div:hover,#doc.coffee div div:hover,#doc.coffee div ol:hover{background:#dcb}.coffee #pdsamples li{background:#fed;border-color:#600}.coffee #pdsamples li div{background:#dcb;border-color:#654}.coffee #pdsamples li div a{color:#900}.coffee #pdsamples li p a{color:#900}",
             sdark: "body.dark{background:#333;color:#eee}.dark a{color:#9cf}.dark h2{background:#def;border-color:#006;color:#036}.dark table.diff{border-color:#036}.dark table.diff tbody th{background:#369;border-color:#036;color:#def}.dark table.diff tbody td{border-color:#036}.dark table.diff thead{background:#036;border-bottom-color:#036;color:#def}.dark table.diff thead th{border-left-color:#abc}.dark table.diff .empty{background-color:#456}.dark table.diff .replace{background-color:#468;color:#def}.dark table.diff .replace em{background-color:#dff;border-color:#036;color:#036}.dark table.diff .delete{background-color:#600;color:#fbb}.dark table.diff .delete em{background-color:#fbb;border-color:#600;color:#600}.dark table.diff .equal{background-color:#024;color:#def}.dark table.diff .skip{background-color:#333;border-color:#036}.dark table.diff .insert{background-color:#696;color:#dfd}.dark table.diff .insert em{background-color:#efc;border-color:#060;color:#050}.dark table.diff th.author{background:#036;border-bottom-color:#036;color:#def}",
@@ -186,10 +186,6 @@ var exports = "",
         stmarkup: pd.$$("stmarkup")
     };
 
-    if (pd.o.sh !== null) {
-        pd.o.sh.innerHTML = pd.o.sh.innerHTML.replace(/\s+/g, " ");
-    }
-    
     //recycle bundles arguments in preparation for executing prettydiff
     pd.recycle = function (e) {
         var c = "",
@@ -442,7 +438,7 @@ var exports = "",
         pd.o.zindex += 1;
         if (pd.o.bb.checked) {
             pd.o.bx.value = output[0];
-            if (pd.o.sh.innerHTML === "Maximize Inputs") {
+            if (pd.o.sh.innerHTML.replace(/\s+/g, " ") === "Maximize Inputs") {
                 pd.o.rh.innerHTML = output[1];
                 pd.o.rg.style.zIndex = pd.o.zindex;
                 pd.o.rg.style.display = "block";
@@ -476,7 +472,7 @@ var exports = "",
             }
         } else if (pd.o.mm.checked) {
             pd.o.mx.value = output[0];
-            if (pd.o.sh.innerHTML === "Maximize Inputs") {
+            if (pd.o.sh.innerHTML.replace(/\s+/g, " ") === "Maximize Inputs") {
                 pd.o.rj.innerHTML = output[1];
                 pd.o.ri.style.zIndex = pd.o.zindex;
                 pd.o.ri.style.display = "block";
@@ -894,45 +890,66 @@ var exports = "",
             b = [],
             c = "",
             d = [];
-        pd.top(pd.o.re);
-        if (/Please try using the option labeled ((&lt;)|<)em((&gt;)|>)Plain Text \(diff only\)((&lt;)|<)\/em((&gt;)|>)\./.test(a) && !/table class\=("|')diff("|')/.test(a)) {
-            pd.o.rf.innerHTML = "<p><strong>Error:</strong> Please try using the option labeled <em>Plain Text (diff only)</em>. <span style='display:block'>The input does not appear to be markup, CSS, or JavaScript.</span></p>";
+        
+        //added support for Firefox and Opera because they support long
+        //URIs.  This extra support allows for local file creation.
+        if (x.nodeName.toLowerCase() === "a") {
+            if (a === "" || (/Please try using the option labeled ((&lt;)|<)em((&gt;)|>)Plain Text \(diff only\)((&lt;)|<)\/em((&gt;)|>)\./.test(a) && !/table class\=("|')diff("|')/.test(a))) {
+                return false;
+            }
+            c = "<table";
+            d = a.split(c);
+            b.push("<?xml version='1.0' encoding='UTF-8' ?><!DOCTYPE html PUBLIC '-//W3C//DTD XHTML 1.1//EN' 'http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd'><html xmlns='http://www.w3.org/1999/xhtml' xml:lang='en'><head><title>Pretty Diff - The difference tool</title><meta name='robots' content='index, follow'/> <meta name='DC.title' content='Pretty Diff - The difference tool'/> <link rel='canonical' href='http://prettydiff.com/' type='application/xhtml+xml'/><meta http-equiv='Content-Type' content='application/xhtml+xml;charset=UTF-8'/><meta http-equiv='Content-Style-Type' content='text/css'/><style type='text/css'>" + pd.o.css.core + pd.o.css["s" + pd.o.color] + "</style></head><body class='" + pd.o.color + "'><h1><a href='http://prettydiff.com/'>Pretty Diff - The difference tool</a></h1><div id='doc'>");
+            b.push(d[0]);
+            b.push("<p>Accessibility note. &lt;em&gt; tags in the output represent character differences per lines compared.</p></div>");
+            b.push(c);
+            b.push(d[1]);
+            b.push("</body></html>");
+            x.setAttribute("href", "data:text/prettydiff;charset=utf-8," + encodeURIComponent(b.join("")));
             return;
-        }
-        if (x.innerHTML === "S") {
-            pd.o.ps.checked = true;
-            if (a !== "") {
-                c = "<table";
-                d = a.split(c);
-                c = c + d[1];
-                a = d[0];
-                b.push(a);
-                b.push(" <p>This is the generated diff output. Please copy the text output, paste into a text file, and save as a &quot;.html&quot; file.</p> <textarea rows='40' cols='80' id='textreport'>");
-                b.push("&lt;?xml version='1.0' encoding='UTF-8' ?&gt;&lt;!DOCTYPE html PUBLIC '-//W3C//DTD XHTML 1.1//EN' 'http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd'&gt;&lt;html xmlns='http://www.w3.org/1999/xhtml' xml:lang='en'&gt;&lt;head&gt;&lt;title&gt;Pretty Diff - The difference tool&lt;/title&gt;&lt;meta name='robots' content='index, follow'/&gt; &lt;meta name='DC.title' content='Pretty Diff - The difference tool'/&gt; &lt;link rel='canonical' href='http://prettydiff.com/' type='application/xhtml+xml'/&gt;&lt;meta http-equiv='Content-Type' content='application/xhtml+xml;charset=UTF-8'/&gt;&lt;meta http-equiv='Content-Style-Type' content='text/css'/&gt;&lt;style type='text/css'&gt;" + pd.o.css.core + pd.o.css["s" + pd.o.color] + "&lt;/style&gt;&lt;/head&gt;&lt;body class='" + pd.o.color + "'&gt;&lt;h1&gt;&lt;a href='http://prettydiff.com/'&gt;Pretty Diff - The difference tool&lt;/a&gt;&lt;/h1&gt;");
-                b.push(a.replace(/\&/g, "&amp;").replace(/>/g, "&gt;").replace(/</g, "&lt;"));
-                b.push("&lt;p&gt;Accessibility note. &amp;lt;em&amp;gt; tags in the output represent character differences per lines compared.&lt;/p&gt;");
-                b.push(c.replace(/\&/g, "&amp;").replace(/>/g, "&gt;").replace(/</g, "&lt;"));
-                b.push("&lt;/body&gt;&lt;/html&gt;</textarea>");
-            }
-            x.innerHTML = "H";
-            x.setAttribute("title", "Convert diff report to an HTML table.");
         } else {
-            pd.o.ps.checked = false;
-            c = "<p>This is the generated diff output. Please copy the text output, paste into a text file, and save as a \".html\" file.</p>";
-            if (a !== "") {
-                a = a.replace(/ xmlns\="http:\/\/www\.w3\.org\/1999\/xhtml"/g, "").replace(/&lt;/g, "<").replace(/&gt;/g, ">").replace(/&amp;/g, "&");
-                d = a.split(c);
-                b.push(d[0]);
-                c = (d[1].indexOf("table class=\"diff\"") === -1) ? "table class='diff'" : "table class=\"diff\"";
-                d[1] = d[1].substring(d[1].indexOf(c) + c.length, d[1].length);
-                d[1] = "<table class=\"diff\"" + (d[1].substring(0, d[1].length - 25));
-                b.push(d[1]);
+            //Webkit and IE get the old functionality of a textarea with
+            //HTML text content to copy and paste into a text file.
+            pd.top(pd.o.re);
+            if (/Please try using the option labeled ((&lt;)|<)em((&gt;)|>)Plain Text \(diff only\)((&lt;)|<)\/em((&gt;)|>)\./.test(a) && !/table class\=("|')diff("|')/.test(a)) {
+                pd.o.rf.innerHTML = "<p><strong>Error:</strong> Please try using the option labeled <em>Plain Text (diff only)</em>. <span style='display:block'>The input does not appear to be markup, CSS, or JavaScript.</span></p>";
+                return;
             }
-            x.innerHTML = "S";
-            x.setAttribute("title", "Convert diff report to text that can be saved.");
+            if (x.innerHTML === "S") {
+                pd.o.ps.checked = true;
+                if (a !== "") {
+                    c = "<table";
+                    d = a.split(c);
+                    c = c + d[1];
+                    a = d[0];
+                    b.push(a);
+                    b.push(" <p>This is the generated diff output. Please copy the text output, paste into a text file, and save as a &quot;.html&quot; file.</p> <textarea rows='40' cols='80' id='textreport'>");
+                    b.push("&lt;?xml version='1.0' encoding='UTF-8' ?&gt;&lt;!DOCTYPE html PUBLIC '-//W3C//DTD XHTML 1.1//EN' 'http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd'&gt;&lt;html xmlns='http://www.w3.org/1999/xhtml' xml:lang='en'&gt;&lt;head&gt;&lt;title&gt;Pretty Diff - The difference tool&lt;/title&gt;&lt;meta name='robots' content='index, follow'/&gt; &lt;meta name='DC.title' content='Pretty Diff - The difference tool'/&gt; &lt;link rel='canonical' href='http://prettydiff.com/' type='application/xhtml+xml'/&gt;&lt;meta http-equiv='Content-Type' content='application/xhtml+xml;charset=UTF-8'/&gt;&lt;meta http-equiv='Content-Style-Type' content='text/css'/&gt;&lt;style type='text/css'&gt;" + pd.o.css.core + pd.o.css["s" + pd.o.color] + "&lt;/style&gt;&lt;/head&gt;&lt;body class='" + pd.o.color + "'&gt;&lt;h1&gt;&lt;a href='http://prettydiff.com/'&gt;Pretty Diff - The difference tool&lt;/a&gt;&lt;/h1&gt;&lt;div id='doc'&gt;");
+                    b.push(a.replace(/\&/g, "&amp;").replace(/>/g, "&gt;").replace(/</g, "&lt;"));
+                    b.push("&lt;p&gt;Accessibility note. &amp;lt;em&amp;gt; tags in the output represent character differences per lines compared.&lt;/p&gt;&lt;/div&gt;");
+                    b.push(c.replace(/\&/g, "&amp;").replace(/>/g, "&gt;").replace(/</g, "&lt;"));
+                    b.push("&lt;/body&gt;&lt;/html&gt;</textarea>");
+                }
+                x.innerHTML = "H";
+                x.setAttribute("title", "Convert diff report to an HTML table.");
+            } else {
+                pd.o.ps.checked = false;
+                c = "<p>This is the generated diff output. Please copy the text output, paste into a text file, and save as a \".html\" file.</p>";
+                if (a !== "") {
+                    a = a.replace(/ xmlns\="http:\/\/www\.w3\.org\/1999\/xhtml"/g, "").replace(/&lt;/g, "<").replace(/&gt;/g, ">").replace(/&amp;/g, "&");
+                    d = a.split(c);
+                    b.push(d[0]);
+                    c = (d[1].indexOf("table class=\"diff\"") === -1) ? "table class='diff'" : "table class=\"diff\"";
+                    d[1] = d[1].substring(d[1].indexOf(c) + c.length, d[1].length);
+                    d[1] = "<table class=\"diff\"" + (d[1].substring(0, d[1].length - 25));
+                    b.push(d[1]);
+                }
+                x.innerHTML = "S";
+                x.setAttribute("title", "Convert diff report to text that can be saved.");
+            }
+            pd.o.rf.innerHTML = b.join("");
+            pd.options(x.parentNode);
         }
-        pd.o.rf.innerHTML = b.join("");
-        pd.options(x.parentNode);
     };
 
     //basic drag and drop for the report windows
@@ -1533,9 +1550,9 @@ var exports = "",
             }
         }
         if (pd.o.sh) {
-            if (pd.o.sh.innerHTML === "Normal view") {
+            if (pd.o.sh.innerHTML.replace(/\s+/g, " ") === "Normal view") {
                 pd.webtool[0] = "showhide: hide";
-            } else if (pd.o.sh.innerHTML !== "Normal view") {
+            } else {
                 pd.webtool[0] = "showhide: show";
             }
         }
@@ -1910,8 +1927,9 @@ var exports = "",
         pd.fixminreport();
     };
 
+    pd.reload = function () {};
     //alter tool on page load in reflection to saved state
-    pd.reload = function () {
+    (function () {
         var a = [],
             b = 0,
             c = 0,
@@ -1924,6 +1942,7 @@ var exports = "",
             k = "",
             l = 0,
             m = [],
+            n = {},
             bm = false,
             dm = false,
             mm = false,
@@ -1939,6 +1958,17 @@ var exports = "",
             stat = [],
             lang = "",
             page = pd.o.wb.getAttribute("id");
+        
+        //supply limited functionality for the pd.save function if not
+        //firefox or opera.
+        if (navigator && navigator.userAgent.indexOf("Firefox") === -1 && navigator.userAgent.indexOf("Opera") === -1) {
+            i = pd.o.re.getElementsByTagName("a")[0];
+            n = i.getElementsByTagName("button")[0];
+            n.setAttribute("onclick", "pd.save(this);");
+            i.removeChild(n);
+            i.parentNode.insertBefore(n, i);
+            i.parentNode.removeChild(i);
+        }
         if (page === "webtool") {
             pd.o.wb.onkeypress = function (event) {
                 var a = event || window.event,
@@ -2739,7 +2769,8 @@ var exports = "",
                 a.innerHTML = h.join("");
             }());
         }
-    };
+    }());
+    
 }());
 if (!(/^(file:\/\/)/).test(location.href)) {
     _gaq.push(["_setAccount", "UA-27834630-1"]);
