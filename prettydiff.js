@@ -4167,7 +4167,7 @@ var prettydiff = function prettydiff(api) {
                         b = "",
                         i = 0,
                         loop = 0;
-                    if (!mhtml) {
+                    if (mhtml === false) {
                         return;
                     }
                     loop = cinfo.length;
@@ -4663,7 +4663,7 @@ var prettydiff = function prettydiff(api) {
                             scriptStart = (/^(\s*<\!\-\-)/),
                             scriptEnd = (/(\-\->\s*)$/),
                             loop = cinfo.length,
-                            disqualify = (mhtml) ? (/^(\s?<((pre)|(script)))/) : (/^(\s?<script)/),
+                            disqualify = (mhtml === true) ? (/^(\s?<((pre)|(script)))/) : (/^(\s?<script)/),
                             attrib = function markup_beauty__algorithm_loop_attributeOrder(tag, end) {
                                 var a = [],
                                     b = 0,
@@ -7494,19 +7494,19 @@ var prettydiff = function prettydiff(api) {
     edition = {
         charDecoder: 121127, //charDecoder library
         cleanCSS: 121127, //cleanCSS library
-        css: 121224, //diffview.css file
+        css: 121228, //diffview.css file
         csvbeauty: 121127, //csvbeauty library
         csvmin: 121127, //csvmin library
         diffview: 121227, //diffview library
         documentation: 121203, //documentation.xhtml
         jsmin: 121223, //jsmin library (fulljsmin.js)
         jspretty: 121227, //jspretty library
-        markup_beauty: 121227, //markup_beauty library
+        markup_beauty: 121228, //markup_beauty library
         markupmin: 121127, //markupmin library
-        prettydiff: 121227, //this file
+        prettydiff: 121228, //this file
         webtool: 121227, //prettydiff.com.xhtml
         api: {
-            dom: 121227,
+            dom: 121228,
             nodeLocal: 121210,
             nodeService: 121106,
             wsh: 121210

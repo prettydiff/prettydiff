@@ -889,7 +889,10 @@ var exports = "",
         var a = pd.o.rf.innerHTML,
             b = [],
             c = "",
-            d = [];
+            d = [],
+            e = {},
+            f = 0,
+            g = {};
         
         //added support for Firefox and Opera because they support long
         //URIs.  This extra support allows for local file creation.
@@ -906,6 +909,28 @@ var exports = "",
             b.push(d[1]);
             b.push("</body></html>");
             x.setAttribute("href", "data:text/prettydiff;charset=utf-8," + encodeURIComponent(b.join("")));
+            
+            //prompt to save file created above.  below is the creation
+            //of the modal with instructions about file extension.
+            e = pd.o.wb.lastChild;
+            if (e.nodeType > 1 || e.nodeName.toLowerCase() === "script") {
+                do {
+                    e = e.previousSibling;
+                } while (e.nodeType > 1 || e.nodeName.toLowerCase() === "script");
+            }
+            f = e.offsetTop + e.clientHeight + 20;
+            e = document.createElement("div");
+            e.setAttribute("onclick", "this.parentNode.removeChild(this)");
+            e.setAttribute("id", "modalSave");
+            g = document.createElement("span");
+            g.style.width = (pd.o.wb.clientWidth + 10) + "px";
+            g.style.height = f + "px";
+            e.appendChild(g);
+            g = document.createElement("p");
+            g.innerHTML = "Just rename the file extension from '<strong>.part</strong>' to '<strong>.xhtml</strong>'. <em>Click anywhere to close this reminder.</em>";
+            e.appendChild(g);
+            pd.o.wb.appendChild(e);
+            g.style.left = (((pd.o.wb.clientWidth + 10) - g.clientWidth) / 2) + "px";
             return;
         } else {
             //Webkit and IE get the old functionality of a textarea with
