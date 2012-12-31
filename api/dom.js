@@ -1694,7 +1694,7 @@ var exports = "",
         pd.o.dt = pd.$$("difftall");
         pd.o.ay = pd.$$("additional_yes");
         a = pd.o.la[pd.o.la.selectedIndex].value;
-        if (x.innerHTML === "Maximize Inputs") {
+        if (x.innerHTML.replace(/\s+/g, " ") === "Maximize Inputs") {
             pd.o.op.style.display = "none";
             pd.o.bops.style.display = "none";
             pd.o.dops.style.display = "none";

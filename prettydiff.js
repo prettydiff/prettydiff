@@ -152,7 +152,7 @@ var prettydiff = function prettydiff(api) {
                     unit = (/u\![0-9a-f]{4,5}\+/),
                     htmln = (/\&\#[0-9]{1,6}\;/),
                     htmlt = (/\&\![0-9]{1,6}\;/);
-                if ((!pd.o.rh && !pd.o.rh.innerHTML) || (c.search(unit) === -1 && c.search(uni) === -1 && c.search(htmlt) === -1 && c.search(htmln) === -1)) {
+                if ((pd === undefined || pd.o.rh === null || pd.o.rh === undefined || typeof pd.o.rh.innerHTML !== "string") || (c.search(unit) === -1 && c.search(uni) === -1 && c.search(htmlt) === -1 && c.search(htmln) === -1)) {
                     return input;
                 }
                 f = input.length;
@@ -6133,6 +6133,34 @@ var prettydiff = function prettydiff(api) {
                                     l = [0, 0],
                                     m = false,
                                     n = [e[0].length, f[0].length];
+                                if (tt === "" && a.replace(/^(\s+)/, "") === b.replace(/^(\s+)/, "")) {
+                                    i = a.search(/\S/);
+                                    j = b.search(/\S/);
+                                    g = a.split("");
+                                    h = b.split("");
+                                    ax = [];
+                                    bx = [];
+                                    if (i > j) {
+                                        g[j] = "<em>" + g[j];
+                                        g[i] = "</em>" + g[i];
+                                        h[j] = "<em></em>" + h[j];
+                                        for (i; i > j; i -= 1) {
+                                            bx.push("");
+                                        }
+                                        k = i + 1;
+                                    } else {
+                                        h[i] = "<em>" + h[i];
+                                        h[j] = "</em>" + h[j];
+                                        g[i] = "<em></em>" + g[i];
+                                        for (j; j > i; j -= 1) {
+                                            ax.push("");
+                                        }
+                                        k = j + 1;
+                                    }
+                                    ax = ax.concat(g);
+                                    bx = bx.concat(h);
+                                    return;
+                                }
                                 if (e[0] !== "") {
                                     a = a.substr(n[0]);
                                 }
@@ -6251,7 +6279,7 @@ var prettydiff = function prettydiff(api) {
                                         if (ax[i].indexOf("</em>") > -1) {
                                             ax[i] = ax[i].replace("</em>", "");
                                             if (bx[i].indexOf("<em></em>") > -1) {
-                                                bx[i] = bx[i].replace("<em></em>", "");
+                                               bx[i] = bx[i].replace("<em></em>", "");
                                                 z = true;
                                             } else if (z === true) {
                                                 bx[i + 1] = bx[i + 1].replace("</em>", "<em></em>");
@@ -6264,7 +6292,11 @@ var prettydiff = function prettydiff(api) {
                                         }
                                         if (ax[i].indexOf("<em>") > -1) {
                                             ax[i] = ax[i].replace("<em>", "");
-                                            bx[i] = bx[i].replace("<em>", "");
+                                            if (bx[i].indexOf("<em>") > -1) {
+                                                bx[i] = bx[i].replace("<em>", "");
+                                            } else if (i > 0 && bx[i - 1].indexOf("<em>") > -1) {
+                                                bx[i - 1] = bx[i - 1].replace("<em>", "");
+                                            }
                                             q = true;
                                         }
                                     }
@@ -6293,7 +6325,11 @@ var prettydiff = function prettydiff(api) {
                                         }
                                         if (bx[i].indexOf("<em>") > -1) {
                                             bx[i] = bx[i].replace("<em>", "");
-                                            ax[i] = ax[i].replace("<em>", "");
+                                            if (ax[i].indexOf("<em>") > -1) {
+                                                ax[i] = ax[i].replace("<em>", "");
+                                            } else if (i > 0 && ax[i - 1].indexOf("<em>") > -1) {
+                                                ax[i - 1] = ax[i - 1].replace("<em>", "");
+                                            }
                                             q = true;
                                         }
                                     }
@@ -6571,7 +6607,7 @@ var prettydiff = function prettydiff(api) {
                                 c, d
                             ];
                         };
-                    if (inline) {
+                    if (inline === true) {
                         node.push("<th class='texttitle' colspan='3'>");
                         node.push(baseTextName);
                         node.push(" vs. ");
@@ -6599,7 +6635,7 @@ var prettydiff = function prettydiff(api) {
                                 jump = rowcnt - ((idx === 0 ? 1 : 2) * context);
                                 if (jump > 1) {
                                     node.push("<tr><th>...</th>");
-                                    if (!inline) {
+                                    if (inline === false) {
                                         node.push("<td class='skip'></td>");
                                     }
                                     node.push("<th>...</th><td class='skip'></td></tr>");
@@ -6622,7 +6658,7 @@ var prettydiff = function prettydiff(api) {
                                     ntest = true;
                                 }
                             }
-                            if (inline) {
+                            if (inline === true) {
                                 if (ntest || change === "insert") {
                                     node.push("<th></th><th>");
                                     node.push(n + 1);
@@ -6636,8 +6672,14 @@ var prettydiff = function prettydiff(api) {
                                     node.push(bta[b]);
                                     node.push("</td></tr>");
                                 } else if (change === "replace") {
-                                    if (b < be && n < ne && bta[b] !== nta[n]) {
-                                        z = charcomp(bta[b], nta[n]);
+                                    if (bta[b] !== nta[n]) {
+                                        if (bta[b] === "") {
+                                            z = ["", nta[n]];
+                                        } else if (nta[n] === "") {
+                                            z = [bta[b], ""];
+                                        } else if (b < be && n < ne) {
+                                            z = charcomp(bta[b], nta[n]);
+                                        }
                                     }
                                     if (b < be) {
                                         node.push("<th>");
@@ -6687,6 +6729,12 @@ var prettydiff = function prettydiff(api) {
                                 }
                             } else {
                                 if (!btest && !ntest && typeof bta[b] === "string" && typeof nta[n] === "string") {
+                                    if (bta[b] === "" && nta[n] !== "") {
+                                        change = "insert";
+                                    }
+                                    if (nta[n] === "" && bta[b] !== "") {
+                                        change = "delete";
+                                    }
                                     if (change === "replace" && b < be && n < ne && bta[b] !== nta[n]) {
                                         z = charcomp(bta[b], nta[n]);
                                     } else {
@@ -6698,6 +6746,8 @@ var prettydiff = function prettydiff(api) {
                                         node.push("</th><td class='");
                                         if (n >= ne) {
                                             node.push("delete");
+                                        } else if (bta[b] === "" && nta[n] !== "") {
+                                            node.push("empty");
                                         } else {
                                             node.push(change);
                                         }
@@ -6717,6 +6767,8 @@ var prettydiff = function prettydiff(api) {
                                         node.push("</th><td class='");
                                         if (b >= be) {
                                             node.push("insert");
+                                        } else if (nta[n] === "" && bta[b] !== "") {
+                                            node.push("empty");
                                         } else {
                                             node.push(change);
                                         }
@@ -6760,7 +6812,7 @@ var prettydiff = function prettydiff(api) {
                         }
                     }
                     node.push("</tbody><tfoot><tr><th class='author' colspan='");
-                    if (inline) {
+                    if (inline === true) {
                         node.push("3");
                     } else {
                         node.push("4");
@@ -7492,21 +7544,21 @@ var prettydiff = function prettydiff(api) {
 
     //the edition values use the format YYMMDD for dates.
     edition = {
-        charDecoder: 121127, //charDecoder library
+        charDecoder: 121231, //charDecoder library
         cleanCSS: 121127, //cleanCSS library
         css: 121228, //diffview.css file
         csvbeauty: 121127, //csvbeauty library
         csvmin: 121127, //csvmin library
-        diffview: 121227, //diffview library
+        diffview: 121231, //diffview library
         documentation: 121203, //documentation.xhtml
         jsmin: 121223, //jsmin library (fulljsmin.js)
         jspretty: 121227, //jspretty library
         markup_beauty: 121228, //markup_beauty library
         markupmin: 121127, //markupmin library
-        prettydiff: 121228, //this file
+        prettydiff: 121231, //this file
         webtool: 121227, //prettydiff.com.xhtml
         api: {
-            dom: 121228,
+            dom: 121231,
             nodeLocal: 121210,
             nodeService: 121106,
             wsh: 121210
