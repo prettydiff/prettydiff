@@ -2452,6 +2452,9 @@ var prettydiff = function prettydiff(api) {
                                 return level.push("x");
                             }
                             if (ctoke === "[") {
+                                if (ltoke === "[") {
+                                    list[list.length - 2] = true;
+                                }
                                 if (ltoke === "return") {
                                     level[a - 1] = "s";
                                 } else if (ltoke === "]" || ltype === "word" || ltoke === ")") {
@@ -2536,9 +2539,7 @@ var prettydiff = function prettydiff(api) {
                                 level[a - 1] = "x";
                                 level.push("x");
                             } else if (ctoke === "]") {
-                                if (a > 1 && token[a - 2] === "[") {
-                                    level[a - 1] = "x";
-                                } else if (list[list.length - 1] === true || (ltoke === "]" && level[level.length - 2] === indent + 1)) {
+                                if (list[list.length - 1] === true || (ltoke === "]" && level[level.length - 2] === indent + 1)) {
                                     level[a - 1] = indent;
                                 } else if (level[a - 1] === "s") {
                                     level[a - 1] = "x";
@@ -5715,7 +5716,8 @@ var prettydiff = function prettydiff(api) {
                                             bestsize = 0;
                                         for (i = alo; i < ahi; i += 1) {
                                             for (c = 0; c < d; c += 1) {
-                                                if (bxj[c][1] === a[i] && (bxj[c][0] === i || a[i] !== b[i] || i === ahi - 1 || a[i + 1] === b[i + 1])) {
+                                                //if (bxj[c][1] === a[i] && (bxj[c][0] === i || a[i] !== b[i] || i === ahi - 1 || a[i + 1] === b[i + 1])) {
+                                                if (bxj[c][1] === a[i] && (a[i] !== b[i] || i === ahi - 1 || a[i + 1] === b[i + 1])) {
                                                     j = bxj[c][0];
                                                     break;
                                                 }
@@ -5959,7 +5961,8 @@ var prettydiff = function prettydiff(api) {
                         return answer;
                     }());
                 return (function diffview__report() {
-                    var node = ["<table class='diff'><thead><tr>"],
+                    var node = ["<div class='diff'>"],
+                        data = [[], [], [], []],
                         idx = 0,
                         b = 0,
                         be = 0,
@@ -6274,9 +6277,9 @@ var prettydiff = function prettydiff(api) {
                                     x = u[u.length - 1],
                                     y = v[v.length - 1],
                                     z = false;
-                                if (x !== "" && x === v[v.length - 2] && u.length > 0 && x.length > 0 && x.indexOf("<em>") < x.indexOf("</em>") && x.lastIndexOf("<em>") < x.lastIndexOf("</em>")) {
+                                /*if (x !== "" && x === v[v.length - 2] && u.length > 0 && x.length > 0 && x.indexOf("<em>") < x.indexOf("</em>") && x.lastIndexOf("<em>") < x.lastIndexOf("</em>")) {
                                     for (i = k; i > -1; i -= 1) {
-                                        if (ax[i].indexOf("</em>") > -1) {
+                                        if (ax[i].indexOf("</em>") > -1 || bx[i].indexOf("</em>") > -1) {
                                             ax[i] = ax[i].replace("</em>", "");
                                             if (bx[i].indexOf("<em></em>") > -1) {
                                                bx[i] = bx[i].replace("<em></em>", "");
@@ -6290,7 +6293,7 @@ var prettydiff = function prettydiff(api) {
                                                 break;
                                             }
                                         }
-                                        if (ax[i].indexOf("<em>") > -1) {
+                                        if (ax[i].indexOf("<em>") > -1 || bx[i].indexOf("<em>") > -1) {
                                             ax[i] = ax[i].replace("<em>", "");
                                             if (bx[i].indexOf("<em>") > -1) {
                                                 bx[i] = bx[i].replace("<em>", "");
@@ -6340,11 +6343,11 @@ var prettydiff = function prettydiff(api) {
                                     errorout -= 1;
                                     q = false;
                                     z = false;
-                                }
+                                }*/
                                 for (i = k; i < zx; i += 1) {
                                     if (ax[i] === bx[i]) {
                                         r = i;
-                                    } else if (!n && ax[i] !== bx[i] && !em.test(ax[i]) && !em.test(bx[i]) && !em.test(ax[i - 1]) && !em.test(bx[i - 1])) {
+                                    } else if (n === false && ax[i] !== bx[i] && !em.test(ax[i]) && !em.test(bx[i]) && !em.test(ax[i - 1]) && !em.test(bx[i - 1])) {
                                         if (i === 0 || (typeof ax[i - 1] === "string" && typeof bx[i - 1] === "string")) {
                                             if (i === 0) {
                                                 ax[i] = "<em>" + ax[i];
@@ -6608,17 +6611,18 @@ var prettydiff = function prettydiff(api) {
                             ];
                         };
                     if (inline === true) {
-                        node.push("<th class='texttitle' colspan='3'>");
+                        node.push("<h3 class='texttitle'>");
                         node.push(baseTextName);
                         node.push(" vs. ");
                         node.push(newTextName);
-                        node.push("</th></tr></thead><tbody>");
+                        node.push("</h3><ol class='count'>");
                     } else {
-                        node.push("<th class='texttitle' colspan='2'>");
-                        node.push(baseTextName);
-                        node.push("</th><th class='texttitle' colspan='2'>");
-                        node.push(newTextName);
-                        node.push("</th></tr></thead><tbody>");
+                        data[0].push("<div class='diff-left'><h3 class='texttitle'>");
+                        data[0].push(baseTextName);
+                        data[0].push("</h3><ol class='count'>");
+                        data[2].push("<div class='diff-right'><h3 class='texttitle'>");
+                        data[2].push(newTextName);
+                        data[2].push("</h3><ol class='count' onmousedown='pd.colSliderGrab(this);' style='cursor:w-resize'>");
                     }
                     for (idx = 0; idx < opleng; idx += 1) {
                         code = opcodes[idx];
@@ -6634,11 +6638,12 @@ var prettydiff = function prettydiff(api) {
                                 ctest = false;
                                 jump = rowcnt - ((idx === 0 ? 1 : 2) * context);
                                 if (jump > 1) {
-                                    node.push("<tr><th>...</th>");
+                                    data[0].push("<li>...</li>");
                                     if (inline === false) {
-                                        node.push("<td class='skip'></td>");
+                                        data[1].push("<li class='skip'>&#8203;</li>");
                                     }
-                                    node.push("<th>...</th><td class='skip'></td></tr>");
+                                    data[2].push("<li>...</li>");
+                                    data[3].push("<li class='skip'>&#8203;</li>");
                                     b += jump;
                                     n += jump;
                                     i += jump - 1;
@@ -6650,7 +6655,6 @@ var prettydiff = function prettydiff(api) {
                             if (change !== "equal") {
                                 diffline += 1;
                             }
-                            node.push("<tr>");
                             if (tab !== "") {
                                 if (!btest && bta[be] !== nta[ne] && typeof bta[b + 1] === "string" && typeof nta[n] === "string" && btab[b + 1] === ntab[n] && btab[b] !== ntab[n] && (typeof nta[n - 1] !== "string" || btab[b] !== ntab[n - 1])) {
                                     btest = true;
@@ -6660,17 +6664,21 @@ var prettydiff = function prettydiff(api) {
                             }
                             if (inline === true) {
                                 if (ntest || change === "insert") {
-                                    node.push("<th></th><th>");
-                                    node.push(n + 1);
-                                    node.push("</th><td class='insert'>");
-                                    node.push(nta[n]);
-                                    node.push("</td></tr>");
+                                    data[0].push("<li class='empty'>&#8203;</li>");
+                                    data[2].push("<li>");
+                                    data[2].push(n + 1);
+                                    data[2].push("&#10;</li>");
+                                    data[3].push("<li class='insert'>");
+                                    data[3].push(nta[n]);
+                                    data[3].push("&#10;</li>");
                                 } else if (btest || change === "delete") {
-                                    node.push("<th>");
-                                    node.push(b + 1);
-                                    node.push("</th><th></th><td class='delete'>");
-                                    node.push(bta[b]);
-                                    node.push("</td></tr>");
+                                    data[0].push("<li>");
+                                    data[0].push(b + 1);
+                                    data[0].push("</li>");
+                                    data[2].push("<li class='empty'>&#8203;</li>");
+                                    data[3].push("<li class='delete'>");
+                                    data[3].push(bta[b]);
+                                    data[3].push("&#10;</li>");
                                 } else if (change === "replace") {
                                     if (bta[b] !== nta[n]) {
                                         if (bta[b] === "") {
@@ -6682,40 +6690,43 @@ var prettydiff = function prettydiff(api) {
                                         }
                                     }
                                     if (b < be) {
-                                        node.push("<th>");
-                                        node.push(b + 1);
-                                        node.push("</th><th></th><td class='delete'>");
+                                        data[0].push("<li>");
+                                        data[0].push(b + 1);
+                                        data[0].push("</li>");
+                                        data[2].push("<li class='empty'>&#8203;</li>");
+                                        data[3].push("<li class='delete'>");
                                         if (n < ne) {
-                                            node.push(z[0]);
+                                            data[3].push(z[0]);
                                         } else {
-                                            node.push(bta[b]);
+                                            data[3].push(bta[b]);
                                         }
-                                        node.push("</td></tr>");
-                                    }
-                                    if (b < be && n < ne) {
-                                        node.push("<tr>");
+                                        data[3].push("&#10;</li>");
                                     }
                                     if (n < ne) {
-                                        node.push("<th></th><th>");
-                                        node.push(n + 1);
-                                        node.push("</th><td class='insert'>");
+                                        data[0].push("<li class='empty'>&#8203;</li>");
+                                        data[2].push("<li>");
+                                        data[2].push(n + 1);
+                                        data[2].push("</li>");
+                                        data[3].push("<li class='insert'>");
                                         if (b < be) {
-                                            node.push(z[1]);
+                                            data[3].push(z[1]);
                                         } else {
-                                            node.push(nta[n]);
+                                            data[3].push(nta[n]);
                                         }
-                                        node.push("</td></tr>");
+                                        data[3].push("&#10;</li>");
                                     }
                                 } else if (b < be || n < ne) {
-                                    node.push("<th>");
-                                    node.push(b + 1);
-                                    node.push("</th><th>");
-                                    node.push(n + 1);
-                                    node.push("</th><td class='");
-                                    node.push(change);
-                                    node.push("'>");
-                                    node.push(bta[b]);
-                                    node.push("</td></tr>");
+                                    data[0].push("<li>");
+                                    data[0].push(b + 1);
+                                    data[0].push("</li>");
+                                    data[2].push("<li>");
+                                    data[2].push(n + 1);
+                                    data[2].push("</li>");
+                                    data[3].push("<li class='");
+                                    data[3].push(change);
+                                    data[3].push("'>");
+                                    data[3].push(bta[b]);
+                                    data[3].push("&#10;</li>");
                                 }
                                 if (btest) {
                                     b += 1;
@@ -6741,46 +6752,64 @@ var prettydiff = function prettydiff(api) {
                                         z = [];
                                     }
                                     if (b < be) {
-                                        node.push("<th>");
-                                        node.push(b + 1);
-                                        node.push("</th><td class='");
+                                        if (bta[b] === "") {
+                                            data[0].push("<li class='empty'>&#8203;");
+                                        } else {
+                                            data[0].push("<li>" + (b + 1));
+                                        }
+                                        data[0].push("</li>");
+                                        data[1].push("<li class='");
                                         if (n >= ne) {
-                                            node.push("delete");
+                                            data[1].push("delete");
                                         } else if (bta[b] === "" && nta[n] !== "") {
-                                            node.push("empty");
+                                            data[1].push("empty");
                                         } else {
-                                            node.push(change);
+                                            data[1].push(change);
                                         }
-                                        node.push("'>");
+                                        data[1].push("'>");
                                         if (z.length === 2) {
-                                            node.push(z[0]);
+                                            data[1].push(z[0]);
+                                            data[1].push("&#10;");
+                                        } else if (bta[b] === "") {
+                                            data[1].push("&#8203;");
                                         } else {
-                                            node.push(bta[b]);
+                                            data[1].push(bta[b]);
+                                            data[1].push("&#10;");
                                         }
-                                        node.push("</td>");
+                                        data[1].push("</li>");
                                     } else if (ctest) {
-                                        node.push("<th></th><td class='empty'></td>");
+                                        data[0].push("<li class='empty'>&#8203;</li>");
+                                        data[1].push("<li class='empty'>&#8203;</li>");
                                     }
                                     if (n < ne) {
-                                        node.push("<th>");
-                                        node.push(n + 1);
-                                        node.push("</th><td class='");
+                                        if (nta[n] === "") {
+                                            data[2].push("<li class='empty'>&#8203;");
+                                        } else {
+                                            data[2].push("<li>" + (n + 1));
+                                        }
+                                        data[2].push("</li>");
+                                        data[3].push("<li class='");
                                         if (b >= be) {
-                                            node.push("insert");
+                                            data[3].push("insert");
                                         } else if (nta[n] === "" && bta[b] !== "") {
-                                            node.push("empty");
+                                            data[3].push("empty");
                                         } else {
-                                            node.push(change);
+                                            data[3].push(change);
                                         }
-                                        node.push("'>");
+                                        data[3].push("'>");
                                         if (z.length === 2) {
-                                            node.push(z[1]);
+                                            data[3].push(z[1]);
+                                            data[3].push("&#10;");
+                                        } else if (nta[n] === "") {
+                                            data[3].push("");
                                         } else {
-                                            node.push(nta[n]);
+                                            data[3].push(nta[n]);
+                                            data[3].push("&#10;");
                                         }
-                                        node.push("</td>");
+                                        data[3].push("</li>");
                                     } else if (ctest) {
-                                        node.push("<th></th><td class='empty'></td>");
+                                        data[2].push("<li class='empty'>&#8203;</li>");
+                                        data[3].push("<li class='empty'>&#8203;</li>");
                                     }
                                     if (b < be) {
                                         b += 1;
@@ -6789,35 +6818,49 @@ var prettydiff = function prettydiff(api) {
                                         n += 1;
                                     }
                                 } else if (btest || (typeof bta[b] === "string" && typeof nta[n] !== "string")) {
-                                    node.push("<th>");
-                                    node.push(b + 1);
-                                    node.push("</th><td class='delete'>");
-                                    node.push(bta[b]);
-                                    node.push("</td>");
-                                    node.push("<th></th><td class='empty'></td>");
+                                    data[0].push("<li>");
+                                    data[0].push(b + 1);
+                                    data[0].push("</li>");
+                                    data[1].push("<li class='delete'>");
+                                    data[1].push(bta[b]);
+                                    data[1].push("&#10;</li>");
+                                    data[2].push("<li class='empty'>&#8203;</li>");
+                                    data[3].push("<li class='empty'>&#8203;</li>");
                                     btest = false;
                                     b += 1;
                                 } else if (ntest || (typeof bta[b] !== "string" && typeof nta[n] === "string")) {
-                                    node.push("<th></th><td class='empty'></td>");
-                                    node.push("<th>");
-                                    node.push(n + 1);
-                                    node.push("</th><td class='insert'>");
-                                    node.push(nta[n]);
-                                    node.push("</td>");
+                                    data[0].push("<li class='empty'>&#8203;</li>");
+                                    data[1].push("<li class='empty'>&#8203;</li>");
+                                    data[2].push("<li>");
+                                    data[2].push(n + 1);
+                                    data[2].push("</li>");
+                                    data[3].push("<li class='insert'>");
+                                    data[3].push(nta[n]);
+                                    data[3].push("&#10;</li>");
                                     ntest = false;
                                     n += 1;
                                 }
-                                node.push("</tr>");
                             }
                         }
                     }
-                    node.push("</tbody><tfoot><tr><th class='author' colspan='");
+                    node.push(data[0].join(""));
+                    node.push("</ol><ol class=");
                     if (inline === true) {
-                        node.push("3");
+                        node.push("'count'>");
                     } else {
-                        node.push("4");
+                        node.push("'data'>");
+                        node.push(data[1].join(""));
+                        node.push("</ol></div>");
                     }
-                    node.push("'>Original diff view created by <a href='https://github.com/cemerick/jsdifflib'>jsdifflib</a>. Diff view rewritten by <a href='http://prettydiff.com/'>Austin Cheney</a>.</th></tr></tfoot></table>");
+                    node.push(data[2].join(""));
+                    node.push("</ol><ol class='data'>");
+                    node.push(data[3].join(""));
+                    if (inline === true) {
+                        node.push("</ol>");
+                    } else {
+                        node.push("</ol></div>");
+                    }
+                    node.push("<p class='author'>Diff view written by <a href='http://prettydiff.com/'>Pretty Diff</a>.</p></div>");
                     return [node.join("").replace(/\$#gt;/g, "&gt;").replace(/\$#lt;/g, "&lt;").replace(/\%#lt;/g, "$#lt;").replace(/\%#gt;/g, "$#gt;"), errorout, diffline];
                 }());
             },
@@ -7546,22 +7589,22 @@ var prettydiff = function prettydiff(api) {
     edition = {
         charDecoder: 121231, //charDecoder library
         cleanCSS: 121127, //cleanCSS library
-        css: 121228, //diffview.css file
+        css: 130113, //diffview.css file
         csvbeauty: 121127, //csvbeauty library
         csvmin: 121127, //csvmin library
-        diffview: 121231, //diffview library
+        diffview: 130113, //diffview library
         documentation: 121203, //documentation.xhtml
         jsmin: 121223, //jsmin library (fulljsmin.js)
-        jspretty: 121227, //jspretty library
+        jspretty: 130113, //jspretty library
         markup_beauty: 121228, //markup_beauty library
         markupmin: 121127, //markupmin library
-        prettydiff: 121231, //this file
+        prettydiff: 130113, //this file
         webtool: 121227, //prettydiff.com.xhtml
         api: {
-            dom: 121231,
-            nodeLocal: 121210,
+            dom: 130113,
+            nodeLocal: 130113,
             nodeService: 121106,
-            wsh: 121210
+            wsh: 130113
         },
         latest: 0
     };
