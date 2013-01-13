@@ -6273,11 +6273,11 @@ var prettydiff = function prettydiff(api) {
                                     p = [],
                                     q = false,
                                     s = [],
-                                    t = [],
-                                    x = u[u.length - 1],
+                                    t = [];
+                                    /*x = u[u.length - 1],
                                     y = v[v.length - 1],
                                     z = false;
-                                /*if (x !== "" && x === v[v.length - 2] && u.length > 0 && x.length > 0 && x.indexOf("<em>") < x.indexOf("</em>") && x.lastIndexOf("<em>") < x.lastIndexOf("</em>")) {
+                                if (x !== "" && x === v[v.length - 2] && u.length > 0 && x.length > 0 && x.indexOf("<em>") < x.indexOf("</em>") && x.lastIndexOf("<em>") < x.lastIndexOf("</em>")) {
                                     for (i = k; i > -1; i -= 1) {
                                         if (ax[i].indexOf("</em>") > -1 || bx[i].indexOf("</em>") > -1) {
                                             ax[i] = ax[i].replace("</em>", "");

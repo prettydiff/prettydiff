@@ -1,6 +1,6 @@
 /*prettydiff.com api.topcoms: true*/
 /*jslint nomen: true */
-/*global edition, document, localStorage, window, prettydiff, XMLHttpRequest, location, ActiveXObject, FileReader*/
+/*global edition, document, localStorage, window, prettydiff, XMLHttpRequest, location, ActiveXObject, FileReader, navigator*/
 var exports = "",
     _gaq = _gaq || [],
     pd = {};
@@ -189,7 +189,6 @@ var exports = "",
 
     pd.colSliderProperties = [];
     pd.colSliderGrab = function (x) {
-        "use strict";
         var a = x.parentNode,
             b = a.parentNode,
             c = 0,
@@ -205,8 +204,6 @@ var exports = "",
             h = max - 15,
             k = false,
             z = a.previousSibling,
-            ua = navigator.userAgent.toLowerCase(),
-            ie = 0,
             drop = function (g) {
                 x.style.cursor = status + "-resize";
                 g = null;
@@ -541,7 +538,9 @@ var exports = "",
             }
             if (api.diffview === "sidebyside" && pd.o.rf.innerHTML.toLowerCase().indexOf("<textarea") === -1) {
                 d = pd.o.rf.getElementsByTagName("ol");
-                pd.colSliderProperties = [d[0].clientWidth, d[1].clientWidth, d[2].parentNode.clientWidth, d[2].parentNode.parentNode.clientWidth, d[2].parentNode.offsetLeft - d[2].parentNode.parentNode.offsetLeft];
+                pd.colSliderProperties = [
+                    d[0].clientWidth, d[1].clientWidth, d[2].parentNode.clientWidth, d[2].parentNode.parentNode.clientWidth, d[2].parentNode.offsetLeft - d[2].parentNode.parentNode.offsetLeft
+                ];
             }
         } else if (pd.o.mm.checked) {
             pd.o.mx.value = output[0];
@@ -783,8 +782,8 @@ var exports = "",
             d = b.getElementsByTagName("h3")[0],
             f = b.getAttribute("id"),
             test = (b === pd.o.re) ? true : false,
-            g = (test) ? a.getElementsByTagName("button")[1] : a.getElementsByTagName("button")[0],
-            h = (test) ? a.getElementsByTagName("button")[2] : a.getElementsByTagName("button")[1];
+            g = (test === true) ? a.getElementsByTagName("button")[1] : a.getElementsByTagName("button")[0],
+            h = (test === true) ? a.getElementsByTagName("button")[2] : a.getElementsByTagName("button")[1];
 
         //shrink
         if (x.innerHTML === "\u035f") {
@@ -968,12 +967,12 @@ var exports = "",
             g = {},
             inline = false,
             type = "";
-        
+
         inline = pd.$$("inline").checked;
         if (inline === false) {
             type = document.getElementsByTagName("script")[0].getAttribute("type");
         }
-        
+
         //added support for Firefox and Opera because they support long
         //URIs.  This extra support allows for local file creation.
         if (x.nodeName.toLowerCase() === "a" && x.getElementsByTagName("button")[0].innerHTML === "S") {
@@ -1006,7 +1005,7 @@ var exports = "",
             }
             b.push("</body></html>");
             x.setAttribute("href", "data:text/prettydiff;charset=utf-8," + encodeURIComponent(b.join("")));
-            
+
             //prompt to save file created above.  below is the creation
             //of the modal with instructions about file extension.
             e = pd.o.wb.lastChild;
@@ -1029,74 +1028,75 @@ var exports = "",
             pd.o.wb.appendChild(e);
             g.style.left = (((pd.o.wb.clientWidth + 10) - g.clientWidth) / 2) + "px";
             return;
+        }
+        //Webkit and IE get the old functionality of a textarea with
+        //HTML text content to copy and paste into a text file.
+        pd.top(pd.o.re);
+        if (/Please try using the option labeled ((&lt;)|<)em((&gt;)|>)Plain Text \(diff only\)((&lt;)|<)\/em((&gt;)|>)\./.test(a) && !/div class\=("|')diff("|')/.test(a)) {
+            pd.o.rf.innerHTML = "<p><strong>Error:</strong> Please try using the option labeled <em>Plain Text (diff only)</em>. <span style='display:block'>The input does not appear to be markup, CSS, or JavaScript.</span></p>";
+            return;
+        }
+        if (x.innerHTML === "S") {
+            pd.o.ps.checked = true;
+            if (a !== "") {
+                c = (a.indexOf("<div class='diff'") > -1) ? "<div class='diff'" : "<div class=\"diff\"";
+                d = a.split(c);
+                c = c + d[1];
+                a = d[0];
+                b.push(a);
+                b.push(" <p>This is the generated diff output. Please copy the text output, paste into a text file, and save as a &quot;.html&quot; file.</p> <textarea rows='40' cols='80' id='textreport'>");
+                b.push("&lt;?xml version='1.0' encoding='UTF-8' ?&gt;&lt;!DOCTYPE html PUBLIC '-//W3C//DTD XHTML 1.1//EN' 'http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd'&gt;&lt;html xmlns='http://www.w3.org/1999/xhtml' xml:lang='en'&gt;&lt;head&gt;&lt;title&gt;Pretty Diff - The difference tool&lt;/title&gt;&lt;meta name='robots' content='index, follow'/&gt; &lt;meta name='DC.title' content='Pretty Diff - The difference tool'/&gt; &lt;link rel='canonical' href='http://prettydiff.com/' type='application/xhtml+xml'/&gt;&lt;meta http-equiv='Content-Type' content='application/xhtml+xml;charset=UTF-8'/&gt;&lt;meta http-equiv='Content-Style-Type' content='text/css'/&gt;&lt;style type='text/css'&gt;" + pd.o.css.core + pd.o.css["s" + pd.o.color] + "&lt;/style&gt;&lt;/head&gt;&lt;body class='" + pd.o.color + "' id='webtool'&gt;&lt;h1&gt;&lt;a href='http://prettydiff.com/'&gt;Pretty Diff - The difference tool&lt;/a&gt;&lt;/h1&gt;&lt;div id='doc'&gt;");
+                b.push(a.replace(/\&/g, "&amp;").replace(/>/g, "&gt;").replace(/</g, "&lt;"));
+                b.push("&lt;p&gt;Accessibility note. &amp;lt;em&amp;gt; tags in the output represent character differences per lines compared.&lt;/p&gt;&lt;/div&gt;");
+                b.push(c.replace(/\&/g, "&amp;").replace(/>/g, "&gt;").replace(/</g, "&lt;"));
+                if (inline === false) {
+                    b.push("&lt;script type='");
+                    b.push(type);
+                    b.push("'&gt;&lt;![CDATA[");
+                    b.push("var pd={};pd.colSliderProperties=[");
+                    b.push(pd.colSliderProperties[0]);
+                    b.push(",");
+                    b.push(pd.colSliderProperties[1]);
+                    b.push(",");
+                    b.push(pd.colSliderProperties[2]);
+                    b.push(",");
+                    b.push(pd.colSliderProperties[3]);
+                    b.push(",");
+                    b.push(pd.colSliderProperties[4]);
+                    b.push("];pd.colSliderGrab=function(x){'use strict';var a=x.parentNode,b=a.parentNode,c=0,counter=pd.colSliderProperties[0],data=pd.colSliderProperties[1],width=pd.colSliderProperties[2],total=pd.colSliderProperties[3],offset=(pd.colSliderProperties[4]),min=0,max=data-1,status='ew',g=min+15,h=max-15,k=false,z=a.previousSibling,ua=navigator.userAgent.toLowerCase(),ie=0,drop=function(g){x.style.cursor=status+'-resize';g=null;document.onmousemove=null;document.onmouseup=null;},boxmove=function(f){f=f||window.event;c=offset-f.clientX;if(c&gt;g&amp;&amp;c&lt;h){k=true;}if(k===true&amp;&amp;c&gt;h){a.style.width=((total-counter-2)/ 10)+'em';status='e';}else if(k===true&amp;&amp;c&lt;g){a.style.width=(width/10)+'em';status='w';}else if(c&lt;max&amp;&amp;c&gt;min){a.style.width=((width+c)/ 10)+'em';status='ew';}document.onmouseup=drop;};if(typeof pd.o==='object'&amp;&amp;typeof pd.o.re==='object'){offset+=pd.o.re.offsetLeft;offset-=pd.o.rf.scrollLeft;}else{c=(document.body.parentNode.scrollLeft&gt;document.body.scrollLeft)?document.body.parentNode.scrollLeft:document.body.scrollLeft;offset-=c;}offset+=x.clientWidth;x.style.cursor='ew-resize';b.style.width=(total/10)+'em';b.style.display='inline-block';if(z.nodeType!==1){do{z=z.previousSibling;}while(z.nodeType!==1);}z.style.display='block';a.style.width=(a.clientWidth/10)+'em';a.style.position='absolute';document.onmousemove=boxmove;document.onmousedown=null;};");
+                    b.push("]]&gt;&lt;/script&gt;");
+                }
+                b.push("&lt;/body&gt;&lt;/html&gt;</textarea>");
+            }
+            x.innerHTML = "H";
+            x.setAttribute("title", "Convert diff report to rendered HTML.");
         } else {
-            //Webkit and IE get the old functionality of a textarea with
-            //HTML text content to copy and paste into a text file.
-            pd.top(pd.o.re);
-            if (/Please try using the option labeled ((&lt;)|<)em((&gt;)|>)Plain Text \(diff only\)((&lt;)|<)\/em((&gt;)|>)\./.test(a) && !/div class\=("|')diff("|')/.test(a)) {
-                pd.o.rf.innerHTML = "<p><strong>Error:</strong> Please try using the option labeled <em>Plain Text (diff only)</em>. <span style='display:block'>The input does not appear to be markup, CSS, or JavaScript.</span></p>";
-                return;
-            }
-            if (x.innerHTML === "S") {
-                pd.o.ps.checked = true;
-                if (a !== "") {
-                    c = (a.indexOf("<div class='diff'") > -1) ? "<div class='diff'" : "<div class=\"diff\"";
-                    d = a.split(c);
-                    c = c + d[1];
-                    a = d[0];
-                    b.push(a);
-                    b.push(" <p>This is the generated diff output. Please copy the text output, paste into a text file, and save as a &quot;.html&quot; file.</p> <textarea rows='40' cols='80' id='textreport'>");
-                    b.push("&lt;?xml version='1.0' encoding='UTF-8' ?&gt;&lt;!DOCTYPE html PUBLIC '-//W3C//DTD XHTML 1.1//EN' 'http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd'&gt;&lt;html xmlns='http://www.w3.org/1999/xhtml' xml:lang='en'&gt;&lt;head&gt;&lt;title&gt;Pretty Diff - The difference tool&lt;/title&gt;&lt;meta name='robots' content='index, follow'/&gt; &lt;meta name='DC.title' content='Pretty Diff - The difference tool'/&gt; &lt;link rel='canonical' href='http://prettydiff.com/' type='application/xhtml+xml'/&gt;&lt;meta http-equiv='Content-Type' content='application/xhtml+xml;charset=UTF-8'/&gt;&lt;meta http-equiv='Content-Style-Type' content='text/css'/&gt;&lt;style type='text/css'&gt;" + pd.o.css.core + pd.o.css["s" + pd.o.color] + "&lt;/style&gt;&lt;/head&gt;&lt;body class='" + pd.o.color + "' id='webtool'&gt;&lt;h1&gt;&lt;a href='http://prettydiff.com/'&gt;Pretty Diff - The difference tool&lt;/a&gt;&lt;/h1&gt;&lt;div id='doc'&gt;");
-                    b.push(a.replace(/\&/g, "&amp;").replace(/>/g, "&gt;").replace(/</g, "&lt;"));
-                    b.push("&lt;p&gt;Accessibility note. &amp;lt;em&amp;gt; tags in the output represent character differences per lines compared.&lt;/p&gt;&lt;/div&gt;");
-                    b.push(c.replace(/\&/g, "&amp;").replace(/>/g, "&gt;").replace(/</g, "&lt;"));
-                    if (inline === false) {
-                        b.push("&lt;script type='");
-                        b.push(type);
-                        b.push("'&gt;&lt;![CDATA[");
-                        b.push("var pd={};pd.colSliderProperties=[");
-                        b.push(pd.colSliderProperties[0]);
-                        b.push(",");
-                        b.push(pd.colSliderProperties[1]);
-                        b.push(",");
-                        b.push(pd.colSliderProperties[2]);
-                        b.push(",");
-                        b.push(pd.colSliderProperties[3]);
-                        b.push(",");
-                        b.push(pd.colSliderProperties[4]);
-                        b.push("];pd.colSliderGrab=function(x){'use strict';var a=x.parentNode,b=a.parentNode,c=0,counter=pd.colSliderProperties[0],data=pd.colSliderProperties[1],width=pd.colSliderProperties[2],total=pd.colSliderProperties[3],offset=(pd.colSliderProperties[4]),min=0,max=data-1,status='ew',g=min+15,h=max-15,k=false,z=a.previousSibling,ua=navigator.userAgent.toLowerCase(),ie=0,drop=function(g){x.style.cursor=status+'-resize';g=null;document.onmousemove=null;document.onmouseup=null;},boxmove=function(f){f=f||window.event;c=offset-f.clientX;if(c&gt;g&amp;&amp;c&lt;h){k=true;}if(k===true&amp;&amp;c&gt;h){a.style.width=((total-counter-2)/ 10)+'em';status='e';}else if(k===true&amp;&amp;c&lt;g){a.style.width=(width/10)+'em';status='w';}else if(c&lt;max&amp;&amp;c&gt;min){a.style.width=((width+c)/ 10)+'em';status='ew';}document.onmouseup=drop;};if(typeof pd.o==='object'&amp;&amp;typeof pd.o.re==='object'){offset+=pd.o.re.offsetLeft;offset-=pd.o.rf.scrollLeft;}else{c=(document.body.parentNode.scrollLeft&gt;document.body.scrollLeft)?document.body.parentNode.scrollLeft:document.body.scrollLeft;offset-=c;}offset+=x.clientWidth;x.style.cursor='ew-resize';b.style.width=(total/10)+'em';b.style.display='inline-block';if(z.nodeType!==1){do{z=z.previousSibling;}while(z.nodeType!==1);}z.style.display='block';a.style.width=(a.clientWidth/10)+'em';a.style.position='absolute';document.onmousemove=boxmove;document.onmousedown=null;};");
-                        b.push("]]&gt;&lt;/script&gt;");
-                    }
-                    b.push("&lt;/body&gt;&lt;/html&gt;</textarea>");
+            pd.o.ps.checked = false;
+            c = "<p>This is the generated diff output. Please copy the text output, paste into a text file, and save as a \".html\" file.</p>";
+            if (a !== "") {
+                a = a.replace(/ xmlns\="http:\/\/www\.w3\.org\/1999\/xhtml"/g, "").replace(/&lt;/g, "<").replace(/&gt;/g, ">").replace(/&amp;/g, "&");
+                d = a.split(c);
+                b.push(d[0]);
+                c = (d[1].indexOf("div class=\"diff\"") === -1) ? "div class='diff'" : "div class=\"diff\"";
+                d[1] = d[1].substring(d[1].indexOf(c) + c.length, d[1].length);
+                if (d[1].indexOf("<script") > -1) {
+                    d[1] = "<div class=\"diff\"" + (d[1].substring(0, d[1].indexOf("<script")));
+                } else {
+                    d[1] = "<div class=\"diff\"" + (d[1].substring(0, d[1].indexOf("</body")));
                 }
-                x.innerHTML = "H";
-                x.setAttribute("title", "Convert diff report to rendered HTML.");
-            } else {
-                pd.o.ps.checked = false;
-                c = "<p>This is the generated diff output. Please copy the text output, paste into a text file, and save as a \".html\" file.</p>";
-                if (a !== "") {
-                    a = a.replace(/ xmlns\="http:\/\/www\.w3\.org\/1999\/xhtml"/g, "").replace(/&lt;/g, "<").replace(/&gt;/g, ">").replace(/&amp;/g, "&");
-                    d = a.split(c);
-                    b.push(d[0]);
-                    c = (d[1].indexOf("div class=\"diff\"") === -1) ? "div class='diff'" : "div class=\"diff\"";
-                    d[1] = d[1].substring(d[1].indexOf(c) + c.length, d[1].length);
-                    if (d[1].indexOf("<script") > -1) {
-                        d[1] = "<div class=\"diff\"" + (d[1].substring(0, d[1].indexOf("<script")));
-                    } else {
-                        d[1] = "<div class=\"diff\"" + (d[1].substring(0, d[1].indexOf("</body")));
-                    }
-                    b.push(d[1]);
-                }
-                x.innerHTML = "S";
-                x.setAttribute("title", "Convert diff report to text that can be saved.");
+                b.push(d[1]);
             }
-            pd.o.rf.innerHTML = b.join("");
-            pd.options(x.parentNode);
-            pd.o.inline = pd.$$("inline");
-            if (pd.colSliderProperties.length === 0 && x.innerHTML === "S" && pd.o.inline.checked === true) {
-                d = pd.o.rf.getElementsByTagName("ol");
-                pd.colSliderProperties = [d[0].clientWidth, d[1].clientWidth, d[2].parentNode.clientWidth, d[2].parentNode.parentNode.clientWidth, d[2].parentNode.offsetLeft - d[2].parentNode.parentNode.offsetLeft];
-            }
+            x.innerHTML = "S";
+            x.setAttribute("title", "Convert diff report to text that can be saved.");
+        }
+        pd.o.rf.innerHTML = b.join("");
+        pd.options(x.parentNode);
+        pd.o.inline = pd.$$("inline");
+        if (pd.colSliderProperties.length === 0 && x.innerHTML === "S" && pd.o.inline.checked === true) {
+            d = pd.o.rf.getElementsByTagName("ol");
+            pd.colSliderProperties = [
+                d[0].clientWidth, d[1].clientWidth, d[2].parentNode.clientWidth, d[2].parentNode.parentNode.clientWidth, d[2].parentNode.offsetLeft - d[2].parentNode.parentNode.offsetLeft
+            ];
         }
     };
 
@@ -2102,7 +2102,7 @@ var exports = "",
             stat = [],
             lang = "",
             page = pd.o.wb.getAttribute("id");
-        
+
         //supply limited functionality for the pd.save function if not
         //firefox or opera.
         if (typeof navigator === "object") {
@@ -2127,15 +2127,16 @@ var exports = "",
                 if (a.keyCode === 8) {
                     if (b.nodeName === "textarea" || (b.nodeName === "input" && (b.getAttribute("type") === "text" || b.getAttribute("type") === "password"))) {
                         return true;
-                    } else {
-                        return false;
                     }
+                    return false;
                 }
             };
             pd.o.update.innerHTML = (function () {
                 var a = String(edition.latest),
                     b = [a.charAt(0) + a.charAt(1), a.charAt(2) + a.charAt(3), a.charAt(4) + a.charAt(5)],
-                    c = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
+                    c = [
+                        "January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"
+                    ];
                 if (b[1].charAt(0) === "0") {
                     b[1] = Number(b[1]);
                 }
@@ -2585,7 +2586,9 @@ var exports = "",
                     k = j.toLocaleDateString();
                     pd.o.stfdate.innerHTML = k;
                     pd.o.stat.fdate = k;
-                    stat = [1, 0, k, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0];
+                    stat = [
+                        1, 0, k, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0
+                    ];
                     if (localStorage.hasOwnProperty("pageCount") && localStorage.getItem("pageCount") !== null) {
                         l = Number(localStorage.getItem("pageCount")) + 1;
                         pd.o.stvisit.innerHTML = l;
@@ -2792,7 +2795,9 @@ var exports = "",
                     conversion = function (x) {
                         var a = String(x),
                             b = [a.charAt(0) + a.charAt(1), a.charAt(2) + a.charAt(3), a.charAt(4) + a.charAt(5)],
-                            c = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+                            c = [
+                                "Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"
+                            ];
                         if (b[1].charAt(0) === "0") {
                             b[1] = Number(b[1]);
                         }
@@ -2806,103 +2811,137 @@ var exports = "",
                         date = edition.charDecoder;
                         c.innerHTML = conversion(date);
                         f.push(date);
-                        g.push([date, b[d].innerHTML]);
+                        g.push([
+                            date, b[d].innerHTML
+                        ]);
                         break;
                     case "cleanCSS.js":
                         date = edition.cleanCSS;
                         c.innerHTML = conversion(date);
                         f.push(date);
-                        g.push([date, b[d].innerHTML]);
+                        g.push([
+                            date, b[d].innerHTML
+                        ]);
                         break;
                     case "csvbeauty.js":
                         date = edition.csvbeauty;
                         c.innerHTML = conversion(date);
                         f.push(date);
-                        g.push([date, b[d].innerHTML]);
+                        g.push([
+                            date, b[d].innerHTML
+                        ]);
                         break;
                     case "csvmin.js":
                         date = edition.csvmin;
                         c.innerHTML = conversion(date);
                         f.push(date);
-                        g.push([date, b[d].innerHTML]);
+                        g.push([
+                            date, b[d].innerHTML
+                        ]);
                         break;
                     case "diffview.css":
                         date = edition.css;
                         c.innerHTML = conversion(date);
                         f.push(date);
-                        g.push([date, b[d].innerHTML]);
+                        g.push([
+                            date, b[d].innerHTML
+                        ]);
                         break;
                     case "diffview.js":
                         date = edition.diffview;
                         c.innerHTML = conversion(date);
                         f.push(date);
-                        g.push([date, b[d].innerHTML]);
+                        g.push([
+                            date, b[d].innerHTML
+                        ]);
                         break;
                     case "documentation.xhtml":
                         date = edition.documentation;
                         c.innerHTML = conversion(date);
                         f.push(date);
-                        g.push([date, b[d].innerHTML]);
+                        g.push([
+                            date, b[d].innerHTML
+                        ]);
                         break;
                     case "dom.js":
                         date = edition.api.dom;
                         c.innerHTML = conversion(date);
                         f.push(date);
-                        g.push([date, b[d].innerHTML]);
+                        g.push([
+                            date, b[d].innerHTML
+                        ]);
                         break;
                     case "fulljsmin.js":
                         date = edition.jsmin;
                         c.innerHTML = conversion(date);
                         f.push(date);
-                        g.push([date, b[d].innerHTML]);
+                        g.push([
+                            date, b[d].innerHTML
+                        ]);
                         break;
                     case "jspretty.js":
                         date = edition.jspretty;
                         c.innerHTML = conversion(date);
                         f.push(date);
-                        g.push([date, b[d].innerHTML]);
+                        g.push([
+                            date, b[d].innerHTML
+                        ]);
                         break;
                     case "markup_beauty.js":
                         date = edition.markup_beauty;
                         c.innerHTML = conversion(date);
                         f.push(date);
-                        g.push([date, b[d].innerHTML]);
+                        g.push([
+                            date, b[d].innerHTML
+                        ]);
                         break;
                     case "markupmin.js":
                         date = edition.markupmin;
                         c.innerHTML = conversion(date);
                         f.push(date);
-                        g.push([date, b[d].innerHTML]);
+                        g.push([
+                            date, b[d].innerHTML
+                        ]);
                         break;
                     case "node-local.js":
                         date = edition.api.nodeLocal;
                         c.innerHTML = conversion(date);
                         f.push(date);
-                        g.push([date, b[d].innerHTML]);
+                        g.push([
+                            date, b[d].innerHTML
+                        ]);
                         break;
                     case "node-service.js":
                         date = edition.api.nodeService;
                         c.innerHTML = conversion(date);
                         f.push(date);
-                        g.push([date, b[d].innerHTML]);
+                        g.push([
+                            date, b[d].innerHTML
+                        ]);
                         break;
                     case "prettydiff.com.xhtml":
                         date = edition.webtool;
                         c.innerHTML = conversion(date);
                         f.push(date);
-                        g.push([date, b[d].innerHTML]);
+                        g.push([
+                            date, b[d].innerHTML
+                        ]);
                         break;
                     case "prettydiff.js":
                         date = edition.prettydiff;
                         c.innerHTML = conversion(date);
                         f.push(date);
-                        g.push([date, b[d].innerHTML]);
+                        g.push([
+                            date, b[d].innerHTML
+                        ]);
                         break;
                     case "prettydiff.wsf":
                         date = edition.api.wsh;
                         c.innerHTML = conversion(date);
                         f.push(date);
-                        g.push([date, b[d].innerHTML]);
+                        g.push([
+                            date, b[d].innerHTML
+                        ]);
                         break;
                     }
                 }
@@ -2921,15 +2960,19 @@ var exports = "",
             }());
         }
     }());
-    
+
 }());
 if (!(/^(file:\/\/)/).test(location.href)) {
-    _gaq.push(["_setAccount", "UA-27834630-1"]);
+    _gaq.push([
+        "_setAccount", "UA-27834630-1"
+    ]);
     _gaq.push(["_trackPageview"]);
     if (pd.bounce) {
         pd.o.wb.onclick = function () {
             "use strict";
-            _gaq.push(["_trackEvent", "Logging", "NoBounce", "NoBounce", null, false]);
+            _gaq.push([
+                "_trackEvent", "Logging", "NoBounce", "NoBounce", null, false
+            ]);
         };
         pd.bounce = false;
     }
@@ -2964,7 +3007,9 @@ if (!(/^(file:\/\/)/).test(location.href)) {
             }
             if (line > 0) {
                 sFormattedMessage = "[" + file + " (" + line + ")] " + message + " " + mode + " " + pd.o.la[pd.o.la.selectedIndex].value;
-                _gaq.push(["_trackEvent", "Exceptions", "Application", sFormattedMessage, null, true]);
+                _gaq.push([
+                    "_trackEvent", "Exceptions", "Application", sFormattedMessage, null, true
+                ]);
             }
         };
     }());
