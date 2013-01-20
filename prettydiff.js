@@ -2478,7 +2478,7 @@ var prettydiff = function prettydiff(api) {
                             return level.push("x");
                         },
                         end = function jspretty__algorithm_end() {
-                            if (a - 1 === lines[l][0] && ltype !== "method" && ltype !== "separator" && ltype !== "operator" && ltype !== "start" && ltoke !== "}") {
+                            if ((a - 1 === lines[l][0] || (ctoke === "}" && casetest.length > 1 && obj.length > 1 && casetest[casetest.length - 2] === true && obj[obj.length - 1] === false && obj[obj.length - 2] === false)) && ltype !== "method" && ltype !== "separator" && ltype !== "operator" && ltype !== "start" && ltoke !== "}") {
                                 if (varline[varline.length - 1] === true) {
                                     varline[varline.length - 1] = false;
                                     indent -= 1;
@@ -2488,9 +2488,15 @@ var prettydiff = function prettydiff(api) {
                                 } else {
                                     level[a - 1] = indent;
                                 }
-                                l += 1;
+                                if (a - 1 === lines[l][0]) {
+                                    l += 1;
+                                }
                                 ltoke = ";";
                                 ltype = "separator";
+                            } else if (ctoke === "}" && a > 1 && (token[a - 2] === ";" || types[a - 2] === "end") && (ltype === "word" || ltype === "literal")) {
+                                ltoke = ";";
+                                ltype = "separator";
+                                level[a - 1] = indent - 1;
                             }
                             if (ctoke !== ")") {
                                 indent -= 1;
@@ -7207,6 +7213,7 @@ var prettydiff = function prettydiff(api) {
                             } else if (/<[a-zA-Z]/.test(a) === false && /<\![A-Z]/.test(a)) {
                                 auto = "SGML";
                             } else if (chtml === true || /^(\s*<\!doctype html>)/i.test(a) || (/^(\s*<\!DOCTYPE\s+((html)|(HTML))\s+PUBLIC\s+)/.test(a) && /XHTML\s+1\.1/.test(a) === false && /XHTML\s+1\.0\s+(S|s)((trict)|(TRICT))/.test(a) === false)) {
+                                chtml = true;
                                 auto = "HTML";
                             } else {
                                 auto = "markup";
@@ -7595,10 +7602,10 @@ var prettydiff = function prettydiff(api) {
         diffview: 130113, //diffview library
         documentation: 121203, //documentation.xhtml
         jsmin: 121223, //jsmin library (fulljsmin.js)
-        jspretty: 130113, //jspretty library
+        jspretty: 130120, //jspretty library
         markup_beauty: 121228, //markup_beauty library
         markupmin: 121127, //markupmin library
-        prettydiff: 130113, //this file
+        prettydiff: 130120, //this file
         webtool: 121227, //prettydiff.com.xhtml
         api: {
             dom: 130113,
