@@ -15,7 +15,6 @@ var exports = "",
     pd.fs = (typeof FileReader === "function" && typeof new FileReader().readAsText === "function") ? true : false;
 
     pd.bounce = true;
-    pd.opera = false;
     pd.$$ = function (x) {
         if (document.getElementById === undefined) {
             return;
@@ -2101,7 +2100,17 @@ var exports = "",
             mode = "",
             stat = [],
             lang = "",
-            page = pd.o.wb.getAttribute("id");
+            page = pd.o.wb.getAttribute("id"),
+            backspace = function (event) {
+                var a = event || window.event,
+                    b = a.srcElement || a.target;
+                if (a.keyCode === 8) {
+                    if (b.nodeName === "textarea" || (b.nodeName === "input" && (b.getAttribute("type") === "text" || b.getAttribute("type") === "password"))) {
+                        return true;
+                    }
+                    return false;
+                }
+            };
 
         //supply limited functionality for the pd.save function if not
         //firefox or opera.
@@ -2121,16 +2130,8 @@ var exports = "",
             }
         }
         if (page === "webtool") {
-            pd.o.wb.onkeypress = function (event) {
-                var a = event || window.event,
-                    b = a.srcElement || a.target;
-                if (a.keyCode === 8) {
-                    if (b.nodeName === "textarea" || (b.nodeName === "input" && (b.getAttribute("type") === "text" || b.getAttribute("type") === "password"))) {
-                        return true;
-                    }
-                    return false;
-                }
-            };
+            document.onkeypress = backspace;
+            document.onkeydown = backspace;
             pd.o.update.innerHTML = (function () {
                 var a = String(edition.latest),
                     b = [a.charAt(0) + a.charAt(1), a.charAt(2) + a.charAt(3), a.charAt(4) + a.charAt(5)],
