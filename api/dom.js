@@ -692,7 +692,7 @@ var exports = "",
             h = 0,
             i = 0;
         pd.o.dd = pd.$$("modediff");
-        if (pd.fs && a[0] !== null && typeof a[0] === "object") {
+        if (pd.fs === true && a[0] !== null && typeof a[0] === "object") {
             if (b.nodeName === "input") {
                 b = b.parentNode.parentNode.getElementsByTagName("textarea")[0];
             }
@@ -701,7 +701,7 @@ var exports = "",
                 g.push(event.target.result);
                 if (i === h) {
                     b.value = g.join("\n\n");
-                    if (!pd.o.dd.checked) {
+                    if (pd.o.dd.checked === false) {
                         pd.recycle();
                     }
                 }
@@ -2153,13 +2153,52 @@ var exports = "",
             pd.o.rg.style.zIndex = "2";
             pd.o.ri.style.zIndex = "2";
             pd.o.rk.style.zIndex = "2";
-            if (!pd.fs) {
-                document.getElementById("diffbasefile").disabled = true;
-                document.getElementById("diffnewfile").disabled = true;
-                document.getElementById("beautyfile").disabled = true;
-                document.getElementById("minifyfile").disabled = true;
+            if (pd.fs === true) {
+                pd.o.bi.ondragover = pd.filenull;
+                pd.o.mi.ondragover = pd.filenull;
+                pd.o.bo.ondragover = pd.filenull;
+                pd.o.nx.ondragover = pd.filenull;
+                pd.o.bi.ondragleave = pd.filenull;
+                pd.o.mi.ondragleave = pd.filenull;
+                pd.o.bo.ondragleave = pd.filenull;
+                pd.o.nx.ondragleave = pd.filenull;
+                pd.o.bi.ondrop = pd.filedrop;
+                pd.o.mi.ondrop = pd.filedrop;
+                pd.o.bo.ondrop = pd.filedrop;
+                pd.o.nx.ondrop = pd.filedrop;
+            } else {
+                m = [
+                    pd.$$("diffbasefile"), pd.$$("diffnewfile"), pd.$$("beautyfile"), pd.$$("minifyfile")
+                ];
+                m[0].disabled = true;
+                m[1].disabled = true;
+                m[2].disabled = true;
+                m[3].disabled = true;
+                m[0] = m[0].parentNode;
+                m[1] = m[1].parentNode;
+                m[2] = m[2].parentNode;
+                m[3] = m[3].parentNode;
+                m[0].style.display = "none";
+                m[1].style.display = "none";
+                m[2].style.display = "none";
+                m[3].style.display = "none";
+                m[0] = m[0].parentNode;
+                m[1] = m[1].parentNode;
+                m[2] = m[2].parentNode;
+                m[3] = m[3].parentNode;
+                m[0].getElementsByTagName("h2")[0].style.display = "block";
+                m[1].getElementsByTagName("h2")[0].style.display = "block";
+                m[2].getElementsByTagName("h2")[0].style.display = "block";
+                m[3].getElementsByTagName("h2")[0].style.display = "block";
+                m[0].getElementsByTagName("textarea")[0].style.height = "34em";
+                m[1].getElementsByTagName("textarea")[0].style.height = "34em";
+                m[2].getElementsByTagName("textarea")[0].style.height = "34em";
+                m[3].getElementsByTagName("textarea")[0].style.height = "34em";
+                m[2].getElementsByTagName("textarea")[1].parentNode.style.margin = "0em";
+                m[3].getElementsByTagName("textarea")[1].parentNode.style.margin = "0em";
+                m = [];
             }
-            if (pd.ls && (localStorage.hasOwnProperty("optionString") || localStorage.hasOwnProperty("webtool") || localStorage.hasOwnProperty("statdata"))) {
+            if (pd.ls === true && (localStorage.hasOwnProperty("optionString") || localStorage.hasOwnProperty("webtool") || localStorage.hasOwnProperty("statdata"))) {
                 if (localStorage.hasOwnProperty("optionString") && localStorage.getItem("optionString") !== null) {
                     pd.o.option.innerHTML = "/*prettydiff.com " + (localStorage.getItem("optionString").replace(/prettydiffper/g, "%").replace(/(prettydiffcsep)+/g, ", ").replace(/\,\s+pdempty/g, "").replace(/(\,\s+\,\s+)+/g, ", ") + " */").replace(/((\,? )+\*\/)$/, " */");
                     a = localStorage.getItem("optionString").replace(/prettydiffper/g, "%").split("prettydiffcsep");
@@ -2740,20 +2779,6 @@ var exports = "",
                 }
                 if (pd.o.nl && localStorage.hasOwnProperty("nl") && localStorage.getItem("ni") !== null) {
                     pd.o.nl.value = localStorage.getItem("nl");
-                }
-                if (pd.fs) {
-                    pd.o.bi.ondragover = pd.filenull;
-                    pd.o.mi.ondragover = pd.filenull;
-                    pd.o.bo.ondragover = pd.filenull;
-                    pd.o.nx.ondragover = pd.filenull;
-                    pd.o.bi.ondragleave = pd.filenull;
-                    pd.o.mi.ondragleave = pd.filenull;
-                    pd.o.bo.ondragleave = pd.filenull;
-                    pd.o.nx.ondragleave = pd.filenull;
-                    pd.o.bi.ondrop = pd.filedrop;
-                    pd.o.mi.ondrop = pd.filedrop;
-                    pd.o.bo.ondrop = pd.filedrop;
-                    pd.o.nx.ondrop = pd.filedrop;
                 }
             }
             pd.fixminreport();
