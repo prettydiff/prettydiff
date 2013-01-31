@@ -2916,7 +2916,7 @@ var prettydiff = function prettydiff(api) {
                         };
                     for (a = 0; a < b; a += 1) {
                         c.push(token[a]);
-                        if (jpres && a === lines[d][0] && level[a] !== "x" && level[a] !== "s") {
+                        if (jpres === true && a === lines[d][0] && level[a] !== "x" && level[a] !== "s") {
                             if (token[a] === "+" || token[a] === "-" || token[a] === "*" || token[a] === "/") {
                                 if (a < b - 1 && types[a + 1] !== "comment" && types[a + 1] !== "comment-inline") {
                                     c.push(nl(indent));
@@ -2946,7 +2946,7 @@ var prettydiff = function prettydiff(api) {
                             d += 1;
                         }
                         if (a < b - 1 && types[a + 1] === "comment" && jcomment === true) {
-                            c.push(nl(0));
+                            c.push(nl(jlevel));
                         } else if (level[a] === "s") {
                             c.push(" ");
                         } else if (level[a] !== "x") {
@@ -7686,10 +7686,10 @@ var prettydiff = function prettydiff(api) {
         diffview: 130113, //diffview library
         documentation: 121203, //documentation.xhtml
         jsmin: 121223, //jsmin library (fulljsmin.js)
-        jspretty: 130130, //jspretty library
+        jspretty: 130131, //jspretty library
         markup_beauty: 130130, //markup_beauty library
         markupmin: 121127, //markupmin library
-        prettydiff: 130130, //this file
+        prettydiff: 130131, //this file
         webtool: 121227, //prettydiff.com.xhtml
         api: {
             dom: 130130,
