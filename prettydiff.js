@@ -1793,7 +1793,7 @@ var prettydiff = function prettydiff(api) {
                         0, 0, 0
                     ],
                     m = [
-                        0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
+                        0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
                     ],
                     n = [
                         0, 0, 0, 0, 0
@@ -2219,6 +2219,8 @@ var prettydiff = function prettydiff(api) {
                                 m[4] += 1;
                             } else if (t === "catch") {
                                 m[48] += 1;
+                            } else if (t === "console") {
+                                m[54] += 1;
                             } else if (t === "continue") {
                                 m[6] += 1;
                             } else if (t === "default") {
@@ -3043,6 +3045,11 @@ var prettydiff = function prettydiff(api) {
                         } else {
                             s[3] = "";
                         }
+                        if (m[54] > 0) {
+                            s[4] = " class='bad'";
+                        } else {
+                            s[4] = "";
+                        }
                         g = g - w[1];
                         h = h - w[2];
                         r = r - w[3];
@@ -3078,10 +3085,11 @@ var prettydiff = function prettydiff(api) {
                         m[49] = m[48] * 5;
                         m[51] = m[50] * 5;
                         m[53] = m[52] * 3;
-                        m[54] = m[0] + m[2] + m[4] + m[6] + m[8] + m[10] + m[12] + m[14] + m[16] + m[18] + m[20] + m[22] + m[24] + m[26] + m[28] + m[30] + m[32] + m[34] + m[36] + m[38] + m[40] + m[42] + m[44] + m[46] + m[48] + m[50] + m[52];
-                        m[55] = m[1] + m[3] + m[5] + m[7] + m[9] + m[11] + m[13] + m[15] + m[17] + m[19] + m[21] + m[23] + m[25] + m[27] + m[29] + m[31] + m[33] + m[35] + m[37] + m[39] + m[41] + m[43] + m[45] + m[47] + m[49] + m[51] + m[53];
-                        z.push(j[2] + l[0] + n[5] + m[54] + o[0] + p[0] + q[0] + i);
-                        z.push(j[3] + l[1] + n[6] + m[55] + o[1] + p[1] + q[1] + i);
+                        m[55] = m[54] * 7; 
+                        m[56] = m[0] + m[2] + m[4] + m[6] + m[8] + m[10] + m[12] + m[14] + m[16] + m[18] + m[20] + m[22] + m[24] + m[26] + m[28] + m[30] + m[32] + m[34] + m[36] + m[38] + m[40] + m[42] + m[44] + m[46] + m[48] + m[50] + m[52] + m[54];
+                        m[57] = m[1] + m[3] + m[5] + m[7] + m[9] + m[11] + m[13] + m[15] + m[17] + m[19] + m[21] + m[23] + m[25] + m[27] + m[29] + m[31] + m[33] + m[35] + m[37] + m[39] + m[41] + m[43] + m[45] + m[47] + m[49] + m[51] + m[53] + m[55];
+                        z.push(j[2] + l[0] + n[5] + m[56] + o[0] + p[0] + q[0] + i);
+                        z.push(j[3] + l[1] + n[6] + m[57] + o[1] + p[1] + q[1] + i);
                         output = ["<div id='doc'>"];
                         output.push("<table class='analysis' summary='JavaScript character size comparison'><caption>JavaScript data report</caption><thead><tr><th>Data Label</th><th>Input</th><th>Output</th><th>Literal Increase</th><th>Percentage Increase</th></tr>");
                         output.push("</thead><tbody><tr><th>Total Character Size</th><td>");
@@ -3313,6 +3321,7 @@ var prettydiff = function prettydiff(api) {
                         output.push(drawRow("break", "", m[2], m[3], z));
                         output.push(drawRow("case", "", m[4], m[5], z));
                         output.push(drawRow("catch", "", m[48], m[49], z));
+                        output.push(drawRow("console", s[4], m[54], m[55], z));
                         output.push(drawRow("continue", s[1], m[6], m[7], z));
                         output.push(drawRow("default", "", m[8], m[9], z));
                         output.push(drawRow("delete", "", m[10], m[11], z));
@@ -3337,13 +3346,13 @@ var prettydiff = function prettydiff(api) {
                         output.push(drawRow("window", "", m[46], m[47], z));
                         output.push(drawRow("try", "", m[52], m[53], z));
                         output.push("<tr><th>Total Keywords</th><td>");
-                        output.push(m[54]);
+                        output.push(m[56]);
                         output.push("</td><td>100.00%</td><td>");
-                        output.push(zero(m[54], z[0]));
+                        output.push(zero(m[56], z[0]));
                         output.push("</td><td>");
-                        output.push(m[55]);
+                        output.push(m[57]);
                         output.push("</td><td>100.00%</td><td>");
-                        output.push(zero(m[55], z[1]));
+                        output.push(zero(m[57], z[1]));
                         output.push("</td></tr>");
                         output.push("<tr><th colspan='7'>Variables and Other Keywords</th></tr><tr><th>Variable Instances</th><td>");
                         output.push(o[0]);
@@ -5693,7 +5702,6 @@ var prettydiff = function prettydiff(api) {
                     }());
                 }
                 token = [];
-                build = [];
                 cinfo = [];
                 level = [];
                 inner = [];
@@ -7441,7 +7449,7 @@ var prettydiff = function prettydiff(api) {
                         });
                         apidiffout = summary;
                     }
-                    if (!apidiffout) {
+                    if (apidiffout === false) {
                         apidiffout = "";
                     }
                     if (autotest === true && clang !== "csv" && clang !== "text") {
@@ -7695,7 +7703,7 @@ var prettydiff = function prettydiff(api) {
         documentation: 121203, //documentation.xhtml
         jsmin: 121223, //jsmin library (fulljsmin.js)
         jspretty: 130202, //jspretty library
-        markup_beauty: 130130, //markup_beauty library
+        markup_beauty: 130202, //markup_beauty library
         markupmin: 121127, //markupmin library
         prettydiff: 130202, //this file
         webtool: 121227, //prettydiff.com.xhtml
