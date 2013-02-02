@@ -2538,10 +2538,18 @@ var prettydiff = function prettydiff(api) {
                                 }
                                 ltoke = ";";
                                 ltype = "separator";
-                            } else if (ctoke === "}" && a > 1 && (token[a - 2] === ";" || types[a - 2] === "end" || types[a - 2] === "operator") && (ltype === "word" || ltype === "literal")) {
-                                ltoke = ";";
-                                ltype = "separator";
-                                level[a - 1] = indent - 1;
+                            } else if (ctoke === "}" && a > 1) {
+                                if (varline[varline.length - 1] === true && ((token[a - 2] === "," && ltype === "word") || (token[a - 2] === "=" && (ltype === "literal" || ltype === "word")))) {
+                                    ltoke = ";";
+                                    ltype = "separator";
+                                    varline[varline.length - 1] === false;
+                                    indent -= 1;
+                                    level[a - 1] = indent - 1;
+                                } else if ((token[a - 2] === ";" || types[a - 2] === "end" || types[a - 2] === "operator") && (ltype === "word" || ltype === "literal")) {
+                                    ltoke = ";";
+                                    ltype = "separator";
+                                    level[a - 1] = indent - 1;
+                                }
                             }
                             if (ctoke !== ")") {
                                 indent -= 1;
@@ -7686,10 +7694,10 @@ var prettydiff = function prettydiff(api) {
         diffview: 130113, //diffview library
         documentation: 121203, //documentation.xhtml
         jsmin: 121223, //jsmin library (fulljsmin.js)
-        jspretty: 130131, //jspretty library
+        jspretty: 130202, //jspretty library
         markup_beauty: 130130, //markup_beauty library
         markupmin: 121127, //markupmin library
-        prettydiff: 130131, //this file
+        prettydiff: 130202, //this file
         webtool: 121227, //prettydiff.com.xhtml
         api: {
             dom: 130130,
