@@ -2606,7 +2606,7 @@ var prettydiff = function prettydiff(api) {
                                 level[a - 1] = "x";
                                 level.push("x");
                             } else if (ctoke === "]") {
-                                if (list[list.length - 1] === true || (ltoke === "]" && level[level.length - 2] === indent + 1)) {
+                                if (list[list.length - 1] === true || (ltoke === "]" && level[a - 2] === indent + 1)) {
                                     level[a - 1] = indent;
                                 } else if (level[a - 1] === "s") {
                                     level[a - 1] = "x";
@@ -4746,6 +4746,7 @@ var prettydiff = function prettydiff(api) {
                     (function markup_beauty__algorithm_loop() {
                         var test = false,
                             test1 = false,
+                            svg = false,
                             cdata = [],
                             cdata1 = [],
                             cdataStart = (/^(\s*\/*<\!\[+[A-Z]+\[+)/),
@@ -4763,8 +4764,25 @@ var prettydiff = function prettydiff(api) {
                                     f = 0,
                                     g = "",
                                     h = 0,
-                                    i = (tag.charAt(0) === " ") ? true : false;
-                                if (i) {
+                                    space = (tag.charAt(0) === " ") ? true : false,
+                                    joinchar = (svg === true) ? "\n" + (function markup_beauty__apply_tab() {
+                                        var a = 0,
+                                            b = msize,
+                                            c = mchar,
+                                            d = [],
+                                            tab = "";
+                                        for (a = 0; a < b; a += 1) {
+                                            d.push(c);
+                                        }
+                                        tab = d.join("");
+                                        b = level[i];
+                                        d = [];
+                                        for (a = 0; a < b; a += 1) {
+                                            d.push(tab);
+                                        }
+                                        return d.join("") + tab;
+                                    }()) : " ";
+                                if (space) {
                                     tag = tag.substr(1);
                                     e = tag.indexOf(" ") + 1;
                                 }
@@ -4823,16 +4841,21 @@ var prettydiff = function prettydiff(api) {
                                         }
                                     }
                                 }
-                                if (i) {
-                                    return " " + g + a.sort().join(" ") + end;
+                                if (space) {
+                                    return " " + g + a.sort().join(joinchar) + end;
                                 }
-                                return g + a.sort().join(" ") + end;
+                                return g + a.sort().join(joinchar) + end;
                             };
                         for (i = 0; i < loop; i += 1) {
                             test = false;
                             test1 = false;
                             cdata = [""];
                             cdata1 = [""];
+                            if (i > 0 && (build[i - 1].indexOf("<svg") === 0 || build[i - 1].indexOf(" <svg") === 0)) {
+                                svg = true;
+                            } else if (build[i] === "</svg>" || build[i] === " </svg>") {
+                                svg = false;
+                            }
                             if (i === 0) {
                                 level.push(0);
                             } else if (mforce) {
