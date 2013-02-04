@@ -1237,7 +1237,11 @@ var prettydiff = function prettydiff(api) {
                             c = "",
                             x = y.replace(/\\\)/g, "~PDpar~").split("url("),
                             d = x.length,
-                            e = "";
+                            e = "",
+                            f = (y.indexOf("data~PrettyDiffColon~") > -1 && y.indexOf("~PrettyDiffSemi~base64") > y.indexOf("data~PrettyDiffColon~")) ? true : false,
+                            basefix = function (x) {
+                                return x + "\n";
+                            };
                         for (a = 1; a < d; a += 1) {
                             e = "\"";
                             if (x[a].charAt(0) === "\"") {
@@ -1252,7 +1256,12 @@ var prettydiff = function prettydiff(api) {
                             } else if (c.charAt(c.length - 1) === "'" || c.charAt(c.length - 1) === "\"") {
                                 c = c.substr(0, c.length - 1) + "\"";
                             }
-                            b[0] = c.replace(/\s*\/\s*/g, "/");
+                            if (f === true) {
+                                b[0] = c.replace(/ ?\/ ?/g, "/").replace(/\S{77}\/?\s*/g, basefix).replace(/\n{2}/g, "\n");
+                                
+                            } else {
+                                b[0] = c.replace(/\s*\/\s*/g, "/");
+                            }
                             x[a] = "url(" + e + b.join(")");
                         }
                         return x.join("").replace(/~PDpar~/g, "\\)");
@@ -1835,7 +1844,7 @@ var prettydiff = function prettydiff(api) {
                                 n = a + offset;
                             for (e = n; e < j; e += 1) {
                                 l.push(c[e]);
-                                if (c[e] === h[i] || (m && (c[e] === "\n" || e === j - 1))) {
+                                if (c[e] === h[i] || (m === true && (c[e] === "\n" || e === j - 1))) {
                                     if (i > 0) {
                                         g = i;
                                         for (f = e; g > -1; f -= 1) {
@@ -4851,7 +4860,7 @@ var prettydiff = function prettydiff(api) {
                             test1 = false;
                             cdata = [""];
                             cdata1 = [""];
-                            if (i > 0 && (build[i - 1].indexOf("<svg") === 0 || build[i - 1].indexOf(" <svg") === 0)) {
+                            if (build[i].indexOf("<svg") === 0 || build[i].indexOf(" <svg") === 0) {
                                 svg = true;
                             } else if (build[i] === "</svg>" || build[i] === " </svg>") {
                                 svg = false;
@@ -4987,7 +4996,15 @@ var prettydiff = function prettydiff(api) {
                                 } else if (cinfo[i] === "end") {
                                     e();
                                 } else if (cinfo[i] === "singleton") {
-                                    h();
+                                    if (svg === true) {
+                                        if (cinfo[i - 1] === "start") {
+                                            level.push(level[i - 1] + 1);
+                                        } else {
+                                            level.push(level[i - 1]);
+                                        }
+                                    } else {
+                                        h();
+                                    }
                                 }
                             }
                             if ((cinfo[i] === "start" || cinfo[i] === "singleton") && disqualify.test(build[i]) === false && build[i].substr(1).indexOf(" ") > 1) {
@@ -7302,7 +7319,7 @@ var prettydiff = function prettydiff(api) {
                             if (/^(\s*\{)/.test(a) && /(\}\s*)$/.test(a) && a.indexOf(",") !== -1) {
                                 clang = "javascript";
                                 auto = "JSON";
-                            } else if (/((\}?(\(\))?\)*;?\s*)|([a-z0-9]("|')?\)*);?(\s*\})*)$/i.test(a) && (/var\s+[a-z]+[a-zA-Z0-9]*/.test(a) || /(\=\s*function)|(\s*function\s+(\w*\s+)?\()/.test(a) || a.indexOf("{") === -1 || (/^(\s*if\s+\()/).test(a))) {
+                            } else if (/((\}?(\(\))?\)*;?\s*)|([a-z0-9]("|')?\)*);?(\s*\})*)$/i.test(a) && (/(var\s+[a-z]+[a-zA-Z0-9]*)/.test(a) || /(\=\s*function)|(\s*function\s+(\w*\s+)?\()/.test(a) || a.indexOf("{") === -1 || (/^(\s*if\s+\()/).test(a))) {
                                 if (a.indexOf("(") > -1 || a.indexOf("=") > -1 || (a.indexOf(";") > -1 && a.indexOf("{") > -1) || cmode !== "diff") {
                                     clang = "javascript";
                                     auto = "JavaScript";
@@ -7358,6 +7375,8 @@ var prettydiff = function prettydiff(api) {
                         } else {
                             auto = "<p>Language set to <strong>auto</strong>. Presumed language is <em>" + auto + "</em>.</p>";
                         }
+                        a = "";
+                        b = [];
                     }());
                 }
                 pdcomment();
@@ -7718,17 +7737,17 @@ var prettydiff = function prettydiff(api) {
     //the edition values use the format YYMMDD for dates.
     edition = {
         charDecoder: 121231, //charDecoder library
-        cleanCSS: 121127, //cleanCSS library
+        cleanCSS: 130204, //cleanCSS library
         css: 130113, //diffview.css file
         csvbeauty: 121127, //csvbeauty library
         csvmin: 121127, //csvmin library
         diffview: 130113, //diffview library
         documentation: 121203, //documentation.xhtml
         jsmin: 121223, //jsmin library (fulljsmin.js)
-        jspretty: 130202, //jspretty library
-        markup_beauty: 130202, //markup_beauty library
+        jspretty: 130204, //jspretty library
+        markup_beauty: 130204, //markup_beauty library
         markupmin: 121127, //markupmin library
-        prettydiff: 130202, //this file
+        prettydiff: 130204, //this file
         webtool: 121227, //prettydiff.com.xhtml
         api: {
             dom: 130130,
