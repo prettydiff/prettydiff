@@ -1,6 +1,6 @@
 /*prettydiff.com api.topcoms: true*/
 /*jslint nomen: true */
-/*global edition, document, localStorage, window, prettydiff, XMLHttpRequest, location, ActiveXObject, FileReader, navigator*/
+/*global edition, document, localStorage, window, prettydiff, XMLHttpRequest, location, ActiveXObject, FileReader, navigator, setTimeout*/
 var exports = "",
     _gaq = _gaq || [],
     pd = {};
@@ -789,7 +789,6 @@ var exports = "",
             growth = function (w, v, x, y) {
                 var a = c,
                     b = d,
-                    e = false,
                     g = 17,
                     h = 3,
                     i = 0,
@@ -901,7 +900,7 @@ var exports = "",
             } else if (b === pd.o.ri) {
                 shrinkage(pd.position[f].leftMin, pd.position[f].topMin, 19.8, b, c, d);
             } else if (b === pd.o.rk) {
-                shrinkage(pd.position[f].leftMin, pd.position[f].topMin, .8, b, c, d);
+                shrinkage(pd.position[f].leftMin, pd.position[f].topMin, 0.8, b, c, d);
             }
             if (pd.o.zindex > 2) {
                 pd.o.zindex -= 3;
@@ -2007,8 +2006,8 @@ var exports = "",
         pd.o.re.getElementsByTagName("h3")[0].style.width = "17em";
         pd.o.re.getElementsByTagName("h3")[0].style.cursor = "pointer";
         pd.o.re.getElementsByTagName("h3")[0].style.margin = "0em";
-        pd.position["diffreport"].leftMin = pd.o.re.offsetLeft/ 10;
-        pd.position["diffreport"].topMin = pd.o.re.offsetTop / 10;
+        pd.position.diffreport.leftMin = pd.o.re.offsetLeft / 10;
+        pd.position.diffreport.topMin = pd.o.re.offsetTop / 10;
         pd.o.rh.style.display = "none";
         pd.o.rg.style.display = "block";
         pd.o.rg.style.left = "auto";
@@ -2018,8 +2017,8 @@ var exports = "",
         pd.o.rg.getElementsByTagName("h3")[0].style.width = "17em";
         pd.o.rg.getElementsByTagName("h3")[0].style.cursor = "pointer";
         pd.o.rg.getElementsByTagName("h3")[0].style.cursor = "0em";
-        pd.position["beaureport"].leftMin = pd.o.rg.offsetLeft / 10;
-        pd.position["beaureport"].topMin = pd.o.rg.offsetTop / 10;
+        pd.position.beaureport.leftMin = pd.o.rg.offsetLeft / 10;
+        pd.position.beaureport.topMin = pd.o.rg.offsetTop / 10;
         pd.o.rj.style.display = "none";
         pd.o.ri.style.display = "block";
         pd.o.ri.style.left = "auto";
@@ -2029,8 +2028,8 @@ var exports = "",
         pd.o.ri.getElementsByTagName("h3")[0].style.width = "17em";
         pd.o.ri.getElementsByTagName("h3")[0].style.cursor = "pointer";
         pd.o.ri.getElementsByTagName("h3")[0].style.cursor = "0em";
-        pd.position["minreport"].leftMin = pd.o.ri.offsetLeft / 10;
-        pd.position["minreport"].topMin = pd.o.ri.offsetTop / 10;
+        pd.position.minreport.leftMin = pd.o.ri.offsetLeft / 10;
+        pd.position.minreport.topMin = pd.o.ri.offsetTop / 10;
         pd.o.rl.style.display = "none";
         pd.o.cs.selectedIndex = 0;
         pd.o.wb.className = "shadow";
@@ -2045,8 +2044,8 @@ var exports = "",
             pd.o.rk.getElementsByTagName("h3")[0].style.width = "17em";
             pd.o.rk.getElementsByTagName("h3")[0].style.cursor = "pointer";
             pd.o.rk.getElementsByTagName("h3")[0].style.cursor = "0em";
-            pd.position["statreport"].leftMin = pd.o.rk.offsetLeft / 10;
-            pd.position["statreport"].topMin = pd.o.rk.offsetTop / 10;
+            pd.position.statreport.leftMin = pd.o.rk.offsetLeft / 10;
+            pd.position.statreport.topMin = pd.o.rk.offsetTop / 10;
         }
         pd.o.bi.style.height = "";
         pd.o.mi.style.height = "";
@@ -2244,14 +2243,14 @@ var exports = "",
             pd.o.rg.style.zIndex = "2";
             pd.o.ri.style.zIndex = "2";
             pd.o.rk.style.zIndex = "2";
-            pd.position["diffreport"].leftMin = pd.o.re.offsetLeft / 10;
-            pd.position["diffreport"].topMin = pd.o.re.offsetTop / 10;
-            pd.position["beaureport"].leftMin = pd.o.rg.offsetLeft / 10;
-            pd.position["beaureport"].topMin = pd.o.rg.offsetTop / 10;
-            pd.position["minreport"].leftMin = pd.o.ri.offsetLeft / 10;
-            pd.position["minreport"].topMin = pd.o.ri.offsetTop / 10;
-            pd.position["statreport"].leftMin = pd.o.rk.offsetLeft / 10;
-            pd.position["statreport"].topMin = pd.o.rk.offsetTop / 10;
+            pd.position.diffreport.leftMin = pd.o.re.offsetLeft / 10;
+            pd.position.diffreport.topMin = pd.o.re.offsetTop / 10;
+            pd.position.beaureport.leftMin = pd.o.rg.offsetLeft / 10;
+            pd.position.beaureport.topMin = pd.o.rg.offsetTop / 10;
+            pd.position.minreport.leftMin = pd.o.ri.offsetLeft / 10;
+            pd.position.minreport.topMin = pd.o.ri.offsetTop / 10;
+            pd.position.statreport.leftMin = pd.o.rk.offsetLeft / 10;
+            pd.position.statreport.topMin = pd.o.rk.offsetTop / 10;
             if (pd.fs === true) {
                 pd.o.bi.ondragover = pd.filenull;
                 pd.o.mi.ondragover = pd.filenull;
