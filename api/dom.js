@@ -782,11 +782,99 @@ var exports = "",
             f = b.getAttribute("id"),
             test = (b === pd.o.re) ? true : false,
             g = (test === true) ? a.getElementsByTagName("button")[1] : a.getElementsByTagName("button")[0],
-            h = (test === true) ? a.getElementsByTagName("button")[2] : a.getElementsByTagName("button")[1];
+            h = (test === true) ? a.getElementsByTagName("button")[2] : a.getElementsByTagName("button")[1],
+            i = b.offsetLeft / 10,
+            j = b.offsetTop / 10,
+            step = 50,
+            growth = function (w, v, x, y) {
+                var a = c,
+                    b = d,
+                    e = false,
+                    g = 17,
+                    h = 3,
+                    i = 0,
+                    j = 0,
+                    k = 0,
+                    l = 0,
+                    m = 0,
+                    n = 0,
+                    q = 0,
+                    r = 0,
+                    s = (y === true) ? 9.71 : 6.71,
+                    grow = function () {
+                        g += m;
+                        h += n;
+                        w += q;
+                        v += r;
+                        a.style.width = g + "em";
+                        a.style.height = h + "em";
+                        b.style.width = (g - s) + "em";
+                        x.style.left = w + "em";
+                        x.style.top = v + "em";
+                        if (g + m < k || h + n < l) {
+                            setTimeout(grow, 1);
+                        } else {
+                            pd.options(x);
+                        }
+                    };
+                if (typeof pd.position[f].left === "number") {
+                    i = pd.position[f].left;
+                    j = pd.position[f].top;
+                    k = pd.position[f].width;
+                    l = pd.position[f].height;
+                } else {
+                    pd.position[f].left = 20;
+                    pd.position[f].top = v;
+                    pd.position[f].width = 75;
+                    pd.position[f].height = 20;
+                    i = 20;
+                    j = v;
+                    k = 75;
+                    l = 20;
+                }
+                m = (k > g) ? ((k - g) / step) : ((g - k) / step);
+                n = (l > h) ? ((l - h) / step) : ((h - l) / step);
+                q = (i - w) / step;
+                r = (j - v) / step;
+                x.style.right = "auto";
+                a.style.display = "block";
+                grow();
+            },
+            shrinkage = function (u, v, w, x, y, z) {
+                var a = i,
+                    b = j,
+                    c = y.clientWidth / 10,
+                    d = y.clientHeight / 10,
+                    e = (u - a) / step,
+                    f = (v - b) / step,
+                    g = (c === 17) ? 0 : (c > 17) ? ((c - 17) / step) : ((17 - c) / step),
+                    h = d / step,
+                    shrink = function () {
+                        a += e;
+                        b += f;
+                        c -= g;
+                        d -= h;
+                        y.style.width = c + "em";
+                        z.style.width = c + "em";
+                        y.style.height = d + "em";
+                        x.style.left = a + "em";
+                        x.style.top = b + "em";
+                        if (c - g > 16.8) {
+                            setTimeout(shrink, 1);
+                        } else {
+                            y.style.display = "none";
+                            x.style.top = "auto";
+                            x.style.left = "auto";
+                            x.style.right = w + "em";
+                            pd.options(x);
+                        }
+                    };
+                shrink();
+            };
 
         //shrink
         if (x.innerHTML === "\u035f") {
-            if (!pd.position[f]) {
+            if (typeof pd.position[f] !== "object") {
                 pd.position[f] = {};
             }
             if (h.innerHTML === "\u2191") {
@@ -798,30 +886,27 @@ var exports = "",
                 h.innerHTML = "\u2191";
             }
             g.innerHTML = "\u2191";
-            b.style.left = "auto";
-            a.style.display = "none";
             b.style.borderWidth = "0em";
             b.style.top = "auto";
             b.style.zIndex = "2";
+            a.style.display = "none";
+            d.style.borderLeftStyle = "solid";
+            d.style.borderTopStyle = "solid";
+            d.style.cursor = "pointer";
+            d.style.margin = "0em 0em -3.2em 0.1em";
             if (b === pd.o.re) {
-                b.style.right = "57.8em";
+                shrinkage(pd.position[f].leftMin, pd.position[f].topMin, 57.8, b, c, d);
             } else if (b === pd.o.rg) {
-                b.style.right = "38.8em";
+                shrinkage(pd.position[f].leftMin, pd.position[f].topMin, 38.8, b, c, d);
             } else if (b === pd.o.ri) {
-                b.style.right = "19.8em";
+                shrinkage(pd.position[f].leftMin, pd.position[f].topMin, 19.8, b, c, d);
             } else if (b === pd.o.rk) {
-                b.style.right = ".8em";
+                shrinkage(pd.position[f].leftMin, pd.position[f].topMin, .8, b, c, d);
             }
             if (pd.o.zindex > 2) {
                 pd.o.zindex -= 3;
                 a.style.zIndex = pd.o.zindex;
             }
-            c.style.display = "none";
-            d.style.borderLeftStyle = "solid";
-            d.style.borderTopStyle = "solid";
-            d.style.cursor = "pointer";
-            d.style.width = "17em";
-            d.style.margin = "0em 0em -3.2em 0.1em";
             x.innerHTML = "\u2191";
 
             //grow
@@ -835,30 +920,14 @@ var exports = "",
             d.style.borderLeftStyle = "none";
             d.style.borderTopStyle = "none";
             d.style.margin = "0.1em 1.7em -3.2em 0.1em";
-            if (pd.position && pd.position[f] && pd.position[f].top) {
-                b.style.right = "auto";
-                b.style.top = pd.position[f].top + "em";
-                b.style.left = pd.position[f].left + "em";
-                if (b === pd.o.re) {
-                    d.style.width = (pd.position[f].width - 9.71) + "em";
-                } else {
-                    d.style.width = (pd.position[f].width - 6.71) + "em";
-                }
-                c.style.width = pd.position[f].width + "em";
-                c.style.height = pd.position[f].height + "em";
+            if (b === pd.o.re) {
+                growth(i, j, b, true);
             } else {
-                b.style.left = (b.offsetLeft / 10) + "em";
-                if (b === pd.o.re) {
-                    d.style.width = "65.24em";
-                } else {
-                    d.style.width = "68.24em";
-                }
-                b.style.right = "auto";
-                c.width = "75em";
+                growth(i, j, b, false);
             }
             x.innerHTML = "\u035f";
         }
-        pd.options(b);
+        return false;
     };
 
     //maximize report window to available browser window
@@ -1919,6 +1988,12 @@ var exports = "",
                 c[b].disabled = true;
             }
         }
+        pd.position = {
+            diffreport: {},
+            beaureport: {},
+            minreport: {},
+            statreport: {}
+        };
         pd.optionString = [];
         pd.webtool = [];
         a[0].innerHTML = "S";
@@ -1930,6 +2005,10 @@ var exports = "",
         pd.o.re.style.zIndex = "2";
         pd.o.re.getElementsByTagName("p")[0].style.display = "none";
         pd.o.re.getElementsByTagName("h3")[0].style.width = "17em";
+        pd.o.re.getElementsByTagName("h3")[0].style.cursor = "pointer";
+        pd.o.re.getElementsByTagName("h3")[0].style.margin = "0em";
+        pd.position["diffreport"].leftMin = pd.o.re.offsetLeft/ 10;
+        pd.position["diffreport"].topMin = pd.o.re.offsetTop / 10;
         pd.o.rh.style.display = "none";
         pd.o.rg.style.display = "block";
         pd.o.rg.style.left = "auto";
@@ -1937,6 +2016,10 @@ var exports = "",
         pd.o.rg.style.zIndex = "2";
         pd.o.rg.getElementsByTagName("p")[0].style.display = "none";
         pd.o.rg.getElementsByTagName("h3")[0].style.width = "17em";
+        pd.o.rg.getElementsByTagName("h3")[0].style.cursor = "pointer";
+        pd.o.rg.getElementsByTagName("h3")[0].style.cursor = "0em";
+        pd.position["beaureport"].leftMin = pd.o.rg.offsetLeft / 10;
+        pd.position["beaureport"].topMin = pd.o.rg.offsetTop / 10;
         pd.o.rj.style.display = "none";
         pd.o.ri.style.display = "block";
         pd.o.ri.style.left = "auto";
@@ -1944,6 +2027,10 @@ var exports = "",
         pd.o.ri.style.zIndex = "2";
         pd.o.ri.getElementsByTagName("p")[0].style.display = "none";
         pd.o.ri.getElementsByTagName("h3")[0].style.width = "17em";
+        pd.o.ri.getElementsByTagName("h3")[0].style.cursor = "pointer";
+        pd.o.ri.getElementsByTagName("h3")[0].style.cursor = "0em";
+        pd.position["minreport"].leftMin = pd.o.ri.offsetLeft / 10;
+        pd.position["minreport"].topMin = pd.o.ri.offsetTop / 10;
         pd.o.rl.style.display = "none";
         pd.o.cs.selectedIndex = 0;
         pd.o.wb.className = "shadow";
@@ -1956,6 +2043,10 @@ var exports = "",
             pd.o.rk.style.zIndex = "2";
             pd.o.rk.getElementsByTagName("p")[0].style.display = "none";
             pd.o.rk.getElementsByTagName("h3")[0].style.width = "17em";
+            pd.o.rk.getElementsByTagName("h3")[0].style.cursor = "pointer";
+            pd.o.rk.getElementsByTagName("h3")[0].style.cursor = "0em";
+            pd.position["statreport"].leftMin = pd.o.rk.offsetLeft / 10;
+            pd.position["statreport"].topMin = pd.o.rk.offsetTop / 10;
         }
         pd.o.bi.style.height = "";
         pd.o.mi.style.height = "";
@@ -2153,6 +2244,14 @@ var exports = "",
             pd.o.rg.style.zIndex = "2";
             pd.o.ri.style.zIndex = "2";
             pd.o.rk.style.zIndex = "2";
+            pd.position["diffreport"].leftMin = pd.o.re.offsetLeft / 10;
+            pd.position["diffreport"].topMin = pd.o.re.offsetTop / 10;
+            pd.position["beaureport"].leftMin = pd.o.rg.offsetLeft / 10;
+            pd.position["beaureport"].topMin = pd.o.rg.offsetTop / 10;
+            pd.position["minreport"].leftMin = pd.o.ri.offsetLeft / 10;
+            pd.position["minreport"].topMin = pd.o.ri.offsetTop / 10;
+            pd.position["statreport"].leftMin = pd.o.rk.offsetLeft / 10;
+            pd.position["statreport"].topMin = pd.o.rk.offsetTop / 10;
             if (pd.fs === true) {
                 pd.o.bi.ondragover = pd.filenull;
                 pd.o.mi.ondragover = pd.filenull;
@@ -2523,13 +2622,13 @@ var exports = "",
                             }
                         }
                     }
-                    if (dm && dma) {
+                    if (dm === true && dma === true) {
                         pd.o.re.style.right = "auto";
                         pd.o.re.style.borderWidth = "0.1em";
                         pd.o.re.getElementsByTagName("p")[0].style.display = "block";
                         pd.o.re.getElementsByTagName("p")[0].getElementsByTagName("button")[1].innerHTML = "\u035f";
                         pd.o.rf.style.display = "block";
-                    } else if (dm) {
+                    } else if (dm === true) {
                         pd.o.re.getElementsByTagName("p")[0].style.display = "none";
                         pd.o.re.getElementsByTagName("h3")[0].style.width = "17em";
                         pd.o.re.style.left = "auto";
@@ -2537,13 +2636,13 @@ var exports = "",
                         pd.o.re.style.borderWidth = "0em";
                         pd.o.rf.style.display = "none";
                     }
-                    if (bm && bma) {
+                    if (bm === true && bma === true) {
                         pd.o.rg.style.right = "auto";
                         pd.o.rg.style.borderWidth = "0.1em";
                         pd.o.rg.getElementsByTagName("p")[0].style.display = "block";
                         pd.o.rg.getElementsByTagName("p")[0].getElementsByTagName("button")[0].innerHTML = "\u035f";
                         pd.o.rh.style.display = "block";
-                    } else if (bm) {
+                    } else if (bm === true) {
                         pd.o.rg.getElementsByTagName("p")[0].style.display = "none";
                         pd.o.rg.getElementsByTagName("h3")[0].style.width = "17em";
                         pd.o.rg.style.left = "auto";
@@ -2551,13 +2650,13 @@ var exports = "",
                         pd.o.rg.style.borderWidth = "0em";
                         pd.o.rh.style.display = "none";
                     }
-                    if (mm && mma) {
+                    if (mm === true && mma === true) {
                         pd.o.ri.style.right = "auto";
                         pd.o.ri.style.borderWidth = "0.1em";
                         pd.o.ri.getElementsByTagName("p")[0].style.display = "block";
                         pd.o.ri.getElementsByTagName("p")[0].getElementsByTagName("button")[0].innerHTML = "\u035f";
                         pd.o.rj.style.display = "block";
-                    } else if (mm) {
+                    } else if (mm === true) {
                         pd.o.ri.getElementsByTagName("p")[0].style.display = "none";
                         pd.o.ri.getElementsByTagName("h3")[0].style.width = "17em";
                         pd.o.ri.style.left = "auto";
@@ -2565,13 +2664,13 @@ var exports = "",
                         pd.o.ri.style.borderWidth = "0em";
                         pd.o.rj.style.display = "none";
                     }
-                    if (sm && sma) {
+                    if (sm === true && sma === true) {
                         pd.o.rk.style.right = "auto";
                         pd.o.rk.style.borderWidth = "0.1em";
                         pd.o.rk.getElementsByTagName("p")[0].style.display = "block";
                         pd.o.rk.getElementsByTagName("p")[0].getElementsByTagName("button")[0].innerHTML = "\u035f";
                         pd.o.rl.style.display = "block";
-                    } else if (sm) {
+                    } else if (sm === true) {
                         pd.o.rk.getElementsByTagName("p")[0].style.display = "none";
                         pd.o.rk.getElementsByTagName("h3")[0].style.width = "17em";
                         pd.o.rk.style.left = "auto";
