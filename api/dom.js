@@ -813,7 +813,10 @@ var exports = "",
                         if (g + m < k || h + n < l) {
                             setTimeout(grow, 1);
                         } else {
+                            a.style.width = (k + 0.1) + "em";
+                            a.style.height = (l + 0.1) + "em";
                             pd.options(x);
+                            return false;
                         }
                     };
                 if (typeof pd.position[f].left === "number") {
@@ -866,6 +869,7 @@ var exports = "",
                             x.style.left = "auto";
                             x.style.right = w + "em";
                             pd.options(x);
+                            return false;
                         }
                     };
                 shrink();
@@ -1203,7 +1207,7 @@ var exports = "",
             }
             a.style.left = "auto";
             pd.minimize(c);
-            return;
+            return false;
         }
         pd.top(a);
         if (d.nodeType !== 1) {
@@ -1232,6 +1236,7 @@ var exports = "",
         document.onmousemove = boxmove;
         document.onmousedown = null;
         pd.options(a);
+        return false;
     };
 
     //shows and hides the additional options
@@ -2202,24 +2207,24 @@ var exports = "",
                 }
             };
 
-        //supply limited functionality for the pd.save function if not
-        //firefox or opera.
-        if (typeof navigator === "object") {
-            if (navigator.userAgent.indexOf("Firefox") === -1 && navigator.userAgent.indexOf("Opera") === -1) {
-                i = pd.o.re.getElementsByTagName("a")[0];
-                n = i.getElementsByTagName("button")[0];
-                n.setAttribute("onclick", "pd.save(this);");
-                i.removeChild(n);
-                i.parentNode.insertBefore(n, i);
-                i.parentNode.removeChild(i);
-            } else if (navigator.userAgent.indexOf("Opera") > -1 && navigator.userAgent.indexOf("Presto") > 0) {
-                pd.o.rf.style.cssFloat = "right";
-                pd.o.rh.style.cssFloat = "right";
-                pd.o.rj.style.cssFloat = "right";
-                pd.o.rl.style.cssFloat = "right";
-            }
-        }
         if (page === "webtool") {
+            //supply limited functionality for the pd.save function if
+            //not firefox or opera.
+            if (typeof navigator === "object") {
+                if (navigator.userAgent.indexOf("Firefox") === -1 && navigator.userAgent.indexOf("Opera") === -1) {
+                    i = pd.o.re.getElementsByTagName("a")[0];
+                    n = i.getElementsByTagName("button")[0];
+                    n.setAttribute("onclick", "pd.save(this);");
+                    i.removeChild(n);
+                    i.parentNode.insertBefore(n, i);
+                    i.parentNode.removeChild(i);
+                } else if (navigator.userAgent.indexOf("Opera") > -1 && navigator.userAgent.indexOf("Presto") > 0) {
+                    pd.o.rf.style.cssFloat = "right";
+                    pd.o.rh.style.cssFloat = "right";
+                    pd.o.rj.style.cssFloat = "right";
+                    pd.o.rl.style.cssFloat = "right";
+                }
+            }
             document.onkeypress = backspace;
             document.onkeydown = backspace;
             pd.o.update.innerHTML = (function () {
