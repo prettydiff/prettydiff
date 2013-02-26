@@ -1,12 +1,16 @@
 /*prettydiff.com api.topcoms: true*/
 /*jslint nomen: true */
-/*global edition, document, localStorage, window, prettydiff, XMLHttpRequest, location, ActiveXObject, FileReader, navigator, setTimeout*/
+/*global edition, document, localStorage, window, prettydiff, summary, markup_beauty, cleanCSS, jsmin, csvbeauty, csvmin, markupmin, jspretty, diffview, XMLHttpRequest, location, ActiveXObject, FileReader, navigator, setTimeout*/
 var exports = "",
     _gaq = _gaq || [],
     pd = {};
 
 (function () {
     "use strict";
+
+    if (typeof prettydiff === "function") {
+        pd.application = prettydiff;
+    }
 
     //test for localStorage and assign the result of the test
     pd.ls = (typeof localStorage === "object" && localStorage !== null && typeof localStorage.getItem === "function" && typeof localStorage.hasOwnProperty === "function") ? true : false;
@@ -24,8 +28,8 @@ var exports = "",
 
     //o Stores a reference to everything that is needed from the DOM
     pd.o = {
-        ao: pd.$$("addOptions"),
         an: pd.$$("additional_no"),
+        ao: pd.$$("addOptions"),
         ay: pd.$$("additional_yes"),
         ba: pd.$$("beau-tab"),
         bb: pd.$$("modebeautify"),
@@ -86,6 +90,10 @@ var exports = "",
         iz: pd.$$("incomment-no"),
         jd: pd.$$("jsindentd-all"),
         je: pd.$$("jsindentd-knr"),
+        jf: pd.$$("jsspace-no"),
+        jg: pd.$$("jsscope-yes"),
+        jh: pd.$$("jslines-no"),
+        ji: pd.$$("jsinlevel"),
         js: pd.$$("jsindent-all"),
         jt: pd.$$("jsindent-knr"),
         la: pd.$$("language"),
@@ -264,7 +272,7 @@ var exports = "",
         if (typeof event === "object" && event.type === "keyup" && (event.altKey || event.keyCode === 18 || event.keyCode === 35 || event.keyCode === 36 || event.keyCode === 37 || event.keyCode === 38 || event.keyCode === 39 || event.keyCode === 40)) {
             return;
         }
-        if (pd.ls) {
+        if (pd.ls === true && pd.o.rk !== null) {
             pd.o.stat.usage += 1;
             pd.o.stusage.innerHTML = pd.o.stat.usage;
         }
@@ -285,6 +293,7 @@ var exports = "",
         api.style = "indent";
         api.topcoms = false;
         api.conditional = false;
+        api.inlevel = 0;
 
         //gather updated dom nodes
         pd.o.bb = pd.$$("modebeautify");
@@ -297,11 +306,11 @@ var exports = "",
         pd.o.dx = pd.$$("diffcontenty");
         pd.o.sh = pd.$$("hideOptions");
         pd.o.la = pd.$$("language");
-        api.lang = pd.o.la[pd.o.la.selectedIndex].value;
-        api.csvchar = pd.o.ch.value;
+        api.lang = (pd.o.la === null) ? "javascript" : (pd.o.la.nodeName === "select") ? pd.o.la[pd.o.la.selectedIndex].value.toLowerCase() : pd.o.la.value.toLowerCase();
+        api.csvchar = (pd.o.ch === null) ? "," : pd.o.ch.value;
 
-        //determine operations based upon mode of operations
-        if (pd.o.bb.checked) {
+        //determine options based upon mode of operations
+        if (pd.o.bb !== null && pd.o.bb.checked) {
             pd.o.hy = pd.$$("html-yes");
             pd.o.ba = pd.$$("beau-tab");
             pd.o.bn = pd.$$("beau-line");
@@ -313,16 +322,32 @@ var exports = "",
             pd.o.is = pd.$$("inscript-yes");
             pd.o.iz = pd.$$("incomment-no");
             pd.o.bg = pd.$$("bforce_indent-yes");
-            pd.o.bx.value = "";
-            api.wrap = pd.o.wc.value;
-            if (pd.o.bg.checked) {
+            pd.o.jf = pd.$$("jsspace-no");
+            pd.o.jg = pd.$$("jsscope-yes");
+            pd.o.jh = pd.$$("jslines-no");
+            if (pd.application === undefined) {
+                if (api.lang === "markup" || api.lang === "html" || api.lang === "xml" || api.lang === "jstl") {
+                    pd.application = markup_beauty;
+                } else if (api.lang === "csv") {
+                    pd.application = csvbeauty;
+                } else if (api.lang === "css" || api.lang === "scss") {
+                    pd.application = cleanCSS;
+                } else {
+                    pd.application = jspretty;
+                }
+            }
+            if (pd.o.bx !== null) {
+                pd.o.bx.value = "";
+            }
+            api.wrap = (pd.o.wc === null) ? "72" : pd.o.wc.value;
+            if (pd.o.bg !== null && pd.o.bg.checked === true) {
                 api.force_indent = true;
             }
-            if (pd.o.ba.checked) {
+            if (pd.o.ba !== null && pd.o.ba.checked) {
                 pd.o.cz = "\t";
-            } else if (pd.o.bn.checked) {
+            } else if (pd.o.bn !== null && pd.o.bn.checked) {
                 pd.o.cz = "\n";
-            } else if (pd.o.bw.checked) {
+            } else if (pd.o.bw !== null && pd.o.bw.checked && pd.o.bc !== null) {
                 pd.o.cz = pd.o.bc.value;
                 if ((/^&/).test(pd.o.cz) && !(/;$/).test(pd.o.cz)) {
                     pd.o.cz = pd.o.cz.replace("&", "&amp;");
@@ -331,43 +356,74 @@ var exports = "",
                 pd.o.cz = " ";
             }
             api.inchar = pd.o.cz;
-            if (!isNaN(pd.o.bq.value)) {
+            if (pd.o.bq !== null && !isNaN(pd.o.bq.value)) {
                 pd.o.cn = Number(pd.o.bq.value);
                 api.insize = pd.o.cn;
             }
-            if (pd.o.it.checked) {
+            if (pd.o.it !== null && pd.o.it.checked) {
                 api.style = "noindent";
             }
-            if (pd.o.hy.checked) {
+            if (pd.o.hy !== null && pd.o.hy.checked) {
                 api.html = "html-yes";
             }
-            if (pd.o.iz.checked) {
+            if (pd.o.iz !== null && pd.o.iz.checked) {
                 api.comments = "noindent";
             }
-            if (pd.o.js.checked) {
+            if (pd.o.js !== null && pd.o.js.checked) {
                 api.indent = "allman";
             }
-            api.source = pd.o.bi.value;
+            if (pd.o.bi !== null) {
+                api.source = pd.o.bi.value;
+            }
+            if (pd.o.jf !== null && pd.o.jf.checked) {
+                api.space = false;
+            }
+            if (pd.o.jg !== null && pd.o.jg.checked) {
+                api.jsscope = true;
+            }
+            if (pd.o.jh !== null && pd.o.jh.checked) {
+                api.preserve = false;
+            }
+            if (pd.o.ji !== null && isNaN(pd.o.ji.value) === false && Number(pd.o.ji.value) > 0) {
+                api.inlevel = Number(pd.o.ji.value);
+            }
             api.mode = "beautify";
-        } else if (pd.o.mm.checked) {
+        } else if (pd.o.mm !== null && pd.o.mm.checked) {
             pd.o.hm = pd.$$("htmlm-yes");
             pd.o.mc = pd.$$("topcoms-yes");
             pd.o.mi = pd.$$("minifyinput");
-            pd.o.mx.value = "";
-            if (pd.o.hm.checked) {
+            if (pd.application === undefined) {
+                if (api.lang === "markup" || api.lang === "html" || api.lang === "xml" || api.lang === "jstl") {
+                    pd.application = markupmin;
+                } else if (api.lang === "csv") {
+                    pd.application = csvmin;
+                } else {
+                    pd.application = jsmin;
+                }
+            }
+            if (pd.o.mx !== null) {
+                pd.o.mx.value = "";
+            }
+            if (pd.o.hm !== null && pd.o.hm.checked) {
                 api.html = "html-yes";
             }
-            if (pd.o.mc.checked) {
+            if (pd.o.mc !== null && pd.o.mc.checked) {
                 api.topcoms = true;
             }
-            if (pd.o.cg.checked) {
+            if (pd.o.cq !== null && pd.o.cg.checked) {
                 api.conditional = true;
             }
-            api.source = pd.o.mi.value;
+            if (pd.o.mi !== null) {
+                api.source = pd.o.mi.value;
+            }
             api.mode = "minify";
-        } else if (pd.o.dd) {
+        } else if (pd.o.dd !== null) {
+            if (typeof prettydiff !== "function") {
+                pd.application = diffview;
+            }
+            api.jsscope = false;
             pd.o.context = pd.$$("contextSize");
-            c = pd.o.context.value;
+            c = (pd.o.context === null) ? 0 : pd.o.context.value;
             pd.o.inline = pd.$$("inline");
             pd.o.bl = pd.$$("baselabel");
             pd.o.nl = pd.$$("newlabel");
@@ -387,23 +443,27 @@ var exports = "",
             pd.o.id = pd.$$("inscriptd-yes");
             pd.o.ps = pd.$$("diff-save");
             pd.o.dg = pd.$$("dforce_indent-yes");
-            api.difflabel = pd.o.nl.value;
-            api.sourcelabel = pd.o.bl.value;
-            api.wrap = pd.o.wd.value;
-            if (pd.o.dg.checked) {
+            if (pd.o.nl !== null) {
+                api.difflabel = pd.o.nl.value;
+            }
+            if (pd.o.bl !== null) {
+                api.sourcelabel = pd.o.bl.value;
+            }
+            api.wrap = (pd.o.wd === null) ? 72 : pd.o.wd.value;
+            if (pd.o.dg !== null && pd.o.dg.checked) {
                 api.force_indent = true;
             }
-            if (pd.o.dh.checked) {
+            if (pd.o.dh !== null && pd.o.dh.checked) {
                 api.diffcomments = true;
             }
-            if (pd.o.du.checked) {
+            if (pd.o.du !== null && pd.o.du.checked) {
                 api.content = true;
             }
-            if (pd.o.da.checked) {
+            if (pd.o.da !== null && pd.o.da.checked) {
                 pd.o.cz = "\t";
-            } else if (pd.o.dz.checked) {
+            } else if (pd.o.dz !== null && pd.o.dz.checked) {
                 pd.o.cz = "\n";
-            } else if (pd.o.dw.checked.checked) {
+            } else if (pd.o.dw !== null && pd.o.dw.checked && pd.o.dc !== null) {
                 pd.o.cz = pd.o.dc.value;
                 if ((/^&/).test(pd.o.cz) && !(/;$/).test(pd.o.cz)) {
                     pd.o.cz = pd.o.cz.replace("&", "&amp;");
@@ -411,27 +471,27 @@ var exports = "",
             } else {
                 pd.o.cz = " ";
             }
-            if (pd.o.ce.checked) {
+            if (pd.o.ce !== null && pd.o.ce.checked) {
                 api.conditional = true;
             }
-            api.inchar = pd.o.cz;
-            if (!isNaN(pd.o.dq.value)) {
+            api.inchar = (pd.o.cz === null) ? " " : pd.o.cz;
+            if (pd.o.dq !== null && !isNaN(pd.o.dq.value)) {
                 pd.o.cn = Number(pd.o.dq.value);
                 api.insize = pd.o.cn;
             }
-            if (!pd.o.id.checked) {
+            if (pd.o.id !== null && !pd.o.id.checked) {
                 api.style = "noindent";
             }
-            if (pd.o.hd.checked) {
+            if (pd.o.hd !== null && pd.o.hd.checked) {
                 api.html = "html-yes";
             }
-            if (pd.o.dy.checked) {
+            if (pd.o.dy !== null && pd.o.dy.checked) {
                 api.quote = true;
             }
-            if (pd.o.dn.checked) {
+            if (pd.o.dn !== null && pd.o.dn.checked) {
                 api.semicolon = true;
             }
-            if (pd.o.inline.checked) {
+            if (pd.o.inline !== null && pd.o.inline.checked) {
                 api.diffview = "inline";
             }
             if ((/^([0-9]+)$/).test(c) && (c === "0" || c.charAt(0) !== "0")) {
@@ -440,19 +500,19 @@ var exports = "",
                 pd.o.context.value = "";
                 api.context = "";
             }
-            if (pd.o.jd.checked) {
+            if (pd.o.jd !== null && pd.o.jd.checked) {
                 api.indent = "allman";
             }
-            if (pd.o.bo.value === "" || pd.o.bo.value === "Error: source code is missing.") {
+            if (pd.o.bo !== null && (pd.o.bo.value === "" || pd.o.bo.value === "Error: source code is missing.")) {
                 pd.o.bo.value = "Error: source code is missing.";
                 return;
             }
-            if (pd.o.nx.value === "" || pd.o.nx.value === "Error: diff code is missing.") {
+            if (pd.o.nx !== null && (pd.o.nx.value === "" || pd.o.nx.value === "Error: diff code is missing.")) {
                 pd.o.nx.value = "Error: diff code is missing.";
                 return;
             }
-            api.source = pd.o.bo.value;
-            api.diff = pd.o.nx.value;
+            api.source = (pd.o.bo === null) ? "" : pd.o.bo.value;
+            api.diff = (pd.o.nx === null) ? "" : pd.o.nx.value;
             api.mode = "diff";
             if (domain.test(api.diff) && (typeof XMLHttpRequest === "function" || typeof ActiveXObject === "function")) {
                 (function () {
@@ -499,20 +559,33 @@ var exports = "",
         }
 
         //this is where prettydiff is executed
-        output = prettydiff(api);
+        if (typeof prettydiff !== "function") {
+            output[0] = pd.application(api);
+            if (typeof summary === "string" && summary.length > 20) {
+                output[1] = summary;
+            } else {
+                output[1] = "";
+            }
+        } else {
+            output = pd.application(api);
+        }
         pd.o.zindex += 1;
-        if (pd.o.bb.checked) {
-            pd.o.bx.value = output[0];
-            if (pd.o.sh.innerHTML.replace(/\s+/g, " ") === "Maximize Inputs") {
+        if (pd.o.bb !== null && pd.o.bb.checked) {
+            if (pd.o.bx !== null) {
+                pd.o.bx.value = output[0];
+            }
+            if (output[1] !== "" && pd.o.rg !== null && pd.o.sh.innerHTML.replace(/\s+/g, " ") === "Maximize Inputs") {
                 pd.o.rh.innerHTML = output[1];
                 pd.o.rg.style.zIndex = pd.o.zindex;
                 pd.o.rg.style.display = "block";
             }
-            if (pd.ls) {
+            if (pd.ls === true) {
                 pd.o.stat.beau += 1;
-                pd.o.stbeau.innerHTML = pd.o.stat.beau;
+                if (pd.o.stbeau !== null) {
+                    pd.o.stbeau.innerHTML = pd.o.stat.beau;
+                }
             }
-        } else if (pd.o.dd !== null && pd.o.dd.checked) {
+        } else if (pd.o.dd !== null && pd.o.re !== null && pd.o.dd.checked) {
             if (/^(<p><strong>Error:<\/strong> Please try using the option labeled ((&lt;)|<)em((&gt;)|>)Plain Text \(diff only\)((&lt;)|<)\/em((&gt;)|>)\.)/.test(output[0])) {
                 pd.o.rf.innerHTML = "<p><strong>Error:</strong> Please try using the option labeled <em>Plain Text (diff only)</em>. <span style='display:block'>The input does not appear to be markup, CSS, or JavaScript.</span></p>";
             } else if (pd.o.ps !== null && pd.o.ps.checked) {
@@ -531,7 +604,7 @@ var exports = "",
                 pd.minimize(pd.o.re.getElementsByTagName("button")[1]);
             }
             pd.o.re.style.right = "auto";
-            if (pd.ls) {
+            if (pd.ls === true) {
                 pd.o.stat.diff += 1;
                 pd.o.stdiff.innerHTML = pd.o.stat.diff;
             }
@@ -541,24 +614,28 @@ var exports = "",
                     d[0].clientWidth, d[1].clientWidth, d[2].parentNode.clientWidth, d[2].parentNode.parentNode.clientWidth, d[2].parentNode.offsetLeft - d[2].parentNode.parentNode.offsetLeft
                 ];
             }
-        } else if (pd.o.mm.checked) {
-            pd.o.mx.value = output[0];
-            if (pd.o.sh.innerHTML.replace(/\s+/g, " ") === "Maximize Inputs") {
+        } else if (pd.o.mm !== null && pd.o.mm.checked) {
+            if (pd.o.mx !== null) {
+                pd.o.mx.value = output[0];
+            }
+            if (output[1] !== "" && pd.o.ri !== null && pd.o.sh.innerHTML.replace(/\s+/g, " ") === "Maximize Inputs") {
                 pd.o.rj.innerHTML = output[1];
                 pd.o.ri.style.zIndex = pd.o.zindex;
                 pd.o.ri.style.display = "block";
             }
-            if (pd.ls) {
+            if (pd.ls === true) {
                 pd.o.stat.minn += 1;
-                pd.o.stminn.innerHTML = pd.o.stat.minn;
+                if (pd.o.stminn !== null) {
+                    pd.o.stminn.innerHTML = pd.o.stat.minn;
+                }
             }
         }
-        if (pd.ls) {
+        if (pd.ls === true) {
             (function () {
                 var stat = [],
                     lang = "",
                     lango = {},
-                    langv = pd.o.la[pd.o.la.selectedIndex].value,
+                    langv = (pd.o.la === null) ? "javascript" : (pd.o.la.nodeName === "select") ? pd.o.la[pd.o.la.selectedIndex].value : pd.o.la.value,
                     size = 0,
                     codesize = 0;
                 if (api.mode === "beautify") {
@@ -604,30 +681,46 @@ var exports = "",
                         lang = lang.substring(lang.indexOf("<em>") + 4, lang.indexOf("</em>"));
                         if (lang === "JavaScript" || lang === "JSON") {
                             pd.o.stat.js += 1;
-                            pd.o.stjs.innerHTML = pd.o.stat.js;
+                            if (pd.o.stjs !== null) {
+                                pd.o.stjs.innerHTML = pd.o.stat.js;
+                            }
                         } else if (lang === "CSS") {
                             pd.o.stat.css += 1;
-                            pd.o.stcss.innerHTML = pd.o.stat.css;
+                            if (pd.o.stcss !== null) {
+                                pd.o.stcss.innerHTML = pd.o.stat.css;
+                            }
                         } else if (lang === "HTML" || lang === "markup") {
                             pd.o.stat.markup += 1;
-                            pd.o.stmarkup.innerHTML = pd.o.stat.markup;
+                            if (pd.o.stmarkup !== null) {
+                                pd.o.stmarkup.innerHTML = pd.o.stat.markup;
+                            }
                         }
                     }
                 } else if (langv === "csv") {
                     pd.o.stat.csv += 1;
-                    pd.o.stcsv.innerHTML = pd.o.stat.csv;
+                    if (pd.o.stcsv) {
+                        pd.o.stcsv.innerHTML = pd.o.stat.csv;
+                    }
                 } else if (langv === "text") {
                     pd.o.stat.text += 1;
-                    pd.o.sttext.innerHTML = pd.o.stat.text;
+                    if (pd.o.sttext !== null) {
+                        pd.o.sttext.innerHTML = pd.o.stat.text;
+                    }
                 } else if (langv === "javascript") {
                     pd.o.stat.js += 1;
-                    pd.o.stjs.innerHTML = pd.o.stat.js;
+                    if (pd.o.stjs !== null) {
+                        pd.o.stjs.innerHTML = pd.o.stat.js;
+                    }
                 } else if (langv === "markup" || langv === "html") {
                     pd.o.stat.markup += 1;
-                    pd.o.stmarkup.innerHTML = pd.o.stat.markup;
+                    if (pd.o.stmarkup !== null) {
+                        pd.o.stmarkup.innerHTML = pd.o.stat.markup;
+                    }
                 } else if (langv === "css") {
                     pd.o.stat.css += 1;
-                    pd.o.stcss.innerHTML = pd.o.stat.css;
+                    if (pd.o.stcss !== null) {
+                        pd.o.stcss.innerHTML = pd.o.stat.css;
+                    }
                 }
                 if (api.mode === "diff" && api.diff.length > api.source.length) {
                     size = api.diff.length;
@@ -636,7 +729,9 @@ var exports = "",
                 }
                 if (size > pd.o.stat.large) {
                     pd.o.stat.large = size;
-                    pd.o.stlarge.innerHTML = size;
+                    if (pd.o.stlarge !== null) {
+                        pd.o.stlarge.innerHTML = size;
+                    }
                 }
                 stat.push(pd.o.stat.visit);
                 stat.push(pd.o.stat.usage);
@@ -677,7 +772,9 @@ var exports = "",
     //intelligently raise the z-index of the report windows
     pd.top = function (x) {
         var a = pd.o.zindex,
-            b = [Number(pd.o.re.style.zIndex), Number(pd.o.rg.style.zIndex), Number(pd.o.ri.style.zIndex), Number(pd.o.rk.style.zIndex)],
+            b = [
+                (pd.o.re === null) ? 0 : Number(pd.o.re.style.zIndex), (pd.o.rg === null) ? 0 : Number(pd.o.rg.style.zIndex), (pd.o.ri === null) ? 0 : Number(pd.o.ri.style.zIndex), (pd.o.rk === null) ? 0 : Number(pd.o.rk.style.zIndex)
+            ],
             c = Math.max(a, b[0], b[1], b[2], b[3]) + 1;
         pd.o.zindex = c;
         x.style.zIndex = c;
@@ -1241,6 +1338,9 @@ var exports = "",
 
     //shows and hides the additional options
     pd.additional = function (x) {
+        if (pd.o.ao === null) {
+            return;
+        }
         if (x === pd.o.an) {
             pd.o.ao.style.display = "none";
         } else if (x === pd.o.ay) {
@@ -1254,6 +1354,9 @@ var exports = "",
         var a = Math.floor(pd.o.wb.clientWidth / 13),
             b = 0,
             event = e || window.event;
+        if (pd.o.option === null) {
+            return;
+        }
         if (x.nodeName.toLowerCase() === "p") {
             if (event.type === "mouseover") {
                 event.type = "mouseout";
@@ -1284,6 +1387,7 @@ var exports = "",
         var b = "",
             c = 0,
             d = [],
+            langtest = (pd.o.la !== null && pd.o.la.nodeName === "select") ? true : false,
             optioncheck = function () {
                 var a = 0,
                     b = [];
@@ -1297,103 +1401,195 @@ var exports = "",
                     }
                 }
             };
-        b = pd.o.la[pd.o.la.selectedIndex].value;
+        b = (pd.o.la === null) ? "javascript" : ((pd.o.la.nodeName === "select") ? pd.o.la[pd.o.la.selectedIndex].value : pd.o.la.value);
         if (a === pd.o.bb) {
-            optioncheck();
-            if (pd.o.bi.value === "" && pd.o.mi.value !== "") {
-                pd.o.bi.value = pd.o.mi.value;
-            } else if (pd.o.bi.value === "" && pd.o.bo.value !== "") {
-                pd.o.bi.value = pd.o.bo.value;
+            if (langtest === true) {
+                optioncheck();
             }
-            pd.o.bd.style.display = "block";
-            pd.o.md.style.display = "none";
-            if (pd.o.bt) {
+            if (pd.o.bi !== null) {
+                if (pd.o.bi.value === "" && pd.o.mi !== null && pd.o.mi.value !== "") {
+                    pd.o.bi.value = pd.o.mi.value;
+                } else if (pd.o.bi.value === "" && pd.o.bo !== null && pd.o.bo.value !== "") {
+                    pd.o.bi.value = pd.o.bo.value;
+                }
+            }
+            if (pd.o.bd !== null) {
+                pd.o.bd.style.display = "block";
+            }
+            if (pd.o.md !== null) {
+                pd.o.md.style.display = "none";
+            }
+            if (pd.o.bt !== null) {
                 pd.o.bt.style.display = "none";
             }
-            if (pd.o.nt) {
+            if (pd.o.nt !== null) {
                 pd.o.nt.style.display = "none";
             }
-            if (pd.o.dops) {
+            if (pd.o.dops !== null) {
                 pd.o.dops.style.display = "none";
             }
-            pd.o.mops.style.display = "none";
-            if (b === "csv") {
+            if (pd.o.mops !== null) {
+                pd.o.mops.style.display = "none";
+            }
+            if (b === "csv" && pd.o.bops !== null) {
                 pd.o.bops.style.display = "none";
             } else {
                 pd.o.bops.style.display = "block";
             }
         } else if (a === pd.o.mm) {
-            optioncheck();
-            if (pd.o.mi.value === "" && pd.o.bi.value !== "") {
-                pd.o.mi.value = pd.o.bi.value;
-            } else if (pd.o.mi.value === "" && pd.o.bo.value !== "") {
-                pd.o.mi.value = pd.o.bo.value;
+            if (langtest === true) {
+                optioncheck();
             }
-            if (b === "text" || b === "csv") {
-                pd.o.mops.style.display = "none";
-            } else {
-                pd.o.mops.style.display = "block";
+            if (pd.o.mi !== null) {
+                if (pd.o.mi.value === "" && pd.o.bi !== null && pd.o.bi.value !== "") {
+                    pd.o.mi.value = pd.o.bi.value;
+                } else if (pd.o.mi.value === "" && pd.o.bo !== null && pd.o.bo.value !== "") {
+                    pd.o.mi.value = pd.o.bo.value;
+                }
             }
-            pd.o.md.style.display = "block";
-            pd.o.bd.style.display = "none";
-            if (pd.o.bt) {
+            if (pd.o.mops !== null) {
+                if (b === "text" || b === "csv") {
+                    pd.o.mops.style.display = "none";
+                } else {
+                    pd.o.mops.style.display = "block";
+                }
+            }
+            if (pd.o.md !== null) {
+                pd.o.md.style.display = "block";
+            }
+            if (pd.o.bd !== null) {
+                pd.o.bd.style.display = "none";
+            }
+            if (pd.o.bt !== null) {
                 pd.o.bt.style.display = "none";
             }
-            if (pd.o.nt) {
+            if (pd.o.nt !== null) {
                 pd.o.nt.style.display = "none";
             }
-            if (pd.o.dops) {
+            if (pd.o.dops !== null) {
                 pd.o.dops.style.display = "none";
             }
-            pd.o.bops.style.display = "none";
+            if (pd.o.bops !== null) {
+                pd.o.bops.style.display = "none";
+            }
         } else if (a === pd.o.dd) {
-            d = pd.o.la.getElementsByTagName("option");
-            for (c = d.length - 1; c > -1; c -= 1) {
-                d[c].disabled = false;
+            if (langtest === true) {
+                d = pd.o.la.getElementsByTagName("option");
+                for (c = d.length - 1; c > -1; c -= 1) {
+                    d[c].disabled = false;
+                }
             }
-            if (pd.o.bo.value === "" && pd.o.bi.value !== "") {
-                pd.o.bo.value = pd.o.bi.value;
-            } else if (pd.o.bo.value === "" && pd.o.mi.value !== "") {
-                pd.o.bo.value = pd.o.mi.value;
+            if (pd.o.bo !== null) {
+                if (pd.o.bo.value === "" && pd.o.bi !== null && pd.o.bi.value !== "") {
+                    pd.o.bo.value = pd.o.bi.value;
+                } else if (pd.o.bo.value === "" && pd.o.mi !== null && pd.o.mi.value !== "") {
+                    pd.o.bo.value = pd.o.mi.value;
+                }
             }
-            pd.o.bt.style.display = "block";
-            pd.o.nt.style.display = "block";
-            pd.o.bd.style.display = "none";
-            pd.o.md.style.display = "none";
-            pd.o.dops.style.display = "block";
-            pd.o.bops.style.display = "none";
-            pd.o.mops.style.display = "none";
+            if (pd.o.bt !== null) {
+                pd.o.bt.style.display = "block";
+            }
+            if (pd.o.nt !== null) {
+                pd.o.nt.style.display = "block";
+            }
+            if (pd.o.bd !== null) {
+                pd.o.bd.style.display = "none";
+            }
+            if (pd.o.md !== null) {
+                pd.o.md.style.display = "none";
+            }
+            if (pd.o.dops !== null) {
+                pd.o.dops.style.display = "block";
+            }
+            if (pd.o.bops !== null) {
+                pd.o.bops.style.display = "none";
+            }
+            if (pd.o.mops !== null) {
+                pd.o.mops.style.display = "none";
+            }
             if (b === "csv" || b === "text") {
-                pd.o.dqp.style.display = "none";
-                pd.o.dqt.style.display = "none";
-                pd.o.db.style.display = "none";
+                if (pd.o.dqp !== null) {
+                    pd.o.dqp.style.display = "none";
+                }
+                if (pd.o.dqt !== null) {
+                    pd.o.dqt.style.display = "none";
+                }
+                if (pd.o.db !== null) {
+                    pd.o.db.style.display = "none";
+                }
             } else {
-                pd.o.dqp.style.display = "block";
-                pd.o.dqt.style.display = "block";
-                pd.o.db.style.display = "block";
+                if (pd.o.dqp !== null) {
+                    pd.o.dqp.style.display = "block";
+                }
+                if (pd.o.dqt !== null) {
+                    pd.o.dqt.style.display = "block";
+                }
+                if (pd.o.db !== null) {
+                    pd.o.db.style.display = "block";
+                }
             }
         } else if (a === pd.o.dp) {
-            pd.o.mi.removeAttribute("style");
-            pd.o.mx.removeAttribute("style");
-            pd.o.bi.removeAttribute("style");
-            pd.o.bx.removeAttribute("style");
-            pd.o.bo.removeAttribute("style");
-            pd.o.nx.removeAttribute("style");
-            pd.o.bt.className = "wide";
-            pd.o.nt.className = "wide";
-            pd.o.bd.className = "wide";
-            pd.o.md.className = "wide";
+            if (pd.o.mi !== null) {
+                pd.o.mi.removeAttribute("style");
+            }
+            if (pd.o.mx !== null) {
+                pd.o.mx.removeAttribute("style");
+            }
+            if (pd.o.bi !== null) {
+                pd.o.bi.removeAttribute("style");
+            }
+            if (pd.o.bx !== null) {
+                pd.o.bx.removeAttribute("style");
+            }
+            if (pd.o.bo !== null) {
+                pd.o.bo.removeAttribute("style");
+            }
+            if (pd.o.nx !== null) {
+                pd.o.nx.removeAttribute("style");
+            }
+            if (pd.o.bt !== null) {
+                pd.o.bt.className = "wide";
+            }
+            if (pd.o.nt !== null) {
+                pd.o.nt.className = "wide";
+            }
+            if (pd.o.bd !== null) {
+                pd.o.bd.className = "wide";
+            }
+            if (pd.o.md !== null) {
+                pd.o.md.className = "wide";
+            }
         } else if (a === pd.o.dt) {
-            pd.o.mi.removeAttribute("style");
-            pd.o.mx.removeAttribute("style");
-            pd.o.bi.removeAttribute("style");
-            pd.o.bx.removeAttribute("style");
-            pd.o.bo.removeAttribute("style");
-            pd.o.nx.removeAttribute("style");
-            pd.o.bt.className = "difftall";
-            pd.o.nt.className = "difftall";
-            pd.o.bd.className = "tall";
-            pd.o.md.className = "tall";
+            if (pd.o.mi !== null) {
+                pd.o.mi.removeAttribute("style");
+            }
+            if (pd.o.mx !== null) {
+                pd.o.mx.removeAttribute("style");
+            }
+            if (pd.o.bi !== null) {
+                pd.o.bi.removeAttribute("style");
+            }
+            if (pd.o.bx !== null) {
+                pd.o.bx.removeAttribute("style");
+            }
+            if (pd.o.bo !== null) {
+                pd.o.bo.removeAttribute("style");
+            }
+            if (pd.o.nx !== null) {
+                pd.o.nx.removeAttribute("style");
+            }
+            if (pd.o.bt !== null) {
+                pd.o.bt.className = "difftall";
+            }
+            if (pd.o.nt !== null) {
+                pd.o.nt.className = "difftall";
+            }
+            if (pd.o.bd !== null) {
+                pd.o.bd.className = "tall";
+            }
+            if (pd.o.md !== null) {
+                pd.o.md.className = "tall";
+            }
         }
         pd.options(a);
     };
@@ -1406,58 +1602,102 @@ var exports = "",
         pd.o.mm = pd.$$("modeminify");
         pd.o.la = pd.$$("language");
         pd.o.ay = pd.$$("additional_yes");
-        if (pd.o.ay.checked) {
+        if (pd.o.ay !== null && pd.o.ao !== null && pd.o.ay.checked) {
             pd.o.ao.style.display = "block";
         }
-        a = pd.o.la[pd.o.la.selectedIndex].value;
-        if (pd.o.dd.checked) {
-            pd.o.mops.style.display = "none";
-            pd.o.bops.style.display = "none";
+        a = (pd.o.la === null) ? "javascript" : (pd.o.la.nodeName === "select") ? pd.o.la[pd.o.la.selectedIndex].value : pd.o.la.value;
+        if (pd.o.dd !== null && pd.o.dd.checked) {
+            if (pd.o.mops !== null) {
+                pd.o.mops.style.display = "none";
+            }
+            if (pd.o.bops !== null) {
+                pd.o.bops.style.display = "none";
+            }
             if (a === "text" || a === "csv") {
-                pd.o.dqp.style.display = "none";
-                pd.o.dqt.style.display = "none";
+                if (pd.o.dqp !== null) {
+                    pd.o.dqp.style.display = "none";
+                }
+                if (pd.o.dqt !== null) {
+                    pd.o.dqt.style.display = "none";
+                }
+                if (pd.o.db !== null) {
+                    pd.o.db.style.display = "none";
+                }
+            } else {
+                if (pd.o.dqp !== null) {
+                    pd.o.dqp.style.display = "block";
+                }
+                if (pd.o.dqt !== null) {
+                    pd.o.dqt.style.display = "block";
+                }
+                if (pd.o.db !== null) {
+                    pd.o.db.style.display = "block";
+                }
+            }
+        } else if (pd.o.bb !== null && pd.o.bb.checked) {
+            if (pd.o.mops !== null) {
+                pd.o.mops.style.display = "none";
+            }
+            if (pd.o.dops !== null) {
+                pd.o.dops.style.display = "none";
+            }
+            if (pd.o.bops !== null) {
+                if (a === "csv") {
+                    pd.o.bops.style.display = "none";
+                } else {
+                    pd.o.bops.style.display = "block";
+                }
+            }
+        } else if (pd.o.mm !== null && pd.o.mm.checked) {
+            if (pd.o.bops !== null) {
+                pd.o.bops.style.display = "none";
+            }
+            if (pd.o.dops !== null) {
+                pd.o.dops.style.display = "none";
+            }
+            if (pd.o.mops !== null) {
+                if (pd.o.ao !== null && a === "csv") {
+                    pd.o.mops.style.display = "none";
+                    pd.o.ao.style.display = "none";
+                } else {
+                    pd.o.mops.style.display = "block";
+                }
+            }
+        }
+        if (pd.o.csvp !== null) {
+            if (a === "csv") {
+                pd.o.csvp.style.display = "block";
+            } else {
+                pd.o.csvp.style.display = "none";
+            }
+        }
+        if (pd.o.db !== null) {
+            if (a === "csv" || a === "text") {
                 pd.o.db.style.display = "none";
             } else {
-                pd.o.dqp.style.display = "block";
-                pd.o.dqt.style.display = "block";
                 pd.o.db.style.display = "block";
             }
-        } else if (pd.o.bb.checked) {
-            pd.o.mops.style.display = "none";
-            pd.o.dops.style.display = "none";
-            if (a === "csv") {
-                pd.o.bops.style.display = "none";
-            } else {
-                pd.o.bops.style.display = "block";
-            }
-        } else if (pd.o.mm.checked) {
-            pd.o.bops.style.display = "none";
-            pd.o.dops.style.display = "none";
-            if (a === "csv") {
-                pd.o.mops.style.display = "none";
-                pd.o.ao.style.display = "none";
-            } else {
-                pd.o.mops.style.display = "block";
-            }
-        }
-        if (a === "csv") {
-            pd.o.csvp.style.display = "block";
-        } else {
-            pd.o.csvp.style.display = "none";
-        }
-        if (a === "csv" || a === "text") {
-            pd.o.db.style.display = "none";
-        } else {
-            pd.o.db.style.display = "block";
         }
         if (a === "html") {
-            pd.o.hd.checked = true;
-            pd.o.hm.checked = true;
-            pd.o.hy.checked = true;
+            if (pd.o.hd !== null) {
+                pd.o.hd.checked = true;
+            }
+            if (pd.o.hm !== null) {
+                pd.o.hm.checked = true;
+            }
+            if (pd.o.hy !== null) {
+                pd.o.hy.checked = true;
+            }
         } else {
-            pd.o.he.checked = true;
-            pd.o.hn.checked = true;
-            pd.o.hz.checked = true;
+            if (pd.o.he !== null) {
+                pd.o.he.checked = true;
+            }
+            if (pd.o.hn !== null) {
+                pd.o.hn.checked = true;
+            }
+            if (pd.o.hz !== null) {
+                pd.o.hz.checked = true;
+            }
         }
         pd.options(x);
     };
@@ -1467,37 +1707,46 @@ var exports = "",
     pd.indentchar = function (x) {
         pd.o.bc = pd.$$("beau-char");
         pd.o.dc = pd.$$("diff-char");
-        if (pd.o.bb.checked && x === pd.o.bc) {
+        if (pd.o.bb !== null && pd.o.bb.checked && pd.o.bw !== null && x === pd.o.bc) {
             pd.o.bw.checked = true;
-        } else if (pd.o.dd.checked && x === pd.o.dc) {
+        } else if (pd.o.dd !== null && pd.o.dd.checked && pd.o.dw !== null && x === pd.o.dc) {
             pd.o.dw.checked = true;
         }
-        if (pd.o.bb.checked && pd.o.bw.checked) {
-            pd.o.bc.className = "checked";
-            if (pd.o.bc.value === "Click me for custom input") {
-                pd.o.bc.value = "";
+        if (pd.o.bc !== null) {
+            if (pd.o.bb !== null) {
+                if (pd.o.bb.checked && pd.o.bw !== null && pd.o.bw.checked) {
+                    pd.o.bc.className = "checked";
+                    if (pd.o.bc.value === "Click me for custom input") {
+                        pd.o.bc.value = "";
+                    }
+                } else if (pd.o.bb.checked) {
+                    if (pd.o.bc.value === "") {
+                        pd.o.bc.value = "Click me for custom input";
+                    }
+                    pd.o.bc.className = "unchecked";
+                }
             }
-        } else if (pd.o.bb.checked) {
-            if (pd.o.bc.value === "") {
-                pd.o.bc.value = "Click me for custom input";
+            if (pd.o.bcv !== null && pd.o.bcv !== "") {
+                pd.o.bc.value = pd.o.bcv;
             }
-            pd.o.bc.className = "unchecked";
-        } else if (pd.o.dd.checked && pd.o.dw.checked) {
-            pd.o.dc.className = "checked";
-            if (pd.o.dc.value === "Click me for custom input") {
-                pd.o.dc.value = "";
-            }
-        } else if (pd.o.dd.checked) {
-            if (pd.o.dc.value === "") {
-                pd.o.dc.value = "Click me for custom input";
-            }
-            pd.o.dc.className = "unchecked";
         }
-        if (pd.o.bcv !== "") {
-            pd.o.bc.value = pd.o.bcv;
-        }
-        if (pd.o.dcv !== "") {
-            pd.o.dc.value = pd.o.dcv;
+        if (pd.o.dc !== null) {
+            if (pd.o.dd !== null) {
+                if (pd.o.dd.checked && pd.o.dw !== null && pd.o.dw.checked) {
+                    pd.o.dc.className = "checked";
+                    if (pd.o.dc.value === "Click me for custom input") {
+                        pd.o.dc.value = "";
+                    }
+                } else if (pd.o.dd.checked) {
+                    if (pd.o.dc.value === "") {
+                        pd.o.dc.value = "Click me for custom input";
+                    }
+                    pd.o.dc.className = "unchecked";
+                }
+            }
+            if (pd.o.dcv !== null && pd.o.dcv !== "") {
+                pd.o.dc.value = pd.o.dcv;
+            }
         }
         if (x !== pd.o.bc && x !== pd.o.dc) {
             pd.options(x);
@@ -1509,7 +1758,7 @@ var exports = "",
         var a = {},
             b = 0,
             c = "";
-        if (!pd.ls) {
+        if (pd.ls === false) {
             return;
         }
         if (localStorage.hasOwnProperty("webtool") && localStorage.getItem("webtool") !== null) {
@@ -1579,13 +1828,25 @@ var exports = "",
         } else if (x === pd.o.iy && pd.o.bb.checked) {
             pd.optionString[5] = "api.comments: indent";
         } else if (x === pd.o.iz && pd.o.bb.checked) {
-            pd.optionString[5] = "api.comments: noindent";
+            if (pd.o.iz.getAttribute("type") === "radio" || (pd.o.iz.getAttribute("type") === "checkbox" && pd.o.iz.checked === true)) {
+                pd.optionString[5] = "api.comments: noindent";
+            } else {
+                pd.optionString[5] = "api.comments: indent";
+            }
         } else if (x === pd.o.js && pd.o.bb.checked) {
-            pd.optionString[6] = "api.indent: allman";
+            if (pd.o.js.getAttribute("type") === "radio" || (pd.o.js.getAttribute("type") === "checkbox" && pd.o.js.checked === true)) {
+                pd.optionString[6] = "api.indent: allman";
+            } else {
+                pd.optionString[6] = "api.indent: knr";
+            }
         } else if (x === pd.o.jt && pd.o.bb.checked) {
             pd.optionString[6] = "api.indent: knr";
         } else if (x === pd.o.jd && pd.o.dd.checked) {
-            pd.optionString[6] = "api.indent: allman";
+            if (pd.o.jd.getAttribute("type") === "radio" || (pd.o.jd.getAttribute("type") === "checkbox" && pd.o.jd.checked === true)) {
+                pd.optionString[6] = "api.indent: allman";
+            } else {
+                pd.optionString[6] = "api.indent: knr";
+            }
         } else if (x === pd.o.je && pd.o.dd.checked) {
             pd.optionString[6] = "api.indent: knr";
         } else if (x === pd.o.is && pd.o.bb.checked) {
@@ -1651,6 +1912,26 @@ var exports = "",
             pd.optionString[18] = "api.wrap: " + pd.o.wc.value;
         } else if (x === pd.o.wd && !isNaN(pd.o.wd.value)) {
             pd.optionString[18] = "api.wrap: " + pd.o.wd.value;
+        } else if (x === pd.o.jf) {
+            if (pd.o.jf.getAttribute("type") === "radio" || (pd.o.jf.getAttribute("type") === "checkbox" && pd.o.jf.checked === true)) {
+                pd.optionString[19] = "api.jsspace: false";
+            } else {
+                pd.optionString[19] = "api.jsspace: true";
+            }
+        } else if (x === pd.o.jg) {
+            if (pd.o.jg.getAttribute("type") === "radio" || (pd.o.jg.getAttribute("type") === "checkbox" && pd.o.jg.checked === true)) {
+                pd.optionString[20] = "api.jsscope: true";
+            } else {
+                pd.optionString[20] = "api.jsscope: false";
+            }
+        } else if (x === pd.o.jh) {
+            if (pd.o.jh.getAttribute("type") === "radio" || (pd.o.jh.getAttribute("type") === "checkbox" && pd.o.jh.checked === true)) {
+                pd.optionString[21] = "api.jslines: false";
+            } else {
+                pd.optionString[21] = "api.jslines: true";
+            }
+        } else if (x === pd.o.ji && isNaN(pd.o.ji.value) === false) {
+            pd.optionString[22] = "api.inlevel: " + pd.o.ji.value;
         } else if (x === pd.o.re) {
             pd.o.re = pd.$$("diffreport");
             pd.o.rf = pd.$$("diffreportbody");
@@ -1712,7 +1993,7 @@ var exports = "",
         }
         if (typeof pd.webtool[28] !== "string") {
             pd.webtool[28] = "colorScheme: shadow";
-        } else if (typeof pd.webtool[4] !== "string") {
+        } else if (typeof pd.webtool[4] !== "string" && pd.o.re !== null) {
             pd.o.re = pd.$$("diffreport");
             pd.o.rf = pd.$$("diffreportbody");
             if (pd.o.rf.style.display === "none") {
@@ -1725,7 +2006,14 @@ var exports = "",
                 pd.webtool[7] = "diffreportwidth: " + ((pd.o.rf.clientWidth / 10) - 0.3);
                 pd.webtool[8] = "diffreportheight: " + ((pd.o.rf.clientHeight / 10) - 3.6);
             }
-        } else if (typeof pd.webtool[10] !== "string") {
+        } else if (typeof pd.webtool[4] !== "string" && pd.o.re === null) {
+            pd.webtool[3] = "";
+            pd.webtool[4] = "";
+            pd.webtool[5] = "";
+            pd.webtool[6] = "";
+            pd.webtool[7] = "";
+            pd.webtool[8] = "";
+        } else if (typeof pd.webtool[10] !== "string" && pd.o.rg !== null) {
             pd.o.rg = pd.$$("beaureport");
             pd.o.rh = pd.$$("beaureportbody");
             if (pd.o.rh.style.display === "none") {
@@ -1738,7 +2026,14 @@ var exports = "",
                 pd.webtool[13] = "beaureportwidth: " + ((pd.o.rh.clientWidth / 10) - 0.3);
                 pd.webtool[14] = "beaureportheight: " + ((pd.o.rh.clientHeight / 10) - 3.6);
             }
-        } else if (typeof pd.webtool[16] !== "string") {
+        } else if (typeof pd.webtool[10] !== "string" && pd.o.rg === null) {
+            pd.webtool[9] = "";
+            pd.webtool[10] = "";
+            pd.webtool[11] = "";
+            pd.webtool[12] = "";
+            pd.webtool[13] = "";
+            pd.webtool[14] = "";
+        } else if (typeof pd.webtool[16] !== "string" && pd.o.ri !== null) {
             pd.o.ri = pd.$$("minreport");
             pd.o.rj = pd.$$("minreportbody");
             if (pd.o.rj.style.display === "none") {
@@ -1751,7 +2046,14 @@ var exports = "",
                 pd.webtool[19] = "minnreportwidth: " + ((pd.o.rj.clientWidth / 10) - 0.3);
                 pd.webtool[20] = "minnreportheight: " + ((pd.o.rj.clientHeight / 10) - 3.6);
             }
-        } else if (typeof pd.webtool[22] !== "string") {
+        } else if (typeof pd.webtool[16] !== "string" && pd.o.ri === null) {
+            pd.webtool[15] = "";
+            pd.webtool[16] = "";
+            pd.webtool[17] = "";
+            pd.webtool[18] = "";
+            pd.webtool[19] = "";
+            pd.webtool[20] = "";
+        } else if (typeof pd.webtool[22] !== "string" && pd.o.rk !== null) {
             pd.o.rk = pd.$$("statreport");
             pd.o.rl = pd.$$("statreportbody");
             if (pd.o.rl.style.display === "none") {
@@ -1764,6 +2066,13 @@ var exports = "",
                 pd.webtool[25] = "statreportwidth: " + ((pd.o.rl.clientWidth / 10) - 0.3);
                 pd.webtool[26] = "statreportheight: " + ((pd.o.rl.clientHeight / 10) - 3.6);
             }
+        } else if (typeof pd.webtool[22] !== "string" && pd.o.rk === null) {
+            pd.webtool[21] = "";
+            pd.webtool[22] = "";
+            pd.webtool[23] = "";
+            pd.webtool[24] = "";
+            pd.webtool[25] = "";
+            pd.webtool[26] = "";
         }
         if (pd.o.sh) {
             if (pd.o.sh.innerHTML.replace(/\s+/g, " ") === "Normal view") {
@@ -1789,7 +2098,7 @@ var exports = "",
                 a.setAttribute("title", "Convert diff report to an HTML table.");
             }
         }
-        for (b = 0; b < 18; b += 1) {
+        for (b = 0; b < 23; b += 1) {
             if (typeof pd.optionString[b] !== "string" || pd.optionString[b] === "") {
                 pd.optionString[b] = "pdempty";
             }
@@ -1799,10 +2108,9 @@ var exports = "",
                 pd.optionString[4] = "api.inchar: \" \"";
             }
             if (typeof pd.o.option.innerHTML === "string") {
-                pd.o.option.innerHTML = ("/*prettydiff.com " + (pd.optionString.join(", ").replace(/pdempty(\, )?/g, "").replace(/(\,\s+\,\s+)+/g, ", ") + " */").replace(/((\,? )+\*\/)$/, " */")).replace(/^(\/\*prettydiff\.com (\, )+)/, "/*prettydiff.com ").replace(/(\,\s+\,\s+)+/g, ", ");
-            }
-            if (typeof pd.o.option.value === "string") {
-                pd.o.option.value = ("/*prettydiff.com " + (pd.optionString.join(", ").replace(/pdempty(\, )?/g, "").replace(/(\,\s+\,\s+)+/g, ", ") + " */").replace(/((\,? )+\*\/)$/, " */")).replace(/^(\/\*prettydiff\.com (\, )+)/, "/*prettydiff.com ").replace(/(\,\s+\,\s+)+/g, ", ");
+                pd.o.option.innerHTML = ("/*prettydiff.com " + (pd.optionString.join(", ").replace(/pdempty(\, )?/g, "").replace(/(\,\s+\,\s+)+/g, ", ") + " */").replace(/((\,? )+\*\/)$/, " */")).replace(/^(\/\*prettydiff\.com (\, )+)/, "/*prettydiff.com ").replace(/(\,\s+\,\s+)+/g, ", ").replace(/\s+/g, " ");
+            } else if (typeof pd.o.option.value === "string") {
+                pd.o.option.value = ("/*prettydiff.com " + (pd.optionString.join(", ").replace(/pdempty(\, )?/g, "").replace(/(\,\s+\,\s+)+/g, ", ") + " */").replace(/((\,? )+\*\/)$/, " */")).replace(/^(\/\*prettydiff\.com (\, )+)/, "/*prettydiff.com ").replace(/(\,\s+\,\s+)+/g, ", ").replace(/\s+/g, " ");
             }
         }
         if (pd.optionString[0] === "" || pd.optionString[0] === undefined) {
@@ -1836,46 +2144,55 @@ var exports = "",
             b = {},
             c = {},
             d = {};
-        pd.o.re = pd.$$("diffreport");
-        pd.o.rf = pd.$$("diffreportbody");
-        pd.o.rg = pd.$$("beaureport");
-        pd.o.rh = pd.$$("beaureportbody");
-        pd.o.ri = pd.$$("minreport");
-        pd.o.rj = pd.$$("minreportbody");
-        a = pd.o.re.getElementsByTagName("h3")[0];
-        b = pd.o.rg.getElementsByTagName("h3")[0];
-        c = pd.o.ri.getElementsByTagName("h3")[0];
-        if (pd.ls) {
+        if (pd.o.re !== null) {
+            pd.o.re = pd.$$("diffreport");
+            pd.o.rf = pd.$$("diffreportbody");
+            a = pd.o.re.getElementsByTagName("h3")[0];
+            if (pd.o.rf.style.display === "none" && (a.style.width === "17em" || a.style.width === "")) {
+                pd.o.re.style.right = "57.8em";
+                pd.o.re.style.top = "auto";
+                pd.o.re.style.left = "auto";
+            }
+        }
+        if (pd.o.rg !== null) {
+            pd.o.rg = pd.$$("beaureport");
+            pd.o.rh = pd.$$("beaureportbody");
+            b = pd.o.rg.getElementsByTagName("h3")[0];
+            if (pd.o.rh.style.display === "none" && (b.style.width === "17em" || b.style.width === "")) {
+                pd.o.rg.style.right = "38.8em";
+                pd.o.rg.style.top = "auto";
+                pd.o.rg.style.left = "auto";
+            }
+        }
+        if (pd.o.ri !== null) {
+            pd.o.ri = pd.$$("minreport");
+            pd.o.rj = pd.$$("minreportbody");
+            c = pd.o.ri.getElementsByTagName("h3")[0];
+            if (pd.o.rj.style.display === "none" && (c.style.width === "17em" || c.style.width === "")) {
+                pd.o.ri.style.right = "19.8em";
+                pd.o.ri.style.top = "auto";
+                pd.o.ri.style.left = "auto";
+            }
+        }
+        if (pd.o.rk !== null && pd.ls === true) {
             pd.o.rk = pd.$$("statreport");
             pd.o.rl = pd.$$("statreportbody");
             d = pd.o.rk.getElementsByTagName("h3")[0];
-        }
-        if (pd.o.rf.style.display === "none" && (a.style.width === "17em" || a.style.width === "")) {
-            pd.o.re.style.right = "57.8em";
-            pd.o.re.style.top = "auto";
-            pd.o.re.style.left = "auto";
-        }
-        if (pd.o.rh.style.display === "none" && (b.style.width === "17em" || b.style.width === "")) {
-            pd.o.rg.style.right = "38.8em";
-            pd.o.rg.style.top = "auto";
-            pd.o.rg.style.left = "auto";
-        }
-        if (pd.o.rj.style.display === "none" && (c.style.width === "17em" || c.style.width === "")) {
-            pd.o.ri.style.right = "19.8em";
-            pd.o.ri.style.top = "auto";
-            pd.o.ri.style.left = "auto";
-        }
-        if (pd.ls && pd.o.rl.style.display === "none" && (d.style.width === "17em" || d.style.width === "")) {
-            pd.o.rk.style.right = ".8em";
-            pd.o.rk.style.top = "auto";
-            pd.o.rk.style.left = "auto";
+            if (pd.o.rl.style.display === "none" && (d.style.width === "17em" || d.style.width === "")) {
+                pd.o.rk.style.right = ".8em";
+                pd.o.rk.style.top = "auto";
+                pd.o.rk.style.left = "auto";
+            }
         }
     };
 
     //maximize textareas and hide options
     pd.hideOptions = function (x) {
-        var a = "";
-        if (!pd.o.dt) {
+        var a = "",
+            b = [
+                pd.o.bi === null, pd.o.mi === null, pd.o.bx === null, pd.o.mx === null, pd.o.bo === null, pd.o.nx === null
+            ];
+        if (pd.o.dd !== null && pd.o.dt === null) {
             return;
         }
         pd.o.bb = pd.$$("modebeautify");
@@ -1884,97 +2201,191 @@ var exports = "",
         pd.o.la = pd.$$("language");
         pd.o.dt = pd.$$("difftall");
         pd.o.ay = pd.$$("additional_yes");
-        a = pd.o.la[pd.o.la.selectedIndex].value;
+        a = (pd.o.la === null) ? "javascript" : (pd.o.la.nodeName === "select") ? pd.o.la[pd.o.la.selectedIndex].value : pd.o.la.value;
         if (x.innerHTML.replace(/\s+/g, " ") === "Maximize Inputs") {
-            pd.o.op.style.display = "none";
-            pd.o.bops.style.display = "none";
-            pd.o.dops.style.display = "none";
-            pd.o.mops.style.display = "none";
-            pd.o.to.style.display = "none";
-            pd.o.bd.className = "tall";
-            pd.o.md.className = "tall";
-            pd.o.bt.className = "difftall";
-            pd.o.nt.className = "difftall";
-            pd.o.bi.style.marginBottom = "1em";
-            pd.o.mi.style.marginBottom = "1em";
+            if (pd.o.op !== null) {
+                pd.o.op.style.display = "none";
+            }
+            if (pd.o.bops !== null) {
+                pd.o.bops.style.display = "none";
+            }
+            if (pd.o.dops !== null) {
+                pd.o.dops.style.display = "none";
+            }
+            if (pd.o.mops !== null) {
+                pd.o.mops.style.display = "none";
+            }
+            if (pd.o.to !== null) {
+                pd.o.to.style.display = "none";
+            }
+            if (pd.o.bd !== null) {
+                pd.o.bd.className = "tall";
+            }
+            if (pd.o.md !== null) {
+                pd.o.md.className = "tall";
+            }
+            if (pd.o.bt !== null) {
+                pd.o.bt.className = "difftall";
+            }
+            if (pd.o.nt !== null) {
+                pd.o.nt.className = "difftall";
+            }
+            if (b[0] === false) {
+                pd.o.bi.style.marginBottom = "1em";
+            }
+            if (b[1] === false) {
+                pd.o.mi.style.marginBottom = "1em";
+            }
             if (window.innerHeight) {
-                pd.o.bi.style.height = ((Math.floor(window.innerHeight / 1.2) - 175) / 10) + "em";
-                pd.o.mi.style.height = ((Math.floor(window.innerHeight / 1.2) - 175) / 10) + "em";
-                pd.o.bx.style.height = ((Math.floor(window.innerHeight / 1.2) - 150) / 10) + "em";
-                pd.o.mx.style.height = ((Math.floor(window.innerHeight / 1.2) - 150) / 10) + "em";
-                pd.o.bo.style.height = ((Math.floor(window.innerHeight / 1.2) - 190) / 10) + "em";
-                pd.o.nx.style.height = ((Math.floor(window.innerHeight / 1.2) - 190) / 10) + "em";
+                if (b[0] === false) {
+                    pd.o.bi.style.height = ((Math.floor(window.innerHeight / 1.2) - 175) / 10) + "em";
+                }
+                if (b[1] === false) {
+                    pd.o.mi.style.height = ((Math.floor(window.innerHeight / 1.2) - 175) / 10) + "em";
+                }
+                if (b[2] === false) {
+                    pd.o.bx.style.height = ((Math.floor(window.innerHeight / 1.2) - 150) / 10) + "em";
+                }
+                if (b[3] === false) {
+                    pd.o.mx.style.height = ((Math.floor(window.innerHeight / 1.2) - 150) / 10) + "em";
+                }
+                if (b[4] === false) {
+                    pd.o.bo.style.height = ((Math.floor(window.innerHeight / 1.2) - 190) / 10) + "em";
+                }
+                if (b[5] === false) {
+                    pd.o.nx.style.height = ((Math.floor(window.innerHeight / 1.2) - 190) / 10) + "em";
+                }
             } else {
-                pd.o.bi.style.height = ((Math.floor(window.screen.availHeight / 1.2) - 250) / 10) + "em";
-                pd.o.mi.style.height = ((Math.floor(window.screen.availHeight / 1.2) - 250) / 10) + "em";
-                pd.o.bx.style.height = ((Math.floor(window.screen.availHeight / 1.2) - 250) / 10) + "em";
-                pd.o.mx.style.height = ((Math.floor(window.screen.availHeight / 1.2) - 250) / 10) + "em";
-                pd.o.bo.style.height = ((Math.floor(window.screen.availHeight / 1.2) - 275) / 10) + "em";
-                pd.o.nx.style.height = ((Math.floor(window.screen.availHeight / 1.2) - 275) / 10) + "em";
+                if (b[0] === false) {
+                    pd.o.bi.style.height = ((Math.floor(window.screen.availHeight / 1.2) - 250) / 10) + "em";
+                }
+                if (b[1] === false) {
+                    pd.o.mi.style.height = ((Math.floor(window.screen.availHeight / 1.2) - 250) / 10) + "em";
+                }
+                if (b[2] === false) {
+                    pd.o.bx.style.height = ((Math.floor(window.screen.availHeight / 1.2) - 250) / 10) + "em";
+                }
+                if (b[3] === false) {
+                    pd.o.mx.style.height = ((Math.floor(window.screen.availHeight / 1.2) - 250) / 10) + "em";
+                }
+                if (b[4] === false) {
+                    pd.o.bo.style.height = ((Math.floor(window.screen.availHeight / 1.2) - 275) / 10) + "em";
+                }
+                if (b[5] === false) {
+                    pd.o.nx.style.height = ((Math.floor(window.screen.availHeight / 1.2) - 275) / 10) + "em";
+                }
             }
             pd.o.disp.className = "maximized";
             x.innerHTML = "Normal view";
-            pd.o.re.style.display = "none";
-            pd.o.rg.style.display = "none";
-            pd.o.ri.style.display = "none";
-            pd.o.rk.style.display = "none";
-            pd.o.ao.style.display = "none";
-            pd.o.ci.style.margin = "0px";
-        } else if (x.innerHTML === "Normal view") {
-            pd.o.op.style.display = "block";
-            if (pd.o.bb.checked && a !== "csv" && a !== "text") {
-                pd.o.bops.style.display = "block";
-            } else if (pd.o.dd.checked) {
-                pd.o.dops.style.display = "block";
-            } else if (pd.o.mm.checked && a !== "csv" && a !== "text") {
-                pd.o.mops.style.display = "block";
-            }
-            pd.o.bi.style.height = "";
-            pd.o.mi.style.height = "";
-            pd.o.bx.style.height = "";
-            pd.o.mx.style.height = "";
-            pd.o.bo.style.height = "";
-            pd.o.nx.style.height = "";
-            pd.o.bi.style.margin = "0em";
-            pd.o.mi.style.margin = "0em";
-            if (typeof pd.position.diffreport === "object" && typeof pd.position.diffreport.display === "string" && pd.position.diffreport.display !== "none") {
-                pd.o.re.style.display = "block";
-            } else {
+            if (pd.o.re !== null) {
                 pd.o.re.style.display = "none";
             }
-            if (typeof pd.position.beaureport === "object" && typeof pd.position.beaureport.display === "string" && pd.position.diffreport.display !== "none") {
-                pd.o.rg.style.display = "block";
-            } else {
+            if (pd.o.rg !== null) {
                 pd.o.rg.style.display = "none";
             }
-            if (typeof pd.position.minreport === "object" && typeof pd.position.minreport.display === "string" && pd.position.minreport.display !== "none") {
-                pd.o.ri.style.display = "block";
-            } else {
+            if (pd.o.ri !== null) {
                 pd.o.ri.style.display = "none";
             }
-            if (typeof pd.position.statreport === "object" && typeof pd.position.statreport.display === "string" && pd.position.statreport.display !== "none") {
-                pd.o.rk.style.display = "block";
-            } else {
+            if (pd.o.rk !== null) {
                 pd.o.rk.style.display = "none";
             }
-            if (pd.o.ay.checked) {
+            if (pd.o.ao !== null) {
+                pd.o.ao.style.display = "none";
+            }
+            if (pd.o.ci !== null) {
+                pd.o.ci.style.margin = "0px";
+            }
+        } else if (x.innerHTML === "Normal view") {
+            if (pd.o.bb !== null && pd.o.bops !== null && pd.o.bb.checked && a !== "csv" && a !== "text") {
+                pd.o.bops.style.display = "block";
+            } else if (pd.o.dd !== null && pd.o.dops !== null && pd.o.dd.checked) {
+                pd.o.dops.style.display = "block";
+            } else if (pd.o.mm !== null && pd.o.mops !== null && pd.o.mm.checked && a !== "csv" && a !== "text") {
+                pd.o.mops.style.display = "block";
+            }
+            if (b[0] === false) {
+                pd.o.bi.style.height = "";
+                pd.o.bi.style.margin = "0em";
+            }
+            if (b[1] === false) {
+                pd.o.mi.style.height = "";
+                pd.o.mi.style.margin = "0em";
+            }
+            if (b[2] === false) {
+                pd.o.bx.style.height = "";
+            }
+            if (b[3] === false) {
+                pd.o.mx.style.height = "";
+            }
+            if (b[4] === false) {
+                pd.o.bo.style.height = "";
+            }
+            if (b[5] === false) {
+                pd.o.nx.style.height = "";
+            }
+            if (pd.o.ay !== null && pd.o.ay.checked) {
                 pd.o.ao.style.display = "block";
             }
-            if (!pd.o.dt.checked) {
-                pd.o.bd.className = "wide";
-                pd.o.md.className = "wide";
-                pd.o.bt.className = "wide";
-                pd.o.nt.className = "wide";
+            if (pd.o.dt !== null && pd.o.dt.checked === false) {
+                if (pd.o.bd !== null) {
+                    pd.o.bd.className = "wide";
+                }
+                if (pd.o.md !== null) {
+                    pd.o.md.className = "wide";
+                }
+                if (pd.o.bt !== null) {
+                    pd.o.bt.className = "wide";
+                }
+                if (pd.o.nt !== null) {
+                    pd.o.nt.className = "wide";
+                }
             }
-            pd.o.to.style.display = "block";
+            if (pd.o.to !== null) {
+                pd.o.to.style.display = "block";
+            }
             pd.o.disp.className = "default";
             x.innerHTML = "Maximize Inputs";
-            pd.o.re.style.display = "block";
-            pd.o.rg.style.display = "block";
-            pd.o.ri.style.display = "block";
-            pd.o.rk.style.display = "block";
-            pd.o.ci.style.margin = "0 0 0 22.5em";
+            if (pd.o.re !== null) {
+                pd.o.re.style.display = "block";
+            }
+            if (pd.o.rg !== null) {
+                pd.o.rg.style.display = "block";
+            }
+            if (pd.o.ri !== null) {
+                pd.o.ri.style.display = "block";
+            }
+            if (pd.o.rk !== null) {
+                pd.o.rk.style.display = "block";
+            }
+            if (pd.o.ci !== null) {
+                pd.o.ci.style.margin = "0 0 0 22.5em";
+            }
             pd.fixminreport();
+            if (pd.o.op !== null) {
+                pd.o.op.style.display = "block";
+                if (pd.o.bi !== null) {
+                    pd.o.bi.style.height = ((pd.o.op.clientHeight / 12) - 9.7) + "em";
+                    pd.o.bi.style.marginBottom = "1.65em";
+                    if (pd.o.bx !== null) {
+                        pd.o.bx.style.height = ((pd.o.op.clientHeight / 12) - 7.3) + "em";
+                    }
+                }
+                if (pd.o.mi !== null) {
+                    pd.o.mi.style.height = ((pd.o.op.clientHeight / 12) - 9.7) + "em";
+                    pd.o.mi.style.marginBottom = "1.65em";
+                    if (pd.o.mx !== null) {
+                        pd.o.mx.style.height = ((pd.o.op.clientHeight / 12) - 7.3) + "em";
+                    }
+                }
+                if (pd.o.dp === null || pd.o.dp.checked === false) {
+                    if (pd.o.bt !== null) {
+                        pd.o.bt.style.height = ((pd.o.op.clientHeight / 12) + 6.5) + "em";
+                    }
+                    if (pd.o.nt !== null) {
+                        pd.o.nt.style.height = ((pd.o.op.clientHeight / 12) + 6.5) + "em";
+                    }
+                }
+            }
         }
         pd.options(x);
         return false;
@@ -1984,12 +2395,15 @@ var exports = "",
     pd.reset = function () {
         var a = pd.o.re.getElementsByTagName("button"),
             b = 0,
-            c = [];
-        c = pd.o.la.getElementsByTagName("option");
-        pd.o.la.selectedIndex = 0;
-        for (b = c.length - 1; b > -1; b -= 1) {
-            if (c[b].value === "text") {
-                c[b].disabled = true;
+            c = [],
+            langtest = (pd.o.la !== null && pd.o.la.nodeName === "select") ? true : false;
+        if (langtest === true) {
+            c = pd.o.la.getElementsByTagName("option");
+            pd.o.la.selectedIndex = 0;
+            for (b = c.length - 1; b > -1; b -= 1) {
+                if (c[b].value === "text") {
+                    c[b].disabled = true;
+                }
             }
         }
         pd.position = {
@@ -2002,165 +2416,273 @@ var exports = "",
         pd.webtool = [];
         a[0].innerHTML = "S";
         a[1].innerHTML = "\u2191";
-        pd.o.rf.style.display = "none";
-        pd.o.re.style.display = "block";
-        pd.o.re.style.left = "auto";
-        pd.o.re.style.right = "59em";
-        pd.o.re.style.zIndex = "2";
-        pd.o.re.getElementsByTagName("p")[0].style.display = "none";
-        pd.o.re.getElementsByTagName("h3")[0].style.width = "17em";
-        pd.o.re.getElementsByTagName("h3")[0].style.cursor = "pointer";
-        pd.o.re.getElementsByTagName("h3")[0].style.margin = "0em";
-        pd.position.diffreport.leftMin = pd.o.re.offsetLeft / 10;
-        pd.position.diffreport.topMin = pd.o.re.offsetTop / 10;
-        pd.o.rh.style.display = "none";
-        pd.o.rg.style.display = "block";
-        pd.o.rg.style.left = "auto";
-        pd.o.rg.style.right = "40em";
-        pd.o.rg.style.zIndex = "2";
-        pd.o.rg.getElementsByTagName("p")[0].style.display = "none";
-        pd.o.rg.getElementsByTagName("h3")[0].style.width = "17em";
-        pd.o.rg.getElementsByTagName("h3")[0].style.cursor = "pointer";
-        pd.o.rg.getElementsByTagName("h3")[0].style.cursor = "0em";
-        pd.position.beaureport.leftMin = pd.o.rg.offsetLeft / 10;
-        pd.position.beaureport.topMin = pd.o.rg.offsetTop / 10;
-        pd.o.rj.style.display = "none";
-        pd.o.ri.style.display = "block";
-        pd.o.ri.style.left = "auto";
-        pd.o.ri.style.right = "1";
-        pd.o.ri.style.zIndex = "2";
-        pd.o.ri.getElementsByTagName("p")[0].style.display = "none";
-        pd.o.ri.getElementsByTagName("h3")[0].style.width = "17em";
-        pd.o.ri.getElementsByTagName("h3")[0].style.cursor = "pointer";
-        pd.o.ri.getElementsByTagName("h3")[0].style.cursor = "0em";
-        pd.position.minreport.leftMin = pd.o.ri.offsetLeft / 10;
-        pd.position.minreport.topMin = pd.o.ri.offsetTop / 10;
-        pd.o.rl.style.display = "none";
-        pd.o.cs.selectedIndex = 0;
+        if (pd.o.cs !== null) {
+            if (pd.o.cs.nodeName === "select") {
+                pd.o.cs.selectedIndex = 4;
+            } else {
+                pd.o.cs.value = "shadow";
+            }
+        }
         pd.o.wb.className = "shadow";
-        if (!pd.ls) {
-            pd.o.rk.style.display = "none";
-        } else {
-            pd.o.rk.style.display = "block";
-            pd.o.rk.style.left = "auto";
-            pd.o.rk.style.right = "2em";
-            pd.o.rk.style.zIndex = "2";
-            pd.o.rk.getElementsByTagName("p")[0].style.display = "none";
-            pd.o.rk.getElementsByTagName("h3")[0].style.width = "17em";
-            pd.o.rk.getElementsByTagName("h3")[0].style.cursor = "pointer";
-            pd.o.rk.getElementsByTagName("h3")[0].style.cursor = "0em";
-            pd.position.statreport.leftMin = pd.o.rk.offsetLeft / 10;
-            pd.position.statreport.topMin = pd.o.rk.offsetTop / 10;
+        if (pd.o.re !== null) {
+            pd.o.rf.style.display = "none";
+            pd.o.re.style.display = "block";
+            pd.o.re.style.left = "auto";
+            pd.o.re.style.right = "59em";
+            pd.o.re.style.zIndex = "2";
+            pd.o.re.getElementsByTagName("p")[0].style.display = "none";
+            pd.o.re.getElementsByTagName("h3")[0].style.width = "17em";
+            pd.o.re.getElementsByTagName("h3")[0].style.cursor = "pointer";
+            pd.o.re.getElementsByTagName("h3")[0].style.margin = "0em";
+            pd.position.diffreport.leftMin = pd.o.re.offsetLeft / 10;
+            pd.position.diffreport.topMin = pd.o.re.offsetTop / 10;
         }
-        pd.o.bi.style.height = "";
-        pd.o.mi.style.height = "";
-        pd.o.bx.style.height = "";
-        pd.o.mx.style.height = "";
-        pd.o.disp.className = "default";
-        pd.o.to.style.display = "block";
-        pd.o.op.style.display = "block";
-        if (pd.o.dops) {
+        if (pd.o.rg !== null) {
+            pd.o.rh.style.display = "none";
+            pd.o.rg.style.display = "block";
+            pd.o.rg.style.left = "auto";
+            pd.o.rg.style.right = "40em";
+            pd.o.rg.style.zIndex = "2";
+            pd.o.rg.getElementsByTagName("p")[0].style.display = "none";
+            pd.o.rg.getElementsByTagName("h3")[0].style.width = "17em";
+            pd.o.rg.getElementsByTagName("h3")[0].style.cursor = "pointer";
+            pd.o.rg.getElementsByTagName("h3")[0].style.cursor = "0em";
+            pd.position.beaureport.leftMin = pd.o.rg.offsetLeft / 10;
+            pd.position.beaureport.topMin = pd.o.rg.offsetTop / 10;
+        }
+        if (pd.o.ri !== null) {
+            pd.o.rj.style.display = "none";
+            pd.o.ri.style.display = "block";
+            pd.o.ri.style.left = "auto";
+            pd.o.ri.style.right = "1";
+            pd.o.ri.style.zIndex = "2";
+            pd.o.ri.getElementsByTagName("p")[0].style.display = "none";
+            pd.o.ri.getElementsByTagName("h3")[0].style.width = "17em";
+            pd.o.ri.getElementsByTagName("h3")[0].style.cursor = "pointer";
+            pd.o.ri.getElementsByTagName("h3")[0].style.cursor = "0em";
+            pd.position.minreport.leftMin = pd.o.ri.offsetLeft / 10;
+            pd.position.minreport.topMin = pd.o.ri.offsetTop / 10;
+        }
+        if (pd.o.rk !== null) {
+            pd.o.rl.style.display = "none";
+            if (!pd.ls) {
+                pd.o.rk.style.display = "none";
+            } else {
+                pd.o.rk.style.display = "block";
+                pd.o.rk.style.left = "auto";
+                pd.o.rk.style.right = "2em";
+                pd.o.rk.style.zIndex = "2";
+                pd.o.rk.getElementsByTagName("p")[0].style.display = "none";
+                pd.o.rk.getElementsByTagName("h3")[0].style.width = "17em";
+                pd.o.rk.getElementsByTagName("h3")[0].style.cursor = "pointer";
+                pd.o.rk.getElementsByTagName("h3")[0].style.cursor = "0em";
+                pd.position.statreport.leftMin = pd.o.rk.offsetLeft / 10;
+                pd.position.statreport.topMin = pd.o.rk.offsetTop / 10;
+            }
+        }
+        if (pd.o.jd !== null) {
+            pd.o.jd.checked = false;
+        }
+        if (pd.o.jf !== null) {
+            pd.o.jf.checked = false;
+        }
+        if (pd.o.jg !== null) {
+            pd.o.jg.checked = false;
+        }
+        if (pd.o.jh !== null) {
+            pd.o.jh.checked = false;
+        }
+        if (pd.o.js !== null) {
+            pd.o.js.checked = false;
+        }
+        if (pd.o.iz !== null) {
+            pd.o.iz.checked = false;
+        }
+        if (pd.o.an !== null) {
+            pd.o.an.checked = true;
+        }
+        if (pd.o.ao !== null) {
+            pd.o.ao.style.display = "none";
+        }
+        if (pd.o.bi !== null) {
+            pd.o.bi.style.height = "";
+        }
+        if (pd.o.mi !== null) {
+            pd.o.mi.style.height = "";
+        }
+        if (pd.o.bx !== null) {
+            pd.o.bx.style.height = "";
+        }
+        if (pd.o.mx !== null) {
+            pd.o.mx.style.height = "";
+        }
+        if (pd.o.disp !== null) {
+            pd.o.disp.className = "default";
+        }
+        if (pd.o.to !== null) {
+            pd.o.to.style.display = "block";
+        }
+        if (pd.o.op !== null) {
+            pd.o.op.style.display = "block";
+        }
+        if (pd.o.dops !== null) {
             pd.o.dops.style.display = "block";
-            pd.o.bops.style.display = "none";
-        } else {
+            if (pd.o.bops !== null) {
+                pd.o.bops.style.display = "none";
+            }
+            if (pd.o.mops !== null) {
+                pd.o.mops.style.display = "none";
+            }
+        } else if (pd.o.bops !== null) {
             pd.o.bops.style.display = "block";
+            if (pd.o.mops !== null) {
+                pd.o.mops.style.display = "none";
+            }
+        } else if (pd.o.mops !== null) {
+            pd.o.mops.style.display = "block";
         }
-        if (pd.o.bt && pd.o.nt) {
+        if (pd.o.bt !== null && pd.o.nt !== null) {
             pd.o.bt.style.display = "block";
             pd.o.nt.style.display = "block";
-            pd.o.bd.style.display = "none";
-        } else {
+            if (pd.o.bd !== null) {
+                pd.o.bd.style.display = "none";
+            }
+        } else if (pd.o.bd !== null) {
             pd.o.bd.style.display = "block";
         }
-        pd.o.mops.style.display = "none";
-        pd.o.csvp.style.display = "none";
-        pd.o.md.style.display = "none";
-        if (pd.o.bt) {
+        if (pd.o.csvp !== null) {
+            pd.o.csvp.style.display = "none";
+        }
+        if (pd.o.md !== null) {
+            pd.o.md.style.display = "none";
+        }
+        if (pd.o.bt !== null) {
             pd.o.bt.className = "difftall";
         }
-        if (pd.o.nt) {
+        if (pd.o.nt !== null) {
             pd.o.nt.className = "difftall";
         }
-        pd.o.bd.className = "tall";
-        pd.o.md.className = "tall";
-        pd.o.option.value = "/*prettydiff.com */";
-        pd.o.bq.value = "4";
-        pd.o.bc.value = "Click me for custom input";
-        pd.o.bc.style.color = "#888";
-        pd.o.bs.checked = true;
-        pd.o.is.checked = true;
-        pd.o.hz.checked = true;
-        pd.o.mb.checked = true;
-        pd.o.hn.checked = true;
-        pd.o.jt.checked = true;
-        pd.o.bf.checked = true;
-        pd.o.cd.checked = true;
-        pd.o.cf.checked = true;
-        pd.o.dh.checked = true;
-        pd.o.wc.value = "72";
-        pd.o.wd.value = "72";
-        if (pd.o.bo) {
+        if (pd.o.bd !== null) {
+            pd.o.bd.className = "tall";
+        }
+        if (pd.o.md !== null) {
+            pd.o.md.className = "tall";
+        }
+        if (pd.o.option !== null) {
+            if (typeof pd.o.option.innerHTML === "string") {
+                pd.o.option.innerHTML = "/*prettydiff.com */";
+                pd.o.option.value = pd.o.option.innerHTML;
+            } else {
+                pd.o.option.value = "/*prettydiff.com */";
+            }
+        }
+        if (pd.o.bq !== null) {
+            pd.o.bq.value = "4";
+        }
+        if (pd.o.bc !== null) {
+            pd.o.bc.value = "Click me for custom input";
+            pd.o.bc.style.color = "#888";
+        }
+        if (pd.o.bs !== null) {
+            pd.o.bs.checked = true;
+        }
+        if (pd.o.is !== null) {
+            pd.o.is.checked = true;
+        }
+        if (pd.o.hz !== null) {
+            pd.o.hz.checked = true;
+        }
+        if (pd.o.mb !== null) {
+            pd.o.mb.checked = true;
+        }
+        if (pd.o.hn !== null) {
+            pd.o.hn.checked = true;
+        }
+        if (pd.o.jt !== null) {
+            pd.o.jt.checked = true;
+        }
+        if (pd.o.bf !== null) {
+            pd.o.bf.checked = true;
+        }
+        if (pd.o.cd !== null) {
+            pd.o.cd.checked = true;
+        }
+        if (pd.o.cf !== null) {
+            pd.o.cf.checked = true;
+        }
+        if (pd.o.dh !== null) {
+            pd.o.dh.checked = true;
+        }
+        if (pd.o.wc !== null) {
+            pd.o.wc.value = "72";
+        }
+        if (pd.o.wd !== null) {
+            pd.o.wd.value = "72";
+        }
+        if (pd.o.bo !== null) {
             pd.o.bo.style.height = "";
         }
-        if (pd.o.nx) {
+        if (pd.o.nx !== null) {
             pd.o.nx.style.height = "";
         }
-        if (pd.o.dd) {
+        if (pd.o.dd !== null) {
             pd.o.dd.checked = true;
-        } else {
+        } else if (pd.o.bb !== null) {
             pd.o.bb.checked = true;
         }
-        if (pd.o.dt) {
+        if (pd.o.dt !== null) {
             pd.o.dt.checked = true;
         }
-        if (pd.o.sh) {
+        if (pd.o.sh !== null) {
             pd.o.sh.innerHTML = "Maximize Inputs";
         }
-        if (pd.o.ds) {
+        if (pd.o.ds !== null) {
             pd.o.ds.checked = true;
         }
-        if (pd.o.dc) {
+        if (pd.o.dc !== null) {
             pd.o.dc.value = "Click me for custom input";
             pd.o.dc.style.color = "#888";
         }
-        if (pd.o.je) {
+        if (pd.o.je !== null) {
             pd.o.je.checked = true;
         }
-        if (pd.o.ps) {
+        if (pd.o.ps !== null) {
             pd.o.ps.checked = false;
         }
-        if (pd.o.context) {
+        if (pd.o.context !== null) {
             pd.o.context.value = "";
         }
-        if (pd.o.dq) {
+        if (pd.o.dq !== null) {
             pd.o.dq.value = "4";
         }
-        if (pd.o.dx) {
+        if (pd.o.dx !== null) {
             pd.o.dx.checked = true;
         }
-        if (pd.o.dr) {
+        if (pd.o.dr !== null) {
             pd.o.dr.checked = true;
         }
-        if (pd.o.dm) {
+        if (pd.o.dm !== null) {
             pd.o.dm.checked = true;
         }
-        if (pd.o.sideby) {
+        if (pd.o.sideby !== null) {
             pd.o.sideby.checked = true;
         }
-        if (pd.o.he) {
+        if (pd.o.he !== null) {
             pd.o.he.checked = true;
         }
-        if (pd.o.id) {
+        if (pd.o.id !== null) {
             pd.o.id.checked = true;
         }
-        if (pd.o.df) {
+        if (pd.o.df !== null) {
             pd.o.df.checked = true;
         }
-        if (pd.ls && localStorage.hasOwnProperty("webtool")) {
-            delete localStorage.webtool;
-        }
-        if (pd.ls && localStorage.hasOwnProperty("optionString")) {
-            delete localStorage.optionString;
+        if (pd.ls === true) {
+            if (localStorage.hasOwnProperty("webtool")) {
+                delete localStorage.webtool;
+            }
+            if (localStorage.hasOwnProperty("optionString")) {
+                delete localStorage.optionString;
+            }
         }
         pd.fixminreport();
     };
@@ -2195,6 +2717,10 @@ var exports = "",
             mode = "",
             stat = [],
             lang = "",
+            wtest = [
+                false, false, false, false
+            ],
+            langtest = (pd.o.la !== null && pd.o.la.nodeName === "select") ? true : false,
             page = pd.o.wb.getAttribute("id"),
             backspace = function (event) {
                 var a = event || window.event,
@@ -2211,7 +2737,7 @@ var exports = "",
             //supply limited functionality for the pd.save function if
             //not firefox or opera.
             if (typeof navigator === "object") {
-                if (navigator.userAgent.indexOf("Firefox") === -1 && navigator.userAgent.indexOf("Opera") === -1) {
+                if (navigator.userAgent.indexOf("Firefox") === -1 && navigator.userAgent.indexOf("Opera") === -1 && pd.o.re !== null) {
                     i = pd.o.re.getElementsByTagName("a")[0];
                     n = i.getElementsByTagName("button")[0];
                     n.setAttribute("onclick", "pd.save(this);");
@@ -2219,56 +2745,95 @@ var exports = "",
                     i.parentNode.insertBefore(n, i);
                     i.parentNode.removeChild(i);
                 } else if (navigator.userAgent.indexOf("Opera") > -1 && navigator.userAgent.indexOf("Presto") > 0) {
-                    pd.o.rf.style.cssFloat = "right";
-                    pd.o.rh.style.cssFloat = "right";
-                    pd.o.rj.style.cssFloat = "right";
-                    pd.o.rl.style.cssFloat = "right";
+                    if (pd.o.re !== null) {
+                        pd.o.rf.style.cssFloat = "right";
+                    }
+                    if (pd.o.rg !== null) {
+                        pd.o.rh.style.cssFloat = "right";
+                    }
+                    if (pd.o.ri !== null) {
+                        pd.o.rj.style.cssFloat = "right";
+                    }
+                    if (pd.o.rk !== null) {
+                        pd.o.rl.style.cssFloat = "right";
+                    }
                 }
             }
             document.onkeypress = backspace;
             document.onkeydown = backspace;
-            pd.o.update.innerHTML = (function () {
-                var a = String(edition.latest),
-                    b = [a.charAt(0) + a.charAt(1), a.charAt(2) + a.charAt(3), a.charAt(4) + a.charAt(5)],
-                    c = [
-                        "January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"
-                    ];
-                if (b[1].charAt(0) === "0") {
-                    b[1] = Number(b[1]);
-                }
-                if (b[2].charAt(0) === "0") {
-                    b[2] = b[2].substr(1);
-                }
-                b[1] -= 1;
-                return "Updated: " + b[2] + " " + c[b[1]] + " 20" + b[0];
-            }());
+            if (pd.o.update !== null) {
+                pd.o.update.innerHTML = (function () {
+                    var a = String(edition.latest),
+                        b = [
+                            a.charAt(0) + a.charAt(1), a.charAt(2) + a.charAt(3), a.charAt(4) + a.charAt(5)
+                        ],
+                        c = [
+                            "January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"
+                        ];
+                    if (b[1].charAt(0) === "0") {
+                        b[1] = Number(b[1]);
+                    }
+                    if (b[2].charAt(0) === "0") {
+                        b[2] = b[2].substr(1);
+                    }
+                    b[1] -= 1;
+                    return "Updated: " + b[2] + " " + c[b[1]] + " 20" + b[0];
+                }());
+            }
             pd.o.bc = pd.$$("beau-char");
             pd.o.dc = pd.$$("diff-char");
-            pd.o.re.style.zIndex = "2";
-            pd.o.rg.style.zIndex = "2";
-            pd.o.ri.style.zIndex = "2";
-            pd.o.rk.style.zIndex = "2";
-            pd.position.diffreport.leftMin = pd.o.re.offsetLeft / 10;
-            pd.position.diffreport.topMin = pd.o.re.offsetTop / 10;
-            pd.position.beaureport.leftMin = pd.o.rg.offsetLeft / 10;
-            pd.position.beaureport.topMin = pd.o.rg.offsetTop / 10;
-            pd.position.minreport.leftMin = pd.o.ri.offsetLeft / 10;
-            pd.position.minreport.topMin = pd.o.ri.offsetTop / 10;
-            pd.position.statreport.leftMin = pd.o.rk.offsetLeft / 10;
-            pd.position.statreport.topMin = pd.o.rk.offsetTop / 10;
+            if (pd.o.re !== null) {
+                pd.o.re.style.zIndex = "2";
+                pd.position.diffreport.leftMin = pd.o.re.offsetLeft / 10;
+                pd.position.diffreport.topMin = pd.o.re.offsetTop / 10;
+                wtest[0] = true;
+            }
+            if (pd.o.rg !== null) {
+                pd.o.rg.style.zIndex = "2";
+                pd.position.beaureport.leftMin = pd.o.rg.offsetLeft / 10;
+                pd.position.beaureport.topMin = pd.o.rg.offsetTop / 10;
+                wtest[1] = true;
+            }
+            if (pd.o.ri !== null) {
+                pd.o.ri.style.zIndex = "2";
+                pd.position.minreport.leftMin = pd.o.ri.offsetLeft / 10;
+                pd.position.minreport.topMin = pd.o.ri.offsetTop / 10;
+                wtest[2] = true;
+            }
+            if (pd.o.rk !== null) {
+                pd.o.rk.style.zIndex = "2";
+                pd.position.statreport.leftMin = pd.o.rk.offsetLeft / 10;
+                pd.position.statreport.topMin = pd.o.rk.offsetTop / 10;
+                wtest[3] = true;
+            }
             if (pd.fs === true) {
-                pd.o.bi.ondragover = pd.filenull;
-                pd.o.mi.ondragover = pd.filenull;
-                pd.o.bo.ondragover = pd.filenull;
-                pd.o.nx.ondragover = pd.filenull;
-                pd.o.bi.ondragleave = pd.filenull;
-                pd.o.mi.ondragleave = pd.filenull;
-                pd.o.bo.ondragleave = pd.filenull;
-                pd.o.nx.ondragleave = pd.filenull;
-                pd.o.bi.ondrop = pd.filedrop;
-                pd.o.mi.ondrop = pd.filedrop;
-                pd.o.bo.ondrop = pd.filedrop;
-                pd.o.nx.ondrop = pd.filedrop;
+                if (pd.o.bi !== null) {
+                    pd.o.bi.ondragover = pd.filenull;
+                    pd.o.bi.ondragleave = pd.filenull;
+                    pd.o.bi.ondrop = pd.filedrop;
+                    if (pd.o.op !== null) {
+                        pd.o.bi.style.height = ((pd.o.op.clientHeight / 12) - 9.7) + "em";
+                        pd.o.bi.style.marginBottom = "1.65em";
+                        if (pd.o.bx !== null) {
+                            pd.o.bx.style.height = ((pd.o.op.clientHeight / 12) - 7.3) + "em";
+                        }
+                    }
+                }
+                if (pd.o.mi !== null) {
+                    pd.o.mi.ondragover = pd.filenull;
+                    pd.o.mi.ondragleave = pd.filenull;
+                    pd.o.mi.ondrop = pd.filedrop;
+                    if (pd.o.op !== null) {
+                        pd.o.mi.style.height = ((pd.o.op.clientHeight / 12) - 9.3) + "em";
+                        if (pd.o.mx !== null) {
+                            pd.o.mx.style.height = ((pd.o.op.clientHeight / 12) - 7) + "em";
+                        }
+                    }
+                }
+                if (pd.o.bo !== null) {
+                    pd.o.bo.ondragover = pd.filenull;
+                    pd.o.bo.ondragleave = pd.filenull;
+                    pd.o.bo.ondrop = pd.filedrop  }
             } else {
                 m = [
                     pd.$$("diffbasefile"), pd.$$("diffnewfile"), pd.$$("beautyfile"), pd.$$("minifyfile")
@@ -2303,7 +2868,14 @@ var exports = "",
             }
             if (pd.ls === true && (localStorage.hasOwnProperty("optionString") || localStorage.hasOwnProperty("webtool") || localStorage.hasOwnProperty("statdata"))) {
                 if (localStorage.hasOwnProperty("optionString") && localStorage.getItem("optionString") !== null) {
-                    pd.o.option.innerHTML = "/*prettydiff.com " + (localStorage.getItem("optionString").replace(/prettydiffper/g, "%").replace(/(prettydiffcsep)+/g, ", ").replace(/\,\s+pdempty/g, "").replace(/(\,\s+\,\s+)+/g, ", ") + " */").replace(/((\,? )+\*\/)$/, " */");
+                    if (pd.o.option !== null) {
+                        if (typeof pd.o.option.innerHTML === "string") {
+                            pd.o.option.innerHTML = "/*prettydiff.com " + (localStorage.getItem("optionString").replace(/prettydiffper/g, "%").replace(/(prettydiffcsep)+/g, ", ").replace(/\,\s+pdempty/g, "").replace(/(\,\s+\,\s+)+/g, ", ") + " */").replace(/((\,?\s+)+\*\/)$/, " */").replace(/\s+/, " ");
+                            pd.o.option.value = pd.o.option.innerHTML;
+                        } else {
+                            pd.o.option.value = "/*prettydiff.com " + (localStorage.getItem("optionString").replace(/prettydiffper/g, "%").replace(/(prettydiffcsep)+/g, ", ").replace(/\,\s+pdempty/g, "").replace(/(\,\s+\,\s+)+/g, ", ") + " */").replace(/((\,?\s+)+\*\/)$/, " */").replace(/\s+/, " ");
+                        }
+                    }
                     a = localStorage.getItem("optionString").replace(/prettydiffper/g, "%").split("prettydiffcsep");
                     c = a.length;
                     for (b = 0; b < c; b += 1) {
@@ -2317,185 +2889,341 @@ var exports = "",
                             }
                             if (d[0] === "api.mode") {
                                 if (mode === "minify" || d[1] === "minify") {
-                                    m = pd.o.la.getElementsByTagName("option");
-                                    for (l = m.length - 1; l > -1; l -= 1) {
-                                        if (m[l].value === "text") {
-                                            m[l].disabled = true;
+                                    if (langtest === true) {
+                                        m = pd.o.la.getElementsByTagName("option");
+                                        for (l = m.length - 1; l > -1; l -= 1) {
+                                            if (m[l].value === "text") {
+                                                m[l].disabled = true;
+                                            }
                                         }
                                     }
-                                    pd.o.mm.checked = true;
-                                    if (pd.o.bt) {
-                                        pd.o.bt.style.display = "none";
+                                    if (pd.o.mm !== null) {
+                                        pd.o.mm.checked = true;
                                     }
-                                    if (pd.o.nt) {
-                                        pd.o.nt.style.display = "none";
+                                    if (pd.o.md !== null) {
+                                        pd.o.md.style.display = "block";
+                                        if (pd.o.bt !== null) {
+                                            pd.o.bt.style.display = "none";
+                                        }
+                                        if (pd.o.nt !== null) {
+                                            pd.o.nt.style.display = "none";
+                                        }
+                                    } else if (pd.o.bd !== null) {
+                                        pd.o.bd.style.display = "block";
+                                        if (pd.o.bt !== null) {
+                                            pd.o.bt.style.display = "none";
+                                        }
+                                        if (pd.o.nt !== null) {
+                                            pd.o.nt.style.display = "none";
+                                        }
+                                    } else if (pd.o.bt !== null) {
+                                        pd.o.bt.style.display = "block";
+                                        if (pd.o.nt !== null) {
+                                            pd.o.nt.style.display = "block";
+                                        }
+                                    } else if (pd.o.nt !== null) {
+                                        pd.o.nt.style.display = "block";
                                     }
-                                    pd.o.md.style.display = "block";
-                                    pd.o.bops.style.display = "none";
-                                    if (pd.o.dops) {
+                                    if (pd.o.bops !== null) {
+                                        pd.o.bops.style.display = "none";
+                                    }
+                                    if (pd.o.dops !== null) {
                                         pd.o.dops.style.display = "none";
                                     }
                                     if (lang === "text") {
                                         lang = "auto";
-                                        pd.o.la.selectedIndex = 0;
+                                        if (langtest === true) {
+                                            pd.o.la.selectedIndex = 0;
+                                        }
                                     }
-                                    if (lang === "text" || lang === "csv") {
-                                        pd.o.mops.style.display = "none";
-                                    } else {
-                                        pd.o.mops.style.display = "block";
+                                    if (pd.o.mops !== null) {
+                                        if (lang === "text" || lang === "csv") {
+                                            pd.o.mops.style.display = "none";
+                                        } else {
+                                            pd.o.mops.style.display = "block";
+                                        }
                                     }
                                 } else if (mode === "beautify" || d[1] === "beautify") {
-                                    m = pd.o.la.getElementsByTagName("option");
-                                    for (l = m.length - 1; l > -1; l -= 1) {
-                                        if (m[l].value === "text") {
-                                            m[l].disabled = true;
+                                    if (langtest === true) {
+                                        m = pd.o.la.getElementsByTagName("option");
+                                        for (l = m.length - 1; l > -1; l -= 1) {
+                                            if (m[l].value === "text") {
+                                                m[l].disabled = true;
+                                            }
                                         }
                                     }
-                                    pd.o.bb.checked = true;
-                                    if (pd.o.bt) {
-                                        pd.o.bt.style.display = "none";
+                                    if (pd.o.bb !== null) {
+                                        pd.o.bb.checked = true;
                                     }
-                                    if (pd.o.nt) {
-                                        pd.o.nt.style.display = "none";
+                                    if (pd.o.bd !== null) {
+                                        pd.o.bd.style.display = "block";
+                                        if (pd.o.bt !== null) {
+                                            pd.o.bt.style.display = "none";
+                                        }
+                                        if (pd.o.nt !== null) {
+                                            pd.o.nt.style.display = "none";
+                                        }
+                                    } else if (pd.o.md !== null) {
+                                        pd.o.md.style.display = "block";
+                                        if (pd.o.bt !== null) {
+                                            pd.o.bt.style.display = "none";
+                                        }
+                                        if (pd.o.nt !== null) {
+                                            pd.o.nt.style.display = "none";
+                                        }
+                                    } else if (pd.o.bt !== null) {
+                                        pd.o.bt.style.display = "block";
+                                        if (pd.o.nt !== null) {
+                                            pd.o.nt.style.display = "block";
+                                        }
+                                    } else if (pd.o.nt !== null) {
+                                        pd.o.nt.style.display = "block";
                                     }
-                                    pd.o.bd.style.display = "block";
-                                    if (pd.o.dops) {
+                                    if (pd.o.dops !== null) {
                                         pd.o.dops.style.display = "none";
                                     }
-                                    pd.o.mops.style.display = "none";
+                                    if (pd.o.mops !== null) {
+                                        pd.o.mops.style.display = "none";
+                                    }
                                     if (lang === "text") {
                                         lang = "auto";
-                                        pd.o.la.selectedIndex = 0;
+                                        if (langtest === true) {
+                                            pd.o.la.selectedIndex = 0;
+                                        }
                                     }
-                                    if (lang === "text" || lang === "csv") {
+                                    if (pd.o.bops !== null) {
+                                        if (lang === "text" || lang === "csv") {
+                                            pd.o.bops.style.display = "none";
+                                        } else {
+                                            pd.o.bops.style.display = "block";
+                                        }
+                                    }
+                                } else if (mode === "diff" || mode === "" || !d[1] || d[1] === "diff" || d[1] === "") {
+                                    if (langtest === true) {
+                                        m = pd.o.la.getElementsByTagName("option");
+                                        for (l = m.length - 1; l > -1; l -= 1) {
+                                            m[l].disabled = false;
+                                        }
+                                    }
+                                    if (pd.o.dd !== null) {
+                                        pd.o.dd.checked = true;
+                                    }
+                                    if (pd.o.bt !== null) {
+                                        pd.o.bt.style.display = "block";
+                                        if (pd.o.nt !== null) {
+                                            pd.o.nt.style.display = "block";
+                                        }
+                                        if (pd.o.bd !== null) {
+                                            pd.o.bd.style.display = "none";
+                                        }
+                                        if (pd.o.md !== null) {
+                                            pd.o.md.style.display = "none";
+                                        }
+                                    } else if (pd.o.nt !== null) {
+                                        pd.o.nt.style.display = "block";
+                                        if (pd.o.bd !== null) {
+                                            pd.o.bd.style.display = "none";
+                                        }
+                                        if (pd.o.md !== null) {
+                                            pd.o.md.style.display = "none";
+                                        }
+                                    } else if (pd.o.bd !== null) {
+                                        pd.o.bd.style.display = "block";
+                                        if (pd.o.md !== null) {
+                                            pd.o.md.style.display = "none";
+                                        }
+                                    } else if (pd.o.md !== null) {
+                                        pd.o.md.style.display = "block";
+                                    }
+                                    if (pd.o.dops !== null) {
+                                        pd.o.dops.style.display = "block";
+                                    }
+                                    if (pd.o.bops !== null) {
                                         pd.o.bops.style.display = "none";
-                                    } else {
-                                        pd.o.bops.style.display = "block";
                                     }
-                                } else if (pd.o.dd && (mode === "diff" || mode === "" || !d[1] || d[1] === "diff" || d[1] === "")) {
-                                    m = pd.o.la.getElementsByTagName("option");
-                                    for (l = m.length - 1; l > -1; l -= 1) {
-                                        m[l].disabled = false;
+                                    if (pd.o.mops !== null) {
+                                        pd.o.mops.style.display = "none";
                                     }
-                                    pd.o.dd.checked = true;
-                                    pd.o.bd.style.display = "none";
-                                    pd.o.md.style.display = "none";
-                                    pd.o.bt.style.display = "block";
-                                    pd.o.nt.style.display = "block";
-                                    pd.o.dops.style.display = "block";
-                                    pd.o.bops.style.display = "none";
-                                    pd.o.mops.style.display = "none";
-                                    if (lang === "text" || lang === "csv") {
-                                        pd.o.db.style.display = "none";
-                                    } else {
-                                        pd.o.db.style.display = "block";
+                                    if (pd.o.db !== null) {
+                                        if (lang === "text" || lang === "csv") {
+                                            pd.o.db.style.display = "none";
+                                        } else {
+                                            pd.o.db.style.display = "block";
+                                        }
                                     }
                                 }
                             } else if (d[0] === "api.lang") {
-                                pd.o.la.selectedIndex = d[1];
-                                lang = pd.o.la[pd.o.la.selectedIndex].value;
-                                if (lang === "csv" || (pd.o.dd.checked && lang === "text")) {
-                                    pd.o.db.style.display = "none";
-                                    pd.o.bops.style.display = "none";
-                                    pd.o.mops.style.display = "none";
-                                    if (pd.o.dops && pd.o.dd.checked) {
+                                if (langtest === true) {
+                                    pd.o.la.selectedIndex = d[1];
+                                    lang = pd.o.la[pd.o.la.selectedIndex].value;
+                                } else if (pd.o.la !== null) {
+                                    lang = pd.o.la.value;
+                                }
+                                if (lang === "csv" || (pd.o.dd !== null && pd.o.dd.checked && lang === "text")) {
+                                    if (pd.o.db !== null) {
+                                        pd.o.db.style.display = "none";
+                                    }
+                                    if (pd.o.bops !== null) {
+                                        pd.o.bops.style.display = "none";
+                                    }
+                                    if (pd.o.mops !== null) {
+                                        pd.o.mops.style.display = "none";
+                                    }
+                                    if (pd.o.dops !== null && pd.o.dd !== null && pd.o.dd.checked) {
                                         pd.o.dops.style.display = "block";
                                     }
                                 }
                                 if (lang === "html") {
-                                    pd.o.hd.checked = true;
-                                    pd.o.hm.checked = true;
-                                    pd.o.hy.checked = true;
+                                    if (pd.o.hd !== null) {
+                                        pd.o.hd.checked = true;
+                                    }
+                                    if (pd.o.hm !== null) {
+                                        pd.o.hm.checked = true;
+                                    }
+                                    if (pd.o.hy !== null) {
+                                        pd.o.hy.checked = true;
+                                    }
                                 } else {
-                                    pd.o.he.checked = true;
-                                    pd.o.hn.checked = true;
-                                    pd.o.hz.checked = true;
+                                    if (pd.o.he !== null) {
+                                        pd.o.he.checked = true;
+                                    }
+                                    if (pd.o.hn !== null) {
+                                        pd.o.hn.checked = true;
+                                    }
+                                    if (pd.o.hz !== null) {
+                                        pd.o.hz.checked = true;
+                                    }
                                 }
-                            } else if (d[0] === "api.csvchar") {
+                            } else if (d[0] === "api.csvchar" && pd.o.ch !== null) {
                                 pd.o.ch.value = d[1];
-                            } else if (d[0] === "api.insize") {
+                            } else if (d[0] === "api.insize" && pd.o.bq !== null) {
                                 pd.o.bq.value = d[1];
-                                if (pd.o.dq) {
+                            } else if (d[0] === "api.insize" && pd.o.dq !== null) {
                                     pd.o.dq.value = d[1];
-                                }
                             } else if (d[0] === "api.inchar") {
                                 if (d[1] === " ") {
-                                    if (pd.o.ds) {
+                                    if (pd.o.ds !== null) {
                                         pd.o.ds.checked = true;
                                     }
-                                    if (pd.o.dc) {
+                                    if (pd.o.dc !== null) {
                                         pd.o.dc.value = "Click me for custom input";
                                         pd.o.dc.className = "unchecked";
                                     }
-                                    pd.o.bs.checked = true;
-                                    pd.o.bc.value = "Click me for custom input";
-                                    pd.o.bc.className = "unchecked";
+                                    if (pd.o.bs !== null) {
+                                        pd.o.bs.checked = true;
+                                    }
+                                    if (pd.o.bc !== null) {
+                                        pd.o.bc.value = "Click me for custom input";
+                                        pd.o.bc.className = "unchecked";
+                                    }
                                 } else if (d[1] === "\\t") {
-                                    if (pd.o.da) {
+                                    if (pd.o.da !== null) {
                                         pd.o.da.checked = true;
                                     }
-                                    if (pd.o.dc) {
+                                    if (pd.o.dc !== null) {
                                         pd.o.dc.value = "Click me for custom input";
                                         pd.o.dc.className = "unchecked";
                                     }
-                                    pd.o.ba.checked = true;
-                                    pd.o.bc.value = "Click me for custom input";
-                                    pd.o.bc.className = "unchecked";
+                                    if (pd.o.ba !== null) {
+                                        pd.o.ba.checked = true;
+                                    }
+                                    if (pd.o.bc !== null) {
+                                        pd.o.bc.value = "Click me for custom input";
+                                        pd.o.bc.className = "unchecked";
+                                    }
                                 } else if (d[1] === "\\n") {
-                                    if (pd.o.dz) {
+                                    if (pd.o.dz !== null) {
                                         pd.o.dz.checked = true;
                                     }
-                                    if (pd.o.dc) {
+                                    if (pd.o.dc !== null) {
                                         pd.o.dc.value = "Click me for custom input";
                                         pd.o.dc.className = "unchecked";
                                     }
-                                    pd.o.bn.checked = true;
-                                    pd.o.bc.value = "Click me for custom input";
-                                    pd.o.bc.className = "unchecked";
+                                    if (pd.o.bn !== null) {
+                                        pd.o.bn.checked = true;
+                                    }
+                                    if (pd.o.bc !== null) {
+                                        pd.o.bc.value = "Click me for custom input";
+                                        pd.o.bc.className = "unchecked";
+                                    }
                                 } else {
-                                    if (pd.o.dw) {
+                                    if (pd.o.dw !== null) {
                                         pd.o.dw.checked = true;
                                     }
-                                    if (pd.o.dc) {
+                                    if (pd.o.dc !== null) {
                                         pd.o.dc.value = d[1];
                                         pd.o.dc.className = "checked";
                                     }
-                                    pd.o.bw.checked = true;
-                                    pd.o.bc.value = d[1];
-                                    pd.o.bc.className = "checked";
+                                    if (pd.o.bw !== null) {
+                                        pd.o.bw.checked = true;
+                                    }
+                                    if (pd.o.bc !== null) {
+                                        pd.o.bc.value = d[1];
+                                        pd.o.bc.className = "checked";
+                                    }
                                 }
-                            } else if (d[0] === "api.comments" && d[1] === "noindent") {
+                            } else if (d[0] === "api.comments" && d[1] === "noindent" && pd.o.iz !== null) {
                                 pd.o.iz.checked = true;
                             } else if (d[0] === "api.indent" && d[1] === "allman") {
-                                pd.o.jd.checked = true;
-                                pd.o.js.checked = true;
+                                if (pd.o.jd !== null) {
+                                    pd.o.jd.checked = true;
+                                }
+                                if (pd.o.js !== null) {
+                                    pd.o.js.checked = true;
+                                }
                             } else if (d[0] === "api.style" && d[1] === "noindent") {
-                                pd.o.ie.checked = true;
-                                pd.o.it.checked = true;
+                                if (pd.o.ie !== null) {
+                                    pd.o.ie.checked = true;
+                                }
+                                if (pd.o.it !== null) {
+                                    pd.o.it.checked = true;
+                                }
                             } else if (d[0] === "api.html" && d[1] === "html-yes") {
-                                pd.o.hd.checked = true;
-                                pd.o.hm.checked = true;
-                                pd.o.hy.checked = true;
-                            } else if (d[0] === "api.context" && ((/^([0-9]+)$/).test(d[1]) && (d[1] === "0" || d[1].charAt(0) !== "0"))) {
+                                if (pd.o.hd !== null) {
+                                    pd.o.hd.checked = true;
+                                }
+                                if (pd.o.hm !== null) {
+                                    pd.o.hm.checked = true;
+                                }
+                                if (pd.o.hy !== null) {
+                                    pd.o.hy.checked = true;
+                                }
+                            } else if (d[0] === "api.context" && pd.o.context !== null && ((/^([0-9]+)$/).test(d[1]) && (d[1] === "0" || d[1].charAt(0) !== "0"))) {
                                 pd.o.context.value = d[1];
-                            } else if (d[0] === "api.content" && d[1] === "true") {
+                            } else if (d[0] === "api.content" && d[1] === "true" && pd.o.du !== null) {
                                 pd.o.du.checked = true;
-                            } else if (d[0] === "api.quote" && d[1] === "true") {
+                            } else if (d[0] === "api.quote" && d[1] === "true" && pd.o.dy !== null) {
                                 pd.o.dy.checked = true;
-                            } else if (d[0] === "api.semicolon" && d[1] === "true") {
+                            } else if (d[0] === "api.semicolon" && d[1] === "true" && pd.o.dn !== null) {
                                 pd.o.dn.checked = true;
-                            } else if (d[0] === "api.diffview" && d[1] === "inline") {
+                            } else if (d[0] === "api.diffview" && d[1] === "inline" && pd.o.inline !== null) {
                                 pd.o.inline.checked = true;
-                            } else if (d[0] === "api.topcoms" && d[1] === "true") {
+                            } else if (d[0] === "api.topcoms" && d[1] === "true" && pd.o.mc !== null) {
                                 pd.o.mc.checked = true;
                             } else if (d[0] === "api.conditional" && d[1] === "true") {
-                                pd.o.ce.checked = true;
-                                pd.o.cg.checked = true;
-                            } else if (d[0] === "api.diffcomments" && d[1] === "true") {
+                                if (pd.o.ce !== null) {
+                                    pd.o.ce.checked = true;
+                                }
+                                if (pd.o.cg !== null) {
+                                    pd.o.cg.checked = true;
+                                }
+                            } else if (d[0] === "api.diffcomments" && d[1] === "true" && pd.o.dh !== null) {
                                 pd.o.dh.checked = true;
                             } else if (d[0] === "api.wrap" && !isNaN(d[1])) {
-                                pd.o.wc.value = d[1];
-                                pd.o.wd.value = d[1];
+                                if (pd.o.wc !== null) {
+                                    pd.o.wc.value = d[1];
+                                }
+                                if (pd.o.wd !== null) {
+                                    pd.o.wd.value = d[1];
+                                }
+                            } else if (d[0] === "api.jsspace" && d[1] === "no" && pd.o.jf !== null) {
+                                pd.o.jf.checked = true;
+                            } else if (d[0] === "api.jsscope" && d[1] === "yes" && pd.o.jg !== null) {
+                                pd.o.jg.checked = true;
+                            } else if (d[0] === "api.jslines" && d[1] === "no" && pd.o.jh !== null) {
+                                pd.o.jh.checked = true;
+                            } else if (d[0] === "api.inlevel" && pd.o.ji !== null) {
+                                pd.o.ji.value = d[1];
                             }
                         }
                     }
@@ -2518,27 +3246,48 @@ var exports = "",
                                     }
                                 }
                                 pd.colorScheme(pd.o.cs);
-                            } else if (d[0] === "showhide" && d[1] === "hide") {
+                            } else if (d[0] === "showhide" && d[1] === "hide" && pd.o.sh !== null) {
                                 pd.hideOptions(pd.o.sh);
-                            } else if (d[0] === "additional" && d[1] === "yes" && lang !== "csv") {
+                            } else if (d[0] === "additional" && d[1] === "yes" && lang !== "csv" && pd.o.ao !== null && pd.o.ay !== null) {
                                 pd.o.ao.style.display = "block";
                                 pd.o.ay.checked = true;
-                            } else if (pd.o.dp && d[0] === "display" && d[1] === "horizontal") {
-                                pd.o.dp.checked = true;
-                                pd.o.bt.className = "wide";
-                                pd.o.nt.className = "wide";
-                                pd.o.bd.className = "wide";
-                                pd.o.md.className = "wide";
-                            } else if (d[0] === "diffsave" && d[1] === "true") {
+                            } else if (d[0] === "display") {
+                                if (d[1] === "horizontal" && pd.o.dp !== null) {
+                                    pd.o.dp.checked = true;
+                                    if (pd.o.bt !== null) {
+                                        pd.o.bt.className = "wide";
+                                    }
+                                    if (pd.o.nt !== null) {
+                                        pd.o.nt.className = "wide";
+                                    }
+                                    if (pd.o.bd !== null) {
+                                        pd.o.bd.className = "wide";
+                                    }
+                                    if (pd.o.md !== null) {
+                                        pd.o.md.className = "wide";
+                                    }
+                                } else if (d[1] !== "horizontal" && pd.o.op !== null && (pd.o.dp === null || pd.o.dp.checked === false)) {
+                                    if (pd.o.bt !== null) {
+                                        pd.o.bt.style.height = ((pd.o.op.clientHeight / 12) + 6.5) + "em";
+                                    }
+                                    if (pd.o.nt !== null) {
+                                        pd.o.nt.style.height = ((pd.o.op.clientHeight / 12) + 6.5) + "em";
+                                    }
+                                }
+                            } else if (d[0] === "diffsave" && d[1] === "true" && pd.o.ps !== null && pd.o.re !== null) {
                                 pd.o.ps.checked = true;
                                 i = pd.o.re.getElementsByTagName("button")[0];
                                 i.innerHTML = "H";
                                 i.setAttribute("title", "Convert diff report to text that can be saved.");
                             } else if (d[0] === "api.force_indent" && d[1] === "true") {
-                                pd.o.bg.checked = true;
-                                pd.o.dg.checked = true;
+                                if (pd.o.bg !== null) {
+                                    pd.o.bg.checked = true;
+                                }
+                                if (pd.o.dg !== null) {
+                                    pd.o.dg.checked = true;
+                                }
                             } else if (d[0].indexOf("report") === 4) {
-                                if (d[0].indexOf("diff") === 0) {
+                                if (wtest[0] === true && d[0].indexOf("diff") === 0) {
                                     dm = true;
                                     if (d[0] === "diffreportleft") {
                                         pd.o.re.style.left = (d[1] / 10) + "em";
@@ -2559,7 +3308,7 @@ var exports = "",
                                         pd.o.re.style.zIndex = d[1];
                                         pd.position.diffreport.zindex = d[1];
                                     }
-                                } else if (d[0].indexOf("beau") === 0) {
+                                } else if (wtest[1] === true && d[0].indexOf("beau") === 0) {
                                     bm = true;
                                     if (d[0] === "beaureportleft") {
                                         pd.o.rg.style.left = (d[1] / 10) + "em";
@@ -2580,7 +3329,7 @@ var exports = "",
                                         pd.o.rg.style.zIndex = d[1];
                                         pd.position.beaureport.zindex = d[1];
                                     }
-                                } else if (d[0].indexOf("minn") === 0) {
+                                } else if (wtest[2] === true && d[0].indexOf("minn") === 0) {
                                     mm = true;
                                     if (d[0] === "minnreportleft") {
                                         pd.o.ri.style.left = (d[1] / 10) + "em";
@@ -2601,7 +3350,7 @@ var exports = "",
                                         pd.o.ri.style.zIndex = d[1];
                                         pd.position.minreport.zindex = d[1];
                                     }
-                                } else if (d[0].indexOf("stat") === 0) {
+                                } else if (wtest[3] === true && d[0].indexOf("stat") === 0) {
                                     sm = true;
                                     if (d[0] === "statreportleft") {
                                         pd.o.rk.style.left = (d[1] / 10) + "em";
@@ -2683,7 +3432,7 @@ var exports = "",
                         pd.o.rl.style.display = "none";
                     }
                 }
-                if (localStorage.hasOwnProperty("statdata") && localStorage.getItem("statdata") !== null) {
+                if (localStorage.hasOwnProperty("statdata") && localStorage.getItem("statdata") !== null && pd.o.rk !== null) {
                     stat = localStorage.getItem("statdata").split("|");
                     pd.o.stat.visit = Number(stat[0]) + 1;
                     stat[0] = pd.o.stat.visit.toString();
@@ -2725,7 +3474,7 @@ var exports = "",
                     pd.o.stcsv.innerHTML = stat[10];
                     pd.o.sttext.innerHTML = stat[11];
                     pd.o.stlarge.innerHTML = stat[12];
-                } else {
+                } else if (pd.o.rk !== null) {
                     k = j.toLocaleDateString();
                     pd.o.stfdate.innerHTML = k;
                     pd.o.stat.fdate = k;
@@ -2759,31 +3508,35 @@ var exports = "",
                 if (lang === "text" || lang === "csv") {
                     pd.o.db.style.display = "none";
                 }
-                if (pd.o.sh.innerHTML === "Normal view") {
+                if (pd.o.ao !== null && pd.o.sh.innerHTML === "Normal view") {
                     pd.o.ao.style.display = "none";
                 }
             }
-            if (location && location.href && location.href.indexOf("?") !== -1) {
+            if (location && location.href && location.href.indexOf("?") > -1) {
                 d = location.href.split("?")[1].split("&");
                 c = d.length;
                 for (b = 0; b < c; b += 1) {
                     if (d[b].indexOf("m=") === 0) {
                         f = d[b].toLowerCase().substr(2);
-                        if (f === "beautify") {
+                        if (f === "beautify" && pd.o.bb !== null) {
                             pd.o.bb.click();
-                        } else if (f === "minify") {
+                        } else if (f === "minify" && pd.o.mm !== null) {
                             pd.o.mm.click();
-                        } else if (pd.o.dd && f === "diff") {
+                        } else if (f === "diff" && pd.o.dd !== null) {
                             pd.o.dd.click();
                         }
                     } else if (d[b].indexOf("s=") === 0) {
                         source = d[b].substr(2);
-                        pd.o.bi.value = source;
-                        pd.o.mi.value = source;
-                        if (pd.o.bo) {
+                        if (pd.o.bi !== null) {
+                            pd.o.bi.value = source;
+                        }
+                        if (pd.o.mi !== null) {
+                            pd.o.mi.value = source;
+                        }
+                        if (pd.o.bo !== null) {
                             pd.o.bo.value = source;
                         }
-                    } else if (d[b].indexOf("d=") === 0) {
+                    } else if (d[b].indexOf("d=") === 0 && pd.o.nx !== null) {
                         diff = d[b].substr(2);
                         pd.o.nx.value = diff;
                     } else if (d[b].toLowerCase() === "html") {
@@ -2799,16 +3552,28 @@ var exports = "",
                             f = lang;
                         } else if (f === "html") {
                             pd.codeOps();
-                            pd.o.hd.checked = true;
-                            pd.o.hm.checked = true;
-                            pd.o.hy.checked = true;
+                            if (pd.o.he !== null) {
+                                pd.o.hd.checked = true;
+                            }
+                            if (pd.o.hm !== null) {
+                                pd.o.hm.checked = true;
+                            }
+                            if (pd.o.hy !== null) {
+                                pd.o.hy.checked = true;
+                            }
                             lang = "markup";
                             f = lang;
                         } else if (f === "markup" || f === "xml" || f === "sgml" || f === "jstl") {
                             pd.codeOps();
-                            pd.o.he.checked = true;
-                            pd.o.hn.checked = true;
-                            pd.o.hz.checked = true;
+                            if (pd.o.he !== null) {
+                                pd.o.he.checked = true;
+                            }
+                            if (pd.o.hn !== null) {
+                                pd.o.hn.checked = true;
+                            }
+                            if (pd.o.hz !== null) {
+                                pd.o.hz.checked = true;
+                            }
                             lang = "markup";
                         } else if (f === "css" || f === "scss") {
                             pd.codeOps();
@@ -2817,18 +3582,22 @@ var exports = "",
                             pd.codeOps();
                             lang = "csv";
                         } else if (f === "text") {
-                            pd.o.dd.click();
+                            if (pd.o.dd !== null) {
+                                pd.o.dd.click();
+                            }
                             lang = "text";
                         } else {
                             lang = "javascript";
                         }
-                        m = pd.o.la.getElementsByTagName("option");
-                        for (l = m.length - 1; l > -1; l -= 1) {
-                            if (f === "text") {
-                                m[l].disabled = false;
-                            }
-                            if (m[l].value === f) {
-                                pd.o.la.selectedIndex = l;
+                        if (langtest === true) {
+                            m = pd.o.la.getElementsByTagName("option");
+                            for (l = m.length - 1; l > -1; l -= 1) {
+                                if (f === "text") {
+                                    m[l].disabled = false;
+                                }
+                                if (m[l].value === f) {
+                                    pd.o.la.selectedIndex = l;
+                                }
                             }
                         }
                     } else if (d[b].indexOf("c=") === 0) {
@@ -2842,45 +3611,53 @@ var exports = "",
                                 break;
                             }
                         }
+                    } else if (d[b].indexOf("jsscope") === 0 && pd.o.jg !== null) {
+                        pd.o.jg.checked = true;
                     }
                 }
             }
-            if (pd.o.bc.value !== "" && pd.o.bc.value !== "Click me for custom input") {
+            if (pd.o.bc !== null && pd.o.bc.value !== "" && pd.o.bc.value !== "Click me for custom input") {
                 pd.o.bcv = pd.o.bc.value;
             }
-            if (pd.o.dc && pd.o.dc.value !== "" && pd.o.dc.value !== "Click me for custom input") {
+            if (pd.o.dc !== null && pd.o.dc.value !== "" && pd.o.dc.value !== "Click me for custom input") {
                 pd.o.dcv = pd.o.dc.value;
             }
-            if (html) {
-                pd.o.hd.checked = true;
-                pd.o.hm.checked = true;
-                pd.o.hy.checked = true;
+            if (html === true) {
+                if (pd.o.hd !== null) {
+                    pd.o.hd.checked = true;
+                }
+                if (pd.o.hm !== null) {
+                    pd.o.hm.checked = true;
+                }
+                if (pd.o.hy !== null) {
+                    pd.o.hy.checked = true;
+                }
             }
-            if (source !== true && (pd.o.bb.checked || pd.o.mm.checked || (pd.o.dd.checked && diff !== true))) {
+            if (source !== true && ((pd.o.bb !== null && pd.o.bb.checked) || (pd.o.mm !== null && pd.o.mm.checked) || (pd.o.dd !== null && pd.o.dd.checked && diff !== true))) {
                 pd.recycle();
                 return;
             }
-            if (pd.ls) {
-                if (localStorage.hasOwnProperty("bi") && localStorage.getItem("bi") !== null) {
+            if (pd.ls === true) {
+                if (pd.o.bi !== null && localStorage.hasOwnProperty("bi") && localStorage.getItem("bi") !== null) {
                     pd.o.bi.value = localStorage.getItem("bi");
                     pd.o.slength.bi = pd.o.bi.value.length;
                 }
-                if (localStorage.hasOwnProperty("mi") && localStorage.getItem("mi") !== null) {
+                if (pd.o.mi !== null && localStorage.hasOwnProperty("mi") && localStorage.getItem("mi") !== null) {
                     pd.o.mi.value = localStorage.getItem("mi");
                     pd.o.slength.mi = pd.o.mi.value.length;
                 }
-                if (pd.o.bo && localStorage.hasOwnProperty("bo") && localStorage.getItem("bo") !== null) {
+                if (pd.o.bo !== null && localStorage.hasOwnProperty("bo") && localStorage.getItem("bo") !== null) {
                     pd.o.bo.value = localStorage.getItem("bo");
                     pd.o.slength.bo = pd.o.bo.value.length;
                 }
-                if (pd.o.nx && localStorage.hasOwnProperty("nx") && localStorage.getItem("nx") !== null) {
+                if (pd.o.nx !== null && localStorage.hasOwnProperty("nx") && localStorage.getItem("nx") !== null) {
                     pd.o.nx.value = localStorage.getItem("nx");
                     pd.o.slength.nx = pd.o.nx.value.length;
                 }
-                if (pd.o.bl && localStorage.hasOwnProperty("bl") && localStorage.getItem("bl") !== null) {
+                if (pd.o.bl !== null && localStorage.hasOwnProperty("bl") && localStorage.getItem("bl") !== null) {
                     pd.o.bl.value = localStorage.getItem("bl");
                 }
-                if (pd.o.nl && localStorage.hasOwnProperty("nl") && localStorage.getItem("ni") !== null) {
+                if (pd.o.nl !== null && localStorage.hasOwnProperty("nl") && localStorage.getItem("ni") !== null) {
                     pd.o.nl.value = localStorage.getItem("nl");
                 }
             }
@@ -2889,7 +3666,15 @@ var exports = "",
                 window.onresize = pd.fixminreport;
             }
             pd.o.wb.style.display = "block";
-        } else if (pd.ls && localStorage.hasOwnProperty("webtool") && localStorage.getItem("webtool") !== null) {
+            if (pd.o.option !== null) {
+                if (typeof pd.o.option.innerHTML === "string") {
+                    pd.o.option.innerHTML = pd.o.option.innerHTML.replace(/\s+/g, " ");
+                    pd.o.option.value = pd.o.option.innerHTML;
+                } else {
+                    pd.o.option.value = pd.o.option.value.replace(/\s+/g, " ");
+                }
+            }
+        } else if (pd.ls === true && localStorage.hasOwnProperty("webtool") && localStorage.getItem("webtool") !== null) {
             a = localStorage.getItem("webtool").replace(/prettydiffper/g, "%").split("prettydiffcsep");
             c = a.length;
             for (b = 0; b < c; b += 1) {
