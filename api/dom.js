@@ -264,7 +264,7 @@ var exports = "",
             d = [],
             api = {},
             output = [],
-            domain = /^(https?:\/\/|file:\/\/\/)/,
+            domain = /^((https?:\/\/)|(file:\/\/\/))/,
             event = e || window.event,
             pstyle = {};
 
@@ -287,7 +287,7 @@ var exports = "",
         api.insize = 4;
         api.indent = "";
         api.lang = "auto";
-        api.mode = "beautify";
+        api.mode = "diff";
         api.quote = false;
         api.semicolon = false;
         api.style = "indent";
@@ -518,12 +518,8 @@ var exports = "",
                 (function () {
                     var a = (api.diff.indexOf("file:///") === 0) ? api.diff.split(":///")[1] : api.diff.split("://")[1],
                         b = a ? a.indexOf("/") : 0,
-                        c,
                         xhr = (typeof XMLHttpRequest === "function") ? new XMLHttpRequest() : new ActiveXObject("Microsoft.XMLHTTP");
-                    if (location && location.href) {
-                        c = location.href.split("://")[0];
-                    }
-                    if (!a || c !== api.diff.split("://")[0]) {
+                    if (typeof a !== "string" || a.length === 0) {
                         return;
                     }
                     if (b !== 0 && b !== -1) {
@@ -540,12 +536,8 @@ var exports = "",
             (function () {
                 var a = (api.source.indexOf("file:///") === 0) ? api.source.split(":///")[1] : api.source.split("://")[1],
                     b = a ? a.indexOf("/") : 0,
-                    c,
                     xhr = (typeof XMLHttpRequest === "function") ? new XMLHttpRequest() : new ActiveXObject("Microsoft.XMLHTTP");
-                if (location && location.href) {
-                    c = location.href.split("://")[0];
-                }
-                if (!a || c !== api.source.split("://")[0]) {
+                if (typeof a !== "string" || a.length === 0) {
                     return;
                 }
                 if (b !== 0 && b !== -1) {
@@ -570,7 +562,7 @@ var exports = "",
             output = pd.application(api);
         }
         pd.o.zindex += 1;
-        if (pd.o.bb !== null && pd.o.bb.checked) {
+        if (api.mode === "beautify") {
             if (pd.o.bx !== null) {
                 pd.o.bx.value = output[0];
             }
@@ -579,13 +571,21 @@ var exports = "",
                 pd.o.rg.style.zIndex = pd.o.zindex;
                 pd.o.rg.style.display = "block";
             }
+            if (api.jsscope === true && pd.o.rg !== null) {
+                pd.top(pd.o.rg);
+                pd.o.rg.style.display = "block";
+                if (pd.o.rg.getElementsByTagName("p")[0].style.display === "none") {
+                    pd.minimize(pd.o.rg.getElementsByTagName("button")[0], 0);
+                }
+                pd.o.rg.style.right = "auto";
+            }
             if (pd.ls === true) {
                 pd.o.stat.beau += 1;
                 if (pd.o.stbeau !== null) {
                     pd.o.stbeau.innerHTML = pd.o.stat.beau;
                 }
             }
-        } else if (pd.o.dd !== null && pd.o.re !== null && pd.o.dd.checked) {
+        } else if (api.mode === "diff" && pd.o.re !== null) {
             if (/^(<p><strong>Error:<\/strong> Please try using the option labeled ((&lt;)|<)em((&gt;)|>)Plain Text \(diff only\)((&lt;)|<)\/em((&gt;)|>)\.)/.test(output[0])) {
                 pd.o.rf.innerHTML = "<p><strong>Error:</strong> Please try using the option labeled <em>Plain Text (diff only)</em>. <span style='display:block'>The input does not appear to be markup, CSS, or JavaScript.</span></p>";
             } else if (pd.o.ps !== null && pd.o.ps.checked) {
@@ -614,7 +614,7 @@ var exports = "",
                     d[0].clientWidth, d[1].clientWidth, d[2].parentNode.clientWidth, d[2].parentNode.parentNode.clientWidth, d[2].parentNode.offsetLeft - d[2].parentNode.parentNode.offsetLeft
                 ];
             }
-        } else if (pd.o.mm !== null && pd.o.mm.checked) {
+        } else if (api.mode === "minify") {
             if (pd.o.mx !== null) {
                 pd.o.mx.value = output[0];
             }
@@ -871,7 +871,7 @@ var exports = "",
     };
 
     //minimize report windows to the default size and location
-    pd.minimize = function (x) {
+    pd.minimize = function (x, y) {
         var a = x.parentNode,
             b = a.parentNode,
             c = b.getElementsByTagName("div")[0],
@@ -882,7 +882,7 @@ var exports = "",
             h = (test === true) ? a.getElementsByTagName("button")[2] : a.getElementsByTagName("button")[1],
             i = b.offsetLeft / 10,
             j = b.offsetTop / 10,
-            step = 50,
+            step = (typeof y === "number") ? y : 50,
             growth = function (w, v, x, y) {
                 var a = c,
                     b = d,
@@ -971,6 +971,9 @@ var exports = "",
                     };
                 shrink();
             };
+        if (c.innerHTML.length > 200000) {
+            step = 1;
+        }
 
         //shrink
         if (x.innerHTML === "\u035f") {
@@ -2492,6 +2495,9 @@ var exports = "",
         if (pd.o.jh !== null) {
             pd.o.jh.checked = false;
         }
+        if (pd.o.ji !== null) {
+            pd.o.ji.value = "0";
+        }
         if (pd.o.js !== null) {
             pd.o.js.checked = false;
         }
@@ -2711,8 +2717,8 @@ var exports = "",
             dma = true,
             mma = true,
             sma = true,
-            source = true,
-            diff = true,
+            source = "",
+            diff = "",
             html = false,
             mode = "",
             stat = [],
@@ -2833,7 +2839,13 @@ var exports = "",
                 if (pd.o.bo !== null) {
                     pd.o.bo.ondragover = pd.filenull;
                     pd.o.bo.ondragleave = pd.filenull;
-                    pd.o.bo.ondrop = pd.filedrop  }
+                    pd.o.bo.ondrop = pd.filedrop;
+                }
+                if (pd.o.nx !== null) {
+                    pd.o.nx.ondragover = pd.filenull;
+                    pd.o.nx.ondragleave = pd.filenull;
+                    pd.o.nx.ondrop = pd.filedrop;
+                }
             } else {
                 m = [
                     pd.$$("diffbasefile"), pd.$$("diffnewfile"), pd.$$("beautyfile"), pd.$$("minifyfile")
@@ -3099,7 +3111,7 @@ var exports = "",
                             } else if (d[0] === "api.insize" && pd.o.bq !== null) {
                                 pd.o.bq.value = d[1];
                             } else if (d[0] === "api.insize" && pd.o.dq !== null) {
-                                    pd.o.dq.value = d[1];
+                                pd.o.dq.value = d[1];
                             } else if (d[0] === "api.inchar") {
                                 if (d[1] === " ") {
                                     if (pd.o.ds !== null) {
@@ -3216,11 +3228,11 @@ var exports = "",
                                 if (pd.o.wd !== null) {
                                     pd.o.wd.value = d[1];
                                 }
-                            } else if (d[0] === "api.jsspace" && d[1] === "no" && pd.o.jf !== null) {
+                            } else if (d[0] === "api.jsspace" && d[1] === "false" && pd.o.jf !== null) {
                                 pd.o.jf.checked = true;
-                            } else if (d[0] === "api.jsscope" && d[1] === "yes" && pd.o.jg !== null) {
+                            } else if (d[0] === "api.jsscope" && d[1] === "true" && pd.o.jg !== null) {
                                 pd.o.jg.checked = true;
-                            } else if (d[0] === "api.jslines" && d[1] === "no" && pd.o.jh !== null) {
+                            } else if (d[0] === "api.jslines" && d[1] === "false" && pd.o.jh !== null) {
                                 pd.o.jh.checked = true;
                             } else if (d[0] === "api.inlevel" && pd.o.ji !== null) {
                                 pd.o.ji.value = d[1];
@@ -3633,8 +3645,11 @@ var exports = "",
                     pd.o.hy.checked = true;
                 }
             }
-            if (source !== true && ((pd.o.bb !== null && pd.o.bb.checked) || (pd.o.mm !== null && pd.o.mm.checked) || (pd.o.dd !== null && pd.o.dd.checked && diff !== true))) {
+            if (source !== "" && ((pd.o.bb !== null && pd.o.bb.checked) || (pd.o.mm !== null && pd.o.mm.checked) || (pd.o.dd !== null && pd.o.dd.checked && diff !== ""))) {
                 pd.recycle();
+                if (pd.o.jg !== null && pd.o.jg.checked === true && pd.o.bb !== null && pd.o.bb.checked === true) {
+                    pd.maximize(pd.o.rg.getElementsByTagName("button")[1]);
+                }
                 return;
             }
             if (pd.ls === true) {
@@ -3708,7 +3723,9 @@ var exports = "",
                     date = 0,
                     conversion = function (x) {
                         var a = String(x),
-                            b = [a.charAt(0) + a.charAt(1), a.charAt(2) + a.charAt(3), a.charAt(4) + a.charAt(5)],
+                            b = [
+                                a.charAt(0) + a.charAt(1), a.charAt(2) + a.charAt(3), a.charAt(4) + a.charAt(5)
+                            ],
                             c = [
                                 "Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"
                             ];
