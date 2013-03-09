@@ -552,11 +552,16 @@ var exports = "",
 
         //this is where prettydiff is executed
         if (typeof prettydiff !== "function") {
-            output[0] = pd.application(api);
-            if (typeof summary === "string" && summary.length > 20) {
-                output[1] = summary;
+            if (pd.application === undefined) {
+                output = ["The application code is missing or is an unsupported type.", "The application code is missing or is an unsupported type."];
+                api.mode = "beautify";
             } else {
-                output[1] = "";
+                output[0] = pd.application(api);
+                if (typeof summary === "string" && summary.length > 20) {
+                    output[1] = summary;
+                } else {
+                    output[1] = "";
+                }
             }
         } else {
             output = pd.application(api);
@@ -2850,32 +2855,40 @@ var exports = "",
                 m = [
                     pd.$$("diffbasefile"), pd.$$("diffnewfile"), pd.$$("beautyfile"), pd.$$("minifyfile")
                 ];
-                m[0].disabled = true;
-                m[1].disabled = true;
-                m[2].disabled = true;
-                m[3].disabled = true;
-                m[0] = m[0].parentNode;
-                m[1] = m[1].parentNode;
-                m[2] = m[2].parentNode;
-                m[3] = m[3].parentNode;
-                m[0].style.display = "none";
-                m[1].style.display = "none";
-                m[2].style.display = "none";
-                m[3].style.display = "none";
-                m[0] = m[0].parentNode;
-                m[1] = m[1].parentNode;
-                m[2] = m[2].parentNode;
-                m[3] = m[3].parentNode;
-                m[0].getElementsByTagName("h2")[0].style.display = "block";
-                m[1].getElementsByTagName("h2")[0].style.display = "block";
-                m[2].getElementsByTagName("h2")[0].style.display = "block";
-                m[3].getElementsByTagName("h2")[0].style.display = "block";
-                m[0].getElementsByTagName("textarea")[0].style.height = "34em";
-                m[1].getElementsByTagName("textarea")[0].style.height = "34em";
-                m[2].getElementsByTagName("textarea")[0].style.height = "34em";
-                m[3].getElementsByTagName("textarea")[0].style.height = "34em";
-                m[2].getElementsByTagName("textarea")[1].parentNode.style.margin = "0em";
-                m[3].getElementsByTagName("textarea")[1].parentNode.style.margin = "0em";
+                if (m[0] !== null) {
+                    m[0].disabled = true;
+                    m[0] = m[0].parentNode;
+                    m[0].style.display = "none";
+                    m[0] = m[0].parentNode;
+                    m[0].getElementsByTagName("h2")[0].style.display = "block";
+                    m[0].getElementsByTagName("textarea")[0].style.height = "34em";
+                }
+                if (m[1] !== null) {
+                    m[1].disabled = true;
+                    m[1] = m[1].parentNode;
+                    m[1].style.display = "none";
+                    m[1] = m[1].parentNode;
+                    m[1].getElementsByTagName("h2")[0].style.display = "block";
+                    m[1].getElementsByTagName("textarea")[0].style.height = "34em";
+                }
+                if (m[2] !== null) {
+                    m[2].disabled = true;
+                    m[2] = m[2].parentNode;
+                    m[2].style.display = "none";
+                    m[2] = m[2].parentNode;
+                    m[2].getElementsByTagName("h2")[0].style.display = "block";
+                    m[2].getElementsByTagName("textarea")[0].style.height = "34em";
+                    m[2].getElementsByTagName("textarea")[1].parentNode.style.margin = "0em";
+                }
+                if (m[3] !== null) {
+                    m[3].disabled = true;
+                    m[3] = m[3].parentNode;
+                    m[3].style.display = "none";
+                    m[3] = m[3].parentNode;
+                    m[3].getElementsByTagName("h2")[0].style.display = "block";
+                    m[3].getElementsByTagName("textarea")[0].style.height = "34em";
+                    m[3].getElementsByTagName("textarea")[1].parentNode.style.margin = "0em";
+                }
                 m = [];
             }
             if (pd.ls === true && (localStorage.hasOwnProperty("optionString") || localStorage.hasOwnProperty("webtool") || localStorage.hasOwnProperty("statdata"))) {
