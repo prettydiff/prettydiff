@@ -526,7 +526,7 @@ var exports = "",
                         xhr.open("GET", "proxy.php?x=" + api.diff.replace(/(\s*)$/, "").replace(/%26/g, "&").replace(/%3F/, "?"), false);
                         xhr.send();
                         if (xhr.status === 200 || xhr.status === 0) {
-                            api.diff = xhr.responseText;
+                            api.diff = xhr.responseText.replace(/\r\n/g, "\n");
                         }
                     }
                 }());
@@ -544,7 +544,7 @@ var exports = "",
                     xhr.open("GET", "proxy.php?x=" + api.source.replace(/(\s*)$/, "").replace(/%26/g, "&").replace(/%3F/, "?"), false);
                     xhr.send();
                     if (xhr.status === 200 || xhr.status === 0) {
-                        api.source = xhr.responseText;
+                        api.source = xhr.responseText.replace(/\r\n/g, "\n");
                     }
                 }
             }());
