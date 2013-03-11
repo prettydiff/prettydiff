@@ -2673,7 +2673,7 @@ var prettydiff = function prettydiff(api) {
                                                 e.push(token[c]);
                                             }
                                             if (d === 0) {
-                                                if (types[c] === "separator" || types[c] === "operator" || types[c] === "literal") {
+                                                if (types[c] === "separator" || types[c] === "operator" || types[c] === "literal" || token[c] === "if" || token[c] === "else" || token[c] === "switch" || token[c] === "do" || token[c] === "while" || token[c] === "catch" || token[c] === "try") {
                                                     return;
                                                 }
                                                 if (token[c] === "function") {
