@@ -3108,11 +3108,15 @@ var prettydiff = function prettydiff(api) {
                                 if (a < b - 1 && token[a + 1].indexOf("/*") === 0) {
                                     c[0] = "<em>&#10;</em></li><li class='c0'>";
                                 } else if (x > 0) {
-                                    d = g;
+                                    if (x > 16) {
+                                        d = 17;
+                                    } else {
+                                        d = g;
+                                    }
+                                    if (g === x + 1 && x > 0) {
+                                        d -= 1;
+                                    }
                                     c.push(lscope[d - 1]);
-                                } else if (x > 16) {
-                                    d = 17;
-                                    c.push(lscope[16]);
                                 }
                             }
                             for (d; d < x; d += 1) {
@@ -7266,7 +7270,7 @@ var prettydiff = function prettydiff(api) {
                     }
                     node.push("<p class='author'>Diff view written by <a href='http://prettydiff.com/'>Pretty Diff</a>.</p></div>");
                     return [
-                        node.join("").replace(/\$#gt;/g, "&gt;").replace(/\$#lt;/g, "&lt;").replace(/\%#lt;/g, "$#lt;").replace(/\%#gt;/g, "$#gt;"), errorout, diffline
+                        node.join("").replace(/li class='equal'><\/li/g, "li class='equal'>&#8203;</li").replace(/\$#gt;/g, "&gt;").replace(/\$#lt;/g, "&lt;").replace(/\%#lt;/g, "$#lt;").replace(/\%#gt;/g, "$#gt;"), errorout, diffline
                     ];
                 }());
             },
@@ -8019,16 +8023,16 @@ var prettydiff = function prettydiff(api) {
         css: 130309, //diffview.css file
         csvbeauty: 121127, //csvbeauty library
         csvmin: 121127, //csvmin library
-        diffview: 130113, //diffview library
+        diffview: 130311, //diffview library
         documentation: 121203, //documentation.xhtml
         jsmin: 121223, //jsmin library (fulljsmin.js)
-        jspretty: 130309, //jspretty library
+        jspretty: 130311, //jspretty library
         markup_beauty: 130204, //markup_beauty library
         markupmin: 121127, //markupmin library
-        prettydiff: 130309, //this file
+        prettydiff: 130311, //this file
         webtool: 121227, //prettydiff.com.xhtml
         api: {
-            dom: 130309,
+            dom: 130310,
             nodeLocal: 130113,
             nodeService: 121106,
             wsh: 130113
