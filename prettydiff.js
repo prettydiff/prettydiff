@@ -2647,7 +2647,7 @@ var prettydiff = function prettydiff(api) {
                                         }
                                     }());
                                 }
-                                if (jsscope === true && obj[obj.length - 1] === false) {
+                                if (jsscope === true) {
                                     (function jspretty__algorithm_end_jsscope() {
                                         var c = 0,
                                             d = 1,
@@ -2658,6 +2658,9 @@ var prettydiff = function prettydiff(api) {
                                                 d += 1;
                                             } else if (types[c] === "start" || types[c] === "method") {
                                                 d -= 1;
+                                            }
+                                            if (d < 0) {
+                                                return;
                                             }
                                             if (d === 1) {
                                                 if (meta[c] === "v") {
@@ -2673,7 +2676,7 @@ var prettydiff = function prettydiff(api) {
                                                 e.push(token[c]);
                                             }
                                             if (d === 0) {
-                                                if (types[c] === "separator" || types[c] === "operator" || types[c] === "literal" || token[c] === "if" || token[c] === "else" || token[c] === "switch" || token[c] === "do" || token[c] === "while" || token[c] === "catch" || token[c] === "try") {
+                                                if (types[c] === "separator" || types[c] === "operator" || types[c] === "literal" || token[c] === "if" || token[c] === "else" || token[c] === "for" || token[c] === "switch" || token[c] === "do" || token[c] === "return" || token[c] === "while" || token[c] === "catch" || token[c] === "try") {
                                                     return;
                                                 }
                                                 if (token[c] === "function") {
@@ -3696,16 +3699,17 @@ var prettydiff = function prettydiff(api) {
                                 }
                                 break;
                             } else {
-                                if ((conditional && end.length === 12) || comments === "beautify" || comments === "comments") {
+                                if ((conditional === true && end.length === 12) || comments === "beautify" || comments === "comments") {
                                     c.push(x[b]);
                                 }
                                 x[b] = "";
                             }
                         }
-                        if (conditional && end.length === 12) {
-                            x[i] = c.join("") + end;
-                        } else if (comments === "comments" || comments === "beautify") {
-                            x[i] = " " + c.join("") + end;
+                        if ((conditional === true && end.length === 12) || comments === "comments" || comments === "beautify") {
+                            x[i] = c.join("");
+                            if (x[i].indexOf(end) !== x[i].length - end.length) {
+                                x[i] = x[i] + end;
+                            }
                         }
                     },
                     markupscript = function markupmin__markupscript(z) {
@@ -5241,7 +5245,11 @@ var prettydiff = function prettydiff(api) {
                                 }
                             } else {
                                 if (cinfo[i] === "comment" && mcomm !== "noindent") {
-                                    h();
+                                    if (build[i].charAt(0) === " ") {
+                                        h();
+                                    } else {
+                                        level.push("x");
+                                    }
                                 } else if (cinfo[i] === "comment" && mcomm === "noindent") {
                                     level.push(0);
                                 } else if (cinfo[i] === "content") {
@@ -5271,7 +5279,7 @@ var prettydiff = function prettydiff(api) {
                                     }
                                 }
                             }
-                            if ((cinfo[i] === "start" || cinfo[i] === "singleton") && disqualify.test(build[i]) === false && build[i].substr(1).indexOf(" ") > 1) {
+                            if ((cinfo[i] === "start" || cinfo[i] === "singleton") && token[i] !== "T_asp" && token[i] !== "T_php" && token[i] !== "T_ssi" && disqualify.test(build[i]) === false && build[i].substr(1).indexOf(" ") > 1) {
                                 if (build[i].lastIndexOf("/>") === build[i].length - 2) {
                                     build[i] = attrib(build[i], "/>");
                                 } else {
@@ -8026,10 +8034,10 @@ var prettydiff = function prettydiff(api) {
         diffview: 130311, //diffview library
         documentation: 121203, //documentation.xhtml
         jsmin: 121223, //jsmin library (fulljsmin.js)
-        jspretty: 130311, //jspretty library
-        markup_beauty: 130204, //markup_beauty library
-        markupmin: 121127, //markupmin library
-        prettydiff: 130311, //this file
+        jspretty: 130312, //jspretty library
+        markup_beauty: 130312, //markup_beauty library
+        markupmin: 130312, //markupmin library
+        prettydiff: 130312, //this file
         webtool: 121227, //prettydiff.com.xhtml
         api: {
             dom: 130310,
