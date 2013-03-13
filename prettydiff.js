@@ -3058,7 +3058,7 @@ var prettydiff = function prettydiff(api) {
                                 for (e = c - 1; e > a; e -= 1) {
                                     if (types[e] === "word") {
                                         for (f = 0; f < h; f += 1) {
-                                            if (token[e] === d[f]) {
+                                            if (token[e - 1] !== "." && token[e] === d[f]) {
                                                 token[e] = "<em class='s" + g + "'>" + token[e] + "</em>";
                                                 break;
                                             }
@@ -7272,7 +7272,7 @@ var prettydiff = function prettydiff(api) {
                         node.push("</ol></div>");
                     }
                     node.push(data[2].join(""));
-                    node.push("</ol><ol class='data'>");
+.push("</ol><ol class='data'>");
                     node.push(data[3].join(""));
                     if (inline === true) {
                         node.push("</ol>");
