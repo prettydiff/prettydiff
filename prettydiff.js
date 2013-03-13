@@ -2748,6 +2748,9 @@ var prettydiff = function prettydiff(api) {
                             } else {
                                 level.push("x");
                             }
+                            if (varline[varline.length - 1] === true) {
+                                indent -= 1;
+                            }
                             lastlist = list[list.length - 1];
                             list.pop();
                             listtest.pop();
@@ -2784,13 +2787,6 @@ var prettydiff = function prettydiff(api) {
                                 question = true;
                             }
                             if (ctoke === ":") {
-                                if (casetest[casetest.length - 1] === true && question === false) {
-                                    if (a < b - 1 && token[a + 1] !== "case" && token[a + 1] !== "default") {
-                                        indent += 1;
-                                    }
-                                    level[a - 1] = "x";
-                                    return level.push(indent);
-                                }
                                 return (function jspretty__algorithm_operator_colon() {
                                     var c = 0,
                                         d = 0;
@@ -2802,6 +2798,13 @@ var prettydiff = function prettydiff(api) {
                                             d -= 1;
                                         }
                                         if (d === 0) {
+                                            if ((token[c] === "case" || token[c] === "default") && casetest[casetest.length - 1] === true && question === false) {
+                                                if (a < b - 1 && token[a + 1] !== "case" && token[a + 1] !== "default") {
+                                                    indent += 1;
+                                                }
+                                                level[a - 1] = "x";
+                                                return level.push(indent);
+                                            }
                                             if (token[c] === "?") {
                                                 ternary = true;
                                                 level[a - 1] = "s";
@@ -8034,10 +8037,10 @@ var prettydiff = function prettydiff(api) {
         diffview: 130311, //diffview library
         documentation: 121203, //documentation.xhtml
         jsmin: 121223, //jsmin library (fulljsmin.js)
-        jspretty: 130312, //jspretty library
+        jspretty: 130313, //jspretty library
         markup_beauty: 130312, //markup_beauty library
         markupmin: 130312, //markupmin library
-        prettydiff: 130312, //this file
+        prettydiff: 130313, //this file
         webtool: 121227, //prettydiff.com.xhtml
         api: {
             dom: 130310,
