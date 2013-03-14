@@ -3714,6 +3714,17 @@ var prettydiff = function prettydiff(api) {
                                 x[i] = x[i] + end;
                             }
                         }
+                        i += 1;
+                        if (/\s/.test(x[i]) === true) {
+                            x[i] = " ";
+                        }
+                        if (i < Y - 1 && /\s/.test(x[i + 1]) === true) {
+                            i += 1;
+                            do {
+                                x[i] = "";
+                                i += 1;
+                            } while (/\s/.test(x[i]) === true);
+                        }
                     },
                     markupscript = function markupmin__markupscript(z) {
                         var c = 0,
@@ -7272,7 +7283,7 @@ var prettydiff = function prettydiff(api) {
                         node.push("</ol></div>");
                     }
                     node.push(data[2].join(""));
-.push("</ol><ol class='data'>");
+                    node.push("</ol><ol class='data'>");
                     node.push(data[3].join(""));
                     if (inline === true) {
                         node.push("</ol>");
@@ -8037,10 +8048,10 @@ var prettydiff = function prettydiff(api) {
         diffview: 130311, //diffview library
         documentation: 121203, //documentation.xhtml
         jsmin: 121223, //jsmin library (fulljsmin.js)
-        jspretty: 130313, //jspretty library
+        jspretty: 130314, //jspretty library
         markup_beauty: 130312, //markup_beauty library
         markupmin: 130312, //markupmin library
-        prettydiff: 130313, //this file
+        prettydiff: 130314, //this file
         webtool: 121227, //prettydiff.com.xhtml
         api: {
             dom: 130310,
