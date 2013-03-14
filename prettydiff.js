@@ -7296,6 +7296,9 @@ var prettydiff = function prettydiff(api) {
                     ];
                 }());
             },
+            //everything above, except "startTime" is a library.  Here
+            //is the logic that puts it all together into a combined
+            //application
             core = function core(api) {
                 var auto = "",
                     autotest = false,
