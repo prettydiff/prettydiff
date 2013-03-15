@@ -376,11 +376,11 @@ var prettydiff = function prettydiff(api) {
                         x = x.substr(1);
                         if (x.indexOf("\n") === 0 && y === "") {
                             return "\n\n";
-                        } else if (x.indexOf("\n") > -1) {
-                            return "\n\n ";
-                        } else {
-                            return "\n ";
                         }
+                        if (x.indexOf("\n") > -1) {
+                            return "\n\n ";
+                        }
+                        return "\n ";
                     },
                     isAlphanum = function jsmin__isAlphanum(c) {
                         if (typeof c === "string") {
@@ -1046,7 +1046,7 @@ var prettydiff = function prettydiff(api) {
                             }
                             if (d === true) {
                                 fcom.push("<![CDATA[");
-                                input = input.replace(/^(\s*<\!\[CDATA\[)/, "").replace(/(]]>\s*)$/, "");
+                                input = input.replace(/^(\s*<\!\[CDATA\[)/, "").replace(/(\]\]>\s*)$/, "");
                             }
                             for (a = 0; a < b; a += 1) {
                                 if (c === "") {
@@ -3047,11 +3047,11 @@ var prettydiff = function prettydiff(api) {
                             x = x.substr(1);
                             if (x.indexOf("\n") === 0 && y === "") {
                                 return "\n\n";
-                            } else if (x.indexOf("\n") > -1) {
-                                return "\n\n ";
-                            } else {
-                                return "\n ";
                             }
+                            if (x.indexOf("\n") > -1) {
+                                return "\n\n ";
+                            }
+                            return "\n ";
                         },
                         blockline = function jspretty__result_blockline(x) {
                             var f = x.split("\n"),
