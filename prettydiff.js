@@ -371,6 +371,17 @@ var prettydiff = function prettydiff(api) {
                     fcom = [],
                     alterj = false,
                     theLookahead = EOF,
+                    blockspace = function jsmin__blockspace(x) {
+                        var y = x.replace(/\n/g, "");
+                        x = x.substr(1);
+                        if (x.indexOf("\n") === 0 && y === "") {
+                            return "\n\n";
+                        } else if (x.indexOf("\n") > -1) {
+                            return "\n\n ";
+                        } else {
+                            return "\n ";
+                        }
+                    },
                     isAlphanum = function jsmin__isAlphanum(c) {
                         if (typeof c === "string") {
                             return c !== EOF && (ALNUM.indexOf(c) > -1 || c.charCodeAt(0) > 126);
@@ -1028,9 +1039,14 @@ var prettydiff = function prettydiff(api) {
                         (function jsmin__m_topComments() {
                             var a = 0,
                                 b = input.length,
-                                c = "";
-                            if (fcomment !== true || (/^\s*\/\*/.test(input) !== true && /^\s*\/\//.test(input) !== true)) {
+                                c = "",
+                                d = (/^(\s*<\!\[CDATA\[)/).test(input);
+                            if (fcomment !== true || (d === false && (/^\s*\/\*/).test(input) !== true && (/^\s*\/\//).test(input) !== true) || (d === true && (/^(\s*<\!\[CDATA\[\s*\/\*)/).test(input) !== true && (/^(\s*<\!\[CDATA\[\s*\/\/)/).test(input) !== true)) {
                                 return;
+                            }
+                            if (d === true) {
+                                fcom.push("<![CDATA[");
+                                input = input.replace(/^(\s*<\!\[CDATA\[)/, "").replace(/(]]>\s*)$/, "");
                             }
                             for (a = 0; a < b; a += 1) {
                                 if (c === "") {
@@ -1216,7 +1232,10 @@ var prettydiff = function prettydiff(api) {
                 if (error !== "") {
                     return error;
                 }
-                return fcom.join("") + ret;
+                if (fcom[0] === "<![CDATA[") {
+                    ret = ret + "]]>";
+                }
+                return fcom.join("").replace(/\n\s+/g, blockspace) + ret;
             },
             cleanCSS = function cleanCSS(args) {
                 var x = (typeof args.source !== "string" || args.source === "") ? "Error: no source supplied to cleanCSS." : args.source,
@@ -1705,7 +1724,7 @@ var prettydiff = function prettydiff(api) {
                     b = c.length;
                     for (a = 0; a < b; a += 1) {
                         if (c[a].search(/\s*\/\*/) !== 0) {
-                            c[a] = c[a].replace(/@charset\s*("|')?[\w\-]+("|')?;?\s*/gi, "").replace(/(\S|\s)0+(%|in|cm|mm|em|ex|pt|pc)?;/g, runZero).replace(/:[\w\s\!\.\-%]*\d+\.0*(?!\d)/g, endZero).replace(/:[\w\s\!\.\-%]* \.\d+/g, startZero).replace(/ \.?0((?=;)|(?= )|%|in|cm|mm|em|ex|pt|pc)/g, " 0px");
+                            c[a] = c[a].replace(/@charset\s*("|')?[\w\-]+("|')?;?\s*/gi, "").replace(/(\S|\s)0+(%|in|cm|mm|em|ex|pt|pc)?;/g, runZero).replace(/:[\w\s\!\.\-%]*\d+\.0*(?!\d)/g, endZero).replace(/:[\w\s\!\.\-%#]* \.\d+/g, startZero).replace(/ \.?0((?=;)|(?= )|%|in|cm|mm|em|ex|pt|pc)/g, " 0px");
                             c[a] = c[a].replace(/\w+(\-\w+)*: ((((\-?(\d*\.\d+)|\d+)[a-zA-Z]+)|0) )+(((\-?(\d*\.\d+)|\d+)[a-zA-Z]+)|0)/g, sameDist).replace(/background\-position: 0px;/g, "background-position: 0px 0px;").replace(/\s+\*\//g, "*/");
                             c[a] = c[a].replace(/\s*[\w\-]+\:\s*(\}|;)/g, emptyend).replace(/\{\s+\}/g, "{}").replace(/\}\s*;\s*\}/g, nestblock).replace(/:\s+#/g, ": #").replace(/(\s+;+\n)+/g, "\n");
                         }
@@ -1779,7 +1798,7 @@ var prettydiff = function prettydiff(api) {
                 return x;
             },
             jspretty = function jspretty(args) {
-                var source = (typeof args.source === "string" && args.source.length > 0) ? args.source : "Error: no source code supplied to jsbeauty!",
+                var source = (typeof args.source === "string" && args.source.length > 0) ? args.source : "Error: no source code supplied to jspretty!",
                     jsize = (args.insize > 0) ? args.insize : ((Number(args.insize) > 0) ? Number(args.insize) : 4),
                     jchar = (typeof args.inchar === "string" && args.inchar.length > 0) ? args.inchar : " ",
                     jpres = (typeof args.preserve === "boolean") ? args.preserve : true,
@@ -3023,6 +3042,17 @@ var prettydiff = function prettydiff(api) {
                         h = 0,
                         scope = jsscope,
                         data = ["<div class='beautify'><ol class='count'><li>1</li>"],
+                        blockspace = function jspretty__result_blockspace(x) {
+                            var y = x.replace(/\n/g, "");
+                            x = x.substr(1);
+                            if (x.indexOf("\n") === 0 && y === "") {
+                                return "\n\n";
+                            } else if (x.indexOf("\n") > -1) {
+                                return "\n\n ";
+                            } else {
+                                return "\n ";
+                            }
+                        },
                         blockline = function jspretty__result_blockline(x) {
                             var f = x.split("\n"),
                                 h = 0,
@@ -3172,6 +3202,8 @@ var prettydiff = function prettydiff(api) {
                             } else {
                                 c.push(token[a]);
                             }
+                        } else if (types[a] === "comment") {
+                            c.push(token[a].replace(/\n\s+/g, blockspace));
                         } else {
                             c.push(token[a]);
                         }
@@ -7387,12 +7419,12 @@ var prettydiff = function prettydiff(api) {
                         }
                         for (c; c < b; c += 1) {
                             if (d) {
-                                if (csource.charAt(c) === "*" && csource.charAt(c + 1) && csource.charAt(c + 1) === "/") {
+                                if (csource.charAt(c) === "*" && csource.charAt(c + 1) === "/") {
                                     break;
                                 }
                                 h.push(csource.charAt(c));
                             } else {
-                                if (cdiff.charAt(c) === "*" && cdiff.charAt(c + 1) && cdiff.charAt(c + 1) === "/") {
+                                if (cdiff.charAt(c) === "*" && cdiff.charAt(c + 1) === "/") {
                                     break;
                                 }
                                 h.push(cdiff.charAt(c));
@@ -8044,17 +8076,17 @@ var prettydiff = function prettydiff(api) {
     //the edition values use the format YYMMDD for dates.
     edition = {
         charDecoder: 121231, //charDecoder library
-        cleanCSS: 130204, //cleanCSS library
+        cleanCSS: 130315, //cleanCSS library
         css: 130309, //diffview.css file
         csvbeauty: 121127, //csvbeauty library
         csvmin: 121127, //csvmin library
         diffview: 130311, //diffview library
         documentation: 121203, //documentation.xhtml
-        jsmin: 121223, //jsmin library (fulljsmin.js)
-        jspretty: 130314, //jspretty library
+        jsmin: 130315, //jsmin library (fulljsmin.js)
+        jspretty: 130315, //jspretty library
         markup_beauty: 130312, //markup_beauty library
         markupmin: 130312, //markupmin library
-        prettydiff: 130314, //this file
+        prettydiff: 130315, //this file
         webtool: 121227, //prettydiff.com.xhtml
         api: {
             dom: 130310,
