@@ -19,6 +19,9 @@
         <meta content="text/css" http-equiv="content-style-type"/>
         <meta content="application/javascript" http-equiv="content-script-type"/>
         <meta content="qL8AV9yjL2-ZFGV9ey6wU3t7pTZdpD4lIetUSiNen7E" name="google-site-verification"/>
+        <meta content="#bbbbff" name="msapplication-TileColor"/>
+        <meta content="images/pdlogo.svg" name="msapplication-TileImage"/>
+        <link href="humans.txt" rel="author" type="text/plain"/>
         <link href="diffview.css" media="all" rel="stylesheet" type="text/css"/>
     </head>
     <body class="shadow" id="webtool">
@@ -53,7 +56,7 @@
                     <li><a href="api/node-local.js">Node.js</a></li>
                     <li><a href="api/prettydiff.wsf">WSH</a></li>
                 </ul>
-                <p id="announcement">If you think this site is ugly then volunteer. Pretty Diff is looking for a visual designer. <a href="mailto:austin.cheney@us.army.mil">Email me</a> to help out.</p>
+                <p id="announcement">To stay informed of critical updates and new features join the <a href="https://groups.google.com/d/forum/pretty-diff">mailing list</a>.</p>
                 <p id="update">Updated:
                 </p>
                 <span class="clear"></span>
@@ -138,6 +141,9 @@
             </div>
         </div>
         <div class="options" id="options"><h2>Main Options</h2>
+            <p><label class="label" for="colorScheme">Color Scheme</label>
+                <select id="colorScheme" onchange="pd.colorScheme(this)"><option>Default</option><option>Coffee</option><option>Dark</option><option>Canvas</option><option selected="selected">Shadow</option><option>White</option></select>
+            </p>
             <p><strong>Function</strong>
                 <span>
                     <input checked="checked" id="modediff" name="mode" onclick="pd.prettyvis(this);" title="This option tells the tool to generate a diff (code comparison) report." type="radio"/>
@@ -174,9 +180,6 @@
                 <span>
                     <input id="additional_yes" name="additional" onclick="pd.additional(this);" title="Click me to show extra options and controls." type="radio"/>
                     <label for="additional_yes">Show additional options</label></span>
-            </p>
-            <p><label class="label" for="colorScheme">Color Scheme</label>
-                <select id="colorScheme" onchange="pd.colorScheme(this)"><option>Default</option><option>Coffee</option><option>Dark</option><option>Canvas</option><option selected="selected">Shadow</option><option>White</option></select>
             </p>
             <p><label class="label" for="option_comment">Pretty Diff Comment</label><textarea cols="30" id="option_comment" onmouseout="pd.comment(event, this)" onmouseover="pd.comment(event, this)" readonly="readonly" rows="2" title="This area contains a configuration string as a code comment. This string can be applied to the top of JavaScript and CSS code to supply instructions to the Pretty Diff tool without need to set options in the user interface.">/*prettydiff.com
                 */</textarea></p>
@@ -273,6 +276,14 @@
                         <span><input id="diffcommentsy" name="diffcomments" onclick="pd.options(this);" title="This option will allow comparison of all comments and code." type="radio"/><label for="diffcommentsy">Compare
                             Code and Comments</label></span>
                     </p>
+                    <p><strong>Ignore Content (Markup / JavaScript)</strong>
+                        <span>
+                            <input checked="checked" id="diffcontenty" name="diffcontent" onclick="pd.options(this);" title="This option maintains document integrity with regard to markup content and JavaScript string contents." type="radio"/>
+                            <label for="diffcontenty">Diff Content Literally</label></span>
+                        <span>
+                            <input id="diffcontentn" name="diffcontent" onclick="pd.options(this);" title="This option removes content from markup or string contents from JavaScript so as to allow comparison of syntax only." type="radio"/>
+                            <label for="diffcontentn">Normalize Content and String Literals</label></span>
+                    </p>
                 </fieldset>
                 <fieldset id="diffbeautify"><legend>Beautification Options</legend>
                     <p id="diffquanp"><label class="label" for="diff-quan">Indentation
@@ -334,14 +345,6 @@
                             <input id="conditionald-yes" name="conditionald" onclick="pd.options(this);" title="Use this option to keep HTML contitional comments used by Internet Explorer." type="radio"/>
                             <label for="conditionald-yes">Preserve HTML conditional comments</label></span>
                     </p>
-                    <p><strong>Ignore Content (Markup / JavaScript)</strong>
-                        <span>
-                            <input checked="checked" id="diffcontenty" name="diffcontent" onclick="pd.options(this);" title="This option maintains document integrity with regard to markup content and JavaScript string contents." type="radio"/>
-                            <label for="diffcontenty">Diff Content Literally</label></span>
-                        <span>
-                            <input id="diffcontentn" name="diffcontent" onclick="pd.options(this);" title="This option removes content from markup or string contents from JavaScript so as to allow comparison of syntax only." type="radio"/>
-                            <label for="diffcontentn">Normalize Content and String Literals</label></span>
-                    </p>
                     <p><strong>Force Indentation (Markup Only)</strong>
                         <span>
                             <input checked="checked" id="dforce_indent-no" name="dforce_indent" onclick="pd.options(this);" title="This markup only option maintains document integrity with regard to indentation that would create text nodes adjacent to content that did not exist before." type="radio"/>
@@ -349,6 +352,22 @@
                         <span>
                             <input id="dforce_indent-yes" name="dforce_indent" onclick="pd.options(this);" title="This markup only option forces indentation for all content and elements without regard for integrity of document structure or content." type="radio"/><label for="dforce_indent-yes">Always
                                 force indentation</label></span>
+                    </p>
+                    <p><strong>Function Space (JavaScript Only)</strong>
+                        <span>
+                            <input checked="checked" id="jsspaced-yes" onclick="pd.options(this);" title="This JavaScript only option retains a single space between the 'function' keyword and the opening parenthesis character of anonymous functions." type="radio"/>
+                            <label for="jsspaced-yes">Retain Function Space</label></span>
+                        <span>
+                            <input id="jsspaced-no" onclick="pd.options(this);" title="This JavaScript only option removes a single space between the 'function' keyword and the opening parenthesis character of anonymous functions." type="radio"/>
+                            <label for="jsspace-no">Remove Space Following Function</label></span>
+                    </p>
+                    <p><strong>Empty Lines (JavaScript Only)</strong>
+                        <span>
+                            <input checked="checked" id="jslinesd-yes" onclick="pd.options(this);" title="This JavaScript only option retains a single empty line for each series of empty lines of code input." type="radio"/>
+                            <label for="jslinesd-yes">Remove Empty Lines</label></span>
+                        <span>
+                            <input id="jslinesd-no" onclick="pd.options(this);" title="This JavaScript only option removes all empty lines." type="radio"/>
+                            <label for="jslinesd-no">Remove Empty Lines</label></span>
                     </p>
                 </fieldset>
             </div>
@@ -358,6 +377,11 @@
                     <p><label class="label" for="beau-quan">Indentation Size</label>
                         <span>
                             <input id="beau-quan" onkeyup="pd.options(this);" title="This text field expects a value of 0 or a positive integer. The number provided dictates how many characters constitute a single indentation of formatted code." type="text" value="4"/>
+                        </span>
+                    </p>
+                    <p><label class="label" for="jsinlevel">Indentation Offset (JavaScript Only)</label>
+                        <span>
+                            <input id="jsinlevel" onkeyup="pd.options(this);" title="This text field expects a value of 0 or a positive integer. This value supplies addition indentation, or padding, as an offset." type="text" value="0"/>
                         </span>
                     </p>
                     <p><label class="label" for="beau-char">Indentation Character</label>
@@ -381,6 +405,14 @@
                 <fieldset><legend>Advanced Options</legend>
                     <p><label class="label" for="beau-wrap">Wrap Text (Markup Only)</label>
                         <span><input id="beau-wrap" onkeyup="pd.options(this);" title="Determines how long text can be before wrapping. Use a value of 0 to eliminate wrapping." type="text" value="72"/></span></p>
+                    <p><strong>Scope Analysis (JavaScript Only)</strong>
+                        <span>
+                            <input checked="checked" id="jsscope-no" name="jsscope" onclick="pd.options(this);" title="This option will causes standard text beautification for JavaScript" type="radio"/>
+                            <label for="jsscope-no">Standard Beautification</label></span>
+                        <span>
+                            <input id="jsscope-yes" name="jsscope" onclick="pd.options(this);" title="This option will display a colorful HTML output of the code that color codes variables to the scope they are declared so as to illustrate the nature of closure and inheritance." type="radio"/>
+                            <label for="jsscope-yes">Scope Analysis Output</label></span>
+                    </p>
                     <p><strong>Indent Comments</strong>
                         <span>
                             <input checked="checked" id="incomment-yes" name="incomment" onclick="pd.options(this);" title="This option will cause comments to be indented." type="radio"/>
@@ -421,6 +453,22 @@
                         <span>
                             <input id="bforce_indent-yes" name="bforce_indent" onclick="pd.options(this);" title="This markup only option forces indentation for all content and elements without regard for integrity of document structure or content." type="radio"/><label for="bforce_indent-yes">Always
                                 force indentation</label></span>
+                    </p>
+                    <p><strong>Function Space (JavaScript Only)</strong>
+                        <span>
+                            <input checked="checked" id="jsspace-yes" onclick="pd.options(this);" title="This JavaScript only option retains a single space between the 'function' keyword and the opening parenthesis character of anonymous functions." type="radio"/>
+                            <label for="jsspace-yes">Retain Function Space</label></span>
+                        <span>
+                            <input id="jsspace-no" onclick="pd.options(this);" title="This JavaScript only option removes a single space between the 'function' keyword and the opening parenthesis character of anonymous functions." type="radio"/>
+                            <label for="jsspace-no">Remove Space Following Function</label></span>
+                    </p>
+                    <p><strong>Empty Lines (JavaScript Only)</strong>
+                        <span>
+                            <input checked="checked" id="jslines-yes" onclick="pd.options(this);" title="This JavaScript only option retains a single empty line for each series of empty lines of code input." type="radio"/>
+                            <label for="jslines-yes">Remove Empty Lines</label></span>
+                        <span>
+                            <input id="jslines-no" onclick="pd.options(this);" title="This JavaScript only option removes all empty lines." type="radio"/>
+                            <label for="jslines-no">Remove Empty Lines</label></span>
                     </p>
                 </fieldset>
             </div>

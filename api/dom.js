@@ -94,6 +94,13 @@ var exports = "",
         jg: pd.$$("jsscope-yes"),
         jh: pd.$$("jslines-no"),
         ji: pd.$$("jsinlevel"),
+        jj: pd.$$("jsspace-yes"),
+        jk: pd.$$("jsspaced-no"),
+        jl: pd.$$("jsspaced-yes"),
+        jm: pd.$$("jsscope-no"),
+        jn: pd.$$("jslines-yes"),
+        jo: pd.$$("jslinesd-no"),
+        jp: pd.$$("jslinesd-yes"),
         js: pd.$$("jsindent-all"),
         jt: pd.$$("jsindent-knr"),
         la: pd.$$("language"),
@@ -580,7 +587,7 @@ var exports = "",
                 pd.top(pd.o.rg);
                 pd.o.rg.style.display = "block";
                 if (pd.o.rg.getElementsByTagName("p")[0].style.display === "none") {
-                    pd.minimize(pd.o.rg.getElementsByTagName("button")[0], 0);
+                    pd.minimize(pd.o.rg.getElementsByTagName("button")[0], 1);
                 }
                 pd.o.rg.style.right = "auto";
             }
@@ -887,7 +894,7 @@ var exports = "",
             h = (test === true) ? a.getElementsByTagName("button")[2] : a.getElementsByTagName("button")[1],
             i = b.offsetLeft / 10,
             j = b.offsetTop / 10,
-            step = (typeof y === "number") ? y : 50,
+            step = (typeof y !== "number") ? 50 : (y < 1) ? 1 : y,
             growth = function (w, v, x, y) {
                 var a = c,
                     b = d,
@@ -1920,8 +1927,8 @@ var exports = "",
             pd.optionString[18] = "api.wrap: " + pd.o.wc.value;
         } else if (x === pd.o.wd && !isNaN(pd.o.wd.value)) {
             pd.optionString[18] = "api.wrap: " + pd.o.wd.value;
-        } else if (x === pd.o.jf) {
-            if (pd.o.jf.getAttribute("type") === "radio" || (pd.o.jf.getAttribute("type") === "checkbox" && pd.o.jf.checked === true)) {
+        } else if (x === pd.o.jf || x === pd.o.jk) {
+            if (x === pd.o.jk || pd.o.jf.getAttribute("type") === "radio" || (pd.o.jf.getAttribute("type") === "checkbox" && pd.o.jf.checked === true)) {
                 pd.optionString[19] = "api.jsspace: false";
             } else {
                 pd.optionString[19] = "api.jsspace: true";
@@ -1932,14 +1939,20 @@ var exports = "",
             } else {
                 pd.optionString[20] = "api.jsscope: false";
             }
-        } else if (x === pd.o.jh) {
-            if (pd.o.jh.getAttribute("type") === "radio" || (pd.o.jh.getAttribute("type") === "checkbox" && pd.o.jh.checked === true)) {
+        } else if (x === pd.o.jh || x === pd.o.jo) {
+            if (x === pd.o.jo || pd.o.jh.getAttribute("type") === "radio" || (pd.o.jh.getAttribute("type") === "checkbox" && pd.o.jh.checked === true)) {
                 pd.optionString[21] = "api.jslines: false";
             } else {
                 pd.optionString[21] = "api.jslines: true";
             }
         } else if (x === pd.o.ji && isNaN(pd.o.ji.value) === false) {
             pd.optionString[22] = "api.inlevel: " + pd.o.ji.value;
+        } else if (x === pd.o.jj || x === pd.o.jl) {
+            pd.optionString[19] = "api.jsspace: true";
+        } else if (x === pd.o.jm) {
+            pd.optionString[20] = "api.jsscope: false";
+        } else if (x === pd.o.jn || x === pd.o.jp) {
+            pd.optionString[21] = "api.jslines: true";
         } else if (x === pd.o.re) {
             pd.o.re = pd.$$("diffreport");
             pd.o.rf = pd.$$("diffreportbody");
@@ -2503,6 +2516,21 @@ var exports = "",
         if (pd.o.ji !== null) {
             pd.o.ji.value = "0";
         }
+        if (pd.o.jj !== null) {
+            pd.o.jj.checked = true;
+        }
+        if (pd.o.jl !== null) {
+            pd.o.jl.checked = true;
+        }
+        if (pd.o.jm !== null) {
+            pd.o.jm.checked = true;
+        }
+        if (pd.o.jn !== null) {
+            pd.o.jn.checked = true;
+        }
+        if (pd.o.jp !== null) {
+            pd.o.jp.checked = true;
+        }
         if (pd.o.js !== null) {
             pd.o.js.checked = false;
         }
@@ -2723,6 +2751,7 @@ var exports = "",
             mma = true,
             sma = true,
             source = "",
+            agent = (typeof navigator === "object") ? navigator.userAgent.toLowerCase() : "",
             diff = "",
             html = false,
             mode = "",
@@ -2747,27 +2776,25 @@ var exports = "",
         if (page === "webtool") {
             //supply limited functionality for the pd.save function if
             //not firefox or opera.
-            if (typeof navigator === "object") {
-                if (navigator.userAgent.indexOf("Firefox") === -1 && navigator.userAgent.indexOf("Opera") === -1 && pd.o.re !== null) {
-                    i = pd.o.re.getElementsByTagName("a")[0];
-                    n = i.getElementsByTagName("button")[0];
-                    n.setAttribute("onclick", "pd.save(this);");
-                    i.removeChild(n);
-                    i.parentNode.insertBefore(n, i);
-                    i.parentNode.removeChild(i);
-                } else if (navigator.userAgent.indexOf("Opera") > -1 && navigator.userAgent.indexOf("Presto") > 0) {
-                    if (pd.o.re !== null) {
-                        pd.o.rf.style.cssFloat = "right";
-                    }
-                    if (pd.o.rg !== null) {
-                        pd.o.rh.style.cssFloat = "right";
-                    }
-                    if (pd.o.ri !== null) {
-                        pd.o.rj.style.cssFloat = "right";
-                    }
-                    if (pd.o.rk !== null) {
-                        pd.o.rl.style.cssFloat = "right";
-                    }
+            if (agent.indexOf("firefox") === -1 && agent.indexOf("opera") === -1 && pd.o.re !== null) {
+                i = pd.o.re.getElementsByTagName("a")[0];
+                n = i.getElementsByTagName("button")[0];
+                n.setAttribute("onclick", "pd.save(this);");
+                i.removeChild(n);
+                i.parentNode.insertBefore(n, i);
+                i.parentNode.removeChild(i);
+            } else if (agent.indexOf("opera") > -1 && agent.indexOf("presto") > 0) {
+                if (pd.o.re !== null) {
+                    pd.o.rf.style.cssFloat = "right";
+                }
+                if (pd.o.rg !== null) {
+                    pd.o.rh.style.cssFloat = "right";
+                }
+                if (pd.o.ri !== null) {
+                    pd.o.rj.style.cssFloat = "right";
+                }
+                if (pd.o.rk !== null) {
+                    pd.o.rl.style.cssFloat = "right";
                 }
             }
             document.onkeypress = backspace;
@@ -3241,12 +3268,55 @@ var exports = "",
                                 if (pd.o.wd !== null) {
                                     pd.o.wd.value = d[1];
                                 }
-                            } else if (d[0] === "api.jsspace" && d[1] === "false" && pd.o.jf !== null) {
-                                pd.o.jf.checked = true;
-                            } else if (d[0] === "api.jsscope" && d[1] === "true" && pd.o.jg !== null) {
-                                pd.o.jg.checked = true;
-                            } else if (d[0] === "api.jslines" && d[1] === "false" && pd.o.jh !== null) {
-                                pd.o.jh.checked = true;
+                            } else if (d[0] === "api.jsspace") {
+                                if (d[1] === "false") {
+                                    if (pd.o.jf !== null) {
+                                        pd.o.jf.checked = true;
+                                    }
+                                    if (pd.o.jk !== null) {
+                                        pd.o.jk.checked = true;
+                                    }
+                                } else {
+                                    if (pd.o.jf !== null) {
+                                        pd.o.jf.checked = false;
+                                    }
+                                    if (pd.o.jj !== null) {
+                                        pd.o.jj.checked = true;
+                                    }
+                                    if (pd.o.jl !== null) {
+                                        pd.o.jl.checked = true;
+                                    }
+                                }
+                            } else if (d[0] === "api.jsscope") {
+                                if (d[1] === "true" && pd.o.jg !== null) {
+                                    pd.o.jg.checked = true;
+                                } else if (d[1] === "false") {
+                                    if (pd.o.jg !== null) {
+                                        pd.o.jg.checked = false;
+                                    }
+                                    if (pd.o.jm !== null) {
+                                        pd.o.jm.checked = true;
+                                    }
+                                }
+                            } else if (d[0] === "api.jslines") {
+                                if (d[1] === "false") {
+                                    if (pd.o.jh !== null) {
+                                        pd.o.jh.checked = true;
+                                    }
+                                    if (pd.o.jo !== null) {
+                                        pd.o.jo.checked = true;
+                                    }
+                                } else {
+                                    if (pd.o.jh !== null) {
+                                        pd.o.jh.checked = false;
+                                    }
+                                    if (pd.o.jn !== null) {
+                                        pd.o.jn.checked = true;
+                                    }
+                                    if (pd.o.jp !== null) {
+                                        pd.o.jp.checked = true;
+                                    }
+                                }
                             } else if (d[0] === "api.inlevel" && pd.o.ji !== null) {
                                 pd.o.ji.value = d[1];
                             }
@@ -3669,18 +3739,30 @@ var exports = "",
                 if (pd.o.bi !== null && localStorage.hasOwnProperty("bi") && localStorage.getItem("bi") !== null) {
                     pd.o.bi.value = localStorage.getItem("bi");
                     pd.o.slength.bi = pd.o.bi.value.length;
+                    if (agent.indexOf("webkit") > 0 && pd.o.bi.getAttribute("wrap") !== null) {
+                        pd.o.bi.removeAttribute("wrap");
+                    }
                 }
                 if (pd.o.mi !== null && localStorage.hasOwnProperty("mi") && localStorage.getItem("mi") !== null) {
                     pd.o.mi.value = localStorage.getItem("mi");
                     pd.o.slength.mi = pd.o.mi.value.length;
+                    if (agent.indexOf("webkit") > 0 && pd.o.mi.getAttribute("wrap") !== null) {
+                        pd.o.mi.removeAttribute("wrap");
+                    }
                 }
                 if (pd.o.bo !== null && localStorage.hasOwnProperty("bo") && localStorage.getItem("bo") !== null) {
                     pd.o.bo.value = localStorage.getItem("bo");
                     pd.o.slength.bo = pd.o.bo.value.length;
+                    if (agent.indexOf("webkit") > 0 && pd.o.bo.getAttribute("wrap") !== null) {
+                        pd.o.bo.removeAttribute("wrap");
+                    }
                 }
                 if (pd.o.nx !== null && localStorage.hasOwnProperty("nx") && localStorage.getItem("nx") !== null) {
                     pd.o.nx.value = localStorage.getItem("nx");
                     pd.o.slength.nx = pd.o.nx.value.length;
+                    if (agent.indexOf("webkit") > 0 && pd.o.nx.getAttribute("wrap") !== null) {
+                        pd.o.nx.removeAttribute("wrap");
+                    }
                 }
                 if (pd.o.bl !== null && localStorage.hasOwnProperty("bl") && localStorage.getItem("bl") !== null) {
                     pd.o.bl.value = localStorage.getItem("bl");
@@ -3904,7 +3986,6 @@ var exports = "",
             }());
         }
     }());
-
 }());
 if (!(/^(file:\/\/)/).test(location.href)) {
     _gaq.push([
