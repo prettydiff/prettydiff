@@ -178,6 +178,12 @@ License:
  permission.
 
 
+ Acknowledgements
+ ----------------
+ 
+ * Harry Whitfield
+ * - JS Pretty QA
+ * - JS Pretty widget
 
    @licend  The above is the entire license notice for the JavaScript
    code in this page.

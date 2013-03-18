@@ -1,0 +1,41 @@
+%!PS-Adobe-2.0 EPSF-2.0
+%%BoundingBox: 0 0 240 240
+%%Title: PD Logo
+%%Creator: H. Whitfield
+%%CreationDate: (Sun Mar 17 23.00:00 GMT 2013)
+%%DocumentFonts: Helvetica
+%%DocumentNeededFonts: Helvetica
+%%DocumentSuppliedFonts:
+%%EndComments
+
+/PDlogo_Procs 16 dict def
+PDlogo_Procs begin
+/rad1  90 def
+/rad2 -90 def
+/len  250 def
+/lw    60 def
+/plus 200 def
+/min -200 def
+/angle -14 def
+/nclRED   {0.0 1.0 1.0 0.0 setcmykcolor} def
+/nclBLACK {0.0 0.0 0.0 1.0 setcmykcolor} def
+/rect   { newpath min min moveto plus min lineto plus plus lineto min plus lineto min min lineto clip closepath } def
+/circle { newpath 0 0 rad1 0 360 arc stroke } def
+/arm1   { newpath rad2 0 moveto rad2 0 len sub lineto stroke } def
+/arm2   { newpath rad1 0 moveto rad1 len lineto stroke } def
+/figure { lw setlinewidth circle arm1 arm2 } def
+/logo   { gsave angle rotate figure grestore } def
+end
+
+PDlogo_Procs begin
+120 140 translate
+gsave
+0.5 0.5 scale
+rect	% clipping rectangle
+logo
+grestore
+/Helvetica findfont 28 scalefont setfont
+(PRETTYDIFF.COM)
+dup stringwidth pop 2 div neg 0 add -140 moveto show 
+end
+showpage
