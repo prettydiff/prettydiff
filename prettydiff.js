@@ -2926,7 +2926,7 @@ var prettydiff = function prettydiff(api) {
                                 }
                                 if (indent === 0) {
                                     varline.push(true);
-                                } else {
+                                } else if (fortest === 0) {
                                     varline[varline.length - 1] = true;
                                 }
                                 if (fortest === 0) {
@@ -8087,10 +8087,10 @@ var prettydiff = function prettydiff(api) {
         diffview: 130311, //diffview library
         documentation: 130317, //documentation.xhtml
         jsmin: 130317, //jsmin library (fulljsmin.js)
-        jspretty: 130317, //jspretty library
+        jspretty: 130321, //jspretty library
         markup_beauty: 130312, //markup_beauty library
         markupmin: 130312, //markupmin library
-        prettydiff: 130317, //this file
+        prettydiff: 130321, //this file
         webtool: 130317, //prettydiff.com.xhtml
         api: {
             dom: 130317,
