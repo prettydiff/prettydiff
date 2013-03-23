@@ -242,7 +242,7 @@ var exports = "",
                 }
                 document.onmouseup = drop;
             };
-        if (typeof pd.o === "object" && typeof pd.o.re === "object") {
+        if (typeof pd.o === "object" && pd.o.re !== null) {
             offset += pd.o.re.offsetLeft;
             offset -= pd.o.rf.scrollLeft;
         } else {
@@ -276,7 +276,7 @@ var exports = "",
             pstyle = {};
 
         //do not execute from alt, home, end, or arrow keys
-        if (typeof event === "object" && event.type === "keyup" && (event.altKey || event.keyCode === 18 || event.keyCode === 35 || event.keyCode === 36 || event.keyCode === 37 || event.keyCode === 38 || event.keyCode === 39 || event.keyCode === 40)) {
+        if (typeof event === "object" && event.type === "keyup" && ((pd.o.jg !== null && pd.o.jg.checked === true && (pd.o.bb === null || pd.o.bb.checked === true)) || event.altKey || event.keyCode === 18 || event.keyCode === 35 || event.keyCode === 36 || event.keyCode === 37 || event.keyCode === 38 || event.keyCode === 39 || event.keyCode === 40)) {
             return;
         }
         if (pd.ls === true && pd.o.rk !== null) {
@@ -429,6 +429,7 @@ var exports = "",
                 pd.application = diffview;
             }
             api.jsscope = false;
+            api.diffcomments = false;
             pd.o.context = pd.$$("contextSize");
             c = (pd.o.context === null) ? 0 : pd.o.context.value;
             pd.o.inline = pd.$$("inline");
@@ -462,6 +463,9 @@ var exports = "",
             }
             if (pd.o.dh !== null && pd.o.dh.checked) {
                 api.diffcomments = true;
+            }
+            if (api.diffcomments === false) {
+                api.comments = "nocomment";
             }
             if (pd.o.du !== null && pd.o.du.checked) {
                 api.content = true;
@@ -578,7 +582,7 @@ var exports = "",
             if (pd.o.bx !== null) {
                 pd.o.bx.value = output[0];
             }
-            if (output[1] !== "" && pd.o.rg !== null && pd.o.sh.innerHTML.replace(/\s+/g, " ") === "Maximize Inputs") {
+            if (output[1] !== "" && pd.o.rg !== null && pd.o.sh !== null && pd.o.sh.innerHTML.replace(/\s+/g, " ") === "Maximize Inputs") {
                 pd.o.rh.innerHTML = output[1];
                 pd.o.rg.style.zIndex = pd.o.zindex;
                 pd.o.rg.style.display = "block";
@@ -942,6 +946,14 @@ var exports = "",
                     j = v;
                     k = 75;
                     l = 20;
+                }
+                if (step === 1) {
+                    x.style.left = i + "em";
+                    x.style.top = j + "em";
+                    a.style.width = k + "em";
+                    a.style.height = l + "em";
+                    pd.options(x);
+                    return;
                 }
                 m = (k > g) ? ((k - g) / step) : ((g - k) / step);
                 n = (l > h) ? ((l - h) / step) : ((h - l) / step);
@@ -2414,7 +2426,7 @@ var exports = "",
 
     //reset tool to default configuration
     pd.reset = function () {
-        var a = pd.o.re.getElementsByTagName("button"),
+        var a = (pd.o.re !== null) ? pd.o.re.getElementsByTagName("button") : null,
             b = 0,
             c = [],
             langtest = (pd.o.la !== null && pd.o.la.nodeName === "select") ? true : false;
@@ -2435,8 +2447,10 @@ var exports = "",
         };
         pd.optionString = [];
         pd.webtool = [];
-        a[0].innerHTML = "S";
-        a[1].innerHTML = "\u2191";
+        if (a !== null) {
+            a[0].innerHTML = "S";
+            a[1].innerHTML = "\u2191";
+        }
         if (pd.o.cs !== null) {
             if (pd.o.cs.nodeName === "select") {
                 pd.o.cs.selectedIndex = 4;
@@ -2714,6 +2728,9 @@ var exports = "",
         }
         if (pd.o.df !== null) {
             pd.o.df.checked = true;
+        }
+        if (pd.o.di !== null) {
+            pd.o.di.checked = true; 
         }
         if (pd.ls === true) {
             if (localStorage.hasOwnProperty("webtool")) {
