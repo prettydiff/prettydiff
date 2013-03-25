@@ -1,13 +1,20 @@
 ﻿/*prettydiff.com api.topcoms: true, api.insize: 4, api.inchar: " " */
 /*global pd, exports */
 /*
- @source: http://prettydiff.com/documentation.php
+
+ Special thanks to Harry Whitfield for the numerous test cases provided
+ against JSPretty.  http://g6auc.me.uk/
+ 
+ Special thanks to Maria Ramos for translating the documentation to
+ Spanish.  http://www.webhostinghub.com/support/es/misc/
+ 
+ @source: http://prettydiff.com/prettydiff.js
+ @documentation - English: http://prettydiff.com/documentation.php
+ @documentation - Spanish:
+ http://www.webhostinghub.com/support/es/misc/diff-documentacion
 
  @licstart  The following is the entire license notice for the
  JavaScript code in this page.
-
- Special thanks to Harry Whitfield for the numerous test cases provided
- against JSPretty.
  
  Created by Austin Cheney originally on 3 Mar 2009.
  This code may not be used or redistributed unless the following
@@ -1258,7 +1265,7 @@ var prettydiff = function prettydiff(api) {
                             d = x.length,
                             e = "",
                             f = (y.indexOf("data~PrettyDiffColon~") > -1 && y.indexOf("~PrettyDiffSemi~base64") > y.indexOf("data~PrettyDiffColon~")) ? true : false,
-                            basefix = function (x) {
+                            basefix = function cleanCSS__fixURI_basefix(x) {
                                 return x + "\n";
                             };
                         for (a = 1; a < d; a += 1) {
@@ -2914,7 +2921,7 @@ var prettydiff = function prettydiff(api) {
                                 level[a - 1] = indent;
                             }
                             if (ctoke === "new") {
-                                (function () {
+                                (function jspretty__algorithm_word_new() {
                                     var c = 0,
                                         d = (typeof token[a + 1] === "string") ? token[a + 1] : "",
                                         e = (d === "") ? [] : ["Date", "RegExp", "Error", "XMLHttpRequest", "FileReader", "ActiveXObject", "DataView", "ArrayBuffer", "Proxy", "ParallelArray", "Int8Array", "Uint8Array", "Int16Array", "Uint16Array", "Int32Array", "Uint32Array", "Float32Array", "Float64Array", "Canvas", "CustomAnimation", "FadeAnimation", "Flash", "FormField", "Frame", "HotKey", "Image", "MenuItem", "MoveAnimation", "Point", "Rectangle", "ResizeAnimation", "RotateAnimation", "ScrollBar", "Shadow", "SQLite", "Text", "TextArea", "Timer", "URL", "Web", "Window"],
@@ -4813,7 +4820,7 @@ var prettydiff = function prettydiff(api) {
                                     if (q) {
                                         return;
                                     }
-                                    return (function markup_beauty__end_computation_whenAllElseFails() {
+                                    return (function markup_beauty__algorithm_end_computation_whenAllElseFails() {
                                         var y = 0,
                                             q = 0;
                                         for (q = r(); q > 0; q -= 1) {
@@ -5157,7 +5164,7 @@ var prettydiff = function prettydiff(api) {
                                     g = "",
                                     h = 0,
                                     space = (tag.charAt(0) === " ") ? true : false,
-                                    joinchar = (svg === true) ? "\n" + (function markup_beauty__apply_tab() {
+                                    joinchar = (svg === true) ? "\n" + (function markup_beauty__algorithm_loop_attributeOrder_joinchar() {
                                         var a = 0,
                                             b = msize,
                                             c = mchar,
@@ -8132,17 +8139,17 @@ var prettydiff = function prettydiff(api) {
     edition = {
         charDecoder: 121231, //charDecoder library
         cleanCSS: 130315, //cleanCSS library
-        css: 130317, //diffview.css file
+        css: 130326, //diffview.css file
         csvbeauty: 121127, //csvbeauty library
         csvmin: 121127, //csvmin library
         diffview: 130311, //diffview library
-        documentation: 130317, //documentation.xhtml
+        documentation: 130326, //documentation.xhtml
         jsmin: 130317, //jsmin library (fulljsmin.js)
         jspretty: 130325, //jspretty library
         markup_beauty: 130312, //markup_beauty library
         markupmin: 130312, //markupmin library
-        prettydiff: 130325, //this file
-        webtool: 130317, //prettydiff.com.xhtml
+        prettydiff: 130326, //this file
+        webtool: 130326, //prettydiff.com.xhtml
         api: {
             dom: 130325,
             nodeLocal: 130317,

@@ -1379,18 +1379,15 @@ var exports = "",
     //resizes the pretty diff comment onmouseover
     pd.comment = function (e, x) {
         var a = Math.floor(pd.o.wb.clientWidth / 13),
-            b = 0,
-            event = e || window.event;
+            b = 0;
         if (pd.o.option === null) {
             return;
         }
         if (x.nodeName.toLowerCase() === "p") {
-            if (event.type === "mouseover") {
-                event.type = "mouseout";
-            }
+            e = false;
             x = pd.o.option;
         }
-        if (event.type === "mouseover") {
+        if (e === true) {
             b = x.value.length;
             x.style.height = Math.ceil((b / 1.6) / a) + ".5em";
             x.style.marginBottom = "-" + Math.ceil((b / 1.6) / a) + ".5em";
@@ -2789,7 +2786,6 @@ var exports = "",
                     return false;
                 }
             };
-
         if (page === "webtool") {
             //supply limited functionality for the pd.save function if
             //not firefox or opera.
@@ -4001,6 +3997,14 @@ var exports = "",
                 }
                 a.innerHTML = h.join("");
             }());
+        }
+        if (pd.o.option !== null) {
+            pd.o.option.onmouseover = function () {
+                pd.comment(true, pd.o.option);
+            };
+            pd.o.option.onmouseout = function () {
+                pd.comment(false, pd.o.option);
+            };
         }
     }());
 }());
