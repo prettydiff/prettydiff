@@ -3402,15 +3402,15 @@ var exports = "",
                                 if (wtest[0] === true && d[0].indexOf("diff") === 0) {
                                     dm = true;
                                     if (d[0] === "diffreportleft") {
-                                        pd.o.re.style.left = (d[1] / 10) + "em";
-                                        pd.position.diffreport.left = (d[1] / 10);
+                                        pd.o.re.style.left = (Number(d[1]) / 10) + "em";
+                                        pd.position.diffreport.left = (Number(d[1]) / 10);
                                     } else if (d[0] === "diffreporttop") {
-                                        pd.o.re.style.top = (d[1] / 10) + "em";
-                                        pd.position.diffreport.top = (d[1] / 10);
+                                        pd.o.re.style.top = (Number(d[1]) / 10) + "em";
+                                        pd.position.diffreport.top = (Number(d[1]) / 10);
                                     } else if (d[0] === "diffreportwidth") {
                                         pd.o.rf.style.width = d[1] + "em";
-                                        pd.position.diffreport.width = d[1];
-                                        pd.o.re.getElementsByTagName("h3")[0].style.width = (d[1] - 9.76) + "em";
+                                        pd.position.diffreport.width = Number(d[1]);
+                                        pd.o.re.getElementsByTagName("h3")[0].style.width = (Number(d[1]) - 9.76) + "em";
                                     } else if (d[0] === "diffreportheight") {
                                         pd.o.rf.style.height = d[1] + "em";
                                         pd.position.diffreport.height = d[1];
@@ -3423,18 +3423,18 @@ var exports = "",
                                 } else if (wtest[1] === true && d[0].indexOf("beau") === 0) {
                                     bm = true;
                                     if (d[0] === "beaureportleft") {
-                                        pd.o.rg.style.left = (d[1] / 10) + "em";
-                                        pd.position.beaureport.left = (d[1] / 10);
+                                        pd.o.rg.style.left = (Number(d[1]) / 10) + "em";
+                                        pd.position.beaureport.left = (Number(d[1]) / 10);
                                     } else if (d[0] === "beaureporttop") {
-                                        pd.o.rg.style.top = (d[1] / 10) + "em";
-                                        pd.position.beaureport.top = (d[1] / 10);
+                                        pd.o.rg.style.top = (Number(d[1]) / 10) + "em";
+                                        pd.position.beaureport.top = (Number(d[1]) / 10);
                                     } else if (d[0] === "beaureportwidth") {
                                         pd.o.rh.style.width = d[1] + "em";
-                                        pd.position.beaureport.width = d[1];
-                                        pd.o.rg.getElementsByTagName("h3")[0].style.width = (d[1] - 6.76) + "em";
+                                        pd.position.beaureport.width = Number(d[1]);
+                                        pd.o.rg.getElementsByTagName("h3")[0].style.width = (Number(d[1]) - 6.76) + "em";
                                     } else if (d[0] === "beaureportheight") {
                                         pd.o.rh.style.height = d[1] + "em";
-                                        pd.position.beaureport.height = d[1];
+                                        pd.position.beaureport.height = Number(d[1]);
                                     } else if (d[0] === "beaureportmin" && d[1] === "1") {
                                         bma = false;
                                     } else if (d[0] === "beaureportzindex") {
@@ -3444,18 +3444,18 @@ var exports = "",
                                 } else if (wtest[2] === true && d[0].indexOf("minn") === 0) {
                                     mm = true;
                                     if (d[0] === "minnreportleft") {
-                                        pd.o.ri.style.left = (d[1] / 10) + "em";
-                                        pd.position.minreport.left = (d[1] / 10);
+                                        pd.o.ri.style.left = (Number(d[1]) / 10) + "em";
+                                        pd.position.minreport.left = (Number(d[1]) / 10);
                                     } else if (d[0] === "minnreporttop") {
-                                        pd.o.ri.style.top = (d[1] / 10) + "em";
-                                        pd.position.minreport.top = (d[1] / 10);
+                                        pd.o.ri.style.top = (Number(d[1]) / 10) + "em";
+                                        pd.position.minreport.top = (Number(d[1]) / 10);
                                     } else if (d[0] === "minnreportwidth") {
                                         pd.o.rj.style.width = d[1] + "em";
-                                        pd.position.minreport.width = d[1];
-                                        pd.o.ri.getElementsByTagName("h3")[0].style.width = (d[1] - 6.76) + "em";
+                                        pd.position.minreport.width = Number(d[1]);
+                                        pd.o.ri.getElementsByTagName("h3")[0].style.width = (Number(d[1]) - 6.76) + "em";
                                     } else if (d[0] === "minnreportheight") {
                                         pd.o.rj.style.height = d[1] + "em";
-                                        pd.position.minreport.height = d[1];
+                                        pd.position.minreport.height = Number(d[1]);
                                     } else if (d[0] === "minnreportmin" && d[1] === "1") {
                                         mma = false;
                                     } else if (d[0] === "minnreportzindex") {
@@ -3465,18 +3465,18 @@ var exports = "",
                                 } else if (wtest[3] === true && d[0].indexOf("stat") === 0) {
                                     sm = true;
                                     if (d[0] === "statreportleft") {
-                                        pd.o.rk.style.left = (d[1] / 10) + "em";
-                                        pd.position.statreport.left = (d[1] / 10);
+                                        pd.o.rk.style.left = (Number(d[1]) / 10) + "em";
+                                        pd.position.statreport.left = (Number(d[1]) / 10);
                                     } else if (d[0] === "statreporttop") {
-                                        pd.o.rk.style.top = (d[1] / 10) + "em";
-                                        pd.position.statreport.top = (d[1] / 10);
+                                        pd.o.rk.style.top = (Number(d[1]) / 10) + "em";
+                                        pd.position.statreport.top = (Number(d[1]) / 10);
                                     } else if (d[0] === "statreportwidth") {
                                         pd.o.rl.style.width = d[1] + "em";
-                                        pd.position.statreport.width = d[1];
-                                        pd.o.rk.getElementsByTagName("h3")[0].style.width = (d[1] - 6.76) + "em";
+                                        pd.position.statreport.width = Number(d[1]);
+                                        pd.o.rk.getElementsByTagName("h3")[0].style.width = (Number(d[1]) - 6.76) + "em";
                                     } else if (d[0] === "statreportheight") {
                                         pd.o.rl.style.height = d[1] + "em";
-                                        pd.position.statreport.height = d[1];
+                                        pd.position.statreport.height = Number(d[1]);
                                     } else if (d[0] === "statreportmin" && d[1] === "1") {
                                         sma = false;
                                     } else if (d[0] === "statreportzindex") {

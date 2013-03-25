@@ -2917,7 +2917,7 @@ var prettydiff = function prettydiff(api) {
                                 (function () {
                                     var c = 0,
                                         d = (typeof token[a + 1] === "string") ? token[a + 1] : "",
-                                        e = (d === "") ? [] : ["Date", "RegExp", "Error", "DataView", "ArrayBuffer", "Proxy", "ParallelArray", "Int8Array", "Uint8Array", "Int16Array", "Uint16Array", "Int32Array", "Uint32Array", "Float32Array", "Float64Array", "Canvas", "CustomAnimation", "FadeAnimation", "Flash", "FormField", "Frame", "HotKey", "Image", "MenuItem", "MoveAnimation", "Point", "Rectangle", "ResizeAnimation", "RotateAnimation", "ScrollBar", "Shadow", "SQLite", "Text", "TextArea", "Timer", "URL", "Web", "Window", "XMLHttpRequest"],
+                                        e = (d === "") ? [] : ["Date", "RegExp", "Error", "XMLHttpRequest", "FileReader", "ActiveXObject", "DataView", "ArrayBuffer", "Proxy", "ParallelArray", "Int8Array", "Uint8Array", "Int16Array", "Uint16Array", "Int32Array", "Uint32Array", "Float32Array", "Float64Array", "Canvas", "CustomAnimation", "FadeAnimation", "Flash", "FormField", "Frame", "HotKey", "Image", "MenuItem", "MoveAnimation", "Point", "Rectangle", "ResizeAnimation", "RotateAnimation", "ScrollBar", "Shadow", "SQLite", "Text", "TextArea", "Timer", "URL", "Web", "Window"],
                                         f = e.length;
                                     for (c = 0; c < f; c += 1) {
                                         if (d === e[c]) {
@@ -8144,7 +8144,7 @@ var prettydiff = function prettydiff(api) {
         prettydiff: 130325, //this file
         webtool: 130317, //prettydiff.com.xhtml
         api: {
-            dom: 130323,
+            dom: 130325,
             nodeLocal: 130317,
             nodeService: 121106,
             wsh: 130317
