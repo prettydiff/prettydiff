@@ -1923,8 +1923,11 @@ var prettydiff = function prettydiff(api) {
                         },
                         comtest = function jspretty__tokenize_commentTester() {
                             var z = 0;
+                            if (u === "comment" || u === "comment-inline") {
+                                return "comment";
+                            }
                             for (z = a - 1; z > -1; z -= 1) {
-                                if (!(/\s/).test(c[z])) {
+                                if ((/\S/).test(c[z]) === true) {
                                     return "comment-inline";
                                 }
                                 if (c[z] === "\n" || c[z] === "\r") {
@@ -2149,11 +2152,13 @@ var prettydiff = function prettydiff(api) {
                                 types.push(u);
                             }
                         } else if (c[a] === "/" && (a === b - 1 || c[a + 1] === "/")) {
-                            t = d("//", 2, "\r");
                             if (jcomment !== "nocomment") {
                                 u = comtest();
                                 j[0] += 1;
                                 j[1] += t.length;
+                            }
+                            t = d("//", 2, "\r");
+                            if (jcomment !== "nocomment") {
                                 token.push(t);
                                 types.push(u);
                             }
@@ -3294,7 +3299,7 @@ var prettydiff = function prettydiff(api) {
                             }
                             d += 1;
                         }
-                        if (a < b - 1 && types[a + 1] === "comment" && jcomment === "indent") {
+                        if (a < b - 1 && types[a + 1] === "comment" && jcomment === "noindent") {
                             c.push(nl(jlevel));
                         } else if (level[a] === "s") {
                             c.push(" ");
@@ -8145,10 +8150,10 @@ var prettydiff = function prettydiff(api) {
         diffview: 130311, //diffview library
         documentation: 130326, //documentation.xhtml
         jsmin: 130317, //jsmin library (fulljsmin.js)
-        jspretty: 130325, //jspretty library
+        jspretty: 130328, //jspretty library
         markup_beauty: 130312, //markup_beauty library
         markupmin: 130312, //markupmin library
-        prettydiff: 130326, //this file
+        prettydiff: 130328, //this file
         webtool: 130326, //prettydiff.com.xhtml
         api: {
             dom: 130325,
