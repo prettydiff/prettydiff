@@ -2228,7 +2228,9 @@ var prettydiff = function prettydiff(api) {
                             types.push(u);
                         } else if (c[a] === "(") {
                             n[4] += 1;
-                            if (token.length > 2 && token[token.length - 2] === "function") {
+                            if (u === "comment" || u === "comment-inline") {
+                                u = "start";
+                            } else if (token.length > 2 && token[token.length - 2] === "function") {
                                 u = "method";
                             } else if (types.length === 0 || t === "return" || t === "function" || t === "for" || t === "if" || t === "while" || t === "switch" || u === "separator" || u === "operator" || (a > 0 && (/\s/).test(c[a - 1]))) {
                                 u = "start";
@@ -2246,8 +2248,15 @@ var prettydiff = function prettydiff(api) {
                             types.push(u);
                         } else if (c[a] === "{") {
                             n[4] += 1;
-                            t = "{";
-                            u = "start";
+                            if ((u === "comment" || u === "comment-inline") && token[token.length - 2] === ")") {
+                                t = token[token.length - 1];
+                                token[token.length - 1] = "{";
+                                u = types[types.length - 1];
+                                types[types.length - 1] = "start";
+                            } else {
+                                t = "{";
+                                u = "start";
+                            }
                             token.push(t);
                             types.push(u);
                         } else if (c[a] === ")") {
@@ -3032,7 +3041,9 @@ var prettydiff = function prettydiff(api) {
                             l += 1;
                         }
                         if (ctype === "comment") {
-                            level[a - 1] = indent;
+                            if (ltoke !== "=" || (/^(\/\*\*\s*@[a-z_]+\s)/).test(ctoke) === false) {
+                                level[a - 1] = indent;
+                            }
                             level.push(indent);
                         }
                         if (ctype === "comment-inline") {
@@ -6173,12 +6184,13 @@ var prettydiff = function prettydiff(api) {
                         var lfpos = str.indexOf("\n"),
                             crpos = str.indexOf("\r"),
                             linebreak = ((lfpos > -1 && crpos > -1) || crpos < 0) ? "\n" : "\r",
-                            lines = str.replace(/\&/g, "&amp;").replace(/\$#lt;/g, "%#lt;").replace(/\$#gt;/g, "%#gt;").replace(/</g, "$#lt;").replace(/>/g, "$#gt;");
+                            lines = "";
                         if (linebreak === "\n") {
                             str = str.replace(/\r/g, "");
                         } else {
                             str = str.replace(/\n/g, "");
                         }
+                        lines = str.replace(/\&/g, "&amp;").replace(/\$#lt;/g, "%#lt;").replace(/\$#gt;/g, "%#gt;").replace(/</g, "$#lt;").replace(/>/g, "$#gt;");
                         return lines.split(linebreak);
                     },
                     bta = stringAsLines(baseTextLines),
@@ -6703,6 +6715,9 @@ var prettydiff = function prettydiff(api) {
                                     bx = bx.concat(h);
                                     return;
                                 }
+                                if (n[0] === 0 && n[1] === 0) {
+                                    return;
+                                }
                                 if (e[0] !== "") {
                                     a = a.substr(n[0]);
                                 }
@@ -6813,76 +6828,6 @@ var prettydiff = function prettydiff(api) {
                                     q = false,
                                     s = [],
                                     t = [];
-                                /*x = u[u.length - 1],
-                                    y = v[v.length - 1],
-                                    z = false;
-                                if (x !== "" && x === v[v.length - 2] && u.length > 0 && x.length > 0 && x.indexOf("<em>") < x.indexOf("</em>") && x.lastIndexOf("<em>") < x.lastIndexOf("</em>")) {
-                                    for (i = k; i > -1; i -= 1) {
-                                        if (ax[i].indexOf("</em>") > -1 || bx[i].indexOf("</em>") > -1) {
-                                            ax[i] = ax[i].replace("</em>", "");
-                                            if (bx[i].indexOf("<em></em>") > -1) {
-                                               bx[i] = bx[i].replace("<em></em>", "");
-                                                z = true;
-                                            } else if (z === true) {
-                                                bx[i + 1] = bx[i + 1].replace("</em>", "<em></em>");
-                                            } else {
-                                                bx[i] = bx[i].replace("</em>", "");
-                                            }
-                                            if (q === true) {
-                                                break;
-                                            }
-                                        }
-                                        if (ax[i].indexOf("<em>") > -1 || bx[i].indexOf("<em>") > -1) {
-                                            ax[i] = ax[i].replace("<em>", "");
-                                            if (bx[i].indexOf("<em>") > -1) {
-                                                bx[i] = bx[i].replace("<em>", "");
-                                            } else if (i > 0 && bx[i - 1].indexOf("<em>") > -1) {
-                                                bx[i - 1] = bx[i - 1].replace("<em>", "");
-                                            }
-                                            q = true;
-                                        }
-                                    }
-                                    ax[k - 2] = ax[k - 2] + "</em>";
-                                    if (typeof bx[i - 1] === "string" && bx[i - 1].indexOf("<em>") === bx[i - 1].length - 4 && bx[i].indexOf("</em>") < 0) {
-                                        bx[i - 1] = bx[i - 1] + "</em>";
-                                    }
-                                    errorout -= 1;
-                                    q = false;
-                                    z = false;
-                                } else if (y !== "" && y === u[u.length - 2] && v.length > 0 && y.length > 0 && y.indexOf("<em>") < y.indexOf("</em>") && y.lastIndexOf("<em>") < y.lastIndexOf("</em>")) {
-                                    for (i = k; i > -1; i -= 1) {
-                                        if (bx[i].indexOf("</em>") > -1) {
-                                            bx[i] = bx[i].replace("</em>", "");
-                                            if (ax[i].indexOf("<em></em>") > -1) {
-                                                ax[i] = ax[i].replace("<em></em>", "");
-                                                z = true;
-                                            } else if (z === true) {
-                                                ax[i + 1] = ax[i + 1].replace("</em>", "<em></em>");
-                                            } else {
-                                                ax[i] = ax[i].replace("</em>", "");
-                                            }
-                                            if (q === true) {
-                                                break;
-                                            }
-                                        }
-                                        if (bx[i].indexOf("<em>") > -1) {
-                                            bx[i] = bx[i].replace("<em>", "");
-                                            if (ax[i].indexOf("<em>") > -1) {
-                                                ax[i] = ax[i].replace("<em>", "");
-                                            } else if (i > 0 && ax[i - 1].indexOf("<em>") > -1) {
-                                                ax[i - 1] = ax[i - 1].replace("<em>", "");
-                                            }
-                                            q = true;
-                                        }
-                                    }
-                                    bx[k - 2] = bx[k - 2] + "</em>";
-                                    if (typeof ax[i - 1] === "string" && ax[i - 1].indexOf("<em>") === ax[i - 1].length - 4 && ax[i].indexOf("</em>") < 0) {
-                                        ax[i - 1] = ax[i - 1] + "</em>";
-                                    }
-                                    errorout -= 1;
-                                    q = false;
-                                    z = false;
-                                }*/
                                 for (i = k; i < zx; i += 1) {
                                     if (ax[i] === bx[i]) {
                                         r = i;
@@ -7179,10 +7124,10 @@ var prettydiff = function prettydiff(api) {
                                 if (jump > 1) {
                                     data[0].push("<li>...</li>");
                                     if (inline === false) {
-                                        data[1].push("<li class='skip'>&#8203;</li>");
+                                        data[1].push("<li class='skip'>&#10;</li>");
                                     }
                                     data[2].push("<li>...</li>");
-                                    data[3].push("<li class='skip'>&#8203;</li>");
+                                    data[3].push("<li class='skip'>&#10;</li>");
                                     b += jump;
                                     n += jump;
                                     i += jump - 1;
@@ -7203,7 +7148,7 @@ var prettydiff = function prettydiff(api) {
                             }
                             if (inline === true) {
                                 if (ntest || change === "insert") {
-                                    data[0].push("<li class='empty'>&#8203;</li>");
+                                    data[0].push("<li class='empty'>&#10;</li>");
                                     data[2].push("<li>");
                                     data[2].push(n + 1);
                                     data[2].push("&#10;</li>");
@@ -7214,7 +7159,7 @@ var prettydiff = function prettydiff(api) {
                                     data[0].push("<li>");
                                     data[0].push(b + 1);
                                     data[0].push("</li>");
-                                    data[2].push("<li class='empty'>&#8203;</li>");
+                                    data[2].push("<li class='empty'>&#10;</li>");
                                     data[3].push("<li class='delete'>");
                                     data[3].push(bta[b]);
                                     data[3].push("&#10;</li>");
@@ -7236,7 +7181,7 @@ var prettydiff = function prettydiff(api) {
                                         data[0].push("<li>");
                                         data[0].push(b + 1);
                                         data[0].push("</li>");
-                                        data[2].push("<li class='empty'>&#8203;</li>");
+                                        data[2].push("<li class='empty'>&#10;</li>");
                                         data[3].push("<li class='delete'>");
                                         if (n < ne) {
                                             data[3].push(z[0]);
@@ -7246,7 +7191,7 @@ var prettydiff = function prettydiff(api) {
                                         data[3].push("&#10;</li>");
                                     }
                                     if (n < ne) {
-                                        data[0].push("<li class='empty'>&#8203;</li>");
+                                        data[0].push("<li class='empty'>&#10;</li>");
                                         data[2].push("<li>");
                                         data[2].push(n + 1);
                                         data[2].push("</li>");
@@ -7296,7 +7241,7 @@ var prettydiff = function prettydiff(api) {
                                     }
                                     if (b < be) {
                                         if (bta[b] === "") {
-                                            data[0].push("<li class='empty'>&#8203;");
+                                            data[0].push("<li class='empty'>&#10;");
                                         } else {
                                             data[0].push("<li>" + (b + 1));
                                         }
@@ -7314,19 +7259,19 @@ var prettydiff = function prettydiff(api) {
                                             data[1].push(z[0]);
                                             data[1].push("&#10;");
                                         } else if (bta[b] === "") {
-                                            data[1].push("&#8203;");
+                                            data[1].push("&#10;");
                                         } else {
                                             data[1].push(bta[b]);
                                             data[1].push("&#10;");
                                         }
                                         data[1].push("</li>");
                                     } else if (ctest) {
-                                        data[0].push("<li class='empty'>&#8203;</li>");
-                                        data[1].push("<li class='empty'>&#8203;</li>");
+                                        data[0].push("<li class='empty'>&#10;</li>");
+                                        data[1].push("<li class='empty'>&#10;</li>");
                                     }
                                     if (n < ne) {
                                         if (nta[n] === "") {
-                                            data[2].push("<li class='empty'>&#8203;");
+                                            data[2].push("<li class='empty'>&#10;");
                                         } else {
                                             data[2].push("<li>" + (n + 1));
                                         }
@@ -7351,8 +7296,8 @@ var prettydiff = function prettydiff(api) {
                                         }
                                         data[3].push("</li>");
                                     } else if (ctest) {
-                                        data[2].push("<li class='empty'>&#8203;</li>");
-                                        data[3].push("<li class='empty'>&#8203;</li>");
+                                        data[2].push("<li class='empty'>&#10;</li>");
+                                        data[3].push("<li class='empty'>&#10;</li>");
                                     }
                                     if (b < be) {
                                         b += 1;
@@ -7367,13 +7312,13 @@ var prettydiff = function prettydiff(api) {
                                     data[1].push("<li class='delete'>");
                                     data[1].push(bta[b]);
                                     data[1].push("&#10;</li>");
-                                    data[2].push("<li class='empty'>&#8203;</li>");
-                                    data[3].push("<li class='empty'>&#8203;</li>");
+                                    data[2].push("<li class='empty'>&#10;</li>");
+                                    data[3].push("<li class='empty'>&#10;</li>");
                                     btest = false;
                                     b += 1;
                                 } else if (ntest || (typeof bta[b] !== "string" && typeof nta[n] === "string")) {
-                                    data[0].push("<li class='empty'>&#8203;</li>");
-                                    data[1].push("<li class='empty'>&#8203;</li>");
+                                    data[0].push("<li class='empty'>&#10;</li>");
+                                    data[1].push("<li class='empty'>&#10;</li>");
                                     data[2].push("<li>");
                                     data[2].push(n + 1);
                                     data[2].push("</li>");
@@ -7405,7 +7350,7 @@ var prettydiff = function prettydiff(api) {
                     }
                     node.push("<p class='author'>Diff view written by <a href='http://prettydiff.com/'>Pretty Diff</a>.</p></div>");
                     return [
-                        node.join("").replace(/li class='equal'><\/li/g, "li class='equal'>&#8203;</li").replace(/\$#gt;/g, "&gt;").replace(/\$#lt;/g, "&lt;").replace(/\%#lt;/g, "$#lt;").replace(/\%#gt;/g, "$#gt;"), errorout, diffline
+                        node.join("").replace(/li class='equal'><\/li/g, "li class='equal'>&#10;</li").replace(/\$#gt;/g, "&gt;").replace(/\$#lt;/g, "&lt;").replace(/\%#lt;/g, "$#lt;").replace(/\%#gt;/g, "$#gt;"), errorout, diffline
                     ];
                 }());
             },
@@ -8078,6 +8023,8 @@ var prettydiff = function prettydiff(api) {
                                 jsscope: false
                             });
                         }
+                        apioutput = apioutput.replace(/\n+/g, "\n").replace(/\r+/g, "\r").replace(/(\r\n)+/g, "\r\n").replace(/(\n\r)+/g, "\n\r");
+                        apidiffout = apidiffout.replace(/\n+/g, "\n").replace(/\r+/g, "\r").replace(/(\r\n)+/g, "\r\n").replace(/(\n\r)+/g, "\n\r");
                     }
                     if (cquote === true) {
                         apioutput = apioutput.replace(/'/g, "\"");
@@ -8147,13 +8094,13 @@ var prettydiff = function prettydiff(api) {
         css: 130326, //diffview.css file
         csvbeauty: 121127, //csvbeauty library
         csvmin: 121127, //csvmin library
-        diffview: 130311, //diffview library
+        diffview: 130403, //diffview library
         documentation: 130326, //documentation.xhtml
         jsmin: 130317, //jsmin library (fulljsmin.js)
-        jspretty: 130328, //jspretty library
+        jspretty: 130403, //jspretty library
         markup_beauty: 130312, //markup_beauty library
         markupmin: 130312, //markupmin library
-        prettydiff: 130328, //this file
+        prettydiff: 130403, //this file
         webtool: 130326, //prettydiff.com.xhtml
         api: {
             dom: 130325,
