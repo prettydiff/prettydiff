@@ -26,9 +26,9 @@
     </head>
     <body class="shadow" id="webtool">
         <ul class="default" id="displayOps">
-            <li><button id="resetOptions" onclick="pd.reset();return false" title="Clicking this button will clear all stored data and reset all options to the default configuration. I recommend refreshing the page after clicking this button." type="button">Reset
+            <li><button id="resetOptions" title="Clicking this button will clear all stored data and reset all options to the default configuration. I recommend refreshing the page after clicking this button." type="button">Reset
                 Options</button></li>
-            <li><button id="hideOptions" onclick="pd.hideOptions(this);return false;" title="Clicking this button will visually hide everything except for textarea elements and one 'Execute' button." type="button">Maximize
+            <li><button id="hideOptions" title="Clicking this button will visually hide everything except for textarea elements and one 'Execute' button." type="button">Maximize
                 Inputs</button></li>
         </ul>
         <div id="top">
@@ -75,7 +75,7 @@
                     <button class="minimize" onclick="pd.minimize(this);" title="Minimize this dialogue ">&uarr;</button>
                     <button class="maximize" onclick="pd.maximize(this);" title="Maximize this dialogue to the browser window.">&uarr;</button>
                     <button class="resize" onmousedown="pd.resize(event, this);" title="Resize this dialogue.">&harr;</button></p>
-                <h3 class="heading" onmousedown="pd.grab(event, this);" title="Grab this title element to open this dialogue or move it around around the screen."><span>Diff
+                <h3 class="heading" title="Grab this title element to open this dialogue or move it around around the screen."><span>Diff
                     Report</span></h3>
                 <div class="body" id="diffreportbody" onclick="pd.top(this.parentNode);" style="display:none"></div>
             </div>
@@ -84,7 +84,7 @@
                     <button class="minimize" onclick="pd.minimize(this);" title="Minimize this dialogue ">&uarr;</button>
                     <button class="maximize" onclick="pd.maximize(this);" title="Maximize this dialogue to the browser window.">&uarr;</button>
                     <button class="resize" onmousedown="pd.resize(event, this);" title="Resize this dialogue.">&harr;</button></p>
-                <h3 class="heading" onmousedown="pd.grab(event, this);" title="Grab this title element to open this dialogue or move it around the screen."><span>Beautify
+                <h3 class="heading" title="Grab this title element to open this dialogue or move it around the screen."><span>Beautify
                     Report</span></h3>
                 <div class="body" id="beaureportbody" onclick="pd.top(this.parentNode);" style="display:none"></div>
             </div>
@@ -93,7 +93,7 @@
                     <button class="minimize" onclick="pd.minimize(this);" title="Minimize this dialogue ">&uarr;</button>
                     <button class="maximize" onclick="pd.maximize(this);" title="Maximize this dialogue to the browser window.">&uarr;</button>
                     <button class="resize" onmousedown="pd.resize(event, this);" title="Resize this dialogue.">&harr;</button></p>
-                <h3 class="heading" onmousedown="pd.grab(event, this);" title="Grab this title element to open this dialogue or move it around the screen."><span>Minify
+                <h3 class="heading" title="Grab this title element to open this dialogue or move it around the screen."><span>Minify
                     Report</span></h3>
                 <div class="body" id="minreportbody" onclick="pd.top(this.parentNode);" style="display:none"></div>
             </div>
@@ -102,7 +102,7 @@
                     <button class="minimize" onclick="pd.minimize(this);" title="Minimize this dialogue ">&uarr;</button>
                     <button class="maximize" onclick="pd.maximize(this);" title="Maximize this dialogue to the browser window.">&uarr;</button>
                     <button class="resize" onmousedown="pd.resize(event, this);" title="Resize this dialogue.">&harr;</button></p>
-                <h3 class="heading" onmousedown="pd.grab(event, this);" title="Grab this title element to open this dialogue or move it around the screen."><span>Usage
+                <h3 class="heading" title="Grab this title element to open this dialogue or move it around the screen."><span>Usage
                     Statistics</span></h3>
                 <div class="body" id="statreportbody" onclick="pd.top(this.parentNode);" style="display:none">
                     <div><h3>General statistics</h3>
@@ -147,21 +147,21 @@
         </div>
         <div class="options" id="options"><h2>Main Options</h2>
             <p><label class="label" for="colorScheme">Color Scheme</label>
-                <select id="colorScheme" onchange="pd.colorScheme(this)"><option>Default</option><option>Coffee</option><option>Dark</option><option>Canvas</option><option selected="selected">Shadow</option><option>White</option></select>
+                <select id="colorScheme"><option>Default</option><option>Coffee</option><option>Dark</option><option>Canvas</option><option selected="selected">Shadow</option><option>White</option></select>
             </p>
             <p><strong>Function</strong>
                 <span>
-                    <input checked="checked" id="modediff" name="mode" onclick="pd.prettyvis(this);" title="This option tells the tool to generate a diff (code comparison) report." type="radio"/>
+                    <input checked="checked" id="modediff" name="mode" title="This option tells the tool to generate a diff (code comparison) report." type="radio"/>
                     <label for="modediff">Compare Code</label></span>
                 <span>
-                    <input id="modebeautify" name="mode" onclick="pd.prettyvis(this);" title="This option tells the tool to return well formatted code." type="radio"/>
+                    <input id="modebeautify" name="mode" title="This option tells the tool to return well formatted code." type="radio"/>
                     <label for="modebeautify">Beautify Code</label></span>
                 <span>
-                    <input id="modeminify" name="mode" onclick="pd.prettyvis(this);" title="This option tells thetool to return white space compressed code." type="radio"/>
+                    <input id="modeminify" name="mode" title="This option tells thetool to return white space compressed code." type="radio"/>
                     <label for="modeminify">Minify Code</label></span>
             </p>
             <p><label class="label" for="language">Code type</label>
-                <select id="language" onchange="pd.codeOps(this)"><option selected="selected" value="auto">Auto
+                <select id="language"><option selected="selected" value="auto">Auto
                     Detect</option><option value="css">CSS</option><option value="csv">CSV</option><option value="html">HTML</option><option value="javascript">JavaScript</option><option value="javascript">JSON</option><option value="markup">JSTL</option><option value="markup">markup
                     (non-specific)</option><option value="text">Plain
                     Text</option><option value="css">SCSS
@@ -172,18 +172,18 @@
                 <input id="csvchar" onkeyup="pd.options(this);" title="If the language type is set to CSV this field will allow definition of the separating character. Please read the documentation for advanced usage." type="text" value=","/></p>
             <p><strong>Input display</strong>
                 <span>
-                    <input checked="checked" id="difftall" name="diffdisplay" onclick="pd.prettyvis(this);" title="This option visually orients the base text field to the left of the new text field, or for beautify and minify modes orients the input field to the left of the output field." type="radio"/>
+                    <input checked="checked" id="difftall" name="diffdisplay" title="This option visually orients the base text field to the left of the new text field, or for beautify and minify modes orients the input field to the left of the output field." type="radio"/>
                     <label for="difftall">Orient Vertically</label></span>
                 <span>
-                    <input id="diffwide" name="diffdisplay" onclick="pd.prettyvis(this);" title="This option visually orients the base text field above the new text field, or for beautify and minify modes orients the input field vertically above the output field." type="radio"/>
+                    <input id="diffwide" name="diffdisplay" title="This option visually orients the base text field above the new text field, or for beautify and minify modes orients the input field vertically above the output field." type="radio"/>
                     <label for="diffwide">Orient Horizontally</label></span>
             </p>
             <p><strong>Additional options</strong>
                 <span>
-                    <input checked="checked" id="additional_no" name="additional" onclick="pd.additional(this);" title="Click me to hide extra options and controls." type="radio"/>
+                    <input checked="checked" id="additional_no" name="additional" title="Click me to hide extra options and controls." type="radio"/>
                     <label for="additional_no">Hide additional options</label></span>
                 <span>
-                    <input id="additional_yes" name="additional" onclick="pd.additional(this);" title="Click me to show extra options and controls." type="radio"/>
+                    <input id="additional_yes" name="additional" title="Click me to show extra options and controls." type="radio"/>
                     <label for="additional_yes">Show additional options</label></span>
             </p>
             <p><label class="label" for="option_comment">Pretty Diff Comment</label><textarea cols="30" id="option_comment" readonly="readonly" rows="2" title="This area contains a configuration string as a code comment. This string can be applied to the top of JavaScript and CSS code to supply instructions to the Pretty Diff tool without need to set options in the user interface.">/*prettydiff.com
@@ -191,9 +191,9 @@
         </div>
         <div id="codeInput">
             <div class="difftall" id="diffBase"><h2>Base Text</h2>
-                <p class="labeltext"><input id="baselabel" onkeyup="pd.options(this);" type="text" value="base"/>
+                <p class="labeltext"><input id="baselabel" type="text" value="base"/>
                     <label for="baselabel">Base label (optional)</label></p>
-                <p class="file"><input id="diffbasefile" multiple="multiple" onchange="pd.file(this.files, this)" type="file"/>
+                <p class="file"><input id="diffbasefile" multiple="multiple" type="file"/>
                     <label for="diffbasefile">Base source file</label></p>
                 <p class="input"><label class="difflabel" for="baseText">Base code for
                     diff</label>
@@ -201,9 +201,9 @@
                 </p>
             </div>
             <div class="difftall" id="diffNew"><h2>New Text</h2>
-                <p class="labeltext"><input id="newlabel" onkeyup="pd.options(this);" type="text" value="new"/>
+                <p class="labeltext"><input id="newlabel" type="text" value="new"/>
                     <label for="newlabel">New label (optional)</label></p>
-                <p class="file"><input id="diffnewfile" multiple="multiple" onchange="pd.file(this.files, this)" type="file"/>
+                <p class="file"><input id="diffnewfile" multiple="multiple" type="file"/>
                     <label for="diffnewfile">New source file</label></p>
                 <p class="input"><label class="difflabel" for="newText">New code for
                     diff</label>
@@ -236,7 +236,7 @@
                 <span class="clear"></span>
             </div>
         </div>
-        <p class="button" onmouseout="pd.comment(event, this)"><button onclick="pd.recycle();" type="button" value="Execute">Execute</button></p>
+        <p id="button-primary" class="button"><button type="button" value="Execute">Execute</button></p>
         <div id="addOptions" style="display:none">
             <div class="options" id="diffops"><h2>Diff Options</h2>
                 <fieldset><legend>Diff Report Options</legend>
@@ -381,29 +381,29 @@
                 <fieldset><legend>Basic Options</legend>
                     <p><label class="label" for="beau-quan">Indentation Size</label>
                         <span>
-                            <input id="beau-quan" onkeyup="pd.options(this);" title="This text field expects a value of 0 or a positive integer. The number provided dictates how many characters constitute a single indentation of formatted code." type="text" value="4"/>
+                            <input id="beau-quan" title="This text field expects a value of 0 or a positive integer. The number provided dictates how many characters constitute a single indentation of formatted code." type="text" value="4"/>
                         </span>
                     </p>
                     <p><label class="label" for="jsinlevel">Indentation Offset (JavaScript Only)</label>
                         <span>
-                            <input id="jsinlevel" onkeyup="pd.options(this);" title="This text field expects a value of 0 or a positive integer. This value supplies addition indentation, or padding, as an offset." type="text" value="0"/>
+                            <input id="jsinlevel" title="This text field expects a value of 0 or a positive integer. This value supplies addition indentation, or padding, as an offset." type="text" value="0"/>
                         </span>
                     </p>
                     <p><label class="label" for="beau-char">Indentation Character</label>
                         <span>
-                            <input class="unchecked" id="beau-char" onclick="pd.indentchar(this);" onkeyup="pd.options(this);" title="Accessibility Note:In order for this field to be accepted by the application the radio button labeled 'Indent with Other Characters' must be checked. This text field allows entry of any text characters to constitute indentation." type="text" value="Click me for custom input"/>
+                            <input class="unchecked" id="beau-char" title="Accessibility Note:In order for this field to be accepted by the application the radio button labeled 'Indent with Other Characters' must be checked. This text field allows entry of any text characters to constitute indentation." type="text" value="Click me for custom input"/>
                         </span>
                         <span id="beau-other-span">
                             <input id="beau-other" name="beauchar" onclick="pd.indentchar(this);" title="This option is only provided for functional reasons so as to enable the 'beau-char' text field and ignore its peer radio buttons from the application." type="radio"/>
                             <label for="beau-other">Indent with Other Characters</label></span>
                         <span>
-                            <input checked="checked" id="beau-space" name="beauchar" onclick="pd.indentchar(this);" title="This option indicates a space character will be the character of indentation." type="radio"/>
+                            <input checked="checked" id="beau-space" name="beauchar" title="This option indicates a space character will be the character of indentation." type="radio"/>
                             <label for="beau-space">Indent Space</label></span>
                         <span>
-                            <input id="beau-tab" name="beauchar" onclick="pd.indentchar(this);" title="This option makes a tab character the character of indentation." type="radio"/>
+                            <input id="beau-tab" name="beauchar" title="This option makes a tab character the character of indentation." type="radio"/>
                             <label for="beau-tab">Indent Tab</label></span>
                         <span>
-                            <input id="beau-line" name="beauchar" onclick="pd.indentchar(this);" title="This option makes a new line character the character of indentation." type="radio"/>
+                            <input id="beau-line" name="beauchar" title="This option makes a new line character the character of indentation." type="radio"/>
                             <label for="beau-line">Indent New Line</label></span>
                     </p>
                 </fieldset>
@@ -415,7 +415,7 @@
                             <input checked="checked" id="jsscope-no" name="jsscope" onclick="pd.options(this);" title="This option will causes standard text beautification for JavaScript" type="radio"/>
                             <label for="jsscope-no">Standard Beautification</label></span>
                         <span>
-                            <input id="jsscope-yes" name="jsscope" onclick="pd.options(this);" title="This option will display a colorful HTML output of the code that color codes variables to the scope they are declared so as to illustrate the nature of closure and inheritance." type="radio"/>
+                            <input id="jsscope-yes" name="jsscope" title="This option will display a colorful HTML output of the code that color codes variables to the scope they are declared so as to illustrate the nature of closure and inheritance." type="radio"/>
                             <label for="jsscope-yes">Scope Analysis Output</label></span>
                     </p>
                     <p><strong>Indent Comments</strong>
@@ -423,7 +423,7 @@
                             <input checked="checked" id="incomment-yes" name="incomment" onclick="pd.options(this);" title="This option will cause comments to be indented." type="radio"/>
                             <label for="incomment-yes">Indent Comments</label></span>
                         <span>
-                            <input id="incomment-no" name="incomment" onclick="pd.options(this);" title="This option will force comments to the start of the line without the benefit of indentation." type="radio"/>
+                            <input id="incomment-no" name="incomment" title="This option will force comments to the start of the line without the benefit of indentation." type="radio"/>
                             <label for="incomment-no">No Comment Indentation</label></span>
                     </p>
                     <p><strong>Style of Indent (JavaScript Only)</strong>
@@ -431,7 +431,7 @@
                             <input checked="checked" id="jsindent-knr" name="jsindent" onclick="pd.options(this);" title="This JavaScript only option sets opening curly braces at the end of the current line of code." type="radio"/>
                             <label for="jsindent-knr">K&amp;R Style</label></span>
                         <span>
-                            <input id="jsindent-all" name="jsindent" onclick="pd.options(this);" title="This JavaScript only option moves opening curly braces onto a new line for visibility of brace contents apart from other code." type="radio"/>
+                            <input id="jsindent-all" name="jsindent" title="This JavaScript only option moves opening curly braces onto a new line for visibility of brace contents apart from other code." type="radio"/>
                             <label for="jsindent-all">Allman (ANSI) Style &mdash; Sets opening curly
                                 braces on a new line.</label></span>
                     </p>
@@ -464,7 +464,7 @@
                             <input checked="checked" id="jsspace-yes" onclick="pd.options(this);" title="This JavaScript only option retains a single space between the 'function' keyword and the opening parenthesis character of anonymous functions." type="radio"/>
                             <label for="jsspace-yes">Retain Function Space</label></span>
                         <span>
-                            <input id="jsspace-no" onclick="pd.options(this);" title="This JavaScript only option removes a single space between the 'function' keyword and the opening parenthesis character of anonymous functions." type="radio"/>
+                            <input id="jsspace-no" title="This JavaScript only option removes a single space between the 'function' keyword and the opening parenthesis character of anonymous functions." type="radio"/>
                             <label for="jsspace-no">Remove Space Following Function</label></span>
                     </p>
                     <p><strong>Empty Lines (JavaScript Only)</strong>
@@ -472,7 +472,7 @@
                             <input checked="checked" id="jslines-yes" onclick="pd.options(this);" title="This JavaScript only option retains a single empty line for each series of empty lines of code input." type="radio"/>
                             <label for="jslines-yes">Remove Empty Lines</label></span>
                         <span>
-                            <input id="jslines-no" onclick="pd.options(this);" title="This JavaScript only option removes all empty lines." type="radio"/>
+                            <input id="jslines-no" title="This JavaScript only option removes all empty lines." type="radio"/>
                             <label for="jslines-no">Remove Empty Lines</label></span>
                     </p>
                 </fieldset>

@@ -2566,6 +2566,9 @@ var prettydiff = function prettydiff(api) {
                             }
                             obj.push(false);
                             if (ctoke === "(") {
+                                if (ltoke === "-" && token[a - 2] === "(") {
+                                    level[a - 2] = "x";
+                                }
                                 if (jsscope === true) {
                                     if (ltoke === "function" || (a < 1 && token[a - 2] === "function")) {
                                         meta.push(0);
@@ -3041,7 +3044,9 @@ var prettydiff = function prettydiff(api) {
                             l += 1;
                         }
                         if (ctype === "comment") {
-                            if (ltoke !== "=" || (/^(\/\*\*\s*@[a-z_]+\s)/).test(ctoke) === false) {
+                            if (ltoke === "=" && (/^(\/\*\*\s*@[a-z_]+\s)/).test(ctoke) === true) {
+                                level[a - 1] = "s";
+                            } else {
                                 level[a - 1] = indent;
                             }
                             level.push(indent);
@@ -3097,112 +3102,100 @@ var prettydiff = function prettydiff(api) {
                     }
                 }());
                 //the result function generates the output
-                result = (function jspretty__result() {
-                    var a = 0,
-                        b = token.length,
-                        c = [],
-                        d = 0,
-                        e = 2,
-                        f = "",
-                        g = 0,
-                        h = 0,
-                        scope = jsscope,
-                        data = ["<div class='beautify'><ol class='count'><li>1</li>"],
-                        blockspace = function jspretty__result_blockspace(x) {
-                            var y = x.replace(/\n/g, "");
-                            x = x.substr(1);
-                            if (x.indexOf("\n") === 0 && y === "") {
-                                return "\n\n";
-                            }
-                            if (x.indexOf("\n") > -1) {
-                                return "\n\n ";
-                            }
-                            return "\n ";
-                        },
-                        blockline = function jspretty__result_blockline(x) {
-                            var f = x.split("\n"),
-                                h = 0,
-                                i = f.length - 1;
-                            data.push("<li>");
-                            data.push(e);
-                            data.push("</li>");
-                            e += 1;
-                            if (lines[d][0] === a && d === a && d > 0) {
+                if (jsscope === true) {
+                    result = (function jspretty__resultJSScope() {
+                        var a = 0,
+                            b = token.length,
+                            c = [],
+                            d = 0,
+                            e = 2,
+                            f = "",
+                            g = 1,
+                            h = 0,
+                            data = ["<div class='beautify'><ol class='count'><li>1</li>"],
+                            blockline = function jspretty__result_blockline(x) {
+                                var f = x.split("\n"),
+                                    h = 0,
+                                    i = f.length - 1;
                                 data.push("<li>");
                                 data.push(e);
                                 data.push("</li>");
                                 e += 1;
-                            }
-                            for (h = 0; h < i; h += 1) {
-                                data.push("<li>");
-                                data.push(e);
-                                data.push("</li>");
-                                e += 1;
-                                f[h] = f[h] + "<em>&#xA;</em></li><li class='c0'>";
-                            }
-                            return f.join("");
-                        },
-                        findvars = function jspretty__result_findvars(x) {
-                            var c = meta[x],
-                                d = meta[c],
-                                e = 0,
-                                f = 0,
-                                h = d.length,
-                                i = 1,
-                                j = true;
-                            if (h > 0) {
-                                for (e = c - 1; e > a; e -= 1) {
-                                    if (types[e] === "word") {
-                                        for (f = 0; f < h; f += 1) {
-                                            if (token[e] === d[f] && token[e - 1] !== ".") {
-                                                token[e] = "<em class='s" + g + "'>" + token[e] + "</em>";
-                                                break;
+                                if (lines[d][0] === a && d === a && d > 0) {
+                                    data.push("<li>");
+                                    data.push(e);
+                                    data.push("</li>");
+                                    e += 1;
+                                }
+                                for (h = 0; h < i; h += 1) {
+                                    data.push("<li>");
+                                    data.push(e);
+                                    data.push("</li>");
+                                    e += 1;
+                                    f[h] = f[h] + "<em>&#xA;</em></li><li class='c0'>";
+                                }
+                                return f.join("");
+                            },
+                            findvars = function jspretty__result_findvars(x) {
+                                var c = meta[x],
+                                    d = meta[c],
+                                    e = 0,
+                                    f = 0,
+                                    h = d.length,
+                                    i = 1,
+                                    j = true;
+                                if (h > 0) {
+                                    for (e = c - 1; e > a; e -= 1) {
+                                        if (types[e] === "word") {
+                                            for (f = 0; f < h; f += 1) {
+                                                if (token[e] === d[f] && token[e - 1] !== ".") {
+                                                    token[e] = "<em class='s" + g + "'>" + token[e] + "</em>";
+                                                    break;
+                                                }
+                                            }
+                                        }
+                                        if (j === true) {
+                                            if (types[e] === "end") {
+                                                i += 1;
+                                            } else if (types[e] === "start" || types[e] === "method") {
+                                                i -= 1;
+                                            }
+                                            if (i === 0 && token[e] === "{") {
+                                                token[e] = "<em class='s" + g + "'>{</em>";
+                                                j = false;
                                             }
                                         }
                                     }
-                                    if (j === true) {
+                                } else {
+                                    for (e = a + 1; e < c; e += 1) {
                                         if (types[e] === "end") {
-                                            i += 1;
-                                        } else if (types[e] === "start" || types[e] === "method") {
                                             i -= 1;
+                                        } else if (types[e] === "start" || types[e] === "method") {
+                                            i += 1;
                                         }
-                                        if (i === 0 && token[e] === "{") {
+                                        if (i === 1 && token[e] === "{") {
                                             token[e] = "<em class='s" + g + "'>{</em>";
-                                            j = false;
+                                            return;
                                         }
                                     }
                                 }
-                            } else {
-                                for (e = a + 1; e < c; e += 1) {
-                                    if (types[e] === "end") {
-                                        i -= 1;
-                                    } else if (types[e] === "start" || types[e] === "method") {
-                                        i += 1;
-                                    }
-                                    if (i === 1 && token[e] === "{") {
-                                        token[e] = "<em class='s" + g + "'>{</em>";
-                                        return;
-                                    }
+                            },
+                            indent = jlevel,
+                            tab = (function jspretty__result_tab() {
+                                var a = jchar,
+                                    b = jsize,
+                                    c = [];
+                                for (b; b > 0; b -= 1) {
+                                    c.push(a);
                                 }
-                            }
-                        },
-                        indent = jlevel,
-                        tab = (function jspretty__result_tab() {
-                            var a = jchar,
-                                b = jsize,
-                                c = [];
-                            for (b; b > 0; b -= 1) {
-                                c.push(a);
-                            }
-                            return c.join("");
-                        }()),
-                        lscope = (scope === true) ? [
-                            "<em class='l0'>" + tab + "</em>", "<em class='l0'>" + tab + "</em><em class='l1'>" + tab + "</em>", "<em class='l0'>" + tab + "</em><em class='l1'>" + tab + "</em><em class='l2'>" + tab + "</em>", "<em class='l0'>" + tab + "</em><em class='l1'>" + tab + "</em><em class='l2'>" + tab + "</em><em class='l3'>" + tab + "</em>", "<em class='l0'>" + tab + "</em><em class='l1'>" + tab + "</em><em class='l2'>" + tab + "</em><em class='l3'>" + tab + "</em><em class='l4'>" + tab + "</em>", "<em class='l0'>" + tab + "</em><em class='l1'>" + tab + "</em><em class='l2'>" + tab + "</em><em class='l3'>" + tab + "</em><em class='l4'>" + tab + "</em><em class='l5'>" + tab + "</em>", "<em class='l0'>" + tab + "</em><em class='l1'>" + tab + "</em><em class='l2'>" + tab + "</em><em class='l3'>" + tab + "</em><em class='l4'>" + tab + "</em><em class='l5'>" + tab + "</em><em class='l6'>" + tab + "</em>", "<em class='l0'>" + tab + "</em><em class='l1'>" + tab + "</em><em class='l2'>" + tab + "</em><em class='l3'>" + tab + "</em><em class='l4'>" + tab + "</em><em class='l5'>" + tab + "</em><em class='l6'>" + tab + "</em><em class='l7'>" + tab + "</em>", "<em class='l0'>" + tab + "</em><em class='l1'>" + tab + "</em><em class='l2'>" + tab + "</em><em class='l3'>" + tab + "</em><em class='l4'>" + tab + "</em><em class='l5'>" + tab + "</em><em class='l6'>" + tab + "</em><em class='l7'>" + tab + "</em><em class='l8'>" + tab + "</em>", "<em class='l0'>" + tab + "</em><em class='l1'>" + tab + "</em><em class='l2'>" + tab + "</em><em class='l3'>" + tab + "</em><em class='l4'>" + tab + "</em><em class='l5'>" + tab + "</em><em class='l6'>" + tab + "</em><em class='l7'>" + tab + "</em><em class='l8'>" + tab + "</em><em class='l9'>" + tab + "</em>", "<em class='l0'>" + tab + "</em><em class='l1'>" + tab + "</em><em class='l2'>" + tab + "</em><em class='l3'>" + tab + "</em><em class='l4'>" + tab + "</em><em class='l5'>" + tab + "</em><em class='l6'>" + tab + "</em><em class='l7'>" + tab + "</em><em class='l8'>" + tab + "</em><em class='l9'>" + tab + "</em><em class='l10'>" + tab + "</em>", "<em class='l0'>" + tab + "</em><em class='l1'>" + tab + "</em><em class='l2'>" + tab + "</em><em class='l3'>" + tab + "</em><em class='l4'>" + tab + "</em><em class='l5'>" + tab + "</em><em class='l6'>" + tab + "</em><em class='l7'>" + tab + "</em><em class='l8'>" + tab + "</em><em class='l9'>" + tab + "</em><em class='l10'>" + tab + "</em><em class='l11'>" + tab + "</em>", "<em class='l0'>" + tab + "</em><em class='l1'>" + tab + "</em><em class='l2'>" + tab + "</em><em class='l3'>" + tab + "</em><em class='l4'>" + tab + "</em><em class='l5'>" + tab + "</em><em class='l6'>" + tab + "</em><em class='l7'>" + tab + "</em><em class='l8'>" + tab + "</em><em class='l9'>" + tab + "</em><em class='l10'>" + tab + "</em><em class='l11'>" + tab + "</em><em class='l12'>" + tab + "</em>", "<em class='l0'>" + tab + "</em><em class='l1'>" + tab + "</em><em class='l2'>" + tab + "</em><em class='l3'>" + tab + "</em><em class='l4'>" + tab + "</em><em class='l5'>" + tab + "</em><em class='l6'>" + tab + "</em><em class='l7'>" + tab + "</em><em class='l8'>" + tab + "</em><em class='l9'>" + tab + "</em><em class='l10'>" + tab + "</em><em class='l11'>" + tab + "</em><em class='l12'>" + tab + "</em><em class='l13'>" + tab + "</em>", "<em class='l0'>" + tab + "</em><em class='l1'>" + tab + "</em><em class='l2'>" + tab + "</em><em class='l3'>" + tab + "</em><em class='l4'>" + tab + "</em><em class='l5'>" + tab + "</em><em class='l6'>" + tab + "</em><em class='l7'>" + tab + "</em><em class='l8'>" + tab + "</em><em class='l9'>" + tab + "</em><em class='l10'>" + tab + "</em><em class='l11'>" + tab + "</em><em class='l12'>" + tab + "</em><em class='l13'>" + tab + "</em><em class='l14'>" + tab + "</em>", "<em class='l0'>" + tab + "</em><em class='l1'>" + tab + "</em><em class='l2'>" + tab + "</em><em class='l3'>" + tab + "</em><em class='l4'>" + tab + "</em><em class='l5'>" + tab + "</em><em class='l6'>" + tab + "</em><em class='l7'>" + tab + "</em><em class='l8'>" + tab + "</em><em class='l9'>" + tab + "</em><em class='l10'>" + tab + "</em><em class='l11'>" + tab + "</em><em class='l12'>" + tab + "</em><em class='l13'>" + tab + "</em><em class='l14'>" + tab + "</em><em class='l15'>" + tab + "</em>", "<em class='l0'>" + tab + "</em><em class='l1'>" + tab + "</em><em class='l2'>" + tab + "</em><em class='l3'>" + tab + "</em><em class='l4'>" + tab + "</em><em class='l5'>" + tab + "</em><em class='l6'>" + tab + "</em><em class='l7'>" + tab + "</em><em class='l8'>" + tab + "</em><em class='l9'>" + tab + "</em><em class='l10'>" + tab + "</em><em class='l11'>" + tab + "</em><em class='l12'>" + tab + "</em><em class='l13'>" + tab + "</em><em class='l14'>" + tab + "</em><em class='l15'>" + tab + "</em><em class='l16'>" + tab + "</em>"
-                        ] : [],
-                        nl = function jspretty__result_nl(x) {
-                            var c = (scope === true) ? ["<em>&#xA;</em></li><li class='l" + g + "'>"] : ["\n"],
-                                d = 0;
-                            if (scope === true) {
+                                return c.join("");
+                            }()),
+                            lscope = [
+                                "<em class='l0'>" + tab + "</em>", "<em class='l0'>" + tab + "</em><em class='l1'>" + tab + "</em>", "<em class='l0'>" + tab + "</em><em class='l1'>" + tab + "</em><em class='l2'>" + tab + "</em>", "<em class='l0'>" + tab + "</em><em class='l1'>" + tab + "</em><em class='l2'>" + tab + "</em><em class='l3'>" + tab + "</em>", "<em class='l0'>" + tab + "</em><em class='l1'>" + tab + "</em><em class='l2'>" + tab + "</em><em class='l3'>" + tab + "</em><em class='l4'>" + tab + "</em>", "<em class='l0'>" + tab + "</em><em class='l1'>" + tab + "</em><em class='l2'>" + tab + "</em><em class='l3'>" + tab + "</em><em class='l4'>" + tab + "</em><em class='l5'>" + tab + "</em>", "<em class='l0'>" + tab + "</em><em class='l1'>" + tab + "</em><em class='l2'>" + tab + "</em><em class='l3'>" + tab + "</em><em class='l4'>" + tab + "</em><em class='l5'>" + tab + "</em><em class='l6'>" + tab + "</em>", "<em class='l0'>" + tab + "</em><em class='l1'>" + tab + "</em><em class='l2'>" + tab + "</em><em class='l3'>" + tab + "</em><em class='l4'>" + tab + "</em><em class='l5'>" + tab + "</em><em class='l6'>" + tab + "</em><em class='l7'>" + tab + "</em>", "<em class='l0'>" + tab + "</em><em class='l1'>" + tab + "</em><em class='l2'>" + tab + "</em><em class='l3'>" + tab + "</em><em class='l4'>" + tab + "</em><em class='l5'>" + tab + "</em><em class='l6'>" + tab + "</em><em class='l7'>" + tab + "</em><em class='l8'>" + tab + "</em>", "<em class='l0'>" + tab + "</em><em class='l1'>" + tab + "</em><em class='l2'>" + tab + "</em><em class='l3'>" + tab + "</em><em class='l4'>" + tab + "</em><em class='l5'>" + tab + "</em><em class='l6'>" + tab + "</em><em class='l7'>" + tab + "</em><em class='l8'>" + tab + "</em><em class='l9'>" + tab + "</em>", "<em class='l0'>" + tab + "</em><em class='l1'>" + tab + "</em><em class='l2'>" + tab + "</em><em class='l3'>" + tab + "</em><em class='l4'>" + tab + "</em><em class='l5'>" + tab + "</em><em class='l6'>" + tab + "</em><em class='l7'>" + tab + "</em><em class='l8'>" + tab + "</em><em class='l9'>" + tab + "</em><em class='l10'>" + tab + "</em>", "<em class='l0'>" + tab + "</em><em class='l1'>" + tab + "</em><em class='l2'>" + tab + "</em><em class='l3'>" + tab + "</em><em class='l4'>" + tab + "</em><em class='l5'>" + tab + "</em><em class='l6'>" + tab + "</em><em class='l7'>" + tab + "</em><em class='l8'>" + tab + "</em><em class='l9'>" + tab + "</em><em class='l10'>" + tab + "</em><em class='l11'>" + tab + "</em>", "<em class='l0'>" + tab + "</em><em class='l1'>" + tab + "</em><em class='l2'>" + tab + "</em><em class='l3'>" + tab + "</em><em class='l4'>" + tab + "</em><em class='l5'>" + tab + "</em><em class='l6'>" + tab + "</em><em class='l7'>" + tab + "</em><em class='l8'>" + tab + "</em><em class='l9'>" + tab + "</em><em class='l10'>" + tab + "</em><em class='l11'>" + tab + "</em><em class='l12'>" + tab + "</em>", "<em class='l0'>" + tab + "</em><em class='l1'>" + tab + "</em><em class='l2'>" + tab + "</em><em class='l3'>" + tab + "</em><em class='l4'>" + tab + "</em><em class='l5'>" + tab + "</em><em class='l6'>" + tab + "</em><em class='l7'>" + tab + "</em><em class='l8'>" + tab + "</em><em class='l9'>" + tab + "</em><em class='l10'>" + tab + "</em><em class='l11'>" + tab + "</em><em class='l12'>" + tab + "</em><em class='l13'>" + tab + "</em>", "<em class='l0'>" + tab + "</em><em class='l1'>" + tab + "</em><em class='l2'>" + tab + "</em><em class='l3'>" + tab + "</em><em class='l4'>" + tab + "</em><em class='l5'>" + tab + "</em><em class='l6'>" + tab + "</em><em class='l7'>" + tab + "</em><em class='l8'>" + tab + "</em><em class='l9'>" + tab + "</em><em class='l10'>" + tab + "</em><em class='l11'>" + tab + "</em><em class='l12'>" + tab + "</em><em class='l13'>" + tab + "</em><em class='l14'>" + tab + "</em>", "<em class='l0'>" + tab + "</em><em class='l1'>" + tab + "</em><em class='l2'>" + tab + "</em><em class='l3'>" + tab + "</em><em class='l4'>" + tab + "</em><em class='l5'>" + tab + "</em><em class='l6'>" + tab + "</em><em class='l7'>" + tab + "</em><em class='l8'>" + tab + "</em><em class='l9'>" + tab + "</em><em class='l10'>" + tab + "</em><em class='l11'>" + tab + "</em><em class='l12'>" + tab + "</em><em class='l13'>" + tab + "</em><em class='l14'>" + tab + "</em><em class='l15'>" + tab + "</em>", "<em class='l0'>" + tab + "</em><em class='l1'>" + tab + "</em><em class='l2'>" + tab + "</em><em class='l3'>" + tab + "</em><em class='l4'>" + tab + "</em><em class='l5'>" + tab + "</em><em class='l6'>" + tab + "</em><em class='l7'>" + tab + "</em><em class='l8'>" + tab + "</em><em class='l9'>" + tab + "</em><em class='l10'>" + tab + "</em><em class='l11'>" + tab + "</em><em class='l12'>" + tab + "</em><em class='l13'>" + tab + "</em><em class='l14'>" + tab + "</em><em class='l15'>" + tab + "</em><em class='l16'>" + tab + "</em>"
+                            ],
+                            nl = function jspretty__result_nl(x) {
+                                var c = ["<em>&#xA;</em></li><li class='l" + g + "'>"],
+                                    d = 0;
                                 data.push("<li>");
                                 data.push(e);
                                 data.push("</li>");
@@ -3220,25 +3213,20 @@ var prettydiff = function prettydiff(api) {
                                     }
                                     c.push(lscope[d - 1]);
                                 }
-                            }
-                            for (d; d < x; d += 1) {
-                                c.push(tab);
-                            }
-                            f = c.join("");
-                            return f;
-                        };
-                    if (scope === true) {
+                                for (d; d < x; d += 1) {
+                                    c.push(tab);
+                                }
+                                f = c.join("");
+                                return f;
+                            };
                         if (types[a] === "comment" && token[a].indexOf("/*") === 0) {
                             c.push("<ol class='data'><li class='c0'>");
                         } else {
                             c.push("<ol class='data'><li>");
                         }
-                    }
-                    for (a = 0; a < indent; a += 1) {
-                        c.push(tab);
-                    }
-                    if (scope === true) {
-                        g = 1;
+                        for (a = 0; a < indent; a += 1) {
+                            c.push(tab);
+                        }
                         for (a = b - 1; a > -1; a -= 1) {
                             if (typeof meta[a] === "number") {
                                 g -= 1;
@@ -3249,77 +3237,64 @@ var prettydiff = function prettydiff(api) {
                             }
                         }
                         g = 0;
-                    }
-                    for (a = 0; a < b; a += 1) {
-                        if (scope === true && types[a] === "comment" && token[a].indexOf("/*") === 0) {
-                            c.push(blockline(token[a]));
-                        } else if (scope === true) {
-                            if (typeof meta[a] === "number") {
-                                g += 1;
-                                c.push(token[a]);
-                            } else if (typeof meta[a] !== "string" && typeof meta[a] !== "number") {
-                                c.push(token[a]);
-                                g -= 1;
-                                h = c.length - 1;
-                                do {
-                                    h -= 1;
-                                } while (c[h].indexOf("</li><li") < 0);
-                                c[h] = c[h].replace(/class\='l\d+'/, "class='l" + g + "'");
+                        for (a = 0; a < b; a += 1) {
+                            if (types[a] === "comment" && token[a].indexOf("/*") === 0) {
+                                c.push(blockline(token[a]));
                             } else {
-                                c.push(token[a]);
-                            }
-                        } else if (types[a] === "comment") {
-                            c.push(token[a].replace(/\n\s+/g, blockspace));
-                        } else {
-                            c.push(token[a]);
-                        }
-                        if (jpres === true && a === lines[d][0] && level[a] !== "x" && level[a] !== "s") {
-                            if (token[a] === "+" || token[a] === "-" || token[a] === "*" || token[a] === "/") {
-                                if (a < b - 1 && types[a + 1] !== "comment" && types[a + 1] !== "comment-inline") {
-                                    c.push(nl(indent));
-                                    c.push(tab);
-                                    level[a] = "x";
+                                if (typeof meta[a] === "number") {
+                                    g += 1;
+                                    c.push(token[a]);
+                                } else if (typeof meta[a] !== "string" && typeof meta[a] !== "number") {
+                                    c.push(token[a]);
+                                    g -= 1;
+                                    h = c.length - 1;
+                                    do {
+                                        h -= 1;
+                                    } while (c[h].indexOf("</li><li") < 0);
+                                    c[h] = c[h].replace(/class\='l\d+'/, "class='l" + g + "'");
                                 } else {
-                                    indent = level[a];
-                                    if (lines[d][1] === true) {
-                                        c.push("\n");
-                                    }
-                                    c.push(nl(indent));
-                                    c.push(tab);
-                                    c.push(token[a + 1]);
-                                    c.push(nl(indent));
-                                    c.push(tab);
-                                    level[a + 1] = "x";
-                                    a += 1;
+                                    c.push(token[a]);
                                 }
-                            } else if (lines[d][1] === true && token[a].charAt(0) !== "=" && token[a].charAt(0) !== "!" && (types[a] !== "start" || (a < b - 1 && types[a + 1] !== "end"))) {
-                                if (a < b - 1 && (types[a + 1] === "comment" || types[a + 1] === "comment-inline" || (token[a] !== "." && token[a] !== "," && types[a + 1] !== "separator"))) {
-                                    if (scope === true) {
+                            }
+                            if (jpres === true && a === lines[d][0] && level[a] !== "x" && level[a] !== "s") {
+                                if (token[a] === "+" || token[a] === "-" || token[a] === "*" || token[a] === "/") {
+                                    if (a < b - 1 && types[a + 1] !== "comment" && types[a + 1] !== "comment-inline") {
+                                        c.push(nl(indent));
+                                        c.push(tab);
+                                        level[a] = "x";
+                                    } else {
+                                        indent = level[a];
+                                        if (lines[d][1] === true) {
+                                            c.push("\n");
+                                        }
+                                        c.push(nl(indent));
+                                        c.push(tab);
+                                        c.push(token[a + 1]);
+                                        c.push(nl(indent));
+                                        c.push(tab);
+                                        level[a + 1] = "x";
+                                        a += 1;
+                                    }
+                                } else if (lines[d][1] === true && token[a].charAt(0) !== "=" && token[a].charAt(0) !== "!" && (types[a] !== "start" || (a < b - 1 && types[a + 1] !== "end"))) {
+                                    if (a < b - 1 && (types[a + 1] === "comment" || types[a + 1] === "comment-inline" || (token[a] !== "." && token[a] !== "," && types[a + 1] !== "separator"))) {
                                         data.push("<li>");
                                         data.push(e);
                                         data.push("</li>");
                                         e += 1;
                                         c.push("<em>&#xA;</em></li><li>");
-                                    } else {
-                                        c.push("\n");
-                                    }
-                                    if (level[a] === "x" && scope === false) {
-                                        c.push("\n");
                                     }
                                 }
+                                d += 1;
                             }
-                            d += 1;
+                            if (a < b - 1 && types[a + 1] === "comment" && jcomment === "noindent") {
+                                c.push(nl(jlevel));
+                            } else if (level[a] === "s") {
+                                c.push(" ");
+                            } else if (level[a] !== "x") {
+                                indent = level[a];
+                                c.push(nl(indent));
+                            }
                         }
-                        if (a < b - 1 && types[a + 1] === "comment" && jcomment === "noindent") {
-                            c.push(nl(jlevel));
-                        } else if (level[a] === "s") {
-                            c.push(" ");
-                        } else if (level[a] !== "x") {
-                            indent = level[a];
-                            c.push(nl(indent));
-                        }
-                    }
-                    if (scope === true) {
                         f = c[c.length - 1];
                         if (f.indexOf("<li") > 0) {
                             c[c.length - 1] = "<em>&#xA;</em></li>";
@@ -3354,9 +3329,94 @@ var prettydiff = function prettydiff(api) {
                         data = [];
                         c = [];
                         return "";
-                    }
-                    return c.join("");
-                }()).replace(/(\s+)$/, "");
+                    }()).replace(/(\s+)$/, "");
+                } else {
+                    result = (function jspretty__resultRegular() {
+                        var a = 0,
+                            b = token.length,
+                            c = [],
+                            d = 0,
+                            f = "",
+                            blockspace = function jspretty__result_blockspace(x) {
+                                var y = x.replace(/\n/g, "");
+                                x = x.substr(1);
+                                if (x.indexOf("\n") === 0 && y === "") {
+                                    return "\n\n";
+                                }
+                                if (x.indexOf("\n") > -1) {
+                                    return "\n\n ";
+                                }
+                                return "\n ";
+                            },
+                            indent = jlevel,
+                            tab = (function jspretty__result_tab() {
+                                var a = jchar,
+                                    b = jsize,
+                                    c = [];
+                                for (b; b > 0; b -= 1) {
+                                    c.push(a);
+                                }
+                                return c.join("");
+                            }()),
+                            nl = function jspretty__result_nl(x) {
+                                var c = ["\n"],
+                                    d = 0;
+                                for (d; d < x; d += 1) {
+                                    c.push(tab);
+                                }
+                                f = c.join("");
+                                return f;
+                            };
+                        for (a = 0; a < indent; a += 1) {
+                            c.push(tab);
+                        }
+                        for (a = 0; a < b; a += 1) {
+                            if (types[a] === "comment") {
+                                c.push(token[a].replace(/\n\s+/g, blockspace));
+                            } else {
+                                c.push(token[a]);
+                            }
+                            if (jpres === true && a === lines[d][0] && level[a] !== "x" && level[a] !== "s") {
+                                if (token[a] === "+" || token[a] === "-" || token[a] === "*" || token[a] === "/") {
+                                    if (a < b - 1 && types[a + 1] !== "comment" && types[a + 1] !== "comment-inline") {
+                                        c.push(nl(indent));
+                                        c.push(tab);
+                                        level[a] = "x";
+                                    } else {
+                                        indent = level[a];
+                                        if (lines[d][1] === true) {
+                                            c.push("\n");
+                                        }
+                                        c.push(nl(indent));
+                                        c.push(tab);
+                                        c.push(token[a + 1]);
+                                        c.push(nl(indent));
+                                        c.push(tab);
+                                        level[a + 1] = "x";
+                                        a += 1;
+                                    }
+                                } else if (lines[d][1] === true && token[a].charAt(0) !== "=" && token[a].charAt(0) !== "!" && (types[a] !== "start" || (a < b - 1 && types[a + 1] !== "end"))) {
+                                    if (a < b - 1 && (types[a + 1] === "comment" || types[a + 1] === "comment-inline" || (token[a] !== "." && token[a] !== "," && types[a + 1] !== "separator"))) {
+                                        c.push("\n");
+                                        if (level[a] === "x") {
+                                            c.push("\n");
+                                        }
+                                    }
+                                }
+                                d += 1;
+                            }
+                            if (a < b - 1 && types[a + 1] === "comment" && jcomment === "noindent") {
+                                c.push(nl(jlevel));
+                            } else if (level[a] === "s") {
+                                c.push(" ");
+                            } else if (level[a] !== "x") {
+                                indent = level[a];
+                                c.push(nl(indent));
+                            }
+                        }
+                        return c.join("");
+                    }()).replace(/(\s+)$/, "");
+                }
                 if (summary !== "diff" && jsscope === false) {
                     //the analysis report is generated in this function
                     (function jspretty__report() {
@@ -6546,8 +6606,6 @@ var prettydiff = function prettydiff(api) {
                                 bx = [],
                                 ra = "",
                                 rb = "",
-                                u = [],
-                                v = [],
                                 zx = 0,
                                 entity = function diffview__report_charcomp_emptyE() {
                                     return;
@@ -6625,7 +6683,8 @@ var prettydiff = function prettydiff(api) {
                             zx = Math.max(ax.length, bx.length);
                             entity = function diffview__report_charcomp_entity(z) {
                                 var a = z.length,
-                                    b = [];
+                                    b = [],
+                                    n = 0;
                                 for (n = 0; n < a; n += 1) {
                                     if (z[n] + z[n + 1] + z[n + 2] + z[n + 3] + z[n + 4] === "$#gt;") {
                                         z[n] = "$#gt;";
@@ -6657,6 +6716,17 @@ var prettydiff = function prettydiff(api) {
                                         z[n + 2] = "";
                                         z[n + 3] = "";
                                         z[n + 4] = "";
+                                    } else if (z[n] + z[n + 1] + z[n + 2] + z[n + 3] === "<em>") {
+                                        z[n] = "<em>";
+                                        z[n + 1] = "";
+                                        z[n + 2] = "";
+                                        z[n + 3] = "";
+                                    } else if (z[n] + z[n + 1] + z[n + 2] + z[n + 3] + z[n + 4] === "</em>") {
+                                        z[n] = "</em>";
+                                        z[n + 1] = "";
+                                        z[n + 2] = "";
+                                        z[n + 3] = "";
+                                        z[n + 4] = "";
                                     }
                                 }
                                 for (n = 0; n < a; n += 1) {
@@ -6666,9 +6736,6 @@ var prettydiff = function prettydiff(api) {
                                 }
                                 return b;
                             };
-                            ax = entity(ax);
-                            bx = entity(bx);
-                            n = false;
                             (function diffview__report_charcomp_spacetest() {
                                 var a = c,
                                     b = d,
@@ -6690,8 +6757,8 @@ var prettydiff = function prettydiff(api) {
                                 if (tt === "" && a.replace(/^(\s+)/, "") === b.replace(/^(\s+)/, "")) {
                                     i = a.search(/\S/);
                                     j = b.search(/\S/);
-                                    g = a.split("");
-                                    h = b.split("");
+                                    g = entity(a.split(""));
+                                    h = entity(b.split(""));
                                     ax = [];
                                     bx = [];
                                     if (i > j) {
@@ -6711,16 +6778,18 @@ var prettydiff = function prettydiff(api) {
                                         }
                                         k = j + 1;
                                     }
-                                    ax = ax.concat(g);
-                                    bx = bx.concat(h);
+                                    ax = entity(ax.concat(g));
+                                    bx = entity(bx.concat(h));
                                     return;
                                 }
+                                //remove indentation for accurate comparison
                                 if (e[0] !== "") {
                                     a = a.substr(n[0]);
                                 }
                                 if (f[0] !== "") {
                                     b = b.substr(n[1]);
                                 }
+                                //compare indentation
                                 if (n[0] > n[1]) {
                                     i = n[0] - n[1];
                                     e[0] = e[0].substring(0, n[0] - i) + "<em>" + e[0].substr(n[0] - i) + "</em>";
@@ -6733,13 +6802,21 @@ var prettydiff = function prettydiff(api) {
                                     e[0] = e[0] + "<em></em>";
                                     errorout += 1;
                                 }
+                                //split line on spaces
                                 g = a.split(" ");
                                 h = b.split(" ");
                                 j = Math.max(g.length, h.length);
+                                //l will contain the string length as this
+                                //algorithm progresses
                                 l[0] += g[0].length;
                                 l[1] += h[0].length;
+
+                                //this loop defines the space based algorithm
                                 for (i = 1; i < j; i += 1) {
                                     if (g[i] !== h[i] && typeof g[i] === "string" && typeof h[i] === "string") {
+                                        //when not identical test one index
+                                        //against the next index of the other
+                                        //sample
                                         if (g[i + 1] === h[i] && g[i] !== "") {
                                             g[i] = "<em> " + g[i] + "</em>";
                                             h.splice(i, 0, "<em></em>");
@@ -6757,18 +6834,26 @@ var prettydiff = function prettydiff(api) {
                                             m = true;
                                             errorout += 1;
                                         } else {
+                                            //break on the first moment this
+                                            //space based algorithm no longer
+                                            //applies
                                             break;
                                         }
                                     } else if (typeof g[i] === "string" && typeof h[i] === "string") {
                                         g[i] = " " + g[i];
                                         h[i] = " " + h[i];
                                     } else {
+                                        //if indexes are exhausted from either
+                                        //sample then break
                                         break;
                                     }
+                                    //account for character length of each index
                                     l[0] += g[i].length;
                                     l[1] += h[i].length;
                                 }
                                 if (m === false) {
+                                    ax = entity(ax);
+                                    bx = entity(bx);
                                     return;
                                 }
                                 if (i === j) {
@@ -6787,8 +6872,8 @@ var prettydiff = function prettydiff(api) {
                                     }
                                     g.splice(0, 0, e[0]);
                                     h.splice(0, 0, f[0]);
-                                    ax = g;
-                                    bx = h;
+                                    ax = entity(g.join("").split(""));
+                                    bx = entity(h.join("").split(""));
                                     k = zx;
                                 } else {
                                     j = Math.max(g.length, h.length);
@@ -6796,8 +6881,8 @@ var prettydiff = function prettydiff(api) {
                                         g[i] = (typeof g[i] === "string") ? " " + g[i] : "";
                                         h[i] = (typeof h[i] === "string") ? " " + h[i] : "";
                                     }
-                                    ax = g.join("").split("");
-                                    bx = h.join("").split("");
+                                    ax = entity(g.join("").split(""));
+                                    bx = entity(h.join("").split(""));
                                     if (l[0] !== l[1]) {
                                         do {
                                             if (l[0] > l[1]) {
@@ -6812,9 +6897,12 @@ var prettydiff = function prettydiff(api) {
                                     ax.splice(0, 0, e[0]);
                                     bx.splice(0, 0, f[0]);
                                     k = l[0];
-                                    zx = Math.max(ax.length, bx.length);
                                 }
+                                zx = Math.max(ax.length, bx.length);
                             }());
+                            ax = entity(ax);
+                            bx = entity(bx);
+                            zx = Math.max(ax.length, bx.length);
                             compare = function diffview__report_charcomp_compare() {
                                 var em = /<em>/g,
                                     i = 0,
@@ -6822,13 +6910,11 @@ var prettydiff = function prettydiff(api) {
                                     m = 0,
                                     o = 0,
                                     p = [],
-                                    q = false,
-                                    s = [],
-                                    t = [];
+                                    q = false;
                                 for (i = k; i < zx; i += 1) {
                                     if (ax[i] === bx[i]) {
                                         r = i;
-                                    } else if (n === false && ax[i] !== bx[i] && !em.test(ax[i]) && !em.test(bx[i]) && !em.test(ax[i - 1]) && !em.test(bx[i - 1])) {
+                                    } else if (n === false && ax[i] !== bx[i] && em.test(ax[i]) === false && em.test(bx[i]) === false && em.test(ax[i - 1]) === false && em.test(bx[i - 1]) === false) {
                                         if (i === 0 || (typeof ax[i - 1] === "string" && typeof bx[i - 1] === "string")) {
                                             if (i === 0) {
                                                 ax[i] = "<em>" + ax[i];
@@ -6887,8 +6973,6 @@ var prettydiff = function prettydiff(api) {
                                                     } while (o > m);
                                                     ax = p.concat(ax);
                                                     n = false;
-                                                    s.push(ax[o]);
-                                                    t.push(bx[o]);
                                                     break;
                                                 } else if (bx[m] === ax[o]) {
                                                     if (m > bx.length - 1) {
@@ -6906,14 +6990,10 @@ var prettydiff = function prettydiff(api) {
                                                     } while (o > m);
                                                     bx = p.concat(bx);
                                                     n = false;
-                                                    s.push(ax[o]);
-                                                    t.push(bx[o]);
                                                     break;
                                                 }
                                             }
-                                            s.push(ax[o]);
-                                            t.push(bx[o]);
-                                            if (!n) {
+                                            if (n === false) {
                                                 break;
                                             } else if (ax[o] === bx[o] && typeof ax[o] === "string") {
                                                 ax[o - 1] = ax[o - 1] + "</em>";
@@ -7033,10 +7113,8 @@ var prettydiff = function prettydiff(api) {
                                                 break;
                                             }
                                         }
-                                        if (n) {
+                                        if (n === true) {
                                             for (o = j + 1; o < zx - 1; o += 1) {
-                                                s.push(ax[o]);
-                                                t.push(bx[o]);
                                                 if (typeof ax[o] !== "string") {
                                                     ax.push("");
                                                 } else if (typeof bx[o] !== "string") {
@@ -7050,20 +7128,13 @@ var prettydiff = function prettydiff(api) {
                                                     break;
                                                 }
                                             }
-                                            if (q) {
+                                            if (q === true) {
                                                 q = false;
                                                 break;
                                             }
                                         }
                                     }
                                     zx = Math.max(ax.length, bx.length);
-                                }
-                                if (j > o) {
-                                    u.push(s.join(""));
-                                    v.push(t.join(""));
-                                } else {
-                                    u.push(ax.slice(i, o).join(""));
-                                    v.push(bx.slice(i, o).join(""));
                                 }
                                 if (j === zx) {
                                     r += 1;
@@ -7121,10 +7192,10 @@ var prettydiff = function prettydiff(api) {
                                 if (jump > 1) {
                                     data[0].push("<li>...</li>");
                                     if (inline === false) {
-                                        data[1].push("<li class='skip'>&#8203;</li>");
+                                        data[1].push("<li class='skip'>&#10;</li>");
                                     }
                                     data[2].push("<li>...</li>");
-                                    data[3].push("<li class='skip'>&#8203;</li>");
+                                    data[3].push("<li class='skip'>&#10;</li>");
                                     b += jump;
                                     n += jump;
                                     i += jump - 1;
@@ -7132,6 +7203,11 @@ var prettydiff = function prettydiff(api) {
                                         break;
                                     }
                                 }
+                            }
+                            if (bta[b] === nta[n]) {
+                                change = "equal";
+                            } else if (change === "equal") {
+                                change = "replace";
                             }
                             if (change !== "equal") {
                                 diffline += 1;
@@ -7145,21 +7221,21 @@ var prettydiff = function prettydiff(api) {
                             }
                             if (inline === true) {
                                 if (ntest || change === "insert") {
-                                    data[0].push("<li class='empty'>&#8203;</li>");
+                                    data[0].push("<li class='empty'>&#8203;&#10;</li>");
                                     data[2].push("<li>");
                                     data[2].push(n + 1);
-                                    data[2].push("&#8203;</li>");
+                                    data[2].push("&#10;</li>");
                                     data[3].push("<li class='insert'>");
                                     data[3].push(nta[n]);
-                                    data[3].push("&#8203;</li>");
+                                    data[3].push("&#10;</li>");
                                 } else if (btest || change === "delete") {
                                     data[0].push("<li>");
                                     data[0].push(b + 1);
                                     data[0].push("</li>");
-                                    data[2].push("<li class='empty'>&#8203;</li>");
+                                    data[2].push("<li class='empty'>&#8203;&#10;</li>");
                                     data[3].push("<li class='delete'>");
                                     data[3].push(bta[b]);
-                                    data[3].push("&#8203;</li>");
+                                    data[3].push("&#10;</li>");
                                 } else if (change === "replace") {
                                     if (bta[b] !== nta[n]) {
                                         if (bta[b] === "") {
@@ -7178,17 +7254,17 @@ var prettydiff = function prettydiff(api) {
                                         data[0].push("<li>");
                                         data[0].push(b + 1);
                                         data[0].push("</li>");
-                                        data[2].push("<li class='empty'>&#8203;</li>");
+                                        data[2].push("<li class='empty'>&#8203;&#10;</li>");
                                         data[3].push("<li class='delete'>");
                                         if (n < ne) {
                                             data[3].push(z[0]);
                                         } else {
                                             data[3].push(bta[b]);
                                         }
-                                        data[3].push("&#8203;</li>");
+                                        data[3].push("&#10;</li>");
                                     }
                                     if (n < ne) {
-                                        data[0].push("<li class='empty'>&#8203;</li>");
+                                        data[0].push("<li class='empty'>&#8203;&#10;</li>");
                                         data[2].push("<li>");
                                         data[2].push(n + 1);
                                         data[2].push("</li>");
@@ -7198,7 +7274,7 @@ var prettydiff = function prettydiff(api) {
                                         } else {
                                             data[3].push(nta[n]);
                                         }
-                                        data[3].push("&#8203;</li>");
+                                        data[3].push("&#10;</li>");
                                     }
                                 } else if (b < be || n < ne) {
                                     data[0].push("<li>");
@@ -7211,7 +7287,7 @@ var prettydiff = function prettydiff(api) {
                                     data[3].push(change);
                                     data[3].push("'>");
                                     data[3].push(bta[b]);
-                                    data[3].push("&#8203;</li>");
+                                    data[3].push("&#10;</li>");
                                 }
                                 if (btest) {
                                     b += 1;
@@ -7238,7 +7314,7 @@ var prettydiff = function prettydiff(api) {
                                     }
                                     if (b < be) {
                                         if (bta[b] === "") {
-                                            data[0].push("<li class='empty'>&#8203;");
+                                            data[0].push("<li class='empty'>&#10;");
                                         } else {
                                             data[0].push("<li>" + (b + 1));
                                         }
@@ -7257,14 +7333,14 @@ var prettydiff = function prettydiff(api) {
                                         } else {
                                             data[1].push(bta[b]);
                                         }
-                                        data[1].push("&#8203;</li>");
+                                        data[1].push("&#10;</li>");
                                     } else if (ctest) {
-                                        data[0].push("<li class='empty'>&#8203;</li>");
+                                        data[0].push("<li class='empty'>&#8203;&#10;</li>");
                                         data[1].push("<li class='empty'>&#8203;</li>");
                                     }
                                     if (n < ne) {
                                         if (nta[n] === "") {
-                                            data[2].push("<li class='empty'>&#8203;");
+                                            data[2].push("<li class='empty'>&#10;");
                                         } else {
                                             data[2].push("<li>" + (n + 1));
                                         }
@@ -7283,9 +7359,9 @@ var prettydiff = function prettydiff(api) {
                                         } else {
                                             data[3].push(nta[n]);
                                         }
-                                        data[3].push("&#8203;</li>");
+                                        data[3].push("&#10;</li>");
                                     } else if (ctest) {
-                                        data[2].push("<li class='empty'>&#8203;</li>");
+                                        data[2].push("<li class='empty'>&#8203;&#10;</li>");
                                         data[3].push("<li class='empty'>&#8203;</li>");
                                     }
                                     if (b < be) {
@@ -7300,20 +7376,20 @@ var prettydiff = function prettydiff(api) {
                                     data[0].push("</li>");
                                     data[1].push("<li class='delete'>");
                                     data[1].push(bta[b]);
-                                    data[1].push("&#8203;</li>");
-                                    data[2].push("<li class='empty'>&#8203;</li>");
+                                    data[1].push("&#10;</li>");
+                                    data[2].push("<li class='empty'>&#8203;&#10;</li>");
                                     data[3].push("<li class='empty'>&#8203;</li>");
                                     btest = false;
                                     b += 1;
                                 } else if (ntest || (typeof bta[b] !== "string" && typeof nta[n] === "string")) {
-                                    data[0].push("<li class='empty'>&#8203;</li>");
+                                    data[0].push("<li class='empty'>&#8203;&#10;</li>");
                                     data[1].push("<li class='empty'>&#8203;</li>");
                                     data[2].push("<li>");
                                     data[2].push(n + 1);
                                     data[2].push("</li>");
                                     data[3].push("<li class='insert'>");
                                     data[3].push(nta[n]);
-                                    data[3].push("&#8203;</li>");
+                                    data[3].push("&#10;</li>");
                                     ntest = false;
                                     n += 1;
                                 }
@@ -7339,7 +7415,7 @@ var prettydiff = function prettydiff(api) {
                     }
                     node.push("<p class='author'>Diff view written by <a href='http://prettydiff.com/'>Pretty Diff</a>.</p></div>");
                     return [
-                        node.join("").replace(/li class='equal'><\/li/g, "li class='equal'>&#8203;</li").replace(/\$#gt;/g, "&gt;").replace(/\$#lt;/g, "&lt;").replace(/\%#lt;/g, "$#lt;").replace(/\%#gt;/g, "$#gt;"), errorout, diffline
+                        node.join("").replace(/li class='equal'><\/li/g, "li class='equal'>&#10;</li").replace(/\$#gt;/g, "&gt;").replace(/\$#lt;/g, "&lt;").replace(/\%#lt;/g, "$#lt;").replace(/\%#gt;/g, "$#gt;"), errorout, diffline
                     ];
                 }());
             },
@@ -8083,16 +8159,16 @@ var prettydiff = function prettydiff(api) {
         css: 130326, //diffview.css file
         csvbeauty: 121127, //csvbeauty library
         csvmin: 121127, //csvmin library
-        diffview: 130403, //diffview library
+        diffview: 130404, //diffview library
         documentation: 130326, //documentation.xhtml
         jsmin: 130317, //jsmin library (fulljsmin.js)
-        jspretty: 130403, //jspretty library
+        jspretty: 130404, //jspretty library
         markup_beauty: 130312, //markup_beauty library
         markupmin: 130312, //markupmin library
-        prettydiff: 130403, //this file
-        webtool: 130326, //prettydiff.com.xhtml
+        prettydiff: 130404, //this file
+        webtool: 130404, //prettydiff.com.xhtml
         api: {
-            dom: 130325,
+            dom: 130404,
             nodeLocal: 130317,
             nodeService: 121106,
             wsh: 130317
