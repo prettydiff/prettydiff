@@ -41,6 +41,7 @@ Examples:
             conditional: false,
             content: false,
             context: "",
+            correct: false,
             csvchar: ",",
             diff: "",
             diffcomments: false,
@@ -85,47 +86,47 @@ Examples:
             c = d.length;
             for (b = 0; b < c; b += 1) {
                 if (d[b].length === 2) {
-                    if (d[b][0] === "source" && d[b][1].length > 0) {
-                        options.source = d[b][1];
+                    if (d[b][0] === "" && d[b][1] === "help") {
+                        help = true;
                     }
-                    if (d[b][0] === "diff" && d[b][1].length > 0) {
-                        options.diff = d[b][1];
-                    }
-                    if (d[b][0] === "mode" && (d[b][1] === "minify" || d[b][1] === "beautify")) {
-                        options.mode = d[b][1];
-                    }
-                    if (d[b][0] === "html" && d[b][1] === "true") {
-                        options.html = true;
-                    }
-                    if (d[b][0] === "lang" && (d[b][1] === "markup" || d[b][1] === "javascript" || d[b][1] === "css" || d[b][1] === "html" || d[b][1] === "csv" || d[b][1] === "text")) {
-                        options.lang = d[b][1];
-                        if (d[b][1] === "html") {
-                            options.html = true;
-                        }
-                    }
-                    if (d[b][0] === "topcoms" && d[b][1] === "true") {
-                        options.topcoms = true;
-                    }
-                    if (d[b][0] === "csvchar" && d[b][1].length > 0) {
-                        options.csvchar = d[b][1];
+                    if (d[b][0] === "color" && (d[b][1] === "default" || d[b][1] === "coffee" || d[b][1] === "dark" || d[b][1] === "canvas" || d[b][1] === "white")) {
+                        options.color = d[b][1];
                     }
                     if (d[b][0] === "comments" && d[b][1] === "noindent") {
                         options.comments = "noindent";
                     }
+                    if (d[b][0] === "conditional" && d[b][1] === "true") {
+                        options.conditional = true;
+                    }
                     if (d[b][0] === "content" && d[b][1] === "true") {
                         options.content = true;
-                    }
-                    if (d[b][0] === "force_indent" && d[b][1] === "true") {
-                        options.force_indent = true;
                     }
                     if (d[b][0] === "context" && !isNaN(d[b][1])) {
                         options.context = Number(d[b][1]);
                     }
+                    if (d[b][0] === "correct" && d[b][1] === "true") {
+                        options.correct = true;
+                    }
+                    if (d[b][0] === "csvchar" && d[b][1].length > 0) {
+                        options.csvchar = d[b][1];
+                    }
+                    if (d[b][0] === "diff" && d[b][1].length > 0) {
+                        options.diff = d[b][1];
+                    }
+                    if (d[b][0] === "diffcomments" && d[b][1] === "true") {
+                        options.diffcomments = true;
+                    }
+                    if (d[b][0] === "difflabel" && d[b][1].length > 0) {
+                        options.difflabel = d[b][1];
+                    }
                     if (d[b][0] === "diffview" && d[b][1] === "inline") {
                         options.diffview = "inline";
                     }
-                    if (d[b][0] === "insize" && !isNaN(d[b][1])) {
-                        options.insize = Number(d[b][1]);
+                    if (d[b][0] === "force_indent" && d[b][1] === "true") {
+                        options.force_indent = true;
+                    }
+                    if (d[b][0] === "html" && d[b][1] === "true") {
+                        options.html = true;
                     }
                     if (d[b][0] === "inchar" && d[b][1].length > 0) {
                         options.inchar = d[b][1];
@@ -133,26 +134,53 @@ Examples:
                     if (d[b][0] === "indent" && d[b][1] === "allman") {
                         options.indent = "allman";
                     }
+                    if (d[b][0] === "inlevel" && !isNaN(d[b][1])) {
+                        options.inlevel = Number(d[b][1]);
+                    }
+                    if (d[b][0] === "insize" && !isNaN(d[b][1])) {
+                        options.insize = Number(d[b][1]);
+                    }
+                    if (d[b][0] === "jsscope" && d[b][1] === "true") {
+                        options.jsscope = true;
+                    }
+                    if (d[b][0] === "lang" && (d[b][1] === "markup" || d[b][1] === "javascript" || d[b][1] === "css" || d[b][1] === "html" || d[b][1] === "csv" || d[b][1] === "text")) {
+                        options.lang = d[b][1];
+                        if (d[b][1] === "html") {
+                            options.html = true;
+                        }
+                    }
+                    if (d[b][0] === "mode" && (d[b][1] === "minify" || d[b][1] === "beautify")) {
+                        options.mode = d[b][1];
+                    }
+                    if (d[b][0] === "output" && d[b][1].length > 0) {
+                        options.output = d[b][1];
+                    }
+                    if (d[b][0] === "preserve" && d[b][1] === "false") {
+                        options.preserve = false;
+                    }
                     if (d[b][0] === "quote" && d[b][1] === "true") {
                         options.quote = true;
+                    }
+                    if (d[b][0] === "report") {
+                        options.output = d[b][1];
                     }
                     if (d[b][0] === "semicolon" && d[b][1] === "true") {
                         options.semicolon = true;
                     }
-                    if (d[b][0] === "style" && d[b][1] === "noindent") {
-                        options.style = "noindent";
+                    if (d[b][0] === "source" && d[b][1].length > 0) {
+                        options.source = d[b][1];
                     }
                     if (d[b][0] === "sourcelabel" && d[b][1].length > 0) {
                         options.sourcelabel = d[b][1];
                     }
-                    if (d[b][0] === "difflabel" && d[b][1].length > 0) {
-                        options.difflabel = d[b][1];
+                    if (d[b][0] === "space" && d[b][1] === "false") {
+                        options.space = false;
                     }
-                    if (d[b][0] === "conditional" && d[b][1] === "true") {
-                        options.conditional = true;
+                    if (d[b][0] === "style" && d[b][1] === "noindent") {
+                        options.style = "noindent";
                     }
-                    if (d[b][0] === "diffcomments" && d[b][1] === "true") {
-                        options.diffcomments = true;
+                    if (d[b][0] === "topcoms" && d[b][1] === "true") {
+                        options.topcoms = true;
                     }
                     if (d[b][0] === "wrap") {
                         if (isNaN(d[b][1])) {
@@ -160,9 +188,6 @@ Examples:
                         } else {
                             options.wrap = Number(d[b][1]);
                         }
-                    }
-                    if (d[b][0] === "color" && (d[b][1] === "default" || d[b][1] === "coffee" || d[b][1] === "dark" || d[b][1] === "canvas" || d[b][1] === "white")) {
-                        options.color = d[b][1];
                     }
                     if (d[b][0] === "readmethod") {
                         if (d[b][1] === "file") {
@@ -174,27 +199,6 @@ Examples:
                         if (d[b][1] === "directory") {
                             options.readmethod = "directory";
                         }
-                    }
-                    if (d[b][0] === "output" && d[b][1].length > 0) {
-                        options.output = d[b][1];
-                    }
-                    if (d[b][0] === "report") {
-                        options.output = d[b][1];
-                    }
-                    if (d[b][0] === "jsscope" && d[b][1] === "true") {
-                        options.jsscope = true;
-                    }
-                    if (d[b][0] === "inlevel" && !isNaN(d[b][1])) {
-                        options.inlevel = Number(d[b][1]);
-                    }
-                    if (d[b][0] === "preserve" && d[b][1] === "false") {
-                        options.preserve = false;
-                    }
-                    if (d[b][0] === "space" && d[b][1] === "false") {
-                        options.space = false;
-                    }
-                    if (d[b][0] === "" && d[b][1] === "help") {
-                        help = true;
                     }
                 } else if (help === false && (d[b] === "help" || d[b][0] === "help")) {
                     help = true;
@@ -299,6 +303,10 @@ Examples:
             a.push("                           specified number of equivalent lines between each");
             a.push("                           line of difference. Defaults to an empty string,");
             a.push("                           which nullifies its use.");
+            a.push("");
+            a.push("* correct      - boolean - Automatically correct some sloppiness in JavaScript.");
+            a.push("                           The default is 'false' and it is only applied during");
+            a.push("                           JavaScript beautification.");
             a.push("");
             a.push("* csvchar      - string  - The character to be used as a separator if lang is");
             a.push("                           'csv'. Any string combination is accepted. Defaults");
@@ -425,6 +433,9 @@ Examples:
         }());
     if (args === 0 || help === true) {
         return console.log(error);
+    }
+    if (options.mode !== "beautify") {
+        options.correct = false;
     }
     if (options.source === "") {
         return console.log("Error: 'source' argument is empty");

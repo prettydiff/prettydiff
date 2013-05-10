@@ -72,7 +72,7 @@
             <div class="box" id="diffreport">
                 <p style="display:none" class="buttons">
                     <a href="#" onclick="pd.save(this);"><button class="save" title="Convert diff report to text that can be saved.">S</button></a>
-                    <button class="minimize" onclick="pd.minimize(this);" title="Minimize this dialogue ">&uarr;</button>
+                    <button class="minimize" onclick="pd.minimize(event, this);" title="Minimize this dialogue ">&uarr;</button>
                     <button class="maximize" onclick="pd.maximize(this);" title="Maximize this dialogue to the browser window.">&uarr;</button>
                     <button class="resize" onmousedown="pd.resize(event, this);" title="Resize this dialogue.">&harr;</button></p>
                 <h3 class="heading" title="Grab this title element to open this dialogue or move it around around the screen."><span>Diff
@@ -81,7 +81,7 @@
             </div>
             <div class="box" id="beaureport">
                 <p style="display:none" class="buttons">
-                    <button class="minimize" onclick="pd.minimize(this);" title="Minimize this dialogue ">&uarr;</button>
+                    <button class="minimize" onclick="pd.minimize(event, this);" title="Minimize this dialogue ">&uarr;</button>
                     <button class="maximize" onclick="pd.maximize(this);" title="Maximize this dialogue to the browser window.">&uarr;</button>
                     <button class="resize" onmousedown="pd.resize(event, this);" title="Resize this dialogue.">&harr;</button></p>
                 <h3 class="heading" title="Grab this title element to open this dialogue or move it around the screen."><span>Beautify
@@ -90,7 +90,7 @@
             </div>
             <div class="box" id="minreport">
                 <p style="display:none" class="buttons">
-                    <button class="minimize" onclick="pd.minimize(this);" title="Minimize this dialogue ">&uarr;</button>
+                    <button class="minimize" onclick="pd.minimize(event, this);" title="Minimize this dialogue ">&uarr;</button>
                     <button class="maximize" onclick="pd.maximize(this);" title="Maximize this dialogue to the browser window.">&uarr;</button>
                     <button class="resize" onmousedown="pd.resize(event, this);" title="Resize this dialogue.">&harr;</button></p>
                 <h3 class="heading" title="Grab this title element to open this dialogue or move it around the screen."><span>Minify
@@ -99,7 +99,7 @@
             </div>
             <div class="box" id="statreport">
                 <p style="display:none" class="buttons">
-                    <button class="minimize" onclick="pd.minimize(this);" title="Minimize this dialogue ">&uarr;</button>
+                    <button class="minimize" onclick="pd.minimize(event, this);" title="Minimize this dialogue ">&uarr;</button>
                     <button class="maximize" onclick="pd.maximize(this);" title="Maximize this dialogue to the browser window.">&uarr;</button>
                     <button class="resize" onmousedown="pd.resize(event, this);" title="Resize this dialogue.">&harr;</button></p>
                 <h3 class="heading" title="Grab this title element to open this dialogue or move it around the screen."><span>Usage
@@ -360,18 +360,18 @@
                     </p>
                     <p><strong>Function Space (JavaScript Only)</strong>
                         <span>
-                            <input checked="checked" id="jsspaced-yes" onclick="pd.options(this);" title="This JavaScript only option retains a single space between the 'function' keyword and the opening parenthesis character of anonymous functions." type="radio"/>
+                            <input checked="checked" id="jsspaced-yes" name="jsspaced" onclick="pd.options(this);" title="This JavaScript only option retains a single space between the 'function' keyword and the opening parenthesis character of anonymous functions." type="radio"/>
                             <label for="jsspaced-yes">Retain Function Space</label></span>
                         <span>
-                            <input id="jsspaced-no" onclick="pd.options(this);" title="This JavaScript only option removes a single space between the 'function' keyword and the opening parenthesis character of anonymous functions." type="radio"/>
+                            <input id="jsspaced-no" name="jsspaced" onclick="pd.options(this);" title="This JavaScript only option removes a single space between the 'function' keyword and the opening parenthesis character of anonymous functions." type="radio"/>
                             <label for="jsspace-no">Remove Space Following Function</label></span>
                     </p>
                     <p><strong>Empty Lines (JavaScript Only)</strong>
                         <span>
-                            <input checked="checked" id="jslinesd-yes" onclick="pd.options(this);" title="This JavaScript only option retains a single empty line for each series of empty lines of code input." type="radio"/>
+                            <input checked="checked" id="jslinesd-yes" name="jslinesd" onclick="pd.options(this);" title="This JavaScript only option retains a single empty line for each series of empty lines of code input." type="radio"/>
                             <label for="jslinesd-yes">Remove Empty Lines</label></span>
                         <span>
-                            <input id="jslinesd-no" onclick="pd.options(this);" title="This JavaScript only option removes all empty lines." type="radio"/>
+                            <input id="jslinesd-no" name="jslinesd" onclick="pd.options(this);" title="This JavaScript only option removes all empty lines." type="radio"/>
                             <label for="jslinesd-no">Remove Empty Lines</label></span>
                     </p>
                 </fieldset>
@@ -454,26 +454,34 @@
                     <p><strong>Force Indentation (Markup Only)</strong>
                         <span>
                             <input checked="checked" id="bforce_indent-no" name="bforce_indent" onclick="pd.options(this);" title="This markup only option maintains document integrity with regard to indentation that would create text nodes adjacent to content that did not exist before." type="radio"/>
-                            <label for="bforce_indent-no">Maintain code integrity</label></span>
+                            <label for="bforce_indent-no">Maintain Code Integrity</label></span>
                         <span>
                             <input id="bforce_indent-yes" name="bforce_indent" onclick="pd.options(this);" title="This markup only option forces indentation for all content and elements without regard for integrity of document structure or content." type="radio"/><label for="bforce_indent-yes">Always
-                                force indentation</label></span>
+                                Force Indentation</label></span>
                     </p>
                     <p><strong>Function Space (JavaScript Only)</strong>
                         <span>
-                            <input checked="checked" id="jsspace-yes" onclick="pd.options(this);" title="This JavaScript only option retains a single space between the 'function' keyword and the opening parenthesis character of anonymous functions." type="radio"/>
+                            <input checked="checked" id="jsspace-yes" name="jsspace" onclick="pd.options(this);" title="This JavaScript only option retains a single space between the 'function' keyword and the opening parenthesis character of anonymous functions." type="radio"/>
                             <label for="jsspace-yes">Retain Function Space</label></span>
                         <span>
-                            <input id="jsspace-no" title="This JavaScript only option removes a single space between the 'function' keyword and the opening parenthesis character of anonymous functions." type="radio"/>
+                            <input id="jsspace-no" name="jsspace" onclick="pd.options(this)" title="This JavaScript only option removes a single space between the 'function' keyword and the opening parenthesis character of anonymous functions." type="radio"/>
                             <label for="jsspace-no">Remove Space Following Function</label></span>
                     </p>
                     <p><strong>Empty Lines (JavaScript Only)</strong>
                         <span>
-                            <input checked="checked" id="jslines-yes" onclick="pd.options(this);" title="This JavaScript only option retains a single empty line for each series of empty lines of code input." type="radio"/>
+                            <input checked="checked" id="jslines-yes" name="jslines" onclick="pd.options(this);" title="This JavaScript only option retains a single empty line for each series of empty lines of code input." type="radio"/>
                             <label for="jslines-yes">Remove Empty Lines</label></span>
                         <span>
-                            <input id="jslines-no" title="This JavaScript only option removes all empty lines." type="radio"/>
+                            <input id="jslines-no" name="jslines" onclick="pd.options(this)" title="This JavaScript only option removes all empty lines." type="radio"/>
                             <label for="jslines-no">Remove Empty Lines</label></span>
+                    </p>
+                    <p><strong>Fix Sloppy Code (JavaScript Only)</strong>
+                        <span>
+                            <input checked="checked" id="jscorrect-no" name="jscorrect" onclick="pd.options(this);" title="Do not alter or remove sloppy JavaScript code." type="radio"/>
+                            <label for="jscorrect-no">Ignore Code Correction</label></span>
+                        <span>
+                            <input id="jscorrect-yes" name="jscorrect" onclick="pd.options(this);" title="This JavaScript only option automatically converts some sloppy behaviors into known best practices." type="radio"/>
+                            <label for="jscorrect-yes">Correct for Sloppiness</label></span>
                     </p>
                 </fieldset>
             </div>

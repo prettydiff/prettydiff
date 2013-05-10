@@ -19,7 +19,7 @@
                             b = 0,
                             c = 0,
                             error = [];
-                        if (fail) {
+                        if (fail === true) {
                             return;
                         }
                         if (WScript.Arguments.Count() === 0 || help) {
@@ -36,6 +36,8 @@
                             error.push("* content      - boolean - If true and mode is 'diff' this will normalize all string literals in JavaScript to 'text' and all content in markup to 'text' so as to eliminate some differences from the HTML diff report. Default is false.");
                             error.push("");
                             error.push("* context      - number  - This shortens the diff output by allowing a specified number of equivalent lines between each line of difference. Defaults to an empty string, which nullifies its use.");
+                            error.push("");
+                            error.push("* correct      - boolean - Automatically correct some sloppiness in JavaScript.  The default is 'false' and it currently only works if mode is 'beautify'.");
                             error.push("");
                             error.push("* csvchar      - string  - The character to be used as a separator if lang is 'csv'. Any string combination is accepted. Defaults to a comma ','.");
                             error.push("");
@@ -238,11 +240,12 @@
                 } else {
                     outerror("Error: Source file is required.");
                 }
-                if (!fail) {
+                if (fail === false) {
                     args.comments = (WScript.Arguments.Named("comments") === "noindent") ? "noindent" : "indent";
                     args.conditional = ((WScript.Arguments.Named("conditional") === "true" || WScript.Arguments.Named("conditional") === true) ? true : false) || false;
                     args.content = ((WScript.Arguments.Named("content") === "true" || WScript.Arguments.Named("content") === true) ? true : false) || false;
                     args.context = (isNaN(WScript.Arguments.Named("context"))) ? "" : Number(WScript.Arguments.Named("context"));
+                    args.correct = (WScript.Arguments.Named("correct") === "true" || WScript.Arguments.Named("correct") === true) ? true : false;
                     args.csvchar = WScript.Arguments.Named("csvchar") || ",";
                     args.diffcomments = ((WScript.Arguments.Named("diffcomments") === "true" || WScript.Arguments.Named("diffcomments") === true) ? true : false) || false;
                     args.difflabel = WScript.Arguments.Named("difflabel") || "new";
@@ -270,6 +273,9 @@
                     }
                     if (args.mode !== "diff" && args.mode !== "beautify" && args.mode !== "minify") {
                         args.mode = "diff";
+                        if (args.mode !== "beautify") {
+                            args.correct = false;
+                        }
                     }
                     if (args.lang !== "javascript" && args.lang !== "markup" && args.lang !== "html" && args.lang !== "css" && args.lang !== "csv" && args.lang !== "text") {
                         args.lang = "javascript";
@@ -288,7 +294,7 @@
                         args.diff = "";
                     }
                 }
-                if (!fail) {
+                if (fail === false) {
                     pd = prettydiff(args);
                     if (pd[0].indexOf("Error: ") === 0) {
                         report = [""];
