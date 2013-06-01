@@ -3910,7 +3910,7 @@ pd.webtool = [];
                     b = [],
                     c = {},
                     d = 0,
-                    e = b.length,
+                    e = 0,
                     f = [],
                     g = [],
                     h = [],
@@ -3933,6 +3933,7 @@ pd.webtool = [];
                 if (a !== null) {
                     a = a.getElementsByTagName("tbody")[0];
                     b = a.getElementsByTagName("tr");
+                    e = b.length;
                     for (d = 0; d < e; d += 1) {
                         c = b[d].getElementsByTagName("td")[3];
                         switch (b[d].getElementsByTagName("a")[0].innerHTML) {
