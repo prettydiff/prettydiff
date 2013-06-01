@@ -5,6 +5,23 @@ var exports = "",
     _gaq = _gaq || [],
     pd = {};
 
+//stores position information of floating report windows without
+//looking to localStorage each and every time
+pd.position = {
+    diffreport: {},
+    beaureport: {},
+    minreport: {},
+    statreport: {}
+};
+
+//stores option information without looking into localStorage each
+//and every time
+pd.optionString = [];
+
+//stores webtool information without looking into localStorage each
+//and every time
+pd.webtool = [];
+
 (function () {
     "use strict";
 
@@ -225,9 +242,8 @@ var exports = "",
             h = max - 15,
             k = false,
             z = a.previousSibling,
-            drop = function (g) {
+            drop = function () {
                 x.style.cursor = status + "-resize";
-                g = null;
                 document.onmousemove = null;
                 document.onmouseup = null;
             },
@@ -501,7 +517,7 @@ var exports = "",
                 pd.o.cn = Number(pd.o.dq.value);
                 api.insize = pd.o.cn;
             }
-            if (pd.o.id !== null && !pd.o.id.checked === true) {
+            if (pd.o.id !== null && pd.o.id.checked === false) {
                 api.style = "noindent";
             }
             if (pd.o.hd !== null && pd.o.hd.checked === true) {
@@ -536,7 +552,7 @@ var exports = "",
             api.source = (pd.o.bo === null) ? "" : pd.o.bo.value;
             api.diff = (pd.o.nx === null) ? "" : pd.o.nx.value;
             api.mode = "diff";
-            if (domain.test(api.diff) && (typeof XMLHttpRequest === "function" || typeof ActiveXObject === "function")) {
+            if (domain.test(api.diff) === true && (typeof XMLHttpRequest === "function" || typeof ActiveXObject === "function")) {
                 (function () {
                     var a = (api.diff.indexOf("file:///") === 0) ? api.diff.split(":///")[1] : api.diff.split("://")[1],
                         b = a ? a.indexOf("/") : 0,
@@ -554,7 +570,7 @@ var exports = "",
                 }());
             }
         }
-        if (domain.test(api.source) && (typeof XMLHttpRequest === "function" || typeof ActiveXObject === "function")) {
+        if (domain.test(api.source) === true && (typeof XMLHttpRequest === "function" || typeof ActiveXObject === "function")) {
             (function () {
                 var a = (api.source.indexOf("file:///") === 0) ? api.source.split(":///")[1] : api.source.split("://")[1],
                     b = a ? a.indexOf("/") : 0,
@@ -804,23 +820,7 @@ var exports = "",
         x.selectionStart = sel + 1;
         x.selectionEnd = sel + 1;
         return false;
-    }
-    //stores position information of floating report windows without
-    //looking to localStorage each and every time
-    pd.position = {
-        diffreport: {},
-        beaureport: {},
-        minreport: {},
-        statreport: {}
     };
-
-    //stores option information without looking into localStorage each
-    //and every time
-    pd.optionString = [];
-
-    //stores webtool information without looking into localStorage each
-    //and every time
-    pd.webtool = [];
 
     //intelligently raise the z-index of the report windows
     pd.top = function (x) {
@@ -1169,11 +1169,10 @@ var exports = "",
             c = a.getElementsByTagName("h3")[0],
             bx = b.clientWidth,
             by = b.clientHeight,
-            drop = function (g) {
+            drop = function () {
                 document.onmousemove = null;
                 bx = b.clientWidth;
                 by = b.clientHeight;
-                g = null;
                 pd.options(a);
                 document.onmouseup = null;
             },
@@ -1350,11 +1349,10 @@ var exports = "",
             i = 0,
             ax = a.offsetLeft,
             ay = a.offsetTop,
-            drop = function (g) {
+            drop = function () {
                 document.onmousemove = null;
                 ax = a.offsetLeft;
                 ay = a.offsetTop;
-                g = null;
                 pd.options(a);
                 document.onmouseup = null;
                 d.style.opacity = "1";
@@ -3908,8 +3906,8 @@ var exports = "",
         }
         if (page === "doc") {
             (function () {
-                var a = document.getElementById("components").getElementsByTagName("tbody")[0],
-                    b = a.getElementsByTagName("tr"),
+                var a = {},
+                    b = [],
                     c = {},
                     d = 0,
                     e = b.length,
@@ -3931,159 +3929,164 @@ var exports = "",
                         b[1] -= 1;
                         return b[2] + " " + c[b[1]] + " 20" + b[0];
                     };
-                for (d = 0; d < e; d += 1) {
-                    c = b[d].getElementsByTagName("td")[3];
-                    switch (b[d].getElementsByTagName("a")[0].innerHTML) {
-                    case "charDecoder.js":
-                        date = edition.charDecoder;
-                        c.innerHTML = conversion(date);
-                        f.push(date);
-                        g.push([
-                            date, b[d].innerHTML
-                        ]);
-                        break;
-                    case "cleanCSS.js":
-                        date = edition.cleanCSS;
-                        c.innerHTML = conversion(date);
-                        f.push(date);
-                        g.push([
-                            date, b[d].innerHTML
-                        ]);
-                        break;
-                    case "csvbeauty.js":
-                        date = edition.csvbeauty;
-                        c.innerHTML = conversion(date);
-                        f.push(date);
-                        g.push([
-                            date, b[d].innerHTML
-                        ]);
-                        break;
-                    case "csvmin.js":
-                        date = edition.csvmin;
-                        c.innerHTML = conversion(date);
-                        f.push(date);
-                        g.push([
-                            date, b[d].innerHTML
-                        ]);
-                        break;
-                    case "diffview.css":
-                        date = edition.css;
-                        c.innerHTML = conversion(date);
-                        f.push(date);
-                        g.push([
-                            date, b[d].innerHTML
-                        ]);
-                        break;
-                    case "diffview.js":
-                        date = edition.diffview;
-                        c.innerHTML = conversion(date);
-                        f.push(date);
-                        g.push([
-                            date, b[d].innerHTML
-                        ]);
-                        break;
-                    case "documentation.xhtml":
-                        date = edition.documentation;
-                        c.innerHTML = conversion(date);
-                        f.push(date);
-                        g.push([
-                            date, b[d].innerHTML
-                        ]);
-                        break;
-                    case "dom.js":
-                        date = edition.api.dom;
-                        c.innerHTML = conversion(date);
-                        f.push(date);
-                        g.push([
-                            date, b[d].innerHTML
-                        ]);
-                        break;
-                    case "fulljsmin.js":
-                        date = edition.jsmin;
-                        c.innerHTML = conversion(date);
-                        f.push(date);
-                        g.push([
-                            date, b[d].innerHTML
-                        ]);
-                        break;
-                    case "jspretty.js":
-                        date = edition.jspretty;
-                        c.innerHTML = conversion(date);
-                        f.push(date);
-                        g.push([
-                            date, b[d].innerHTML
-                        ]);
-                        break;
-                    case "markup_beauty.js":
-                        date = edition.markup_beauty;
-                        c.innerHTML = conversion(date);
-                        f.push(date);
-                        g.push([
-                            date, b[d].innerHTML
-                        ]);
-                        break;
-                    case "markupmin.js":
-                        date = edition.markupmin;
-                        c.innerHTML = conversion(date);
-                        f.push(date);
-                        g.push([
-                            date, b[d].innerHTML
-                        ]);
-                        break;
-                    case "node-local.js":
-                        date = edition.api.nodeLocal;
-                        c.innerHTML = conversion(date);
-                        f.push(date);
-                        g.push([
-                            date, b[d].innerHTML
-                        ]);
-                        break;
-                    case "node-service.js":
-                        date = edition.api.nodeService;
-                        c.innerHTML = conversion(date);
-                        f.push(date);
-                        g.push([
-                            date, b[d].innerHTML
-                        ]);
-                        break;
-                    case "prettydiff.com.xhtml":
-                        date = edition.webtool;
-                        c.innerHTML = conversion(date);
-                        f.push(date);
-                        g.push([
-                            date, b[d].innerHTML
-                        ]);
-                        break;
-                    case "prettydiff.js":
-                        date = edition.prettydiff;
-                        c.innerHTML = conversion(date);
-                        f.push(date);
-                        g.push([
-                            date, b[d].innerHTML
-                        ]);
-                        break;
-                    case "prettydiff.wsf":
-                        date = edition.api.wsh;
-                        c.innerHTML = conversion(date);
-                        f.push(date);
-                        g.push([
-                            date, b[d].innerHTML
-                        ]);
-                        break;
+                a = document.getElementById("components");
+                if (a !== null) {
+                    a = a.getElementsByTagName("tbody")[0];
+                    b = a.getElementsByTagName("tr");
+                    for (d = 0; d < e; d += 1) {
+                        c = b[d].getElementsByTagName("td")[3];
+                        switch (b[d].getElementsByTagName("a")[0].innerHTML) {
+                        case "charDecoder.js":
+                            date = edition.charDecoder;
+                            c.innerHTML = conversion(date);
+                            f.push(date);
+                            g.push([
+                                date, b[d].innerHTML
+                            ]);
+                            break;
+                        case "cleanCSS.js":
+                            date = edition.cleanCSS;
+                            c.innerHTML = conversion(date);
+                            f.push(date);
+                            g.push([
+                                date, b[d].innerHTML
+                            ]);
+                            break;
+                        case "csvbeauty.js":
+                            date = edition.csvbeauty;
+                            c.innerHTML = conversion(date);
+                            f.push(date);
+                            g.push([
+                                date, b[d].innerHTML
+                            ]);
+                            break;
+                        case "csvmin.js":
+                            date = edition.csvmin;
+                            c.innerHTML = conversion(date);
+                            f.push(date);
+                            g.push([
+                                date, b[d].innerHTML
+                            ]);
+                            break;
+                        case "diffview.css":
+                            date = edition.css;
+                            c.innerHTML = conversion(date);
+                            f.push(date);
+                            g.push([
+                                date, b[d].innerHTML
+                            ]);
+                            break;
+                        case "diffview.js":
+                            date = edition.diffview;
+                            c.innerHTML = conversion(date);
+                            f.push(date);
+                            g.push([
+                                date, b[d].innerHTML
+                            ]);
+                            break;
+                        case "documentation.xhtml":
+                            date = edition.documentation;
+                            c.innerHTML = conversion(date);
+                            f.push(date);
+                            g.push([
+                                date, b[d].innerHTML
+                            ]);
+                            break;
+                        case "dom.js":
+                            date = edition.api.dom;
+                            c.innerHTML = conversion(date);
+                            f.push(date);
+                            g.push([
+                                date, b[d].innerHTML
+                            ]);
+                            break;
+                        case "fulljsmin.js":
+                            date = edition.jsmin;
+                            c.innerHTML = conversion(date);
+                            f.push(date);
+                            g.push([
+                                date, b[d].innerHTML
+                            ]);
+                            break;
+                        case "jspretty.js":
+                            date = edition.jspretty;
+                            c.innerHTML = conversion(date);
+                            f.push(date);
+                            g.push([
+                                date, b[d].innerHTML
+                            ]);
+                            break;
+                        case "markup_beauty.js":
+                            date = edition.markup_beauty;
+                            c.innerHTML = conversion(date);
+                            f.push(date);
+                            g.push([
+                                date, b[d].innerHTML
+                            ]);
+                            break;
+                        case "markupmin.js":
+                            date = edition.markupmin;
+                            c.innerHTML = conversion(date);
+                            f.push(date);
+                            g.push([
+                                date, b[d].innerHTML
+                            ]);
+                            break;
+                        case "node-local.js":
+                            date = edition.api.nodeLocal;
+                            c.innerHTML = conversion(date);
+                            f.push(date);
+                            g.push([
+                                date, b[d].innerHTML
+                            ]);
+                            break;
+                        case "node-service.js":
+                            date = edition.api.nodeService;
+                            c.innerHTML = conversion(date);
+                            f.push(date);
+                            g.push([
+                                date, b[d].innerHTML
+                            ]);
+                            break;
+                        case "prettydiff.com.xhtml":
+                            date = edition.webtool;
+                            c.innerHTML = conversion(date);
+                            f.push(date);
+                            g.push([
+                                date, b[d].innerHTML
+                            ]);
+                            break;
+                        case "prettydiff.js":
+                            date = edition.prettydiff;
+                            c.innerHTML = conversion(date);
+                            f.push(date);
+                            g.push([
+                                date, b[d].innerHTML
+                            ]);
+                            break;
+                        case "prettydiff.wsf":
+                            date = edition.api.wsh;
+                            c.innerHTML = conversion(date);
+                            f.push(date);
+                            g.push([
+                                date, b[d].innerHTML
+                            ]);
+                            break;
+                        }
                     }
+                    e = g.length;
+                    g = g.sort(function (a, b) {
+                        return a[1] === b[1];
+                    }).reverse().sort(function (a, b) {
+                        return a[0] - b[0];
+                    });
+                    for (d = g.length - 1; d > -1; d -= 1) {
+                        h.push("<tr>");
+                        h.push(g[d][1]);
+                        h.push("</tr>");
+                    }
+                    a.innerHTML = h.join("");
                 }
-                e = g.length;
-                g = g.sort(function (a, b) {
-                    return a[1] === b[1];
-                }).reverse().sort(function (a, b) {
-                    return a[0] - b[0];
-                });
-                for (d = g.length - 1; d > -1; d -= 1) {
-                    h.push("<tr>");
-                    h.push(g[d][1]);
-                    h.push("</tr>");
-                }
-                a.innerHTML = h.join("");
             }());
         }
         if (pd.o.ro !== null) {
@@ -4254,22 +4257,22 @@ var exports = "",
         if (pd.o.bo !== null) {
             pd.o.bo.onkeydown = function (event) {
                 return pd.fixtabs(event, pd.o.bo);
-            }
+            };
         }
         if (pd.o.nx !== null) {
             pd.o.nx.onkeydown = function (event) {
                 return pd.fixtabs(event, pd.o.nx);
-            }
+            };
         }
         if (pd.o.bi !== null) {
             pd.o.bi.onkeydown = function (event) {
                 return pd.fixtabs(event, pd.o.bi);
-            }
+            };
         }
         if (pd.o.mi !== null) {
             pd.o.mi.onkeydown = function (event) {
                 return pd.fixtabs(event, pd.o.mi);
-            }
+            };
         }
     }());
 }());
