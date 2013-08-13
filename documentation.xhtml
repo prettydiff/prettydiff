@@ -120,6 +120,10 @@
                     source. If the value of this URI contains ampersand characters, &amp;,
                     or question mark characters, ?, please escape the ampersands characters
                     to "%26" and the question mark characters to %3F.</li>
+                    <li><strong>jscorrect</strong>
+                        - This presence of this parameter sets the
+                        <em>jscorrect</em>
+                        parameter to boolean "true". No value is required.</li>
                     <li><strong>jsscope</strong>
                         - This parameter forcefully applies the jsscope feature of the JSPretty
                     library and does not require a value.</li>
@@ -365,6 +369,12 @@
                         An integer or string containing an integer is accepted. If anything else
                         is supplied this property defaults to a value of
                         <strong>"4"</strong>.</li>
+                    <li>jscorrect - This JavaScript only property determines if sloppiness
+                        should corrected for in the beautified output. Semicolons and curly
+                        braces are added where missing. Operators "++" and "--" are converted to
+                        "+= 1" provided they are not adjacent to arithmetic or arguments of a
+                        method. "new Object()" and "new Array()" are converted to "{}" and "[]".
+                        This argument accepts a boolean value and defaults to "false".</li>
                     <li>jsscope - This property, if provided a value of boolean true, will
                         produce HTML output for JavaScript beautification that colors variables
                         based upon their scope of declaration. This feature highlights
@@ -562,7 +572,19 @@
                         is beautified in accordance with conventions expressed by JSLint
                         beautification scheme. This essentially means that spaces are added
                         after commas, object contents are indented, and a new line is added
-                        after each statement termination and object closing.</p><h4>Summary</h4>
+                        after each statement termination and object closing.</p>
+                <p>jspretty now warns on unnecessary use of the
+                    <em>new</em>
+                    keyword, which is any use except immediately preceeding one of these
+                    global objects:</p><blockquote>"Date",
+                        "RegExp", "Error", "XMLHttpRequest", "FileReader", "ActiveXObject",
+                        "DataView", "ArrayBuffer", "Proxy", "ParallelArray", "Int8Array",
+                        "Uint8Array", "Int16Array", "Uint16Array", "Int32Array", "Uint32Array",
+                        "Float32Array", "Float64Array", "Canvas", "CustomAnimation",
+                        "FadeAnimation", "Flash", "FormField", "Frame", "HotKey", "Image",
+                        "MenuItem", "MoveAnimation", "Point", "Rectangle", "ResizeAnimation",
+                        "RotateAnimation", "ScrollBar", "Shadow", "SQLite", "Text", "TextArea",
+                        "Timer", "URL", "Web", "Window"</blockquote><h4>Summary</h4>
                 <p>An unassigned anonymous function creates the summary report and
                     assigns its output to a variable named
                     <em>summary</em>. Variable

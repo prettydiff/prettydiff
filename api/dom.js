@@ -2,7 +2,7 @@
 /*jslint nomen: true */
 /*global edition, document, localStorage, window, prettydiff, summary, markup_beauty, cleanCSS, jsmin, csvbeauty, csvmin, markupmin, jspretty, diffview, XMLHttpRequest, location, ActiveXObject, FileReader, navigator, setTimeout*/
 var exports = "",
-    _gaq = _gaq || [],
+    _gaq = [],
     pd = {};
 
 //stores position information of floating report windows without
@@ -12,6 +12,13 @@ pd.position = {
     beaureport: {},
     minreport: {},
     statreport: {}
+};
+
+pd.keypress = {
+    state: false,
+    keys: [],
+    date: {},
+    throttle: 0
 };
 
 //stores option information without looking into localStorage each
@@ -299,8 +306,23 @@ pd.webtool = [];
             pstyle = {};
 
         //do not execute from alt, home, end, or arrow keys
-        if (typeof event === "object" && event.type === "keyup" && ((pd.o.jg !== null && pd.o.jg.checked === true && (pd.o.bb === null || pd.o.bb.checked === true)) || event.altKey === true || event.keyCode === 16 || event.keyCode === 18 || event.keyCode === 35 || event.keyCode === 36 || event.keyCode === 37 || event.keyCode === 38 || event.keyCode === 39 || event.keyCode === 40)) {
-            return false;
+        if (typeof event === "object" && event.type === "keyup") {
+            if (pd.keypress.state === true) {
+                if (pd.keypress.keys.length > 0) {
+                    pd.keypress.keys.pop();
+                    if (pd.keypress.keys.length === 0) {
+                        pd.keypress.state = false;
+                    }
+                    return false;
+                }
+            }
+            if ((pd.o.jg !== null && pd.o.jg.checked === true && (pd.o.bb === null || pd.o.bb.checked === true)) || event.altKey === true || event.keyCode === 16 || event.keyCode === 18 || event.keyCode === 35 || event.keyCode === 36 || event.keyCode === 37 || event.keyCode === 38 || event.keyCode === 39 || event.keyCode === 40) {
+                return false;
+            }
+            if ((event.keyCode === 17 || event.ctrlKey === true) && pd.keypress.state === true && pd.keypress.keys.length === 0) {
+                pd.keypress.state = false;
+                return false;
+            }
         }
         if (pd.ls === true && pd.o.rk !== null) {
             pd.o.stat.usage += 1;
@@ -835,8 +857,12 @@ pd.webtool = [];
 
     //read from files if the W3C File API is supported
     pd.file = function (a, b) {
-        var c = function () {},
-            d = function () {},
+        var c = function () {
+                return;
+            },
+            d = function () {
+                return;
+            },
             f = {},
             g = [],
             h = 0,
@@ -938,13 +964,13 @@ pd.webtool = [];
             k = (test === true) ? a.getElementsByTagName("button")[3] : a.getElementsByTagName("button")[2],
             step = (typeof y !== "number") ? 50 : (y < 1) ? 1 : y,
             growth = function (w, v, x, y) {
-                var a = c,
-                    b = d,
-                    g = 17,
-                    h = 3,
-                    i = 0,
-                    j = 0,
-                    k = 0,
+                var aa = c,
+                    bb = d,
+                    gg = 17,
+                    hh = 3,
+                    ii = 0,
+                    jj = 0,
+                    kk = 0,
                     l = 0,
                     m = 0,
                     n = 0,
@@ -952,77 +978,77 @@ pd.webtool = [];
                     r = 0,
                     s = (y === true) ? 9.71 : 6.71,
                     grow = function () {
-                        g += m;
-                        h += n;
+                        gg += m;
+                        hh += n;
                         w += q;
                         v += r;
-                        a.style.width = g + "em";
-                        a.style.height = h + "em";
-                        b.style.width = (g - s) + "em";
+                        aa.style.width = gg + "em";
+                        aa.style.height = hh + "em";
+                        bb.style.width = (gg - s) + "em";
                         x.style.left = w + "em";
                         x.style.top = v + "em";
-                        if (g + m < k || h + n < l) {
+                        if (gg + m < kk || hh + n < l) {
                             setTimeout(grow, 1);
                         } else {
-                            a.style.width = (k + 0.1) + "em";
-                            a.style.height = (l + 0.1) + "em";
+                            aa.style.width = (kk + 0.1) + "em";
+                            aa.style.height = (l + 0.1) + "em";
                             pd.options(x);
                             return false;
                         }
                     };
                 if (typeof pd.position[f].left === "number") {
-                    i = pd.position[f].left;
-                    j = pd.position[f].top;
-                    k = pd.position[f].width;
+                    ii = pd.position[f].left;
+                    jj = pd.position[f].top;
+                    kk = pd.position[f].width;
                     l = pd.position[f].height;
                 } else {
                     pd.position[f].left = 20;
                     pd.position[f].top = v;
                     pd.position[f].width = 75;
                     pd.position[f].height = 20;
-                    i = 20;
-                    j = v;
-                    k = 75;
+                    ii = 20;
+                    jj = v;
+                    kk = 75;
                     l = 20;
                 }
                 if (step === 1) {
-                    x.style.left = i + "em";
-                    x.style.top = j + "em";
-                    a.style.width = k + "em";
-                    a.style.height = l + "em";
-                    d.style.width = (k - s) + "em";
+                    x.style.left = ii + "em";
+                    x.style.top = jj + "em";
+                    aa.style.width = kk + "em";
+                    aa.style.height = l + "em";
+                    d.style.width = (kk - s) + "em";
                     pd.options(x);
                     return false;
                 }
-                m = (k > g) ? ((k - g) / step) : ((g - k) / step);
-                n = (l > h) ? ((l - h) / step) : ((h - l) / step);
-                q = (i - w) / step;
-                r = (j - v) / step;
+                m = (kk > gg) ? ((kk - gg) / step) : ((gg - kk) / step);
+                n = (l > hh) ? ((l - hh) / step) : ((hh - l) / step);
+                q = (ii - w) / step;
+                r = (jj - v) / step;
                 x.style.right = "auto";
-                a.style.display = "block";
+                aa.style.display = "block";
                 grow();
                 return false;
             },
             shrinkage = function (u, v, w, x, y, z) {
-                var a = i,
-                    b = j,
-                    c = y.clientWidth / 10,
-                    d = y.clientHeight / 10,
-                    e = (u - a) / step,
-                    f = (v - b) / step,
-                    g = (c === 17) ? 0 : (c > 17) ? ((c - 17) / step) : ((17 - c) / step),
-                    h = d / step,
+                var aa = i,
+                    bb = j,
+                    cc = y.clientWidth / 10,
+                    dd = y.clientHeight / 10,
+                    ee = (u - aa) / step,
+                    ff = (v - bb) / step,
+                    gg = (cc === 17) ? 0 : (cc > 17) ? ((cc - 17) / step) : ((17 - cc) / step),
+                    hh = dd / step,
                     shrink = function () {
-                        a += e;
-                        b += f;
-                        c -= g;
-                        d -= h;
-                        y.style.width = c + "em";
-                        z.style.width = c + "em";
-                        y.style.height = d + "em";
-                        x.style.left = a + "em";
-                        x.style.top = b + "em";
-                        if (c - g > 16.8) {
+                        aa += ee;
+                        bb += ff;
+                        cc -= gg;
+                        dd -= hh;
+                        y.style.width = cc + "em";
+                        z.style.width = cc + "em";
+                        y.style.height = dd + "em";
+                        x.style.left = aa + "em";
+                        x.style.top = bb + "em";
+                        if (cc - gg > 16.8) {
                             setTimeout(shrink, 1);
                         } else {
                             y.style.display = "none";
@@ -1458,15 +1484,15 @@ pd.webtool = [];
             d = [],
             langtest = (pd.o.la !== null && pd.o.la.nodeName === "select") ? true : false,
             optioncheck = function () {
-                var a = 0,
-                    b = [];
-                b = pd.o.la.getElementsByTagName("option");
-                for (a = b.length - 1; a > -1; a -= 1) {
-                    if (b[a].value === "text") {
-                        if (pd.o.la.selectedIndex === a) {
+                var aa = 0,
+                    bb = [];
+                bb = pd.o.la.getElementsByTagName("option");
+                for (aa = bb.length - 1; aa > -1; aa -= 1) {
+                    if (bb[aa].value === "text") {
+                        if (pd.o.la.selectedIndex === aa) {
                             pd.o.la.selectedIndex = 0;
                         }
-                        b[a].disabled = true;
+                        bb[aa].disabled = true;
                     }
                 }
             };
@@ -2815,7 +2841,9 @@ pd.webtool = [];
         return false;
     };
 
-    pd.reload = function () {};
+    pd.reload = function () {
+        return;
+    };
     //alter tool on page load in reflection to saved state
     (function () {
         var a = [],
@@ -2852,16 +2880,214 @@ pd.webtool = [];
             langtest = (pd.o.la !== null && pd.o.la.nodeName === "select") ? true : false,
             page = pd.o.wb.getAttribute("id"),
             backspace = function (event) {
-                var a = event || window.event,
-                    b = a.srcElement || a.target;
-                if (a.keyCode === 8) {
-                    if (b.nodeName === "textarea" || (b.nodeName === "input" && (b.getAttribute("type") === "text" || b.getAttribute("type") === "password"))) {
+                var aa = event || window.event,
+                    bb = aa.srcElement || aa.target;
+                if (aa.keyCode === 8) {
+                    if (bb.nodeName === "textarea" || (bb.nodeName === "input" && (bb.getAttribute("type") === "text" || bb.getAttribute("type") === "password"))) {
                         return true;
                     }
                     return false;
                 }
             };
         if (page === "webtool") {
+            if (pd.o.an !== null) {
+                pd.o.an.onclick = function () {
+                    pd.additional(pd.o.an);
+                };
+            }
+            if (pd.o.ay !== null) {
+                pd.o.ay.onclick = function () {
+                    pd.additional(pd.o.ay);
+                };
+            }
+            if (pd.o.ba !== null) {
+                pd.o.ba.onclick = function () {
+                    pd.indentchar(pd.o.ba);
+                };
+            }
+            if (pd.o.bb !== null) {
+                pd.o.bb.onclick = function () {
+                    pd.prettyvis(pd.o.bb);
+                };
+            }
+            if (pd.o.bc !== null) {
+                pd.o.bc.onclick = function () {
+                    pd.indentchar(pd.o.bc);
+                };
+                pd.o.bc.onkeyup = function () {
+                    pd.options(pd.o.bc);
+                };
+            }
+            if (pd.o.bi !== null) {
+                pd.o.bi.onkeydown = function (event) {
+                    if (pd.keypress.state === true && (pd.keypress.keys.length === 0 || event.keyCode !== pd.keypress.keys[pd.keypress.keys.length - 1]) && event.keyCode !== 17) {
+                        pd.keypress.keys.push(event.keyCode);
+                    }
+                    if (event.keyCode === 17 || event.ctrlKey === true) {
+                        pd.keypress.state = true;
+                    }
+                    return pd.fixtabs(event, pd.o.bi);
+                };
+            }
+            if (pd.o.bl !== null) {
+                pd.o.bl.onkeyup = function () {
+                    pd.options(pd.o.bl);
+                };
+            }
+            if (pd.o.bn !== null) {
+                pd.o.bn.onclick = function () {
+                    pd.indentchar(pd.o.bn);
+                };
+            }
+            if (pd.o.bo !== null) {
+                pd.o.bo.onkeydown = function (event) {
+                    return pd.fixtabs(event, pd.o.bo);
+                };
+            }
+            if (pd.o.bq !== null) {
+                pd.o.bq.onkeyup = function () {
+                    pd.options(pd.o.bq);
+                };
+            }
+            if (pd.o.bs !== null) {
+                pd.o.bs.onclick = function () {
+                    pd.indentchar(pd.o.bs);
+                };
+            }
+            if (pd.o.cs !== null) {
+                pd.o.cs.onchange = function () {
+                    pd.colorScheme(pd.o.cs);
+                };
+            }
+            if (pd.o.dbf !== null) {
+                pd.o.dbf.onchange = function () {
+                    pd.file(pd.o.dbf.files, pd.o.dbf);
+                };
+            }
+            if (pd.o.dd !== null) {
+                pd.o.dd.onclick = function () {
+                    pd.prettyvis(pd.o.dd);
+                };
+            }
+            if (pd.o.dnf !== null) {
+                pd.o.dnf.onchange = function () {
+                    pd.file(pd.o.dnf.files, pd.o.dnf);
+                };
+            }
+            if (pd.o.dp !== null) {
+                pd.o.dp.onclick = function () {
+                    pd.prettyvis(pd.o.dp);
+                };
+            }
+            if (pd.o.dt !== null) {
+                pd.o.dt.onclick = function () {
+                    pd.prettyvis(pd.o.dt);
+                };
+            }
+            if (pd.o.exe !== null) {
+                pd.o.exe.onmouseout = function () {
+                    pd.comment(false, pd.o.exe);
+                };
+                pd.o.exe.getElementsByTagName("button")[0].onclick = pd.recycle;
+            }
+            if (pd.o.iz !== null) {
+                pd.o.iz.onclick = function () {
+                    pd.options(pd.o.iz);
+                };
+            }
+            if (pd.o.jd !== null) {
+                pd.o.jd.onclick = function () {
+                    pd.options(pd.o.jd);
+                };
+            }
+            if (pd.o.jf !== null) {
+                pd.o.jf.onclick = function () {
+                    pd.options(pd.o.jf);
+                };
+            }
+            if (pd.o.jg !== null) {
+                pd.o.jg.onclick = function () {
+                    pd.options(pd.o.jg);
+                };
+            }
+            if (pd.o.jh !== null) {
+                pd.o.jh.onclick = function () {
+                    pd.options(pd.o.jh);
+                };
+            }
+            if (pd.o.ji !== null) {
+                pd.o.ji.onkeyup = function () {
+                    pd.options(pd.o.ji);
+                };
+            }
+            if (pd.o.la !== null) {
+                pd.o.la.onchange = function () {
+                    pd.codeOps(pd.o.la);
+                };
+            }
+            if (pd.o.mi !== null) {
+                pd.o.mi.onkeydown = function (event) {
+                    if (pd.keypress.state === true && (pd.keypress.keys.length === 0 || event.keyCode !== pd.keypress.keys[pd.keypress.keys.length - 1]) && event.keyCode !== 17) {
+                        pd.keypress.keys.push(event.keyCode);
+                    }
+                    if (event.keyCode === 17 || event.ctrlKey === true) {
+                        pd.keypress.state = true;
+                    }
+                    return pd.fixtabs(event, pd.o.mi);
+                };
+            }
+            if (pd.o.mm !== null) {
+                pd.o.mm.onclick = function () {
+                    pd.prettyvis(pd.o.mm);
+                };
+            }
+            if (pd.o.nl !== null) {
+                pd.o.nl.onkeyup = function () {
+                    pd.options(pd.o.nl);
+                };
+            }
+            if (pd.o.nx !== null) {
+                pd.o.nx.onkeydown = function (event) {
+                    return pd.fixtabs(event, pd.o.nx);
+                };
+            }
+            if (pd.o.option !== null) {
+                pd.o.option.onmouseover = function () {
+                    pd.comment(true, pd.o.option);
+                };
+                pd.o.option.onmouseout = function () {
+                    pd.comment(false, pd.o.option);
+                };
+            }
+            if (pd.o.re !== null) {
+                pd.o.re.getElementsByTagName("h3")[0].onmousedown = function (e) {
+                    pd.grab(e, pd.o.re.getElementsByTagName("h3")[0]);
+                };
+            }
+            if (pd.o.rg !== null) {
+                pd.o.rg.getElementsByTagName("h3")[0].onmousedown = function (e) {
+                    pd.grab(e, pd.o.rg.getElementsByTagName("h3")[0]);
+                };
+            }
+            if (pd.o.ri !== null) {
+                pd.o.ri.getElementsByTagName("h3")[0].onmousedown = function (e) {
+                    pd.grab(e, pd.o.ri.getElementsByTagName("h3")[0]);
+                };
+            }
+            if (pd.o.rk !== null) {
+                pd.o.rk.getElementsByTagName("h3")[0].onmousedown = function (e) {
+                    pd.grab(e, pd.o.rk.getElementsByTagName("h3")[0]);
+                };
+            }
+            if (pd.o.ro !== null) {
+                pd.o.ro.onclick = pd.reset;
+            }
+            if (pd.o.sh !== null) {
+                pd.o.sh.onclick = function () {
+                    pd.hideOptions(pd.o.sh);
+                };
+            }
+
             //supply limited functionality for the pd.save function if
             //not firefox or opera.
             if (agent.indexOf("firefox") === -1 && agent.indexOf("opera") === -1 && pd.o.re !== null) {
@@ -2889,21 +3115,21 @@ pd.webtool = [];
             document.onkeydown = backspace;
             if (pd.o.update !== null) {
                 pd.o.update.innerHTML = (function () {
-                    var a = String(edition.latest),
-                        b = [
-                            a.charAt(0) + a.charAt(1), a.charAt(2) + a.charAt(3), a.charAt(4) + a.charAt(5)
+                    var aa = String(edition.latest),
+                        bb = [
+                            aa.charAt(0) + aa.charAt(1), aa.charAt(2) + aa.charAt(3), aa.charAt(4) + aa.charAt(5)
                         ],
-                        c = [
+                        cc = [
                             "January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"
                         ];
-                    if (b[1].charAt(0) === "0") {
-                        b[1] = Number(b[1]);
+                    if (bb[1].charAt(0) === "0") {
+                        bb[1] = Number(bb[1]);
                     }
-                    if (b[2].charAt(0) === "0") {
-                        b[2] = b[2].substr(1);
+                    if (bb[2].charAt(0) === "0") {
+                        bb[2] = bb[2].substr(1);
                     }
-                    b[1] -= 1;
-                    return "Updated: " + b[2] + " " + c[b[1]] + " 20" + b[0];
+                    bb[1] -= 1;
+                    return "Updated: " + bb[2] + " " + cc[bb[1]] + " 20" + bb[0];
                 }());
             }
             pd.o.bc = pd.$$("beau-char");
@@ -3807,6 +4033,8 @@ pd.webtool = [];
                         }
                     } else if (d[b].indexOf("jsscope") === 0 && pd.o.jg !== null) {
                         pd.o.jg.checked = true;
+                    } else if (d[b].indexOf("jscorrect") === 0 && pd.o.co !== null) {
+                        pd.o.co.checked = true;
                     }
                 }
             }
@@ -3906,374 +4134,189 @@ pd.webtool = [];
         }
         if (page === "doc") {
             (function () {
-                var a = {},
-                    b = [],
-                    c = {},
-                    d = 0,
+                var aa = {},
+                    bb = [],
+                    cc = {},
+                    dd = 0,
                     e = 0,
-                    f = [],
-                    g = [],
-                    h = [],
+                    ff = [],
+                    gg = [],
+                    hh = [],
                     date = 0,
                     conversion = function (x) {
-                        var a = String(x),
-                            b = [
-                                a.charAt(0) + a.charAt(1), a.charAt(2) + a.charAt(3), a.charAt(4) + a.charAt(5)
+                        var aaa = String(x),
+                            bbb = [
+                                aaa.charAt(0) + aaa.charAt(1), aaa.charAt(2) + aaa.charAt(3), aaa.charAt(4) + aaa.charAt(5)
                             ],
-                            c = [
+                            ccc = [
                                 "Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"
                             ];
-                        if (b[1].charAt(0) === "0") {
-                            b[1] = Number(b[1]);
+                        if (bbb[1].charAt(0) === "0") {
+                            bbb[1] = Number(bbb[1]);
                         }
-                        b[1] -= 1;
-                        return b[2] + " " + c[b[1]] + " 20" + b[0];
+                        bbb[1] -= 1;
+                        return bbb[2] + " " + ccc[bbb[1]] + " 20" + bbb[0];
                     };
-                a = document.getElementById("components");
-                if (a !== null) {
-                    a = a.getElementsByTagName("tbody")[0];
-                    b = a.getElementsByTagName("tr");
-                    e = b.length;
-                    for (d = 0; d < e; d += 1) {
-                        c = b[d].getElementsByTagName("td")[3];
-                        switch (b[d].getElementsByTagName("a")[0].innerHTML) {
+                aa = document.getElementById("components");
+                if (aa !== null) {
+                    aa = aa.getElementsByTagName("tbody")[0];
+                    bb = aa.getElementsByTagName("tr");
+                    e = bb.length;
+                    for (dd = 0; dd < e; dd += 1) {
+                        cc = bb[dd].getElementsByTagName("td")[3];
+                        switch (bb[dd].getElementsByTagName("a")[0].innerHTML) {
                         case "charDecoder.js":
                             date = edition.charDecoder;
-                            c.innerHTML = conversion(date);
-                            f.push(date);
-                            g.push([
-                                date, b[d].innerHTML
+                            cc.innerHTML = conversion(date);
+                            ff.push(date);
+                            gg.push([
+                                date, bb[dd].innerHTML
                             ]);
                             break;
                         case "cleanCSS.js":
                             date = edition.cleanCSS;
-                            c.innerHTML = conversion(date);
-                            f.push(date);
-                            g.push([
-                                date, b[d].innerHTML
+                            cc.innerHTML = conversion(date);
+                            ff.push(date);
+                            gg.push([
+                                date, bb[dd].innerHTML
                             ]);
                             break;
                         case "csvbeauty.js":
                             date = edition.csvbeauty;
-                            c.innerHTML = conversion(date);
-                            f.push(date);
-                            g.push([
-                                date, b[d].innerHTML
+                            cc.innerHTML = conversion(date);
+                            ff.push(date);
+                            gg.push([
+                                date, bb[dd].innerHTML
                             ]);
                             break;
                         case "csvmin.js":
                             date = edition.csvmin;
-                            c.innerHTML = conversion(date);
-                            f.push(date);
-                            g.push([
-                                date, b[d].innerHTML
+                            cc.innerHTML = conversion(date);
+                            ff.push(date);
+                            gg.push([
+                                date, bb[dd].innerHTML
                             ]);
                             break;
                         case "diffview.css":
                             date = edition.css;
-                            c.innerHTML = conversion(date);
-                            f.push(date);
-                            g.push([
-                                date, b[d].innerHTML
+                            cc.innerHTML = conversion(date);
+                            ff.push(date);
+                            gg.push([
+                                date, bb[dd].innerHTML
                             ]);
                             break;
                         case "diffview.js":
                             date = edition.diffview;
-                            c.innerHTML = conversion(date);
-                            f.push(date);
-                            g.push([
-                                date, b[d].innerHTML
+                            cc.innerHTML = conversion(date);
+                            ff.push(date);
+                            gg.push([
+                                date, bb[dd].innerHTML
                             ]);
                             break;
                         case "documentation.xhtml":
                             date = edition.documentation;
-                            c.innerHTML = conversion(date);
-                            f.push(date);
-                            g.push([
-                                date, b[d].innerHTML
+                            cc.innerHTML = conversion(date);
+                            ff.push(date);
+                            gg.push([
+                                date, bb[dd].innerHTML
                             ]);
                             break;
                         case "dom.js":
                             date = edition.api.dom;
-                            c.innerHTML = conversion(date);
-                            f.push(date);
-                            g.push([
-                                date, b[d].innerHTML
+                            cc.innerHTML = conversion(date);
+                            ff.push(date);
+                            gg.push([
+                                date, bb[dd].innerHTML
                             ]);
                             break;
                         case "fulljsmin.js":
                             date = edition.jsmin;
-                            c.innerHTML = conversion(date);
-                            f.push(date);
-                            g.push([
-                                date, b[d].innerHTML
+                            cc.innerHTML = conversion(date);
+                            ff.push(date);
+                            gg.push([
+                                date, bb[dd].innerHTML
                             ]);
                             break;
                         case "jspretty.js":
                             date = edition.jspretty;
-                            c.innerHTML = conversion(date);
-                            f.push(date);
-                            g.push([
-                                date, b[d].innerHTML
+                            cc.innerHTML = conversion(date);
+                            ff.push(date);
+                            gg.push([
+                                date, bb[dd].innerHTML
                             ]);
                             break;
                         case "markup_beauty.js":
                             date = edition.markup_beauty;
-                            c.innerHTML = conversion(date);
-                            f.push(date);
-                            g.push([
-                                date, b[d].innerHTML
+                            cc.innerHTML = conversion(date);
+                            ff.push(date);
+                            gg.push([
+                                date, bb[dd].innerHTML
                             ]);
                             break;
                         case "markupmin.js":
                             date = edition.markupmin;
-                            c.innerHTML = conversion(date);
-                            f.push(date);
-                            g.push([
-                                date, b[d].innerHTML
+                            cc.innerHTML = conversion(date);
+                            ff.push(date);
+                            gg.push([
+                                date, bb[dd].innerHTML
                             ]);
                             break;
                         case "node-local.js":
                             date = edition.api.nodeLocal;
-                            c.innerHTML = conversion(date);
-                            f.push(date);
-                            g.push([
-                                date, b[d].innerHTML
+                            cc.innerHTML = conversion(date);
+                            ff.push(date);
+                            gg.push([
+                                date, bb[dd].innerHTML
                             ]);
                             break;
                         case "node-service.js":
                             date = edition.api.nodeService;
-                            c.innerHTML = conversion(date);
-                            f.push(date);
-                            g.push([
-                                date, b[d].innerHTML
+                            cc.innerHTML = conversion(date);
+                            ff.push(date);
+                            gg.push([
+                                date, bb[dd].innerHTML
                             ]);
                             break;
                         case "prettydiff.com.xhtml":
                             date = edition.webtool;
-                            c.innerHTML = conversion(date);
-                            f.push(date);
-                            g.push([
-                                date, b[d].innerHTML
+                            cc.innerHTML = conversion(date);
+                            ff.push(date);
+                            gg.push([
+                                date, bb[dd].innerHTML
                             ]);
                             break;
                         case "prettydiff.js":
                             date = edition.prettydiff;
-                            c.innerHTML = conversion(date);
-                            f.push(date);
-                            g.push([
-                                date, b[d].innerHTML
+                            cc.innerHTML = conversion(date);
+                            ff.push(date);
+                            gg.push([
+                                date, bb[dd].innerHTML
                             ]);
                             break;
                         case "prettydiff.wsf":
                             date = edition.api.wsh;
-                            c.innerHTML = conversion(date);
-                            f.push(date);
-                            g.push([
-                                date, b[d].innerHTML
+                            cc.innerHTML = conversion(date);
+                            ff.push(date);
+                            gg.push([
+                                date, bb[dd].innerHTML
                             ]);
                             break;
                         }
                     }
-                    e = g.length;
-                    g = g.sort(function (a, b) {
-                        return a[1] === b[1];
-                    }).reverse().sort(function (a, b) {
-                        return a[0] - b[0];
+                    e = gg.length;
+                    gg = gg.sort(function (aa, bb) {
+                        return aa[1] === bb[1];
+                    }).reverse().sort(function (aa, bb) {
+                        return aa[0] - bb[0];
                     });
-                    for (d = g.length - 1; d > -1; d -= 1) {
-                        h.push("<tr>");
-                        h.push(g[d][1]);
-                        h.push("</tr>");
+                    for (dd = gg.length - 1; dd > -1; dd -= 1) {
+                        hh.push("<tr>");
+                        hh.push(gg[dd][1]);
+                        hh.push("</tr>");
                     }
-                    a.innerHTML = h.join("");
+                    aa.innerHTML = hh.join("");
                 }
             }());
-        }
-        if (pd.o.ro !== null) {
-            pd.o.ro.onclick = pd.reset;
-        }
-        if (pd.o.sh !== null) {
-            pd.o.sh.onclick = function () {
-                pd.hideOptions(pd.o.sh);
-            };
-        }
-        if (pd.o.re !== null) {
-            pd.o.re.getElementsByTagName("h3")[0].onmousedown = function (e) {
-                pd.grab(e, pd.o.re.getElementsByTagName("h3")[0]);
-            };
-        }
-        if (pd.o.rg !== null) {
-            pd.o.rg.getElementsByTagName("h3")[0].onmousedown = function (e) {
-                pd.grab(e, pd.o.rg.getElementsByTagName("h3")[0]);
-            };
-        }
-        if (pd.o.ri !== null) {
-            pd.o.ri.getElementsByTagName("h3")[0].onmousedown = function (e) {
-                pd.grab(e, pd.o.ri.getElementsByTagName("h3")[0]);
-            };
-        }
-        if (pd.o.rk !== null) {
-            pd.o.rk.getElementsByTagName("h3")[0].onmousedown = function (e) {
-                pd.grab(e, pd.o.rk.getElementsByTagName("h3")[0]);
-            };
-        }
-        if (pd.o.cs !== null) {
-            pd.o.cs.onchange = function () {
-                pd.colorScheme(pd.o.cs);
-            };
-        }
-        if (pd.o.dd !== null) {
-            pd.o.dd.onclick = function () {
-                pd.prettyvis(pd.o.dd);
-            };
-        }
-        if (pd.o.bb !== null) {
-            pd.o.bb.onclick = function () {
-                pd.prettyvis(pd.o.bb);
-            };
-        }
-        if (pd.o.mm !== null) {
-            pd.o.mm.onclick = function () {
-                pd.prettyvis(pd.o.mm);
-            };
-        }
-        if (pd.o.la !== null) {
-            pd.o.la.onchange = function () {
-                pd.codeOps(pd.o.la);
-            };
-        }
-        if (pd.o.dt !== null) {
-            pd.o.dt.onclick = function () {
-                pd.prettyvis(pd.o.dt);
-            };
-        }
-        if (pd.o.dp !== null) {
-            pd.o.dp.onclick = function () {
-                pd.prettyvis(pd.o.dp);
-            };
-        }
-        if (pd.o.an !== null) {
-            pd.o.an.onclick = function () {
-                pd.additional(pd.o.an);
-            };
-        }
-        if (pd.o.ay !== null) {
-            pd.o.ay.onclick = function () {
-                pd.additional(pd.o.ay);
-            };
-        }
-        if (pd.o.option !== null) {
-            pd.o.option.onmouseover = function () {
-                pd.comment(true, pd.o.option);
-            };
-            pd.o.option.onmouseout = function () {
-                pd.comment(false, pd.o.option);
-            };
-        }
-        if (pd.o.bl !== null) {
-            pd.o.bl.onkeyup = function () {
-                pd.options(pd.o.bl);
-            };
-        }
-        if (pd.o.dbf !== null) {
-            pd.o.dbf.onchange = function () {
-                pd.file(pd.o.dbf.files, pd.o.dbf);
-            };
-        }
-        if (pd.o.nl !== null) {
-            pd.o.nl.onkeyup = function () {
-                pd.options(pd.o.nl);
-            };
-        }
-        if (pd.o.dnf !== null) {
-            pd.o.dnf.onchange = function () {
-                pd.file(pd.o.dnf.files, pd.o.dnf);
-            };
-        }
-        if (pd.o.exe !== null) {
-            pd.o.exe.onmouseout = function () {
-                pd.comment(false, pd.o.exe);
-            };
-            pd.o.exe.getElementsByTagName("button")[0].onclick = pd.recycle;
-        }
-        if (pd.o.bq !== null) {
-            pd.o.bq.onclick = function () {
-                pd.options(pd.o.bq);
-            };
-        }
-        if (pd.o.ji !== null) {
-            pd.o.ji.onclick = function () {
-                pd.options(pd.o.ji);
-            };
-        }
-        if (pd.o.bc !== null) {
-            pd.o.bc.onclick = function () {
-                pd.indentchar(pd.o.bc);
-            };
-            pd.o.bc.onkeyup = function () {
-                pd.options(pd.o.bc);
-            };
-        }
-        if (pd.o.bs !== null) {
-            pd.o.bs.onclick = function () {
-                pd.indentchar(pd.o.bs);
-            };
-        }
-        if (pd.o.ba !== null) {
-            pd.o.ba.onclick = function () {
-                pd.indentchar(pd.o.ba);
-            };
-        }
-        if (pd.o.bn !== null) {
-            pd.o.bn.onclick = function () {
-                pd.indentchar(pd.o.bn);
-            };
-        }
-        if (pd.o.iz !== null) {
-            pd.o.iz.onclick = function () {
-                pd.options(pd.o.iz);
-            };
-        }
-        if (pd.o.jd !== null) {
-            pd.o.jd.onclick = function () {
-                pd.options(pd.o.jd);
-            };
-        }
-        if (pd.o.jf !== null) {
-            pd.o.jf.onclick = function () {
-                pd.options(pd.o.jf);
-            };
-        }
-        if (pd.o.jg !== null) {
-            pd.o.jg.onclick = function () {
-                pd.options(pd.o.jg);
-            };
-        }
-        if (pd.o.jh !== null) {
-            pd.o.jh.onclick = function () {
-                pd.options(pd.o.jh);
-            };
-        }
-        if (pd.o.bo !== null) {
-            pd.o.bo.onkeydown = function (event) {
-                return pd.fixtabs(event, pd.o.bo);
-            };
-        }
-        if (pd.o.nx !== null) {
-            pd.o.nx.onkeydown = function (event) {
-                return pd.fixtabs(event, pd.o.nx);
-            };
-        }
-        if (pd.o.bi !== null) {
-            pd.o.bi.onkeydown = function (event) {
-                return pd.fixtabs(event, pd.o.bi);
-            };
-        }
-        if (pd.o.mi !== null) {
-            pd.o.mi.onkeydown = function (event) {
-                return pd.fixtabs(event, pd.o.mi);
-            };
         }
     }());
 }());
