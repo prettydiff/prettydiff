@@ -3762,7 +3762,7 @@ var prettydiff = function prettydiff(api) {
                                     var c = 0,
                                         d = (typeof token[a + 1] === "string") ? token[a + 1] : "",
                                         e = (d === "") ? [] : [
-                                            "Date", "RegExp", "Error", "XMLHttpRequest", "FileReader", "ActiveXObject", "DataView", "ArrayBuffer", "Proxy", "ParallelArray", "Int8Array", "Uint8Array", "Int16Array", "Uint16Array", "Int32Array", "Uint32Array", "Float32Array", "Float64Array", "Canvas", "CustomAnimation", "FadeAnimation", "Flash", "FormField", "Frame", "HotKey", "Image", "MenuItem", "MoveAnimation", "Point", "Rectangle", "ResizeAnimation", "RotateAnimation", "ScrollBar", "Shadow", "SQLite", "Text", "TextArea", "Timer", "URL", "Web", "Window"
+                                            "Date", "RegExp", "Error", "XMLHttpRequest", "FileReader", "ActiveXObject", "DataView", "ArrayBuffer", "Proxy", "DOMParser", "ParallelArray", "Int8Array", "Uint8Array", "Int16Array", "Uint16Array", "Int32Array", "Uint32Array", "Float32Array", "Float64Array", "Canvas", "CustomAnimation", "FadeAnimation", "Flash", "FormField", "Frame", "HotKey", "Image", "MenuItem", "MoveAnimation", "Point", "Rectangle", "ResizeAnimation", "RotateAnimation", "ScrollBar", "Shadow", "SQLite", "Text", "TextArea", "Timer", "URL", "Web", "Window"
                                         ],
                                         f = e.length;
                                     for (c = 0; c < f; c += 1) {
@@ -6413,7 +6413,24 @@ var prettydiff = function prettydiff(api) {
                                 ind = (function markup_beauty__apply_wrap_ind() {
                                     var aa = 0,
                                         bb = [],
-                                        cc = level[i];
+                                        cc = level[i],
+                                        dd = 0;
+                                        if (cinfo[i - 1] === "end" && level[i - 1] === "x") {
+                                            for (aa = i - 1; aa > -1; aa -= 1) {
+                                                if (cinfo[aa] === "end") {
+                                                    dd += 1;
+                                                }
+                                                if (cinfo[aa] === "start") {
+                                                    dd -= 1;
+                                                }
+                                                if (dd === -1 && cinfo[aa] === "start") {
+                                                    if (i > aa + 2 && level[aa + 2] !== "x") {
+                                                        return indents;
+                                                    }
+                                                    return indents + tab;
+                                                }
+                                            }
+                                        }
                                     for (aa = i - 1; aa > -1; aa -= 1) {
                                         if (token[aa] === "T_content" || (cinfo[aa] === "end" && level[aa] !== "x")) {
                                             if (cinfo[aa] === "end" && level[i] !== "x" && level[i] !== indents.length / tab.length) {
@@ -6425,6 +6442,9 @@ var prettydiff = function prettydiff(api) {
                                             return indents;
                                         }
                                         if (cinfo[aa] !== "singleton" && cinfo[aa] !== "end") {
+                                            if (cinfo[aa] === "start" && cinfo[aa - 1] === "end" && aa === i - 1 && level[aa] === "x") {
+                                                return indents;
+                                            }
                                             return indents + tab;
                                         }
                                     }
@@ -7410,7 +7430,6 @@ var prettydiff = function prettydiff(api) {
                                 kt = false,
                                 kk = 0,
                                 ll = [],
-                                rs = (/ _pdiffdiff_/g),
                                 rrs = (/_pdiffdiff_/g),
                                 rrt = (/_epdiffdiff_/g),
                                 ss = "_pdiffdiff_",
@@ -8582,15 +8601,15 @@ var prettydiff = function prettydiff(api) {
         csvbeauty: 130813, //csvbeauty library
         csvmin: 121127, //csvmin library
         diffview: 130813, //diffview library
-        documentation: 130813, //documentation.xhtml
+        documentation: 130814, //documentation.xhtml
         jsmin: 130813, //jsmin library (fulljsmin.js)
-        jspretty: 130813, //jspretty library
-        markup_beauty: 130813, //markup_beauty library
+        jspretty: 130814, //jspretty library
+        markup_beauty: 130814, //markup_beauty library
         markupmin: 130813, //markupmin library
-        prettydiff: 130813, //this file
+        prettydiff: 130814, //this file
         webtool: 130510, //prettydiff.com.xhtml
         api: {
-            dom: 130813,
+            dom: 130814,
             nodeLocal: 130510,
             nodeService: 121106,
             wsh: 130510

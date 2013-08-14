@@ -29,7 +29,7 @@ pd.optionString = [];
 //and every time
 pd.webtool = [];
 
-(function () {
+(function dom__init() {
     "use strict";
 
     if (typeof prettydiff === "function") {
@@ -43,7 +43,7 @@ pd.webtool = [];
     pd.fs = (typeof FileReader === "function" && typeof new FileReader().readAsText === "function") ? true : false;
 
     pd.bounce = true;
-    pd.$$ = function (x) {
+    pd.$$ = function dom__$$(x) {
         if (document.getElementById === undefined) {
             return;
         }
@@ -233,7 +233,7 @@ pd.webtool = [];
     };
 
     pd.colSliderProperties = [];
-    pd.colSliderGrab = function (x) {
+    pd.colSliderGrab = function dom__colSliderGrab(x) {
         var a = x.parentNode,
             b = a.parentNode,
             c = 0,
@@ -249,12 +249,12 @@ pd.webtool = [];
             h = max - 15,
             k = false,
             z = a.previousSibling,
-            drop = function () {
+            drop = function DOM_colSliderGrab_drop() {
                 x.style.cursor = status + "-resize";
                 document.onmousemove = null;
                 document.onmouseup = null;
             },
-            boxmove = function (f) {
+            boxmove = function DOM_colSliderGrab_boxmove(f) {
                 f = f || window.event;
                 c = offset - f.clientX;
                 if (c > g && c < h) {
@@ -296,7 +296,7 @@ pd.webtool = [];
     };
 
     //recycle bundles arguments in preparation for executing prettydiff
-    pd.recycle = function (e) {
+    pd.recycle = function dom__recycle(e) {
         var c = "",
             d = [],
             api = {},
@@ -575,7 +575,7 @@ pd.webtool = [];
             api.diff = (pd.o.nx === null) ? "" : pd.o.nx.value;
             api.mode = "diff";
             if (domain.test(api.diff) === true && (typeof XMLHttpRequest === "function" || typeof ActiveXObject === "function")) {
-                (function () {
+                (function dom__recycle_XHR_diff() {
                     var a = (api.diff.indexOf("file:///") === 0) ? api.diff.split(":///")[1] : api.diff.split("://")[1],
                         b = a ? a.indexOf("/") : 0,
                         xhr = (typeof XMLHttpRequest === "function") ? new XMLHttpRequest() : new ActiveXObject("Microsoft.XMLHTTP");
@@ -593,7 +593,7 @@ pd.webtool = [];
             }
         }
         if (domain.test(api.source) === true && (typeof XMLHttpRequest === "function" || typeof ActiveXObject === "function")) {
-            (function () {
+            (function dom__recycle_XHR_source() {
                 var a = (api.source.indexOf("file:///") === 0) ? api.source.split(":///")[1] : api.source.split("://")[1],
                     b = a ? a.indexOf("/") : 0,
                     xhr = (typeof XMLHttpRequest === "function") ? new XMLHttpRequest() : new ActiveXObject("Microsoft.XMLHTTP");
@@ -704,7 +704,7 @@ pd.webtool = [];
             }
         }
         if (pd.ls === true) {
-            (function () {
+            (function dom__recycle_storage() {
                 var stat = [],
                     lang = "",
                     lango = {},
@@ -825,7 +825,7 @@ pd.webtool = [];
         }
     };
 
-    pd.fixtabs = function (e, x) {
+    pd.fixtabs = function dom__fixtabs(e, x) {
         var start = "",
             end = "",
             val = "",
@@ -845,7 +845,7 @@ pd.webtool = [];
     };
 
     //intelligently raise the z-index of the report windows
-    pd.top = function (x) {
+    pd.top = function dom__top(x) {
         var a = pd.o.zindex,
             b = [
                 (pd.o.re === null) ? 0 : Number(pd.o.re.style.zIndex), (pd.o.rg === null) ? 0 : Number(pd.o.rg.style.zIndex), (pd.o.ri === null) ? 0 : Number(pd.o.ri.style.zIndex), (pd.o.rk === null) ? 0 : Number(pd.o.rk.style.zIndex)
@@ -856,11 +856,11 @@ pd.webtool = [];
     };
 
     //read from files if the W3C File API is supported
-    pd.file = function (a, b) {
-        var c = function () {
+    pd.file = function dom__file(a, b) {
+        var c = function dom__file_init1() {
                 return;
             },
-            d = function () {
+            d = function dom__file_init2() {
                 return;
             },
             f = {},
@@ -872,7 +872,7 @@ pd.webtool = [];
             if (b.nodeName === "input") {
                 b = b.parentNode.parentNode.getElementsByTagName("textarea")[0];
             }
-            c = function (e) {
+            c = function dom__file_onload(e) {
                 var event = e || window.event;
                 g.push(event.target.result);
                 if (i === h) {
@@ -882,7 +882,7 @@ pd.webtool = [];
                     }
                 }
             };
-            d = function (e) {
+            d = function dom__file_onerror(e) {
                 var event = e || window.event;
                 b.value = "Error reading file: " + a[i].name + "\n\nThis is the browser's descriptiong: " + event.target.error.name;
                 h = -1;
@@ -897,13 +897,13 @@ pd.webtool = [];
         }
     };
 
-    pd.filenull = function (e) {
+    pd.filenull = function dom__filenull(e) {
         var event = e || window.event;
         event.stopPropagation();
         event.preventDefault();
     };
 
-    pd.filedrop = function (e) {
+    pd.filedrop = function dom__filedrop(e) {
         var event = e || window.event,
             files = event.target.files || event.dataTransfer.files;
         event.stopPropagation();
@@ -912,7 +912,7 @@ pd.webtool = [];
     };
 
     //change the color scheme of the web UI
-    pd.colorScheme = function (x) {
+    pd.colorScheme = function DOM_colorScheme(x) {
         var a = x.selectedIndex,
             b = x.getElementsByTagName("option"),
             c = b[a].innerHTML.toLowerCase().replace(/\s+/g, ""),
@@ -950,7 +950,7 @@ pd.webtool = [];
     };
 
     //minimize report windows to the default size and location
-    pd.minimize = function (e, x, y) {
+    pd.minimize = function dom__minimize(e, x, y) {
         var a = x.parentNode,
             b = a.parentNode,
             c = b.getElementsByTagName("div")[0],
@@ -963,7 +963,7 @@ pd.webtool = [];
             j = b.offsetTop / 10,
             k = (test === true) ? a.getElementsByTagName("button")[3] : a.getElementsByTagName("button")[2],
             step = (typeof y !== "number") ? 50 : (y < 1) ? 1 : y,
-            growth = function (w, v, x, y) {
+            growth = function dom__minimize_growth(w, v, x, y) {
                 var aa = c,
                     bb = d,
                     gg = 17,
@@ -977,7 +977,7 @@ pd.webtool = [];
                     q = 0,
                     r = 0,
                     s = (y === true) ? 9.71 : 6.71,
-                    grow = function () {
+                    grow = function dom__minimize_growth_grow() {
                         gg += m;
                         hh += n;
                         w += q;
@@ -1029,7 +1029,7 @@ pd.webtool = [];
                 grow();
                 return false;
             },
-            shrinkage = function (u, v, w, x, y, z) {
+            shrinkage = function dom__minimize_shrinkage(u, v, w, x, y, z) {
                 var aa = i,
                     bb = j,
                     cc = y.clientWidth / 10,
@@ -1038,7 +1038,7 @@ pd.webtool = [];
                     ff = (v - bb) / step,
                     gg = (cc === 17) ? 0 : (cc > 17) ? ((cc - 17) / step) : ((17 - cc) / step),
                     hh = dd / step,
-                    shrink = function () {
+                    shrink = function dom__minimize_shrinkage() {
                         aa += ee;
                         bb += ff;
                         cc -= gg;
@@ -1129,7 +1129,7 @@ pd.webtool = [];
     };
 
     //maximize report window to available browser window
-    pd.maximize = function (x) {
+    pd.maximize = function dom__maximize(x) {
         var a = x.parentNode.parentNode,
             b = a.getElementsByTagName("h3")[0],
             c = a.getElementsByTagName("div")[0],
@@ -1189,20 +1189,20 @@ pd.webtool = [];
     };
 
     //resize report window to custom width and height on drag
-    pd.resize = function (e, x) {
+    pd.resize = function dom__resize(e, x) {
         var a = x.parentNode.parentNode,
             b = a.getElementsByTagName("div")[0],
             c = a.getElementsByTagName("h3")[0],
             bx = b.clientWidth,
             by = b.clientHeight,
-            drop = function () {
+            drop = function dom__resize_drop() {
                 document.onmousemove = null;
                 bx = b.clientWidth;
                 by = b.clientHeight;
                 pd.options(a);
                 document.onmouseup = null;
             },
-            boxsize = function (f) {
+            boxsize = function dom__resize_boxsize(f) {
                 f = f || window.event;
                 b.style.width = ((bx + ((f.clientX - 4) - b.mouseX)) / 10) + "em";
                 if (a === pd.o.re) {
@@ -1222,7 +1222,7 @@ pd.webtool = [];
     };
 
     //toggle between parsed html diff report and raw text representation
-    pd.save = function (x) {
+    pd.save = function dom__save(x) {
         var a = pd.o.rf.innerHTML.replace(/ xmlns\=("|')http:\/\/www\.w3\.org\/1999\/xhtml("|')/g, ""),
             b = [],
             c = "",
@@ -1366,7 +1366,7 @@ pd.webtool = [];
     };
 
     //basic drag and drop for the report windows
-    pd.grab = function (e, x) {
+    pd.grab = function dom__grab(e, x) {
         var a = x.parentNode,
             b = a.getElementsByTagName("p")[0].style.display,
             c = {},
@@ -1375,7 +1375,7 @@ pd.webtool = [];
             i = 0,
             ax = a.offsetLeft,
             ay = a.offsetTop,
-            drop = function () {
+            drop = function dom__grab_drop() {
                 document.onmousemove = null;
                 ax = a.offsetLeft;
                 ay = a.offsetTop;
@@ -1386,7 +1386,7 @@ pd.webtool = [];
                 h.style.top = "100%";
                 return false;
             },
-            boxmove = function (f) {
+            boxmove = function dom__grab_boxmove(f) {
                 f = f || window.event;
                 a.style.right = "auto";
                 a.style.left = ((ax + (f.clientX - a.mouseX)) / 10) + "em";
@@ -1435,7 +1435,7 @@ pd.webtool = [];
     };
 
     //shows and hides the additional options
-    pd.additional = function (x) {
+    pd.additional = function dom__additional(x) {
         if (pd.o.ao === null) {
             return;
         }
@@ -1448,7 +1448,7 @@ pd.webtool = [];
     };
 
     //resizes the pretty diff comment onmouseover
-    pd.comment = function (e, x) {
+    pd.comment = function dom__comment(e, x) {
         var a = Math.floor(pd.o.wb.clientWidth / 13),
             b = 0;
         if (pd.o.option === null) {
@@ -1478,12 +1478,12 @@ pd.webtool = [];
 
     //toggle between tool modes and vertical/horizontal orientation of
     //textareas
-    pd.prettyvis = function (a) {
+    pd.prettyvis = function dom__prettyvis(a) {
         var b = "",
             c = 0,
             d = [],
             langtest = (pd.o.la !== null && pd.o.la.nodeName === "select") ? true : false,
-            optioncheck = function () {
+            optioncheck = function dom__prettyvis_optioncheck() {
                 var aa = 0,
                     bb = [];
                 bb = pd.o.la.getElementsByTagName("option");
@@ -1698,7 +1698,7 @@ pd.webtool = [];
     };
 
     //alters available options depending upon language selection
-    pd.codeOps = function (x) {
+    pd.codeOps = function dom__codeOps(x) {
         var a = "";
         pd.o.bb = pd.$$("modebeautify");
         pd.o.dd = pd.$$("modediff");
@@ -1807,7 +1807,7 @@ pd.webtool = [];
 
     //provides interaction to simulate a text input into a radio button
     //set with appropriate accessbility response
-    pd.indentchar = function (x) {
+    pd.indentchar = function dom__indentchar(x) {
         pd.o.bc = pd.$$("beau-char");
         pd.o.dc = pd.$$("diff-char");
         if (pd.o.bb !== null && pd.o.bb.checked && pd.o.bw !== null && x === pd.o.bc) {
@@ -1857,7 +1857,7 @@ pd.webtool = [];
     };
 
     //store tool changes into localStorage in effort to maintain state
-    pd.options = function (x) {
+    pd.options = function dom__options(x) {
         var a = {},
             b = 0,
             c = "";
@@ -2252,7 +2252,7 @@ pd.webtool = [];
         localStorage.setItem("webtool", pd.webtool.join("prettydiffcsep").replace(/(prettydiffcsep)+/g, "prettydiffcsep").replace(/%/g, "prettydiffper"));
     };
 
-    pd.fixminreport = function () {
+    pd.fixminreport = function dom__fixminreport() {
         var a = {},
             b = {},
             c = {},
@@ -2300,7 +2300,7 @@ pd.webtool = [];
     };
 
     //maximize textareas and hide options
-    pd.hideOptions = function (x) {
+    pd.hideOptions = function dom__hideOptions(x) {
         var a = "",
             b = [
                 pd.o.bi === null, pd.o.mi === null, pd.o.bx === null, pd.o.mx === null, pd.o.bo === null, pd.o.nx === null
@@ -2519,7 +2519,7 @@ pd.webtool = [];
     };
 
     //reset tool to default configuration
-    pd.reset = function () {
+    pd.reset = function dom__reset() {
         var a = (pd.o.re !== null) ? pd.o.re.getElementsByTagName("button") : null,
             b = 0,
             c = [],
@@ -2841,11 +2841,11 @@ pd.webtool = [];
         return false;
     };
 
-    pd.reload = function () {
+    pd.reload = function dom__reloadOld() {
         return;
     };
     //alter tool on page load in reflection to saved state
-    (function () {
+    (function dom__core() {
         var a = [],
             b = 0,
             c = 0,
@@ -2879,7 +2879,7 @@ pd.webtool = [];
             ],
             langtest = (pd.o.la !== null && pd.o.la.nodeName === "select") ? true : false,
             page = pd.o.wb.getAttribute("id"),
-            backspace = function (event) {
+            backspace = function dom__core_backspace(event) {
                 var aa = event || window.event,
                     bb = aa.srcElement || aa.target;
                 if (aa.keyCode === 8) {
@@ -2891,35 +2891,35 @@ pd.webtool = [];
             };
         if (page === "webtool") {
             if (pd.o.an !== null) {
-                pd.o.an.onclick = function () {
+                pd.o.an.onclick = function dom__core_event_an() {
                     pd.additional(pd.o.an);
                 };
             }
             if (pd.o.ay !== null) {
-                pd.o.ay.onclick = function () {
+                pd.o.ay.onclick = function dom__core_event_ay() {
                     pd.additional(pd.o.ay);
                 };
             }
             if (pd.o.ba !== null) {
-                pd.o.ba.onclick = function () {
+                pd.o.ba.onclick = function dom__core_event_ba() {
                     pd.indentchar(pd.o.ba);
                 };
             }
             if (pd.o.bb !== null) {
-                pd.o.bb.onclick = function () {
+                pd.o.bb.onclick = function dom__core_event_bb() {
                     pd.prettyvis(pd.o.bb);
                 };
             }
             if (pd.o.bc !== null) {
-                pd.o.bc.onclick = function () {
+                pd.o.bc.onclick = function dom__core_event_bc_onclick() {
                     pd.indentchar(pd.o.bc);
                 };
-                pd.o.bc.onkeyup = function () {
+                pd.o.bc.onkeyup = function dom__core_event_bc_onkeyup() {
                     pd.options(pd.o.bc);
                 };
             }
             if (pd.o.bi !== null) {
-                pd.o.bi.onkeydown = function (event) {
+                pd.o.bi.onkeydown = function dom__core_event_bi(event) {
                     if (pd.keypress.state === true && (pd.keypress.keys.length === 0 || event.keyCode !== pd.keypress.keys[pd.keypress.keys.length - 1]) && event.keyCode !== 17) {
                         pd.keypress.keys.push(event.keyCode);
                     }
@@ -2930,103 +2930,103 @@ pd.webtool = [];
                 };
             }
             if (pd.o.bl !== null) {
-                pd.o.bl.onkeyup = function () {
+                pd.o.bl.onkeyup = function dom__core_event_bl() {
                     pd.options(pd.o.bl);
                 };
             }
             if (pd.o.bn !== null) {
-                pd.o.bn.onclick = function () {
+                pd.o.bn.onclick = function dom__core_event_bn() {
                     pd.indentchar(pd.o.bn);
                 };
             }
             if (pd.o.bo !== null) {
-                pd.o.bo.onkeydown = function (event) {
+                pd.o.bo.onkeydown = function dom__core_event_bo(event) {
                     return pd.fixtabs(event, pd.o.bo);
                 };
             }
             if (pd.o.bq !== null) {
-                pd.o.bq.onkeyup = function () {
+                pd.o.bq.onkeyup = function dom__core_event_bq() {
                     pd.options(pd.o.bq);
                 };
             }
             if (pd.o.bs !== null) {
-                pd.o.bs.onclick = function () {
+                pd.o.bs.onclick = function dom__core_event_bs() {
                     pd.indentchar(pd.o.bs);
                 };
             }
             if (pd.o.cs !== null) {
-                pd.o.cs.onchange = function () {
+                pd.o.cs.onchange = function dom__core_event_cs() {
                     pd.colorScheme(pd.o.cs);
                 };
             }
             if (pd.o.dbf !== null) {
-                pd.o.dbf.onchange = function () {
+                pd.o.dbf.onchange = function dom__core_event_dbf() {
                     pd.file(pd.o.dbf.files, pd.o.dbf);
                 };
             }
             if (pd.o.dd !== null) {
-                pd.o.dd.onclick = function () {
+                pd.o.dd.onclick = function dom__core_event_dd() {
                     pd.prettyvis(pd.o.dd);
                 };
             }
             if (pd.o.dnf !== null) {
-                pd.o.dnf.onchange = function () {
+                pd.o.dnf.onchange = function dom__core_event_dnf() {
                     pd.file(pd.o.dnf.files, pd.o.dnf);
                 };
             }
             if (pd.o.dp !== null) {
-                pd.o.dp.onclick = function () {
+                pd.o.dp.onclick = function dom__core_event_dp() {
                     pd.prettyvis(pd.o.dp);
                 };
             }
             if (pd.o.dt !== null) {
-                pd.o.dt.onclick = function () {
+                pd.o.dt.onclick = function dom__core_event_dt() {
                     pd.prettyvis(pd.o.dt);
                 };
             }
             if (pd.o.exe !== null) {
-                pd.o.exe.onmouseout = function () {
+                pd.o.exe.onmouseout = function dom__core_event_exe() {
                     pd.comment(false, pd.o.exe);
                 };
                 pd.o.exe.getElementsByTagName("button")[0].onclick = pd.recycle;
             }
             if (pd.o.iz !== null) {
-                pd.o.iz.onclick = function () {
+                pd.o.iz.onclick = function dom__core_event_iz() {
                     pd.options(pd.o.iz);
                 };
             }
             if (pd.o.jd !== null) {
-                pd.o.jd.onclick = function () {
+                pd.o.jd.onclick = function dom__core_event_jd() {
                     pd.options(pd.o.jd);
                 };
             }
             if (pd.o.jf !== null) {
-                pd.o.jf.onclick = function () {
+                pd.o.jf.onclick = function dom__core_event_jf() {
                     pd.options(pd.o.jf);
                 };
             }
             if (pd.o.jg !== null) {
-                pd.o.jg.onclick = function () {
+                pd.o.jg.onclick = function dom__core_event_jg() {
                     pd.options(pd.o.jg);
                 };
             }
             if (pd.o.jh !== null) {
-                pd.o.jh.onclick = function () {
+                pd.o.jh.onclick = function dom__core_event_jh() {
                     pd.options(pd.o.jh);
                 };
             }
             if (pd.o.ji !== null) {
-                pd.o.ji.onkeyup = function () {
+                pd.o.ji.onkeyup = function dom__core_event_ji() {
                     pd.options(pd.o.ji);
                 };
             }
             if (pd.o.la !== null) {
-                pd.o.la.onchange = function () {
+                pd.o.la.onchange = function dom__core_event_la() {
                     pd.codeOps(pd.o.la);
                 };
             }
             if (pd.o.mi !== null) {
-                pd.o.mi.onkeydown = function (event) {
+                pd.o.mi.onkeydown = function dom__core_event_mi(event) {
                     if (pd.keypress.state === true && (pd.keypress.keys.length === 0 || event.keyCode !== pd.keypress.keys[pd.keypress.keys.length - 1]) && event.keyCode !== 17) {
                         pd.keypress.keys.push(event.keyCode);
                     }
@@ -3037,45 +3037,45 @@ pd.webtool = [];
                 };
             }
             if (pd.o.mm !== null) {
-                pd.o.mm.onclick = function () {
+                pd.o.mm.onclick = function dom__core_event_mm() {
                     pd.prettyvis(pd.o.mm);
                 };
             }
             if (pd.o.nl !== null) {
-                pd.o.nl.onkeyup = function () {
+                pd.o.nl.onkeyup = function dom__core_event_nl() {
                     pd.options(pd.o.nl);
                 };
             }
             if (pd.o.nx !== null) {
-                pd.o.nx.onkeydown = function (event) {
+                pd.o.nx.onkeydown = function dom__core_event_nx(event) {
                     return pd.fixtabs(event, pd.o.nx);
                 };
             }
             if (pd.o.option !== null) {
-                pd.o.option.onmouseover = function () {
+                pd.o.option.onmouseover = function dom__core_event_option_onmouseover() {
                     pd.comment(true, pd.o.option);
                 };
-                pd.o.option.onmouseout = function () {
+                pd.o.option.onmouseout = function dom__core_event_option_onmouseout() {
                     pd.comment(false, pd.o.option);
                 };
             }
             if (pd.o.re !== null) {
-                pd.o.re.getElementsByTagName("h3")[0].onmousedown = function (e) {
+                pd.o.re.getElementsByTagName("h3")[0].onmousedown = function dom__core_event_re(e) {
                     pd.grab(e, pd.o.re.getElementsByTagName("h3")[0]);
                 };
             }
             if (pd.o.rg !== null) {
-                pd.o.rg.getElementsByTagName("h3")[0].onmousedown = function (e) {
+                pd.o.rg.getElementsByTagName("h3")[0].onmousedown = function dom__core_event_rg(e) {
                     pd.grab(e, pd.o.rg.getElementsByTagName("h3")[0]);
                 };
             }
             if (pd.o.ri !== null) {
-                pd.o.ri.getElementsByTagName("h3")[0].onmousedown = function (e) {
+                pd.o.ri.getElementsByTagName("h3")[0].onmousedown = function dom__core_event_ri(e) {
                     pd.grab(e, pd.o.ri.getElementsByTagName("h3")[0]);
                 };
             }
             if (pd.o.rk !== null) {
-                pd.o.rk.getElementsByTagName("h3")[0].onmousedown = function (e) {
+                pd.o.rk.getElementsByTagName("h3")[0].onmousedown = function dom__core_event_rk(e) {
                     pd.grab(e, pd.o.rk.getElementsByTagName("h3")[0]);
                 };
             }
@@ -3083,7 +3083,7 @@ pd.webtool = [];
                 pd.o.ro.onclick = pd.reset;
             }
             if (pd.o.sh !== null) {
-                pd.o.sh.onclick = function () {
+                pd.o.sh.onclick = function dom__core_event_sh() {
                     pd.hideOptions(pd.o.sh);
                 };
             }
@@ -3114,7 +3114,7 @@ pd.webtool = [];
             document.onkeypress = backspace;
             document.onkeydown = backspace;
             if (pd.o.update !== null) {
-                pd.o.update.innerHTML = (function () {
+                pd.o.update.innerHTML = (function dom__core_update() {
                     var aa = String(edition.latest),
                         bb = [
                             aa.charAt(0) + aa.charAt(1), aa.charAt(2) + aa.charAt(3), aa.charAt(4) + aa.charAt(5)
@@ -4133,7 +4133,7 @@ pd.webtool = [];
             }
         }
         if (page === "doc") {
-            (function () {
+            (function dom__core_doc() {
                 var aa = {},
                     bb = [],
                     cc = {},
@@ -4143,7 +4143,7 @@ pd.webtool = [];
                     gg = [],
                     hh = [],
                     date = 0,
-                    conversion = function (x) {
+                    conversion = function dom__core_doc_conversion(x) {
                         var aaa = String(x),
                             bbb = [
                                 aaa.charAt(0) + aaa.charAt(1), aaa.charAt(2) + aaa.charAt(3), aaa.charAt(4) + aaa.charAt(5)
@@ -4304,9 +4304,9 @@ pd.webtool = [];
                         }
                     }
                     e = gg.length;
-                    gg = gg.sort(function (aa, bb) {
+                    gg = gg.sort(function dom__core_sort_forward(aa, bb) {
                         return aa[1] === bb[1];
-                    }).reverse().sort(function (aa, bb) {
+                    }).reverse().sort(function dom__core_sort_reverse(aa, bb) {
                         return aa[0] - bb[0];
                     });
                     for (dd = gg.length - 1; dd > -1; dd -= 1) {
@@ -4326,7 +4326,7 @@ if (!(/^(file:\/\/)/).test(location.href)) {
     ]);
     _gaq.push(["_trackPageview"]);
     if (pd.bounce) {
-        pd.o.wb.onclick = function () {
+        pd.o.wb.onclick = function ga__click() {
             "use strict";
             _gaq.push([
                 "_trackEvent", "Logging", "NoBounce", "NoBounce", null, false
@@ -4334,7 +4334,7 @@ if (!(/^(file:\/\/)/).test(location.href)) {
         };
         pd.bounce = false;
     }
-    (function () {
+    (function ga__init() {
         "use strict";
         var ga = document.createElement("script"),
             s = document.getElementsByTagName("script")[0];
@@ -4342,8 +4342,8 @@ if (!(/^(file:\/\/)/).test(location.href)) {
         ga.setAttribute("async", true);
         ga.setAttribute("src", ("https:" === document.location.protocol ? "https://ssl" : "http://www") + ".google-analytics.com/ga.js");
         s.parentNode.insertBefore(ga, s);
-        window.onerror = function (message, file, line) {
-            var mode = (function () {
+        window.onerror = function ga__onerror(message, file, line) {
+            var mode = (function ga__onerror_mode() {
                     if (pd.$$("modebeautify").checked) {
                         return "beautify";
                     }
