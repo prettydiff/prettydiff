@@ -2845,7 +2845,7 @@ pd.webtool = [];
         return;
     };
     //alter tool on page load in reflection to saved state
-    (function dom__core() {
+    (function dom__load() {
         var a = [],
             b = 0,
             c = 0,
@@ -2879,7 +2879,7 @@ pd.webtool = [];
             ],
             langtest = (pd.o.la !== null && pd.o.la.nodeName === "select") ? true : false,
             page = pd.o.wb.getAttribute("id"),
-            backspace = function dom__core_backspace(event) {
+            backspace = function dom__load_backspace(event) {
                 var aa = event || window.event,
                     bb = aa.srcElement || aa.target;
                 if (aa.keyCode === 8) {
@@ -2891,35 +2891,35 @@ pd.webtool = [];
             };
         if (page === "webtool") {
             if (pd.o.an !== null) {
-                pd.o.an.onclick = function dom__core_event_an() {
+                pd.o.an.onclick = function dom__load_event_an() {
                     pd.additional(pd.o.an);
                 };
             }
             if (pd.o.ay !== null) {
-                pd.o.ay.onclick = function dom__core_event_ay() {
+                pd.o.ay.onclick = function dom__load_event_ay() {
                     pd.additional(pd.o.ay);
                 };
             }
             if (pd.o.ba !== null) {
-                pd.o.ba.onclick = function dom__core_event_ba() {
+                pd.o.ba.onclick = function dom__load_event_ba() {
                     pd.indentchar(pd.o.ba);
                 };
             }
             if (pd.o.bb !== null) {
-                pd.o.bb.onclick = function dom__core_event_bb() {
+                pd.o.bb.onclick = function dom__load_event_bb() {
                     pd.prettyvis(pd.o.bb);
                 };
             }
             if (pd.o.bc !== null) {
-                pd.o.bc.onclick = function dom__core_event_bc_onclick() {
+                pd.o.bc.onclick = function dom__load_event_bc_onclick() {
                     pd.indentchar(pd.o.bc);
                 };
-                pd.o.bc.onkeyup = function dom__core_event_bc_onkeyup() {
+                pd.o.bc.onkeyup = function dom__load_event_bc_onkeyup() {
                     pd.options(pd.o.bc);
                 };
             }
             if (pd.o.bi !== null) {
-                pd.o.bi.onkeydown = function dom__core_event_bi(event) {
+                pd.o.bi.onkeydown = function dom__load_event_bi(event) {
                     if (pd.keypress.state === true && (pd.keypress.keys.length === 0 || event.keyCode !== pd.keypress.keys[pd.keypress.keys.length - 1]) && event.keyCode !== 17) {
                         pd.keypress.keys.push(event.keyCode);
                     }
@@ -2930,103 +2930,103 @@ pd.webtool = [];
                 };
             }
             if (pd.o.bl !== null) {
-                pd.o.bl.onkeyup = function dom__core_event_bl() {
+                pd.o.bl.onkeyup = function dom__load_event_bl() {
                     pd.options(pd.o.bl);
                 };
             }
             if (pd.o.bn !== null) {
-                pd.o.bn.onclick = function dom__core_event_bn() {
+                pd.o.bn.onclick = function dom__load_event_bn() {
                     pd.indentchar(pd.o.bn);
                 };
             }
             if (pd.o.bo !== null) {
-                pd.o.bo.onkeydown = function dom__core_event_bo(event) {
+                pd.o.bo.onkeydown = function dom__load_event_bo(event) {
                     return pd.fixtabs(event, pd.o.bo);
                 };
             }
             if (pd.o.bq !== null) {
-                pd.o.bq.onkeyup = function dom__core_event_bq() {
+                pd.o.bq.onkeyup = function dom__load_event_bq() {
                     pd.options(pd.o.bq);
                 };
             }
             if (pd.o.bs !== null) {
-                pd.o.bs.onclick = function dom__core_event_bs() {
+                pd.o.bs.onclick = function dom__load_event_bs() {
                     pd.indentchar(pd.o.bs);
                 };
             }
             if (pd.o.cs !== null) {
-                pd.o.cs.onchange = function dom__core_event_cs() {
+                pd.o.cs.onchange = function dom__load_event_cs() {
                     pd.colorScheme(pd.o.cs);
                 };
             }
             if (pd.o.dbf !== null) {
-                pd.o.dbf.onchange = function dom__core_event_dbf() {
+                pd.o.dbf.onchange = function dom__load_event_dbf() {
                     pd.file(pd.o.dbf.files, pd.o.dbf);
                 };
             }
             if (pd.o.dd !== null) {
-                pd.o.dd.onclick = function dom__core_event_dd() {
+                pd.o.dd.onclick = function dom__load_event_dd() {
                     pd.prettyvis(pd.o.dd);
                 };
             }
             if (pd.o.dnf !== null) {
-                pd.o.dnf.onchange = function dom__core_event_dnf() {
+                pd.o.dnf.onchange = function dom__load_event_dnf() {
                     pd.file(pd.o.dnf.files, pd.o.dnf);
                 };
             }
             if (pd.o.dp !== null) {
-                pd.o.dp.onclick = function dom__core_event_dp() {
+                pd.o.dp.onclick = function dom__load_event_dp() {
                     pd.prettyvis(pd.o.dp);
                 };
             }
             if (pd.o.dt !== null) {
-                pd.o.dt.onclick = function dom__core_event_dt() {
+                pd.o.dt.onclick = function dom__load_event_dt() {
                     pd.prettyvis(pd.o.dt);
                 };
             }
             if (pd.o.exe !== null) {
-                pd.o.exe.onmouseout = function dom__core_event_exe() {
+                pd.o.exe.onmouseout = function dom__load_event_exe() {
                     pd.comment(false, pd.o.exe);
                 };
                 pd.o.exe.getElementsByTagName("button")[0].onclick = pd.recycle;
             }
             if (pd.o.iz !== null) {
-                pd.o.iz.onclick = function dom__core_event_iz() {
+                pd.o.iz.onclick = function dom__load_event_iz() {
                     pd.options(pd.o.iz);
                 };
             }
             if (pd.o.jd !== null) {
-                pd.o.jd.onclick = function dom__core_event_jd() {
+                pd.o.jd.onclick = function dom__load_event_jd() {
                     pd.options(pd.o.jd);
                 };
             }
             if (pd.o.jf !== null) {
-                pd.o.jf.onclick = function dom__core_event_jf() {
+                pd.o.jf.onclick = function dom__load_event_jf() {
                     pd.options(pd.o.jf);
                 };
             }
             if (pd.o.jg !== null) {
-                pd.o.jg.onclick = function dom__core_event_jg() {
+                pd.o.jg.onclick = function dom__load_event_jg() {
                     pd.options(pd.o.jg);
                 };
             }
             if (pd.o.jh !== null) {
-                pd.o.jh.onclick = function dom__core_event_jh() {
+                pd.o.jh.onclick = function dom__load_event_jh() {
                     pd.options(pd.o.jh);
                 };
             }
             if (pd.o.ji !== null) {
-                pd.o.ji.onkeyup = function dom__core_event_ji() {
+                pd.o.ji.onkeyup = function dom__load_event_ji() {
                     pd.options(pd.o.ji);
                 };
             }
             if (pd.o.la !== null) {
-                pd.o.la.onchange = function dom__core_event_la() {
+                pd.o.la.onchange = function dom__load_event_la() {
                     pd.codeOps(pd.o.la);
                 };
             }
             if (pd.o.mi !== null) {
-                pd.o.mi.onkeydown = function dom__core_event_mi(event) {
+                pd.o.mi.onkeydown = function dom__load_event_mi(event) {
                     if (pd.keypress.state === true && (pd.keypress.keys.length === 0 || event.keyCode !== pd.keypress.keys[pd.keypress.keys.length - 1]) && event.keyCode !== 17) {
                         pd.keypress.keys.push(event.keyCode);
                     }
@@ -3037,45 +3037,45 @@ pd.webtool = [];
                 };
             }
             if (pd.o.mm !== null) {
-                pd.o.mm.onclick = function dom__core_event_mm() {
+                pd.o.mm.onclick = function dom__load_event_mm() {
                     pd.prettyvis(pd.o.mm);
                 };
             }
             if (pd.o.nl !== null) {
-                pd.o.nl.onkeyup = function dom__core_event_nl() {
+                pd.o.nl.onkeyup = function dom__load_event_nl() {
                     pd.options(pd.o.nl);
                 };
             }
             if (pd.o.nx !== null) {
-                pd.o.nx.onkeydown = function dom__core_event_nx(event) {
+                pd.o.nx.onkeydown = function dom__load_event_nx(event) {
                     return pd.fixtabs(event, pd.o.nx);
                 };
             }
             if (pd.o.option !== null) {
-                pd.o.option.onmouseover = function dom__core_event_option_onmouseover() {
+                pd.o.option.onmouseover = function dom__load_event_option_onmouseover() {
                     pd.comment(true, pd.o.option);
                 };
-                pd.o.option.onmouseout = function dom__core_event_option_onmouseout() {
+                pd.o.option.onmouseout = function dom__load_event_option_onmouseout() {
                     pd.comment(false, pd.o.option);
                 };
             }
             if (pd.o.re !== null) {
-                pd.o.re.getElementsByTagName("h3")[0].onmousedown = function dom__core_event_re(e) {
+                pd.o.re.getElementsByTagName("h3")[0].onmousedown = function dom__load_event_re(e) {
                     pd.grab(e, pd.o.re.getElementsByTagName("h3")[0]);
                 };
             }
             if (pd.o.rg !== null) {
-                pd.o.rg.getElementsByTagName("h3")[0].onmousedown = function dom__core_event_rg(e) {
+                pd.o.rg.getElementsByTagName("h3")[0].onmousedown = function dom__load_event_rg(e) {
                     pd.grab(e, pd.o.rg.getElementsByTagName("h3")[0]);
                 };
             }
             if (pd.o.ri !== null) {
-                pd.o.ri.getElementsByTagName("h3")[0].onmousedown = function dom__core_event_ri(e) {
+                pd.o.ri.getElementsByTagName("h3")[0].onmousedown = function dom__load_event_ri(e) {
                     pd.grab(e, pd.o.ri.getElementsByTagName("h3")[0]);
                 };
             }
             if (pd.o.rk !== null) {
-                pd.o.rk.getElementsByTagName("h3")[0].onmousedown = function dom__core_event_rk(e) {
+                pd.o.rk.getElementsByTagName("h3")[0].onmousedown = function dom__load_event_rk(e) {
                     pd.grab(e, pd.o.rk.getElementsByTagName("h3")[0]);
                 };
             }
@@ -3083,7 +3083,7 @@ pd.webtool = [];
                 pd.o.ro.onclick = pd.reset;
             }
             if (pd.o.sh !== null) {
-                pd.o.sh.onclick = function dom__core_event_sh() {
+                pd.o.sh.onclick = function dom__load_event_sh() {
                     pd.hideOptions(pd.o.sh);
                 };
             }
@@ -3114,7 +3114,7 @@ pd.webtool = [];
             document.onkeypress = backspace;
             document.onkeydown = backspace;
             if (pd.o.update !== null) {
-                pd.o.update.innerHTML = (function dom__core_update() {
+                pd.o.update.innerHTML = (function dom__load_update() {
                     var aa = String(edition.latest),
                         bb = [
                             aa.charAt(0) + aa.charAt(1), aa.charAt(2) + aa.charAt(3), aa.charAt(4) + aa.charAt(5)
@@ -4133,7 +4133,7 @@ pd.webtool = [];
             }
         }
         if (page === "doc") {
-            (function dom__core_doc() {
+            (function dom__load_doc() {
                 var aa = {},
                     bb = [],
                     cc = {},
@@ -4143,7 +4143,7 @@ pd.webtool = [];
                     gg = [],
                     hh = [],
                     date = 0,
-                    conversion = function dom__core_doc_conversion(x) {
+                    conversion = function dom__load_doc_conversion(x) {
                         var aaa = String(x),
                             bbb = [
                                 aaa.charAt(0) + aaa.charAt(1), aaa.charAt(2) + aaa.charAt(3), aaa.charAt(4) + aaa.charAt(5)
@@ -4304,9 +4304,9 @@ pd.webtool = [];
                         }
                     }
                     e = gg.length;
-                    gg = gg.sort(function dom__core_sort_forward(aa, bb) {
+                    gg = gg.sort(function dom__load_sort_forward(aa, bb) {
                         return aa[1] === bb[1];
-                    }).reverse().sort(function dom__core_sort_reverse(aa, bb) {
+                    }).reverse().sort(function dom__load_sort_reverse(aa, bb) {
                         return aa[0] - bb[0];
                     });
                     for (dd = gg.length - 1; dd > -1; dd -= 1) {
