@@ -3250,7 +3250,7 @@ var prettydiff = function prettydiff(api) {
                     lines.push([
                         token.length, false
                     ]);
-                    asi(a);
+                    asi(a);console.log(token);
                 }());
                 //this function is the pretty-print algorithm
                 (function jspretty__algorithm() {
@@ -7065,8 +7065,8 @@ var prettydiff = function prettydiff(api) {
             diffview = function diffview(args) {
                 var errorout = 0,
                     diffline = 0,
-                    baseTextLines = (typeof args.baseTextLines === "string") ? args.baseTextLines : "Error: Cannot build diff view; baseTextLines is not defined.",
-                    newTextLines = (typeof args.newTextLines === "string") ? args.newTextLines : "Error: Cannot build diff view; newTextLines is not defined.",
+                    baseTextLines = (typeof args.baseTextLines === "string") ? args.baseTextLines : "",
+                    newTextLines = (typeof args.newTextLines === "string") ? args.newTextLines : "",
                     baseTextName = (typeof args.baseTextName === "string") ? args.baseTextName : "Base Source",
                     newTextName = (typeof args.newTextName === "string") ? args.newTextName : "New Source",
                     context = ((/^([0-9]+)$/).test(args.contextSize)) ? Number(args.contextSize) : -1,
@@ -7264,6 +7264,9 @@ var prettydiff = function prettydiff(api) {
                                 ]);
                                 return non_adjacent;
                             };
+                        if (baseTextLines === "" || newTextLines === "") {
+                            return "";
+                        }
                         (function diffview__opcodes_diffArray() {
                             (function diffview__opcodes_diffArray_determineReverse() {
                                 if (bta.length > nta.length) {
@@ -7408,6 +7411,9 @@ var prettydiff = function prettydiff(api) {
                         }());
                         return answer;
                     }());
+                if (baseTextLines === "" || newTextLines === "") {
+                    return "";
+                }
                 return (function diffview__report() {
                     var node = ["<div class='diff'>"],
                         data = [
@@ -7890,7 +7896,7 @@ var prettydiff = function prettydiff(api) {
                     ccontext = (api.context === "" || (/^(\s+)$/).test(api.context) || isNaN(api.context)) ? "" : Number(api.context),
                     ccorrect = (api.correct === true) ? true : false,
                     ccsvchar = (typeof api.csvchar === "string" && api.csvchar.length > 0) ? api.csvchar : ",",
-                    cdiff = (typeof api.diff === "string" && api.diff.length > 0) ? api.diff : "Diff sample is missing.",
+                    cdiff = (typeof api.diff === "string" && api.diff.length > 0) ? api.diff : "",
                     cdiffcomments = (api.diffcomments === true) ? true : false,
                     cdifflabel = (typeof api.difflabel === "string" && api.difflabel.length > 0) ? api.difflabel : "new",
                     cdiffview = (api.diffview === "inline") ? "inline" : "sidebyside",
@@ -7906,7 +7912,7 @@ var prettydiff = function prettydiff(api) {
                     cpreserve = (api.preserve === false) ? false : true,
                     cquote = (api.quote === true) ? true : false,
                     csemicolon = (api.semicolon === true) ? true : false,
-                    csource = (typeof api.source === "string" && api.source.length > 0) ? api.source : "Source sample is missing.",
+                    csource = (typeof api.source === "string" && api.source.length > 0) ? api.source : ((cmode === "diff") ? "" : "Source sample is missing."),
                     csourcelabel = (typeof api.sourcelabel === "string" && api.sourcelabel.length > 0) ? api.sourcelabel : "base",
                     cspace = (api.space === false) ? false : true,
                     cstyle = (api.style === "noindent") ? "noindent" : "indent",
@@ -8405,6 +8411,11 @@ var prettydiff = function prettydiff(api) {
                 }
                 if (cmode === "diff") {
                     summary = "diff";
+                    if (csource === "" || cdiff === "") {
+                        return [
+                            "", ""
+                        ];
+                    }
                     if (clang === "css") {
                         if (cdiffcomments === true) {
                             apioutput = csource;
@@ -8624,13 +8635,13 @@ var prettydiff = function prettydiff(api) {
         css: 130813, //diffview.css file
         csvbeauty: 130813, //csvbeauty library
         csvmin: 121127, //csvmin library
-        diffview: 130818, //diffview library
+        diffview: 130820, //diffview library
         documentation: 130814, //documentation.xhtml
         jsmin: 130813, //jsmin library (fulljsmin.js)
         jspretty: 130818, //jspretty library
         markup_beauty: 130814, //markup_beauty library
         markupmin: 130813, //markupmin library
-        prettydiff: 130818, //this file
+        prettydiff: 130820, //this file
         webtool: 130510, //prettydiff.com.xhtml
         api: {
             dom: 130818,
