@@ -1831,6 +1831,7 @@ var prettydiff = function prettydiff(api) {
                     types = [],
                     level = [],
                     lines = [],
+                    globals = [],
                     meta = [],
                     news = 0,
                     j = [
@@ -3250,7 +3251,7 @@ var prettydiff = function prettydiff(api) {
                     lines.push([
                         token.length, false
                     ]);
-                    asi(a);console.log(token);
+                    asi(a);
                 }());
                 //this function is the pretty-print algorithm
                 (function jspretty__algorithm() {
@@ -3573,8 +3574,7 @@ var prettydiff = function prettydiff(api) {
                                         var c = 0,
                                             d = 1,
                                             e = [],
-                                            f = false,
-                                            g = false;
+                                            f = false;
                                         for (c = a - 1; c > -1; c -= 1) {
                                             if (types[c] === "end") {
                                                 d += 1;
@@ -3589,17 +3589,9 @@ var prettydiff = function prettydiff(api) {
                                                     e.push(token[c]);
                                                 } else if (token[c] === ")") {
                                                     f = true;
-                                                } else if (token[c] === "(") {
-                                                    g = false;
                                                 } else if (f === true && types[c] === "word" && token[c] !== e[e.length - 1]) {
                                                     e.push(token[c]);
                                                 }
-                                            }
-                                            if (d === 2 && token[c] === ")") {
-                                                g = true;
-                                            }
-                                            if (g === true && meta[c] === "v" && token[c] !== e[e.length - 1]) {
-                                                e.push(token[c]);
                                             }
                                             if (c > 0 && token[c - 1] === "function" && types[c] === "word" && token[c] !== e[e.length - 1]) {
                                                 e.push(token[c]);
@@ -3781,6 +3773,9 @@ var prettydiff = function prettydiff(api) {
                             if (ltoke === "}" || ltoke === "x}") {
                                 level[a - 1] = indent;
                             }
+                            if (varline.length === 1 && varline[0] === true && (ltoke === "var" || ltoke === "," || (ltoke === "function" && types[a + 1] === "method"))) {
+                                globals.push(ctoke);
+                            }
                             if (ctoke === "new") {
                                 (function jspretty__algorithm_word_new() {
                                     var c = 0,
@@ -3840,7 +3835,7 @@ var prettydiff = function prettydiff(api) {
                                 if (ltype === "end") {
                                     level[a - 1] = indent;
                                 }
-                                if (indent === 0) {
+                                if (varline.length === 0) {
                                     varline.push(true);
                                 } else {
                                     varline[varline.length - 1] = true;
@@ -3998,7 +3993,11 @@ var prettydiff = function prettydiff(api) {
                                         if (types[ee] === "word") {
                                             for (ff = 0; ff < hh; ff += 1) {
                                                 if (token[ee] === dd[ff] && token[ee - 1] !== ".") {
-                                                    token[ee] = "<em class='s" + g + "'>" + token[ee] + "</em>";
+                                                    if (token[ee - 1] === "function" && token[ee + 1] === "(") {
+                                                        token[ee] = "<em class='s" + (g + 1) + "'>" + token[ee] + "</em>";
+                                                    } else if (token[ee + 1] !== ":" || (token[ee + 1] === ":" && level[ee] !== "x")) {
+                                                        token[ee] = "<em class='s" + g + "'>" + token[ee] + "</em>";
+                                                    }
                                                     break;
                                                 }
                                             }
@@ -4080,11 +4079,32 @@ var prettydiff = function prettydiff(api) {
                             if (typeof meta[a] === "number") {
                                 g -= 1;
                                 findvars(a);
-                            } else if (typeof meta[a] !== "string" && typeof meta[a] !== "number") {
+                            } else if (typeof meta[a] !== "string" && typeof meta[a] !== "number" && a > 0) {
                                 token[a] = "<em class='s" + g + "'>" + token[a] + "</em>";
                                 g += 1;
                             }
                         }
+                        (function jspretty__result_globals() {
+                            var aa = 0,
+                                bb = token.length,
+                                cc = globals,
+                                dd = cc.length,
+                                ee = 0;
+                            for (aa = bb - 1; aa > 0; aa -= 1) {
+                                if (types[aa] === "word" && (token[aa + 1] !== ":" || (token[aa + 1] === ":" && level[aa + 1] === "x")) && token[aa].indexOf("<em ") < 0) {
+                                    for (ee = dd - 1; ee > -1; ee -= 1) {
+                                        if (token[aa] === cc[ee]) {
+                                            if (token[aa - 1] === "function" && types[aa + 1] === "method") {
+                                                token[aa] = "<em class='s1'>" + token[aa] + "</em>";
+                                            } else {
+                                                token[aa] = "<em class='s0'>" + token[aa] + "</em>";
+                                            }
+                                            break;
+                                        }
+                                    }
+                                }
+                            }
+                        }());
                         g = 0;
                         for (a = 0; a < b; a += 1) {
                             if (types[a] === "comment" && token[a].indexOf("/*") === 0) {
@@ -4099,7 +4119,7 @@ var prettydiff = function prettydiff(api) {
                                     h = c.length - 1;
                                     do {
                                         h -= 1;
-                                    } while (c[h].indexOf("</li><li") < 0);
+                                    } while (c[h].indexOf("</li><li") < 0 && h > 0);
                                     c[h] = c[h].replace(/class\='l\d+'/, "class='l" + g + "'");
                                 } else if (token[a] !== "x;" && token[a] !== "x{" && token[a] !== "x}") {
                                     c.push(token[a]);
@@ -7460,10 +7480,10 @@ var prettydiff = function prettydiff(api) {
                                 kt = false,
                                 kk = 0,
                                 ll = [],
-                                rrs = (/_pdiffdiff_/g),
-                                rrt = (/_epdiffdiff_/g),
-                                ss = "_pdiffdiff_",
-                                tt = "_epdiffdiff_",
+                                rrs = (/_pdiffdiff\_/g),
+                                rrt = (/_epdiffdiff\_/g),
+                                ss = "_pdiff" + "diff_",
+                                tt = "_epdiff" + "diff_",
                                 xx = 0,
                                 tabdiff = (function diffview__report_charcomp_tabdiff() {
                                     var aaa = "",
@@ -7618,6 +7638,20 @@ var prettydiff = function prettydiff(api) {
                                     ka.pop();
                                     ll.pop();
                                     ll.pop();
+                                }
+                            }
+                            if (ee < Math.max(aa.length, bb.length) && rrt.test(aa[aa.length - 1]) === false && rrt.test(bb[bb.length - 1]) === false) {
+                                errorout += 1;
+                                if (aa.length < bb.length) {
+                                    aa.push(ss);
+                                    aa.push(tt);
+                                    bb[ee] = ss + bb[ee];
+                                    bb.push(tt);
+                                } else {
+                                    bb.push(ss);
+                                    bb.push(tt);
+                                    aa[ee] = ss + aa[ee];
+                                    aa.push(tt);
                                 }
                             }
                             return [
@@ -8632,16 +8666,16 @@ var prettydiff = function prettydiff(api) {
     edition = {
         charDecoder: 121231, //charDecoder library
         cleanCSS: 130813, //cleanCSS library
-        css: 130813, //diffview.css file
+        css: 130822, //diffview.css file
         csvbeauty: 130813, //csvbeauty library
         csvmin: 121127, //csvmin library
-        diffview: 130820, //diffview library
+        diffview: 130822, //diffview library
         documentation: 130814, //documentation.xhtml
         jsmin: 130813, //jsmin library (fulljsmin.js)
-        jspretty: 130818, //jspretty library
+        jspretty: 130822, //jspretty library
         markup_beauty: 130814, //markup_beauty library
         markupmin: 130813, //markupmin library
-        prettydiff: 130820, //this file
+        prettydiff: 130822, //this file
         webtool: 130510, //prettydiff.com.xhtml
         api: {
             dom: 130818,
