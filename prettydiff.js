@@ -7518,7 +7518,7 @@ var prettydiff = function prettydiff(api) {
                             if (tb !== "" && cc.length !== dd.length && cc.replace(tb, "") === dd.replace(tb, "")) {
                                 errorout += 1;
                                 return [
-                                    (tabdiff[0] + tabdiff[2]).replace(rrs, "<em>").replace(rrt, "</em>"), (tabdiff[1] + tabdiff[3]).replace(rrs, "<em>").replace(rrt, "</em>")
+                                    (tabdiff[0] + tabdiff[2]).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(rrs, "<em>").replace(rrt, "</em>"), (tabdiff[1] + tabdiff[3]).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(rrs, "<em>").replace(rrt, "</em>")
                                 ];
                             }
                             aa = cc.split("");
@@ -7602,20 +7602,28 @@ var prettydiff = function prettydiff(api) {
                                         }
                                         break;
                                     }
-                                    if (aa[ll[0]] === bb[ee].replace(rrs, "")) {
-                                        aa[ll[0]] = aa[ll[0]] + tt;
+                                    if (aa[ll[0]] === bb[ee].substring(ss.length)) {
+                                        if (aa[ll[0]] === bb[ee].substring(ss.length)) {
+                                            aa[ll[0]] = tt + aa[ll[0]];
+                                        } else {
+                                            aa[ll[0]] = aa[ll[0]] + tt;
+                                        }
                                         if (ll[1] === ee) {
                                             bb[ll[1]] = ss + tt + bb[ll[1]].replace(rrs, "");
                                         } else {
                                             bb[ll[1]] = tt + bb[ll[1]];
                                         }
-                                    } else if (aa[ee] === bb[ll[1]]) {
+                                    } else if (bb[ll[1]] === aa[ee].substring(ss.length)) {
+                                        if (bb[ll[1]] === aa[ee].substring(ss.length)) {
+                                            bb[ll[1]] = tt + bb[ll[1]];
+                                        } else {
+                                            bb[ll[1]] = bb[ll[1]] + tt;
+                                        }
                                         if (ll[0] === ee) {
                                             aa[ll[0]] = ss + tt + aa[ll[0]].replace(rrs, "");
                                         } else {
                                             aa[ll[0]] = tt + aa[ll[0]];
                                         }
-                                        bb[ll[1]] = bb[ll[1]] + tt;
                                     } else {
                                         aa[ll[0]] = aa[ll[0]] + tt;
                                         bb[ll[1]] = bb[ll[1]] + tt;
@@ -7653,7 +7661,7 @@ var prettydiff = function prettydiff(api) {
                                     aa[ee] = ss + aa[ee];
                                     aa.push(tt);
                                 }
-                            }
+                            }//console.log("\n");console.log(aa.join("").replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(rrs, "<em>").replace(rrt, "</em>"));console.log(bb.join("").replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(rrs, "<em>").replace(rrt, "</em>"));
                             return [
                                 aa.join("").replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(rrs, "<em>").replace(rrt, "</em>"), bb.join("").replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(rrs, "<em>").replace(rrt, "</em>")
                             ];
@@ -8669,13 +8677,13 @@ var prettydiff = function prettydiff(api) {
         css: 130822, //diffview.css file
         csvbeauty: 130813, //csvbeauty library
         csvmin: 121127, //csvmin library
-        diffview: 130822, //diffview library
+        diffview: 130824, //diffview library
         documentation: 130814, //documentation.xhtml
         jsmin: 130813, //jsmin library (fulljsmin.js)
         jspretty: 130822, //jspretty library
         markup_beauty: 130814, //markup_beauty library
         markupmin: 130813, //markupmin library
-        prettydiff: 130822, //this file
+        prettydiff: 130824, //this file
         webtool: 130510, //prettydiff.com.xhtml
         api: {
             dom: 130818,
