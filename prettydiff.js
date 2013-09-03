@@ -4,6 +4,9 @@
 
  Special thanks to Harry Whitfield for the numerous test cases provided
  against JSPretty.  http://g6auc.me.uk/
+ 
+ Special thanks to Andreas Greuel for contributing samples to test
+ diffview.js  https://plus.google.com/105958105635636993368/posts
 
  Special thanks to Maria Ramos for translating the documentation to
  Spanish.  http://www.webhostinghub.com/support/es/misc/
@@ -4292,6 +4295,7 @@ var prettydiff = function prettydiff(api) {
                             i = 0,
                             s = [],
                             z = [],
+                            ww = w[0],
                             output,
                             zero = function jspretty__report_zero(x, y) {
                                 if (y === 0) {
@@ -4386,13 +4390,24 @@ var prettydiff = function prettydiff(api) {
                         m[57] = m[1] + m[3] + m[5] + m[7] + m[9] + m[11] + m[13] + m[15] + m[17] + m[19] + m[21] + m[23] + m[25] + m[27] + m[29] + m[31] + m[33] + m[35] + m[37] + m[39] + m[41] + m[43] + m[45] + m[47] + m[49] + m[51] + m[53] + m[55];
                         z.push(j[2] + l[0] + n[5] + m[56] + o[0] + p[0] + q[0] + i);
                         z.push(j[3] + l[1] + n[6] + m[57] + o[1] + p[1] + q[1] + i);
+                        if (ww === 0) {
+                            ww = 1;
+                        }
                         output = ["<div id='doc'>"];
                         output.push("<p><em>");
                         output.push(v);
-                        output.push("</em> instances of <strong>missing semicolons</strong> counted.</p>");
+                        output.push("</em> instance");
+                        if (v !== 1) {
+                            output.push("s");
+                        }
+                        output.push(" of <strong>missing semicolons</strong> counted.</p>");
                         output.push("<p><em>");
                         output.push(news);
-                        output.push("</em> unnessary instances of the keyword <strong>new</strong> counted.</p>");
+                        output.push("</em> unnessary instance");
+                        if (news !== 1) {
+                            output.push("s");
+                        }
+                        output.push(" of the keyword <strong>new</strong> counted.</p>");
                         output.push("<table class='analysis' summary='JavaScript character size comparison'><caption>JavaScript data report</caption><thead><tr><th>Data Label</th><th>Input</th><th>Output</th><th>Literal Increase</th><th>Percentage Increase</th></tr>");
                         output.push("</thead><tbody><tr><th>Total Character Size</th><td>");
                         output.push(e);
@@ -4403,13 +4418,13 @@ var prettydiff = function prettydiff(api) {
                         output.push("</td><td>");
                         output.push((((result.length - e) / e) * 100).toFixed(2));
                         output.push("%</td></tr><tr><th>Total Lines of Code</th><td>");
-                        output.push(w[0]);
+                        output.push(ww);
                         output.push("</td><td>");
                         output.push(f);
                         output.push("</td><td>");
-                        output.push(f - w[0]);
+                        output.push(f - ww);
                         output.push("</td><td>");
-                        output.push((((f - w[0]) / w[0]) * 100).toFixed(2));
+                        output.push((((f - ww) / ww) * 100).toFixed(2));
                         output.push("%</td></tr></tbody></table>");
                         output.push("<table class='analysis' summary='JavaScript component analysis'><caption>JavaScript component analysis</caption><thead><tr><th>JavaScript Component</th><th>Component Quantity</th><th>Percentage Quantity from Section</th>");
                         output.push("<th>Percentage Qauntity from Total</th><th>Character Length</th><th>Percentage Length from Section</th><th>Percentage Length from Total</th></tr></thead><tbody>");
@@ -6956,16 +6971,7 @@ var prettydiff = function prettydiff(api) {
                                     }
                                     oo = mm.join("");
                                     xx = n.join("");
-                                    ii.push("</th></tr></thead><tbody><tr><th colspan='5'>Unfiltered Word Set</th></tr>");
-                                    ii.push(oo);
-                                    if (oo !== xx && n.length > 2) {
-                                        ii.push("<tr><th colspan='5'>Filtered Word Set</th></tr>");
-                                        ii.push(xx);
-                                    }
-                                    ii.push("</tbody></table>");
-                                    return ii.join("");
-                                }()));
-                                i.push("<table class='analysis' summary='Analysis of markup pieces.'><caption>Analysis of markup pieces.</caption><thead><tr><th>Type</th><th>Quantity of Tags/Content</th><th>Percentage Quantity in Section</th><th>Percentage Quantity of Total</th><th>** Character Size</th><th>Percentage Size in Section</th><th>Percentage Size of Total</th></tr></thead><tbody><tr><th>Total Pieces</th><td>");
+                                    ii.push("</th></tr></thead><tbody><tr><th colspan='5'>U'Analysis of markup pieces.'><caption>Analysis of markup pieces.</caption><thead><tr><th>Type</th><th>Quantity of Tags/Content</th><th>Percentage Quantity in Section</th><th>Percentage Quantity of Total</th><th>** Character Size</th><th>Percentage Size in Section</th><th>Percentage Size of Total</th></tr></thead><tbody><tr><th>Total Pieces</th><td>");
                                 i.push(g);
                                 i.push("</td><td>100.00%</td><td>100.00%</td><td>");
                                 i.push(f);
