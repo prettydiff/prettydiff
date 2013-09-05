@@ -1261,6 +1261,7 @@ var prettydiff = function prettydiff(api) {
                     a = 0,
                     b = 0,
                     c = [],
+                    commstor = [],
                     atchar = x.match(/\@charset\s+("|')[\w\-]+("|');?/gi),
                     tab = "",
                     nsize = Number(size),
@@ -1443,7 +1444,16 @@ var prettydiff = function prettydiff(api) {
                             },
                             ccex = (/[\w\s:#\-\=\!\(\)"'\[\]\.%-\_\?\/\\]\/\*/),
                             cceg = function cleanCSS__reduction_cceg(z) {
+                                if (z.indexOf("\n/\*") === 0) {
+                                    return z;
+                                }
                                 return z.replace(/\s*\/\*/, ";/*");
+                            },
+                            commfix = function cleanCSS_reduction_commfix(y) {
+                                if (y.charAt(y.length - 1) === "}") {
+                                    return y.replace(";", "");
+                                }
+                                return y.replace(";", "\n");
                             };
                         (function cleanCSS__reduction_missingSemicolon() {
                             var misssemi = function cleanCSS__reduction_missingSemicolon_misssemi(y) {
@@ -1457,21 +1467,49 @@ var prettydiff = function prettydiff(api) {
                                 eee = 0,
                                 qqq = "";
                             for (aa = 0; aa < z; aa += 1) {
-                                ccc.push(x.charAt(aa));
-                                if (x.charAt(aa) === "{" || x.charAt(aa + 1) === "}") {
-                                    if (ccc[0] === "}") {
-                                        d.push("}");
-                                        ccc[0] = "";
-                                    }
-                                    qqq = ccc.join("");
-                                    if (qqq.indexOf("{") > -1 && (qqq.indexOf("\n") > -1 || qqq.indexOf(";") > -1)) {
-                                        eee = Math.max(qqq.lastIndexOf("\n"), qqq.lastIndexOf(";"));
-                                        d.push(qqq.substring(0, eee + 1).replace(/(\w|\)|"|')\s+/g, misssemi));
-                                        d.push(qqq.substring(eee + 1));
-                                    } else {
-                                        d.push(qqq.replace(/(\w|\)|"|')\s+/g, misssemi));
-                                    }
+                                if (x.charAt(aa) === "/" && x.charAt(aa + 1) === "*") {
+                                    d.push(ccc.join(""));
                                     ccc = [];
+                                    if ((/\s/).test(x.charAt(aa - 1)) === true) {
+                                        for (m = aa - 1; m > -1; m -= 1) {
+                                            if (x.charAt(m) === "\n") {
+                                                ccc.push("\n");
+                                                break;
+                                            }
+                                            if ((/\s/).test(x.charAt(m)) === false) {
+                                                break;
+                                            }
+                                        }
+                                    }
+                                    do {
+                                        ccc.push(x.charAt(aa));
+                                        aa += 1;
+                                    } while (x.charAt(aa - 2) !== "*" || (x.charAt(aa - 2) === "*" && x.charAt(aa - 1) !== "/"));
+                                    if (x.charAt(aa) === "\n") {
+                                        ccc.push("\n");
+                                    }
+                                    d.push(ccc.join(""));
+                                    ccc = [];
+                                    if (x.charAt(aa) === "}") {
+                                        d.push("}");
+                                    }
+                                } else {
+                                    ccc.push(x.charAt(aa));
+                                    if (x.charAt(aa) === "{" || x.charAt(aa + 1) === "}") {
+                                        if (ccc[0] === "}") {
+                                            d.push("}");
+                                            ccc[0] = "";
+                                        }
+                                        qqq = ccc.join("");
+                                        if (qqq.indexOf("{") > -1 && (qqq.indexOf("\n") > -1 || qqq.indexOf(";") > -1)) {
+                                            eee = Math.max(qqq.lastIndexOf("\n"), qqq.lastIndexOf(";"));
+                                            d.push(qqq.substring(0, eee + 1).replace(/(\w|\)|"|')\s+/g, misssemi));
+                                            d.push(qqq.substring(eee + 1));
+                                        } else {
+                                            d.push(qqq.replace(/(\w|\)|"|')\s+/g, misssemi));
+                                        }
+                                        ccc = [];
+                                    }
                                 }
                             }
                             d.push("}");
@@ -1509,7 +1547,7 @@ var prettydiff = function prettydiff(api) {
                                         aaa = hhh.length - 1;
                                         bbb = d.length;
                                     }
-                                } else if (d[aaa].indexOf("{") > -1) {
+                                } else if (d[aaa].indexOf("{") > -1 && (d[aaa].indexOf("/\*") === 0 || d[aaa].indexOf("\n/\*") === 0)) {
                                     eee += 1;
                                     if (eee > fff) {
                                         ttt = true;
@@ -1538,7 +1576,7 @@ var prettydiff = function prettydiff(api) {
                                 bbb = d.length;
                                 ggg = [];
                                 for (aaa = 0; aaa < bbb; aaa += 1) {
-                                    if (ggg.length > 0 && ggg[ggg.length - 1].indexOf("{") === -1 && d[aaa] !== "}" && d[aaa].indexOf("{") === -1) {
+                                    if (ggg.length > 0 && ggg[ggg.length - 1].indexOf("{") === -1 && d[aaa] !== "}" && d[aaa].indexOf("{") === -1 && d[aaa].indexOf("/\*") !== 0 && d[aaa].indexOf("\n/\*") !== 0) {
                                         ggg[ggg.length - 1] = ggg[ggg.length - 1] + d[aaa];
                                     } else if (d[aaa] !== "") {
                                         ggg.push(d[aaa]);
@@ -1557,7 +1595,7 @@ var prettydiff = function prettydiff(api) {
                         bb = d.length;
                         for (aa = 0; aa < bb; aa += 1) {
                             if (d[aa].charAt(d[aa].length - 1) === "{") {
-                                d[aa] = d[aa].replace(/,\s*/g, ",\n").replace(/>/g, " > ");
+                                d[aa] = d[aa].replace(/\,\s*/g, ",\n").replace(/>/g, " > ");
                             } else {
                                 if (d[aa].indexOf("url(") > -1) {
                                     h = d[aa].split("");
@@ -1587,8 +1625,8 @@ var prettydiff = function prettydiff(api) {
                                 h = [];
                                 i = [];
                                 for (e = 0; e < f; e += 1) {
-                                    if (/^(\/\*)/.test(cc[e])) {
-                                        h.push(cc[e].replace(/\/\*\s*/, "/* "));
+                                    if (/^(\n?\/\*)/.test(cc[e])) {
+                                        h.push(cc[e].replace(/\/\*\s+/, "/* "));
                                     } else if (cc[e] !== "") {
                                         i.push(cc[e].replace(/^\s*/, ""));
                                     }
@@ -1703,7 +1741,7 @@ var prettydiff = function prettydiff(api) {
                                 d[aa] = (h.join(";") + ";").replace(/^;/, "");
                             }
                         }
-                        return d.join("").replace(/\*\/\s*;\s*/g, "*/\n").replace(/(\s*[\w\-]+:)$/g, "\n}").replace(/\s*;$/, "").replace(/PDpoundPD#/g, "#");
+                        return d.join("").replace(/\*\/\s*;\s*\}?/g, commfix).replace(/(\s*[\w\-]+:)$/g, "\n}").replace(/\s*;$/, "").replace(/PDpoundPD#/g, "#");
                     };
                 (function cleanCSS__tab() {
                     var i = 0,
@@ -1736,7 +1774,16 @@ var prettydiff = function prettydiff(api) {
                     }
                     x = cc.join("");
                 }());
-                x = x.replace(/[ \t\r\v\f]+/g, " ").replace(/\n (?!\*)/g, "\n").replace(/\s?([;:{}+>])\s?/g, "$1").replace(/\{(\.*):(\.*)\}/g, "{$1: $2}").replace(/\b\*/g, " *").replace(/\*\/\s?/g, "*/\n").replace(/\d%\.?\d/g, fixpercent);
+                c = x.split("*/");
+                b = c.length;
+                for (a = 0; a < b; a += 1) {
+                    if (c[a].search(/\s*\/\*/) !== 0) {
+                        commstor = c[a].split("/*");
+                        commstor[0] = commstor[0].replace(/[ \t\r\v\f]+/g, " ").replace(/\n (?!\*)/g, "\n").replace(/\s?([;:{}+>])\s?/g, "$1").replace(/\{(\.*):(\.*)\}/g, "{$1: $2}").replace(/\b\*/g, " *").replace(/\*\/\s?/g, "*/\n").replace(/\d%\.?\d/g, fixpercent);
+                        c[a] = commstor.join("/*");
+                    }
+                }
+                x = c.join("*/");
                 if (alter === true) {
                     x = reduction(x);
                 }
@@ -1746,9 +1793,11 @@ var prettydiff = function prettydiff(api) {
                     b = c.length;
                     for (a = 0; a < b; a += 1) {
                         if (c[a].search(/\s*\/\*/) !== 0) {
-                            c[a] = c[a].replace(/@charset\s*("|')?[\w\-]+("|')?;?\s*/gi, "").replace(/(\S|\s)0+(%|in|cm|mm|em|ex|pt|pc)?;/g, runZero).replace(/:[\w\s\!\.\-%]*\d+\.0*(?!\d)/g, endZero).replace(/:[\w\s\!\.\-%#]* \.\d+/g, startZero).replace(/ \.?0((?=;)|(?= )|%|in|cm|mm|em|ex|pt|pc)/g, " 0px");
-                            c[a] = c[a].replace(/\w+(\-\w+)*: ((((\-?(\d*\.\d+)|\d+)[a-zA-Z]+)|0) )+(((\-?(\d*\.\d+)|\d+)[a-zA-Z]+)|0)/g, sameDist).replace(/background\-position: 0px;/g, "background-position: 0px 0px;").replace(/\s+\*\//g, "*/");
-                            c[a] = c[a].replace(/\s*[\w\-]+\:\s*(\}|;)/g, emptyend).replace(/\{\s+\}/g, "{}").replace(/\}\s*;\s*\}/g, nestblock).replace(/:\s+#/g, ": #").replace(/(\s+;+\n)+/g, "\n");
+                            commstor = c[a].split("/*");
+                            commstor[0] = commstor[0].replace(/@charset\s*("|')?[\w\-]+("|')?;?\s*/gi, "").replace(/(\S|\s)0+(%|in|cm|mm|em|ex|pt|pc)?;/g, runZero).replace(/:[\w\s\!\.\-%]*\d+\.0*(?!\d)/g, endZero).replace(/:[\w\s\!\.\-%#]* \.\d+/g, startZero).replace(/ \.?0((?=;)|(?= )|%|in|cm|mm|em|ex|pt|pc)/g, " 0px");
+                            commstor[0] = commstor[0].replace(/\w+(\-\w+)*: ((((\-?(\d*\.\d+)|\d+)[a-zA-Z]+)|0) )+(((\-?(\d*\.\d+)|\d+)[a-zA-Z]+)|0)/g, sameDist).replace(/background\-position: 0px;/g, "background-position: 0px 0px;").replace(/\s+\*\//g, "*/");
+                            commstor[0] = commstor[0].replace(/\s*[\w\-]+\:\s*(\}|;)/g, emptyend).replace(/\{\s+\}/g, "{}").replace(/\}\s*;\s*\}/g, nestblock).replace(/:\s+#/g, ": #").replace(/(\s+;+\n)+/g, "\n");
+                            c[a] = commstor.join("/*");
                         }
                     }
                     x = c.join("*/");
@@ -6971,7 +7020,16 @@ var prettydiff = function prettydiff(api) {
                                     }
                                     oo = mm.join("");
                                     xx = n.join("");
-                                    ii.push("</th></tr></thead><tbody><tr><th colspan='5'>U'Analysis of markup pieces.'><caption>Analysis of markup pieces.</caption><thead><tr><th>Type</th><th>Quantity of Tags/Content</th><th>Percentage Quantity in Section</th><th>Percentage Quantity of Total</th><th>** Character Size</th><th>Percentage Size in Section</th><th>Percentage Size of Total</th></tr></thead><tbody><tr><th>Total Pieces</th><td>");
+                                    ii.push("</th></tr></thead><tbody><tr><th colspan='5'>Unfiltered Word Set</th></tr>");
+                                    ii.push(oo);
+                                    if (oo !== xx && n.length > 2) {
+                                        ii.push("<tr><th colspan='5'>Filtered Word Set</th></tr>");
+                                        ii.push(xx);
+                                    }
+                                    ii.push("</tbody></table>");
+                                    return ii.join("");
+                                }()));
+                                i.push("<table class='analysis' summary='Analysis of markup pieces.'><caption>Analysis of markup pieces.</caption><thead><tr><th>Type</th><th>Quantity of Tags/Content</th><th>Percentage Quantity in Section</th><th>Percentage Quantity of Total</th><th>** Character Size</th><th>Percentage Size in Section</th><th>Percentage Size of Total</th></tr></thead><tbody><tr><th>Total Pieces</th><td>");
                                 i.push(g);
                                 i.push("</td><td>100.00%</td><td>100.00%</td><td>");
                                 i.push(f);
@@ -7634,8 +7692,32 @@ var prettydiff = function prettydiff(api) {
                                             aa[ll[0]] = tt + aa[ll[0]];
                                         }
                                     } else {
-                                        aa[ll[0]] = aa[ll[0]] + tt;
-                                        bb[ll[1]] = bb[ll[1]] + tt;
+                                        if (ll[1] > ll[0] && aa[ll[1] + 1] === bb[ll[1] + 1]) {
+                                            if (aa[ll[1]] === bb[ll[1]].replace(rrt, "")) {
+                                                bb[ll[1]] = bb[ll[1]].replace(rrt, "");
+                                                do {
+                                                    ll[1] -= 1;
+                                                } while (aa[ll[1]] === bb[ll[1]]);
+                                                bb[ll[1]] = bb[ll[1]] + tt;
+                                            }
+                                            aa[ll[1]] = aa[ll[1]] + tt;
+                                            ll[0] = ll[1];
+                                        } else if (rrt.test(aa[ll[0]]) === false) {
+                                            aa[ll[0]] = aa[ll[0]] + tt;
+                                        }
+                                        if (ll[0] > ll[1] && bb[ll[0] + 1] === aa[ll[0] + 1]) {
+                                            if (bb[ll[0]] === aa[ll[0]].replace(rrt, "")) {
+                                                aa[ll[0]] = aa[ll[0]].replace(rrt, "");
+                                                do {
+                                                    ll[0] -= 1;
+                                                } while (bb[ll[0]] === aa[ll[0]]);
+                                                aa[ll[0]] = aa[ll[0]] + tt;
+                                            }
+                                            bb[ll[0]] = bb[ll[0]] + tt;
+                                            ll[1] = ll[0];
+                                        } else if (rrt.test(bb[ll[1]]) === false) {
+                                            bb[ll[1]] = bb[ll[1]] + tt;
+                                        }
                                     }
                                     if (ll[1] - ll[0] > 0) {
                                         for (xx = (ll[1] - ll[0]) + ee; xx > ee; xx -= 1) {
@@ -7670,7 +7752,7 @@ var prettydiff = function prettydiff(api) {
                                     aa[ee] = ss + aa[ee];
                                     aa.push(tt);
                                 }
-                            }//console.log("\n");console.log(aa.join("").replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(rrs, "<em>").replace(rrt, "</em>"));console.log(bb.join("").replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(rrs, "<em>").replace(rrt, "</em>"));
+                            }
                             return [
                                 aa.join("").replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(rrs, "<em>").replace(rrt, "</em>"), bb.join("").replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(rrs, "<em>").replace(rrt, "</em>")
                             ];
@@ -7979,7 +8061,7 @@ var prettydiff = function prettydiff(api) {
                             c = b.toFixed(3),
                             plural = function core__proctime_plural(x, y) {
                                 var a = "";
-                                if (x > 1) {
+                                if (x !== 1) {
                                     a = x + y + "s ";
                                 } else {
                                     a = x + y + " ";
@@ -7987,21 +8069,22 @@ var prettydiff = function prettydiff(api) {
                                 return a;
                             },
                             minute = function core__proctime_minute() {
-                                d = (b / 60).toFixed(1);
-                                f = Number(d.toString().split(".")[0]);
-                                c = (b - (f * 60)).toFixed(3);
-                                d = plural(d, " minute");
+                                f = parseInt((b /60), 10);
+                                c = plural(Number((b - (f * 60)).toFixed(3)), " second");
+                                d = plural(f, " minute");
                             };
                         if (b >= 60 && b < 3600) {
                             minute();
                         } else if (b >= 3600) {
-                            e = (b / 3600).toFixed(1);
-                            h = Number(e.toString().split(".")[0]);
+                            h = parseInt((b / 3600), 10);
+                            e = h.toString();
                             b = b - (h * 3600);
-                            e = plural(e, " hour");
+                            e = plural(h, " hour");
                             minute();
+                        } else {
+                            c = plural(c, " second");
                         }
-                        return "<p><strong>Execution time:</strong> <em>" + e + d + c + "</em> seconds</p>";
+                        return "<p><strong>Execution time:</strong> <em>" + e + d + c + "</em></p>";
                     },
                     pdcomment = function core__pdcomment() {
                         var a = "",
@@ -8510,7 +8593,7 @@ var prettydiff = function prettydiff(api) {
                                 source: csource,
                                 insize: cinsize,
                                 inchar: cinchar,
-                                mode: "beautify",
+                                mode: "diff",
                                 comments: ccomm,
                                 style: cstyle,
                                 html: chtml,
@@ -8523,7 +8606,7 @@ var prettydiff = function prettydiff(api) {
                                 source: cdiff,
                                 insize: cinsize,
                                 inchar: cinchar,
-                                mode: "beautify",
+                                mode: "diff",
                                 comments: ccomm,
                                 style: cstyle,
                                 html: chtml,
@@ -8682,17 +8765,17 @@ var prettydiff = function prettydiff(api) {
     //the edition values use the format YYMMDD for dates.
     edition = {
         charDecoder: 121231, //charDecoder library
-        cleanCSS: 130813, //cleanCSS library
+        cleanCSS: 130905, //cleanCSS library
         css: 130822, //diffview.css file
         csvbeauty: 130813, //csvbeauty library
         csvmin: 121127, //csvmin library
-        diffview: 130824, //diffview library
+        diffview: 130903, //diffview library
         documentation: 130814, //documentation.xhtml
         jsmin: 130813, //jsmin library (fulljsmin.js)
-        jspretty: 130822, //jspretty library
+        jspretty: 130903, //jspretty library
         markup_beauty: 130829, //markup_beauty library
         markupmin: 130829, //markupmin library
-        prettydiff: 130829, //this file
+        prettydiff: 130905, //this file
         webtool: 130829, //prettydiff.com.xhtml
         api: {
             dom: 130818,
