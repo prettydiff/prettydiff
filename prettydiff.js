@@ -4051,7 +4051,7 @@ var prettydiff = function prettydiff(api) {
                                 ]);
                             },
                             foldclose = function () {
-                                var ff = (typeof meta[a] !== "number" && typeof meta[a] !== "string") ? e - i : e - i - 1;
+                                var ff = (typeof meta[a] !== "number" && typeof meta[a] !== "string" && types[a + 1] === "separator") ? e - i : e - i - 1;
                                 data[jj[jj.length - 1][0]] = data[jj[jj.length - 1][0]].replace("xxx", ff);
                                 jj.pop();
                             },
@@ -4214,7 +4214,7 @@ var prettydiff = function prettydiff(api) {
                             }
                             if (types[a] === "comment" && token[a].indexOf("/*") === 0) {
                                 c.push(blockline(token[a]));
-                                if (token[a].indexOf("\n") < 0 && types[a + 1] === "comment") {
+                                if (types[a + 1] === "comment" && token[a].indexOf("\n") < 0 && token[a + 1].indexOf("//") !== 0) {
                                     i += 1;
                                 }
                             } else {
