@@ -2897,12 +2897,14 @@ var prettydiff = function prettydiff(api) {
                             if (u === "end" && c[a] === "-") {
                                 t = "-";
                                 u = "operator";
+                                n[0] += 1;
+                                n[1] += 1;
                             } else {
                                 t = numb();
                                 u = "literal";
+                                q[0] += 1;
+                                q[1] += t.length;
                             }
-                            q[0] += 1;
-                            q[1] += t.length;
                             token.push(t);
                             types.push(u);
                         } else if (c[a] === ",") {
@@ -3544,7 +3546,7 @@ var prettydiff = function prettydiff(api) {
                                     level[a - 2] = "x";
                                 }
                                 if (jsscope === true) {
-                                    if (ltoke === "function" || (a < 1 && token[a - 2] === "function")) {
+                                    if (ltoke === "function" || token[a - 2] === "function") {
                                         meta.push(0);
                                     } else {
                                         meta.push("");
@@ -4032,12 +4034,27 @@ var prettydiff = function prettydiff(api) {
                             data = ["<div class='beautify' id='pd-jsscope'><ol class='count'><li>1</li>"],
                             folder = function jspretty__result_folder() {
                                 var ff = data.length - (i * 3),
-                                    gg = 0,
-                                    hh = data[ff + 1];
+                                    gg = a,
+                                    hh = data[ff + 1],
+                                    ii = false,
+                                    kk = gg;
                                 if (types[a] === "comment" && comfold === false) {
                                     comfold = true;
                                 } else if (types[a] !== "comment") {
                                     gg = meta[a];
+                                    do {
+                                        kk -= 1;
+                                    } while (token[kk] !== "function");
+                                    kk -= 1;
+                                    if (token[kk] === "(" && types[kk] === "start") {
+                                        kk -= 1;
+                                        if (types[kk] === "comment" || token[kk] === ";") {
+                                            ii = true;
+                                        }
+                                    }
+                                    if (token[kk] === "}" || token[kk] === "=" || token[kk] === "return" || token[kk] === ":" || token[kk] === "," || types[kk] === "method" || token[kk] === "||" || token[kk] === "&&" || token[kk] === "+=" || token[kk] === "-=") {
+                                        ii = true;
+                                    }
                                 }
                                 if (ff < 2) {
                                     ff = 0;
@@ -4047,12 +4064,15 @@ var prettydiff = function prettydiff(api) {
                                     data[ff + 1] = "- " + hh;
                                 }
                                 jj.push([
-                                    ff, gg
+                                    ff, gg, ii
                                 ]);
                             },
-                            foldclose = function () {
-                                var ff = (typeof meta[a] !== "number" && typeof meta[a] !== "string" && types[a + 1] === "separator") ? e - i : e - i - 1;
+                            foldclose = function jspretty__result_foldclose() {
+                                var ff = (jj[jj.length - 1][2] === true && token[a + 1] !== ":") ? e - i : e - i - 1;
                                 data[jj[jj.length - 1][0]] = data[jj[jj.length - 1][0]].replace("xxx", ff);
+                                if (jj[jj.length - 1][0] !== 0 && types[a] === "comment" && token[a].indexOf("//") !== 0) {
+                                    i += 1;
+                                }
                                 jj.pop();
                             },
                             blockline = function jspretty__result_blockline(x) {
@@ -4075,8 +4095,10 @@ var prettydiff = function prettydiff(api) {
                                     e += 1;
                                     ff[hh] = ff[hh] + "<em>&#xA;</em></li><li class='c0'>";
                                 }
-                                if (ii !== 0 && (a === 0 || token[a - 1].indexOf("/*") !== 0)) {
+                                if (ii !== 0 && (a === 0 || token[a - 1].indexOf("/*") !== 0) && (jj.length === 0 || jj[jj.length - 1][0] === 0)) {
                                     i += 1;
+                                } else if ((jj.length === 0 || jj[jj.length - 1][0] > 0) && token[a - 1].indexOf("/*") === 0 && i > 1) {
+                                    i -= 1;
                                 }
                                 return ff.join("").replace(/\r/g, "");
                             },
@@ -4132,7 +4154,13 @@ var prettydiff = function prettydiff(api) {
                                 }
                             },
                             indent = jlevel,
-                            tab = (function jspretty__result_tab() {
+                            removeEm = function jspretty__result_removeEm(x) {
+                                var bb = x.lastIndexOf("<em "),
+                                    cc = x.substring(bb),
+                                    dd = cc.indexOf("'>");
+                                return x.substring(0, bb) + cc.substring(dd + 2).replace("</em>", "");
+                            },
+                            tab = (function jspretty__result_tabScope() {
                                 var aa = jchar,
                                     bb = jsize,
                                     cc = [];
@@ -4144,7 +4172,7 @@ var prettydiff = function prettydiff(api) {
                             lscope = [
                                 "<em class='l0'>" + tab + "</em>", "<em class='l0'>" + tab + "</em><em class='l1'>" + tab + "</em>", "<em class='l0'>" + tab + "</em><em class='l1'>" + tab + "</em><em class='l2'>" + tab + "</em>", "<em class='l0'>" + tab + "</em><em class='l1'>" + tab + "</em><em class='l2'>" + tab + "</em><em class='l3'>" + tab + "</em>", "<em class='l0'>" + tab + "</em><em class='l1'>" + tab + "</em><em class='l2'>" + tab + "</em><em class='l3'>" + tab + "</em><em class='l4'>" + tab + "</em>", "<em class='l0'>" + tab + "</em><em class='l1'>" + tab + "</em><em class='l2'>" + tab + "</em><em class='l3'>" + tab + "</em><em class='l4'>" + tab + "</em><em class='l5'>" + tab + "</em>", "<em class='l0'>" + tab + "</em><em class='l1'>" + tab + "</em><em class='l2'>" + tab + "</em><em class='l3'>" + tab + "</em><em class='l4'>" + tab + "</em><em class='l5'>" + tab + "</em><em class='l6'>" + tab + "</em>", "<em class='l0'>" + tab + "</em><em class='l1'>" + tab + "</em><em class='l2'>" + tab + "</em><em class='l3'>" + tab + "</em><em class='l4'>" + tab + "</em><em class='l5'>" + tab + "</em><em class='l6'>" + tab + "</em><em class='l7'>" + tab + "</em>", "<em class='l0'>" + tab + "</em><em class='l1'>" + tab + "</em><em class='l2'>" + tab + "</em><em class='l3'>" + tab + "</em><em class='l4'>" + tab + "</em><em class='l5'>" + tab + "</em><em class='l6'>" + tab + "</em><em class='l7'>" + tab + "</em><em class='l8'>" + tab + "</em>", "<em class='l0'>" + tab + "</em><em class='l1'>" + tab + "</em><em class='l2'>" + tab + "</em><em class='l3'>" + tab + "</em><em class='l4'>" + tab + "</em><em class='l5'>" + tab + "</em><em class='l6'>" + tab + "</em><em class='l7'>" + tab + "</em><em class='l8'>" + tab + "</em><em class='l9'>" + tab + "</em>", "<em class='l0'>" + tab + "</em><em class='l1'>" + tab + "</em><em class='l2'>" + tab + "</em><em class='l3'>" + tab + "</em><em class='l4'>" + tab + "</em><em class='l5'>" + tab + "</em><em class='l6'>" + tab + "</em><em class='l7'>" + tab + "</em><em class='l8'>" + tab + "</em><em class='l9'>" + tab + "</em><em class='l10'>" + tab + "</em>", "<em class='l0'>" + tab + "</em><em class='l1'>" + tab + "</em><em class='l2'>" + tab + "</em><em class='l3'>" + tab + "</em><em class='l4'>" + tab + "</em><em class='l5'>" + tab + "</em><em class='l6'>" + tab + "</em><em class='l7'>" + tab + "</em><em class='l8'>" + tab + "</em><em class='l9'>" + tab + "</em><em class='l10'>" + tab + "</em><em class='l11'>" + tab + "</em>", "<em class='l0'>" + tab + "</em><em class='l1'>" + tab + "</em><em class='l2'>" + tab + "</em><em class='l3'>" + tab + "</em><em class='l4'>" + tab + "</em><em class='l5'>" + tab + "</em><em class='l6'>" + tab + "</em><em class='l7'>" + tab + "</em><em class='l8'>" + tab + "</em><em class='l9'>" + tab + "</em><em class='l10'>" + tab + "</em><em class='l11'>" + tab + "</em><em class='l12'>" + tab + "</em>", "<em class='l0'>" + tab + "</em><em class='l1'>" + tab + "</em><em class='l2'>" + tab + "</em><em class='l3'>" + tab + "</em><em class='l4'>" + tab + "</em><em class='l5'>" + tab + "</em><em class='l6'>" + tab + "</em><em class='l7'>" + tab + "</em><em class='l8'>" + tab + "</em><em class='l9'>" + tab + "</em><em class='l10'>" + tab + "</em><em class='l11'>" + tab + "</em><em class='l12'>" + tab + "</em><em class='l13'>" + tab + "</em>", "<em class='l0'>" + tab + "</em><em class='l1'>" + tab + "</em><em class='l2'>" + tab + "</em><em class='l3'>" + tab + "</em><em class='l4'>" + tab + "</em><em class='l5'>" + tab + "</em><em class='l6'>" + tab + "</em><em class='l7'>" + tab + "</em><em class='l8'>" + tab + "</em><em class='l9'>" + tab + "</em><em class='l10'>" + tab + "</em><em class='l11'>" + tab + "</em><em class='l12'>" + tab + "</em><em class='l13'>" + tab + "</em><em class='l14'>" + tab + "</em>", "<em class='l0'>" + tab + "</em><em class='l1'>" + tab + "</em><em class='l2'>" + tab + "</em><em class='l3'>" + tab + "</em><em class='l4'>" + tab + "</em><em class='l5'>" + tab + "</em><em class='l6'>" + tab + "</em><em class='l7'>" + tab + "</em><em class='l8'>" + tab + "</em><em class='l9'>" + tab + "</em><em class='l10'>" + tab + "</em><em class='l11'>" + tab + "</em><em class='l12'>" + tab + "</em><em class='l13'>" + tab + "</em><em class='l14'>" + tab + "</em><em class='l15'>" + tab + "</em>", "<em class='l0'>" + tab + "</em><em class='l1'>" + tab + "</em><em class='l2'>" + tab + "</em><em class='l3'>" + tab + "</em><em class='l4'>" + tab + "</em><em class='l5'>" + tab + "</em><em class='l6'>" + tab + "</em><em class='l7'>" + tab + "</em><em class='l8'>" + tab + "</em><em class='l9'>" + tab + "</em><em class='l10'>" + tab + "</em><em class='l11'>" + tab + "</em><em class='l12'>" + tab + "</em><em class='l13'>" + tab + "</em><em class='l14'>" + tab + "</em><em class='l15'>" + tab + "</em><em class='l16'>" + tab + "</em>"
                             ],
-                            nl = function jspretty__result_nl(x) {
+                            nl = function jspretty__result_nlScope(x) {
                                 var cc = ["<em>&#xA;</em></li><li class='l" + g + "'>"],
                                     dd = 0;
                                 data.push("<li>");
@@ -4214,7 +4242,7 @@ var prettydiff = function prettydiff(api) {
                             }
                             if (types[a] === "comment" && token[a].indexOf("/*") === 0) {
                                 c.push(blockline(token[a]));
-                                if (types[a + 1] === "comment" && token[a].indexOf("\n") < 0 && token[a + 1].indexOf("//") !== 0) {
+                                if (token[a + 1].indexOf("/*") === 0) {
                                     i += 1;
                                 }
                             } else {
@@ -4240,10 +4268,10 @@ var prettydiff = function prettydiff(api) {
                                             c[c.length - 1] = c[c.length - 1].replace(/class\='l\d+'/, "class='c0'");
                                         }
                                         if ((a === 0 || types[a - 1] !== "comment") && types[a + 1] === "comment") {
-                                            folder();
-                                            if (types[a + 1] === "comment") {
-                                                i += 1;
+                                            if (token[a + 1].indexOf("/*") === 0) {
+                                                i -= 1;
                                             }
+                                            folder();
                                         }
                                     }
                                     c.push(token[a]);
@@ -4284,8 +4312,8 @@ var prettydiff = function prettydiff(api) {
                             } else if (level[a] === "s" && token[a] !== "x}") {
                                 c.push(" ");
                             } else if (level[a] !== "x" && token[a] === "x}" && typeof meta[a + 1] !== "string" && typeof meta[a + 1] !== "number") {
-                                c[c.length - 1] = c[c.length - 1].substring(0, c[c.length - 1].lastIndexOf("<em "));
-                            } else if (level[a] !== "x" && token[a] !== "x}" && token[a] !== "x{") {
+                                c[c.length - 1] = removeEm(c[c.length - 1]);
+                            } else if (level[a] !== "x" && token[a] !== "x}") {
                                 indent = level[a];
                                 c.push(nl(indent));
                             }
@@ -4297,9 +4325,6 @@ var prettydiff = function prettydiff(api) {
                                     foldclose();
                                 }
                                 if (comfold === true && (a === b - 1 || (types[a] !== "comment" && types[a - 1] === "comment")) && (a > 0 || token[a].indexOf("\n") > 0)) {
-                                    if (jj[jj.length - 1][0] > 0 && i > 1) {
-                                        i -= 1;
-                                    }
                                     foldclose();
                                     comfold = false;
                                 }
@@ -8860,19 +8885,19 @@ var prettydiff = function prettydiff(api) {
         cleanCSS: 130924, //cleanCSS library
         css: 130924, //diffview.css file
         csvbeauty: 130924, //csvbeauty library
-        csvmin: 121127, //csvmin library
+        csvmin: 131018, //csvmin library
         diffview: 130903, //diffview library
         documentation: 130814, //documentation.xhtml
         jsmin: 130813, //jsmin library (fulljsmin.js)
-        jspretty: 131006, //jspretty library
+        jspretty: 131018, //jspretty library
         markup_beauty: 130829, //markup_beauty library
         markupmin: 130829, //markupmin library
-        prettydiff: 131006, //this file
+        prettydiff: 131018, //this file
         webtool: 130829, //prettydiff.com.xhtml
         api: {
-            dom: 130924,
+            dom: 131018,
             nodeLocal: 130924,
-            nodeService: 121106,
+            nodeService: 121106, //no longer maintained
             wsh: 130924
         },
         latest: 0
