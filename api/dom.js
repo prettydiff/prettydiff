@@ -640,7 +640,7 @@ pd.webtool = [];
             if (pd.o.bx !== null) {
                 pd.o.bx.value = output[0];
             }
-            if (output[0].length > 125000) {
+            if (output[1].length > 125000) {
                 pd.o.filled.rg = true;
             } else {
                 pd.o.filled.rg = false;
@@ -660,7 +660,7 @@ pd.webtool = [];
                     pd.o.rg.style.display = "block";
                     parent = pd.o.rg.getElementsByTagName("p")[0];
                     if (parent.innerHTML.indexOf("pd.save") === -1) {
-                        if (parent.style.display === "block") {
+                        if (parent.style === undefined || parent.style.display === "block") {
                             h3 = pd.o.rg.getElementsByTagName("h3")[0].style.width;
                             pd.o.rg.getElementsByTagName("h3")[0].style.width = (Number(h3.substr(0, h3.length - 2)) - 3) + "em";
                         }
@@ -686,7 +686,7 @@ pd.webtool = [];
                     pd.beaurows[1] = pd.o.rg.getElementsByTagName("ol")[1].getElementsByTagName("li");
                 } else {
                     if (pd.o.rg.getElementsByTagName("p")[0].innerHTML.indexOf("pd.save") > -1) {
-                        if (parent.style.display === "block") {
+                        if (parent.style === undefined || parent.style.display === "block") {
                             h3 = pd.o.rg.getElementsByTagName("h3")[0].style.width;
                             pd.o.rg.getElementsByTagName("h3")[0].style.width = (Number(h3.substr(0, h3.length - 2)) + 3) + "em";
                         }
@@ -711,7 +711,7 @@ pd.webtool = [];
                 }
             }
         } else if (api.mode === "diff" && pd.o.re !== null) {
-            if (output[0].length > 125000) {
+            if (output[1].length > 125000) {
                 pd.o.filled.re = true;
             } else {
                 pd.o.filled.rg = false;
@@ -750,7 +750,7 @@ pd.webtool = [];
                 }
             }
         } else if (api.mode === "minify") {
-            if (output[0].length > 125000) {
+            if (output[1].length > 125000) {
                 pd.o.filled.ri = true;
             } else {
                 pd.o.filled.ri = false;
