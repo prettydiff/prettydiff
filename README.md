@@ -190,8 +190,8 @@ License:
    @licend  The above is the entire license notice for the JavaScript
    code in this page.
 
- Acknowledgements
- ----------------
+Acknowledgements
+----------------
  
  * Harry Whitfield - http://g6auc.me.uk/
   - JS Pretty QA
