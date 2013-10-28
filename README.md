@@ -4,6 +4,16 @@ Pretty Diff
 Try it online at http://prettydiff.com/ or [join the mailing list](https://groups.google.com/d/forum/pretty-diff "Pretty Diff mailing list").
 ---------------------------------------------------------------------
 
+api/dom.js
+----------
+
+Please feel free to use prettydiff.com.xhtml file to supplement dom.js.  Otherwise, dom.js requires supplemental assistance to map DOM nodes from an HTML source to the properties of the pd.o object found in dom.js.  dom.js is fault tolerant so most of the nodes mapped by pd.o need not be supported from custom HTML.
+
+To run Pretty Diff using dom.js include the following two script tags and bind the pd.recycle() function to the executing event.
+
+    <script type="application/javascript" src="prettydiff.js"></script>
+    <script type="application/javascript" src="api/dom.js"></script>
+
 Node.js
 -------
 
@@ -182,8 +192,12 @@ License:
  ----------------
  
  * Harry Whitfield
- * - JS Pretty QA
- * - JS Pretty widget
+  - JS Pretty QA
+  - JS Pretty widget
+ * Andreas Greuel
+  - diffview.js QA
+ * Maria Ramos
+  - Spanish language documentation
 
    @licend  The above is the entire license notice for the JavaScript
    code in this page.
