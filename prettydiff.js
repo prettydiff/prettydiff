@@ -2850,7 +2850,7 @@ var prettydiff = function prettydiff(api) {
                             do {
                                 ee.push(c[f]);
                                 f += 1;
-                            } while (f < g && !((/\s/).test(c[f]) === true || c[f] === ";" || c[f] === "=" || c[f] === "." || c[f] === "," || c[f] === "&" || c[f] === "<" || c[f] === ">" || c[f] === "+" || c[f] === "-" || c[f] === "*" || c[f] === "/" || c[f] === "!" || c[f] === "?" || c[f] === "|" || c[f] === "^" || c[f] === ":" || c[f] === "\"" || c[f] === "'" || c[f] === "\\" || c[f] === "/" || c[f] === "(" || c[f] === ")" || c[f] === "{" || c[f] === "}" || c[f] === "[" || c[f] === "]" || c[f] === "%"));
+                            } while (f < g && " \f\n\r\t\v\u00A0\u2028\u2029;=.,&<>+-*/!?|^:\"'\\(){}[]%".indexOf(c[f]) === -1);
                             h = ee.join("");
                             if (types.length > 1 && h === "function" && types[types.length - 1] === "method" && (token[token.length - 2] === "{" || token[token.length - 2] === "x{")) {
                                 types[types.length - 1] = "start";
@@ -3851,6 +3851,9 @@ var prettydiff = function prettydiff(api) {
                             if (ltoke === "}" || ltoke === "x}") {
                                 level[a - 1] = indent;
                             }
+                            if (ctoke === "else" && ltoke === "}" && token[a - 2] === "x}") {
+                                level[a - 3] -= 1;
+                            }
                             if (varline.length === 1 && varline[0] === true && (ltoke === "var" || ltoke === "," || (ltoke === "function" && types[a + 1] === "method"))) {
                                 globals.push(ctoke);
                             }
@@ -4036,7 +4039,7 @@ var prettydiff = function prettydiff(api) {
                             h = 0,
                             i = 1,
                             jj = [],
-                            comfold = false,
+                            comfold = -1,
                             data = [
                                 "<div class='beautify' id='pd-jsscope'><ol class='count'>", "<li>", 1, "</li>"
                             ],
@@ -4046,8 +4049,8 @@ var prettydiff = function prettydiff(api) {
                                     hh = data[ff + 1],
                                     ii = false,
                                     kk = gg;
-                                if (types[a] === "comment" && comfold === false) {
-                                    comfold = true;
+                                if (types[a] === "comment" && comfold === -1) {
+                                    comfold = a;
                                 } else if (types[a] !== "comment") {
                                     gg = meta[a];
                                     do {
@@ -4112,7 +4115,7 @@ var prettydiff = function prettydiff(api) {
                                     e += 1;
                                     ff[hh] = ff[hh] + "<em>&#xA;</em></li><li class='c0'>";
                                 }
-                                if (ii !== 0 && (a === 0 || token[a - 1].indexOf("/*") !== 0) && (jj.length === 0 || jj[jj.length - 1][0] === 0)) {
+                                if (ii !== 0 && (comfold === 0 || token[a - 1].indexOf("/*") !== 0) && (jj.length === 0 || jj[jj.length - 1][0] === 0)) {
                                     i += 1;
                                 } else if ((jj.length === 0 || jj[jj.length - 1][0] > 1) && a > 0 && token[a - 1].indexOf("/*") === 0 && i > 1) {
                                     i -= 1;
@@ -4190,26 +4193,26 @@ var prettydiff = function prettydiff(api) {
                                 "<em class='l0'>" + tab + "</em>", "<em class='l0'>" + tab + "</em><em class='l1'>" + tab + "</em>", "<em class='l0'>" + tab + "</em><em class='l1'>" + tab + "</em><em class='l2'>" + tab + "</em>", "<em class='l0'>" + tab + "</em><em class='l1'>" + tab + "</em><em class='l2'>" + tab + "</em><em class='l3'>" + tab + "</em>", "<em class='l0'>" + tab + "</em><em class='l1'>" + tab + "</em><em class='l2'>" + tab + "</em><em class='l3'>" + tab + "</em><em class='l4'>" + tab + "</em>", "<em class='l0'>" + tab + "</em><em class='l1'>" + tab + "</em><em class='l2'>" + tab + "</em><em class='l3'>" + tab + "</em><em class='l4'>" + tab + "</em><em class='l5'>" + tab + "</em>", "<em class='l0'>" + tab + "</em><em class='l1'>" + tab + "</em><em class='l2'>" + tab + "</em><em class='l3'>" + tab + "</em><em class='l4'>" + tab + "</em><em class='l5'>" + tab + "</em><em class='l6'>" + tab + "</em>", "<em class='l0'>" + tab + "</em><em class='l1'>" + tab + "</em><em class='l2'>" + tab + "</em><em class='l3'>" + tab + "</em><em class='l4'>" + tab + "</em><em class='l5'>" + tab + "</em><em class='l6'>" + tab + "</em><em class='l7'>" + tab + "</em>", "<em class='l0'>" + tab + "</em><em class='l1'>" + tab + "</em><em class='l2'>" + tab + "</em><em class='l3'>" + tab + "</em><em class='l4'>" + tab + "</em><em class='l5'>" + tab + "</em><em class='l6'>" + tab + "</em><em class='l7'>" + tab + "</em><em class='l8'>" + tab + "</em>", "<em class='l0'>" + tab + "</em><em class='l1'>" + tab + "</em><em class='l2'>" + tab + "</em><em class='l3'>" + tab + "</em><em class='l4'>" + tab + "</em><em class='l5'>" + tab + "</em><em class='l6'>" + tab + "</em><em class='l7'>" + tab + "</em><em class='l8'>" + tab + "</em><em class='l9'>" + tab + "</em>", "<em class='l0'>" + tab + "</em><em class='l1'>" + tab + "</em><em class='l2'>" + tab + "</em><em class='l3'>" + tab + "</em><em class='l4'>" + tab + "</em><em class='l5'>" + tab + "</em><em class='l6'>" + tab + "</em><em class='l7'>" + tab + "</em><em class='l8'>" + tab + "</em><em class='l9'>" + tab + "</em><em class='l10'>" + tab + "</em>", "<em class='l0'>" + tab + "</em><em class='l1'>" + tab + "</em><em class='l2'>" + tab + "</em><em class='l3'>" + tab + "</em><em class='l4'>" + tab + "</em><em class='l5'>" + tab + "</em><em class='l6'>" + tab + "</em><em class='l7'>" + tab + "</em><em class='l8'>" + tab + "</em><em class='l9'>" + tab + "</em><em class='l10'>" + tab + "</em><em class='l11'>" + tab + "</em>", "<em class='l0'>" + tab + "</em><em class='l1'>" + tab + "</em><em class='l2'>" + tab + "</em><em class='l3'>" + tab + "</em><em class='l4'>" + tab + "</em><em class='l5'>" + tab + "</em><em class='l6'>" + tab + "</em><em class='l7'>" + tab + "</em><em class='l8'>" + tab + "</em><em class='l9'>" + tab + "</em><em class='l10'>" + tab + "</em><em class='l11'>" + tab + "</em><em class='l12'>" + tab + "</em>", "<em class='l0'>" + tab + "</em><em class='l1'>" + tab + "</em><em class='l2'>" + tab + "</em><em class='l3'>" + tab + "</em><em class='l4'>" + tab + "</em><em class='l5'>" + tab + "</em><em class='l6'>" + tab + "</em><em class='l7'>" + tab + "</em><em class='l8'>" + tab + "</em><em class='l9'>" + tab + "</em><em class='l10'>" + tab + "</em><em class='l11'>" + tab + "</em><em class='l12'>" + tab + "</em><em class='l13'>" + tab + "</em>", "<em class='l0'>" + tab + "</em><em class='l1'>" + tab + "</em><em class='l2'>" + tab + "</em><em class='l3'>" + tab + "</em><em class='l4'>" + tab + "</em><em class='l5'>" + tab + "</em><em class='l6'>" + tab + "</em><em class='l7'>" + tab + "</em><em class='l8'>" + tab + "</em><em class='l9'>" + tab + "</em><em class='l10'>" + tab + "</em><em class='l11'>" + tab + "</em><em class='l12'>" + tab + "</em><em class='l13'>" + tab + "</em><em class='l14'>" + tab + "</em>", "<em class='l0'>" + tab + "</em><em class='l1'>" + tab + "</em><em class='l2'>" + tab + "</em><em class='l3'>" + tab + "</em><em class='l4'>" + tab + "</em><em class='l5'>" + tab + "</em><em class='l6'>" + tab + "</em><em class='l7'>" + tab + "</em><em class='l8'>" + tab + "</em><em class='l9'>" + tab + "</em><em class='l10'>" + tab + "</em><em class='l11'>" + tab + "</em><em class='l12'>" + tab + "</em><em class='l13'>" + tab + "</em><em class='l14'>" + tab + "</em><em class='l15'>" + tab + "</em>", "<em class='l0'>" + tab + "</em><em class='l1'>" + tab + "</em><em class='l2'>" + tab + "</em><em class='l3'>" + tab + "</em><em class='l4'>" + tab + "</em><em class='l5'>" + tab + "</em><em class='l6'>" + tab + "</em><em class='l7'>" + tab + "</em><em class='l8'>" + tab + "</em><em class='l9'>" + tab + "</em><em class='l10'>" + tab + "</em><em class='l11'>" + tab + "</em><em class='l12'>" + tab + "</em><em class='l13'>" + tab + "</em><em class='l14'>" + tab + "</em><em class='l15'>" + tab + "</em><em class='l16'>" + tab + "</em>"
                             ],
                             nl = function jspretty__result_nlScope(x) {
-                                var cc = ["<em>&#xA;</em></li><li class='l" + g + "'>"],
-                                    dd = 0;
+                                var dd = 0;
                                 data.push("<li>");
                                 data.push(e);
                                 data.push("</li>");
                                 e += 1;
                                 if (a < b - 1 && token[a + 1].indexOf("/*") === 0) {
-                                    cc[0] = "<em>&#xA;</em></li><li class='c0'>";
-                                } else if (x > 0) {
-                                    dd = g;
-                                    if (g === x + 1 && x > 0) {
-                                        dd -= 1;
+                                    c.push("<em>&#xA;</em></li><li class='c0'>");
+                                } else {
+                                    c.push("<em>&#xA;</em></li><li class='l" + g + "'>");
+                                    if (x > 0) {
+                                        dd = g;
+                                        if (g === x + 1 && x > 0) {
+                                            dd -= 1;
+                                        }
+                                        c.push(lscope[dd - 1]);
                                     }
-                                    cc.push(lscope[dd - 1]);
                                 }
                                 for (dd; dd < x; dd += 1) {
-                                    cc.push(tab);
+                                    c.push(tab);
                                 }
-                                f = cc.join("");
-                                return f;
                             };
                         if (types[a] === "comment" && token[a].indexOf("/*") === 0) {
                             c.push("<ol class='data'><li class='c0'>");
@@ -4259,9 +4262,6 @@ var prettydiff = function prettydiff(api) {
                             }
                             if (types[a] === "comment" && token[a].indexOf("/*") === 0) {
                                 c.push(blockline(token[a]));
-                                if (a < b - 1 && token[a + 1].indexOf("/*") === 0) {
-                                    i += 1;
-                                }
                             } else {
                                 if (typeof meta[a] === "number") {
                                     g += 1;
@@ -4285,7 +4285,7 @@ var prettydiff = function prettydiff(api) {
                                             c[c.length - 1] = c[c.length - 1].replace(/class\='l\d+'/, "class='c0'");
                                         }
                                         if ((a === 0 || types[a - 1] !== "comment") && types[a + 1] === "comment") {
-                                            if (token[a + 1].indexOf("/*") === 0) {
+                                            if (token[a + 1].indexOf("//") === 0) {
                                                 i -= 1;
                                             }
                                             folder();
@@ -4297,7 +4297,7 @@ var prettydiff = function prettydiff(api) {
                             if (jpres === true && lines[d] !== undefined && a === lines[d][0] && level[a] !== "x" && level[a] !== "s") {
                                 if (token[a] === "+" || token[a] === "-" || token[a] === "*" || token[a] === "/") {
                                     if (a < b - 1 && types[a + 1] !== "comment" && types[a + 1] !== "comment-inline") {
-                                        c.push(nl(indent));
+                                        nl(indent);
                                         c.push(tab);
                                         level[a] = "x";
                                     } else {
@@ -4305,10 +4305,10 @@ var prettydiff = function prettydiff(api) {
                                         if (lines[d][1] === true) {
                                             c.push("\n");
                                         }
-                                        c.push(nl(indent));
+                                        nl(indent);
                                         c.push(tab);
                                         c.push(token[a + 1]);
-                                        c.push(nl(indent));
+                                        nl(indent);
                                         c.push(tab);
                                         level[a + 1] = "x";
                                         a += 1;
@@ -4322,32 +4322,37 @@ var prettydiff = function prettydiff(api) {
                                         data.push(e);
                                         data.push("</li>");
                                         e += 1;
-                                        c.push(nl(indent));
-                                        i += 1;
+                                        nl(indent);
+                                        if (comfold === -1 || (token[a].indexOf("//") !== 0 && token[a + 1].indexOf("//") !== 0)) {
+                                            i += 1;
+                                        }
                                     }
                                 }
                                 d += 1;
                             }
                             if (a < b - 1 && types[a + 1] === "comment" && jcomment === "noindent") {
-                                c.push(nl(jlevel));
+                                nl(jlevel);
                             } else if (level[a] === "s" && token[a] !== "x}") {
                                 c.push(" ");
                             } else if (level[a] !== "x" && token[a] === "x}" && typeof meta[a + 1] !== "string" && typeof meta[a + 1] !== "number") {
                                 c[c.length - 1] = removeEm(c[c.length - 1]);
-                            } else if (level[a] !== "x" && (token[a] !== "x}" || lines[d - 1][1] === true)) {
+                            } else if (level[a] !== "x" && (token[a] !== "x}" || (d > 0 && lines[d - 1][1] === true))) {
                                 indent = level[a];
-                                c.push(nl(indent));
+                                nl(indent);
                             }
                             if (lines[d] !== undefined && lines[d][0] < a) {
                                 d += 1;
                             }
                             if (jj.length > 0) {
-                                if (a === jj[jj.length - 1][1] && comfold === false) {
+                                if (a === jj[jj.length - 1][1] && comfold === -1) {
                                     foldclose();
                                 }
-                                if (comfold === true && (a === b - 1 || (types[a] !== "comment" && types[a - 1] === "comment")) && (a > 0 || token[a].indexOf("\n") > 0)) {
+                                if (comfold > -1 && (a === b - 1 || (types[a] !== "comment" && types[a - 1] === "comment")) && (a > 0 || token[a].indexOf("\n") > 0)) {
+                                    if (a > comfold + 1) {
+                                        i += 1;
+                                    }
                                     foldclose();
-                                    comfold = false;
+                                    comfold = -1;
                                 }
                             }
                         }
@@ -4407,13 +4412,11 @@ var prettydiff = function prettydiff(api) {
                                 return cc.join("");
                             }()),
                             nl = function jspretty__result_nl(x) {
-                                var cc = ["\n"],
-                                    dd = 0;
+                                var dd = 0;
+                                c.push("\n");
                                 for (dd; dd < x; dd += 1) {
-                                    cc.push(tab);
+                                    c.push(tab);
                                 }
-                                f = cc.join("");
-                                return f;
                             };
                         for (a = 0; a < indent; a += 1) {
                             c.push(tab);
@@ -4427,7 +4430,7 @@ var prettydiff = function prettydiff(api) {
                             if (jpres === true && lines[d] !== undefined && a === lines[d][0] && level[a] !== "x" && level[a] !== "s") {
                                 if (token[a] === "+" || token[a] === "-" || token[a] === "*" || token[a] === "/") {
                                     if (a < b - 1 && types[a + 1] !== "comment" && types[a + 1] !== "comment-inline") {
-                                        c.push(nl(indent));
+                                        nl(indent);
                                         c.push(tab);
                                         level[a] = "x";
                                     } else {
@@ -4435,10 +4438,10 @@ var prettydiff = function prettydiff(api) {
                                         if (lines[d][1] === true) {
                                             c.push("\n");
                                         }
-                                        c.push(nl(indent));
+                                        nl(indent);
                                         c.push(tab);
                                         c.push(token[a + 1]);
-                                        c.push(nl(indent));
+                                        nl(indent);
                                         c.push(tab);
                                         level[a + 1] = "x";
                                         a += 1;
@@ -4456,12 +4459,12 @@ var prettydiff = function prettydiff(api) {
                                 d += 1;
                             }
                             if (a < b - 1 && types[a + 1] === "comment" && jcomment === "noindent") {
-                                c.push(nl(jlevel));
+                                nl(jlevel);
                             } else if (level[a] === "s" && token[a] !== "x}") {
                                 c.push(" ");
-                            } else if (level[a] !== "x" && (token[a] !== "x}" || lines[d - 1][1] === true)) {
+                            } else if (level[a] !== "x" && (token[a] !== "x}" || (d > 0 && lines[d - 1][1] === true))) {
                                 indent = level[a];
-                                c.push(nl(indent));
+                                nl(indent);
                             }
                             if (lines[d] !== undefined && lines[d][0] < a) {
                                 d += 1;
@@ -5014,7 +5017,7 @@ var prettydiff = function prettydiff(api) {
                                 ce = g.match(scriptEnd)[0];
                                 g = g.replace(scriptEnd, "");
                             }
-                            if (e[e.length - 1] !== ">") {
+                            if (e[e.length - 1] !== ">" || (z === "script" && e[e.length - 3] === "]" && e[e.length - 2] === "]" && e[e.length - 1] === ">")) {
                                 if (z === "style") {
                                     g = cs + jsmin({
                                         source: g,
@@ -8912,13 +8915,13 @@ var prettydiff = function prettydiff(api) {
         diffview: 130903, //diffview library
         documentation: 130814, //documentation.xhtml
         jsmin: 130813, //jsmin library (fulljsmin.js)
-        jspretty: 131026, //jspretty library
+        jspretty: 131029, //jspretty library
         markup_beauty: 130829, //markup_beauty library
-        markupmin: 130829, //markupmin library
-        prettydiff: 131026, //this file
+        markupmin: 131029, //markupmin library
+        prettydiff: 131029, //this file
         webtool: 130829, //prettydiff.com.xhtml
         api: {
-            dom: 131021,
+            dom: 131029,
             nodeLocal: 130924,
             nodeService: 121106, //no longer maintained
             wsh: 130924

@@ -711,7 +711,7 @@ pd.webtool = [];
                 }
             }
         } else if (api.mode === "diff" && pd.o.re !== null) {
-            if (output[1].length > 125000) {
+            if (output[0].length > 125000) {
                 pd.o.filled.re = true;
             } else {
                 pd.o.filled.rg = false;
@@ -750,7 +750,7 @@ pd.webtool = [];
                 }
             }
         } else if (api.mode === "minify") {
-            if (output[1].length > 125000) {
+            if (output[0].length > 125000) {
                 pd.o.filled.ri = true;
             } else {
                 pd.o.filled.ri = false;
