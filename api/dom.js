@@ -1248,7 +1248,7 @@ pd.webtool = [];
             pd.position[f].zindex = a.style.zIndex;
             a.style.top = (d / 10) + "em";
             a.style.left = (e / 10) + "em";
-            if (window.innerHeight) {
+            if (typeof window.innerHeight === "number") {
                 c.style.height = ((window.innerHeight / 10) - 5.5) + "em";
                 if (save === true) {
                     b.style.width = ((window.innerWidth / 10) - 13.76) + "em";
