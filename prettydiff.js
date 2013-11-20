@@ -2569,7 +2569,29 @@ var prettydiff = function prettydiff(api) {
                                 ll = [start],
                                 mm = (h[0] === "\r") ? true : false,
                                 nn = a + offset,
-                                oo = "";
+                                oo = "",
+                                escape = false;
+                            if (c[a - 2] !== "\\" && c[a - 1] === "\\" && (c[a] === "\"" || c[a] === "'")) {
+                                token.pop();
+                                types.pop();
+                                if (token[0] === "{") {
+                                    if (c[a] === "\"") {
+                                        start = "\"";
+                                        end = "\\\"";
+                                        ll = ["\""];
+                                    } else {
+                                        start = "'";
+                                        end = "\\'";
+                                        ll = ["'"];
+                                    }
+                                    escape = true;
+                                } else {
+                                    if (c[a] === "\"") {
+                                        return "\\\"";
+                                    }
+                                    return "\\'";
+                                }
+                            }
                             for (ee = nn; ee < jj; ee += 1) {
                                 ll.push(c[ee]);
                                 if (c[ee] === h[i] || (mm === true && (c[ee] === "\n" || ee === jj - 1))) {
@@ -2587,7 +2609,7 @@ var prettydiff = function prettydiff(api) {
                                     } else {
                                         kk = true;
                                     }
-                                    if (ee > i + 1 && c[ee - i - 1] === "\\") {
+                                    if (ee > i + 1 && c[ee - i - 1] === "\\" && end.charAt(0) !== "\\") {
                                         g = 1;
                                         for (f = ee - 2; f > -1; f -= 1) {
                                             if (c[f] === "\\") {
@@ -2604,6 +2626,12 @@ var prettydiff = function prettydiff(api) {
                                         break;
                                     }
                                 }
+                            }
+                            if (escape === true) {
+                                oo = ll[ll.length - 1];
+                                ll.pop();
+                                ll.pop();
+                                ll.push(oo);
                             }
                             if (ee < jj) {
                                 a = ee;
@@ -6653,7 +6681,7 @@ var prettydiff = function prettydiff(api) {
                                 }
                             }
                             d = indent.join("");
-                            return "\n" + d + x.replace(/\n/g, "\n" + d);
+                            return "\n" + d + x.replace(/\n(?!\n)/g, "\n" + d);
                         },
                         text_wrap = function markup_beauty__apply_wrap() {
                             var a = i,
@@ -8921,10 +8949,10 @@ var prettydiff = function prettydiff(api) {
         diffview: 130903, //diffview library
         documentation: 130814, //documentation.xhtml
         jsmin: 131107, //jsmin library (fulljsmin.js)
-        jspretty: 131107, //jspretty library
-        markup_beauty: 130829, //markup_beauty library
+        jspretty: 131119, //jspretty library
+        markup_beauty: 131119, //markup_beauty library
         markupmin: 131102, //markupmin library
-        prettydiff: 131107, //this file
+        prettydiff: 131119, //this file
         webtool: 130829, //prettydiff.com.xhtml
         api: {
             dom: 131107,
