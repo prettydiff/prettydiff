@@ -5261,6 +5261,9 @@ var prettydiff = function prettydiff(api) {
                             return y;
                         };
                     x = x.replace(/\/+<!\[+[A-Z]+\[+/g, a).replace(/\/+\]+>/g, b);
+                    if (mhtml === true) {
+                        x = x.replace(/<\!\[endif\]\-\->/g, "<!--[endif]-->");
+                    }
                 }());
                 (function markup_beauty__findNestedTags() {
                     var d = (function markup_beauty__findNestedTags_angleBraces() {
@@ -8950,10 +8953,10 @@ var prettydiff = function prettydiff(api) {
         documentation: 130814, //documentation.xhtml
         jsmin: 131107, //jsmin library (fulljsmin.js)
         jspretty: 131119, //jspretty library
-        markup_beauty: 131119, //markup_beauty library
+        markup_beauty: 131120, //markup_beauty library
         markupmin: 131102, //markupmin library
-        prettydiff: 131119, //this file
-        webtool: 130829, //prettydiff.com.xhtml
+        prettydiff: 131120, //this file
+        webtool: 131120, //prettydiff.com.xhtml
         api: {
             dom: 131107,
             nodeLocal: 130924,
