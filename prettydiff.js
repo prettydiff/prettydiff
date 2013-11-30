@@ -1,5 +1,5 @@
 /*prettydiff.com api.topcoms: true, api.insize: 4, api.inchar: " " */
-/*global pd, exports */
+/*global pd, exports, define */
 /*
  Special thanks to:
 
@@ -3415,6 +3415,10 @@ var prettydiff = function prettydiff(api) {
                                             g = false,
                                             h = 0,
                                             i = 2;
+                                        if (methodtest[methodtest.length - 1] === true) {
+                                            list[list.length - 1] = true;
+                                            return;
+                                        }
                                         for (c = a - 1; c > -1; c -= 1) {
                                             if (types[c] === "end") {
                                                 d += 1;
@@ -3591,6 +3595,9 @@ var prettydiff = function prettydiff(api) {
                             if (ctoke === "(") {
                                 if (ltoke === "-" && token[a - 2] === "(") {
                                     level[a - 2] = "x";
+                                }
+                                if (ltoke === "function" || ltoke === "switch" || ltoke === "for" || ltoke === "while") {
+                                    methodtest[methodtest.length - 1] = true;
                                 }
                                 if (jsscope === true) {
                                     if (ltoke === "function" || token[a - 2] === "function") {
@@ -9111,10 +9118,10 @@ var prettydiff = function prettydiff(api) {
         diffview     : 130903, //diffview library
         documentation: 130814, //documentation.xhtml
         jsmin        : 131107, //jsmin library (fulljsmin.js)
-        jspretty     : 131126, //jspretty library
+        jspretty     : 131129, //jspretty library
         markup_beauty: 131120, //markup_beauty library
         markupmin    : 131102, //markupmin library
-        prettydiff   : 131126, //this file
+        prettydiff   : 131129, //this file
         webtool      : 131120, //prettydiff.com.xhtml
         api          : {
             dom        : 131107,
@@ -9129,8 +9136,22 @@ edition.latest = (function edition_latest() {
     return Math.max(edition.charDecoder, edition.cleanCSS, edition.css, edition.csvbeauty, edition.csvmin, edition.diffview, edition.documentation, edition.jsmin, edition.jspretty, edition.markup_beauty, edition.markupmin, edition.prettydiff, edition.webtool, edition.api.dom, edition.api.nodeLocal, edition.api.nodeService, edition.api.wsh);
 }());
 if (typeof exports === "object" || typeof exports === "function") {
+    //commonjs and nodejs support
     exports.api = function commonjs(x) {
         "use strict";
         return prettydiff(x);
     };
+} else if (typeof define === "object" || typeof define === "function") {
+    //requirejs support
+    define(function requirejs(require, exports) {
+        "use strict";
+        exports.api = function requirejs_export(x) {
+            return prettydiff(x);
+        };
+        //worthless if block to appease RequireJS and JSLint
+        if (typeof require === "number") {
+            return require;
+        }
+        return exports.api;
+    });
 }
