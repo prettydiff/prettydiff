@@ -3475,7 +3475,7 @@ var prettydiff = function prettydiff(api) {
                                                             }
                                                         }
                                                     }
-                                                } else if (f === false && g === false && ((token[c] === "(" && token[c - 1] === "for") || ((token[c - 1] === "=" || token[c - 1] === ":") && token[c] === "["))) {
+                                                } else if (f === false && g === false && ((token[c] === "(" && token[c - 1] === "for") || token[c] === "[")) {
                                                     list[list.length - 1] = true;
                                                     return;
                                                 }
