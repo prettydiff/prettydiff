@@ -14,8 +14,8 @@ To run Pretty Diff using dom.js include the following two script tags and bind t
     <script type="application/javascript" src="prettydiff.js"></script>
     <script type="application/javascript" src="api/dom.js"></script>
 
-Node.js
--------
+Node.js / CommonJS / RequireJS
+------------------------------
 
 Node.js support is provided by api/node-local.js.  This file can execute
 in the following modes:
