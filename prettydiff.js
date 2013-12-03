@@ -1585,7 +1585,7 @@ var prettydiff = function prettydiff(api) {
                         bb = d.length;
                         for (aa = 0; aa < bb; aa += 1) {
                             if (d[aa].charAt(d[aa].length - 1) === "{") {
-                                d[aa] = d[aa].replace(/\,(\s*)/g, ",\n").replace(/>/g, " > ");
+                                d[aa] = d[aa].replace(/>/g, " > ");
                             } else {
                                 if (d[aa].indexOf("url(") > -1) {
                                     h = d[aa].split("");
@@ -1723,12 +1723,19 @@ var prettydiff = function prettydiff(api) {
                                 h = [];
                                 for (e = 0; e < f; e += 1) {
                                     if (typeof cc[e] !== "string" && cc[e] !== undefined && cc[e][0] !== "") {
-                                        h.push(cc[e].join(": "));
+                                        if (cc[e][1] === undefined || cc[e][1] === "before" || cc[e][1] === "after" || cc[e][1] === "hover" || cc[e][1] === "link" || cc[e][1] === "visited" || cc[e][1] === "active" || cc[e][1] === "focus" || cc[e][1] === "first-child" || cc[e][1] === "lang" || cc[e][1] === "first-line" || cc[e][1] === "first-letter") {
+                                            h.push(cc[e].join(":"));
+                                        } else {
+                                            h.push(cc[e].join(": "));
+                                        }
                                     } else if (typeof cc[e] === "string") {
                                         h.push(cc[e].replace(/~PDCSEP~/g, ": "));
                                     }
                                 }
                                 d[aa] = (h.join(";") + ";").replace(/^;/, "");
+                            }
+                            if (d[aa].charAt(d[aa].length - 1) === "{") {
+                                d[aa] = d[aa].replace(/\,/g, "\,\n");
                             }
                         }
                         return d.join("").replace(/\*\/\s*;\s*\}?/g, commfix).replace(/(\s*[\w\-]+:)$/g, "\n}").replace(/\s*;$/, "").replace(/PDpoundPD#/g, "#");
@@ -1775,7 +1782,7 @@ var prettydiff = function prettydiff(api) {
                 }
                 x = c.join("*\/");
                 if (alter === true) {
-                    x = reduction(x);
+                    x = reduction(x.replace(/\,\s+/g, ","));
                 }
                 cleanAsync();
                 if (alter === true) {
@@ -3847,7 +3854,7 @@ var prettydiff = function prettydiff(api) {
                                         if (d === 0) {
                                             if (token[c] === "," && obj[obj.length - 1] === true && ternary === false) {
                                                 level[a - 1] = "x";
-                                                if (c === a - f) {
+                                                if (c === a - f && varlen.length > 0) {
                                                     varlen[varlen.length - 1].push(a - 1);
                                                 }
                                                 return level.push("s");
@@ -9111,17 +9118,17 @@ var prettydiff = function prettydiff(api) {
     //the edition values use the format YYMMDD for dates.
     edition    = {
         charDecoder  : 121231, //charDecoder library
-        cleanCSS     : 131102, //cleanCSS library
+        cleanCSS     : 131202, //cleanCSS library
         css          : 130924, //diffview.css file
         csvbeauty    : 130924, //csvbeauty library
         csvmin       : 131018, //csvmin library
         diffview     : 130903, //diffview library
         documentation: 130814, //documentation.xhtml
         jsmin        : 131107, //jsmin library (fulljsmin.js)
-        jspretty     : 131129, //jspretty library
+        jspretty     : 131202, //jspretty library
         markup_beauty: 131120, //markup_beauty library
         markupmin    : 131102, //markupmin library
-        prettydiff   : 131129, //this file
+        prettydiff   : 131202, //this file
         webtool      : 131120, //prettydiff.com.xhtml
         api          : {
             dom        : 131107,
