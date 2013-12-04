@@ -24,6 +24,9 @@ define(function (require, exports, module) {
             args.source = docText.getText();
             if (tab === true) {
                 args.inchar = "\t";
+                args.insize = 1;
+            } else {
+                args.insize = Editor.getSpaceUnits();
             }
             output = pd(args);
             docText.setText(output[0]);
