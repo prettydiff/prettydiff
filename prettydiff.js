@@ -3913,7 +3913,7 @@ var prettydiff = function prettydiff(api) {
                                         } else {
                                             varlen.push([]);
                                         }
-                                    } else if (token[a + 1] === "=") {
+                                    } else if (token[a + 1] === "=" && varlen.length > 0) {
                                         varlen[varlen.length - 1].push(a);
                                     }
                                     meta.push("v");
@@ -9125,10 +9125,10 @@ var prettydiff = function prettydiff(api) {
         diffview     : 130903, //diffview library
         documentation: 130814, //documentation.xhtml
         jsmin        : 131107, //jsmin library (fulljsmin.js)
-        jspretty     : 131202, //jspretty library
+        jspretty     : 131203, //jspretty library
         markup_beauty: 131120, //markup_beauty library
         markupmin    : 131102, //markupmin library
-        prettydiff   : 131202, //this file
+        prettydiff   : 131203, //this file
         webtool      : 131120, //prettydiff.com.xhtml
         api          : {
             dom        : 131107,
