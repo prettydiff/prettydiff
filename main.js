@@ -32,7 +32,7 @@ define(function (require, exports, module) {
             docText.setText(output[0]);
         },
         minify = function () {
-            console.log("qwer");
+            console.log("qwerty");
         };
     CommandManager.register("Beautify", Beau_ID, beautify);
     command = [{
