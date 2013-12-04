@@ -1,4 +1,4 @@
-﻿
+
 function f(s, pos) {
     switch (s) {
     case "a":
