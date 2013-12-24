@@ -149,97 +149,89 @@ var prettydiff = function prettydiff(api) {
             }()),
             summary       = "",
             charDecoder   = function charDecoder(input) {
-                var b     = 0,
-                    d     = 0,
-                    a     = 0,
-                    f     = 0,
-                    g     = 0,
-                    c     = input,
-                    e     = [],
-                    x     = [],
-                    y     = [],
-                    uni   = (/u\+[0-9a-f]{4,5}\+/),
-                    unit  = (/u\![0-9a-f]{4,5}\+/),
-                    htmln = (/\&\#[0-9]{1,6}\;/),
-                    htmlt = (/\&\![0-9]{1,6}\;/);
-                if ((pd === undefined || pd.o.rh === null || pd.o.rh === undefined || typeof pd.o.rh.innerHTML !== "string") || (c.search(unit) === -1 && c.search(uni) === -1 && c.search(htmlt) === -1 && c.search(htmln) === -1)) {
+                var a         = 0,
+                    b         = 0,
+                    index     = 0,
+                    inputLenA = 0,
+                    inputLenB = 0,
+                    output    = [],
+                    entity    = [],
+                    type      = [],
+                    uni       = (/u\+[0-9a-f]{4,5}\+/),
+                    unit      = (/u\![0-9a-f]{4,5}\+/),
+                    htmln     = (/\&\#[0-9]{1,6}\;/),
+                    htmlt     = (/\&\![0-9]{1,6}\;/);
+                if ((pd === undefined || pd.o.rh === null || pd.o.rh === undefined || typeof pd.o.rh.innerHTML !== "string") || (input.search(unit) === -1 && input.search(uni) === -1 && input.search(htmlt) === -1 && input.search(htmln) === -1)) {
                     return input;
                 }
-                f = input.length;
-                for (b = 0; b < f; b += 1) {
-                    if (c.search(htmln) === -1 || (c.search(uni) < c.search(htmln) && c.search(uni) !== -1)) {
-                        d = c.search(uni);
-                        y.push(d + "|h");
-                        g = c.length;
-                        for (a = d; a < g; a += 1) {
-                            if (c.charAt(a) === "+" && c.charAt(a - 1) === "u") {
-                                e = c.split("");
-                                e.splice(a, 1, "!");
-                                c = e.join("");
+                inputLenA = input.length;
+                for (b = 0; b < inputLenA; b += 1) {
+                    if (input.search(htmln) === -1 || (input.search(uni) < input.search(htmln) && input.search(uni) !== -1)) {
+                        index = input.search(uni);
+                        type.push(index + "|h");
+                        inputLenB = input.length;
+                        for (a = index; a < inputLenB; a += 1) {
+                            if (input.charAt(a) === "+" && input.charAt(a - 1) === "u") {
+                                input = input.slice(0, a) + "!" + input.slice(a + 1);
                             }
-                            if (c.charAt(a) === "+" && c.charAt(a - 1) !== "u") {
+                            if (input.charAt(a) === "+" && input.charAt(a - 1) !== "u") {
                                 a += 1;
                                 break;
                             }
                         }
-                        x.push(c.slice(d + 2, a - 1));
-                        c = c.replace(unit, "");
-                    } else if (c.search(uni) === -1 || (c.search(htmln) < c.search(uni) && c.search(htmln) !== -1)) {
-                        d = c.search(htmln);
-                        y.push(d + "|d");
-                        g = c.length;
-                        for (a = d; a < g; a += 1) {
-                            if (c.charAt(a) === "#") {
-                                e = c.split("");
-                                e.splice(a, 1, "!");
-                                c = e.join("");
+                        entity.push(input.slice(index + 2, a - 1));
+                        input = input.replace(unit, "");
+                    } else if (input.search(uni) === -1 || (input.search(htmln) < input.search(uni) && input.search(htmln) !== -1)) {
+                        index = input.search(htmln);
+                        type.push(index + "|d");
+                        inputLenB = input.length;
+                        for (a = index; a < inputLenB; a += 1) {
+                            if (input.charAt(a) === "#") {
+                                input = input.slice(0, a) + "!" + input.slice(a + 1);
                             }
-                            if (c.charAt(a) === ";") {
+                            if (input.charAt(a) === ";") {
                                 a += 1;
                                 break;
                             }
                         }
-                        x.push(c.slice(d + 2, a - 1));
-                        c = c.replace(htmlt, "");
+                        entity.push(input.slice(index + 2, a - 1));
+                        input = input.replace(htmlt, "");
                     }
-                    if (c.search(uni) === -1 && c.search(htmln) === -1) {
+                    if (input.search(uni) === -1 && input.search(htmln) === -1) {
                         break;
                     }
                 }
-                c = c.replace(/u\![0-9a-f]{4,5}\+/g, "").replace(/\&\![0-9]{1,6}\;/g, "").split("");
-                d = x.length;
-                e = [];
-                for (b = 0; b < d; b += 1) {
-                    y[b] = y[b].split("|");
-                    if (y[b][1] === "h") {
-                        x[b] = parseInt(x[b], 16);
+                input = input.replace(/u\![0-9a-f]{4,5}\+/g, "").replace(/\&\![0-9]{1,6}\;/g, "").split("");
+                index = entity.length;
+                for (b = 0; b < index; b += 1) {
+                    type[b] = type[b].split("|");
+                    if (type[b][1] === "h") {
+                        entity[b] = parseInt(entity[b], 16);
                     }
-                    pd.o.rh.innerHTML = "&#" + parseInt(x[b], 10) + ";";
-                    x[b]              = pd.o.rh.innerHTML;
-                    e.push(x[b]);
+                    pd.o.rh.innerHTML = "&#" + parseInt(entity[b], 10) + ";";
+                    entity[b]         = pd.o.rh.innerHTML;
+                    output.push(entity[b]);
                 }
-                return e.join("");
+                return output.join("");
             },
             csvbeauty     = function csvbeauty(source, ch) {
-                var err   = "",
-                    a     = 0,
-                    b     = 0,
-                    c     = [],
-                    error = "Error: Unterminated string begging at character number ";
+                var errorLocation  = "",
+                    a              = 0,
+                    b              = 0,
+                    quotedNewlines = [],
+                    error          = "Error: Unterminated string begging at character number ";
                 (function csvbeauty__logic() {
-                    var bb  = 0,
-                        d   = 0,
-                        e   = 0,
-                        src = [];
+                    var bb     = 0,
+                        srcLen = 0,
+                        src    = [];
                     source = source.replace(/"{2}/g, "{csvquote}");
                     src    = source.split("");
-                    e      = src.length;
-                    for (a = 0; a < e; a += 1) {
+                    srcLen = src.length;
+                    for (a = 0; a < srcLen; a += 1) {
                         if (src[a] === "\"") {
-                            d = src.length;
-                            for (bb = a + 1; bb < d; bb += 1) {
+                            for (bb = a + 1; bb < srcLen; bb += 1) {
                                 if (src[bb] === "\"") {
-                                    c.push(source.slice(a, bb + 1));
+                                    quotedNewlines.push(source.slice(a, bb + 1));
                                     src[a]  = "{csvstring}";
                                     src[bb] = "";
                                     a       = bb + 1;
@@ -247,9 +239,9 @@ var prettydiff = function prettydiff(api) {
                                 }
                                 src[bb] = "";
                             }
-                            if (bb === src.length) {
-                                err    = src.join("").slice(a, a + 9);
-                                source = error;
+                            if (bb === srcLen) {
+                                errorLocation = src.join("").slice(a, a + 9);
+                                source        = error;
                                 return;
                             }
                         }
@@ -266,7 +258,7 @@ var prettydiff = function prettydiff(api) {
                 }
                 if (source === error) {
                     if (a !== source.length - 1) {
-                        return source + a + ", '" + err + "'.";
+                        return source + a + ", '" + errorLocation + "'.";
                     }
                     return source + a + ".";
                 }
@@ -277,10 +269,10 @@ var prettydiff = function prettydiff(api) {
                 do {
                     source = source.replace(ch, "\n");
                 } while (source.indexOf(ch) !== -1);
-                b = c.length;
+                b = quotedNewlines.length;
                 for (a = 0; a < b; a += 1) {
-                    c[a]   = c[a].replace(/\n/g, "{ }");
-                    source = source.replace("{csvstring}", c[a]);
+                    quotedNewlines[a] = quotedNewlines[a].replace(/\n/g, "{ }");
+                    source            = source.replace("{csvstring}", quotedNewlines[a]);
                 }
                 return source.replace(/\{csvquote\}/g, "\"");
             },
@@ -291,59 +283,55 @@ var prettydiff = function prettydiff(api) {
                     ch = charDecoder(ch);
                 }
                 (function csvmin__logic() {
-                    var multiline = function csvmin__logic_multiline(x) {
-                            var w = [],
-                                y = 0,
-                                z = x.length - 2;
-                            if (x.length === 2) {
+                    var multiline     = function csvmin__logic_multiline(x) {
+                            var output = [],
+                                y      = 0,
+                                len    = x.length - 2;
+                            if (len === 0) {
                                 return "{ }";
                             }
-                            for (y = 0; y < z; y += 1) {
-                                w.push(ch);
+                            for (y = 0; y < len; y += 1) {
+                                output.push(ch);
                             }
-                            return w.join("") + "{ }";
+                            return output.join("") + "{ }";
                         },
-                        a         = 0,
-                        c         = [],
-                        d         = "",
-                        e         = 0,
-                        f         = [],
-                        g         = source.replace(/\n\n\{\-\}\n\n/g, "{-}").replace(/\n{2,}/g, multiline).split("\n"),
-                        b         = g.length,
-                        err       = "",
-                        error     = "Error: Unterminated String begging at character number ";
-                    for (a = 0; a < b; a += 1) {
-                        c = [];
-                        if (typeof g[a] === "string" && g[a].indexOf("\"") !== -1) {
-                            f = g[a].split("");
-                            e = f.length;
-                            for (b = 0; b < e; b += 1) {
-                                if (f[b] === "\"") {
-                                    c.push(b);
+                        a             = 0,
+                        b             = 0,
+                        segment       = [],
+                        partLen       = 0,
+                        part          = [],
+                        srcLines      = source.replace(/\n\n\{\-\}\n\n/g, "{-}").replace(/\n{2,}/g, multiline).split("\n"),
+                        srcLen        = srcLines.length,
+                        errorLocation = "",
+                        error         = "Error: Unterminated String begging at character number ";
+                    for (a = 0; a < srcLen; a += 1) {
+                        segment = [];
+                        if (typeof srcLines[a] === "string" && srcLines[a].indexOf("\"") !== -1) {
+                            part    = srcLines[a].split("");
+                            partLen = part.length;
+                            for (b = 0; b < partLen; b += 1) {
+                                if (part[b] === "\"") {
+                                    segment.push(b);
                                 }
                             }
-                            if (c.length === 1) {
-                                d    = error;
-                                g[a] = f.join("");
-                                err  = g[a].slice(c[0], c[0] + 9);
-                                return;
+                            if (segment.length === 1) {
+                                srcLines[a]   = part.join("");
+                                errorLocation = srcLines[a].slice(segment[0], segment[0] + 9);
+                                return error + (srcLines.join(ch).indexOf(srcLines[a]) + segment[0]) + " or value number " + (a + 1) + ", '" + errorLocation + "'.";
                             }
-                            if (c.length > 2) {
-                                e = c.length - 1;
-                                for (d = 1; d < e; d += 1) {
-                                    f[c[d]] = "\"\"";
+                            if (segment.length > 2) {
+                                partLen = segment.length - 1;
+                                for (b = 1; b < partLen; b += 1) {
+                                    part[segment[b]] = "\"\"";
                                 }
                             }
-                            g[a] = f.join("");
+                            srcLines[a] = part.join("");
                         }
                     }
-                    if (d === error) {
-                        return error + (g.join(ch).indexOf(g[a]) + c[0]) + " or value number " + (a + 1) + ", '" + err + "'.";
+                    if (srcLines[srcLines.length - 1] === "{|}") {
+                        srcLines[srcLines.length - 1] = "";
                     }
-                    if (g[g.length - 1] === "{|}") {
-                        g[g.length - 1] = "";
-                    }
-                    source = g.join(ch).replace(/\n/g, ch);
+                    source = srcLines.join(ch).replace(/\n/g, ch);
                 }());
                 do {
                     source = source.replace("{ }", "\n");
@@ -380,13 +368,13 @@ var prettydiff = function prettydiff(api) {
                     fcom         = [],
                     alterj       = false,
                     theLookahead = EOF,
-                    blockspace   = function jsmin__blockspace(x) {
-                        var y = x.replace(/\n/g, "");
-                        x = x.substr(1);
-                        if (x.indexOf("\n") === 0 && y === "") {
+                    blockspace   = function jsmin__blockspace(whiteSpace) {
+                        var noNewLine = whiteSpace.replace(/\n/g, "");
+                        whiteSpace = whiteSpace.substr(1);
+                        if (whiteSpace.indexOf("\n") === 0 && noNewLine === "") {
                             return "\n\n";
                         }
-                        if (x.indexOf("\n") > -1) {
+                        if (whiteSpace.indexOf("\n") > -1) {
                             return "\n\n ";
                         }
                         return "\n ";
@@ -395,6 +383,7 @@ var prettydiff = function prettydiff(api) {
                         if (typeof c === "string") {
                             return c !== EOF && (ALNUM.indexOf(c) > -1 || c.charCodeAt(0) > 126);
                         }
+                        return false;
                     },
                     jsasiq       = function jsmin__jsasiq(x) {
                         if (x.indexOf("\n") === -1) {
@@ -405,130 +394,130 @@ var prettydiff = function prettydiff(api) {
                         return x.join("");
                     },
                     semiword     = function jsmin__semiword(x) {
-                        var aa = x.replace(/\s+/, "");
+                        var noSpace = x.replace(/\s+/, "");
                         if (x.indexOf("\n") > -1) {
-                            return aa + ";";
+                            return noSpace + ";";
                         }
-                        return aa + " ";
+                        return noSpace + " ";
                     },
-                    asiFix       = function jsmin__asiFix(y) {
-                        var aa = 0,
-                            x  = y.split(""),
-                            bb = x.length,
-                            c  = 0,
-                            d  = 0,
-                            e  = "",
-                            f  = "",
-                            g  = "",
-                            h  = "";
+                    asiFix       = function jsmin__asiFix(input) {
+                        var aa      = 0,
+                            chars   = input.split(""),
+                            bb      = chars.length,
+                            c       = 0,
+                            counter = 0,
+                            quoteA  = "",
+                            quoteB  = "",
+                            starter = "",
+                            ender   = "";
                         for (aa = 0; aa < bb; aa += 1) {
-                            if (x[aa] === "\\") {
+                            if (chars[aa] === "\\") {
                                 aa += 1;
-                            } else if (x[aa] === "\"" && f === "") {
-                                f = "\"";
-                            } else if (x[aa] === "'" && f === "") {
-                                f = "'";
-                            } else if (x[aa] === "/" && f === "" && !isAlphanum(x[aa - 1]) && x[aa - 1] !== ")" && x[aa - 1] !== "]") {
-                                if (x[aa - 1] === " ") {
-                                    x[aa - 1] = "";
-                                    if (!isAlphanum(x[aa - 2])) {
-                                        f     = "/";
-                                        x[aa] = "pd";
-                                    } else if (x[aa + 1] === " ") {
-                                        x[aa + 1] = "";
+                            } else if (chars[aa] === "\"" && quoteB === "") {
+                                quoteB = "\"";
+                            } else if (chars[aa] === "'" && quoteB === "") {
+                                quoteB = "'";
+                            } else if (chars[aa] === "/" && quoteB === "" && !isAlphanum(chars[aa - 1]) && chars[aa - 1] !== ")" && chars[aa - 1] !== "]") {
+                                if (chars[aa - 1] === " ") {
+                                    chars[aa - 1] = "";
+                                    if (!isAlphanum(chars[aa - 2])) {
+                                        quoteB    = "/";
+                                        chars[aa] = "pd";
+                                    } else if (chars[aa + 1] === " ") {
+                                        chars[aa + 1] = "";
                                     }
                                 } else {
-                                    f     = "/";
-                                    x[aa] = "pd";
+                                    quoteB    = "/";
+                                    chars[aa] = "pd";
                                 }
-                            } else if (x[aa] === "/" && f === "" && x[aa + 1] === " " && isAlphanum(x[aa - 1])) {
-                                x[aa + 1] = "";
-                            } else if (x[aa] === "\"" && f === "\"") {
-                                f = "";
-                            } else if (x[aa] === "'" && f === "'") {
-                                f = "";
-                            } else if (x[aa] === "/" && f === "/") {
-                                f     = "";
-                                x[aa] = "pd";
-                            } else if ((f === "'" || f === "\"") && x[aa - 2] === "\\" && x[aa - 1] === ";") {
-                                x[aa - 1] = "";
-                                x[aa - 2] = " ";
-                            } else if (f === "" && (x[aa] === "}" || x[aa] === ")")) {
-                                if ((x[aa + 1] !== "(" && x[aa + 1] !== "[" && x[aa + 1] !== "," && x[aa + 1] !== ";" && x[aa + 1] !== "." && x[aa + 1] !== "?" && x[aa + 1] !== "*" && x[aa + 1] !== "+" && x[aa + 1] !== "-" && (x[aa + 1] !== "\n" || (x[aa + 1] === "\n" && x[aa + 2] !== "(" && x[aa + 2] !== "[" && x[aa + 2] !== "+" && x[aa + 2] !== "-" && x[aa + 2] !== "/")) && typeof x[aa - 3] === "string" && x[aa - 2] === "=" && x[aa - 1] === "{" && x[aa] === "}" && (x[aa + 1] !== "\n" || (x[aa + 1] === "\n" && x[aa + 2] !== "+" && x[aa + 2] !== "-")) && (isAlphanum(x[aa - 3]) || x[aa - 3] === "]" || x[aa - 3] === ")"))) {
-                                    x[aa] += ";";
+                            } else if (chars[aa] === "/" && quoteB === "" && chars[aa + 1] === " " && isAlphanum(chars[aa - 1])) {
+                                chars[aa + 1] = "";
+                            } else if (chars[aa] === "\"" && quoteB === "\"") {
+                                quoteB = "";
+                            } else if (chars[aa] === "'" && quoteB === "'") {
+                                quoteB = "";
+                            } else if (chars[aa] === "/" && quoteB === "/") {
+                                quoteB    = "";
+                                chars[aa] = "pd";
+                            } else if ((quoteB === "'" || quoteB === "\"") && chars[aa - 2] === "\\" && chars[aa - 1] === ";") {
+                                chars[aa - 1] = "";
+                                chars[aa - 2] = " ";
+                            } else if (quoteB === "" && (chars[aa] === "}" || chars[aa] === ")")) {
+                                if ((chars[aa + 1] !== "(" && chars[aa + 1] !== "[" && chars[aa + 1] !== "," && chars[aa + 1] !== ";" && chars[aa + 1] !== "." && chars[aa + 1] !== "?" && chars[aa + 1] !== "*" && chars[aa + 1] !== "+" && chars[aa + 1] !== "-" && (chars[aa + 1] !== "\n" || (chars[aa + 1] === "\n" && chars[aa + 2] !== "(" && chars[aa + 2] !== "[" && chars[aa + 2] !== "+" && chars[aa + 2] !== "-" && chars[aa + 2] !== "/")) && typeof chars[aa - 3] === "string" && chars[aa - 2] === "=" && chars[aa - 1] === "{" && chars[aa] === "}" && (chars[aa + 1] !== "\n" || (chars[aa + 1] === "\n" && chars[aa + 2] !== "+" && chars[aa + 2] !== "-")) && (isAlphanum(chars[aa - 3]) || chars[aa - 3] === "]" || chars[aa - 3] === ")"))) {
+                                    chars[aa] += ";";
                                 } else {
-                                    d = -1;
-                                    e = "";
-                                    g = "";
-                                    if (x[aa] === "}") {
-                                        g = "}";
-                                        h = "{";
+                                    counter = -1;
+                                    quoteA  = "";
+                                    starter = "";
+                                    if (chars[aa] === "}") {
+                                        starter = "}";
+                                        ender   = "{";
                                     } else {
-                                        g = ")";
-                                        h = "(";
+                                        starter = ")";
+                                        ender   = "(";
                                     }
                                     for (c = aa - 1; c > -1; c -= 1) {
-                                        if ((c > 1 && x[c - 1] === "\\" && x[c - 2] !== "\\") || (c === 1 && x[c - 1] === "\\")) {
+                                        if ((c > 1 && chars[c - 1] === "\\" && chars[c - 2] !== "\\") || (c === 1 && chars[c - 1] === "\\")) {
                                             c -= 1;
                                         } else {
-                                            if (x[c].charAt(0) === g && e === "") {
-                                                d -= 1;
-                                            } else if (x[c] === h && e === "") {
-                                                d += 1;
-                                            } else if (x[c] === "\"" && e === "") {
-                                                e = "\"";
-                                            } else if (x[c] === "'" && e === "") {
-                                                e = "'";
-                                            } else if (x[c] === "pd" && e === "") {
-                                                e = "/";
-                                            } else if (x[c] === "\"" && e === "\"") {
-                                                e = "";
-                                            } else if (x[c] === "'" && e === "'") {
-                                                e = "";
-                                            } else if (x[c] === "pd" && e === "/") {
-                                                e = "";
+                                            if (chars[c].charAt(0) === starter && quoteA === "") {
+                                                counter -= 1;
+                                            } else if (chars[c] === ender && quoteA === "") {
+                                                counter += 1;
+                                            } else if (chars[c] === "\"" && quoteA === "") {
+                                                quoteA = "\"";
+                                            } else if (chars[c] === "'" && quoteA === "") {
+                                                quoteA = "'";
+                                            } else if (chars[c] === "pd" && quoteA === "") {
+                                                quoteA = "/";
+                                            } else if (chars[c] === "\"" && quoteA === "\"") {
+                                                quoteA = "";
+                                            } else if (chars[c] === "'" && quoteA === "'") {
+                                                quoteA = "";
+                                            } else if (chars[c] === "pd" && quoteA === "/") {
+                                                quoteA = "";
                                             }
                                         }
-                                        if (d === 0 && (c !== aa - 1 || (c === aa - 1 && typeof x[c - 1] === "string" && x[c - 1] !== x[aa]))) {
-                                            if (x[c - 1] === ")" && g === "}") {
-                                                c -= 2;
-                                                d = -1;
-                                                e = "";
+                                        if (counter === 0 && (c !== aa - 1 || (c === aa - 1 && typeof chars[c - 1] === "string" && chars[c - 1] !== chars[aa]))) {
+                                            if (chars[c - 1] === ")" && starter === "}") {
+                                                c       -= 2;
+                                                counter = -1;
+                                                quoteA  = "";
                                                 for (c; c > -1; c -= 1) {
-                                                    if ((c > 1 && x[c - 1] === "\\" && x[c - 2] !== "\\") || (c === 1 && x[c - 1] === "\\")) {
+                                                    if ((c > 1 && chars[c - 1] === "\\" && chars[c - 2] !== "\\") || (c === 1 && chars[c - 1] === "\\")) {
                                                         c -= 1;
                                                     } else {
-                                                        if (x[c] === ")" && e === "") {
-                                                            d -= 1;
-                                                        } else if (x[c] === "(" && e === "") {
-                                                            d += 1;
-                                                        } else if (x[c] === "\"" && e === "") {
-                                                            e = "\"";
-                                                        } else if (x[c] === "'" && e === "") {
-                                                            e = "'";
-                                                        } else if (x[c] === "pd" && e === "") {
-                                                            e = "/";
-                                                        } else if (x[c] === "\"" && e === "\"") {
-                                                            e = "";
-                                                        } else if (x[c] === "'" && e === "'") {
-                                                            e = "";
-                                                        } else if (x[c] === "pd" && e === "/") {
-                                                            e = "";
+                                                        if (chars[c] === ")" && quoteA === "") {
+                                                            counter -= 1;
+                                                        } else if (chars[c] === "(" && quoteA === "") {
+                                                            counter += 1;
+                                                        } else if (chars[c] === "\"" && quoteA === "") {
+                                                            quoteA = "\"";
+                                                        } else if (chars[c] === "'" && quoteA === "") {
+                                                            quoteA = "'";
+                                                        } else if (chars[c] === "pd" && quoteA === "") {
+                                                            quoteA = "/";
+                                                        } else if (chars[c] === "\"" && quoteA === "\"") {
+                                                            quoteA = "";
+                                                        } else if (chars[c] === "'" && quoteA === "'") {
+                                                            quoteA = "";
+                                                        } else if (chars[c] === "pd" && quoteA === "/") {
+                                                            quoteA = "";
                                                         }
                                                     }
-                                                    if (d === 0) {
+                                                    if (counter === 0) {
                                                         c -= 1;
-                                                        if (x[aa + 1] !== "(" && x[aa + 1] !== "[" && x[aa + 1] !== "," && x[aa + 1] !== ";" && x[aa + 1] !== "." && x[aa + 1] !== "?" && x[aa + 1] !== "*" && x[aa + 1] !== "+" && x[aa + 1] !== "-" && typeof x[c - 9] === "string" && x[c - 8] === "=" && x[c - 7] === "f" && x[c - 6] === "u" && x[c - 5] === "n" && x[c - 4] === "c" && x[c - 3] === "t" && x[c - 2] === "i" && x[c - 1] === "o" && x[c] === "n" && (isAlphanum(x[c - 9]) || x[c - 9] === "]" || x[c - 9] === ")")) {
-                                                            x[aa] += ";";
+                                                        if (chars[aa + 1] !== "(" && chars[aa + 1] !== "[" && chars[aa + 1] !== "," && chars[aa + 1] !== ";" && chars[aa + 1] !== "." && chars[aa + 1] !== "?" && chars[aa + 1] !== "*" && chars[aa + 1] !== "+" && chars[aa + 1] !== "-" && typeof chars[c - 9] === "string" && chars[c - 8] === "=" && chars[c - 7] === "f" && chars[c - 6] === "u" && chars[c - 5] === "n" && chars[c - 4] === "c" && chars[c - 3] === "t" && chars[c - 2] === "i" && chars[c - 1] === "o" && chars[c] === "n" && (isAlphanum(chars[c - 9]) || chars[c - 9] === "]" || chars[c - 9] === ")")) {
+                                                            chars[aa] += ";";
                                                         }
                                                         break;
                                                     }
                                                 }
                                                 break;
                                             }
-                                            if (typeof x[c - 2] === "string" && x[c - 1] === "=" && (x[aa - 1].length === 1 || x[aa - 1] === "pd") && (isAlphanum(x[c - 2] || x[c - 2] === "]" || x[c - 2] === ")"))) {
-                                                if (x[aa + 1] !== "(" && x[aa + 1] !== "[" && x[aa + 1] !== "," && x[aa + 1] !== ";" && x[aa + 1] !== "." && x[aa + 1] !== "?" && x[aa + 1] !== "*" && x[aa + 1] !== "+" && x[aa + 1] !== "-" && (x[aa + 1] !== "\n" || (x[aa + 1] === "\n" && x[aa + 2] !== "(" && x[aa + 2] !== "[" && x[aa + 2] !== "+" && x[aa + 2] !== "-" && x[aa + 2] !== "/")) && (typeof x[aa + 1] !== "string" || x[aa + 1] !== "/")) {
-                                                    x[aa] += ";";
+                                            if (typeof chars[c - 2] === "string" && chars[c - 1] === "=" && (chars[aa - 1].length === 1 || chars[aa - 1] === "pd") && (isAlphanum(chars[c - 2] || chars[c - 2] === "]" || chars[c - 2] === ")"))) {
+                                                if (chars[aa + 1] !== "(" && chars[aa + 1] !== "[" && chars[aa + 1] !== "," && chars[aa + 1] !== ";" && chars[aa + 1] !== "." && chars[aa + 1] !== "?" && chars[aa + 1] !== "*" && chars[aa + 1] !== "+" && chars[aa + 1] !== "-" && (chars[aa + 1] !== "\n" || (chars[aa + 1] === "\n" && chars[aa + 2] !== "(" && chars[aa + 2] !== "[" && chars[aa + 2] !== "+" && chars[aa + 2] !== "-" && chars[aa + 2] !== "/")) && (typeof chars[aa + 1] !== "string" || chars[aa + 1] !== "/")) {
+                                                    chars[aa] += ";";
                                                 }
                                                 break;
                                             }
@@ -536,277 +525,265 @@ var prettydiff = function prettydiff(api) {
                                         }
                                     }
                                 }
-                            } else if (f === "" && x[aa] === "\n") {
-                                if ((/\w/).test(x[aa + 1]) && x[aa - 1] !== "}" && x[aa - 1] !== ")" && x[aa - 1].indexOf(";") === -1) {
-                                    x[aa] = ";";
+                            } else if (quoteB === "" && chars[aa] === "\n") {
+                                if ((/\w/).test(chars[aa + 1]) && chars[aa - 1] !== "}" && chars[aa - 1] !== ")" && chars[aa - 1].indexOf(";") === -1) {
+                                    chars[aa] = ";";
                                 } else {
-                                    x[aa] = "";
+                                    chars[aa] = "";
                                 }
                             }
                         }
                         for (aa = 0; aa < bb; aa += 1) {
-                            if (x[aa] === "pd") {
-                                x[aa] = "/";
+                            if (chars[aa] === "pd") {
+                                chars[aa] = "/";
                             }
                         }
-                        return x.join("").replace(/\"/g, "\"").replace(/\'/g, "'");
+                        return chars.join("").replace(/\"/g, "\"").replace(/\'/g, "'");
                     },
                     reduction    = function jsmin__reduction(x) {
-                        var aa       = 0,
-                            e        = 0,
-                            f        = 0,
-                            g        = -1,
-                            m        = 0,
-                            p        = 0,
-                            r        = 0,
-                            bb       = x.length,
-                            c        = [],
-                            d        = [],
-                            h        = [],
-                            i        = [],
-                            test     = false,
-                            colorLow = function jsmin__reduction_colorLow(y) {
-                                var aaa = y.charAt(0),
-                                    bbb = false;
-                                if (y.length === 8 || y.length === 5) {
-                                    y   = y.substr(1);
-                                    bbb = true;
+                        var aa           = 0,
+                            e            = 0,
+                            length       = 0,
+                            noWordIndex  = -1,
+                            marginCount  = 0,
+                            paddingCount = 0,
+                            marginIndex  = 0,
+                            buildLen     = x.length,
+                            c            = [],
+                            build        = [],
+                            fragment     = [],
+                            margin       = [],
+                            test         = false,
+                            colorLow     = function jsmin__reduction_colorLow(colorInput) {
+                                var firstChar = colorInput.charAt(0),
+                                    tooLong   = false;
+                                if (colorInput.length === 8 || colorInput.length === 5) {
+                                    colorInput = colorInput.substr(1);
+                                    tooLong    = true;
                                 }
-                                y = y.toLowerCase();
-                                if (y.length === 7 && y.charAt(1) === y.charAt(2) && y.charAt(3) === y.charAt(4) && y.charAt(5) === y.charAt(6)) {
-                                    y = "#" + y.charAt(1) + y.charAt(3) + y.charAt(5);
+                                colorInput = colorInput.toLowerCase();
+                                if (colorInput.length === 7 && colorInput.charAt(1) === colorInput.charAt(2) && colorInput.charAt(3) === colorInput.charAt(4) && colorInput.charAt(5) === colorInput.charAt(6)) {
+                                    colorInput = "#" + colorInput.charAt(1) + colorInput.charAt(3) + colorInput.charAt(5);
                                 }
-                                if (bbb && !(/\s/).test(aaa) && aaa !== ":") {
-                                    y = aaa + " " + y;
-                                } else if (bbb && aaa === ":") {
-                                    y = ":PDpoundPD" + y;
-                                } else if (bbb && (/\s/).test(aaa)) {
-                                    y = " " + y;
+                                if (tooLong === true && (/\s/).test(firstChar) === false && firstChar !== ":") {
+                                    colorInput = firstChar + " " + colorInput;
+                                } else if (tooLong === true && firstChar === ":") {
+                                    colorInput = ":PDpoundPD" + colorInput;
+                                } else if (tooLong === true && (/\s/).test(firstChar) === true) {
+                                    colorInput = " " + colorInput;
                                 }
-                                return y;
+                                return colorInput;
                             };
                         (function jsmin__reduction_semicolonRepair() {
-                            var misssemi = function jsmin__reduction_semicolonRepair_misssemi(y) {
-                                    if (y.indexOf("\n") === -1) {
-                                        return y;
+                            var misssemi   = function jsmin__reduction_semicolonRepair_misssemi(cssSample) {
+                                    if (cssSample.indexOf("\n") === -1) {
+                                        return cssSample;
                                     }
-                                    return y.replace(/\s+/, ";");
+                                    return cssSample.replace(/\s+/, ";");
                                 },
-                                bbb      = x.length,
-                                ccc      = [],
-                                eee      = 0,
-                                q        = "";
-                            for (aa = 0; aa < bbb; aa += 1) {
-                                ccc.push(x.charAt(aa));
+                                lengthSemi = x.length,
+                                fragments  = [],
+                                semiIndex  = 0,
+                                fragmenta  = "";
+                            for (aa = 0; aa < lengthSemi; aa += 1) {
+                                fragments.push(x.charAt(aa));
                                 if (x.charAt(aa) === "{" || x.charAt(aa + 1) === "}") {
-                                    if (ccc[0] === "}") {
-                                        d.push("}");
-                                        ccc[0] = "";
+                                    if (fragments[0] === "}") {
+                                        build.push("}");
+                                        fragments[0] = "";
                                     }
-                                    q = ccc.join("");
-                                    if (q.indexOf("{") > -1) {
-                                        eee = Math.max(q.lastIndexOf("\n"), q.lastIndexOf(";"));
-                                        d.push(q.substring(0, eee + 1).replace(/^(\s+)/, "").replace(/(\w|\)|"|')\s+/g, misssemi));
-                                        d.push(q.substring(eee + 1));
+                                    fragmenta = fragments.join("");
+                                    if (fragmenta.indexOf("{") > -1) {
+                                        semiIndex = Math.max(fragmenta.lastIndexOf("\n"), fragmenta.lastIndexOf(";"));
+                                        build.push(fragmenta.substring(0, semiIndex + 1).replace(/^(\s+)/, "").replace(/(\w|\)|"|')\s+/g, misssemi));
+                                        build.push(fragmenta.substring(semiIndex + 1));
                                     } else {
-                                        d.push(q.replace(/^(\s+)/, "").replace(/\s+\w+(\-\w+)*:/g, misssemi));
+                                        build.push(fragmenta.replace(/^(\s+)/, "").replace(/\s+\w+(\-\w+)*:/g, misssemi));
                                     }
-                                    ccc = [];
+                                    fragments = [];
                                 }
                             }
-                            d.push("}");
+                            build.push("}");
                         }());
-                        for (bb = aa - 1; bb > 0; bb -= 1) {
-                            if (x.charAt(bb) === "/" && x.charAt(bb - 1) && x.charAt(bb - 1) === "*") {
-                                for (e = bb - 1; e > 0; e -= 1) {
-                                    if (x.charAt(e) === "/" && x.charAt(e + 1) === "*") {
-                                        bb = e;
-                                        break;
-                                    }
-                                }
-                            } else if (!/[\}\s]/.test(x.charAt(bb))) {
-                                break;
-                            }
-                        }
                         //looks for multidimensional structures, SCSS, and pulls
                         //direct properties above child structures
                         (function jsmin__reduction_scss() {
-                            var aaa = 0,
-                                bbb = d.length,
-                                ccc = 0,
-                                eee = 0,
-                                fff = 1,
-                                ggg = [],
-                                hhh = [],
-                                iii = [],
-                                ttt = false;
-                            for (aaa = 0; aaa < bbb; aaa += 1) {
-                                if (d[aaa] === "}") {
-                                    eee -= 1;
-                                    if (eee === fff - 1 && ggg.length > 0) {
-                                        hhh = d.slice(0, aaa);
-                                        iii = d.slice(aaa, d.length);
-                                        d   = [].concat(hhh, ggg, iii);
-                                        ggg = [];
-                                        aaa = hhh.length - 1;
-                                        bbb = d.length;
+                            var aaa          = 0,
+                                ccc          = 0,
+                                lengthScss   = build.length,
+                                blockCounter = 0,
+                                blockState   = 1,
+                                subBuild     = [],
+                                partFirst    = [],
+                                partSecond   = [],
+                                blockTest    = false;
+                            for (aaa = 0; aaa < lengthScss; aaa += 1) {
+                                if (build[aaa] === "}") {
+                                    blockCounter -= 1;
+                                    if (blockCounter === blockState - 1 && subBuild.length > 0) {
+                                        partFirst  = build.slice(0, aaa);
+                                        partSecond = build.slice(aaa, build.length);
+                                        build      = [].concat(partFirst, subBuild, partSecond);
+                                        subBuild   = [];
+                                        aaa        = partFirst.length - 1;
+                                        lengthScss = build.length;
                                     }
-                                } else if (d[aaa].indexOf("{") > -1) {
-                                    eee += 1;
-                                    if (eee > fff) {
-                                        ttt = true;
-                                        fff = eee - 1;
-                                        ggg.push(d[aaa]);
-                                        d[aaa] = "";
-                                        for (ccc = aaa + 1; ccc < bbb; ccc += 1) {
-                                            ggg.push(d[ccc]);
-                                            if (d[ccc].indexOf("{") > -1) {
-                                                eee    += 1;
-                                                d[ccc] = "";
-                                            } else if (d[ccc] === "}") {
-                                                eee    -= 1;
-                                                d[ccc] = "";
-                                                if (eee === fff) {
+                                } else if (build[aaa].indexOf("{") > -1) {
+                                    blockCounter += 1;
+                                    if (blockCounter > blockState) {
+                                        blockTest  = true;
+                                        blockState = blockCounter - 1;
+                                        subBuild.push(build[aaa]);
+                                        build[aaa] = "";
+                                        for (ccc = aaa + 1; ccc < lengthScss; ccc += 1) {
+                                            subBuild.push(build[ccc]);
+                                            if (build[ccc].indexOf("{") > -1) {
+                                                blockCounter += 1;
+                                                build[ccc]   = "";
+                                            } else if (build[ccc] === "}") {
+                                                blockCounter -= 1;
+                                                build[ccc]   = "";
+                                                if (blockCounter === blockState) {
                                                     break;
                                                 }
                                             } else {
-                                                d[ccc] = "";
+                                                build[ccc] = "";
                                             }
                                         }
                                     }
                                 }
                             }
-                            if (ttt === true) {
-                                bbb = d.length;
-                                ggg = [];
-                                for (aaa = 0; aaa < bbb; aaa += 1) {
-                                    if (ggg.length > 0 && ggg[ggg.length - 1].indexOf("{") === -1 && d[aaa] !== "}" && d[aaa].indexOf("{") === -1) {
-                                        ggg[ggg.length - 1] = ggg[ggg.length - 1] + d[aaa];
-                                    } else if (d[aaa] !== "") {
-                                        ggg.push(d[aaa]);
+                            if (blockTest === true) {
+                                lengthScss = build.length;
+                                subBuild   = [];
+                                for (aaa = 0; aaa < lengthScss; aaa += 1) {
+                                    if (subBuild.length > 0 && subBuild[subBuild.length - 1].indexOf("{") === -1 && build[aaa] !== "}" && build[aaa].indexOf("{") === -1) {
+                                        subBuild[subBuild.length - 1] = subBuild[subBuild.length - 1] + build[aaa];
+                                    } else if (build[aaa] !== "") {
+                                        subBuild.push(build[aaa]);
                                     }
                                 }
-                                d = [].concat(ggg);
+                                build = [].concat(subBuild);
                             }
                         }());
-                        bb = d.length;
-                        for (aa = 0; aa < bb - 1; aa += 1) {
-                            if (d[aa].charAt(d[aa].length - 1) !== "{") {
-                                if (d[aa].indexOf("url(") > -1) {
-                                    h = d[aa].split("");
-                                    f = h.length;
-                                    for (e = 3; e < f; e += 1) {
-                                        if (h[e - 3] === "u" && h[e - 2] === "r" && h[e - 1] === "l" && h[e] === "(") {
+                        buildLen = build.length;
+                        for (aa = 0; aa < buildLen - 1; aa += 1) {
+                            if (build[aa].charAt(build[aa].length - 1) !== "{") {
+                                if (build[aa].indexOf("url(") > -1) {
+                                    fragment = build[aa].split("");
+                                    length   = fragment.length;
+                                    for (e = 3; e < length; e += 1) {
+                                        if (fragment[e - 3] === "u" && fragment[e - 2] === "r" && fragment[e - 1] === "l" && fragment[e] === "(") {
                                             test = true;
                                         }
-                                        if (test) {
-                                            if (h[e - 1] !== "\\" && h[e] === ")") {
+                                        if (test === true) {
+                                            if (fragment[e - 1] !== "\\" && fragment[e] === ")") {
                                                 test = false;
-                                            } else if (h[e] === ";") {
-                                                h[e] = "~PrettyDiffSemi~";
-                                            } else if (h[e] === ":") {
-                                                h[e] = "~PrettyDiffColon~";
+                                            } else if (fragment[e] === ";") {
+                                                fragment[e] = "~PrettyDiffSemi~";
+                                            } else if (fragment[e] === ":") {
+                                                fragment[e] = "~PrettyDiffColon~";
                                             }
                                         }
                                     }
-                                    d[aa] = h.join("");
+                                    build[aa] = fragment.join("");
                                 }
-                                if (d[aa].charAt(d[aa].length - 1) === ";") {
-                                    d[aa] = d[aa].substr(0, d[aa].length - 1);
+                                if (build[aa].charAt(build[aa].length - 1) === ";") {
+                                    build[aa] = build[aa].substr(0, build[aa].length - 1);
                                 }
-                                if (d[aa].indexOf("{") > -1 || d[aa].indexOf(",") > d[aa].length - 3) {
-                                    c = [d[aa]];
+                                if (build[aa].indexOf("{") > -1 || build[aa].indexOf(",") > build[aa].length - 3) {
+                                    c = [build[aa]];
                                 } else {
-                                    c = d[aa].replace(/(\w|\W)?#[a-fA-F0-9]{3,6}(?!(\w*\)))(?=(;|\s|\)\}|,))/g, colorLow).replace(/:/g, "~PDCSEP~").split(";").sort();
+                                    c = build[aa].replace(/(\w|\W)?#[a-fA-F0-9]{3,6}(?!(\w*\)))(?=(;|\s|\)\}|,))/g, colorLow).replace(/:/g, "~PDCSEP~").split(";").sort();
                                 }
-                                f = c.length;
-                                h = [];
-                                for (e = 0; e < f; e += 1) {
+                                length   = c.length;
+                                fragment = [];
+                                for (e = 0; e < length; e += 1) {
                                     if (c[e].charAt(0) === "_") {
                                         c.push(c[e]);
                                         c.splice(e, 1);
                                     }
-                                    h.push(c[e].split("~PDCSEP~"));
+                                    fragment.push(c[e].split("~PDCSEP~"));
                                 }
-                                c = [].concat(h);
-                                f = c.length;
-                                m = 0;
-                                p = 0;
-                                g = -1;
-                                for (e = 1; e < f; e += 1) {
+                                c            = [].concat(fragment);
+                                length       = c.length;
+                                marginCount  = 0;
+                                paddingCount = 0;
+                                noWordIndex  = -1;
+                                for (e = 1; e < length; e += 1) {
                                     if (c[e].length > 1 && c[e][0] === c[e - 1][0]) {
                                         c[e - 1] = [
                                             "", ""
                                         ];
                                     }
                                 }
-                                for (e = 0; e < f; e += 1) {
+                                for (e = 0; e < length; e += 1) {
                                     if (c[e - 1] && c[e - 1][0] === c[e][0] && (/\-[a-z]/).test(c[e - 1][1]) === false && (/\-[a-z]/).test(c[e][1]) === false) {
                                         c[e - 1] = [
                                             "", ""
                                         ];
                                     }
                                     if (c[e][0] !== "margin" && c[e][0].indexOf("margin") !== -1) {
-                                        m += 1;
-                                        if (m === 4) {
-                                            i = [c[e][1]];
-                                            r = e;
+                                        marginCount += 1;
+                                        if (marginCount === 4) {
+                                            margin      = [c[e][1]];
+                                            marginIndex = e;
                                             do {
-                                                r -= 1;
-                                                if (c[r].length > 1 && c[r][1] !== "") {
-                                                    i.push(c[r][1]);
-                                                    c[r] = [
+                                                marginIndex -= 1;
+                                                if (c[marginIndex].length > 1 && c[marginIndex][1] !== "") {
+                                                    margin.push(c[marginIndex][1]);
+                                                    c[marginIndex] = [
                                                         "", ""
                                                     ];
                                                 }
-                                            } while (i.length < 4 && r > 0);
-                                            c[e] = [
-                                                "margin", i[0] + " " + i[1] + " " + i[3] + " " + i[2]
+                                            } while (margin.length < 4 && marginIndex > 0);
+                                            c[e]        = [
+                                                "margin", margin[0] + " " + margin[1] + " " + margin[3] + " " + margin[2]
                                             ];
-                                            m    = 0;
+                                            marginCount = 0;
                                         }
                                     } else if (c[e][0] !== "padding" && c[e][0].indexOf("padding") !== -1) {
-                                        p += 1;
-                                        if (p === 4) {
-                                            i = [c[e][1]];
-                                            r = e;
+                                        paddingCount += 1;
+                                        if (paddingCount === 4) {
+                                            margin      = [c[e][1]];
+                                            marginIndex = e;
                                             do {
-                                                r -= 1;
-                                                if (c[r].length > 1 && c[r][1] !== "") {
-                                                    i.push(c[r][1]);
-                                                    c[r] = [
+                                                marginIndex -= 1;
+                                                if (c[marginIndex].length > 1 && c[marginIndex][1] !== "") {
+                                                    margin.push(c[marginIndex][1]);
+                                                    c[marginIndex] = [
                                                         "", ""
                                                     ];
                                                 }
-                                            } while (i.length < 4 && r > 0);
-                                            c[e] = [
-                                                "padding", i[0] + " " + i[1] + " " + i[3] + " " + i[2]
+                                            } while (margin.length < 4 && marginIndex > 0);
+                                            c[e]         = [
+                                                "padding", margin[0] + " " + margin[1] + " " + margin[3] + " " + margin[2]
                                             ];
-                                            p    = 0;
+                                            paddingCount = 0;
                                         }
                                     }
-                                    if (g === -1 && c[e + 1] && c[e][0].charAt(0) !== "-" && (c[e][0].indexOf("cue") !== -1 || c[e][0].indexOf("list-style") !== -1 || c[e][0].indexOf("outline") !== -1 || c[e][0].indexOf("overflow") !== -1 || c[e][0].indexOf("pause") !== -1) && (c[e][0] === c[e + 1][0].substring(0, c[e + 1][0].lastIndexOf("-")) || c[e][0].substring(0, c[e][0].lastIndexOf("-")) === c[e + 1][0].substring(0, c[e + 1][0].lastIndexOf("-")))) {
-                                        g = e;
-                                        if (c[g][0].indexOf("-") !== -1 && c[g][0] !== "list-style") {
-                                            c[g][0] = c[g][0].substring(0, c[g][0].lastIndexOf("-"));
+                                    if (noWordIndex === -1 && c[e + 1] && c[e][0].charAt(0) !== "-" && (c[e][0].indexOf("cue") !== -1 || c[e][0].indexOf("list-style") !== -1 || c[e][0].indexOf("outline") !== -1 || c[e][0].indexOf("overflow") !== -1 || c[e][0].indexOf("pause") !== -1) && (c[e][0] === c[e + 1][0].substring(0, c[e + 1][0].lastIndexOf("-")) || c[e][0].substring(0, c[e][0].lastIndexOf("-")) === c[e + 1][0].substring(0, c[e + 1][0].lastIndexOf("-")))) {
+                                        noWordIndex = e;
+                                        if (c[noWordIndex][0].indexOf("-") !== -1 && c[noWordIndex][0] !== "list-style") {
+                                            c[noWordIndex][0] = c[noWordIndex][0].substring(0, c[noWordIndex][0].lastIndexOf("-"));
                                         }
-                                    } else if (g !== -1 && c[g][0] === c[e][0].substring(0, c[e][0].lastIndexOf("-"))) {
-                                        if (c[g][0] === "cue" || c[g][0] === "pause") {
-                                            c[g][1] = c[e][1] + " " + c[g][1];
+                                    } else if (noWordIndex !== -1 && c[noWordIndex][0] === c[e][0].substring(0, c[e][0].lastIndexOf("-"))) {
+                                        if (c[noWordIndex][0] === "cue" || c[noWordIndex][0] === "pause") {
+                                            c[noWordIndex][1] = c[e][1] + " " + c[noWordIndex][1];
                                         } else {
-                                            c[g][1] = c[g][1] + " " + c[e][1];
+                                            c[noWordIndex][1] = c[noWordIndex][1] + " " + c[e][1];
                                         }
                                         c[e] = [
                                             "", ""
                                         ];
-                                    } else if (g !== -1) {
-                                        g = -1;
+                                    } else if (noWordIndex !== -1) {
+                                        noWordIndex = -1;
                                     }
                                 }
-                                for (e = 0; e < f; e += 1) {
+                                for (e = 0; e < length; e += 1) {
                                     if (c[e].length > 1 && c[e][0] !== "") {
-                                        for (r = e + 1; r < f; r += 1) {
-                                            if (c[r].length > 1 && c[e][0] === c[r][0]) {
+                                        for (marginIndex = e + 1; marginIndex < length; marginIndex += 1) {
+                                            if (c[marginIndex].length > 1 && c[e][0] === c[marginIndex][0]) {
                                                 c[e] = [
                                                     "", ""
                                                 ];
@@ -814,71 +791,69 @@ var prettydiff = function prettydiff(api) {
                                         }
                                     }
                                 }
-                                h = [];
-                                for (e = 0; e < f; e += 1) {
+                                fragment = [];
+                                for (e = 0; e < length; e += 1) {
                                     if (typeof c[e] !== "string" && c[e] !== undefined && c[e][0] !== "") {
-                                        h[e] = c[e].join(":");
+                                        fragment[e] = c[e].join(":");
                                     } else if (typeof c[e] === "string") {
-                                        h[e] = c[e].replace(/~PDCSEP~/g, ":");
+                                        fragment[e] = c[e].replace(/~PDCSEP~/g, ":");
                                     }
                                 }
-                                d[aa] = h.join(";").replace(/;+/g, ";").replace(/^;/, "");
-                                if (d[aa] !== "}" && typeof d[aa + 1] === "string" && d[aa + 1] !== "}" && d[aa + 1].indexOf("{") > -1 && !(/(\,\s*)$/).test(d[aa])) {
-                                    d[aa] = d[aa] + ";";
+                                build[aa] = fragment.join(";").replace(/;+/g, ";").replace(/^;/, "");
+                                if (build[aa] !== "}" && typeof build[aa + 1] === "string" && build[aa + 1] !== "}" && build[aa + 1].indexOf("{") > -1 && (/(\,\s*)$/).test(build[aa]) === false) {
+                                    build[aa] = build[aa] + ";";
                                 }
                             }
-                            d[aa] = d[aa].replace(/\)\s+\{/g, "){");
+                            build[aa] = build[aa].replace(/\)\s+\{/g, "){");
                         }
-                        return d.join("").replace(/PDpoundPD#/g, "#");
+                        return build.join("").replace(/PDpoundPD#/g, "#");
                     },
                     fixURI       = function jsmin__fixURI(y) {
-                        var aa = 0,
-                            bb = [],
-                            c  = "",
-                            x  = y.replace(/\\\)/g, "~PDpar~").split("url("),
-                            d  = x.length,
-                            e  = "";
-                        for (aa = 1; aa < d; aa += 1) {
-                            e = "\"";
-                            if (x[aa].charAt(0) === "\"") {
-                                e = "";
-                            } else if (x[aa].charAt(0) === "'") {
-                                x[aa] = x[aa].substr(1, x[aa].length - 1);
+                        var aa          = 0,
+                            uriFragment = [],
+                            c           = "",
+                            uris        = y.replace(/\\\)/g, "~PDpar~").split("url("),
+                            uriLen      = uris.length,
+                            quote       = "";
+                        for (aa = 1; aa < uriLen; aa += 1) {
+                            quote = "\"";
+                            if (uris[aa].charAt(0) === "\"") {
+                                quote = "";
+                            } else if (uris[aa].charAt(0) === "'") {
+                                uris[aa] = uris[aa].substr(1, uris[aa].length - 1);
                             }
-                            bb = x[aa].split(")");
-                            c  = bb[0];
+                            uriFragment = uris[aa].split(")");
+                            c           = uriFragment[0];
                             if (c.charAt(c.length - 1) !== "\"" && c.charAt(c.length - 1) !== "'") {
                                 c = c + "\"";
                             } else if (c.charAt(c.length - 1) === "'" || c.charAt(c.length - 1) === "\"") {
                                 c = c.substr(0, c.length - 1) + "\"";
                             }
-                            bb[0] = c;
-                            x[aa] = "url(" + e + bb.join(")");
+                            uriFragment[0] = c;
+                            uris[aa]       = "url(" + quote + uriFragment.join(")");
                         }
-                        return x.join("").replace(/~PDpar~/g, "\\)");
+                        return uris.join("").replace(/~PDpar~/g, "\\)");
                     },
                     fixNegative  = function jsmin__fixNegative(x) {
                         return x.replace(/\-/, " -");
                     },
                     rgbToHex     = function jsmin__rgbToHex(x) {
-                        var z,
-                            y = function jsmin__rgbToHex_toHex(z) {
+                        var toHex = function jsmin__rgbToHex_toHex(z) {
                                 z = Number(z).toString(16);
                                 if (z.length === 1) {
                                     z = "0" + z;
                                 }
                                 return z;
                             };
-                        z = "#" + x.replace(/\d+/g, y).replace(/rgb\(/, "").replace(/,/g, "").replace(/\)/, "").replace(/(\s*)/g, "");
-                        return z;
+                        return "#" + x.replace(/\d+/g, toHex).replace(/rgb\(/, "").replace(/,/g, "").replace(/\)/, "").replace(/(\s*)/g, "");
                     },
                     sameDist     = function jsmin__sameDist(y) {
-                        var z = y.split(":"),
-                            x = [];
-                        if (z[0].indexOf("background") > -1 || z.length > 2) {
+                        var cssProperty = y.split(":"),
+                            x           = [];
+                        if (cssProperty[0].indexOf("background") > -1 || cssProperty.length > 2) {
                             return y;
                         }
-                        x = z[1].split(" ");
+                        x = cssProperty[1].split(" ");
                         if (x.length === 4) {
                             if (x[0] === x[1] && x[1] === x[2] && x[2] === x[3]) {
                                 x[1] = "";
@@ -895,22 +870,22 @@ var prettydiff = function prettydiff(api) {
                         } else if (x.length === 2 && a !== " " && x[0] === x[1]) {
                             x[1] = "";
                         }
-                        return z[0] + ":" + x.join(" ").replace(/\s+/g, " ").replace(/\s+$/, "");
+                        return cssProperty[0] + ":" + x.join(" ").replace(/\s+/g, " ").replace(/\s+$/, "");
                     },
                     singleZero   = function jsmin__singleZero(x) {
-                        var z = x.substr(0, x.indexOf(":") + 1);
-                        if (z === "radius:" || z === "shadow:" || x.charAt(x.length - 1) !== "0" || (x.charAt(x.length - 1) === "0" && x.charAt(x.length - 2) !== " ")) {
+                        var property = x.substr(0, x.indexOf(":") + 1);
+                        if (property === "radius:" || property === "shadow:" || x.charAt(x.length - 1) !== "0" || (x.charAt(x.length - 1) === "0" && x.charAt(x.length - 2) !== " ")) {
                             return x;
                         }
-                        return z + "0";
+                        return property + "0";
                     },
                     endZero      = function jsmin__endZero(x) {
-                        var z = x.indexOf(".");
-                        return x.substr(0, z);
+                        var dot = x.indexOf(".");
+                        return x.substr(0, dot);
                     },
                     startZero    = function jsmin__startZero(x) {
-                        var z = x.indexOf(".");
-                        return x.charAt(0) + x.substr(z, x.length);
+                        var dot = x.indexOf(".");
+                        return x.charAt(0) + x.substr(dot, x.length);
                     },
                     fixpercent   = function jsmin__fixpercent(x) {
                         return x.replace(/%/, "% ");
@@ -922,19 +897,19 @@ var prettydiff = function prettydiff(api) {
                         return x;
                     },
                     get          = function jsmin__get() {
-                        var c = theLookahead;
+                        var lookAhead = theLookahead;
                         if (geti === getl) {
                             return EOF;
                         }
                         theLookahead = EOF;
-                        if (c === EOF) {
-                            c    = input.charAt(geti);
-                            geti += 1;
+                        if (lookAhead === EOF) {
+                            lookAhead = input.charAt(geti);
+                            geti      += 1;
                         }
-                        if (c >= " " || c === "\n") {
-                            return c;
+                        if (lookAhead >= " " || lookAhead === "\n") {
+                            return lookAhead;
                         }
-                        if (c === "\r") {
+                        if (lookAhead === "\r") {
                             return "\n";
                         }
                         return " ";
@@ -944,14 +919,14 @@ var prettydiff = function prettydiff(api) {
                         return theLookahead;
                     },
                     next         = function jsmin__next() {
-                        var c = get();
-                        if (c === "/" && (type === "javascript" || (type === "css" && peek() !== "/"))) {
+                        var got = get();
+                        if (got === "/" && (type === "javascript" || (type === "css" && peek() !== "/"))) {
                             switch (peek()) {
                             case "/":
                                 for (;;) {
-                                    c = get();
-                                    if (c <= "\n") {
-                                        return c;
+                                    got = get();
+                                    if (got <= "\n") {
+                                        return got;
                                     }
                                 }
                                 break;
@@ -960,10 +935,10 @@ var prettydiff = function prettydiff(api) {
                                 for (;;) {
                                     switch (get()) {
                                     case "'":
-                                        c = get().replace(/'/, "");
+                                        got = get().replace(/'/, "");
                                         break;
                                     case "\"":
-                                        c = get().replace(/"/, "");
+                                        got = get().replace(/"/, "");
                                         break;
                                     case "*":
                                         if (peek() === "/") {
@@ -978,25 +953,25 @@ var prettydiff = function prettydiff(api) {
                                 }
                                 break;
                             default:
-                                return c;
+                                return got;
                             }
                         }
-                        return c;
+                        return got;
                     },
-                    action       = function jsmin__action(d) {
-                        var r = [];
-                        if (d === 1) {
-                            r.push(a);
+                    action       = function jsmin__action(rule) {
+                        var build = [];
+                        if (rule === 1) {
+                            build.push(a);
                         }
-                        if (d < 3) {
+                        if (rule < 3) {
                             a = b;
                             if (a === "'" || a === "\"") {
-                                if (d === 1 && (r[0] === ")" || r[0] === "]") && alterj) {
+                                if (rule === 1 && (build[0] === ")" || build[0] === "]") && alterj === true) {
                                     a = ";";
-                                    return r[0];
+                                    return build[0];
                                 }
                                 for (;;) {
-                                    r.push(a);
+                                    build.push(a);
                                     a = get();
                                     if (a === b) {
                                         break;
@@ -1010,7 +985,7 @@ var prettydiff = function prettydiff(api) {
                                         return error;
                                     }
                                     if (a === "\\") {
-                                        r.push(a);
+                                        build.push(a);
                                         a = get();
                                     }
                                 }
@@ -1018,47 +993,47 @@ var prettydiff = function prettydiff(api) {
                         }
                         b = next();
                         if (b === "/" && "(,=:[!&|".indexOf(a) > -1 && type !== "css") {
-                            r.push(a);
-                            r.push(b);
+                            build.push(a);
+                            build.push(b);
                             for (;;) {
                                 a = get();
                                 if (a === "/") {
                                     break;
                                 }
                                 if (a === "\\") {
-                                    r.push(a);
+                                    build.push(a);
                                     a = get();
                                 } else if (a <= "\n") {
                                     error = "Error: unterminated JavaScript Regular Expression literal";
                                     return error;
                                 }
-                                r.push(a);
+                                build.push(a);
                             }
                             b = next();
                         }
-                        return r.join("");
+                        return build.join("");
                     },
-                    m            = function jsmin__m() {
-                        var r       = [],
-                            s       = "",
-                            t       = 0,
-                            asiflag = true,
-                            conflag = false;
+                    min          = function jsmin__min() {
+                        var build    = [],
+                            syntax   = "",
+                            buildLen = 0,
+                            asiflag  = true,
+                            conflag  = false;
                         if (error !== "") {
                             return error;
                         }
                         a = "\n";
-                        r.push(action(3));
+                        build.push(action(3));
                         while (a !== EOF) {
-                            if (a === " " && !(type === "css" && b === "#")) {
-                                if (isAlphanum(b)) {
-                                    r.push(action(1));
+                            if (a === " " && type !== "css" && b !== "#") {
+                                if (isAlphanum(b) === true) {
+                                    build.push(action(1));
                                 } else {
-                                    r.push(action(2));
-                                    if (alterj) {
-                                        s = r[r.length - 1];
-                                        if ((isAlphanum(s) || s === "'" || s === "\"" || s === "]" || s === ")") && a === "}") {
-                                            r.push(";");
+                                    build.push(action(2));
+                                    if (alterj === true) {
+                                        syntax = build[build.length - 1];
+                                        if ((isAlphanum(syntax) === true || syntax === "'" || syntax === "\"" || syntax === "]" || syntax === ")") && a === "}") {
+                                            build.push(";");
                                         }
                                     }
                                 }
@@ -1069,81 +1044,81 @@ var prettydiff = function prettydiff(api) {
                                 case "(":
                                 case "+":
                                 case "-":
-                                    r.push(action(1));
+                                    build.push(action(1));
                                     break;
                                 case " ":
-                                    r.push(action(3));
+                                    build.push(action(3));
                                     break;
                                 default:
-                                    if (isAlphanum(b)) {
-                                        r.push(action(1));
+                                    if (isAlphanum(b) === true) {
+                                        build.push(action(1));
                                     } else {
                                         if (level === 1 && b !== "\n") {
-                                            r.push(action(1));
+                                            build.push(action(1));
                                         } else {
-                                            r.push(action(2));
+                                            build.push(action(2));
                                         }
                                     }
                                 }
                             } else {
                                 switch (b) {
                                 case " ":
-                                    if (isAlphanum(a)) {
-                                        r.push(action(1));
+                                    if (isAlphanum(a) === true) {
+                                        build.push(action(1));
                                         break;
                                     }
-                                    r.push(action(3));
+                                    build.push(action(3));
                                     break;
                                 case "\n":
                                     if (level === 1 && a !== "\n") {
-                                        r.push(action(1));
+                                        build.push(action(1));
                                     } else if (a === "}") {
                                         asiflag = true;
                                         if (level === 3) {
-                                            r.push(action(3));
+                                            build.push(action(3));
                                         } else {
-                                            r.push(action(1));
+                                            build.push(action(1));
                                         }
-                                    } else if (isAlphanum(a)) {
-                                        r.push(action(1));
-                                        if (alterj) {
-                                            s = r[r.length - 1];
-                                            if (s === ":") {
+                                    } else if (isAlphanum(a) === true) {
+                                        build.push(action(1));
+                                        if (alterj === true) {
+                                            syntax = build[build.length - 1];
+                                            if (syntax === ":") {
                                                 asiflag = false;
                                             }
-                                            if (asiflag && (isAlphanum(s) || s === "]" || s === ")") && a === "\n" && (b === "}" || b === " ")) {
-                                                r.push(";");
+                                            if (asiflag === true && (isAlphanum(syntax) === true || syntax === "]" || syntax === ")") && a === "\n" && (b === "}" || b === " ")) {
+                                                build.push(";");
                                             }
                                         }
                                     } else {
-                                        r.push(action(3));
+                                        build.push(action(3));
                                     }
                                     break;
                                 default:
-                                    r.push(action(1));
-                                    if (alterj) {
-                                        s = r[r.length - 1];
-                                        if (s === "{") {
+                                    build.push(action(1));
+                                    if (alterj === true) {
+                                        syntax = build[build.length - 1];
+                                        if (syntax === "{") {
                                             asiflag = true;
-                                        } else if (s.charAt(0) === ":") {
+                                        } else if (syntax.charAt(0) === ":") {
                                             asiflag = false;
-                                        } else if ((r[r.length - 3] + r[r.length - 2] + r[r.length - 1] === "if(") || (r[r.length - 4] + r[r.length - 3] + r[r.length - 2] + r[r.length - 1] === "for(")) {
+                                        } else if ((build[build.length - 3] + build[build.length - 2] + build[build.length - 1] === "if(") || (build[build.length - 4] + build[build.length - 3] + build[build.length - 2] + build[build.length - 1] === "for(")) {
                                             asiflag = false;
                                             conflag = true;
-                                        } else if (r[r.length - 1] === "(" && r[r.length - 2] === "") {
-                                            t = r.length - 2;
+                                        } else if (build[build.length - 1] === "(" && build[build.length - 2] === "") {
+                                            buildLen = build.length - 2;
                                             do {
-                                                t -= 1;
-                                            } while (r[t] === "");
-                                            if ((r[t - 1] + r[t] + r[r.length - 1] === "if(") || (r[t - 2] + r[t - 1] + r[t] + r[r.length - 1] === "for(")) {
+                                                buildLen -= 1;
+                                            } while (build[buildLen] === "");
+                                            if ((build[buildLen - 1] + build[buildLen] + build[build.length - 1] === "if(") || (build[buildLen - 2] + build[buildLen - 1] + build[buildLen] + build[build.length - 1] === "for(")) {
                                                 asiflag = false;
                                                 conflag = true;
                                             }
                                         }
-                                        if (asiflag && (((s === "]" || s === ")") && isAlphanum(a) && a !== "/") || (a === "}" && (isAlphanum(s) || s === "'" || s === "\"")))) {
-                                            r.push(";");
+                                        if (asiflag === true && (((syntax === "]" || syntax === ")") && isAlphanum(a) === true && a !== "/") || (a === "}" && (isAlphanum(syntax) === true || syntax === "'" || syntax === "\"")))) {
+                                            build.push(";");
                                         }
-                                        if (conflag && s === ")") {
+                                        if (conflag === true && syntax === ")") {
                                             asiflag = true;
                                             conflag = false;
                                         }
@@ -1152,24 +1127,24 @@ var prettydiff = function prettydiff(api) {
                                 }
                             }
                         }
-                        return r.join("").replace(/;\]/g, "]");
+                        return build.join("").replace(/;\]/g, "]");
                     };
                 (function jsmin__topComments() {
-                    var aa = 0,
-                        bb = input.length,
-                        c  = "",
-                        d  = (/^(\s*<\!\[CDATA\[)/).test(input);
-                    if (fcomment === false || (d === false && (/^(\s*\/\*)/).test(input) === false && (/^(\s*\/\/)/).test(input) === false) || (d === true && (/^(\s*<\!\[CDATA\[\s*\/\*)/).test(input) === false && (/^(\s*<\!\[CDATA\[\s*\/\/)/).test(input) === false)) {
+                    var aa      = 0,
+                        length  = input.length,
+                        comment = "",
+                        cdata   = (/^(\s*<\!\[CDATA\[)/).test(input);
+                    if (fcomment === false || (cdata === false && (/^(\s*\/\*)/).test(input) === false && (/^(\s*\/\/)/).test(input) === false) || (cdata === true && (/^(\s*<\!\[CDATA\[\s*\/\*)/).test(input) === false && (/^(\s*<\!\[CDATA\[\s*\/\/)/).test(input) === false)) {
                         return;
                     }
-                    if (d === true) {
+                    if (cdata === true) {
                         fcom.push("<![CDATA[");
                         input = input.replace(/^(\s*<\!\[CDATA\[)/, "").replace(/(\]\]>\s*)$/, "");
                     }
-                    for (aa = 0; aa < bb; aa += 1) {
-                        if (c === "") {
+                    for (aa = 0; aa < length; aa += 1) {
+                        if (comment === "") {
                             if (input.charAt(aa) === "/" && typeof input.charAt(aa + 1) === "string" && (input.charAt(aa + 1) === "*" || input.charAt(aa + 1) === "/")) {
-                                c = input.substr(aa, 2);
+                                comment = input.substr(aa, 2);
                                 fcom.push(input.charAt(aa));
                             } else if (/\s/.test(input.charAt(aa)) === false) {
                                 input = input.substr(aa);
@@ -1177,16 +1152,16 @@ var prettydiff = function prettydiff(api) {
                             }
                         } else {
                             fcom.push(input.charAt(aa));
-                            if (input.charAt(aa) === "*" && c === "/*" && input.charAt(aa + 1) && input.charAt(aa + 1) === "/") {
+                            if (input.charAt(aa) === "*" && comment === "/*" && input.charAt(aa + 1) && input.charAt(aa + 1) === "/") {
                                 fcom.push("/\n");
                                 if (input.charAt(aa + 2) && input.charAt(aa + 2) === "\n") {
                                     aa += 2;
                                 } else {
                                     aa += 1;
                                 }
-                                c = "";
-                            } else if ((input.charAt(aa) === "\n" || input.charAt(aa) === "\r") && c === "//") {
-                                c = "";
+                                comment = "";
+                            } else if ((input.charAt(aa) === "\n" || input.charAt(aa) === "\r") && comment === "//") {
+                                comment = "";
                             }
                         }
                     }
@@ -1206,7 +1181,7 @@ var prettydiff = function prettydiff(api) {
                 ALNUM = LETTERS + DIGITS + OTHERS;
                 geti  = 0;
                 getl  = input.length;
-                ret   = m(input);
+                ret   = min(input);
                 if (/\s/.test(ret.charAt(0))) {
                     ret = ret.slice(1, ret.length);
                 }
@@ -1245,96 +1220,96 @@ var prettydiff = function prettydiff(api) {
                 return fcom.join("").replace(/\n\s+/g, blockspace) + ret;
             },
             cleanCSS      = function cleanCSS(args) {
-                var x          = (typeof args.source !== "string" || args.source === "") ? "Error: no source supplied to cleanCSS." : args.source,
+                var source          = (typeof args.source !== "string" || args.source === "") ? "Error: no source supplied to cleanCSS." : args.source,
                     size       = (typeof args.size !== "number" || args.size < 0) ? 4 : args.size,
                     character  = (typeof args.character !== "string") ? " " : args.character,
                     comment    = (args.comment === "noindent") ? "noindent" : "",
                     alter      = (args.alter === true) ? true : false,
-                    q          = x.length,
+                    sourceLen          = source.length,
                     a          = 0,
-                    b          = 0,
-                    c          = [],
+                    commsLen          = 0,
+                    comments          = [],
                     commstor   = [],
-                    atchar     = x.match(/\@charset\s+("|')[\w\-]+("|');?/gi),
+                    atchar     = source.match(/\@charset\s+("|')[\w\-]+("|');?/gi),
                     tab        = "",
                     nsize      = Number(size),
                     fixURI     = function cleanCSS__fixURI(y) {
                         var aa = 0,
-                            bb = [],
-                            cc = "",
-                            xx = y.replace(/\\\)/g, "~PDpar~").split("url("),
-                            d  = xx.length,
-                            e  = "",
-                            f  = (y.indexOf("data~PrettyDiffColon~") > -1 && y.indexOf("~PrettyDiffSemi~base64") > y.indexOf("data~PrettyDiffColon~")) ? true : false;
-                        for (aa = 1; aa < d; aa += 1) {
-                            e = "\"";
-                            if (xx[aa].charAt(0) === "\"") {
-                                e = "";
-                            } else if (xx[aa].charAt(0) === "'") {
-                                xx[aa] = xx[aa].substr(1, xx[aa].length - 1);
+                            uriFragment = [],
+                            c = "",
+                            uris = y.replace(/\\\)/g, "~PDpar~").split("url("),
+                            uriLen  = uris.length,
+                            quote  = "",
+                            process  = (y.indexOf("data~PrettyDiffColon~") > -1 && y.indexOf("~PrettyDiffSemi~base64") > y.indexOf("data~PrettyDiffColon~")) ? true : false;
+                        for (aa = 1; aa < uriLen; aa += 1) {
+                            quote = "\"";
+                            if (uris[aa].charAt(0) === "\"") {
+                                quote = "";
+                            } else if (uris[aa].charAt(0) === "'") {
+                                uris[aa] = uris[aa].substr(1, uris[aa].length - 1);
                             }
-                            bb = xx[aa].split(")");
-                            cc = bb[0];
-                            if (cc.charAt(cc.length - 1) !== "\"" && cc.charAt(cc.length - 1) !== "'") {
-                                cc = cc + "\"";
-                            } else if (cc.charAt(cc.length - 1) === "'" || cc.charAt(cc.length - 1) === "\"") {
-                                cc = cc.substr(0, cc.length - 1) + "\"";
+                            uriFragment = uris[aa].split(")");
+                            c = uriFragment[0];
+                            if (c.charAt(c.length - 1) !== "\"" && c.charAt(c.length - 1) !== "'") {
+                                c = c + "\"";
+                            } else if (c.charAt(c.length - 1) === "'" || c.charAt(c.length - 1) === "\"") {
+                                c = c.substr(0, c.length - 1) + "\"";
                             }
-                            if (f === true) {
-                                bb[0] = cc.replace(/ ?\/ ?/g, "/").replace(/\n{2}/g, "\n");
+                            if (process === true) {
+                                uriFragment[0] = c.replace(/ ?\/ ?/g, "/").replace(/\n{2}/g, "\n");
                             } else {
-                                bb[0] = cc.replace(/\s*\/(\s*)/g, "/");
+                                uriFragment[0] = c.replace(/\s*\/(\s*)/g, "/");
                             }
-                            xx[aa] = "url(" + e + bb.join(")");
+                            uris[aa] = "url(" + quote + uriFragment.join(")");
                         }
-                        return xx.join("").replace(/~PDpar~/g, "\\)");
+                        return uris.join("").replace(/~PDpar~/g, "\\)");
                     },
-                    sameDist   = function cleanCSS__sameDist(x) {
-                        var y = [],
-                            z = x.split(": ");
-                        if (z[0].indexOf("background") > -1 || z.length > 2) {
-                            return x;
-                        }
-                        y = z[1].split(" ");
-                        if (y.length === 4) {
-                            if (y[0] === y[1] && y[1] === y[2] && y[2] === y[3]) {
-                                y[1] = "";
-                                y[2] = "";
-                                y[3] = "";
-                            } else if (y[0] === y[2] && y[1] === y[3] && y[0] !== y[1]) {
-                                y[2] = "";
-                                y[3] = "";
-                            } else if (y[0] !== y[2] && y[1] === y[3]) {
-                                y[3] = "";
-                            }
-                        } else if (y.length === 3 && y[0] === y[2] && y[0] !== y[1]) {
-                            y[2] = "";
-                        } else if (y.length === 2 && y[0] === y[1]) {
-                            y[1] = "";
-                        }
-                        return z[0] + ": " + y.join(" ").replace(/\s+/g, " ").replace(/\s+$/, "");
-                    },
-                    endZero    = function cleanCSS__endZero(y) {
-                        var z = y.indexOf(".");
-                        return y.substr(0, z);
-                    },
-                    runZero    = function cleanCSS__runZero(y) {
-                        var z = y.charAt(0);
-                        if (z === "#" || z === "." || /[a-f0-9]/.test(z)) {
+                    sameDist   = function cleanCSS__sameDist(y) {
+                        var cssProperty = y.split(": "),
+                            x = [];
+                        if (cssProperty[0].indexOf("background") > -1 || cssProperty.length > 2) {
                             return y;
                         }
-                        return z + "0;";
+                        x = cssProperty[1].split(" ");
+                        if (x.length === 4) {
+                            if (x[0] === x[1] && x[1] === x[2] && x[2] === x[3]) {
+                                x[1] = "";
+                                x[2] = "";
+                                x[3] = "";
+                            } else if (x[0] === x[2] && x[1] === x[3] && x[0] !== x[1]) {
+                                x[2] = "";
+                                x[3] = "";
+                            } else if (x[0] !== x[2] && x[1] === x[3]) {
+                                x[3] = "";
+                            }
+                        } else if (x.length === 3 && x[0] === x[2] && x[0] !== x[1]) {
+                            x[2] = "";
+                        } else if (x.length === 2 && x[0] === x[1]) {
+                            x[1] = "";
+                        }
+                        return cssProperty[0] + ": " + x.join(" ").replace(/\s+/g, " ").replace(/\s+$/, "");
+                    },
+                    endZero    = function cleanCSS__endZero(y) {
+                        var dot = y.indexOf(".");
+                        return y.substr(0, dot);
+                    },
+                    runZero    = function cleanCSS__runZero(y) {
+                        var first = y.charAt(0);
+                        if (first === "#" || first === "." || (/[a-f0-9]/).test(first) === true) {
+                            return y;
+                        }
+                        return first + "0;";
                     },
                     startZero  = function cleanCSS__startZero(y) {
                         return y.replace(/ \./g, " 0.");
                     },
                     emptyend   = function cleanCSS__emptyend(y) {
-                        var z  = y.match(/^(\s*)/)[0],
-                            cc = z.substr(0, z.length - tab.length);
+                        var spaceStart  = y.match(/^(\s*)/)[0],
+                            noTab = spaceStart.substr(0, spaceStart.length - tab.length);
                         if (y.charAt(y.length - 1) === "}") {
-                            return cc + "}";
+                            return noTab + "}";
                         }
-                        return cc.replace(/(\s+)$/, "");
+                        return noTab.replace(/(\s+)$/, "");
                     },
                     fixpercent = function cleanCSS__fixpercent(y) {
                         return y.replace(/%/, "% ");
@@ -1345,25 +1320,25 @@ var prettydiff = function prettydiff(api) {
                     cleanAsync = function cleanCSS__cleanAsync() {
                         var i    = 0,
                             j    = 0,
-                            z    = x.length,
+                            localLen    = sourceLen,
                             tabs = [],
                             tabb = "",
                             out  = [tab],
-                            y    = x.split("");
-                        for (i = 0; i < z; i += 1) {
-                            if ("{" === y[i]) {
+                            build    = source.split("");
+                        for (i = 0; i < localLen; i += 1) {
+                            if ("{" === build[i]) {
                                 tabs.push(tab);
                                 tabb = tabs.join("");
                                 out.push(" {\n");
                                 out.push(tabb);
-                            } else if ("\n" === y[i]) {
+                            } else if ("\n" === build[i]) {
                                 out.push("\n");
                                 out.push(tabb);
-                            } else if ("}" === y[i]) {
+                            } else if ("}" === build[i]) {
                                 out[out.length - 1] = out[out.length - 1].replace(/\s*$/, "");
                                 tabs                = tabs.slice(0, tabs.length - 1);
                                 tabb                = tabs.join("");
-                                if (y[i + 1] + y[i + 2] !== "*\/") {
+                                if (build[i + 1] + build[i + 2] !== "*\/") {
                                     out.push("\n");
                                     out.push(tabb);
                                     out.push("}\n");
@@ -1373,67 +1348,67 @@ var prettydiff = function prettydiff(api) {
                                     out.push(tabb);
                                     out.push("}");
                                 }
-                            } else if (y[i - 1] === "," && (/\s/).test(y[i]) === false) {
+                            } else if (build[i - 1] === "," && (/\s/).test(build[i]) === false) {
                                 out.push(" ");
-                                out.push(y[i]);
-                            } else if (";" === y[i] && "}" !== y[i + 1]) {
+                                out.push(build[i]);
+                            } else if (";" === build[i] && "}" !== build[i + 1]) {
                                 out.push(";\n");
                                 out.push(tabb);
-                            } else if (i > 3 && y[i - 3] === "u" && y[i - 2] === "r" && y[i - 1] === "l" && y[i] === "(") {
-                                for (j = i; j < z; j += 1) {
-                                    out.push(y[j]);
-                                    if (y[j] === ")" && y[j - 1] !== "\\") {
+                            } else if (i > 3 && build[i - 3] === "u" && build[i - 2] === "r" && build[i - 1] === "l" && build[i] === "(") {
+                                for (j = i; j < localLen; j += 1) {
+                                    out.push(build[j]);
+                                    if (build[j] === ")" && build[j - 1] !== "\\") {
                                         i = j;
                                         break;
                                     }
                                 }
                             } else {
-                                out.push(y[i]);
+                                out.push(build[i]);
                             }
                         }
-                        if (i >= z) {
+                        if (i >= localLen) {
                             out  = [out.join("").replace(/^(\s*)/, "").replace(/(\s*)$/, "")];
-                            x    = out.join("");
+                            source    = out.join("");
                             tabs = [];
                         }
                     },
                     reduction  = function cleanCSS__reduction(x) {
                         var aa       = 0,
                             e        = 0,
-                            f        = 0,
-                            g        = -1,
-                            m        = 0,
-                            p        = 0,
-                            r        = 0,
-                            qq       = "",
-                            bb       = x.length,
+                            length        = 0,
+                            noWordIndex        = -1,
+                            marginCount        = 0,
+                            paddingCount        = 0,
+                            marginIndex        = 0,
+                            buildLen       = x.length,
                             cc       = [],
-                            d        = [],
-                            h        = [],
-                            i        = [],
+                            build        = [],
+                            fragment        = [],
+                            margin        = [],
                             test     = false,
-                            colorLow = function cleanCSS__reduction_colorLow(y) {
-                                var aaa = y.charAt(0),
-                                    bbb = false;
-                                if (y.length === 8 || y.length === 5) {
-                                    y   = y.substr(1);
-                                    bbb = true;
+                            colorLow = function cleanCSS__reduction_colorLow(colorInput) {
+                                var firstChar = colorInput.charAt(0),
+                                    tooLong = false;
+                                if (colorInput.length === 8 || colorInput.length === 5) {
+                                    colorInput   = colorInput.substr(1);
+                                    tooLong = true;
                                 }
-                                y = y.toLowerCase();
-                                if (y.length === 7 && y.charAt(1) === y.charAt(2) && y.charAt(3) === y.charAt(4) && y.charAt(5) === y.charAt(6)) {
-                                    y = "#" + y.charAt(1) + y.charAt(3) + y.charAt(5);
+                                colorInput = colorInput.toLowerCase();
+                                if (colorInput.length === 7 && colorInput.charAt(1) === colorInput.charAt(2) && colorInput.charAt(3) === colorInput.charAt(4) && colorInput.charAt(5) === colorInput.charAt(6)) {
+                                    colorInput = "#" + colorInput.charAt(1) + colorInput.charAt(3) + colorInput.charAt(5);
                                 }
-                                if (aaa === ":") {
-                                    y = aaa + "PDpoundPD" + y;
-                                } else if (bbb && !(/\s/).test(aaa) && aaa !== "(") {
-                                    y = aaa + " " + y;
-                                } else if (bbb && ((/\s/).test(aaa) || aaa === "(")) {
-                                    y = aaa + y;
+                                if (firstChar === ":") {
+                                    colorInput = firstChar + "PDpoundPD" + colorInput;
+                                } else if (tooLong === true && (/\s/).test(firstChar) === false && firstChar !== "(") {
+                                    colorInput = firstChar + " " + colorInput;
+                                } else if (tooLong === true && ((/\s/).test(firstChar) === true || firstChar === "(")) {
+                                    colorInput = firstChar + colorInput;
                                 }
-                                return y;
+                                return colorInput;
                             },
-                            ccex     = (/[\w\s:#\-\=\!\(\)"'\[\]\.%-\_\?\/\\]\/(\*)/),
-                            cceg     = function cleanCSS__reduction_cceg(z) {
+                            propertyComment       = "",
+                            propertyCommentIn     = (/[\w\s:#\-\=\!\(\)"'\[\]\.%-\_\?\/\\]\/(\*)/),
+                            propertyCommentOut     = function cleanCSS__reduction_propertyCommentOut(z) {
                                 if (z.indexOf("\n/*") === 0) {
                                     return z;
                                 }
@@ -1446,204 +1421,185 @@ var prettydiff = function prettydiff(api) {
                                 return y.replace(";", "\n");
                             };
                         (function cleanCSS__reduction_missingSemicolon() {
-                            var misssemi = function cleanCSS__reduction_missingSemicolon_misssemi(y) {
-                                    if (y.indexOf("\n") === -1) {
-                                        return y;
+                            var misssemi = function cleanCSS__reduction_missingSemicolon_misssemi(cssSample) {
+                                    if (cssSample.indexOf("\n") === -1) {
+                                        return cssSample;
                                     }
-                                    return y.replace(/\s+/, ";");
+                                    return cssSample.replace(/\s+/, ";");
                                 },
-                                z        = x.length,
-                                ccc      = [],
-                                eee      = 0,
-                                qqq      = "";
-                            for (aa = 0; aa < z; aa += 1) {
+                                lengthSemi        = x.length,
+                                fragments      = [],
+                                semiIndex      = 0,
+                                fragmenta      = "";
+                            for (aa = 0; aa < lengthSemi; aa += 1) {
                                 if (x.charAt(aa) === "/" && x.charAt(aa + 1) === "*") {
-                                    d.push(ccc.join(""));
-                                    ccc = [];
+                                    build.push(fragments.join(""));
+                                    fragments = [];
                                     if ((/\s/).test(x.charAt(aa - 1)) === true) {
-                                        for (m = aa - 1; m > -1; m -= 1) {
-                                            if (x.charAt(m) === "\n") {
-                                                ccc.push("\n");
+                                        for (marginCount = aa - 1; marginCount > -1; marginCount -= 1) {
+                                            if (x.charAt(marginCount) === "\n") {
+                                                fragments.push("\n");
                                                 break;
                                             }
-                                            if ((/\s/).test(x.charAt(m)) === false) {
+                                            if ((/\s/).test(x.charAt(marginCount)) === false) {
                                                 break;
                                             }
                                         }
                                     }
                                     do {
-                                        ccc.push(x.charAt(aa));
+                                        fragments.push(x.charAt(aa));
                                         aa += 1;
                                     } while (x.charAt(aa - 2) !== "*" || (x.charAt(aa - 2) === "*" && x.charAt(aa - 1) !== "/"));
                                     if (x.charAt(aa) === "\n") {
-                                        ccc.push("\n");
+                                        fragments.push("\n");
                                     }
-                                    d.push(ccc.join(""));
-                                    ccc = [];
+                                    build.push(fragments.join(""));
+                                    fragments = [];
                                     if (x.charAt(aa) === "}") {
-                                        d.push("}");
+                                        build.push("}");
                                     }
                                 } else {
-                                    ccc.push(x.charAt(aa));
+                                    fragments.push(x.charAt(aa));
                                     if (x.charAt(aa) === "{" || x.charAt(aa + 1) === "}") {
-                                        if (ccc[0] === "}") {
-                                            d.push("}");
-                                            ccc[0] = "";
+                                        if (fragments[0] === "}") {
+                                            build.push("}");
+                                            fragments[0] = "";
                                         }
-                                        qqq = ccc.join("");
-                                        if (qqq.indexOf("{") > -1 && (qqq.indexOf("\n") > -1 || qqq.indexOf(";") > -1)) {
-                                            eee = Math.max(qqq.lastIndexOf("\n"), qqq.lastIndexOf(";"));
-                                            d.push(qqq.substring(0, eee + 1).replace(/(\w|\)|"|')\s+/g, misssemi));
-                                            d.push(qqq.substring(eee + 1));
+                                        fragmenta = fragments.join("");
+                                        if (fragmenta.indexOf("{") > -1 && (fragmenta.indexOf("\n") > -1 || fragmenta.indexOf(";") > -1)) {
+                                            semiIndex = Math.max(fragmenta.lastIndexOf("\n"), fragmenta.lastIndexOf(";"));
+                                            build.push(fragmenta.substring(0, semiIndex + 1).replace(/(\w|\)|"|')\s+/g, misssemi));
+                                            build.push(fragmenta.substring(semiIndex + 1));
                                         } else {
-                                            d.push(qqq.replace(/(\w|\)|"|')\s+/g, misssemi));
+                                            build.push(fragmenta.replace(/(\w|\)|"|')\s+/g, misssemi));
                                         }
-                                        ccc = [];
+                                        fragments = [];
                                     }
                                 }
                             }
-                            d.push("}");
+                            build.push("}");
                         }());
-                        for (bb = aa - 1; bb > 0; bb -= 1) {
-                            if (x.charAt(bb) === "/" && x.charAt(bb - 1) && x.charAt(bb - 1) === "*") {
-                                for (e = bb - 1; e > 0; e -= 1) {
-                                    if (x.charAt(e) === "/" && x.charAt(e + 1) === "*") {
-                                        bb = e;
-                                        break;
-                                    }
-                                }
-                            } else if (!/[\}\s]/.test(x.charAt(bb))) {
-                                break;
-                            }
-                        }
                         (function cleanCSS__reduction_scss() {
                             var aaa = 0,
-                                bbb = d.length,
                                 ccc = 0,
-                                eee = 0,
-                                fff = 1,
-                                ggg = [],
-                                hhh = [],
-                                iii = [],
-                                ttt = false;
-                            for (aaa = 0; aaa < bbb; aaa += 1) {
-                                if (d[aaa] === "}") {
-                                    eee -= 1;
-                                    if (eee === fff - 1 && ggg.length > 0) {
-                                        hhh = d.slice(0, aaa);
-                                        iii = d.slice(aaa, d.length);
-                                        d   = [].concat(hhh, ggg, iii);
-                                        ggg = [];
-                                        aaa = hhh.length - 1;
-                                        bbb = d.length;
+                                lengthScss = build.length,
+                                blockCounter = 0,
+                                blockState = 1,
+                                subBuild = [],
+                                partFirst = [],
+                                partSecond = [],
+                                blockTest = false;
+                            for (aaa = 0; aaa < lengthScss; aaa += 1) {
+                                if (build[aaa] === "}") {
+                                    blockCounter -= 1;
+                                    if (blockCounter === blockState - 1 && subBuild.length > 0) {
+                                        partFirst = build.slice(0, aaa);
+                                        partSecond = build.slice(aaa, build.length);
+                                        build   = [].concat(partFirst, subBuild, partSecond);
+                                        subBuild = [];
+                                        aaa = partFirst.length - 1;
+                                        lengthScss = build.length;
                                     }
-                                } else if (d[aaa].indexOf("{") > -1 && (d[aaa].indexOf("/*") === 0 || d[aaa].indexOf("\n/*") === 0)) {
-                                    eee += 1;
-                                    if (eee > fff) {
-                                        ttt = true;
-                                        fff = eee - 1;
-                                        ggg.push(d[aaa]);
-                                        d[aaa] = "";
-                                        for (ccc = aaa + 1; ccc < bbb; ccc += 1) {
-                                            ggg.push(d[ccc]);
-                                            if (d[ccc].indexOf("{") > -1) {
-                                                eee    += 1;
-                                                d[ccc] = "";
-                                            } else if (d[ccc] === "}") {
-                                                eee    -= 1;
-                                                d[ccc] = "";
-                                                if (eee === fff) {
+                                } else if (build[aaa].indexOf("{") > -1 && (build[aaa].indexOf("/*") === 0 || build[aaa].indexOf("\n/*") === 0)) {
+                                    blockCounter += 1;
+                                    if (blockCounter > blockState) {
+                                        blockTest = true;
+                                        blockState = blockCounter - 1;
+                                        subBuild.push(build[aaa]);
+                                        build[aaa] = "";
+                                        for (ccc = aaa + 1; ccc < lengthScss; ccc += 1) {
+                                            subBuild.push(build[ccc]);
+                                            if (build[ccc].indexOf("{") > -1) {
+                                                blockCounter    += 1;
+                                                build[ccc] = "";
+                                            } else if (build[ccc] === "}") {
+                                                blockCounter    -= 1;
+                                                build[ccc] = "";
+                                                if (blockCounter === blockState) {
                                                     break;
                                                 }
                                             } else {
-                                                d[ccc] = "";
+                                                build[ccc] = "";
                                             }
                                         }
                                     }
                                 }
                             }
-                            if (ttt === true) {
-                                bbb = d.length;
-                                ggg = [];
-                                for (aaa = 0; aaa < bbb; aaa += 1) {
-                                    if (ggg.length > 0 && ggg[ggg.length - 1].indexOf("{") === -1 && d[aaa] !== "}" && d[aaa].indexOf("{") === -1 && d[aaa].indexOf("/*") !== 0 && d[aaa].indexOf("\n/*") !== 0) {
-                                        ggg[ggg.length - 1] = ggg[ggg.length - 1] + d[aaa];
-                                    } else if (d[aaa] !== "") {
-                                        ggg.push(d[aaa]);
+                            if (blockTest === true) {
+                                lengthScss = build.length;
+                                subBuild = [];
+                                for (aaa = 0; aaa < lengthScss; aaa += 1) {
+                                    if (subBuild.length > 0 && subBuild[subBuild.length - 1].indexOf("{") === -1 && build[aaa] !== "}" && build[aaa].indexOf("{") === -1 && build[aaa].indexOf("/*") !== 0 && build[aaa].indexOf("\n/*") !== 0) {
+                                        subBuild[subBuild.length - 1] = subBuild[subBuild.length - 1] + build[aaa];
+                                    } else if (build[aaa] !== "") {
+                                        subBuild.push(build[aaa]);
                                     }
                                 }
-                                d = [].concat(ggg);
+                                build = [].concat(subBuild);
                             }
                         }());
-                        for (aa = d.length - 1; aa > 0; aa -= 1) {
-                            if (d[aa] === "}") {
-                                bb += 1;
+                        buildLen = build.length;
+                        for (aa = 0; aa < buildLen; aa += 1) {
+                            if (build[aa].charAt(build[aa].length - 1) === "{") {
+                                build[aa] = build[aa].replace(/>/g, " > ");
                             } else {
-                                break;
-                            }
-                        }
-                        bb = d.length;
-                        for (aa = 0; aa < bb; aa += 1) {
-                            if (d[aa].charAt(d[aa].length - 1) === "{") {
-                                d[aa] = d[aa].replace(/>/g, " > ");
-                            } else {
-                                if (d[aa].indexOf("url(") > -1) {
-                                    h = d[aa].split("");
-                                    f = h.length;
-                                    for (e = 3; e < f; e += 1) {
-                                        if (h[e - 3] === "u" && h[e - 2] === "r" && h[e - 1] === "l" && h[e] === "(") {
+                                if (build[aa].indexOf("url(") > -1) {
+                                    fragment = build[aa].split("");
+                                    length = fragment.length;
+                                    for (e = 3; e < length; e += 1) {
+                                        if (fragment[e - 3] === "u" && fragment[e - 2] === "r" && fragment[e - 1] === "l" && fragment[e] === "(") {
                                             test = true;
                                         }
                                         if (test === true) {
-                                            if (h[e - 1] !== "\\" && h[e] === ")") {
+                                            if (fragment[e - 1] !== "\\" && fragment[e] === ")") {
                                                 test = false;
-                                            } else if (h[e] === ";") {
-                                                h[e] = "~PrettyDiffSemi~";
-                                            } else if (h[e] === ":") {
-                                                h[e] = "~PrettyDiffColon~";
+                                            } else if (fragment[e] === ";") {
+                                                fragment[e] = "~PrettyDiffSemi~";
+                                            } else if (fragment[e] === ":") {
+                                                fragment[e] = "~PrettyDiffColon~";
                                             }
                                         }
                                     }
-                                    d[aa] = h.join("");
+                                    build[aa] = fragment.join("");
                                 }
-                                if (d[aa].charAt(d[aa].length - 1) === ";") {
-                                    d[aa] = d[aa].substr(0, d[aa].length - 1);
+                                if (build[aa].charAt(build[aa].length - 1) === ";") {
+                                    build[aa] = build[aa].substr(0, build[aa].length - 1);
                                 }
-                                qq = d[aa].replace(ccex, cceg);
-                                cc = qq.replace(/(\w|\W)?#[a-fA-F0-9]{3,6}(?!(\w*\)))/g, colorLow).replace(/\*\//g, "*\/;").replace(/:/g, "~PDCSEP~").split(";");
-                                f  = cc.length;
-                                h  = [];
-                                i  = [];
-                                for (e = 0; e < f; e += 1) {
+                                propertyComment = build[aa].replace(propertyCommentIn, propertyCommentOut);
+                                cc = propertyComment.replace(/(\w|\W)?#[a-fA-F0-9]{3,6}(?!(\w*\)))/g, colorLow).replace(/\*\//g, "*\/;").replace(/:/g, "~PDCSEP~").split(";");
+                                length  = cc.length;
+                                fragment  = [];
+                                margin  = [];
+                                for (e = 0; e < length; e += 1) {
                                     if (/^(\n?\/\*)/.test(cc[e])) {
-                                        h.push(cc[e].replace(/\/\*\s+/, "/* "));
+                                        fragment.push(cc[e].replace(/\/\*\s+/, "/* "));
                                     } else if (cc[e] !== "") {
-                                        i.push(cc[e].replace(/^(\s*)/, ""));
+                                        margin.push(cc[e].replace(/^(\s*)/, ""));
                                     }
                                 }
-                                i  = i.sort();
-                                f  = i.length;
+                                margin  = margin.sort();
+                                length  = margin.length;
                                 cc = [];
-                                for (e = 0; e < f; e += 1) {
-                                    if (i[e].charAt(0) === "_") {
-                                        i.push(i[e]);
-                                        i.splice(e, 1);
+                                for (e = 0; e < length; e += 1) {
+                                    if (margin[e].charAt(0) === "_") {
+                                        margin.push(margin[e]);
+                                        margin.splice(e, 1);
                                     }
-                                    cc.push(i[e].split("~PDCSEP~"));
+                                    cc.push(margin[e].split("~PDCSEP~"));
                                 }
-                                cc = h.concat(cc);
-                                f  = cc.length;
-                                m  = 0;
-                                p  = 0;
-                                g  = -1;
-                                for (e = 1; e < f; e += 1) {
+                                cc = fragment.concat(cc);
+                                length  = cc.length;
+                                marginCount  = 0;
+                                paddingCount  = 0;
+                                noWordIndex  = -1;
+                                for (e = 1; e < length; e += 1) {
                                     if (cc[e].length > 1 && cc[e][0] === cc[e - 1][0]) {
                                         cc[e - 1] = [
                                             "", ""
                                         ];
                                     }
                                 }
-                                for (e = 0; e < f; e += 1) {
+                                for (e = 0; e < length; e += 1) {
                                     if (cc[e - 1] && cc[e - 1][0] === cc[e][0] && (/\-[a-z]/).test(cc[e - 1][1]) === false && (/\-[a-z]/).test(cc[e][1]) === false) {
                                         cc[e - 1] = [
                                             "", ""
@@ -1653,66 +1609,66 @@ var prettydiff = function prettydiff(api) {
                                         cc[e][1] = cc[e][1].replace(/\//g, " / ").replace(/(\*)/g, "* ");
                                     }
                                     if (cc[e][0] !== "margin" && cc[e][0].indexOf("margin") !== -1) {
-                                        m += 1;
-                                        if (m === 4) {
-                                            i = [cc[e][1]];
-                                            r = e;
+                                        marginCount += 1;
+                                        if (marginCount === 4) {
+                                            margin = [cc[e][1]];
+                                            marginIndex = e;
                                             do {
-                                                r -= 1;
-                                                if (cc[r].length > 1 && cc[r][1] !== "") {
-                                                    i.push(cc[r][1]);
-                                                    cc[r] = [
+                                                marginIndex -= 1;
+                                                if (cc[marginIndex].length > 1 && cc[marginIndex][1] !== "") {
+                                                    margin.push(cc[marginIndex][1]);
+                                                    cc[marginIndex] = [
                                                         "", ""
                                                     ];
                                                 }
-                                            } while (i.length < 4 && r > 0);
+                                            } while (margin.length < 4 && marginIndex > 0);
                                             cc[e] = [
-                                                "margin", i[0] + " " + i[1] + " " + i[3] + " " + i[2]
+                                                "margin", margin[0] + " " + margin[1] + " " + margin[3] + " " + margin[2]
                                             ];
-                                            m     = 0;
+                                            marginCount     = 0;
                                         }
                                     } else if (cc[e][0] !== "padding" && cc[e][0].indexOf("padding") !== -1) {
-                                        p += 1;
-                                        if (p === 4) {
-                                            i = [cc[e][1]];
-                                            r = e;
+                                        paddingCount += 1;
+                                        if (paddingCount === 4) {
+                                            margin = [cc[e][1]];
+                                            marginIndex = e;
                                             do {
-                                                r -= 1;
-                                                if (cc[r].length > 1 && cc[r][1] !== "") {
-                                                    i.push(cc[r][1]);
-                                                    cc[r] = [
+                                                marginIndex -= 1;
+                                                if (cc[marginIndex].length > 1 && cc[marginIndex][1] !== "") {
+                                                    margin.push(cc[marginIndex][1]);
+                                                    cc[marginIndex] = [
                                                         "", ""
                                                     ];
                                                 }
-                                            } while (i.length < 4 && r > 0);
+                                            } while (margin.length < 4 && marginIndex > 0);
                                             cc[e] = [
-                                                "padding", i[0] + " " + i[1] + " " + i[3] + " " + i[2]
+                                                "padding", margin[0] + " " + margin[1] + " " + margin[3] + " " + margin[2]
                                             ];
-                                            p     = 0;
+                                            paddingCount     = 0;
                                         }
                                     }
-                                    if (g === -1 && cc[e + 1] && cc[e][0].charAt(0) !== "-" && (cc[e][0].indexOf("cue") !== -1 || cc[e][0].indexOf("list-style") !== -1 || cc[e][0].indexOf("outline") !== -1 || cc[e][0].indexOf("overflow") !== -1 || cc[e][0].indexOf("pause") !== -1) && (cc[e][0] === cc[e + 1][0].substring(0, cc[e + 1][0].lastIndexOf("-")) || cc[e][0].substring(0, cc[e][0].lastIndexOf("-")) === cc[e + 1][0].substring(0, cc[e + 1][0].lastIndexOf("-")))) {
-                                        g = e;
-                                        if (cc[g][0].indexOf("-") !== -1 && cc[g][0] !== "list-style") {
-                                            cc[g][0] = cc[g][0].substring(0, cc[g][0].lastIndexOf("-"));
+                                    if (noWordIndex === -1 && cc[e + 1] && cc[e][0].charAt(0) !== "-" && (cc[e][0].indexOf("cue") !== -1 || cc[e][0].indexOf("list-style") !== -1 || cc[e][0].indexOf("outline") !== -1 || cc[e][0].indexOf("overflow") !== -1 || cc[e][0].indexOf("pause") !== -1) && (cc[e][0] === cc[e + 1][0].substring(0, cc[e + 1][0].lastIndexOf("-")) || cc[e][0].substring(0, cc[e][0].lastIndexOf("-")) === cc[e + 1][0].substring(0, cc[e + 1][0].lastIndexOf("-")))) {
+                                        noWordIndex = e;
+                                        if (cc[noWordIndex][0].indexOf("-") !== -1 && cc[noWordIndex][0] !== "list-style") {
+                                            cc[noWordIndex][0] = cc[noWordIndex][0].substring(0, cc[noWordIndex][0].lastIndexOf("-"));
                                         }
-                                    } else if (g !== -1 && cc[g][0] === cc[e][0].substring(0, cc[e][0].lastIndexOf("-"))) {
-                                        if (cc[g][0] === "cue" || cc[g][0] === "pause") {
-                                            cc[g][1] = cc[e][1] + " " + cc[g][1];
+                                    } else if (noWordIndex !== -1 && cc[noWordIndex][0] === cc[e][0].substring(0, cc[e][0].lastIndexOf("-"))) {
+                                        if (cc[noWordIndex][0] === "cue" || cc[noWordIndex][0] === "pause") {
+                                            cc[noWordIndex][1] = cc[e][1] + " " + cc[noWordIndex][1];
                                         } else {
-                                            cc[g][1] = cc[g][1] + " " + cc[e][1];
+                                            cc[noWordIndex][1] = cc[noWordIndex][1] + " " + cc[e][1];
                                         }
                                         cc[e] = [
                                             "", ""
                                         ];
-                                    } else if (g !== -1) {
-                                        g = -1;
+                                    } else if (noWordIndex !== -1) {
+                                        noWordIndex = -1;
                                     }
                                 }
-                                for (e = 0; e < f; e += 1) {
+                                for (e = 0; e < length; e += 1) {
                                     if (cc[e].length > 1 && cc[e][0] !== "") {
-                                        for (r = e + 1; r < f; r += 1) {
-                                            if (cc[r].length > 1 && cc[e][0] === cc[r][0]) {
+                                        for (marginIndex = e + 1; marginIndex < length; marginIndex += 1) {
+                                            if (cc[marginIndex].length > 1 && cc[e][0] === cc[marginIndex][0]) {
                                                 cc[e] = [
                                                     "", ""
                                                 ];
@@ -1720,84 +1676,84 @@ var prettydiff = function prettydiff(api) {
                                         }
                                     }
                                 }
-                                h = [];
-                                for (e = 0; e < f; e += 1) {
+                                fragment = [];
+                                for (e = 0; e < length; e += 1) {
                                     if (typeof cc[e] !== "string" && cc[e] !== undefined && cc[e][0] !== "") {
                                         if (cc[e][1] === undefined || cc[e][1] === "before" || cc[e][1] === "after" || cc[e][1] === "hover" || cc[e][1] === "link" || cc[e][1] === "visited" || cc[e][1] === "active" || cc[e][1] === "focus" || cc[e][1] === "first-child" || cc[e][1] === "lang" || cc[e][1] === "first-line" || cc[e][1] === "first-letter") {
-                                            h.push(cc[e].join(":"));
+                                            fragment.push(cc[e].join(":"));
                                         } else {
-                                            h.push(cc[e].join(": "));
+                                            fragment.push(cc[e].join(": "));
                                         }
                                     } else if (typeof cc[e] === "string") {
-                                        h.push(cc[e].replace(/~PDCSEP~/g, ": "));
+                                        fragment.push(cc[e].replace(/~PDCSEP~/g, ": "));
                                     }
                                 }
-                                d[aa] = (h.join(";") + ";").replace(/^;/, "");
+                                build[aa] = (fragment.join(";") + ";").replace(/^;/, "");
                             }
-                            if (d[aa].charAt(d[aa].length - 1) === "{") {
-                                d[aa] = d[aa].replace(/\,/g, ",\n");
+                            if (build[aa].charAt(build[aa].length - 1) === "{") {
+                                build[aa] = build[aa].replace(/\,/g, ",\n");
                             }
                         }
-                        return d.join("").replace(/\*\/\s*;\s*\}?/g, commfix).replace(/(\s*[\w\-]+:)$/g, "\n}").replace(/\s*;$/, "").replace(/PDpoundPD#/g, "#");
+                        return build.join("").replace(/\*\/\s*;\s*\}?/g, commfix).replace(/(\s*[\w\-]+:)$/g, "\n}").replace(/\s*;$/, "").replace(/PDpoundPD#/g, "#");
                     };
                 (function cleanCSS__tab() {
                     var i = 0,
-                        j = [];
+                        output = [];
                     for (i = 0; i < nsize; i += 1) {
-                        j.push(character);
+                        output.push(character);
                     }
-                    tab = j.join("");
+                    tab = output.join("");
                 }());
-                if ("\n" === x.charAt(0)) {
-                    x = x.substr(1);
+                if ("\n" === source.charAt(0)) {
+                    source = source.substr(1);
                 }
                 (function cleanCSS__fixSyntaxReplace() {
-                    var cc = x.split(""),
-                        z  = cc.length,
+                    var chars = source.split(""),
+                        buildLen  = chars.length,
                         f  = 0,
-                        e  = false;
-                    for (f = 1; f < z; f += 1) {
-                        if (cc[f] === "*" && cc[f - 1] === "/" && !e) {
-                            e = true;
-                        } else if (e) {
-                            if (cc[f] === ",") {
-                                cc[f] = "~PrettyDiffComma~";
-                            } else if (cc[f] === ";") {
-                                cc[f] = "~PrettyDiffSemi~";
-                            } else if (cc[f] === "/" && cc[f - 1] === "*") {
-                                e = false;
+                        blockComment  = false;
+                    for (f = 1; f < buildLen; f += 1) {
+                        if (chars[f] === "*" && chars[f - 1] === "/" && blockComment === false) {
+                            blockComment = true;
+                        } else if (blockComment === true) {
+                            if (chars[f] === ",") {
+                                chars[f] = "~PrettyDiffComma~";
+                            } else if (chars[f] === ";") {
+                                chars[f] = "~PrettyDiffSemi~";
+                            } else if (chars[f] === "/" && chars[f - 1] === "*") {
+                                blockComment = false;
                             }
                         }
                     }
-                    x = cc.join("");
+                    source = chars.join("");
                 }());
-                c = x.split("*\/");
-                b = c.length;
-                for (a = 0; a < b; a += 1) {
-                    if (c[a].search(/\s*\/(\*)/) !== 0) {
-                        commstor    = c[a].split("/*");
+                comments = source.split("*\/");
+                commsLen = comments.length;
+                for (a = 0; a < commsLen; a += 1) {
+                    if (comments[a].search(/\s*\/(\*)/) !== 0) {
+                        commstor    = comments[a].split("/*");
                         commstor[0] = commstor[0].replace(/[ \t\r\v\f]+/g, " ").replace(/\n (?!\*)/g, "\n").replace(/\s?([;:{}+>])\s?/g, "$1").replace(/\{(\.*):(\.*)\}/g, "{$1: $2}").replace(/\b(\*)/g, " *").replace(/\*\/\s?/g, "*\/\n").replace(/\d%\.?\d/g, fixpercent);
-                        c[a]        = commstor.join("/*");
+                        comments[a]        = commstor.join("/*");
                     }
                 }
-                x = c.join("*\/");
+                source = comments.join("*\/");
                 if (alter === true) {
-                    x = reduction(x.replace(/\,\s+/g, ","));
+                    source = reduction(source.replace(/\,\s+/g, ","));
                 }
                 cleanAsync();
                 if (alter === true) {
-                    c = x.split("*\/");
-                    b = c.length;
-                    for (a = 0; a < b; a += 1) {
-                        if (c[a].search(/\s*\/(\*)/) !== 0) {
-                            commstor    = c[a].split("/*");
+                    comments = source.split("*\/");
+                    commsLen = comments.length;
+                    for (a = 0; a < commsLen; a += 1) {
+                        if (comments[a].search(/\s*\/(\*)/) !== 0) {
+                            commstor    = comments[a].split("/*");
                             commstor[0] = commstor[0].replace(/@charset\s*("|')?[\w\-]+("|')?;?(\s*)/gi, "").replace(/(\S|\s)0+(%|in|cm|mm|em|ex|pt|pc)?;/g, runZero).replace(/:[\w\s\!\.\-%]*\d+\.0*(?!\d)/g, endZero).replace(/:[\w\s\!\.\-%#]* \.\d+/g, startZero).replace(/ \.?0((?=;)|(?= )|%|in|cm|mm|em|ex|pt|pc)/g, " 0px");
                             commstor[0] = commstor[0].replace(/\w+(\-\w+)*: ((((\-?(\d*\.\d+)|\d+)[a-zA-Z]+)|0) )+(((\-?(\d*\.\d+)|\d+)[a-zA-Z]+)|0)/g, sameDist).replace(/background\-position: 0px;/g, "background-position: 0px 0px;").replace(/\s+\*\//g, "*\/");
                             commstor[0] = commstor[0].replace(/\s*[\w\-]+\:\s*(\}|;)/g, emptyend).replace(/\{\s+\}/g, "{}").replace(/\}\s*;\s*\}/g, nestblock).replace(/:\s+#/g, ": #").replace(/(\s+;+\n)+/g, "\n");
-                            c[a]        = commstor.join("/*");
+                            comments[a]        = commstor.join("/*");
                         }
                     }
-                    x = c.join("*\/");
+                    source = comments.join("*\/");
                     if (atchar === null) {
                         atchar = [""];
                     } else if (atchar[0].charAt(atchar[0].length - 1) !== ";") {
@@ -1805,65 +1761,65 @@ var prettydiff = function prettydiff(api) {
                     } else {
                         atchar[0] = atchar[0] + "\n";
                     }
-                    x = atchar[0].replace(/@charset/i, "@charset") + fixURI(x).replace(/~PrettyDiffColon~/g, ":").replace(/~PrettyDiffSemi~/g, ";").replace(/~PrettyDiffComma~/g, ",");
+                    source = atchar[0].replace(/@charset/i, "@charset") + fixURI(source).replace(/~PrettyDiffColon~/g, ":").replace(/~PrettyDiffSemi~/g, ";").replace(/~PrettyDiffComma~/g, ",");
                 }
                 if (comment === "noindent") {
-                    x = x.replace(/\s+\/(\*)/g, "\n/*").replace(/\n\s+\*\//g, "\n*\/");
+                    source = source.replace(/\s+\/(\*)/g, "\n/*").replace(/\n\s+\*\//g, "\n*\/");
                 }
                 if (summary !== "diff") {
                     (function cleanCSS__report() {
                         var aa = 0,
-                            bb = [],
-                            cc = x.split("\n"),
-                            d  = cc.length,
-                            e  = [],
-                            f  = q.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ","),
-                            g  = x.length.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ","),
-                            h  = 0,
-                            i  = "",
+                            build = [],
+                            lines = source.split("\n"),
+                            lineLen  = lines.length,
+                            requests  = [],
+                            lengthInput  = sourceLen.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ","),
+                            lengthOutput  = source.length.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ","),
+                            requestCount  = 0,
+                            requestList  = "",
                             j  = 0;
-                        for (aa = 0; aa < d; aa += 1) {
-                            if (cc[aa].charAt(0) === "/" && cc[aa].charAt(1) === "*") {
-                                for (aa; aa < d; aa += 1) {
-                                    if (cc[aa].charAt(cc[aa].length - 2) === "*" && cc[aa].charAt(cc[aa].length - 1) === "/") {
+                        for (aa = 0; aa < lineLen; aa += 1) {
+                            if (lines[aa].charAt(0) === "/" && lines[aa].charAt(1) === "*") {
+                                for (aa; aa < lineLen; aa += 1) {
+                                    if (lines[aa].charAt(lines[aa].length - 2) === "*" && lines[aa].charAt(lines[aa].length - 1) === "/") {
                                         break;
                                     }
                                 }
-                            } else if (cc[aa].indexOf("url") !== -1 && cc[aa].indexOf("url(\"\")") === -1 && cc[aa].indexOf("url('')") === -1 && cc[aa].indexOf("url()") === -1) {
-                                bb.push(cc[aa]);
+                            } else if (lines[aa].indexOf("url") !== -1 && lines[aa].indexOf("url(\"\")") === -1 && lines[aa].indexOf("url('')") === -1 && lines[aa].indexOf("url()") === -1) {
+                                build.push(lines[aa]);
                             }
                         }
-                        d = bb.length;
-                        for (aa = 0; aa < d; aa += 1) {
-                            bb[aa] = bb[aa].substr(bb[aa].indexOf("url(\"") + 5, bb[aa].length);
-                            bb[aa] = bb[aa].substr(0, bb[aa].indexOf("\")"));
+                        lineLen = build.length;
+                        for (aa = 0; aa < lineLen; aa += 1) {
+                            build[aa] = build[aa].substr(build[aa].indexOf("url(\"") + 5, build[aa].length);
+                            build[aa] = build[aa].substr(0, build[aa].indexOf("\")"));
                         }
-                        for (aa = 0; aa < d; aa += 1) {
-                            e[aa] = 1;
-                            for (j = aa + 1; j < d; j += 1) {
-                                if (bb[aa] === bb[j]) {
-                                    e[aa] += 1;
-                                    bb[j] = "";
+                        for (aa = 0; aa < lineLen; aa += 1) {
+                            requests[aa] = 1;
+                            for (j = aa + 1; j < lineLen; j += 1) {
+                                if (build[aa] === build[j]) {
+                                    requests[aa] += 1;
+                                    build[j] = "";
                                 }
                             }
                         }
-                        for (aa = 0; aa < d; aa += 1) {
-                            if (bb[aa] !== "") {
-                                h     += 1;
-                                e[aa] = e[aa] + "x";
-                                if (e[aa] === "1x") {
-                                    e[aa] = "<em>" + e[aa] + "</em>";
+                        for (aa = 0; aa < lineLen; aa += 1) {
+                            if (build[aa] !== "") {
+                                requestCount     += 1;
+                                requests[aa] = requests[aa] + "x";
+                                if (requests[aa] === "1x") {
+                                    requests[aa] = "<em>" + requests[aa] + "</em>";
                                 }
-                                bb[aa] = "<li>" + e[aa] + " - " + bb[aa] + "</li>";
+                                build[aa] = "<li>" + requests[aa] + " - " + build[aa] + "</li>";
                             }
                         }
-                        if (d !== 0) {
-                            i = "<h4>List of HTTP requests:</h4><ul>" + bb.join("") + "</ul>";
+                        if (lineLen !== 0) {
+                            requestList = "<h4>List of HTTP requests:</h4><ul>" + build.join("") + "</ul>";
                         }
-                        summary = "<p><strong>Total input size:</strong> <em>" + f + "</em> characters</p><p><strong>Total output size:</strong> <em>" + g + "</em> characters</p><p><strong>Number of HTTP requests:</strong> <em>" + h + "</em></p>" + i;
+                        summary = "<p><strong>Total input size:</strong> <em>" + lengthInput + "</em> characters</p><p><strong>Total output size:</strong> <em>" + lengthOutput + "</em> characters</p><p><strong>Number of HTTP requests:</strong> <em>" + requestCount + "</em></p>" + requestList;
                     }());
                 }
-                return x;
+                return source;
             },
             jspretty      = function jspretty(args) {
                 var source    = (typeof args.source === "string" && args.source.length > 0) ? args.source + " " : "Error: no source code supplied to jspretty!",
@@ -4414,6 +4370,9 @@ var prettydiff = function prettydiff(api) {
                                 longList    = [],
                                 joins       = function jspretty__resultScope_varSpaces_joins(x) {
                                     var xlen   = token[x].length,
+                                        endTest = false,
+                                        mixTest = false,
+                                        perTest = false,
                                         period = function jspretty__resultScope_varSpaces_joins_periodInit() {
                                             return;
                                         },
@@ -4421,22 +4380,29 @@ var prettydiff = function prettydiff(api) {
                                             return;
                                         };
                                     period = function jspretty__resultScope_varSpaces_joins_period() {
+                                        perTest = true;
                                         do {
-                                            xlen += 1;
                                             x    -= 2;
-                                            xlen += token[x].length;
+                                            xlen += token[x].length + 1;
                                         } while (x > 1 && token[x - 1] === ".");
                                         if (token[x] === ")" || token[x] === "]") {
+                                            x += 1;
+                                            xlen -= 1;
+                                            mixTest = true;
                                             ending();
                                         }
                                     };
                                     ending = function jspretty__resultScope_varSpaces_joins_ending() {
                                         var yy = 0;
+                                        endTest = true;
                                         for (x -= 1; x > -1; x -= 1) {
                                             xlen += token[x].length;
                                             if (types[x] === "start" || types[x] === "method") {
                                                 yy += 1;
                                                 if (yy === 1) {
+                                                    if (mixTest === true) {
+                                                        return;
+                                                    }
                                                     break;
                                                 }
                                             }
@@ -4451,6 +4417,9 @@ var prettydiff = function prettydiff(api) {
                                                     xlen += 1;
                                                 }
                                             }
+                                            if (token[x] === ";") {
+                                                return;
+                                            }
                                         }
                                         if (types[x - 1] === "word" || types[x - 1] === "literal") {
                                             x    -= 1;
@@ -4464,8 +4433,16 @@ var prettydiff = function prettydiff(api) {
                                     };
                                     if (types[x] === "word" && token[x - 1] === ".") {
                                         period();
+                                        if (endTest === false) {
+                                            xlen += 1;
+                                        }
                                     } else if (token[x] === ")" || token[x] === "]") {
                                         ending();
+                                        if (perTest === false) {
+                                            xlen += 1;
+                                        }
+                                    } else {
+                                        xlen += 1;
                                     }
                                     return xlen;
                                 };
@@ -4728,6 +4705,9 @@ var prettydiff = function prettydiff(api) {
                                 longList    = [],
                                 joins       = function jspretty__result_varSpaces_joins(x) {
                                     var xlen   = token[x].length,
+                                        endTest = false,
+                                        mixTest = false,
+                                        perTest = false,
                                         period = function jspretty__result_varSpaces_joins_periodInit() {
                                             return;
                                         },
@@ -4735,22 +4715,29 @@ var prettydiff = function prettydiff(api) {
                                             return;
                                         };
                                     period = function jspretty__result_varSpaces_joins_period() {
+                                        perTest = true;
                                         do {
-                                            xlen += 1;
                                             x    -= 2;
-                                            xlen += token[x].length;
+                                            xlen += token[x].length + 1;
                                         } while (x > 1 && token[x - 1] === ".");
                                         if (token[x] === ")" || token[x] === "]") {
+                                            x += 1;
+                                            xlen -= 1;
+                                            mixTest = true;
                                             ending();
                                         }
                                     };
                                     ending = function jspretty__result_varSpaces_joins_ending() {
                                         var yy = 0;
+                                        endTest = true;
                                         for (x -= 1; x > -1; x -= 1) {
                                             xlen += token[x].length;
                                             if (types[x] === "start" || types[x] === "method") {
                                                 yy += 1;
                                                 if (yy === 1) {
+                                                    if (mixTest === true) {
+                                                        return;
+                                                    }
                                                     break;
                                                 }
                                             }
@@ -4765,6 +4752,9 @@ var prettydiff = function prettydiff(api) {
                                                     xlen += 1;
                                                 }
                                             }
+                                            if (token[x] === ";") {
+                                                return;
+                                            }
                                         }
                                         if (types[x - 1] === "word" || types[x - 1] === "literal") {
                                             x    -= 1;
@@ -4778,8 +4768,16 @@ var prettydiff = function prettydiff(api) {
                                     };
                                     if (types[x] === "word" && token[x - 1] === ".") {
                                         period();
+                                        if (endTest === false) {
+                                            xlen += 1;
+                                        }
                                     } else if (token[x] === ")" || token[x] === "]") {
                                         ending();
+                                        if (perTest === false) {
+                                            xlen += 1;
+                                        }
+                                    } else {
+                                        xlen += 1;
                                     }
                                     return xlen;
                                 };
@@ -8247,7 +8245,7 @@ var prettydiff = function prettydiff(api) {
                         rowcnt = Math.max(be - b, ne - n);
                         ctest  = true;
                         for (i = 0; i < rowcnt; i += 1) {
-                            if (!isNaN(context) && context > -1 && opcodes.length > 1 && ((idx > 0 && i === context) || (idx === 0 && i === 0)) && change === "equal") {
+                            if (isNaN(context) === false && context > -1 && opcodes.length > 1 && ((idx > 0 && i === context) || (idx === 0 && i === 0)) && change === "equal") {
                                 ctest = false;
                                 jump  = rowcnt - ((idx === 0 ? 1 : 2) * context);
                                 if (jump > 1) {
@@ -8264,19 +8262,18 @@ var prettydiff = function prettydiff(api) {
                                         break;
                                     }
                                 }
+                            } else if (change !== "equal") {
+                                diffline += 1;
                             }
                             if (bta[b] === nta[n]) {
                                 change = "equal";
                             } else if (change === "equal") {
                                 change = "replace";
                             }
-                            if (change !== "equal") {
-                                diffline += 1;
-                            }
                             if (tab !== "") {
-                                if (!btest && bta[be] !== nta[ne] && typeof bta[b + 1] === "string" && typeof nta[n] === "string" && btab[b + 1] === ntab[n] && btab[b] !== ntab[n] && (typeof nta[n - 1] !== "string" || btab[b] !== ntab[n - 1])) {
+                                if (btest === false && bta[be] !== nta[ne] && typeof bta[b + 1] === "string" && typeof nta[n] === "string" && btab[b + 1] === ntab[n] && btab[b] !== ntab[n] && (typeof nta[n - 1] !== "string" || btab[b] !== ntab[n - 1])) {
                                     btest = true;
-                                } else if (!ntest && bta[be] !== nta[ne] && typeof nta[n + 1] === "string" && typeof bta[b] === "string" && ntab[n + 1] === btab[b] && ntab[n] !== btab[b] && (typeof bta[b - 1] !== "string" || ntab[n] !== btab[b - 1])) {
+                                } else if (ntest === false && bta[be] !== nta[ne] && typeof nta[n + 1] === "string" && typeof bta[b] === "string" && ntab[n + 1] === btab[b] && ntab[n] !== btab[b] && (typeof bta[b - 1] !== "string" || ntab[n] !== btab[b - 1])) {
                                     ntest = true;
                                 }
                             }
@@ -9254,18 +9251,18 @@ var prettydiff = function prettydiff(api) {
     },
     //the edition values use the format YYMMDD for dates.
     edition    = {
-        charDecoder  : 121231, //charDecoder library
-        cleanCSS     : 131206, //cleanCSS library
+        charDecoder  : 131224, //charDecoder library
+        cleanCSS     : 131224, //cleanCSS library
         css          : 130924, //diffview.css file
-        csvbeauty    : 130924, //csvbeauty library
-        csvmin       : 131018, //csvmin library
+        csvbeauty    : 131224, //csvbeauty library
+        csvmin       : 131224, //csvmin library
         diffview     : 130903, //diffview library
         documentation: 130814, //documentation.xhtml
-        jsmin        : 131107, //jsmin library (fulljsmin.js)
-        jspretty     : 131219, //jspretty library
+        jsmin        : 131224, //jsmin library (fulljsmin.js)
+        jspretty     : 131224, //jspretty library
         markup_beauty: 131210, //markup_beauty library
         markupmin    : 131102, //markupmin library
-        prettydiff   : 131219, //this file
+        prettydiff   : 131224, //this file
         webtool      : 131120, //prettydiff.com.xhtml
         api          : {
             dom        : 131219,
