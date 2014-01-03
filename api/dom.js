@@ -41,6 +41,8 @@ pd.webtool = [];
 
     //test for support of the file api
     pd.fs = (typeof FileReader === "function" && typeof new FileReader().readAsText === "function") ? true : false;
+    
+    pd.xhr = (typeof XMLHttpRequest === "function" || typeof XMLHttpRequest === "object" || typeof ActiveXObject === "function");
 
     pd.bounce = true;
     pd.$$ = function dom__$$(x) {
@@ -312,7 +314,268 @@ pd.webtool = [];
             event = e || window.event,
             parent = {},
             button = {},
-            h3 = "";
+            h3 = "",
+            requests = false,
+            requestd = false,
+            completes = false,
+            completed = false,
+            execOutput = function dom__recycle_execOutput() {
+                pd.o.zindex += 1;
+                if (api.mode === "beautify") {
+                    if (pd.o.bx !== null) {
+                        pd.o.bx.value = output[0];
+                    }
+                    if (output[1].length > 125000) {
+                        pd.o.filled.rg = true;
+                    } else {
+                        pd.o.filled.rg = false;
+                    }
+                    if (output[1] !== "" && pd.o.rg !== null && pd.o.sh !== null && pd.o.sh.innerHTML.replace(/\s+/g, " ") === "Maximize Inputs") {
+                        pd.o.rh.innerHTML = output[1];
+                        pd.o.rg.style.zIndex = pd.o.zindex;
+                        pd.o.rg.style.display = "block";
+                    }
+                    if (api.jsscope === true && pd.o.rg !== null && (api.lang === "auto" || api.lang === "javascript")) {
+                        if (api.lang === "auto") {
+                            c = output[1].split("Presumed language is <em>")[1];
+                            c = c.substring(0, c.indexOf("</em>"));
+                        }
+                        if (c === "JavaScript" || api.lang === "javascript") {
+                            pd.top(pd.o.rg);
+                            pd.o.rg.style.display = "block";
+                            parent = pd.o.rg.getElementsByTagName("p")[0];
+                            if (parent.innerHTML.indexOf("pd.save") === -1) {
+                                if (parent.style === undefined || parent.style.display === "block") {
+                                    h3 = pd.o.rg.getElementsByTagName("h3")[0].style.width;
+                                    pd.o.rg.getElementsByTagName("h3")[0].style.width = (Number(h3.substr(0, h3.length - 2)) - 3) + "em";
+                                }
+                                if (pd.o.rg !== null && (pd.o.agent.indexOf("firefox") > -1 || pd.o.agent.indexOf("opera") > -1)) {
+                                    button = document.createElement("a");
+                                    button.setAttribute("href", "#");
+                                    button.setAttribute("onclick", "pd.save(this);");
+                                    button.innerHTML = "<button class='save' title='Save output.'>S</button>";
+                                } else {
+                                    button = document.createElement("button");
+                                    button.setAttribute("class", "save");
+                                    button.setAttribute("onclick", "pd.save(this);");
+                                    button.setAttribute("title", "Save output.");
+                                    button.innerHTML = "S";
+                                }
+                                parent.insertBefore(button, parent.firstChild);
+                            }
+                            if (pd.o.rg.getElementsByTagName("p")[0].style.display === "none") {
+                                pd.minimize(null, pd.o.rg.getElementsByTagName("button")[1], 1);
+                            }
+                            pd.o.rg.style.right = "auto";
+                            pd.beaurows[0] = pd.o.rg.getElementsByTagName("ol")[0].getElementsByTagName("li");
+                            pd.beaurows[1] = pd.o.rg.getElementsByTagName("ol")[1].getElementsByTagName("li");
+                        } else {
+                            if (pd.o.rg.getElementsByTagName("p")[0].innerHTML.indexOf("pd.save") > -1) {
+                                if (parent.style === undefined || parent.style.display === "block") {
+                                    h3 = pd.o.rg.getElementsByTagName("h3")[0].style.width;
+                                    pd.o.rg.getElementsByTagName("h3")[0].style.width = (Number(h3.substr(0, h3.length - 2)) + 3) + "em";
+                                }
+                                pd.o.rg.getElementsByTagName("p")[0].removeChild(pd.o.rg.getElementsByTagName("p")[0].firstChild);
+                            }
+                            pd.beaurows = [];
+                        }
+                    } else {
+                        if (pd.o.rg.getElementsByTagName("p")[0].innerHTML.indexOf("pd.save") > -1) {
+                            if (parent.style === undefined || parent.style.display === "block") {
+                                h3 = pd.o.rg.getElementsByTagName("h3")[0].style.width;
+                                pd.o.rg.getElementsByTagName("h3")[0].style.width = (Number(h3.substr(0, h3.length - 2)) + 3) + "em";
+                            }
+                            pd.o.rg.getElementsByTagName("p")[0].removeChild(pd.o.rg.getElementsByTagName("p")[0].firstChild);
+                        }
+                        pd.beaurows = [];
+                    }
+                    if (pd.ls === true) {
+                        pd.o.stat.beau += 1;
+                        if (pd.o.stbeau !== null) {
+                            pd.o.stbeau.innerHTML = pd.o.stat.beau;
+                        }
+                    }
+                } else if (api.mode === "diff" && pd.o.re !== null) {
+                    if (output[0].length > 125000) {
+                        pd.o.filled.re = true;
+                    } else {
+                        pd.o.filled.rg = false;
+                    }
+                    if (/^(<p><strong>Error:<\/strong> Please try using the option labeled ((&lt;)|<)em((&gt;)|>)Plain Text \(diff only\)((&lt;)|<)\/em((&gt;)|>)\.)/.test(output[0])) {
+                        pd.o.rf.innerHTML = "<p><strong>Error:</strong> Please try using the option labeled <em>Plain Text (diff only)</em>. <span style='display:block'>The input does not appear to be markup, CSS, or JavaScript.</span></p>";
+                    } else if (pd.o.ps !== null && pd.o.ps.checked) {
+                        output[2] = output[1] + "<p>This is the generated diff output. Please copy the text output, paste into a text file, and save as a &quot;.html&quot; file.</p><textarea rows='40' cols='80' id='textreport'>";
+                        output[0] = "<?xml version='1.0' encoding='UTF-8' ?><!DOCTYPE html PUBLIC '-//W3C//DTD XHTML 1.1//EN' 'http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd'><html xmlns='http://www.w3.org/1999/xhtml' xml:lang='en'><head><title>Pretty Diff - The difference tool</title><meta name='robots' content='index, follow'/> <meta name='DC.title' content='Pretty Diff - The difference tool'/> <link rel='canonical' href='http://prettydiff.com/' type='application/xhtml+xml'/><meta http-equiv='Content-Type' content='application/xhtml+xml;charset=UTF-8'/><meta http-equiv='Content-Style-Type' content='text/css'/><style type='text/css'>" + pd.o.css.core + pd.o.css["s" + pd.o.color] + "</style></head><body class='" + pd.o.color + "'><h1><a href='http://prettydiff.com/'>Pretty Diff - The difference tool</a></h1>" + output[1] + "<p>Accessibility note. &lt;em&gt; tags in the output represent character differences per lines compared.</p>" + output[0] + "</body></html>";
+                        pd.o.rf.innerHTML = output[2] + output[0].replace(/\&/g, "&amp;").replace(/>/g, "&gt;").replace(/</g, "&lt;") + "</textarea>";
+                    } else {
+                        pd.o.rf.innerHTML = output[1] + output[0];
+                    }
+                    if (pd.o.re !== null) {
+                        pd.top(pd.o.re);
+                        pd.o.re.style.display = "block";
+                        if (pd.o.re.getElementsByTagName("p")[0].style.display === "none") {
+                            pd.minimize(null, pd.o.re.getElementsByTagName("button")[1], 1);
+                        }
+                        pd.o.re.style.right = "auto";
+                    }
+                    if (pd.ls === true) {
+                        pd.o.stat.diff += 1;
+                        pd.o.stdiff.innerHTML = pd.o.stat.diff;
+                    }
+                    if (api.diffview === "sidebyside" && pd.o.rf.innerHTML.toLowerCase().indexOf("<textarea") === -1 && pd.o.rf !== null) {
+                        d = pd.o.rf.getElementsByTagName("ol");
+                        if (d.length < 3 || d[0] === null || d[1] === null || d[2] === null) {
+                            pd.colSliderProperties = [
+                                0, 0, 0, 0, 0
+                            ];
+                        } else {
+                            pd.colSliderProperties = [
+                                d[0].clientWidth, d[1].clientWidth, d[2].parentNode.clientWidth, d[2].parentNode.parentNode.clientWidth, d[2].parentNode.offsetLeft - d[2].parentNode.parentNode.offsetLeft
+                            ];
+                        }
+                    }
+                } else if (api.mode === "minify") {
+                    if (output[0].length > 125000) {
+                        pd.o.filled.ri = true;
+                    } else {
+                        pd.o.filled.ri = false;
+                    }
+                    if (pd.o.mx !== null) {
+                        pd.o.mx.value = output[0];
+                    }
+                    if (output[1] !== "" && pd.o.ri !== null && pd.o.sh.innerHTML.replace(/\s+/g, " ") === "Maximize Inputs") {
+                        pd.o.rj.innerHTML = output[1];
+                        pd.o.ri.style.zIndex = pd.o.zindex;
+                        pd.o.ri.style.display = "block";
+                    }
+                    if (pd.ls === true) {
+                        pd.o.stat.minn += 1;
+                        if (pd.o.stminn !== null) {
+                            pd.o.stminn.innerHTML = pd.o.stat.minn;
+                        }
+                    }
+                }
+                if (pd.ls === true) {
+                    (function dom__recycle_storage() {
+                        var stat = [],
+                            lang = "",
+                            lango = {},
+                            langv = (pd.o.la === null) ? "javascript" : (pd.o.la.nodeName === "select") ? pd.o.la[pd.o.la.selectedIndex].value : pd.o.la.value,
+                            size = 0,
+                            codesize = 0;
+                        if (api.mode === "beautify") {
+                            codesize = api.source.length + pd.o.slength.mi + pd.o.slength.bo + pd.o.slength.nx;
+                            if (api.source.length < 2096000 && codesize < 4800000) {
+                                localStorage.setItem("bi", api.source);
+                                pd.o.slength.bi = api.source.length;
+                            } else {
+                                localStorage.setItem("bi", "");
+                                pd.o.slength.bi = 0;
+                            }
+                        } else if (api.mode === "minify") {
+                            codesize = pd.o.slength.bi + api.source.length + pd.o.slength.bo + pd.o.slength.nx;
+                            if (api.source.length < 2096000 && codesize < 4800000) {
+                                localStorage.setItem("mi", api.source);
+                                pd.o.slength.mi = api.source.length;
+                            } else {
+                                localStorage.setItem("mi", "");
+                                pd.o.slength.mi = 0;
+                            }
+                        } else if (api.mode === "diff") {
+                            codesize = pd.o.slength.bi + pd.o.slength.mi + api.source.length + api.diff.length;
+                            if (api.source.length < 2096000 && api.diff.length < 2096000 && codesize < 4800000) {
+                                localStorage.setItem("bo", api.source);
+                                localStorage.setItem("nx", api.diff);
+                                localStorage.setItem("bl", api.sourcelabel);
+                                localStorage.setItem("nl", api.difflabel);
+                                pd.o.slength.bo = api.source.length;
+                                pd.o.slength.nx = api.diff.length;
+                            } else {
+                                localStorage.setItem("bo", "");
+                                localStorage.setItem("nx", "");
+                                localStorage.setItem("bl", "");
+                                localStorage.setItem("nl", "");
+                                pd.o.slength.bo = 0;
+                                pd.o.slength.nx = 0;
+                            }
+                        }
+                        if (langv === "auto" && typeof output[1] === "string") {
+                            lango = (/Language set to <strong>auto<\/strong>\. Presumed language is <em>\w+<\/em>\./).exec(output[1]);
+                            if (lango !== null) {
+                                lang = lango.toString();
+                                lang = lang.substring(lang.indexOf("<em>") + 4, lang.indexOf("</em>"));
+                                if (lang === "JavaScript" || lang === "JSON") {
+                                    pd.o.stat.js += 1;
+                                    if (pd.o.stjs !== null) {
+                                        pd.o.stjs.innerHTML = pd.o.stat.js;
+                                    }
+                                } else if (lang === "CSS") {
+                                    pd.o.stat.css += 1;
+                                    if (pd.o.stcss !== null) {
+                                        pd.o.stcss.innerHTML = pd.o.stat.css;
+                                    }
+                                } else if (lang === "HTML" || lang === "markup") {
+                                    pd.o.stat.markup += 1;
+                                    if (pd.o.stmarkup !== null) {
+                                        pd.o.stmarkup.innerHTML = pd.o.stat.markup;
+                                    }
+                                }
+                            }
+                        } else if (langv === "csv") {
+                            pd.o.stat.csv += 1;
+                            if (pd.o.stcsv) {
+                                pd.o.stcsv.innerHTML = pd.o.stat.csv;
+                            }
+                        } else if (langv === "text") {
+                            pd.o.stat.text += 1;
+                            if (pd.o.sttext !== null) {
+                                pd.o.sttext.innerHTML = pd.o.stat.text;
+                            }
+                        } else if (langv === "javascript") {
+                            pd.o.stat.js += 1;
+                            if (pd.o.stjs !== null) {
+                                pd.o.stjs.innerHTML = pd.o.stat.js;
+                            }
+                        } else if (langv === "markup" || langv === "html") {
+                            pd.o.stat.markup += 1;
+                            if (pd.o.stmarkup !== null) {
+                                pd.o.stmarkup.innerHTML = pd.o.stat.markup;
+                            }
+                        } else if (langv === "css") {
+                            pd.o.stat.css += 1;
+                            if (pd.o.stcss !== null) {
+                                pd.o.stcss.innerHTML = pd.o.stat.css;
+                            }
+                        }
+                        if (api.mode === "diff" && api.diff.length > api.source.length) {
+                            size = api.diff.length;
+                        } else {
+                            size = api.source.length;
+                        }
+                        if (size > pd.o.stat.large) {
+                            pd.o.stat.large = size;
+                            if (pd.o.stlarge !== null) {
+                                pd.o.stlarge.innerHTML = size;
+                            }
+                        }
+                        stat.push(pd.o.stat.visit);
+                        stat.push(pd.o.stat.usage);
+                        stat.push(pd.o.stat.fdate);
+                        stat.push(pd.o.stat.avday);
+                        stat.push(pd.o.stat.diff);
+                        stat.push(pd.o.stat.beau);
+                        stat.push(pd.o.stat.minn);
+                        stat.push(pd.o.stat.markup);
+                        stat.push(pd.o.stat.js);
+                        stat.push(pd.o.stat.css);
+                        stat.push(pd.o.stat.csv);
+                        stat.push(pd.o.stat.text);
+                        stat.push(pd.o.stat.large);
+                        stat.push(pd.o.stat.pdate);
+                        localStorage.setItem("statdata", stat.join("|"));
+                    }());
+                }
+            };
 
         //do not execute from alt, home, end, or arrow keys
         if (typeof event === "object" && event.type === "keyup") {
@@ -371,7 +634,7 @@ pd.webtool = [];
         api.csvchar = (pd.o.ch === null) ? "," : pd.o.ch.value;
 
         //determine options based upon mode of operations
-        if (pd.o.bb !== null && pd.o.bb.checked) {
+        if (pd.o.bb !== null && pd.o.bb.checked === true) {
             pd.o.hy = pd.$$("html-yes");
             pd.o.ba = pd.$$("beau-tab");
             pd.o.bn = pd.$$("beau-line");
@@ -453,7 +716,8 @@ pd.webtool = [];
                 api.correct = true;
             }
             api.mode = "beautify";
-        } else if (pd.o.mm !== null && pd.o.mm.checked === true) {
+        }
+        if (pd.o.mm !== null && pd.o.mm.checked === true) {
             pd.o.hm = pd.$$("htmlm-yes");
             pd.o.mc = pd.$$("topcoms-yes");
             pd.o.mi = pd.$$("minifyinput");
@@ -482,7 +746,8 @@ pd.webtool = [];
                 api.source = pd.o.mi.value;
             }
             api.mode = "minify";
-        } else if (pd.o.dd !== null) {
+        }
+        if (pd.o.dd !== null && pd.o.dd.checked === true) {
             if (typeof prettydiff !== "function") {
                 pd.application = diffview;
             }
@@ -583,312 +848,70 @@ pd.webtool = [];
             api.source = (pd.o.bo === null) ? "" : pd.o.bo.value;
             api.diff = (pd.o.nx === null) ? "" : pd.o.nx.value;
             api.mode = "diff";
-            if (domain.test(api.diff) === true && (typeof XMLHttpRequest === "function" || typeof ActiveXObject === "function")) {
-                (function dom__recycle_XHR_diff() {
-                    var a = (api.diff.indexOf("file:///") === 0) ? api.diff.split(":///")[1] : api.diff.split("://")[1],
-                        b = a ? a.indexOf("/") : 0,
-                        xhr = (typeof XMLHttpRequest === "function") ? new XMLHttpRequest() : new ActiveXObject("Microsoft.XMLHTTP");
-                    if (typeof a !== "string" || a.length === 0) {
+            if (domain.test(api.diff) === true && pd.xhr === true) {
+                (function dom__recycle_xhrDiff() {
+                    var protocolRemove = (api.diff.indexOf("file:///") === 0) ? api.diff.split(":///")[1] : api.diff.split("://")[1],
+                        slashIndex = (protocolRemove !== undefined) ? protocolRemove.indexOf("/") : 0,
+                        xhr = (typeof XMLHttpRequest === "function" || typeof XMLHttpRequest === "object") ? new XMLHttpRequest() : new ActiveXObject("Microsoft.XMLHTTP");
+                    if (typeof protocolRemove !== "string" || protocolRemove.length === 0) {
                         return;
                     }
-                    if (b !== 0 && b !== -1) {
-                        xhr.open("GET", "proxy.php?x=" + api.diff.replace(/(\s*)$/, "").replace(/%26/g, "&").replace(/%3F/, "?"), false);
+                    requestd = true;
+                    if (slashIndex > 0 || api.diff.indexOf("http") === 0) {
+                        xhr.onreadystatechange = function dom__recycle_xhrDiff_stateChange() {
+                            if (xhr.readystate === 4) {
+                                if (xhr.status === 200 || xhr.status === 0) {
+                                    api.diff = xhr.responseText.replace(/\r\n/g, "\n");
+                                    if (completes === true) {
+                                        output = pd.application(api);
+                                        execOutput();
+                                        return;
+                                    }
+                                    completed = true;
+                                } else {
+                                    api.diff = "Error: transmission failure receiving diff code from address.";
+                                }
+                            }
+                        };
+                        xhr.open("GET", "proxy.php?x=" + api.diff.replace(/(\s*)$/, "").replace(/%26/g, "&").replace(/%3F/, "?"), true);
                         xhr.send();
-                        if (xhr.status === 200 || xhr.status === 0) {
-                            api.diff = xhr.responseText.replace(/\r\n/g, "\n");
-                        }
                     }
                 }());
             }
         }
-        if (domain.test(api.source) === true && (typeof XMLHttpRequest === "function" || typeof ActiveXObject === "function")) {
-            (function dom__recycle_XHR_source() {
-                var a = (api.source.indexOf("file:///") === 0) ? api.source.split(":///")[1] : api.source.split("://")[1],
-                    b = a ? a.indexOf("/") : 0,
-                    xhr = (typeof XMLHttpRequest === "function") ? new XMLHttpRequest() : new ActiveXObject("Microsoft.XMLHTTP");
-                if (typeof a !== "string" || a.length === 0) {
+        if (domain.test(api.source) === true && pd.xhr === true) {
+            (function dom__recycle_xhrSource() {
+                var protocolRemove = (api.source.indexOf("file:///") === 0) ? api.source.split(":///")[1] : api.source.split("://")[1],
+                    slashIndex = (protocolRemove !== undefined) ? protocolRemove.indexOf("/") : 0,
+                    xhr = (typeof XMLHttpRequest === "function" || typeof XMLHttpRequest === "object") ? new XMLHttpRequest() : new ActiveXObject("Microsoft.XMLHTTP");
+                if (typeof protocolRemove !== "string" || protocolRemove.length === 0) {
                     return;
                 }
-                if (b !== 0 && b !== -1) {
-                    xhr.open("GET", "proxy.php?x=" + api.source.replace(/(\s*)$/, "").replace(/%26/g, "&").replace(/%3F/, "?"), false);
+                requests = true;
+                if (slashIndex > 0 || api.source.indexOf("http") === 0) {
+                    xhr.onreadystatechange = function dom__recycle_xhrSource_statechange() {
+                        if (xhr.readyState === 4) {
+                            if (xhr.status === 200 || xhr.status === 0) {
+                                api.source = xhr.responseText.replace(/\r\n/g, "\n");
+                                if (pd.o.dd === null || pd.o.dd.checked === false || (requestd === true && completed === true)) {
+                                    output = pd.application(api);
+                                    execOutput();
+                                    return;
+                                }
+                                completes = true;
+                            } else {
+                                api.source = "Error: transmission failure receiving source code from address.";
+                            }
+                        }
+                    };
+                    xhr.open("GET", "proxy.php?x=" + api.source.replace(/(\s*)$/, "").replace(/%26/g, "&").replace(/%3F/, "?"), true);
                     xhr.send();
-                    if (xhr.status === 200 || xhr.status === 0) {
-                        api.source = xhr.responseText.replace(/\r\n/g, "\n");
-                    }
                 }
             }());
         }
-
-        //this is where prettydiff is executed
-        if (typeof prettydiff !== "function") {
-            if (pd.application === undefined) {
-                output = ["The application code is missing or is an unsupported type.", "The application code is missing or is an unsupported type."];
-                api.mode = "beautify";
-            } else {
-                output[0] = pd.application(api);
-                if (typeof summary === "string" && summary.length > 20) {
-                    output[1] = summary;
-                } else {
-                    output[1] = "";
-                }
-            }
-        } else {
+        if (requests === false && requestd === false) {
             output = pd.application(api);
-        }
-        pd.o.zindex += 1;
-        if (api.mode === "beautify") {
-            if (pd.o.bx !== null) {
-                pd.o.bx.value = output[0];
-            }
-            if (output[1].length > 125000) {
-                pd.o.filled.rg = true;
-            } else {
-                pd.o.filled.rg = false;
-            }
-            if (output[1] !== "" && pd.o.rg !== null && pd.o.sh !== null && pd.o.sh.innerHTML.replace(/\s+/g, " ") === "Maximize Inputs") {
-                pd.o.rh.innerHTML = output[1];
-                pd.o.rg.style.zIndex = pd.o.zindex;
-                pd.o.rg.style.display = "block";
-            }
-            if (api.jsscope === true && pd.o.rg !== null && (api.lang === "auto" || api.lang === "javascript")) {
-                if (api.lang === "auto") {
-                    c = output[1].split("Presumed language is <em>")[1];
-                    c = c.substring(0, c.indexOf("</em>"));
-                }
-                if (c === "JavaScript" || api.lang === "javascript") {
-                    pd.top(pd.o.rg);
-                    pd.o.rg.style.display = "block";
-                    parent = pd.o.rg.getElementsByTagName("p")[0];
-                    if (parent.innerHTML.indexOf("pd.save") === -1) {
-                        if (parent.style === undefined || parent.style.display === "block") {
-                            h3 = pd.o.rg.getElementsByTagName("h3")[0].style.width;
-                            pd.o.rg.getElementsByTagName("h3")[0].style.width = (Number(h3.substr(0, h3.length - 2)) - 3) + "em";
-                        }
-                        if (pd.o.rg !== null && (pd.o.agent.indexOf("firefox") > -1 || pd.o.agent.indexOf("opera") > -1)) {
-                            button = document.createElement("a");
-                            button.setAttribute("href", "#");
-                            button.setAttribute("onclick", "pd.save(this);");
-                            button.innerHTML = "<button class='save' title='Save output.'>S</button>";
-                        } else {
-                            button = document.createElement("button");
-                            button.setAttribute("class", "save");
-                            button.setAttribute("onclick", "pd.save(this);");
-                            button.setAttribute("title", "Save output.");
-                            button.innerHTML = "S";
-                        }
-                        parent.insertBefore(button, parent.firstChild);
-                    }
-                    if (pd.o.rg.getElementsByTagName("p")[0].style.display === "none") {
-                        pd.minimize(null, pd.o.rg.getElementsByTagName("button")[1], 1);
-                    }
-                    pd.o.rg.style.right = "auto";
-                    pd.beaurows[0] = pd.o.rg.getElementsByTagName("ol")[0].getElementsByTagName("li");
-                    pd.beaurows[1] = pd.o.rg.getElementsByTagName("ol")[1].getElementsByTagName("li");
-                } else {
-                    if (pd.o.rg.getElementsByTagName("p")[0].innerHTML.indexOf("pd.save") > -1) {
-                        if (parent.style === undefined || parent.style.display === "block") {
-                            h3 = pd.o.rg.getElementsByTagName("h3")[0].style.width;
-                            pd.o.rg.getElementsByTagName("h3")[0].style.width = (Number(h3.substr(0, h3.length - 2)) + 3) + "em";
-                        }
-                        pd.o.rg.getElementsByTagName("p")[0].removeChild(pd.o.rg.getElementsByTagName("p")[0].firstChild);
-                    }
-                    pd.beaurows = [];
-                }
-            } else {
-                if (pd.o.rg.getElementsByTagName("p")[0].innerHTML.indexOf("pd.save") > -1) {
-                    if (parent.style === undefined || parent.style.display === "block") {
-                        h3 = pd.o.rg.getElementsByTagName("h3")[0].style.width;
-                        pd.o.rg.getElementsByTagName("h3")[0].style.width = (Number(h3.substr(0, h3.length - 2)) + 3) + "em";
-                    }
-                    pd.o.rg.getElementsByTagName("p")[0].removeChild(pd.o.rg.getElementsByTagName("p")[0].firstChild);
-                }
-                pd.beaurows = [];
-            }
-            if (pd.ls === true) {
-                pd.o.stat.beau += 1;
-                if (pd.o.stbeau !== null) {
-                    pd.o.stbeau.innerHTML = pd.o.stat.beau;
-                }
-            }
-        } else if (api.mode === "diff" && pd.o.re !== null) {
-            if (output[0].length > 125000) {
-                pd.o.filled.re = true;
-            } else {
-                pd.o.filled.rg = false;
-            }
-            if (/^(<p><strong>Error:<\/strong> Please try using the option labeled ((&lt;)|<)em((&gt;)|>)Plain Text \(diff only\)((&lt;)|<)\/em((&gt;)|>)\.)/.test(output[0])) {
-                pd.o.rf.innerHTML = "<p><strong>Error:</strong> Please try using the option labeled <em>Plain Text (diff only)</em>. <span style='display:block'>The input does not appear to be markup, CSS, or JavaScript.</span></p>";
-            } else if (pd.o.ps !== null && pd.o.ps.checked) {
-                output[2] = output[1] + "<p>This is the generated diff output. Please copy the text output, paste into a text file, and save as a &quot;.html&quot; file.</p><textarea rows='40' cols='80' id='textreport'>";
-                output[0] = "<?xml version='1.0' encoding='UTF-8' ?><!DOCTYPE html PUBLIC '-//W3C//DTD XHTML 1.1//EN' 'http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd'><html xmlns='http://www.w3.org/1999/xhtml' xml:lang='en'><head><title>Pretty Diff - The difference tool</title><meta name='robots' content='index, follow'/> <meta name='DC.title' content='Pretty Diff - The difference tool'/> <link rel='canonical' href='http://prettydiff.com/' type='application/xhtml+xml'/><meta http-equiv='Content-Type' content='application/xhtml+xml;charset=UTF-8'/><meta http-equiv='Content-Style-Type' content='text/css'/><style type='text/css'>" + pd.o.css.core + pd.o.css["s" + pd.o.color] + "</style></head><body class='" + pd.o.color + "'><h1><a href='http://prettydiff.com/'>Pretty Diff - The difference tool</a></h1>" + output[1] + "<p>Accessibility note. &lt;em&gt; tags in the output represent character differences per lines compared.</p>" + output[0] + "</body></html>";
-                pd.o.rf.innerHTML = output[2] + output[0].replace(/\&/g, "&amp;").replace(/>/g, "&gt;").replace(/</g, "&lt;") + "</textarea>";
-            } else {
-                pd.o.rf.innerHTML = output[1] + output[0];
-            }
-            if (pd.o.re !== null) {
-                pd.top(pd.o.re);
-                pd.o.re.style.display = "block";
-                if (pd.o.re.getElementsByTagName("p")[0].style.display === "none") {
-                    pd.minimize(null, pd.o.re.getElementsByTagName("button")[1], 1);
-                }
-                pd.o.re.style.right = "auto";
-            }
-            if (pd.ls === true) {
-                pd.o.stat.diff += 1;
-                pd.o.stdiff.innerHTML = pd.o.stat.diff;
-            }
-            if (api.diffview === "sidebyside" && pd.o.rf.innerHTML.toLowerCase().indexOf("<textarea") === -1 && pd.o.rf !== null) {
-                d = pd.o.rf.getElementsByTagName("ol");
-                if (d.length < 3 || d[0] === null || d[1] === null || d[2] === null) {
-                    pd.colSliderProperties = [
-                        0, 0, 0, 0, 0
-                    ];
-                } else {
-                    pd.colSliderProperties = [
-                        d[0].clientWidth, d[1].clientWidth, d[2].parentNode.clientWidth, d[2].parentNode.parentNode.clientWidth, d[2].parentNode.offsetLeft - d[2].parentNode.parentNode.offsetLeft
-                    ];
-                }
-            }
-        } else if (api.mode === "minify") {
-            if (output[0].length > 125000) {
-                pd.o.filled.ri = true;
-            } else {
-                pd.o.filled.ri = false;
-            }
-            if (pd.o.mx !== null) {
-                pd.o.mx.value = output[0];
-            }
-            if (output[1] !== "" && pd.o.ri !== null && pd.o.sh.innerHTML.replace(/\s+/g, " ") === "Maximize Inputs") {
-                pd.o.rj.innerHTML = output[1];
-                pd.o.ri.style.zIndex = pd.o.zindex;
-                pd.o.ri.style.display = "block";
-            }
-            if (pd.ls === true) {
-                pd.o.stat.minn += 1;
-                if (pd.o.stminn !== null) {
-                    pd.o.stminn.innerHTML = pd.o.stat.minn;
-                }
-            }
-        }
-        if (pd.ls === true) {
-            (function dom__recycle_storage() {
-                var stat = [],
-                    lang = "",
-                    lango = {},
-                    langv = (pd.o.la === null) ? "javascript" : (pd.o.la.nodeName === "select") ? pd.o.la[pd.o.la.selectedIndex].value : pd.o.la.value,
-                    size = 0,
-                    codesize = 0;
-                if (api.mode === "beautify") {
-                    codesize = api.source.length + pd.o.slength.mi + pd.o.slength.bo + pd.o.slength.nx;
-                    if (api.source.length < 2096000 && codesize < 4800000) {
-                        localStorage.setItem("bi", api.source);
-                        pd.o.slength.bi = api.source.length;
-                    } else {
-                        localStorage.setItem("bi", "");
-                        pd.o.slength.bi = 0;
-                    }
-                } else if (api.mode === "minify") {
-                    codesize = pd.o.slength.bi + api.source.length + pd.o.slength.bo + pd.o.slength.nx;
-                    if (api.source.length < 2096000 && codesize < 4800000) {
-                        localStorage.setItem("mi", api.source);
-                        pd.o.slength.mi = api.source.length;
-                    } else {
-                        localStorage.setItem("mi", "");
-                        pd.o.slength.mi = 0;
-                    }
-                } else if (api.mode === "diff") {
-                    codesize = pd.o.slength.bi + pd.o.slength.mi + api.source.length + api.diff.length;
-                    if (api.source.length < 2096000 && api.diff.length < 2096000 && codesize < 4800000) {
-                        localStorage.setItem("bo", api.source);
-                        localStorage.setItem("nx", api.diff);
-                        localStorage.setItem("bl", api.sourcelabel);
-                        localStorage.setItem("nl", api.difflabel);
-                        pd.o.slength.bo = api.source.length;
-                        pd.o.slength.nx = api.diff.length;
-                    } else {
-                        localStorage.setItem("bo", "");
-                        localStorage.setItem("nx", "");
-                        localStorage.setItem("bl", "");
-                        localStorage.setItem("nl", "");
-                        pd.o.slength.bo = 0;
-                        pd.o.slength.nx = 0;
-                    }
-                }
-                if (langv === "auto" && typeof output[1] === "string") {
-                    lango = (/Language set to <strong>auto<\/strong>\. Presumed language is <em>\w+<\/em>\./).exec(output[1]);
-                    if (lango !== null) {
-                        lang = lango.toString();
-                        lang = lang.substring(lang.indexOf("<em>") + 4, lang.indexOf("</em>"));
-                        if (lang === "JavaScript" || lang === "JSON") {
-                            pd.o.stat.js += 1;
-                            if (pd.o.stjs !== null) {
-                                pd.o.stjs.innerHTML = pd.o.stat.js;
-                            }
-                        } else if (lang === "CSS") {
-                            pd.o.stat.css += 1;
-                            if (pd.o.stcss !== null) {
-                                pd.o.stcss.innerHTML = pd.o.stat.css;
-                            }
-                        } else if (lang === "HTML" || lang === "markup") {
-                            pd.o.stat.markup += 1;
-                            if (pd.o.stmarkup !== null) {
-                                pd.o.stmarkup.innerHTML = pd.o.stat.markup;
-                            }
-                        }
-                    }
-                } else if (langv === "csv") {
-                    pd.o.stat.csv += 1;
-                    if (pd.o.stcsv) {
-                        pd.o.stcsv.innerHTML = pd.o.stat.csv;
-                    }
-                } else if (langv === "text") {
-                    pd.o.stat.text += 1;
-                    if (pd.o.sttext !== null) {
-                        pd.o.sttext.innerHTML = pd.o.stat.text;
-                    }
-                } else if (langv === "javascript") {
-                    pd.o.stat.js += 1;
-                    if (pd.o.stjs !== null) {
-                        pd.o.stjs.innerHTML = pd.o.stat.js;
-                    }
-                } else if (langv === "markup" || langv === "html") {
-                    pd.o.stat.markup += 1;
-                    if (pd.o.stmarkup !== null) {
-                        pd.o.stmarkup.innerHTML = pd.o.stat.markup;
-                    }
-                } else if (langv === "css") {
-                    pd.o.stat.css += 1;
-                    if (pd.o.stcss !== null) {
-                        pd.o.stcss.innerHTML = pd.o.stat.css;
-                    }
-                }
-                if (api.mode === "diff" && api.diff.length > api.source.length) {
-                    size = api.diff.length;
-                } else {
-                    size = api.source.length;
-                }
-                if (size > pd.o.stat.large) {
-                    pd.o.stat.large = size;
-                    if (pd.o.stlarge !== null) {
-                        pd.o.stlarge.innerHTML = size;
-                    }
-                }
-                stat.push(pd.o.stat.visit);
-                stat.push(pd.o.stat.usage);
-                stat.push(pd.o.stat.fdate);
-                stat.push(pd.o.stat.avday);
-                stat.push(pd.o.stat.diff);
-                stat.push(pd.o.stat.beau);
-                stat.push(pd.o.stat.minn);
-                stat.push(pd.o.stat.markup);
-                stat.push(pd.o.stat.js);
-                stat.push(pd.o.stat.css);
-                stat.push(pd.o.stat.csv);
-                stat.push(pd.o.stat.text);
-                stat.push(pd.o.stat.large);
-                stat.push(pd.o.stat.pdate);
-                localStorage.setItem("statdata", stat.join("|"));
-            }());
+            execOutput();
         }
     };
 
@@ -4473,7 +4496,7 @@ pd.webtool = [];
         }
     }());
 }());
-if (!(/^(file:\/\/)/).test(location.href)) {
+if ((/^(file:\/\/)/).test(location.href) === false) {
     _gaq.push([
         "_setAccount", "UA-27834630-1"
     ]);

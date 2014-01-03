@@ -1865,6 +1865,10 @@ var prettydiff = function prettydiff(api) {
                             chars: 0
                         },
                         semicolon   : 0,
+                        server      : {
+                            token: 0,
+                            chars: 0
+                        },
                         space       : {
                             newline: 0,
                             other  : 0,
@@ -2565,7 +2569,7 @@ var prettydiff = function prettydiff(api) {
                             }
                             types.push("end");
                         },
-                        generic      = function jspretty__tokenize_genericBuilder(start, offset, ending) {
+                        generic      = function jspretty__tokenize_genericBuilder(start, ending) {
                             var ee       = 0,
                                 f        = 0,
                                 g        = 0,
@@ -2575,7 +2579,7 @@ var prettydiff = function prettydiff(api) {
                                 exittest = false,
                                 build    = [start],
                                 rtest    = (end[0] === "\r") ? true : false,
-                                base     = a + offset,
+                                base     = a + start.length,
                                 output   = "",
                                 escape   = false;
                             if (c[a - 2] !== "\\" && c[a - 1] === "\\" && (c[a] === "\"" || c[a] === "'")) {
@@ -2890,8 +2894,29 @@ var prettydiff = function prettydiff(api) {
                         lengtha = token.length;
                         if ((/\s/).test(c[a])) {
                             space();
+                        } else if (c[a] === "<" && c[a + 1] === "?" && c[a + 2] === "p" && c[a + 3] === "h" && c[a + 4] === "p") {
+                            ltoke              = generic("<?php", "?>");
+                            ltype              = "literal";
+                            stats.server.token += 1;
+                            stats.server.chars += ltoke.length;
+                            token.push(ltoke);
+                            types.push(ltype);
+                        } else if (c[a] === "<" && c[a + 1] === "%") {
+                            ltoke              = generic("<%", "%>");
+                            ltype              = "literal";
+                            stats.server.token += 1;
+                            stats.server.chars += ltoke.length;
+                            token.push(ltoke);
+                            types.push(ltype);
+                        } else if (c[a] === "<" && c[a + 1] === "!" && c[a + 2] === "-" && c[a + 3] === "-" && c[a + 4] === "#") {
+                            ltoke              = generic("<!--#", "--\u003e");
+                            ltype              = "literal";
+                            stats.server.token += 1;
+                            stats.server.chars += ltoke.length;
+                            token.push(ltoke);
+                            types.push(ltype);
                         } else if (c[a] === "/" && (a === b - 1 || c[a + 1] === "*")) {
-                            ltoke                    = generic("/*", 2, "*\/");
+                            ltoke                    = generic("/*", "*\/");
                             stats.commentBlock.token += 1;
                             stats.commentBlock.chars += ltoke.length;
                             if (jcomment !== "nocomment") {
@@ -2903,7 +2928,7 @@ var prettydiff = function prettydiff(api) {
                             if (jcomment !== "nocomment") {
                                 ltype = comtest();
                             }
-                            ltoke                   = generic("//", 2, "\r");
+                            ltoke                   = generic("//", "\r");
                             stats.commentLine.token += 1;
                             stats.commentLine.chars += ltoke.length;
                             if (jcomment !== "nocomment") {
@@ -2918,7 +2943,7 @@ var prettydiff = function prettydiff(api) {
                             token.push(ltoke);
                             types.push(ltype);
                         } else if (c[a] === "\"") {
-                            ltoke              = generic("\"", 1, "\"");
+                            ltoke              = generic("\"", "\"");
                             ltype              = "literal";
                             stats.string.token += 1;
                             stats.string.chars += ltoke.length - 2;
@@ -2926,7 +2951,7 @@ var prettydiff = function prettydiff(api) {
                             token.push(ltoke);
                             types.push(ltype);
                         } else if (c[a] === "'") {
-                            ltoke              = generic("'", 1, "'");
+                            ltoke              = generic("'", "'");
                             ltype              = "literal";
                             stats.string.token += 1;
                             stats.string.chars += ltoke.length - 2;
@@ -4906,8 +4931,8 @@ var prettydiff = function prettydiff(api) {
                             };
                         total.syntax.chars = total.syntax.token + stats.operator.chars;
                         total.syntax.token += stats.operator.token;
-                        total.token        = stats.word.token + total.comment.token + total.literal.token + total.space + total.syntax.token;
-                        total.chars        = stats.word.chars + total.comment.chars + total.literal.chars + total.space + total.syntax.chars;
+                        total.token        = stats.server.token + stats.word.token + total.comment.token + total.literal.token + total.space + total.syntax.token;
+                        total.chars        = stats.server.chars + stats.word.chars + total.comment.chars + total.literal.chars + total.space + total.syntax.chars;
                         if (newlines === 0) {
                             newlines = 1;
                         }
@@ -5151,7 +5176,7 @@ var prettydiff = function prettydiff(api) {
                         output.push("</td><td>100.00%</td><td>");
                         output.push(zero(total.syntax.chars, total.chars));
                         output.push("</td></tr>");
-                        output.push("<tr><th colspan='7'>Keywords and Variables</th></tr><tr><th>Word</th><td>");
+                        output.push("<tr><th colspan='7'>Keywords and Variables</th></tr><tr><th>Words</th><td>");
                         output.push(stats.word.token);
                         output.push("</td><td>100.00%</td><td>");
                         output.push(zero(stats.word.token, total.token));
@@ -5159,6 +5184,15 @@ var prettydiff = function prettydiff(api) {
                         output.push(stats.word.chars);
                         output.push("</td><td>100.00%</td><td>");
                         output.push(zero(stats.word.chars, total.chars));
+                        output.push("</td></tr>");
+                        output.push("<tr><th colspan='7'>Server-side Tags</th></tr><tr><th>Server Tags</th><td>");
+                        output.push(stats.server.token);
+                        output.push("</td><td>100.00%</td><td>");
+                        output.push(zero(stats.server.token, total.token));
+                        output.push("</td><td>");
+                        output.push(stats.server.chars);
+                        output.push("</td><td>100.00%</td><td>");
+                        output.push(zero(stats.server.chars, total.chars));
                         output.push("</td></tr></tbody></table></div>");
                         summary = output.join("");
                     }());
@@ -9305,13 +9339,13 @@ var prettydiff = function prettydiff(api) {
         diffview     : 140101, //diffview library
         documentation: 130814, //documentation.xhtml
         jsmin        : 131224, //jsmin library (fulljsmin.js)
-        jspretty     : 140101, //jspretty library
+        jspretty     : 140103, //jspretty library
         markup_beauty: 140101, //markup_beauty library
         markupmin    : 140101, //markupmin library
-        prettydiff   : 140101, //this file
+        prettydiff   : 140103, //this file
         webtool      : 131120, //prettydiff.com.xhtml
         api          : {
-            dom        : 140101,
+            dom        : 140103,
             nodeLocal  : 131224,
             nodeService: 121106, //no longer maintained
             wsh        : 130924
