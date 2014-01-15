@@ -74,40 +74,40 @@
             tool</h2>
             <div class="box" id="diffreport">
                 <p style="display:none" class="buttons">
-                    <a href="#" onclick="pd.save(this);"><button class="save" title="Convert diff report to text that can be saved.">S</button></a>
-                    <button class="minimize" onclick="pd.minimize(event, this);" title="Minimize this dialogue ">&uarr;</button>
-                    <button class="maximize" onclick="pd.maximize(this);" title="Maximize this dialogue to the browser window.">&uarr;</button>
-                    <button class="resize" onmousedown="pd.resize(event, this);" title="Resize this dialogue.">&harr;</button></p>
+                    <a href="#"><button class="save" title="Convert diff report to text that can be saved.">S</button></a>
+                    <button class="minimize" title="Minimize this dialogue ">&uarr;</button>
+                    <button class="maximize" title="Maximize this dialogue to the browser window.">&uarr;</button>
+                    <button class="resize" title="Resize this dialogue.">&harr;</button></p>
                 <h3 class="heading" title="Grab this title element to open this dialogue or move it around around the screen."><span>Diff
                     Report</span></h3>
-                <div class="body" id="diffreportbody" onclick="pd.top(this.parentNode);" style="display:none"></div>
+                <div class="body" id="diffreportbody" style="display:none" xml:space="preserve"></div>
             </div>
             <div class="box" id="beaureport">
                 <p style="display:none" class="buttons">
-                    <button class="minimize" onclick="pd.minimize(event, this);" title="Minimize this dialogue ">&uarr;</button>
-                    <button class="maximize" onclick="pd.maximize(this);" title="Maximize this dialogue to the browser window.">&uarr;</button>
-                    <button class="resize" onmousedown="pd.resize(event, this);" title="Resize this dialogue.">&harr;</button></p>
+                    <button class="minimize" title="Minimize this dialogue ">&uarr;</button>
+                    <button class="maximize" title="Maximize this dialogue to the browser window.">&uarr;</button>
+                    <button class="resize" title="Resize this dialogue.">&harr;</button></p>
                 <h3 class="heading" title="Grab this title element to open this dialogue or move it around the screen."><span>Beautify
                     Report</span></h3>
-                <div class="body" id="beaureportbody" onclick="pd.top(this.parentNode);" style="display:none"></div>
+                <div class="body" id="beaureportbody" style="display:none" xml:space="preserve"></div>
             </div>
-            <div class="box" id="minreport">
+            <div class="box" id="minnreport">
                 <p style="display:none" class="buttons">
-                    <button class="minimize" onclick="pd.minimize(event, this);" title="Minimize this dialogue ">&uarr;</button>
-                    <button class="maximize" onclick="pd.maximize(this);" title="Maximize this dialogue to the browser window.">&uarr;</button>
-                    <button class="resize" onmousedown="pd.resize(event, this);" title="Resize this dialogue.">&harr;</button></p>
+                    <button class="minimize" title="Minimize this dialogue ">&uarr;</button>
+                    <button class="maximize" title="Maximize this dialogue to the browser window.">&uarr;</button>
+                    <button class="resize" title="Resize this dialogue.">&harr;</button></p>
                 <h3 class="heading" title="Grab this title element to open this dialogue or move it around the screen."><span>Minify
                     Report</span></h3>
-                <div class="body" id="minreportbody" onclick="pd.top(this.parentNode);" style="display:none"></div>
+                <div class="body" id="minreportbody" style="display:none" xml:space="preserve"></div>
             </div>
             <div class="box" id="statreport">
                 <p style="display:none" class="buttons">
-                    <button class="minimize" onclick="pd.minimize(event, this);" title="Minimize this dialogue ">&uarr;</button>
-                    <button class="maximize" onclick="pd.maximize(this);" title="Maximize this dialogue to the browser window.">&uarr;</button>
-                    <button class="resize" onmousedown="pd.resize(event, this);" title="Resize this dialogue.">&harr;</button></p>
+                    <button class="minimize" title="Minimize this dialogue ">&uarr;</button>
+                    <button class="maximize" title="Maximize this dialogue to the browser window.">&uarr;</button>
+                    <button class="resize" title="Resize this dialogue.">&harr;</button></p>
                 <h3 class="heading" title="Grab this title element to open this dialogue or move it around the screen."><span>Usage
                     Statistics</span></h3>
-                <div class="body" id="statreportbody" onclick="pd.top(this.parentNode);" style="display:none">
+                <div class="body" id="statreportbody" style="display:none">
                     <div><h3>General statistics</h3>
                         <ul><li>Total number of visits:
                                 <strong id="stvisit">0</strong></li>
@@ -172,7 +172,7 @@
             </p>
             <p id="csvcharp" style="display:none;"><label class="label" for="csvchar">Character
                 Separator</label>
-                <input id="csvchar" onkeyup="pd.options(this);" title="If the language type is set to CSV this field will allow definition of the separating character. Please read the documentation for advanced usage." type="text" value=","/></p>
+                <input id="csvchar" title="If the language type is set to CSV this field will allow definition of the separating character. Please read the documentation for advanced usage." type="text" value=","/></p>
             <p><strong>Input display</strong>
                 <span>
                     <input checked="checked" id="difftall" name="diffdisplay" title="This option visually orients the base text field to the left of the new text field, or for beautify and minify modes orients the input field to the left of the output field." type="radio"/>
@@ -189,7 +189,7 @@
                     <input id="additional_yes" name="additional" title="Click me to show extra options and controls." type="radio"/>
                     <label for="additional_yes">Show additional options</label></span>
             </p>
-            <p><label class="label" for="option_comment">Pretty Diff Comment</label><textarea cols="30" id="option_comment" readonly="readonly" rows="2" title="This area contains a configuration string as a code comment. This string can be applied to the top of JavaScript and CSS code to supply instructions to the Pretty Diff tool without need to set options in the user interface.">/*prettydiff.com
+            <p><label class="label" for="option_comment">Pretty Diff Comment</label><textarea cols="30" id="option_comment" rows="2" title="This area contains a configuration string as a code comment. This string can be applied to the top of JavaScript and CSS code to supply instructions to the Pretty Diff tool without need to set options in the user interface.">/*prettydiff.com
                 */</textarea></p>
         </div>
         <div id="codeInput">
@@ -215,10 +215,10 @@
             </div>
             <div class="tall" id="Beautify" style="display:none;"><h2 title="The term pretty-print is synonymous with code beautification.">Beautify
                 Code</h2>
-                <p class="file"><input id="beautyfile" multiple="multiple" onchange="pd.file(this.files, this)" type="file"/>
+                <p class="file"><input id="beautyfile" multiple="multiple" type="file"/>
                     <label for="beautyfile">Beautify local file</label></p>
                 <p class="input"><label for="beautyinput">Beautification input</label>
-                    <textarea cols="80" id="beautyinput" onkeyup="pd.recycle(event);" rows="10" wrap="off"></textarea>
+                    <textarea cols="80" id="beautyinput" rows="10" wrap="off"></textarea>
                 </p>
                 <p class="output"><label class="outputlabel" for="beautyoutput">Beautification
                     output</label>
@@ -227,10 +227,10 @@
                 <span class="clear"></span>
             </div>
             <div class="tall" id="Minify" style="display:none;"><h2>Minify Code</h2>
-                <p class="file"><input id="minifyfile" multiple="multiple" onchange="pd.file(this.files, this)" type="file"/>
+                <p class="file"><input id="minifyfile" multiple="multiple" type="file"/>
                     <label for="minifyfile">Minify local file</label></p>
                 <p class="input"><label for="minifyinput">Minification input</label>
-                    <textarea cols="80" id="minifyinput" onkeyup="pd.recycle(event);" rows="10" wrap="off"></textarea>
+                    <textarea cols="80" id="minifyinput" rows="10" wrap="off"></textarea>
                 </p>
                 <p class="output"><label class="outputlabel" for="minifyoutput">Minification
                     output</label>
@@ -245,57 +245,57 @@
                 <fieldset><legend>Diff Report Options</legend>
                     <p><strong>Print or Save Output</strong>
                         <span>
-                            <input id="diff-save" onclick="pd.options(this);" title="A diff report formatting option. Checking this option returns plain text code of the diff report instead of parsed HTML. The intention here is to allow users to copy the text and paste it into a text editor in order to save down the diff report." type="checkbox"/>
+                            <input id="diff-save" title="A diff report formatting option. Checking this option returns plain text code of the diff report instead of parsed HTML. The intention here is to allow users to copy the text and paste it into a text editor in order to save down the diff report." type="checkbox"/>
                             <label for="diff-save">&mdash; Generates HTML report as raw text inside
                                 a text area.</label></span>
                     </p>
                     <p><label class="label" for="contextSize">Context size
                         (optional)</label>
                         <span>
-                            <input id="contextSize" onkeyup="pd.options(this);" title="A diff report formatting option. If the value is empty or, not 0, or not a positive integer then a diff is generated showing the entirety of the code samples. If the value is 0 or a positive integer then this value dictates how many 'equal' lines of code will display in the report between lines with differences." type="text" value=""/>
+                            <input id="contextSize" title="A diff report formatting option. If the value is empty or, not 0, or not a positive integer then a diff is generated showing the entirety of the code samples. If the value is 0 or a positive integer then this value dictates how many 'equal' lines of code will display in the report between lines with differences." type="text" value=""/>
                             <label for="contextSize">&mdash; This sets number of lines of code to
                                 pad the differences.</label></span>
                     </p>
                     <p><strong>Diff View Type</strong>
                         <span>
-                            <input checked="checked" id="sidebyside" name="_viewtype" onclick="pd.options(this);" title="This diff report option determines whether the diff report will show a table with columns for each code sample for a left and right comparison." type="radio"/>
+                            <input checked="checked" id="sidebyside" name="_viewtype" title="This diff report option determines whether the diff report will show a table with columns for each code sample for a left and right comparison." type="radio"/>
                             <label for="sidebyside">Side by Side View</label></span>
                         <span>
-                            <input id="inline" name="_viewtype" onclick="pd.options(this);" title="This diff option will generate a diff report with only one column and two rows dedicated to each different line of code." type="radio"/>
+                            <input id="inline" name="_viewtype" title="This diff option will generate a diff report with only one column and two rows dedicated to each different line of code." type="radio"/>
                             <label for="inline">Inline View</label></span>
                     </p>
                 </fieldset>
                 <fieldset><legend>Difference Reduction Options</legend>
                     <p><strong>Diff Quotes</strong>
                         <span>
-                            <input checked="checked" id="diffquotey" name="diffquote" onclick="pd.options(this);" title="This option will report single quote characters and double quote characters as differences." type="radio"/><label for="diffquotey">Diff
+                            <input checked="checked" id="diffquotey" name="diffquote" title="This option will report single quote characters and double quote characters as differences." type="radio"/><label for="diffquotey">Diff
                             Quotes Literally</label></span>
                         <span>
-                            <input id="diffquoten" name="diffquote" onclick="pd.options(this);" title="This option will convert all single quote characters to double quote characters so as to reduce the number of total code differences from the diff report." type="radio"/><label for="diffquoten">Normalize
+                            <input id="diffquoten" name="diffquote" title="This option will convert all single quote characters to double quote characters so as to reduce the number of total code differences from the diff report." type="radio"/><label for="diffquoten">Normalize
                             Single Quote Characters to Double Quote Characters</label></span>
                     </p>
                     <p><strong>Trailing Semicolons</strong>
                         <span>
-                            <input checked="checked" id="diffscolony" name="diffscolon" onclick="pd.options(this);" title="This option will prevent the tool from removing semicolons at the end of lines of code so as to preserve the integrity of the code samples in the diff report." type="radio"/><label for="diffscolony">Diff
+                            <input checked="checked" id="diffscolony" name="diffscolon" title="This option will prevent the tool from removing semicolons at the end of lines of code so as to preserve the integrity of the code samples in the diff report." type="radio"/><label for="diffscolony">Diff
                             Semicolons</label></span>
                         <span>
-                            <input id="diffscolonn" name="diffscolon" onclick="pd.options(this);" title="This option will remove all trailing semicolons so as to reduce the number of potential differences from the diff report." type="radio"/><label for="diffscolonn">Remove
+                            <input id="diffscolonn" name="diffscolon" title="This option will remove all trailing semicolons so as to reduce the number of potential differences from the diff report." type="radio"/><label for="diffscolonn">Remove
                             Trailing Semicolons</label></span>
                     </p>
                     <p><strong>Code Comments</strong>
                         <span>
-                            <input checked="checked" id="diffcommentsn" name="diffcomments" onclick="pd.options(this);" title="This option will remove all code comments from the diff analysis. This effect of this option can be partially overridden when selecting the option 'Preserve HTML conditional comments' for HTML." type="radio"/><label for="diffcommentsn">Remove
+                            <input checked="checked" id="diffcommentsn" name="diffcomments" title="This option will remove all code comments from the diff analysis. This effect of this option can be partially overridden when selecting the option 'Preserve HTML conditional comments' for HTML." type="radio"/><label for="diffcommentsn">Remove
                             Code Comments</label></span>
                         <span>
-                            <input id="diffcommentsy" name="diffcomments" onclick="pd.options(this);" title="This option will allow comparison of all comments and code." type="radio"/><label for="diffcommentsy">Compare
+                            <input id="diffcommentsy" name="diffcomments" title="This option will allow comparison of all comments and code." type="radio"/><label for="diffcommentsy">Compare
                             Code and Comments</label></span>
                     </p>
                     <p><strong>Ignore Content (Markup / JavaScript)</strong>
                         <span>
-                            <input checked="checked" id="diffcontenty" name="diffcontent" onclick="pd.options(this);" title="This option maintains document integrity with regard to markup content and JavaScript string contents." type="radio"/>
+                            <input checked="checked" id="diffcontenty" name="diffcontent" title="This option maintains document integrity with regard to markup content and JavaScript string contents." type="radio"/>
                             <label for="diffcontenty">Diff Content Literally</label></span>
                         <span>
-                            <input id="diffcontentn" name="diffcontent" onclick="pd.options(this);" title="This option removes content from markup or string contents from JavaScript so as to allow comparison of syntax only." type="radio"/>
+                            <input id="diffcontentn" name="diffcontent" title="This option removes content from markup or string contents from JavaScript so as to allow comparison of syntax only." type="radio"/>
                             <label for="diffcontentn">Normalize Content and String Literals</label></span>
                     </p>
                 </fieldset>
@@ -303,85 +303,85 @@
                     <p id="diffquanp"><label class="label" for="diff-quan">Indentation
                         Size</label>
                         <span>
-                            <input id="diff-quan" onkeyup="pd.options(this);" title="This text field expects a value of 0 or a positive integer. The number provided dictates how many characters constitute a single indentation of formatted code." type="text" value="4"/>
+                            <input id="diff-quan" title="This text field expects a value of 0 or a positive integer. The number provided dictates how many characters constitute a single indentation of formatted code." type="text" value="4"/>
                         </span>
                     </p>
                     <p id="difftypep"><label class="label" for="diff-char">Indentation
                         Character</label>
                         <span>
-                            <input class="unchecked" id="diff-char" onclick="pd.indentchar(this);" onkeyup="pd.options(this);" title="Accessibility Note:In order for this field to be accepted by the application the radio button labeled 'Indent with Other Characters' must be checked. This text field allows entry of any text characters to constitute indentation." type="text" value="Click me for custom input"/>
+                            <input class="unchecked" id="diff-char" title="Accessibility Note:In order for this field to be accepted by the application the radio button labeled 'Indent with Other Characters' must be checked. This text field allows entry of any text characters to constitute indentation." type="text" value="Click me for custom input"/>
                         </span>
                         <span id="diff-other-span">
-                            <input id="diff-other" name="diffchar" onclick="pd.indentchar(this);" title="This option is only provided for functional reasons so as to enable the 'diff-char' text field and ignore its peer radio buttons from the application." type="radio"/>
+                            <input id="diff-other" name="diffchar" title="This option is only provided for functional reasons so as to enable the 'diff-char' text field and ignore its peer radio buttons from the application." type="radio"/>
                             <label for="diff-other">Indent with Other Characters</label></span>
                         <span>
-                            <input checked="checked" id="diff-space" name="diffchar" onclick="pd.indentchar(this);" title="This option indicates a space character will be the character of indentation." type="radio"/>
+                            <input checked="checked" id="diff-space" name="diffchar" title="This option indicates a space character will be the character of indentation." type="radio"/>
                             <label for="diff-space">Indent Space</label></span>
                         <span>
-                            <input id="diff-tab" name="diffchar" onclick="pd.indentchar(this);" title="This option makes a tab character the character of indentation." type="radio"/>
+                            <input id="diff-tab" name="diffchar" title="This option makes a tab character the character of indentation." type="radio"/>
                             <label for="diff-tab">Indent Tab</label></span>
                         <span>
-                            <input id="diff-line" name="diffchar" onclick="pd.indentchar(this);" title="This option makes a new line character the character of indentation." type="radio"/>
+                            <input id="diff-line" name="diffchar" title="This option makes a new line character the character of indentation." type="radio"/>
                             <label for="diff-line">Indent New Line</label></span>
                     </p>
                     <p><label class="label" for="diff-wrap">Wrap Text (Markup Only)</label>
                         <span>
-                            <input id="diff-wrap" onkeyup="pd.options(this);" title="Determines how long text can be before wrapping. Use a value of 0 to eliminate wrapping." type="text" value="72"/></span></p>
+                            <input id="diff-wrap" title="Determines how long text can be before wrapping. Use a value of 0 to eliminate wrapping." type="text" value="72"/></span></p>
                     <p><strong>Style of Indent (JavaScript Only)</strong>
                         <span>
-                            <input checked="checked" id="jsindentd-knr" name="jsindentdiff" onclick="pd.options(this);" title="This JavaScript only option sets opening curly braces at the end of the current line of code." type="radio"/>
+                            <input checked="checked" id="jsindentd-knr" name="jsindentdiff" title="This JavaScript only option sets opening curly braces at the end of the current line of code." type="radio"/>
                             <label for="jsindentd-knr">K&amp;R Style</label></span>
                         <span>
-                            <input id="jsindentd-all" name="jsindentdiff" onclick="pd.options(this);" title="This JavaScript only option moves opening curly braces onto a new line for visibility of brace contents apart from other code." type="radio"/>
+                            <input id="jsindentd-all" name="jsindentdiff" title="This JavaScript only option moves opening curly braces onto a new line for visibility of brace contents apart from other code." type="radio"/>
                             <label for="jsindentd-all">Allman (ANSI) Style &mdash; Sets opening
                                 curly braces on a new line.</label></span>
                     </p>
                     <p><strong>Indent Style/Script (Markup Only)</strong>
                         <span>
-                            <input checked="checked" id="inscriptd-yes" name="inscriptd" onclick="pd.options(this);" title="This markup only option sets the baseline for script and style definition from the identation point of the opening markup tag plus one indentation step." type="radio"/>
+                            <input checked="checked" id="inscriptd-yes" name="inscriptd" title="This markup only option sets the baseline for script and style definition from the identation point of the opening markup tag plus one indentation step." type="radio"/>
                             <label for="inscriptd-yes">Indent to Markup</label></span>
                         <span>
-                            <input id="inscriptd-no" name="inscriptd" onclick="pd.options(this);" title="This option sets the indentation baseline for script and style code to 0 regardless of surrounding markup." type="radio"/>
+                            <input id="inscriptd-no" name="inscriptd" title="This option sets the indentation baseline for script and style code to 0 regardless of surrounding markup." type="radio"/>
                             <label for="inscriptd-no">Indent Style/Script Independently</label></span>
                     </p>
                     <p><strong>Presume HTML (Markup Only)</strong>
                         <span>
-                            <input checked="checked" id="htmld-no" name="presumehtmld" onclick="pd.options(this);" title="Use this option to ignore HTML specific vocabulary and instead focus purely on syntax." type="radio"/>
+                            <input checked="checked" id="htmld-no" name="presumehtmld" title="Use this option to ignore HTML specific vocabulary and instead focus purely on syntax." type="radio"/>
                             <label for="htmld-no">Strict XML syntax</label></span>
                         <span>
-                            <input id="htmld-yes" name="presumehtmld" onclick="pd.options(this);" title="This option determines whether HTML tags like &lt;br&gt; and lt;hr&gt; should be evaluated as singletons, such as &lt;br/&gt; and lt;hr/&gt;." type="radio"/>
+                            <input id="htmld-yes" name="presumehtmld" title="This option determines whether HTML tags like &lt;br&gt; and lt;hr&gt; should be evaluated as singletons, such as &lt;br/&gt; and lt;hr/&gt;." type="radio"/>
                             <label for="htmld-yes">Tolerate HTML foolishness</label></span>
                     </p>
                     <p><strong>IE Comments (HTML Only)</strong>
                         <span>
-                            <input checked="checked" id="conditionald-no" name="conditionald" onclick="pd.options(this);" title="Use this option to remove HTML contitional comments used by Internet Explorer." type="radio"/>
+                            <input checked="checked" id="conditionald-no" name="conditionald" title="Use this option to remove HTML contitional comments used by Internet Explorer." type="radio"/>
                             <label for="conditionald-no">Remove all comments</label></span>
                         <span>
-                            <input id="conditionald-yes" name="conditionald" onclick="pd.options(this);" title="Use this option to keep HTML contitional comments used by Internet Explorer." type="radio"/>
+                            <input id="conditionald-yes" name="conditionald" title="Use this option to keep HTML contitional comments used by Internet Explorer." type="radio"/>
                             <label for="conditionald-yes">Preserve HTML conditional comments</label></span>
                     </p>
                     <p><strong>Force Indentation (Markup Only)</strong>
                         <span>
-                            <input checked="checked" id="dforce_indent-no" name="dforce_indent" onclick="pd.options(this);" title="This markup only option maintains document integrity with regard to indentation that would create text nodes adjacent to content that did not exist before." type="radio"/>
+                            <input checked="checked" id="dforce_indent-no" name="dforce_indent" title="This markup only option maintains document integrity with regard to indentation that would create text nodes adjacent to content that did not exist before." type="radio"/>
                             <label for="dforce_indent-no">Maintain Code Integrity</label></span>
                         <span>
-                            <input id="dforce_indent-yes" name="dforce_indent" onclick="pd.options(this);" title="This markup only option forces indentation for all content and elements without regard for integrity of document structure or content." type="radio"/><label for="dforce_indent-yes">Always
+                            <input id="dforce_indent-yes" name="dforce_indent" title="This markup only option forces indentation for all content and elements without regard for integrity of document structure or content." type="radio"/><label for="dforce_indent-yes">Always
                                 Force Indentation</label></span>
                     </p>
                     <p><strong>Function Space (JavaScript Only)</strong>
                         <span>
-                            <input checked="checked" id="jsspaced-yes" name="jsspaced" onclick="pd.options(this);" title="This JavaScript only option retains a single space between the 'function' keyword and the opening parenthesis character of anonymous functions." type="radio"/>
+                            <input checked="checked" id="jsspaced-yes" name="jsspaced" title="This JavaScript only option retains a single space between the 'function' keyword and the opening parenthesis character of anonymous functions." type="radio"/>
                             <label for="jsspaced-yes">Retain Function Space</label></span>
                         <span>
-                            <input id="jsspaced-no" name="jsspaced" onclick="pd.options(this);" title="This JavaScript only option removes a single space between the 'function' keyword and the opening parenthesis character of anonymous functions." type="radio"/>
+                            <input id="jsspaced-no" name="jsspaced" title="This JavaScript only option removes a single space between the 'function' keyword and the opening parenthesis character of anonymous functions." type="radio"/>
                             <label for="jsspaced-no">Remove Space Following Function</label></span>
                     </p>
                     <p><strong>Empty Lines (JavaScript Only)</strong>
                         <span>
-                            <input checked="checked" id="jslinesd-yes" name="jslinesd" onclick="pd.options(this);" title="This JavaScript only option retains a single empty line for each series of empty lines of code input." type="radio"/>
-                            <label for="jslinesd-yes">Remove Empty Lines</label></span>
+                            <input checked="checked" id="jslinesd-yes" name="jslinesd" title="This JavaScript only option retains a single empty line for each series of empty lines of code input." type="radio"/>
+                            <label for="jslinesd-yes">Preserve Empty Lines</label></span>
                         <span>
-                            <input id="jslinesd-no" name="jslinesd" onclick="pd.options(this);" title="This JavaScript only option removes all empty lines." type="radio"/>
+                            <input id="jslinesd-no" name="jslinesd" title="This JavaScript only option removes all empty lines." type="radio"/>
                             <label for="jslinesd-no">Remove Empty Lines</label></span>
                     </p>
                 </fieldset>
@@ -404,7 +404,7 @@
                             <input class="unchecked" id="beau-char" title="Accessibility Note:In order for this field to be accepted by the application the radio button labeled 'Indent with Other Characters' must be checked. This text field allows entry of any text characters to constitute indentation." type="text" value="Click me for custom input"/>
                         </span>
                         <span id="beau-other-span">
-                            <input id="beau-other" name="beauchar" onclick="pd.indentchar(this);" title="This option is only provided for functional reasons so as to enable the 'beau-char' text field and ignore its peer radio buttons from the application." type="radio"/>
+                            <input id="beau-other" name="beauchar" title="This option is only provided for functional reasons so as to enable the 'beau-char' text field and ignore its peer radio buttons from the application." type="radio"/>
                             <label for="beau-other">Indent with Other Characters</label></span>
                         <span>
                             <input checked="checked" id="beau-space" name="beauchar" title="This option indicates a space character will be the character of indentation." type="radio"/>
@@ -420,10 +420,10 @@
                 <fieldset><legend>Advanced Options</legend>
                     <p><label class="label" for="beau-wrap">Wrap Text (Markup Only)</label>
                         <span>
-                            <input id="beau-wrap" onkeyup="pd.options(this);" title="Determines how long text can be before wrapping. Use a value of 0 to eliminate wrapping." type="text" value="72"/></span></p>
+                            <input id="beau-wrap" title="Determines how long text can be before wrapping. Use a value of 0 to eliminate wrapping." type="text" value="72"/></span></p>
                     <p><strong>Scope Analysis (JavaScript Only)</strong>
                         <span>
-                            <input checked="checked" id="jsscope-no" name="jsscope" onclick="pd.options(this);" title="This option will causes standard text beautification for JavaScript" type="radio"/>
+                            <input checked="checked" id="jsscope-no" name="jsscope" title="This option will causes standard text beautification for JavaScript" type="radio"/>
                             <label for="jsscope-no">Standard Beautification</label></span>
                         <span>
                             <input id="jsscope-yes" name="jsscope" title="This option will display a colorful HTML output of the code that color codes variables to the scope they are declared so as to illustrate the nature of closure and inheritance." type="radio"/>
@@ -431,7 +431,7 @@
                     </p>
                     <p><strong>Indent Comments</strong>
                         <span>
-                            <input checked="checked" id="incomment-yes" name="incomment" onclick="pd.options(this);" title="This option will cause comments to be indented." type="radio"/>
+                            <input checked="checked" id="incomment-yes" name="incomment" title="This option will cause comments to be indented." type="radio"/>
                             <label for="incomment-yes">Indent Comments</label></span>
                         <span>
                             <input id="incomment-no" name="incomment" title="This option will force comments to the start of the line without the benefit of indentation." type="radio"/>
@@ -439,7 +439,7 @@
                     </p>
                     <p><strong>Style of Indent (JavaScript Only)</strong>
                         <span>
-                            <input checked="checked" id="jsindent-knr" name="jsindent" onclick="pd.options(this);" title="This JavaScript only option sets opening curly braces at the end of the current line of code." type="radio"/>
+                            <input checked="checked" id="jsindent-knr" name="jsindent" title="This JavaScript only option sets opening curly braces at the end of the current line of code." type="radio"/>
                             <label for="jsindent-knr">K&amp;R Style</label></span>
                         <span>
                             <input id="jsindent-all" name="jsindent" title="This JavaScript only option moves opening curly braces onto a new line for visibility of brace contents apart from other code." type="radio"/>
@@ -448,50 +448,50 @@
                     </p>
                     <p><strong>Indent Style/Script (Markup Only)</strong>
                         <span>
-                            <input checked="checked" id="inscript-yes" name="inscript" onclick="pd.options(this);" title="This markup only option sets the baseline for script and style definition from the identation point of the opening markup tag plus one indentation step." type="radio"/>
+                            <input checked="checked" id="inscript-yes" name="inscript" title="This markup only option sets the baseline for script and style definition from the identation point of the opening markup tag plus one indentation step." type="radio"/>
                             <label for="inscript-yes">Indent to Markup</label></span>
                         <span>
-                            <input id="inscript-no" name="inscript" onclick="pd.options(this);" title="This option sets the indentation baseline for script and style code to 0 regardless of surrounding markup." type="radio"/>
+                            <input id="inscript-no" name="inscript" title="This option sets the indentation baseline for script and style code to 0 regardless of surrounding markup." type="radio"/>
                             <label for="inscript-no">Indent Script/Style Independently</label></span>
                     </p>
                     <p><strong>Presume HTML (Markup Only)</strong>
                         <span>
-                            <input checked="checked" id="html-no" name="presumehtml" onclick="pd.options(this);" title="Use this option to ignore HTML specific vocabulary and instead focus purely on syntax." type="radio"/>
+                            <input checked="checked" id="html-no" name="presumehtml" title="Use this option to ignore HTML specific vocabulary and instead focus purely on syntax." type="radio"/>
                             <label for="html-no">Strict XML syntax</label></span>
                         <span>
-                            <input id="html-yes" name="presumehtml" onclick="pd.options(this);" title="This option determines whether HTML tags like &lt;br&gt; and lt;hr&gt; should be evaluated as singletons, such as &lt;br/&gt; and lt;hr/&gt;." type="radio"/>
+                            <input id="html-yes" name="presumehtml" title="This option determines whether HTML tags like &lt;br&gt; and lt;hr&gt; should be evaluated as singletons, such as &lt;br/&gt; and lt;hr/&gt;." type="radio"/>
                             <label for="html-yes">Tolerate HTML foolishness</label></span>
                     </p>
                     <p><strong>Force Indentation (Markup Only)</strong>
                         <span>
-                            <input checked="checked" id="bforce_indent-no" name="bforce_indent" onclick="pd.options(this);" title="This markup only option maintains document integrity with regard to indentation that would create text nodes adjacent to content that did not exist before." type="radio"/>
+                            <input checked="checked" id="bforce_indent-no" name="bforce_indent" title="This markup only option maintains document integrity with regard to indentation that would create text nodes adjacent to content that did not exist before." type="radio"/>
                             <label for="bforce_indent-no">Maintain Code Integrity</label></span>
                         <span>
-                            <input id="bforce_indent-yes" name="bforce_indent" onclick="pd.options(this);" title="This markup only option forces indentation for all content and elements without regard for integrity of document structure or content." type="radio"/><label for="bforce_indent-yes">Always
+                            <input id="bforce_indent-yes" name="bforce_indent" title="This markup only option forces indentation for all content and elements without regard for integrity of document structure or content." type="radio"/><label for="bforce_indent-yes">Always
                                 Force Indentation</label></span>
                     </p>
                     <p><strong>Function Space (JavaScript Only)</strong>
                         <span>
-                            <input checked="checked" id="jsspace-yes" name="jsspace" onclick="pd.options(this);" title="This JavaScript only option retains a single space between the 'function' keyword and the opening parenthesis character of anonymous functions." type="radio"/>
+                            <input checked="checked" id="jsspace-yes" name="jsspace" title="This JavaScript only option retains a single space between the 'function' keyword and the opening parenthesis character of anonymous functions." type="radio"/>
                             <label for="jsspace-yes">Retain Function Space</label></span>
                         <span>
-                            <input id="jsspace-no" name="jsspace" onclick="pd.options(this)" title="This JavaScript only option removes a single space between the 'function' keyword and the opening parenthesis character of anonymous functions." type="radio"/>
+                            <input id="jsspace-no" name="jsspace" title="This JavaScript only option removes a single space between the 'function' keyword and the opening parenthesis character of anonymous functions." type="radio"/>
                             <label for="jsspace-no">Remove Space Following Function</label></span>
                     </p>
                     <p><strong>Empty Lines (JavaScript Only)</strong>
                         <span>
-                            <input checked="checked" id="jslines-yes" name="jslines" onclick="pd.options(this);" title="This JavaScript only option retains a single empty line for each series of empty lines of code input." type="radio"/>
-                            <label for="jslines-yes">Remove Empty Lines</label></span>
+                            <input checked="checked" id="jslines-yes" name="jslines" title="This JavaScript only option retains a single empty line for each series of empty lines of code input." type="radio"/>
+                            <label for="jslines-yes">Preserve Empty Lines</label></span>
                         <span>
-                            <input id="jslines-no" name="jslines" onclick="pd.options(this)" title="This JavaScript only option removes all empty lines." type="radio"/>
+                            <input id="jslines-no" name="jslines" title="This JavaScript only option removes all empty lines." type="radio"/>
                             <label for="jslines-no">Remove Empty Lines</label></span>
                     </p>
                     <p><strong>Fix Sloppy Code (JavaScript Only)</strong>
                         <span>
-                            <input checked="checked" id="jscorrect-no" name="jscorrect" onclick="pd.options(this);" title="Do not alter or remove sloppy JavaScript code." type="radio"/>
+                            <input checked="checked" id="jscorrect-no" name="jscorrect" title="Do not alter or remove sloppy JavaScript code." type="radio"/>
                             <label for="jscorrect-no">Ignore Code Correction</label></span>
                         <span>
-                            <input id="jscorrect-yes" name="jscorrect" onclick="pd.options(this);" title="This JavaScript only option automatically converts some sloppy behaviors into known best practices." type="radio"/>
+                            <input id="jscorrect-yes" name="jscorrect" title="This JavaScript only option automatically converts some sloppy behaviors into known best practices." type="radio"/>
                             <label for="jscorrect-yes">Correct for Sloppiness</label></span>
                     </p>
                 </fieldset>
@@ -500,30 +500,30 @@
                 Options</h2>
                 <p><strong>Presume HTML (Markup Only)</strong>
                     <span>
-                        <input checked="checked" id="htmlm-no" name="presumehtmlm" onclick="pd.options(this);" title="Use this option to ignore HTML specific vocabulary and instead focus purely on syntax." type="radio"/>
+                        <input checked="checked" id="htmlm-no" name="presumehtmlm" title="Use this option to ignore HTML specific vocabulary and instead focus purely on syntax." type="radio"/>
                         <label for="htmlm-no">Strict XML syntax</label></span>
                     <span>
-                        <input id="htmlm-yes" name="presumehtmlm" onclick="pd.options(this);" title="This option determines whether HTML tags like &lt;br&gt; and lt;hr&gt; should be evaluated as singletons, such as &lt;br/&gt; and lt;hr/&gt;." type="radio"/>
+                        <input id="htmlm-yes" name="presumehtmlm" title="This option determines whether HTML tags like &lt;br&gt; and lt;hr&gt; should be evaluated as singletons, such as &lt;br/&gt; and lt;hr/&gt;." type="radio"/>
                         <label for="htmlm-yes">Tolerate HTML foolishness</label></span>
                 </p>
                 <p><strong>IE Comments (HTML Only)</strong>
                     <span>
-                        <input checked="checked" id="conditionalm-no" name="conditionalm" onclick="pd.options(this);" title="Use this option to remove HTML contitional comments used by Internet Explorer." type="radio"/>
+                        <input checked="checked" id="conditionalm-no" name="conditionalm" title="Use this option to remove HTML contitional comments used by Internet Explorer." type="radio"/>
                         <label for="conditionalm-no">Remove all comments</label></span>
                     <span>
-                        <input id="conditionalm-yes" name="conditionalm" onclick="pd.options(this);" title="Use this option to keep HTML contitional comments used by Internet Explorer." type="radio"/>
+                        <input id="conditionalm-yes" name="conditionalm" title="Use this option to keep HTML contitional comments used by Internet Explorer." type="radio"/>
                         <label for="conditionalm-yes">Preserve HTML conditional comments</label></span>
                 </p>
                 <p><strong>Top Comments (JavaScript / CSS)</strong>
                     <span>
-                        <input checked="checked" id="topcoms-no" name="topcoms" onclick="pd.options(this);" title="Use this remove all comments in JavaScript and CSS including comments above the first line of code." type="radio"/>
+                        <input checked="checked" id="topcoms-no" name="topcoms" otitle="Use this remove all comments in JavaScript and CSS including comments above the first line of code." type="radio"/>
                         <label for="topcoms-no">Minify all comments</label></span>
                     <span>
-                        <input id="topcoms-yes" name="topcoms" onclick="pd.options(this);" title="Use this option retain comments comments above the first line of JavaScript and CSS code." type="radio"/>
+                        <input id="topcoms-yes" name="topcoms" title="Use this option retain comments comments above the first line of JavaScript and CSS code." type="radio"/>
                         <label for="topcoms-yes">Preserve comments before any code</label></span>
                 </p>
             </div>
-            <p class="button"><button onclick="pd.recycle();" type="button" value="Execute">Execute</button></p>
+            <p class="button"><button type="button" value="Execute">Execute</button></p>
         </div>
         <div id="diffoutput"><p id="emailme">Please post comments, feedback, and
             requests on the
@@ -544,9 +544,9 @@
                 and other custom written libraries.</p>
             <p>Pretty Diff is used by these great organizations:</p>
             <ul id="thirdparties">
-                <li><a href="http://www.w3.org/" onclick="window.open(this.href, 'thirdparty');return false;"><img alt="World Wide Web Consortium" src="images/logo_w3c.gif"/></a></li>
-                <li><a href="http://www.travelocity.com/" onclick="window.open(this.href, 'thirdparty');return false;"><img alt="Travelocity" src="images/logo_travelocity.gif"/></a></li>
-                <li><a href="http://www.iPredikt.com/" onclick="window.open(this.href, 'thirdparty');return false;"><img alt="iPredikt" src="images/logo_ipredikt.png"/></a></li>
+                <li><a href="http://www.w3.org/"><img alt="World Wide Web Consortium" src="images/logo_w3c.gif"/></a></li>
+                <li><a href="http://www.travelocity.com/"><img alt="Travelocity" src="images/logo_travelocity.gif"/></a></li>
+                <li><a href="http://www.iPredikt.com/"><img alt="iPredikt" src="images/logo_ipredikt.png"/></a></li>
             </ul>
         </div>
         <script type="application/javascript" src="prettydiff.js"></script>

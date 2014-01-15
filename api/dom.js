@@ -5,30 +5,6 @@ var exports = "",
     _gaq = [],
     pd = {};
 
-//stores position information of floating report windows without
-//looking to localStorage each and every time
-pd.position = {
-    diffreport: {},
-    beaureport: {},
-    minreport: {},
-    statreport: {}
-};
-
-pd.keypress = {
-    state: false,
-    keys: [],
-    date: {},
-    throttle: 0
-};
-
-//stores option information without looking into localStorage each
-//and every time
-pd.optionString = [];
-
-//stores webtool information without looking into localStorage each
-//and every time
-pd.webtool = [];
-
 (function dom__init() {
     "use strict";
 
@@ -36,15 +12,79 @@ pd.webtool = [];
         pd.application = prettydiff;
     }
 
-    //test for localStorage and assign the result of the test
-    pd.ls = (typeof localStorage === "object" && localStorage !== null && typeof localStorage.getItem === "function" && typeof localStorage.hasOwnProperty === "function") ? true : false;
+    //stores keypress state to avoid execution of pd.recycle from
+    //certain key combinations
+    pd.keypress = {
+        state: false,
+        keys: [],
+        date: {},
+        throttle: 0
+    };
 
-    //test for support of the file api
-    pd.fs = (typeof FileReader === "function" && typeof new FileReader().readAsText === "function") ? true : false;
-    
-    pd.xhr = (typeof XMLHttpRequest === "function" || typeof XMLHttpRequest === "object" || typeof ActiveXObject === "function");
+    //test for web browser features for progressive enhancement
+    pd.test = {
+        //test for localStorage and assign the result of the test
+        ls: (typeof localStorage === "object" && localStorage !== null && typeof localStorage.getItem === "function" && typeof localStorage.hasOwnProperty === "function") ? true : false,
+        //check for native JSON support
+        json: (JSON === undefined) ? false : true,
+        //test for support of the file api
+        fs: (typeof FileReader === "function" && typeof new FileReader().readAsText === "function") ? true : false,
+        //check of native AJAX support
+        xhr: (typeof XMLHttpRequest === "function" || typeof XMLHttpRequest === "object" || typeof ActiveXObject === "function"),
+        //get the lowercase useragent string
+        agent: (typeof navigator === "object") ? navigator.userAgent.toLowerCase() : "",
+        //some operations should not occur as the page is initially loading
+        load: true,
+        //If the output is too large the report must open and minimize in a single step
+        filled: {
+            beau: false,
+            diff: false,
+            minn: false,
+            stat: false
+        }
+    };
 
+    //the various CSS color themes
+    pd.css = {
+        core: "body{font-family:\"Arial\";font-size:10px;overflow-y:scroll;}#samples #dcolorScheme{position:relative;z-index:1000}#apireturn textarea{font-size:1.2em;height:50em;width:100%}button{border-radius:.9em;display:block;font-weight:bold;width:100%}div .button{text-align:center}div button{display:inline-block;font-weight:bold;margin:1em 0;padding:1em 2em}button:hover{cursor:pointer}#introduction{clear:both;margin:0 0 0 5.6em;position:relative;top:-2.75em}#introduction ul{clear:both;height:3em;margin:0 0 0 -5.5em;overflow:hidden;width:100em}#introduction li{clear:none;display:block;float:left;font-size:1.4em;margin:0 4.95em -1em 0}#introduction li li{font-size:1em;margin-left:2em}#introduction .information,#webtool #introduction h2{left:-90em;position:absolute;top:0;width:10em}#introduction h2{float:none}#displayOps{float:right;font-size:1.5em;font-weight:bold;margin-right:1em;width:22.5em}#displayOps.default{position:static}#displayOps.maximized{margin-bottom:-2em;position:relative}#displayOps li{clear:none;display:block;float:left;list-style:none;margin:2em 0 0;text-align:right;width:9em}h1{float:left;font-size:2em;margin:0 .5em .5em 0}#hideOptions{margin-left:5em;padding:0}#title_text{border-style:solid;border-width:.05em;display:block;float:left;font-size:1em;margin-left:.55em;padding:.1em}h1 svg,h1 img{border-style:solid;border-width:.05em;float:left;height:2em;width:2em}h1 span{font-size:.5em}h2,h3{background:#fff;border-style:solid;border-width:.075em;display:inline-block;font-size:1.8em;font-weight:bold;margin:0 .5em .5em 0;padding:0 .2em}#doc h3{margin-top:.5em}h3{font-size:1.6em}h4{font-size:1.4em}fieldset{border-radius:.9em;clear:both;margin:3.5em 0 -2em;padding:0 0 0 1em}legend{border-style:solid;border-width:.1em;font-size:1.2em;font-weight:bold;margin-left:-.25em}.button{margin:1em 0;text-align:center}.button button{display:block;font-size:2em;height:1.5em;margin:0 auto;padding:0;width:50%}#diffreport{right:57.8em}#beaureport{right:38.8em}#minnreport{right:19.8em}#statreport{right:.8em}#statreport .body p,#statreport .body li,#statreport .body h3{font-size:1.2em}#statreport .body h3{margin-top:0}#statreport .body ul{margin-top:1em}#reports{height:4em}#reports h2{display:none}.box{border-style:solid;border-width:0;left:auto;margin:0;padding:0;position:absolute;z-index:10}.box button{border-radius:0;border-style:solid;border-width:.1em;display:block;float:right;font-family:'Lucida Console','Trebuchet MS','Arial';height:1.75em;padding:0;position:absolute;right:0;text-align:center;top:0;width:1.75em;z-index:7}.box button.resize{border-width:.05em;cursor:se-resize;font-size:1.667em;font-weight:normal;height:.8em;line-height:.5em;margin:-.85em 0 0;position:absolute;right:.05em;top:100%;width:.85em}.box button.minimize{margin:.35em 4em 0 0}.box button.maximize{margin:.35em 1.75em 0 0}.box button.save{margin:.35em 6.25em 0 0}.box .buttons{float:right;margin:0}.box h3.heading{cursor:pointer;float:left;font-size:1em;height:3em;margin:0 0 -3.2em;position:relative;width:17em;z-index:6}.box h3.heading span{display:block;font-size:1.8em;padding:.25em 0 0 .5em}.box .body{clear:both;height:20em;margin-top:-.1em;overflow:scroll;padding:4.25em 1em 1em;position:relative;right:0;top:0;width:75em;z-index:5}.options{border-radius:0 0 .9em .9em;clear:both;margin-bottom:1em;padding:1em 1em 3.5em;width:auto}label{display:inline;font-size:1.4em}ol li{font-size:1.4em;list-style-type:decimal}ol li li{font-size:1em}body#doc ol li{font-size:1.1em}ul{margin:-1.4em 0 2em;padding:0}ul li{list-style-type:none}li{clear:both;margin:1em 0 1em 3em}li h4{display:inline;float:left;margin:.4em 0;text-align:left;width:14em}p{clear:both;font-size:1.2em;margin:0 0 1em}#option_comment{height:2.5em;margin-bottom:-1.5em;width:100%}.difflabel{display:block;height:0}#beau-other-span,#diff-other-span{text-indent:-200em;width:0}.options p span{display:block;float:left;font-size:1.2em}#top{min-width:80em}#top em{font-weight:bold}#update{clear:left;float:right;font-weight:bold;padding:.5em;position:absolute;right:1em;top:11em}#announcement{height:2.5em;margin:0 -5em -4.75em;width:27.5em}#textreport{width:100%}#options{float:left;margin:0;width:19em}#options label{width:auto}#options p{clear:both;font-size:1em;margin:0;padding:0}#options p span{clear:both;float:none;height:2em;margin:0 0 0 2em}#csvchar{width:11.8em}#language,#csvchar,#colorScheme{margin:0 0 1em 2em}#codeInput{margin-left:22.5em}#Beautify.wide p,#Beautify.tall p.file,#Minify.wide p,#Minify.tall p.file{clear:none;float:none}#diffops p,#miniops p,#beauops p{clear:both;font-size:1em;padding-top:1em}#options p strong,#diffops p strong,#miniops p strong,#beauops p strong,#options .label,#diffops .label,#miniops .label,#beauops .label{display:block;float:left;font-size:1.2em;font-weight:bold;margin-bottom:1em;width:17.5em}input[type=\"radio\"]{margin:0 .25em}input[type=\"file\"]{box-shadow:none}select{border-style:inset;border-width:.1em;width:11.85em}.options input,.options label{border-style:none;display:block;float:left}.options span label{margin-left:.4em;white-space:nowrap;width:12em}.options p span label{font-size:1em}#webtool .options input[type=text]{margin-right:1em;width:11.6em}#webtool .options input[type=text],div input,textarea{border-style:inset;border-width:.1em}textarea{display:inline-block;height:10em;margin:0}strong label{font-size:1em;width:inherit}strong.new{background:#ff6;font-style:italic}#miniops span strong,#diffops span strong,#beauops span strong{display:inline;float:none;font-size:1em;width:auto}#Beautify .input label,#Beautify .output label,#Minify .input label,#Minify .output label{display:block;font-size:1.05em;font-weight:bold}#beautyinput,#minifyinput,#baseText,#newText,#beautyoutput,#minifyoutput{font-size:1em}.clear{clear:both;display:block}.wide,.tall,#diffBase,#diffNew{border-radius:0 0 .9em .9em;margin-bottom:1em}#diffBase,#diffNew{padding:1em}#diffBase p,#diffNew p{clear:none;float:none}#diffBase.wide textarea,#diffNew.wide textarea{height:10.1em}.wide,.tall{padding:1em 1.25em 0}#diff .addsource{cursor:pointer;margin-bottom:1em;padding:0}#diff .addsource input{display:block;float:left;margin:.5em .5em -1.5em}#diff .addsource label{cursor:pointer;display:inline-block;font-size:1.2em;padding:.5em .5em .5em 2em}.wide label{float:none;margin-right:0;width:100%}.wide #beautyinput,.wide #minifyinput,.wide #beautyoutput,.wide #minifyoutput{height:14.8em;margin:0;width:99.5%}.tall .input{clear:none;float:left}.tall .output{clear:none;float:right;margin-top:-2.4em}.tall .input,.tall .output{width:49%}.tall .output label{text-align:right}.tall .input textarea{height:31.7em}.tall .output textarea{height:34em}.tall textarea{margin:0 0 -.1em;width:100%}.tall #beautyinput,.tall #minifyinput{float:left}.tall #beautyoutput,.tall #minifyoutput{float:right}.wide{width:auto}#diffBase.difftall,#diffNew.difftall{margin-bottom:1.3em;padding:1em 1% .9em;width:47.5%}#diffBase.difftall{float:left}#diffNew.difftall{float:right}.file input,.labeltext input{display:inline-block;margin:0 .7em 0 0;width:16em}.labeltext,.file{font-size:.9em;font-weight:bold;margin-bottom:1em}.difftall textarea{height:30.6em;margin-bottom:.5em}#diffBase textarea,#diffNew textarea{width:99.5%}.input,.output{margin:0}#diffBase.wide,#diffNew.wide{padding:.8em 1em}#diffBase.wide{margin-bottom:1.2em}#diffoutput{width:100%}#diffoutput p em,#diffoutput li em,.analysis .bad,.analysis .good{font-weight:bold}#diffoutput ul{font-size:1.2em;margin-top:1em}#diffoutput ul li{display:list-item;list-style-type:disc}.analysis th{text-align:left}.analysis td{text-align:right}#doc ul{margin-top:1em}#doc ul li{font-size:1.2em}body#doc ul li{font-size:1.1em}#doc ol li span{display:block;margin-left:2em}.diff,.beautify{border-style:solid;border-width:.2em;display:inline-block;font-family:'Courier New',Courier,'Lucida Console',monospace;margin:0 1em 1em 0;padding:0;position:relative}.beautify .data em{display:inline-block;font-style:normal;font-weight:bold;padding-top:.5em}.diff .skip{border-style:none none solid;border-width:0 0 .1em}.diff li,.diff p,.diff h3,.beautify li{font-size:1.1em}.diff .diff-left,.diff .diff-right{display:table-cell}.diff .diff-left{border-style:none none none solid;border-width:0 0 0 .1em}.diff .diff-right{border-style:none none none solid;border-width:0 0 0 .1em;margin-left:-.1em;min-width:16.5em;right:0;top:0}.diff-right .data ol{min-width:16.5em}.diff-right .data{border-style:none solid none none;border-width:0 .1em 0 0;width:100%}.diff-right .data li{min-width:16.5em}.diff ol,.beautify ol{display:table-cell;margin:0;padding:0}.diff li,.beautify li{border-style:none none solid;border-width:0 0 .1em;display:block;line-height:1.2;list-style-type:none;margin:0;padding-bottom:0;padding-right:.5em}.diff li{padding-top:.5em}.beautify .count li{padding-top:.5em}@media screen and (-webkit-min-device-pixel-ratio:0) {.beautify .count li{padding-top:.546em}}#doc .beautify .count li.fold{color:#900;cursor:pointer;font-weight:bold;padding-left:.5em}.diff .count,.beautify .count{border-style:solid;border-width:0 .1em 0 0;font-weight:normal;padding:0;text-align:right}.diff .count li,.beautify .count li{padding-left:2em}.diff .data,.beautify .data{text-align:left;white-space:pre}.diff .data li,.beautify .data li{letter-spacing:.1em;padding-left:.5em;white-space:pre}#webtool .diff h3{border-style:none solid solid;border-width:0 .1em .2em;box-shadow:none;display:block;font-family:Verdana;margin:0 0 0 -.1em;padding:.2em 2em;text-align:left}.diff li em{font-style:normal;margin:0 -.09em;padding:.05em 0}.diff p.author{border-style:solid;border-width:.2em .1em .1em;margin:0;overflow:hidden;padding:.4em;text-align:right}#dcolorScheme{float:right;margin:-2em 0 0 0}#dcolorScheme label{display:inline-block;font-size:1em;margin-right:1em}body#doc{font-size:.8em;max-width:80em}#doc th{font-weight:bold}#doc td span{display:block}#doc table,.box .body table{border-collapse:collapse;border-style:solid;border-width:.2em;clear:both}#doc table{font-size:1.2em}body#doc table{font-size:1em}#doc td,#doc th{border-left-style:solid;border-left-width:.1em;border-top-style:solid;border-top-width:.1em;padding:.5em}#doc em,.box .body em{font-style:normal;font-weight:bold}#doc div{margin-bottom:2em}#doc div div{clear:both;margin-bottom:1em}#doc h2{font-size:1.6em;margin:.5em .5em .5em 0}#doc ol{clear:both}#doc_contents li{font-size:1.75em;margin:1em 0 0}#doc_contents ol ol li{font-size:.75em;list-style:lower-alpha;margin:.5em 0 0}#doc_contents ol{padding-bottom:1em}#doc #doc_contents ol ol{background-color:inherit;border-style:none;margin:.25em .3em 0 0;padding-bottom:0}#doc_contents a{text-decoration:none}#diffoutput #thirdparties li{display:inline-block;list-style-type:none}#thirdparties a{border-style:none;display:block;height:4em;text-decoration:none}button,fieldset,.box h3.heading,.box .body,.options,.diff .replace em,.diff .delete em,.diff .insert em,.wide,.tall,#diffBase,#diffNew,#doc div,#doc div div,#doc ol,#option_comment,#update,#thirdparties img,#diffoutput #thirdparties{border-style:solid;border-width:.1em}#apitest p{clear:both;padding-top:.75em}#apitest label,#apitest select,#apitest input,#apitest textarea{float:left}#apitest label{width:20em}#apitest select,#apitest input,#apitest textarea{width:30em}#pdsamples{list-style-position:inside;margin:-12em 0 0 0;padding:0;position:relative;z-index:10}#pdsamples li{border-radius:1em;border-style:solid;border-width:.1em;margin:0 0 3em;padding:1em}#pdsamples li div{border-radius:1em;border-style:solid;border-width:.1em;margin:0;padding:1em}#pdsamples li p{display:inline-block;font-size:1em;margin:0}#pdsamples li p a{display:block;margin:0 0 1em 2em}#pdsamples li ul{margin:0 0 0 2em}#samples #pdsamples li li{background:none transparent;border-style:none;display:list-item;list-style:disc outside;margin:0;padding:.5em}#modalSave span{background:#000;display:block;left:0;opacity:.5;position:absolute;top:0;z-index:9000}#modalSave p{background:#eee;color:#333;font-size:3em;padding:1em;position:absolute;text-align:center;top:10em;width:25em;z-index:9001}#modalSave p em{display:block;font-size:.75em;margin-top:1em}#modalSave p strong{color:#c00;font-weight:bold}@media print{p,.options,#Beautify,#Minify,#diff,ul{display:none}div{width:100%}html td{font-size:.8em;white-space:normal}}",
+        sdefault: "html body.default,body.default{background:url(\"images/body.gif\") repeat-x #a8b8c8;color:#000}body.default button{background:#dfd;border-color:#030;box-shadow:0 .1em .2em rgba(0,32,0,0.75);color:#030}.default a{color:#f00}.default button:hover{background:#f6fff6}.default button:active{background:#030;color:#dfd}.default #title_text{background:#fff;border-color:#000;box-shadow:0 .15em .3em rgba(0,0,0,0.5);color:#000}.default #introduction h2{border-color:#f00;color:#c00}.default h1 svg{border-color:#600;box-shadow:0 .2em .4em rgba(0,0,0,0.5)}.default h2,.default h3{border-color:#000}.default fieldset{border-color:#caa}.default legend{border-color:#fee;color:#966}.default .button button{background:url(\"images/green.png\") repeat-x 0 100%#dfd}.default .button button:hover{background:#f6fff6}.default .button button:active{background:#030;color:#efe}.default .box{background:#ccc;border-color:#006;box-shadow:0 .4em .8em rgba(0,0,64,0.75)}.default .box button{box-shadow:0 .1em .2em rgba(0,0,64,0.5)}.default .box button.resize{background:#ddf;border-color:#006;color:#006}.default .box button.minimize{background:#ddf;border-color:#006;color:#006}.default .box button.minimize:hover,.default .box button.resize:hover{background:#99f}.default .box button.save{background:#ddf;border-color:#006;color:#006}.default .box button.save:hover{background:#99f}.default .box h3.heading{background:#eef;border-color:#006}.default .box h3.heading:hover{background:#ccf}.default .box .body{background:#d8dde8;border-color:#006;box-shadow:0 0 .4em rgba(0,64,0,0.75)}.default .options{background:url(\"images/backred.gif\") #fee repeat-x 100% 100%;border-color:#600;box-shadow:0 .2em .4em rgba(64,0,0,0.5)}.default .options h2{border-color:#600;box-shadow:0 .1em .2em rgba(102,0,0,0.75)}.default #Beautify h2,.default #Minify h2,.default #diffBase h2,.default #diffNew h2{border-color:#006;box-shadow:0 .1em .2em rgba(0,0,64,0.5)}.default #option_comment{background:#fee;border-color:#600}.default #top em{color:#00f}.default #update{background:#fff;border-color:#000;box-shadow:0 .1em .2em rgba(0,0,0,0.5)}.default .wide,.default .tall,.default #diffBase,.default #diffNew{background:url(\"images/backblue.gif\") #eef repeat-x 100% 100%;border-color:#006;box-shadow:0 .2em .4em rgba(0,0,64,0.5)}.default .file input,.default .labeltext input{border-color:#006}#webtool.default input.unchecked{background:#eef8ff;color:#000}.default .options input[type=text],.default .options select{border-color:#933}.default #beautyoutput,.default #minifyoutput{background:#ddd}.default #diffoutput p em,.default #diffoutput li em{color:#c00}.default .analysis .bad{background-color:#e99;color:#400}.default .analysis .good{background-color:#9e9;color:#040}.default #doc .analysis thead th,.default #doc .analysis th[colspan]{background:#eef}.default div input{border-color:#933}.default textarea{border-color:#339}.default textarea:hover{background:#eef8ff}.default .diff,.default .diff-right,.default .diff-right .data,.default .diff-left{border-color:#669}.default .diff .count{background:#eed;border-color:#bbc;color:#664}.default .diff .count .empty{color:#eed}.default .diff .count li{background:#eed;border-color:#aa8;color:#886}.default .diff h3{background:#efefef;border-color:#669 #669 #bbc}.default .diff .empty{background-color:#ddd;border-color:#ccc}.default .diff .replace{background-color:#fd8;border-color:#cb6}#webtool.default .diff .replace em{background-color:#ffd;border-color:#963;color:#630}.default .diff .delete{background-color:#e99;border-color:#b88}#webtool.default .diff .delete em{background-color:#fdd;border-color:#700;color:#600}.default .diff .equal{background-color:#fff;border-color:#ddd}.default .diff .skip{background-color:#efefef;border-color:#ccc}.default .diff .insert{background-color:#9e9;border-color:#6c6}#webtool.default .diff .insert em{background-color:#efc;border-color:#070;color:#050}.default #doc table,.default .box .body table{background:#fff;border-color:#669}.default #doc strong,.default .box .body strong{color:#c00}.default .box .body em,.default .box .body #doc em{color:#090}.default .diff p.author{background:#efefef;border-color:#bbc #669 #669}.default #thirdparties img,.default #diffoutput #thirdparties{border-color:#687888}.default #diffoutput #thirdparties{background:#c8d8e8}.default #doc div,#doc.default div{background:#eef;border-color:#669}.default #doc ol,#doc.default ol{background:#fff;border-color:#669}.default #doc div div,#doc.default div div{background:#fff;border-color:#966}.default #doc table,#doc.default table{background:#fff;border-color:#669}.default #doc th,#doc.default th{background:#fed;border-left-color:#669;border-top-color:#669}.default #doc tr:hover,#doc.default tr:hover{background:#fed}#doc.default em{color:#060}.default #doc div:hover,#doc.default div:hover{background:#def}.default #doc div div:hover,#doc.default div div:hover,#doc.default div ol:hover{background:#fed}.default #pdsamples li{background:#eef;border-color:#006}.default #pdsamples li div{background:url(\"images/backred.gif\") repeat-x 100% 100%#fee;border-color:#600}.default #pdsamples li div a{color:#009}.default #pdsamples li p a{color:#900}",
+        scoffee: "html .coffee,body.coffee{background:#dcb;color:#321}.coffee a{color:#900}.coffee button{background:#654;border-color:#321;box-shadow:0 .1em .2em rgba(32,0,0,0.75);color:#fed}.coffee button:hover,.coffee button:active{background:#fed;color:#654}.coffee #update,.coffee #title_text{background:#fff8ee;border-color:#600;box-shadow:0 .15em .3em rgba(32,0,0,0.5);color:#321}.coffee #introduction h2{color:#f00}.coffee h1 svg{border-color:#600;box-shadow:0 .2em .4em rgba(0,0,0,0.5)}.coffee h2,.coffee h3{border-color:#600}.coffee fieldset{background:#dcb;border-color:#654}.coffee legend{background:#fed;border-color:#654}.coffee .box{background:#ccc;border-color:#654;box-shadow:0 .4em .8em rgba(64,0,0,0.75)}.coffee .box button{border-color:#600;box-shadow:0 .1em .2em rgba(64,0,0,0.5);color:#600}.coffee .box button.minimize:hover,.coffee .box button.resize:hover,.coffee .box button.save:hover,.coffee .box button.maximize:hover{background:#654;color:#fed}.coffee .box button.resize{background:#c96}.coffee .box button.minimize{background:#eda}.coffee .box button.save{background:#db0}.coffee .box button.maximize{background:#dd8}.coffee .box h3.heading{background:#987;border-color:#600;color:#fed}.coffee .box h3.heading:hover{background:#654}.coffee .box .body{background:#fed;border-color:#654;box-shadow:0 .4em .8em rgba(64,0,0,0.75)}.coffee .options{background:#fed;border-color:#600;box-shadow:0 .4em .8em rgba(64,0,0,0.5)}.coffee .options h2{border-color:#600;box-shadow:0 .1em .2em rgba(64,0,0,0.75)}.coffee #Beautify h2,.coffee #Minify h2,.coffee #diffBase h2,.coffee #diffNew h2{border-color:#600;box-shadow:0 .1em .2em rgba(64,0,0,0.5)}.coffee #option_comment{border-color:#600;box-shadow:0 .1em .2em rgba(64,0,0,0.5);color:#600}.coffee #top em{color:#f00}.coffee .wide,.coffee .tall,.coffee #diffBase,.coffee #diffNew{background:#fed;border-color:#600;box-shadow:0 .2em .4em rgba(64,0,0,0.5)}.coffee .file input,.coffee .labeltext input{border-color:#600}#webtool.coffee input.unchecked{background:#cba;color:#000}.coffee .options input[type=text],.coffee .options select{border-color:#933}.coffee #beautyoutput,.coffee #minifyoutput{background:#dcb}.coffee #diffoutput p em,.coffee #diffoutput li em{color:#900}.coffee .analysis .bad{background-color:#eb9;color:#400}.coffee .analysis .good{background-color:#be9;color:#040}.coffee #doc .analysis thead th,.coffee #doc .analysis th[colspan]{background:#dcb}.coffee div input{border-color:#933}.coffee textarea{background:#fff8ee;border-color:#a66}.coffee textarea:hover{background:#fff}.coffee .diff,.coffee .diff h3,.coffee .diff-left,.coffee .diff-right,.coffee .diff-right ol,.coffee p.author{border-color:#966}.coffee .diff .count li{background:#edc;border-color:#966;color:#633}.coffee .diff .count{border-color:#966}.coffee .diff h3{background:#cba}.coffee .diff .empty{background-color:#ddd;border-color:#ccc}.coffee .diff .replace{background-color:#fda;border-color:#ec9}#webtool.coffee .diff .replace em{background-color:#ffd;border-color:#963;color:#630}.coffee .diff .delete{background-color:#ebb;border-color:#daa}#webtool.coffee .diff .delete em{background-color:#fee;border-color:#700;color:#600}.coffee .diff .equal{background-color:#fff8ee;border-color:#ecc}.coffee .diff .skip{background-color:#eee;border-color:#ccc}.coffee .diff .insert{background-color:#cec;border-color:#bdb}#webtool.coffee .diff .insert em{background-color:#efc;border-color:#070;color:#050}.coffee #doc table,.coffee .box .body table{background:#fff8ee;border-color:#966}.coffee #doc strong,.coffee .box .body strong{color:#900}.coffee .box .body em,.coffee .box .body #doc em{color:#262}.coffee .diff th.author{background:#cba;border-top-color:#966}.coffee #diffoutput #thirdparties{background:#edc;border-color:#600}.coffee #doc div,#doc.coffee div{background:#edc;border-color:#966}.coffee #doc ol,#doc.coffee ol{background:#fff8ee;border-color:#966}.coffee #doc div div,#doc.coffee div div{background:#fff;border-color:#966}.coffee #doc table,#doc.coffee table{background:#fff8ee;border-color:#966}.coffee #doc th,#doc.coffee th{background:#eed;border-left-color:#966;border-top-color:#966}.coffee #doc tr:hover,#doc.coffee tr:hover{background:#fed}.coffee #doc div:hover,#doc.coffee div:hover{background:#dcb}.coffee #doc div div:hover,#doc.coffee div div:hover,#doc.coffee div ol:hover{background:#dcb}.coffee #pdsamples li{background:#fed;border-color:#600}.coffee #pdsamples li div{background:#dcb;border-color:#654}.coffee #pdsamples li div a{color:#900}.coffee #pdsamples li p a{color:#900}",
+        sdark: "html .dark,body.dark{background:#333;color:#eee}.dark a{color:#9cf}.dark button{background:#9cf;border-color:#036;box-shadow:0 .1em .2em rgba(224,224,255,0.75);color:#036}.dark button:hover,.dark button:active{background:#def}.dark #update,.dark #title_text{background:#def;border-color:#036;box-shadow:0 .1em .2em rgba(224,224,255,0.75);color:#036}.dark h1 svg{border-color:#00c;box-shadow:0 .1em .2em rgba(224,224,255,0.75)}.dark h2,.dark h3{background:#def;border-color:#006;color:#036}.dark fieldset{background:#246;border-color:#036}.dark legend{background:#def;border-color:#036;color:#036}.dark .box{background:#666;border-color:#abc}.dark .box button{border-color:#036;box-shadow:0 0 0 rgba(0,0,0,0);color:#036}.dark .box button.minimize:hover,.dark .box button.resize:hover,.dark .box button.save:hover,.dark .box button.maximize:hover{background:#def}.dark .box button.resize{background:#9cf}.dark .box button.save{background:#7ad}.dark .box button.minimize{background:#9cf}.dark .box button.maximize{background:#bef}.dark .box h3.heading{background:#8ad;border-color:#036;color:#036}.dark .box h3.heading:hover{background:#def}.dark .box .body{background:#abc;border-color:#036;box-shadow:0 0 0 rgba(0,0,0,0);color:#000}.dark .options{background:#024;border-color:#89a;box-shadow:0 .4em .8em rgba(224,224,255,0.5);color:#fff}.dark #Beautify h2,.dark #Minify h2,.dark #diffBase h2,.dark #diffNew h2,.dark .options h2{box-shadow:0 .1em .2em rgba(224,224,255,0.75)}.dark #option_comment{background:#bcd;border-color:#036;color:#036}.dark #top em{color:#f00}.dark .wide,.dark .tall,.dark #diffBase,.dark #diffNew{background:#024;border-color:#89a;box-shadow:0 .1em .2em rgba(224,224,255,0.5)}.dark .file input,.dark .labeltext input{border-color:#036}#webtool.dark input.unchecked{background:#ccc;color:#444}.dark .options input[type=text],.dark .options select{background:#bcd;border-color:#036}.dark #beautyoutput,.dark #minifyoutput{background:#ccc}.dark #diffoutput p em,.dark #diffoutput li em{color:#050}.dark .analysis .bad{background-color:#e99;color:#400}.dark .analysis .good{background-color:#be9;color:#040}.dark #doc .analysis thead th,.dark #doc .analysis th[colspan]{background:#8ac}.dark div input{border-color:#933}.dark textarea{background:#bcd;border-color:#036}.dark textarea:hover{background:#cdf}.dark .diff,.dark .diff-left,.dark .diff-right,.dark .diff ol,.dark .diff h3,.dark .diff p.author{border-color:#036}.dark .diff-right,.dark .diff-right h3{border-left-color:#000}.dark .diff .count{background:#369}.dark .diff .count li{border-color:#036}.dark .diff .count .empty{background:#369;color:#369}.dark .diff h3{background:#036;color:#def}.dark .diff .empty{background-color:#456;border-color:#345}.dark .diff .replace{background-color:#468;border-color:#579;color:#def}#webtool.dark .diff .replace em{background-color:#dff;border-color:#036;color:#036}.dark .diff .delete{background-color:#600;border-color:#400;color:#fbb}#webtool.dark .diff .delete em{background-color:#fbb;border-color:#600;color:#600}.dark .diff .equal{background-color:#024;border-color:#135;color:#def}.dark .diff .skip{background-color:#333;border-color:#444}.dark .diff .insert{background-color:#696;border-color:#464;color:#dfd}#webtool.dark .diff .insert em{background-color:#efc;border-color:#060;color:#050}.dark #doc table,.dark .box .body table{background:#024;border-color:#036;color:#def}.dark #doc strong,.dark .box .body strong{color:#900}.dark .box .body em,.dark .box .body #doc em{color:#360}.dark .diff p.author{background:#036;color:#def}.dark #diffoutput #thirdparties{background:#024;border-color:#369}.dark #diffoutput #thirdparties a{color:#00f}.dark #doc div,#doc.dark div{background:#246;border-color:#036}.dark #doc ol,#doc.dark ol{background:#024;border-color:#036}.dark #doc div div,#doc.dark div div{background:#024;border-color:#036}.dark #doc table,#doc.dark table{background:#024;border-color:#036}.dark #doc th,#doc.dark th{background:#468;border-left-color:#036;border-top-color:#036}.dark #doc tr:hover,#doc.dark tr:hover{background:#468}.dark #doc td,#doc.dark td{border-color:#036}.dark #doc div:hover,#doc.dark div:hover{background:#468}.dark #doc div div:hover,#doc.dark div div:hover,#doc.dark div ol:hover{background:#246}.dark #pdsamples li{background:#024;border-color:#89a}.dark #pdsamples li div{background:#444;border-color:#222}.dark #pdsamples li div a{color:#9cf}.dark #pdsamples li p a{color:#ccc}",
+        scanvas: "html .canvas,body.canvas{background:#e8e8e8;color:#666}.canvas a{color:#450}.canvas button{background:#d8d8cf;border-color:#664;box-shadow:0 .1em .2em rgba(128,128,92,0.75);color:#664;text-shadow:.05em .05em .1em #999}.canvas button:hover,.canvas button:active{background:#ffe}.canvas #update,.canvas #title_text{background:#f8f8ee;box-shadow:0 .1em .2em rgba(128,128,92,0.75);color:#464}.canvas h1 svg{border-color:#664;box-shadow:0 .1em .2em rgba(128,128,92,0.75)}.canvas h2,.canvas h3{background:#f8f8ef;border-color:#664;box-shadow:0 .1em .2em rgba(128,128,92,0.75);text-shadow:none}.canvas .wide,.canvas .tall,.canvas #diffBase,.canvas #diffNew{background:#d8d8cf;border-color:#664;box-shadow:0 .2em .4em rgba(128,128,92,0.5);color:#444}.canvas .wide label,.canvas .tall label,.canvas #diffBase label,.canvas #diffNew label{text-shadow:.05em .05em .1em #aaa}.canvas .options{background:#d8d8cf;border-color:#664;box-shadow:0 .2em .4em rgba(128,128,92,0.5);color:#444;text-shadow:.05em .05em .1em #999}.canvas fieldset{background:#e8e8e8;border-color:#664}.canvas legend{background:#f8f8ef;border-color:#664}.canvas .box{background:#ccc;border-color:#664}.canvas .box .body{background:#e8e8e8;border-color:#664;box-shadow:0 .2em .4em rgba(128,128,92,0.75);color:#666}.canvas .box button{box-shadow:0 .1em .2em rgba(128,128,92,0.75)}.canvas .box button.resize{background:#cfcfd8;border-color:#446;color:#446}.canvas .box button.resize:hover{background:#bbf;border-color:#228;color:#228}.canvas .box button.save{background:#d8cfcf;border-color:#644;color:#644}.canvas .box button.save:hover{background:#fcc;border-color:#822;color:#822}.canvas .box button.minimize{background:#cfcfd8;border-color:#446;color:#446}.canvas .box button.minimize:hover{background:#bbf;border-color:#228;color:#228}.canvas .box button.maximize{background:#cfd8cf;border-color:#464;color:#464}.canvas .box button.maximize:hover{background:#cfc;border-color:#282;color:#282}.canvas .box h3.heading:hover{background:#d8d8cf}.canvas #option_comment{background:#e8e8e8;border-color:#664;color:#444}.canvas #top em{color:#fcc}#webtool.canvas input.unchecked{background:#ccc;color:#333}.canvas input,.canvas select{box-shadow:.1em .1em .2em #999}.canvas .file input,.canvas .labeltext input,.canvas .options input[type=text],.canvas .options select{background:#f8f8f8;border-color:#664}.canvas #beautyoutput,.canvas #minifyoutput{background:#ccc}.canvas #diffoutput p em,.canvas #diffoutput li em{color:#050}.canvas #doc .analysis thead th,.canvas #doc .analysis th[colspan]{background:#c8c8bf}.canvas textarea{background:#f8f8ef;border-color:#664}.canvas textarea:hover{background:#e8e8e8}.canvas .diff,.canvas ol,.canvas .diff p.author,.canvas .diff h3,.canvas .diff-right,.canvas .diff-left{border-color:#664}.canvas .diff .count{background:#c8c8bf}.canvas .diff .count .empty{background:#c8c8bf;border-color:#664;color:#c8c8bf}.canvas .diff .data{background:#f8f8ef}.canvas .diff h3{background:#c8c8bf;color:#664}.canvas .analysis .bad{background-color:#ecb;color:#744}.canvas .analysis .good{background-color:#cdb;color:#474}.canvas .diff .empty{background-color:#ccc;border-color:#bbb}.canvas .diff .replace{background-color:#dda;border-color:#cc8;color:#660}#webtool.canvas .diff .replace em{background-color:#ffd;border-color:#664;color:#880}.canvas .diff .delete{background-color:#da9;border-color:#c87;color:#600}#webtool.canvas .diff .delete em{background-color:#fdc;border-color:#600;color:#933}.canvas .diff .equal{background-color:#f8f8ef;border-color:#ddd;color:#666}.canvas .diff .skip{background-color:#eee;border-color:#ccc}.canvas .diff .insert{background-color:#bd9;border-color:#9c7;color:#040}#webtool.canvas .diff .insert em{background-color:#efc;border-color:#060;color:#464}.canvas .diff p.author{background:#ddc;color:#666}.canvas #doc table,.canvas .box .body table{background:#f8f8ef;border-color:#664;color:#666}.canvas #doc strong,.canvas .box .body strong{color:#933}.canvas .box .body em,.canvas .box .body #doc em{color:#472}.canvas #diffoutput #thirdparties{background:#c8c8bf;border-color:#664}.canvas #diffoutput #thirdparties a{color:#664}#doc.canvas{color:#444}.canvas #doc div,#doc.canvas div{background:#c8c8bf;border-color:#664}.canvas #doc ol,#doc.canvas ol{background:#e8e8e8;border-color:#664}.canvas #doc div div,#doc.canvas div div{background:#e8e8e8;border-color:#664}.canvas #doc table,#doc.canvas table{background:#f8f8ef;border-color:#664}.canvas #doc th,#doc.canvas th{background:#c8c8bf;border-left-color:#664;border-top-color:#664}.canvas #doc tr:hover,#doc.canvas tr:hover{background:#c8c8bf}.canvas #doc td,#doc.canvas td{border-color:#664}.canvas #doc div:hover,#doc.canvas div:hover{background:#d8d8cf}.canvas #doc div div:hover,#doc.canvas div div:hover,#doc.canvas div ol:hover{background:#f8f8ef}.canvas #pdsamples li{background:#d8d8cf;border-color:#664}.canvas #pdsamples li div{background:#e8e8e8;border-color:#664}.canvas #pdsamples li div a{color:#664}.canvas #pdsamples li p a{color:#450}",
+        sshadow: "html .shadow,body.shadow{background:#222;color:#eee}.shadow a{color:#f60}.shadow a:hover{color:#c30}.shadow button{background:#630;border-color:#600;box-shadow:0 .2em .4em rgba(0,0,0,1);color:#f90;text-shadow:.1em .1em .1em #000}.shadow button:hover,.shadow button:active{background:#300;border-color:#c00;color:#fc0;text-shadow:.1em .1em .1em rgba(0,0,0,.5)}.shadow #title_text{border-color:#222;color:#eee}.shadow #update{background:#ddd;border-color:#000;color:#222}.shadow h1 svg{border-color:#222;box-shadow:.2em .2em .4em #000}.shadow h2,.shadow h3{background-color:#666;border-color:#666;box-shadow:none;color:#ddd;padding-left:0;text-shadow:none}.shadow .wide,.shadow .tall,.shadow #diffBase,.shadow #diffNew{background:#666;border-color:#999;color:#ddd}.shadow .wide label,.shadow .tall label,.shadow #diffBase label,.shadow #diffNew label{text-shadow:.1em .1em .1em #333}.shadow textarea{background:#333;border-color:#000;color:#ddd}.shadow textarea:hover{background:#000}.shadow .options{background:#666;border-color:#999;color:#ddd;text-shadow:.1em .1em .2em #333}.shadow fieldset{background:#333;border-color:#999}.shadow legend{background:#eee;border-color:#333;box-shadow:0 .1em .2em rgba(0,0,0,0.75);color:#222;text-shadow:none}.shadow .box{background:#000;border-color:#999;box-shadow:.6em .6em .8em rgba(0,0,0,.75)}.shadow .box .body{background:#333;border-color:#999;color:#ddd}.shadow .box h3{background:#ccc;border-color:#333;box-shadow:.2em .2em .8em #000;color:#222}.shadow .box h3.heading:hover{background:#222;border-color:#ddd;color:#ddd}.shadow .box button{box-shadow:0 .1em .2em rgba(0,0,0,0.75);text-shadow:.1em .1em .1em rgba(0,0,0,.5)}.shadow .box button.resize{background:#bbf;border-color:#446;color:#446}.shadow .box button.resize:hover{background:#ddf;border-color:#228;color:#228}.shadow .box button.save{background:#d99;border-color:#300;color:#300}.shadow .box button.save:hover{background:#fcc;border-color:#822;color:#822}.shadow .box button.minimize{background:#bbf;border-color:#006;color:#006}.shadow .box button.minimize:hover{background:#eef;border-color:#228;color:#228}.shadow .box button.maximize{background:#9c9;border-color:#030;color:#030}.shadow .box button.maximize:hover{background:#cfc;border-color:#060;color:#060}.shadow #option_comment{background:#333;border-color:#999;color:#ddd}.shadow #option_comment,.shadow input,.shadow select{box-shadow:.1em .1em .2em #000}.shadow input[disabled]{box-shadow:none}.shadow #top em{color:#684}#webtool.shadow input.unchecked{background:#666;color:#ddd}.shadow .file input,.shadow .labeltext input,.shadow .options input[type=text],.shadow .options select{background:#333;border-color:#999;color:#ddd}.shadow .options fieldset span input[type=text]{background:#222;border-color:#333}.shadow #beautyoutput,.shadow #minifyoutput{background:#555;color:#eee}.shadow #doc .analysis th[colspan],.shadow .diff h3,.shadow #doc .analysis thead th{background:#555;border-color:#999;color:#ddd}.shadow .analysis .bad{background-color:#400;color:#c66}.shadow .analysis .good{background-color:#040;color:#6a6}.shadow .diff,.shadow .diff div,.shadow .diff p,.ahadow .diff ol,.shadow .diff li,.shadow .diff .count li,.shadow .diff-right .data{border-color:#999}.shadow .diff .diff-right{border-color:#999 #999 #999 #333}.shadow .diff .count{background:#bbb;color:#333}.shadow .diff .data{background:#333;color:#ddd}.shadow .diff .empty{background-color:#999;border-color:#888}.shadow .diff .replace{background-color:#664;border-color:#707050;color:#bb8}.shadow .diff .count .empty{background:#bbb;color:#bbb}#webtool.shadow .diff .replace em{background-color:#440;border-color:#220;color:#cc9}.shadow .diff .delete{background-color:#300;border-color:#400;color:#c66}#webtool.shadow .diff .delete em{background-color:#700;border-color:#c66;color:#f99}.shadow .diff .equal{background-color:#333;border-color:#404040;color:#ddd}.shadow .diff .skip{background-color:#000;border-color:#555}.shadow .diff .insert{background-color:#040;border-color:#005000;color:#6c6}#webtool.shadow .diff .insert em{background-color:#363;border-color:#6c0;color:#cfc}.shadow .diff p.author{background:#555;border-color:#999;color:#ddd}.shadow table td{border-color:#999}.shadow .diff,.shadow #doc table,.shadow .box .body table{background:#333;border-color:#999;color:#ddd}.shadow #doc strong,.shadow .box .body strong{color:#b33}.shadow .box .body em,.shadow .box .body #doc em,.shadow #diffoutput p em,.shadow #diffoutput li em{color:#684}.shadow #diffoutput #thirdparties{background:#666;border-color:#999}.shadow #diffoutput #thirdparties a{box-shadow:0 .2em .4em rgba(0,0,0,1);color:#000}#doc.shadow{color:#ddd}#doc.shadow h3 a{color:#f90}.shadow #doc div,#doc.shadow div{background:#666;border-color:#999}.shadow #doc ol,#doc.shadow ol{background:#333;border-color:#999}.shadow #doc div div,#doc.shadow div div{background:#333;border-color:#999}.shadow #doc table,#doc.shadow table{background:#333;border-color:#999}.shadow #doc th,#doc.shadow th{background:#bbb;border-left-color:#999;border-top-color:#999;color:#333}.shadow #doc tr:hover,#doc.shadow tr:hover{background:#555}.shadow #doc div:hover,#doc.shadow div:hover{background:#777}.shadow #doc div div:hover,#doc.shadow div div:hover,#doc.shadow div ol:hover{background:#444}.shadow #textreport{background:#222}.shadow #pdsamples li{background:#666;border-color:#999}.shadow #pdsamples li div{background:#333;border-color:#999}.shadow #pdsamples li p a{color:#f90}.shadow #pdsamples li p a:hover{color:#fc0}",
+        swhite: "html .white,body.white{color:#333}body.white button{background:#eee;border-color:#222;box-shadow:0 .1em .2em rgba(64,64,64,0.75);color:#666;text-shadow:.05em .05em .1em #ccc}.white button:hover,.white button:active{background:#999;color:#eee;text-shadow:.1em .1em .1em #333}.white a{color:#009}.white #title_text{border-color:#fff;color:#333}.white #introduction h2{border-color:#999;color:#333}.white h1 svg{background:#eee;border-color:#999;box-shadow:0 .1em .2em rgba(150,150,150,0.5)}.white h2,.white h3{background:#eee;border-color:#eee;box-shadow:none;padding-left:0;text-shadow:none}.white fieldset{background:#ddd;border-color:#999}.white legend{background:#fff;border-color:#999;color:#333;text-shadow:none}.white .box{background:#666;border-color:#999;box-shadow:0 .4em .8em rgba(64,64,64,0.75)}.white .box button{box-shadow:0 .1em .2em rgba(0,0,0,0.75);text-shadow:.1em .1em .1em rgba(0,0,0,.5)}.white .box button.resize{background:#bbf;border-color:#446;color:#446}.white .box button.resize:hover{background:#ddf;border-color:#228;color:#228}.white .box button.save{background:#d99;border-color:#300;color:#300}.white .box button.save:hover{background:#fcc;border-color:#822;color:#822}.white .box button.minimize{background:#bbf;border-color:#006;color:#006}.white .box button.minimize:hover{background:#eef;border-color:#228;color:#228}.white .box button.maximize{background:#9c9;border-color:#030;color:#030}.white .box button.maximize:hover{background:#cfc;border-color:#060;color:#060}.white .box h3.heading{background:#ddd;border-color:#888;box-shadow:.2em .2em .4em #666}.white .box h3.heading:hover{background:#333;color:#eee}.white .box .body{background:#eee;border-color:#888;box-shadow:0 0 .4em rgba(64,64,64,0.75)}.white .options{background:#eee;border-color:#999;box-shadow:0 .2em .4em rgba(64,64,64,0.5);text-shadow:.05em .05em .1em #ccc}.white .options h2,.white #Beautify h2,.white #Minify h2,.white #diffBase h2,.white #diffNew h2{background:#eee;border-color:#eee;box-shadow:none;text-shadow:none}.white #option_comment{background:#ddd;border-color:#999}.white #top em{color:#00f}.white #update{background:#eee;border-color:#999;box-shadow:0 .1em .2em rgba(64,64,64,0.5)}.white .wide,.white .tall,.white #diffBase,.white #diffNew{background:#eee;border-color:#999;box-shadow:0 .2em .4em rgba(64,64,64,0.5)}.white .file input,.white .labeltext input{border-color:#fff}#webtool.white input.unchecked{background:#ccc;color:#666}.white .options input[type=text],.white .options select{border-color:#999}.white #beautyoutput,.white #minifyoutput{background:#ddd}.white #diffoutput p em,.white #diffoutput li em{color:#c00}.white .analysis .bad{background-color:#ebb;color:#400}.white .analysis .good{background-color:#cec;color:#040}.white #doc .analysis thead th,.white #doc .analysis th[colspan]{background:#eef}.white div input{border-color:#999}.white textarea{border-color:#999}.white textarea:hover{background:#eef8ff}.white .diff,.white .diff ol,.white .diff .diff-left,.white .diff .diff-right,.white h3,.white p.author{border-color:#999}.white .diff .count li{background:#eed;border-color:#bbc;color:#886}.white .diff h3{background:#ddd;border-bottom-color:#bbc}.white .diff .empty{background-color:#ddd;border-color:#ccc}.white .diff .replace{background-color:#fea;border-color:#dd8}#webtool.white .diff .replace em{background-color:#ffd;border-color:#963;color:#630}.white .diff .delete{background-color:#fbb;border-color:#eaa}#webtool.white .diff .delete em{background-color:#fdd;border-color:#700;color:#600}.white .diff .equal{background-color:#fff;border-color:#eee}.white .diff .skip{background-color:#efefef;border-color:#ddd}.white .diff .insert{background-color:#bfb;border-color:#aea}#webtool.white .diff .insert em{background-color:#efc;border-color:#070;color:#050}.white .diff p.author{background:#efefef;border-top-color:#bbc}.white #doc table,.white .box .body table{background:#fff;border-color:#999}.white #doc strong,.white .box .body strong{color:#c00}.white .box .body em,.white .box .body #doc em{color:#090}.white #thirdparties img,.white #diffoutput #thirdparties{border-color:#999}.white #thirdparties img{box-shadow:.2em .2em .4em #999}.white #diffoutput #thirdparties{background:#eee}.white #doc div,#doc.white div{background:#ddd;border-color:#999}.white #doc ol,#doc.white ol{background:#eee;border-color:#999}.white #doc div div,#doc.white div div{background:#eee;border-color:#999}.white #doc table,#doc.white table{background:#fff;border-color:#999}.white #doc th,#doc.white th{background:#ddd;border-left-color:#999;border-top-color:#999}.white #doc tr:hover,#doc.white tr:hover{background:#ddd}#doc.white em{color:#060}.white #doc div:hover,#doc.white div:hover{background:#ccc}.white #doc div div:hover,#doc.white div div:hover,#doc.white div ol:hover{background:#fff}.white #pdsamples li{background:#eee;border-color:#999}.white #pdsamples li div{background:#ddd;border-color:#999}.white #pdsamples li div a{color:#47a}.white #pdsamples li p a{color:#009}"
+    };
+
+    //global color property so that HTML generated reports know which
+    //CSS theme to apply
+    pd.color = "white";
+
+    //stores data for the comment string
+    pd.commentString = [];
+
+    //statistical usage data
+    pd.stat = {
+        visit: 0,
+        usage: 0,
+        fdate: "",
+        avday: "1",
+        diff: 0,
+        beau: 0,
+        minn: 0,
+        markup: 0,
+        js: 0,
+        css: 0,
+        csv: 0,
+        text: 0,
+        pdate: "",
+        large: 0
+    };
+
+    //bounce allows the Google Analytics code to know that interaction
+    //on the page is not a bounced visit
     pd.bounce = true;
+
+    //shorthand for document.getElementById method
     pd.$$ = function dom__$$(x) {
         if (document.getElementById === undefined) {
             return;
@@ -52,200 +92,67 @@ pd.webtool = [];
         return document.getElementById(x);
     };
 
-    //o Stores a reference to everything that is needed from the DOM
+    //shared DOM nodes
     pd.o = {
-        an: pd.$$("additional_no"),
-        ao: pd.$$("addOptions"),
-        ay: pd.$$("additional_yes"),
-        ba: pd.$$("beau-tab"),
-        bb: pd.$$("modebeautify"),
-        bc: pd.$$("beau-char"),
-        bd: pd.$$("Beautify"),
-        bf: pd.$$("bforce_indent-no"),
-        bg: pd.$$("bforce_indent-yes"),
-        bi: pd.$$("beautyinput"),
-        bl: pd.$$("baselabel"),
-        bn: pd.$$("beau-line"),
-        bo: pd.$$("baseText"),
-        bq: pd.$$("beau-quan"),
-        bs: pd.$$("beau-space"),
-        bt: pd.$$("diffBase"),
-        bx: pd.$$("beautyoutput"),
-        bw: pd.$$("beau-other"),
-        bz: pd.$$("bo"),
-        cd: pd.$$("conditionald-no"),
-        ce: pd.$$("conditionald-yes"),
-        cf: pd.$$("conditionalm-no"),
-        cg: pd.$$("conditionalm-yes"),
-        ch: pd.$$("csvchar"),
-        ci: pd.$$("codeInput"),
-        cn: 4,
-        co: pd.$$("jscorrect-yes"),
-        cp: pd.$$("jscorrect-no"),
-        cs: pd.$$("colorScheme"),
-        cz: " ",
-        da: pd.$$("diff-tab"),
-        db: pd.$$("diffbeautify"),
-        dc: pd.$$("diff-char"),
-        dd: pd.$$("modediff"),
-        df: pd.$$("dforce_indent-no"),
-        dg: pd.$$("dforce_indent-yes"),
-        dh: pd.$$("diffcommentsy"),
-        di: pd.$$("diffcommentsn"),
-        dm: pd.$$("diffscolony"),
-        dn: pd.$$("diffscolonn"),
-        dp: pd.$$("diffwide"),
-        dq: pd.$$("diff-quan"),
-        dr: pd.$$("diffquotey"),
-        ds: pd.$$("diff-space"),
-        dt: pd.$$("difftall"),
-        du: pd.$$("diffcontentn"),
-        dw: pd.$$("diff-other"),
-        dx: pd.$$("diffcontenty"),
-        dy: pd.$$("diffquoten"),
-        dz: pd.$$("diff-line"),
-        hd: pd.$$("htmld-yes"),
-        he: pd.$$("htmld-no"),
-        hm: pd.$$("htmlm-yes"),
-        hn: pd.$$("htmlm-no"),
-        hy: pd.$$("html-yes"),
-        hz: pd.$$("html-no"),
-        id: pd.$$("inscriptd-yes"),
-        ie: pd.$$("inscriptd-no"),
-        is: pd.$$("inscript-yes"),
-        it: pd.$$("inscript-no"),
-        iy: pd.$$("incomment-yes"),
-        iz: pd.$$("incomment-no"),
-        jd: pd.$$("jsindentd-all"),
-        je: pd.$$("jsindentd-knr"),
-        jf: pd.$$("jsspace-no"),
-        jg: pd.$$("jsscope-yes"),
-        jh: pd.$$("jslines-no"),
-        ji: pd.$$("jsinlevel"),
-        jj: pd.$$("jsspace-yes"),
-        jk: pd.$$("jsspaced-no"),
-        jl: pd.$$("jsspaced-yes"),
-        jm: pd.$$("jsscope-no"),
-        jn: pd.$$("jslines-yes"),
-        jo: pd.$$("jslinesd-no"),
-        jp: pd.$$("jslinesd-yes"),
-        js: pd.$$("jsindent-all"),
-        jt: pd.$$("jsindent-knr"),
-        la: pd.$$("language"),
-        mb: pd.$$("topcoms-no"),
-        mc: pd.$$("topcoms-yes"),
-        md: pd.$$("Minify"),
-        mi: pd.$$("minifyinput"),
-        ml: pd.$$("minifyinputlines"),
-        mm: pd.$$("modeminify"),
-        mn: pd.$$("minifywindiff"),
-        mo: pd.$$("minifyoutputsize"),
-        mr: pd.$$("minifywinratiosize"),
-        ms: pd.$$("minifyinputsize"),
-        mt: pd.$$("minifyratiosize"),
-        mu: pd.$$("minifyunixdiff"),
-        mw: pd.$$("minifywinsize"),
-        mx: pd.$$("minifyoutput"),
-        nl: pd.$$("newlabel"),
-        nt: pd.$$("diffNew"),
-        nx: pd.$$("newText"),
-        nz: pd.$$("no"),
-        op: pd.$$("options"),
-        ps: pd.$$("diff-save"),
-        re: pd.$$("diffreport"),
-        rf: pd.$$("diffreportbody"),
-        rg: pd.$$("beaureport"),
-        rh: pd.$$("beaureportbody"),
-        ri: pd.$$("minreport"),
-        rj: pd.$$("minreportbody"),
-        rk: pd.$$("statreport"),
-        rl: pd.$$("statreportbody"),
-        filled: {
-            re: false,
-            rg: false,
-            ri: false,
-            rk: false
-        },
-        ro: pd.$$("resetOptions"),
-        sh: pd.$$("hideOptions"),
-        to: pd.$$("top"),
-        wb: document.getElementsByTagName("body")[0],
-        wc: pd.$$("beau-wrap"),
-        wd: pd.$$("diff-wrap"),
-        bcv: "",
-        buf: pd.$$("beautyfile"),
-        css: {
-            core: "body{font-family:\"Arial\";font-size:10px;overflow-y:scroll;}#samples #dcolorScheme{position:relative;z-index:1000}#apireturn textarea{font-size:1.2em;height:50em;width:100%}button{border-radius:.9em;display:block;font-weight:bold;width:100%}div .button{text-align:center}div button{display:inline-block;font-weight:bold;margin:1em 0;padding:1em 2em}button:hover{cursor:pointer}#introduction{clear:both;margin:0 0 0 5.6em;position:relative;top:-2.75em}#introduction ul{clear:both;height:3em;margin:0 0 0 -5.5em;overflow:hidden;width:100em}#introduction li{clear:none;display:block;float:left;font-size:1.4em;margin:0 4.95em -1em 0}#introduction li li{font-size:1em;margin-left:2em}#introduction .information,#webtool #introduction h2{left:-90em;position:absolute;top:0;width:10em}#introduction h2{float:none}#displayOps{float:right;font-size:1.5em;font-weight:bold;margin-right:1em;width:22.5em}#displayOps.default{background:inherit;position:static}#displayOps.maximized{margin-bottom:-2em;position:relative}#displayOps li{clear:none;display:block;float:left;list-style:none;margin:2em 0 0;text-align:right;width:9em}h1{float:left;font-size:2em;margin:0 .5em .5em 0}#hideOptions{margin-left:5em;padding:0}#title_text{border-style:solid;border-width:.05em;display:block;float:left;font-size:1em;margin-left:.55em;padding:.1em}h1 svg,h1 img{border-style:solid;border-width:.05em;float:left;height:2em;width:2em}h1 span{font-size:.5em}h2,h3{background:#fff;border-style:solid;border-width:.075em;display:inline-block;font-size:1.8em;font-weight:bold;margin:0 .5em .5em 0;padding:0 .2em}#doc h3{margin-top:.5em}h3{font-size:1.6em}h4{font-size:1.4em}fieldset{border-radius:.9em;clear:both;margin:3.5em 0 -2em;padding:0 0 0 1em}legend{border-style:solid;border-width:.1em;font-size:1.2em;font-weight:bold;margin-left:-.25em}.button{margin:1em 0;text-align:center}.button button{display:block;font-size:2em;height:1.5em;margin:0 auto;padding:0;width:50%}#diffreport{right:57.8em}#beaureport{right:38.8em}#minreport{right:19.8em}#statreport{right:.8em}#statreport .body p,#statreport .body li,#statreport .body h3{font-size:1.2em}#statreport .body h3{margin-top:0}#statreport .body ul{margin-top:1em}#reports{height:4em}#reports h2{display:none}.box{border-style:solid;border-width:0;left:auto;margin:0;padding:0;position:absolute;z-index:10}.box button{border-radius:0;border-style:solid;border-width:.1em;display:block;float:right;font-family:'Lucida Console','Trebuchet MS','Arial';height:1.75em;padding:0;position:absolute;right:0;text-align:center;top:0;width:1.75em;z-index:7}.box button.resize{border-width:.05em;cursor:se-resize;font-size:1.667em;font-weight:normal;height:.8em;line-height:.5em;margin:-.85em 0 0;position:absolute;right:.05em;top:100%;width:.85em}.box button.minimize{margin:.35em 4em 0 0}.box button.maximize{margin:.35em 1.75em 0 0}.box button.save{margin:.35em 6.25em 0 0}.box .buttons{float:right;margin:0}.box h3.heading{cursor:pointer;float:left;font-size:1em;height:3em;margin:0 0 -3.2em;position:relative;width:17em;z-index:6}.box h3.heading span{display:block;font-size:1.8em;padding:.25em 0 0 .5em}.box .body{clear:both;height:20em;margin-top:-.1em;overflow:scroll;padding:4.25em 1em 1em;position:relative;right:0;top:0;width:75em;z-index:5}.options{border-radius:0 0 .9em .9em;clear:both;margin-bottom:1em;padding:1em 1em 3.5em;width:auto}label{display:inline;font-size:1.4em}ol li{font-size:1.4em;list-style-type:decimal}ol li li{font-size:1em}body#doc ol li{font-size:1.1em}ul{margin:-1.4em 0 2em;padding:0}ul li{list-style-type:none}li{clear:both;margin:1em 0 1em 3em}li h4{display:inline;float:left;margin:.4em 0;text-align:left;width:14em}p{clear:both;font-size:1.2em;margin:0 0 1em}#option_comment{height:2.5em;margin-bottom:-1.5em;width:100%}.difflabel{display:block;height:0}#beau-other-span,#diff-other-span{text-indent:-200em;width:0}.options p span{display:block;float:left;font-size:1.2em}#top{min-width:80em}#top em{font-weight:bold}#update{clear:left;float:right;font-weight:bold;padding:.5em;position:absolute;right:1em;top:11em}#announcement{height:2.5em;margin:0 -5em -4.75em;width:27.5em}#textreport{width:100%}#options{float:left;margin:0;width:19em}#options label{width:auto}#options p{clear:both;font-size:1em;margin:0;padding:0}#options p span{clear:both;float:none;height:2em;margin:0 0 0 2em}#csvchar{width:11.8em}#language,#csvchar,#colorScheme{margin:0 0 1em 2em}#codeInput{margin-left:22.5em}#Beautify.wide p,#Beautify.tall p.file,#Minify.wide p,#Minify.tall p.file{clear:none;float:none}#diffops p,#miniops p,#beauops p{clear:both;font-size:1em;padding-top:1em}#options p strong,#diffops p strong,#miniops p strong,#beauops p strong,#options .label,#diffops .label,#miniops .label,#beauops .label{display:block;float:left;font-size:1.2em;font-weight:bold;margin-bottom:1em;width:17.5em}input[type=\"radio\"]{margin:0 .25em}input[type=\"file\"]{box-shadow:none}select{border-style:inset;border-width:.1em;width:11.85em}.options input,.options label{border-style:none;display:block;float:left}.options span label{margin-left:.4em;white-space:nowrap;width:12em}.options p span label{font-size:1em}#webtool .options input[type=text]{margin-right:1em;width:11.6em}#webtool .options input[type=text],div input,textarea{border-style:inset;border-width:.1em}textarea{display:inline-block;height:10em;margin:0}strong label{font-size:1em;width:inherit}strong.new{background:#ff6;font-style:italic}#miniops span strong,#diffops span strong,#beauops span strong{display:inline;float:none;font-size:1em;width:auto}#Beautify .input label,#Beautify .output label,#Minify .input label,#Minify .output label{display:block;font-size:1.05em;font-weight:bold}#beautyinput,#minifyinput,#baseText,#newText,#beautyoutput,#minifyoutput{font-size:1em}.clear{clear:both;display:block}.wide,.tall,#diffBase,#diffNew{border-radius:0 0 .9em .9em;margin-bottom:1em}#diffBase,#diffNew{padding:1em}#diffBase p,#diffNew p{clear:none;float:none}#diffBase.wide textarea,#diffNew.wide textarea{height:10.1em}.wide,.tall{padding:1em 1.25em 0}#diff .addsource{cursor:pointer;margin-bottom:1em;padding:0}#diff .addsource input{display:block;float:left;margin:.5em .5em -1.5em}#diff .addsource label{cursor:pointer;display:inline-block;font-size:1.2em;padding:.5em .5em .5em 2em}.wide label{float:none;margin-right:0;width:100%}.wide #beautyinput,.wide #minifyinput,.wide #beautyoutput,.wide #minifyoutput{height:14.8em;margin:0;width:99.5%}.tall .input{clear:none;float:left}.tall .output{clear:none;float:right;margin-top:-2.4em}.tall .input,.tall .output{width:49%}.tall .output label{text-align:right}.tall .input textarea{height:31.7em}.tall .output textarea{height:34em}.tall textarea{margin:0 0 -.1em;width:100%}.tall #beautyinput,.tall #minifyinput{float:left}.tall #beautyoutput,.tall #minifyoutput{float:right}.wide{width:auto}#diffBase.difftall,#diffNew.difftall{margin-bottom:1.3em;padding:1em 1% .9em;width:47.5%}#diffBase.difftall{float:left}#diffNew.difftall{float:right}.file input,.labeltext input{display:inline-block;margin:0 .7em 0 0;width:16em}.labeltext,.file{font-size:.9em;font-weight:bold;margin-bottom:1em}.difftall textarea{height:30.6em;margin-bottom:.5em}#diffBase textarea,#diffNew textarea{width:99.5%}.input,.output{margin:0}#diffBase.wide,#diffNew.wide{padding:.8em 1em}#diffBase.wide{margin-bottom:1.2em}#diffoutput{width:100%}#diffoutput p em,#diffoutput li em,.analysis .bad,.analysis .good{font-weight:bold}#diffoutput ul{font-size:1.2em;margin-top:1em}#diffoutput ul li{display:list-item;list-style-type:disc}.analysis th{text-align:left}.analysis td{text-align:right}#doc ul{margin-top:1em}#doc ul li{font-size:1.2em}body#doc ul li{font-size:1.1em}#doc ol li span{display:block;margin-left:2em}.diff,.beautify{border-style:solid;border-width:.2em;display:inline-block;font-family:'Courier New',Courier,'Lucida Console',monospace;margin:0 1em 1em 0;padding:0;position:relative}.beautify .data em{display:inline-block;font-style:normal;font-weight:bold;padding-top:.5em}.diff .skip{border-style:none none solid;border-width:0 0 .1em}.diff li,.diff p,.diff h3,.beautify li{font-size:1.1em}.diff .diff-left,.diff .diff-right{display:table-cell}.diff .diff-left{border-style:none none none solid;border-width:0 0 0 .1em}.diff .diff-right{border-style:none none none solid;border-width:0 0 0 .1em;margin-left:-.1em;min-width:16.5em;right:0;top:0}.diff-right .data ol{min-width:16.5em}.diff-right .data{border-style:none solid none none;border-width:0 .1em 0 0;width:100%}.diff-right .data li{min-width:16.5em}.diff ol,.beautify ol{display:table-cell;margin:0;padding:0}.diff li,.beautify li{border-style:none none solid;border-width:0 0 .1em;display:block;line-height:1.2;list-style-type:none;margin:0;padding-bottom:0;padding-right:.5em}.diff li{padding-top:.5em}.beautify .count li{padding-top:.5em}@media screen and (-webkit-min-device-pixel-ratio:0) {.beautify .count li{padding-top:.546em}}#doc .beautify .count li.fold{color:#900;cursor:pointer;font-weight:bold;padding-left:.5em}.diff .count,.beautify .count{border-style:solid;border-width:0 .1em 0 0;font-weight:normal;padding:0;text-align:right}.diff .count li,.beautify .count li{padding-left:2em}.diff .data,.beautify .data{text-align:left;white-space:pre}.diff .data li,.beautify .data li{letter-spacing:.1em;padding-left:.5em;white-space:pre}#webtool .diff h3{border-style:none solid solid;border-width:0 .1em .2em;box-shadow:none;display:block;font-family:Verdana;margin:0 0 0 -.1em;padding:.2em 2em;text-align:left}.diff li em{font-style:normal;margin:0 -.09em;padding:.05em 0}.diff p.author{border-style:solid;border-width:.2em .1em .1em;margin:0;overflow:hidden;padding:.4em;text-align:right}#dcolorScheme{float:right;margin:-2em 0 0 0}#dcolorScheme label{display:inline-block;font-size:1em;margin-right:1em}body#doc{font-size:.8em;max-width:80em}#doc th{font-weight:bold}#doc td span{display:block}#doc table,.box .body table{border-collapse:collapse;border-style:solid;border-width:.2em;clear:both}#doc table{font-size:1.2em}body#doc table{font-size:1em}#doc td,#doc th{border-left-style:solid;border-left-width:.1em;border-top-style:solid;border-top-width:.1em;padding:.5em}#doc em,.box .body em{font-style:normal;font-weight:bold}#doc div{margin-bottom:2em}#doc div div{clear:both;margin-bottom:1em}#doc h2{font-size:1.6em;margin:.5em .5em .5em 0}#doc ol{clear:both}#doc_contents li{font-size:1.75em;margin:1em 0 0}#doc_contents ol ol li{font-size:.75em;list-style:lower-alpha;margin:.5em 0 0}#doc_contents ol{padding-bottom:1em}#doc #doc_contents ol ol{background-color:inherit;border-style:none;margin:.25em .3em 0 0;padding-bottom:0}#doc_contents a{text-decoration:none}#diffoutput #thirdparties li{display:inline-block;list-style-type:none}#thirdparties a{border-style:none;display:block;height:4em;text-decoration:none}button,fieldset,.box h3.heading,.box .body,.options,.diff .replace em,.diff .delete em,.diff .insert em,.wide,.tall,#diffBase,#diffNew,#doc div,#doc div div,#doc ol,#option_comment,#update,#thirdparties img,#diffoutput #thirdparties{border-style:solid;border-width:.1em}#apitest p{clear:both;padding-top:.75em}#apitest label,#apitest select,#apitest input,#apitest textarea{float:left}#apitest label{width:20em}#apitest select,#apitest input,#apitest textarea{width:30em}#pdsamples{list-style-position:inside;margin:-12em 0 0 0;padding:0;position:relative;z-index:10}#pdsamples li{border-radius:1em;border-style:solid;border-width:.1em;margin:0 0 3em;padding:1em}#pdsamples li div{border-radius:1em;border-style:solid;border-width:.1em;margin:0;padding:1em}#pdsamples li p{display:inline-block;font-size:1em;margin:0}#pdsamples li p a{display:block;margin:0 0 1em 2em}#pdsamples li ul{margin:0 0 0 2em}#samples #pdsamples li li{background:none transparent;border-style:none;display:list-item;list-style:disc outside;margin:0;padding:.5em}#modalSave span{background:#000;display:block;left:0;opacity:.5;position:absolute;top:0;z-index:9000}#modalSave p{background:#eee;color:#333;font-size:3em;padding:1em;position:absolute;text-align:center;top:10em;width:25em;z-index:9001}#modalSave p em{display:block;font-size:.75em;margin-top:1em}#modalSave p strong{color:#c00;font-weight:bold}@media print{p,.options,#Beautify,#Minify,#diff,ul{display:none}div{width:100%}html td{font-size:.8em;white-space:normal}}",
-            sdefault: "html .default,body.default{background:url(\"images/body.gif\") repeat-x #a8b8c8;color:#000}body.default button{background:#dfd;border-color:#030;box-shadow:0 .1em .2em rgba(0,32,0,0.75);color:#030}.default a{color:#f00}.default button:hover{background:#f6fff6}.default button:active{background:#030;color:#dfd}.default #title_text{background:#fff;border-color:#000;box-shadow:0 .15em .3em rgba(0,0,0,0.5);color:#000}.default #introduction h2{border-color:#f00;color:#c00}.default h1 svg{border-color:#600;box-shadow:0 .2em .4em rgba(0,0,0,0.5)}.default h2,.default h3{border-color:#000}.default fieldset{border-color:#caa}.default legend{border-color:#fee;color:#966}.default .button button{background:url(\"images/green.png\") repeat-x 0 100%#dfd}.default .button button:hover{background:#f6fff6}.default .button button:active{background:#030;color:#efe}.default .box{background:#ccc;border-color:#006;box-shadow:0 .4em .8em rgba(0,0,64,0.75)}.default .box button{box-shadow:0 .1em .2em rgba(0,0,64,0.5)}.default .box button.resize{background:#ddf;border-color:#006;color:#006}.default .box button.minimize{background:#ddf;border-color:#006;color:#006}.default .box button.minimize:hover,.default .box button.resize:hover{background:#99f}.default .box button.save{background:#ddf;border-color:#006;color:#006}.default .box button.save:hover{background:#99f}.default .box h3.heading{background:#eef;border-color:#006}.default .box h3.heading:hover{background:#ccf}.default .box .body{background:#d8dde8;border-color:#006;box-shadow:0 0 .4em rgba(0,64,0,0.75)}.default .options{background:url(\"images/backred.gif\") #fee repeat-x 100% 100%;border-color:#600;box-shadow:0 .2em .4em rgba(64,0,0,0.5)}.default .options h2{border-color:#600;box-shadow:0 .1em .2em rgba(102,0,0,0.75)}.default #Beautify h2,.default #Minify h2,.default #diffBase h2,.default #diffNew h2{border-color:#006;box-shadow:0 .1em .2em rgba(0,0,64,0.5)}.default #option_comment{background:#fee;border-color:#600}.default #top em{color:#00f}.default #update{background:#fff;border-color:#000;box-shadow:0 .1em .2em rgba(0,0,0,0.5)}.default .wide,.default .tall,.default #diffBase,.default #diffNew{background:url(\"images/backblue.gif\") #eef repeat-x 100% 100%;border-color:#006;box-shadow:0 .2em .4em rgba(0,0,64,0.5)}.default .file input,.default .labeltext input{border-color:#006}#webtool.default input.unchecked{background:#eef8ff;color:#000}.default .options input[type=text],.default .options select{border-color:#933}.default #beautyoutput,.default #minifyoutput{background:#ddd}.default #diffoutput p em,.default #diffoutput li em{color:#c00}.default .analysis .bad{background-color:#e99;color:#400}.default .analysis .good{background-color:#9e9;color:#040}.default #doc .analysis thead th,.default #doc .analysis th[colspan]{background:#eef}.default div input{border-color:#933}.default textarea{border-color:#339}.default textarea:hover{background:#eef8ff}.default .diff,.default .diff-right,.default .diff-right .data,.default .diff-left{border-color:#669}.default .diff .count{background:#eed;border-color:#bbc;color:#664}.default .diff .count .empty{color:#eed}.default .diff .count li{background:#eed;border-color:#aa8;color:#886}.default .diff h3{background:#efefef;border-color:#669 #669 #bbc}.default .diff .empty{background-color:#ddd;border-color:#ccc}.default .diff .replace{background-color:#fd8;border-color:#cb6}#webtool.default .diff .replace em{background-color:#ffd;border-color:#963;color:#630}.default .diff .delete{background-color:#e99;border-color:#b88}#webtool.default .diff .delete em{background-color:#fdd;border-color:#700;color:#600}.default .diff .equal{background-color:#fff;border-color:#ddd}.default .diff .skip{background-color:#efefef;border-color:#ccc}.default .diff .insert{background-color:#9e9;border-color:#6c6}#webtool.default .diff .insert em{background-color:#efc;border-color:#070;color:#050}.default #doc table,.default .box .body table{background:#fff;border-color:#669}.default #doc strong,.default .box .body strong{color:#c00}.default .box .body em,.default .box .body #doc em{color:#090}.default .diff p.author{background:#efefef;border-color:#bbc #669 #669}.default #thirdparties img,.default #diffoutput #thirdparties{border-color:#687888}.default #diffoutput #thirdparties{background:#c8d8e8}.default #doc div,#doc.default div{background:#eef;border-color:#669}.default #doc ol,#doc.default ol{background:#fff;border-color:#669}.default #doc div div,#doc.default div div{background:#fff;border-color:#966}.default #doc table,#doc.default table{background:#fff;border-color:#669}.default #doc th,#doc.default th{background:#fed;border-left-color:#669;border-top-color:#669}.default #doc tr:hover,#doc.default tr:hover{background:#fed}#doc.default em{color:#060}.default #doc div:hover,#doc.default div:hover{background:#def}.default #doc div div:hover,#doc.default div div:hover,#doc.default div ol:hover{background:#fed}.default #pdsamples li{background:#eef;border-color:#006}.default #pdsamples li div{background:url(\"images/backred.gif\") repeat-x 100% 100%#fee;border-color:#600}.default #pdsamples li div a{color:#009}.default #pdsamples li p a{color:#900}",
-            scoffee: "html .coffee,body.coffee{background:#dcb;color:#321}.coffee a{color:#900}.coffee button{background:#654;border-color:#321;box-shadow:0 .1em .2em rgba(32,0,0,0.75);color:#fed}.coffee button:hover,.coffee button:active{background:#fed;color:#654}.coffee #update,.coffee #title_text{background:#fff8ee;border-color:#600;box-shadow:0 .15em .3em rgba(32,0,0,0.5);color:#321}.coffee #introduction h2{color:#f00}.coffee h1 svg{border-color:#600;box-shadow:0 .2em .4em rgba(0,0,0,0.5)}.coffee h2,.coffee h3{border-color:#600}.coffee fieldset{background:#dcb;border-color:#654}.coffee legend{background:#fed;border-color:#654}.coffee .box{background:#ccc;border-color:#654;box-shadow:0 .4em .8em rgba(64,0,0,0.75)}.coffee .box button{border-color:#600;box-shadow:0 .1em .2em rgba(64,0,0,0.5);color:#600}.coffee .box button.minimize:hover,.coffee .box button.resize:hover,.coffee .box button.save:hover,.coffee .box button.maximize:hover{background:#654;color:#fed}.coffee .box button.resize{background:#c96}.coffee .box button.minimize{background:#eda}.coffee .box button.save{background:#db0}.coffee .box button.maximize{background:#dd8}.coffee .box h3.heading{background:#987;border-color:#600;color:#fed}.coffee .box h3.heading:hover{background:#654}.coffee .box .body{background:#fed;border-color:#654;box-shadow:0 .4em .8em rgba(64,0,0,0.75)}.coffee .options{background:#fed;border-color:#600;box-shadow:0 .4em .8em rgba(64,0,0,0.5)}.coffee .options h2{border-color:#600;box-shadow:0 .1em .2em rgba(64,0,0,0.75)}.coffee #Beautify h2,.coffee #Minify h2,.coffee #diffBase h2,.coffee #diffNew h2{border-color:#600;box-shadow:0 .1em .2em rgba(64,0,0,0.5)}.coffee #option_comment{border-color:#600;box-shadow:0 .1em .2em rgba(64,0,0,0.5);color:#600}.coffee #top em{color:#f00}.coffee .wide,.coffee .tall,.coffee #diffBase,.coffee #diffNew{background:#fed;border-color:#600;box-shadow:0 .2em .4em rgba(64,0,0,0.5)}.coffee .file input,.coffee .labeltext input{border-color:#600}#webtool.coffee input.unchecked{background:#cba;color:#000}.coffee .options input[type=text],.coffee .options select{border-color:#933}.coffee #beautyoutput,.coffee #minifyoutput{background:#dcb}.coffee #diffoutput p em,.coffee #diffoutput li em{color:#900}.coffee .analysis .bad{background-color:#eb9;color:#400}.coffee .analysis .good{background-color:#be9;color:#040}.coffee #doc .analysis thead th,.coffee #doc .analysis th[colspan]{background:#dcb}.coffee div input{border-color:#933}.coffee textarea{background:#fff8ee;border-color:#a66}.coffee textarea:hover{background:#fff}.coffee .diff,.coffee .diff h3,.coffee .diff-left,.coffee .diff-right,.coffee .diff-right ol,.coffee p.author{border-color:#966}.coffee .diff .count li{background:#edc;border-color:#966;color:#633}.coffee .diff .count{border-color:#966}.coffee .diff h3{background:#cba}.coffee .diff .empty{background-color:#ddd;border-color:#ccc}.coffee .diff .replace{background-color:#fda;border-color:#ec9}#webtool.coffee .diff .replace em{background-color:#ffd;border-color:#963;color:#630}.coffee .diff .delete{background-color:#ebb;border-color:#daa}#webtool.coffee .diff .delete em{background-color:#fee;border-color:#700;color:#600}.coffee .diff .equal{background-color:#fff8ee;border-color:#ecc}.coffee .diff .skip{background-color:#eee;border-color:#ccc}.coffee .diff .insert{background-color:#cec;border-color:#bdb}#webtool.coffee .diff .insert em{background-color:#efc;border-color:#070;color:#050}.coffee #doc table,.coffee .box .body table{background:#fff8ee;border-color:#966}.coffee #doc strong,.coffee .box .body strong{color:#900}.coffee .box .body em,.coffee .box .body #doc em{color:#262}.coffee .diff th.author{background:#cba;border-top-color:#966}.coffee #diffoutput #thirdparties{background:#edc;border-color:#600}.coffee #doc div,#doc.coffee div{background:#edc;border-color:#966}.coffee #doc ol,#doc.coffee ol{background:#fff8ee;border-color:#966}.coffee #doc div div,#doc.coffee div div{background:#fff;border-color:#966}.coffee #doc table,#doc.coffee table{background:#fff8ee;border-color:#966}.coffee #doc th,#doc.coffee th{background:#eed;border-left-color:#966;border-top-color:#966}.coffee #doc tr:hover,#doc.coffee tr:hover{background:#fed}.coffee #doc div:hover,#doc.coffee div:hover{background:#dcb}.coffee #doc div div:hover,#doc.coffee div div:hover,#doc.coffee div ol:hover{background:#dcb}.coffee #pdsamples li{background:#fed;border-color:#600}.coffee #pdsamples li div{background:#dcb;border-color:#654}.coffee #pdsamples li div a{color:#900}.coffee #pdsamples li p a{color:#900}",
-            sdark: "html .dark,body.dark{background:#333;color:#eee}.dark a{color:#9cf}.dark button{background:#9cf;border-color:#036;box-shadow:0 .1em .2em rgba(224,224,255,0.75);color:#036}.dark button:hover,.dark button:active{background:#def}.dark #update,.dark #title_text{background:#def;border-color:#036;box-shadow:0 .1em .2em rgba(224,224,255,0.75);color:#036}.dark h1 svg{border-color:#00c;box-shadow:0 .1em .2em rgba(224,224,255,0.75)}.dark h2,.dark h3{background:#def;border-color:#006;color:#036}.dark fieldset{background:#246;border-color:#036}.dark legend{background:#def;border-color:#036;color:#036}.dark .box{background:#666;border-color:#abc}.dark .box button{border-color:#036;box-shadow:0 0 0 rgba(0,0,0,0);color:#036}.dark .box button.minimize:hover,.dark .box button.resize:hover,.dark .box button.save:hover,.dark .box button.maximize:hover{background:#def}.dark .box button.resize{background:#9cf}.dark .box button.save{background:#7ad}.dark .box button.minimize{background:#9cf}.dark .box button.maximize{background:#bef}.dark .box h3.heading{background:#8ad;border-color:#036;color:#036}.dark .box h3.heading:hover{background:#def}.dark .box .body{background:#abc;border-color:#036;box-shadow:0 0 0 rgba(0,0,0,0);color:#000}.dark .options{background:#024;border-color:#89a;box-shadow:0 .4em .8em rgba(224,224,255,0.5);color:#fff}.dark #Beautify h2,.dark #Minify h2,.dark #diffBase h2,.dark #diffNew h2,.dark .options h2{box-shadow:0 .1em .2em rgba(224,224,255,0.75)}.dark #option_comment{background:#bcd;border-color:#036;color:#036}.dark #top em{color:#f00}.dark .wide,.dark .tall,.dark #diffBase,.dark #diffNew{background:#024;border-color:#89a;box-shadow:0 .1em .2em rgba(224,224,255,0.5)}.dark .file input,.dark .labeltext input{border-color:#036}#webtool.dark input.unchecked{background:#ccc;color:#444}.dark .options input[type=text],.dark .options select{background:#bcd;border-color:#036}.dark #beautyoutput,.dark #minifyoutput{background:#ccc}.dark #diffoutput p em,.dark #diffoutput li em{color:#050}.dark .analysis .bad{background-color:#e99;color:#400}.dark .analysis .good{background-color:#be9;color:#040}.dark #doc .analysis thead th,.dark #doc .analysis th[colspan]{background:#8ac}.dark div input{border-color:#933}.dark textarea{background:#bcd;border-color:#036}.dark textarea:hover{background:#cdf}.dark .diff,.dark .diff-left,.dark .diff-right,.dark .diff ol,.dark .diff h3,.dark .diff p.author{border-color:#036}.dark .diff-right,.dark .diff-right h3{border-left-color:#000}.dark .diff .count{background:#369}.dark .diff .count li{border-color:#036}.dark .diff .count .empty{background:#369;color:#369}.dark .diff h3{background:#036;color:#def}.dark .diff .empty{background-color:#456;border-color:#345}.dark .diff .replace{background-color:#468;border-color:#579;color:#def}#webtool.dark .diff .replace em{background-color:#dff;border-color:#036;color:#036}.dark .diff .delete{background-color:#600;border-color:#400;color:#fbb}#webtool.dark .diff .delete em{background-color:#fbb;border-color:#600;color:#600}.dark .diff .equal{background-color:#024;border-color:#135;color:#def}.dark .diff .skip{background-color:#333;border-color:#444}.dark .diff .insert{background-color:#696;border-color:#464;color:#dfd}#webtool.dark .diff .insert em{background-color:#efc;border-color:#060;color:#050}.dark #doc table,.dark .box .body table{background:#024;border-color:#036;color:#def}.dark #doc strong,.dark .box .body strong{color:#900}.dark .box .body em,.dark .box .body #doc em{color:#360}.dark .diff p.author{background:#036;color:#def}.dark #diffoutput #thirdparties{background:#024;border-color:#369}.dark #diffoutput #thirdparties a{color:#00f}.dark #doc div,#doc.dark div{background:#246;border-color:#036}.dark #doc ol,#doc.dark ol{background:#024;border-color:#036}.dark #doc div div,#doc.dark div div{background:#024;border-color:#036}.dark #doc table,#doc.dark table{background:#024;border-color:#036}.dark #doc th,#doc.dark th{background:#468;border-left-color:#036;border-top-color:#036}.dark #doc tr:hover,#doc.dark tr:hover{background:#468}.dark #doc td,#doc.dark td{border-color:#036}.dark #doc div:hover,#doc.dark div:hover{background:#468}.dark #doc div div:hover,#doc.dark div div:hover,#doc.dark div ol:hover{background:#246}.dark #pdsamples li{background:#024;border-color:#89a}.dark #pdsamples li div{background:#444;border-color:#222}.dark #pdsamples li div a{color:#9cf}.dark #pdsamples li p a{color:#ccc}",
-            scanvas: "html .canvas,body.canvas{background:#e8e8e8;color:#666}.canvas a{color:#450}.canvas button{background:#d8d8cf;border-color:#664;box-shadow:0 .1em .2em rgba(128,128,92,0.75);color:#664;text-shadow:.05em .05em .1em #999}.canvas button:hover,.canvas button:active{background:#ffe}.canvas #update,.canvas #title_text{background:#f8f8ee;box-shadow:0 .1em .2em rgba(128,128,92,0.75);color:#464}.canvas h1 svg{border-color:#664;box-shadow:0 .1em .2em rgba(128,128,92,0.75)}.canvas h2,.canvas h3{background:#f8f8ef;border-color:#664;box-shadow:0 .1em .2em rgba(128,128,92,0.75);text-shadow:none}.canvas .wide,.canvas .tall,.canvas #diffBase,.canvas #diffNew{background:#d8d8cf;border-color:#664;box-shadow:0 .2em .4em rgba(128,128,92,0.5);color:#444}.canvas .wide label,.canvas .tall label,.canvas #diffBase label,.canvas #diffNew label{text-shadow:.05em .05em .1em #aaa}.canvas .options{background:#d8d8cf;border-color:#664;box-shadow:0 .2em .4em rgba(128,128,92,0.5);color:#444;text-shadow:.05em .05em .1em #999}.canvas fieldset{background:#e8e8e8;border-color:#664}.canvas legend{background:#f8f8ef;border-color:#664}.canvas .box{background:#ccc;border-color:#664}.canvas .box .body{background:#e8e8e8;border-color:#664;box-shadow:0 .2em .4em rgba(128,128,92,0.75);color:#666}.canvas .box button{box-shadow:0 .1em .2em rgba(128,128,92,0.75)}.canvas .box button.resize{background:#cfcfd8;border-color:#446;color:#446}.canvas .box button.resize:hover{background:#bbf;border-color:#228;color:#228}.canvas .box button.save{background:#d8cfcf;border-color:#644;color:#644}.canvas .box button.save:hover{background:#fcc;border-color:#822;color:#822}.canvas .box button.minimize{background:#cfcfd8;border-color:#446;color:#446}.canvas .box button.minimize:hover{background:#bbf;border-color:#228;color:#228}.canvas .box button.maximize{background:#cfd8cf;border-color:#464;color:#464}.canvas .box button.maximize:hover{background:#cfc;border-color:#282;color:#282}.canvas .box h3.heading:hover{background:#d8d8cf}.canvas #option_comment{background:#e8e8e8;border-color:#664;color:#444}.canvas #top em{color:#fcc}#webtool.canvas input.unchecked{background:#ccc;color:#333}.canvas input,.canvas select{box-shadow:.1em .1em .2em #999}.canvas .file input,.canvas .labeltext input,.canvas .options input[type=text],.canvas .options select{background:#f8f8f8;border-color:#664}.canvas #beautyoutput,.canvas #minifyoutput{background:#ccc}.canvas #diffoutput p em,.canvas #diffoutput li em{color:#050}.canvas #doc .analysis thead th,.canvas #doc .analysis th[colspan]{background:#c8c8bf}.canvas textarea{background:#f8f8ef;border-color:#664}.canvas textarea:hover{background:#e8e8e8}.canvas .diff,.canvas ol,.canvas .diff p.author,.canvas .diff h3,.canvas .diff-right,.canvas .diff-left{border-color:#664}.canvas .diff .count{background:#c8c8bf}.canvas .diff .count .empty{background:#c8c8bf;border-color:#664;color:#c8c8bf}.canvas .diff .data{background:#f8f8ef}.canvas .diff h3{background:#c8c8bf;color:#664}.canvas .analysis .bad{background-color:#ecb;color:#744}.canvas .analysis .good{background-color:#cdb;color:#474}.canvas .diff .empty{background-color:#ccc;border-color:#bbb}.canvas .diff .replace{background-color:#dda;border-color:#cc8;color:#660}#webtool.canvas .diff .replace em{background-color:#ffd;border-color:#664;color:#880}.canvas .diff .delete{background-color:#da9;border-color:#c87;color:#600}#webtool.canvas .diff .delete em{background-color:#fdc;border-color:#600;color:#933}.canvas .diff .equal{background-color:#f8f8ef;border-color:#ddd;color:#666}.canvas .diff .skip{background-color:#eee;border-color:#ccc}.canvas .diff .insert{background-color:#bd9;border-color:#9c7;color:#040}#webtool.canvas .diff .insert em{background-color:#efc;border-color:#060;color:#464}.canvas .diff p.author{background:#ddc;color:#666}.canvas #doc table,.canvas .box .body table{background:#f8f8ef;border-color:#664;color:#666}.canvas #doc strong,.canvas .box .body strong{color:#933}.canvas .box .body em,.canvas .box .body #doc em{color:#472}.canvas #diffoutput #thirdparties{background:#c8c8bf;border-color:#664}.canvas #diffoutput #thirdparties a{color:#664}#doc.canvas{color:#444}.canvas #doc div,#doc.canvas div{background:#c8c8bf;border-color:#664}.canvas #doc ol,#doc.canvas ol{background:#e8e8e8;border-color:#664}.canvas #doc div div,#doc.canvas div div{background:#e8e8e8;border-color:#664}.canvas #doc table,#doc.canvas table{background:#f8f8ef;border-color:#664}.canvas #doc th,#doc.canvas th{background:#c8c8bf;border-left-color:#664;border-top-color:#664}.canvas #doc tr:hover,#doc.canvas tr:hover{background:#c8c8bf}.canvas #doc td,#doc.canvas td{border-color:#664}.canvas #doc div:hover,#doc.canvas div:hover{background:#d8d8cf}.canvas #doc div div:hover,#doc.canvas div div:hover,#doc.canvas div ol:hover{background:#f8f8ef}.canvas #pdsamples li{background:#d8d8cf;border-color:#664}.canvas #pdsamples li div{background:#e8e8e8;border-color:#664}.canvas #pdsamples li div a{color:#664}.canvas #pdsamples li p a{color:#450}",
-            sshadow: "html .shadow,body.shadow{background:#222;color:#eee}.shadow a{color:#f60}.shadow a:hover{color:#c30}.shadow button{background:#630;border-color:#600;box-shadow:0 .2em .4em rgba(0,0,0,1);color:#f90;text-shadow:.1em .1em .1em #000}.shadow button:hover,.shadow button:active{background:#300;border-color:#c00;color:#fc0;text-shadow:.1em .1em .1em rgba(0,0,0,.5)}.shadow #title_text{border-color:#222;color:#eee}.shadow #update{background:#ddd;border-color:#000;color:#222}.shadow h1 svg{border-color:#222;box-shadow:.2em .2em .4em #000}.shadow h2,.shadow h3{background-color:#666;border-color:#666;box-shadow:none;color:#ddd;padding-left:0;text-shadow:none}.shadow .wide,.shadow .tall,.shadow #diffBase,.shadow #diffNew{background:#666;border-color:#999;color:#ddd}.shadow .wide label,.shadow .tall label,.shadow #diffBase label,.shadow #diffNew label{text-shadow:.1em .1em .1em #333}.shadow textarea{background:#333;border-color:#000;color:#ddd}.shadow textarea:hover{background:#000}.shadow .options{background:#666;border-color:#999;color:#ddd;text-shadow:.1em .1em .2em #333}.shadow fieldset{background:#333;border-color:#999}.shadow legend{background:#eee;border-color:#333;box-shadow:0 .1em .2em rgba(0,0,0,0.75);color:#222;text-shadow:none}.shadow .box{background:#000;border-color:#999;box-shadow:.6em .6em .8em rgba(0,0,0,.75)}.shadow .box .body{background:#333;border-color:#999;color:#ddd}.shadow .box h3{background:#ccc;border-color:#333;box-shadow:.2em .2em .8em #000;color:#222}.shadow .box h3.heading:hover{background:#222;border-color:#ddd;color:#ddd}.shadow .box button{box-shadow:0 .1em .2em rgba(0,0,0,0.75);text-shadow:.1em .1em .1em rgba(0,0,0,.5)}.shadow .box button.resize{background:#bbf;border-color:#446;color:#446}.shadow .box button.resize:hover{background:#ddf;border-color:#228;color:#228}.shadow .box button.save{background:#d99;border-color:#300;color:#300}.shadow .box button.save:hover{background:#fcc;border-color:#822;color:#822}.shadow .box button.minimize{background:#bbf;border-color:#006;color:#006}.shadow .box button.minimize:hover{background:#eef;border-color:#228;color:#228}.shadow .box button.maximize{background:#9c9;border-color:#030;color:#030}.shadow .box button.maximize:hover{background:#cfc;border-color:#060;color:#060}.shadow #option_comment{background:#333;border-color:#999;color:#ddd}.shadow #option_comment,.shadow input,.shadow select{box-shadow:.1em .1em .2em #000}.shadow input[disabled]{box-shadow:none}.shadow #top em{color:#684}#webtool.shadow input.unchecked{background:#666;color:#ddd}.shadow .file input,.shadow .labeltext input,.shadow .options input[type=text],.shadow .options select{background:#333;border-color:#999;color:#ddd}.shadow .options fieldset span input[type=text]{background:#222;border-color:#333}.shadow #beautyoutput,.shadow #minifyoutput{background:#555;color:#eee}.shadow #doc .analysis th[colspan],.shadow .diff h3,.shadow #doc .analysis thead th{background:#555;border-color:#999;color:#ddd}.shadow .analysis .bad{background-color:#400;color:#c66}.shadow .analysis .good{background-color:#040;color:#6a6}.shadow .diff,.shadow .diff div,.shadow .diff p,.ahadow .diff ol,.shadow .diff li,.shadow .diff .count li,.shadow .diff-right .data{border-color:#999}.shadow .diff .diff-right{border-color:#999 #999 #999 #333}.shadow .diff .count{background:#bbb;color:#333}.shadow .diff .data{background:#333;color:#ddd}.shadow .diff .empty{background-color:#999;border-color:#888}.shadow .diff .replace{background-color:#664;border-color:#707050;color:#bb8}.shadow .diff .count .empty{background:#bbb;color:#bbb}#webtool.shadow .diff .replace em{background-color:#440;border-color:#220;color:#cc9}.shadow .diff .delete{background-color:#300;border-color:#400;color:#c66}#webtool.shadow .diff .delete em{background-color:#700;border-color:#c66;color:#f99}.shadow .diff .equal{background-color:#333;border-color:#404040;color:#ddd}.shadow .diff .skip{background-color:#000;border-color:#555}.shadow .diff .insert{background-color:#040;border-color:#005000;color:#6c6}#webtool.shadow .diff .insert em{background-color:#363;border-color:#6c0;color:#cfc}.shadow .diff p.author{background:#555;border-color:#999;color:#ddd}.shadow table td{border-color:#999}.shadow .diff,.shadow #doc table,.shadow .box .body table{background:#333;border-color:#999;color:#ddd}.shadow #doc strong,.shadow .box .body strong{color:#b33}.shadow .box .body em,.shadow .box .body #doc em,.shadow #diffoutput p em,.shadow #diffoutput li em{color:#684}.shadow #diffoutput #thirdparties{background:#666;border-color:#999}.shadow #diffoutput #thirdparties a{box-shadow:0 .2em .4em rgba(0,0,0,1);color:#000}#doc.shadow{color:#ddd}#doc.shadow h3 a{color:#f90}.shadow #doc div,#doc.shadow div{background:#666;border-color:#999}.shadow #doc ol,#doc.shadow ol{background:#333;border-color:#999}.shadow #doc div div,#doc.shadow div div{background:#333;border-color:#999}.shadow #doc table,#doc.shadow table{background:#333;border-color:#999}.shadow #doc th,#doc.shadow th{background:#bbb;border-left-color:#999;border-top-color:#999;color:#333}.shadow #doc tr:hover,#doc.shadow tr:hover{background:#555}.shadow #doc div:hover,#doc.shadow div:hover{background:#777}.shadow #doc div div:hover,#doc.shadow div div:hover,#doc.shadow div ol:hover{background:#444}.shadow #textreport{background:#222}.shadow #pdsamples li{background:#666;border-color:#999}.shadow #pdsamples li div{background:#333;border-color:#999}.shadow #pdsamples li p a{color:#f90}.shadow #pdsamples li p a:hover{color:#fc0}",
-            swhite: "html .white,body.white{color:#333}body.white button{background:#eee;border-color:#222;box-shadow:0 .1em .2em rgba(64,64,64,0.75);color:#666;text-shadow:.05em .05em .1em #ccc}.white button:hover,.white button:active{background:#999;color:#eee;text-shadow:.1em .1em .1em #333}.white a{color:#009}.white #title_text{border-color:#fff;color:#333}.white #introduction h2{border-color:#999;color:#333}.white h1 svg{background:#eee;border-color:#999;box-shadow:0 .1em .2em rgba(150,150,150,0.5)}.white h2,.white h3{background:#eee;border-color:#eee;box-shadow:none;padding-left:0;text-shadow:none}.white fieldset{background:#ddd;border-color:#999}.white legend{background:#fff;border-color:#999;color:#333;text-shadow:none}.white .box{background:#666;border-color:#999;box-shadow:0 .4em .8em rgba(64,64,64,0.75)}.white .box button{box-shadow:0 .1em .2em rgba(0,0,0,0.75);text-shadow:.1em .1em .1em rgba(0,0,0,.5)}.white .box button.resize{background:#bbf;border-color:#446;color:#446}.white .box button.resize:hover{background:#ddf;border-color:#228;color:#228}.white .box button.save{background:#d99;border-color:#300;color:#300}.white .box button.save:hover{background:#fcc;border-color:#822;color:#822}.white .box button.minimize{background:#bbf;border-color:#006;color:#006}.white .box button.minimize:hover{background:#eef;border-color:#228;color:#228}.white .box button.maximize{background:#9c9;border-color:#030;color:#030}.white .box button.maximize:hover{background:#cfc;border-color:#060;color:#060}.white .box h3.heading{background:#ddd;border-color:#888;box-shadow:.2em .2em .4em #666}.white .box h3.heading:hover{background:#333;color:#eee}.white .box .body{background:#eee;border-color:#888;box-shadow:0 0 .4em rgba(64,64,64,0.75)}.white .options{background:#eee;border-color:#999;box-shadow:0 .2em .4em rgba(64,64,64,0.5);text-shadow:.05em .05em .1em #ccc}.white .options h2,.white #Beautify h2,.white #Minify h2,.white #diffBase h2,.white #diffNew h2{background:#eee;border-color:#eee;box-shadow:none;text-shadow:none}.white #option_comment{background:#ddd;border-color:#999}.white #top em{color:#00f}.white #update{background:#eee;border-color:#999;box-shadow:0 .1em .2em rgba(64,64,64,0.5)}.white .wide,.white .tall,.white #diffBase,.white #diffNew{background:#eee;border-color:#999;box-shadow:0 .2em .4em rgba(64,64,64,0.5)}.white .file input,.white .labeltext input{border-color:#fff}#webtool.white input.unchecked{background:#ccc;color:#666}.white .options input[type=text],.white .options select{border-color:#999}.white #beautyoutput,.white #minifyoutput{background:#ddd}.white #diffoutput p em,.white #diffoutput li em{color:#c00}.white .analysis .bad{background-color:#ebb;color:#400}.white .analysis .good{background-color:#cec;color:#040}.white #doc .analysis thead th,.white #doc .analysis th[colspan]{background:#eef}.white div input{border-color:#999}.white textarea{border-color:#999}.white textarea:hover{background:#eef8ff}.white .diff,.white .diff ol,.white .diff .diff-left,.white .diff .diff-right,.white h3,.white p.author{border-color:#999}.white .diff .count li{background:#eed;border-color:#bbc;color:#886}.white .diff h3{background:#ddd;border-bottom-color:#bbc}.white .diff .empty{background-color:#ddd;border-color:#ccc}.white .diff .replace{background-color:#fea;border-color:#dd8}#webtool.white .diff .replace em{background-color:#ffd;border-color:#963;color:#630}.white .diff .delete{background-color:#fbb;border-color:#eaa}#webtool.white .diff .delete em{background-color:#fdd;border-color:#700;color:#600}.white .diff .equal{background-color:#fff;border-color:#eee}.white .diff .skip{background-color:#efefef;border-color:#ddd}.white .diff .insert{background-color:#bfb;border-color:#aea}#webtool.white .diff .insert em{background-color:#efc;border-color:#070;color:#050}.white .diff p.author{background:#efefef;border-top-color:#bbc}.white #doc table,.white .box .body table{background:#fff;border-color:#999}.white #doc strong,.white .box .body strong{color:#c00}.white .box .body em,.white .box .body #doc em{color:#090}.white #thirdparties img,.white #diffoutput #thirdparties{border-color:#999}.white #thirdparties img{box-shadow:.2em .2em .4em #999}.white #diffoutput #thirdparties{background:#eee}.white #doc div,#doc.white div{background:#ddd;border-color:#999}.white #doc ol,#doc.white ol{background:#eee;border-color:#999}.white #doc div div,#doc.white div div{background:#eee;border-color:#999}.white #doc table,#doc.white table{background:#fff;border-color:#999}.white #doc th,#doc.white th{background:#ddd;border-left-color:#999;border-top-color:#999}.white #doc tr:hover,#doc.white tr:hover{background:#ddd}#doc.white em{color:#060}.white #doc div:hover,#doc.white div:hover{background:#ccc}.white #doc div div:hover,#doc.white div div:hover,#doc.white div ol:hover{background:#fff}.white #pdsamples li{background:#eee;border-color:#999}.white #pdsamples li div{background:#ddd;border-color:#999}.white #pdsamples li div a{color:#47a}.white #pdsamples li p a{color:#009}"
-        },
-        dbf: pd.$$("diffbasefile"),
-        dnf: pd.$$("diffnewfile"),
-        dcv: "",
-        dqp: pd.$$("diffquanp"),
-        dqt: pd.$$("difftypep"),
-        exe: pd.$$("button-primary"),
-        bops: pd.$$("beauops"),
-        csvp: pd.$$("csvcharp"),
-        disp: pd.$$("displayOps"),
-        dops: pd.$$("diffops"),
-        mops: pd.$$("miniops"),
-        stat: {
-            visit: 0,
-            usage: 0,
-            fdate: "",
-            avday: "1",
-            diff: 0,
+        addNo: pd.$$("additional_no"),
+        addOps: pd.$$("addOptions"),
+        addYes: pd.$$("additional_yes"),
+        beau: pd.$$("Beautify"),
+        beauOps: pd.$$("beauops"),
+        codeBeauIn: pd.$$("beautyinput"),
+        codeBeauOut: pd.$$("beautyoutput"),
+        codeDiffBase: pd.$$("baseText"),
+        codeDiffNew: pd.$$("newText"),
+        codeMinnIn: pd.$$("minifyinput"),
+        codeMinnOut: pd.$$("minifyoutput"),
+        comment: pd.$$("option_comment"),
+        diffBase: pd.$$("diffBase"),
+        diffNew: pd.$$("diffNew"),
+        diffOps: pd.$$("diffops"),
+        displayTall: pd.$$("difftall"),
+        displayWide: pd.$$("diffwide"),
+        lang: pd.$$("language"),
+        length: {
             beau: 0,
-            minn: 0,
-            markup: 0,
-            js: 0,
-            css: 0,
-            csv: 0,
-            text: 0,
-            pdate: "",
-            large: 0
+            diffBase: 0,
+            diffNew: 0,
+            minn: 0
         },
-        stjs: pd.$$("stjs"),
-        agent: (typeof navigator === "object") ? navigator.userAgent.toLowerCase() : "",
-        color: "shadow",
-        stcss: pd.$$("stcss"),
-        stcsv: pd.$$("stcsv"),
-        inline: pd.$$("inline"),
-        option: pd.$$("option_comment"),
-        pdlogo: pd.$$("pdlogo"),
-        stbeau: pd.$$("stbeau"),
-        sideby: pd.$$("sidebyside"),
-        stdiff: pd.$$("stdiff"),
-        stminn: pd.$$("stminn"),
-        sttext: pd.$$("sttext"),
-        update: pd.$$("update"),
-        zindex: 10,
-        context: pd.$$("contextSize"),
-        stavday: pd.$$("stavday"),
-        stcouse: pd.$$("stcouse"),
-        stfdate: pd.$$("stfdate"),
-        stlarge: pd.$$("stlarge"),
-        slength: {
-            bi: 0,
-            mi: 0,
-            bo: 0,
-            nx: 0
+        maxInputs: pd.$$("hideOptions"),
+        minn: pd.$$("Minify"),
+        minnOps: pd.$$("miniops"),
+        modeBeau: pd.$$("modebeautify"),
+        modeDiff: pd.$$("modediff"),
+        modeMinn: pd.$$("modeminify"),
+        page: document.getElementsByTagName("body")[0],
+        report: {
+            beau: {
+                box: pd.$$("beaureport")
+            },
+            diff: {
+                box: pd.$$("diffreport")
+            },
+            minn: {
+                box: pd.$$("minnreport")
+            },
+            stat: {
+                box: pd.$$("statreport")
+            }
         },
-        stusage: pd.$$("stusage"),
-        stvisit: pd.$$("stvisit"),
-        stmarkup: pd.$$("stmarkup")
+        save: pd.$$("diff-save")
     };
+    pd.o.report.beau.body = (pd.o.report.beau.box === null) ? null : pd.o.report.beau.box.getElementsByTagName("div")[0];
+    pd.o.report.diff.body = (pd.o.report.diff.box === null) ? null : pd.o.report.diff.box.getElementsByTagName("div")[0];
+    pd.o.report.minn.body = (pd.o.report.minn.box === null) ? null : pd.o.report.minn.box.getElementsByTagName("div")[0];
+    pd.o.report.stat.body = (pd.o.report.stat.box === null) ? null : pd.o.report.stat.box.getElementsByTagName("div")[0];
 
+    //colSlider stuff is used with the horizontal dragging of columns in
+    //the diff report
     pd.colSliderProperties = [];
     pd.colSliderGrab = function dom__colSliderGrab(x) {
-        var a = x.parentNode,
-            b = a.parentNode,
-            c = 0,
+        var diffRight = x.parentNode,
+            diff = diffRight.parentNode,
+            subOffset = 0,
             counter = pd.colSliderProperties[0],
             data = pd.colSliderProperties[1],
             width = pd.colSliderProperties[2],
@@ -254,10 +161,10 @@ pd.webtool = [];
             min = 0,
             max = data - 1,
             status = "ew",
-            g = min + 15,
-            h = max - 15,
-            k = false,
-            z = a.previousSibling,
+            minAdjust = min + 15,
+            maxAdjust = max - 15,
+            withinRange = false,
+            diffLeft = diffRight.previousSibling,
             drop = function DOM_colSliderGrab_drop() {
                 x.style.cursor = status + "-resize";
                 document.onmousemove = null;
@@ -265,18 +172,18 @@ pd.webtool = [];
             },
             boxmove = function DOM_colSliderGrab_boxmove(f) {
                 f = f || window.event;
-                c = offset - f.clientX;
-                if (c > g && c < h) {
-                    k = true;
+                subOffset = offset - f.clientX;
+                if (subOffset > minAdjust && subOffset < maxAdjust) {
+                    withinRange = true;
                 }
-                if (k === true && c > h) {
-                    a.style.width = ((total - counter - 2) / 10) + "em";
+                if (withinRange === true && subOffset > maxAdjust) {
+                    diffRight.style.width = ((total - counter - 2) / 10) + "em";
                     status = "e";
-                } else if (k === true && c < g) {
-                    a.style.width = (width / 10) + "em";
+                } else if (withinRange === true && subOffset < minAdjust) {
+                    diffRight.style.width = (width / 10) + "em";
                     status = "w";
-                } else if (c < max && c > min) {
-                    a.style.width = ((width + c) / 10) + "em";
+                } else if (subOffset < max && subOffset > min) {
+                    diffRight.style.width = ((width + subOffset) / 10) + "em";
                     status = "ew";
                 }
                 document.onmouseup = drop;
@@ -285,266 +192,287 @@ pd.webtool = [];
             offset += pd.o.re.offsetLeft;
             offset -= pd.o.rf.scrollLeft;
         } else {
-            c = (document.body.parentNode.scrollLeft > document.body.scrollLeft) ? document.body.parentNode.scrollLeft : document.body.scrollLeft;
-            offset -= c;
+            subOffset = (document.body.parentNode.scrollLeft > document.body.scrollLeft) ? document.body.parentNode.scrollLeft : document.body.scrollLeft;
+            offset -= subOffset;
         }
         offset += x.clientWidth;
         x.style.cursor = "ew-resize";
-        b.style.width = (total / 10) + "em";
-        b.style.display = "inline-block";
-        if (z.nodeType !== 1) {
+        diff.style.width = (total / 10) + "em";
+        diff.style.display = "inline-block";
+        if (diffLeft.nodeType !== 1) {
             do {
-                z = z.previousSibling;
-            } while (z.nodeType !== 1);
+                diffLeft = diffLeft.previousSibling;
+            } while (diffLeft.nodeType !== 1);
         }
-        z.style.display = "block";
-        a.style.width = (a.clientWidth / 10) + "em";
-        a.style.position = "absolute";
+        diffLeft.style.display = "block";
+        diffRight.style.width = (diffRight.clientWidth / 10) + "em";
+        diffRight.style.position = "absolute";
         document.onmousemove = boxmove;
         document.onmousedown = null;
     };
 
     //recycle bundles arguments in preparation for executing prettydiff
     pd.recycle = function dom__recycle(e) {
-        var c = "",
-            d = [],
-            api = {},
+        var api = {},
             output = [],
-            domain = /^((https?:\/\/)|(file:\/\/\/))/,
+            domain = (/^((https?:\/\/)|(file:\/\/\/))/),
             event = e || window.event,
             parent = {},
-            button = {},
             h3 = "",
+            node = {},
             requests = false,
             requestd = false,
             completes = false,
             completed = false,
             execOutput = function dom__recycle_execOutput() {
-                pd.o.zindex += 1;
+                var diffList = [],
+                    button = {},
+                    buttons = {},
+                    maximize = pd.$$("hideOptions"),
+                    presumedLanguage = "";
+                pd.zIndex += 1;
                 if (api.mode === "beautify") {
-                    if (pd.o.bx !== null) {
-                        pd.o.bx.value = output[0];
+                    if (pd.o.codeBeauOut !== null) {
+                        pd.o.codeBeauOut.value = output[0];
                     }
-                    if (output[1].length > 125000) {
-                        pd.o.filled.rg = true;
-                    } else {
-                        pd.o.filled.rg = false;
-                    }
-                    if (output[1] !== "" && pd.o.rg !== null && pd.o.sh !== null && pd.o.sh.innerHTML.replace(/\s+/g, " ") === "Maximize Inputs") {
-                        pd.o.rh.innerHTML = output[1];
-                        pd.o.rg.style.zIndex = pd.o.zindex;
-                        pd.o.rg.style.display = "block";
-                    }
-                    if (api.jsscope === true && pd.o.rg !== null && (api.lang === "auto" || api.lang === "javascript")) {
-                        if (api.lang === "auto") {
-                            c = output[1].split("Presumed language is <em>")[1];
-                            c = c.substring(0, c.indexOf("</em>"));
-                        }
-                        if (c === "JavaScript" || api.lang === "javascript") {
-                            pd.top(pd.o.rg);
-                            pd.o.rg.style.display = "block";
-                            parent = pd.o.rg.getElementsByTagName("p")[0];
-                            if (parent.innerHTML.indexOf("pd.save") === -1) {
-                                if (parent.style === undefined || parent.style.display === "block") {
-                                    h3 = pd.o.rg.getElementsByTagName("h3")[0].style.width;
-                                    pd.o.rg.getElementsByTagName("h3")[0].style.width = (Number(h3.substr(0, h3.length - 2)) - 3) + "em";
-                                }
-                                if (pd.o.rg !== null && (pd.o.agent.indexOf("firefox") > -1 || pd.o.agent.indexOf("opera") > -1)) {
-                                    button = document.createElement("a");
-                                    button.setAttribute("href", "#");
-                                    button.setAttribute("onclick", "pd.save(this);");
-                                    button.innerHTML = "<button class='save' title='Save output.'>S</button>";
-                                } else {
-                                    button = document.createElement("button");
-                                    button.setAttribute("class", "save");
-                                    button.setAttribute("onclick", "pd.save(this);");
-                                    button.setAttribute("title", "Save output.");
-                                    button.innerHTML = "S";
-                                }
-                                parent.insertBefore(button, parent.firstChild);
-                            }
-                            if (pd.o.rg.getElementsByTagName("p")[0].style.display === "none") {
-                                pd.minimize(null, pd.o.rg.getElementsByTagName("button")[1], 1);
-                            }
-                            pd.o.rg.style.right = "auto";
-                            pd.beaurows[0] = pd.o.rg.getElementsByTagName("ol")[0].getElementsByTagName("li");
-                            pd.beaurows[1] = pd.o.rg.getElementsByTagName("ol")[1].getElementsByTagName("li");
+                    if (pd.o.report.beau.box !== null) {
+                        if (output[1].length > 125000) {
+                            pd.test.filled.beau = true;
                         } else {
-                            if (pd.o.rg.getElementsByTagName("p")[0].innerHTML.indexOf("pd.save") > -1) {
-                                if (parent.style === undefined || parent.style.display === "block") {
-                                    h3 = pd.o.rg.getElementsByTagName("h3")[0].style.width;
-                                    pd.o.rg.getElementsByTagName("h3")[0].style.width = (Number(h3.substr(0, h3.length - 2)) + 3) + "em";
+                            pd.test.filled.beau = false;
+                        }
+                        if (output[1] !== "" && maximize !== null && maximize.innerHTML.replace(/\s+/g, " ") === "Maximize Inputs") {
+                            pd.o.report.beau.body.innerHTML = output[1];
+                            pd.o.report.beau.box.style.zIndex = pd.zIndex;
+                            pd.o.report.beau.box.style.display = "block";
+                        }
+                        parent = pd.o.report.beau.box.getElementsByTagName("p")[0];
+                        h3 = pd.o.report.beau.box.getElementsByTagName("h3")[0].style.width;
+                        if (api.jsscope === true && (api.lang === "auto" || api.lang === "javascript")) {
+                            if (api.lang === "auto") {
+                                presumedLanguage = output[1].split("Presumed language is <em>")[1];
+                                presumedLanguage = presumedLanguage.substring(0, presumedLanguage.indexOf("</em>"));
+                            }
+                            if (presumedLanguage === "JavaScript" || api.lang === "javascript") {
+                                pd.top(pd.o.report.beau.box);
+                                pd.o.report.beau.box.style.display = "block";
+                                if (parent.innerHTML.indexOf("pd.save") < 0) {
+                                    if (parent.style === undefined || parent.style.display === "block") {
+                                        pd.o.report.beau.box.getElementsByTagName("h3")[0].style.width = (Number(h3.substr(0, h3.length - 2)) - 3) + "em";
+                                    }
+                                    if (pd.test.agent.indexOf("firefox") > -1 || (pd.test.agent.indexOf("opera") > -1 && pd.test.agent.indexOf("blink") < 0)) {
+                                        button = document.createElement("a");
+                                        button.setAttribute("href", "#");
+                                        button.innerHTML = "<button class='save' title='Save output.'>S</button>";
+                                    } else {
+                                        button = document.createElement("button");
+                                        button.setAttribute("class", "save");
+                                        button.setAttribute("title", "Save output.");
+                                        button.innerHTML = "S";
+                                    }
+                                    parent.insertBefore(button, parent.firstChild);
+                                    button.onclick = function dom__recycle_beauSave() {
+                                        var that = this;
+                                        pd.save(that);
+                                    };
                                 }
-                                pd.o.rg.getElementsByTagName("p")[0].removeChild(pd.o.rg.getElementsByTagName("p")[0].firstChild);
+                                button = pd.o.report.beau.box.getElementsByTagName("p")[0];
+                                if (button.style.display === "none") {
+                                    buttons = button.getElementsByTagName("button");
+                                    if (buttons[0].innerHTML.indexOf("save") > 0) {
+                                        button = buttons[1];
+                                    } else {
+                                        button = buttons[0];
+                                    }
+                                    button.click(button.onclick, 1, button);
+                                }
+                                pd.o.report.beau.box.style.right = "auto";
+                                pd.beaurows[0] = pd.o.report.beau.box.getElementsByTagName("ol")[0].getElementsByTagName("li");
+                                pd.beaurows[1] = pd.o.report.beau.box.getElementsByTagName("ol")[1].getElementsByTagName("li");
+                            } else {
+                                if (parent.innerHTML.indexOf("pd.save") > -1) {
+                                    if (parent.style === undefined || parent.style.display === "block") {
+                                        pd.o.report.beau.box.getElementsByTagName("h3")[0].style.width = (Number(h3.substr(0, h3.length - 2)) + 3) + "em";
+                                    }
+                                    parent.removeChild(parent.firstChild);
+                                }
+                                pd.beaurows = [];
+                            }
+                        } else {
+                            if (parent.innerHTML.indexOf("pd.save") > -1) {
+                                if (parent.style === undefined || parent.style.display === "block") {
+                                    pd.o.report.beau.box.getElementsByTagName("h3")[0].style.width = (Number(h3.substr(0, h3.length - 2)) + 3) + "em";
+                                }
+                                parent.removeChild(parent.firstChild);
                             }
                             pd.beaurows = [];
                         }
-                    } else {
-                        if (pd.o.rg.getElementsByTagName("p")[0].innerHTML.indexOf("pd.save") > -1) {
-                            if (parent.style === undefined || parent.style.display === "block") {
-                                h3 = pd.o.rg.getElementsByTagName("h3")[0].style.width;
-                                pd.o.rg.getElementsByTagName("h3")[0].style.width = (Number(h3.substr(0, h3.length - 2)) + 3) + "em";
-                            }
-                            pd.o.rg.getElementsByTagName("p")[0].removeChild(pd.o.rg.getElementsByTagName("p")[0].firstChild);
-                        }
-                        pd.beaurows = [];
                     }
-                    if (pd.ls === true) {
-                        pd.o.stat.beau += 1;
-                        if (pd.o.stbeau !== null) {
-                            pd.o.stbeau.innerHTML = pd.o.stat.beau;
+                    if (pd.test.ls === true) {
+                        pd.stat.beau += 1;
+                        node = pd.$$("stbeau");
+                        if (node !== null) {
+                            node.innerHTML = pd.stat.beau;
                         }
                     }
-                } else if (api.mode === "diff" && pd.o.re !== null) {
+                }
+                if (api.mode === "diff" && pd.o.report.diff.box !== null) {
+                    buttons = pd.o.report.diff.box.getElementsByTagName("p")[0].getElementsByTagName("button");
                     if (output[0].length > 125000) {
-                        pd.o.filled.re = true;
+                        pd.test.filled.diff = true;
                     } else {
-                        pd.o.filled.rg = false;
+                        pd.test.filled.diff = false;
                     }
                     if (/^(<p><strong>Error:<\/strong> Please try using the option labeled ((&lt;)|<)em((&gt;)|>)Plain Text \(diff only\)((&lt;)|<)\/em((&gt;)|>)\.)/.test(output[0])) {
-                        pd.o.rf.innerHTML = "<p><strong>Error:</strong> Please try using the option labeled <em>Plain Text (diff only)</em>. <span style='display:block'>The input does not appear to be markup, CSS, or JavaScript.</span></p>";
-                    } else if (pd.o.ps !== null && pd.o.ps.checked) {
-                        output[2] = output[1] + "<p>This is the generated diff output. Please copy the text output, paste into a text file, and save as a &quot;.html&quot; file.</p><textarea rows='40' cols='80' id='textreport'>";
-                        output[0] = "<?xml version='1.0' encoding='UTF-8' ?><!DOCTYPE html PUBLIC '-//W3C//DTD XHTML 1.1//EN' 'http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd'><html xmlns='http://www.w3.org/1999/xhtml' xml:lang='en'><head><title>Pretty Diff - The difference tool</title><meta name='robots' content='index, follow'/> <meta name='DC.title' content='Pretty Diff - The difference tool'/> <link rel='canonical' href='http://prettydiff.com/' type='application/xhtml+xml'/><meta http-equiv='Content-Type' content='application/xhtml+xml;charset=UTF-8'/><meta http-equiv='Content-Style-Type' content='text/css'/><style type='text/css'>" + pd.o.css.core + pd.o.css["s" + pd.o.color] + "</style></head><body class='" + pd.o.color + "'><h1><a href='http://prettydiff.com/'>Pretty Diff - The difference tool</a></h1>" + output[1] + "<p>Accessibility note. &lt;em&gt; tags in the output represent character differences per lines compared.</p>" + output[0] + "</body></html>";
-                        pd.o.rf.innerHTML = output[2] + output[0].replace(/\&/g, "&amp;").replace(/>/g, "&gt;").replace(/</g, "&lt;") + "</textarea>";
+                        pd.o.report.diff.body.innerHTML = "<p><strong>Error:</strong> Please try using the option labeled <em>Plain Text (diff only)</em>. <span style='display:block'>The input does not appear to be markup, CSS, or JavaScript.</span></p>";
                     } else {
-                        pd.o.rf.innerHTML = output[1] + output[0];
+                        pd.o.report.diff.body.innerHTML = output[1] + output[0];
                     }
-                    if (pd.o.re !== null) {
-                        pd.top(pd.o.re);
-                        pd.o.re.style.display = "block";
-                        if (pd.o.re.getElementsByTagName("p")[0].style.display === "none") {
-                            pd.minimize(null, pd.o.re.getElementsByTagName("button")[1], 1);
-                        }
-                        pd.o.re.style.right = "auto";
+                    if (buttons[1].parentNode.style.display === "none") {
+                        pd.minimize(buttons[1].onclick, 1, buttons[1]);
                     }
-                    if (pd.ls === true) {
-                        pd.o.stat.diff += 1;
-                        pd.o.stdiff.innerHTML = pd.o.stat.diff;
-                    }
-                    if (api.diffview === "sidebyside" && pd.o.rf.innerHTML.toLowerCase().indexOf("<textarea") === -1 && pd.o.rf !== null) {
-                        d = pd.o.rf.getElementsByTagName("ol");
-                        if (d.length < 3 || d[0] === null || d[1] === null || d[2] === null) {
+                    if (api.diffview === "sidebyside" && pd.o.report.diff.body.innerHTML.toLowerCase().indexOf("<textarea") === -1) {
+                        diffList = pd.o.report.diff.body.getElementsByTagName("ol");
+                        if (diffList.length < 3 || diffList[0] === null || diffList[1] === null || diffList[2] === null) {
                             pd.colSliderProperties = [
                                 0, 0, 0, 0, 0
                             ];
                         } else {
                             pd.colSliderProperties = [
-                                d[0].clientWidth, d[1].clientWidth, d[2].parentNode.clientWidth, d[2].parentNode.parentNode.clientWidth, d[2].parentNode.offsetLeft - d[2].parentNode.parentNode.offsetLeft
+                                diffList[0].clientWidth, diffList[1].clientWidth, diffList[2].parentNode.clientWidth, diffList[2].parentNode.parentNode.clientWidth, diffList[2].parentNode.offsetLeft - diffList[2].parentNode.parentNode.offsetLeft
                             ];
                         }
                     }
-                } else if (api.mode === "minify") {
-                    if (output[0].length > 125000) {
-                        pd.o.filled.ri = true;
-                    } else {
-                        pd.o.filled.ri = false;
+                    if (pd.o.save !== null && pd.o.save.checked === true) {
+                        if (buttons[0].parentNode.nodeName.toLowerCase() === "a") {
+                            pd.save(buttons[0].parentNode);
+                        } else {
+                            pd.save(buttons[0]);
+                        }
                     }
-                    if (pd.o.mx !== null) {
-                        pd.o.mx.value = output[0];
-                    }
-                    if (output[1] !== "" && pd.o.ri !== null && pd.o.sh.innerHTML.replace(/\s+/g, " ") === "Maximize Inputs") {
-                        pd.o.rj.innerHTML = output[1];
-                        pd.o.ri.style.zIndex = pd.o.zindex;
-                        pd.o.ri.style.display = "block";
-                    }
-                    if (pd.ls === true) {
-                        pd.o.stat.minn += 1;
-                        if (pd.o.stminn !== null) {
-                            pd.o.stminn.innerHTML = pd.o.stat.minn;
+                    if (pd.test.ls === true) {
+                        pd.stat.diff += 1;
+                        node = pd.$$("stdiff");
+                        if (node !== null) {
+                            node.innerHTML = pd.stat.diff;
                         }
                     }
                 }
-                if (pd.ls === true) {
+                if (api.mode === "minify") {
+                    if (output[0].length > 125000) {
+                        pd.test.filled.min = true;
+                    } else {
+                        pd.test.filled.min = false;
+                    }
+                    if (pd.o.codeMinnOut !== null) {
+                        pd.o.codeMinnOut.value = output[0];
+                    }
+                    if (output[1] !== "" && pd.o.report.minn.box !== null && pd.o.maxInputs.innerHTML.replace(/\s+/g, " ") === "Maximize Inputs") {
+                        pd.o.report.minn.body.innerHTML = output[1];
+                        pd.o.report.minn.box.style.zIndex = pd.zIndex;
+                        pd.o.report.minn.box.style.display = "block";
+                    }
+                    if (pd.test.ls === true) {
+                        pd.stat.minn += 1;
+                        node = pd.$$("stminn");
+                        if (node !== null) {
+                            node.innerHTML = pd.stat.minn;
+                        }
+                    }
+                }
+                if (pd.test.ls === true) {
                     (function dom__recycle_storage() {
-                        var stat = [],
-                            lang = "",
+                        var lang = "",
                             lango = {},
-                            langv = (pd.o.la === null) ? "javascript" : (pd.o.la.nodeName === "select") ? pd.o.la[pd.o.la.selectedIndex].value : pd.o.la.value,
                             size = 0,
                             codesize = 0;
+                        //this logic attempts to prevent writes to localStorage if they are likely to exceed 5mb of storage
                         if (api.mode === "beautify") {
-                            codesize = api.source.length + pd.o.slength.mi + pd.o.slength.bo + pd.o.slength.nx;
+                            codesize = api.source.length + pd.o.length.diffBase + pd.o.length.diffNew + pd.o.length.minn;
                             if (api.source.length < 2096000 && codesize < 4800000) {
-                                localStorage.setItem("bi", api.source);
-                                pd.o.slength.bi = api.source.length;
+                                localStorage.codeBeautify = api.source;
+                                pd.o.length.beau = api.source.length;
                             } else {
-                                localStorage.setItem("bi", "");
-                                pd.o.slength.bi = 0;
+                                localStorage.codeBeautify = "";
+                                pd.o.length.beau = 0;
                             }
                         } else if (api.mode === "minify") {
-                            codesize = pd.o.slength.bi + api.source.length + pd.o.slength.bo + pd.o.slength.nx;
+                            codesize = api.source.length + pd.o.length.beau + pd.o.length.diffBase + pd.o.length.diffNew;
                             if (api.source.length < 2096000 && codesize < 4800000) {
-                                localStorage.setItem("mi", api.source);
-                                pd.o.slength.mi = api.source.length;
+                                localStorage.codeMinify = api.source;
+                                pd.o.length.minn = api.source.length;
                             } else {
-                                localStorage.setItem("mi", "");
-                                pd.o.slength.mi = 0;
+                                localStorage.codeMinify = "";
+                                pd.o.length.minn = 0;
                             }
                         } else if (api.mode === "diff") {
-                            codesize = pd.o.slength.bi + pd.o.slength.mi + api.source.length + api.diff.length;
+                            codesize = pd.o.length.beau + pd.o.length.minn + api.source.length + api.diff.length;
                             if (api.source.length < 2096000 && api.diff.length < 2096000 && codesize < 4800000) {
-                                localStorage.setItem("bo", api.source);
-                                localStorage.setItem("nx", api.diff);
-                                localStorage.setItem("bl", api.sourcelabel);
-                                localStorage.setItem("nl", api.difflabel);
-                                pd.o.slength.bo = api.source.length;
-                                pd.o.slength.nx = api.diff.length;
+                                localStorage.codeDiffBase = api.source;
+                                localStorage.codeDiffNew = api.diff;
+                                pd.o.length.diffBase = api.source.length;
+                                pd.o.length.diffNew = api.diff.length;
                             } else {
-                                localStorage.setItem("bo", "");
-                                localStorage.setItem("nx", "");
-                                localStorage.setItem("bl", "");
-                                localStorage.setItem("nl", "");
-                                pd.o.slength.bo = 0;
-                                pd.o.slength.nx = 0;
+                                localStorage.codeDiffBase = "";
+                                localStorage.codeDiffNew = "";
+                                pd.o.length.diffBase = 0;
+                                pd.o.length.diffNew = 0;
                             }
                         }
-                        if (langv === "auto" && typeof output[1] === "string") {
+                        if (api.lang === "auto" && typeof output[1] === "string") {
                             lango = (/Language set to <strong>auto<\/strong>\. Presumed language is <em>\w+<\/em>\./).exec(output[1]);
                             if (lango !== null) {
                                 lang = lango.toString();
                                 lang = lang.substring(lang.indexOf("<em>") + 4, lang.indexOf("</em>"));
                                 if (lang === "JavaScript" || lang === "JSON") {
-                                    pd.o.stat.js += 1;
-                                    if (pd.o.stjs !== null) {
-                                        pd.o.stjs.innerHTML = pd.o.stat.js;
+                                    pd.stat.js += 1;
+                                    node = pd.$$("stjs");
+                                    if (node !== null) {
+                                        node.innerHTML = pd.stat.js;
                                     }
                                 } else if (lang === "CSS") {
-                                    pd.o.stat.css += 1;
-                                    if (pd.o.stcss !== null) {
-                                        pd.o.stcss.innerHTML = pd.o.stat.css;
+                                    pd.stat.css += 1;
+                                    node = pd.$$("stcss");
+                                    if (node !== null) {
+                                        node.innerHTML = pd.stat.css;
                                     }
                                 } else if (lang === "HTML" || lang === "markup") {
-                                    pd.o.stat.markup += 1;
-                                    if (pd.o.stmarkup !== null) {
-                                        pd.o.stmarkup.innerHTML = pd.o.stat.markup;
+                                    pd.stat.markup += 1;
+                                    node = pd.$$("stmarkup");
+                                    if (node !== null) {
+                                        node.innerHTML = pd.stat.markup;
                                     }
                                 }
                             }
-                        } else if (langv === "csv") {
-                            pd.o.stat.csv += 1;
-                            if (pd.o.stcsv) {
-                                pd.o.stcsv.innerHTML = pd.o.stat.csv;
+                        } else if (api.lang === "csv") {
+                            pd.stat.csv += 1;
+                            node = pd.$$("stcsv");
+                            if (node !== null) {
+                                node.innerHTML = pd.stat.csv;
                             }
-                        } else if (langv === "text") {
-                            pd.o.stat.text += 1;
-                            if (pd.o.sttext !== null) {
-                                pd.o.sttext.innerHTML = pd.o.stat.text;
+                        } else if (api.lang === "text") {
+                            pd.stat.text += 1;
+                            node = pd.$$("sttext");
+                            if (node !== null) {
+                                node.innerHTML = pd.stat.text;
                             }
-                        } else if (langv === "javascript") {
-                            pd.o.stat.js += 1;
-                            if (pd.o.stjs !== null) {
-                                pd.o.stjs.innerHTML = pd.o.stat.js;
+                        } else if (api.lang === "javascript") {
+                            pd.stat.js += 1;
+                            node = pd.$$("stjs");
+                            if (node !== null) {
+                                node.innerHTML = pd.stat.js;
                             }
-                        } else if (langv === "markup" || langv === "html") {
-                            pd.o.stat.markup += 1;
-                            if (pd.o.stmarkup !== null) {
-                                pd.o.stmarkup.innerHTML = pd.o.stat.markup;
+                        } else if (api.lang === "markup" || api.lang === "html") {
+                            pd.stat.markup += 1;
+                            node = pd.$$("stmarkup");
+                            if (node !== null) {
+                                node.innerHTML = pd.stat.markup;
                             }
-                        } else if (langv === "css") {
-                            pd.o.stat.css += 1;
-                            if (pd.o.stcss !== null) {
-                                pd.o.stcss.innerHTML = pd.o.stat.css;
+                        } else if (api.lang === "css") {
+                            pd.stat.css += 1;
+                            node = pd.$$("stcss");
+                            if (node !== null) {
+                                node.innerHTML = pd.stat.css;
                             }
                         }
                         if (api.mode === "diff" && api.diff.length > api.source.length) {
@@ -552,32 +480,21 @@ pd.webtool = [];
                         } else {
                             size = api.source.length;
                         }
-                        if (size > pd.o.stat.large) {
-                            pd.o.stat.large = size;
-                            if (pd.o.stlarge !== null) {
-                                pd.o.stlarge.innerHTML = size;
+                        if (size > pd.stat.large) {
+                            pd.stat.large = size;
+                            node = pd.$$("stlarge");
+                            if (node !== null) {
+                                node.innerHTML = size;
                             }
                         }
-                        stat.push(pd.o.stat.visit);
-                        stat.push(pd.o.stat.usage);
-                        stat.push(pd.o.stat.fdate);
-                        stat.push(pd.o.stat.avday);
-                        stat.push(pd.o.stat.diff);
-                        stat.push(pd.o.stat.beau);
-                        stat.push(pd.o.stat.minn);
-                        stat.push(pd.o.stat.markup);
-                        stat.push(pd.o.stat.js);
-                        stat.push(pd.o.stat.css);
-                        stat.push(pd.o.stat.csv);
-                        stat.push(pd.o.stat.text);
-                        stat.push(pd.o.stat.large);
-                        stat.push(pd.o.stat.pdate);
-                        localStorage.setItem("statdata", stat.join("|"));
+                        if (pd.test.json === true) {
+                            localStorage.setItem("stat", JSON.stringify(pd.stat));
+                        }
                     }());
                 }
             };
 
-        //do not execute from alt, home, end, or arrow keys
+        //do not execute keypress from alt, home, end, or arrow keys
         if (typeof event === "object" && event.type === "keyup") {
             if (pd.keypress.state === true) {
                 if (pd.keypress.keys.length > 0) {
@@ -588,7 +505,9 @@ pd.webtool = [];
                     return false;
                 }
             }
-            if ((pd.o.jg !== null && pd.o.jg.checked === true && (pd.o.bb === null || pd.o.bb.checked === true)) || event.altKey === true || event.keyCode === 16 || event.keyCode === 18 || event.keyCode === 35 || event.keyCode === 36 || event.keyCode === 37 || event.keyCode === 38 || event.keyCode === 39 || event.keyCode === 40) {
+            node = pd.$$("jsscope-yes");
+            //jsscope does not get the convenience of keypress execution, because its overhead is costly
+            if (node !== null && node.checked === true && (pd.mode === "beau" || event.altKey === true || event.keyCode === 16 || event.keyCode === 18 || event.keyCode === 35 || event.keyCode === 36 || event.keyCode === 37 || event.keyCode === 38 || event.keyCode === 39 || event.keyCode === 40)) {
                 return false;
             }
             if ((event.keyCode === 17 || event.ctrlKey === true) && pd.keypress.state === true && pd.keypress.keys.length === 0) {
@@ -596,9 +515,12 @@ pd.webtool = [];
                 return false;
             }
         }
-        if (pd.ls === true && pd.o.rk !== null) {
-            pd.o.stat.usage += 1;
-            pd.o.stusage.innerHTML = pd.o.stat.usage;
+        if (pd.test.ls === true && pd.o.report.stat.box !== null) {
+            pd.stat.usage += 1;
+            node = pd.$$("stusage");
+            if (node !== null) {
+                node.innerHTML = pd.stat.usage;
+            }
         }
 
         //set defaults for all arguments
@@ -620,36 +542,12 @@ pd.webtool = [];
         api.inlevel = 0;
 
         //gather updated dom nodes
-        pd.o.bb = pd.$$("modebeautify");
-        pd.o.jd = pd.$$("jsindentd-all");
-        pd.o.js = pd.$$("jsindent-all");
-        pd.o.ch = pd.$$("csvchar");
-        pd.o.dd = pd.$$("modediff");
-        pd.o.la = pd.$$("language");
-        pd.o.mm = pd.$$("modeminify");
-        pd.o.dx = pd.$$("diffcontenty");
-        pd.o.sh = pd.$$("hideOptions");
-        pd.o.la = pd.$$("language");
-        api.lang = (pd.o.la === null) ? "javascript" : (pd.o.la.nodeName === "select") ? pd.o.la[pd.o.la.selectedIndex].value.toLowerCase() : pd.o.la.value.toLowerCase();
-        api.csvchar = (pd.o.ch === null) ? "," : pd.o.ch.value;
+        api.lang = (pd.o.lang === null) ? "javascript" : (pd.o.lang.nodeName.toLowerCase() === "select") ? pd.o.lang[pd.o.lang.selectedIndex].value.toLowerCase() : pd.o.lang.value.toLowerCase();
+        node = pd.$$("csvchar");
+        api.csvchar = (node === null || node.value.length === 0) ? "," : node.value;
 
         //determine options based upon mode of operations
-        if (pd.o.bb !== null && pd.o.bb.checked === true) {
-            pd.o.hy = pd.$$("html-yes");
-            pd.o.ba = pd.$$("beau-tab");
-            pd.o.bn = pd.$$("beau-line");
-            pd.o.bw = pd.$$("beau-other");
-            pd.o.bc = pd.$$("beau-char");
-            pd.o.bi = pd.$$("beautyinput");
-            pd.o.bq = pd.$$("beau-quan");
-            pd.o.co = pd.$$("jscorrect-yes");
-            pd.o.wc = pd.$$("beau-wrap");
-            pd.o.is = pd.$$("inscript-yes");
-            pd.o.iz = pd.$$("incomment-no");
-            pd.o.bg = pd.$$("bforce_indent-yes");
-            pd.o.jf = pd.$$("jsspace-no");
-            pd.o.jg = pd.$$("jsscope-yes");
-            pd.o.jh = pd.$$("jslines-no");
+        if (pd.mode === "beau") {
             if (pd.application === undefined) {
                 if (api.lang === "markup" || api.lang === "html" || api.lang === "xml" || api.lang === "jstl") {
                     pd.application = markup_beauty;
@@ -661,66 +559,79 @@ pd.webtool = [];
                     pd.application = jspretty;
                 }
             }
-            if (pd.o.bx !== null) {
-                pd.o.bx.value = "";
-            }
-            api.wrap = (pd.o.wc === null) ? "72" : pd.o.wc.value;
-            if (pd.o.bg !== null && pd.o.bg.checked === true) {
-                api.force_indent = true;
-            }
-            if (pd.o.ba !== null && pd.o.ba.checked) {
-                pd.o.cz = "\t";
-            } else if (pd.o.bn !== null && pd.o.bn.checked) {
-                pd.o.cz = "\n";
-            } else if (pd.o.bw !== null && pd.o.bw.checked && pd.o.bc !== null) {
-                pd.o.cz = pd.o.bc.value;
-                if ((/^&/).test(pd.o.cz) && !(/;$/).test(pd.o.cz)) {
-                    pd.o.cz = pd.o.cz.replace("&", "&amp;");
+            (function dom__recycle_beautify() {
+                var comments = pd.$$("incomment-no"),
+                    chars = pd.$$("beau-space"),
+                    emptyLines = {},
+                    forceIndent = {},
+                    html = {},
+                    indent = {},
+                    jscorrect = {},
+                    jsscope = {},
+                    jsspace = {},
+                    offset = {},
+                    quantity = pd.$$("beau-quan"),
+                    style = {},
+                    wrap = {};
+                if (pd.o.codeBeauIn !== null) {
+                    pd.o.codeBeauIn = pd.$$("beautyinput");
+                    api.source = pd.o.codeBeauIn.value;
                 }
-            } else {
-                pd.o.cz = " ";
-            }
-            api.inchar = pd.o.cz;
-            if (pd.o.bq !== null && !isNaN(pd.o.bq.value)) {
-                pd.o.cn = Number(pd.o.bq.value);
-                api.insize = pd.o.cn;
-            }
-            if (pd.o.it !== null && pd.o.it.checked === true) {
-                api.style = "noindent";
-            }
-            if (pd.o.hy !== null && pd.o.hy.checked === true) {
-                api.html = "html-yes";
-            }
-            if (pd.o.iz !== null && pd.o.iz.checked === true) {
-                api.comments = "noindent";
-            }
-            if (pd.o.js !== null && pd.o.js.checked === true) {
-                api.indent = "allman";
-            }
-            if (pd.o.bi !== null) {
-                api.source = pd.o.bi.value;
-            }
-            if (pd.o.jf !== null && pd.o.jf.checked === true) {
-                api.space = false;
-            }
-            if (pd.o.jg !== null && pd.o.jg.checked === true) {
-                api.jsscope = true;
-            }
-            if (pd.o.jh !== null && pd.o.jh.checked === true) {
-                api.preserve = false;
-            }
-            if (pd.o.ji !== null && isNaN(pd.o.ji.value) === false && Number(pd.o.ji.value) > 0) {
-                api.inlevel = Number(pd.o.ji.value);
-            }
-            if (pd.o.co !== null && pd.o.co.checked === true) {
-                api.correct = true;
-            }
+                api.comments = (comments === null || comments.checked === false) ? false : true;
+                api.insize = (quantity === null || isNaN(quantity.value) === true) ? 4 : Number(quantity.value);
+                if (chars === null || chars.checked === false) {
+                    chars = pd.$$("beau-tab");
+                    if (chars === null || chars.checked === false) {
+                        chars = pd.$$("beau-line");
+                        if (chars === null || chars.checked === false) {
+                            chars = pd.$$("beau-other");
+                            if (chars === null || chars.checked === false) {
+                                api.inchar = " ";
+                            } else {
+                                chars = pd.$$("beau-char");
+                                if (chars === null) {
+                                    api.inchar = " ";
+                                } else {
+                                    api.inchar = chars.value;
+                                }
+                            }
+                        } else {
+                            api.inchar = "\n";
+                        }
+                    } else {
+                        api.inchar = "\t";
+                    }
+                } else {
+                    api.inchar = " ";
+                }
+                if (api.lang === "auto" || api.lang === "javascript") {
+                    emptyLines = pd.$$("jslines-no");
+                    indent = pd.$$("jsindent-all");
+                    jscorrect = pd.$$("jscorrect-yes");
+                    jsscope = pd.$$("jsscope-yes");
+                    jsspace = pd.$$("jsspace-no");
+                    offset = pd.$$("jsinlevel");
+                    api.correct = (jscorrect === null || jscorrect.checked === false) ? false : true;
+                    api.indent = (indent === null || indent.checked === false) ? "knr" : "allman";
+                    api.inlevel = (offset === null || isNaN(offset.value) === true) ? 0 : Number(offset.value);
+                    api.jsscope = (jsscope === null || jsscope.checked === false) ? false : true;
+                    api.preserve = (emptyLines === null || emptyLines.checked === false) ? true : false;
+                    api.space = (jsspace === null || jsspace.checked === false) ? true : false;
+                }
+                if (api.lang === "auto" || api.lang === "markup" || api.lang === "html" || api.lang === "xml" || api.lang === "jstl") {
+                    forceIndent = pd.$$("bforce_indent-yes");
+                    html = pd.$$("html-yes");
+                    style = pd.$$("inscript-no");
+                    wrap = pd.$$("beau-wrap");
+                    api.force_indent = (forceIndent === null || forceIndent.checked === false) ? false : true;
+                    api.html = (html === null || html.checked === false) ? false : true;
+                    api.style = (style === null || style.checked === false) ? "indent" : "noindent";
+                    api.wrap = (wrap === null || isNaN(wrap.value) === true) ? 72 : Number(wrap.value);
+                }
+            }());
             api.mode = "beautify";
         }
-        if (pd.o.mm !== null && pd.o.mm.checked === true) {
-            pd.o.hm = pd.$$("htmlm-yes");
-            pd.o.mc = pd.$$("topcoms-yes");
-            pd.o.mi = pd.$$("minifyinput");
+        if (pd.mode === "minn") {
             if (pd.application === undefined) {
                 if (api.lang === "markup" || api.lang === "html" || api.lang === "xml" || api.lang === "jstl") {
                     pd.application = markupmin;
@@ -730,156 +641,145 @@ pd.webtool = [];
                     pd.application = jsmin;
                 }
             }
-            if (pd.o.mx !== null) {
-                pd.o.mx.value = "";
-            }
-            if (pd.o.hm !== null && pd.o.hm.checked === true) {
-                api.html = "html-yes";
-            }
-            if (pd.o.mc !== null && pd.o.mc.checked === true) {
-                api.topcoms = true;
-            }
-            if (pd.o.cq !== null && pd.o.cg.checked === true) {
-                api.conditional = true;
-            }
-            if (pd.o.mi !== null) {
-                api.source = pd.o.mi.value;
-            }
+            (function dom__recycle_minify() {
+                var conditional = pd.$$("conditionalm-yes"),
+                    html = pd.$$("htmlm-yes"),
+                    topcoms = pd.$$("topcoms-yes");
+                if (pd.o.codeMinnIn !== null) {
+                    pd.o.codeMinnIn = pd.$$("minifyinput");
+                    api.source = pd.o.codeMinnIn.value;
+                }
+                api.conditional = (conditional === null || conditional.checked === false) ? false : true;
+                api.html = (html === null || html.checked === false) ? false : true;
+                api.topcoms = (topcoms === null || topcoms.checked === false) ? false : true;
+            }());
             api.mode = "minify";
         }
-        if (pd.o.dd !== null && pd.o.dd.checked === true) {
+        if (pd.mode === "diff") {
             if (typeof prettydiff !== "function") {
                 pd.application = diffview;
             }
+            if (typeof pd.application !== "function") {
+                return;
+            }
             api.jsscope = false;
-            api.diffcomments = false;
-            pd.o.context = pd.$$("contextSize");
-            c = (pd.o.context === null) ? "0" : pd.o.context.value;
-            pd.o.inline = pd.$$("inline");
-            pd.o.bl = pd.$$("baselabel");
-            pd.o.nl = pd.$$("newlabel");
-            pd.o.hd = pd.$$("htmld-yes");
-            pd.o.bo = pd.$$("baseText");
-            pd.o.nx = pd.$$("newText");
-            pd.o.dh = pd.$$("diffcommentsy");
-            pd.o.dn = pd.$$("diffscolonn");
-            pd.o.dy = pd.$$("diffquoten");
-            pd.o.da = pd.$$("diff-tab");
-            pd.o.dw = pd.$$("diff-other");
-            pd.o.dz = pd.$$("diff-line");
-            pd.o.dc = pd.$$("diff-char");
-            pd.o.dq = pd.$$("diff-quan");
-            pd.o.wd = pd.$$("diff-wrap");
-            pd.o.du = pd.$$("diffcontentn");
-            pd.o.id = pd.$$("inscriptd-yes");
-            pd.o.ps = pd.$$("diff-save");
-            pd.o.dg = pd.$$("dforce_indent-yes");
-            if (pd.o.nl !== null) {
-                api.difflabel = pd.o.nl.value;
-            }
-            if (pd.o.bl !== null) {
-                api.sourcelabel = pd.o.bl.value;
-            }
-            api.wrap = (pd.o.wd === null) ? 72 : pd.o.wd.value;
-            if (pd.o.dg !== null && pd.o.dg.checked === true) {
-                api.force_indent = true;
-            }
-            if (pd.o.dh !== null && pd.o.dh.checked === true) {
-                api.diffcomments = true;
-            }
-            if (api.diffcomments === false) {
-                api.comments = "nocomment";
-            }
-            if (pd.o.du !== null && pd.o.du.checked === true) {
-                api.content = true;
-            }
-            if (pd.o.da !== null && pd.o.da.checked === true) {
-                pd.o.cz = "\t";
-            } else if (pd.o.dz !== null && pd.o.dz.checked === true) {
-                pd.o.cz = "\n";
-            } else if (pd.o.dw !== null && pd.o.dw.checked && pd.o.dc !== null) {
-                pd.o.cz = pd.o.dc.value;
-                if ((/^&/).test(pd.o.cz) && !(/;$/).test(pd.o.cz)) {
-                    pd.o.cz = pd.o.cz.replace("&", "&amp;");
-                }
-            } else {
-                pd.o.cz = " ";
-            }
-            if (pd.o.ce !== null && pd.o.ce.checked === true) {
-                api.conditional = true;
-            }
-            api.inchar = (pd.o.cz === null) ? " " : pd.o.cz;
-            if (pd.o.dq !== null && !isNaN(pd.o.dq.value)) {
-                pd.o.cn = Number(pd.o.dq.value);
-                api.insize = pd.o.cn;
-            }
-            if (pd.o.id !== null && pd.o.id.checked === false) {
-                api.style = "noindent";
-            }
-            if (pd.o.hd !== null && pd.o.hd.checked === true) {
-                api.html = "html-yes";
-            }
-            if (pd.o.dy !== null && pd.o.dy.checked === true) {
-                api.quote = true;
-            }
-            if (pd.o.dn !== null && pd.o.dn.checked === true) {
-                api.semicolon = true;
-            }
-            if (pd.o.inline !== null && pd.o.inline.checked === true) {
-                api.diffview = "inline";
-            }
-            if ((/^([0-9]+)$/).test(c) && (c === "0" || c.charAt(0) !== "0")) {
-                api.context = Number(c);
-            } else {
-                pd.o.context.value = "";
-                api.context = "";
-            }
-            if (pd.o.jd !== null && pd.o.jd.checked === true) {
-                api.indent = "allman";
-            }
-            if (pd.o.bo !== null && (pd.o.bo.value === "" || pd.o.bo.value === "Error: source code is missing.")) {
-                pd.o.bo.value = "Error: source code is missing.";
-                return;
-            }
-            if (pd.o.nx !== null && (pd.o.nx.value === "" || pd.o.nx.value === "Error: diff code is missing.")) {
-                pd.o.nx.value = "Error: diff code is missing.";
-                return;
-            }
-            api.source = (pd.o.bo === null) ? "" : pd.o.bo.value;
-            api.diff = (pd.o.nx === null) ? "" : pd.o.nx.value;
-            api.mode = "diff";
-            if (domain.test(api.diff) === true && pd.xhr === true) {
-                (function dom__recycle_xhrDiff() {
-                    var protocolRemove = (api.diff.indexOf("file:///") === 0) ? api.diff.split(":///")[1] : api.diff.split("://")[1],
-                        slashIndex = (protocolRemove !== undefined) ? protocolRemove.indexOf("/") : 0,
-                        xhr = (typeof XMLHttpRequest === "function" || typeof XMLHttpRequest === "object") ? new XMLHttpRequest() : new ActiveXObject("Microsoft.XMLHTTP");
-                    if (typeof protocolRemove !== "string" || protocolRemove.length === 0) {
-                        return;
-                    }
-                    requestd = true;
-                    if (slashIndex > 0 || api.diff.indexOf("http") === 0) {
-                        xhr.onreadystatechange = function dom__recycle_xhrDiff_stateChange() {
-                            if (xhr.readystate === 4) {
-                                if (xhr.status === 200 || xhr.status === 0) {
-                                    api.diff = xhr.responseText.replace(/\r\n/g, "\n");
-                                    if (completes === true) {
-                                        output = pd.application(api);
-                                        execOutput();
-                                        return;
-                                    }
-                                    completed = true;
+            (function dom__recycle_diff() {
+                var baseLabel = pd.$$("baselabel"),
+                    comments = pd.$$("diffcommentsy"),
+                    chars = pd.$$("diff-space"),
+                    conditional = {},
+                    content = pd.$$("diffcontentn"),
+                    context = pd.$$("contextSize"),
+                    forceIndent = {},
+                    html = {},
+                    indent = pd.$$("jsindentd-all"),
+                    inline = pd.$$("inline"),
+                    newLabel = pd.$$("newlabel"),
+                    preserve = pd.$$("jslinesd-no"),
+                    quantity = pd.$$("diff-quan"),
+                    quote = pd.$$("diffquoten"),
+                    style = {},
+                    semicolon = pd.$$("diffscolonn"),
+                    space = pd.$$("jsspaced-no"),
+                    wrap = {};
+                pd.o.codeDiffBase = pd.$$("baseText");
+                pd.o.codeDiffNew = pd.$$("newText");
+                api.content = (content === null || content.checked === false) ? false : true;
+                api.context = (context !== null && context.value !== "" && isNaN(context.value) === false) ? Number(context.value) : "";
+                api.diffcomments = (comments === null || comments.checked === false) ? false : true;
+                api.difflabel = (newLabel === null) ? "new" : newLabel.value;
+                api.diffview = (inline === null || inline.checked === false) ? false : true;
+                api.indent = (indent === null || indent.checked === false) ? "knr" : "allman";
+                api.insize = (quantity === null || isNaN(quantity.value) === true) ? 4 : Number(quantity.value);
+                api.preserve = (preserve === null || preserve.checked === false) ? false : true;
+                api.quote = (quote === null || quote.checked === false) ? false : true;
+                api.semicolon = (semicolon === null || semicolon.checked === false) ? false : true;
+                api.sourcelabel = (baseLabel === null) ? "base" : baseLabel.value;
+                api.space = (space === null || space.checked === false) ? true : false;
+                if (chars === null || chars.checked === false) {
+                    chars = pd.$$("diff-tab");
+                    if (chars === null || chars.checked === false) {
+                        chars = pd.$$("diff-line");
+                        if (chars === null || chars.checked === false) {
+                            chars = pd.$$("diff-other");
+                            if (chars === null || chars.checked === false) {
+                                api.inchar = " ";
+                            } else {
+                                chars = pd.$$("diff-char");
+                                if (chars === null) {
+                                    api.inchar = " ";
                                 } else {
-                                    api.diff = "Error: transmission failure receiving diff code from address.";
+                                    api.inchar = chars.value;
                                 }
                             }
-                        };
-                        xhr.open("GET", "proxy.php?x=" + api.diff.replace(/(\s*)$/, "").replace(/%26/g, "&").replace(/%3F/, "?"), true);
-                        xhr.send();
+                        } else {
+                            api.inchar = "\n";
+                        }
+                    } else {
+                        api.inchar = "\t";
                     }
-                }());
-            }
+                } else {
+                    api.inchar = " ";
+                }
+                if (api.lang === "auto" || api.lang === "markup" || api.lang === "html" || api.lang === "xml" || api.lang === "jstl") {
+                    conditional = pd.$$("conditionald-yes");
+                    forceIndent = pd.$$("dforce_indent-yes");
+                    html = pd.$$("htmld-yes");
+                    style = pd.$$("inscriptd-no");
+                    wrap = pd.$$("diff-wrap");
+                    api.conditional = (conditional === null || conditional.checked === false) ? false : true;
+                    api.force_indent = (forceIndent === null || forceIndent.checked === false) ? false : true;
+                    api.html = (html === null || html.checked === false) ? false : true;
+                    api.style = (style === null || style.checked === false) ? "indent" : "noindent";
+                    api.wrap = (wrap === null || isNaN(wrap.value) === true) ? 72 : Number(wrap.value);
+                }
+                if (api.diffcomments === false) {
+                    api.comments = "nocomment";
+                }
+                if (pd.o.codeDiffBase !== null && (pd.o.codeDiffBase.value === "" || pd.o.codeDiffBase.value === "Error: source code is missing.")) {
+                    pd.o.codeDiffBase.value = "Error: source code is missing.";
+                    return;
+                }
+                if (pd.o.codeDiffNew !== null && (pd.o.codeDiffNew.value === "" || pd.o.codeDiffNew.value === "Error: diff code is missing.")) {
+                    pd.o.codeDiffNew.value = "Error: diff code is missing.";
+                    return;
+                }
+                api.source = (pd.o.codeDiffBase === null) ? "" : pd.o.codeDiffBase.value;
+                api.diff = (pd.o.codeDiffNew === null) ? "" : pd.o.codeDiffNew.value;
+                api.mode = "diff";
+                if (domain.test(api.diff) === true && pd.test.xhr === true) {
+                    (function dom__recycle_xhrDiff() {
+                        var protocolRemove = (api.diff.indexOf("file:///") === 0) ? api.diff.split(":///")[1] : api.diff.split("://")[1],
+                            slashIndex = (protocolRemove !== undefined) ? protocolRemove.indexOf("/") : 0,
+                            xhr = (typeof XMLHttpRequest === "function" || typeof XMLHttpRequest === "object") ? new XMLHttpRequest() : new ActiveXObject("Microsoft.XMLHTTP");
+                        if (typeof protocolRemove !== "string" || protocolRemove.length === 0) {
+                            return;
+                        }
+                        requestd = true;
+                        if (slashIndex > 0 || api.diff.indexOf("http") === 0) {
+                            xhr.onreadystatechange = function dom__recycle_xhrDiff_stateChange() {
+                                if (xhr.readystate === 4) {
+                                    if (xhr.status === 200 || xhr.status === 0) {
+                                        api.diff = xhr.responseText.replace(/\r\n/g, "\n");
+                                        if (completes === true) {
+                                            output = pd.application(api);
+                                            execOutput();
+                                            return;
+                                        }
+                                        completed = true;
+                                    } else {
+                                        api.diff = "Error: transmission failure receiving diff code from address.";
+                                    }
+                                }
+                            };
+                            xhr.open("GET", "proxy.php?x=" + api.diff.replace(/(\s*)$/, "").replace(/%26/g, "&").replace(/%3F/, "?"), true);
+                            xhr.send();
+                        }
+                    }());
+                }
+            }());
         }
-        if (domain.test(api.source) === true && pd.xhr === true) {
+        if (domain.test(api.source) === true && pd.test.xhr === true) {
             (function dom__recycle_xhrSource() {
                 var protocolRemove = (api.source.indexOf("file:///") === 0) ? api.source.split(":///")[1] : api.source.split("://")[1],
                     slashIndex = (protocolRemove !== undefined) ? protocolRemove.indexOf("/") : 0,
@@ -943,8 +843,9 @@ pd.webtool = [];
 
     //this function allows typing of tab characters into textareas
     //without the textarea loosing focus
-    pd.fixtabs = function dom__fixtabs(e, x) {
-        var start = "",
+    pd.fixtabs = function dom__fixtabs(e) {
+        var x = this,
+            start = "",
             end = "",
             val = "",
             sel = 0,
@@ -964,54 +865,56 @@ pd.webtool = [];
 
     //intelligently raise the z-index of the report windows
     pd.top = function dom__top(x) {
-        var a = pd.o.zindex,
-            b = [
-                (pd.o.re === null) ? 0 : Number(pd.o.re.style.zIndex), (pd.o.rg === null) ? 0 : Number(pd.o.rg.style.zIndex), (pd.o.ri === null) ? 0 : Number(pd.o.ri.style.zIndex), (pd.o.rk === null) ? 0 : Number(pd.o.rk.style.zIndex)
+        var indexListed = pd.zIndex,
+            indexes = [
+                (pd.o.report.diff.box === null) ? 0 : Number(pd.o.report.diff.box.style.zIndex), (pd.o.report.beau.box === null) ? 0 : Number(pd.o.report.beau.box.style.zIndex), (pd.o.report.minn.box === null) ? 0 : Number(pd.o.report.minn.box.style.zIndex), (pd.o.report.stat.box === null) ? 0 : Number(pd.o.report.stat.box.style.zIndex)
             ],
-            c = Math.max(a, b[0], b[1], b[2], b[3]) + 1;
-        pd.o.zindex = c;
-        x.style.zIndex = c;
+            indexMax = Math.max(indexListed, indexes[0], indexes[1], indexes[2], indexes[3]) + 1;
+        pd.zIndex = indexMax;
+        x.style.zIndex = indexMax;
     };
 
     //read from files if the W3C File API is supported
-    pd.file = function dom__file(a, b) {
-        var c = function dom__file_init1() {
+    pd.file = function dom__file() {
+        var a = 0,
+            input = this,
+            files = input.files,
+            reader = {},
+            fileStore = [],
+            fileCount = 0,
+            fileLoad = function dom__file_init1() {
                 return;
             },
-            d = function dom__file_init2() {
+            fileError = function dom__file_init2() {
                 return;
-            },
-            f = {},
-            g = [],
-            h = 0,
-            i = 0;
-        pd.o.dd = pd.$$("modediff");
-        if (pd.fs === true && a[0] !== null && typeof a[0] === "object") {
-            if (b.nodeName === "input") {
-                b = b.parentNode.parentNode.getElementsByTagName("textarea")[0];
+            };
+        if (pd.test.fs === true && files[0] !== null && typeof files[0] === "object") {
+            if (input.nodeName === "input") {
+                input = input.parentNode.parentNode.getElementsByTagName("textarea")[0];
             }
-            c = function dom__file_onload(e) {
+            fileLoad = function dom__file_onload(e) {
                 var event = e || window.event;
-                g.push(event.target.result);
-                if (i === h) {
-                    b.value = g.join("\n\n");
-                    if (pd.o.dd.checked === false) {
+                fileStore.push(event.target.result);
+                if (a === fileCount) {
+                    input.value = fileStore.join("\n\n");
+                    if (pd.mode !== "diff") {
                         pd.recycle();
                     }
                 }
             };
-            d = function dom__file_onerror(e) {
+            fileError = function dom__file_onerror(e) {
                 var event = e || window.event;
-                b.value = "Error reading file: " + a[i].name + "\n\nThis is the browser's descriptiong: " + event.target.error.name;
-                h = -1;
+                input.value = "Error reading file: " + files[a].name + "\n\nThis is the browser's descriptiong: " + event.target.error.name;
+                fileCount = -1;
             };
-            h = a.length;
-            for (i = 0; i < h; i += 1) {
-                f = new FileReader();
-                f.onload = c;
-                f.onerror = d;
-                f.readAsText(a[i], "UTF-8");
+            fileCount = files.length;
+            for (a = 0; a < fileCount; a += 1) {
+                reader = new FileReader();
+                reader.onload = fileLoad;
+                reader.onerror = fileError;
+                reader.readAsText(files[a], "UTF-8");
             }
+            pd.recycle();
         }
     };
 
@@ -1022,343 +925,368 @@ pd.webtool = [];
     };
 
     pd.filedrop = function dom__filedrop(e) {
-        var event = e || window.event,
-            files = event.target.files || event.dataTransfer.files;
+        var event = e || window.event;
         event.stopPropagation();
         event.preventDefault();
-        pd.file(files, this);
+        pd.file();
     };
 
     //change the color scheme of the web UI
-    pd.colorScheme = function DOM_colorScheme(x) {
-        var a = x.selectedIndex,
-            b = x.getElementsByTagName("option"),
-            c = b[a].innerHTML.toLowerCase().replace(/\s+/g, ""),
-            d = "";
-        pd.o.wb.className = c;
-        pd.o.color = c;
-        if (pd.o.pdlogo !== null) {
-            switch (c) {
+    pd.colorScheme = function DOM_colorScheme(node) {
+        var x = (node.nodeType === 1) ? node : this,
+            index = x.selectedIndex,
+            option = x.getElementsByTagName("option"),
+            color = option[index].innerHTML.toLowerCase().replace(/\s+/g, ""),
+            logoColor = "",
+            logo = pd.$$("pdlogo");
+        pd.o.page.setAttribute("class", color);
+        pd.color = color;
+        if (logo !== null) {
+            switch (color) {
             case "default":
-                d = "234";
+                logoColor = "234";
                 break;
             case "coffee":
-                d = "654";
+                logoColor = "654";
                 break;
             case "dark":
-                d = "8ad";
+                logoColor = "8ad";
                 break;
             case "canvas":
-                d = "664";
+                logoColor = "664";
                 break;
             case "shadow":
-                d = "999";
+                logoColor = "999";
                 break;
             case "white":
-                d = "666";
+                logoColor = "666";
                 break;
             default:
-                d = "000";
+                logoColor = "000";
                 break;
             }
-            pd.o.pdlogo.style.borderColor = "#" + d;
-            pd.o.pdlogo.getElementsByTagName("g")[0].setAttribute("fill", "#" + d);
+            logo.style.borderColor = "#" + logoColor;
+            logo.getElementsByTagName("g")[0].setAttribute("fill", "#" + logoColor);
         }
-        pd.options("colorScheme");
+        pd.options(x);
     };
 
     //minimize report windows to the default size and location
-    pd.minimize = function dom__minimize(e, x, y) {
-        var a = x.parentNode,
-            b = a.parentNode,
-            c = b.getElementsByTagName("div")[0],
-            d = b.getElementsByTagName("h3")[0],
-            f = b.getAttribute("id"),
-            buttons = a.getElementsByTagName("button"),
-            save = (a.innerHTML.indexOf("pd.save") > -1) ? true : false,
-            g = (save === true) ? buttons[1] : buttons[0],
-            h = (save === true) ? buttons[2] : buttons[1],
-            i = b.offsetLeft / 10,
-            j = b.offsetTop / 10,
-            k = (save === true) ? buttons[3] : buttons[2],
-            step = (typeof y !== "number") ? 50 : (y < 1) ? 1 : y,
-            growth = function dom__minimize_growth(w, v, x, y) {
-                var aa = c,
-                    bb = d,
-                    gg = 17,
-                    hh = 3,
-                    ii = 0,
-                    jj = 0,
-                    kk = 0,
-                    l = 0,
-                    m = 0,
-                    n = 0,
-                    q = 0,
-                    r = 0,
-                    s = (y === true) ? 9.71 : 6.71,
+    pd.minimize = function dom__minimize(e, steps, node) {
+        var x = node || this,
+            parent = x.parentNode,
+            box = parent.parentNode,
+            finale = 0,
+            body = box.getElementsByTagName("div")[0],
+            heading = box.getElementsByTagName("h3")[0],
+            id = box.getAttribute("id"),
+            buttons = parent.getElementsByTagName("button"),
+            save = (parent.innerHTML.indexOf("save") > -1) ? true : false,
+            buttonMin = (save === true) ? buttons[1] : buttons[0],
+            buttonMax = (save === true) ? buttons[2] : buttons[1],
+            left = (box.offsetLeft / 10),
+            top = (box.offsetTop / 10),
+            buttonRes = (save === true) ? buttons[3] : buttons[2],
+            step = (typeof steps !== "number") ? 50 : (steps < 1) ? 1 : steps,
+            growth = function dom__minimize_growth() {
+                var boxLocal = box,
+                    bodyLocal = body,
+                    headingLocal = heading,
+                    leftLocal = left,
+                    topLocal = top,
+                    width = 17,
+                    height = 3,
+                    leftTarget = 0,
+                    topTarget = 0,
+                    widthTarget = 0,
+                    heightTarget = 0,
+                    incW = 0,
+                    incH = 0,
+                    incL = 0,
+                    incT = 0,
+                    saveSpace = (save === true) ? 9.45 : 6.45,
                     grow = function dom__minimize_growth_grow() {
-                        gg += m;
-                        hh += n;
-                        w += q;
-                        v += r;
-                        aa.style.width = gg + "em";
-                        aa.style.height = hh + "em";
-                        bb.style.width = (gg - s) + "em";
-                        x.style.left = w + "em";
-                        x.style.top = v + "em";
-                        if (gg + m < kk || hh + n < l) {
+                        width += incW;
+                        height += incH;
+                        leftLocal += incL;
+                        topLocal += incT;
+                        bodyLocal.style.width = width + "em";
+                        bodyLocal.style.height = height + "em";
+                        headingLocal.style.width = (width - saveSpace) + "em";
+                        boxLocal.style.left = leftLocal + "em";
+                        boxLocal.style.top = topLocal + "em";
+                        if (width + incW < widthTarget || height + incH < heightTarget) {
                             setTimeout(grow, 1);
                         } else {
-                            aa.style.width = (kk + 0.1) + "em";
-                            aa.style.height = (l + 0.1) + "em";
-                            pd.options(x);
+                            bodyLocal.style.width = widthTarget + "em";
+                            bodyLocal.style.height = heightTarget + "em";
+                            headingLocal.style.width = (widthTarget - saveSpace) + "em";
+                            pd.options(boxLocal);
                             return false;
                         }
                     };
-                if (typeof pd.position[f].left === "number") {
-                    ii = pd.position[f].left;
-                    jj = pd.position[f].top;
-                    kk = pd.position[f].width;
-                    l = pd.position[f].height;
+                if (typeof pd.settings[id].left === "number") {
+                    leftTarget = (pd.settings[id].left / 10);
+                    topTarget = (pd.settings[id].top / 10);
+                    widthTarget = (pd.settings[id].width / 10);
+                    heightTarget = (pd.settings[id].height / 10);
                 } else {
-                    pd.position[f].left = 20;
-                    pd.position[f].top = v;
-                    pd.position[f].width = 75;
-                    pd.position[f].height = 20;
-                    ii = 20;
-                    jj = v;
-                    kk = 75;
-                    l = 20;
+                    topLocal += 4;
+                    pd.settings[id].left = 200;
+                    pd.settings[id].top = (topLocal * 10);
+                    pd.settings[id].width = 750;
+                    pd.settings[id].height = 200;
+                    leftTarget = 20;
+                    topTarget = topLocal;
+                    widthTarget = 75;
+                    heightTarget = 20;
                 }
+                widthTarget = widthTarget - 0.3;
+                heightTarget = heightTarget - 3.55;
                 if (step === 1) {
-                    x.style.left = ii + "em";
-                    x.style.top = jj + "em";
-                    aa.style.width = (kk + 0.1) + "em";
-                    aa.style.height = (l + 0.1) + "em";
-                    d.style.width = (kk - s) + "em";
-                    pd.options(x);
+                    boxLocal.style.left = leftTarget + "em";
+                    boxLocal.style.top = topTarget + "em";
+                    bodyLocal.style.width = widthTarget + "em";
+                    bodyLocal.style.height = heightTarget + "em";
+                    heading.style.width = (widthTarget - saveSpace) + "em";
+                    pd.options(boxLocal);
                     return false;
                 }
-                m = (kk > gg) ? ((kk - gg) / step) : ((gg - kk) / step);
-                n = (l > hh) ? ((l - hh) / step) : ((hh - l) / step);
-                q = (ii - w) / step;
-                r = (jj - v) / step;
-                x.style.right = "auto";
-                aa.style.display = "block";
+                incW = (widthTarget > width) ? ((widthTarget - width) / step) : ((width - widthTarget) / step);
+                incH = (heightTarget > height) ? ((heightTarget - height) / step) : ((height - heightTarget) / step);
+                incL = (leftTarget - leftLocal) / step;
+                incT = (topTarget - topLocal) / step;
+                boxLocal.style.right = "auto";
+                bodyLocal.style.display = "block";
                 grow();
                 return false;
             },
-            shrinkage = function dom__minimize_shrinkage(u, v, w, x, y, z) {
-                var aa = i,
-                    bb = j,
-                    cc = y.clientWidth / 10,
-                    dd = y.clientHeight / 10,
-                    ee = (u - aa) / step,
-                    ff = (v - bb) / step,
-                    gg = (cc === 17) ? 0 : (cc > 17) ? ((cc - 17) / step) : ((17 - cc) / step),
-                    hh = dd / step,
+            shrinkage = function dom__minimize_shrinkage() {
+                var leftLocal = left,
+                    topLocal = top,
+                    boxLocal = box,
+                    bodyLocal = body,
+                    headingLocal = heading,
+                    finalLocal = finale,
+                    width = bodyLocal.clientWidth / 10,
+                    height = bodyLocal.clientHeight / 10,
+                    incL = (((window.innerWidth / 10) - finalLocal - 17) - leftLocal) / step,
+                    incT = (((pd.settings[id].topmin / 10) - topLocal) / step),
+                    incW = (width === 17) ? 0 : (width > 17) ? ((width - 17) / step) : ((17 - width) / step),
+                    incH = height / step,
                     shrink = function dom__minimize_shrinkage() {
-                        aa += ee;
-                        bb += ff;
-                        cc -= gg;
-                        dd -= hh;
-                        y.style.width = cc + "em";
-                        z.style.width = cc + "em";
-                        y.style.height = dd + "em";
-                        x.style.left = aa + "em";
-                        x.style.top = bb + "em";
-                        if (cc - gg > 16.8) {
+                        leftLocal += incL;
+                        topLocal += incT;
+                        width -= incW;
+                        height -= incH;
+                        bodyLocal.style.width = width + "em";
+                        headingLocal.style.width = width + "em";
+                        bodyLocal.style.height = height + "em";
+                        boxLocal.style.left = leftLocal + "em";
+                        boxLocal.style.top = topLocal + "em";
+                        if (width - incW > 16.8) {
                             setTimeout(shrink, 1);
                         } else {
-                            y.style.display = "none";
-                            x.style.top = "auto";
-                            x.style.left = "auto";
-                            x.style.right = w + "em";
-                            pd.options(x);
+                            bodyLocal.style.display = "none";
+                            boxLocal.style.top = "auto";
+                            boxLocal.style.left = "auto";
+                            boxLocal.style.right = finalLocal + "em";
+                            pd.options(boxLocal);
                             return false;
                         }
                     };
                 shrink();
                 return false;
             };
-        k.style.display = "block";
-        if ((b === pd.o.re && pd.o.filled.re === true) || (b === pd.o.rg && pd.o.filled.rg === true) || (b === pd.o.ri && pd.o.filled.ri === true) || (b === pd.o.rj && pd.o.filled.rj === true)) {
-            step = 1;
+        buttonRes.style.display = "block";
+        if (box === pd.o.report.diff.box) {
+            if (pd.test.filled.diff === true) {
+                step = 1;
+            }
+            finale = 57.8;
         }
-
+        if (box === pd.o.report.beau.box) {
+            if (pd.test.filled.beau === true) {
+                step = 1;
+            }
+            finale = 38.8;
+        }
+        if (box === pd.o.report.minn.box) {
+            if (pd.test.filled.minn === true) {
+                step = 1;
+            }
+            finale = 19.8;
+        }
+        if (box === pd.o.report.stat.box) {
+            if (pd.test.filled.stat === true) {
+                step = 1;
+            }
+            finale = 0.8;
+        }
+        e = e || window.event;
+        if (typeof e.preventDefault === "function") {
+            e.preventDefault();
+        }
         //shrink
         if (x.innerHTML === "\u035f") {
-            if (typeof pd.position[f] !== "object") {
-                pd.position[f] = {};
-            }
-            if (h.innerHTML === "\u2191") {
-                pd.position[f].top = (b.offsetTop / 10);
-                pd.position[f].left = (b.offsetLeft / 10);
-                pd.position[f].height = (c.clientHeight / 10) - 3.7;
-                pd.position[f].width = (c.clientWidth / 10) - 0.4;
+            if (buttonMax.innerHTML === "\u2191") {
+                pd.settings[id].top = box.offsetTop;
+                pd.settings[id].left = box.offsetLeft;
+                pd.settings[id].height = body.clientHeight;
+                pd.settings[id].width = body.clientWidth;
+                if (pd.zIndex > 2) {
+                    pd.zIndex -= 3;
+                    parent.style.zIndex = pd.zIndex;
+                }
             } else {
-                h.innerHTML = "\u2191";
+                buttonMax.innerHTML = "\u2191";
+                pd.settings[id].top += 1;
+                pd.settings[id].left -= 7;
+                pd.settings[id].height += 35.5;
+                pd.settings[id].width += 3;
             }
-            g.innerHTML = "\u2191";
-            b.style.borderWidth = "0em";
-            b.style.top = "auto";
-            b.style.zIndex = "2";
-            a.style.display = "none";
-            d.style.borderLeftStyle = "solid";
-            d.style.borderTopStyle = "solid";
-            d.style.cursor = "pointer";
-            d.style.margin = "0em 0em -3.2em 0.1em";
-            if (b === pd.o.re) {
-                shrinkage(pd.position[f].leftMin, pd.position[f].topMin, 57.8, b, c, d);
-            } else if (b === pd.o.rg) {
-                shrinkage(pd.position[f].leftMin, pd.position[f].topMin, 38.8, b, c, d);
-            } else if (b === pd.o.ri) {
-                shrinkage(pd.position[f].leftMin, pd.position[f].topMin, 19.8, b, c, d);
-            } else if (b === pd.o.rk) {
-                shrinkage(pd.position[f].leftMin, pd.position[f].topMin, 0.8, b, c, d);
-            }
-            if (pd.o.zindex > 2) {
-                pd.o.zindex -= 3;
-                a.style.zIndex = pd.o.zindex;
-            }
+            pd.settings[id].max = false;
+            buttonMin.innerHTML = "\u2191";
+            box.style.borderWidth = "0em";
+            box.style.top = "auto";
+            box.style.zIndex = "2";
+            parent.style.display = "none";
+            heading.style.borderLeftStyle = "solid";
+            heading.style.borderTopStyle = "solid";
+            heading.style.cursor = "pointer";
+            heading.style.margin = "0em 0em -3.2em 0.1em";
+            shrinkage();
             x.innerHTML = "\u2191";
 
             //grow
         } else {
-            pd.top(b);
-            g.innerHTML = "\u2191";
-            a.style.display = "block";
-            b.style.borderWidth = ".1em";
-            c.style.display = "block";
-            d.style.cursor = "move";
-            d.style.borderLeftStyle = "none";
-            d.style.borderTopStyle = "none";
-            d.style.margin = "0.1em 1.7em -3.2em 0.1em";
-            if (save === true) {
-                growth(i, j, b, true);
-            } else {
-                growth(i, j, b, false);
-            }
+            pd.top(box);
+            buttonMin.innerHTML = "\u2191";
+            parent.style.display = "block";
+            box.style.borderWidth = ".1em";
+            box.style.right = "auto";
+            body.style.display = "block";
+            heading.style.cursor = "move";
+            heading.style.borderLeftStyle = "none";
+            heading.style.borderTopStyle = "none";
+            heading.style.margin = "0.1em 1.7em -3.2em 0.1em";
+            growth();
             x.innerHTML = "\u035f";
-        }
-        if (typeof e === "object" && e !== null && typeof e.preventDefault === "function") {
-            e.preventDefault();
         }
         return false;
     };
 
     //maximize report window to available browser window
-    pd.maximize = function dom__maximize(x) {
-        var parent = x.parentNode,
-            save = (parent.innerHTML.indexOf("pd.save") > -1) ? true : false,
-            a = parent.parentNode,
-            b = a.getElementsByTagName("h3")[0],
-            c = a.getElementsByTagName("div")[0],
-            d = (document.body.parentNode.scrollTop > document.body.scrollTop) ? document.body.parentNode.scrollTop : document.body.scrollTop,
-            e = (document.body.parentNode.scrollLeft > document.body.scrollLeft) ? document.body.parentNode.scrollLeft : document.body.scrollLeft,
-            f = a.getAttribute("id"),
-            g = x.parentNode.getElementsByTagName("button"),
-            h = g[g.length - 1];
-        pd.top(a);
+    pd.maximize = function dom__maximize() {
+        var x = this,
+            parent = x.parentNode,
+            save = (parent.innerHTML.indexOf("save") > -1) ? true : false,
+            box = parent.parentNode,
+            heading = box.getElementsByTagName("h3")[0],
+            body = box.getElementsByTagName("div")[0],
+            top = (document.body.parentNode.scrollTop > document.body.scrollTop) ? document.body.parentNode.scrollTop : document.body.scrollTop,
+            left = (document.body.parentNode.scrollLeft > document.body.scrollLeft) ? document.body.parentNode.scrollLeft : document.body.scrollLeft,
+            id = box.getAttribute("id"),
+            buttons = x.parentNode.getElementsByTagName("button"),
+            resize = buttons[buttons.length - 1];
+        pd.top(box);
+
+        //maximize
         if (x.innerHTML === "\u2191") {
             x.innerHTML = "\u2193";
             x.setAttribute("title", "Return this dialogue to its prior size and location.");
-            pd.position[f] = {};
-            pd.position[f].top = (a.offsetTop / 10);
-            pd.position[f].left = (a.offsetLeft / 10);
-            pd.position[f].height = (c.clientHeight / 10) - 3.6;
-            pd.position[f].width = (c.clientWidth / 10) - 0.3;
-            pd.position[f].zindex = a.style.zIndex;
-            a.style.top = (d / 10) + "em";
-            a.style.left = (e / 10) + "em";
-            if (typeof window.innerHeight === "number") {
-                c.style.height = ((window.innerHeight / 10) - 5.5) + "em";
-                if (save === true) {
-                    b.style.width = ((window.innerWidth / 10) - 13.76) + "em";
-                } else {
-                    b.style.width = ((window.innerWidth / 10) - 10.76) + "em";
-                }
-                c.style.width = ((window.innerWidth / 10) - 4.1) + "em";
-            } else {
-                c.style.height = ((window.screen.availHeight / 10) - 21) + "em";
-                if (save === true) {
-                    b.style.width = ((window.screen.availWidth / 10) - 17.76) + "em";
-                } else {
-                    b.style.width = ((window.screen.availWidth / 10) - 14.76) + "em";
-                }
-                c.style.width = ((window.screen.availWidth / 10) - 5.1) + "em";
+            pd.settings[id].max = true;
+            pd.settings[id].min = false;
+            if (pd.test.ls === true && pd.test.json === true) {
+                localStorage.settings = JSON.stringify(pd.settings);
             }
-            h.style.display = "none";
+            pd.settings[id].top = box.offsetTop;
+            pd.settings[id].left = box.offsetLeft;
+            pd.settings[id].height = body.clientHeight - 36;
+            pd.settings[id].width = body.clientWidth - 3;
+            pd.settings[id].zindex = box.style.zIndex;
+            box.style.top = (top / 10) + "em";
+            box.style.left = (left / 10) + "em";
+            if (typeof window.innerHeight === "number") {
+                body.style.height = ((window.innerHeight / 10) - 5.5) + "em";
+                if (save === true) {
+                    heading.style.width = ((window.innerWidth / 10) - 13.76) + "em";
+                } else {
+                    heading.style.width = ((window.innerWidth / 10) - 10.76) + "em";
+                }
+                body.style.width = ((window.innerWidth / 10) - 4.1) + "em";
+            }
+            resize.style.display = "none";
+
+        //return to normal size
         } else {
+            pd.settings[id].max = false;
             x.innerHTML = "\u2191";
             x.setAttribute("title", "Maximize this dialogue to the browser window.");
-            if (pd.position && pd.position[f] && pd.position[f].top) {
-                a.style.top = pd.position[f].top + "em";
-                a.style.left = pd.position[f].left + "em";
-                if (save === true) {
-                    b.style.width = (pd.position[f].width - 9.76) + "em";
-                } else {
-                    b.style.width = (pd.position[f].width - 6.76) + "em";
-                }
-                c.style.width = pd.position[f].width + "em";
-                c.style.height = pd.position[f].height + "em";
+            box.style.top = (pd.settings[id].top / 10) + "em";
+            box.style.left = (pd.settings[id].left / 10) + "em";
+            if (save === true) {
+                heading.style.width = ((pd.settings[id].width / 10) - 9.76) + "em";
+            } else {
+                heading.style.width = ((pd.settings[id].width / 10) - 6.76) + "em";
             }
-            a.style.zIndex = pd.position[f].zindex;
-            h.style.display = "block";
-            pd.options(a);
+            body.style.width = (pd.settings[id].width / 10) + "em";
+            body.style.height = (pd.settings[id].height / 10) + "em";
+            box.style.zIndex = pd.settings[id].zindex;
+            resize.style.display = "block";
+            pd.options(box);
         }
     };
 
     //resize report window to custom width and height on drag
     pd.resize = function dom__resize(e, x) {
         var parent = x.parentNode,
-            save = (parent.innerHTML.indexOf("pd.save") > -1) ? true : false,
-            a = parent.parentNode,
-            b = a.getElementsByTagName("div")[0],
-            c = a.getElementsByTagName("h3")[0],
-            bx = b.clientWidth,
-            by = b.clientHeight,
+            save = (parent.innerHTML.indexOf("save") > -1) ? true : false,
+            box = parent.parentNode,
+            body = box.getElementsByTagName("div")[0],
+            heading = box.getElementsByTagName("h3")[0],
+            bodyWidth = body.clientWidth,
+            bodyHeight = body.clientHeight,
             drop = function dom__resize_drop() {
                 document.onmousemove = null;
-                bx = b.clientWidth;
-                by = b.clientHeight;
-                pd.options(a);
+                bodyWidth = body.clientWidth;
+                bodyHeight = body.clientHeight;
+                pd.options(box);
                 document.onmouseup = null;
             },
             boxsize = function dom__resize_boxsize(f) {
                 f = f || window.event;
-                b.style.width = ((bx + ((f.clientX - 4) - b.mouseX)) / 10) + "em";
+                body.style.width = ((bodyWidth + ((f.clientX - 4) - body.mouseX)) / 10) + "em";
                 if (save === true) {
-                    c.style.width = (((bx + (f.clientX - b.mouseX)) / 10) - 10.24) + "em";
+                    heading.style.width = (((bodyWidth + (f.clientX - body.mouseX)) / 10) - 9.8) + "em";
                 } else {
-                    c.style.width = (((bx + (f.clientX - b.mouseX)) / 10) - 7.24) + "em";
+                    heading.style.width = (((bodyWidth + (f.clientX - body.mouseX)) / 10) - 6.8) + "em";
                 }
-                b.style.height = ((by + ((f.clientY - 36) - b.mouseY)) / 10) + "em";
+                body.style.height = ((bodyHeight + ((f.clientY - 36) - body.mouseY)) / 10) + "em";
                 document.onmouseup = drop;
             };
-        pd.top(a);
+        pd.top(box);
         e = e || window.event;
-        b.mouseX = e.clientX;
-        b.mouseY = e.clientY;
+        body.mouseX = e.clientX;
+        body.mouseY = e.clientY;
         document.onmousemove = boxsize;
         document.onmousedown = null;
     };
 
     //toggle between parsed html diff report and raw text representation
     pd.save = function dom__save(x) {
-        var top = x.parentNode.parentNode,
+        var top = (x.parentNode.nodeName.toLowerCase() === "a") ? x.parentNode.parentNode.parentNode : x.parentNode.parentNode,
             body = top.getElementsByTagName("div")[0],
-            a = body.innerHTML.replace(/ xmlns\=("|')http:\/\/www\.w3\.org\/1999\/xhtml("|')/g, ""),
-            b = [],
-            c = "",
-            d = [],
-            e = {},
-            f = 0,
-            g = {},
-            inline = false,
+            bodyInner = body.innerHTML.replace(/ xmlns\=("|')http:\/\/www\.w3\.org\/1999\/xhtml("|')/g, ""),
+            build = [],
+            classQuote = "",
+            content = [],
+            lastChild = {},
+            pageHeight = 0,
+            span = pd.$$("inline"),
+            inline = (span === null || span.checked === false) ? false : true,
             type = "";
 
-        inline = pd.$$("inline").checked;
         if (inline === false) {
             type = document.getElementsByTagName("script")[0].getAttribute("type");
         }
@@ -1366,1695 +1294,1171 @@ pd.webtool = [];
         //added support for Firefox and Opera because they support long
         //URIs.  This extra support allows for local file creation.
         if (x.nodeName.toLowerCase() === "a" && x.getElementsByTagName("button")[0].innerHTML === "S") {
-            if (a === "" || ((/Please try using the option labeled ((&lt;)|<)em((&gt;)|>)Plain Text \(diff only\)((&lt;)|<)\/em((&gt;)|>)\./).test(a) === true && (/div class\=("|')diff("|')/).test(a) === false)) {
+            if (bodyInner === "" || ((/Please try using the option labeled ((&lt;)|<)em((&gt;)|>)Plain Text \(diff only\)((&lt;)|<)\/em((&gt;)|>)\./).test(bodyInner) === true && (/div class\=("|')diff("|')/).test(bodyInner) === false)) {
                 return false;
             }
-            b.push("<?xml version='1.0' encoding='UTF-8' ?><!DOCTYPE html PUBLIC '-//W3C//DTD XHTML 1.1//EN' 'http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd'><html xmlns='http://www.w3.org/1999/xhtml' xml:lang='en'><head><title>Pretty Diff - The difference tool</title><meta name='robots' content='index, follow'/> <meta name='DC.title' content='Pretty Diff - The difference tool'/> <link rel='canonical' href='http://prettydiff.com/' type='application/xhtml+xml'/><meta http-equiv='Content-Type' content='application/xhtml+xml;charset=UTF-8'/><meta http-equiv='Content-Style-Type' content='text/css'/><style type='text/css'>" + pd.o.css.core + pd.o.css["s" + pd.o.color] + "</style></head><body class='" + pd.o.color + "' id='webtool'><h1><a href='http://prettydiff.com/'>Pretty Diff - The difference tool</a></h1><div id='doc'>");
-            if (top === pd.o.re) {
-                c = (a.indexOf("<div class='diff'") > -1) ? "<div class='diff'" : "<div class=\"diff\"";
-                d = a.split(c);
-                b.push(d[0]);
-                b.push("<p>Accessibility note. &lt;em&gt; tags in the output represent character differences per lines compared.</p></div>");
-                b.push(c);
-                b.push(d[1]);
+            build.push("<?xml version='1.0' encoding='UTF-8' ?><!DOCTYPE html PUBLIC '-//W3C//DTD XHTML 1.1//EN' 'http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd'><html xmlns='http://www.w3.org/1999/xhtml' xml:lang='en'><head><title>Pretty Diff - The difference tool</title><meta name='robots' content='index, follow'/> <meta name='DC.title' content='Pretty Diff - The difference tool'/> <link rel='canonical' href='http://prettydiff.com/' type='application/xhtml+xml'/><meta http-equiv='Content-Type' content='application/xhtml+xml;charset=UTF-8'/><meta http-equiv='Content-Style-Type' content='text/css'/><style type='text/css'>" + pd.css.core + pd.css["s" + pd.color] + "</style></head><body class='" + pd.color + "' id='webtool'><h1><a href='http://prettydiff.com/'>Pretty Diff - The difference tool</a></h1><div id='doc'>");
+            if (top === pd.o.report.diff.box) {
+                classQuote = (bodyInner.indexOf("<div class='diff'") > -1) ? "<div class='diff'" : "<div class=\"diff\"";
+                content = bodyInner.split(classQuote);
+                build.push(content[0]);
+                build.push("<p>Accessibility note. &lt;em&gt; tags in the output represent character differences per lines compared.</p></div>");
+                build.push(classQuote);
+                build.push(content[1]);
                 if (inline === false) {
-                    b.push("<script type='");
-                    b.push(type);
-                    b.push("'><![CDATA[");
-                    b.push("var pd={};pd.colSliderProperties=[");
-                    b.push(pd.colSliderProperties[0]);
-                    b.push(",");
-                    b.push(pd.colSliderProperties[1]);
-                    b.push(",");
-                    b.push(pd.colSliderProperties[2]);
-                    b.push(",");
-                    b.push(pd.colSliderProperties[3]);
-                    b.push(",");
-                    b.push(pd.colSliderProperties[4]);
-                    b.push("];pd.colSliderGrab=function(x){'use strict';var a=x.parentNode,b=a.parentNode,c=0,counter=pd.colSliderProperties[0],data=pd.colSliderProperties[1],width=pd.colSliderProperties[2],total=pd.colSliderProperties[3],offset=(pd.colSliderProperties[4]),min=0,max=data-1,status='ew',g=min+15,h=max-15,k=false,z=a.previousSibling,ua=navigator.userAgent.toLowerCase(),ie=0,drop=function(g){x.style.cursor=status+'-resize';g=null;document.onmousemove=null;document.onmouseup=null;},boxmove=function(f){f=f||window.event;c=offset-f.clientX;if(c>g&&c<h){k=true;}if(k===true&&c>h){a.style.width=((total-counter-2)/ 10)+'em';status='e';}else if(k===true&&c<g){a.style.width=(width/10)+'em';status='w';}else if(c<max&&c>min){a.style.width=((width+c)/ 10)+'em';status='ew';}document.onmouseup=drop;};if(typeof pd.o==='object'&&typeof pd.o.re==='object'){offset+=pd.o.re.offsetLeft;offset-=pd.o.rf.scrollLeft;}else{c=(document.body.parentNode.scrollLeft>document.body.scrollLeft)?document.body.parentNode.scrollLeft:document.body.scrollLeft;offset-=c;}offset+=x.clientWidth;x.style.cursor='ew-resize';b.style.width=(total/10)+'em';b.style.display='inline-block';if(z.nodeType!==1){do{z=z.previousSibling;}while(z.nodeType!==1);}z.style.display='block';a.style.width=(a.clientWidth/10)+'em';a.style.position='absolute';document.onmousemove=boxmove;document.onmousedown=null;};");
-                    b.push("]]></script>");
+                    build.push("<script type='");
+                    build.push(type);
+                    build.push("'><![CDATA[");
+                    build.push("var pd={};pd.colSliderProperties=[");
+                    build.push(pd.colSliderProperties[0]);
+                    build.push(",");
+                    build.push(pd.colSliderProperties[1]);
+                    build.push(",");
+                    build.push(pd.colSliderProperties[2]);
+                    build.push(",");
+                    build.push(pd.colSliderProperties[3]);
+                    build.push(",");
+                    build.push(pd.colSliderProperties[4]);
+                    build.push("];pd.colSliderGrab=function(x){'use strict';var a=x.parentNode,b=a.parentNode,c=0,counter=pd.colSliderProperties[0],data=pd.colSliderProperties[1],width=pd.colSliderProperties[2],total=pd.colSliderProperties[3],offset=(pd.colSliderProperties[4]),min=0,max=data-1,status='ew',g=min+15,h=max-15,k=false,z=a.previousSibling,ua=navigator.userAgent.toLowerCase(),ie=0,drop=function(g){x.style.cursor=status+'-resize';g=null;document.onmousemove=null;document.onmouseup=null;},boxmove=function(f){f=f||window.event;c=offset-f.clientX;if(c>g&&c<h){k=true;}if(k===true&&c>h){a.style.width=((total-counter-2)/ 10)+'em';status='e';}else if(k===true&&c<g){a.style.width=(width/10)+'em';status='w';}else if(c<max&&c>min){a.style.width=((width+c)/ 10)+'em';status='ew';}document.onmouseup=drop;};if(typeof pd.o==='object'&&typeof pd.o.report.diff.box==='object'){offset+=pd.o.report.diff.box.offsetLeft;offset-=pd.o.report.diff.body.scrollLeft;}else{c=(document.body.parentNode.scrollLeft>document.body.scrollLeft)?document.body.parentNode.scrollLeft:document.body.scrollLeft;offset-=c;}offset+=x.clientWidth;x.style.cursor='ew-resize';b.style.width=(total/10)+'em';b.style.display='inline-block';if(z.nodeType!==1){do{z=z.previousSibling;}while(z.nodeType!==1);}z.style.display='block';a.style.width=(a.clientWidth/10)+'em';a.style.position='absolute';document.onmousemove=boxmove;document.onmousedown=null;};");
+                    build.push("]]></script>");
                 }
-            } else if (top === pd.o.rg) {
-                c = (a.indexOf("<div class='beautify' id='pd-jsscope'>") > -1) ? "<div class='beautify' id='pd-jsscope'>" : "<div class=\"beautify\" id=\"pd-jsscope\">";
-                d = a.split(c);
-                b.push(d[0]);
-                b.push("<p>Accessibility note. &lt;em&gt; tags in the output represent presentation for variable coloring and scope.</p></div>");
-                b.push(c);
-                b.push(d[1]);
-                b.push("<script type='");
-                b.push(type);
-                b.push("'><![CDATA[");
-                b.push("var data=document.getElementById('pd-jsscope'),pd={};pd.beaurows=[];");
-                b.push("pd.beaurows[0]=data.getElementsByTagName('ol')[0].getElementsByTagName('li');");
-                b.push("pd.beaurows[1]=data.getElementsByTagName('ol')[1].getElementsByTagName('li');");
-                b.push("pd.beaufold=function dom__beaufold(self,min,max){var a=0,b='';if(self.innerHTML.charAt(0)==='-'){for(a=min;a<max;a+=1){pd.beaurows[0][a].style.display='none';pd.beaurows[1][a].style.display='none';}self.innerHTML='+'+self.innerHTML.substr(1);}else{for(a=min;a<max;a+=1){pd.beaurows[0][a].style.display='block';pd.beaurows[1][a].style.display='block';if(pd.beaurows[0][a].getAttribute('class')==='fold'&&pd.beaurows[0][a].innerHTML.charAt(0)==='+'){b=pd.beaurows[0][a].getAttribute('onclick');b=b.substring(b.lastIndexOf(',')+1,b.indexOf(')'));a=Number(b)-1;}}self.innerHTML='-'+self.innerHTML.substr(1);}};");
-                b.push("]]></script>");
+            } else if (top === pd.o.report.beau.box) {
+                classQuote = (bodyInner.indexOf("<div class='beautify' id='pd-jsscope'>") > -1) ? "<div class='beautify' id='pd-jsscope'>" : "<div class=\"beautify\" id=\"pd-jsscope\">";
+                content = bodyInner.split(classQuote);
+                build.push(content[0]);
+                build.push("<p>Accessibility note. &lt;em&gt; tags in the output represent presentation for variable coloring and scope.</p></div>");
+                build.push(classQuote);
+                build.push(content[1]);
+                build.push("<script type='");
+                build.push(type);
+                build.push("'><![CDATA[");
+                build.push("var data=document.getElementById('pd-jsscope'),pd={};pd.beaurows=[];");
+                build.push("pd.beaurows[0]=data.getElementsByTagName('ol')[0].getElementsByTagName('li');");
+                build.push("pd.beaurows[1]=data.getElementsByTagName('ol')[1].getElementsByTagName('li');");
+                build.push("pd.beaufold=function dom__beaufold(self,min,max){var a=0,b='';if(self.innerHTML.charAt(0)==='-'){for(a=min;a<max;a+=1){pd.beaurows[0][a].style.display='none';pd.beaurows[1][a].style.display='none';}self.innerHTML='+'+self.innerHTML.substr(1);}else{for(a=min;a<max;a+=1){pd.beaurows[0][a].style.display='block';pd.beaurows[1][a].style.display='block';if(pd.beaurows[0][a].getAttribute('class')==='fold'&&pd.beaurows[0][a].innerHTML.charAt(0)==='+'){b=pd.beaurows[0][a].getAttribute('onclick');b=b.substring(b.lastIndexOf(',')+1,b.indexOf(')'));a=Number(b)-1;}}self.innerHTML='-'+self.innerHTML.substr(1);}};");
+                build.push("]]></script>");
             }
-            b.push("</body></html>");
-            x.setAttribute("href", "data:text/prettydiff;charset=utf-8," + encodeURIComponent(b.join("")));
+            build.push("</body></html>");
+            x.setAttribute("href", "data:text/prettydiff;charset=utf-8," + encodeURIComponent(build.join("")));
+            x.onclick = null;
+            x.click();
+            x.onclick = function dom__save_rebind() {
+                var that = this;
+                pd.save(that);
+            };
 
             //prompt to save file created above.  below is the creation
             //of the modal with instructions about file extension.
-            e = pd.o.wb.lastChild;
-            if (e.nodeType > 1 || e.nodeName.toLowerCase() === "script") {
+            lastChild = pd.o.page.lastChild;
+            if (lastChild.nodeType > 1 || lastChild.nodeName.toLowerCase() === "script") {
                 do {
-                    e = e.previousSibling;
-                } while (e.nodeType > 1 || e.nodeName.toLowerCase() === "script");
+                    lastChild = lastChild.previousSibling;
+                } while (lastChild.nodeType > 1 || lastChild.nodeName.toLowerCase() === "script");
             }
-            f = e.offsetTop + e.clientHeight + 20;
-            e = document.createElement("div");
-            e.setAttribute("onclick", "this.parentNode.removeChild(this)");
-            e.setAttribute("id", "modalSave");
-            g = document.createElement("span");
-            g.style.width = (pd.o.wb.clientWidth + 10) + "px";
-            g.style.height = f + "px";
-            e.appendChild(g);
-            g = document.createElement("p");
-            g.innerHTML = "Just rename the file extension from '<strong>.part</strong>' to '<strong>.xhtml</strong>'. <em>Click anywhere to close this reminder.</em>";
-            e.appendChild(g);
-            pd.o.wb.appendChild(e);
-            g.style.left = (((pd.o.wb.clientWidth + 10) - g.clientWidth) / 2) + "px";
+            pageHeight = lastChild.offsetTop + lastChild.clientHeight + 20;
+            lastChild = document.createElement("div");
+            lastChild.setAttribute("onclick", "this.parentNode.removeChild(this)");
+            lastChild.setAttribute("id", "modalSave");
+            span = document.createElement("span");
+            span.style.width = (pd.o.page.clientWidth + 10) + "px";
+            span.style.height = pageHeight + "px";
+            lastChild.appendChild(span);
+            span = document.createElement("p");
+            span.innerHTML = "Just rename the file extension from '<strong>.part</strong>' to '<strong>.xhtml</strong>'. <em>Click anywhere to close this reminder.</em>";
+            lastChild.appendChild(span);
+            pd.o.page.appendChild(lastChild);
+            span.style.left = (((pd.o.page.clientWidth + 10) - span.clientWidth) / 2) + "px";
             return;
         }
         //Webkit and IE get the old functionality of a textarea with
         //HTML text content to copy and paste into a text file.
         pd.top(top);
-        if (/Please try using the option labeled ((&lt;)|<)em((&gt;)|>)Plain Text \(diff only\)((&lt;)|<)\/em((&gt;)|>)\./.test(a) === true && /div class\=("|')diff("|')/.test(a) === false) {
-            pd.o.rf.innerHTML = "<p><strong>Error:</strong> Please try using the option labeled <em>Plain Text (diff only)</em>. <span style='display:block'>The input does not appear to be markup, CSS, or JavaScript.</span></p>";
+        if (/Please try using the option labeled ((&lt;)|<)em((&gt;)|>)Plain Text \(diff only\)((&lt;)|<)\/em((&gt;)|>)\./.test(bodyInner) === true && /div class\=("|')diff("|')/.test(bodyInner) === false) {
+            pd.o.report.diff.body.innerHTML = "<p><strong>Error:</strong> Please try using the option labeled <em>Plain Text (diff only)</em>. <span style='display:block'>The input does not appear to be markup, CSS, or JavaScript.</span></p>";
             return;
         }
         if (x.innerHTML === "S") {
-            if (a !== "") {
-                if (top === pd.o.re) {
-                    pd.o.ps.checked = true;
-                    c = (a.indexOf("<div class='diff'") > -1) ? "<div class='diff'" : "<div class=\"diff\"";
-                    d = a.split(c);
-                    c = c + d[1];
-                    a = d[0];
-                    b.push(a);
-                    b.push(" <p>This is the generated output. Please copy the text output, paste into a text file, and save as a &quot;.html&quot; file.</p> <textarea rows='40' cols='80' id='textreport'>");
-                    b.push("&lt;?xml version='1.0' encoding='UTF-8' ?&gt;&lt;!DOCTYPE html PUBLIC '-//W3C//DTD XHTML 1.1//EN' 'http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd'&gt;&lt;html xmlns='http://www.w3.org/1999/xhtml' xml:lang='en'&gt;&lt;head&gt;&lt;title&gt;Pretty Diff - The difference tool&lt;/title&gt;&lt;meta name='robots' content='index, follow'/&gt; &lt;meta name='DC.title' content='Pretty Diff - The difference tool'/&gt; &lt;link rel='canonical' href='http://prettydiff.com/' type='application/xhtml+xml'/&gt;&lt;meta http-equiv='Content-Type' content='application/xhtml+xml;charset=UTF-8'/&gt;&lt;meta http-equiv='Content-Style-Type' content='text/css'/&gt;&lt;style type='text/css'&gt;" + pd.o.css.core + pd.o.css["s" + pd.o.color] + "&lt;/style&gt;&lt;/head&gt;&lt;body class='" + pd.o.color + "' id='webtool'&gt;&lt;h1&gt;&lt;a href='http://prettydiff.com/'&gt;Pretty Diff - The difference tool&lt;/a&gt;&lt;/h1&gt;&lt;div id='doc'&gt;");
-                    b.push(a.replace(/\&/g, "&amp;").replace(/>/g, "&gt;").replace(/</g, "&lt;"));
-                    b.push("&lt;p&gt;Accessibility note. &amp;lt;em&amp;gt; tags in the output represent character differences per lines compared.&lt;/p&gt;&lt;/div&gt;");
-                    b.push(c.replace(/\&/g, "&amp;").replace(/>/g, "&gt;").replace(/</g, "&lt;"));
+            if (bodyInner !== "") {
+                if (top === pd.o.report.diff.box) {
+                    pd.o.save.checked = true;
+                    classQuote = (bodyInner.indexOf("<div class='diff'") > -1) ? "<div class='diff'" : "<div class=\"diff\"";
+                    content = bodyInner.split(classQuote);
+                    classQuote = classQuote + content[1];
+                    bodyInner = content[0];
+                    build.push(bodyInner);
+                    build.push(" <p>This is the generated output. Please copy the text output, paste into a text file, and save as a &quot;.html&quot; file.</p> <textarea rows='40' cols='80' id='textreport'>");
+                    build.push("&lt;?xml version='1.0' encoding='UTF-8' ?&gt;&lt;!DOCTYPE html PUBLIC '-//W3C//DTD XHTML 1.1//EN' 'http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd'&gt;&lt;html xmlns='http://www.w3.org/1999/xhtml' xml:lang='en'&gt;&lt;head&gt;&lt;title&gt;Pretty Diff - The difference tool&lt;/title&gt;&lt;meta name='robots' content='index, follow'/&gt; &lt;meta name='DC.title' content='Pretty Diff - The difference tool'/&gt; &lt;link rel='canonical' href='http://prettydiff.com/' type='application/xhtml+xml'/&gt;&lt;meta http-equiv='Content-Type' content='application/xhtml+xml;charset=UTF-8'/&gt;&lt;meta http-equiv='Content-Style-Type' content='text/css'/&gt;&lt;style type='text/css'&gt;" + pd.css.core + pd.css["s" + pd.color] + "&lt;/style&gt;&lt;/head&gt;&lt;body class='" + pd.color + "' id='webtool'&gt;&lt;h1&gt;&lt;a href='http://prettydiff.com/'&gt;Pretty Diff - The difference tool&lt;/a&gt;&lt;/h1&gt;&lt;div id='doc'&gt;");
+                    build.push(bodyInner.replace(/\&/g, "&amp;").replace(/>/g, "&gt;").replace(/</g, "&lt;"));
+                    build.push("&lt;p&gt;Accessibility note. &amp;lt;em&amp;gt; tags in the output represent character differences per lines compared.&lt;/p&gt;&lt;/div&gt;");
+                    build.push(classQuote.replace(/\&/g, "&amp;").replace(/>/g, "&gt;").replace(/</g, "&lt;"));
                     if (inline === false) {
-                        b.push("&lt;script type='");
-                        b.push(type);
-                        b.push("'&gt;&lt;![CDATA[");
-                        b.push("var pd={};pd.colSliderProperties=[");
-                        b.push(pd.colSliderProperties[0]);
-                        b.push(",");
-                        b.push(pd.colSliderProperties[1]);
-                        b.push(",");
-                        b.push(pd.colSliderProperties[2]);
-                        b.push(",");
-                        b.push(pd.colSliderProperties[3]);
-                        b.push(",");
-                        b.push(pd.colSliderProperties[4]);
-                        b.push("];pd.colSliderGrab=function(x){'use strict';var a=x.parentNode,b=a.parentNode,c=0,counter=pd.colSliderProperties[0],data=pd.colSliderProperties[1],width=pd.colSliderProperties[2],total=pd.colSliderProperties[3],offset=(pd.colSliderProperties[4]),min=0,max=data-1,status='ew',g=min+15,h=max-15,k=false,z=a.previousSibling,ua=navigator.userAgent.toLowerCase(),ie=0,drop=function(g){x.style.cursor=status+'-resize';g=null;document.onmousemove=null;document.onmouseup=null;},boxmove=function(f){f=f||window.event;c=offset-f.clientX;if(c&gt;g&amp;&amp;c&lt;h){k=true;}if(k===true&amp;&amp;c&gt;h){a.style.width=((total-counter-2)/ 10)+'em';status='e';}else if(k===true&amp;&amp;c&lt;g){a.style.width=(width/10)+'em';status='w';}else if(c&lt;max&amp;&amp;c&gt;min){a.style.width=((width+c)/ 10)+'em';status='ew';}document.onmouseup=drop;};if(typeof pd.o==='object'&amp;&amp;typeof pd.o.re==='object'){offset+=pd.o.re.offsetLeft;offset-=pd.o.rf.scrollLeft;}else{c=(document.body.parentNode.scrollLeft&gt;document.body.scrollLeft)?document.body.parentNode.scrollLeft:document.body.scrollLeft;offset-=c;}offset+=x.clientWidth;x.style.cursor='ew-resize';b.style.width=(total/10)+'em';b.style.display='inline-block';if(z.nodeType!==1){do{z=z.previousSibling;}while(z.nodeType!==1);}z.style.display='block';a.style.width=(a.clientWidth/10)+'em';a.style.position='absolute';document.onmousemove=boxmove;document.onmousedown=null;};");
-                        b.push("]]&gt;&lt;/script&gt;");
+                        build.push("&lt;script type='");
+                        build.push(type);
+                        build.push("'&gt;&lt;![CDATA[");
+                        build.push("var pd={};pd.colSliderProperties=[");
+                        build.push(pd.colSliderProperties[0]);
+                        build.push(",");
+                        build.push(pd.colSliderProperties[1]);
+                        build.push(",");
+                        build.push(pd.colSliderProperties[2]);
+                        build.push(",");
+                        build.push(pd.colSliderProperties[3]);
+                        build.push(",");
+                        build.push(pd.colSliderProperties[4]);
+                        build.push("];pd.colSliderGrab=function(x){'use strict';var a=x.parentNode,b=a.parentNode,c=0,counter=pd.colSliderProperties[0],data=pd.colSliderProperties[1],width=pd.colSliderProperties[2],total=pd.colSliderProperties[3],offset=(pd.colSliderProperties[4]),min=0,max=data-1,status='ew',g=min+15,h=max-15,k=false,z=a.previousSibling,ua=navigator.userAgent.toLowerCase(),ie=0,drop=function(g){x.style.cursor=status+'-resize';g=null;document.onmousemove=null;document.onmouseup=null;},boxmove=function(f){f=f||window.event;c=offset-f.clientX;if(c&gt;g&amp;&amp;c&lt;h){k=true;}if(k===true&amp;&amp;c&gt;h){a.style.width=((total-counter-2)/ 10)+'em';status='e';}else if(k===true&amp;&amp;c&lt;g){a.style.width=(width/10)+'em';status='w';}else if(c&lt;max&amp;&amp;c&gt;min){a.style.width=((width+c)/ 10)+'em';status='ew';}document.onmouseup=drop;};if(typeof pd.o==='object'&amp;&amp;typeof pd.o.report.diff.box==='object'){offset+=pd.o.report.diff.box.offsetLeft;offset-=pd.o.report.diff.body.scrollLeft;}else{c=(document.body.parentNode.scrollLeft&gt;document.body.scrollLeft)?document.body.parentNode.scrollLeft:document.body.scrollLeft;offset-=c;}offset+=x.clientWidth;x.style.cursor='ew-resize';b.style.width=(total/10)+'em';b.style.display='inline-block';if(z.nodeType!==1){do{z=z.previousSibling;}while(z.nodeType!==1);}z.style.display='block';a.style.width=(a.clientWidth/10)+'em';a.style.position='absolute';document.onmousemove=boxmove;document.onmousedown=null;};");
+                        build.push("]]&gt;&lt;/script&gt;");
                     }
-                } else if (top === pd.o.rg) {
-                    c = (a.indexOf("<div class='beautify' id='pd-jsscope'>") > -1) ? "<div class='beautify' id='pd-jsscope'>" : "<div class=\"beautify\" id=\"pd-jsscope\">";
-                    d = a.split(c);
-                    c = c + d[1];
-                    a = d[0];
-                    b.push(a);
-                    b.push(" <p>This is the generated output. Please copy the text output, paste into a text file, and save as a &quot;.html&quot; file.</p> <textarea rows='40' cols='80' id='textreport'>");
-                    b.push("&lt;?xml version='1.0' encoding='UTF-8' ?&gt;&lt;!DOCTYPE html PUBLIC '-//W3C//DTD XHTML 1.1//EN' 'http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd'&gt;&lt;html xmlns='http://www.w3.org/1999/xhtml' xml:lang='en'&gt;&lt;head&gt;&lt;title&gt;Pretty Diff - The difference tool&lt;/title&gt;&lt;meta name='robots' content='index, follow'/&gt; &lt;meta name='DC.title' content='Pretty Diff - The difference tool'/&gt; &lt;link rel='canonical' href='http://prettydiff.com/' type='application/xhtml+xml'/&gt;&lt;meta http-equiv='Content-Type' content='application/xhtml+xml;charset=UTF-8'/&gt;&lt;meta http-equiv='Content-Style-Type' content='text/css'/&gt;&lt;style type='text/css'&gt;" + pd.o.css.core + pd.o.css["s" + pd.o.color] + "&lt;/style&gt;&lt;/head&gt;&lt;body class='" + pd.o.color + "' id='webtool'&gt;&lt;h1&gt;&lt;a href='http://prettydiff.com/'&gt;Pretty Diff - The difference tool&lt;/a&gt;&lt;/h1&gt;&lt;div id='doc'&gt;");
-                    b.push(a.replace(/\&/g, "&amp;").replace(/>/g, "&gt;").replace(/</g, "&lt;"));
-                    b.push("&lt;p&gt;Accessibility note. &amp;lt;em&amp;gt; tags in the output represent presentation for variable coloring and scope.&lt;/p&gt;&lt;/div&gt;");
-                    b.push(c.replace(/\&/g, "&amp;").replace(/>/g, "&gt;").replace(/</g, "&lt;"));
-                    b.push("&lt;script type='");
-                    b.push(type);
-                    b.push("'&gt;&lt;![CDATA[");
-                    b.push("var data=document.getElementById('pd-jsscope'),pd={};pd.beaurows=[];");
-                    b.push("pd.beaurows[0]=data.getElementsByTagName('ol')[0].getElementsByTagName('li');");
-                    b.push("pd.beaurows[1]=data.getElementsByTagName('ol')[1].getElementsByTagName('li');");
-                    b.push("pd.beaufold=function dom__beaufold(self,min,max){var a=0,b='';if(self.innerHTML.charAt(0)==='-'){for(a=min;a&lt;max;a+=1){pd.beaurows[0][a].style.display='none';pd.beaurows[1][a].style.display='none';}self.innerHTML='+'+self.innerHTML.substr(1);}else{for(a=min;a&lt;max;a+=1){pd.beaurows[0][a].style.display='block';pd.beaurows[1][a].style.display='block';if(pd.beaurows[0][a].getAttribute('class')==='fold'&amp;&amp;pd.beaurows[0][a].innerHTML.charAt(0)==='+'){b=pd.beaurows[0][a].getAttribute('onclick');b=b.substring(b.lastIndexOf(',')+1,b.indexOf(')'));a=Number(b)-1;}}self.innerHTML='-'+self.innerHTML.substr(1);}};");
-                    b.push("]]&gt;&lt;/script&gt;");
+                } else if (top === pd.o.report.beau.box) {
+                    classQuote = (bodyInner.indexOf("<div class='beautify' id='pd-jsscope'>") > -1) ? "<div class='beautify' id='pd-jsscope'>" : "<div class=\"beautify\" id=\"pd-jsscope\">";
+                    content = bodyInner.split(classQuote);
+                    classQuote = classQuote + content[1];
+                    bodyInner = content[0];
+                    build.push(bodyInner);
+                    build.push(" <p>This is the generated output. Please copy the text output, paste into a text file, and save as a &quot;.html&quot; file.</p> <textarea rows='40' cols='80' id='textreport'>");
+                    build.push("&lt;?xml version='1.0' encoding='UTF-8' ?&gt;&lt;!DOCTYPE html PUBLIC '-//W3C//DTD XHTML 1.1//EN' 'http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd'&gt;&lt;html xmlns='http://www.w3.org/1999/xhtml' xml:lang='en'&gt;&lt;head&gt;&lt;title&gt;Pretty Diff - The difference tool&lt;/title&gt;&lt;meta name='robots' content='index, follow'/&gt; &lt;meta name='DC.title' content='Pretty Diff - The difference tool'/&gt; &lt;link rel='canonical' href='http://prettydiff.com/' type='application/xhtml+xml'/&gt;&lt;meta http-equiv='Content-Type' content='application/xhtml+xml;charset=UTF-8'/&gt;&lt;meta http-equiv='Content-Style-Type' content='text/css'/&gt;&lt;style type='text/css'&gt;" + pd.css.core + pd.css["s" + pd.color] + "&lt;/style&gt;&lt;/head&gt;&lt;body class='" + pd.color + "' id='webtool'&gt;&lt;h1&gt;&lt;a href='http://prettydiff.com/'&gt;Pretty Diff - The difference tool&lt;/a&gt;&lt;/h1&gt;&lt;div id='doc'&gt;");
+                    build.push(bodyInner.replace(/\&/g, "&amp;").replace(/>/g, "&gt;").replace(/</g, "&lt;"));
+                    build.push("&lt;p&gt;Accessibility note. &amp;lt;em&amp;gt; tags in the output represent presentation for variable coloring and scope.&lt;/p&gt;&lt;/div&gt;");
+                    build.push(classQuote.replace(/\&/g, "&amp;").replace(/>/g, "&gt;").replace(/</g, "&lt;"));
+                    build.push("&lt;script type='");
+                    build.push(type);
+                    build.push("'&gt;&lt;![CDATA[");
+                    build.push("var data=document.getElementById('pd-jsscope'),pd={};pd.beaurows=[];");
+                    build.push("pd.beaurows[0]=data.getElementsByTagName('ol')[0].getElementsByTagName('li');");
+                    build.push("pd.beaurows[1]=data.getElementsByTagName('ol')[1].getElementsByTagName('li');");
+                    build.push("pd.beaufold=function dom__beaufold(self,min,max){var a=0,b='';if(self.innerHTML.charAt(0)==='-'){for(a=min;a&lt;max;a+=1){pd.beaurows[0][a].style.display='none';pd.beaurows[1][a].style.display='none';}self.innerHTML='+'+self.innerHTML.substr(1);}else{for(a=min;a&lt;max;a+=1){pd.beaurows[0][a].style.display='block';pd.beaurows[1][a].style.display='block';if(pd.beaurows[0][a].getAttribute('class')==='fold'&amp;&amp;pd.beaurows[0][a].innerHTML.charAt(0)==='+'){b=pd.beaurows[0][a].getAttribute('onclick');b=b.substring(b.lastIndexOf(',')+1,b.indexOf(')'));a=Number(b)-1;}}self.innerHTML='-'+self.innerHTML.substr(1);}};");
+                    build.push("]]&gt;&lt;/script&gt;");
                 }
-                b.push("&lt;/body&gt;&lt;/html&gt;</textarea>");
+                build.push("&lt;/body&gt;&lt;/html&gt;</textarea>");
             }
             x.innerHTML = "H";
             x.setAttribute("title", "Convert output to rendered HTML.");
         } else {
-            c = "<p>This is the generated output. Please copy the text output, paste into a text file, and save as a \".html\" file.</p>";
-            if (a !== "") {
-                a = a.replace(/ xmlns\="http:\/\/www\.w3\.org\/1999\/xhtml"/g, "").replace(/&lt;/g, "<").replace(/&gt;/g, ">").replace(/&amp;/g, "&");
-                d = a.split(c);
-                b.push(d[0]);
-                if (top === pd.o.re) {
-                    c = (d[1].indexOf("<div class='diff'") > -1) ? "<div class='diff'" : "<div class=\"diff\"";
-                    pd.o.inline = pd.$$("inline");
-                    if (pd.colSliderProperties.length === 0 && x.innerHTML === "S" && pd.o.inline.checked === true) {
-                        d = pd.o.rf.getElementsByTagName("ol");
+            classQuote = "<p>This is the generated output. Please copy the text output, paste into a text file, and save as a \".html\" file.</p>";
+            if (bodyInner !== "") {
+                bodyInner = bodyInner.replace(/ xmlns\="http:\/\/www\.w3\.org\/1999\/xhtml"/g, "").replace(/&lt;/g, "<").replace(/&gt;/g, ">").replace(/&amp;/g, "&");
+                content = bodyInner.split(classQuote);
+                build.push(content[0]);
+                if (top === pd.o.report.diff.box) {
+                    classQuote = (content[1].indexOf("<div class='diff'") > -1) ? "<div class='diff'" : "<div class=\"diff\"";
+                    if (pd.colSliderProperties.length === 0 && x.innerHTML === "S" && inline === true) {
+                        content = pd.o.report.diff.body.getElementsByTagName("ol");
                         pd.colSliderProperties = [
-                            d[0].clientWidth, d[1].clientWidth, d[2].parentNode.clientWidth, d[2].parentNode.parentNode.clientWidth, d[2].parentNode.offsetLeft - d[2].parentNode.parentNode.offsetLeft
+                            content[0].clientWidth, content[1].clientWidth, content[2].parentNode.clientWidth, content[2].parentNode.parentNode.clientWidth, content[2].parentNode.offsetLeft - content[2].parentNode.parentNode.offsetLeft
                         ];
                     }
-                } else if (top === pd.o.rg) {
-                    c = (d[1].indexOf("<div class='beautify' id='pd-jsscope'>") > -1) ? "<div class='beautify' id='pd-jsscope'>" : "<div class=\"beautify\" id=\"pd-jsscope\">";
+                } else if (top === pd.o.report.beau.box) {
+                    classQuote = (content[1].indexOf("<div class='beautify' id='pd-jsscope'>") > -1) ? "<div class='beautify' id='pd-jsscope'>" : "<div class=\"beautify\" id=\"pd-jsscope\">";
                 }
-                d[1] = d[1].substring(d[1].indexOf(c) + c.length, d[1].length);
-                if (d[1].indexOf("<script") > -1) {
-                    d[1] = c + (d[1].substring(0, d[1].indexOf("<script")));
+                content[1] = content[1].substring(content[1].indexOf(classQuote) + classQuote.length, content[1].length);
+                if (content[1].indexOf("<script") > -1) {
+                    content[1] = classQuote + (content[1].substring(0, content[1].indexOf("<script")));
                 } else {
-                    d[1] = c + (d[1].substring(0, d[1].indexOf("</body")));
+                    content[1] = classQuote + (content[1].substring(0, content[1].indexOf("</body")));
                 }
-                b.push(d[1]);
+                build.push(content[1]);
             }
             x.innerHTML = "S";
             x.setAttribute("title", "Convert report to text that can be saved.");
         }
-        body.innerHTML = b.join("");
+        body.innerHTML = build.join("");
         pd.options(x.parentNode);
     };
 
     //basic drag and drop for the report windows
     pd.grab = function dom__grab(e, x) {
-        var a = x.parentNode,
-            parent = a.getElementsByTagName("p")[0],
-            save = (parent.innerHTML.indexOf("pd.save") > -1) ? true : false,
-            b = parent.style.display,
-            c = {},
-            d = a.lastChild,
-            h = a.firstChild,
-            i = 0,
-            ax = a.offsetLeft,
-            ay = a.offsetTop,
-            filled = ((a === pd.o.re && pd.o.filled.re === true) || (a === pd.o.rg && pd.o.filled.rg === true) || (a === pd.o.ri && pd.o.filled.ri === true) || (a === pd.o.rj && pd.o.filled.rj === true)) ? true : false,
+        var box = x.parentNode,
+            parent = box.getElementsByTagName("p")[0],
+            save = (parent.innerHTML.indexOf("save") > -1) ? true : false,
+            minifyTest = (parent.style.display === "none") ? true : false,
+            minButton = (save === true) ? box.getElementsByTagName("button")[1] : box.getElementsByTagName("button")[0],
+            body = box.lastChild,
+            heading = box.firstChild,
+            boxLeft = box.offsetLeft,
+            boxTop = box.offsetTop,
+            filled = ((box === pd.o.report.diff.box && pd.test.filled.diff === true) || (box === pd.o.report.beau.box && pd.test.filled.beau === true) || (box === pd.o.report.minn.box && pd.test.filled.minn === true) || (box === pd.o.report.stat.box && pd.test.filled.stat === true)) ? true : false,
             drop = function dom__grab_drop() {
+                var innerHeight = window.innerHeight,
+                    headingWidth = box.getElementsByTagName("h3")[0].clientWidth;
+                boxLeft = box.offsetLeft;
+                boxTop = box.offsetTop;
                 document.onmousemove = null;
-                ax = a.offsetLeft;
-                ay = a.offsetTop;
-                pd.options(a);
                 document.onmouseup = null;
-                d.style.opacity = "1";
-                a.style.height = "auto";
-                h.style.top = "100%";
+                if (boxTop < 10) {
+                    box.style.top = "1em";
+                }
+                if (boxTop > (innerHeight - 40)) {
+                    box.style.top = ((innerHeight - 40) / 10) + "em";
+                }
+                if (boxLeft < ((headingWidth * -1) + 40)) {
+                    box.style.left = (((headingWidth * -1) + 40) / 10) + "em";
+                }
+                body.style.opacity = "1";
+                box.style.height = "auto";
+                heading.style.top = "100%";
+                pd.options(box);
                 return false;
             },
             boxmove = function dom__grab_boxmove(f) {
                 f = f || window.event;
-                a.style.right = "auto";
-                a.style.left = ((ax + (f.clientX - a.mouseX)) / 10) + "em";
-                a.style.top = ((ay + (f.clientY - a.mouseY)) / 10) + "em";
+                f.preventDefault();
+                box.style.right = "auto";
+                box.style.left = ((boxLeft + (f.clientX - box.mouseX)) / 10) + "em";
+                box.style.top = ((boxTop + (f.clientY - box.mouseY)) / 10) + "em";
                 document.onmouseup = drop;
                 return false;
             };
         e = e || window.event;
-        if (b === "none") {
+        if (minifyTest === true) {
             if (save === true) {
-                c = a.getElementsByTagName("button")[1];
+                minButton = box.getElementsByTagName("button")[1];
             } else {
-                c = a.getElementsByTagName("button")[0];
+                minButton = box.getElementsByTagName("button")[0];
             }
             if (filled === true) {
-                a.style.right = "auto";
+                box.style.right = "auto";
             } else {
-                a.style.left = "auto";
+                box.style.left = "auto";
             }
-            pd.minimize(e, c);
+            minButton.click(e);
             return false;
         }
-        pd.top(a);
-        if (d.nodeType !== 1) {
+        pd.top(box);
+        e.preventDefault();
+        if (body.nodeType !== 1) {
             do {
-                d = d.previousSibling;
-            } while (d.nodeType !== 1);
+                body = body.previousSibling;
+            } while (body.nodeType !== 1);
         }
-        if (h.nodeType !== 1) {
+        if (heading.nodeType !== 1) {
             do {
-                h = h.nextSibling;
-            } while (h.nodeType !== 1);
+                heading = heading.nextSibling;
+            } while (heading.nodeType !== 1);
         }
-        h = h.lastChild;
-        if (h.nodeType !== 1) {
+        heading = heading.lastChild;
+        if (heading.nodeType !== 1) {
             do {
-                h = h.previousSibling;
-            } while (h.nodeType !== 1);
+                heading = heading.previousSibling;
+            } while (heading.nodeType !== 1);
         }
-        d.style.opacity = ".5";
-        i = a.clientHeight;
-        h.style.top = (i / 20) + "0em";
-        a.style.height = ".1em";
-        a.mouseX = e.clientX;
-        a.mouseY = e.clientY;
+        body.style.opacity = ".5";
+        heading.style.top = (box.clientHeight / 20) + "0em";
+        box.style.height = ".1em";
+        box.mouseX = e.clientX;
+        box.mouseY = e.clientY;
         document.onmousemove = boxmove;
         document.onmousedown = null;
-        pd.options(a);
+        pd.options(box);
         return false;
     };
 
     //shows and hides the additional options
-    pd.additional = function dom__additional(x) {
-        if (pd.o.ao === null) {
+    pd.additional = function dom__additional() {
+        var x = this;
+        if (pd.o.addOps === null) {
             return;
         }
-        if (x === pd.o.an) {
-            pd.o.ao.style.display = "none";
-        } else if (x === pd.o.ay) {
-            pd.o.ao.style.display = "block";
+        if (x === pd.o.addNo) {
+            pd.o.addOps.style.display = "none";
+        } else if (x === pd.o.addYes) {
+            pd.o.addOps.style.display = "block";
         }
         pd.options(x);
     };
 
     //resizes the pretty diff comment onmouseover
-    pd.comment = function dom__comment(e, x) {
-        var a = Math.floor(pd.o.wb.clientWidth / 13),
-            b = 0;
-        if (pd.o.option === null) {
-            return;
+    pd.comment = function dom__comment(node, over) {
+        var pageWidth = Math.floor(pd.o.page.clientWidth / 13),
+            textLength = 0;
+        if (node === undefined || node.nodeName === undefined || node.nodeName.toLowerCase() !== "textarea") {
+            over = false;
+            node = pd.$$("option_comment");
+            if (node === null) {
+                return;
+            }
         }
-        if (x.nodeName.toLowerCase() === "p") {
-            e = false;
-            x = pd.o.option;
-        }
-        if (e === true) {
-            b = x.value.length;
-            x.style.height = Math.ceil((b / 1.6) / a) + ".5em";
-            x.style.marginBottom = "-" + Math.ceil((b / 1.6) / a) + ".5em";
-            x.style.paddingTop = "1em";
-            x.style.position = "relative";
-            x.style.width = (a - 4.7) + "em";
-            x.style.zIndex = "5";
+        if (over === true) {
+            textLength = node.value.length;
+            node.style.height = Math.ceil((textLength / 1.6) / pageWidth) + ".5em";
+            node.style.marginBottom = "-" + Math.ceil((textLength / 1.6) / pageWidth) + ".5em";
+            node.style.paddingTop = "1em";
+            node.style.position = "relative";
+            node.style.width = (pageWidth - 4.7) + "em";
+            node.style.zIndex = "5";
         } else {
-            x.style.height = "2.5em";
-            x.style.marginBottom = "-1.5em";
-            x.style.paddingTop = "0em";
-            x.style.position = "static";
-            x.style.width = "100%";
-            x.style.zIndex = "1";
+            node.style.height = "2.5em";
+            node.style.marginBottom = "-1.5em";
+            node.style.paddingTop = "0em";
+            node.style.position = "static";
+            node.style.width = "100%";
+            node.style.zIndex = "1";
         }
     };
 
     //toggle between tool modes and vertical/horizontal orientation of
     //textareas
-    pd.prettyvis = function dom__prettyvis(a) {
-        var b = "",
-            c = 0,
-            d = [],
-            langtest = (pd.o.la !== null && pd.o.la.nodeName === "select") ? true : false,
+    pd.prettyvis = function dom__prettyvis(x) {
+        var a = (x.nodeType === 1) ? x : this,
+            b = 0,
+            lang = (pd.o.lang === null) ? "javascript" : ((pd.o.lang.nodeName === "select") ? pd.o.lang[pd.o.lang.selectedIndex].value : pd.o.lang.value),
+            langOps = [],
+            node = {},
+            langtest = (pd.o.lang !== null && pd.o.lang.nodeName === "select") ? true : false,
             optioncheck = function dom__prettyvis_optioncheck() {
-                var aa = 0,
-                    bb = [];
-                bb = pd.o.la.getElementsByTagName("option");
-                for (aa = bb.length - 1; aa > -1; aa -= 1) {
-                    if (bb[aa].value === "text") {
-                        if (pd.o.la.selectedIndex === aa) {
-                            pd.o.la.selectedIndex = 0;
+                var c = 0,
+                    langs = [];
+                langs = pd.o.lang.getElementsByTagName("option");
+                for (c = langs.length - 1; c > -1; c -= 1) {
+                    if (langs[c].value === "text") {
+                        if (pd.o.lang.selectedIndex === c) {
+                            pd.o.lang.selectedIndex = 0;
                         }
-                        bb[aa].disabled = true;
+                        langs[c].disabled = true;
                     }
                 }
             };
-        b = (pd.o.la === null) ? "javascript" : ((pd.o.la.nodeName === "select") ? pd.o.la[pd.o.la.selectedIndex].value : pd.o.la.value);
-        if (a === pd.o.bb) {
+        if (a === pd.o.modeBeau) {
+            pd.mode = "beau";
             if (langtest === true) {
                 optioncheck();
             }
-            if (pd.o.bi !== null) {
-                if (pd.o.bi.value === "" && pd.o.mi !== null && pd.o.mi.value !== "") {
-                    pd.o.bi.value = pd.o.mi.value;
-                } else if (pd.o.bi.value === "" && pd.o.bo !== null && pd.o.bo.value !== "") {
-                    pd.o.bi.value = pd.o.bo.value;
+            if (pd.o.codeBeauIn !== null) {
+                if (pd.o.codeBeauIn.value === "" && pd.o.codeMinnIn !== null && pd.o.codeMinnIn.value !== "") {
+                    pd.o.codeBeauIn.value = pd.o.codeMinnIn.value;
+                } else if (pd.o.codeBeauIn.value === "" && pd.o.codeBeauOut !== null && pd.o.codeBeauOut.value !== "") {
+                    pd.o.codeBeauIn.value = pd.o.codeBeauOut.value;
                 }
             }
-            if (pd.o.bd !== null) {
-                pd.o.bd.style.display = "block";
+            if (pd.o.beau !== null) {
+                pd.o.beau.style.display = "block";
             }
-            if (pd.o.md !== null) {
-                pd.o.md.style.display = "none";
+            if (pd.o.minn !== null) {
+                pd.o.minn.style.display = "none";
             }
-            if (pd.o.bt !== null) {
-                pd.o.bt.style.display = "none";
+            if (pd.o.diffBase !== null) {
+                pd.o.diffBase.style.display = "none";
             }
-            if (pd.o.nt !== null) {
-                pd.o.nt.style.display = "none";
+            if (pd.o.diffNew !== null) {
+                pd.o.diffNew.style.display = "none";
             }
-            if (pd.o.dops !== null) {
-                pd.o.dops.style.display = "none";
+            if (pd.o.diffOps !== null) {
+                pd.o.diffOps.style.display = "none";
             }
-            if (pd.o.mops !== null) {
-                pd.o.mops.style.display = "none";
+            if (pd.o.minnOps !== null) {
+                pd.o.minnOps.style.display = "none";
             }
-            if (b === "csv" && pd.o.bops !== null) {
-                pd.o.bops.style.display = "none";
+            if (lang === "csv" && pd.o.beauOps !== null) {
+                pd.o.beauOps.style.display = "none";
             } else {
-                pd.o.bops.style.display = "block";
+                pd.o.beauOps.style.display = "block";
             }
-        } else if (a === pd.o.mm) {
+        }
+        if (a === pd.o.modeMinn) {
+            pd.mode = "minn";
             if (langtest === true) {
                 optioncheck();
             }
-            if (pd.o.mi !== null) {
-                if (pd.o.mi.value === "" && pd.o.bi !== null && pd.o.bi.value !== "") {
-                    pd.o.mi.value = pd.o.bi.value;
-                } else if (pd.o.mi.value === "" && pd.o.bo !== null && pd.o.bo.value !== "") {
-                    pd.o.mi.value = pd.o.bo.value;
+            if (pd.o.codeMinnIn !== null) {
+                if (pd.o.codeMinnIn.value === "" && pd.o.codeBeauIn !== null && pd.o.codeBeauIn.value !== "") {
+                    pd.o.codeMinnIn.value = pd.o.codeBeauIn.value;
+                } else if (pd.o.codeMinnIn.value === "" && pd.o.codeBeauOut !== null && pd.o.codeBeauOut.value !== "") {
+                    pd.o.codeMinnIn.value = pd.o.codeBeauOut.value;
                 }
             }
-            if (pd.o.mops !== null) {
-                if (b === "text" || b === "csv") {
-                    pd.o.mops.style.display = "none";
+            if (pd.o.minnOps !== null) {
+                if (lang === "text" || lang === "csv") {
+                    pd.o.minnOps.style.display = "none";
                 } else {
-                    pd.o.mops.style.display = "block";
+                    pd.o.minnOps.style.display = "block";
                 }
             }
-            if (pd.o.md !== null) {
-                pd.o.md.style.display = "block";
+            if (pd.o.minn !== null) {
+                pd.o.minn.style.display = "block";
             }
-            if (pd.o.bd !== null) {
-                pd.o.bd.style.display = "none";
+            if (pd.o.beau !== null) {
+                pd.o.beau.style.display = "none";
             }
-            if (pd.o.bt !== null) {
-                pd.o.bt.style.display = "none";
+            if (pd.o.diffBase !== null) {
+                pd.o.diffBase.style.display = "none";
             }
-            if (pd.o.nt !== null) {
-                pd.o.nt.style.display = "none";
+            if (pd.o.diffNew !== null) {
+                pd.o.diffNew.style.display = "none";
             }
-            if (pd.o.dops !== null) {
-                pd.o.dops.style.display = "none";
+            if (pd.o.diffOps !== null) {
+                pd.o.diffOps.style.display = "none";
             }
-            if (pd.o.bops !== null) {
-                pd.o.bops.style.display = "none";
+            if (pd.o.beauOps !== null) {
+                pd.o.beauOps.style.display = "none";
             }
-        } else if (a === pd.o.dd) {
+        }
+        if (a === pd.o.modeDiff) {
+            pd.mode = "diff";
             if (langtest === true) {
-                d = pd.o.la.getElementsByTagName("option");
-                for (c = d.length - 1; c > -1; c -= 1) {
-                    d[c].disabled = false;
+                langOps = pd.o.lang.getElementsByTagName("option");
+                for (b = langOps.length - 1; b > -1; b -= 1) {
+                    langOps[b].disabled = false;
                 }
             }
-            if (pd.o.bo !== null) {
-                if (pd.o.bo.value === "" && pd.o.bi !== null && pd.o.bi.value !== "") {
-                    pd.o.bo.value = pd.o.bi.value;
-                } else if (pd.o.bo.value === "" && pd.o.mi !== null && pd.o.mi.value !== "") {
-                    pd.o.bo.value = pd.o.mi.value;
+            if (pd.o.codeBeauOut !== null) {
+                if (pd.o.codeBeauOut.value === "" && pd.o.codeBeauIn !== null && pd.o.codeBeauIn.value !== "") {
+                    pd.o.codeBeauOut.value = pd.o.codeBeauIn.value;
+                } else if (pd.o.codeBeauOut.value === "" && pd.o.codeMinnIn !== null && pd.o.codeMinnIn.value !== "") {
+                    pd.o.codeBeauOut.value = pd.o.codeMinnIn.value;
                 }
             }
-            if (pd.o.bt !== null) {
-                pd.o.bt.style.display = "block";
+            if (pd.o.diffBase !== null) {
+                pd.o.diffBase.style.display = "block";
             }
-            if (pd.o.nt !== null) {
-                pd.o.nt.style.display = "block";
+            if (pd.o.diffNew !== null) {
+                pd.o.diffNew.style.display = "block";
             }
-            if (pd.o.bd !== null) {
-                pd.o.bd.style.display = "none";
+            if (pd.o.beau !== null) {
+                pd.o.beau.style.display = "none";
             }
-            if (pd.o.md !== null) {
-                pd.o.md.style.display = "none";
+            if (pd.o.minn !== null) {
+                pd.o.minn.style.display = "none";
             }
-            if (pd.o.dops !== null) {
-                pd.o.dops.style.display = "block";
+            if (pd.o.diffOps !== null) {
+                pd.o.diffOps.style.display = "block";
             }
-            if (pd.o.bops !== null) {
-                pd.o.bops.style.display = "none";
+            if (pd.o.beauOps !== null) {
+                pd.o.beauOps.style.display = "none";
             }
-            if (pd.o.mops !== null) {
-                pd.o.mops.style.display = "none";
+            if (pd.o.minnOps !== null) {
+                pd.o.minnOps.style.display = "none";
             }
-            if (b === "csv" || b === "text") {
-                if (pd.o.dqp !== null) {
-                    pd.o.dqp.style.display = "none";
+            if (lang === "csv" || lang === "text") {
+                node = pd.$$("diffquanp");
+                if (node !== null) {
+                    node.style.display = "none";
                 }
-                if (pd.o.dqt !== null) {
-                    pd.o.dqt.style.display = "none";
+                node = pd.$$("difftypep");
+                if (node !== null) {
+                    node.style.display = "none";
                 }
-                if (pd.o.db !== null) {
-                    pd.o.db.style.display = "none";
+                node = pd.$$("diffbeautify");
+                if (node !== null) {
+                    node.style.display = "none";
                 }
             } else {
-                if (pd.o.dqp !== null) {
-                    pd.o.dqp.style.display = "block";
+                node = pd.$$("diffquanp");
+                if (node !== null) {
+                    node.style.display = "block";
                 }
-                if (pd.o.dqt !== null) {
-                    pd.o.dqt.style.display = "block";
+                node = pd.$$("difftypep");
+                if (node !== null) {
+                    node.style.display = "block";
                 }
-                if (pd.o.db !== null) {
-                    pd.o.db.style.display = "block";
-                }
-            }
-        } else if (a === pd.o.dp) {
-            if (pd.o.mi !== null) {
-                pd.o.mi.removeAttribute("style");
-            }
-            if (pd.o.mx !== null) {
-                pd.o.mx.removeAttribute("style");
-            }
-            if (pd.o.bi !== null) {
-                pd.o.bi.removeAttribute("style");
-            }
-            if (pd.o.bx !== null) {
-                pd.o.bx.removeAttribute("style");
-            }
-            if (pd.o.bo !== null) {
-                pd.o.bo.removeAttribute("style");
-            }
-            if (pd.o.nx !== null) {
-                pd.o.nx.removeAttribute("style");
-            }
-            if (pd.o.bt !== null) {
-                pd.o.bt.className = "wide";
-                pd.o.bt.style.height = "auto";
-            }
-            if (pd.o.nt !== null) {
-                pd.o.nt.className = "wide";
-                pd.o.nt.style.height = "auto";
-            }
-            if (pd.o.bd !== null) {
-                pd.o.bd.className = "wide";
-            }
-            if (pd.o.md !== null) {
-                pd.o.md.className = "wide";
-            }
-        } else if (a === pd.o.dt) {
-            if (pd.o.mi !== null) {
-                pd.o.mi.removeAttribute("style");
-            }
-            if (pd.o.mx !== null) {
-                pd.o.mx.removeAttribute("style");
-            }
-            if (pd.o.bi !== null) {
-                pd.o.bi.removeAttribute("style");
-            }
-            if (pd.o.bx !== null) {
-                pd.o.bx.removeAttribute("style");
-            }
-            if (pd.o.bo !== null) {
-                pd.o.bo.removeAttribute("style");
-            }
-            if (pd.o.nx !== null) {
-                pd.o.nx.removeAttribute("style");
-            }
-            if (pd.o.bt !== null) {
-                pd.o.bt.className = "difftall";
-                if (pd.o.op !== null) {
-                    pd.o.bt.style.height = ((pd.o.op.clientHeight / 12) + 6.5) + "em";
+                node = pd.$$("diffbeautify");
+                if (node !== null) {
+                    node.style.display = "block";
                 }
             }
-            if (pd.o.nt !== null) {
-                pd.o.nt.className = "difftall";
-                if (pd.o.op !== null) {
-                    pd.o.nt.style.height = ((pd.o.op.clientHeight / 12) + 6.5) + "em";
+        }
+        if (a === pd.o.displayWide) {
+            if (pd.o.codeMinnIn !== null) {
+                pd.o.codeMinnIn.removeAttribute("style");
+            }
+            if (pd.o.codeMinnOut !== null) {
+                pd.o.codeMinnOut.removeAttribute("style");
+            }
+            if (pd.o.codeBeauIn !== null) {
+                pd.o.codeBeauIn.removeAttribute("style");
+            }
+            if (pd.o.codeBeauOut !== null) {
+                pd.o.codeBeauOut.removeAttribute("style");
+            }
+            if (pd.o.codeBeauOut !== null) {
+                pd.o.codeBeauOut.removeAttribute("style");
+            }
+            if (pd.o.codeDiffNew !== null) {
+                pd.o.codeDiffNew.removeAttribute("style");
+            }
+            if (pd.o.diffBase !== null) {
+                pd.o.diffBase.setAttribute("class", "wide");
+                pd.o.diffBase.style.height = "auto";
+            }
+            if (pd.o.diffNew !== null) {
+                pd.o.diffNew.setAttribute("class", "wide");
+                pd.o.diffNew.style.height = "auto";
+            }
+            if (pd.o.beau !== null) {
+                pd.o.beau.setAttribute("class", "wide");
+            }
+            if (pd.o.minn !== null) {
+                pd.o.minn.setAttribute("class", "wide");
+            }
+        }
+        if (a === pd.o.displayTall) {
+            node = pd.$$("options");
+            if (pd.o.codeMinnIn !== null) {
+                pd.o.codeMinnIn.removeAttribute("style");
+            }
+            if (pd.o.codeMinnOut !== null) {
+                pd.o.codeMinnOut.removeAttribute("style");
+            }
+            if (pd.o.codeBeauIn !== null) {
+                pd.o.codeBeauIn.removeAttribute("style");
+            }
+            if (pd.o.codeBeauOut !== null) {
+                pd.o.codeBeauOut.removeAttribute("style");
+            }
+            if (pd.o.codeBeauOut !== null) {
+                pd.o.codeBeauOut.removeAttribute("style");
+            }
+            if (pd.o.codeDiffNew !== null) {
+                pd.o.codeDiffNew.removeAttribute("style");
+            }
+            if (pd.o.diffBase !== null) {
+                pd.o.diffBase.setAttribute("class", "difftall");
+                if (node !== null) {
+                    pd.o.diffBase.style.height = ((node.clientHeight / 12) + 6.5) + "em";
                 }
             }
-            if (pd.o.bd !== null) {
-                pd.o.bd.className = "tall";
+            if (pd.o.diffNew !== null) {
+                pd.o.diffNew.setAttribute("class", "difftall");
+                if (node !== null) {
+                    pd.o.diffNew.style.height = ((node.clientHeight / 12) + 6.5) + "em";
+                }
             }
-            if (pd.o.md !== null) {
-                pd.o.md.className = "tall";
+            if (pd.o.beau !== null) {
+                pd.o.beau.setAttribute("class", "tall");
             }
+            if (pd.o.minn !== null) {
+                pd.o.minn.setAttribute("class", "tall");
+            }
+        }
+        if (a.nodeType === undefined || (a === pd.o.displayWide && pd.o.displayWide.checked === false) || (a === pd.o.displayTall && pd.o.displayTall.checked === false)) {
+            return;
         }
         pd.options(a);
     };
 
     //alters available options depending upon language selection
-    pd.codeOps = function dom__codeOps(x) {
-        var a = "";
-        pd.o.bb = pd.$$("modebeautify");
-        pd.o.dd = pd.$$("modediff");
-        pd.o.mm = pd.$$("modeminify");
-        pd.o.la = pd.$$("language");
-        pd.o.ay = pd.$$("additional_yes");
-        if (pd.o.ay !== null && pd.o.ao !== null && pd.o.ay.checked) {
-            pd.o.ao.style.display = "block";
+    pd.codeOps = function dom__codeOps(node) {
+        var x = (node.nodeType === 1) ? node : this,
+            lang = "",
+            xml = (x.getElementsByTagName("option")[x.selectedIndex].innerHTML === "XML" || x.getElementsByTagName("option")[x.selectedIndex].innerHTML === "JSTL") ? true : false,
+            dqp = pd.$$("diffquanp"),
+            dqt = pd.$$("difftypep"),
+            db = pd.$$("diffbeautify"),
+            csvp = pd.$$("csvcharp"),
+            hd = pd.$$("htmld-yes"),
+            he = pd.$$("htmld-no"),
+            hm = pd.$$("htmlm-yes"),
+            hn = pd.$$("htmlm-no"),
+            hy = pd.$$("html-yes"),
+            hz = pd.$$("html-no");
+        if (pd.o.addYes !== null && pd.o.addOps !== null && pd.o.addYes.checked === true) {
+            pd.o.addOps.style.display = "block";
         }
-        a = (pd.o.la === null) ? "javascript" : (pd.o.la.nodeName === "select") ? pd.o.la[pd.o.la.selectedIndex].value : pd.o.la.value;
-        if (pd.o.dd !== null && pd.o.dd.checked) {
-            if (pd.o.mops !== null) {
-                pd.o.mops.style.display = "none";
+        lang = (pd.o.lang === null) ? "javascript" : (pd.o.lang.nodeName === "select") ? pd.o.lang[pd.o.lang.selectedIndex].value : pd.o.lang.value;
+        if (pd.o.modeDiff !== null && pd.o.modeDiff.checked === true) {
+            if (pd.o.minnOps !== null) {
+                pd.o.minnOps.style.display = "none";
             }
-            if (pd.o.bops !== null) {
-                pd.o.bops.style.display = "none";
+            if (pd.o.beauOps !== null) {
+                pd.o.beauOps.style.display = "none";
             }
-            if (a === "text" || a === "csv") {
-                if (pd.o.dqp !== null) {
-                    pd.o.dqp.style.display = "none";
+            if (lang === "text" || lang === "csv") {
+                if (dqp !== null) {
+                    dqp.style.display = "none";
                 }
-                if (pd.o.dqt !== null) {
-                    pd.o.dqt.style.display = "none";
-                }
-                if (pd.o.db !== null) {
-                    pd.o.db.style.display = "none";
+                if (dqt !== null) {
+                    dqt.style.display = "none";
                 }
             } else {
-                if (pd.o.dqp !== null) {
-                    pd.o.dqp.style.display = "block";
+                if (dqp !== null) {
+                    dqp.style.display = "block";
                 }
-                if (pd.o.dqt !== null) {
-                    pd.o.dqt.style.display = "block";
-                }
-                if (pd.o.db !== null) {
-                    pd.o.db.style.display = "block";
+                if (dqt !== null) {
+                    dqt.style.display = "block";
                 }
             }
-        } else if (pd.o.bb !== null && pd.o.bb.checked) {
-            if (pd.o.mops !== null) {
-                pd.o.mops.style.display = "none";
+        } else if (pd.o.modeBeau !== null && pd.o.modeBeau.checked === true) {
+            if (pd.o.minnOps !== null) {
+                pd.o.minnOps.style.display = "none";
             }
-            if (pd.o.dops !== null) {
-                pd.o.dops.style.display = "none";
+            if (pd.o.diffOps !== null) {
+                pd.o.diffOps.style.display = "none";
             }
-            if (pd.o.bops !== null) {
-                if (a === "csv") {
-                    pd.o.bops.style.display = "none";
+            if (pd.o.beauOps !== null) {
+                if (lang === "csv") {
+                    pd.o.beauOps.style.display = "none";
                 } else {
-                    pd.o.bops.style.display = "block";
+                    pd.o.beauOps.style.display = "block";
                 }
             }
-        } else if (pd.o.mm !== null && pd.o.mm.checked) {
-            if (pd.o.bops !== null) {
-                pd.o.bops.style.display = "none";
+        } else if (pd.o.modeMinn !== null && pd.o.modeMinn.checked === true) {
+            if (pd.o.beauOps !== null) {
+                pd.o.beauOps.style.display = "none";
             }
-            if (pd.o.dops !== null) {
-                pd.o.dops.style.display = "none";
+            if (pd.o.diffOps !== null) {
+                pd.o.diffOps.style.display = "none";
             }
-            if (pd.o.mops !== null) {
-                if (pd.o.ao !== null && a === "csv") {
-                    pd.o.mops.style.display = "none";
-                    pd.o.ao.style.display = "none";
+            if (pd.o.minnOps !== null) {
+                if (pd.o.addOps !== null && lang === "csv") {
+                    pd.o.minnOps.style.display = "none";
+                    pd.o.addOps.style.display = "none";
                 } else {
-                    pd.o.mops.style.display = "block";
+                    pd.o.minnOps.style.display = "block";
                 }
             }
         }
-        if (pd.o.csvp !== null) {
-            if (a === "csv") {
-                pd.o.csvp.style.display = "block";
+        if (csvp !== null) {
+            if (lang === "csv") {
+                csvp.style.display = "block";
             } else {
-                pd.o.csvp.style.display = "none";
+                csvp.style.display = "none";
             }
         }
-        if (pd.o.db !== null) {
-            if (a === "csv" || a === "text") {
-                pd.o.db.style.display = "none";
+        if (db !== null) {
+            if (lang === "csv" || lang === "text") {
+                db.style.display = "none";
             } else {
-                pd.o.db.style.display = "block";
+                db.style.display = "block";
             }
         }
-        if (a === "html") {
-            if (pd.o.hd !== null) {
-                pd.o.hd.checked = true;
+        if (lang === "html") {
+            if (hd !== null) {
+                hd.checked = true;
             }
-            if (pd.o.hm !== null) {
-                pd.o.hm.checked = true;
+            if (hm !== null) {
+                hm.checked = true;
             }
-            if (pd.o.hy !== null) {
-                pd.o.hy.checked = true;
+            if (hy !== null) {
+                hy.checked = true;
+            }
+        } else if (xml === true) {
+            if (he !== null) {
+                he.checked = true;
+            }
+            if (hn !== null) {
+                hn.checked = true;
+            }
+            if (hz !== null) {
+                hz.checked = true;
             }
         } else {
-            if (pd.o.he !== null) {
-                pd.o.he.checked = true;
+            if (pd.settings.presumehtmld === "htmld-no" && he !== null) {
+                he.checked = true;
             }
-            if (pd.o.hn !== null) {
-                pd.o.hn.checked = true;
+            if (pd.settings.presumehtmlm === "htmlm-no" && hn !== null) {
+                hn.checked = true;
             }
-            if (pd.o.hz !== null) {
-                pd.o.hz.checked = true;
+            if (pd.settings.presumehtml === "html-no" && hz !== null) {
+                hz.checked = true;
+            }
+            if (pd.settings.presumehtmld === "htmld-yes" && hd !== null) {
+                hd.checked = true;
+            }
+            if (pd.settings.presumehtmlm === "htmlm-yes" && hm !== null) {
+                hm.checked = true;
+            }
+            if (pd.settings.presumehtml === "html-yes" && hy !== null) {
+                hy.checked = true;
             }
         }
         pd.options(x);
     };
 
     //provides interaction to simulate a text input into a radio button
-    //set with appropriate accessbility response
-    pd.indentchar = function dom__indentchar(x) {
-        pd.o.bc = pd.$$("beau-char");
-        pd.o.dc = pd.$$("diff-char");
-        if (pd.o.bb !== null && pd.o.bb.checked && pd.o.bw !== null && x === pd.o.bc) {
-            pd.o.bw.checked = true;
-        } else if (pd.o.dd !== null && pd.o.dd.checked && pd.o.dw !== null && x === pd.o.dc) {
-            pd.o.dw.checked = true;
+    //set with appropriate accessibility response
+    pd.indentchar = function dom__indentchar() {
+        var x = this,
+            beauChar = pd.$$("beau-char"),
+            diffChar = pd.$$("diff-char"),
+            beauOther = pd.$$("beau-other"),
+            diffOther = pd.$$("diff-other");
+        if (pd.mode === "beau" && x === beauChar && beauOther !== null && x === beauChar) {
+            beauOther.checked = true;
+        } else if (pd.mode === "diff" && x === diffChar && diffOther !== null && x === diffChar) {
+            diffOther.checked = true;
         }
-        if (pd.o.bc !== null) {
-            if (pd.o.bb !== null) {
-                if (pd.o.bb.checked && pd.o.bw !== null && pd.o.bw.checked) {
-                    pd.o.bc.className = "checked";
-                    if (pd.o.bc.value === "Click me for custom input") {
-                        pd.o.bc.value = "";
-                    }
-                } else if (pd.o.bb.checked) {
-                    if (pd.o.bc.value === "") {
-                        pd.o.bc.value = "Click me for custom input";
-                    }
-                    pd.o.bc.className = "unchecked";
+        if (beauChar !== null && pd.mode === "beau") {
+            if (beauOther !== null && beauOther.checked === true) {
+                beauChar.setAttribute("class", "checked");
+                if (beauChar.value === "Click me for custom input") {
+                    beauChar.value = "";
+                }
+            } else {
+                beauChar.setAttribute("class", "unchecked");
+                if (beauChar.value === "") {
+                    beauChar.value = "Click me for custom input";
                 }
             }
-            if (pd.o.bcv !== null && pd.o.bcv !== "") {
-                pd.o.bc.value = pd.o.bcv;
-            }
         }
-        if (pd.o.dc !== null) {
-            if (pd.o.dd !== null) {
-                if (pd.o.dd.checked && pd.o.dw !== null && pd.o.dw.checked) {
-                    pd.o.dc.className = "checked";
-                    if (pd.o.dc.value === "Click me for custom input") {
-                        pd.o.dc.value = "";
-                    }
-                } else if (pd.o.dd.checked) {
-                    if (pd.o.dc.value === "") {
-                        pd.o.dc.value = "Click me for custom input";
-                    }
-                    pd.o.dc.className = "unchecked";
+        if (diffChar !== null && pd.mode === "diff") {
+            if (diffOther !== null && diffOther.checked === true) {
+                diffChar.setAttribute("class", "checked");
+                if (diffChar.value === "Click me for custom input") {
+                    diffChar.value = "";
+                }
+            } else {
+                diffChar.setAttribute("class", "unchecked");
+                if (diffChar.value === "") {
+                    diffChar.value = "Click me for custom input";
                 }
             }
-            if (pd.o.dcv !== null && pd.o.dcv !== "") {
-                pd.o.dc.value = pd.o.dcv;
-            }
         }
-        if (x !== pd.o.bc && x !== pd.o.dc) {
-            pd.options(x);
+        if (x === diffChar && diffOther !== null) {
+            pd.options(diffOther);
         }
+        if (x === beauChar && beauOther !== null) {
+            pd.options(beauOther);
+        }
+        pd.options(x);
     };
 
-    //store tool changes into localStorage in effort to maintain state
+    //store tool changes into localStorage to maintain state
     pd.options = function dom__options(x) {
-        var a = {},
-            b = 0,
-            c = "";
-        if (pd.ls === false) {
+        var item = (x.nodeType === 1) ? x : this,
+            node = item.nodeName.toLowerCase(),
+            name = item.getAttribute("name"),
+            type = item.getAttribute("type"),
+            id = item.getAttribute("id"),
+            classy = item.getAttribute("class"),
+            h3 = {},
+            body = {};
+        if (pd.test.load === true) {
             return;
         }
-        if (localStorage.hasOwnProperty("webtool") && localStorage.getItem("webtool") !== null) {
-            pd.webtool = localStorage.getItem("webtool").replace(/prettydiffper/g, "%").split("prettydiffcsep");
+        if (node === "input") {
+            if (type === "radio") {
+                pd.settings[name] = id;
+            } else if (type === "text") {
+                pd.settings[id] = item.value;
+            }
+        } else if (node === "select") {
+            pd.settings[id] = item.selectedIndex;
+        } else if (node === "div" && classy === "box") {
+            h3 = item.getElementsByTagName("h3")[0];
+            body = item.getElementsByTagName("div")[0];
+            if (body.style.display === "none" && h3.clientWidth === 172) {
+                pd.settings[id].min = true;
+                pd.settings[id].max = false;
+            } else if (pd.settings[id].max === false || pd.settings[id].max === undefined) {
+                pd.settings[id].min = false;
+                pd.settings[id].left = item.offsetLeft;
+                pd.settings[id].top = item.offsetTop;
+                pd.settings[id].width = (body.clientWidth - 3);
+                pd.settings[id].height = (body.clientHeight - 35.5);
+            }
+        } else if (node === "button" && id !== null) {
+            pd.settings[id] = item.innerHTML.replace(/\s+/g, " ");
         }
-        if (localStorage.hasOwnProperty("optionString") && localStorage.getItem("optionString") !== null) {
-            pd.optionString = localStorage.getItem("optionString").replace(/prettydiffper/g, "%").split("prettydiffcsep");
-        }
-        pd.o.bb = pd.$$("modebeautify");
-        pd.o.dd = pd.$$("modediff");
-        pd.o.mm = pd.$$("modeminify");
-        pd.o.dp = pd.$$("diffwide");
-        pd.o.sh = pd.$$("hideOptions");
-        pd.o.ps = pd.$$("diff-save");
-        if (x === pd.o.la) {
-            pd.optionString[0] = "api.lang: " + x.selectedIndex;
-        } else if (x === pd.o.bb) {
-            pd.optionString[1] = "api.mode: beautify";
-        } else if (x === pd.o.mm) {
-            pd.optionString[1] = "api.mode: minify";
-        } else if (x === pd.o.dd) {
-            pd.optionString[1] = "api.mode: diff";
-        } else if (x === pd.o.ch) {
-            pd.optionString[2] = "api.csvchar: \"" + pd.o.ch.value + "\"";
-        } else if (x === pd.o.bq && pd.o.bb.checked && pd.o.bq.value !== "" && !isNaN(Number(pd.o.bq.value))) {
-            pd.optionString[3] = "api.insize: " + pd.o.bq.value;
-        } else if (x === pd.o.dq && pd.o.dd.checked && pd.o.dq.value !== "" && !isNaN(Number(pd.o.dq.value))) {
-            pd.optionString[3] = "api.insize: " + pd.o.dq.value;
-        } else if (x === pd.o.bc && pd.o.bb.checked && pd.o.bw.checked) {
-            pd.o.cz = pd.o.bc.value;
-            if ((/^&/).test(pd.o.cz) && !(/;$/).test(pd.o.cz)) {
-                pd.o.cz = pd.o.cz.replace("&", "&amp;");
-            }
-            pd.optionString[4] = "api.inchar: \"" + pd.o.cz + "\"";
-            pd.o.bcv = pd.o.cz;
-        } else if (x === pd.o.bw && pd.o.bb.checked) {
-            pd.o.cz = pd.o.bc.value;
-            if ((/^&/).test(pd.o.cz) && !(/;$/).test(pd.o.cz)) {
-                pd.o.cz = pd.o.cz.replace("&", "&amp;");
-            }
-            pd.optionString[4] = "api.inchar: \"" + pd.o.cz + "\"";
-        } else if (x === pd.o.bs && pd.o.bb.checked) {
-            pd.optionString[4] = "api.inchar: \" \"";
-        } else if (x === pd.o.ba && pd.o.bb.checked) {
-            pd.optionString[4] = "api.inchar: \"\\t\"";
-        } else if (x === pd.o.bn && pd.o.bb.checked) {
-            pd.optionString[4] = "api.inchar: \"\\n\"";
-        } else if (x === pd.o.dc && pd.o.dd.checked && pd.o.dw.checked) {
-            pd.o.cz = pd.o.dc.value;
-            if ((/^&/).test(pd.o.cz) && !(/;$/).test(pd.o.cz)) {
-                pd.o.cz = pd.o.cz.replace("&", "&amp;");
-            }
-            pd.optionString[4] = "api.inchar: \"" + pd.o.cz + "\"";
-            pd.o.dcv = pd.o.cz;
-        } else if (x === pd.o.dw && pd.o.dd.checked) {
-            pd.o.cz = pd.o.dc.value;
-            if ((/^&/).test(pd.o.cz) && !(/;$/).test(pd.o.cz)) {
-                pd.o.cz = pd.o.cz.replace("&", "&amp;");
-            }
-            pd.optionString[4] = "api.inchar: \"" + pd.o.cz + "\"";
-        } else if (x === pd.o.ds && pd.o.dd.checked) {
-            pd.optionString[4] = "api.inchar: \" \"";
-        } else if (x === pd.o.da && pd.o.dd.checked) {
-            pd.optionString[4] = "api.inchar: \"\\t\"";
-        } else if (x === pd.o.dz && pd.o.dd.checked) {
-            pd.optionString[4] = "api.inchar: \"\\n\"";
-        } else if (x === pd.o.iy && pd.o.bb.checked) {
-            pd.optionString[5] = "api.comments: indent";
-        } else if (x === pd.o.iz && pd.o.bb.checked) {
-            if (pd.o.iz.getAttribute("type") === "radio" || (pd.o.iz.getAttribute("type") === "checkbox" && pd.o.iz.checked === true)) {
-                pd.optionString[5] = "api.comments: noindent";
-            } else {
-                pd.optionString[5] = "api.comments: indent";
-            }
-        } else if (x === pd.o.js && pd.o.bb.checked) {
-            if (pd.o.js.getAttribute("type") === "radio" || (pd.o.js.getAttribute("type") === "checkbox" && pd.o.js.checked === true)) {
-                pd.optionString[6] = "api.indent: allman";
-            } else {
-                pd.optionString[6] = "api.indent: knr";
-            }
-        } else if (x === pd.o.jt && pd.o.bb.checked) {
-            pd.optionString[6] = "api.indent: knr";
-        } else if (x === pd.o.jd && pd.o.dd.checked) {
-            if (pd.o.jd.getAttribute("type") === "radio" || (pd.o.jd.getAttribute("type") === "checkbox" && pd.o.jd.checked === true)) {
-                pd.optionString[6] = "api.indent: allman";
-            } else {
-                pd.optionString[6] = "api.indent: knr";
-            }
-        } else if (x === pd.o.je && pd.o.dd.checked) {
-            pd.optionString[6] = "api.indent: knr";
-        } else if (x === pd.o.is && pd.o.bb.checked) {
-            pd.optionString[7] = "api.style: indent";
-        } else if (x === pd.o.it && pd.o.bb.checked) {
-            pd.optionString[7] = "api.stylet: noindent";
-        } else if (x === pd.o.id && pd.o.dd.checked) {
-            pd.optionString[7] = "api.style: indent";
-        } else if (x === pd.o.ie && pd.o.dd.checked) {
-            pd.optionString[7] = "api.style: noindent";
-        } else if (x === pd.o.hy && pd.o.bb.checked) {
-            pd.optionString[8] = "api.html: html-yes";
-        } else if (x === pd.o.hz && pd.o.bb.checked) {
-            pd.optionString[8] = "api.html: html-no";
-        } else if (x === pd.o.hm && pd.o.mm.checked) {
-            pd.optionString[8] = "api.html: html-yes";
-        } else if (x === pd.o.hn && pd.o.mm.checked) {
-            pd.optionString[8] = "api.html: html-no";
-        } else if (x === pd.o.hd && pd.o.dd.checked) {
-            pd.optionString[8] = "api.html: html-yes";
-        } else if (x === pd.o.he && pd.o.dd.checked) {
-            pd.optionString[8] = "api.html: html-no";
-        } else if (x === pd.o.context) {
-            c = pd.o.context.value;
-            if ((/^([0-9]+)$/).test(c) && (c === "0" || c.charAt(0) !== "0")) {
-                pd.optionString[9] = "api.context: " + c;
-            } else {
-                pd.optionString[9] = "api.context: \"\"";
-            }
-        } else if (x === pd.o.du) {
-            pd.optionString[10] = "api.content: true";
-        } else if (x === pd.o.dx) {
-            pd.optionString[10] = "api.content: false";
-        } else if (x === pd.o.dr) {
-            pd.optionString[11] = "api.quote: false";
-        } else if (x === pd.o.dy) {
-            pd.optionString[11] = "api.quote: true";
-        } else if (x === pd.o.dm) {
-            pd.optionString[12] = "api.semicolon: false";
-        } else if (x === pd.o.dn) {
-            pd.optionString[12] = "api.semicolon: true";
-        } else if (x === pd.o.inline) {
-            pd.optionString[13] = "api.diffview: inline";
-        } else if (x === pd.o.sideby) {
-            pd.optionString[13] = "api.diffview: sidebyside";
-        } else if (x === pd.o.mb) {
-            pd.optionString[14] = "api.topcoms: false";
-        } else if (x === pd.o.mc) {
-            pd.optionString[14] = "api.topcoms: true";
-        } else if (x === pd.o.bg || x === pd.o.dg) {
-            pd.optionString[15] = "api.force_indent: true";
-        } else if (x === pd.o.bf || x === pd.o.df) {
-            pd.optionString[15] = "api.force_indent: false";
-        } else if (x === pd.o.ce || x === pd.o.cg) {
-            pd.optionString[16] = "api.conditional: true";
-        } else if (x === pd.o.cd || x === pd.o.cf) {
-            pd.optionString[16] = "api.conditional: false";
-        } else if (x === pd.o.dh) {
-            pd.optionString[17] = "api.diffcomments: true";
-        } else if (x === pd.o.di) {
-            pd.optionString[17] = "api.diffcomments: false";
-        } else if (x === pd.o.wc && !isNaN(pd.o.wc.value)) {
-            pd.optionString[18] = "api.wrap: " + pd.o.wc.value;
-        } else if (x === pd.o.wd && !isNaN(pd.o.wd.value)) {
-            pd.optionString[18] = "api.wrap: " + pd.o.wd.value;
-        } else if (x === pd.o.jf || x === pd.o.jk) {
-            if (x === pd.o.jk || pd.o.jf.getAttribute("type") === "radio" || (pd.o.jf.getAttribute("type") === "checkbox" && pd.o.jf.checked === true)) {
-                pd.optionString[19] = "api.jsspace: false";
-            } else {
-                pd.optionString[19] = "api.jsspace: true";
-            }
-        } else if (x === pd.o.jg) {
-            if (pd.o.jg.getAttribute("type") === "radio" || (pd.o.jg.getAttribute("type") === "checkbox" && pd.o.jg.checked === true)) {
-                pd.optionString[20] = "api.jsscope: true";
-            } else {
-                pd.optionString[20] = "api.jsscope: false";
-            }
-        } else if (x === pd.o.jh || x === pd.o.jo) {
-            if (x === pd.o.jo || pd.o.jh.getAttribute("type") === "radio" || (pd.o.jh.getAttribute("type") === "checkbox" && pd.o.jh.checked === true)) {
-                pd.optionString[21] = "api.jslines: false";
-            } else {
-                pd.optionString[21] = "api.jslines: true";
-            }
-        } else if (x === pd.o.ji && isNaN(pd.o.ji.value) === false) {
-            pd.optionString[22] = "api.inlevel: " + pd.o.ji.value;
-        } else if (x === pd.o.jj || x === pd.o.jl) {
-            pd.optionString[19] = "api.jsspace: true";
-        } else if (x === pd.o.jm) {
-            pd.optionString[20] = "api.jsscope: false";
-        } else if (x === pd.o.jn || x === pd.o.jp) {
-            pd.optionString[21] = "api.jslines: true";
-        } else if (x === pd.o.co) {
-            pd.optionString[23] = "api.correct: true";
-        } else if (x === pd.o.cp) {
-            pd.optionString[23] = "api.correct: false";
-        } else if (x === pd.o.re) {
-            pd.o.re = pd.$$("diffreport");
-            pd.o.rf = pd.$$("diffreportbody");
-            if (pd.o.rf.style.display === "none") {
-                pd.webtool[4] = "diffreportmin: 1";
-            } else {
-                pd.webtool[3] = "diffreportzindex: " + pd.o.re.style.zIndex;
-                pd.webtool[4] = "diffreportmin: 0";
-                pd.webtool[5] = "diffreportleft: " + pd.o.re.offsetLeft;
-                pd.webtool[6] = "diffreporttop: " + pd.o.re.offsetTop;
-                pd.webtool[7] = "diffreportwidth: " + ((pd.o.rf.clientWidth / 10) - 0.3);
-                pd.webtool[8] = "diffreportheight: " + ((pd.o.rf.clientHeight / 10) - 3.6);
-            }
-        } else if (x === pd.o.rg) {
-            pd.o.rg = pd.$$("beaureport");
-            pd.o.rh = pd.$$("beaureportbody");
-            if (pd.o.rh.style.display === "none") {
-                pd.webtool[10] = "beaureportmin: 1";
-            } else {
-                pd.webtool[9] = "beaureportzindex: " + pd.o.rg.style.zIndex;
-                pd.webtool[10] = "beaureportmin: 0";
-                pd.webtool[11] = "beaureportleft: " + pd.o.rg.offsetLeft;
-                pd.webtool[12] = "beaureporttop: " + pd.o.rg.offsetTop;
-                pd.webtool[13] = "beaureportwidth: " + ((pd.o.rh.clientWidth / 10) - 0.3);
-                pd.webtool[14] = "beaureportheight: " + ((pd.o.rh.clientHeight / 10) - 3.6);
-            }
-        } else if (x === pd.o.ri) {
-            pd.o.ri = pd.$$("minreport");
-            pd.o.rj = pd.$$("minreportbody");
-            if (pd.o.rj.style.display === "none") {
-                pd.webtool[16] = "minnreportmin: 1";
-            } else {
-                pd.webtool[15] = "minnreportzindex: " + pd.o.ri.style.zIndex;
-                pd.webtool[16] = "minnreportmin: 0";
-                pd.webtool[17] = "minnreportleft: " + pd.o.ri.offsetLeft;
-                pd.webtool[18] = "minnreporttop: " + pd.o.ri.offsetTop;
-                pd.webtool[19] = "minnreportwidth: " + ((pd.o.rj.clientWidth / 10) - 0.3);
-                pd.webtool[20] = "minnreportheight: " + ((pd.o.rj.clientHeight / 10) - 3.6);
-            }
-        } else if (x === pd.o.rk) {
-            pd.o.rk = pd.$$("statreport");
-            pd.o.rl = pd.$$("statreportbody");
-            if (pd.o.rl.style.display === "none") {
-                pd.webtool[22] = "statreportmin: 1";
-            } else {
-                pd.webtool[21] = "statreportzindex: " + pd.o.rk.style.zIndex;
-                pd.webtool[22] = "statreportmin: 0";
-                pd.webtool[23] = "statreportleft: " + pd.o.rk.offsetLeft;
-                pd.webtool[24] = "statreporttop: " + pd.o.rk.offsetTop;
-                pd.webtool[25] = "statreportwidth: " + ((pd.o.rl.clientWidth / 10) - 0.3);
-                pd.webtool[26] = "statreportheight: " + ((pd.o.rl.clientHeight / 10) - 3.6);
-            }
-        } else if (x === pd.o.an) {
-            pd.webtool[27] = "additional: no";
-        } else if (x === pd.o.ay) {
-            pd.webtool[27] = "additional: yes";
-        } else if (x === "colorScheme") {
-            pd.webtool[28] = "colorScheme: " + pd.o.color;
-        }
-        if (typeof pd.webtool[28] !== "string") {
-            pd.webtool[28] = "colorScheme: shadow";
-        } else if (typeof pd.webtool[4] !== "string" && pd.o.re !== null) {
-            pd.o.re = pd.$$("diffreport");
-            pd.o.rf = pd.$$("diffreportbody");
-            if (pd.o.rf.style.display === "none") {
-                pd.webtool[4] = "diffreportmin: 1";
-            } else {
-                pd.webtool[3] = "diffreportzindex: " + pd.o.re.style.zIndex;
-                pd.webtool[4] = "diffreportmin: 0";
-                pd.webtool[5] = "diffreportleft: " + pd.o.re.offsetLeft;
-                pd.webtool[6] = "diffreporttop: " + pd.o.re.offsetTop;
-                pd.webtool[7] = "diffreportwidth: " + ((pd.o.rf.clientWidth / 10) - 0.3);
-                pd.webtool[8] = "diffreportheight: " + ((pd.o.rf.clientHeight / 10) - 3.6);
-            }
-        } else if (typeof pd.webtool[4] !== "string" && pd.o.re === null) {
-            pd.webtool[3] = "";
-            pd.webtool[4] = "";
-            pd.webtool[5] = "";
-            pd.webtool[6] = "";
-            pd.webtool[7] = "";
-            pd.webtool[8] = "";
-        } else if (typeof pd.webtool[10] !== "string" && pd.o.rg !== null) {
-            pd.o.rg = pd.$$("beaureport");
-            pd.o.rh = pd.$$("beaureportbody");
-            if (pd.o.rh.style.display === "none") {
-                pd.webtool[10] = "beaureportmin: 1";
-            } else {
-                pd.webtool[9] = "beaureportzindex: " + pd.o.rg.style.zIndex;
-                pd.webtool[10] = "beaureportmin: 0";
-                pd.webtool[11] = "beaureportleft: " + pd.o.rg.offsetLeft;
-                pd.webtool[12] = "beaureporttop: " + pd.o.rg.offsetTop;
-                pd.webtool[13] = "beaureportwidth: " + ((pd.o.rh.clientWidth / 10) - 0.3);
-                pd.webtool[14] = "beaureportheight: " + ((pd.o.rh.clientHeight / 10) - 3.6);
-            }
-        } else if (typeof pd.webtool[10] !== "string" && pd.o.rg === null) {
-            pd.webtool[9] = "";
-            pd.webtool[10] = "";
-            pd.webtool[11] = "";
-            pd.webtool[12] = "";
-            pd.webtool[13] = "";
-            pd.webtool[14] = "";
-        } else if (typeof pd.webtool[16] !== "string" && pd.o.ri !== null) {
-            pd.o.ri = pd.$$("minreport");
-            pd.o.rj = pd.$$("minreportbody");
-            if (pd.o.rj.style.display === "none") {
-                pd.webtool[16] = "minnreportmin: 1";
-            } else {
-                pd.webtool[15] = "minnreportzindex: " + pd.o.ri.style.zIndex;
-                pd.webtool[16] = "minnreportmin: 0";
-                pd.webtool[17] = "minnreportleft: " + pd.o.ri.offsetLeft;
-                pd.webtool[18] = "minnreporttop: " + pd.o.ri.offsetTop;
-                pd.webtool[19] = "minnreportwidth: " + ((pd.o.rj.clientWidth / 10) - 0.3);
-                pd.webtool[20] = "minnreportheight: " + ((pd.o.rj.clientHeight / 10) - 3.6);
-            }
-        } else if (typeof pd.webtool[16] !== "string" && pd.o.ri === null) {
-            pd.webtool[15] = "";
-            pd.webtool[16] = "";
-            pd.webtool[17] = "";
-            pd.webtool[18] = "";
-            pd.webtool[19] = "";
-            pd.webtool[20] = "";
-        } else if (typeof pd.webtool[22] !== "string" && pd.o.rk !== null) {
-            pd.o.rk = pd.$$("statreport");
-            pd.o.rl = pd.$$("statreportbody");
-            if (pd.o.rl.style.display === "none") {
-                pd.webtool[22] = "statreportmin: 1";
-            } else {
-                pd.webtool[21] = "statreportzindex: " + pd.o.rk.style.zIndex;
-                pd.webtool[22] = "statreportmin: 0";
-                pd.webtool[23] = "statreportleft: " + pd.o.rk.offsetLeft;
-                pd.webtool[24] = "statreporttop: " + pd.o.rk.offsetTop;
-                pd.webtool[25] = "statreportwidth: " + ((pd.o.rl.clientWidth / 10) - 0.3);
-                pd.webtool[26] = "statreportheight: " + ((pd.o.rl.clientHeight / 10) - 3.6);
-            }
-        } else if (typeof pd.webtool[22] !== "string" && pd.o.rk === null) {
-            pd.webtool[21] = "";
-            pd.webtool[22] = "";
-            pd.webtool[23] = "";
-            pd.webtool[24] = "";
-            pd.webtool[25] = "";
-            pd.webtool[26] = "";
-        }
-        if (pd.o.sh) {
-            if (pd.o.sh.innerHTML.replace(/\s+/g, " ") === "Normal view") {
-                pd.webtool[0] = "showhide: hide";
-            } else {
-                pd.webtool[0] = "showhide: show";
-            }
-        }
-        if (x === pd.o.dt || !pd.o.dp || !pd.o.dp.checked) {
-            pd.webtool[1] = "display: vertical";
-        } else if (x === pd.o.dp || pd.o.dp.checked) {
-            pd.webtool[1] = "display: horizontal";
-        }
-        if (pd.o.ps) {
-            a = pd.o.re.getElementsByTagName("button")[0];
-            if ((x === pd.o.ps && pd.o.ps.checked) || pd.o.ps.checked) {
-                pd.webtool[2] = "diffsave: true";
-                a.innerHTML = "H";
-                a.setAttribute("title", "Convert diff report to text that can be saved.");
-            } else if (x === pd.o.ps || !pd.o.ps.checked) {
-                pd.webtool[2] = "diffsave: false";
-                a.innerHTML = "S";
-                a.setAttribute("title", "Convert diff report to an HTML table.");
-            }
-        }
-        for (b = 0; b < 24; b += 1) {
-            if (typeof pd.optionString[b] !== "string" || pd.optionString[b] === "") {
-                pd.optionString[b] = "pdempty";
-            }
-        }
-        if (pd.o.option !== null) {
-            if (pd.optionString[4] === "api.inchar: \"&nbsp;\"") {
-                pd.optionString[4] = "api.inchar: \" \"";
-            }
-            if (typeof pd.o.option.innerHTML === "string") {
-                pd.o.option.innerHTML = ("/*prettydiff.com " + (pd.optionString.join(", ").replace(/pdempty(\, )?/g, "").replace(/(\,\s+\,\s+)+/g, ", ") + " */").replace(/((\,? )+\*\/)$/, " */")).replace(/^(\/\*prettydiff\.com (\, )+)/, "/*prettydiff.com ").replace(/(\,\s+\,\s+)+/g, ", ").replace(/\s+/g, " ");
-            } else if (typeof pd.o.option.value === "string") {
-                pd.o.option.value = ("/*prettydiff.com " + (pd.optionString.join(", ").replace(/pdempty(\, )?/g, "").replace(/(\,\s+\,\s+)+/g, ", ") + " */").replace(/((\,? )+\*\/)$/, " */")).replace(/^(\/\*prettydiff\.com (\, )+)/, "/*prettydiff.com ").replace(/(\,\s+\,\s+)+/g, ", ").replace(/\s+/g, " ");
-            }
-        }
-        if (pd.optionString[0] === "" || pd.optionString[0] === undefined) {
-            if (pd.o.bb.checked) {
-                pd.optionString[0] = "api.mode: beautify";
-            } else if (pd.o.mm.checked) {
-                pd.optionString[0] = "api.mode: minify";
-            } else {
-                pd.optionString[0] = "api.mode: diff";
-            }
-            localStorage.setItem("optionString", pd.optionString.join("prettydiffcsep").replace(/(prettydiffcsep)+/g, "prettydiffcsep").replace(/%/g, "prettydiffper"));
-            pd.optionString[0] = "";
-        } else {
-            localStorage.setItem("optionString", pd.optionString.join("prettydiffcsep").replace(/(prettydiffcsep)+/g, "prettydiffcsep").replace(/%/g, "prettydiffper"));
+        if (pd.test.json === true) {
+            localStorage.settings = JSON.stringify(pd.settings);
         }
 
-        //IMPORTANT the index for this loop must be one less than the
-        //length on the parsed webtool storage. This limit prevents
-        //excessive writing to the array which is corrupted each time
-        //pd.options is executed
-        for (b = 0; b < 28; b += 1) {
-            if (pd.webtool[b] === "" || (typeof pd.webtool[b] === "string" && pd.webtool[b].indexOf("colorScheme") > -1)) {
-                pd.webtool[b] = "pdempty";
-            }
-        }
-        localStorage.setItem("webtool", pd.webtool.join("prettydiffcsep").replace(/(prettydiffcsep)+/g, "prettydiffcsep").replace(/%/g, "prettydiffper"));
-    };
-
-    pd.fixminreport = function dom__fixminreport() {
-        var a = {},
-            b = {},
-            c = {},
-            d = {};
-        if (pd.o.re !== null) {
-            pd.o.re = pd.$$("diffreport");
-            pd.o.rf = pd.$$("diffreportbody");
-            a = pd.o.re.getElementsByTagName("h3")[0];
-            if (pd.o.rf.style.display === "none" && (a.style.width === "17em" || a.style.width === "")) {
-                pd.o.re.style.right = "57.8em";
-                pd.o.re.style.top = "auto";
-                pd.o.re.style.left = "auto";
-            }
-        }
-        if (pd.o.rg !== null) {
-            pd.o.rg = pd.$$("beaureport");
-            pd.o.rh = pd.$$("beaureportbody");
-            b = pd.o.rg.getElementsByTagName("h3")[0];
-            if (pd.o.rh.style.display === "none" && (b.style.width === "17em" || b.style.width === "")) {
-                pd.o.rg.style.right = "38.8em";
-                pd.o.rg.style.top = "auto";
-                pd.o.rg.style.left = "auto";
-            }
-        }
-        if (pd.o.ri !== null) {
-            pd.o.ri = pd.$$("minreport");
-            pd.o.rj = pd.$$("minreportbody");
-            c = pd.o.ri.getElementsByTagName("h3")[0];
-            if (pd.o.rj.style.display === "none" && (c.style.width === "17em" || c.style.width === "")) {
-                pd.o.ri.style.right = "19.8em";
-                pd.o.ri.style.top = "auto";
-                pd.o.ri.style.left = "auto";
-            }
-        }
-        if (pd.o.rk !== null && pd.ls === true) {
-            pd.o.rk = pd.$$("statreport");
-            pd.o.rl = pd.$$("statreportbody");
-            d = pd.o.rk.getElementsByTagName("h3")[0];
-            if (pd.o.rl.style.display === "none" && (d.style.width === "17em" || d.style.width === "")) {
-                pd.o.rk.style.right = ".8em";
-                pd.o.rk.style.top = "auto";
-                pd.o.rk.style.left = "auto";
-            }
+        //pd.comment additions
+        if (pd.o.comment !== null && id !== null) {
+            (function dom__options_comment() {
+                var a = 0,
+                    data = [];
+                if (id === "modediff") {
+                    data = ["api.mode", "diff"];
+                }
+                if (id === "modebeautify") {
+                    data = ["api.mode", "beautify"];
+                }
+                if (id === "modeminify") {
+                    data = ["api.mode", "minify"];
+                }
+                if (id === "langauge") {
+                    data = ["api.lang", "\"" + item.value + "\""];
+                }
+                if (id === "csvchar") {
+                    data = ["api.csvchar", "\"" + item.value + "\""];
+                }
+                if (id === "diff-quan" || id === "beau-quan") {
+                    data = ["api.insize", "\"" + item.value + "\""];
+                }
+                if (id === "diff-char" || id === "beau-char") {
+                    data = ["api.inchar", "\"" + item.value + "\""];
+                }
+                if (id === "diff-space" || id === "beau-space") {
+                    data = ["api.inchar",  "\" \""];
+                }
+                if (id === "diff-tab" || id === "beau-tab") {
+                    data = ["api.inchar",  "\"\t\""];
+                }
+                if (id === "diff-line" || id === "beau-line") {
+                    data = ["api.inchar",  "\"\n\""];
+                }
+                if (id === "incomment-yes") {
+                    data = ["api.comments", "indent"];
+                }
+                if (id === "incomment-no") {
+                    data = ["api.comments", "noindent"];
+                }
+                if (id === "jsindentd-knr" || id === "jsindent-knr") {
+                    data = ["api.indent", "knr"];
+                }
+                if (id === "jsindentd-all" || id === "jsindent-all") {
+                    data = ["api.indent", "allman"];
+                }
+                if (id === "inscriptd-yes" || id === "inscript-yes") {
+                    data = ["api.style", "indent"];
+                }
+                if (id === "inscriptd-no" || id === "inscript-no") {
+                    data = ["api.style", "noindent"];
+                }
+                if (id === "htmld-no" || id === "html-no" || id === "htmlm-no") {
+                    data = ["api.html", "html-no"];
+                }
+                if (id === "htmld-yes" || id === "html-yes" || id === "htmln-yes") {
+                    data = ["api.html", "html-yes"];
+                }
+                if (id === "contextSize") {
+                    data = ["api.context", "\"" + item.value + "\""];
+                }
+                if (id === "diffcontenty") {
+                    data = ["api.content", "false"];
+                }
+                if (id === "diffcontent") {
+                    data = ["api.content", "true"];
+                }
+                if (id === "diffquotey") {
+                    data = ["api.quote", "false"];
+                }
+                if (id === "diffquote") {
+                    data = ["api.quote", "true"];
+                }
+                if (id === "diffscolony") {
+                    data = ["api.semicolon", "false"];
+                }
+                if (id === "diffscolon") {
+                    data = ["api.semicolon", "true"];
+                }
+                if (id === "sidebyside") {
+                    data = ["api.diffview", "sidebyside"];
+                }
+                if (id === "inline") {
+                    data = ["api.diffview", "inline"];
+                }
+                if (id === "baselabel") {
+                    data = ["api.sourcelabel", "\"" + item.value + "\""];
+                }
+                if (id === "difflabel") {
+                    data = ["api.difflabel", "\"" + item.value + "\""];
+                }
+                if (id === "topcoms-no") {
+                    data = ["api.topcoms", "false"];
+                }
+                if (id === "topcoms") {
+                    data = ["api.topcoms", "true"];
+                }
+                if (id === "dforce_indent-no" || id === "bforce_indent-no") {
+                    data = ["api.force_indent", "false"];
+                }
+                if (id === "dforce_indent" || id === "bforce_indent") {
+                    data = ["api.force_indent", "true"];
+                }
+                if (id === "conditionald-no" || id === "conditionalm-no") {
+                    data = ["api.conditional", "false"];
+                }
+                if (id === "conditionald-yes" || id === "conditionalm-yes") {
+                    data = ["api.conditional", "true"];
+                }
+                if (id === "diffcommentsn") {
+                    data = ["api.diffcomments", "false"];
+                }
+                if (id === "diffcommentsy") {
+                    data = ["api.diffcomments", "true"];
+                }
+                if (id === "jsspaced-yes" || id === "jsspace-yes") {
+                    data = ["api.jsspace", "true"];
+                }
+                if (id === "jsspaced-no" || id === "jsspace-no") {
+                    data = ["api.jsspace", "false"];
+                }
+                if (id === "jsscope-no") {
+                    data = ["api.jsscope", "false"];
+                }
+                if (id === "jsscope-yes") {
+                    data = ["api.jsscope", "true"];
+                }
+                if (id === "jslinesd-yes" || id === "jslines-yes") {
+                    data = ["api.jslines", "true"];
+                }
+                if (id === "jslinesd-no" || id === "jslines-no") {
+                    data = ["api.jslines", "false"];
+                }
+                if (id === "jsinlevel") {
+                    data = ["api.inlevel", "\"" + item.value + "\""];
+                }
+                if (id === "diff-wrap" || id === "beau-wrap") {
+                    data = ["api.wrap", "\"" + item.value + "\""];
+                }
+                if (id === "jscorrect-no") {
+                    data = ["api.correct", "false"];
+                }
+                if (id === "jscorrect-yes") {
+                    data = ["api.correct", "true"];
+                }
+                if (data.length === 0) {
+                    return;
+                }
+                for (a = pd.commentString.length - 1; a > -1; a -= 1) {
+                    if (pd.commentString[a].indexOf(data[0]) > -1) {
+                        pd.commentString[a] = data.join(": ");
+                        break;
+                    }
+                }
+                if (a < 0) {
+                    pd.commentString.push(data.join(": "));
+                    pd.commentString.sort();
+                }
+                if (pd.commentString.length === 0) {
+                    pd.o.comment.innerHTML = "/*prettydiff.com */";
+                } else if (pd.commentString.length === 1) {
+                    pd.o.comment.innerHTML = "/*prettydiff.com " + pd.commentString[0] + " */";
+                } else {
+                    pd.o.comment.innerHTML = "/*prettydiff.com " + pd.commentString.join(", ") + " */";
+                }
+                if (pd.test.ls === true && pd.test.json === true) {
+                    localStorage.commentString = JSON.stringify(pd.commentString);
+                }
+            }());
         }
     };
 
     //maximize textareas and hide options
-    pd.hideOptions = function dom__hideOptions(x) {
-        var a = "",
-            b = [
-                pd.o.bi === null, pd.o.mi === null, pd.o.bx === null, pd.o.mx === null, pd.o.bo === null, pd.o.nx === null
-            ];
-        if (pd.o.dd !== null && pd.o.dt === null) {
+    pd.hideOptions = function dom__hideOptions() {
+        var button = pd.$$("hideOptions"),
+            node = {},
+            height = 0;
+        if (button === null) {
             return;
         }
-        pd.o.bb = pd.$$("modebeautify");
-        pd.o.dd = pd.$$("modediff");
-        pd.o.mm = pd.$$("modeminify");
-        pd.o.la = pd.$$("language");
-        pd.o.dt = pd.$$("difftall");
-        pd.o.ay = pd.$$("additional_yes");
-        a = (pd.o.la === null) ? "javascript" : (pd.o.la.nodeName === "select") ? pd.o.la[pd.o.la.selectedIndex].value : pd.o.la.value;
-        if (x.innerHTML.replace(/\s+/g, " ") === "Maximize Inputs") {
-            if (pd.o.op !== null) {
-                pd.o.op.style.display = "none";
+        if (button.innerHTML.replace(/\s+/g, " ") === "Maximize Inputs") {
+            if (pd.o.displayTall !== null && pd.o.displayTall.checked === false) {
+                pd.prettyvis(pd.o.displayTall);
             }
-            if (pd.o.bops !== null) {
-                pd.o.bops.style.display = "none";
+            node = pd.$$("top");
+            if (node !== null) {
+                node.style.display = "none";
             }
-            if (pd.o.dops !== null) {
-                pd.o.dops.style.display = "none";
+            if (pd.o.report.diff.box !== null) {
+                pd.o.report.diff.box.style.display = "none";
             }
-            if (pd.o.mops !== null) {
-                pd.o.mops.style.display = "none";
+            if (pd.o.report.beau.box !== null) {
+                pd.o.report.beau.box.style.display = "none";
             }
-            if (pd.o.to !== null) {
-                pd.o.to.style.display = "none";
+            if (pd.o.report.minn.box !== null) {
+                pd.o.report.minn.box.style.display = "none";
             }
-            if (pd.o.bd !== null) {
-                pd.o.bd.className = "tall";
+            if (pd.o.report.stat.box !== null) {
+                pd.o.report.stat.box.style.display = "none";
             }
-            if (pd.o.md !== null) {
-                pd.o.md.className = "tall";
+            node = pd.$$("diffoutput");
+            if (node !== null) {
+                node.style.display = "none";
             }
-            if (pd.o.bt !== null) {
-                pd.o.bt.className = "difftall";
-                if (pd.o.op !== null) {
-                    pd.o.bt.style.height = "auto";
-                }
+            node = pd.$$("options");
+            if (node !== null) {
+                node.style.display = "none";
             }
-            if (pd.o.nt !== null) {
-                pd.o.nt.className = "difftall";
-                if (pd.o.op !== null) {
-                    pd.o.nt.style.height = "auto";
-                }
+            node = pd.$$("codeInput");
+            if (node !== null) {
+                node.style.marginLeft = "0em";
             }
-            if (b[0] === false) {
-                pd.o.bi.style.marginBottom = "1em";
+            height = window.innerHeight;
+            node = pd.$$("displayOps");
+            if (node !== null) {
+                height = height - node.clientHeight;
+                height = height - 9;
             }
-            if (b[1] === false) {
-                pd.o.mi.style.marginBottom = "1em";
+            node = pd.$$("button-primary");
+            if (node !== null) {
+                height = height - node.clientHeight;
+                height = height - 24;
             }
-            if (window.innerHeight) {
-                if (b[0] === false) {
-                    pd.o.bi.style.height = ((Math.floor(window.innerHeight / 1.2) - 175) / 10) + "em";
-                }
-                if (b[1] === false) {
-                    pd.o.mi.style.height = ((Math.floor(window.innerHeight / 1.2) - 175) / 10) + "em";
-                }
-                if (b[2] === false) {
-                    pd.o.bx.style.height = ((Math.floor(window.innerHeight / 1.2) - 150) / 10) + "em";
-                }
-                if (b[3] === false) {
-                    pd.o.mx.style.height = ((Math.floor(window.innerHeight / 1.2) - 150) / 10) + "em";
-                }
-                if (b[4] === false) {
-                    pd.o.bo.style.height = ((Math.floor(window.innerHeight / 1.2) - 190) / 10) + "em";
-                }
-                if (b[5] === false) {
-                    pd.o.nx.style.height = ((Math.floor(window.innerHeight / 1.2) - 190) / 10) + "em";
-                }
-            } else {
-                if (b[0] === false) {
-                    pd.o.bi.style.height = ((Math.floor(window.screen.availHeight / 1.2) - 250) / 10) + "em";
-                }
-                if (b[1] === false) {
-                    pd.o.mi.style.height = ((Math.floor(window.screen.availHeight / 1.2) - 250) / 10) + "em";
-                }
-                if (b[2] === false) {
-                    pd.o.bx.style.height = ((Math.floor(window.screen.availHeight / 1.2) - 250) / 10) + "em";
-                }
-                if (b[3] === false) {
-                    pd.o.mx.style.height = ((Math.floor(window.screen.availHeight / 1.2) - 250) / 10) + "em";
-                }
-                if (b[4] === false) {
-                    pd.o.bo.style.height = ((Math.floor(window.screen.availHeight / 1.2) - 275) / 10) + "em";
-                }
-                if (b[5] === false) {
-                    pd.o.nx.style.height = ((Math.floor(window.screen.availHeight / 1.2) - 275) / 10) + "em";
-                }
+            height = height - 62;
+            if (pd.mode === "diff") {
+                height = height - 10;
             }
-            pd.o.disp.className = "maximized";
-            x.innerHTML = "Normal view";
-            if (pd.o.re !== null) {
-                pd.o.re.style.display = "none";
+            if (pd.o.codeDiffBase !== null) {
+                pd.o.codeDiffBase.style.height = (height / 12) + "em";
+                pd.o.codeDiffBase.style.marginBottom = "1em";
             }
-            if (pd.o.rg !== null) {
-                pd.o.rg.style.display = "none";
+            if (pd.o.codeDiffNew !== null) {
+                pd.o.codeDiffNew.style.height = (height / 12) + "em";
+                pd.o.codeDiffNew.style.marginBottom = "1em";
             }
-            if (pd.o.ri !== null) {
-                pd.o.ri.style.display = "none";
+            node = pd.$$("diffBase");
+            if (node !== null) {
+                node.style.marginTop = "-4em";
             }
-            if (pd.o.rk !== null) {
-                pd.o.rk.style.display = "none";
+            node = pd.$$("diffNew");
+            if (node !== null) {
+                node.style.marginTop = "-4em";
             }
-            if (pd.o.ao !== null) {
-                pd.o.ao.style.display = "none";
+            node = pd.$$("Beautify");
+            if (node !== null) {
+                node.style.marginTop = "-4em";
+                height += 40;
             }
-            if (pd.o.ci !== null) {
-                pd.o.ci.style.margin = "0px";
+            if (pd.o.codeBeauIn !== null) {
+                pd.o.codeBeauIn.style.height = ((height / 12) - 2.3) + "em";
+                pd.o.codeBeauIn.style.marginBottom = "1em";
             }
-        } else if (x.innerHTML === "Normal view") {
-            if (pd.o.op !== null) {
-                if (pd.o.bt !== null) {
-                    pd.o.bt.style.height = ((pd.o.op.clientHeight / 12) + 6.5) + "em";
-                }
-                if (pd.o.nt !== null) {
-                    pd.o.nt.style.height = ((pd.o.op.clientHeight / 12) + 6.5) + "em";
-                }
+            if (pd.o.codeBeauOut !== null) {
+                pd.o.codeBeauOut.style.height = (height / 12) + "em";
+                pd.o.codeBeauOut.style.marginBottom = "1em";
             }
-            if (pd.o.bb !== null && pd.o.bops !== null && pd.o.bb.checked && a !== "csv" && a !== "text") {
-                pd.o.bops.style.display = "block";
-            } else if (pd.o.dd !== null && pd.o.dops !== null && pd.o.dd.checked) {
-                pd.o.dops.style.display = "block";
-            } else if (pd.o.mm !== null && pd.o.mops !== null && pd.o.mm.checked && a !== "csv" && a !== "text") {
-                pd.o.mops.style.display = "block";
+            node = pd.$$("Minify");
+            if (node !== null) {
+                node.style.marginTop = "-4em";
+                height += 40;
             }
-            if (b[0] === false) {
-                pd.o.bi.style.height = "";
-                pd.o.bi.style.margin = "0em";
+            if (pd.o.codeMinnIn !== null) {
+                pd.o.codeMinnIn.style.height = ((height / 12) - 2.3) + "em";
+                pd.o.codeMinnIn.style.marginBottom = "1em";
             }
-            if (b[1] === false) {
-                pd.o.mi.style.height = "";
-                pd.o.mi.style.margin = "0em";
+            if (pd.o.codeMinnOut !== null) {
+                pd.o.codeMinnOut.style.height = (height / 12) + "em";
+                pd.o.codeMinnOut.style.marginBottom = "1em";
             }
-            if (b[2] === false) {
-                pd.o.bx.style.height = "";
+            node = button.parentNode;
+            if (node.nodeName.toLowerCase() === "li") {
+                node = node.parentNode;
             }
-            if (b[3] === false) {
-                pd.o.mx.style.height = "";
-            }
-            if (b[4] === false) {
-                pd.o.bo.style.height = "";
-            }
-            if (b[5] === false) {
-                pd.o.nx.style.height = "";
-            }
-            if (pd.o.ay !== null && pd.o.ay.checked) {
-                pd.o.ao.style.display = "block";
-            }
-            if (pd.o.dt !== null && pd.o.dt.checked === false) {
-                if (pd.o.bd !== null) {
-                    pd.o.bd.className = "wide";
-                }
-                if (pd.o.md !== null) {
-                    pd.o.md.className = "wide";
-                }
-                if (pd.o.bt !== null) {
-                    pd.o.bt.className = "wide";
-                }
-                if (pd.o.nt !== null) {
-                    pd.o.nt.className = "wide";
-                }
-            }
-            if (pd.o.to !== null) {
-                pd.o.to.style.display = "block";
-            }
-            pd.o.disp.className = "default";
-            x.innerHTML = "Maximize Inputs";
-            if (pd.o.re !== null) {
-                pd.o.re.style.display = "block";
-            }
-            if (pd.o.rg !== null) {
-                pd.o.rg.style.display = "block";
-            }
-            if (pd.o.ri !== null) {
-                pd.o.ri.style.display = "block";
-            }
-            if (pd.o.rk !== null) {
-                pd.o.rk.style.display = "block";
-            }
-            if (pd.o.ci !== null) {
-                pd.o.ci.style.margin = "0 0 0 22.5em";
-            }
-            pd.fixminreport();
-            if (pd.o.op !== null) {
-                pd.o.op.style.display = "block";
-                if (pd.o.bi !== null) {
-                    pd.o.bi.style.height = ((pd.o.op.clientHeight / 12) - 9.7) + "em";
-                    pd.o.bi.style.marginBottom = "1.65em";
-                    if (pd.o.bx !== null) {
-                        pd.o.bx.style.height = ((pd.o.op.clientHeight / 12) - 7.3) + "em";
-                    }
-                }
-                if (pd.o.mi !== null) {
-                    pd.o.mi.style.height = ((pd.o.op.clientHeight / 12) - 9.7) + "em";
-                    pd.o.mi.style.marginBottom = "1.65em";
-                    if (pd.o.mx !== null) {
-                        pd.o.mx.style.height = ((pd.o.op.clientHeight / 12) - 7.3) + "em";
-                    }
-                }
-                if (pd.o.dp === null || pd.o.dp.checked === false) {
-                    if (pd.o.bt !== null) {
-                        pd.o.bt.style.height = ((pd.o.op.clientHeight / 12) + 6.5) + "em";
-                    }
-                    if (pd.o.nt !== null) {
-                        pd.o.nt.style.height = ((pd.o.op.clientHeight / 12) + 6.5) + "em";
-                    }
-                }
-            }
+            node.style.position = "relative";
+            node.style.marginBottom = "0em";
+            button.innerHTML = "Normal View";
+            pd.options(button);
+            return false;
         }
-        pd.options(x);
+        node = pd.$$("top");
+        if (node !== null) {
+            node.style.display = "block";
+        }
+        if (pd.o.report.diff.box !== null) {
+            pd.o.report.diff.box.style.display = "block";
+        }
+        if (pd.o.report.beau.box !== null) {
+            pd.o.report.beau.box.style.display = "block";
+        }
+        if (pd.o.report.minn.box !== null) {
+            pd.o.report.minn.box.style.display = "block";
+        }
+        if (pd.o.report.stat.box !== null) {
+            pd.o.report.stat.box.style.display = "block";
+        }
+        node = pd.$$("diffoutput");
+        if (node !== null) {
+            node.style.display = "block";
+        }
+        node = pd.$$("options");
+        if (node !== null) {
+            node.style.display = "block";
+        }
+        node = pd.$$("codeInput");
+        if (node !== null) {
+            node.style.marginLeft = "22.5em";
+        }
+        if (pd.o.codeDiffBase !== null) {
+            pd.o.codeDiffBase.style.height = "30.6em";
+            pd.o.codeDiffBase.style.marginBottom = "0.5em";
+        }
+        node = pd.$$("diffBase");
+        if (node !== null) {
+            node.style.marginTop = "0em";
+        }
+        if (pd.o.codeDiffNew !== null) {
+            pd.o.codeDiffNew.style.height = "30.6em";
+            pd.o.codeDiffNew.style.marginBottom = "0.5em";
+        }
+        node = pd.$$("diffNew");
+        if (node !== null) {
+            node.style.marginTop = "0em";
+        }
+        node = pd.$$("Beautify");
+        if (node !== null) {
+            node.style.marginTop = "0em";
+        }
+        if (pd.o.codeBeauIn !== null) {
+            pd.o.codeBeauIn.style.height = "31.7em";
+            pd.o.codeBeauIn.style.marginBottom = "-0.1em";
+        }
+        if (pd.o.codeBeauOut !== null) {
+            pd.o.codeBeauOut.style.height = "34em";
+            pd.o.codeBeauOut.style.marginBottom = "-0.1em";
+        }
+        node = pd.$$("Minify");
+        if (node !== null) {
+            node.style.marginTop = "0em";
+        }
+        if (pd.o.codeMinnIn !== null) {
+            pd.o.codeMinnIn.style.height = "31.7em";
+            pd.o.codeMinnIn.style.marginBottom = "-0.1em";
+        }
+        if (pd.o.codeMinnOut !== null) {
+            pd.o.codeMinnOut.style.height = "34em";
+            pd.o.codeMinnOut.style.marginBottom = "-0.1em";
+        }
+        button.innerHTML = "Maximize Inputs";
+        node = button.parentNode;
+        if (node.nodeName.toLowerCase() === "li") {
+            node = node.parentNode;
+        }
+        node.style.position = "static";
+        node.style.marginBottom = "2em";
+        if (pd.o.displayWide !== null && pd.o.displayWide.checked === true) {
+            pd.prettyvis(pd.o.displayWide);
+        }
+        pd.options(button);
         return false;
     };
 
     //reset tool to default configuration
     pd.reset = function dom__reset() {
-        var a = (pd.o.re !== null) ? pd.o.re.getElementsByTagName("button") : null,
-            b = 0,
-            c = [],
-            d = (pd.o.rg !== null) ? pd.o.rg.getElementsByTagName("button") : null,
-            langtest = (pd.o.la !== null && pd.o.la.nodeName === "select") ? true : false;
-        if (langtest === true) {
-            c = pd.o.la.getElementsByTagName("option");
-            pd.o.la.selectedIndex = 0;
-            for (b = c.length - 1; b > -1; b -= 1) {
-                if (c[b].value === "text") {
-                    c[b].disabled = true;
-                }
-            }
-        }
-        pd.position = {
-            diffreport: {},
-            beaureport: {},
-            minreport: {},
-            statreport: {}
-        };
-        pd.optionString = [];
-        pd.webtool = [];
-        if (a !== null) {
-            a[0].innerHTML = "S";
-            a[1].innerHTML = "\u2191";
-        }
-        if (d !== null && d[0].innerHTML === "S") {
-            d[0].parentNode.removeChild(d[0]);
-        }
-        if (pd.o.cs !== null) {
-            if (pd.o.cs.nodeName === "select") {
-                pd.o.cs.selectedIndex = 4;
-            } else {
-                pd.o.cs.value = "shadow";
-            }
-        }
-        pd.o.wb.className = "shadow";
-        if (pd.o.re !== null) {
-            pd.o.rf.style.display = "none";
-            pd.o.re.style.display = "block";
-            pd.o.re.style.left = "auto";
-            pd.o.re.style.right = "59em";
-            pd.o.re.style.zIndex = "2";
-            pd.o.re.getElementsByTagName("p")[0].style.display = "none";
-            pd.o.re.getElementsByTagName("h3")[0].style.width = "17em";
-            pd.o.re.getElementsByTagName("h3")[0].style.cursor = "pointer";
-            pd.o.re.getElementsByTagName("h3")[0].style.margin = "0em";
-            pd.position.diffreport.leftMin = pd.o.re.offsetLeft / 10;
-            pd.position.diffreport.topMin = pd.o.re.offsetTop / 10;
-        }
-        if (pd.o.rg !== null) {
-            pd.o.rh.style.display = "none";
-            pd.o.rg.style.display = "block";
-            pd.o.rg.style.left = "auto";
-            pd.o.rg.style.right = "40em";
-            pd.o.rg.style.zIndex = "2";
-            pd.o.rg.getElementsByTagName("p")[0].style.display = "none";
-            pd.o.rg.getElementsByTagName("h3")[0].style.width = "17em";
-            pd.o.rg.getElementsByTagName("h3")[0].style.cursor = "pointer";
-            pd.o.rg.getElementsByTagName("h3")[0].style.cursor = "0em";
-            pd.position.beaureport.leftMin = pd.o.rg.offsetLeft / 10;
-            pd.position.beaureport.topMin = pd.o.rg.offsetTop / 10;
-        }
-        if (pd.o.ri !== null) {
-            pd.o.rj.style.display = "none";
-            pd.o.ri.style.display = "block";
-            pd.o.ri.style.left = "auto";
-            pd.o.ri.style.right = "1";
-            pd.o.ri.style.zIndex = "2";
-            pd.o.ri.getElementsByTagName("p")[0].style.display = "none";
-            pd.o.ri.getElementsByTagName("h3")[0].style.width = "17em";
-            pd.o.ri.getElementsByTagName("h3")[0].style.cursor = "pointer";
-            pd.o.ri.getElementsByTagName("h3")[0].style.cursor = "0em";
-            pd.position.minreport.leftMin = pd.o.ri.offsetLeft / 10;
-            pd.position.minreport.topMin = pd.o.ri.offsetTop / 10;
-        }
-        if (pd.o.rk !== null) {
-            pd.o.rl.style.display = "none";
-            if (!pd.ls) {
-                pd.o.rk.style.display = "none";
-            } else {
-                pd.o.rk.style.display = "block";
-                pd.o.rk.style.left = "auto";
-                pd.o.rk.style.right = "2em";
-                pd.o.rk.style.zIndex = "2";
-                pd.o.rk.getElementsByTagName("p")[0].style.display = "none";
-                pd.o.rk.getElementsByTagName("h3")[0].style.width = "17em";
-                pd.o.rk.getElementsByTagName("h3")[0].style.cursor = "pointer";
-                pd.o.rk.getElementsByTagName("h3")[0].style.cursor = "0em";
-                pd.position.statreport.leftMin = pd.o.rk.offsetLeft / 10;
-                pd.position.statreport.topMin = pd.o.rk.offsetTop / 10;
-            }
-        }
-        if (pd.o.cp !== null) {
-            pd.o.cp.checked = true;
-        }
-        if (pd.o.jd !== null) {
-            pd.o.jd.checked = false;
-        }
-        if (pd.o.jf !== null) {
-            pd.o.jf.checked = false;
-        }
-        if (pd.o.jg !== null) {
-            pd.o.jg.checked = false;
-        }
-        if (pd.o.jh !== null) {
-            pd.o.jh.checked = false;
-        }
-        if (pd.o.ji !== null) {
-            pd.o.ji.value = "0";
-        }
-        if (pd.o.jj !== null) {
-            pd.o.jj.checked = true;
-        }
-        if (pd.o.jl !== null) {
-            pd.o.jl.checked = true;
-        }
-        if (pd.o.jm !== null) {
-            pd.o.jm.checked = true;
-        }
-        if (pd.o.jn !== null) {
-            pd.o.jn.checked = true;
-        }
-        if (pd.o.jp !== null) {
-            pd.o.jp.checked = true;
-        }
-        if (pd.o.js !== null) {
-            pd.o.js.checked = false;
-        }
-        if (pd.o.iz !== null) {
-            pd.o.iz.checked = false;
-        }
-        if (pd.o.an !== null) {
-            pd.o.an.checked = true;
-        }
-        if (pd.o.ao !== null) {
-            pd.o.ao.style.display = "none";
-        }
-        if (pd.o.bi !== null) {
-            pd.o.bi.style.height = "";
-        }
-        if (pd.o.mi !== null) {
-            pd.o.mi.style.height = "";
-        }
-        if (pd.o.bx !== null) {
-            pd.o.bx.style.height = "";
-        }
-        if (pd.o.mx !== null) {
-            pd.o.mx.style.height = "";
-        }
-        if (pd.o.disp !== null) {
-            pd.o.disp.className = "default";
-        }
-        if (pd.o.to !== null) {
-            pd.o.to.style.display = "block";
-        }
-        if (pd.o.op !== null) {
-            pd.o.op.style.display = "block";
-        }
-        if (pd.o.dops !== null) {
-            pd.o.dops.style.display = "block";
-            if (pd.o.bops !== null) {
-                pd.o.bops.style.display = "none";
-            }
-            if (pd.o.mops !== null) {
-                pd.o.mops.style.display = "none";
-            }
-        } else if (pd.o.bops !== null) {
-            pd.o.bops.style.display = "block";
-            if (pd.o.mops !== null) {
-                pd.o.mops.style.display = "none";
-            }
-        } else if (pd.o.mops !== null) {
-            pd.o.mops.style.display = "block";
-        }
-        if (pd.o.bt !== null && pd.o.nt !== null) {
-            pd.o.bt.style.display = "block";
-            pd.o.nt.style.display = "block";
-            if (pd.o.bd !== null) {
-                pd.o.bd.style.display = "none";
-            }
-        } else if (pd.o.bd !== null) {
-            pd.o.bd.style.display = "block";
-        }
-        if (pd.o.csvp !== null) {
-            pd.o.csvp.style.display = "none";
-        }
-        if (pd.o.md !== null) {
-            pd.o.md.style.display = "none";
-        }
-        if (pd.o.bt !== null) {
-            pd.o.bt.className = "difftall";
-        }
-        if (pd.o.nt !== null) {
-            pd.o.nt.className = "difftall";
-        }
-        if (pd.o.bd !== null) {
-            pd.o.bd.className = "tall";
-        }
-        if (pd.o.md !== null) {
-            pd.o.md.className = "tall";
-        }
-        if (pd.o.option !== null) {
-            if (typeof pd.o.option.innerHTML === "string") {
-                pd.o.option.innerHTML = "/*prettydiff.com */";
-                pd.o.option.value = pd.o.option.innerHTML;
-            } else {
-                pd.o.option.value = "/*prettydiff.com */";
-            }
-        }
-        if (pd.o.bq !== null) {
-            pd.o.bq.value = "4";
-        }
-        if (pd.o.bc !== null) {
-            pd.o.bc.value = "Click me for custom input";
-            pd.o.bc.style.color = "#888";
-        }
-        if (pd.o.bs !== null) {
-            pd.o.bs.checked = true;
-        }
-        if (pd.o.is !== null) {
-            pd.o.is.checked = true;
-        }
-        if (pd.o.hz !== null) {
-            pd.o.hz.checked = true;
-        }
-        if (pd.o.mb !== null) {
-            pd.o.mb.checked = true;
-        }
-        if (pd.o.hn !== null) {
-            pd.o.hn.checked = true;
-        }
-        if (pd.o.jt !== null) {
-            pd.o.jt.checked = true;
-        }
-        if (pd.o.bf !== null) {
-            pd.o.bf.checked = true;
-        }
-        if (pd.o.cd !== null) {
-            pd.o.cd.checked = true;
-        }
-        if (pd.o.cf !== null) {
-            pd.o.cf.checked = true;
-        }
-        if (pd.o.dh !== null) {
-            pd.o.dh.checked = true;
-        }
-        if (pd.o.wc !== null) {
-            pd.o.wc.value = "72";
-        }
-        if (pd.o.wd !== null) {
-            pd.o.wd.value = "72";
-        }
-        if (pd.o.bo !== null) {
-            pd.o.bo.style.height = "";
-        }
-        if (pd.o.nx !== null) {
-            pd.o.nx.style.height = "";
-        }
-        if (pd.o.dd !== null) {
-            pd.o.dd.checked = true;
-        } else if (pd.o.bb !== null) {
-            pd.o.bb.checked = true;
-        }
-        if (pd.o.dt !== null) {
-            pd.o.dt.checked = true;
-        }
-        if (pd.o.sh !== null) {
-            pd.o.sh.innerHTML = "Maximize Inputs";
-        }
-        if (pd.o.ds !== null) {
-            pd.o.ds.checked = true;
-        }
-        if (pd.o.dc !== null) {
-            pd.o.dc.value = "Click me for custom input";
-            pd.o.dc.style.color = "#888";
-        }
-        if (pd.o.je !== null) {
-            pd.o.je.checked = true;
-        }
-        if (pd.o.ps !== null) {
-            pd.o.ps.checked = false;
-        }
-        if (pd.o.context !== null) {
-            pd.o.context.value = "";
-        }
-        if (pd.o.dq !== null) {
-            pd.o.dq.value = "4";
-        }
-        if (pd.o.dx !== null) {
-            pd.o.dx.checked = true;
-        }
-        if (pd.o.dr !== null) {
-            pd.o.dr.checked = true;
-        }
-        if (pd.o.dm !== null) {
-            pd.o.dm.checked = true;
-        }
-        if (pd.o.sideby !== null) {
-            pd.o.sideby.checked = true;
-        }
-        if (pd.o.he !== null) {
-            pd.o.he.checked = true;
-        }
-        if (pd.o.id !== null) {
-            pd.o.id.checked = true;
-        }
-        if (pd.o.df !== null) {
-            pd.o.df.checked = true;
-        }
-        if (pd.o.di !== null) {
-            pd.o.di.checked = true;
-        }
-        if (pd.ls === true) {
-            if (localStorage.hasOwnProperty("webtool")) {
-                delete localStorage.webtool;
-            }
-            if (localStorage.hasOwnProperty("optionString")) {
-                delete localStorage.optionString;
-            }
-        }
-        pd.fixminreport();
-        return false;
+        delete localStorage.codeBeautify;
+        delete localStorage.codeDiffBase;
+        delete localStorage.codeDiffNew;
+        delete localStorage.codeMinify;
+        delete localStorage.commentString;
+        delete localStorage.settings;
+        delete localStorage.stat;
+        location.reload();
     };
 
-    pd.reload = function dom__reloadOld() {
-        return;
-    };
     //alter tool on page load in reflection to saved state
     (function dom__load() {
-        var a = [],
-            b = 0,
-            c = 0,
-            d = [],
-            f = "",
-            g = 0,
-            h = "",
-            i = {},
-            j = new Date(),
-            k = "",
-            l = 0,
-            m = [],
-            n = {},
-            bm = false,
-            dm = false,
-            mm = false,
-            sm = false,
-            bma = true,
-            dma = true,
-            mma = true,
-            sma = true,
-            source = "",
-            diff = "",
-            html = false,
-            mode = "",
-            stat = [],
-            lang = "",
-            wtest = [
-                false, false, false, false
-            ],
-            langtest = (pd.o.la !== null && pd.o.la.nodeName === "select") ? true : false,
-            page = pd.o.wb.getAttribute("id"),
+        var a = 0,
+            inputs = [],
+            inputsLen = 0,
+            id = "",
+            name = "",
+            type = "",
+            node = {},
+            buttons = {},
+            title = {},
+            statdump = [],
+            thirdparty = function dom__load_thirdparty() {
+                var that = this,
+                    href = that.getAttribute("href");
+                window.open(href, 'thirdparty');
+                return false;
+            },
+            resize = function dom__load_resize(e) {
+                var that = this;
+                pd.resize(e, that);
+            },
+            save = function dom__load_save() {
+                var that = this;
+                pd.save(that);
+            },
+            grab = function dom__load_grab(e) {
+                var that = this;
+                pd.grab(e, that);
+            },
+            top = function dom__load_top() {
+                var that = this;
+                pd.top(that.parentNode);
+            },
+            page = document.getElementsByTagName("body")[0].getAttribute("id"),
             backspace = function dom__load_backspace(event) {
                 var aa = event || window.event,
                     bb = aa.srcElement || aa.target;
@@ -3066,1434 +2470,723 @@ pd.webtool = [];
                 }
             };
         if (page === "webtool") {
-            if (pd.o.an !== null) {
-                pd.o.an.onclick = function dom__load_event_an() {
-                    pd.additional(pd.o.an);
-                };
-            }
-            if (pd.o.ay !== null) {
-                pd.o.ay.onclick = function dom__load_event_ay() {
-                    pd.additional(pd.o.ay);
-                };
-            }
-            if (pd.o.ba !== null) {
-                pd.o.ba.onclick = function dom__load_event_ba() {
-                    pd.indentchar(pd.o.ba);
-                };
-            }
-            if (pd.o.bb !== null) {
-                pd.o.bb.onclick = function dom__load_event_bb() {
-                    pd.prettyvis(pd.o.bb);
-                };
-            }
-            if (pd.o.bc !== null) {
-                pd.o.bc.onclick = function dom__load_event_bc_onclick() {
-                    pd.indentchar(pd.o.bc);
-                };
-                pd.o.bc.onkeyup = function dom__load_event_bc_onkeyup() {
-                    pd.options(pd.o.bc);
-                };
-            }
-            if (pd.o.bi !== null) {
-                pd.o.bi.onkeydown = function dom__load_event_bi(event) {
-                    if (pd.keypress.state === true && (pd.keypress.keys.length === 0 || event.keyCode !== pd.keypress.keys[pd.keypress.keys.length - 1]) && event.keyCode !== 17) {
-                        pd.keypress.keys.push(event.keyCode);
-                    }
-                    if (event.keyCode === 17 || event.ctrlKey === true) {
-                        pd.keypress.state = true;
-                    }
-                    return pd.fixtabs(event, pd.o.bi);
-                };
-            }
-            if (pd.o.bl !== null) {
-                pd.o.bl.onkeyup = function dom__load_event_bl() {
-                    pd.options(pd.o.bl);
-                };
-            }
-            if (pd.o.bn !== null) {
-                pd.o.bn.onclick = function dom__load_event_bn() {
-                    pd.indentchar(pd.o.bn);
-                };
-            }
-            if (pd.o.bo !== null) {
-                pd.o.bo.onkeydown = function dom__load_event_bo(event) {
-                    return pd.fixtabs(event, pd.o.bo);
-                };
-            }
-            if (pd.o.bq !== null) {
-                pd.o.bq.onkeyup = function dom__load_event_bq() {
-                    pd.options(pd.o.bq);
-                };
-            }
-            if (pd.o.bs !== null) {
-                pd.o.bs.onclick = function dom__load_event_bs() {
-                    pd.indentchar(pd.o.bs);
-                };
-            }
-            if (pd.o.cs !== null) {
-                pd.o.cs.onchange = function dom__load_event_cs() {
-                    pd.colorScheme(pd.o.cs);
-                };
-            }
-            if (pd.o.dbf !== null) {
-                pd.o.dbf.onchange = function dom__load_event_dbf() {
-                    pd.file(pd.o.dbf.files, pd.o.dbf);
-                };
-            }
-            if (pd.o.dd !== null) {
-                pd.o.dd.onclick = function dom__load_event_dd() {
-                    pd.prettyvis(pd.o.dd);
-                };
-            }
-            if (pd.o.dnf !== null) {
-                pd.o.dnf.onchange = function dom__load_event_dnf() {
-                    pd.file(pd.o.dnf.files, pd.o.dnf);
-                };
-            }
-            if (pd.o.dp !== null) {
-                pd.o.dp.onclick = function dom__load_event_dp() {
-                    pd.prettyvis(pd.o.dp);
-                };
-            }
-            if (pd.o.dt !== null) {
-                pd.o.dt.onclick = function dom__load_event_dt() {
-                    pd.prettyvis(pd.o.dt);
-                };
-            }
-            if (pd.o.exe !== null) {
-                pd.o.exe.onmouseout = function dom__load_event_exe() {
-                    pd.comment(false, pd.o.exe);
-                };
-                pd.o.exe.getElementsByTagName("button")[0].onclick = pd.recycle;
-            }
-            if (pd.o.iz !== null) {
-                pd.o.iz.onclick = function dom__load_event_iz() {
-                    pd.options(pd.o.iz);
-                };
-            }
-            if (pd.o.jd !== null) {
-                pd.o.jd.onclick = function dom__load_event_jd() {
-                    pd.options(pd.o.jd);
-                };
-            }
-            if (pd.o.jf !== null) {
-                pd.o.jf.onclick = function dom__load_event_jf() {
-                    pd.options(pd.o.jf);
-                };
-            }
-            if (pd.o.jg !== null) {
-                pd.o.jg.onclick = function dom__load_event_jg() {
-                    pd.options(pd.o.jg);
-                };
-            }
-            if (pd.o.jh !== null) {
-                pd.o.jh.onclick = function dom__load_event_jh() {
-                    pd.options(pd.o.jh);
-                };
-            }
-            if (pd.o.ji !== null) {
-                pd.o.ji.onkeyup = function dom__load_event_ji() {
-                    pd.options(pd.o.ji);
-                };
-            }
-            if (pd.o.la !== null) {
-                pd.o.la.onchange = function dom__load_event_la() {
-                    pd.codeOps(pd.o.la);
-                };
-            }
-            if (pd.o.mi !== null) {
-                pd.o.mi.onkeydown = function dom__load_event_mi(event) {
-                    if (pd.keypress.state === true && (pd.keypress.keys.length === 0 || event.keyCode !== pd.keypress.keys[pd.keypress.keys.length - 1]) && event.keyCode !== 17) {
-                        pd.keypress.keys.push(event.keyCode);
-                    }
-                    if (event.keyCode === 17 || event.ctrlKey === true) {
-                        pd.keypress.state = true;
-                    }
-                    return pd.fixtabs(event, pd.o.mi);
-                };
-            }
-            if (pd.o.mm !== null) {
-                pd.o.mm.onclick = function dom__load_event_mm() {
-                    pd.prettyvis(pd.o.mm);
-                };
-            }
-            if (pd.o.nl !== null) {
-                pd.o.nl.onkeyup = function dom__load_event_nl() {
-                    pd.options(pd.o.nl);
-                };
-            }
-            if (pd.o.nx !== null) {
-                pd.o.nx.onkeydown = function dom__load_event_nx(event) {
-                    return pd.fixtabs(event, pd.o.nx);
-                };
-            }
-            if (pd.o.option !== null) {
-                pd.o.option.onmouseover = function dom__load_event_option_onmouseover() {
-                    pd.comment(true, pd.o.option);
-                };
-                pd.o.option.onmouseout = function dom__load_event_option_onmouseout() {
-                    pd.comment(false, pd.o.option);
-                };
-            }
-            if (pd.o.re !== null) {
-                pd.o.re.getElementsByTagName("h3")[0].onmousedown = function dom__load_event_re(e) {
-                    pd.grab(e, pd.o.re.getElementsByTagName("h3")[0]);
-                };
-            }
-            if (pd.o.rg !== null) {
-                pd.o.rg.getElementsByTagName("h3")[0].onmousedown = function dom__load_event_rg(e) {
-                    pd.grab(e, pd.o.rg.getElementsByTagName("h3")[0]);
-                };
-            }
-            if (pd.o.ri !== null) {
-                pd.o.ri.getElementsByTagName("h3")[0].onmousedown = function dom__load_event_ri(e) {
-                    pd.grab(e, pd.o.ri.getElementsByTagName("h3")[0]);
-                };
-            }
-            if (pd.o.rk !== null) {
-                pd.o.rk.getElementsByTagName("h3")[0].onmousedown = function dom__load_event_rk(e) {
-                    pd.grab(e, pd.o.rk.getElementsByTagName("h3")[0]);
-                };
-            }
-            if (pd.o.ro !== null) {
-                pd.o.ro.onclick = pd.reset;
-            }
-            if (pd.o.sh !== null) {
-                pd.o.sh.onclick = function dom__load_event_sh() {
-                    pd.hideOptions(pd.o.sh);
-                };
-            }
-
-            //supply limited functionality for the pd.save function if
-            //not firefox or opera.
-            if (pd.o.agent.indexOf("firefox") === -1 && pd.o.agent.indexOf("opera") === -1 && pd.o.re !== null) {
-                i = pd.o.re.getElementsByTagName("a")[0];
-                n = i.getElementsByTagName("button")[0];
-                n.setAttribute("onclick", "pd.save(this);");
-                i.removeChild(n);
-                i.parentNode.insertBefore(n, i);
-                i.parentNode.removeChild(i);
-            } else if (pd.o.agent.indexOf("opera") > -1 && pd.o.agent.indexOf("presto") > 0) {
-                if (pd.o.re !== null) {
-                    pd.o.rf.style.cssFloat = "right";
-                }
-                if (pd.o.rg !== null) {
-                    pd.o.rh.style.cssFloat = "right";
-                }
-                if (pd.o.ri !== null) {
-                    pd.o.rj.style.cssFloat = "right";
-                }
-                if (pd.o.rk !== null) {
-                    pd.o.rl.style.cssFloat = "right";
-                }
-            }
             document.onkeypress = backspace;
             document.onkeydown = backspace;
-            if (pd.o.update !== null) {
-                pd.o.update.innerHTML = (function dom__load_update() {
-                    var aa = String(edition.latest),
-                        bb = [
-                            aa.charAt(0) + aa.charAt(1), aa.charAt(2) + aa.charAt(3), aa.charAt(4) + aa.charAt(5)
+            pd.zIndex = 10;
+            pd.mode = "diff";
+            pd.settings = {};
+            pd.settings.diffreport = {};
+            pd.settings.beaureport = {};
+            pd.settings.minnreport = {};
+            pd.settings.statreport = {};
+            pd.settings.diffreport.topmin = pd.o.report.diff.box.offsetTop;
+            pd.settings.beaureport.topmin = pd.o.report.beau.box.offsetTop;
+            pd.settings.minnreport.topmin = pd.o.report.minn.box.offsetTop;
+            pd.settings.statreport.topmin = pd.o.report.stat.box.offsetTop;
+            pd.keypress = {
+                state: false,
+                keys: [],
+                date: {},
+                throttle: 0
+            };
+            if (pd.test.fs === false) {
+                node = pd.$$("diffbasefile");
+                if (node !== null) {
+                    node.disabled = true;
+                }
+                node = pd.$$("diffnewfile");
+                if (node !== null) {
+                    node.disabled = true;
+                }
+                node = pd.$$("beautyfile");
+                if (node !== null) {
+                    node.disabled = true;
+                }
+                node = pd.$$("minifyfile");
+                if (node !== null) {
+                    node.disabled = true;
+                }
+            }
+            if (pd.test.ls === true) {
+                if (localStorage.webtool !== undefined) {
+                    delete localStorage.webtool;
+                    delete localStorage.optionString;
+                }
+                delete localStorage.bl;
+                delete localStorage.nl;
+                if (localStorage.bo !== undefined) {
+                    name = localStorage.bo;
+                    delete localStorage.bo;
+                    localStorage.codeDiffBase = name;
+                }
+                if (localStorage.nx !== undefined) {
+                    name = localStorage.nx;
+                    delete localStorage.nx;
+                    localStorage.codeDiffNew = name;
+                }
+                if (localStorage.bi !== undefined) {
+                    name = localStorage.bi;
+                    delete localStorage.bi;
+                    localStorage.codeBeautify = name;
+                }
+                if (localStorage.mi !== undefined) {
+                    name = localStorage.mi;
+                    delete localStorage.mi;
+                    localStorage.codeMinify = name;
+                }
+                if (localStorage.statdata !== undefined) {
+                    statdump = localStorage.statdata.split("|");
+                    pd.stat.visit = statdump[0];
+                    pd.stat.usage = statdump[1];
+                    pd.stat.fdate = statdump[2];
+                    pd.stat.diff = statdump[4];
+                    pd.stat.beau = statdump[5];
+                    pd.stat.minn = statdump[6];
+                    pd.stat.markup = statdump[7];
+                    pd.stat.js = statdump[8];
+                    pd.stat.css = statdump[9];
+                    pd.stat.csv = statdump[10];
+                    pd.stat.text = statdump[11];
+                    if (statdump[12] === "NaN") {
+                        pd.stat.large = statdump[13];
+                    } else if (isNaN(statdump[12]) === false) {
+                        pd.stat.large = statdump[12];
+                    }
+                    pd.stat.visit = Number(pd.stat.visit) + 1;
+                    if (pd.stat.fdate === "") {
+                        pd.stat.fdate = new Date().toLocaleDateString();
+                    }
+                    pd.stat.avdate = (((Date.now() - Date.parse(statdump[2])) / 86400000) / Number(statdump[0])).toFixed(2);
+                }
+                if (pd.test.json === true) {
+                    if (localStorage.commentString !== undefined) {
+                        pd.commentString = JSON.parse(localStorage.commentString);
+                    }
+                    if (localStorage.settings !== undefined) {
+                        pd.settings = JSON.parse(localStorage.settings);
+                    }
+                    if (localStorage.stat !== undefined) {
+                        if (statdump.length === 0) {
+                            pd.stat = JSON.parse(localStorage.stat);
+                            pd.stat.visit = Number(pd.stat.visit) + 1;
+                            if (pd.stat.fdate === "") {
+                                pd.stat.fdate = new Date().toLocaleDateString();
+                            }
+                            pd.stat.avdate = (((Date.now() - Date.parse(pd.stat.fdate)) / 86400000) / Number(statdump[0])).toFixed(2);
+                        }
+                        node = pd.$$("stvisit");
+                        if (node !== null) {
+                            node.innerHTML = pd.stat.visit;
+                        }
+                        node = pd.$$("stusage");
+                        if (node !== null) {
+                            node.innerHTML = pd.stat.usage;
+                        }
+                        node = pd.$$("stfdate");
+                        if (node !== null) {
+                            node.innerHTML = pd.stat.fdate;
+                        }
+                        node = pd.$$("stavday");
+                        if (node !== null) {
+                            node.innerHTML = pd.stat.avday;
+                        }
+                        node = pd.$$("stlarge");
+                        if (node !== null) {
+                            node.innerHTML = pd.stat.large;
+                        }
+                        node = pd.$$("stdiff");
+                        if (node !== null) {
+                            node.innerHTML = pd.stat.diff;
+                        }
+                        node = pd.$$("stbeau");
+                        if (node !== null) {
+                            node.innerHTML = pd.stat.beau;
+                        }
+                        node = pd.$$("stminn");
+                        if (node !== null) {
+                            node.innerHTML = pd.stat.minn;
+                        }
+                        node = pd.$$("stmarkup");
+                        if (node !== null) {
+                            node.innerHTML = pd.stat.markup;
+                        }
+                        node = pd.$$("stjs");
+                        if (node !== null) {
+                            node.innerHTML = pd.stat.js;
+                        }
+                        node = pd.$$("stcss");
+                        if (node !== null) {
+                            node.innerHTML = pd.stat.css;
+                        }
+                        node = pd.$$("stcsv");
+                        if (node !== null) {
+                            node.innerHTML = pd.stat.csv;
+                        }
+                        node = pd.$$("sttext");
+                        if (node !== null) {
+                            node.innerHTML = pd.stat.text;
+                        }
+                    }
+                    localStorage.stat = JSON.stringify(pd.stat);
+                }
+                if (statdump.length > 0) {
+                    delete localStorage.statdata;
+                }
+                if (pd.o.codeDiffBase !== null && localStorage.codeDiffBase !== undefined) {
+                    pd.o.codeDiffBase.value = localStorage.codeDiffBase;
+                }
+                if (pd.o.codeDiffNew !== null && localStorage.codeDiffNew !== undefined) {
+                    pd.o.codeDiffNew.value = localStorage.codeDiffNew;
+                }
+                if (pd.o.codeBeauIn !== null && localStorage.codeBeautify !== undefined) {
+                    pd.o.codeBeauIn.value = localStorage.codeBeautify;
+                }
+                if (pd.o.codeMinnIn !== null && localStorage.codeMinify !== undefined) {
+                    pd.o.codeMinnIn.value = localStorage.codeMinify;
+                }
+            }
+            if (pd.test.agent.indexOf("webkit") > 0) {
+                inputs = document.getElementsByTagName("textarea");
+                inputsLen = inputs.length;
+                for (a = 0; a < inputsLen; a += 1) {
+                    inputs[a].removeAttribute("wrap");
+                }
+            }
+            if (pd.o.codeBeauIn !== null) {
+                pd.o.codeBeauIn.onkeyup = function dom__load_bindBeauIn(e) {
+                    var event = e || window.event;
+                    pd.recycle(event);
+                };
+            }
+            if (pd.o.codeMinnIn !== null) {
+                pd.o.codeMinnIn.onkeyup = function dom__load_bindMinnIn(e) {
+                    var event = e || window.event;
+                    pd.recycle(event);
+                };
+            }
+            if (pd.o.report.diff.box !== null) {
+                if (pd.test.fs === true) {
+                    pd.o.report.diff.box.ondragover = pd.filenull;
+                    pd.o.report.diff.box.ondragleave = pd.filenull;
+                    pd.o.report.diff.box.ondrop = pd.filedrop;
+                }
+                pd.o.report.diff.body.onclick = top;
+                title = pd.o.report.diff.box.getElementsByTagName("h3")[0];
+                title.onmousedown = grab;
+                if (pd.settings.diffreport.min === false) {
+                    buttons = pd.o.report.diff.box.getElementsByTagName("p")[0];
+                    buttons.style.display = "block";
+                    title.style.cursor = "move";
+                    if (buttons.innerHTML.indexOf("save") > 0) {
+                        buttons.getElementsByTagName("button")[1].innerHTML = "\u035f";
+                        title.style.width = ((pd.settings.diffreport.width / 10) - 9.75) + "em";
+                    } else {
+                        buttons.getElementsByTagName("button")[0].innerHTML = "\u035f";
+                        title.style.width = ((pd.settings.diffreport.width / 10) - 6.75) + "em";
+                    }
+                    pd.o.report.diff.box.style.right = "auto";
+                    pd.o.report.diff.box.style.left = (pd.settings.diffreport.left / 10) + "em";
+                    pd.o.report.diff.box.style.top = (pd.settings.diffreport.top / 10) + "em";
+                    pd.o.report.diff.body.style.width = (pd.settings.diffreport.width / 10) + "em";
+                    pd.o.report.diff.body.style.height = (pd.settings.diffreport.height / 10) + "em";
+                    pd.o.report.diff.body.style.display = "block";
+                }
+            }
+            if (pd.o.report.beau.box !== null) {
+                if (pd.test.fs === true) {
+                    pd.o.report.beau.box.ondragover = pd.filenull;
+                    pd.o.report.beau.box.ondragleave = pd.filenull;
+                    pd.o.report.beau.box.ondrop = pd.filedrop;
+                }
+                pd.o.report.beau.body.onclick = top;
+                title = pd.o.report.beau.box.getElementsByTagName("h3")[0];
+                title.onmousedown = grab;
+                buttons = pd.o.report.beau.box.getElementsByTagName("p")[0];
+                node = pd.$$("jsscope-yes");
+                if (node !== null && node.checked === true) {
+                    if (pd.test.agent.indexOf("firefox") > 0 || pd.test.agent.indexOf("presto") > 0) {
+                        node = document.createElement("a");
+                        node.setAttribute("href", "#");
+                        node.onclick = save;
+                        node.innerHTML = "<button class='save' title='Convert report to text that can be saved.'>S</button>";
+                        buttons.insertBefore(node, buttons.firstChild);
+                    } else {
+                        node = document.createElement("button");
+                        node.setAttribute("class", "save");
+                        node.setAttribute("title", "Convert report to text that can be saved.");
+                        node.innerHTML = "S";
+                        buttons.insertBefore(node, buttons.firstChild);
+                    }
+                }
+                if (pd.settings.beaureport.min === false) {
+                    buttons.style.display = "block";
+                    title.style.cursor = "move";
+                    if (buttons.innerHTML.indexOf("save") > 0) {
+                        buttons.getElementsByTagName("button")[1].innerHTML = "\u035f";
+                        title.style.width = ((pd.settings.beaureport.width / 10) - 9.75) + "em";
+                    } else {
+                        buttons.getElementsByTagName("button")[0].innerHTML = "\u035f";
+                        title.style.width = ((pd.settings.beaureport.width / 10) - 6.75) + "em";
+                    }
+                    pd.o.report.beau.box.style.right = "auto";
+                    pd.o.report.beau.box.style.left = (pd.settings.beaureport.left / 10) + "em";
+                    pd.o.report.beau.box.style.top = (pd.settings.beaureport.top / 10) + "em";
+                    pd.o.report.beau.body.style.width = (pd.settings.beaureport.width / 10) + "em";
+                    pd.o.report.beau.body.style.height = (pd.settings.beaureport.height / 10) + "em";
+                    pd.o.report.beau.body.style.display = "block";
+                }
+            }
+            if (pd.o.report.minn.box !== null) {
+                if (pd.test.fs === true) {
+                    pd.o.report.minn.box.ondragover = pd.filenull;
+                    pd.o.report.minn.box.ondragleave = pd.filenull;
+                    pd.o.report.minn.box.ondrop = pd.filedrop;
+                }
+                pd.o.report.minn.body.onclick = top;
+                title = pd.o.report.minn.box.getElementsByTagName("h3")[0];
+                title.onmousedown = grab;
+                if (pd.settings.minnreport.min === false) {
+                    buttons = pd.o.report.minn.box.getElementsByTagName("p")[0];
+                    buttons.style.display = "block";
+                    title.style.cursor = "move";
+                    if (buttons.innerHTML.indexOf("save") > 0) {
+                        buttons.getElementsByTagName("button")[1].innerHTML = "\u035f";
+                        title.style.width = ((pd.settings.minnreport.width / 10) - 9.75) + "em";
+                    } else {
+                        buttons.getElementsByTagName("button")[0].innerHTML = "\u035f";
+                        title.style.width = ((pd.settings.minnreport.width / 10) - 6.75) + "em";
+                    }
+                    pd.o.report.minn.box.style.right = "auto";
+                    pd.o.report.minn.box.style.left = (pd.settings.minnreport.left / 10) + "em";
+                    pd.o.report.minn.box.style.top = (pd.settings.minnreport.top / 10) + "em";
+                    pd.o.report.minn.body.style.width = (pd.settings.minnreport.width / 10) + "em";
+                    pd.o.report.minn.body.style.height = (pd.settings.minnreport.height / 10) + "em";
+                    pd.o.report.minn.body.style.display = "block";
+                }
+            }
+            if (pd.o.report.stat.box !== null) {
+                if (pd.test.fs === true) {
+                    pd.o.report.stat.box.ondragover = pd.filenull;
+                    pd.o.report.stat.box.ondragleave = pd.filenull;
+                    pd.o.report.stat.box.ondrop = pd.filedrop;
+                }
+                pd.o.report.stat.body.onclick = top;
+                title = pd.o.report.stat.box.getElementsByTagName("h3")[0];
+                title.onmousedown = grab;
+                if (pd.settings.statreport.min === false) {
+                    buttons = pd.o.report.stat.box.getElementsByTagName("p")[0];
+                    buttons.style.display = "block";
+                    title.style.cursor = "move";
+                    if (buttons.innerHTML.indexOf("save") > 0) {
+                        buttons.getElementsByTagName("button")[1].innerHTML = "\u035f";
+                        title.style.width = ((pd.settings.statreport.width / 10) - 9.75) + "em";
+                    } else {
+                        buttons.getElementsByTagName("button")[0].innerHTML = "\u035f";
+                        title.style.width = ((pd.settings.statreport.width / 10) - 6.75) + "em";
+                    }
+                    pd.o.report.stat.box.style.right = "auto";
+                    pd.o.report.stat.box.style.left = (pd.settings.statreport.left / 10) + "em";
+                    pd.o.report.stat.box.style.top = (pd.settings.statreport.top / 10) + "em";
+                    pd.o.report.stat.body.style.width = (pd.settings.statreport.width / 10) + "em";
+                    pd.o.report.stat.body.style.height = (pd.settings.statreport.height / 10) + "em";
+                    pd.o.report.stat.body.style.display = "block";
+                }
+            }
+            inputs = document.getElementsByTagName("input");
+            inputsLen = inputs.length;
+            for (a = 0; a < inputsLen; a += 1) {
+                type = inputs[a].getAttribute("type");
+                id = inputs[a].getAttribute("id");
+                if (type === "radio") {
+                    name = inputs[a].getAttribute("name");
+                    if (name === "mode" || name === "diffdisplay") {
+                        inputs[a].onclick = pd.prettyvis;
+                    } else if (name === "additional") {
+                        inputs[a].onclick = pd.additional;
+                    } else if (name === "diffchar" || name === "beauchar") {
+                        inputs[a].onclick = pd.indentchar;
+                    } else {
+                        inputs[a].onclick = pd.options;
+                    }
+                    if (id === pd.settings[name]) {
+                        inputs[a].checked = true;
+                        if (id === "diff-other" && pd.$$("diff-char") !== null) {
+                            pd.$$("diff-char").click();
+                        } else if (id === "beau-other" && pd.$$("beau-char") !== null) {
+                            pd.$$("beau-char").click();
+                        } else {
+                            inputs[a].click();
+                        }
+                    }
+                } else if (type === "text") {
+                    inputs[a].onkeyup = pd.options;
+                    if (pd.settings[id] !== undefined) {
+                        inputs[a].value = pd.settings[id];
+                    }
+                    if (id === "beau-char" || id === "diff-char") {
+                        inputs[a].onclick = pd.indentchar;
+                    }
+                } else if (type === "file") {
+                    inputs[a].onchange = pd.file;
+                }
+            }
+            inputs = document.getElementsByTagName("select");
+            inputsLen = inputs.length;
+            for (a = 0; a < inputsLen; a += 1) {
+                id = inputs[a].getAttribute("id");
+                if (id === "colorScheme") {
+                    inputs[a].onchange = pd.colorScheme;
+                    if (pd.settings.colorScheme !== undefined) {
+                        inputs[a].selectedIndex = Number(pd.settings.colorScheme);
+                        pd.colorScheme(inputs[a]);
+                    }
+                } else if (id === "language") {
+                    inputs[a].onchange = pd.codeOps;
+                    if (pd.settings.language !== undefined) {
+                        inputs[a].selectedIndex = Number(pd.settings.language);
+                        pd.codeOps(inputs[a]);
+                    }
+                } else {
+                    inputs[a].onchange = pd.options;
+                }
+            }
+            inputs = document.getElementsByTagName("button");
+            inputsLen = inputs.length;
+            for (a = 0; a < inputsLen; a += 1) {
+                name = inputs[a].getAttribute("class");
+                id = inputs[a].getAttribute("id");
+                if (name === null) {
+                    if (inputs[a].value === "Execute") {
+                        inputs[a].onclick = pd.recycle;
+                    } else if (id === "resetOptions") {
+                        inputs[a].onclick = pd.reset;
+                    } else if (id === "hideOptions") {
+                        inputs[a].onclick = pd.hideOptions;
+                    }
+                } else if (name === "minimize") {
+                    inputs[a].onclick = pd.minimize;
+                } else if (name === "maximize") {
+                    inputs[a].onclick = pd.maximize;
+                    if (pd.settings[inputs[a].parentNode.parentNode.getAttribute("id")].max === true) {
+                        inputs[a].click();
+                    }
+                } else if (name === "resize") {
+                    inputs[a].onmousedown = resize;
+                } else if (name === "save") {
+                    node = inputs[a];
+                    title = inputs[a].parentNode;
+                    if (title.nodeName.toLowerCase() === "a") {
+                        if (pd.test.agent.indexOf("firefox") < 0 && pd.test.agent.indexOf("presto") < 0) {
+                            buttons = title.parentNode;
+                            node.onclick = save;
+                            title.removeChild(node);
+                            buttons.removeChild(title);
+                            buttons.insertBefore(node, buttons.firstChild);
+                        } else {
+                            title.onclick = save;
+                        }
+                    } else {
+                        node.onclick = save;
+                    }
+                }
+                if (id !== null && pd.settings[id] !== undefined && pd.settings[id] !== inputs[a].innerHTML.replace(/\s+/g, " ")) {
+                    inputs[a].click();
+                }
+            }
+            inputs = pd.$$("thirdparties").getElementsByTagName("a");
+            inputsLen = inputs.length;
+            for (a = 0; a < inputsLen; a += 1) {
+                inputs[a].onclick = thirdparty;
+            }
+            //webkit users get sucky textareas, because they refuse to
+            //accept bugs related to long scrolling errors
+            node = pd.$$("update");
+            if (node !== null && edition !== undefined) {
+                node.innerHTML = (function dom__load_doc_conversion() {
+                    var str = String(edition.latest),
+                        list = [
+                            str.charAt(0) + str.charAt(1), Number(str.charAt(2) + str.charAt(3)), str.charAt(4) + str.charAt(5)
                         ],
-                        cc = [
+                        month = [
                             "January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"
                         ];
-                    if (bb[1].charAt(0) === "0") {
-                        bb[1] = Number(bb[1]);
+                    list[1] -= 1;
+                    if (list[2].charAt(0) === "0") {
+                        list[2] = list[2].substr(1);
                     }
-                    if (bb[2].charAt(0) === "0") {
-                        bb[2] = bb[2].substr(1);
-                    }
-                    bb[1] -= 1;
-                    return "Updated: " + bb[2] + " " + cc[bb[1]] + " 20" + bb[0];
+                    return "Updated: " + list[2] + " " + month[list[1]] + " 20" + list[0];
                 }());
             }
-            pd.o.bc = pd.$$("beau-char");
-            pd.o.dc = pd.$$("diff-char");
-            if (pd.o.re !== null) {
-                pd.o.re.style.zIndex = "2";
-                pd.position.diffreport.leftMin = pd.o.re.offsetLeft / 10;
-                pd.position.diffreport.topMin = pd.o.re.offsetTop / 10;
-                wtest[0] = true;
+            if (pd.o.comment !== null) {
+                if (pd.commentString.length === 0) {
+                    pd.o.comment.innerHTML = "/*prettydiff.com */";
+                } else if (pd.commentString.length === 1) {
+                    pd.o.comment.innerHTML = "/*prettydiff.com " + pd.commentString[0] + " */";
+                } else {
+                    pd.o.comment.innerHTML = "/*prettydiff.com " + pd.commentString.join(", ") + " */";
+                }
+                pd.o.comment.onmouseover = function dom__load_commentOver() {
+                    pd.comment(pd.o.comment, true);
+                };
+                pd.o.comment.onmouseout = function dom__load_commentOut() {
+                    pd.comment(pd.o.comment, false);
+                };
             }
-            if (pd.o.rg !== null) {
-                pd.o.rg.style.zIndex = "2";
-                pd.position.beaureport.leftMin = pd.o.rg.offsetLeft / 10;
-                pd.position.beaureport.topMin = pd.o.rg.offsetTop / 10;
-                wtest[1] = true;
-            }
-            if (pd.o.ri !== null) {
-                pd.o.ri.style.zIndex = "2";
-                pd.position.minreport.leftMin = pd.o.ri.offsetLeft / 10;
-                pd.position.minreport.topMin = pd.o.ri.offsetTop / 10;
-                wtest[2] = true;
-            }
-            if (pd.o.rk !== null) {
-                pd.o.rk.style.zIndex = "2";
-                pd.position.statreport.leftMin = pd.o.rk.offsetLeft / 10;
-                pd.position.statreport.topMin = pd.o.rk.offsetTop / 10;
-                wtest[3] = true;
-            }
-            if (pd.fs === true) {
-                if (pd.o.bi !== null) {
-                    pd.o.bi.ondragover = pd.filenull;
-                    pd.o.bi.ondragleave = pd.filenull;
-                    pd.o.bi.ondrop = pd.filedrop;
-                    if (pd.o.op !== null) {
-                        pd.o.bi.style.height = ((pd.o.op.clientHeight / 12) - 9.7) + "em";
-                        pd.o.bi.style.marginBottom = "1.65em";
-                        if (pd.o.bx !== null) {
-                            pd.o.bx.style.height = ((pd.o.op.clientHeight / 12) - 7.3) + "em";
-                        }
-                    }
-                }
-                if (pd.o.mi !== null) {
-                    pd.o.mi.ondragover = pd.filenull;
-                    pd.o.mi.ondragleave = pd.filenull;
-                    pd.o.mi.ondrop = pd.filedrop;
-                    if (pd.o.op !== null) {
-                        pd.o.mi.style.height = ((pd.o.op.clientHeight / 12) - 9.3) + "em";
-                        if (pd.o.mx !== null) {
-                            pd.o.mx.style.height = ((pd.o.op.clientHeight / 12) - 7) + "em";
-                        }
-                    }
-                }
-                if (pd.o.bo !== null) {
-                    pd.o.bo.ondragover = pd.filenull;
-                    pd.o.bo.ondragleave = pd.filenull;
-                    pd.o.bo.ondrop = pd.filedrop;
-                }
-                if (pd.o.nx !== null) {
-                    pd.o.nx.ondragover = pd.filenull;
-                    pd.o.nx.ondragleave = pd.filenull;
-                    pd.o.nx.ondrop = pd.filedrop;
-                }
-            } else {
-                m = [
-                    pd.$$("diffbasefile"), pd.$$("diffnewfile"), pd.$$("beautyfile"), pd.$$("minifyfile")
-                ];
-                if (m[0] !== null) {
-                    m[0].disabled = true;
-                    m[0] = m[0].parentNode;
-                    m[0].style.display = "none";
-                    m[0] = m[0].parentNode;
-                    m[0].getElementsByTagName("h2")[0].style.display = "block";
-                    m[0].getElementsByTagName("textarea")[0].style.height = "34em";
-                }
-                if (m[1] !== null) {
-                    m[1].disabled = true;
-                    m[1] = m[1].parentNode;
-                    m[1].style.display = "none";
-                    m[1] = m[1].parentNode;
-                    m[1].getElementsByTagName("h2")[0].style.display = "block";
-                    m[1].getElementsByTagName("textarea")[0].style.height = "34em";
-                }
-                if (m[2] !== null) {
-                    m[2].disabled = true;
-                    m[2] = m[2].parentNode;
-                    m[2].style.display = "none";
-                    m[2] = m[2].parentNode;
-                    m[2].getElementsByTagName("h2")[0].style.display = "block";
-                    m[2].getElementsByTagName("textarea")[0].style.height = "34em";
-                    m[2].getElementsByTagName("textarea")[1].parentNode.style.margin = "0em";
-                }
-                if (m[3] !== null) {
-                    m[3].disabled = true;
-                    m[3] = m[3].parentNode;
-                    m[3].style.display = "none";
-                    m[3] = m[3].parentNode;
-                    m[3].getElementsByTagName("h2")[0].style.display = "block";
-                    m[3].getElementsByTagName("textarea")[0].style.height = "34em";
-                    m[3].getElementsByTagName("textarea")[1].parentNode.style.margin = "0em";
-                }
-                m = [];
-            }
-            if (pd.ls === true && (localStorage.hasOwnProperty("optionString") || localStorage.hasOwnProperty("webtool") || localStorage.hasOwnProperty("statdata"))) {
-                if (localStorage.hasOwnProperty("optionString") && localStorage.getItem("optionString") !== null) {
-                    if (pd.o.option !== null) {
-                        if (typeof pd.o.option.innerHTML === "string") {
-                            pd.o.option.innerHTML = "/*prettydiff.com " + (localStorage.getItem("optionString").replace(/prettydiffper/g, "%").replace(/(prettydiffcsep)+/g, ", ").replace(/\,\s+pdempty/g, "").replace(/(\,\s+\,\s+)+/g, ", ") + " */").replace(/((\,?\s+)+\*\/)$/, " */").replace(/\s+/, " ");
-                            pd.o.option.value = pd.o.option.innerHTML;
-                        } else {
-                            pd.o.option.value = "/*prettydiff.com " + (localStorage.getItem("optionString").replace(/prettydiffper/g, "%").replace(/(prettydiffcsep)+/g, ", ").replace(/\,\s+pdempty/g, "").replace(/(\,\s+\,\s+)+/g, ", ") + " */").replace(/((\,?\s+)+\*\/)$/, " */").replace(/\s+/, " ");
-                        }
-                    }
-                    a = localStorage.getItem("optionString").replace(/prettydiffper/g, "%").split("prettydiffcsep");
-                    c = a.length;
-                    for (b = 0; b < c; b += 1) {
-                        d = a[b].split(": ");
-                        if (typeof d[1] === "string") {
-                            f = d[1].charAt(0);
-                            g = d[1].length - 1;
-                            h = d[1].charAt(d[1].length - 2);
-                            if ((f === "\"" || f === "'") && f === d[1].charAt(g) && h !== "\\") {
-                                d[1] = d[1].substring(1, g);
-                            }
-                            if (d[0] === "api.mode") {
-                                if (mode === "minify" || d[1] === "minify") {
-                                    if (langtest === true) {
-                                        m = pd.o.la.getElementsByTagName("option");
-                                        for (l = m.length - 1; l > -1; l -= 1) {
-                                            if (m[l].value === "text") {
-                                                m[l].disabled = true;
-                                            }
-                                        }
-                                    }
-                                    if (pd.o.mm !== null) {
-                                        pd.o.mm.checked = true;
-                                    }
-                                    if (pd.o.md !== null) {
-                                        pd.o.md.style.display = "block";
-                                        if (pd.o.bt !== null) {
-                                            pd.o.bt.style.display = "none";
-                                        }
-                                        if (pd.o.nt !== null) {
-                                            pd.o.nt.style.display = "none";
-                                        }
-                                    } else if (pd.o.bd !== null) {
-                                        pd.o.bd.style.display = "block";
-                                        if (pd.o.bt !== null) {
-                                            pd.o.bt.style.display = "none";
-                                        }
-                                        if (pd.o.nt !== null) {
-                                            pd.o.nt.style.display = "none";
-                                        }
-                                    } else if (pd.o.bt !== null) {
-                                        pd.o.bt.style.display = "block";
-                                        if (pd.o.nt !== null) {
-                                            pd.o.nt.style.display = "block";
-                                        }
-                                    } else if (pd.o.nt !== null) {
-                                        pd.o.nt.style.display = "block";
-                                    }
-                                    if (pd.o.bops !== null) {
-                                        pd.o.bops.style.display = "none";
-                                    }
-                                    if (pd.o.dops !== null) {
-                                        pd.o.dops.style.display = "none";
-                                    }
-                                    if (lang === "text") {
-                                        lang = "auto";
-                                        if (langtest === true) {
-                                            pd.o.la.selectedIndex = 0;
-                                        }
-                                    }
-                                    if (pd.o.mops !== null) {
-                                        if (lang === "text" || lang === "csv") {
-                                            pd.o.mops.style.display = "none";
-                                        } else {
-                                            pd.o.mops.style.display = "block";
-                                        }
-                                    }
-                                } else if (mode === "beautify" || d[1] === "beautify") {
-                                    if (langtest === true) {
-                                        m = pd.o.la.getElementsByTagName("option");
-                                        for (l = m.length - 1; l > -1; l -= 1) {
-                                            if (m[l].value === "text") {
-                                                m[l].disabled = true;
-                                            }
-                                        }
-                                    }
-                                    if (pd.o.bb !== null) {
-                                        pd.o.bb.checked = true;
-                                    }
-                                    if (pd.o.bd !== null) {
-                                        pd.o.bd.style.display = "block";
-                                        if (pd.o.bt !== null) {
-                                            pd.o.bt.style.display = "none";
-                                        }
-                                        if (pd.o.nt !== null) {
-                                            pd.o.nt.style.display = "none";
-                                        }
-                                    } else if (pd.o.md !== null) {
-                                        pd.o.md.style.display = "block";
-                                        if (pd.o.bt !== null) {
-                                            pd.o.bt.style.display = "none";
-                                        }
-                                        if (pd.o.nt !== null) {
-                                            pd.o.nt.style.display = "none";
-                                        }
-                                    } else if (pd.o.bt !== null) {
-                                        pd.o.bt.style.display = "block";
-                                        if (pd.o.nt !== null) {
-                                            pd.o.nt.style.display = "block";
-                                        }
-                                    } else if (pd.o.nt !== null) {
-                                        pd.o.nt.style.display = "block";
-                                    }
-                                    if (pd.o.dops !== null) {
-                                        pd.o.dops.style.display = "none";
-                                    }
-                                    if (pd.o.mops !== null) {
-                                        pd.o.mops.style.display = "none";
-                                    }
-                                    if (lang === "text") {
-                                        lang = "auto";
-                                        if (langtest === true) {
-                                            pd.o.la.selectedIndex = 0;
-                                        }
-                                    }
-                                    if (pd.o.bops !== null) {
-                                        if (lang === "text" || lang === "csv") {
-                                            pd.o.bops.style.display = "none";
-                                        } else {
-                                            pd.o.bops.style.display = "block";
-                                        }
-                                    }
-                                } else if (mode === "diff" || mode === "" || !d[1] || d[1] === "diff" || d[1] === "") {
-                                    if (langtest === true) {
-                                        m = pd.o.la.getElementsByTagName("option");
-                                        for (l = m.length - 1; l > -1; l -= 1) {
-                                            m[l].disabled = false;
-                                        }
-                                    }
-                                    if (pd.o.dd !== null) {
-                                        pd.o.dd.checked = true;
-                                    }
-                                    if (pd.o.bt !== null) {
-                                        pd.o.bt.style.display = "block";
-                                        if (pd.o.nt !== null) {
-                                            pd.o.nt.style.display = "block";
-                                        }
-                                        if (pd.o.bd !== null) {
-                                            pd.o.bd.style.display = "none";
-                                        }
-                                        if (pd.o.md !== null) {
-                                            pd.o.md.style.display = "none";
-                                        }
-                                    } else if (pd.o.nt !== null) {
-                                        pd.o.nt.style.display = "block";
-                                        if (pd.o.bd !== null) {
-                                            pd.o.bd.style.display = "none";
-                                        }
-                                        if (pd.o.md !== null) {
-                                            pd.o.md.style.display = "none";
-                                        }
-                                    } else if (pd.o.bd !== null) {
-                                        pd.o.bd.style.display = "block";
-                                        if (pd.o.md !== null) {
-                                            pd.o.md.style.display = "none";
-                                        }
-                                    } else if (pd.o.md !== null) {
-                                        pd.o.md.style.display = "block";
-                                    }
-                                    if (pd.o.dops !== null) {
-                                        pd.o.dops.style.display = "block";
-                                    }
-                                    if (pd.o.bops !== null) {
-                                        pd.o.bops.style.display = "none";
-                                    }
-                                    if (pd.o.mops !== null) {
-                                        pd.o.mops.style.display = "none";
-                                    }
-                                    if (pd.o.db !== null) {
-                                        if (lang === "text" || lang === "csv") {
-                                            pd.o.db.style.display = "none";
-                                        } else {
-                                            pd.o.db.style.display = "block";
-                                        }
-                                    }
-                                }
-                            } else if (d[0] === "api.lang") {
-                                if (langtest === true) {
-                                    pd.o.la.selectedIndex = d[1];
-                                    lang = pd.o.la[pd.o.la.selectedIndex].value;
-                                } else if (pd.o.la !== null) {
-                                    lang = pd.o.la.value;
-                                }
-                                if (lang === "csv" || (pd.o.dd !== null && pd.o.dd.checked && lang === "text")) {
-                                    if (pd.o.db !== null) {
-                                        pd.o.db.style.display = "none";
-                                    }
-                                    if (pd.o.bops !== null) {
-                                        pd.o.bops.style.display = "none";
-                                    }
-                                    if (pd.o.mops !== null) {
-                                        pd.o.mops.style.display = "none";
-                                    }
-                                    if (pd.o.dops !== null && pd.o.dd !== null && pd.o.dd.checked) {
-                                        pd.o.dops.style.display = "block";
-                                    }
-                                }
-                                if (lang === "html") {
-                                    if (pd.o.hd !== null) {
-                                        pd.o.hd.checked = true;
-                                    }
-                                    if (pd.o.hm !== null) {
-                                        pd.o.hm.checked = true;
-                                    }
-                                    if (pd.o.hy !== null) {
-                                        pd.o.hy.checked = true;
-                                    }
-                                } else {
-                                    if (pd.o.he !== null) {
-                                        pd.o.he.checked = true;
-                                    }
-                                    if (pd.o.hn !== null) {
-                                        pd.o.hn.checked = true;
-                                    }
-                                    if (pd.o.hz !== null) {
-                                        pd.o.hz.checked = true;
-                                    }
-                                }
-                            } else if (d[0] === "api.csvchar" && pd.o.ch !== null) {
-                                pd.o.ch.value = d[1];
-                            } else if (d[0] === "api.insize" && pd.o.bq !== null) {
-                                pd.o.bq.value = d[1];
-                            } else if (d[0] === "api.insize" && pd.o.dq !== null) {
-                                pd.o.dq.value = d[1];
-                            } else if (d[0] === "api.inchar") {
-                                if (d[1] === " ") {
-                                    if (pd.o.ds !== null) {
-                                        pd.o.ds.checked = true;
-                                    }
-                                    if (pd.o.dc !== null) {
-                                        pd.o.dc.value = "Click me for custom input";
-                                        pd.o.dc.className = "unchecked";
-                                    }
-                                    if (pd.o.bs !== null) {
-                                        pd.o.bs.checked = true;
-                                    }
-                                    if (pd.o.bc !== null) {
-                                        pd.o.bc.value = "Click me for custom input";
-                                        pd.o.bc.className = "unchecked";
-                                    }
-                                } else if (d[1] === "\\t") {
-                                    if (pd.o.da !== null) {
-                                        pd.o.da.checked = true;
-                                    }
-                                    if (pd.o.dc !== null) {
-                                        pd.o.dc.value = "Click me for custom input";
-                                        pd.o.dc.className = "unchecked";
-                                    }
-                                    if (pd.o.ba !== null) {
-                                        pd.o.ba.checked = true;
-                                    }
-                                    if (pd.o.bc !== null) {
-                                        pd.o.bc.value = "Click me for custom input";
-                                        pd.o.bc.className = "unchecked";
-                                    }
-                                } else if (d[1] === "\\n") {
-                                    if (pd.o.dz !== null) {
-                                        pd.o.dz.checked = true;
-                                    }
-                                    if (pd.o.dc !== null) {
-                                        pd.o.dc.value = "Click me for custom input";
-                                        pd.o.dc.className = "unchecked";
-                                    }
-                                    if (pd.o.bn !== null) {
-                                        pd.o.bn.checked = true;
-                                    }
-                                    if (pd.o.bc !== null) {
-                                        pd.o.bc.value = "Click me for custom input";
-                                        pd.o.bc.className = "unchecked";
-                                    }
-                                } else {
-                                    if (pd.o.dw !== null) {
-                                        pd.o.dw.checked = true;
-                                    }
-                                    if (pd.o.dc !== null) {
-                                        pd.o.dc.value = d[1];
-                                        pd.o.dc.className = "checked";
-                                    }
-                                    if (pd.o.bw !== null) {
-                                        pd.o.bw.checked = true;
-                                    }
-                                    if (pd.o.bc !== null) {
-                                        pd.o.bc.value = d[1];
-                                        pd.o.bc.className = "checked";
-                                    }
-                                }
-                            } else if (d[0] === "api.comments" && d[1] === "noindent" && pd.o.iz !== null) {
-                                pd.o.iz.checked = true;
-                            } else if (d[0] === "api.indent" && d[1] === "allman") {
-                                if (pd.o.jd !== null) {
-                                    pd.o.jd.checked = true;
-                                }
-                                if (pd.o.js !== null) {
-                                    pd.o.js.checked = true;
-                                }
-                            } else if (d[0] === "api.style" && d[1] === "noindent") {
-                                if (pd.o.ie !== null) {
-                                    pd.o.ie.checked = true;
-                                }
-                                if (pd.o.it !== null) {
-                                    pd.o.it.checked = true;
-                                }
-                            } else if (d[0] === "api.html" && d[1] === "html-yes") {
-                                if (pd.o.hd !== null) {
-                                    pd.o.hd.checked = true;
-                                }
-                                if (pd.o.hm !== null) {
-                                    pd.o.hm.checked = true;
-                                }
-                                if (pd.o.hy !== null) {
-                                    pd.o.hy.checked = true;
-                                }
-                            } else if (d[0] === "api.context" && pd.o.context !== null && ((/^([0-9]+)$/).test(d[1]) && (d[1] === "0" || d[1].charAt(0) !== "0"))) {
-                                pd.o.context.value = d[1];
-                            } else if (d[0] === "api.content" && d[1] === "true" && pd.o.du !== null) {
-                                pd.o.du.checked = true;
-                            } else if (d[0] === "api.quote" && d[1] === "true" && pd.o.dy !== null) {
-                                pd.o.dy.checked = true;
-                            } else if (d[0] === "api.semicolon" && d[1] === "true" && pd.o.dn !== null) {
-                                pd.o.dn.checked = true;
-                            } else if (d[0] === "api.diffview" && d[1] === "inline" && pd.o.inline !== null) {
-                                pd.o.inline.checked = true;
-                            } else if (d[0] === "api.topcoms" && d[1] === "true" && pd.o.mc !== null) {
-                                pd.o.mc.checked = true;
-                            } else if (d[0] === "api.conditional" && d[1] === "true") {
-                                if (pd.o.ce !== null) {
-                                    pd.o.ce.checked = true;
-                                }
-                                if (pd.o.cg !== null) {
-                                    pd.o.cg.checked = true;
-                                }
-                            } else if (d[0] === "api.diffcomments" && d[1] === "true" && pd.o.dh !== null) {
-                                pd.o.dh.checked = true;
-                            } else if (d[0] === "api.wrap" && !isNaN(d[1])) {
-                                if (pd.o.wc !== null) {
-                                    pd.o.wc.value = d[1];
-                                }
-                                if (pd.o.wd !== null) {
-                                    pd.o.wd.value = d[1];
-                                }
-                            } else if (d[0] === "api.jsspace") {
-                                if (d[1] === "false") {
-                                    if (pd.o.jf !== null) {
-                                        pd.o.jf.checked = true;
-                                    }
-                                    if (pd.o.jk !== null) {
-                                        pd.o.jk.checked = true;
-                                    }
-                                } else {
-                                    if (pd.o.jf !== null) {
-                                        pd.o.jf.checked = false;
-                                    }
-                                    if (pd.o.jj !== null) {
-                                        pd.o.jj.checked = true;
-                                    }
-                                    if (pd.o.jl !== null) {
-                                        pd.o.jl.checked = true;
-                                    }
-                                }
-                            } else if (d[0] === "api.jsscope") {
-                                if (d[1] === "true" && pd.o.jg !== null) {
-                                    pd.o.jg.checked = true;
-                                } else if (d[1] === "false") {
-                                    if (pd.o.jg !== null) {
-                                        pd.o.jg.checked = false;
-                                    }
-                                    if (pd.o.jm !== null) {
-                                        pd.o.jm.checked = true;
-                                    }
-                                }
-                            } else if (d[0] === "api.jslines") {
-                                if (d[1] === "false") {
-                                    if (pd.o.jh !== null) {
-                                        pd.o.jh.checked = true;
-                                    }
-                                    if (pd.o.jo !== null) {
-                                        pd.o.jo.checked = true;
-                                    }
-                                } else {
-                                    if (pd.o.jh !== null) {
-                                        pd.o.jh.checked = false;
-                                    }
-                                    if (pd.o.jn !== null) {
-                                        pd.o.jn.checked = true;
-                                    }
-                                    if (pd.o.jp !== null) {
-                                        pd.o.jp.checked = true;
-                                    }
-                                }
-                            } else if (d[0] === "api.inlevel" && pd.o.ji !== null) {
-                                pd.o.ji.value = d[1];
-                            } else if (d[0] === "api.correct") {
-                                if (d[1] === "true" && pd.o.co !== null) {
-                                    pd.o.co.checked = true;
-                                } else if (d[1] === "false" && pd.o.cp !== null) {
-                                    pd.o.cp.checked = true;
-                                }
-                            }
-                        }
-                    }
-                }
-                if (localStorage.hasOwnProperty("webtool") && localStorage.getItem("webtool") !== null) {
-                    a = localStorage.getItem("webtool").replace(/prettydiffper/g, "%").split("prettydiffcsep");
-                    c = a.length;
-                    for (b = 0; b < c; b += 1) {
-                        d = a[b].split(": ");
-                        if (typeof d[1] === "string") {
-                            if (d[0] === "colorScheme") {
-                                pd.o.wb.className = d[1];
-                                pd.o.color = d[1];
-                                m = pd.o.cs.getElementsByTagName("option");
-                                g = m.length;
-                                for (l = 0; l < g; l += 1) {
-                                    if (m[l].innerHTML.replace(/\s+/g, "").toLowerCase() === d[1]) {
-                                        pd.o.cs.selectedIndex = l;
-                                        break;
-                                    }
-                                }
-                                pd.colorScheme(pd.o.cs);
-                            } else if (d[0] === "showhide" && d[1] === "hide" && pd.o.sh !== null) {
-                                pd.hideOptions(pd.o.sh);
-                            } else if (d[0] === "additional" && pd.o.ao !== null) {
-                                if (d[1] === "yes" && lang !== "csv" && pd.o.ay !== null) {
-                                    pd.o.ao.style.display = "block";
-                                    pd.o.ay.checked = true;
-                                } else if (d[1] === "no" && pd.o.an !== null) {
-                                    pd.o.ao.style.display = "none";
-                                    pd.o.an.checked = true;
-                                }
-                            } else if (d[0] === "display") {
-                                if (d[1] === "horizontal" && pd.o.dp !== null) {
-                                    pd.o.dp.checked = true;
-                                    if (pd.o.bt !== null) {
-                                        pd.o.bt.className = "wide";
-                                    }
-                                    if (pd.o.nt !== null) {
-                                        pd.o.nt.className = "wide";
-                                    }
-                                    if (pd.o.bd !== null) {
-                                        pd.o.bd.className = "wide";
-                                    }
-                                    if (pd.o.md !== null) {
-                                        pd.o.md.className = "wide";
-                                    }
-                                } else if (d[1] !== "horizontal" && pd.o.op !== null && (pd.o.dp === null || pd.o.dp.checked === false) && (pd.o.sh === null || pd.o.sh.innerHTML.replace(/\s+/g, " ") === "Maximize Inputs")) {
-                                    if (pd.o.bt !== null) {
-                                        pd.o.bt.style.height = ((pd.o.op.clientHeight / 12) + 6.5) + "em";
-                                    }
-                                    if (pd.o.nt !== null) {
-                                        pd.o.nt.style.height = ((pd.o.op.clientHeight / 12) + 6.5) + "em";
-                                    }
-                                }
-                            } else if (d[0] === "diffsave" && d[1] === "true" && pd.o.ps !== null && pd.o.re !== null) {
-                                pd.o.ps.checked = true;
-                                i = pd.o.re.getElementsByTagName("button")[0];
-                                i.innerHTML = "H";
-                                i.setAttribute("title", "Convert diff report to text that can be saved.");
-                            } else if (d[0] === "api.force_indent" && d[1] === "true") {
-                                if (pd.o.bg !== null) {
-                                    pd.o.bg.checked = true;
-                                }
-                                if (pd.o.dg !== null) {
-                                    pd.o.dg.checked = true;
-                                }
-                            } else if (d[0].indexOf("report") === 4) {
-                                if (wtest[0] === true && d[0].indexOf("diff") === 0) {
-                                    dm = true;
-                                    if (d[0] === "diffreportleft") {
-                                        pd.o.re.style.left = (Number(d[1]) / 10) + "em";
-                                        pd.position.diffreport.left = (Number(d[1]) / 10);
-                                    } else if (d[0] === "diffreporttop") {
-                                        pd.o.re.style.top = (Number(d[1]) / 10) + "em";
-                                        pd.position.diffreport.top = (Number(d[1]) / 10);
-                                    } else if (d[0] === "diffreportwidth") {
-                                        pd.o.rf.style.width = d[1] + "em";
-                                        pd.position.diffreport.width = Number(d[1]);
-                                        pd.o.re.getElementsByTagName("h3")[0].style.width = (Number(d[1]) - 9.76) + "em";
-                                    } else if (d[0] === "diffreportheight") {
-                                        pd.o.rf.style.height = d[1] + "em";
-                                        pd.position.diffreport.height = d[1];
-                                    } else if (d[0] === "diffreportmin" && d[1] === "1") {
-                                        dma = false;
-                                    } else if (d[0] === "diffreportzindex") {
-                                        pd.o.re.style.zIndex = d[1];
-                                        pd.position.diffreport.zindex = d[1];
-                                    }
-                                } else if (wtest[1] === true && d[0].indexOf("beau") === 0) {
-                                    bm = true;
-                                    if (d[0] === "beaureportleft") {
-                                        pd.o.rg.style.left = (Number(d[1]) / 10) + "em";
-                                        pd.position.beaureport.left = (Number(d[1]) / 10);
-                                    } else if (d[0] === "beaureporttop") {
-                                        pd.o.rg.style.top = (Number(d[1]) / 10) + "em";
-                                        pd.position.beaureport.top = (Number(d[1]) / 10);
-                                    } else if (d[0] === "beaureportwidth") {
-                                        pd.o.rh.style.width = d[1] + "em";
-                                        pd.position.beaureport.width = Number(d[1]);
-                                        pd.o.rg.getElementsByTagName("h3")[0].style.width = (Number(d[1]) - 6.76) + "em";
-                                    } else if (d[0] === "beaureportheight") {
-                                        pd.o.rh.style.height = d[1] + "em";
-                                        pd.position.beaureport.height = Number(d[1]);
-                                    } else if (d[0] === "beaureportmin" && d[1] === "1") {
-                                        bma = false;
-                                    } else if (d[0] === "beaureportzindex") {
-                                        pd.o.rg.style.zIndex = d[1];
-                                        pd.position.beaureport.zindex = d[1];
-                                    }
-                                } else if (wtest[2] === true && d[0].indexOf("minn") === 0) {
-                                    mm = true;
-                                    if (d[0] === "minnreportleft") {
-                                        pd.o.ri.style.left = (Number(d[1]) / 10) + "em";
-                                        pd.position.minreport.left = (Number(d[1]) / 10);
-                                    } else if (d[0] === "minnreporttop") {
-                                        pd.o.ri.style.top = (Number(d[1]) / 10) + "em";
-                                        pd.position.minreport.top = (Number(d[1]) / 10);
-                                    } else if (d[0] === "minnreportwidth") {
-                                        pd.o.rj.style.width = d[1] + "em";
-                                        pd.position.minreport.width = Number(d[1]);
-                                        pd.o.ri.getElementsByTagName("h3")[0].style.width = (Number(d[1]) - 6.76) + "em";
-                                    } else if (d[0] === "minnreportheight") {
-                                        pd.o.rj.style.height = d[1] + "em";
-                                        pd.position.minreport.height = Number(d[1]);
-                                    } else if (d[0] === "minnreportmin" && d[1] === "1") {
-                                        mma = false;
-                                    } else if (d[0] === "minnreportzindex") {
-                                        pd.o.ri.style.zIndex = d[1];
-                                        pd.position.minreport.zindex = d[1];
-                                    }
-                                } else if (wtest[3] === true && d[0].indexOf("stat") === 0) {
-                                    sm = true;
-                                    if (d[0] === "statreportleft") {
-                                        pd.o.rk.style.left = (Number(d[1]) / 10) + "em";
-                                        pd.position.statreport.left = (Number(d[1]) / 10);
-                                    } else if (d[0] === "statreporttop") {
-                                        pd.o.rk.style.top = (Number(d[1]) / 10) + "em";
-                                        pd.position.statreport.top = (Number(d[1]) / 10);
-                                    } else if (d[0] === "statreportwidth") {
-                                        pd.o.rl.style.width = d[1] + "em";
-                                        pd.position.statreport.width = Number(d[1]);
-                                        pd.o.rk.getElementsByTagName("h3")[0].style.width = (Number(d[1]) - 6.76) + "em";
-                                    } else if (d[0] === "statreportheight") {
-                                        pd.o.rl.style.height = d[1] + "em";
-                                        pd.position.statreport.height = Number(d[1]);
-                                    } else if (d[0] === "statreportmin" && d[1] === "1") {
-                                        sma = false;
-                                    } else if (d[0] === "statreportzindex") {
-                                        pd.o.rk.style.zIndex = d[1];
-                                        pd.position.statreport.zindex = d[1];
-                                    }
-                                }
-                            }
-                        }
-                    }
-                    if (dm === true && dma === true) {
-                        pd.o.re.style.right = "auto";
-                        pd.o.re.style.borderWidth = "0.1em";
-                        pd.o.re.getElementsByTagName("p")[0].style.display = "block";
-                        pd.o.re.getElementsByTagName("p")[0].getElementsByTagName("button")[1].innerHTML = "\u035f";
-                        pd.o.rf.style.display = "block";
-                    } else if (dm === true) {
-                        pd.o.re.getElementsByTagName("p")[0].style.display = "none";
-                        pd.o.re.getElementsByTagName("h3")[0].style.width = "17em";
-                        pd.o.re.style.left = "auto";
-                        pd.o.re.style.top = "auto";
-                        pd.o.re.style.borderWidth = "0em";
-                        pd.o.rf.style.display = "none";
-                    }
-                    if (bm === true && bma === true) {
-                        pd.o.rg.style.right = "auto";
-                        pd.o.rg.style.borderWidth = "0.1em";
-                        pd.o.rg.getElementsByTagName("p")[0].style.display = "block";
-                        pd.o.rg.getElementsByTagName("p")[0].getElementsByTagName("button")[0].innerHTML = "\u035f";
-                        pd.o.rh.style.display = "block";
-                    } else if (bm === true) {
-                        pd.o.rg.getElementsByTagName("p")[0].style.display = "none";
-                        pd.o.rg.getElementsByTagName("h3")[0].style.width = "17em";
-                        pd.o.rg.style.left = "auto";
-                        pd.o.rg.style.top = "auto";
-                        pd.o.rg.style.borderWidth = "0em";
-                        pd.o.rh.style.display = "none";
-                    }
-                    if (mm === true && mma === true) {
-                        pd.o.ri.style.right = "auto";
-                        pd.o.ri.style.borderWidth = "0.1em";
-                        pd.o.ri.getElementsByTagName("p")[0].style.display = "block";
-                        pd.o.ri.getElementsByTagName("p")[0].getElementsByTagName("button")[0].innerHTML = "\u035f";
-                        pd.o.rj.style.display = "block";
-                    } else if (mm === true) {
-                        pd.o.ri.getElementsByTagName("p")[0].style.display = "none";
-                        pd.o.ri.getElementsByTagName("h3")[0].style.width = "17em";
-                        pd.o.ri.style.left = "auto";
-                        pd.o.ri.style.top = "auto";
-                        pd.o.ri.style.borderWidth = "0em";
-                        pd.o.rj.style.display = "none";
-                    }
-                    if (sm === true && sma === true) {
-                        pd.o.rk.style.right = "auto";
-                        pd.o.rk.style.borderWidth = "0.1em";
-                        pd.o.rk.getElementsByTagName("p")[0].style.display = "block";
-                        pd.o.rk.getElementsByTagName("p")[0].getElementsByTagName("button")[0].innerHTML = "\u035f";
-                        pd.o.rl.style.display = "block";
-                    } else if (sm === true) {
-                        pd.o.rk.getElementsByTagName("p")[0].style.display = "none";
-                        pd.o.rk.getElementsByTagName("h3")[0].style.width = "17em";
-                        pd.o.rk.style.left = "auto";
-                        pd.o.rk.style.top = "auto";
-                        pd.o.rk.style.borderWidth = "0em";
-                        pd.o.rl.style.display = "none";
-                    }
-                }
-                if (localStorage.hasOwnProperty("statdata") && localStorage.getItem("statdata") !== null && pd.o.rk !== null) {
-                    stat = localStorage.getItem("statdata").split("|");
-                    pd.o.stat.visit = Number(stat[0]) + 1;
-                    stat[0] = pd.o.stat.visit.toString();
-                    pd.o.stvisit.innerHTML = stat[0];
-                    i = new Date();
-                    if (stat[2] === "") {
-                        stat[2] = i.toDateString();
-                    }
-                    k = (Date.parse(i) - Date.parse(stat[2]));
-                    if (k < 86400000) {
-                        k = 1;
-                    } else {
-                        k = Number((k / 86400000).toFixed(0));
-                    }
-                    stat[3] = (pd.o.stat.visit / k).toFixed(2);
-                    pd.o.stat.avday = stat[3];
-                    localStorage.setItem("statdata", stat.join("|"));
-                    pd.o.stat.usage = Number(stat[1]);
-                    pd.o.stat.fdate = stat[2];
-                    pd.o.stat.diff = Number(stat[4]);
-                    pd.o.stat.beau = Number(stat[5]);
-                    pd.o.stat.minn = Number(stat[6]);
-                    pd.o.stat.markup = Number(stat[7]);
-                    pd.o.stat.js = Number(stat[8]);
-                    pd.o.stat.css = Number(stat[9]);
-                    pd.o.stat.csv = Number(stat[10]);
-                    pd.o.stat.text = Number(stat[11]);
-                    pd.o.stat.pdate = k;
-                    pd.o.stat.large = Number(stat[12]);
-                    pd.o.stusage.innerHTML = stat[1];
-                    pd.o.stfdate.innerHTML = stat[2];
-                    pd.o.stavday.innerHTML = stat[3];
-                    pd.o.stdiff.innerHTML = stat[4];
-                    pd.o.stbeau.innerHTML = stat[5];
-                    pd.o.stminn.innerHTML = stat[6];
-                    pd.o.stmarkup.innerHTML = stat[7];
-                    pd.o.stjs.innerHTML = stat[8];
-                    pd.o.stcss.innerHTML = stat[9];
-                    pd.o.stcsv.innerHTML = stat[10];
-                    pd.o.sttext.innerHTML = stat[11];
-                    pd.o.stlarge.innerHTML = stat[12];
-                } else if (pd.o.rk !== null) {
-                    k = j.toLocaleDateString();
-                    pd.o.stfdate.innerHTML = k;
-                    pd.o.stat.fdate = k;
-                    stat = [
-                        1, 0, k, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0
-                    ];
-                    if (localStorage.hasOwnProperty("pageCount") && localStorage.getItem("pageCount") !== null) {
-                        l = Number(localStorage.getItem("pageCount")) + 1;
-                        pd.o.stvisit.innerHTML = l;
-                        pd.o.stat.visit = l;
-                        stat[0] = l;
-                    } else {
-                        pd.o.stat.visit = 1;
-                    }
-                    pd.o.stat.usage = 0;
-                    pd.o.stat.avday = 1;
-                    pd.o.stat.diff = 0;
-                    pd.o.stat.beau = 0;
-                    pd.o.stat.minn = 0;
-                    pd.o.stat.markup = 0;
-                    pd.o.stat.js = 0;
-                    pd.o.stat.css = 0;
-                    pd.o.stat.csv = 0;
-                    pd.o.stat.text = 0;
-                    pd.o.stat.large = 0;
-                    localStorage.setItem("statdata", stat.join("|"));
-                }
-                if (lang === "csv") {
-                    pd.o.csvp.style.display = "block";
-                }
-                if (lang === "text" || lang === "csv") {
-                    pd.o.db.style.display = "none";
-                }
-                if (pd.o.ao !== null && pd.o.sh.innerHTML === "Normal view") {
-                    pd.o.ao.style.display = "none";
-                }
+            node = pd.$$("button-primary");
+            if (node !== null) {
+                node.onmouseover = pd.comment;
             }
             if (location && location.href && location.href.indexOf("?") > -1) {
-                d = location.href.split("?")[1].split("&");
-                c = d.length;
-                for (b = 0; b < c; b += 1) {
-                    if (d[b].indexOf("m=") === 0) {
-                        f = d[b].toLowerCase().substr(2);
-                        if (f === "beautify" && pd.o.bb !== null) {
-                            pd.o.bb.click();
-                        } else if (f === "minify" && pd.o.mm !== null) {
-                            pd.o.mm.click();
-                        } else if (f === "diff" && pd.o.dd !== null) {
-                            pd.o.dd.click();
-                        }
-                    } else if (d[b].indexOf("s=") === 0) {
-                        source = d[b].substr(2);
-                        if (pd.o.bi !== null) {
-                            pd.o.bi.value = source;
-                        }
-                        if (pd.o.mi !== null) {
-                            pd.o.mi.value = source;
-                        }
-                        if (pd.o.bo !== null) {
-                            pd.o.bo.value = source;
-                        }
-                    } else if (d[b].indexOf("d=") === 0 && pd.o.nx !== null) {
-                        diff = d[b].substr(2);
-                        pd.o.nx.value = diff;
-                    } else if (d[b].toLowerCase() === "html") {
-                        html = true;
-                    } else if (d[b].indexOf("l=") === 0) {
-                        f = d[b].toLowerCase().substr(2);
-                        if (f === "auto") {
-                            pd.codeOps();
-                            lang = "auto";
-                        } else if (f === "javascript" || f === "js" || f === "json") {
-                            pd.codeOps();
-                            lang = "javascript";
-                            f = lang;
-                        } else if (f === "html") {
-                            pd.codeOps();
-                            if (pd.o.he !== null) {
-                                pd.o.hd.checked = true;
+                (function dom__load_queryString() {
+                    var b = 0,
+                        c = 0,
+                        color = pd.$$("colorScheme"),
+                        colors = (color !== null) ? color.getElementsByTagName("option") : [],
+                        options = (pd.o.lang !== null) ? pd.o.lang.getElementsByTagName("option") : [],
+                        params = location.href.split("?")[1].split("&"),
+                        paramLen = params.length,
+                        value = "",
+                        source = "",
+                        diff = "";
+                    for (b = 0; b < paramLen; b += 1) {
+                        if (params[b].indexOf("m=") === 0) {
+                            value = params[b].toLowerCase().substr(2);
+                            if (value === "beautify" && pd.o.modeBeau !== null) {
+                                pd.o.modeBeau.click();
+                            } else if (value === "minify" && pd.o.modeMinn !== null) {
+                                pd.o.modeMinn.click();
+                            } else if (value === "diff" && pd.o.modeDiff !== null) {
+                                pd.o.modeDiff.click();
                             }
-                            if (pd.o.hm !== null) {
-                                pd.o.hm.checked = true;
-                            }
-                            if (pd.o.hy !== null) {
-                                pd.o.hy.checked = true;
-                            }
-                            lang = "markup";
-                            f = lang;
-                        } else if (f === "markup" || f === "xml" || f === "sgml" || f === "jstl") {
-                            pd.codeOps();
-                            if (pd.o.he !== null) {
-                                pd.o.he.checked = true;
-                            }
-                            if (pd.o.hn !== null) {
-                                pd.o.hn.checked = true;
-                            }
-                            if (pd.o.hz !== null) {
-                                pd.o.hz.checked = true;
-                            }
-                            lang = "markup";
-                        } else if (f === "css" || f === "scss") {
-                            pd.codeOps();
-                            lang = "css";
-                        } else if (f === "csv") {
-                            pd.codeOps();
-                            lang = "csv";
-                        } else if (f === "text") {
-                            if (pd.o.dd !== null) {
-                                pd.o.dd.click();
-                            }
-                            lang = "text";
-                        } else {
-                            lang = "javascript";
-                        }
-                        if (langtest === true) {
-                            m = pd.o.la.getElementsByTagName("option");
-                            for (l = m.length - 1; l > -1; l -= 1) {
-                                if (f === "text") {
-                                    m[l].disabled = false;
-                                }
-                                if (m[l].value === f) {
-                                    pd.o.la.selectedIndex = l;
+                        } else if (params[b].indexOf("s=") === 0) {
+                            source = params[b].substr(2);
+                        } else if (params[b].indexOf("d=") === 0 && pd.o.codeDiffNew !== null) {
+                            diff = params[b].substr(2);
+                            pd.o.codeDiffNew.value = diff;
+                        } else if (params[b].toLowerCase() === "html") {
+                            for (c = options.length - 1; c > -1; c -= 1) {
+                                if (options[c].value === "html") {
+                                    pd.o.lang.selectedIndex = c;
+                                    pd.codeOps(pd.o.lang);
+                                    break;
                                 }
                             }
-                        }
-                    } else if (d[b].indexOf("c=") === 0) {
-                        f = d[b].toLowerCase().substr(2);
-                        a = pd.o.cs.getElementsByTagName("option");
-                        for (g = a.length - 1; g > -1; g -= 1) {
-                            h = a[g].innerHTML.toLowerCase().replace(/\s+/g, "");
-                            if (f === h) {
-                                pd.o.cs.selectedIndex = g;
-                                pd.o.wb.className = h;
-                                break;
+                        } else if (params[b].indexOf("l=") === 0) {
+                            value = params[b].toLowerCase().substr(2);
+                            for (c = options.length - 1; c > -1; c -= 1) {
+                                if (value === "text") {
+                                    pd.o.modeDiff.click();
+                                }
+                                if (options[c].value === value || (options[c].value === "javascript" && (value === "js" || value === "json")) || (options[c].value === "css" && value === "scss") || (options[c].value === "markup" && (value === "xml" || value === "sgml" || value === "jstl"))) {
+                                    pd.o.lang.selectedIndex = c;
+                                    pd.codeOps(pd.o.lang);
+                                    break;
+                                }
                             }
-                        }
-                    } else if (d[b].indexOf("jsscope") === 0 && pd.o.jg !== null) {
-                        pd.o.jg.checked = true;
-                    } else if (d[b].indexOf("jscorrect") === 0 && pd.o.co !== null) {
-                        pd.o.co.checked = true;
-                    }
-                }
-            }
-            if (pd.o.bc !== null && pd.o.bc.value !== "" && pd.o.bc.value !== "Click me for custom input") {
-                pd.o.bcv = pd.o.bc.value;
-            }
-            if (pd.o.dc !== null && pd.o.dc.value !== "" && pd.o.dc.value !== "Click me for custom input") {
-                pd.o.dcv = pd.o.dc.value;
-            }
-            if (html === true) {
-                if (pd.o.hd !== null) {
-                    pd.o.hd.checked = true;
-                }
-                if (pd.o.hm !== null) {
-                    pd.o.hm.checked = true;
-                }
-                if (pd.o.hy !== null) {
-                    pd.o.hy.checked = true;
-                }
-            }
-            if (source !== "" && ((pd.o.bb !== null && pd.o.bb.checked) || (pd.o.mm !== null && pd.o.mm.checked) || (pd.o.dd !== null && pd.o.dd.checked && diff !== ""))) {
-                pd.recycle();
-                if (pd.o.jg !== null && pd.o.jg.checked === true && pd.o.bb !== null && pd.o.bb.checked === true) {
-                    pd.maximize(pd.o.rg.getElementsByTagName("button")[1]);
-                }
-                return;
-            }
-            if (pd.ls === true) {
-                if (pd.o.bi !== null && localStorage.hasOwnProperty("bi") && localStorage.getItem("bi") !== null) {
-                    pd.o.bi.value = localStorage.getItem("bi");
-                    pd.o.slength.bi = pd.o.bi.value.length;
-                    if (pd.o.agent.indexOf("webkit") > 0 && pd.o.bi.getAttribute("wrap") !== null) {
-                        pd.o.bi.removeAttribute("wrap");
-                    }
-                }
-                if (pd.o.mi !== null && localStorage.hasOwnProperty("mi") && localStorage.getItem("mi") !== null) {
-                    pd.o.mi.value = localStorage.getItem("mi");
-                    pd.o.slength.mi = pd.o.mi.value.length;
-                    if (pd.o.agent.indexOf("webkit") > 0 && pd.o.mi.getAttribute("wrap") !== null) {
-                        pd.o.mi.removeAttribute("wrap");
-                    }
-                }
-                if (pd.o.bo !== null && localStorage.hasOwnProperty("bo") && localStorage.getItem("bo") !== null) {
-                    pd.o.bo.value = localStorage.getItem("bo");
-                    pd.o.slength.bo = pd.o.bo.value.length;
-                    if (pd.o.agent.indexOf("webkit") > 0 && pd.o.bo.getAttribute("wrap") !== null) {
-                        pd.o.bo.removeAttribute("wrap");
-                    }
-                }
-                if (pd.o.nx !== null && localStorage.hasOwnProperty("nx") && localStorage.getItem("nx") !== null) {
-                    pd.o.nx.value = localStorage.getItem("nx");
-                    pd.o.slength.nx = pd.o.nx.value.length;
-                    if (pd.o.agent.indexOf("webkit") > 0 && pd.o.nx.getAttribute("wrap") !== null) {
-                        pd.o.nx.removeAttribute("wrap");
-                    }
-                }
-                if (pd.o.bl !== null && localStorage.hasOwnProperty("bl") && localStorage.getItem("bl") !== null) {
-                    pd.o.bl.value = localStorage.getItem("bl");
-                }
-                if (pd.o.nl !== null && localStorage.hasOwnProperty("nl") && localStorage.getItem("ni") !== null) {
-                    pd.o.nl.value = localStorage.getItem("nl");
-                }
-            }
-            pd.fixminreport();
-            if (typeof window.onresize === "object" || typeof window.onresize === "function") {
-                window.onresize = pd.fixminreport;
-            }
-            pd.o.wb.style.display = "block";
-            if (pd.o.option !== null) {
-                if (typeof pd.o.option.innerHTML === "string") {
-                    pd.o.option.innerHTML = pd.o.option.innerHTML.replace(/\s+/g, " ");
-                    pd.o.option.value = pd.o.option.innerHTML;
-                } else {
-                    pd.o.option.value = pd.o.option.value.replace(/\s+/g, " ");
-                }
-            }
-        } else if (pd.ls === true && localStorage.hasOwnProperty("webtool") && localStorage.getItem("webtool") !== null) {
-            a = localStorage.getItem("webtool").replace(/prettydiffper/g, "%").split("prettydiffcsep");
-            c = a.length;
-            for (b = 0; b < c; b += 1) {
-                d = a[b].split(": ");
-                if (typeof d[1] === "string") {
-                    if (d[0] === "colorScheme") {
-                        pd.o.wb.className = d[1];
-                        pd.o.color = d[1];
-                        m = pd.o.cs.getElementsByTagName("option");
-                        g = m.length;
-                        for (l = 0; l < g; l += 1) {
-                            if (m[l].innerHTML.replace(/\s+/g, "").toLowerCase() === d[1]) {
-                                pd.o.cs.selectedIndex = l;
-                                break;
+                        } else if (params[b].indexOf("c=") === 0) {
+                            value = params[b].toLowerCase().substr(2);
+                            for (c = colors.length - 1; c > -1; c -= 1) {
+                                if (colors[c].innerHTML.toLowerCase() === value) {
+                                    color.selectedIndex = c;
+                                    pd.colorScheme(color);
+                                    break;
+                                }
+                            }
+                        } else if (params[b].indexOf("jsscope") === 0) {
+                            node = pd.$$("jsscope-yes");
+                            if (node !== null) {
+                                node.checked = true;
+                            }
+                        } else if (params[b].indexOf("jscorrect") === 0) {
+                            node = pd.$$("jscorrect-yes");
+                            if (node !== null) {
+                                node.checked = true;
                             }
                         }
                     }
-                }
+                    if (source !== "") {
+                        if (pd.o.codeBeauIn !== null && pd.mode === "beau") {
+                            pd.o.codeBeauIn.value = value;
+                            pd.recycle();
+                        } else if (pd.o.codeMinnIn !== null && pd.mode === "minn") {
+                            pd.o.codeMinnIn.value = value;
+                            pd.recycle();
+                        } else if (pd.o.codeDiffBase !== null && pd.mode === "diff") {
+                            pd.o.codeDiffBase.value = value;
+                            if (diff !== "") {
+                                pd.recycle();
+                            }
+                        }
+                    }
+                }());
             }
         }
         if (page === "doc") {
             (function dom__load_doc() {
-                var aa = {},
-                    bb = [],
-                    cc = {},
-                    dd = 0,
-                    e = 0,
-                    ff = [],
-                    gg = [],
-                    hh = [],
+                var b = 0,
+                    componentArea = {},
+                    row = [],
+                    dateCell = {},
+                    dateList = [],
+                    output = [],
+                    rowLen = 0,
                     date = 0,
-                    conversion = function dom__load_doc_conversion(x) {
-                        var aaa = String(x),
-                            bbb = [
-                                aaa.charAt(0) + aaa.charAt(1), aaa.charAt(2) + aaa.charAt(3), aaa.charAt(4) + aaa.charAt(5)
+                    conversion = function dom__load_doc_conversion(dateInstance) {
+                        var str = String(dateInstance),
+                            list = [
+                                str.charAt(0) + str.charAt(1), Number(str.charAt(2) + str.charAt(3)), str.charAt(4) + str.charAt(5)
                             ],
-                            ccc = [
+                            month = [
                                 "Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"
                             ];
-                        if (bbb[1].charAt(0) === "0") {
-                            bbb[1] = Number(bbb[1]);
-                        }
-                        bbb[1] -= 1;
-                        return bbb[2] + " " + ccc[bbb[1]] + " 20" + bbb[0];
+                        list[1] -= 1;
+                        return list[2] + " " + month[list[1]] + " 20" + list[0];
                     };
-                aa = document.getElementById("components");
-                if (aa !== null) {
-                    aa = aa.getElementsByTagName("tbody")[0];
-                    bb = aa.getElementsByTagName("tr");
-                    e = bb.length;
-                    for (dd = 0; dd < e; dd += 1) {
-                        cc = bb[dd].getElementsByTagName("td")[3];
-                        switch (bb[dd].getElementsByTagName("a")[0].innerHTML) {
+                componentArea = document.getElementById("components");
+                if (componentArea !== null) {
+                    componentArea = componentArea.getElementsByTagName("tbody")[0];
+                    row = componentArea.getElementsByTagName("tr");
+                    rowLen = row.length;
+                    for (b = 0; b < rowLen; b += 1) {
+                        dateCell = row[b].getElementsByTagName("td")[3];
+                        switch (row[b].getElementsByTagName("a")[0].innerHTML) {
                         case "charDecoder.js":
                             date = edition.charDecoder;
-                            cc.innerHTML = conversion(date);
-                            ff.push(date);
-                            gg.push([
-                                date, bb[dd].innerHTML
+                            dateCell.innerHTML = conversion(date);
+                            dateList.push([
+                                date, row[b].innerHTML
                             ]);
                             break;
                         case "cleanCSS.js":
                             date = edition.cleanCSS;
-                            cc.innerHTML = conversion(date);
-                            ff.push(date);
-                            gg.push([
-                                date, bb[dd].innerHTML
+                            dateCell.innerHTML = conversion(date);
+                            dateList.push([
+                                date, row[b].innerHTML
                             ]);
                             break;
                         case "csvbeauty.js":
                             date = edition.csvbeauty;
-                            cc.innerHTML = conversion(date);
-                            ff.push(date);
-                            gg.push([
-                                date, bb[dd].innerHTML
+                            dateCell.innerHTML = conversion(date);
+                            dateList.push([
+                                date, row[b].innerHTML
                             ]);
                             break;
                         case "csvmin.js":
                             date = edition.csvmin;
-                            cc.innerHTML = conversion(date);
-                            ff.push(date);
-                            gg.push([
-                                date, bb[dd].innerHTML
+                            dateCell.innerHTML = conversion(date);
+                            dateList.push([
+                                date, row[b].innerHTML
                             ]);
                             break;
                         case "diffview.css":
                             date = edition.css;
-                            cc.innerHTML = conversion(date);
-                            ff.push(date);
-                            gg.push([
-                                date, bb[dd].innerHTML
+                            dateCell.innerHTML = conversion(date);
+                            dateList.push([
+                                date, row[b].innerHTML
                             ]);
                             break;
                         case "diffview.js":
                             date = edition.diffview;
-                            cc.innerHTML = conversion(date);
-                            ff.push(date);
-                            gg.push([
-                                date, bb[dd].innerHTML
+                            dateCell.innerHTML = conversion(date);
+                            dateList.push([
+                                date, row[b].innerHTML
                             ]);
                             break;
                         case "documentation.xhtml":
                             date = edition.documentation;
-                            cc.innerHTML = conversion(date);
-                            ff.push(date);
-                            gg.push([
-                                date, bb[dd].innerHTML
+                            dateCell.innerHTML = conversion(date);
+                            dateList.push([
+                                date, row[b].innerHTML
                             ]);
                             break;
                         case "dom.js":
                             date = edition.api.dom;
-                            cc.innerHTML = conversion(date);
-                            ff.push(date);
-                            gg.push([
-                                date, bb[dd].innerHTML
+                            dateCell.innerHTML = conversion(date);
+                            dateList.push([
+                                date, row[b].innerHTML
                             ]);
                             break;
                         case "fulljsmin.js":
                             date = edition.jsmin;
-                            cc.innerHTML = conversion(date);
-                            ff.push(date);
-                            gg.push([
-                                date, bb[dd].innerHTML
+                            dateCell.innerHTML = conversion(date);
+                            dateList.push([
+                                date, row[b].innerHTML
                             ]);
                             break;
                         case "jspretty.js":
                             date = edition.jspretty;
-                            cc.innerHTML = conversion(date);
-                            ff.push(date);
-                            gg.push([
-                                date, bb[dd].innerHTML
+                            dateCell.innerHTML = conversion(date);
+                            dateList.push([
+                                date, row[b].innerHTML
                             ]);
                             break;
                         case "markup_beauty.js":
                             date = edition.markup_beauty;
-                            cc.innerHTML = conversion(date);
-                            ff.push(date);
-                            gg.push([
-                                date, bb[dd].innerHTML
+                            dateCell.innerHTML = conversion(date);
+                            dateList.push([
+                                date, row[b].innerHTML
                             ]);
                             break;
                         case "markupmin.js":
                             date = edition.markupmin;
-                            cc.innerHTML = conversion(date);
-                            ff.push(date);
-                            gg.push([
-                                date, bb[dd].innerHTML
+                            dateCell.innerHTML = conversion(date);
+                            dateList.push([
+                                date, row[b].innerHTML
                             ]);
                             break;
                         case "node-local.js":
                             date = edition.api.nodeLocal;
-                            cc.innerHTML = conversion(date);
-                            ff.push(date);
-                            gg.push([
-                                date, bb[dd].innerHTML
+                            dateCell.innerHTML = conversion(date);
+                            dateList.push([
+                                date, row[b].innerHTML
                             ]);
                             break;
                         case "node-service.js":
                             date = edition.api.nodeService;
-                            cc.innerHTML = conversion(date);
-                            ff.push(date);
-                            gg.push([
-                                date, bb[dd].innerHTML
+                            dateCell.innerHTML = conversion(date);
+                            dateList.push([
+                                date, row[b].innerHTML
                             ]);
                             break;
                         case "prettydiff.com.xhtml":
                             date = edition.webtool;
-                            cc.innerHTML = conversion(date);
-                            ff.push(date);
-                            gg.push([
-                                date, bb[dd].innerHTML
+                            dateCell.innerHTML = conversion(date);
+                            dateList.push([
+                                date, row[b].innerHTML
                             ]);
                             break;
                         case "prettydiff.js":
                             date = edition.prettydiff;
-                            cc.innerHTML = conversion(date);
-                            ff.push(date);
-                            gg.push([
-                                date, bb[dd].innerHTML
+                            dateCell.innerHTML = conversion(date);
+                            dateList.push([
+                                date, row[b].innerHTML
                             ]);
                             break;
                         case "prettydiff.wsf":
                             date = edition.api.wsh;
-                            cc.innerHTML = conversion(date);
-                            ff.push(date);
-                            gg.push([
-                                date, bb[dd].innerHTML
+                            dateCell.innerHTML = conversion(date);
+                            dateList.push([
+                                date, row[b].innerHTML
                             ]);
                             break;
                         }
                     }
-                    e = gg.length;
-                    gg = gg.sort(function dom__load_sort_forward(aa, bb) {
-                        return aa[1] === bb[1];
-                    }).reverse().sort(function dom__load_sort_reverse(aa, bb) {
-                        return aa[0] - bb[0];
+                    rowLen = dateList.length;
+                    dateList = dateList.sort(function dom__load_sort_forward(componentArea, row) {
+                        return componentArea[1] === row[1];
+                    }).reverse().sort(function dom__load_sort_reverse(componentArea, row) {
+                        return componentArea[0] - row[0];
                     });
-                    for (dd = gg.length - 1; dd > -1; dd -= 1) {
-                        hh.push("<tr>");
-                        hh.push(gg[dd][1]);
-                        hh.push("</tr>");
+                    for (b = dateList.length - 1; b > -1; b -= 1) {
+                        output.push("<tr>");
+                        output.push(dateList[b][1]);
+                        output.push("</tr>");
                     }
-                    aa.innerHTML = hh.join("");
+                    componentArea.innerHTML = output.join("");
                 }
             }());
         }
+        pd.test.load = false;
     }());
 }());
 if ((/^(file:\/\/)/).test(location.href) === false) {
@@ -4501,8 +3194,8 @@ if ((/^(file:\/\/)/).test(location.href) === false) {
         "_setAccount", "UA-27834630-1"
     ]);
     _gaq.push(["_trackPageview"]);
-    if (pd.bounce) {
-        pd.o.wb.onclick = function ga__click() {
+    if (pd.bounce === true) {
+        pd.o.page.onclick = function ga__click() {
             "use strict";
             _gaq.push([
                 "_trackEvent", "Logging", "NoBounce", "NoBounce", null, false
@@ -4529,7 +3222,7 @@ if ((/^(file:\/\/)/).test(location.href) === false) {
                     return "diff";
                 }()),
                 sFormattedMessage = "";
-            if (message === "prettydiff is not defined" && pd.ls) {
+            if (message === "prettydiff is not defined" && pd.test.ls === true) {
                 if (mode === "minify") {
                     localStorage.setItem("mi", "");
                 } else if (mode === "beautify") {
