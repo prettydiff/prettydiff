@@ -2224,7 +2224,7 @@ var prettydiff = function prettydiff(api) {
                                 nextCharA = c[z];
                                 nextCharB = c[z + 1];
                             }
-                            if (last === "else") {
+                            if (last === "else" || nextCharA === "]") {
                                 return;
                             }
                             if (last === "return" || last === "break" || last === "continue" || last === "throw") {
@@ -2509,7 +2509,7 @@ var prettydiff = function prettydiff(api) {
                                             }
                                         }
                                     }
-                                } else if (jj > -1 && token[jj] !== "," && token[jj] !== "[") {
+                                } else if (jj > -1 && token[jj] !== ",") {
                                     asiTest = true;
                                 }
                             }
@@ -4017,7 +4017,6 @@ var prettydiff = function prettydiff(api) {
                                     if (types[a + 1] === "operator" && compare === true && varlen.length > 0 && token[varlen[varlen.length - 1][varlen[varlen.length - 1].length - 1] + 1] !== ":") {
                                         varlen[varlen.length - 1].push(a);
                                     }
-                                    meta.push("v");
                                 }
                                 if (jsscope === true) {
                                     meta.push("v");
@@ -9380,10 +9379,10 @@ var prettydiff = function prettydiff(api) {
         diffview     : 140101, //diffview library
         documentation: 130814, //documentation.xhtml
         jsmin        : 140114, //jsmin library (fulljsmin.js)
-        jspretty     : 140115, //jspretty library
+        jspretty     : 140116, //jspretty library
         markup_beauty: 140101, //markup_beauty library
         markupmin    : 140101, //markupmin library
-        prettydiff   : 140115, //this file
+        prettydiff   : 140116, //this file
         webtool      : 140114, //prettydiff.com.xhtml
         api          : {
             dom        : 140114,
