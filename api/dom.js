@@ -256,7 +256,7 @@ var exports = "",
                             if (presumedLanguage === "JavaScript" || api.lang === "javascript") {
                                 pd.top(pd.o.report.beau.box);
                                 pd.o.report.beau.box.style.display = "block";
-                                if (parent.innerHTML.indexOf("pd.save") < 0) {
+                                if (parent.innerHTML.indexOf("save") < 0) {
                                     if (parent.style === undefined || parent.style.display === "block") {
                                         pd.o.report.beau.box.getElementsByTagName("h3")[0].style.width = (Number(h3.substr(0, h3.length - 2)) - 3) + "em";
                                     }
@@ -279,7 +279,7 @@ var exports = "",
                                 button = pd.o.report.beau.box.getElementsByTagName("p")[0];
                                 if (button.style.display === "none") {
                                     buttons = button.getElementsByTagName("button");
-                                    if (buttons[0].innerHTML.indexOf("save") > 0) {
+                                    if (buttons[0].getAttribute("class") === "save") {
                                         button = buttons[1];
                                     } else {
                                         button = buttons[0];
@@ -290,7 +290,7 @@ var exports = "",
                                 pd.beaurows[0]                    = pd.o.report.beau.box.getElementsByTagName("ol")[0].getElementsByTagName("li");
                                 pd.beaurows[1]                    = pd.o.report.beau.box.getElementsByTagName("ol")[1].getElementsByTagName("li");
                             } else {
-                                if (parent.innerHTML.indexOf("pd.save") > -1) {
+                                if (parent.innerHTML.indexOf("save") > -1) {
                                     if (parent.style === undefined || parent.style.display === "block") {
                                         pd.o.report.beau.box.getElementsByTagName("h3")[0].style.width = (Number(h3.substr(0, h3.length - 2)) + 3) + "em";
                                     }
@@ -299,7 +299,7 @@ var exports = "",
                                 pd.beaurows = [];
                             }
                         } else {
-                            if (parent.innerHTML.indexOf("pd.save") > -1) {
+                            if (parent.innerHTML.indexOf("save") > -1) {
                                 if (parent.style === undefined || parent.style.display === "block") {
                                     pd.o.report.beau.box.getElementsByTagName("h3")[0].style.width = (Number(h3.substr(0, h3.length - 2)) + 3) + "em";
                                 }
