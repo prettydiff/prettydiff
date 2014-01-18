@@ -111,6 +111,7 @@ var exports = "",
         diffOps     : pd.$$("diffops"),
         displayTall : pd.$$("difftall"),
         displayWide : pd.$$("diffwide"),
+        jsscope     : pd.$$("jsscope-yes"),
         lang        : pd.$$("language"),
         length      : {
             beau    : 0,
@@ -1767,9 +1768,6 @@ var exports = "",
             if (pd.o.codeBeauOut !== null) {
                 pd.o.codeBeauOut.removeAttribute("style");
             }
-            if (pd.o.codeBeauOut !== null) {
-                pd.o.codeBeauOut.removeAttribute("style");
-            }
             if (pd.o.codeDiffNew !== null) {
                 pd.o.codeDiffNew.removeAttribute("style");
             }
@@ -1787,6 +1785,7 @@ var exports = "",
             if (pd.o.minn !== null) {
                 pd.o.minn.setAttribute("class", "wide");
             }
+            pd.hideBeauOut();
         }
         if (a === pd.o.displayTall) {
             node = pd.$$("options");
@@ -1826,6 +1825,7 @@ var exports = "",
             if (pd.o.minn !== null) {
                 pd.o.minn.setAttribute("class", "tall");
             }
+            pd.hideBeauOut();
         }
         if (a.nodeType === undefined || (a === pd.o.displayWide && pd.o.displayWide.checked === false) || (a === pd.o.displayTall && pd.o.displayTall.checked === false)) {
             return;
@@ -1958,7 +1958,49 @@ var exports = "",
                 hy.checked = true;
             }
         }
+        if (x === pd.o.lang) {
+            pd.hideBeauOut();
+        }
         pd.options(x);
+    };
+
+    pd.hideBeauOut = function dom__hideBeauOut() {
+        var node = {},
+            wide = pd.$$("diffwide"),
+            state = (pd.o.jsscope === null || pd.o.jsscope.checked === false) ? false : true,
+            restore = function dom__hideBeauOut_restore() {
+                pd.o.codeBeauOut.parentNode.style.display = "block";
+                if (pd.o.codeBeauIn !== null) {
+                    node = pd.o.codeBeauIn.parentNode;
+                    if (wide !== null && wide.checked === true) {
+                        node.parentNode.setAttribute("class", "wide");
+                    }
+                    if (node.parentNode.getAttribute("class") === "tall") {
+                        node.style.width = "49%";
+                        pd.o.codeBeauIn.style.height = "31.7em";
+                    } else {
+                        node.style.width = "100%";
+                        pd.o.codeBeauIn.style.height = "14.8em";
+                    }
+                }
+            };
+        if (pd.o.codeBeauOut === null) {
+            return;
+        }
+        if (pd.o.lang === null || pd.o.lang.value === "auto" || pd.o.lang.value === "javascript") {
+            if (state === true) {
+                pd.o.codeBeauOut.parentNode.style.display = "none";
+                if (pd.o.codeBeauIn !== null) {
+                    node = pd.o.codeBeauIn.parentNode;
+                    node.style.width = "100%";
+                    pd.o.codeBeauIn.style.height = "31.7em";
+                }
+            } else {
+                restore();
+            }
+        } else {
+            restore();
+        }
     };
 
     //provides interaction to simulate a text input into a radio button
@@ -2530,6 +2572,10 @@ var exports = "",
             buttons    = {},
             title      = {},
             statdump   = [],
+            hideBeauOut = function dom__load_hideBeauOut() {
+                pd.hideBeauOut();
+                pd.options(this);
+            },
             thirdparty = function dom__load_thirdparty() {
                 var that = this,
                     href = that.getAttribute("href");
@@ -2751,12 +2797,20 @@ var exports = "",
                     var event = e || window.event;
                     pd.recycle(event);
                 };
+                pd.o.codeBeauIn.onkeydown = pd.fixtabs;
             }
             if (pd.o.codeMinnIn !== null) {
                 pd.o.codeMinnIn.onkeyup = function dom__load_bindMinnIn(e) {
                     var event = e || window.event;
                     pd.recycle(event);
                 };
+                pd.o.codeMinnIn.onkeydown = pd.fixtabs;
+            }
+            if (pd.o.codeDiffBase !== null) {
+                pd.o.codeDiffBase.onkeydown = pd.fixtabs;
+            }
+            if (pd.o.codeDiffNew !== null) {
+                pd.o.codeDiffNew.onkeydown = pd.fixtabs;
             }
             if (pd.o.report.diff.box !== null) {
                 if (pd.test.fs === true) {
@@ -2899,6 +2953,8 @@ var exports = "",
                         inputs[a].onclick = pd.additional;
                     } else if (name === "diffchar" || name === "beauchar") {
                         inputs[a].onclick = pd.indentchar;
+                    } else if (name === "jsscope") {
+                        inputs[a].onclick = hideBeauOut;
                     } else {
                         inputs[a].onclick = pd.options;
                     }
@@ -3087,9 +3143,8 @@ var exports = "",
                                 }
                             }
                         } else if (params[b].indexOf("jsscope") === 0) {
-                            node = pd.$$("jsscope-yes");
-                            if (node !== null) {
-                                node.checked = true;
+                            if (pd.o.jsscope !== null) {
+                                pd.o.jsscope.click();
                             }
                         } else if (params[b].indexOf("jscorrect") === 0) {
                             node = pd.$$("jscorrect-yes");
