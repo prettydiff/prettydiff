@@ -1350,11 +1350,11 @@ var prettydiff = function prettydiff(api) {
                     cleanAsync = function cleanCSS__cleanAsync() {
                         var i        = 0,
                             j        = 0,
-                            localLen = sourceLen,
                             tabs     = [],
                             tabb     = "",
                             out      = [tab],
-                            build    = source.split("");
+                            build    = source.split(""),
+                            localLen = build.length;
                         for (i = 0; i < localLen; i += 1) {
                             if ("{" === build[i]) {
                                 tabs.push(tab);
@@ -1479,7 +1479,7 @@ var prettydiff = function prettydiff(api) {
                                     do {
                                         fragments.push(x.charAt(aa));
                                         aa += 1;
-                                    } while (x.charAt(aa - 2) !== "*" || (x.charAt(aa - 2) === "*" && x.charAt(aa - 1) !== "/"));
+                                    } while (aa < lengthSemi && (x.charAt(aa - 2) !== "*" || (x.charAt(aa - 2) === "*" && x.charAt(aa - 1) !== "/")));
                                     if (x.charAt(aa) === "\n") {
                                         fragments.push("\n");
                                     }
@@ -9372,7 +9372,7 @@ var prettydiff = function prettydiff(api) {
     //the edition values use the format YYMMDD for dates.
     edition    = {
         charDecoder  : 131224, //charDecoder library
-        cleanCSS     : 131224, //cleanCSS library
+        cleanCSS     : 140123, //cleanCSS library
         css          : 140114, //diffview.css file
         csvbeauty    : 140114, //csvbeauty library
         csvmin       : 131224, //csvmin library
@@ -9382,10 +9382,10 @@ var prettydiff = function prettydiff(api) {
         jspretty     : 140116, //jspretty library
         markup_beauty: 140101, //markup_beauty library
         markupmin    : 140101, //markupmin library
-        prettydiff   : 140116, //this file
+        prettydiff   : 140123, //this file
         webtool      : 140114, //prettydiff.com.xhtml
         api          : {
-            dom        : 140114,
+            dom        : 140118,
             nodeLocal  : 140114,
             nodeService: 121106, //no longer maintained
             wsh        : 140114
