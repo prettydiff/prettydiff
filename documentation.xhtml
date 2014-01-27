@@ -26,7 +26,7 @@
             - Documentation</h1>
         <p id="dcolorScheme"><label class="label" for="colorScheme">Color
             Scheme</label>
-            <select id="colorScheme" onchange="pd.colorScheme(this)"><option>Default</option><option>Coffee</option><option>Dark</option><option>Canvas</option><option selected="selected">Shadow</option><option>White</option></select>
+            <select id="colorScheme" onchange="pd.colorScheme(this)"><option>Default</option><option>Canvas</option><option selected="selected">Shadow</option><option>White</option></select>
         </p>
         <p>For any questions, comments, requests, or feedback please join the
             <a href="https://groups.google.com/d/forum/pretty-diff">Pretty Diff
@@ -156,6 +156,9 @@
                         diff mode if a source is provided with the
                         <em>d</em>
                         parameter.</li>
+                    <li><strong>codemirror</strong>
+                        - If this parameter is present with a value of <em>false</em> the CodeMirror
+                        application library will be discarded in favor of HTML textarea elements.</li>
                 </ol>
                 <p>The parameters are optional and are provided soley for portability.
                     The parameters may occur in any order. Examples:</p>
@@ -1016,6 +1019,18 @@
                                 - Major Revision</span>
                         </td>
                         <td>Beautifies CSS code.</td>
+                        <td></td>
+                    </tr>
+                    <tr>
+                        <td><a href="cm/codemirror.css">codemirror.css</a></td>
+                        <td><a href="http://codemirror.com/">CodeMirror team</a></td>
+                        <td>CSS for the CodeMirror editor.</td>
+                        <td></td>
+                    </tr>
+                    <tr>
+                        <td><a href="cm/codemirror.js">codemirror.js</a></td>
+                        <td><a href="http://codemirror.com/">CodeMirror team</a></td>
+                        <td>JavaScript for the CodeMirror editor.</td>
                         <td></td>
                     </tr>
                     <tr>

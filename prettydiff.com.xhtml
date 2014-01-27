@@ -23,6 +23,7 @@
         <meta content="images/pdlogo.svg" name="msapplication-TileImage"/>
         <link href="humans.txt" rel="author" type="text/plain"/>
         <link href="diffview.css" media="all" rel="stylesheet" type="text/css"/>
+        <link href="cm/codemirror.css" media="all" rel="stylesheet" type="text/css"/>
     </head>
     <body class="shadow" id="webtool">
         <ul class="default" id="displayOps">
@@ -64,7 +65,7 @@
                     <li><a href="jspretty.xhtml">JSPretty</a></li>
                     <li><a href="http://g6auc.me.uk/widgets.html">JSPretty Widget</a></li>
                 </ul>
-                <p id="announcement">To stay informed of critical updates and new features join the <a href="https://groups.google.com/d/forum/pretty-diff">mailing list</a>.</p>
+                <p id="announcement">Pretty Diff updated its web interface to support <a href="http://codemirror.com/">CodeMirror</a>, and can be disabled with URI parameter <em>codemirror=false</em>.</p>
                 <p id="update">Updated:
                 </p>
                 <span class="clear"></span>
@@ -150,7 +151,7 @@
         </div>
         <div class="options" id="options"><h2>Main Options</h2>
             <p><label class="label" for="colorScheme">Color Scheme</label>
-                <select id="colorScheme"><option>Default</option><option>Coffee</option><option>Dark</option><option>Canvas</option><option selected="selected">Shadow</option><option>White</option></select>
+                <select id="colorScheme"><option>Default</option><option>Canvas</option><option selected="selected">Shadow</option><option>White</option></select>
             </p>
             <p><strong>Function</strong>
                 <span>
@@ -498,6 +499,19 @@
             </div>
             <div class="options" id="miniops" style="display:none;"><h2>Minify
                 Options</h2>
+                <p style="display:none;"><label class="label" for="minn-quan">Indentation Size</label>
+                    <span>
+                        <input id="minn-quan" title="This text field expects a value of 0 or a positive integer. The number provided dictates how many characters constitute a single indentation of formatted code." type="text" value="4"/>
+                    </span>
+                </p>
+                <p style="display:none;"><strong>Indentation Character</strong>
+                    <span>
+                        <input checked="checked" id="minn-space" name="minnchar" title="This option indicates a space character will be the character of indentation." type="radio"/>
+                        <label for="minn-space">Indent Space</label></span>
+                    <span>
+                        <input id="minn-tab" name="minnchar" title="This option makes a tab character the character of indentation." type="radio"/>
+                        <label for="minn-tab">Indent Tab</label></span>
+                </p>
                 <p><strong>Presume HTML (Markup Only)</strong>
                     <span>
                         <input checked="checked" id="htmlm-no" name="presumehtmlm" title="Use this option to ignore HTML specific vocabulary and instead focus purely on syntax." type="radio"/>
@@ -549,6 +563,7 @@
                 <li><a href="http://www.iPredikt.com/"><img alt="iPredikt" src="images/logo_ipredikt.png"/></a></li>
             </ul>
         </div>
+        <script type="application/javascript" src="cm/codemirror.js"></script>
         <script type="application/javascript" src="prettydiff.js"></script>
         <script type="application/javascript" src="api/dom.js"></script>
     </body>

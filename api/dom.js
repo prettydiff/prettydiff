@@ -1,6 +1,19 @@
 /*prettydiff.com api.topcoms: true*/
 /*jslint nomen: true */
-/*global edition, document, localStorage, window, prettydiff, summary, markup_beauty, cleanCSS, jsmin, csvbeauty, csvmin, markupmin, jspretty, diffview, XMLHttpRequest, location, ActiveXObject, FileReader, navigator, setTimeout*/
+/*global edition, document, localStorage, window, prettydiff, markup_beauty, cleanCSS, jsmin, csvbeauty, csvmin, markupmin, jspretty, diffview, XMLHttpRequest, location, ActiveXObject, FileReader, navigator, setTimeout, codeMirror*/
+/***********************************************************************
+This is written by Austin Cheney on 3 Mar 2009. Anybody may use this;
+code without permission so long as this comment exists verbatim in each;
+instance of its use.
+
+http: //www.travelocity.com/ 
+http: //mailmarkup.org/
+http: //prettydiff.com/
+
+CodeMirror
+Copyright (C) 2013 by Marijn Haverbeke <marijnh@gmail.com> and others
+http://codemirror.com/   - MIT License
+***********************************************************************/
 var exports = "",
     _gaq    = [],
     pd      = {};
@@ -11,15 +24,6 @@ var exports = "",
     if (typeof prettydiff === "function") {
         pd.application = prettydiff;
     }
-
-    //stores keypress state to avoid execution of pd.recycle from
-    //certain key combinations
-    pd.keypress            = {
-        state   : false,
-        keys    : [],
-        date    : {},
-        throttle: 0
-    };
 
     //test for web browser features for progressive enhancement
     pd.test                = {
@@ -35,23 +39,33 @@ var exports = "",
         agent : (typeof navigator === "object") ? navigator.userAgent.toLowerCase() : "",
         //some operations should not occur as the page is initially loading
         load  : true,
+        //stores keypress state to avoid execution of pd.recycle from certain key combinations
+        keypress: false,
+        //supplement to ensure keypress is returned to false only after other keys other than ctrl are released
+        keystore: [],
+        //CodeMirror will only render correctly if the parent container is visible, this test solves for this problem
+        render: {
+            diff: false,
+            beau: false,
+            minn: false
+        },
         //If the output is too large the report must open and minimize in a single step
         filled: {
             beau: false,
             diff: false,
             minn: false,
             stat: false
-        }
+        },
+        //delect if CodeMirror is supported
+        cm: (location.href.toLowerCase().indexOf("codemirror=false") < 0 && (typeof codeMirror === "object" || typeof codeMirror === "function")) ? true : false
     };
 
     //the various CSS color themes
     pd.css                 = {
-        core    : "body{font-family:\"Arial\";font-size:10px;overflow-y:scroll;}#samples #dcolorScheme{position:relative;z-index:1000}#apireturn textarea{font-size:1.2em;height:50em;width:100%}button{border-radius:.9em;display:block;font-weight:bold;width:100%}div .button{text-align:center}div button{display:inline-block;font-weight:bold;margin:1em 0;padding:1em 2em}button:hover{cursor:pointer}#introduction{clear:both;margin:0 0 0 5.6em;position:relative;top:-2.75em}#introduction ul{clear:both;height:3em;margin:0 0 0 -5.5em;overflow:hidden;width:100em}#introduction li{clear:none;display:block;float:left;font-size:1.4em;margin:0 4.95em -1em 0}#introduction li li{font-size:1em;margin-left:2em}#introduction .information,#webtool #introduction h2{left:-90em;position:absolute;top:0;width:10em}#introduction h2{float:none}#displayOps{float:right;font-size:1.5em;font-weight:bold;margin-right:1em;width:22.5em}#displayOps.default{position:static}#displayOps.maximized{margin-bottom:-2em;position:relative}#displayOps li{clear:none;display:block;float:left;list-style:none;margin:2em 0 0;text-align:right;width:9em}h1{float:left;font-size:2em;margin:0 .5em .5em 0}#hideOptions{margin-left:5em;padding:0}#title_text{border-style:solid;border-width:.05em;display:block;float:left;font-size:1em;margin-left:.55em;padding:.1em}h1 svg,h1 img{border-style:solid;border-width:.05em;float:left;height:2em;width:2em}h1 span{font-size:.5em}h2,h3{background:#fff;border-style:solid;border-width:.075em;display:inline-block;font-size:1.8em;font-weight:bold;margin:0 .5em .5em 0;padding:0 .2em}#doc h3{margin-top:.5em}h3{font-size:1.6em}h4{font-size:1.4em}fieldset{border-radius:.9em;clear:both;margin:3.5em 0 -2em;padding:0 0 0 1em}legend{border-style:solid;border-width:.1em;font-size:1.2em;font-weight:bold;margin-left:-.25em}.button{margin:1em 0;text-align:center}.button button{display:block;font-size:2em;height:1.5em;margin:0 auto;padding:0;width:50%}#diffreport{right:57.8em}#beaureport{right:38.8em}#minnreport{right:19.8em}#statreport{right:.8em}#statreport .body p,#statreport .body li,#statreport .body h3{font-size:1.2em}#statreport .body h3{margin-top:0}#statreport .body ul{margin-top:1em}#reports{height:4em}#reports h2{display:none}.box{border-style:solid;border-width:0;left:auto;margin:0;padding:0;position:absolute;z-index:10}.box button{border-radius:0;border-style:solid;border-width:.1em;display:block;float:right;font-family:'Lucida Console','Trebuchet MS','Arial';height:1.75em;padding:0;position:absolute;right:0;text-align:center;top:0;width:1.75em;z-index:7}.box button.resize{border-width:.05em;cursor:se-resize;font-size:1.667em;font-weight:normal;height:.8em;line-height:.5em;margin:-.85em 0 0;position:absolute;right:.05em;top:100%;width:.85em}.box button.minimize{margin:.35em 4em 0 0}.box button.maximize{margin:.35em 1.75em 0 0}.box button.save{margin:.35em 6.25em 0 0}.box .buttons{float:right;margin:0}.box h3.heading{cursor:pointer;float:left;font-size:1em;height:3em;margin:0 0 -3.2em;position:relative;width:17em;z-index:6}.box h3.heading span{display:block;font-size:1.8em;padding:.25em 0 0 .5em}.box .body{clear:both;height:20em;margin-top:-.1em;overflow:scroll;padding:4.25em 1em 1em;position:relative;right:0;top:0;width:75em;z-index:5}.options{border-radius:0 0 .9em .9em;clear:both;margin-bottom:1em;padding:1em 1em 3.5em;width:auto}label{display:inline;font-size:1.4em}ol li{font-size:1.4em;list-style-type:decimal}ol li li{font-size:1em}body#doc ol li{font-size:1.1em}ul{margin:-1.4em 0 2em;padding:0}ul li{list-style-type:none}li{clear:both;margin:1em 0 1em 3em}li h4{display:inline;float:left;margin:.4em 0;text-align:left;width:14em}p{clear:both;font-size:1.2em;margin:0 0 1em}#option_comment{height:2.5em;margin-bottom:-1.5em;width:100%}.difflabel{display:block;height:0}#beau-other-span,#diff-other-span{text-indent:-200em;width:0}.options p span{display:block;float:left;font-size:1.2em}#top{min-width:80em}#top em{font-weight:bold}#update{clear:left;float:right;font-weight:bold;padding:.5em;position:absolute;right:1em;top:11em}#announcement{height:2.5em;margin:0 -5em -4.75em;width:27.5em}#textreport{width:100%}#options{float:left;margin:0;width:19em}#options label{width:auto}#options p{clear:both;font-size:1em;margin:0;padding:0}#options p span{clear:both;float:none;height:2em;margin:0 0 0 2em}#csvchar{width:11.8em}#language,#csvchar,#colorScheme{margin:0 0 1em 2em}#codeInput{margin-left:22.5em}#Beautify.wide p,#Beautify.tall p.file,#Minify.wide p,#Minify.tall p.file{clear:none;float:none}#diffops p,#miniops p,#beauops p{clear:both;font-size:1em;padding-top:1em}#options p strong,#diffops p strong,#miniops p strong,#beauops p strong,#options .label,#diffops .label,#miniops .label,#beauops .label{display:block;float:left;font-size:1.2em;font-weight:bold;margin-bottom:1em;width:17.5em}input[type=\"radio\"]{margin:0 .25em}input[type=\"file\"]{box-shadow:none}select{border-style:inset;border-width:.1em;width:11.85em}.options input,.options label{border-style:none;display:block;float:left}.options span label{margin-left:.4em;white-space:nowrap;width:12em}.options p span label{font-size:1em}#webtool .options input[type=text]{margin-right:1em;width:11.6em}#webtool .options input[type=text],div input,textarea{border-style:inset;border-width:.1em}textarea{display:inline-block;height:10em;margin:0}strong label{font-size:1em;width:inherit}strong.new{background:#ff6;font-style:italic}#miniops span strong,#diffops span strong,#beauops span strong{display:inline;float:none;font-size:1em;width:auto}#Beautify .input label,#Beautify .output label,#Minify .input label,#Minify .output label{display:block;font-size:1.05em;font-weight:bold}#beautyinput,#minifyinput,#baseText,#newText,#beautyoutput,#minifyoutput{font-size:1em}.clear{clear:both;display:block}.wide,.tall,#diffBase,#diffNew{border-radius:0 0 .9em .9em;margin-bottom:1em}#diffBase,#diffNew{padding:1em}#diffBase p,#diffNew p{clear:none;float:none}#diffBase.wide textarea,#diffNew.wide textarea{height:10.1em}.wide,.tall{padding:1em 1.25em 0}#diff .addsource{cursor:pointer;margin-bottom:1em;padding:0}#diff .addsource input{display:block;float:left;margin:.5em .5em -1.5em}#diff .addsource label{cursor:pointer;display:inline-block;font-size:1.2em;padding:.5em .5em .5em 2em}.wide label{float:none;margin-right:0;width:100%}.wide #beautyinput,.wide #minifyinput,.wide #beautyoutput,.wide #minifyoutput{height:14.8em;margin:0;width:99.5%}.tall .input{clear:none;float:left}.tall .output{clear:none;float:right;margin-top:-2.4em}.tall .input,.tall .output{width:49%}.tall .output label{text-align:right}.tall .input textarea{height:31.7em}.tall .output textarea{height:34em}.tall textarea{margin:0 0 -.1em;width:100%}.tall #beautyinput,.tall #minifyinput{float:left}.tall #beautyoutput,.tall #minifyoutput{float:right}.wide{width:auto}#diffBase.difftall,#diffNew.difftall{margin-bottom:1.3em;padding:1em 1% .9em;width:47.5%}#diffBase.difftall{float:left}#diffNew.difftall{float:right}.file input,.labeltext input{display:inline-block;margin:0 .7em 0 0;width:16em}.labeltext,.file{font-size:.9em;font-weight:bold;margin-bottom:1em}.difftall textarea{height:30.6em;margin-bottom:.5em}#diffBase textarea,#diffNew textarea{width:99.5%}.input,.output{margin:0}#diffBase.wide,#diffNew.wide{padding:.8em 1em}#diffBase.wide{margin-bottom:1.2em}#diffoutput{width:100%}#diffoutput p em,#diffoutput li em,.analysis .bad,.analysis .good{font-weight:bold}#diffoutput ul{font-size:1.2em;margin-top:1em}#diffoutput ul li{display:list-item;list-style-type:disc}.analysis th{text-align:left}.analysis td{text-align:right}#doc ul{margin-top:1em}#doc ul li{font-size:1.2em}body#doc ul li{font-size:1.1em}#doc ol li span{display:block;margin-left:2em}.diff,.beautify{border-style:solid;border-width:.2em;display:inline-block;font-family:'Courier New',Courier,'Lucida Console',monospace;margin:0 1em 1em 0;padding:0;position:relative}.beautify .data em{display:inline-block;font-style:normal;font-weight:bold;padding-top:.5em}.diff .skip{border-style:none none solid;border-width:0 0 .1em}.diff li,.diff p,.diff h3,.beautify li{font-size:1.1em}.diff .diff-left,.diff .diff-right{display:table-cell}.diff .diff-left{border-style:none none none solid;border-width:0 0 0 .1em}.diff .diff-right{border-style:none none none solid;border-width:0 0 0 .1em;margin-left:-.1em;min-width:16.5em;right:0;top:0}.diff-right .data ol{min-width:16.5em}.diff-right .data{border-style:none solid none none;border-width:0 .1em 0 0;width:100%}.diff-right .data li{min-width:16.5em}.diff ol,.beautify ol{display:table-cell;margin:0;padding:0}.diff li,.beautify li{border-style:none none solid;border-width:0 0 .1em;display:block;line-height:1.2;list-style-type:none;margin:0;padding-bottom:0;padding-right:.5em}.diff li{padding-top:.5em}.beautify .count li{padding-top:.5em}@media screen and (-webkit-min-device-pixel-ratio:0) {.beautify .count li{padding-top:.546em}}#doc .beautify .count li.fold{color:#900;cursor:pointer;font-weight:bold;padding-left:.5em}.diff .count,.beautify .count{border-style:solid;border-width:0 .1em 0 0;font-weight:normal;padding:0;text-align:right}.diff .count li,.beautify .count li{padding-left:2em}.diff .data,.beautify .data{text-align:left;white-space:pre}.diff .data li,.beautify .data li{letter-spacing:.1em;padding-left:.5em;white-space:pre}#webtool .diff h3{border-style:none solid solid;border-width:0 .1em .2em;box-shadow:none;display:block;font-family:Verdana;margin:0 0 0 -.1em;padding:.2em 2em;text-align:left}.diff li em{font-style:normal;margin:0 -.09em;padding:.05em 0}.diff p.author{border-style:solid;border-width:.2em .1em .1em;margin:0;overflow:hidden;padding:.4em;text-align:right}#dcolorScheme{float:right;margin:-2em 0 0 0}#dcolorScheme label{display:inline-block;font-size:1em;margin-right:1em}body#doc{font-size:.8em;max-width:80em}#doc th{font-weight:bold}#doc td span{display:block}#doc table,.box .body table{border-collapse:collapse;border-style:solid;border-width:.2em;clear:both}#doc table{font-size:1.2em}body#doc table{font-size:1em}#doc td,#doc th{border-left-style:solid;border-left-width:.1em;border-top-style:solid;border-top-width:.1em;padding:.5em}#doc em,.box .body em{font-style:normal;font-weight:bold}#doc div{margin-bottom:2em}#doc div div{clear:both;margin-bottom:1em}#doc h2{font-size:1.6em;margin:.5em .5em .5em 0}#doc ol{clear:both}#doc_contents li{font-size:1.75em;margin:1em 0 0}#doc_contents ol ol li{font-size:.75em;list-style:lower-alpha;margin:.5em 0 0}#doc_contents ol{padding-bottom:1em}#doc #doc_contents ol ol{background-color:inherit;border-style:none;margin:.25em .3em 0 0;padding-bottom:0}#doc_contents a{text-decoration:none}#diffoutput #thirdparties li{display:inline-block;list-style-type:none}#thirdparties a{border-style:none;display:block;height:4em;text-decoration:none}button,fieldset,.box h3.heading,.box .body,.options,.diff .replace em,.diff .delete em,.diff .insert em,.wide,.tall,#diffBase,#diffNew,#doc div,#doc div div,#doc ol,#option_comment,#update,#thirdparties img,#diffoutput #thirdparties{border-style:solid;border-width:.1em}#apitest p{clear:both;padding-top:.75em}#apitest label,#apitest select,#apitest input,#apitest textarea{float:left}#apitest label{width:20em}#apitest select,#apitest input,#apitest textarea{width:30em}#pdsamples{list-style-position:inside;margin:-12em 0 0 0;padding:0;position:relative;z-index:10}#pdsamples li{border-radius:1em;border-style:solid;border-width:.1em;margin:0 0 3em;padding:1em}#pdsamples li div{border-radius:1em;border-style:solid;border-width:.1em;margin:0;padding:1em}#pdsamples li p{display:inline-block;font-size:1em;margin:0}#pdsamples li p a{display:block;margin:0 0 1em 2em}#pdsamples li ul{margin:0 0 0 2em}#samples #pdsamples li li{background:none transparent;border-style:none;display:list-item;list-style:disc outside;margin:0;padding:.5em}#modalSave span{background:#000;display:block;left:0;opacity:.5;position:absolute;top:0;z-index:9000}#modalSave p{background:#eee;color:#333;font-size:3em;padding:1em;position:absolute;text-align:center;top:10em;width:25em;z-index:9001}#modalSave p em{display:block;font-size:.75em;margin-top:1em}#modalSave p strong{color:#c00;font-weight:bold}@media print{p,.options,#Beautify,#Minify,#diff,ul{display:none}div{width:100%}html td{font-size:.8em;white-space:normal}}",
+        core    : "body{font-family:\"Arial\";font-size:10px;overflow-y:scroll;}#samples #dcolorScheme{position:relative;z-index:1000}#apireturn textarea{font-size:1.2em;height:50em;width:100%}button{border-radius:.9em;display:block;font-weight:bold;width:100%}div .button{text-align:center}div button{display:inline-block;font-weight:bold;margin:1em 0;padding:1em 2em}button:hover{cursor:pointer}#introduction{clear:both;margin:0 0 0 5.6em;position:relative;top:-2.75em}#introduction ul{clear:both;height:3em;margin:0 0 0 -5.5em;overflow:hidden;width:100em}#introduction li{clear:none;display:block;float:left;font-size:1.4em;margin:0 4.95em -1em 0}#introduction li li{font-size:1em;margin-left:2em}#introduction .information,#webtool #introduction h2{left:-90em;position:absolute;top:0;width:10em}#introduction h2{float:none}#displayOps{float:right;font-size:1.5em;font-weight:bold;margin-right:1em;width:22.5em}#displayOps.default{position:static}#displayOps.maximized{margin-bottom:-2em;position:relative}#displayOps li{clear:none;display:block;float:left;list-style:none;margin:2em 0 0;text-align:right;width:9em}h1{float:left;font-size:2em;margin:0 .5em .5em 0}#hideOptions{margin-left:5em;padding:0}#title_text{border-style:solid;border-width:.05em;display:block;float:left;font-size:1em;margin-left:.55em;padding:.1em}h1 svg,h1 img{border-style:solid;border-width:.05em;float:left;height:2em;width:2em}h1 span{font-size:.5em}h2,h3{background:#fff;border-style:solid;border-width:.075em;display:inline-block;font-size:1.8em;font-weight:bold;margin:0 .5em .5em 0;padding:0 .2em}#doc h3{margin-top:.5em}h3{font-size:1.6em}h4{font-size:1.4em}fieldset{border-radius:.9em;clear:both;margin:3.5em 0 -2em;padding:0 0 0 1em}legend{border-style:solid;border-width:.1em;font-size:1.2em;font-weight:bold;margin-left:-.25em}.button{margin:1em 0;text-align:center}.button button{display:block;font-size:2em;height:1.5em;margin:0 auto;padding:0;width:50%}#diffreport{right:57.8em}#beaureport{right:38.8em}#minnreport{right:19.8em}#statreport{right:.8em}#statreport .body p,#statreport .body li,#statreport .body h3{font-size:1.2em}#statreport .body h3{margin-top:0}#statreport .body ul{margin-top:1em}#reports{height:4em}#reports h2{display:none}.box{border-style:solid;border-width:0;left:auto;margin:0;padding:0;position:absolute;z-index:10}.box button{border-radius:0;border-style:solid;border-width:.1em;display:block;float:right;font-family:'Lucida Console','Trebuchet MS','Arial';height:1.75em;padding:0;position:absolute;right:0;text-align:center;top:0;width:1.75em;z-index:7}.box button.resize{border-width:.05em;cursor:se-resize;font-size:1.667em;font-weight:normal;height:.8em;line-height:.5em;margin:-.85em 0 0;position:absolute;right:.05em;top:100%;width:.85em}.box button.minimize{margin:.35em 4em 0 0}.box button.maximize{margin:.35em 1.75em 0 0}.box button.save{margin:.35em 6.25em 0 0}.box .buttons{float:right;margin:0}.box h3.heading{cursor:pointer;float:left;font-size:1em;height:3em;margin:0 0 -3.2em;position:relative;width:17em;z-index:6}.box h3.heading span{display:block;font-size:1.8em;padding:.25em 0 0 .5em}.box .body{clear:both;height:20em;margin-top:-.1em;overflow:scroll;padding:4.25em 1em 1em;position:relative;right:0;top:0;width:75em;z-index:5}.options{border-radius:0 0 .9em .9em;clear:both;margin-bottom:1em;padding:1em 1em 3.5em;width:auto}label{display:inline;font-size:1.4em}ol li{font-size:1.4em;list-style-type:decimal}ol li li{font-size:1em}body#doc ol li{font-size:1.1em}ul{margin:-1.4em 0 2em;padding:0}ul li{list-style-type:none}li{clear:both;margin:1em 0 1em 3em}li h4{display:inline;float:left;margin:.4em 0;text-align:left;width:14em}p{clear:both;font-size:1.2em;margin:0 0 1em}#option_comment{height:2.5em;margin-bottom:-1.5em;width:100%}.difflabel{display:block;height:0}#beau-other-span,#diff-other-span{text-indent:-200em;width:0}.options p span{display:block;float:left;font-size:1.2em}#top{min-width:80em}#top em{font-weight:bold}#update{clear:left;float:right;font-weight:bold;padding:.5em;position:absolute;right:1em;top:11em}#announcement{height:2.5em;margin:0 -5em -4.75em;width:27.5em}#textreport{width:100%}#options{float:left;margin:0;width:19em}#options label{width:auto}#options p{clear:both;font-size:1em;margin:0;padding:0}#options p span{clear:both;float:none;height:2em;margin:0 0 0 2em}#csvchar{width:11.8em}#language,#csvchar,#colorScheme{margin:0 0 1em 2em}#codeInput{margin-left:22.5em}#Beautify.wide p,#Beautify.tall p.file,#Minify.wide p,#Minify.tall p.file{clear:none;float:none}#diffops p,#miniops p,#beauops p{clear:both;font-size:1em;padding-top:1em}#options p strong,#diffops p strong,#miniops p strong,#beauops p strong,#options .label,#diffops .label,#miniops .label,#beauops .label{display:block;float:left;font-size:1.2em;font-weight:bold;margin-bottom:1em;width:17.5em}input[type=\"radio\"]{margin:0 .25em}input[type=\"file\"]{box-shadow:none}select{border-style:inset;border-width:.1em;width:11.85em}.options input,.options label{border-style:none;display:block;float:left}.options span label{margin-left:.4em;white-space:nowrap;width:12em}.options p span label{font-size:1em}#webtool .options input[type=text]{margin-right:1em;width:11.6em}#webtool .options input[type=text],div input,textarea{border-style:inset;border-width:.1em}textarea{display:inline-block;height:10em;margin:0}strong label{font-size:1em;width:inherit}strong.new{background:#ff6;font-style:italic}#miniops span strong,#diffops span strong,#beauops span strong{display:inline;float:none;font-size:1em;width:auto}#Beautify .input label,#Beautify .output label,#Minify .input label,#Minify .output label{display:block;font-size:1.05em;font-weight:bold}#beautyinput,#minifyinput,#baseText,#newText,#beautyoutput,#minifyoutput{font-size:1em}.clear{clear:both;display:block}.wide,.tall,#diffBase,#diffNew{border-radius:0 0 .9em .9em;margin-bottom:1em}#diffBase,#diffNew{padding:1em}#diffBase p,#diffNew p{clear:none;float:none}#diffBase.wide textarea,#diffNew.wide textarea{height:10.1em}.wide,.tall{padding:1em 1.25em 0}#diff .addsource{cursor:pointer;margin-bottom:1em;padding:0}#diff .addsource input{display:block;float:left;margin:.5em .5em -1.5em}#diff .addsource label{cursor:pointer;display:inline-block;font-size:1.2em;padding:.5em .5em .5em 2em}.wide label{float:none;margin-right:0;width:100%}.wide #beautyinput,.wide #minifyinput,.wide #beautyoutput,.wide #minifyoutput{height:14.8em;margin:0;width:99.5%}.tall .input{clear:none;float:left}.tall .output{clear:none;float:right;margin-top:-2.4em}.tall .input,.tall .output{width:49%}.tall .output label{text-align:right}.tall .input textarea{height:31.7em}.tall .output textarea{height:34em}.tall textarea{margin:0 0 -.1em;width:100%}.wide{width:auto}#diffBase.difftall,#diffNew.difftall{margin-bottom:1.3em;padding:1em 1% .9em;width:47.5%}#diffBase.difftall{float:left}#diffNew.difftall{float:right}.file input,.labeltext input{display:inline-block;margin:0 .7em 0 0;width:16em}.labeltext,.file{font-size:.9em;font-weight:bold;margin-bottom:1em}.difftall textarea{height:30.6em;margin-bottom:.5em}#diffBase textarea,#diffNew textarea{width:99.5%}.input,.output{margin:0}#diffBase.wide,#diffNew.wide{padding:.8em 1em}#diffBase.wide{margin-bottom:1.2em}#diffoutput{width:100%}#diffoutput p em,#diffoutput li em,.analysis .bad,.analysis .good{font-weight:bold}#diffoutput ul{font-size:1.2em;margin-top:1em}#diffoutput ul li{display:list-item;list-style-type:disc}.analysis th{text-align:left}.analysis td{text-align:right}#doc ul{margin-top:1em}#doc ul li{font-size:1.2em}body#doc ul li{font-size:1.1em}#doc ol li span{display:block;margin-left:2em}.diff,.beautify{border-style:solid;border-width:.2em;display:inline-block;font-family:'Courier New',Courier,'Lucida Console',monospace;margin:0 1em 1em 0;padding:0;position:relative}.beautify .data em{display:inline-block;font-style:normal;font-weight:bold;padding-top:.5em}.diff .skip{border-style:none none solid;border-width:0 0 .1em}.diff li,.diff p,.diff h3,.beautify li{font-size:1.1em}.diff .diff-left,.diff .diff-right{display:table-cell}.diff .diff-left{border-style:none none none solid;border-width:0 0 0 .1em}.diff .diff-right{border-style:none none none solid;border-width:0 0 0 .1em;margin-left:-.1em;min-width:16.5em;right:0;top:0}.diff-right .data ol{min-width:16.5em}.diff-right .data{border-style:none solid none none;border-width:0 .1em 0 0;width:100%}.diff-right .data li{min-width:16.5em}.diff ol,.beautify ol{display:table-cell;margin:0;padding:0}.diff li,.beautify li{border-style:none none solid;border-width:0 0 .1em;display:block;line-height:1.2;list-style-type:none;margin:0;padding-bottom:0;padding-right:.5em}.diff li{padding-top:.5em}.beautify .count li{padding-top:.5em}@media screen and (-webkit-min-device-pixel-ratio:0) {.beautify .count li{padding-top:.546em}}#doc .beautify .count li.fold{color:#900;cursor:pointer;font-weight:bold;padding-left:.5em}.diff .count,.beautify .count{border-style:solid;border-width:0 .1em 0 0;font-weight:normal;padding:0;text-align:right}.diff .count li,.beautify .count li{padding-left:2em}.diff .data,.beautify .data{text-align:left;white-space:pre}.diff .data li,.beautify .data li{letter-spacing:.1em;padding-left:.5em;white-space:pre}#webtool .diff h3{border-style:none solid solid;border-width:0 .1em .2em;box-shadow:none;display:block;font-family:Verdana;margin:0 0 0 -.1em;padding:.2em 2em;text-align:left}.diff li em{font-style:normal;margin:0 -.09em;padding:.05em 0}.diff p.author{border-style:solid;border-width:.2em .1em .1em;margin:0;overflow:hidden;padding:.4em;text-align:right}#dcolorScheme{float:right;margin:-2em 0 0 0}#dcolorScheme label{display:inline-block;font-size:1em;margin-right:1em}body#doc{font-size:.8em;max-width:80em}#doc th{font-weight:bold}#doc td span{display:block}#doc table,.box .body table{border-collapse:collapse;border-style:solid;border-width:.2em;clear:both}#doc table{font-size:1.2em}body#doc table{font-size:1em}#doc td,#doc th{border-left-style:solid;border-left-width:.1em;border-top-style:solid;border-top-width:.1em;padding:.5em}#doc em,.box .body em{font-style:normal;font-weight:bold}#doc div{margin-bottom:2em}#doc div div{clear:both;margin-bottom:1em}#doc h2{font-size:1.6em;margin:.5em .5em .5em 0}#doc ol{clear:both}#doc_contents li{font-size:1.75em;margin:1em 0 0}#doc_contents ol ol li{font-size:.75em;list-style:lower-alpha;margin:.5em 0 0}#doc_contents ol{padding-bottom:1em}#doc #doc_contents ol ol{background-color:inherit;border-style:none;margin:.25em .3em 0 0;padding-bottom:0}#doc_contents a{text-decoration:none}#diffoutput #thirdparties li{display:inline-block;list-style-type:none}#thirdparties a{border-style:none;display:block;height:4em;text-decoration:none}button,fieldset,.box h3.heading,.box .body,.options,.diff .replace em,.diff .delete em,.diff .insert em,.wide,.tall,#diffBase,#diffNew,#doc div,#doc div div,#doc ol,#option_comment,#update,#thirdparties img,#diffoutput #thirdparties{border-style:solid;border-width:.1em}#apitest p{clear:both;padding-top:.75em}#apitest label,#apitest select,#apitest input,#apitest textarea{float:left}#apitest label{width:20em}#apitest select,#apitest input,#apitest textarea{width:30em}#pdsamples{list-style-position:inside;margin:-12em 0 0 0;padding:0;position:relative;z-index:10}#pdsamples li{border-radius:1em;border-style:solid;border-width:.1em;margin:0 0 3em;padding:1em}#pdsamples li div{border-radius:1em;border-style:solid;border-width:.1em;margin:0;padding:1em}#pdsamples li p{display:inline-block;font-size:1em;margin:0}#pdsamples li p a{display:block;margin:0 0 1em 2em}#pdsamples li ul{margin:0 0 0 2em}#samples #pdsamples li li{background:none transparent;border-style:none;display:list-item;list-style:disc outside;margin:0;padding:.5em}#modalSave span{background:#000;display:block;left:0;opacity:.5;position:absolute;top:0;z-index:9000}#modalSave p{background:#eee;color:#333;font-size:3em;padding:1em;position:absolute;text-align:center;top:10em;width:25em;z-index:9001}#modalSave p em{display:block;font-size:.75em;margin-top:1em}#modalSave p strong{color:#c00;font-weight:bold}@media print{p,.options,#Beautify,#Minify,#diff,ul{display:none}div{width:100%}html td{font-size:.8em;white-space:normal}}",
         sdefault: "html body.default,body.default{background:url(\"images/body.gif\") repeat-x #a8b8c8;color:#000}body.default button{background:#dfd;border-color:#030;box-shadow:0 .1em .2em rgba(0,32,0,0.75);color:#030}.default a{color:#f00}.default button:hover{background:#f6fff6}.default button:active{background:#030;color:#dfd}.default #title_text{background:#fff;border-color:#000;box-shadow:0 .15em .3em rgba(0,0,0,0.5);color:#000}.default #introduction h2{border-color:#f00;color:#c00}.default h1 svg{border-color:#600;box-shadow:0 .2em .4em rgba(0,0,0,0.5)}.default h2,.default h3{border-color:#000}.default fieldset{border-color:#caa}.default legend{border-color:#fee;color:#966}.default .button button{background:url(\"images/green.png\") repeat-x 0 100%#dfd}.default .button button:hover{background:#f6fff6}.default .button button:active{background:#030;color:#efe}.default .box{background:#ccc;border-color:#006;box-shadow:0 .4em .8em rgba(0,0,64,0.75)}.default .box button{box-shadow:0 .1em .2em rgba(0,0,64,0.5)}.default .box button.resize{background:#ddf;border-color:#006;color:#006}.default .box button.minimize{background:#ddf;border-color:#006;color:#006}.default .box button.minimize:hover,.default .box button.resize:hover{background:#99f}.default .box button.save{background:#ddf;border-color:#006;color:#006}.default .box button.save:hover{background:#99f}.default .box h3.heading{background:#eef;border-color:#006}.default .box h3.heading:hover{background:#ccf}.default .box .body{background:#d8dde8;border-color:#006;box-shadow:0 0 .4em rgba(0,64,0,0.75)}.default .options{background:url(\"images/backred.gif\") #fee repeat-x 100% 100%;border-color:#600;box-shadow:0 .2em .4em rgba(64,0,0,0.5)}.default .options h2{border-color:#600;box-shadow:0 .1em .2em rgba(102,0,0,0.75)}.default #Beautify h2,.default #Minify h2,.default #diffBase h2,.default #diffNew h2{border-color:#006;box-shadow:0 .1em .2em rgba(0,0,64,0.5)}.default #option_comment{background:#fee;border-color:#600}.default #top em{color:#00f}.default #update{background:#fff;border-color:#000;box-shadow:0 .1em .2em rgba(0,0,0,0.5)}.default .wide,.default .tall,.default #diffBase,.default #diffNew{background:url(\"images/backblue.gif\") #eef repeat-x 100% 100%;border-color:#006;box-shadow:0 .2em .4em rgba(0,0,64,0.5)}.default .file input,.default .labeltext input{border-color:#006}#webtool.default input.unchecked{background:#eef8ff;color:#000}.default .options input[type=text],.default .options select{border-color:#933}.default #beautyoutput,.default #minifyoutput{background:#ddd}.default #diffoutput p em,.default #diffoutput li em{color:#c00}.default .analysis .bad{background-color:#e99;color:#400}.default .analysis .good{background-color:#9e9;color:#040}.default #doc .analysis thead th,.default #doc .analysis th[colspan]{background:#eef}.default div input{border-color:#933}.default textarea{border-color:#339}.default textarea:hover{background:#eef8ff}.default .diff,.default .diff-right,.default .diff-right .data,.default .diff-left{border-color:#669}.default .diff .count{background:#eed;border-color:#bbc;color:#664}.default .diff .count .empty{color:#eed}.default .diff .count li{background:#eed;border-color:#aa8;color:#886}.default .diff h3{background:#efefef;border-color:#669 #669 #bbc}.default .diff .empty{background-color:#ddd;border-color:#ccc}.default .diff .replace{background-color:#fd8;border-color:#cb6}#webtool.default .diff .replace em{background-color:#ffd;border-color:#963;color:#630}.default .diff .delete{background-color:#e99;border-color:#b88}#webtool.default .diff .delete em{background-color:#fdd;border-color:#700;color:#600}.default .diff .equal{background-color:#fff;border-color:#ddd}.default .diff .skip{background-color:#efefef;border-color:#ccc}.default .diff .insert{background-color:#9e9;border-color:#6c6}#webtool.default .diff .insert em{background-color:#efc;border-color:#070;color:#050}.default #doc table,.default .box .body table{background:#fff;border-color:#669}.default #doc strong,.default .box .body strong{color:#c00}.default .box .body em,.default .box .body #doc em{color:#090}.default .diff p.author{background:#efefef;border-color:#bbc #669 #669}.default #thirdparties img,.default #diffoutput #thirdparties{border-color:#687888}.default #diffoutput #thirdparties{background:#c8d8e8}.default #doc div,#doc.default div{background:#eef;border-color:#669}.default #doc ol,#doc.default ol{background:#fff;border-color:#669}.default #doc div div,#doc.default div div{background:#fff;border-color:#966}.default #doc table,#doc.default table{background:#fff;border-color:#669}.default #doc th,#doc.default th{background:#fed;border-left-color:#669;border-top-color:#669}.default #doc tr:hover,#doc.default tr:hover{background:#fed}#doc.default em{color:#060}.default #doc div:hover,#doc.default div:hover{background:#def}.default #doc div div:hover,#doc.default div div:hover,#doc.default div ol:hover{background:#fed}.default #pdsamples li{background:#eef;border-color:#006}.default #pdsamples li div{background:url(\"images/backred.gif\") repeat-x 100% 100%#fee;border-color:#600}.default #pdsamples li div a{color:#009}.default #pdsamples li p a{color:#900}",
-        scoffee : "html .coffee,body.coffee{background:#dcb;color:#321}.coffee a{color:#900}.coffee button{background:#654;border-color:#321;box-shadow:0 .1em .2em rgba(32,0,0,0.75);color:#fed}.coffee button:hover,.coffee button:active{background:#fed;color:#654}.coffee #update,.coffee #title_text{background:#fff8ee;border-color:#600;box-shadow:0 .15em .3em rgba(32,0,0,0.5);color:#321}.coffee #introduction h2{color:#f00}.coffee h1 svg{border-color:#600;box-shadow:0 .2em .4em rgba(0,0,0,0.5)}.coffee h2,.coffee h3{border-color:#600}.coffee fieldset{background:#dcb;border-color:#654}.coffee legend{background:#fed;border-color:#654}.coffee .box{background:#ccc;border-color:#654;box-shadow:0 .4em .8em rgba(64,0,0,0.75)}.coffee .box button{border-color:#600;box-shadow:0 .1em .2em rgba(64,0,0,0.5);color:#600}.coffee .box button.minimize:hover,.coffee .box button.resize:hover,.coffee .box button.save:hover,.coffee .box button.maximize:hover{background:#654;color:#fed}.coffee .box button.resize{background:#c96}.coffee .box button.minimize{background:#eda}.coffee .box button.save{background:#db0}.coffee .box button.maximize{background:#dd8}.coffee .box h3.heading{background:#987;border-color:#600;color:#fed}.coffee .box h3.heading:hover{background:#654}.coffee .box .body{background:#fed;border-color:#654;box-shadow:0 .4em .8em rgba(64,0,0,0.75)}.coffee .options{background:#fed;border-color:#600;box-shadow:0 .4em .8em rgba(64,0,0,0.5)}.coffee .options h2{border-color:#600;box-shadow:0 .1em .2em rgba(64,0,0,0.75)}.coffee #Beautify h2,.coffee #Minify h2,.coffee #diffBase h2,.coffee #diffNew h2{border-color:#600;box-shadow:0 .1em .2em rgba(64,0,0,0.5)}.coffee #option_comment{border-color:#600;box-shadow:0 .1em .2em rgba(64,0,0,0.5);color:#600}.coffee #top em{color:#f00}.coffee .wide,.coffee .tall,.coffee #diffBase,.coffee #diffNew{background:#fed;border-color:#600;box-shadow:0 .2em .4em rgba(64,0,0,0.5)}.coffee .file input,.coffee .labeltext input{border-color:#600}#webtool.coffee input.unchecked{background:#cba;color:#000}.coffee .options input[type=text],.coffee .options select{border-color:#933}.coffee #beautyoutput,.coffee #minifyoutput{background:#dcb}.coffee #diffoutput p em,.coffee #diffoutput li em{color:#900}.coffee .analysis .bad{background-color:#eb9;color:#400}.coffee .analysis .good{background-color:#be9;color:#040}.coffee #doc .analysis thead th,.coffee #doc .analysis th[colspan]{background:#dcb}.coffee div input{border-color:#933}.coffee textarea{background:#fff8ee;border-color:#a66}.coffee textarea:hover{background:#fff}.coffee .diff,.coffee .diff h3,.coffee .diff-left,.coffee .diff-right,.coffee .diff-right ol,.coffee p.author{border-color:#966}.coffee .diff .count li{background:#edc;border-color:#966;color:#633}.coffee .diff .count{border-color:#966}.coffee .diff h3{background:#cba}.coffee .diff .empty{background-color:#ddd;border-color:#ccc}.coffee .diff .replace{background-color:#fda;border-color:#ec9}#webtool.coffee .diff .replace em{background-color:#ffd;border-color:#963;color:#630}.coffee .diff .delete{background-color:#ebb;border-color:#daa}#webtool.coffee .diff .delete em{background-color:#fee;border-color:#700;color:#600}.coffee .diff .equal{background-color:#fff8ee;border-color:#ecc}.coffee .diff .skip{background-color:#eee;border-color:#ccc}.coffee .diff .insert{background-color:#cec;border-color:#bdb}#webtool.coffee .diff .insert em{background-color:#efc;border-color:#070;color:#050}.coffee #doc table,.coffee .box .body table{background:#fff8ee;border-color:#966}.coffee #doc strong,.coffee .box .body strong{color:#900}.coffee .box .body em,.coffee .box .body #doc em{color:#262}.coffee .diff th.author{background:#cba;border-top-color:#966}.coffee #diffoutput #thirdparties{background:#edc;border-color:#600}.coffee #doc div,#doc.coffee div{background:#edc;border-color:#966}.coffee #doc ol,#doc.coffee ol{background:#fff8ee;border-color:#966}.coffee #doc div div,#doc.coffee div div{background:#fff;border-color:#966}.coffee #doc table,#doc.coffee table{background:#fff8ee;border-color:#966}.coffee #doc th,#doc.coffee th{background:#eed;border-left-color:#966;border-top-color:#966}.coffee #doc tr:hover,#doc.coffee tr:hover{background:#fed}.coffee #doc div:hover,#doc.coffee div:hover{background:#dcb}.coffee #doc div div:hover,#doc.coffee div div:hover,#doc.coffee div ol:hover{background:#dcb}.coffee #pdsamples li{background:#fed;border-color:#600}.coffee #pdsamples li div{background:#dcb;border-color:#654}.coffee #pdsamples li div a{color:#900}.coffee #pdsamples li p a{color:#900}",
-        sdark   : "html .dark,body.dark{background:#333;color:#eee}.dark a{color:#9cf}.dark button{background:#9cf;border-color:#036;box-shadow:0 .1em .2em rgba(224,224,255,0.75);color:#036}.dark button:hover,.dark button:active{background:#def}.dark #update,.dark #title_text{background:#def;border-color:#036;box-shadow:0 .1em .2em rgba(224,224,255,0.75);color:#036}.dark h1 svg{border-color:#00c;box-shadow:0 .1em .2em rgba(224,224,255,0.75)}.dark h2,.dark h3{background:#def;border-color:#006;color:#036}.dark fieldset{background:#246;border-color:#036}.dark legend{background:#def;border-color:#036;color:#036}.dark .box{background:#666;border-color:#abc}.dark .box button{border-color:#036;box-shadow:0 0 0 rgba(0,0,0,0);color:#036}.dark .box button.minimize:hover,.dark .box button.resize:hover,.dark .box button.save:hover,.dark .box button.maximize:hover{background:#def}.dark .box button.resize{background:#9cf}.dark .box button.save{background:#7ad}.dark .box button.minimize{background:#9cf}.dark .box button.maximize{background:#bef}.dark .box h3.heading{background:#8ad;border-color:#036;color:#036}.dark .box h3.heading:hover{background:#def}.dark .box .body{background:#abc;border-color:#036;box-shadow:0 0 0 rgba(0,0,0,0);color:#000}.dark .options{background:#024;border-color:#89a;box-shadow:0 .4em .8em rgba(224,224,255,0.5);color:#fff}.dark #Beautify h2,.dark #Minify h2,.dark #diffBase h2,.dark #diffNew h2,.dark .options h2{box-shadow:0 .1em .2em rgba(224,224,255,0.75)}.dark #option_comment{background:#bcd;border-color:#036;color:#036}.dark #top em{color:#f00}.dark .wide,.dark .tall,.dark #diffBase,.dark #diffNew{background:#024;border-color:#89a;box-shadow:0 .1em .2em rgba(224,224,255,0.5)}.dark .file input,.dark .labeltext input{border-color:#036}#webtool.dark input.unchecked{background:#ccc;color:#444}.dark .options input[type=text],.dark .options select{background:#bcd;border-color:#036}.dark #beautyoutput,.dark #minifyoutput{background:#ccc}.dark #diffoutput p em,.dark #diffoutput li em{color:#050}.dark .analysis .bad{background-color:#e99;color:#400}.dark .analysis .good{background-color:#be9;color:#040}.dark #doc .analysis thead th,.dark #doc .analysis th[colspan]{background:#8ac}.dark div input{border-color:#933}.dark textarea{background:#bcd;border-color:#036}.dark textarea:hover{background:#cdf}.dark .diff,.dark .diff-left,.dark .diff-right,.dark .diff ol,.dark .diff h3,.dark .diff p.author{border-color:#036}.dark .diff-right,.dark .diff-right h3{border-left-color:#000}.dark .diff .count{background:#369}.dark .diff .count li{border-color:#036}.dark .diff .count .empty{background:#369;color:#369}.dark .diff h3{background:#036;color:#def}.dark .diff .empty{background-color:#456;border-color:#345}.dark .diff .replace{background-color:#468;border-color:#579;color:#def}#webtool.dark .diff .replace em{background-color:#dff;border-color:#036;color:#036}.dark .diff .delete{background-color:#600;border-color:#400;color:#fbb}#webtool.dark .diff .delete em{background-color:#fbb;border-color:#600;color:#600}.dark .diff .equal{background-color:#024;border-color:#135;color:#def}.dark .diff .skip{background-color:#333;border-color:#444}.dark .diff .insert{background-color:#696;border-color:#464;color:#dfd}#webtool.dark .diff .insert em{background-color:#efc;border-color:#060;color:#050}.dark #doc table,.dark .box .body table{background:#024;border-color:#036;color:#def}.dark #doc strong,.dark .box .body strong{color:#900}.dark .box .body em,.dark .box .body #doc em{color:#360}.dark .diff p.author{background:#036;color:#def}.dark #diffoutput #thirdparties{background:#024;border-color:#369}.dark #diffoutput #thirdparties a{color:#00f}.dark #doc div,#doc.dark div{background:#246;border-color:#036}.dark #doc ol,#doc.dark ol{background:#024;border-color:#036}.dark #doc div div,#doc.dark div div{background:#024;border-color:#036}.dark #doc table,#doc.dark table{background:#024;border-color:#036}.dark #doc th,#doc.dark th{background:#468;border-left-color:#036;border-top-color:#036}.dark #doc tr:hover,#doc.dark tr:hover{background:#468}.dark #doc td,#doc.dark td{border-color:#036}.dark #doc div:hover,#doc.dark div:hover{background:#468}.dark #doc div div:hover,#doc.dark div div:hover,#doc.dark div ol:hover{background:#246}.dark #pdsamples li{background:#024;border-color:#89a}.dark #pdsamples li div{background:#444;border-color:#222}.dark #pdsamples li div a{color:#9cf}.dark #pdsamples li p a{color:#ccc}",
         scanvas : "html .canvas,body.canvas{background:#e8e8e8;color:#666}.canvas a{color:#450}.canvas button{background:#d8d8cf;border-color:#664;box-shadow:0 .1em .2em rgba(128,128,92,0.75);color:#664;text-shadow:.05em .05em .1em #999}.canvas button:hover,.canvas button:active{background:#ffe}.canvas #update,.canvas #title_text{background:#f8f8ee;box-shadow:0 .1em .2em rgba(128,128,92,0.75);color:#464}.canvas h1 svg{border-color:#664;box-shadow:0 .1em .2em rgba(128,128,92,0.75)}.canvas h2,.canvas h3{background:#f8f8ef;border-color:#664;box-shadow:0 .1em .2em rgba(128,128,92,0.75);text-shadow:none}.canvas .wide,.canvas .tall,.canvas #diffBase,.canvas #diffNew{background:#d8d8cf;border-color:#664;box-shadow:0 .2em .4em rgba(128,128,92,0.5);color:#444}.canvas .wide label,.canvas .tall label,.canvas #diffBase label,.canvas #diffNew label{text-shadow:.05em .05em .1em #aaa}.canvas .options{background:#d8d8cf;border-color:#664;box-shadow:0 .2em .4em rgba(128,128,92,0.5);color:#444;text-shadow:.05em .05em .1em #999}.canvas fieldset{background:#e8e8e8;border-color:#664}.canvas legend{background:#f8f8ef;border-color:#664}.canvas .box{background:#ccc;border-color:#664}.canvas .box .body{background:#e8e8e8;border-color:#664;box-shadow:0 .2em .4em rgba(128,128,92,0.75);color:#666}.canvas .box button{box-shadow:0 .1em .2em rgba(128,128,92,0.75)}.canvas .box button.resize{background:#cfcfd8;border-color:#446;color:#446}.canvas .box button.resize:hover{background:#bbf;border-color:#228;color:#228}.canvas .box button.save{background:#d8cfcf;border-color:#644;color:#644}.canvas .box button.save:hover{background:#fcc;border-color:#822;color:#822}.canvas .box button.minimize{background:#cfcfd8;border-color:#446;color:#446}.canvas .box button.minimize:hover{background:#bbf;border-color:#228;color:#228}.canvas .box button.maximize{background:#cfd8cf;border-color:#464;color:#464}.canvas .box button.maximize:hover{background:#cfc;border-color:#282;color:#282}.canvas .box h3.heading:hover{background:#d8d8cf}.canvas #option_comment{background:#e8e8e8;border-color:#664;color:#444}.canvas #top em{color:#fcc}#webtool.canvas input.unchecked{background:#ccc;color:#333}.canvas input,.canvas select{box-shadow:.1em .1em .2em #999}.canvas .file input,.canvas .labeltext input,.canvas .options input[type=text],.canvas .options select{background:#f8f8f8;border-color:#664}.canvas #beautyoutput,.canvas #minifyoutput{background:#ccc}.canvas #diffoutput p em,.canvas #diffoutput li em{color:#050}.canvas #doc .analysis thead th,.canvas #doc .analysis th[colspan]{background:#c8c8bf}.canvas textarea{background:#f8f8ef;border-color:#664}.canvas textarea:hover{background:#e8e8e8}.canvas .diff,.canvas ol,.canvas .diff p.author,.canvas .diff h3,.canvas .diff-right,.canvas .diff-left{border-color:#664}.canvas .diff .count{background:#c8c8bf}.canvas .diff .count .empty{background:#c8c8bf;border-color:#664;color:#c8c8bf}.canvas .diff .data{background:#f8f8ef}.canvas .diff h3{background:#c8c8bf;color:#664}.canvas .analysis .bad{background-color:#ecb;color:#744}.canvas .analysis .good{background-color:#cdb;color:#474}.canvas .diff .empty{background-color:#ccc;border-color:#bbb}.canvas .diff .replace{background-color:#dda;border-color:#cc8;color:#660}#webtool.canvas .diff .replace em{background-color:#ffd;border-color:#664;color:#880}.canvas .diff .delete{background-color:#da9;border-color:#c87;color:#600}#webtool.canvas .diff .delete em{background-color:#fdc;border-color:#600;color:#933}.canvas .diff .equal{background-color:#f8f8ef;border-color:#ddd;color:#666}.canvas .diff .skip{background-color:#eee;border-color:#ccc}.canvas .diff .insert{background-color:#bd9;border-color:#9c7;color:#040}#webtool.canvas .diff .insert em{background-color:#efc;border-color:#060;color:#464}.canvas .diff p.author{background:#ddc;color:#666}.canvas #doc table,.canvas .box .body table{background:#f8f8ef;border-color:#664;color:#666}.canvas #doc strong,.canvas .box .body strong{color:#933}.canvas .box .body em,.canvas .box .body #doc em{color:#472}.canvas #diffoutput #thirdparties{background:#c8c8bf;border-color:#664}.canvas #diffoutput #thirdparties a{color:#664}#doc.canvas{color:#444}.canvas #doc div,#doc.canvas div{background:#c8c8bf;border-color:#664}.canvas #doc ol,#doc.canvas ol{background:#e8e8e8;border-color:#664}.canvas #doc div div,#doc.canvas div div{background:#e8e8e8;border-color:#664}.canvas #doc table,#doc.canvas table{background:#f8f8ef;border-color:#664}.canvas #doc th,#doc.canvas th{background:#c8c8bf;border-left-color:#664;border-top-color:#664}.canvas #doc tr:hover,#doc.canvas tr:hover{background:#c8c8bf}.canvas #doc td,#doc.canvas td{border-color:#664}.canvas #doc div:hover,#doc.canvas div:hover{background:#d8d8cf}.canvas #doc div div:hover,#doc.canvas div div:hover,#doc.canvas div ol:hover{background:#f8f8ef}.canvas #pdsamples li{background:#d8d8cf;border-color:#664}.canvas #pdsamples li div{background:#e8e8e8;border-color:#664}.canvas #pdsamples li div a{color:#664}.canvas #pdsamples li p a{color:#450}",
-        sshadow : "html .shadow,body.shadow{background:#222;color:#eee}.shadow a{color:#f60}.shadow a:hover{color:#c30}.shadow button{background:#630;border-color:#600;box-shadow:0 .2em .4em rgba(0,0,0,1);color:#f90;text-shadow:.1em .1em .1em #000}.shadow button:hover,.shadow button:active{background:#300;border-color:#c00;color:#fc0;text-shadow:.1em .1em .1em rgba(0,0,0,.5)}.shadow #title_text{border-color:#222;color:#eee}.shadow #update{background:#ddd;border-color:#000;color:#222}.shadow h1 svg{border-color:#222;box-shadow:.2em .2em .4em #000}.shadow h2,.shadow h3{background-color:#666;border-color:#666;box-shadow:none;color:#ddd;padding-left:0;text-shadow:none}.shadow .wide,.shadow .tall,.shadow #diffBase,.shadow #diffNew{background:#666;border-color:#999;color:#ddd}.shadow .wide label,.shadow .tall label,.shadow #diffBase label,.shadow #diffNew label{text-shadow:.1em .1em .1em #333}.shadow textarea{background:#333;border-color:#000;color:#ddd}.shadow textarea:hover{background:#000}.shadow .options{background:#666;border-color:#999;color:#ddd;text-shadow:.1em .1em .2em #333}.shadow fieldset{background:#333;border-color:#999}.shadow legend{background:#eee;border-color:#333;box-shadow:0 .1em .2em rgba(0,0,0,0.75);color:#222;text-shadow:none}.shadow .box{background:#000;border-color:#999;box-shadow:.6em .6em .8em rgba(0,0,0,.75)}.shadow .box .body{background:#333;border-color:#999;color:#ddd}.shadow .box h3{background:#ccc;border-color:#333;box-shadow:.2em .2em .8em #000;color:#222}.shadow .box h3.heading:hover{background:#222;border-color:#ddd;color:#ddd}.shadow .box button{box-shadow:0 .1em .2em rgba(0,0,0,0.75);text-shadow:.1em .1em .1em rgba(0,0,0,.5)}.shadow .box button.resize{background:#bbf;border-color:#446;color:#446}.shadow .box button.resize:hover{background:#ddf;border-color:#228;color:#228}.shadow .box button.save{background:#d99;border-color:#300;color:#300}.shadow .box button.save:hover{background:#fcc;border-color:#822;color:#822}.shadow .box button.minimize{background:#bbf;border-color:#006;color:#006}.shadow .box button.minimize:hover{background:#eef;border-color:#228;color:#228}.shadow .box button.maximize{background:#9c9;border-color:#030;color:#030}.shadow .box button.maximize:hover{background:#cfc;border-color:#060;color:#060}.shadow #option_comment{background:#333;border-color:#999;color:#ddd}.shadow #option_comment,.shadow input,.shadow select{box-shadow:.1em .1em .2em #000}.shadow input[disabled]{box-shadow:none}.shadow #top em{color:#684}#webtool.shadow input.unchecked{background:#666;color:#ddd}.shadow .file input,.shadow .labeltext input,.shadow .options input[type=text],.shadow .options select{background:#333;border-color:#999;color:#ddd}.shadow .options fieldset span input[type=text]{background:#222;border-color:#333}.shadow #beautyoutput,.shadow #minifyoutput{background:#555;color:#eee}.shadow #doc .analysis th[colspan],.shadow .diff h3,.shadow #doc .analysis thead th{background:#555;border-color:#999;color:#ddd}.shadow .analysis .bad{background-color:#400;color:#c66}.shadow .analysis .good{background-color:#040;color:#6a6}.shadow .diff,.shadow .diff div,.shadow .diff p,.ahadow .diff ol,.shadow .diff li,.shadow .diff .count li,.shadow .diff-right .data{border-color:#999}.shadow .diff .diff-right{border-color:#999 #999 #999 #333}.shadow .diff .count{background:#bbb;color:#333}.shadow .diff .data{background:#333;color:#ddd}.shadow .diff .empty{background-color:#999;border-color:#888}.shadow .diff .replace{background-color:#664;border-color:#707050;color:#bb8}.shadow .diff .count .empty{background:#bbb;color:#bbb}#webtool.shadow .diff .replace em{background-color:#440;border-color:#220;color:#cc9}.shadow .diff .delete{background-color:#300;border-color:#400;color:#c66}#webtool.shadow .diff .delete em{background-color:#700;border-color:#c66;color:#f99}.shadow .diff .equal{background-color:#333;border-color:#404040;color:#ddd}.shadow .diff .skip{background-color:#000;border-color:#555}.shadow .diff .insert{background-color:#040;border-color:#005000;color:#6c6}#webtool.shadow .diff .insert em{background-color:#363;border-color:#6c0;color:#cfc}.shadow .diff p.author{background:#555;border-color:#999;color:#ddd}.shadow table td{border-color:#999}.shadow .diff,.shadow #doc table,.shadow .box .body table{background:#333;border-color:#999;color:#ddd}.shadow #doc strong,.shadow .box .body strong{color:#b33}.shadow .box .body em,.shadow .box .body #doc em,.shadow #diffoutput p em,.shadow #diffoutput li em{color:#684}.shadow #diffoutput #thirdparties{background:#666;border-color:#999}.shadow #diffoutput #thirdparties a{box-shadow:0 .2em .4em rgba(0,0,0,1);color:#000}#doc.shadow{color:#ddd}#doc.shadow h3 a{color:#f90}.shadow #doc div,#doc.shadow div{background:#666;border-color:#999}.shadow #doc ol,#doc.shadow ol{background:#333;border-color:#999}.shadow #doc div div,#doc.shadow div div{background:#333;border-color:#999}.shadow #doc table,#doc.shadow table{background:#333;border-color:#999}.shadow #doc th,#doc.shadow th{background:#bbb;border-left-color:#999;border-top-color:#999;color:#333}.shadow #doc tr:hover,#doc.shadow tr:hover{background:#555}.shadow #doc div:hover,#doc.shadow div:hover{background:#777}.shadow #doc div div:hover,#doc.shadow div div:hover,#doc.shadow div ol:hover{background:#444}.shadow #textreport{background:#222}.shadow #pdsamples li{background:#666;border-color:#999}.shadow #pdsamples li div{background:#333;border-color:#999}.shadow #pdsamples li p a{color:#f90}.shadow #pdsamples li p a:hover{color:#fc0}",
+        sshadow : "html .shadow,body.shadow{background:#222;color:#eee}.shadow a{color:#f90}.shadow a:hover{color:#c30}.shadow button{background:#630;border-color:#600;box-shadow:0 .2em .4em rgba(0,0,0,1);color:#f90;text-shadow:.1em .1em .1em #000}.shadow button:hover,.shadow button:active{background:#300;border-color:#c00;color:#fc0;text-shadow:.1em .1em .1em rgba(0,0,0,.5)}.shadow #title_text{border-color:#222;color:#eee}.shadow #update{background:#ddd;border-color:#000;color:#222}.shadow h1 svg{border-color:#222;box-shadow:.2em .2em .4em #000}.shadow h2,.shadow h3{background-color:#666;border-color:#666;box-shadow:none;color:#ddd;padding-left:0;text-shadow:none}.shadow .wide,.shadow .tall,.shadow #diffBase,.shadow #diffNew{background:#666;border-color:#999;color:#ddd}.shadow .wide label,.shadow .tall label,.shadow #diffBase label,.shadow #diffNew label{text-shadow:.1em .1em .1em #333}.shadow textarea{background:#333;border-color:#000;color:#ddd}.shadow textarea:hover{background:#000}.shadow .options{background:#666;border-color:#999;color:#ddd;text-shadow:.1em .1em .2em #333}.shadow fieldset{background:#333;border-color:#999}.shadow legend{background:#eee;border-color:#333;box-shadow:0 .1em .2em rgba(0,0,0,0.75);color:#222;text-shadow:none}.shadow .box{background:#000;border-color:#999;box-shadow:.6em .6em .8em rgba(0,0,0,.75)}.shadow .box .body{background:#333;border-color:#999;color:#ddd}.shadow .box h3{background:#ccc;border-color:#333;box-shadow:.2em .2em .8em #000;color:#222}.shadow .box h3.heading:hover{background:#222;border-color:#ddd;color:#ddd}.shadow .box button{box-shadow:0 .1em .2em rgba(0,0,0,0.75);text-shadow:.1em .1em .1em rgba(0,0,0,.5)}.shadow .box button.resize{background:#bbf;border-color:#446;color:#446}.shadow .box button.resize:hover{background:#ddf;border-color:#228;color:#228}.shadow .box button.save{background:#d99;border-color:#300;color:#300}.shadow .box button.save:hover{background:#fcc;border-color:#822;color:#822}.shadow .box button.minimize{background:#bbf;border-color:#006;color:#006}.shadow .box button.minimize:hover{background:#eef;border-color:#228;color:#228}.shadow .box button.maximize{background:#9c9;border-color:#030;color:#030}.shadow .box button.maximize:hover{background:#cfc;border-color:#060;color:#060}.shadow #option_comment{background:#333;border-color:#999;color:#ddd}.shadow #option_comment,.shadow input,.shadow select{box-shadow:.1em .1em .2em #000}.shadow input[disabled]{box-shadow:none}.shadow #top em{color:#684}#webtool.shadow input.unchecked{background:#666;color:#ddd}.shadow .file input,.shadow .labeltext input,.shadow .options input[type=text],.shadow .options select{background:#333;border-color:#999;color:#ddd}.shadow .options fieldset span input[type=text]{background:#222;border-color:#333}.shadow #beautyoutput,.shadow #minifyoutput{background:#555;color:#eee}.shadow #doc .analysis th[colspan],.shadow .diff h3,.shadow #doc .analysis thead th{background:#555;border-color:#999;color:#ddd}.shadow .analysis .bad{background-color:#400;color:#c66}.shadow .analysis .good{background-color:#040;color:#6a6}.shadow .diff,.shadow .diff div,.shadow .diff p,.ahadow .diff ol,.shadow .diff li,.shadow .diff .count li,.shadow .diff-right .data{border-color:#999}.shadow .diff .diff-right{border-color:#999 #999 #999 #333}.shadow .diff .count{background:#bbb;color:#333}.shadow .diff .data{background:#333;color:#ddd}.shadow .diff .empty{background-color:#999;border-color:#888}.shadow .diff .replace{background-color:#664;border-color:#707050;color:#bb8}.shadow .diff .count .empty{background:#bbb;color:#bbb}#webtool.shadow .diff .replace em{background-color:#440;border-color:#220;color:#cc9}.shadow .diff .delete{background-color:#300;border-color:#400;color:#c66}#webtool.shadow .diff .delete em{background-color:#700;border-color:#c66;color:#f99}.shadow .diff .equal{background-color:#333;border-color:#404040;color:#ddd}.shadow .diff .skip{background-color:#000;border-color:#555}.shadow .diff .insert{background-color:#040;border-color:#005000;color:#6c6}#webtool.shadow .diff .insert em{background-color:#363;border-color:#6c0;color:#cfc}.shadow .diff p.author{background:#555;border-color:#999;color:#ddd}.shadow table td{border-color:#999}.shadow .diff,.shadow #doc table,.shadow .box .body table{background:#333;border-color:#999;color:#ddd}.shadow #doc strong,.shadow .box .body strong{color:#b33}.shadow .box .body em,.shadow .box .body #doc em,.shadow #diffoutput p em,.shadow #diffoutput li em{color:#684}.shadow #diffoutput #thirdparties{background:#666;border-color:#999}.shadow #diffoutput #thirdparties a{box-shadow:0 .2em .4em rgba(0,0,0,1);color:#000}#doc.shadow{color:#ddd}#doc.shadow h3 a{color:#f90}.shadow #doc div,#doc.shadow div{background:#666;border-color:#999}.shadow #doc ol,#doc.shadow ol{background:#333;border-color:#999}.shadow #doc div div,#doc.shadow div div{background:#333;border-color:#999}.shadow #doc table,#doc.shadow table{background:#333;border-color:#999}.shadow #doc th,#doc.shadow th{background:#bbb;border-left-color:#999;border-top-color:#999;color:#333}.shadow #doc tr:hover,#doc.shadow tr:hover{background:#555}.shadow #doc div:hover,#doc.shadow div:hover{background:#777}.shadow #doc div div:hover,#doc.shadow div div:hover,#doc.shadow div ol:hover{background:#444}.shadow #textreport{background:#222}.shadow #pdsamples li{background:#666;border-color:#999}.shadow #pdsamples li div{background:#333;border-color:#999}.shadow #pdsamples li p a{color:#f90}.shadow #pdsamples li p a:hover{color:#fc0}",
         swhite  : "html .white,body.white{color:#333}body.white button{background:#eee;border-color:#222;box-shadow:0 .1em .2em rgba(64,64,64,0.75);color:#666;text-shadow:.05em .05em .1em #ccc}.white button:hover,.white button:active{background:#999;color:#eee;text-shadow:.1em .1em .1em #333}.white a{color:#009}.white #title_text{border-color:#fff;color:#333}.white #introduction h2{border-color:#999;color:#333}.white h1 svg{background:#eee;border-color:#999;box-shadow:0 .1em .2em rgba(150,150,150,0.5)}.white h2,.white h3{background:#eee;border-color:#eee;box-shadow:none;padding-left:0;text-shadow:none}.white fieldset{background:#ddd;border-color:#999}.white legend{background:#fff;border-color:#999;color:#333;text-shadow:none}.white .box{background:#666;border-color:#999;box-shadow:0 .4em .8em rgba(64,64,64,0.75)}.white .box button{box-shadow:0 .1em .2em rgba(0,0,0,0.75);text-shadow:.1em .1em .1em rgba(0,0,0,.5)}.white .box button.resize{background:#bbf;border-color:#446;color:#446}.white .box button.resize:hover{background:#ddf;border-color:#228;color:#228}.white .box button.save{background:#d99;border-color:#300;color:#300}.white .box button.save:hover{background:#fcc;border-color:#822;color:#822}.white .box button.minimize{background:#bbf;border-color:#006;color:#006}.white .box button.minimize:hover{background:#eef;border-color:#228;color:#228}.white .box button.maximize{background:#9c9;border-color:#030;color:#030}.white .box button.maximize:hover{background:#cfc;border-color:#060;color:#060}.white .box h3.heading{background:#ddd;border-color:#888;box-shadow:.2em .2em .4em #666}.white .box h3.heading:hover{background:#333;color:#eee}.white .box .body{background:#eee;border-color:#888;box-shadow:0 0 .4em rgba(64,64,64,0.75)}.white .options{background:#eee;border-color:#999;box-shadow:0 .2em .4em rgba(64,64,64,0.5);text-shadow:.05em .05em .1em #ccc}.white .options h2,.white #Beautify h2,.white #Minify h2,.white #diffBase h2,.white #diffNew h2{background:#eee;border-color:#eee;box-shadow:none;text-shadow:none}.white #option_comment{background:#ddd;border-color:#999}.white #top em{color:#00f}.white #update{background:#eee;border-color:#999;box-shadow:0 .1em .2em rgba(64,64,64,0.5)}.white .wide,.white .tall,.white #diffBase,.white #diffNew{background:#eee;border-color:#999;box-shadow:0 .2em .4em rgba(64,64,64,0.5)}.white .file input,.white .labeltext input{border-color:#fff}#webtool.white input.unchecked{background:#ccc;color:#666}.white .options input[type=text],.white .options select{border-color:#999}.white #beautyoutput,.white #minifyoutput{background:#ddd}.white #diffoutput p em,.white #diffoutput li em{color:#c00}.white .analysis .bad{background-color:#ebb;color:#400}.white .analysis .good{background-color:#cec;color:#040}.white #doc .analysis thead th,.white #doc .analysis th[colspan]{background:#eef}.white div input{border-color:#999}.white textarea{border-color:#999}.white textarea:hover{background:#eef8ff}.white .diff,.white .diff ol,.white .diff .diff-left,.white .diff .diff-right,.white h3,.white p.author{border-color:#999}.white .diff .count li{background:#eed;border-color:#bbc;color:#886}.white .diff h3{background:#ddd;border-bottom-color:#bbc}.white .diff .empty{background-color:#ddd;border-color:#ccc}.white .diff .replace{background-color:#fea;border-color:#dd8}#webtool.white .diff .replace em{background-color:#ffd;border-color:#963;color:#630}.white .diff .delete{background-color:#fbb;border-color:#eaa}#webtool.white .diff .delete em{background-color:#fdd;border-color:#700;color:#600}.white .diff .equal{background-color:#fff;border-color:#eee}.white .diff .skip{background-color:#efefef;border-color:#ddd}.white .diff .insert{background-color:#bfb;border-color:#aea}#webtool.white .diff .insert em{background-color:#efc;border-color:#070;color:#050}.white .diff p.author{background:#efefef;border-top-color:#bbc}.white #doc table,.white .box .body table{background:#fff;border-color:#999}.white #doc strong,.white .box .body strong{color:#c00}.white .box .body em,.white .box .body #doc em{color:#090}.white #thirdparties img,.white #diffoutput #thirdparties{border-color:#999}.white #thirdparties img{box-shadow:.2em .2em .4em #999}.white #diffoutput #thirdparties{background:#eee}.white #doc div,#doc.white div{background:#ddd;border-color:#999}.white #doc ol,#doc.white ol{background:#eee;border-color:#999}.white #doc div div,#doc.white div div{background:#eee;border-color:#999}.white #doc table,#doc.white table{background:#fff;border-color:#999}.white #doc th,#doc.white th{background:#ddd;border-left-color:#999;border-top-color:#999}.white #doc tr:hover,#doc.white tr:hover{background:#ddd}#doc.white em{color:#060}.white #doc div:hover,#doc.white div:hover{background:#ccc}.white #doc div div:hover,#doc.white div div:hover,#doc.white div ol:hover{background:#fff}.white #pdsamples li{background:#eee;border-color:#999}.white #pdsamples li div{background:#ddd;border-color:#999}.white #pdsamples li div a{color:#47a}.white #pdsamples li p a{color:#009}"
     };
 
@@ -147,6 +161,281 @@ var exports = "",
     pd.o.report.minn.body  = (pd.o.report.minn.box === null) ? null : pd.o.report.minn.box.getElementsByTagName("div")[0];
     pd.o.report.stat.body  = (pd.o.report.stat.box === null) ? null : pd.o.report.stat.box.getElementsByTagName("div")[0];
 
+    if (pd.test.cm === true) {
+        pd.cm = {};
+        pd.cm.diffBase = codeMirror(function (x) {
+            var node = pd.$$("diffBase");
+            if (pd.o.codeDiffBase === null) {
+                if (node === null) {
+                    pd.o.page.appendChild(x);
+                } else {
+                    node.appendChild(x);
+                }
+            } else {
+                pd.o.codeDiffBase.parentNode.replaceChild(x, pd.o.codeDiffBase);
+            }
+            x.setAttribute("id", "baseText");
+            pd.o.codeDiffBase = x;
+        }, {
+            lineNumbers      : true,
+            indentUnit       : 4,
+            foldGutter       : true,
+            gutters          : ["CodeMirror-linenumbers", "CodeMirror-foldgutter"],
+            tabSize          : 4,
+            theme            : "shadow",
+            showTrailingSpace: true,
+            matchTags        : true,
+            matchBrackets    : true,
+            mode             : "javascript"
+        });
+        pd.cm.diffNew = codeMirror(function (x) {
+            var node = pd.$$("diffNew");
+            if (pd.o.codeDiffNew === null) {
+                if (node === null) {
+                    pd.o.page.appendChild(x);
+                } else {
+                    node.appendChild(x);
+                }
+            } else {
+                pd.o.codeDiffNew.parentNode.replaceChild(x, pd.o.codeDiffNew);
+            }
+            x.setAttribute("id", "newText");
+            pd.o.codeDiffNew = x;
+        }, {
+            lineNumbers      : true,
+            indentUnit       : 4,
+            foldGutter       : true,
+            gutters          : ["CodeMirror-linenumbers", "CodeMirror-foldgutter"],
+            tabSize          : 4,
+            theme            : "shadow",
+            showTrailingSpace: true,
+            matchTags        : true,
+            matchBrackets    : true,
+            mode             : "javascript"
+        });
+        pd.cm.beauIn = codeMirror(function (x) {
+            var node = pd.$$("Beautify");
+            if (pd.o.codeBeauIn === null) {
+                if (node === null) {
+                    pd.o.page.appendChild(x);
+                } else {
+                    node.appendChild(x);
+                }
+            } else {
+                pd.o.codeBeauIn.parentNode.replaceChild(x, pd.o.codeBeauIn);
+            }
+            x.setAttribute("id", "beautyinput");
+            pd.o.codeBeauIn = x;
+        }, {
+            lineNumbers      : true,
+            indentUnit       : 4,
+            foldGutter       : true,
+            gutters          : ["CodeMirror-linenumbers", "CodeMirror-foldgutter"],
+            tabSize          : 4,
+            theme            : "shadow",
+            showTrailingSpace: true,
+            matchTags        : true,
+            matchBrackets    : true,
+            mode             : "javascript"
+        });
+        pd.cm.beauOut = codeMirror(function (x) {
+            var node = pd.$$("Beautify");
+            if (pd.o.codeBeauOut === null) {
+                if (node === null) {
+                    pd.o.page.appendChild(x);
+                } else {
+                    node.appendChild(x);
+                }
+            } else {
+                pd.o.codeBeauOut.parentNode.replaceChild(x, pd.o.codeBeauOut);
+            }
+            x.setAttribute("id", "beautyoutput");
+            pd.o.codeBeauOut = x;
+        }, {
+            lineNumbers      : true,
+            indentUnit       : 4,
+            foldGutter       : true,
+            gutters          : ["CodeMirror-linenumbers", "CodeMirror-foldgutter"],
+            tabSize          : 4,
+            theme            : "shadow",
+            showTrailingSpace: true,
+            matchTags        : true,
+            matchBrackets    : true,
+            mode             : "javascript",
+            readOnly         : true
+        });
+        pd.cm.minnIn = codeMirror(function (x) {
+            var node = pd.$$("Minify");
+            if (pd.o.codeMinnIn === null) {
+                if (node === null) {
+                    pd.o.page.appendChild(x);
+                } else {
+                    node.appendChild(x);
+                }
+            } else {
+                pd.o.codeMinnIn.parentNode.replaceChild(x, pd.o.codeMinnIn);
+            }
+            x.setAttribute("id", "minifyinput");
+            pd.o.codeMinnIn = x;
+        }, {
+            lineNumbers      : true,
+            indentUnit       : 4,
+            foldGutter       : true,
+            gutters          : ["CodeMirror-linenumbers", "CodeMirror-foldgutter"],
+            tabSize          : 4,
+            theme            : "shadow",
+            showTrailingSpace: true,
+            matchTags        : true,
+            matchBrackets    : true,
+            mode             : "javascript"
+        });
+        pd.cm.minnOut = codeMirror(function (x) {
+            var node = pd.$$("Minify");
+            if (pd.o.codeMinnOut === null) {
+                if (node === null) {
+                    pd.o.page.appendChild(x);
+                } else {
+                    node.appendChild(x);
+                }
+            } else {
+                pd.o.codeMinnOut.parentNode.replaceChild(x, pd.o.codeMinnOut);
+            }
+            x.setAttribute("id", "minifyoutput");
+            pd.o.codeMinnOut = x;
+        }, {
+            lineNumbers      : true,
+            indentUnit       : 4,
+            foldGutter       : true,
+            gutters          : ["CodeMirror-linenumbers", "CodeMirror-foldgutter"],
+            tabSize          : 4,
+            theme            : "shadow",
+            showTrailingSpace: true,
+            matchTags        : true,
+            matchBrackets    : true,
+            mode             : "javascript",
+            readOnly         : true
+        });
+        //language detection
+        pd.auto = function dom__auto(a) {
+            var b     = a.replace(/\[[a-zA-Z][\w\-]*\=("|')?[a-zA-Z][\w\-]*("|')?\]/g, "").split(""),
+                c     = b.length,
+                d     = 0,
+                join  = "",
+                flaga = false,
+                flagb = false;
+            if ((/^(\s*#)/).test(a) === true) {
+                return "css";
+            }
+            if (/^([\s\w]*<)/.test(a) === false && /(>[\s\w]*)$/.test(a) === false) {
+                for (d = 1; d < c; d += 1) {
+                    if (flaga === false) {
+                        if (b[d] === "*" && b[d - 1] === "/") {
+                            b[d - 1] = "";
+                            flaga    = true;
+                        } else if (flagb === false && b[d] === "f" && d < c - 6 && b[d + 1] === "i" && b[d + 2] === "l" && b[d + 3] === "t" && b[d + 4] === "e" && b[d + 5] === "r" && b[d + 6] === ":") {
+                            flagb = true;
+                        }
+                    } else if (flaga === true && b[d] === "*" && d !== c - 1 && b[d + 1] === "/") {
+                        flaga    = false;
+                        b[d]     = "";
+                        b[d + 1] = "";
+                    } else if (flagb === true && b[d] === ";") {
+                        flagb = false;
+                        b[d]  = "";
+                    }
+                    if (flaga === true || flagb === true) {
+                        b[d] = "";
+                    }
+                }
+                join = b.join("");
+                if (/^(\s*\{)/.test(a) === true && /(\}\s*)$/.test(a) && a.indexOf(",") !== -1) {
+                    return "javascript";
+                }
+                if ((/((\}?(\(\))?\)*;?\s*)|([a-z0-9]("|')?\)*);?(\s*\})*)$/i).test(a) === true && ((/(var\s+[a-z]+[a-zA-Z0-9]*)/).test(a) === true || /(\=\s*function)|(\s*function\s+(\w*\s+)?\()/.test(a) === true || a.indexOf("{") === -1 || (/^(\s*if\s+\()/).test(a) === true)) {
+                    if (a.indexOf("(") > -1 || a.indexOf("=") > -1 || (a.indexOf(";") > -1 && a.indexOf("{") > -1) || pd.mode !== "diff") {
+                        return "javascript";
+                    }
+                    return "text";
+                }
+                if ((/^(\s*[\$\.#@a-z0-9])|^(\s*\/\*)|^(\s*\*\s*\{)/i).test(a) === true && (/^(\s*if\s*\()/).test(a) === false && a.indexOf("{") !== -1 && (/\=\s*(\{|\[|\()/).test(join) === false && ((/(\+|\-|\=|\*|\?)\=/).test(join) === false || ((/\=+('|")?\)/).test(a) === true && (/;\s*base64/).test(a) === true)) && (/function(\s+\w+)*\s*\(/).test(join) === false) {
+                    if ((/^(\s*return;?\s*\{)/).test(a) === true && (/(\};?\s*)$/).test(a) === true) {
+                        return "javascript";
+                    }
+                    return "css";
+                }
+                if (pd.mode === "diff") {
+                    return "text";
+                }
+                return "javascript";
+            }
+            if ((/(>[\w\s:]*)?<(\/|\!)?[\w\s:\-\[]+/.test(a) === true && (/^([\s\w]*<)/).test(a) === true && (/(>[\s\w]*)$/).test(a) === true) || ((/^(\s*<s((cript)|(tyle)))/i).test(a) === true && (/(<\/s((cript)|(tyle))>\s*)$/i).test(a) === true)) {
+                if ((/^(\s*<\!doctype html>)/i).test(a) === true || ((/^(\s*<\!DOCTYPE\s+((html)|(HTML))\s+PUBLIC\s+)/).test(a) === true && (/XHTML\s+1\.1/).test(a) === false && (/XHTML\s+1\.0\s+(S|s)((trict)|(TRICT))/).test(a) === false)) {
+                    return "html";
+                }
+                return "markup";
+            }
+            if (pd.mode === "diff") {
+                return "text";
+            }
+            return "javascript";
+        };
+        //execute pd.auto onkeyup for codeBeauIn and codeMinnIn
+        pd.langkey = function dom__langkey(x) {
+            var value = x.getValue(),
+                lang = (pd.o.lang === null || pd.o.lang[pd.o.lang.selectedIndex].value === "auto") ? "auto" : pd.o.lang[pd.o.lang.selectedIndex].value;
+            if (lang === "auto") {
+                lang = pd.auto(value);
+            }
+            if (x.options.mode !== lang) {
+                if (lang === "javascript" || lang === "text") {
+                    x.setOption("mode", "javascript");
+                    x.setOption("mode", "javascript");
+                }
+                if (lang === "markup") {
+                    x.setOption("mode", "xml");
+                    x.setOption("mode", "xml");
+                }
+                if (lang === "html") {
+                    x.setOption("mode", "htmlembedded");
+                    x.setOption("mode", "htmlembedded");
+                }
+                if (lang === "css") {
+                    x.setOption("mode", "text/x-scss");
+                    x.setOption("mode", "text/x-scss");
+                }
+            }
+        };
+        //set indentation size in CodeMirror
+        pd.insize = function dom__insize() {
+            var that = this,
+                value = Number(that.value);
+            if (that === pd.$$("diff-quan")) {
+                if (pd.o.codeDiffBase !== null) {
+                    pd.cm.diffBase.setOption("indentUnit", value);
+                }
+                if (pd.o.codeDiffNew !== null) {
+                    pd.cm.diffNew.setOption("indentUnit", value);
+                }
+            }
+            if (that === pd.$$("beau-quan")) {
+                if (pd.o.codeBeauIn !== null) {
+                    pd.cm.beauIn.setOption("indentUnit", value);
+                }
+                if (pd.o.codeBeauOut !== null) {
+                    pd.cm.beauOut.setOption("indentUnit", value);
+                }
+            }
+            if (that === pd.$$("minn-quan")) {
+                if (pd.o.codeMinnIn !== null) {
+                    pd.cm.minnIn.setOption("indentUnit", value);
+                }
+                if (pd.o.codeMinnOut !== null) {
+                    pd.cm.minnOut.setOption("indentUnit", value);
+                }
+            }
+        };
+    }
+
     //colSlider stuff is used with the horizontal dragging of columns in
     //the diff report
     pd.colSliderProperties = [];
@@ -220,32 +509,81 @@ var exports = "",
             event      = e || window.event,
             parent     = {},
             h3         = "",
+            lang       = "",
             node       = {},
             requests   = false,
             requestd   = false,
             completes  = false,
             completed  = false,
+            autotest   = false,
+            cmlang     = function dom__recycle_cmlang() {
+                if (api.lang === "auto") {
+                    autotest = true;
+                    api.lang = pd.auto(api.source);
+                }
+                lang = api.lang;
+                if (lang === "html") {
+                    lang = "htmlembedded";
+                } else if (lang === "css") {
+                    lang = "text/x-scss";
+                } else if (lang === "markup") {
+                    lang = "xml";
+                }
+                if (pd.mode === "diff") {
+                    if (pd.cm.diffBase.options.mode !== lang) {
+                        if (lang === "text") {
+                            pd.cm.diffBase.setOption("mode", null);
+                        } else {
+                            pd.cm.diffBase.setOption("mode", lang);
+                        }
+                    }
+                    if (pd.cm.diffNew.options.mode !== lang) {
+                        if (lang === "text") {
+                            pd.cm.diffNew.setOption("mode", null);
+                        } else {
+                            pd.cm.diffNew.setOption("mode", lang);
+                        }
+                    }
+                }
+                if (pd.mode === "beau" && pd.cm.beauIn.options.mode !== lang) {
+                    pd.cm.beauIn.setOption("mode", lang);
+                    pd.cm.beauOut.setOption("mode", lang);
+                }
+                if (pd.mode === "minn" && pd.cm.minnIn.options.mode !== lang) {
+                    pd.cm.minnIn.setOption("mode", lang);
+                    pd.cm.minnOut.setOption("mode", lang);
+                }
+            },
             execOutput = function dom__recycle_execOutput() {
                 var diffList         = [],
                     button           = {},
                     buttons          = {},
                     maximize         = pd.$$("hideOptions"),
                     presumedLanguage = "";
+
                 pd.zIndex += 1;
                 if (api.mode === "beautify") {
                     if (pd.o.codeBeauOut !== null) {
-                        pd.o.codeBeauOut.value = output[0];
+                        if (pd.test.cm === true) {
+                            pd.cm.beauOut.setValue(output[0]);
+                        } else {
+                            pd.o.codeBeauOut.value = output[0];
+                        }
                     }
                     if (pd.o.report.beau.box !== null) {
+                        if (output[1] !== "" && maximize !== null && maximize.innerHTML.replace(/\s+/g, " ") === "Maximize Inputs") {
+                            if (autotest === true) {
+                                output[1] = output[1].replace("seconds </em></p>", "seconds </em></p> <p>Language is set to <strong>auto</strong>. Presumed language is <em>" + api.lang + "</em>.</p>");
+                                api.lang = "auto";
+                            }
+                            pd.o.report.beau.body.innerHTML    = output[1];
+                            pd.o.report.beau.box.style.zIndex  = pd.zIndex;
+                            pd.o.report.beau.box.style.display = "block";
+                        }
                         if (output[1].length > 125000) {
                             pd.test.filled.beau = true;
                         } else {
                             pd.test.filled.beau = false;
-                        }
-                        if (output[1] !== "" && maximize !== null && maximize.innerHTML.replace(/\s+/g, " ") === "Maximize Inputs") {
-                            pd.o.report.beau.body.innerHTML    = output[1];
-                            pd.o.report.beau.box.style.zIndex  = pd.zIndex;
-                            pd.o.report.beau.box.style.display = "block";
                         }
                         parent = pd.o.report.beau.box.getElementsByTagName("p")[0];
                         h3     = pd.o.report.beau.box.getElementsByTagName("h3")[0].style.width;
@@ -318,6 +656,10 @@ var exports = "",
                     }
                 }
                 if (api.mode === "diff" && pd.o.report.diff.box !== null) {
+                    if (autotest === true) {
+                        output[1] = output[1].replace("seconds </em></p>", "seconds </em></p> <p>Language is set to <strong>auto</strong>. Presumed language is <em>" + api.lang + "</em>.</p>");
+                        api.lang = "auto";
+                    }
                     buttons = pd.o.report.diff.box.getElementsByTagName("p")[0].getElementsByTagName("button");
                     if (output[0].length > 125000) {
                         pd.test.filled.diff = true;
@@ -366,9 +708,17 @@ var exports = "",
                         pd.test.filled.min = false;
                     }
                     if (pd.o.codeMinnOut !== null) {
-                        pd.o.codeMinnOut.value = output[0];
+                        if (pd.test.cm === true) {
+                            pd.cm.minnOut.setValue(output[0]);
+                        } else {
+                            pd.o.codeMinnOut.value = output[0];
+                        }
                     }
                     if (output[1] !== "" && pd.o.report.minn.box !== null && pd.o.maxInputs.innerHTML.replace(/\s+/g, " ") === "Maximize Inputs") {
+                        if (autotest === true) {
+                            output[1] = output[1].replace("seconds </em</p>", "seconds </em</p> <p>Language is set to <strong>auto</strong>. Presumed language is <em>" + api.lang + "</em>.</p>");
+                            api.lang = "auto";
+                        }
                         pd.o.report.minn.body.innerHTML    = output[1];
                         pd.o.report.minn.box.style.zIndex  = pd.zIndex;
                         pd.o.report.minn.box.style.display = "block";
@@ -383,8 +733,7 @@ var exports = "",
                 }
                 if (pd.test.ls === true) {
                     (function dom__recycle_storage() {
-                        var lang     = "",
-                            lango    = {},
+                        var lango    = {},
                             size     = 0,
                             codesize = 0;
                         //this logic attempts to prevent writes to localStorage if they are likely to exceed 5mb of storage
@@ -496,24 +845,34 @@ var exports = "",
             };
 
         //do not execute keypress from alt, home, end, or arrow keys
-        if (typeof event === "object" && event.type === "keyup") {
-            if (pd.keypress.state === true) {
-                if (pd.keypress.keys.length > 0) {
-                    pd.keypress.keys.pop();
-                    if (pd.keypress.keys.length === 0) {
-                        pd.keypress.state = false;
+        if (typeof event === "object") {
+            if (event.type === "keydown") {
+                if (pd.test.keypress === true) {
+                    if ((pd.test.keystore.length === 0 || pd.test.keystore[pd.test.keystore.length - 1] !== event.keyCode) && event.keyCode !== 17) {
+                        pd.test.keystore.push(event.keyCode);
                     }
+                    return true;
+                }
+                if (pd.test.keypress === false && (event.keyCode === 17 || event.ctrlKey === true)) {
+                    pd.test.keypress = true;
                     return false;
                 }
             }
-            node = pd.$$("jsscope-yes");
-            //jsscope does not get the convenience of keypress execution, because its overhead is costly
-            if (node !== null && node.checked === true && (pd.mode === "beau" || event.altKey === true || event.keyCode === 16 || event.keyCode === 18 || event.keyCode === 35 || event.keyCode === 36 || event.keyCode === 37 || event.keyCode === 38 || event.keyCode === 39 || event.keyCode === 40)) {
-                return false;
-            }
-            if ((event.keyCode === 17 || event.ctrlKey === true) && pd.keypress.state === true && pd.keypress.keys.length === 0) {
-                pd.keypress.state = false;
-                return false;
+            if (event.type === "keyup") {
+                //jsscope does not get the convenience of keypress execution, because its overhead is costly
+                node = pd.$$("jsscope-yes");
+                if ((node !== null && node.checked === true && pd.mode === "beau") || event.altKey === true || event.keyCode === 16 || event.keyCode === 18 || event.keyCode === 35 || event.keyCode === 36 || event.keyCode === 37 || event.keyCode === 38 || event.keyCode === 39 || event.keyCode === 40) {
+                    return false;
+                }
+                if ((event.keyCode === 17 || event.ctrlKey === true) && pd.test.keypress === true) {
+                    if (pd.test.keystore.length === 0) {
+                        pd.test.keypress = false;
+                    }
+                }
+                if (pd.test.keypress === true && pd.test.keystore.length > 0) {
+                    pd.test.keystore.pop();
+                    return true;
+                }
             }
         }
         if (pd.test.ls === true && pd.o.report.stat.box !== null) {
@@ -575,8 +934,11 @@ var exports = "",
                     style       = {},
                     wrap        = {};
                 if (pd.o.codeBeauIn !== null) {
-                    pd.o.codeBeauIn = pd.$$("beautyinput");
-                    api.source      = pd.o.codeBeauIn.value;
+                    if (pd.test.cm === true) {
+                        api.source = pd.cm.beauIn.getValue();
+                    } else {
+                        api.source = pd.o.codeBeauIn.value;
+                    }
                 }
                 api.comments = (comments === null || comments.checked === false) ? false : true;
                 api.insize   = (quantity === null || isNaN(quantity.value) === true) ? 4 : Number(quantity.value);
@@ -648,7 +1010,11 @@ var exports = "",
                     topcoms     = pd.$$("topcoms-yes");
                 if (pd.o.codeMinnIn !== null) {
                     pd.o.codeMinnIn = pd.$$("minifyinput");
-                    api.source      = pd.o.codeMinnIn.value;
+                    if (pd.test.cm === true) {
+                        api.source = pd.cm.minnIn.getValue();
+                    } else {
+                        api.source = pd.o.codeMinnIn.value;
+                    }
                 }
                 api.conditional = (conditional === null || conditional.checked === false) ? false : true;
                 api.html        = (html === null || html.checked === false) ? false : true;
@@ -745,8 +1111,20 @@ var exports = "",
                     pd.o.codeDiffNew.value = "Error: diff code is missing.";
                     return;
                 }
-                api.source = (pd.o.codeDiffBase === null) ? "" : pd.o.codeDiffBase.value;
-                api.diff   = (pd.o.codeDiffNew === null) ? "" : pd.o.codeDiffNew.value;
+                if (pd.o.codeDiffBase !== null) {
+                    if (pd.test.cm === true) {
+                        api.source = pd.cm.diffBase.getValue();
+                    } else {
+                        api.source = pd.o.codeDiffBase.value;
+                    }
+                }
+                if (pd.o.codeDiffNew !== null) {
+                    if (pd.test.cm === true) {
+                        api.diff = pd.cm.diffNew.getValue();
+                    } else {
+                        api.diff = pd.o.codeDiffNew.value;
+                    }
+                }
                 api.mode   = "diff";
                 if (domain.test(api.diff) === true && pd.test.xhr === true) {
                     (function dom__recycle_xhrDiff() {
@@ -763,6 +1141,9 @@ var exports = "",
                                     if (xhr.status === 200 || xhr.status === 0) {
                                         api.diff = xhr.responseText.replace(/\r\n/g, "\n");
                                         if (completes === true) {
+                                            if (pd.test.cm === true) {
+                                                cmlang();
+                                            }
                                             output = pd.application(api);
                                             execOutput();
                                             return;
@@ -794,7 +1175,10 @@ var exports = "",
                         if (xhr.readyState === 4) {
                             if (xhr.status === 200 || xhr.status === 0) {
                                 api.source = xhr.responseText.replace(/\r\n/g, "\n");
-                                if (pd.o.dd === null || pd.o.dd.checked === false || (requestd === true && completed === true)) {
+                                if (pd.mode !== "diff" || (requestd === true && completed === true)) {
+                                    if (pd.test.cm === true) {
+                                        cmlang();
+                                    }
                                     output = pd.application(api);
                                     execOutput();
                                     return;
@@ -811,6 +1195,9 @@ var exports = "",
             }());
         }
         if (requests === false && requestd === false) {
+            if (pd.test.cm === true) {
+                cmlang();
+            }
             output = pd.application(api);
             execOutput();
         }
@@ -934,24 +1321,33 @@ var exports = "",
 
     //change the color scheme of the web UI
     pd.colorScheme         = function DOM_colorScheme(node) {
-        var x         = (node.nodeType === 1) ? node : this,
-            index     = x.selectedIndex,
+        var x         = (node !== undefined && node.nodeType === 1) ? node : this,
             option    = x.getElementsByTagName("option"),
+            optionLen = option.length,
+            index     = (function dom__colorScheme_indexLen() {
+                if (x.selectedIndex < 0 || x.selectedIndex > optionLen) {
+                    x.selectedIndex = optionLen - 1;
+                    return optionLen - 1;
+                }
+                return x.selectedIndex;
+            }()),
             color     = option[index].innerHTML.toLowerCase().replace(/\s+/g, ""),
             logoColor = "",
             logo      = pd.$$("pdlogo");
         pd.o.page.setAttribute("class", color);
+        if (pd.test.cm === true) {
+            pd.cm.diffBase.setOption("theme", color);
+            pd.cm.diffNew.setOption("theme", color);
+            pd.cm.beauIn.setOption("theme", color);
+            pd.cm.beauOut.setOption("theme", color);
+            pd.cm.minnIn.setOption("theme", color);
+            pd.cm.minnOut.setOption("theme", color);
+        }
         pd.color = color;
         if (logo !== null) {
             switch (color) {
             case "default":
                 logoColor = "234";
-                break;
-            case "coffee":
-                logoColor = "654";
-                break;
-            case "dark":
-                logoColor = "8ad";
                 break;
             case "canvas":
                 logoColor = "664";
@@ -1584,7 +1980,7 @@ var exports = "",
             node.style.paddingTop   = "1em";
             node.style.position     = "relative";
             node.style.width        = (pageWidth - 4.7) + "em";
-            node.style.zIndex       = "5";
+            node.style.zIndex       = "500";
         } else {
             node.style.height       = "2.5em";
             node.style.marginBottom = "-1.5em";
@@ -1603,7 +1999,7 @@ var exports = "",
             lang        = (pd.o.lang === null) ? "javascript" : ((pd.o.lang.nodeName === "select") ? pd.o.lang[pd.o.lang.selectedIndex].value : pd.o.lang.value),
             langOps     = [],
             node        = {},
-            langtest    = (pd.o.lang !== null && pd.o.lang.nodeName === "select") ? true : false,
+            langtest    = (pd.o.lang !== null && pd.o.lang.nodeName.toLowerCase() === "select") ? true : false,
             optioncheck = function dom__prettyvis_optioncheck() {
                 var c     = 0,
                     langs = [];
@@ -1652,6 +2048,50 @@ var exports = "",
             } else {
                 pd.o.beauOps.style.display = "block";
             }
+            if (pd.test.render.beau === false) {
+                lang = "";
+                if (pd.o.codeBeauIn !== null) {
+                    if (pd.test.ls === true && localStorage.codeBeautify !== undefined) {
+                        if (pd.test.cm === true) {
+                            if (langtest === true && pd.o.lang.selectedIndex === 0) {
+                                lang = pd.auto(localStorage.codeBeautify);
+                                if (lang === "html") {
+                                    lang = "htmlembedded";
+                                } else if (lang === "css") {
+                                    lang = "text/x-scss";
+                                } else if (lang === "markup") {
+                                    lang = "xml";
+                                }
+                                pd.cm.beauIn.setOption("mode", lang);
+                            }
+                            pd.cm.beauIn.setValue(localStorage.codeBeautify);
+                        } else {
+                            pd.o.codeBeauIn.value = localStorage.codeBeautify;
+                        }
+                    } else if (pd.test.cm === true) {
+                        pd.cm.beauIn.setValue(" ");
+                    }
+                }
+                if (pd.test.cm === true && pd.o.codeBeauOut !== null) {
+                    if (langtest === true && pd.o.lang.selectedIndex === 0) {
+                        if (lang === "" && pd.test.ls === true && localStorage.codeBeautify !== undefined) {
+                            lang = pd.auto(localStorage.codeBeautify);
+                            if (lang === "html") {
+                                lang = "htmlembedded";
+                            } else if (lang === "css") {
+                                lang = "text/x-scss";
+                            } else if (lang === "markup") {
+                                lang = "xml";
+                            }
+                        }
+                        if (lang !== "") {
+                            pd.cm.beauOut.setOption("mode", lang);
+                        }
+                    }
+                    pd.cm.beauOut.setValue(" ");
+                }
+            }
+            pd.test.render.beau = true;
         }
         if (a === pd.o.modeMinn) {
             pd.mode = "minn";
@@ -1690,6 +2130,50 @@ var exports = "",
             if (pd.o.beauOps !== null) {
                 pd.o.beauOps.style.display = "none";
             }
+            if (pd.test.render.minn === false) {
+                lang = "";
+                if (pd.o.codeMinnIn !== null) {
+                    if (pd.test.ls === true && localStorage.codeBeautify !== undefined) {
+                        if (pd.test.cm === true) {
+                            if (langtest === true && pd.o.lang.selectedIndex === 0) {
+                                lang = pd.auto(localStorage.codeMinify);
+                                if (lang === "html") {
+                                    lang = "htmlembedded";
+                                } else if (lang === "css") {
+                                    lang = "text/x-scss";
+                                } else if (lang === "markup") {
+                                    lang = "xml";
+                                }
+                                pd.cm.minnIn.setOption("mode", lang);
+                            }
+                            pd.cm.minnIn.setValue(localStorage.codeMinify);
+                        } else {
+                            pd.o.codeMinnIn.value = localStorage.codeMinify;
+                        }
+                    } else if (pd.test.cm === true) {
+                        pd.cm.minnIn.setValue(" ");
+                    }
+                }
+                if (pd.test.cm === true && pd.o.codeMinnOut !== null) {
+                    if (langtest === true && pd.o.lang.selectedIndex === 0) {
+                        if (lang === "" && pd.test.ls === true && localStorage.codeMinify !== undefined) {
+                            lang = pd.auto(localStorage.codeMinify);
+                            if (lang === "html") {
+                                lang = "htmlembedded";
+                            } else if (lang === "css") {
+                                lang = "text/x-scss";
+                            } else if (lang === "markup") {
+                                lang = "xml";
+                            }
+                        }
+                        if (lang !== "") {
+                            pd.cm.minnOut.setOption("mode", lang);
+                        }
+                    }
+                    pd.cm.minnOut.setValue(" ");
+                }
+            }
+            pd.test.render.minn = true;
         }
         if (a === pd.o.modeDiff) {
             pd.mode = "diff";
@@ -1753,6 +2237,53 @@ var exports = "",
                 if (node !== null) {
                     node.style.display = "block";
                 }
+            }
+            if (pd.test.render.diff === false && pd.mode === "diff") {
+                if (pd.o.codeDiffBase !== null) {
+                    if (pd.test.ls === true && localStorage.codeDiffBase !== undefined) {
+                        if (pd.test.cm === true) {
+                            if (langtest === true && pd.o.lang.selectedIndex === 0) {
+                                lang = pd.auto(localStorage.codeDiffBase);
+                                if (lang === "htmlembedded") {
+                                    lang = "htmlembedded";
+                                } else if (lang === "css") {
+                                    lang = "text/x-scss";
+                                } else if (lang === "markup") {
+                                    lang = "xml";
+                                }
+                                pd.cm.diffBase.setOption("mode", lang);
+                            }
+                            pd.cm.diffBase.setValue(localStorage.codeDiffBase);
+                        } else {
+                            pd.o.codeDiffBase.value = localStorage.codeDiffBase;
+                        }
+                    } else if (pd.test.cm === true) {
+                        pd.cm.diffBase.setValue(" ");
+                    }
+                }
+                if (pd.o.codeDiffNew !== null) {
+                    if (pd.test.ls === true && localStorage.codeDiffNew !== undefined) {
+                        if (pd.test.cm === true) {
+                            if (langtest === true && pd.o.lang.selectedIndex === 0) {
+                                lang = pd.auto(localStorage.codeDiffBase);
+                                if (lang === "html") {
+                                    lang = "htmlembedded";
+                                } else if (lang === "css") {
+                                    lang = "text/x-scss";
+                                } else if (lang === "markup") {
+                                    lang = "xml";
+                                }
+                                pd.cm.diffNew.setOption("mode", lang);
+                            }
+                            pd.cm.diffNew.setValue(localStorage.codeDiffNew);
+                        } else {
+                            pd.o.codeDiffNew.value = localStorage.codeDiffNew;
+                        }
+                    } else if (pd.test.cm === true) {
+                        pd.cm.diffNew.setValue(" ");
+                    }
+                }
+                pd.test.render.diff = true;
             }
         }
         if (a === pd.o.displayWide) {
@@ -1964,7 +2495,7 @@ var exports = "",
         pd.options(x);
     };
 
-    pd.hideBeauOut = function dom__hideBeauOut() {
+    pd.hideBeauOut         = function dom__hideBeauOut() {
         var node = {},
             wide = pd.$$("diffwide"),
             state = (pd.o.jsscope === null || pd.o.jsscope.checked === false) ? false : true,
@@ -1972,16 +2503,22 @@ var exports = "",
                 pd.o.codeBeauOut.parentNode.style.display = "block";
                 if (pd.o.codeBeauIn !== null) {
                     node = pd.o.codeBeauIn.parentNode;
-                    if (wide !== null && wide.checked === true) {
-                        node.parentNode.setAttribute("class", "wide");
+                    if (node !== null) {
+                        if (wide !== null && wide.checked === true) {
+                            node.parentNode.setAttribute("class", "wide");
+                        }
+                        if (node.parentNode.getAttribute("class") === "tall") {
+                            node.style.width = "49%";
+                            if (pd.test.load === false && pd.test.cm === false) {
+                                pd.o.codeBeauIn.style.height = "31.7em";
+                            }
+                        } else {
+                            node.style.width = "100%";
+                            pd.o.codeBeauIn.style.height = "14.8em";
+                        }
                     }
-                    if (node.parentNode.getAttribute("class") === "tall") {
-                        node.style.width = "49%";
-                        pd.o.codeBeauIn.style.height = "31.7em";
-                    } else {
-                        node.style.width = "100%";
-                        pd.o.codeBeauIn.style.height = "14.8em";
-                    }
+                    pd.o.codeBeauIn.onkeyup   = pd.recycle;
+                    pd.o.codeBeauIn.onkeydown = pd.recycle;
                 }
             };
         if (pd.o.codeBeauOut === null) {
@@ -1994,6 +2531,11 @@ var exports = "",
                     node = pd.o.codeBeauIn.parentNode;
                     node.style.width = "100%";
                     pd.o.codeBeauIn.style.height = "31.7em";
+                    if (pd.test.cm === true) {
+                        pd.o.codeBeauIn.onkeyup = function dom__hideBeauOut_langkey() {
+                            pd.langkey(pd.cm.beauIn);
+                        };
+                    }
                 }
             } else {
                 restore();
@@ -2048,6 +2590,35 @@ var exports = "",
         if (x === beauChar && beauOther !== null) {
             pd.options(beauOther);
         }
+        if (pd.test.cm === true) {
+            if (pd.mode === "diff") {
+                if (x === pd.$$("diff-tab")) {
+                    pd.cm.diffBase.setOption("indentWithTabs", true);
+                    pd.cm.diffNew.setOption("indentWithTabs", true);
+                } else {
+                    pd.cm.diffBase.setOption("indentWithTabs", false);
+                    pd.cm.diffNew.setOption("indentWithTabs", false);
+                }
+            }
+            if (pd.mode === "beau") {
+                if (x === pd.$$("beau-tab")) {
+                    pd.cm.beauIn.setOption("indentWithTabs", true);
+                    pd.cm.beauOut.setOption("indentWithTabs", true);
+                } else {
+                    pd.cm.beauIn.setOption("indentWithTabs", false);
+                    pd.cm.beauOut.setOption("indentWithTabs", false);
+                }
+            }
+            if (pd.mode === "minn") {
+                if (x === pd.$$("minn-tab")) {
+                    pd.cm.beauIn.setOption("indentWithTabs", true);
+                    pd.cm.beauOut.setOption("indentWithTabs", true);
+                } else {
+                    pd.cm.beauIn.setOption("indentWithTabs", false);
+                    pd.cm.beauOut.setOption("indentWithTabs", false);
+                }
+            }
+        }
         pd.options(x);
     };
 
@@ -2075,7 +2646,7 @@ var exports = "",
         } else if (node === "div" && classy === "box") {
             h3   = item.getElementsByTagName("h3")[0];
             body = item.getElementsByTagName("div")[0];
-            if (body.style.display === "none" && h3.clientWidth === 172) {
+            if (body.style.display === "none" && h3.clientWidth < 175) {
                 pd.settings[id].min = true;
                 pd.settings[id].max = false;
             } else if (pd.settings[id].max === false || pd.settings[id].max === undefined) {
@@ -2572,6 +3143,7 @@ var exports = "",
             buttons    = {},
             title      = {},
             statdump   = [],
+            langtest    = (pd.o.lang !== null && pd.o.lang.nodeName.toLowerCase() === "select") ? true : false,
             hideBeauOut = function dom__load_hideBeauOut() {
                 pd.hideBeauOut();
                 pd.options(this);
@@ -2772,18 +3344,6 @@ var exports = "",
                 if (statdump.length > 0) {
                     delete localStorage.statdata;
                 }
-                if (pd.o.codeDiffBase !== null && localStorage.codeDiffBase !== undefined) {
-                    pd.o.codeDiffBase.value = localStorage.codeDiffBase;
-                }
-                if (pd.o.codeDiffNew !== null && localStorage.codeDiffNew !== undefined) {
-                    pd.o.codeDiffNew.value = localStorage.codeDiffNew;
-                }
-                if (pd.o.codeBeauIn !== null && localStorage.codeBeautify !== undefined) {
-                    pd.o.codeBeauIn.value = localStorage.codeBeautify;
-                }
-                if (pd.o.codeMinnIn !== null && localStorage.codeMinify !== undefined) {
-                    pd.o.codeMinnIn.value = localStorage.codeMinify;
-                }
             }
             if (pd.test.agent.indexOf("webkit") > 0) {
                 inputs    = document.getElementsByTagName("textarea");
@@ -2793,18 +3353,26 @@ var exports = "",
                 }
             }
             if (pd.o.codeBeauIn !== null) {
-                pd.o.codeBeauIn.onkeyup = function dom__load_bindBeauIn(e) {
+                pd.o.codeBeauIn.onkeyup = function dom__load_bindBeauInUp(e) {
                     var event = e || window.event;
                     pd.recycle(event);
                 };
-                pd.o.codeBeauIn.onkeydown = pd.fixtabs;
+                pd.o.codeBeauIn.onkeydown = function dom__load_bindBeauInDown(e) {
+                    var event = e || window.event;
+                    pd.fixtabs();
+                    pd.recycle(event);
+                };
             }
             if (pd.o.codeMinnIn !== null) {
-                pd.o.codeMinnIn.onkeyup = function dom__load_bindMinnIn(e) {
+                pd.o.codeMinnIn.onkeyup = function dom__load_bindMinnInUp(e) {
                     var event = e || window.event;
                     pd.recycle(event);
                 };
-                pd.o.codeMinnIn.onkeydown = pd.fixtabs;
+                pd.o.codeMinnIn.onkeydown = function dom__load_bindMinnInDown(e) {
+                    var event = e || window.event;
+                    pd.fixtabs();
+                    pd.recycle(event);
+                };
             }
             if (pd.o.codeDiffBase !== null) {
                 pd.o.codeDiffBase.onkeydown = pd.fixtabs;
@@ -2951,7 +3519,7 @@ var exports = "",
                         inputs[a].onclick = pd.prettyvis;
                     } else if (name === "additional") {
                         inputs[a].onclick = pd.additional;
-                    } else if (name === "diffchar" || name === "beauchar") {
+                    } else if (name === "diffchar" || name === "beauchar" || name === "minnchar") {
                         inputs[a].onclick = pd.indentchar;
                     } else if (name === "jsscope") {
                         inputs[a].onclick = hideBeauOut;
@@ -2969,11 +3537,39 @@ var exports = "",
                         }
                     }
                 } else if (type === "text") {
-                    inputs[a].onkeyup = pd.options;
+                    if (pd.test.cm === true && (id === "diff-quan" || id === "beau-quan" || id === "minn-quan")) {
+                        inputs[a].onkeyup = pd.insize;
+                        if (pd.settings[id] !== undefined && pd.settings[id] !== "4" && isNaN(pd.settings[id]) === false) {
+                            if (id === "diff-quan") {
+                                if (pd.o.codeDiffBase !== null) {
+                                    pd.cm.diffBase.setOption("indentUnit", Number(pd.settings[id]));
+                                }
+                                if (pd.o.codeDiffNew !== null) {
+                                    pd.cm.diffNew.setOption("indentUnit", Number(pd.settings[id]));
+                                }
+                            } else if (id === "beau-quan") {
+                                if (pd.o.codeBeauIn !== null) {
+                                    pd.cm.beauIn.setOption("indentUnit", Number(pd.settings[id]));
+                                }
+                                if (pd.o.codeBeauOut !== null) {
+                                    pd.cm.beauOut.setOption("indentUnit", Number(pd.settings[id]));
+                                }
+                            } else if (id === "minn-quan") {
+                                if (pd.o.codeMinnIn !== null) {
+                                    pd.cm.minnIn.setOption("indentUnit", Number(pd.settings[id]));
+                                }
+                                if (pd.o.codeMinnOut !== null) {
+                                    pd.cm.minnOut.setOption("indentUnit", Number(pd.settings[id]));
+                                }
+                            }
+                        }
+                    } else {
+                        inputs[a].onkeyup = pd.options;
+                    }
                     if (pd.settings[id] !== undefined) {
                         inputs[a].value = pd.settings[id];
                     }
-                    if (id === "beau-char" || id === "diff-char") {
+                    if (id === "diff-char" || id === "beau-char") {
                         inputs[a].onclick = pd.indentchar;
                     }
                 } else if (type === "file") {
@@ -3113,7 +3709,7 @@ var exports = "",
                         } else if (params[b].indexOf("d=") === 0 && pd.o.codeDiffNew !== null) {
                             diff                   = params[b].substr(2);
                             pd.o.codeDiffNew.value = diff;
-                        } else if (params[b].toLowerCase() === "html") {
+                        } else if (params[b].toLowerCase() === "html" && pd.o.lang !== null) {
                             for (c = options.length - 1; c > -1; c -= 1) {
                                 if (options[c].value === "html") {
                                     pd.o.lang.selectedIndex = c;
@@ -3121,7 +3717,7 @@ var exports = "",
                                     break;
                                 }
                             }
-                        } else if (params[b].indexOf("l=") === 0) {
+                        } else if (params[b].indexOf("l=") === 0 && pd.o.lang !== null) {
                             value = params[b].toLowerCase().substr(2);
                             for (c = options.length - 1; c > -1; c -= 1) {
                                 if (value === "text") {
@@ -3142,6 +3738,37 @@ var exports = "",
                                     break;
                                 }
                             }
+                            if (pd.test.cm === true) {
+                                if (value === "html") {
+                                    pd.cm.diffBase.setOption("mode", "htmlembedded");
+                                    pd.cm.diffNew.setOption("mode", "htmlembedded");
+                                    pd.cm.beauIn.setOption("mode", "htmlembedded");
+                                    pd.cm.beauOut.setOption("mode", "htmlembedded");
+                                    pd.cm.minnIn.setOption("mode", "htmlembedded");
+                                    pd.cm.minnOut.setOption("mode", "htmlembedded");
+                                } else if (id === "css") {
+                                    pd.cm.diffBase.setOption("mode", "text/x-scss");
+                                    pd.cm.diffNew.setOption("mode", "text/x-scss");
+                                    pd.cm.beauIn.setOption("mode", "text/x-scss");
+                                    pd.cm.beauOut.setOption("mode", "text/x-scss");
+                                    pd.cm.minnIn.setOption("mode", "text/x-scss");
+                                    pd.cm.minnOut.setOption("mode", "text/x-scss");
+                                } else if (id === "markup") {
+                                    pd.cm.diffBase.setOption("mode", "xml");
+                                    pd.cm.diffNew.setOption("mode", "xml");
+                                    pd.cm.beauIn.setOption("mode", "xml");
+                                    pd.cm.beauOut.setOption("mode", "xml");
+                                    pd.cm.minnIn.setOption("mode", "xml");
+                                    pd.cm.minnOut.setOption("mode", "xml");
+                                } else if (value !== "javascript") {
+                                    pd.cm.diffBase.setOption("mode", value);
+                                    pd.cm.diffNew.setOption("mode", value);
+                                    pd.cm.beauIn.setOption("mode", value);
+                                    pd.cm.beauOut.setOption("mode", value);
+                                    pd.cm.minnIn.setOption("mode", value);
+                                    pd.cm.minnOut.setOption("mode", value);
+                                }
+                            }
                         } else if (params[b].indexOf("jsscope") === 0) {
                             if (pd.o.jsscope !== null) {
                                 pd.o.jsscope.click();
@@ -3150,6 +3777,31 @@ var exports = "",
                             node = pd.$$("jscorrect-yes");
                             if (node !== null) {
                                 node.checked = true;
+                            }
+                        } else if (params[b].indexOf("html") === 0) {
+                            node = pd.$$("html-yes");
+                            if (node !== null) {
+                                node.click();
+                            }
+                            node = pd.$$("htmld-yes");
+                            if (node !== null) {
+                                node.click();
+                            }
+                            value = params[b].toLowerCase().substr(2);
+                            for (c = options.length - 1; c > -1; c -= 1) {
+                                if (options[c].value === "html") {
+                                    pd.o.lang.selectedIndex = c;
+                                    pd.codeOps(pd.o.lang);
+                                    break;
+                                }
+                            }
+                            if (pd.test.cm === true) {
+                                pd.cm.diffBase.setOption("mode", "htmlembedded");
+                                pd.cm.diffNew.setOption("mode", "htmlembedded");
+                                pd.cm.beauIn.setOption("mode", "htmlembedded");
+                                pd.cm.beauOut.setOption("mode", "htmlembedded");
+                                pd.cm.minnIn.setOption("mode", "htmlembedded");
+                                pd.cm.minnOut.setOption("mode", "htmlembedded");
                             }
                         }
                     }
@@ -3169,6 +3821,73 @@ var exports = "",
                     }
                 }());
             }
+            if (pd.mode === "diff") {
+                if (pd.o.codeDiffBase !== null) {
+                    if (pd.test.cm === true) {
+                        pd.o.codeDiffBase.onkeyup = function dom__load_langkeyBase() {
+                            pd.langkey(pd.cm.diffBase);
+                        };
+                    }
+                    if (pd.test.ls === true && localStorage.codeDiffBase !== undefined) {
+                        if (pd.test.cm === true) {
+                            if (langtest === true && pd.o.lang.selectedIndex === 0) {
+                                id = pd.auto(localStorage.codeDiffBase);
+                                if (id === "html") {
+                                    id = "htmlembedded";
+                                } else if (id === "css") {
+                                    id = "text/x-scss";
+                                } else if (id === "markup") {
+                                    id = "xml";
+                                }
+                                pd.cm.diffBase.setOption("mode", id);
+                            }
+                            pd.cm.diffBase.setValue(localStorage.codeDiffBase);
+                        } else {
+                            pd.o.codeDiffBase.value = localStorage.codeDiffBase;
+                        }
+                    } else if (pd.test.cm === true) {
+                        pd.cm.diffBase.setValue(" ");
+                    }
+                }
+                if (pd.o.codeDiffNew !== null) {
+                    if (pd.test.cm === true) {
+                        pd.o.codeDiffNew.onkeyup = function dom__load_langkeyBase() {
+                            pd.langkey(pd.cm.diffNew);
+                        };
+                    }
+                    if (pd.test.ls === true && localStorage.codeDiffNew !== undefined) {
+                        if (pd.test.cm === true) {
+                            if (langtest === true && pd.o.lang.selectedIndex === 0) {
+                                id = pd.auto(localStorage.codeDiffBase);
+                                if (id === "html") {
+                                    id = "htmlembedded";
+                                } else if (id === "css") {
+                                    id = "text/x-scss";
+                                } else if (id === "markup") {
+                                    id = "xml";
+                                }
+                                pd.cm.diffNew.setOption("mode", id);
+                            }
+                            pd.cm.diffNew.setValue(localStorage.codeDiffNew);
+                        } else {
+                            pd.o.codeDiffNew.value = localStorage.codeDiffNew;
+                        }
+                    } else if (pd.test.cm === true) {
+                        pd.cm.diffNew.setValue(" ");
+                    }
+                }
+                pd.test.render.diff = true;
+            }
+            if (pd.test.cm === true) {
+                node = pd.$$("minn-quan");
+                if (node !== null) {
+                    node.parentNode.parentNode.style.display = "block";
+                }
+                node = pd.$$("minn-space");
+                if (node !== null) {
+                    node.parentNode.parentNode.style.display = "block";
+                }
+            }
         }
         if (page === "doc") {
             (function dom__load_doc() {
@@ -3180,6 +3899,7 @@ var exports = "",
                     output        = [],
                     rowLen        = 0,
                     date          = 0,
+                    colorParam    = (location && location.href && location.href.indexOf("?") > -1) ? location.href.toLowerCase().split("?")[1] : "",
                     conversion    = function dom__load_doc_conversion(dateInstance) {
                         var str   = String(dateInstance),
                             list  = [
@@ -3191,7 +3911,30 @@ var exports = "",
                         list[1] -= 1;
                         return list[2] + " " + month[list[1]] + " 20" + list[0];
                     };
-                componentArea = document.getElementById("components");
+                node = pd.$$("colorScheme");
+                if (node !== null) {
+                    pd.settings = (pd.test.ls === true && pd.test.json === true && localStorage.settings !== undefined) ? JSON.parse(localStorage.settings) : {};
+                    if (colorParam.indexOf("c=") === 0 || colorParam.indexOf("&c=") > -1) {
+                        if (colorParam.indexOf("&c=") > -1) {
+                            colorParam.substr(colorParam.indexOf("&c=") + 1);
+                        }
+                        colorParam = colorParam.split("&")[0];
+                        colorParam = colorParam.substr(colorParam.indexOf("=") + 1);
+                        row = node.getElementsByTagName("option");
+                        rowLen = row.length;
+                        for (b = 0; b < rowLen; b += 1) {
+                            if (row[b].value.toLowerCase() === colorParam) {
+                                node.selectedIndex = b;
+                                break;
+                            }
+                        }
+                    }
+                    if (((rowLen > 0 && b !== rowLen) || rowLen === 0) && pd.settings.colorScheme !== undefined) {
+                        node.selectedIndex = pd.settings.colorScheme;
+                    }
+                    pd.colorScheme(node);
+                }
+                componentArea = pd.$$("components");
                 if (componentArea !== null) {
                     componentArea = componentArea.getElementsByTagName("tbody")[0];
                     row           = componentArea.getElementsByTagName("tr");
@@ -3313,6 +4056,20 @@ var exports = "",
                             break;
                         case "prettydiff.wsf":
                             date               = edition.api.wsh;
+                            dateCell.innerHTML = conversion(date);
+                            dateList.push([
+                                date, row[b].innerHTML
+                            ]);
+                            break;
+                        case "codemirror.css":
+                            date               = edition.addon.cmcss;
+                            dateCell.innerHTML = conversion(date);
+                            dateList.push([
+                                date, row[b].innerHTML
+                            ]);
+                            break;
+                        case "codemirror.js":
+                            date               = edition.addon.cmjs;
                             dateCell.innerHTML = conversion(date);
                             dateList.push([
                                 date, row[b].innerHTML

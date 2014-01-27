@@ -105,6 +105,10 @@
 
  - used as markup-beauty function
  <http://prettydiff.com/lib/markup_beauty.js>
+ 
+ * CodeMirror
+ Copyright (C) 2013 by Marijn Haverbeke <marijnh@gmail.com> and others
+ <http://codemirror.com> - MIT License
 
  * pd.o object literal is in the api/dom.js file and exists to provide a
  one time and external means of access to the DOM for character entity
@@ -663,7 +667,7 @@ var prettydiff = function prettydiff(api) {
                                         subBuild.push(build[aaa]);
                                     }
                                 }
-                                build = [].concat(subBuild);
+                                build = subBuild;
                             }
                         }());
                         buildLen = build.length;
@@ -691,7 +695,7 @@ var prettydiff = function prettydiff(api) {
                                 if (build[aa].charAt(build[aa].length - 1) === ";") {
                                     build[aa] = build[aa].substr(0, build[aa].length - 1);
                                 }
-                                if (build[aa].indexOf("{") > -1 || build[aa].indexOf(",") > build[aa].length - 3) {
+                                if (build[aa].slice(0, 2) === "/*" || build[aa].indexOf("{") > -1 || build[aa].indexOf(",") > build[aa].length - 3) {
                                     c = [build[aa]];
                                 } else {
                                     c = build[aa].replace(/(\w|\W)?#[a-fA-F0-9]{3,6}(?!(\w*\)))(?=(;|\s|\)\}|,))/g, colorLow).replace(/:/g, "~PDCSEP~").split(";").sort();
@@ -1565,7 +1569,7 @@ var prettydiff = function prettydiff(api) {
                                         subBuild.push(build[aaa]);
                                     }
                                 }
-                                build = [].concat(subBuild);
+                                build = subBuild;
                             }
                         }());
                         buildLen = build.length;
@@ -1638,7 +1642,11 @@ var prettydiff = function prettydiff(api) {
                                     if (cc[e].length > 1 && typeof cc[e][1] === "string" && cc[e][1].length > 2) {
                                         cc[e][1] = cc[e][1].replace(/\//g, " / ").replace(/(\*)/g, "* ");
                                     }
-                                    if (cc[e][0] !== "margin" && cc[e][0].indexOf("margin") !== -1) {
+                                    if (cc[e][0] === "opacity" || cc[e][0] === "line-height") {
+                                        if ((/^(0+(\.0+)?)$/).test(cc[e][1]) === true) {
+                                            cc[e][1] = "prettydiffzero";
+                                        }
+                                    } else if (cc[e][0] !== "margin" && cc[e][0].indexOf("margin") !== -1) {
                                         marginCount += 1;
                                         if (marginCount === 4) {
                                             margin      = [cc[e][1]];
@@ -1777,13 +1785,13 @@ var prettydiff = function prettydiff(api) {
                     for (a = 0; a < commsLen; a += 1) {
                         if (comments[a].search(/\s*\/(\*)/) !== 0) {
                             commstor    = comments[a].split("/*");
-                            commstor[0] = commstor[0].replace(/@charset\s*("|')?[\w\-]+("|')?;?(\s*)/gi, "").replace(/(\S|\s)0+(%|in|cm|mm|em|ex|pt|pc)?;/g, runZero).replace(/:[\w\s\!\.\-%]*\d+\.0*(?!\d)/g, endZero).replace(/:[\w\s\!\.\-%#]* \.\d+/g, startZero).replace(/ \.?0((?=;)|(?= )|%|in|cm|mm|em|ex|pt|pc)/g, " 0px");
-                            commstor[0] = commstor[0].replace(/\w+(\-\w+)*: ((((\-?(\d*\.\d+)|\d+)[a-zA-Z]+)|0) )+(((\-?(\d*\.\d+)|\d+)[a-zA-Z]+)|0)/g, sameDist).replace(/background\-position: 0px;/g, "background-position: 0px 0px;").replace(/\s+\*\//g, "*\/");
+                            commstor[0] = commstor[0].replace(/@charset\s*("|')?[\w\-]+("|')?;?(\s*)/gi, "").replace(/(\S|\s)0+(%|in|cm|mm|em|ex|pt|pc)?;/g, runZero).replace(/:[\w\s\!\.\-%]*\d+\.0*(?!\d)/g, endZero).replace(/:[\w\s\!\.\-%#]* \.\d+/g, startZero).replace(/ \.?0((?=;)|(?= )|%|in|cm|mm|em|ex|pt|pc)/g, " 0em");
+                            commstor[0] = commstor[0].replace(/\w+(\-\w+)*: ((((\-?(\d*\.\d+)|\d+)[a-zA-Z]+)|0) )+(((\-?(\d*\.\d+)|\d+)[a-zA-Z]+)|0)/g, sameDist).replace(/background\-position: 0px;/g, "background-position: 0% 0%;").replace(/\s+\*\//g, "*\/");
                             commstor[0] = commstor[0].replace(/\s*[\w\-]+\:\s*(\}|;)/g, emptyend).replace(/\{\s+\}/g, "{}").replace(/\}\s*;\s*\}/g, nestblock).replace(/:\s+#/g, ": #").replace(/(\s+;+\n)+/g, "\n");
                             comments[a] = commstor.join("/*");
                         }
                     }
-                    source = comments.join("*\/");
+                    source = comments.join("*\/").replace(/prettydiffzero/g, "0");
                     if (atchar === null) {
                         atchar = [""];
                     } else if (atchar[0].charAt(atchar[0].length - 1) !== ";") {
@@ -5956,7 +5964,10 @@ var prettydiff = function prettydiff(api) {
                                 if (part[part.length - 1] === endParse[0] && braceCount === 0) {
                                     if (endLen === 1) {
                                         if (mhtml === true && (part[3] === ">" || part[3] === " " || part[3] === "l" || part[3] === "L")) {
-                                            name = part.slice(1, 4).join("").toLowerCase();
+                                            name = part.slice(1, 5).join("").toLowerCase();
+                                            if (name.slice(0, 2) === "li") {
+                                                name = name.slice(0, 4);
+                                            }
                                             b    = build.length - 1;
                                             if (b > -1) {
                                                 if (token[b] === "T_asp" || token[b] === "T_php" || token[b] === "T_ssi" || token[b] === "T_sgml" || token[b] === "T_xml" || token[b] === "T_comment") {
@@ -5964,8 +5975,11 @@ var prettydiff = function prettydiff(api) {
                                                         b -= 1;
                                                     } while (b > 0 && (token[b] === "T_asp" || token[b] === "T_php" || token[b] === "T_ssi" || token[b] === "T_sgml" || token[b] === "T_xml" || token[b] === "T_comment"));
                                                 }
-                                                ename = (build[b].charAt(0) === " ") ? build[b].slice(2, 5).toLowerCase() : build[b].slice(1, 4).toLowerCase();
-                                                if (((name === "li " || name === "li>") && ename !== "/li" && ename !== "ul " && ename !== "ul>" && ename !== "ol " && ename !== "ol>") || (name === "/ul" && ename !== "/li" && ename !== "ul " && ename !== "ul>") || (name === "/ol" && ename !== "/li" && ename !== "ol " && ename !== "ol>")) {
+                                                ename = build[b].toLowerCase().substr(1);
+                                                if (ename.charAt(0) === "<") {
+                                                    ename = ename.substr(1);
+                                                }
+                                                if (((name === "li " || name === "li>") && (ename === "/ol>" || ename === "/ul>")) || ((name === "/ul>" || name === "/ol>") && ename !== "/li>")) {
                                                     build.push("</prettydiffli>");
                                                     token.push("T_tag_end");
                                                 }
@@ -5996,7 +6010,7 @@ var prettydiff = function prettydiff(api) {
                                     if (y[a] === "/" && y[a + 1] && y[a + 1] === "/") {
                                         comment = "//";
                                     } else if (y[a] === "/" && y[a + 1] && y[a + 1] === "*") {
-                                        comment = "/*";
+                                        comment = "/" + "*";
                                     } else if (y[a] === "'" || y[a] === "\"" || y[a] === "/") {
                                         if (y[a] === "/") {
                                             for (b = a - 1; b > 0; b -= 1) {
@@ -6013,7 +6027,7 @@ var prettydiff = function prettydiff(api) {
                                             comment = y[a];
                                         }
                                     }
-                                } else if ((y[a - 1] !== "\\" || (a > 2 && y[a - 2] === "\\")) && ((comment === "'" && y[a] === "'") || (comment === "\"" && y[a] === "\"") || (comment === "/" && y[a] === "/") || (comment === "//" && (y[a] === "\n" || (y[a - 4] && y[a - 4] === "/" && y[a - 3] === "/" && y[a - 2] === "-" && y[a - 1] === "-" && y[a] === ">"))) || (comment === "/*" && y[a - 1] === "*" && y[a] === "/"))) {
+                                } else if ((y[a - 1] !== "\\" || (a > 2 && y[a - 2] === "\\")) && ((comment === "'" && y[a] === "'") || (comment === "\"" && y[a] === "\"") || (comment === "/" && y[a] === "/") || (comment === "//" && (y[a] === "\n" || (y[a - 4] && y[a - 4] === "/" && y[a - 3] === "/" && y[a - 2] === "-" && y[a - 1] === "-" && y[a] === ">"))) || (comment === ("/" + "*") && y[a - 1] === "*" && y[a] === "/"))) {
                                     comment = "";
                                 }
                                 if (((type === "script" && comment === "") || type === "style") && y[a] === "<" && y[a + 1] === "/" && y[a + 2].toLowerCase() === "s") {
@@ -6667,8 +6681,8 @@ var prettydiff = function prettydiff(api) {
                             svg         = false,
                             cdata       = [],
                             cdata1      = [],
-                            cdataStart  = (/^(\s*\/*<\!\[+[A-Z]+\[+)/),
-                            cdataEnd    = (/(\/*\]+>\s*)$/),
+                            cdataStart  = (/^(\s*(\/)*<\!\[+[A-Z]+\[+)/),
+                            cdataEnd    = (/((\/)*\]+>\s*)$/),
                             scriptStart = (/^(\s*<\!\-\-)/),
                             scriptEnd   = (/(\-\->\s*)$/),
                             loop        = cinfo.length,
@@ -8914,7 +8928,7 @@ var prettydiff = function prettydiff(api) {
                         autotest = true;
                         if ((/^(\s*#)/).test(a) === true) {
                             clang = "css";
-                            auto  = "CSS";
+                            auto = "<p>Language set to <strong>auto</strong>. Presumed language is <em>CSS</em>.</p>";
                             return;
                         }
                         if (/^([\s\w]*<)/.test(a) === false && /(>[\s\w]*)$/.test(a) === false) {
@@ -9372,23 +9386,27 @@ var prettydiff = function prettydiff(api) {
     //the edition values use the format YYMMDD for dates.
     edition    = {
         charDecoder  : 131224, //charDecoder library
-        cleanCSS     : 140123, //cleanCSS library
-        css          : 140114, //diffview.css file
+        cleanCSS     : 140127, //cleanCSS library
+        css          : 140127, //diffview.css file
         csvbeauty    : 140114, //csvbeauty library
         csvmin       : 131224, //csvmin library
         diffview     : 140101, //diffview library
-        documentation: 130814, //documentation.xhtml
-        jsmin        : 140114, //jsmin library (fulljsmin.js)
+        documentation: 140127, //documentation.xhtml
+        jsmin        : 140127, //jsmin library (fulljsmin.js)
         jspretty     : 140116, //jspretty library
-        markup_beauty: 140101, //markup_beauty library
+        markup_beauty: 140127, //markup_beauty library
         markupmin    : 140101, //markupmin library
-        prettydiff   : 140123, //this file
-        webtool      : 140114, //prettydiff.com.xhtml
+        prettydiff   : 140127, //this file
+        webtool      : 140127, //prettydiff.com.xhtml
         api          : {
-            dom        : 140118,
-            nodeLocal  : 140114,
+            dom        : 140127,
+            nodeLocal  : 140127,
             nodeService: 121106, //no longer maintained
-            wsh        : 140114
+            wsh        : 140127
+        },
+        addon        : {
+            cmjs : 140127, //CodeMirror JavaScript
+            cmcss: 140127 //CodeMirror CSS
         },
         latest       : 0
     };
