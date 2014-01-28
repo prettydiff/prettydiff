@@ -182,7 +182,7 @@ var exports = "",
             foldGutter       : true,
             gutters          : ["CodeMirror-linenumbers", "CodeMirror-foldgutter"],
             tabSize          : 4,
-            theme            : "shadow",
+            theme            : "white",
             showTrailingSpace: true,
             matchTags        : true,
             matchBrackets    : true,
@@ -207,7 +207,7 @@ var exports = "",
             foldGutter       : true,
             gutters          : ["CodeMirror-linenumbers", "CodeMirror-foldgutter"],
             tabSize          : 4,
-            theme            : "shadow",
+            theme            : "white",
             showTrailingSpace: true,
             matchTags        : true,
             matchBrackets    : true,
@@ -232,7 +232,7 @@ var exports = "",
             foldGutter       : true,
             gutters          : ["CodeMirror-linenumbers", "CodeMirror-foldgutter"],
             tabSize          : 4,
-            theme            : "shadow",
+            theme            : "white",
             showTrailingSpace: true,
             matchTags        : true,
             matchBrackets    : true,
@@ -257,7 +257,7 @@ var exports = "",
             foldGutter       : true,
             gutters          : ["CodeMirror-linenumbers", "CodeMirror-foldgutter"],
             tabSize          : 4,
-            theme            : "shadow",
+            theme            : "white",
             showTrailingSpace: true,
             matchTags        : true,
             matchBrackets    : true,
@@ -283,7 +283,7 @@ var exports = "",
             foldGutter       : true,
             gutters          : ["CodeMirror-linenumbers", "CodeMirror-foldgutter"],
             tabSize          : 4,
-            theme            : "shadow",
+            theme            : "white",
             showTrailingSpace: true,
             matchTags        : true,
             matchBrackets    : true,
@@ -308,7 +308,7 @@ var exports = "",
             foldGutter       : true,
             gutters          : ["CodeMirror-linenumbers", "CodeMirror-foldgutter"],
             tabSize          : 4,
-            theme            : "shadow",
+            theme            : "white",
             showTrailingSpace: true,
             matchTags        : true,
             matchBrackets    : true,
@@ -2934,11 +2934,13 @@ var exports = "",
     pd.hideOptions         = function dom__hideOptions() {
         var button = pd.$$("hideOptions"),
             node   = {},
-            height = 0;
+            height = 0,
+            text = "";
         if (button === null) {
             return;
         }
-        if (button.innerHTML.replace(/\s+/g, " ") === "Maximize Inputs") {
+        text = button.innerHTML.replace(/\s+/g, " ");
+        if (text === "Default Display" || text === "Maximize Inputs") {
             if (pd.o.displayTall !== null && pd.o.displayTall.checked === false) {
                 pd.prettyvis(pd.o.displayTall);
             }
@@ -3033,7 +3035,8 @@ var exports = "",
             }
             node.style.position     = "relative";
             node.style.marginBottom = "0em";
-            button.innerHTML        = "Normal View";
+            button.innerHTML        = "Show Options";
+            button.setAttribute("title", "Click on this button to see additional options and settings.");
             pd.options(button);
             return false;
         }
@@ -3115,6 +3118,7 @@ var exports = "",
         if (pd.o.displayWide !== null && pd.o.displayWide.checked === true) {
             pd.prettyvis(pd.o.displayWide);
         }
+        button.setAttribute("title", "Clicking this button will visually hide everything except for textarea elements and one 'Execute' button.");
         pd.options(button);
         return false;
     };
@@ -3170,7 +3174,7 @@ var exports = "",
                 var that = this;
                 pd.top(that.parentNode);
             },
-            page       = document.getElementsByTagName("body")[0].getAttribute("id"),
+            page       = (pd.o.page === null) ? "" : pd.o.page.getAttribute("id"),
             backspace  = function dom__load_backspace(event) {
                 var aa = event || window.event,
                     bb = aa.srcElement || aa.target;
@@ -3182,6 +3186,22 @@ var exports = "",
                 }
             };
         if (page === "webtool") {
+            node = pd.$$("hideOptions");
+            if (node !== null && node.innerHTML.replace(/\s+/, " ") === "Default Display") {
+                if (pd.test.ls === false || localStorage.settings === undefined) {
+                    pd.hideOptions();
+                    node = document.createElement("p");
+                    node.innerHTML = "<strong>New to Pretty Diff?</strong> Click on the <em>Show Options</em> button in the top right corner to see more options and settings including a beautification and minify mode.";
+                    node.setAttribute("id", "showOptionsCallOut");
+                    node.onclick = function () {
+                        var self = document.getElementById("showOptionsCallOut");
+                        self.parentNode.removeChild(self);
+                    };
+                    pd.o.page.appendChild(node);
+                } else {
+                    node.innerHTML = "Maximize Inputs";
+                }
+            }
             document.onkeypress           = backspace;
             document.onkeydown            = backspace;
             pd.zIndex                     = 10;

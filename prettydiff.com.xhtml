@@ -25,12 +25,11 @@
         <link href="diffview.css" media="all" rel="stylesheet" type="text/css"/>
         <link href="cm/codemirror.css" media="all" rel="stylesheet" type="text/css"/>
     </head>
-    <body class="shadow" id="webtool">
+    <body class="white" id="webtool">
         <ul class="default" id="displayOps">
             <li><button id="resetOptions" title="Clicking this button will clear all stored data and reset all options to the default configuration. I recommend refreshing the page after clicking this button." type="button">Reset
                 Options</button></li>
-            <li><button id="hideOptions" title="Clicking this button will visually hide everything except for textarea elements and one 'Execute' button." type="button">Maximize
-                Inputs</button></li>
+            <li><button id="hideOptions" title="Clicking this button will visually hide everything except for textarea elements and one 'Execute' button." type="button">Default Display</button></li>
         </ul>
         <div id="top">
             <h1 title="Pretty Diff is a language aware code comparison tool featuring automatic language detection. Some of the supported languages include: XML, SGML, JSTL, HTML, CSS, SCSS, CSV, JavaScript, and JSON">
@@ -150,22 +149,22 @@
             </div>
         </div>
         <div class="options" id="options"><h2>Main Options</h2>
-            <p><label class="label" for="colorScheme">Color Scheme</label>
-                <select id="colorScheme"><option>Default</option><option>Canvas</option><option selected="selected">Shadow</option><option>White</option></select>
+            <p><label class="label" for="colorScheme" title="Pick a color theme with this list of options. Force a theme by default with the address parameter 'c', for example 'c=shadow'.">Color Scheme</label>
+                <select id="colorScheme" title="Pick a color theme with this list of options. Force a theme by default with the address parameter 'c', for example 'c=shadow'."><option>Default</option><option>Canvas</option><option>Shadow</option><option selected="selected">White</option></select>
             </p>
             <p><strong>Function</strong>
                 <span>
-                    <input checked="checked" id="modediff" name="mode" title="This option tells the tool to generate a diff (code comparison) report." type="radio"/>
-                    <label for="modediff">Compare Code</label></span>
+                    <input checked="checked" id="modediff" name="mode" title="This option tells the tool to generate a diff (code comparison) report. Force this display by default with the address parameter 'm=diff'." type="radio"/>
+                    <label for="modediff" title="This option tells the tool to generate a diff (code comparison) report. Force this display by default with the address parameter 'm=diff'.">Compare Code</label></span>
                 <span>
-                    <input id="modebeautify" name="mode" title="This option tells the tool to return well formatted code." type="radio"/>
-                    <label for="modebeautify">Beautify Code</label></span>
+                    <input id="modebeautify" name="mode" title="This option tells the tool to return well formatted code. Force this display by default with the address parameter 'm=beautify'." type="radio"/>
+                    <label for="modebeautify" title="This option tells the tool to return well formatted code. Force this display by default with the address parameter 'm=beautify'.">Beautify Code</label></span>
                 <span>
-                    <input id="modeminify" name="mode" title="This option tells thetool to return white space compressed code." type="radio"/>
-                    <label for="modeminify">Minify Code</label></span>
+                    <input id="modeminify" name="mode" title="This option tells thetool to return white space compressed code. Force this display by default with the address parameter 'm=minify'." type="radio"/>
+                    <label for="modeminify" title="This option tells thetool to return white space compressed code. Force this display by default with the address parameter 'm=minify'.">Minify Code</label></span>
             </p>
-            <p><label class="label" for="language">Code type</label>
-                <select id="language"><option selected="selected" value="auto">Auto
+            <p><label class="label" for="language" title="Choose a specific language with this list. Pick a language by default with the 'l' address parameter, for example 'l=html'.">Code type</label>
+                <select id="language" title="Choose a specific language with this list. Pick a language by default with the 'l' address parameter, for example 'l=html'."><option selected="selected" value="auto">Auto
                     Detect</option><option value="css">CSS</option><option value="csv">CSV</option><option value="html">HTML</option><option value="javascript">JavaScript</option><option value="javascript">JSON</option><option value="markup">JSTL</option><option value="markup">markup
                     (non-specific)</option><option value="text">Plain
                     Text</option><option value="css">SCSS
