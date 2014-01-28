@@ -3708,7 +3708,13 @@ var exports = "",
                             source = params[b].substr(2);
                         } else if (params[b].indexOf("d=") === 0 && pd.o.codeDiffNew !== null) {
                             diff                   = params[b].substr(2);
-                            pd.o.codeDiffNew.value = diff;
+                            if (pd.o.codeDiffNew !== null) {
+                                if (pd.test.cm === true) {
+                                    pd.cm.diffNew.setValue(diff);
+                                } else {
+                                    pd.o.codeDiffNew.value = diff;
+                                }
+                            }
                         } else if (params[b].toLowerCase() === "html" && pd.o.lang !== null) {
                             for (c = options.length - 1; c > -1; c -= 1) {
                                 if (options[c].value === "html") {
@@ -3807,13 +3813,25 @@ var exports = "",
                     }
                     if (source !== "") {
                         if (pd.o.codeBeauIn !== null && pd.mode === "beau") {
-                            pd.o.codeBeauIn.value = value;
+                            if (pd.test.cm === true) {
+                                pd.cm.beauIn.setValue(source);
+                            } else {
+                                pd.o.codeBeauIn.value = source;
+                            }
                             pd.recycle();
                         } else if (pd.o.codeMinnIn !== null && pd.mode === "minn") {
-                            pd.o.codeMinnIn.value = value;
+                            if (pd.test.cm === true) {
+                                pd.cm.minnIn.setValue(source);
+                            } else {
+                                pd.o.codeMinnIn.value = source;
+                            }
                             pd.recycle();
                         } else if (pd.o.codeDiffBase !== null && pd.mode === "diff") {
-                            pd.o.codeDiffBase.value = value;
+                            if (pd.test.cm === true) {
+                                pd.cm.diffBase.setValue(source);
+                            } else {
+                                pd.o.codeDiffBase.value = source;
+                            }
                             if (diff !== "") {
                                 pd.recycle();
                             }
