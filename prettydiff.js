@@ -4490,7 +4490,7 @@ var prettydiff = function prettydiff(api) {
                                                         xlen += 1;
                                                     }
                                                 }
-                                                if (token[x] === ";") {
+                                                if (token[x] === ";" || token[x] === "x;" || token[x] === "}") {
                                                     return;
                                                 }
                                             }
@@ -4746,17 +4746,6 @@ var prettydiff = function prettydiff(api) {
                             b          = token.length,
                             build      = [],
                             lineinc    = 0,
-                            blockspace = function jspretty__result_blockspace(x) {
-                                var linetest = x.replace(/\n/g, "");
-                                x = x.substr(1);
-                                if (x.indexOf("\n") === 0 && linetest === "") {
-                                    return "\n\n";
-                                }
-                                if (x.indexOf("\n") > -1) {
-                                    return "\n\n ";
-                                }
-                                return "\n ";
-                            },
                             indent     = jlevel,
                             tab        = (function jspretty__result_tab() {
                                 var aa = jchar,
@@ -4832,7 +4821,7 @@ var prettydiff = function prettydiff(api) {
                                                         xlen += 1;
                                                     }
                                                 }
-                                                if (token[x] === ";") {
+                                                if (token[x] === ";" || token[x] === "x;" || token[x] === "}") {
                                                     return;
                                                 }
                                             }
@@ -4896,9 +4885,7 @@ var prettydiff = function prettydiff(api) {
                             build.push(tab);
                         }
                         for (a = 0; a < b; a += 1) {
-                            if (types[a] === "comment") {
-                                build.push(token[a].replace(/\n\s+/g, blockspace));
-                            } else if (token[a] !== "x;" && token[a] !== "x{" && token[a] !== "x}") {
+                            if (types[a] === "comment" || (token[a] !== "x;" && token[a] !== "x{" && token[a] !== "x}")) {
                                 build.push(token[a]);
                             }
                             if (jpres === true && lines[lineinc] !== undefined && a === lines[lineinc][0] && level[a] !== "x" && level[a] !== "s") {
@@ -9387,19 +9374,19 @@ var prettydiff = function prettydiff(api) {
     edition    = {
         charDecoder  : 131224, //charDecoder library
         cleanCSS     : 140127, //cleanCSS library
-        css          : 140127, //diffview.css file
+        css          : 140129, //diffview.css file
         csvbeauty    : 140114, //csvbeauty library
         csvmin       : 131224, //csvmin library
         diffview     : 140101, //diffview library
         documentation: 140127, //documentation.xhtml
         jsmin        : 140127, //jsmin library (fulljsmin.js)
-        jspretty     : 140116, //jspretty library
+        jspretty     : 140130, //jspretty library
         markup_beauty: 140127, //markup_beauty library
         markupmin    : 140101, //markupmin library
-        prettydiff   : 140127, //this file
-        webtool      : 140127, //prettydiff.com.xhtml
+        prettydiff   : 140130, //this file
+        webtool      : 140129, //prettydiff.com.xhtml
         api          : {
-            dom        : 140127,
+            dom        : 140130,
             nodeLocal  : 140127,
             nodeService: 121106, //no longer maintained
             wsh        : 140127

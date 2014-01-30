@@ -571,7 +571,7 @@ var exports = "",
                         }
                     }
                     if (pd.o.report.beau.box !== null) {
-                        if (output[1] !== "" && maximize !== null && maximize.innerHTML.replace(/\s+/g, " ") === "Maximize Inputs") {
+                        if (output[1] !== "") {
                             if (autotest === true) {
                                 output[1] = output[1].replace("seconds </em></p>", "seconds </em></p> <p>Language is set to <strong>auto</strong>. Presumed language is <em>" + api.lang + "</em>.</p>");
                                 api.lang = "auto";
@@ -626,8 +626,8 @@ var exports = "",
                                     button.click(button.onclick, 1, button);
                                 }
                                 pd.o.report.beau.box.style.right = "auto";
-                                pd.beaurows[0]                    = pd.o.report.beau.box.getElementsByTagName("ol")[0].getElementsByTagName("li");
-                                pd.beaurows[1]                    = pd.o.report.beau.box.getElementsByTagName("ol")[1].getElementsByTagName("li");
+                                pd.beaurows[0]                    = pd.o.report.beau.body.getElementsByTagName("ol")[0].getElementsByTagName("li");
+                                pd.beaurows[1]                    = pd.o.report.beau.body.getElementsByTagName("ol")[1].getElementsByTagName("li");
                             } else {
                                 if (parent.innerHTML.indexOf("save") > -1) {
                                     if (parent.style === undefined || parent.style.display === "block") {
@@ -700,6 +700,7 @@ var exports = "",
                             node.innerHTML = pd.stat.diff;
                         }
                     }
+                    pd.o.report.diff.box.style.display = "block";
                 }
                 if (api.mode === "minify") {
                     if (output[0].length > 125000) {
