@@ -4721,15 +4721,17 @@ var prettydiff = function prettydiff(api) {
                         }
                         build.push("</ol></div>");
                         last  = build.join("");
-                        scope = last.match(/<li/g).length;
-                        if (linecount - 1 > scope) {
-                            linecount -= 1;
-                            do {
-                                data.pop();
-                                data.pop();
-                                data.pop();
+                        if (last.match(/<li/g) !== null) {
+                            scope = last.match(/<li/g).length;
+                            if (linecount - 1 > scope) {
                                 linecount -= 1;
-                            } while (linecount > scope);
+                                do {
+                                    data.pop();
+                                    data.pop();
+                                    data.pop();
+                                    linecount -= 1;
+                                } while (linecount > scope);
+                            }
                         }
                         data.push("</ol>");
                         build   = [
@@ -8603,7 +8605,7 @@ var prettydiff = function prettydiff(api) {
                     ccontext      = (api.context === "" || (/^(\s+)$/).test(api.context) || isNaN(api.context)) ? "" : Number(api.context),
                     ccorrect      = (api.correct === true) ? true : false,
                     ccsvchar      = (typeof api.csvchar === "string" && api.csvchar.length > 0) ? api.csvchar : ",",
-                    cdiff         = (typeof api.diff === "string" && api.diff.length > 0) ? api.diff : "",
+                    cdiff         = (typeof api.diff === "string" && api.diff.length > 0 && (/^(\s+)$/).test(api.diff) === false) ? api.diff : "",
                     cdiffcomments = (api.diffcomments === true) ? true : false,
                     cdifflabel    = (typeof api.difflabel === "string" && api.difflabel.length > 0) ? api.difflabel : "new",
                     cdiffview     = (api.diffview === "inline") ? "inline" : "sidebyside",
@@ -8619,7 +8621,7 @@ var prettydiff = function prettydiff(api) {
                     cpreserve     = (api.preserve === false) ? false : true,
                     cquote        = (api.quote === true) ? true : false,
                     csemicolon    = (api.semicolon === true) ? true : false,
-                    csource       = (typeof api.source === "string" && api.source.length > 0) ? api.source : ((cmode === "diff") ? "" : "Source sample is missing."),
+                    csource       = (typeof api.source === "string" && api.source.length > 0 && (/^(\s+)$/).test(api.source) === false) ? api.source : ((cmode === "diff") ? "" : "Source sample is missing."),
                     csourcelabel  = (typeof api.sourcelabel === "string" && api.sourcelabel.length > 0) ? api.sourcelabel : "base",
                     cspace        = (api.space === false) ? false : true,
                     cstyle        = (api.style === "noindent") ? "noindent" : "indent",
@@ -9380,13 +9382,13 @@ var prettydiff = function prettydiff(api) {
         diffview     : 140101, //diffview library
         documentation: 140127, //documentation.xhtml
         jsmin        : 140127, //jsmin library (fulljsmin.js)
-        jspretty     : 140130, //jspretty library
+        jspretty     : 140131, //jspretty library
         markup_beauty: 140127, //markup_beauty library
         markupmin    : 140101, //markupmin library
-        prettydiff   : 140130, //this file
-        webtool      : 140129, //prettydiff.com.xhtml
+        prettydiff   : 140131, //this file
+        webtool      : 140131, //prettydiff.com.xhtml
         api          : {
-            dom        : 140130,
+            dom        : 140131,
             nodeLocal  : 140127,
             nodeService: 121106, //no longer maintained
             wsh        : 140127

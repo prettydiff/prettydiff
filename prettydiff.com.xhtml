@@ -183,10 +183,10 @@
             </p>
             <p><strong>Additional options</strong>
                 <span>
-                    <input checked="checked" id="additional_no" name="additional" title="Click me to hide extra options and controls." type="radio"/>
+                    <input id="additional_no" name="additional" title="Click me to hide extra options and controls." type="radio"/>
                     <label for="additional_no">Hide additional options</label></span>
                 <span>
-                    <input id="additional_yes" name="additional" title="Click me to show extra options and controls." type="radio"/>
+                    <input checked="checked" id="additional_yes" name="additional" title="Click me to show extra options and controls." type="radio"/>
                     <label for="additional_yes">Show additional options</label></span>
             </p>
             <p><label class="label" for="option_comment">Pretty Diff Comment</label><textarea cols="30" id="option_comment" rows="2" title="This area contains a configuration string as a code comment. This string can be applied to the top of JavaScript and CSS code to supply instructions to the Pretty Diff tool without need to set options in the user interface.">/*prettydiff.com
@@ -240,7 +240,7 @@
             </div>
         </div>
         <p id="button-primary" class="button"><button type="button" value="Execute">Execute</button></p>
-        <div id="addOptions" style="display:none">
+        <div id="addOptions">
             <div class="options" id="diffops"><h2>Diff Options</h2>
                 <fieldset><legend>Diff Report Options</legend>
                     <p><strong>Print or Save Output</strong>
