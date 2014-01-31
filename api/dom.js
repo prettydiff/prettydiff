@@ -626,9 +626,10 @@ var exports = "",
                                     }
                                     button.click(button.onclick, 1, button);
                                 }
+                                pd.o.report.beau.box.style.top   = (pd.settings.beaureport.top / 10) + "em";
                                 pd.o.report.beau.box.style.right = "auto";
-                                pd.beaurows[0]                    = pd.o.report.beau.body.getElementsByTagName("ol")[0].getElementsByTagName("li");
-                                pd.beaurows[1]                    = pd.o.report.beau.body.getElementsByTagName("ol")[1].getElementsByTagName("li");
+                                pd.beaurows[0]                   = pd.o.report.beau.body.getElementsByTagName("ol")[0].getElementsByTagName("li");
+                                pd.beaurows[1]                   = pd.o.report.beau.body.getElementsByTagName("ol")[1].getElementsByTagName("li");
                             } else {
                                 if (parent.innerHTML.indexOf("save") > -1) {
                                     if (parent.style === undefined || parent.style.display === "block") {
@@ -702,6 +703,7 @@ var exports = "",
                         }
                     }
                     if (pd.o.report.diff.box !== null) {
+                        pd.o.report.diff.box.style.top = (pd.settings.diffreport.top / 10) + "em";
                         pd.o.report.diff.box.style.display = "block";
                     }
                 }
@@ -1382,6 +1384,7 @@ var exports = "",
             parent    = x.parentNode,
             box       = parent.parentNode,
             finale    = 0,
+            hideOps   = (pd.$$("hideOptions") !== null && pd.$$("hideOptions").innerHTML.replace(/\s+/g, " ") === "Show Options") ? true : false,
             body      = box.getElementsByTagName("div")[0],
             heading   = box.getElementsByTagName("h3")[0],
             id        = box.getAttribute("id"),
@@ -1496,8 +1499,8 @@ var exports = "",
                             setTimeout(shrink, 1);
                         } else {
                             bodyLocal.style.display = "none";
-                            if (pd.settings[id].topmin !== -100) {
-                                boxLocal.style.top      = "auto";
+                            if (hideOps === true) {
+                                boxLocal.style.top      = "-1000em";
                             }
                             boxLocal.style.left     = "auto";
                             boxLocal.style.right    = finalLocal + "em";
@@ -1539,12 +1542,8 @@ var exports = "",
         }
         //shrink
         if (x.innerHTML === "\u035f") {
-            if (pd.settings[id].topmin < 35) {
-                if (box.style.top === "-10em" || (pd.$$("hideOptions") !== null && pd.$$("hideOptions").innerHTML.replace(/\s+/g, " ") === "Show Options")) {
-                    pd.settings[id].topmin = -100;
-                } else {
-                    pd.settings[id].topmin = box.parentNode.offsetTop;
-                }
+            if (pd.settings[id].topmin < 35 && hideOps === true) {
+                pd.settings[id].topmin = box.parentNode.offsetTop;
             }
             if (buttonMax.innerHTML === "\u2191") {
                 pd.settings[id].top    = box.offsetTop;
@@ -1562,7 +1561,7 @@ var exports = "",
                 pd.settings[id].height += 35.5;
                 pd.settings[id].width  += 3;
             }
-            pd.settings[id].max          = false;
+            pd.settings[id].max           = false;
             buttonMin.innerHTML           = "\u2191";
             box.style.borderWidth         = "0em";
             box.style.top                 = "auto";
@@ -2977,16 +2976,16 @@ var exports = "",
                 node.style.display = "none";
             }
             if (pd.o.report.diff.box !== null) {
-                pd.o.report.diff.box.style.top = "-10em";
+                pd.o.report.diff.box.style.top = "-1000em";
             }
             if (pd.o.report.beau.box !== null) {
-                pd.o.report.beau.box.style.top = "-10em";
+                pd.o.report.beau.box.style.top = "-1000em";
             }
             if (pd.o.report.minn.box !== null) {
-                pd.o.report.minn.box.style.top = "-10em";
+                pd.o.report.minn.box.style.top = "-1000em";
             }
             if (pd.o.report.stat.box !== null) {
-                pd.o.report.stat.box.style.top = "-10em";
+                pd.o.report.stat.box.style.top = "-1000em";
             }
             node = pd.$$("diffoutput");
             if (node !== null) {
