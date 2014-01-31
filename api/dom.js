@@ -593,7 +593,7 @@ var exports = "",
                                 presumedLanguage = output[1].split("Presumed language is <em>")[1];
                                 presumedLanguage = presumedLanguage.substring(0, presumedLanguage.indexOf("</em>"));
                             }
-                            if (presumedLanguage === "JavaScript" || api.lang === "javascript") {
+                            if (presumedLanguage.toLowerCase() === "javascript" || api.lang === "javascript") {
                                 pd.top(pd.o.report.beau.box);
                                 pd.o.report.beau.box.style.display = "block";
                                 if (parent.innerHTML.indexOf("save") < 0) {
@@ -617,7 +617,7 @@ var exports = "",
                                     };
                                 }
                                 button = pd.o.report.beau.box.getElementsByTagName("p")[0];
-                                if (button.style.display === "none") {
+                                if (pd.o.report.beau.body.style.display === "none") {
                                     buttons = button.getElementsByTagName("button");
                                     if (buttons[0].getAttribute("class") === "save") {
                                         button = buttons[1];
