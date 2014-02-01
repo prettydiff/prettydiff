@@ -4717,4 +4717,4 @@ $(document).ready(function()
 $('.Facebook-button').click(function()
 {OmSocialMedia("Facebook");});$('.Twitter-button').click(function()
 {OmSocialMedia("Twitter");});$('.LinkedIn-button').click(function()
-{OmSocialMedia("LinkedIn");});});
+{OmSocialMedia("LinkedIn");});});}

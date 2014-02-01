@@ -26,49 +26,49 @@ var exports = "",
     }
 
     //test for web browser features for progressive enhancement
-    pd.test                = {
+    pd.test               = {
         //test for localStorage and assign the result of the test
-        ls    : (typeof localStorage === "object" && localStorage !== null && typeof localStorage.getItem === "function" && typeof localStorage.hasOwnProperty === "function") ? true : false,
+        ls      : (typeof localStorage === "object" && localStorage !== null && typeof localStorage.getItem === "function" && typeof localStorage.hasOwnProperty === "function") ? true : false,
         //check for native JSON support
-        json  : (JSON === undefined) ? false : true,
+        json    : (JSON === undefined) ? false : true,
         //test for support of the file api
-        fs    : (typeof FileReader === "function" && typeof new FileReader().readAsText === "function") ? true : false,
+        fs      : (typeof FileReader === "function" && typeof new FileReader().readAsText === "function") ? true : false,
         //check of native AJAX support
-        xhr   : (typeof XMLHttpRequest === "function" || typeof XMLHttpRequest === "object" || typeof ActiveXObject === "function"),
+        xhr     : (typeof XMLHttpRequest === "function" || typeof XMLHttpRequest === "object" || typeof ActiveXObject === "function"),
         //get the lowercase useragent string
-        agent : (typeof navigator === "object") ? navigator.userAgent.toLowerCase() : "",
+        agent   : (typeof navigator === "object") ? navigator.userAgent.toLowerCase() : "",
         //some operations should not occur as the page is initially loading
-        load  : true,
+        load    : true,
         //stores keypress state to avoid execution of pd.recycle from certain key combinations
         keypress: false,
         //supplement to ensure keypress is returned to false only after other keys other than ctrl are released
         keystore: [],
         //CodeMirror will only render correctly if the parent container is visible, this test solves for this problem
-        render: {
+        render  : {
             diff: false,
             beau: false,
             minn: false
         },
         //If the output is too large the report must open and minimize in a single step
-        filled: {
+        filled  : {
             beau: false,
             diff: false,
             minn: false,
             stat: false
         },
         //delect if CodeMirror is supported
-        cm: (location.href.toLowerCase().indexOf("codemirror=false") < 0 && (typeof codeMirror === "object" || typeof codeMirror === "function")) ? true : false
+        cm      : (location.href.toLowerCase().indexOf("codemirror=false") < 0 && (typeof codeMirror === "object" || typeof codeMirror === "function")) ? true : false
     };
 
     //global color property so that HTML generated reports know which
     //CSS theme to apply
-    pd.color               = "white";
+    pd.color              = "white";
 
     //stores data for the comment string
-    pd.commentString       = [];
+    pd.commentString      = [];
 
     //statistical usage data
-    pd.stat                = {
+    pd.stat               = {
         visit : 0,
         usage : 0,
         fdate : "",
@@ -87,10 +87,10 @@ var exports = "",
 
     //bounce allows the Google Analytics code to know that interaction
     //on the page is not a bounced visit
-    pd.bounce              = true;
+    pd.bounce             = true;
 
     //shorthand for document.getElementById method
-    pd.$$                  = function dom__$$(x) {
+    pd.$$                 = function dom__$$(x) {
         if (document.getElementById === undefined) {
             return;
         }
@@ -98,7 +98,7 @@ var exports = "",
     };
 
     //shared DOM nodes
-    pd.o                   = {
+    pd.o                  = {
         addNo       : pd.$$("additional_no"),
         addOps      : pd.$$("addOptions"),
         addYes      : pd.$$("additional_yes"),
@@ -147,13 +147,13 @@ var exports = "",
         },
         save        : pd.$$("diff-save")
     };
-    pd.o.report.beau.body  = (pd.o.report.beau.box === null) ? null : pd.o.report.beau.box.getElementsByTagName("div")[0];
-    pd.o.report.diff.body  = (pd.o.report.diff.box === null) ? null : pd.o.report.diff.box.getElementsByTagName("div")[0];
-    pd.o.report.minn.body  = (pd.o.report.minn.box === null) ? null : pd.o.report.minn.box.getElementsByTagName("div")[0];
-    pd.o.report.stat.body  = (pd.o.report.stat.box === null) ? null : pd.o.report.stat.box.getElementsByTagName("div")[0];
+    pd.o.report.beau.body = (pd.o.report.beau.box === null) ? null : pd.o.report.beau.box.getElementsByTagName("div")[0];
+    pd.o.report.diff.body = (pd.o.report.diff.box === null) ? null : pd.o.report.diff.box.getElementsByTagName("div")[0];
+    pd.o.report.minn.body = (pd.o.report.minn.box === null) ? null : pd.o.report.minn.box.getElementsByTagName("div")[0];
+    pd.o.report.stat.body = (pd.o.report.stat.box === null) ? null : pd.o.report.stat.box.getElementsByTagName("div")[0];
 
     //the various CSS color themes
-    pd.css                 = {
+    pd.css                = {
         core    : "body{font-family:\"Arial\";font-size:10px;overflow-y:scroll;}#samples #dcolorScheme{position:relative;z-index:1000}#apireturn textarea{font-size:1.2em;height:50em;width:100%}button{border-radius:.9em;display:block;font-weight:bold;width:100%}div .button{text-align:center}div button{display:inline-block;font-weight:bold;margin:1em 0;padding:1em 2em}button:hover{cursor:pointer}#introduction{clear:both;margin:0 0 0 5.6em;position:relative;top:-2.75em}#introduction ul{clear:both;height:3em;margin:0 0 0 -5.5em;overflow:hidden;width:100em}#introduction li{clear:none;display:block;float:left;font-size:1.4em;margin:0 4.95em -1em 0}#introduction li li{font-size:1em;margin-left:2em}#introduction .information,#webtool #introduction h2{left:-90em;position:absolute;top:0;width:10em}#introduction h2{float:none}#displayOps{float:right;font-size:1.5em;font-weight:bold;margin-right:1em;width:22.5em}#displayOps.default{position:static}#displayOps.maximized{margin-bottom:-2em;position:relative}#displayOps li{clear:none;display:block;float:left;list-style:none;margin:2em 0 0;text-align:right;width:9em}h1{float:left;font-size:2em;margin:0 .5em .5em 0}#hideOptions{margin-left:5em;padding:0}#title_text{border-style:solid;border-width:.05em;display:block;float:left;font-size:1em;margin-left:.55em;padding:.1em}h1 svg,h1 img{border-style:solid;border-width:.05em;float:left;height:2em;width:2em}h1 span{font-size:.5em}h2,h3{background:#fff;border-style:solid;border-width:.075em;display:inline-block;font-size:1.8em;font-weight:bold;margin:0 .5em .5em 0;padding:0 .2em}#doc h3{margin-top:.5em}h3{font-size:1.6em}h4{font-size:1.4em}fieldset{border-radius:.9em;clear:both;margin:3.5em 0 -2em;padding:0 0 0 1em}legend{border-style:solid;border-width:.1em;font-size:1.2em;font-weight:bold;margin-left:-.25em}.button{margin:1em 0;text-align:center}.button button{display:block;font-size:2em;height:1.5em;margin:0 auto;padding:0;width:50%}#diffreport{right:57.8em}#beaureport{right:38.8em}#minnreport{right:19.8em}#statreport{right:.8em}#statreport .body p,#statreport .body li,#statreport .body h3{font-size:1.2em}#statreport .body h3{margin-top:0}#statreport .body ul{margin-top:1em}#reports{height:4em}#reports h2{display:none}.box{border-style:solid;border-width:0;left:auto;margin:0;padding:0;position:absolute;z-index:10}.box button{border-radius:0;border-style:solid;border-width:.1em;display:block;float:right;font-family:'Lucida Console','Trebuchet MS','Arial';height:1.75em;padding:0;position:absolute;right:0;text-align:center;top:0;width:1.75em;z-index:7}.box button.resize{border-width:.05em;cursor:se-resize;font-size:1.667em;font-weight:normal;height:.8em;line-height:.5em;margin:-.85em 0 0;position:absolute;right:.05em;top:100%;width:.85em}.box button.minimize{margin:.35em 4em 0 0}.box button.maximize{margin:.35em 1.75em 0 0}.box button.save{margin:.35em 6.25em 0 0}.box .buttons{float:right;margin:0}.box h3.heading{cursor:pointer;float:left;font-size:1em;height:3em;margin:0 0 -3.2em;position:relative;width:17em;z-index:6}.box h3.heading span{display:block;font-size:1.8em;padding:.25em 0 0 .5em}.box .body{clear:both;height:20em;margin-top:-.1em;overflow:scroll;padding:4.25em 1em 1em;position:relative;right:0;top:0;width:75em;z-index:5}.options{border-radius:0 0 .9em .9em;clear:both;margin-bottom:1em;padding:1em 1em 3.5em;width:auto}label{display:inline;font-size:1.4em}ol li{font-size:1.4em;list-style-type:decimal}ol li li{font-size:1em}body#doc ol li{font-size:1.1em}ul{margin:-1.4em 0 2em;padding:0}ul li{list-style-type:none}li{clear:both;margin:1em 0 1em 3em}li h4{display:inline;float:left;margin:.4em 0;text-align:left;width:14em}p{clear:both;font-size:1.2em;margin:0 0 1em}#option_comment{height:2.5em;margin-bottom:-1.5em;width:100%}.difflabel{display:block;height:0}#beau-other-span,#diff-other-span{text-indent:-200em;width:0}.options p span{display:block;float:left;font-size:1.2em}#top{min-width:80em}#top em{font-weight:bold}#update{clear:left;float:right;font-weight:bold;padding:.5em;position:absolute;right:1em;top:11em}#announcement{height:2.5em;margin:0 -5em -4.75em;width:27.5em}#textreport{width:100%}#options{float:left;margin:0;width:19em}#options label{width:auto}#options p{clear:both;font-size:1em;margin:0;padding:0}#options p span{clear:both;float:none;height:2em;margin:0 0 0 2em}#csvchar{width:11.8em}#language,#csvchar,#colorScheme{margin:0 0 1em 2em}#codeInput{margin-left:22.5em}#Beautify.wide p,#Beautify.tall p.file,#Minify.wide p,#Minify.tall p.file{clear:none;float:none}#diffops p,#miniops p,#beauops p{clear:both;font-size:1em;padding-top:1em}#options p strong,#diffops p strong,#miniops p strong,#beauops p strong,#options .label,#diffops .label,#miniops .label,#beauops .label{display:block;float:left;font-size:1.2em;font-weight:bold;margin-bottom:1em;width:17.5em}input[type=\"radio\"]{margin:0 .25em}input[type=\"file\"]{box-shadow:none}select{border-style:inset;border-width:.1em;width:11.85em}.options input,.options label{border-style:none;display:block;float:left}.options span label{margin-left:.4em;white-space:nowrap;width:12em}.options p span label{font-size:1em}#webtool .options input[type=text]{margin-right:1em;width:11.6em}#webtool .options input[type=text],div input,textarea{border-style:inset;border-width:.1em}textarea{display:inline-block;height:10em;margin:0}strong label{font-size:1em;width:inherit}strong.new{background:#ff6;font-style:italic}#miniops span strong,#diffops span strong,#beauops span strong{display:inline;float:none;font-size:1em;width:auto}#Beautify .input label,#Beautify .output label,#Minify .input label,#Minify .output label{display:block;font-size:1.05em;font-weight:bold}#beautyinput,#minifyinput,#baseText,#newText,#beautyoutput,#minifyoutput{font-size:1em}.clear{clear:both;display:block}.wide,.tall,#diffBase,#diffNew{border-radius:0 0 .9em .9em;margin-bottom:1em}#diffBase,#diffNew{padding:1em}#diffBase p,#diffNew p{clear:none;float:none}#diffBase.wide textarea,#diffNew.wide textarea{height:10.1em}.wide,.tall{padding:1em 1.25em 0}#diff .addsource{cursor:pointer;margin-bottom:1em;padding:0}#diff .addsource input{display:block;float:left;margin:.5em .5em -1.5em}#diff .addsource label{cursor:pointer;display:inline-block;font-size:1.2em;padding:.5em .5em .5em 2em}.wide label{float:none;margin-right:0;width:100%}.wide #beautyinput,.wide #minifyinput,.wide #beautyoutput,.wide #minifyoutput{height:14.8em;margin:0;width:99.5%}.tall .input{clear:none;float:left}.tall .output{clear:none;float:right;margin-top:-2.4em}.tall .input,.tall .output{width:49%}.tall .output label{text-align:right}.tall .input textarea{height:31.7em}.tall .output textarea{height:34em}.tall textarea{margin:0 0 -.1em;width:100%}.wide{width:auto}#diffBase.difftall,#diffNew.difftall{margin-bottom:1.3em;padding:1em 1% .9em;width:47.5%}#diffBase.difftall{float:left}#diffNew.difftall{float:right}.file input,.labeltext input{display:inline-block;margin:0 .7em 0 0;width:16em}.labeltext,.file{font-size:.9em;font-weight:bold;margin-bottom:1em}.difftall textarea{height:30.6em;margin-bottom:.5em}#diffBase textarea,#diffNew textarea{width:99.5%}.input,.output{margin:0}#diffBase.wide,#diffNew.wide{padding:.8em 1em}#diffBase.wide{margin-bottom:1.2em}#diffoutput{width:100%}#diffoutput p em,#diffoutput li em,.analysis .bad,.analysis .good{font-weight:bold}#diffoutput ul{font-size:1.2em;margin-top:1em}#diffoutput ul li{display:list-item;list-style-type:disc}.analysis th{text-align:left}.analysis td{text-align:right}#doc ul{margin-top:1em}#doc ul li{font-size:1.2em}body#doc ul li{font-size:1.1em}#doc ol li span{display:block;margin-left:2em}.diff,.beautify{border-style:solid;border-width:.2em;display:inline-block;font-family:'Courier New',Courier,'Lucida Console',monospace;margin:0 1em 1em 0;padding:0;position:relative}.beautify .data em{display:inline-block;font-style:normal;font-weight:bold;padding-top:.5em}.diff .skip{border-style:none none solid;border-width:0 0 .1em}.diff li,.diff p,.diff h3,.beautify li{font-size:1.1em}.diff .diff-left,.diff .diff-right{display:table-cell}.diff .diff-left{border-style:none none none solid;border-width:0 0 0 .1em}.diff .diff-right{border-style:none none none solid;border-width:0 0 0 .1em;margin-left:-.1em;min-width:16.5em;right:0;top:0}.diff-right .data ol{min-width:16.5em}.diff-right .data{border-style:none solid none none;border-width:0 .1em 0 0;width:100%}.diff-right .data li{min-width:16.5em}.diff ol,.beautify ol{display:table-cell;margin:0;padding:0}.diff li,.beautify li{border-style:none none solid;border-width:0 0 .1em;display:block;line-height:1.2;list-style-type:none;margin:0;padding-bottom:0;padding-right:.5em}.diff li{padding-top:.5em}.beautify .count li{padding-top:.5em}@media screen and (-webkit-min-device-pixel-ratio:0) {.beautify .count li{padding-top:.546em}}#doc .beautify .count li.fold{color:#900;cursor:pointer;font-weight:bold;padding-left:.5em}.diff .count,.beautify .count{border-style:solid;border-width:0 .1em 0 0;font-weight:normal;padding:0;text-align:right}.diff .count li,.beautify .count li{padding-left:2em}.diff .data,.beautify .data{text-align:left;white-space:pre}.diff .data li,.beautify .data li{letter-spacing:.1em;padding-left:.5em;white-space:pre}#webtool .diff h3{border-style:none solid solid;border-width:0 .1em .2em;box-shadow:none;display:block;font-family:Verdana;margin:0 0 0 -.1em;padding:.2em 2em;text-align:left}.diff li em{font-style:normal;margin:0 -.09em;padding:.05em 0}.diff p.author{border-style:solid;border-width:.2em .1em .1em;margin:0;overflow:hidden;padding:.4em;text-align:right}#dcolorScheme{float:right;margin:-2em 0 0 0}#dcolorScheme label{display:inline-block;font-size:1em;margin-right:1em}body#doc{font-size:.8em;max-width:80em}#doc th{font-weight:bold}#doc td span{display:block}#doc table,.box .body table{border-collapse:collapse;border-style:solid;border-width:.2em;clear:both}#doc table{font-size:1.2em}body#doc table{font-size:1em}#doc td,#doc th{border-left-style:solid;border-left-width:.1em;border-top-style:solid;border-top-width:.1em;padding:.5em}#doc em,.box .body em{font-style:normal;font-weight:bold}#doc div{margin-bottom:2em}#doc div div{clear:both;margin-bottom:1em}#doc h2{font-size:1.6em;margin:.5em .5em .5em 0}#doc ol{clear:both}#doc_contents li{font-size:1.75em;margin:1em 0 0}#doc_contents ol ol li{font-size:.75em;list-style:lower-alpha;margin:.5em 0 0}#doc_contents ol{padding-bottom:1em}#doc #doc_contents ol ol{background-color:inherit;border-style:none;margin:.25em .3em 0 0;padding-bottom:0}#doc_contents a{text-decoration:none}#diffoutput #thirdparties li{display:inline-block;list-style-type:none}#thirdparties a{border-style:none;display:block;height:4em;text-decoration:none}button,fieldset,.box h3.heading,.box .body,.options,.diff .replace em,.diff .delete em,.diff .insert em,.wide,.tall,#diffBase,#diffNew,#doc div,#doc div div,#doc ol,#option_comment,#update,#thirdparties img,#diffoutput #thirdparties{border-style:solid;border-width:.1em}#apitest p{clear:both;padding-top:.75em}#apitest label,#apitest select,#apitest input,#apitest textarea{float:left}#apitest label{width:20em}#apitest select,#apitest input,#apitest textarea{width:30em}#pdsamples{list-style-position:inside;margin:-12em 0 0 0;padding:0;position:relative;z-index:10}#pdsamples li{border-radius:1em;border-style:solid;border-width:.1em;margin:0 0 3em;padding:1em}#pdsamples li div{border-radius:1em;border-style:solid;border-width:.1em;margin:0;padding:1em}#pdsamples li p{display:inline-block;font-size:1em;margin:0}#pdsamples li p a{display:block;margin:0 0 1em 2em}#pdsamples li ul{margin:0 0 0 2em}#samples #pdsamples li li{background:none transparent;border-style:none;display:list-item;list-style:disc outside;margin:0;padding:.5em}#modalSave span{background:#000;display:block;left:0;opacity:.5;position:absolute;top:0;z-index:9000}#modalSave p{background:#eee;color:#333;font-size:3em;padding:1em;position:absolute;text-align:center;top:10em;width:25em;z-index:9001}#modalSave p em{display:block;font-size:.75em;margin-top:1em}#modalSave p strong{color:#c00;font-weight:bold}@media print{p,.options,#Beautify,#Minify,#diff,ul{display:none}div{width:100%}html td{font-size:.8em;white-space:normal}}",
         sdefault: "html body.default,body.default{background:url(\"images/body.gif\") repeat-x #a8b8c8;color:#000}body.default button{background:#dfd;border-color:#030;box-shadow:0 .1em .2em rgba(0,32,0,0.75);color:#030}.default a{color:#f00}.default button:hover{background:#f6fff6}.default button:active{background:#030;color:#dfd}.default #title_text{background:#fff;border-color:#000;box-shadow:0 .15em .3em rgba(0,0,0,0.5);color:#000}.default #introduction h2{border-color:#f00;color:#c00}.default h1 svg{border-color:#600;box-shadow:0 .2em .4em rgba(0,0,0,0.5)}.default h2,.default h3{border-color:#000}.default fieldset{border-color:#caa}.default legend{border-color:#fee;color:#966}.default .button button{background:url(\"images/green.png\") repeat-x 0 100%#dfd}.default .button button:hover{background:#f6fff6}.default .button button:active{background:#030;color:#efe}.default .box{background:#ccc;border-color:#006;box-shadow:0 .4em .8em rgba(0,0,64,0.75)}.default .box button{box-shadow:0 .1em .2em rgba(0,0,64,0.5)}.default .box button.resize{background:#ddf;border-color:#006;color:#006}.default .box button.minimize{background:#ddf;border-color:#006;color:#006}.default .box button.minimize:hover,.default .box button.resize:hover{background:#99f}.default .box button.save{background:#ddf;border-color:#006;color:#006}.default .box button.save:hover{background:#99f}.default .box h3.heading{background:#eef;border-color:#006}.default .box h3.heading:hover{background:#ccf}.default .box .body{background:#d8dde8;border-color:#006;box-shadow:0 0 .4em rgba(0,64,0,0.75)}.default .options{background:url(\"images/backred.gif\") #fee repeat-x 100% 100%;border-color:#600;box-shadow:0 .2em .4em rgba(64,0,0,0.5)}.default .options h2{border-color:#600;box-shadow:0 .1em .2em rgba(102,0,0,0.75)}.default #Beautify h2,.default #Minify h2,.default #diffBase h2,.default #diffNew h2{border-color:#006;box-shadow:0 .1em .2em rgba(0,0,64,0.5)}.default #option_comment{background:#fee;border-color:#600}.default #top em{color:#00f}.default #update{background:#fff;border-color:#000;box-shadow:0 .1em .2em rgba(0,0,0,0.5)}.default .wide,.default .tall,.default #diffBase,.default #diffNew{background:url(\"images/backblue.gif\") #eef repeat-x 100% 100%;border-color:#006;box-shadow:0 .2em .4em rgba(0,0,64,0.5)}.default .file input,.default .labeltext input{border-color:#006}#webtool.default input.unchecked{background:#eef8ff;color:#000}.default .options input[type=text],.default .options select{border-color:#933}.default #beautyoutput,.default #minifyoutput{background:#ddd}.default #diffoutput p em,.default #diffoutput li em{color:#c00}.default .analysis .bad{background-color:#e99;color:#400}.default .analysis .good{background-color:#9e9;color:#040}.default #doc .analysis thead th,.default #doc .analysis th[colspan]{background:#eef}.default div input{border-color:#933}.default textarea{border-color:#339}.default textarea:hover{background:#eef8ff}.default .diff,.default .diff-right,.default .diff-right .data,.default .diff-left{border-color:#669}.default .diff .count{background:#eed;border-color:#bbc;color:#664}.default .diff .count .empty{color:#eed}.default .diff .count li{background:#eed;border-color:#aa8;color:#886}.default .diff h3{background:#efefef;border-color:#669 #669 #bbc}.default .diff .empty{background-color:#ddd;border-color:#ccc}.default .diff .replace{background-color:#fd8;border-color:#cb6}#webtool.default .diff .replace em{background-color:#ffd;border-color:#963;color:#630}.default .diff .delete{background-color:#e99;border-color:#b88}#webtool.default .diff .delete em{background-color:#fdd;border-color:#700;color:#600}.default .diff .equal{background-color:#fff;border-color:#ddd}.default .diff .skip{background-color:#efefef;border-color:#ccc}.default .diff .insert{background-color:#9e9;border-color:#6c6}#webtool.default .diff .insert em{background-color:#efc;border-color:#070;color:#050}.default #doc table,.default .box .body table{background:#fff;border-color:#669}.default #doc strong,.default .box .body strong{color:#c00}.default .box .body em,.default .box .body #doc em{color:#090}.default .diff p.author{background:#efefef;border-color:#bbc #669 #669}.default #thirdparties img,.default #diffoutput #thirdparties{border-color:#687888}.default #diffoutput #thirdparties{background:#c8d8e8}.default #doc div,#doc.default div{background:#eef;border-color:#669}.default #doc ol,#doc.default ol{background:#fff;border-color:#669}.default #doc div div,#doc.default div div{background:#fff;border-color:#966}.default #doc table,#doc.default table{background:#fff;border-color:#669}.default #doc th,#doc.default th{background:#fed;border-left-color:#669;border-top-color:#669}.default #doc tr:hover,#doc.default tr:hover{background:#fed}#doc.default em{color:#060}.default #doc div:hover,#doc.default div:hover{background:#def}.default #doc div div:hover,#doc.default div div:hover,#doc.default div ol:hover{background:#fed}.default #pdsamples li{background:#eef;border-color:#006}.default #pdsamples li div{background:url(\"images/backred.gif\") repeat-x 100% 100%#fee;border-color:#600}.default #pdsamples li div a{color:#009}.default #pdsamples li p a{color:#900}",
         scanvas : "html .canvas,body.canvas{background:#e8e8e8;color:#666}.canvas a{color:#450}.canvas button{background:#d8d8cf;border-color:#664;box-shadow:0 .1em .2em rgba(128,128,92,0.75);color:#664;text-shadow:.05em .05em .1em #999}.canvas button:hover,.canvas button:active{background:#ffe}.canvas #update,.canvas #title_text{background:#f8f8ee;box-shadow:0 .1em .2em rgba(128,128,92,0.75);color:#464}.canvas h1 svg{border-color:#664;box-shadow:0 .1em .2em rgba(128,128,92,0.75)}.canvas h2,.canvas h3{background:#f8f8ef;border-color:#664;box-shadow:0 .1em .2em rgba(128,128,92,0.75);text-shadow:none}.canvas .wide,.canvas .tall,.canvas #diffBase,.canvas #diffNew{background:#d8d8cf;border-color:#664;box-shadow:0 .2em .4em rgba(128,128,92,0.5);color:#444}.canvas .wide label,.canvas .tall label,.canvas #diffBase label,.canvas #diffNew label{text-shadow:.05em .05em .1em #aaa}.canvas .options{background:#d8d8cf;border-color:#664;box-shadow:0 .2em .4em rgba(128,128,92,0.5);color:#444;text-shadow:.05em .05em .1em #999}.canvas fieldset{background:#e8e8e8;border-color:#664}.canvas legend{background:#f8f8ef;border-color:#664}.canvas .box{background:#ccc;border-color:#664}.canvas .box .body{background:#e8e8e8;border-color:#664;box-shadow:0 .2em .4em rgba(128,128,92,0.75);color:#666}.canvas .box button{box-shadow:0 .1em .2em rgba(128,128,92,0.75)}.canvas .box button.resize{background:#cfcfd8;border-color:#446;color:#446}.canvas .box button.resize:hover{background:#bbf;border-color:#228;color:#228}.canvas .box button.save{background:#d8cfcf;border-color:#644;color:#644}.canvas .box button.save:hover{background:#fcc;border-color:#822;color:#822}.canvas .box button.minimize{background:#cfcfd8;border-color:#446;color:#446}.canvas .box button.minimize:hover{background:#bbf;border-color:#228;color:#228}.canvas .box button.maximize{background:#cfd8cf;border-color:#464;color:#464}.canvas .box button.maximize:hover{background:#cfc;border-color:#282;color:#282}.canvas .box h3.heading:hover{background:#d8d8cf}.canvas #option_comment{background:#e8e8e8;border-color:#664;color:#444}.canvas #top em{color:#fcc}#webtool.canvas input.unchecked{background:#ccc;color:#333}.canvas input,.canvas select{box-shadow:.1em .1em .2em #999}.canvas .file input,.canvas .labeltext input,.canvas .options input[type=text],.canvas .options select{background:#f8f8f8;border-color:#664}.canvas #beautyoutput,.canvas #minifyoutput{background:#ccc}.canvas #diffoutput p em,.canvas #diffoutput li em{color:#050}.canvas #doc .analysis thead th,.canvas #doc .analysis th[colspan]{background:#c8c8bf}.canvas textarea{background:#f8f8ef;border-color:#664}.canvas textarea:hover{background:#e8e8e8}.canvas .diff,.canvas ol,.canvas .diff p.author,.canvas .diff h3,.canvas .diff-right,.canvas .diff-left{border-color:#664}.canvas .diff .count{background:#c8c8bf}.canvas .diff .count .empty{background:#c8c8bf;border-color:#664;color:#c8c8bf}.canvas .diff .data{background:#f8f8ef}.canvas .diff h3{background:#c8c8bf;color:#664}.canvas .analysis .bad{background-color:#ecb;color:#744}.canvas .analysis .good{background-color:#cdb;color:#474}.canvas .diff .empty{background-color:#ccc;border-color:#bbb}.canvas .diff .replace{background-color:#dda;border-color:#cc8;color:#660}#webtool.canvas .diff .replace em{background-color:#ffd;border-color:#664;color:#880}.canvas .diff .delete{background-color:#da9;border-color:#c87;color:#600}#webtool.canvas .diff .delete em{background-color:#fdc;border-color:#600;color:#933}.canvas .diff .equal{background-color:#f8f8ef;border-color:#ddd;color:#666}.canvas .diff .skip{background-color:#eee;border-color:#ccc}.canvas .diff .insert{background-color:#bd9;border-color:#9c7;color:#040}#webtool.canvas .diff .insert em{background-color:#efc;border-color:#060;color:#464}.canvas .diff p.author{background:#ddc;color:#666}.canvas #doc table,.canvas .box .body table{background:#f8f8ef;border-color:#664;color:#666}.canvas #doc strong,.canvas .box .body strong{color:#933}.canvas .box .body em,.canvas .box .body #doc em{color:#472}.canvas #diffoutput #thirdparties{background:#c8c8bf;border-color:#664}.canvas #diffoutput #thirdparties a{color:#664}#doc.canvas{color:#444}.canvas #doc div,#doc.canvas div{background:#c8c8bf;border-color:#664}.canvas #doc ol,#doc.canvas ol{background:#e8e8e8;border-color:#664}.canvas #doc div div,#doc.canvas div div{background:#e8e8e8;border-color:#664}.canvas #doc table,#doc.canvas table{background:#f8f8ef;border-color:#664}.canvas #doc th,#doc.canvas th{background:#c8c8bf;border-left-color:#664;border-top-color:#664}.canvas #doc tr:hover,#doc.canvas tr:hover{background:#c8c8bf}.canvas #doc td,#doc.canvas td{border-color:#664}.canvas #doc div:hover,#doc.canvas div:hover{background:#d8d8cf}.canvas #doc div div:hover,#doc.canvas div div:hover,#doc.canvas div ol:hover{background:#f8f8ef}.canvas #pdsamples li{background:#d8d8cf;border-color:#664}.canvas #pdsamples li div{background:#e8e8e8;border-color:#664}.canvas #pdsamples li div a{color:#664}.canvas #pdsamples li p a{color:#450}",
@@ -162,7 +162,7 @@ var exports = "",
     };
 
     if (pd.test.cm === true) {
-        pd.cm = {};
+        pd.cm          = {};
         pd.cm.diffBase = codeMirror(function (x) {
             var node = pd.$$("diffBase");
             if (pd.o.codeDiffBase === null) {
@@ -180,7 +180,9 @@ var exports = "",
             lineNumbers      : true,
             indentUnit       : 4,
             foldGutter       : true,
-            gutters          : ["CodeMirror-linenumbers", "CodeMirror-foldgutter"],
+            gutters          : [
+                "CodeMirror-linenumbers", "CodeMirror-foldgutter"
+            ],
             tabSize          : 4,
             theme            : "white",
             showTrailingSpace: true,
@@ -188,7 +190,7 @@ var exports = "",
             matchBrackets    : true,
             mode             : "javascript"
         });
-        pd.cm.diffNew = codeMirror(function (x) {
+        pd.cm.diffNew  = codeMirror(function (x) {
             var node = pd.$$("diffNew");
             if (pd.o.codeDiffNew === null) {
                 if (node === null) {
@@ -205,7 +207,9 @@ var exports = "",
             lineNumbers      : true,
             indentUnit       : 4,
             foldGutter       : true,
-            gutters          : ["CodeMirror-linenumbers", "CodeMirror-foldgutter"],
+            gutters          : [
+                "CodeMirror-linenumbers", "CodeMirror-foldgutter"
+            ],
             tabSize          : 4,
             theme            : "white",
             showTrailingSpace: true,
@@ -213,7 +217,7 @@ var exports = "",
             matchBrackets    : true,
             mode             : "javascript"
         });
-        pd.cm.beauIn = codeMirror(function (x) {
+        pd.cm.beauIn   = codeMirror(function (x) {
             var node = pd.$$("Beautify");
             if (pd.o.codeBeauIn === null) {
                 if (node === null) {
@@ -230,7 +234,9 @@ var exports = "",
             lineNumbers      : true,
             indentUnit       : 4,
             foldGutter       : true,
-            gutters          : ["CodeMirror-linenumbers", "CodeMirror-foldgutter"],
+            gutters          : [
+                "CodeMirror-linenumbers", "CodeMirror-foldgutter"
+            ],
             tabSize          : 4,
             theme            : "white",
             showTrailingSpace: true,
@@ -238,7 +244,7 @@ var exports = "",
             matchBrackets    : true,
             mode             : "javascript"
         });
-        pd.cm.beauOut = codeMirror(function (x) {
+        pd.cm.beauOut  = codeMirror(function (x) {
             var node = pd.$$("Beautify");
             if (pd.o.codeBeauOut === null) {
                 if (node === null) {
@@ -255,7 +261,9 @@ var exports = "",
             lineNumbers      : true,
             indentUnit       : 4,
             foldGutter       : true,
-            gutters          : ["CodeMirror-linenumbers", "CodeMirror-foldgutter"],
+            gutters          : [
+                "CodeMirror-linenumbers", "CodeMirror-foldgutter"
+            ],
             tabSize          : 4,
             theme            : "white",
             showTrailingSpace: true,
@@ -264,7 +272,7 @@ var exports = "",
             mode             : "javascript",
             readOnly         : true
         });
-        pd.cm.minnIn = codeMirror(function (x) {
+        pd.cm.minnIn   = codeMirror(function (x) {
             var node = pd.$$("Minify");
             if (pd.o.codeMinnIn === null) {
                 if (node === null) {
@@ -281,7 +289,9 @@ var exports = "",
             lineNumbers      : true,
             indentUnit       : 4,
             foldGutter       : true,
-            gutters          : ["CodeMirror-linenumbers", "CodeMirror-foldgutter"],
+            gutters          : [
+                "CodeMirror-linenumbers", "CodeMirror-foldgutter"
+            ],
             tabSize          : 4,
             theme            : "white",
             showTrailingSpace: true,
@@ -289,7 +299,7 @@ var exports = "",
             matchBrackets    : true,
             mode             : "javascript"
         });
-        pd.cm.minnOut = codeMirror(function (x) {
+        pd.cm.minnOut  = codeMirror(function (x) {
             var node = pd.$$("Minify");
             if (pd.o.codeMinnOut === null) {
                 if (node === null) {
@@ -306,7 +316,9 @@ var exports = "",
             lineNumbers      : true,
             indentUnit       : 4,
             foldGutter       : true,
-            gutters          : ["CodeMirror-linenumbers", "CodeMirror-foldgutter"],
+            gutters          : [
+                "CodeMirror-linenumbers", "CodeMirror-foldgutter"
+            ],
             tabSize          : 4,
             theme            : "white",
             showTrailingSpace: true,
@@ -316,7 +328,7 @@ var exports = "",
             readOnly         : true
         });
         //language detection
-        pd.auto = function dom__auto(a) {
+        pd.auto        = function dom__auto(a) {
             var b     = [],
                 c     = 0,
                 d     = 0,
@@ -382,9 +394,9 @@ var exports = "",
             return "javascript";
         };
         //execute pd.auto onkeyup for codeBeauIn and codeMinnIn
-        pd.langkey = function dom__langkey(x) {
+        pd.langkey     = function dom__langkey(x) {
             var value = x.getValue(),
-                lang = (pd.o.lang === null || pd.o.lang[pd.o.lang.selectedIndex].value === "auto") ? "auto" : pd.o.lang[pd.o.lang.selectedIndex].value;
+                lang  = (pd.o.lang === null || pd.o.lang[pd.o.lang.selectedIndex].value === "auto") ? "auto" : pd.o.lang[pd.o.lang.selectedIndex].value;
             if (lang === "auto") {
                 lang = pd.auto(value);
             }
@@ -408,8 +420,8 @@ var exports = "",
             }
         };
         //set indentation size in CodeMirror
-        pd.insize = function dom__insize() {
-            var that = this,
+        pd.insize      = function dom__insize() {
+            var that  = this,
                 value = Number(that.value);
             if (that === pd.$$("diff-quan")) {
                 if (pd.o.codeDiffBase !== null) {
@@ -563,7 +575,7 @@ var exports = "",
                     maximize         = pd.$$("hideOptions"),
                     presumedLanguage = "";
 
-                node = pd.$$("showOptionsCallOut");
+                node      = pd.$$("showOptionsCallOut");
                 pd.zIndex += 1;
                 if (api.mode === "beautify") {
                     if (pd.o.codeBeauOut !== null) {
@@ -577,7 +589,7 @@ var exports = "",
                         if (output[1] !== "") {
                             if (autotest === true) {
                                 output[1] = output[1].replace("seconds </em></p>", "seconds </em></p> <p>Language is set to <strong>auto</strong>. Presumed language is <em>" + api.lang + "</em>.</p>");
-                                api.lang = "auto";
+                                api.lang  = "auto";
                             }
                             pd.o.report.beau.body.innerHTML    = output[1];
                             pd.o.report.beau.box.style.zIndex  = pd.zIndex;
@@ -630,7 +642,7 @@ var exports = "",
                                 }
                                 pd.o.report.beau.box.style.top   = (pd.settings.beaureport.top / 10) + "em";
                                 pd.o.report.beau.box.style.right = "auto";
-                                diffList = pd.o.report.beau.body.getElementsByTagName("ol");
+                                diffList                         = pd.o.report.beau.body.getElementsByTagName("ol");
                                 if (diffList.length > 0) {
                                     pd.beaurows[0] = diffList[0].getElementsByTagName("li");
                                     pd.beaurows[1] = diffList[1].getElementsByTagName("li");
@@ -665,7 +677,7 @@ var exports = "",
                 if (api.mode === "diff" && pd.o.report.diff.box !== null) {
                     if (autotest === true) {
                         output[1] = output[1].replace("seconds </em></p>", "seconds </em></p> <p>Language is set to <strong>auto</strong>. Presumed language is <em>" + api.lang + "</em>.</p>");
-                        api.lang = "auto";
+                        api.lang  = "auto";
                     }
                     buttons = pd.o.report.diff.box.getElementsByTagName("p")[0].getElementsByTagName("button");
                     if (output[0].length > 125000) {
@@ -708,7 +720,7 @@ var exports = "",
                         }
                     }
                     if (pd.o.report.diff.box !== null) {
-                        pd.o.report.diff.box.style.top = (pd.settings.diffreport.top / 10) + "em";
+                        pd.o.report.diff.box.style.top     = (pd.settings.diffreport.top / 10) + "em";
                         pd.o.report.diff.box.style.display = "block";
                     }
                 }
@@ -728,7 +740,7 @@ var exports = "",
                     if (output[1] !== "" && pd.o.report.minn.box !== null && pd.o.maxInputs.innerHTML.replace(/\s+/g, " ") === "Maximize Inputs") {
                         if (autotest === true) {
                             output[1] = output[1].replace("seconds </em</p>", "seconds </em</p> <p>Language is set to <strong>auto</strong>. Presumed language is <em>" + api.lang + "</em>.</p>");
-                            api.lang = "auto";
+                            api.lang  = "auto";
                         }
                         pd.o.report.minn.body.innerHTML    = output[1];
                         pd.o.report.minn.box.style.zIndex  = pd.zIndex;
@@ -875,7 +887,7 @@ var exports = "",
                 }
                 if (pd.test.keypress === false && (event.keyCode === 17 || event.ctrlKey === true)) {
                     pd.test.keypress = true;
-                    return false;
+                    return true;
                 }
             }
             if (event.type === "keyup") {
@@ -887,6 +899,9 @@ var exports = "",
                     pd.test.keystore = [];
                 } else if (pd.test.keypress === true) {
                     pd.test.keystore.pop();
+                    if (pd.test.keystore.length === 0) {
+                        ps.test.keypress = false;
+                    }
                     return true;
                 }
             }
@@ -1141,7 +1156,7 @@ var exports = "",
                         api.diff = pd.o.codeDiffNew.value;
                     }
                 }
-                api.mode   = "diff";
+                api.mode = "diff";
                 if (domain.test(api.diff) === true && pd.test.xhr === true) {
                     (function dom__recycle_xhrDiff() {
                         var protocolRemove = (api.diff.indexOf("file:///") === 0) ? api.diff.split(":///")[1] : api.diff.split("://")[1],
@@ -1506,10 +1521,10 @@ var exports = "",
                         } else {
                             bodyLocal.style.display = "none";
                             if (hideOps === true) {
-                                boxLocal.style.top      = "-1000em";
+                                boxLocal.style.top = "-1000em";
                             }
-                            boxLocal.style.left     = "auto";
-                            boxLocal.style.right    = finalLocal + "em";
+                            boxLocal.style.left  = "auto";
+                            boxLocal.style.right = finalLocal + "em";
                             pd.options(boxLocal);
                             return false;
                         }
@@ -1625,7 +1640,7 @@ var exports = "",
             if (pd.test.ls === true && pd.test.json === true) {
                 localStorage.settings = JSON.stringify(pd.settings);
             }
-            pd.settings[id].top   = box.offsetTop;
+            pd.settings[id].top    = box.offsetTop;
             pd.settings[id].left   = box.offsetLeft;
             pd.settings[id].height = body.clientHeight - 36;
             pd.settings[id].width  = body.clientWidth - 3;
@@ -2545,9 +2560,9 @@ var exports = "",
     };
 
     pd.hideBeauOut         = function dom__hideBeauOut() {
-        var node = {},
-            wide = pd.$$("diffwide"),
-            state = (pd.o.jsscope === null || pd.o.jsscope.checked === false) ? false : true,
+        var node    = {},
+            wide    = pd.$$("diffwide"),
+            state   = (pd.o.jsscope === null || pd.o.jsscope.checked === false) ? false : true,
             restore = function dom__hideBeauOut_restore() {
                 pd.o.codeBeauOut.parentNode.style.display = "block";
                 if (pd.o.codeBeauIn !== null) {
@@ -2562,7 +2577,7 @@ var exports = "",
                                 pd.o.codeBeauIn.style.height = "31.7em";
                             }
                         } else {
-                            node.style.width = "100%";
+                            node.style.width             = "100%";
                             pd.o.codeBeauIn.style.height = "14.8em";
                         }
                     }
@@ -2577,8 +2592,8 @@ var exports = "",
             if (state === true) {
                 pd.o.codeBeauOut.parentNode.style.display = "none";
                 if (pd.o.codeBeauIn !== null) {
-                    node = pd.o.codeBeauIn.parentNode;
-                    node.style.width = "100%";
+                    node                         = pd.o.codeBeauIn.parentNode;
+                    node.style.width             = "100%";
                     pd.o.codeBeauIn.style.height = "31.7em";
                     if (pd.test.cm === true) {
                         pd.o.codeBeauIn.onkeyup = function dom__hideBeauOut_langkey() {
@@ -2985,7 +3000,7 @@ var exports = "",
             node   = {},
             fgroup = pd.$$("functionGroup"),
             height = 0,
-            text = "";
+            text   = "";
         if (button === null) {
             return;
         }
@@ -3212,45 +3227,45 @@ var exports = "",
 
     //alter tool on page load in reflection to saved state
     (function dom__load() {
-        var a          = 0,
-            inputs     = [],
-            inputsLen  = 0,
-            id         = "",
-            name       = "",
-            type       = "",
-            node       = {},
-            buttons    = {},
-            title      = {},
-            statdump   = [],
+        var a           = 0,
+            inputs      = [],
+            inputsLen   = 0,
+            id          = "",
+            name        = "",
+            type        = "",
+            node        = {},
+            buttons     = {},
+            title       = {},
+            statdump    = [],
             langtest    = (pd.o.lang !== null && pd.o.lang.nodeName.toLowerCase() === "select") ? true : false,
             hideBeauOut = function dom__load_hideBeauOut() {
                 pd.hideBeauOut();
                 pd.options(this);
             },
-            thirdparty = function dom__load_thirdparty() {
+            thirdparty  = function dom__load_thirdparty() {
                 var that = this,
                     href = that.getAttribute("href");
                 window.open(href, 'thirdparty');
                 return false;
             },
-            resize     = function dom__load_resize(e) {
+            resize      = function dom__load_resize(e) {
                 var that = this;
                 pd.resize(e, that);
             },
-            save       = function dom__load_save() {
+            save        = function dom__load_save() {
                 var that = this;
                 pd.save(that);
             },
-            grab       = function dom__load_grab(e) {
+            grab        = function dom__load_grab(e) {
                 var that = this;
                 pd.grab(e, that);
             },
-            top        = function dom__load_top() {
+            top         = function dom__load_top() {
                 var that = this;
                 pd.top(that.parentNode);
             },
-            page       = (pd.o.page === null) ? "" : pd.o.page.getAttribute("id"),
-            backspace  = function dom__load_backspace(event) {
+            page        = (pd.o.page === null) ? "" : pd.o.page.getAttribute("id"),
+            backspace   = function dom__load_backspace(event) {
                 var aa = event || window.event,
                     bb = aa.srcElement || aa.target;
                 if (aa.keyCode === 8) {
@@ -3265,8 +3280,8 @@ var exports = "",
             if (node !== null && node.innerHTML.replace(/\s+/, " ") === "Default Display") {
                 if (pd.test.ls === false || localStorage.settings === undefined) {
                     pd.hideOptions();
-                    node = document.createElement("p");
-                    id = (location.href.indexOf("prettydiff.com/") > -1) ? "php" : "xhtml";
+                    node           = document.createElement("p");
+                    id             = (location.href.indexOf("prettydiff.com/") > -1) ? "php" : "xhtml";
                     node.innerHTML = "<strong>New to Pretty Diff?</strong> Click on the <em>Show Options</em> button in the top right corner to see more options or read the <a href='documentation." + id + "'>documentation</a>.";
                     node.setAttribute("id", "showOptionsCallOut");
                     node.onclick = function () {
@@ -3449,7 +3464,7 @@ var exports = "",
                 }
             }
             if (pd.o.codeBeauIn !== null) {
-                pd.o.codeBeauIn.onkeyup = function dom__load_bindBeauInUp(e) {
+                pd.o.codeBeauIn.onkeyup   = function dom__load_bindBeauInUp(e) {
                     var event = e || window.event;
                     pd.recycle(event);
                 };
@@ -3460,7 +3475,7 @@ var exports = "",
                 };
             }
             if (pd.o.codeMinnIn !== null) {
-                pd.o.codeMinnIn.onkeyup = function dom__load_bindMinnInUp(e) {
+                pd.o.codeMinnIn.onkeyup   = function dom__load_bindMinnInUp(e) {
                     var event = e || window.event;
                     pd.recycle(event);
                 };
@@ -3821,7 +3836,7 @@ var exports = "",
                         } else if (params[b].indexOf("s=") === 0) {
                             source = params[b].substr(2);
                         } else if (params[b].indexOf("d=") === 0 && pd.o.codeDiffNew !== null) {
-                            diff                   = params[b].substr(2);
+                            diff = params[b].substr(2);
                             if (pd.o.codeDiffNew !== null) {
                                 if (pd.test.cm === true) {
                                     pd.cm.diffNew.setValue(diff);
@@ -4060,8 +4075,8 @@ var exports = "",
                         }
                         colorParam = colorParam.split("&")[0];
                         colorParam = colorParam.substr(colorParam.indexOf("=") + 1);
-                        row = node.getElementsByTagName("option");
-                        rowLen = row.length;
+                        row        = node.getElementsByTagName("option");
+                        rowLen     = row.length;
                         for (b = 0; b < rowLen; b += 1) {
                             if (row[b].value.toLowerCase() === colorParam) {
                                 node.selectedIndex = b;
