@@ -340,7 +340,7 @@ var exports = "",
             }
             b = a.replace(/\[[a-zA-Z][\w\-]*\=("|')?[a-zA-Z][\w\-]*("|')?\]/g, "").split("");
             c = b.length;
-            if (/^([\s\w]*<)/.test(a) === false && /(>[\s\w]*)$/.test(a) === false) {
+            if ((/^([\s\w]*<)/).test(a) === false && (/(>[\s\w]*)$/).test(a) === false) {
                 for (d = 1; d < c; d += 1) {
                     if (flaga === false) {
                         if (b[d] === "*" && b[d - 1] === "/") {
@@ -362,10 +362,10 @@ var exports = "",
                     }
                 }
                 join = b.join("");
-                if (/^(\s*\{)/.test(a) === true && /(\}\s*)$/.test(a) && a.indexOf(",") !== -1) {
+                if ((/^(\s*\{)/).test(a) === true && (/(\}\s*)$/).test(a) && a.indexOf(",") !== -1) {
                     return "javascript";
                 }
-                if ((/((\}?(\(\))?\)*;?\s*)|([a-z0-9]("|')?\)*);?(\s*\})*)$/i).test(a) === true && ((/(var\s+[a-z]+[a-zA-Z0-9]*)/).test(a) === true || /(\=\s*function)|(\s*function\s+(\w*\s+)?\()/.test(a) === true || a.indexOf("{") === -1 || (/^(\s*if\s+\()/).test(a) === true)) {
+                if ((/((\}?(\(\))?\)*;?\s*)|([a-z0-9]("|')?\)*);?(\s*\})*)$/i).test(a) === true && ((/(var\s+[a-z]+[a-zA-Z0-9]*)/).test(a) === true || (/(\=\s*function)|(\s*function\s+(\w*\s+)?\()/).test(a) === true || a.indexOf("{") === -1 || (/^(\s*if\s+\()/).test(a) === true)) {
                     if (a.indexOf("(") > -1 || a.indexOf("=") > -1 || (a.indexOf(";") > -1 && a.indexOf("{") > -1) || pd.mode !== "diff") {
                         return "javascript";
                     }
@@ -382,8 +382,8 @@ var exports = "",
                 }
                 return "javascript";
             }
-            if ((/(>[\w\s:]*)?<(\/|\!)?[\w\s:\-\[]+/.test(a) === true && (/^([\s\w]*<)/).test(a) === true && (/(>[\s\w]*)$/).test(a) === true) || ((/^(\s*<s((cript)|(tyle)))/i).test(a) === true && (/(<\/s((cript)|(tyle))>\s*)$/i).test(a) === true)) {
-                if ((/^(\s*<\!doctype html>)/i).test(a) === true || ((/^(\s*<\!DOCTYPE\s+((html)|(HTML))\s+PUBLIC\s+)/).test(a) === true && (/XHTML\s+1\.1/).test(a) === false && (/XHTML\s+1\.0\s+(S|s)((trict)|(TRICT))/).test(a) === false)) {
+            if (((/(>[\w\s:]*)?<(\/|\!)?[\w\s:\-\[]+/).test(a) === true && (/^([\s\w]*<)/).test(a) === true && (/(>[\s\w]*)$/).test(a) === true) || ((/^(\s*<s((cript)|(tyle)))/i).test(a) === true && (/(<\/s((cript)|(tyle))>\s*)$/i).test(a) === true)) {
+                if ((/^(\s*<\!doctype html>)/i).test(a) === true || (/^(\s*<html)/i).test(a) === true || ((/^(\s*<\!DOCTYPE\s+((html)|(HTML))\s+PUBLIC\s+)/).test(a) === true && (/XHTML\s+1\.1/).test(a) === false && (/XHTML\s+1\.0\s+(S|s)((trict)|(TRICT))/).test(a) === false)) {
                     return "html";
                 }
                 return "markup";
@@ -515,6 +515,16 @@ var exports = "",
         document.onmousedown     = null;
     };
 
+    pd.keydown = function dom__keydown(e) {
+        var event = e || window.event;
+        if (pd.test.keypress === true && (pd.test.keystore.length === 0 || event.keyCode !== pd.test.keystore[pd.test.keystore.length - 1]) && event.keyCode !== 17) {
+            pd.test.keystore.push(event.keyCode);
+        }
+        if (event.keyCode === 17 || event.ctrlKey === true) {
+            pd.test.keypress = true;
+        }
+    };
+
     //recycle bundles arguments in preparation for executing prettydiff
     pd.recycle             = function dom__recycle(e) {
         var api        = {},
@@ -572,7 +582,6 @@ var exports = "",
                 var diffList         = [],
                     button           = {},
                     buttons          = {},
-                    maximize         = pd.$$("hideOptions"),
                     presumedLanguage = "";
 
                 node      = pd.$$("showOptionsCallOut");
@@ -685,7 +694,7 @@ var exports = "",
                     } else {
                         pd.test.filled.diff = false;
                     }
-                    if (/^(<p><strong>Error:<\/strong> Please try using the option labeled ((&lt;)|<)em((&gt;)|>)Plain Text \(diff only\)((&lt;)|<)\/em((&gt;)|>)\.)/.test(output[0])) {
+                    if ((/^(<p><strong>Error:<\/strong> Please try using the option labeled ((&lt;)|<)em((&gt;)|>)Plain Text \(diff only\)((&lt;)|<)\/em((&gt;)|>)\.)/).test(output[0])) {
                         pd.o.report.diff.body.innerHTML = "<p><strong>Error:</strong> Please try using the option labeled <em>Plain Text (diff only)</em>. <span style='display:block'>The input does not appear to be markup, CSS, or JavaScript.</span></p>";
                     } else {
                         pd.o.report.diff.body.innerHTML = output[1] + output[0];
@@ -871,39 +880,25 @@ var exports = "",
         if (node !== null) {
             node.parentNode.removeChild(node);
         }
-        //do not execute keypress from alt, home, end, or arrow keys
-        if (typeof event === "object") {
+        if (typeof event === "object" && event.type === "keyup") {
             //jsscope does not get the convenience of keypress execution, because its overhead is costly
             node = pd.$$("jsscope-yes");
-            if (event.type === "keydown") {
-                if (node !== null && node.checked === true && pd.mode === "beau") {
-                    return false;
-                }
-                if (pd.test.keypress === true) {
-                    if ((pd.test.keystore.length === 0 || pd.test.keystore[pd.test.keystore.length - 1] !== event.keyCode) && event.keyCode !== 17) {
-                        pd.test.keystore.push(event.keyCode);
-                    }
-                    return true;
-                }
-                if (pd.test.keypress === false && (event.keyCode === 17 || event.ctrlKey === true)) {
-                    pd.test.keypress = true;
-                    return true;
-                }
+            //do not execute keypress from alt, home, end, or arrow keys
+            if ((node !== null && node.checked === true && pd.mode === "beau") || event.altKey === true || event.keyCode === 16 || event.keyCode === 18 || event.keyCode === 35 || event.keyCode === 36 || event.keyCode === 37 || event.keyCode === 38 || event.keyCode === 39 || event.keyCode === 40) {
+                return false;
             }
-            if (event.type === "keyup") {
-                if ((node !== null && node.checked === true && pd.mode === "beau") || event.altKey === true || event.keyCode === 16 || event.keyCode === 18 || event.keyCode === 35 || event.keyCode === 36 || event.keyCode === 37 || event.keyCode === 38 || event.keyCode === 39 || event.keyCode === 40) {
-                    return false;
-                }
-                if (event.keyCode === 17 || event.ctrlKey === true) {
-                    pd.test.keypress = false;
-                    pd.test.keystore = [];
-                } else if (pd.test.keypress === true) {
+            if (pd.test.keypress === true) {
+                if (pd.test.keystore.length > 0) {
                     pd.test.keystore.pop();
                     if (pd.test.keystore.length === 0) {
-                        ps.test.keypress = false;
+                        pd.test.keypress = false;
                     }
-                    return true;
+                    return false;
                 }
+            }
+            if ((event.keyCode === 17 || event.ctrlKey === true) && pd.test.keypress === true && pd.test.keystore.length === 0) {
+                pd.test.keypress = false;
+                return false;
             }
         }
         if (pd.test.ls === true && pd.o.report.stat.box !== null) {
@@ -914,23 +909,23 @@ var exports = "",
             }
         }
 
-        //set defaults for all arguments
-        api.comments     = "indent";
-        api.content      = false;
-        api.diff         = "";
-        api.diffview     = "sidebyside";
-        api.force_indent = false;
-        api.html         = false;
-        api.insize       = 4;
-        api.indent       = "";
-        api.lang         = "auto";
-        api.mode         = "diff";
-        api.quote        = false;
-        api.semicolon    = false;
-        api.style        = "indent";
-        api.topcoms      = false;
-        api.conditional  = false;
-        api.inlevel      = 0;
+        //examples of static options with appropriate types
+        //api.comments     = "indent";
+        //api.content      = false;
+        //api.diff         = "";
+        //api.diffview     = "sidebyside";
+        //api.force_indent = false;
+        //api.html         = false;
+        //api.insize       = 4;
+        //api.indent       = "";
+        //api.lang         = "auto";
+        //api.mode         = "diff";
+        //api.quote        = false;
+        //api.semicolon    = false;
+        //api.style        = "indent";
+        //api.topcoms      = false;
+        //api.conditional  = false;
+        //api.inlevel      = 0;
 
         //gather updated dom nodes
         api.lang         = (pd.o.lang === null) ? "javascript" : (pd.o.lang.nodeName.toLowerCase() === "select") ? pd.o.lang[pd.o.lang.selectedIndex].value.toLowerCase() : pd.o.lang.value.toLowerCase();
@@ -1813,7 +1808,7 @@ var exports = "",
         //Webkit and IE get the old functionality of a textarea with
         //HTML text content to copy and paste into a text file.
         pd.top(top);
-        if (/Please try using the option labeled ((&lt;)|<)em((&gt;)|>)Plain Text \(diff only\)((&lt;)|<)\/em((&gt;)|>)\./.test(bodyInner) === true && /div class\=("|')diff("|')/.test(bodyInner) === false) {
+        if ((/Please try using the option labeled ((&lt;)|<)em((&gt;)|>)Plain Text \(diff only\)((&lt;)|<)\/em((&gt;)|>)\./).test(bodyInner) === true && (/div class\=("|')diff("|')/).test(bodyInner) === false) {
             pd.o.report.diff.body.innerHTML = "<p><strong>Error:</strong> Please try using the option labeled <em>Plain Text (diff only)</em>. <span style='display:block'>The input does not appear to be markup, CSS, or JavaScript.</span></p>";
             return;
         }
@@ -2582,7 +2577,7 @@ var exports = "",
                         }
                     }
                     pd.o.codeBeauIn.onkeyup   = pd.recycle;
-                    pd.o.codeBeauIn.onkeydown = pd.recycle;
+                    pd.o.codeBeauIn.onkeydown = pd.keydown;
                 }
             };
         if (pd.o.codeBeauOut === null) {
@@ -3471,7 +3466,7 @@ var exports = "",
                 pd.o.codeBeauIn.onkeydown = function dom__load_bindBeauInDown(e) {
                     var event = e || window.event;
                     pd.fixtabs();
-                    pd.recycle(event);
+                    pd.keydown(event);
                 };
             }
             if (pd.o.codeMinnIn !== null) {
@@ -3482,14 +3477,24 @@ var exports = "",
                 pd.o.codeMinnIn.onkeydown = function dom__load_bindMinnInDown(e) {
                     var event = e || window.event;
                     pd.fixtabs();
-                    pd.recycle(event);
+                    pd.keydown(event);
                 };
             }
             if (pd.o.codeDiffBase !== null) {
                 pd.o.codeDiffBase.onkeydown = pd.fixtabs;
+                if (pd.test.cm === true) {
+                    pd.o.codeDiffBase.onkeyup = function dom__load_bindAutoDiffBase() {
+                        pd.langkey(pd.cm.diffBase);
+                    };
+                }
             }
             if (pd.o.codeDiffNew !== null) {
                 pd.o.codeDiffNew.onkeydown = pd.fixtabs;
+                if (pd.test.cm === true) {
+                    pd.o.codeDiffNew.onkeyup = function dom__load_bindAutoDiffNew() {
+                        pd.langkey(pd.cm.diffNew);
+                    };
+                }
             }
             if (pd.o.report.diff.box !== null) {
                 if (pd.test.fs === true) {

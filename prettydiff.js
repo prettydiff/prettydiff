@@ -1180,7 +1180,7 @@ var prettydiff = function prettydiff(api) {
                             if (input.charAt(aa) === "/" && typeof input.charAt(aa + 1) === "string" && (input.charAt(aa + 1) === "*" || input.charAt(aa + 1) === "/")) {
                                 comment = input.substr(aa, 2);
                                 fcom.push(input.charAt(aa));
-                            } else if (/\s/.test(input.charAt(aa)) === false) {
+                            } else if ((/\s/).test(input.charAt(aa)) === false) {
                                 input = input.substr(aa);
                                 return;
                             }
@@ -1216,7 +1216,7 @@ var prettydiff = function prettydiff(api) {
                 geti  = 0;
                 getl  = input.length;
                 ret   = min(input);
-                if (/\s/.test(ret.charAt(0))) {
+                if ((/\s/).test(ret.charAt(0))) {
                     ret = ret.slice(1, ret.length);
                 }
                 if (type === "css") {
@@ -1605,7 +1605,7 @@ var prettydiff = function prettydiff(api) {
                                 fragment        = [];
                                 margin          = [];
                                 for (e = 0; e < length; e += 1) {
-                                    if (/^(\n?\/\*)/.test(cc[e])) {
+                                    if ((/^(\n?\/\*)/).test(cc[e])) {
                                         fragment.push(cc[e].replace(/\/\*\s+/, "/* "));
                                     } else if (cc[e] !== "") {
                                         margin.push(cc[e].replace(/^(\s*)/, ""));
@@ -5342,15 +5342,15 @@ var prettydiff = function prettydiff(api) {
                             }
                         }
                         i += 1;
-                        if (/\s/.test(x[i]) === true) {
+                        if ((/\s/).test(x[i]) === true) {
                             x[i] = " ";
                         }
-                        if (i < end - 1 && /\s/.test(x[i + 1]) === true) {
+                        if (i < end - 1 && (/\s/).test(x[i + 1]) === true) {
                             i += 1;
                             do {
                                 x[i] = "";
                                 i    += 1;
-                            } while (/\s/.test(x[i]) === true);
+                            } while ((/\s/).test(x[i]) === true);
                         }
                     },
                     markupscript  = function markupmin__markupscript(type) {
@@ -7029,7 +7029,7 @@ var prettydiff = function prettydiff(api) {
                             }
                             indents = indent.join("");
                             item    = "\n" + indents + item;
-                            if (cinfo[i] === "parse" && /\[\s*</.test(build[i])) {
+                            if (cinfo[i] === "parse" && (/\[\s*</).test(build[i])) {
                                 build[i] = build[i].replace(/\[\s+</g, "[<");
                                 parse    = build[i].split("");
                                 loopEnd  = parse.length;
@@ -8960,7 +8960,7 @@ var prettydiff = function prettydiff(api) {
                             auto  = "<p>Language set to <strong>auto</strong>. Presumed language is <em>CSS</em>.</p>";
                             return;
                         }
-                        if (/^([\s\w]*<)/.test(a) === false && /(>[\s\w]*)$/.test(a) === false) {
+                        if ((/^([\s\w]*<)/).test(a) === false && (/(>[\s\w]*)$/).test(a) === false) {
                             for (d = 1; d < c; d += 1) {
                                 if (flaga === false) {
                                     if (b[d] === "*" && b[d - 1] === "/") {
@@ -8982,10 +8982,10 @@ var prettydiff = function prettydiff(api) {
                                 }
                             }
                             join = b.join("");
-                            if (/^(\s*\{)/.test(a) === true && /(\}\s*)$/.test(a) && a.indexOf(",") !== -1) {
+                            if ((/^(\s*\{)/).test(a) === true && (/(\}\s*)$/).test(a) && a.indexOf(",") !== -1) {
                                 clang = "javascript";
                                 auto  = "JSON";
-                            } else if ((/((\}?(\(\))?\)*;?\s*)|([a-z0-9]("|')?\)*);?(\s*\})*)$/i).test(a) === true && ((/(var\s+[a-z]+[a-zA-Z0-9]*)/).test(a) === true || /(\=\s*function)|(\s*function\s+(\w*\s+)?\()/.test(a) === true || a.indexOf("{") === -1 || (/^(\s*if\s+\()/).test(a) === true)) {
+                            } else if ((/((\}?(\(\))?\)*;?\s*)|([a-z0-9]("|')?\)*);?(\s*\})*)$/i).test(a) === true && ((/(var\s+[a-z]+[a-zA-Z0-9]*)/).test(a) === true || (/(\=\s*function)|(\s*function\s+(\w*\s+)?\()/).test(a) === true || a.indexOf("{") === -1 || (/^(\s*if\s+\()/).test(a) === true)) {
                                 if (a.indexOf("(") > -1 || a.indexOf("=") > -1 || (a.indexOf(";") > -1 && a.indexOf("{") > -1) || cmode !== "diff") {
                                     clang = "javascript";
                                     auto  = "JavaScript";
@@ -9008,17 +9008,17 @@ var prettydiff = function prettydiff(api) {
                                 clang = "javascript";
                                 auto  = "JavaScript";
                             }
-                        } else if ((/(>[\w\s:]*)?<(\/|\!)?[\w\s:\-\[]+/.test(a) === true && (/^([\s\w]*<)/).test(a) === true && (/(>[\s\w]*)$/).test(a) === true) || (/^(\s*<s((cript)|(tyle)))/i.test(a) === true && /(<\/s((cript)|(tyle))>\s*)$/i.test(a) === true)) {
+                        } else if (((/(>[\w\s:]*)?<(\/|\!)?[\w\s:\-\[]+/).test(a) === true && (/^([\s\w]*<)/).test(a) === true && (/(>[\s\w]*)$/).test(a) === true) || (/^(\s*<s((cript)|(tyle)))/i.test(a) === true && /(<\/s((cript)|(tyle))>\s*)$/i.test(a) === true)) {
                             clang = "markup";
-                            if (/^(\s*<\?xml)/.test(a) === true) {
-                                if (/XHTML\s+1\.1/.test(a) === true || /XHTML\s+1\.0\s+(S|s)((trict)|(TRICT))/.test(a) === true) {
+                            if ((/^(\s*<\?xml)/).test(a) === true) {
+                                if ((/XHTML\s+1\.1/).test(a) === true || (/XHTML\s+1\.0\s+(S|s)((trict)|(TRICT))/).test(a) === true) {
                                     auto = "XHTML";
                                 } else {
                                     auto = "XML";
                                 }
-                            } else if (/<[a-zA-Z]/.test(a) === false && /<\![A-Z]/.test(a) === true) {
+                            } else if ((/<[a-zA-Z]/).test(a) === false && (/<\![A-Z]/).test(a) === true) {
                                 auto = "SGML";
-                            } else if (chtml === true || /^(\s*<\!doctype html>)/i.test(a) === true || (/^(\s*<\!DOCTYPE\s+((html)|(HTML))\s+PUBLIC\s+)/.test(a) === true && /XHTML\s+1\.1/.test(a) === false && /XHTML\s+1\.0\s+(S|s)((trict)|(TRICT))/.test(a) === false)) {
+                            } else if (chtml === true || (/^(\s*<\!doctype html>)/i).test(a) === true || (/^(\s*<html)/i).test(a) === true || ((/^(\s*<\!DOCTYPE\s+((html)|(HTML))\s+PUBLIC\s+)/).test(a) === true && (/XHTML\s+1\.1/).test(a) === false && (/XHTML\s+1\.0\s+(S|s)((trict)|(TRICT))/).test(a) === false)) {
                                 chtml = true;
                                 auto  = "HTML";
                             } else {
@@ -9425,10 +9425,10 @@ var prettydiff = function prettydiff(api) {
         jspretty     : 140131, //jspretty library
         markup_beauty: 140127, //markup_beauty library
         markupmin    : 140101, //markupmin library
-        prettydiff   : 140131, //this file
+        prettydiff   : 140203, //this file
         webtool      : 140131, //prettydiff.com.xhtml
         api          : {
-            dom        : 140131,
+            dom        : 140203,
             nodeLocal  : 140127,
             nodeService: 121106, //no longer maintained
             wsh        : 140127
