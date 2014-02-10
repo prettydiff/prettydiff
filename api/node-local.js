@@ -12,8 +12,8 @@
 
 http://prettydiff.com/
 
-Command line API for Prettydiff for local file system only.  This API
-makes no requests or connections outside the local file system.
+Command line API for Prettydiff for local execution only.  This API is
+not intended for execution as a service on a remote server.
 
 Arguments entered from the command line are separated by spaces and
 values are separated from argument names by a colon.  For safety
@@ -60,6 +60,7 @@ Examples:
             jsscope     : false,
             lang        : "auto",
             mode        : "diff",
+            obfuscation : false,
             output      : "",
             preserve    : true,
             quote       : false,
@@ -239,6 +240,10 @@ Examples:
             a.push("");
             a.push("* mode         - string  - The operation to be performed. Defaults to 'diff'.");
             a.push("                 Accepted values: diff, beautify, minify.");
+            a.push("");
+            a.push("* obfuscation  - boolean - If JavaScript minification should result in smaller");
+            a.push("                           variable names and fewer simicolons.  Default is");
+            a.push("                           false.");
             a.push("");
             a.push("* output       - string  - The path of the directory, if readmethod is value");
             a.push("                           'directory', or path and name of the file to write");
@@ -538,6 +543,9 @@ Examples:
                     }
                     if (d[b][0] === "mode" && (d[b][1] === "minify" || d[b][1] === "beautify")) {
                         options.mode = d[b][1];
+                    }
+                    if (d[b][0] === "obfuscation" && d[b][1] === "true") {
+                        options.obfuscation = true;
                     }
                     if (d[b][0] === "output" && d[b][1].length > 0) {
                         options.output = d[b][1];

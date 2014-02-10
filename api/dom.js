@@ -1033,7 +1033,8 @@ var exports = "",
             (function dom__recycle_minify() {
                 var conditional = pd.$$("conditionalm-yes"),
                     html        = pd.$$("htmlm-yes"),
-                    topcoms     = pd.$$("topcoms-yes");
+                    topcoms     = pd.$$("topcoms-yes"),
+                    obfuscate   = pd.$$("obfuscate-yes");
                 if (pd.o.codeMinnIn !== null) {
                     pd.o.codeMinnIn = pd.$$("minifyinput");
                     if (pd.test.cm === true) {
@@ -1045,6 +1046,7 @@ var exports = "",
                 api.conditional = (conditional === null || conditional.checked === false) ? false : true;
                 api.html        = (html === null || html.checked === false) ? false : true;
                 api.topcoms     = (topcoms === null || topcoms.checked === false) ? false : true;
+                api.obfuscate   = (obfuscate === null || obfuscate.checked === false) ? false : true;
             }());
             api.mode = "minify";
         }
@@ -2727,169 +2729,9 @@ var exports = "",
             (function dom__options_comment() {
                 var a    = 0,
                     data = [];
-                if (id === "modediff") {
-                    data = [
-                        "api.mode", "diff"
-                    ];
-                }
-                if (id === "modebeautify") {
-                    data = [
-                        "api.mode", "beautify"
-                    ];
-                }
-                if (id === "modeminify") {
-                    data = [
-                        "api.mode", "minify"
-                    ];
-                }
-                if (id === "langauge") {
-                    data = [
-                        "api.lang", "\"" + item.value + "\""
-                    ];
-                }
-                if (id === "csvchar") {
-                    data = [
-                        "api.csvchar", "\"" + item.value + "\""
-                    ];
-                }
-                if (id === "diff-quan" || id === "beau-quan") {
-                    data = [
-                        "api.insize", "\"" + item.value + "\""
-                    ];
-                }
-                if (id === "diff-char" || id === "beau-char") {
-                    data = [
-                        "api.inchar", "\"" + item.value + "\""
-                    ];
-                }
-                if (id === "diff-space" || id === "beau-space") {
-                    data = [
-                        "api.inchar", "\" \""
-                    ];
-                }
-                if (id === "diff-tab" || id === "beau-tab") {
-                    data = [
-                        "api.inchar", "\"\t\""
-                    ];
-                }
-                if (id === "diff-line" || id === "beau-line") {
-                    data = [
-                        "api.inchar", "\"\n\""
-                    ];
-                }
-                if (id === "incomment-yes") {
-                    data = [
-                        "api.comments", "indent"
-                    ];
-                }
-                if (id === "incomment-no") {
-                    data = [
-                        "api.comments", "noindent"
-                    ];
-                }
-                if (id === "jsindentd-knr" || id === "jsindent-knr") {
-                    data = [
-                        "api.indent", "knr"
-                    ];
-                }
-                if (id === "jsindentd-all" || id === "jsindent-all") {
-                    data = [
-                        "api.indent", "allman"
-                    ];
-                }
-                if (id === "inscriptd-yes" || id === "inscript-yes") {
-                    data = [
-                        "api.style", "indent"
-                    ];
-                }
-                if (id === "inscriptd-no" || id === "inscript-no") {
-                    data = [
-                        "api.style", "noindent"
-                    ];
-                }
-                if (id === "htmld-no" || id === "html-no" || id === "htmlm-no") {
-                    data = [
-                        "api.html", "html-no"
-                    ];
-                }
-                if (id === "htmld-yes" || id === "html-yes" || id === "htmln-yes") {
-                    data = [
-                        "api.html", "html-yes"
-                    ];
-                }
-                if (id === "contextSize") {
-                    data = [
-                        "api.context", "\"" + item.value + "\""
-                    ];
-                }
-                if (id === "diffcontenty") {
-                    data = [
-                        "api.content", "false"
-                    ];
-                }
-                if (id === "diffcontent") {
-                    data = [
-                        "api.content", "true"
-                    ];
-                }
-                if (id === "diffquotey") {
-                    data = [
-                        "api.quote", "false"
-                    ];
-                }
-                if (id === "diffquote") {
-                    data = [
-                        "api.quote", "true"
-                    ];
-                }
-                if (id === "diffscolony") {
-                    data = [
-                        "api.semicolon", "false"
-                    ];
-                }
-                if (id === "diffscolon") {
-                    data = [
-                        "api.semicolon", "true"
-                    ];
-                }
-                if (id === "sidebyside") {
-                    data = [
-                        "api.diffview", "sidebyside"
-                    ];
-                }
-                if (id === "inline") {
-                    data = [
-                        "api.diffview", "inline"
-                    ];
-                }
                 if (id === "baselabel") {
                     data = [
                         "api.sourcelabel", "\"" + item.value + "\""
-                    ];
-                }
-                if (id === "difflabel") {
-                    data = [
-                        "api.difflabel", "\"" + item.value + "\""
-                    ];
-                }
-                if (id === "topcoms-no") {
-                    data = [
-                        "api.topcoms", "false"
-                    ];
-                }
-                if (id === "topcoms") {
-                    data = [
-                        "api.topcoms", "true"
-                    ];
-                }
-                if (id === "dforce_indent-no" || id === "bforce_indent-no") {
-                    data = [
-                        "api.force_indent", "false"
-                    ];
-                }
-                if (id === "dforce_indent" || id === "bforce_indent") {
-                    data = [
-                        "api.force_indent", "true"
                     ];
                 }
                 if (id === "conditionald-no" || id === "conditionalm-no") {
@@ -2902,6 +2744,66 @@ var exports = "",
                         "api.conditional", "true"
                     ];
                 }
+                if (id === "contextSize") {
+                    data = [
+                        "api.context", "\"" + item.value + "\""
+                    ];
+                }
+                if (id === "csvchar") {
+                    data = [
+                        "api.csvchar", "\"" + item.value + "\""
+                    ];
+                }
+                if (id === "diff-char" || id === "beau-char") {
+                    data = [
+                        "api.inchar", "\"" + item.value + "\""
+                    ];
+                }
+                if (id === "diff-line" || id === "beau-line") {
+                    data = [
+                        "api.inchar", "\"\n\""
+                    ];
+                }
+                if (id === "diff-quan" || id === "beau-quan") {
+                    data = [
+                        "api.insize", "\"" + item.value + "\""
+                    ];
+                }
+                if (id === "diff-space" || id === "beau-space") {
+                    data = [
+                        "api.inchar", "\" \""
+                    ];
+                }
+                if (id === "diff-tab" || id === "beau-tab") {
+                    data = [
+                        "api.inchar", "\"\t\""
+                    ];
+                }
+                if (id === "diff-wrap" || id === "beau-wrap") {
+                    data = [
+                        "api.wrap", "\"" + item.value + "\""
+                    ];
+                }
+                if (id === "diffcontent") {
+                    data = [
+                        "api.content", "true"
+                    ];
+                }
+                if (id === "diffcontenty") {
+                    data = [
+                        "api.content", "false"
+                    ];
+                }
+                if (id === "dforce_indent" || id === "bforce_indent") {
+                    data = [
+                        "api.force_indent", "true"
+                    ];
+                }
+                if (id === "dforce_indent-no" || id === "bforce_indent-no") {
+                    data = [
+                        "api.force_indent", "false"
+                    ];
+                }
                 if (id === "diffcommentsn") {
                     data = [
                         "api.diffcomments", "false"
@@ -2912,14 +2814,99 @@ var exports = "",
                         "api.diffcomments", "true"
                     ];
                 }
-                if (id === "jsspaced-yes" || id === "jsspace-yes") {
+                if (id === "difflabel") {
                     data = [
-                        "api.jsspace", "true"
+                        "api.difflabel", "\"" + item.value + "\""
                     ];
                 }
-                if (id === "jsspaced-no" || id === "jsspace-no") {
+                if (id === "diffquote") {
                     data = [
-                        "api.jsspace", "false"
+                        "api.quote", "true"
+                    ];
+                }
+                if (id === "diffquotey") {
+                    data = [
+                        "api.quote", "false"
+                    ];
+                }
+                if (id === "diffscolon") {
+                    data = [
+                        "api.semicolon", "true"
+                    ];
+                }
+                if (id === "diffscolony") {
+                    data = [
+                        "api.semicolon", "false"
+                    ];
+                }
+                if (id === "htmld-no" || id === "html-no" || id === "htmlm-no") {
+                    data = [
+                        "api.html", "html-no"
+                    ];
+                }
+                if (id === "htmld-yes" || id === "html-yes" || id === "htmln-yes") {
+                    data = [
+                        "api.html", "html-yes"
+                    ];
+                }
+                if (id === "incomment-no") {
+                    data = [
+                        "api.comments", "noindent"
+                    ];
+                }
+                if (id === "incomment-yes") {
+                    data = [
+                        "api.comments", "indent"
+                    ];
+                }
+                if (id === "inline") {
+                    data = [
+                        "api.diffview", "inline"
+                    ];
+                }
+                if (id === "inscriptd-no" || id === "inscript-no") {
+                    data = [
+                        "api.style", "noindent"
+                    ];
+                }
+                if (id === "inscriptd-yes" || id === "inscript-yes") {
+                    data = [
+                        "api.style", "indent"
+                    ];
+                }
+                if (id === "jscorrect-no") {
+                    data = [
+                        "api.correct", "false"
+                    ];
+                }
+                if (id === "jscorrect-yes") {
+                    data = [
+                        "api.correct", "true"
+                    ];
+                }
+                if (id === "jsindentd-all" || id === "jsindent-all") {
+                    data = [
+                        "api.indent", "allman"
+                    ];
+                }
+                if (id === "jsindentd-knr" || id === "jsindent-knr") {
+                    data = [
+                        "api.indent", "knr"
+                    ];
+                }
+                if (id === "jsinlevel") {
+                    data = [
+                        "api.inlevel", "\"" + item.value + "\""
+                    ];
+                }
+                if (id === "jslinesd-no" || id === "jslines-no") {
+                    data = [
+                        "api.jslines", "false"
+                    ];
+                }
+                if (id === "jslinesd-yes" || id === "jslines-yes") {
+                    data = [
+                        "api.jslines", "true"
                     ];
                 }
                 if (id === "jsscope-no") {
@@ -2932,34 +2919,59 @@ var exports = "",
                         "api.jsscope", "true"
                     ];
                 }
-                if (id === "jslinesd-yes" || id === "jslines-yes") {
+                if (id === "jsspaced-no" || id === "jsspace-no") {
                     data = [
-                        "api.jslines", "true"
+                        "api.jsspace", "false"
                     ];
                 }
-                if (id === "jslinesd-no" || id === "jslines-no") {
+                if (id === "jsspaced-yes" || id === "jsspace-yes") {
                     data = [
-                        "api.jslines", "false"
+                        "api.jsspace", "true"
                     ];
                 }
-                if (id === "jsinlevel") {
+                if (id === "langauge") {
                     data = [
-                        "api.inlevel", "\"" + item.value + "\""
+                        "api.lang", "\"" + item.value + "\""
                     ];
                 }
-                if (id === "diff-wrap" || id === "beau-wrap") {
+                if (id === "modebeautify") {
                     data = [
-                        "api.wrap", "\"" + item.value + "\""
+                        "api.mode", "beautify"
                     ];
                 }
-                if (id === "jscorrect-no") {
+                if (id === "modediff") {
                     data = [
-                        "api.correct", "false"
+                        "api.mode", "diff"
                     ];
                 }
-                if (id === "jscorrect-yes") {
+                if (id === "modeminify") {
                     data = [
-                        "api.correct", "true"
+                        "api.mode", "minify"
+                    ];
+                }
+                if (id === "obfuscate-no") {
+                    data = [
+                        "api.obfuscate", "false"
+                    ];
+                }
+                if (id === "obfuscate-yes") {
+                    data = [
+                        "api.obfuscate", "true"
+                    ];
+                }
+                if (id === "sidebyside") {
+                    data = [
+                        "api.diffview", "sidebyside"
+                    ];
+                }
+                if (id === "topcoms") {
+                    data = [
+                        "api.topcoms", "true"
+                    ];
+                }
+                if (id === "topcoms-no") {
+                    data = [
+                        "api.topcoms", "false"
                     ];
                 }
                 if (data.length === 0) {

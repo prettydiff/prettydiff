@@ -529,11 +529,19 @@
                 </p>
                 <p><strong>Top Comments (JavaScript / CSS)</strong>
                     <span>
-                        <input checked="checked" id="topcoms-no" name="topcoms" otitle="Use this remove all comments in JavaScript and CSS including comments above the first line of code." type="radio"/>
+                        <input checked="checked" id="topcoms-no" name="topcoms" title="Use this remove all comments in JavaScript and CSS including comments above the first line of code." type="radio"/>
                         <label for="topcoms-no">Minify all comments</label></span>
                     <span>
                         <input id="topcoms-yes" name="topcoms" title="Use this option retain comments comments above the first line of JavaScript and CSS code." type="radio"/>
                         <label for="topcoms-yes">Preserve comments before any code</label></span>
+                </p>
+                <p><strong>Obfuscation (JavaScript)</strong>
+                    <span>
+                        <input checked="checked" id="obfuscate-no" name="obfuscate" title="This option avoids code obfuscation." type="radio"/>
+                        <label for="obfuscate-no">No Obfuscation</label></span>
+                    <span>
+                        <input id="obfuscate-yes" name="obfuscate" title="Use this option to shorten variable names and remove some semicolons." type="radio"/>
+                        <label for="obfuscate-yes">Shorten variable names and remove some semicolons (Warning: changes to variable names cannot be undone)</label></span>
                 </p>
             </div>
             <p class="button"><button type="button" value="Execute">Execute</button></p>

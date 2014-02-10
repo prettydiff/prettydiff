@@ -73,6 +73,8 @@
                             error.push("* mode         - string  - The operation to be performed. Defaults to 'diff'.");
                             error.push("                 Accepted values: diff, beautify, minify.");
                             error.push("");
+                            error.push("* obfuscate    - boolean - If JavaScript minification should result in smaller variable names and fewer simicolons. Default is false.");
+                            error.push("");
                             error.push("* output       - string  - The location of the output file. If the file does not exist it will be created. If this argument is missing output will print to screen.");
                             error.push("");
                             error.push("* preserve     - boolean - If true runs of empty lines are condensed into a single empty line of beautified JavaScript. If false empty lines are removed. Default is true.");
@@ -257,6 +259,7 @@
                     args.jsscope = (WScript.Arguments.Named("jsscope") === "true" || WScript.Arguments.Named("jsscope") === true) ? true : false;
                     args.lang = WScript.Arguments.Named("lang") || "auto";
                     args.mode = WScript.Arguments.Named("mode") || "diff";
+                    args.obfuscate = WScript.Arguments.Named("obfuscate") || false;
                     args.quote = ((WScript.Arguments.Named("quote") === "true" || WScript.Arguments.Named("quote") === true) ? true : false) || false;
                     args.preserve = (WScript.Arguments.Named("preserve") === "false" || WScript.Arguments.Named("preserve") === false) ? false : true;
                     args.semicolon = ((WScript.Arguments.Named("semicolon") === "true" || WScript.Arguments.Named("semicolon") === true) ? true : false) || false;

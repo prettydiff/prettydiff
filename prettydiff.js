@@ -1860,26 +1860,29 @@ var prettydiff = function prettydiff(api) {
                 return source;
             },
             jspretty      = function jspretty(args) {
-                var source    = (typeof args.source === "string" && args.source.length > 0) ? args.source + " " : "Error: no source code supplied to jspretty!",
-                    jsize     = (args.insize > 0) ? args.insize : ((Number(args.insize) > 0) ? Number(args.insize) : 4),
-                    jchar     = (typeof args.inchar === "string" && args.inchar.length > 0) ? args.inchar : " ",
-                    jpres     = (args.preserve === false) ? false : true,
-                    jlevel    = (args.inlevel > -1) ? args.inlevel : ((Number(args.inlevel) > -1) ? Number(args.inlevel) : 0),
-                    jspace    = (args.space === false) ? false : true,
-                    jbrace    = (args.braces === "allman") ? true : false,
-                    jcomment  = (args.comments === "noindent") ? "noindent" : (args.comments === "nocomment") ? "nocomment" : "indent",
-                    jsscope   = (args.jsscope === true) ? true : false,
-                    jscorrect = (args.correct === true) ? true : false,
-                    jvarspace = (args.varspace === false || args.varspace === "false") ? false : true,
-                    token     = [],
-                    types     = [],
-                    level     = [],
-                    lines     = [],
-                    globals   = [],
-                    meta      = [],
-                    varlist   = [],
-                    news      = 0,
-                    stats     = {
+                var source     = (typeof args.source === "string" && args.source.length > 0) ? args.source + " " : "Error: no source code supplied to jspretty!",
+                    jbrace     = (args.braces === "allman") ? true : false,
+                    jchar      = (typeof args.inchar === "string" && args.inchar.length > 0) ? args.inchar : " ",
+                    jcomment   = (args.comments === "noindent") ? "noindent" : (args.comments === "nocomment") ? "nocomment" : "indent",
+                    jlevel     = (args.inlevel > -1) ? args.inlevel : ((Number(args.inlevel) > -1) ? Number(args.inlevel) : 0),
+                    jmode      = (args.mode !== undefined && args.mode.toLowerCase() === "minify") ? "minify" : "beautify",
+                    jobfuscate = (args.obfuscate === true || args.obfuscate === "true") ? true : false,
+                    jpres      = (args.preserve === false || args.preserve === "false") ? false : true,
+                    jscorrect  = (args.correct === true || args.correct === "true") ? true : false,
+                    jsize      = (args.insize > 0) ? args.insize : ((Number(args.insize) > 0) ? Number(args.insize) : 4),
+                    jspace     = (args.space === false || args.space === "false") ? false : true,
+                    jsscope    = (args.jsscope === true || args.jsscope === "true" || (jmode === "minify" && jobfuscate === true)) ? true : false,
+                    jtopcoms   = (args.topcoms === true || args.topcoms === "true") ? true : false,
+                    jvarspace  = (args.varspace === false || args.varspace === "false") ? false : true,
+                    token      = [],
+                    types      = [],
+                    level      = [],
+                    lines      = [],
+                    globals    = [],
+                    meta       = [],
+                    varlist    = [],
+                    news       = 0,
+                    stats      = {
                         comma       : 0,
                         commentBlock: {
                             token: 0,
@@ -1923,8 +1926,8 @@ var prettydiff = function prettydiff(api) {
                             chars: 0
                         }
                     },
-                    semi      = 0,
-                    result    = "";
+                    semi       = 0,
+                    result     = "";
                 if (source === "Error: no source code supplied to jspretty!") {
                     return source;
                 }
@@ -2722,7 +2725,7 @@ var prettydiff = function prettydiff(api) {
                                     stats.space.newline += 1;
                                     build.pop();
                                 }
-                                if (jsscope === true) {
+                                if (jsscope === true && (jmode === "beautify" || (jmode === "minify" && jobfuscate === false))) {
                                     output = build.join("").replace(/\&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
                                 } else {
                                     output = build.join("");
@@ -2792,7 +2795,7 @@ var prettydiff = function prettydiff(api) {
                                 output = build.join("");
                             }
                             a = a + (output.length - 1);
-                            if (jsscope === true) {
+                            if (jsscope === true && (jmode === "beautify" || (jmode === "minify" && jobfuscate === false))) {
                                 output = output.replace(/\&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
                             }
                             return output;
@@ -2854,7 +2857,7 @@ var prettydiff = function prettydiff(api) {
                             } else {
                                 a = ee;
                             }
-                            if (jsscope === true) {
+                            if (jsscope === true && (jmode === "beautify" || (jmode === "minify" && jobfuscate === false))) {
                                 output = build.join("").replace(/\&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
                             } else {
                                 output = build.join("");
@@ -3165,6 +3168,9 @@ var prettydiff = function prettydiff(api) {
                                 asi(a);
                                 lengthb = token.length;
                             }
+                            if (ltoke === ";" && jmode === "minify" && jobfuscate === true) {
+                                token[token.length - 1] = "x;";
+                            }
                             if ((token[lengtha - 3] === ";" || token[lengtha - 3] === "}" || token[lengtha - 3] === "[" || token[lengtha - 3] === "(" || token[lengtha - 3] === ")" || token[lengtha - 3] === "," || token[lengtha - 3] === "return") && jscorrect === true) {
                                 if (token[lengtha - 1] === "++" || token[lengtha - 1] === "--") {
                                     plusplus(lengtha - 1, "post");
@@ -3413,7 +3419,8 @@ var prettydiff = function prettydiff(api) {
                     ]);
                     asi(a);
                 }());
-                //this function is the pretty-print algorithm
+
+                //this function is the pretty-print and var finding algorithm
                 (function jspretty__algorithm() {
                     var a          = 0,
                         b          = token.length,
@@ -4247,1037 +4254,1141 @@ var prettydiff = function prettydiff(api) {
                         }
                     }
                 }());
-                //the result function generates the output
-                if (jsscope === true) {
-                    result = (function jspretty__resultScope() {
-                        var a          = 0,
-                            b          = token.length,
-                            build      = [],
-                            linesinc   = 0,
-                            linecount  = 2,
-                            last       = "",
-                            scope      = 1,
-                            buildlen   = 0,
-                            commentfix = (function jspretty__resultScope_i() {
-                                var aa = 1,
-                                    bb = 1;
-                                if (types[0] !== "comment" || (token[0].indexOf("//") === 0 && (lines.length === 0 || lines[0][0] > 0)) || types[1] !== "comment") {
-                                    return 1;
-                                }
-                                do {
-                                    if (token[aa].indexOf("/*") === 0) {
-                                        bb += 1;
-                                    }
-                                    aa += 1;
-                                } while (types[aa] === "comment");
-                                return bb;
-                            }()),
-                            folderItem = [],
-                            comfold    = -1,
-                            data       = [
-                                "<div class='beautify' id='pd-jsscope'><ol class='count'>", "<li>", 1, "</li>"
-                            ],
-                            folder     = function jspretty__resultScope_folder() {
-                                var datalen = (data.length - (commentfix * 3) > 0) ? data.length - (commentfix * 3) : 1,
-                                    index   = a,
-                                    start   = data[datalen + 1] || 1,
-                                    assign  = true,
-                                    kk      = index;
-                                if (types[a] === "comment" && comfold === -1) {
-                                    comfold = a;
-                                } else if (types[a] !== "comment") {
-                                    index = meta[a];
-                                    do {
-                                        kk -= 1;
-                                    } while (token[kk] !== "function");
-                                    kk -= 1;
-                                    if (token[kk] === "(" && types[kk] === "start") {
-                                        do {
-                                            kk -= 1;
-                                        } while (types[kk] === "start" && token[kk] === "(");
-                                    }
-                                    if (token[kk] === "=" || token[kk] === ":" || token[kk] === "," || (token[kk + 1] === "(" && types[kk + 1] === "start")) {
-                                        assign = false;
-                                    }
-                                }
-                                if (types[a] === "comment" && lines[linesinc - 1] !== undefined && lines[linesinc - 1][1] === true) {
-                                    datalen -= 3;
-                                    start   -= 1;
-                                }
-                                data[datalen]     = "<li class='fold' onclick='pd.beaufold(this," + start + ",xxx);'>";
-                                data[datalen + 1] = "- " + start;
-                                folderItem.push([
-                                    datalen, index, assign
-                                ]);
-                            },
-                            foldclose  = function jspretty__resultScope_foldclose() {
-                                var end = (function jspretty_resultScope_foldclose_end() {
-                                        if (comfold > -1 || folderItem[folderItem.length - 1][2] === true) {
-                                            return linecount - commentfix - 1;
-                                        }
-                                        return linecount - commentfix;
-                                    }()),
-                                    gg  = 0;
-                                if (a > 1 && token[a].indexOf("}</em>") === token[a].length - 6 && token[a - 1].indexOf("{</em>") === token[a - 1].length - 6) {
-                                    for (gg = data.length - 1; gg > 0; gg -= 1) {
-                                        if (typeof data[gg] === "string" && data[gg].charAt(0) === "-") {
-                                            data[gg - 1] = "<li>";
-                                            data[gg]     = Number(data[gg].substr(1));
-                                            folderItem.pop();
-                                            return;
-                                        }
-                                    }
-                                }
-                                if (folderItem[folderItem.length - 1][1] === b - 1 && token[a].indexOf("<em ") === 0) {
-                                    end += 1;
-                                }
-                                data[folderItem[folderItem.length - 1][0]] = data[folderItem[folderItem.length - 1][0]].replace("xxx", end);
-                                folderItem.pop();
-                            },
-                            blockline  = function jspretty__resultScope_blockline(x) {
-                                var commentLines = x.split("\n"),
-                                    hh           = 0,
-                                    ii           = commentLines.length - 1;
-                                if (lines[linesinc] !== undefined && lines[linesinc][0] === a && linesinc === a && linesinc > 0) {
-                                    data.push("<li>");
-                                    data.push(linecount);
-                                    data.push("</li>");
-                                    linecount += 1;
-                                }
-                                for (hh = 0; hh < ii; hh += 1) {
-                                    data.push("<li>");
-                                    data.push(linecount);
-                                    data.push("</li>");
-                                    linecount        += 1;
-                                    commentLines[hh] = commentLines[hh] + "<em>&#xA;</em></li><li class='c0'>";
-                                }
-                                return commentLines.join("").replace(/\r/g, "");
-                            },
-                            findvars   = function jspretty__resultScope_findvars(x) {
-                                var metax         = meta[x],
-                                    metameta      = meta[metax],
-                                    ee            = 0,
-                                    ff            = 0,
-                                    hh            = metameta.length,
-                                    adjustment    = 1,
-                                    functionBlock = true,
-                                    varbuild      = [],
-                                    varbuildlen   = 0;
-                                if (types[a - 1] === "word" && token[a - 1] !== "function") {
-                                    varbuild     = token[a - 1].split(" ");
-                                    token[a - 1] = "<em class='s" + scope + "'>" + varbuild[0] + "</em>";
-                                    varbuildlen  = varbuild.length;
-                                    if (varbuildlen > 1) {
-                                        do {
-                                            token[ee]   = token[ee] + " ";
-                                            varbuildlen -= 1;
-                                        } while (varbuildlen > 1);
-                                    }
-                                }
+
+                if (jmode === "minify") {
+                    result = (function jspretty__minify() {
+                        var a        = 0,
+                            length   = token.length,
+                            comtest  = (jtopcoms === false) ? true : false,
+                            build    = [],
+                            letter   = [65],
+                            gg       = 0,
+                            minmeta  = [],
+                            findvars = function jspretty__minify_findvars(x) {
+                                var metax    = meta[x],
+                                    metameta = meta[metax],
+                                    mini     = minmeta[meta[x]],
+                                    ee       = 0,
+                                    ff       = 0,
+                                    hh       = metameta.length;
                                 if (hh > 0) {
                                     for (ee = metax - 1; ee > a; ee -= 1) {
-                                        varbuild = token[ee].split(" ");
                                         if (types[ee] === "word") {
                                             for (ff = 0; ff < hh; ff += 1) {
-                                                if (varbuild[0] === metameta[ff] && token[ee - 1] !== ".") {
+                                                if (token[ee] === metameta[ff] && token[ee - 1] !== ".") {
                                                     if (token[ee - 1] === "function" && token[ee + 1] === "(") {
-                                                        token[ee]   = "<em class='s" + (scope + 1) + "'>" + varbuild[0] + "</em>";
-                                                        varbuildlen = varbuild.length;
-                                                        if (varbuildlen > 1) {
-                                                            do {
-                                                                token[ee]   = token[ee] + " ";
-                                                                varbuildlen -= 1;
-                                                            } while (varbuildlen > 1);
-                                                        }
-                                                    } else if (token[ee + 1] !== ":" || (token[ee + 1] === ":" && level[ee] !== "x")) {
-                                                        token[ee]   = "<em class='s" + scope + "'>" + varbuild[0] + "</em>";
-                                                        varbuildlen = varbuild.length;
-                                                        if (varbuildlen > 1) {
-                                                            do {
-                                                                token[ee]   = token[ee] + " ";
-                                                                varbuildlen -= 1;
-                                                            } while (varbuildlen > 1);
-                                                        }
+                                                        token[ee] = mini[ff];
+                                                    } else if (token[ee - 1] === "case" || token[ee + 1] !== ":" || (token[ee + 1] === ":" && level[ee] !== "x")) {
+                                                        token[ee] = mini[ff];
                                                     }
-                                                    break;
                                                 }
                                             }
                                         }
-                                        if (functionBlock === true) {
-                                            if (types[ee] === "end") {
-                                                adjustment += 1;
-                                            } else if (types[ee] === "start" || types[ee] === "method") {
-                                                adjustment -= 1;
-                                            }
-                                            if (adjustment === 0 && token[ee] === "{") {
-                                                token[ee]     = "<em class='s" + scope + "'>{</em>";
-                                                functionBlock = false;
-                                            }
-                                        }
-                                    }
-                                } else {
-                                    for (ee = a + 1; ee < metax; ee += 1) {
-                                        if (types[ee] === "end") {
-                                            adjustment -= 1;
-                                        } else if (types[ee] === "start" || types[ee] === "method") {
-                                            adjustment += 1;
-                                        }
-                                        if (adjustment === 1 && token[ee] === "{") {
-                                            token[ee] = "<em class='s" + scope + "'>{</em>";
-                                            return;
-                                        }
                                     }
                                 }
                             },
-                            indent     = jlevel,
-                            removeEm   = function jspretty__resultScope_removeEm(x) {
-                                var em   = x.lastIndexOf("<em "),
-                                    noem = x.substring(em),
-                                    end  = noem.indexOf("'>");
-                                return x.substring(0, em) + noem.substring(end + 2).replace("</em>", "");
-                            },
-                            tab        = (function jspretty__resultScope_tab() {
-                                var aa = jchar,
-                                    bb = jsize,
-                                    cc = [];
-                                for (bb; bb > 0; bb -= 1) {
-                                    cc.push(aa);
-                                }
-                                return cc.join("");
-                            }()),
-                            lscope     = [
-                                "<em class='l0'>" + tab + "</em>", "<em class='l0'>" + tab + "</em><em class='l1'>" + tab + "</em>", "<em class='l0'>" + tab + "</em><em class='l1'>" + tab + "</em><em class='l2'>" + tab + "</em>", "<em class='l0'>" + tab + "</em><em class='l1'>" + tab + "</em><em class='l2'>" + tab + "</em><em class='l3'>" + tab + "</em>", "<em class='l0'>" + tab + "</em><em class='l1'>" + tab + "</em><em class='l2'>" + tab + "</em><em class='l3'>" + tab + "</em><em class='l4'>" + tab + "</em>", "<em class='l0'>" + tab + "</em><em class='l1'>" + tab + "</em><em class='l2'>" + tab + "</em><em class='l3'>" + tab + "</em><em class='l4'>" + tab + "</em><em class='l5'>" + tab + "</em>", "<em class='l0'>" + tab + "</em><em class='l1'>" + tab + "</em><em class='l2'>" + tab + "</em><em class='l3'>" + tab + "</em><em class='l4'>" + tab + "</em><em class='l5'>" + tab + "</em><em class='l6'>" + tab + "</em>", "<em class='l0'>" + tab + "</em><em class='l1'>" + tab + "</em><em class='l2'>" + tab + "</em><em class='l3'>" + tab + "</em><em class='l4'>" + tab + "</em><em class='l5'>" + tab + "</em><em class='l6'>" + tab + "</em><em class='l7'>" + tab + "</em>", "<em class='l0'>" + tab + "</em><em class='l1'>" + tab + "</em><em class='l2'>" + tab + "</em><em class='l3'>" + tab + "</em><em class='l4'>" + tab + "</em><em class='l5'>" + tab + "</em><em class='l6'>" + tab + "</em><em class='l7'>" + tab + "</em><em class='l8'>" + tab + "</em>", "<em class='l0'>" + tab + "</em><em class='l1'>" + tab + "</em><em class='l2'>" + tab + "</em><em class='l3'>" + tab + "</em><em class='l4'>" + tab + "</em><em class='l5'>" + tab + "</em><em class='l6'>" + tab + "</em><em class='l7'>" + tab + "</em><em class='l8'>" + tab + "</em><em class='l9'>" + tab + "</em>", "<em class='l0'>" + tab + "</em><em class='l1'>" + tab + "</em><em class='l2'>" + tab + "</em><em class='l3'>" + tab + "</em><em class='l4'>" + tab + "</em><em class='l5'>" + tab + "</em><em class='l6'>" + tab + "</em><em class='l7'>" + tab + "</em><em class='l8'>" + tab + "</em><em class='l9'>" + tab + "</em><em class='l10'>" + tab + "</em>", "<em class='l0'>" + tab + "</em><em class='l1'>" + tab + "</em><em class='l2'>" + tab + "</em><em class='l3'>" + tab + "</em><em class='l4'>" + tab + "</em><em class='l5'>" + tab + "</em><em class='l6'>" + tab + "</em><em class='l7'>" + tab + "</em><em class='l8'>" + tab + "</em><em class='l9'>" + tab + "</em><em class='l10'>" + tab + "</em><em class='l11'>" + tab + "</em>", "<em class='l0'>" + tab + "</em><em class='l1'>" + tab + "</em><em class='l2'>" + tab + "</em><em class='l3'>" + tab + "</em><em class='l4'>" + tab + "</em><em class='l5'>" + tab + "</em><em class='l6'>" + tab + "</em><em class='l7'>" + tab + "</em><em class='l8'>" + tab + "</em><em class='l9'>" + tab + "</em><em class='l10'>" + tab + "</em><em class='l11'>" + tab + "</em><em class='l12'>" + tab + "</em>", "<em class='l0'>" + tab + "</em><em class='l1'>" + tab + "</em><em class='l2'>" + tab + "</em><em class='l3'>" + tab + "</em><em class='l4'>" + tab + "</em><em class='l5'>" + tab + "</em><em class='l6'>" + tab + "</em><em class='l7'>" + tab + "</em><em class='l8'>" + tab + "</em><em class='l9'>" + tab + "</em><em class='l10'>" + tab + "</em><em class='l11'>" + tab + "</em><em class='l12'>" + tab + "</em><em class='l13'>" + tab + "</em>", "<em class='l0'>" + tab + "</em><em class='l1'>" + tab + "</em><em class='l2'>" + tab + "</em><em class='l3'>" + tab + "</em><em class='l4'>" + tab + "</em><em class='l5'>" + tab + "</em><em class='l6'>" + tab + "</em><em class='l7'>" + tab + "</em><em class='l8'>" + tab + "</em><em class='l9'>" + tab + "</em><em class='l10'>" + tab + "</em><em class='l11'>" + tab + "</em><em class='l12'>" + tab + "</em><em class='l13'>" + tab + "</em><em class='l14'>" + tab + "</em>", "<em class='l0'>" + tab + "</em><em class='l1'>" + tab + "</em><em class='l2'>" + tab + "</em><em class='l3'>" + tab + "</em><em class='l4'>" + tab + "</em><em class='l5'>" + tab + "</em><em class='l6'>" + tab + "</em><em class='l7'>" + tab + "</em><em class='l8'>" + tab + "</em><em class='l9'>" + tab + "</em><em class='l10'>" + tab + "</em><em class='l11'>" + tab + "</em><em class='l12'>" + tab + "</em><em class='l13'>" + tab + "</em><em class='l14'>" + tab + "</em><em class='l15'>" + tab + "</em>", "<em class='l0'>" + tab + "</em><em class='l1'>" + tab + "</em><em class='l2'>" + tab + "</em><em class='l3'>" + tab + "</em><em class='l4'>" + tab + "</em><em class='l5'>" + tab + "</em><em class='l6'>" + tab + "</em><em class='l7'>" + tab + "</em><em class='l8'>" + tab + "</em><em class='l9'>" + tab + "</em><em class='l10'>" + tab + "</em><em class='l11'>" + tab + "</em><em class='l12'>" + tab + "</em><em class='l13'>" + tab + "</em><em class='l14'>" + tab + "</em><em class='l15'>" + tab + "</em><em class='l16'>" + tab + "</em>"
-                            ],
-                            nl         = function jspretty__resultScope_nl(x) {
-                                var dd = 0;
-                                data.push("<li>");
-                                data.push(linecount);
-                                data.push("</li>");
-                                linecount += 1;
-                                if (a < b - 1 && token[a + 1].indexOf("/*") === 0) {
-                                    build.push("<em>&#xA;</em></li><li class='c0'>");
-                                } else {
-                                    build.push("<em>&#xA;</em></li><li class='l" + scope + "'>");
-                                    if (x > 0) {
-                                        dd = scope;
-                                        if (scope > 0) {
-                                            if (scope === x + 1 && x > 0) {
-                                                dd -= 1;
-                                            }
-                                            build.push(lscope[dd - 1]);
+                            rename   = function (x) {
+                                var a        = 0,
+                                    len      = x.length,
+                                    array    = [],
+                                    inc      = function jspretty__minify_findvars_inc() {
+                                        letter[letter.length - 1] += 1;
+                                        if (letter[letter.length - 1] === 91) {
+                                            letter[letter.length - 1] = 97;
                                         }
-                                    }
-                                }
-                                for (dd; dd < x; dd += 1) {
-                                    build.push(tab);
-                                }
-                            };
-                        if (jvarspace === true) {
-                            (function jspretty__resultScope_varSpaces() {
-                                var aa          = 0,
-                                    lastListLen = 0,
-                                    cc          = 0,
-                                    longest     = 0,
-                                    longTest    = 0,
-                                    tokenInList = "",
-                                    longList    = [],
-                                    joins       = function jspretty__resultScope_varSpaces_joins(x) {
-                                        var xlen    = token[x].length,
-                                            endTest = false,
-                                            mixTest = false,
-                                            perTest = false,
-                                            period  = function jspretty__resultScope_varSpaces_joins_periodInit() {
-                                                return;
-                                            },
-                                            ending  = function jspretty__resultScope_varSpaces_joins_endingInit() {
-                                                return;
-                                            };
-                                        period = function jspretty__resultScope_varSpaces_joins_period() {
-                                            perTest = true;
+                                        if (letter[0] === 123) {
+                                            for (gg = letter.length - 1; gg > -1; gg -= 1) {
+                                                letter[gg] = 65;
+                                            }
+                                            letter.push(65);
+                                        } else if (letter[letter.length - 1] === 123) {
+                                            gg         = letter.length - 1;
+                                            letter[gg] = 65;
                                             do {
-                                                x    -= 2;
-                                                xlen += token[x].length + 1;
-                                            } while (x > 1 && token[x - 1] === ".");
-                                            if (token[x] === ")" || token[x] === "]") {
-                                                x       += 1;
-                                                xlen    -= 1;
-                                                mixTest = true;
-                                                ending();
-                                            }
-                                        };
-                                        ending = function jspretty__resultScope_varSpaces_joins_ending() {
-                                            var yy = 0;
-                                            endTest = true;
-                                            for (x -= 1; x > -1; x -= 1) {
-                                                xlen += token[x].length;
-                                                if (types[x] === "start" || types[x] === "method") {
-                                                    yy += 1;
-                                                    if (yy === 1) {
-                                                        if (mixTest === true) {
-                                                            return;
-                                                        }
-                                                        break;
-                                                    }
+                                                gg         -= 1;
+                                                letter[gg] += 1;
+                                                if (letter[gg] === 91) {
+                                                    letter[gg] = 97;
                                                 }
-                                                if (types[x] === "end") {
-                                                    yy -= 1;
+                                                if (letter[gg] === 123) {
+                                                    letter[gg] = 65;
                                                 }
-                                                if (types[x] === "operator") {
-                                                    if (level[x] === "s") {
-                                                        xlen += 1;
-                                                    }
-                                                    if (level[x - 1] === "s") {
-                                                        xlen += 1;
-                                                    }
-                                                }
-                                                if (token[x] === ";" || token[x] === "x;" || token[x] === "}") {
-                                                    return;
-                                                }
+                                            } while (letter[gg] === 65 && gg > 1);
+                                        }
+                                    },
+                                    toLetter = function jspretty__minify_findvars_toLetter() {
+                                        var ii  = letter.length - 1,
+                                            out = [];
+                                        for (ii; ii > -1; ii -= 1) {
+                                            out.push(String.fromCharCode(letter[ii]));
+                                        }
+                                        return "a" + out.join("");
+                                    };
+                                for (a = 0; a < len; a += 1) {
+                                    array.push(toLetter());
+                                    inc();
+                                }
+                                minmeta.push(array);
+                            };
+                        if (jobfuscate === true) {
+                            for (a = 0; a < token.length; a += 1) {
+                                if (typeof meta[a] === "number" || typeof meta[a] === "string") {
+                                    minmeta.push(meta[a]);
+                                } else {
+                                    rename(meta[a]);
+                                }
+                            }
+                            for (a = token.length - 1; a > -1; a -= 1) {
+                                if (typeof meta[a] === "number") {
+                                    findvars(a);
+                                }
+                            }
+                        }
+                        for (a = 0; a < length; a += 1) {
+                            if (types[a] !== "comment") {
+                                comtest = true;
+                            }
+                            if (types[a] === "comment" && comtest === false) {
+                                build.push(token[a]);
+                                build.push("\n");
+                            } else if (token[a] === "x;" && token[a + 1] !== "}") {
+                                build.push(";")
+                            } else if (types[a] === "word" && (types[a + 1] === "word" || types[a + 1] === "literal")) {
+                                build.push(token[a]);
+                                build.push(" ");
+                            } else if (token[a] !== "x;" && token[a] !== "x{" && token[a] !== "x}" && types[a] !== "comment" && types[a] !== "comment-inline") {
+                                build.push(token[a]);
+                            }
+                        }
+                        return build.join("");
+                    }());
+                } else {
+                    //the result function generates the output
+                    if (jsscope === true) {
+                        result = (function jspretty__resultScope() {
+                            var a          = 0,
+                                b          = token.length,
+                                build      = [],
+                                linesinc   = 0,
+                                linecount  = 2,
+                                last       = "",
+                                scope      = 1,
+                                buildlen   = 0,
+                                commentfix = (function jspretty__resultScope_i() {
+                                    var aa = 1,
+                                        bb = 1;
+                                    if (types[0] !== "comment" || (token[0].indexOf("//") === 0 && (lines.length === 0 || lines[0][0] > 0)) || types[1] !== "comment") {
+                                        return 1;
+                                    }
+                                    do {
+                                        if (token[aa].indexOf("/*") === 0) {
+                                            bb += 1;
+                                        }
+                                        aa += 1;
+                                    } while (types[aa] === "comment");
+                                    return bb;
+                                }()),
+                                folderItem = [],
+                                comfold    = -1,
+                                data       = [
+                                    "<div class='beautify' id='pd-jsscope'><ol class='count'>", "<li>", 1, "</li>"
+                                ],
+                                folder     = function jspretty__resultScope_folder() {
+                                    var datalen = (data.length - (commentfix * 3) > 0) ? data.length - (commentfix * 3) : 1,
+                                        index   = a,
+                                        start   = data[datalen + 1] || 1,
+                                        assign  = true,
+                                        kk      = index;
+                                    if (types[a] === "comment" && comfold === -1) {
+                                        comfold = a;
+                                    } else if (types[a] !== "comment") {
+                                        index = meta[a];
+                                        do {
+                                            kk -= 1;
+                                        } while (token[kk] !== "function");
+                                        kk -= 1;
+                                        if (token[kk] === "(" && types[kk] === "start") {
+                                            do {
+                                                kk -= 1;
+                                            } while (types[kk] === "start" && token[kk] === "(");
+                                        }
+                                        if (token[kk] === "=" || token[kk] === ":" || token[kk] === "," || (token[kk + 1] === "(" && types[kk + 1] === "start")) {
+                                            assign = false;
+                                        }
+                                    }
+                                    if (types[a] === "comment" && lines[linesinc - 1] !== undefined && lines[linesinc - 1][1] === true) {
+                                        datalen -= 3;
+                                        start   -= 1;
+                                    }
+                                    data[datalen]     = "<li class='fold' onclick='pd.beaufold(this," + start + ",xxx);'>";
+                                    data[datalen + 1] = "- " + start;
+                                    folderItem.push([
+                                        datalen, index, assign
+                                    ]);
+                                },
+                                foldclose  = function jspretty__resultScope_foldclose() {
+                                    var end = (function jspretty_resultScope_foldclose_end() {
+                                            if (comfold > -1 || folderItem[folderItem.length - 1][2] === true) {
+                                                return linecount - commentfix - 1;
                                             }
-                                            if (types[x - 1] === "word" || types[x - 1] === "literal") {
-                                                x    -= 1;
-                                                xlen += token[x].length;
-                                            }
-                                            if (types[x] === "word" && token[x - 1] === ".") {
-                                                period();
-                                            }
-                                            if (token[x] === "{") {
+                                            return linecount - commentfix;
+                                        }()),
+                                        gg  = 0;
+                                    if (a > 1 && token[a].indexOf("}</em>") === token[a].length - 6 && token[a - 1].indexOf("{</em>") === token[a - 1].length - 6) {
+                                        for (gg = data.length - 1; gg > 0; gg -= 1) {
+                                            if (typeof data[gg] === "string" && data[gg].charAt(0) === "-") {
+                                                data[gg - 1] = "<li>";
+                                                data[gg]     = Number(data[gg].substr(1));
+                                                folderItem.pop();
                                                 return;
                                             }
-                                            if (token[x - 1] === ")" || token[x - 1] === "]") {
-                                                xlen -= 1;
-                                                ending();
-                                            }
-                                        };
-                                        if (types[x] === "word" && token[x - 1] === ".") {
-                                            period();
-                                            if (endTest === false) {
-                                                xlen += 1;
-                                            }
-                                        } else if (token[x] === ")" || token[x] === "]") {
-                                            ending();
-                                            if (perTest === false) {
-                                                xlen += 1;
-                                            }
-                                        } else {
-                                            xlen += 1;
-                                        }
-                                        return xlen;
-                                    };
-                                for (aa = varlist.length - 1; aa > -1; aa -= 1) {
-                                    if (varlist[aa] !== undefined) {
-                                        lastListLen = varlist[aa].length;
-                                        longest     = 0;
-                                        longList    = [];
-                                        for (cc = 0; cc < lastListLen; cc += 1) {
-                                            longTest = joins(varlist[aa][cc]);
-                                            if (longTest > longest) {
-                                                longest = longTest;
-                                            }
-                                            longList.push(longTest);
-                                        }
-                                        for (cc = 0; cc < lastListLen; cc += 1) {
-                                            tokenInList = token[varlist[aa][cc]];
-                                            if (longList[cc] < longest) {
-                                                do {
-                                                    tokenInList  += " ";
-                                                    longList[cc] += 1;
-                                                } while (longList[cc] < longest);
-                                            }
-                                            token[varlist[aa][cc]] = tokenInList;
                                         }
                                     }
-                                }
-                            }());
-                        }
-                        if (types[a] === "comment" && token[a].indexOf("/*") === 0) {
-                            build.push("<ol class='data'><li class='c0'>");
-                        } else {
-                            build.push("<ol class='data'><li>");
-                        }
-                        for (a = 0; a < indent; a += 1) {
-                            build.push(tab);
-                        }
-                        for (a = b - 1; a > -1; a -= 1) {
-                            if (typeof meta[a] === "number") {
-                                scope -= 1;
-                                findvars(a);
-                            } else if (meta[a] !== undefined && typeof meta[a] !== "string" && typeof meta[a] !== "number" && a > 0) {
-                                token[a] = "<em class='s" + scope + "'>" + token[a] + "</em>";
-                                scope    += 1;
-                                if (scope > 16) {
-                                    scope = 16;
-                                }
-                            }
-                        }
-                        (function jspretty__resultScope_globals() {
-                            var aa          = 0,
-                                bb          = token.length,
-                                globalLocal = globals,
-                                dd          = globalLocal.length,
-                                ee          = 0,
-                                word        = [],
-                                wordlen     = 0;
-                            for (aa = bb - 1; aa > 0; aa -= 1) {
-                                if (types[aa] === "word" && (token[aa + 1] !== ":" || (token[aa + 1] === ":" && level[aa + 1] === "x")) && token[aa].indexOf("<em ") < 0) {
-                                    word = token[aa].split(" ");
-                                    for (ee = dd - 1; ee > -1; ee -= 1) {
-                                        if (word[0] === globalLocal[ee] && token[aa - 1] !== ".") {
-                                            if (token[aa - 1] === "function" && types[aa + 1] === "method") {
-                                                token[aa] = "<em class='s1'>" + word[0] + "</em>";
-                                                wordlen   = word.length;
-                                                if (wordlen > 1) {
-                                                    do {
-                                                        token[aa] = token[aa] + " ";
-                                                        wordlen   -= 1;
-                                                    } while (wordlen > 1);
-                                                }
-                                            } else {
-                                                token[aa] = "<em class='s0'>" + word[0] + "</em>";
-                                                wordlen   = word.length;
-                                                if (wordlen > 1) {
-                                                    do {
-                                                        token[aa] = token[aa] + " ";
-                                                        wordlen   -= 1;
-                                                    } while (wordlen > 1);
-                                                }
-                                            }
-                                            break;
-                                        }
+                                    if (folderItem[folderItem.length - 1][1] === b - 1 && token[a].indexOf("<em ") === 0) {
+                                        end += 1;
                                     }
-                                }
-                            }
-                        }());
-                        scope = 0;
-                        for (a = 0; a < b; a += 1) {
-                            if (typeof meta[a] === "number") {
-                                folder();
-                            }
-                            if (comfold === -1 && types[a] === "comment" && ((token[a].indexOf("/*") === 0 && token[a].indexOf("\n") > 0) || types[a + 1] === "comment" || (lines[linesinc] !== undefined && lines[linesinc - 1][1] === true))) {
-                                folder();
-                                comfold = a;
-                            }
-                            if (comfold > -1 && types[a] !== "comment") {
-                                foldclose();
-                                comfold = -1;
-                            }
-                            if (types[a] === "comment" && token[a].indexOf("/*") === 0) {
-                                build.push(blockline(token[a]));
-                            } else {
-                                if (typeof meta[a] === "number") {
-                                    scope += 1;
-                                    if (scope > 16) {
-                                        scope = 16;
-                                    }
-                                    build.push(token[a]);
-                                } else if (typeof meta[a] !== "string" && typeof meta[a] !== "number") {
-                                    build.push(token[a]);
-                                    scope    -= 1;
-                                    buildlen = build.length - 1;
-                                    do {
-                                        buildlen -= 1;
-                                    } while (buildlen > 0 && build[buildlen].indexOf("</li><li") < 0);
-                                    build[buildlen] = build[buildlen].replace(/class\='l\d+'/, "class='l" + scope + "'");
-                                } else if (token[a] !== "x;" && token[a] !== "x{" && token[a] !== "x}") {
-                                    if (types[a] === "comment") {
-                                        if (a === 0) {
-                                            build[0] = "<ol class='data'><li class='c0'>";
-                                        } else {
-                                            buildlen = build.length - 1;
-                                            if (build[buildlen].indexOf("<li") < 0) {
-                                                do {
-                                                    build[buildlen] = build[buildlen].replace(/<em class\='[a-z]\d+'>/g, "").replace(/<\/em>/g, "");
-                                                    buildlen        -= 1;
-                                                    if (buildlen > 0 && build[buildlen] === undefined) {
-                                                        buildlen -= 1;
-                                                    }
-                                                } while (buildlen > 0 && build[buildlen - 1] !== undefined && build[buildlen].indexOf("<li") < 0);
-                                            }
-                                            build[buildlen] = build[buildlen].replace(/class\='l\d+'/, "class='c0'");
-                                        }
-                                    }
-                                    build.push(token[a]);
-                                }
-                            }
-                            if (jpres === true && lines[linesinc] !== undefined && a === lines[linesinc][0] && level[a] !== "x" && level[a] !== "s") {
-                                if (token[a] === "+" || token[a] === "-" || token[a] === "*" || token[a] === "/") {
-                                    if (a < b - 1 && types[a + 1] !== "comment" && types[a + 1] !== "comment-inline") {
-                                        nl(indent);
-                                        build.push(tab);
-                                        level[a] = "x";
-                                    } else {
-                                        indent = level[a];
-                                        if (lines[linesinc][1] === true) {
-                                            build.push("\n");
-                                        }
-                                        nl(indent);
-                                        build.push(tab);
-                                        build.push(token[a + 1]);
-                                        nl(indent);
-                                        build.push(tab);
-                                        level[a + 1] = "x";
-                                        a            += 1;
-                                    }
-                                } else if (lines[linesinc][1] === true && token[a].charAt(0) !== "=" && token[a].charAt(0) !== "!" && (types[a] !== "start" || (a < b - 1 && types[a + 1] !== "end"))) {
-                                    if ((token[a] !== "x}" || isNaN(level[a]) === true) && (a < b - 1 && (types[a + 1] === "comment" || types[a + 1] === "comment-inline" || (token[a] !== "." && token[a] !== "," && types[a + 1] !== "separator")))) {
+                                    data[folderItem[folderItem.length - 1][0]] = data[folderItem[folderItem.length - 1][0]].replace("xxx", end);
+                                    folderItem.pop();
+                                },
+                                blockline  = function jspretty__resultScope_blockline(x) {
+                                    var commentLines = x.split("\n"),
+                                        hh           = 0,
+                                        ii           = commentLines.length - 1;
+                                    if (lines[linesinc] !== undefined && lines[linesinc][0] === a && linesinc === a && linesinc > 0) {
                                         data.push("<li>");
                                         data.push(linecount);
                                         data.push("</li>");
                                         linecount += 1;
-                                        if (types[a] === "comment") {
-                                            build.push("<em>&#xA;</em></li><li class='c0'>");
-                                        } else {
-                                            commentfix += 1;
-                                            nl(indent);
+                                    }
+                                    for (hh = 0; hh < ii; hh += 1) {
+                                        data.push("<li>");
+                                        data.push(linecount);
+                                        data.push("</li>");
+                                        linecount        += 1;
+                                        commentLines[hh] = commentLines[hh] + "<em>&#xA;</em></li><li class='c0'>";
+                                    }
+                                    return commentLines.join("").replace(/\r/g, "");
+                                },
+                                findvars   = function jspretty__resultScope_findvars(x) {
+                                    var metax         = meta[x],
+                                        metameta      = meta[metax],
+                                        ee            = 0,
+                                        ff            = 0,
+                                        hh            = metameta.length,
+                                        adjustment    = 1,
+                                        functionBlock = true,
+                                        varbuild      = [],
+                                        varbuildlen   = 0;
+                                    if (types[a - 1] === "word" && token[a - 1] !== "function") {
+                                        varbuild     = token[a - 1].split(" ");
+                                        token[a - 1] = "<em class='s" + scope + "'>" + varbuild[0] + "</em>";
+                                        varbuildlen  = varbuild.length;
+                                        if (varbuildlen > 1) {
+                                            do {
+                                                token[ee]   = token[ee] + " ";
+                                                varbuildlen -= 1;
+                                            } while (varbuildlen > 1);
                                         }
                                     }
-                                }
-                                linesinc += 1;
-                            }
-                            if (a < b - 1 && types[a + 1] === "comment" && jcomment === "noindent") {
-                                nl(jlevel);
-                            } else if (level[a] === "s" && token[a] !== "x}") {
-                                build.push(" ");
-                            } else if (level[a] !== "x" && token[a] === "x}" && typeof meta[a + 1] !== "string" && typeof meta[a + 1] !== "number") {
-                                build[build.length - 1] = removeEm(build[build.length - 1]);
-                            } else if (level[a] !== "x" && (token[a] !== "x}" || (linesinc > 0 && lines[linesinc - 1][1] === true && lines[linesinc - 1][0] === a))) {
-                                indent = level[a];
-                                nl(indent);
-                            }
-                            if (lines[linesinc] !== undefined && lines[linesinc][0] < a) {
-                                linesinc += 1;
-                            }
-                            if (folderItem.length > 0) {
-                                if (a === folderItem[folderItem.length - 1][1] && comfold === -1) {
-                                    foldclose();
-                                }
-                            }
-                        }
-                        last = build[build.length - 1];
-                        if (last.indexOf("<li") > 0) {
-                            build[build.length - 1] = "<em>&#xA;</em></li>";
-                        } else if (last.indexOf("</li>") < 0) {
-                            build.push("<em>&#xA;</em></li>");
-                        }
-                        build.push("</ol></div>");
-                        last = build.join("");
-                        if (last.match(/<li/g) !== null) {
-                            scope = last.match(/<li/g).length;
-                            if (linecount - 1 > scope) {
-                                linecount -= 1;
-                                do {
-                                    data.pop();
-                                    data.pop();
-                                    data.pop();
-                                    linecount -= 1;
-                                } while (linecount > scope);
-                            }
-                        }
-                        data.push("</ol>");
-                        build   = [
-                            "<p>Scope analysis does not provide support for undeclared variables.</p>", "<p><em>", semi, "</em> instances of <strong>missing semicolons</strong> counted.</p>", "<p><em>", news, "</em> unnecessary instances of the keyword <strong>new</strong> counted.</p>", data.join(""), last
-                        ];
-                        summary = build.join("");
-                        data    = [];
-                        build   = [];
-                        return "";
-                    }()).replace(/(\s+)$/, "");
-                } else {
-                    result = (function jspretty__result() {
-                        var a       = 0,
-                            b       = token.length,
-                            build   = [],
-                            lineinc = 0,
-                            indent  = jlevel,
-                            tab     = (function jspretty__result_tab() {
-                                var aa = jchar,
-                                    bb = jsize,
-                                    cc = [];
-                                for (bb; bb > 0; bb -= 1) {
-                                    cc.push(aa);
-                                }
-                                return cc.join("");
-                            }()),
-                            nl      = function jspretty__result_nl(x) {
-                                var dd = 0;
-                                build.push("\n");
-                                for (dd; dd < x; dd += 1) {
-                                    build.push(tab);
-                                }
-                            };
-                        if (jvarspace === true) {
-                            (function jspretty__result_varSpaces() {
-                                var aa          = 0,
-                                    varListLen  = 0,
-                                    cc          = 0,
-                                    longest     = 0,
-                                    longTest    = 0,
-                                    tokenInList = "",
-                                    longList    = [],
-                                    joins       = function jspretty__result_varSpaces_joins(x) {
-                                        var xlen    = token[x].length,
-                                            endTest = false,
-                                            mixTest = false,
-                                            perTest = false,
-                                            period  = function jspretty__result_varSpaces_joins_periodInit() {
-                                                return;
-                                            },
-                                            ending  = function jspretty__result_varSpaces_joins_endingInit() {
-                                                return;
-                                            };
-                                        period = function jspretty__result_varSpaces_joins_period() {
-                                            perTest = true;
-                                            do {
-                                                x    -= 2;
-                                                xlen += token[x].length + 1;
-                                            } while (x > 1 && token[x - 1] === ".");
-                                            if (token[x] === ")" || token[x] === "]") {
-                                                x       += 1;
-                                                xlen    -= 1;
-                                                mixTest = true;
-                                                ending();
-                                            }
-                                        };
-                                        ending = function jspretty__result_varSpaces_joins_ending() {
-                                            var yy = 0;
-                                            endTest = true;
-                                            for (x -= 1; x > -1; x -= 1) {
-                                                xlen += token[x].length;
-                                                if (types[x] === "start" || types[x] === "method") {
-                                                    yy += 1;
-                                                    if (yy === 1) {
-                                                        if (mixTest === true) {
-                                                            return;
+                                    if (hh > 0) {
+                                        for (ee = metax - 1; ee > a; ee -= 1) {
+                                            varbuild = token[ee].split(" ");
+                                            if (types[ee] === "word") {
+                                                for (ff = 0; ff < hh; ff += 1) {
+                                                    if (varbuild[0] === metameta[ff] && token[ee - 1] !== ".") {
+                                                        if (token[ee - 1] === "function" && token[ee + 1] === "(") {
+                                                            token[ee]   = "<em class='s" + (scope + 1) + "'>" + varbuild[0] + "</em>";
+                                                            varbuildlen = varbuild.length;
+                                                            if (varbuildlen > 1) {
+                                                                do {
+                                                                    token[ee]   = token[ee] + " ";
+                                                                    varbuildlen -= 1;
+                                                                } while (varbuildlen > 1);
+                                                            }
+                                                        } else if (token[ee - 1] === "case" || token[ee + 1] !== ":" || (token[ee + 1] === ":" && level[ee] !== "x")) {
+                                                            token[ee]   = "<em class='s" + scope + "'>" + varbuild[0] + "</em>";
+                                                            varbuildlen = varbuild.length;
+                                                            if (varbuildlen > 1) {
+                                                                do {
+                                                                    token[ee]   = token[ee] + " ";
+                                                                    varbuildlen -= 1;
+                                                                } while (varbuildlen > 1);
+                                                            }
                                                         }
                                                         break;
                                                     }
                                                 }
-                                                if (types[x] === "end") {
-                                                    yy -= 1;
+                                            }
+                                            if (functionBlock === true) {
+                                                if (types[ee] === "end") {
+                                                    adjustment += 1;
+                                                } else if (types[ee] === "start" || types[ee] === "method") {
+                                                    adjustment -= 1;
                                                 }
-                                                if (types[x] === "operator") {
-                                                    if (level[x] === "s") {
-                                                        xlen += 1;
-                                                    }
-                                                    if (level[x - 1] === "s") {
-                                                        xlen += 1;
-                                                    }
-                                                }
-                                                if (token[x] === ";" || token[x] === "x;" || token[x] === "}") {
-                                                    return;
+                                                if (adjustment === 0 && token[ee] === "{") {
+                                                    token[ee]     = "<em class='s" + scope + "'>{</em>";
+                                                    functionBlock = false;
                                                 }
                                             }
-                                            if (types[x - 1] === "word" || types[x - 1] === "literal") {
-                                                x    -= 1;
-                                                xlen += token[x].length;
+                                        }
+                                    } else {
+                                        for (ee = a + 1; ee < metax; ee += 1) {
+                                            if (types[ee] === "end") {
+                                                adjustment -= 1;
+                                            } else if (types[ee] === "start" || types[ee] === "method") {
+                                                adjustment += 1;
                                             }
-                                            if (types[x] === "word" && token[x - 1] === ".") {
-                                                period();
-                                            }
-                                            if (token[x] === "{") {
+                                            if (adjustment === 1 && token[ee] === "{") {
+                                                token[ee] = "<em class='s" + scope + "'>{</em>";
                                                 return;
                                             }
-                                            if (token[x - 1] === ")" || token[x - 1] === "]") {
-                                                xlen -= 1;
-                                                ending();
-                                            }
-                                        };
-                                        if (types[x] === "word" && token[x - 1] === ".") {
-                                            period();
-                                            if (endTest === false) {
-                                                xlen += 1;
-                                            }
-                                        } else if (token[x] === ")" || token[x] === "]") {
-                                            ending();
-                                            if (perTest === false) {
-                                                xlen += 1;
-                                            }
-                                        } else {
-                                            xlen += 1;
                                         }
-                                        return xlen;
-                                    };
-                                for (aa = varlist.length - 1; aa > -1; aa -= 1) {
-                                    if (varlist[aa] !== undefined) {
-                                        varListLen = varlist[aa].length;
-                                        longest    = 0;
-                                        longList   = [];
-                                        for (cc = 0; cc < varListLen; cc += 1) {
-                                            longTest = joins(varlist[aa][cc]);
-                                            if (longTest > longest) {
-                                                longest = longTest;
+                                    }
+                                },
+                                indent     = jlevel,
+                                removeEm   = function jspretty__resultScope_removeEm(x) {
+                                    var em   = x.lastIndexOf("<em "),
+                                        noem = x.substring(em),
+                                        end  = noem.indexOf("'>");
+                                    return x.substring(0, em) + noem.substring(end + 2).replace("</em>", "");
+                                },
+                                tab        = (function jspretty__resultScope_tab() {
+                                    var aa = jchar,
+                                        bb = jsize,
+                                        cc = [];
+                                    for (bb; bb > 0; bb -= 1) {
+                                        cc.push(aa);
+                                    }
+                                    return cc.join("");
+                                }()),
+                                lscope     = [
+                                    "<em class='l0'>" + tab + "</em>", "<em class='l0'>" + tab + "</em><em class='l1'>" + tab + "</em>", "<em class='l0'>" + tab + "</em><em class='l1'>" + tab + "</em><em class='l2'>" + tab + "</em>", "<em class='l0'>" + tab + "</em><em class='l1'>" + tab + "</em><em class='l2'>" + tab + "</em><em class='l3'>" + tab + "</em>", "<em class='l0'>" + tab + "</em><em class='l1'>" + tab + "</em><em class='l2'>" + tab + "</em><em class='l3'>" + tab + "</em><em class='l4'>" + tab + "</em>", "<em class='l0'>" + tab + "</em><em class='l1'>" + tab + "</em><em class='l2'>" + tab + "</em><em class='l3'>" + tab + "</em><em class='l4'>" + tab + "</em><em class='l5'>" + tab + "</em>", "<em class='l0'>" + tab + "</em><em class='l1'>" + tab + "</em><em class='l2'>" + tab + "</em><em class='l3'>" + tab + "</em><em class='l4'>" + tab + "</em><em class='l5'>" + tab + "</em><em class='l6'>" + tab + "</em>", "<em class='l0'>" + tab + "</em><em class='l1'>" + tab + "</em><em class='l2'>" + tab + "</em><em class='l3'>" + tab + "</em><em class='l4'>" + tab + "</em><em class='l5'>" + tab + "</em><em class='l6'>" + tab + "</em><em class='l7'>" + tab + "</em>", "<em class='l0'>" + tab + "</em><em class='l1'>" + tab + "</em><em class='l2'>" + tab + "</em><em class='l3'>" + tab + "</em><em class='l4'>" + tab + "</em><em class='l5'>" + tab + "</em><em class='l6'>" + tab + "</em><em class='l7'>" + tab + "</em><em class='l8'>" + tab + "</em>", "<em class='l0'>" + tab + "</em><em class='l1'>" + tab + "</em><em class='l2'>" + tab + "</em><em class='l3'>" + tab + "</em><em class='l4'>" + tab + "</em><em class='l5'>" + tab + "</em><em class='l6'>" + tab + "</em><em class='l7'>" + tab + "</em><em class='l8'>" + tab + "</em><em class='l9'>" + tab + "</em>", "<em class='l0'>" + tab + "</em><em class='l1'>" + tab + "</em><em class='l2'>" + tab + "</em><em class='l3'>" + tab + "</em><em class='l4'>" + tab + "</em><em class='l5'>" + tab + "</em><em class='l6'>" + tab + "</em><em class='l7'>" + tab + "</em><em class='l8'>" + tab + "</em><em class='l9'>" + tab + "</em><em class='l10'>" + tab + "</em>", "<em class='l0'>" + tab + "</em><em class='l1'>" + tab + "</em><em class='l2'>" + tab + "</em><em class='l3'>" + tab + "</em><em class='l4'>" + tab + "</em><em class='l5'>" + tab + "</em><em class='l6'>" + tab + "</em><em class='l7'>" + tab + "</em><em class='l8'>" + tab + "</em><em class='l9'>" + tab + "</em><em class='l10'>" + tab + "</em><em class='l11'>" + tab + "</em>", "<em class='l0'>" + tab + "</em><em class='l1'>" + tab + "</em><em class='l2'>" + tab + "</em><em class='l3'>" + tab + "</em><em class='l4'>" + tab + "</em><em class='l5'>" + tab + "</em><em class='l6'>" + tab + "</em><em class='l7'>" + tab + "</em><em class='l8'>" + tab + "</em><em class='l9'>" + tab + "</em><em class='l10'>" + tab + "</em><em class='l11'>" + tab + "</em><em class='l12'>" + tab + "</em>", "<em class='l0'>" + tab + "</em><em class='l1'>" + tab + "</em><em class='l2'>" + tab + "</em><em class='l3'>" + tab + "</em><em class='l4'>" + tab + "</em><em class='l5'>" + tab + "</em><em class='l6'>" + tab + "</em><em class='l7'>" + tab + "</em><em class='l8'>" + tab + "</em><em class='l9'>" + tab + "</em><em class='l10'>" + tab + "</em><em class='l11'>" + tab + "</em><em class='l12'>" + tab + "</em><em class='l13'>" + tab + "</em>", "<em class='l0'>" + tab + "</em><em class='l1'>" + tab + "</em><em class='l2'>" + tab + "</em><em class='l3'>" + tab + "</em><em class='l4'>" + tab + "</em><em class='l5'>" + tab + "</em><em class='l6'>" + tab + "</em><em class='l7'>" + tab + "</em><em class='l8'>" + tab + "</em><em class='l9'>" + tab + "</em><em class='l10'>" + tab + "</em><em class='l11'>" + tab + "</em><em class='l12'>" + tab + "</em><em class='l13'>" + tab + "</em><em class='l14'>" + tab + "</em>", "<em class='l0'>" + tab + "</em><em class='l1'>" + tab + "</em><em class='l2'>" + tab + "</em><em class='l3'>" + tab + "</em><em class='l4'>" + tab + "</em><em class='l5'>" + tab + "</em><em class='l6'>" + tab + "</em><em class='l7'>" + tab + "</em><em class='l8'>" + tab + "</em><em class='l9'>" + tab + "</em><em class='l10'>" + tab + "</em><em class='l11'>" + tab + "</em><em class='l12'>" + tab + "</em><em class='l13'>" + tab + "</em><em class='l14'>" + tab + "</em><em class='l15'>" + tab + "</em>", "<em class='l0'>" + tab + "</em><em class='l1'>" + tab + "</em><em class='l2'>" + tab + "</em><em class='l3'>" + tab + "</em><em class='l4'>" + tab + "</em><em class='l5'>" + tab + "</em><em class='l6'>" + tab + "</em><em class='l7'>" + tab + "</em><em class='l8'>" + tab + "</em><em class='l9'>" + tab + "</em><em class='l10'>" + tab + "</em><em class='l11'>" + tab + "</em><em class='l12'>" + tab + "</em><em class='l13'>" + tab + "</em><em class='l14'>" + tab + "</em><em class='l15'>" + tab + "</em><em class='l16'>" + tab + "</em>"
+                                ],
+                                nl         = function jspretty__resultScope_nl(x) {
+                                    var dd = 0;
+                                    data.push("<li>");
+                                    data.push(linecount);
+                                    data.push("</li>");
+                                    linecount += 1;
+                                    if (a < b - 1 && token[a + 1].indexOf("/*") === 0) {
+                                        build.push("<em>&#xA;</em></li><li class='c0'>");
+                                    } else {
+                                        build.push("<em>&#xA;</em></li><li class='l" + scope + "'>");
+                                        if (x > 0) {
+                                            dd = scope;
+                                            if (scope > 0) {
+                                                if (scope === x + 1 && x > 0) {
+                                                    dd -= 1;
+                                                }
+                                                build.push(lscope[dd - 1]);
                                             }
-                                            longList.push(longTest);
                                         }
-                                        for (cc = 0; cc < varListLen; cc += 1) {
-                                            tokenInList = token[varlist[aa][cc]];
-                                            if (longList[cc] < longest) {
+                                    }
+                                    for (dd; dd < x; dd += 1) {
+                                        build.push(tab);
+                                    }
+                                };
+                            if (jvarspace === true) {
+                                (function jspretty__resultScope_varSpaces() {
+                                    var aa          = 0,
+                                        lastListLen = 0,
+                                        cc          = 0,
+                                        longest     = 0,
+                                        longTest    = 0,
+                                        tokenInList = "",
+                                        longList    = [],
+                                        joins       = function jspretty__resultScope_varSpaces_joins(x) {
+                                            var xlen    = token[x].length,
+                                                endTest = false,
+                                                mixTest = false,
+                                                perTest = false,
+                                                period  = function jspretty__resultScope_varSpaces_joins_periodInit() {
+                                                    return;
+                                                },
+                                                ending  = function jspretty__resultScope_varSpaces_joins_endingInit() {
+                                                    return;
+                                                };
+                                            period = function jspretty__resultScope_varSpaces_joins_period() {
+                                                perTest = true;
                                                 do {
-                                                    tokenInList  += " ";
-                                                    longList[cc] += 1;
-                                                } while (longList[cc] < longest);
+                                                    x    -= 2;
+                                                    xlen += token[x].length + 1;
+                                                } while (x > 1 && token[x - 1] === ".");
+                                                if (token[x] === ")" || token[x] === "]") {
+                                                    x       += 1;
+                                                    xlen    -= 1;
+                                                    mixTest = true;
+                                                    ending();
+                                                }
+                                            };
+                                            ending = function jspretty__resultScope_varSpaces_joins_ending() {
+                                                var yy = 0;
+                                                endTest = true;
+                                                for (x -= 1; x > -1; x -= 1) {
+                                                    xlen += token[x].length;
+                                                    if (types[x] === "start" || types[x] === "method") {
+                                                        yy += 1;
+                                                        if (yy === 1) {
+                                                            if (mixTest === true) {
+                                                                return;
+                                                            }
+                                                            break;
+                                                        }
+                                                    }
+                                                    if (types[x] === "end") {
+                                                        yy -= 1;
+                                                    }
+                                                    if (types[x] === "operator") {
+                                                        if (level[x] === "s") {
+                                                            xlen += 1;
+                                                        }
+                                                        if (level[x - 1] === "s") {
+                                                            xlen += 1;
+                                                        }
+                                                    }
+                                                    if (token[x] === ";" || token[x] === "x;" || token[x] === "}") {
+                                                        return;
+                                                    }
+                                                }
+                                                if (types[x - 1] === "word" || types[x - 1] === "literal") {
+                                                    x    -= 1;
+                                                    xlen += token[x].length;
+                                                }
+                                                if (types[x] === "word" && token[x - 1] === ".") {
+                                                    period();
+                                                }
+                                                if (token[x] === "{") {
+                                                    return;
+                                                }
+                                                if (token[x - 1] === ")" || token[x - 1] === "]") {
+                                                    xlen -= 1;
+                                                    ending();
+                                                }
+                                            };
+                                            if (types[x] === "word" && token[x - 1] === ".") {
+                                                period();
+                                                if (endTest === false) {
+                                                    xlen += 1;
+                                                }
+                                            } else if (token[x] === ")" || token[x] === "]") {
+                                                ending();
+                                                if (perTest === false) {
+                                                    xlen += 1;
+                                                }
+                                            } else {
+                                                xlen += 1;
                                             }
-                                            token[varlist[aa][cc]] = tokenInList;
+                                            return xlen;
+                                        };
+                                    for (aa = varlist.length - 1; aa > -1; aa -= 1) {
+                                        if (varlist[aa] !== undefined) {
+                                            lastListLen = varlist[aa].length;
+                                            longest     = 0;
+                                            longList    = [];
+                                            for (cc = 0; cc < lastListLen; cc += 1) {
+                                                longTest = joins(varlist[aa][cc]);
+                                                if (longTest > longest) {
+                                                    longest = longTest;
+                                                }
+                                                longList.push(longTest);
+                                            }
+                                            for (cc = 0; cc < lastListLen; cc += 1) {
+                                                tokenInList = token[varlist[aa][cc]];
+                                                if (longList[cc] < longest) {
+                                                    do {
+                                                        tokenInList  += " ";
+                                                        longList[cc] += 1;
+                                                    } while (longList[cc] < longest);
+                                                }
+                                                token[varlist[aa][cc]] = tokenInList;
+                                            }
+                                        }
+                                    }
+                                }());
+                            }
+                            if (types[a] === "comment" && token[a].indexOf("/*") === 0) {
+                                build.push("<ol class='data'><li class='c0'>");
+                            } else {
+                                build.push("<ol class='data'><li>");
+                            }
+                            for (a = 0; a < indent; a += 1) {
+                                build.push(tab);
+                            }
+                            for (a = b - 1; a > -1; a -= 1) {
+                                if (typeof meta[a] === "number") {
+                                    scope -= 1;
+                                    findvars(a);
+                                } else if (meta[a] !== undefined && typeof meta[a] !== "string" && typeof meta[a] !== "number" && a > 0) {
+                                    token[a] = "<em class='s" + scope + "'>" + token[a] + "</em>";
+                                    scope    += 1;
+                                    if (scope > 16) {
+                                        scope = 16;
+                                    }
+                                }
+                            }
+                            (function jspretty__resultScope_globals() {
+                                var aa          = 0,
+                                    bb          = token.length,
+                                    globalLocal = globals,
+                                    dd          = globalLocal.length,
+                                    ee          = 0,
+                                    word        = [],
+                                    wordlen     = 0;
+                                for (aa = bb - 1; aa > 0; aa -= 1) {
+                                    if (types[aa] === "word" && (token[aa + 1] !== ":" || (token[aa + 1] === ":" && level[aa + 1] === "x")) && token[aa].indexOf("<em ") < 0) {
+                                        word = token[aa].split(" ");
+                                        for (ee = dd - 1; ee > -1; ee -= 1) {
+                                            if (word[0] === globalLocal[ee] && token[aa - 1] !== ".") {
+                                                if (token[aa - 1] === "function" && types[aa + 1] === "method") {
+                                                    token[aa] = "<em class='s1'>" + word[0] + "</em>";
+                                                    wordlen   = word.length;
+                                                    if (wordlen > 1) {
+                                                        do {
+                                                            token[aa] = token[aa] + " ";
+                                                            wordlen   -= 1;
+                                                        } while (wordlen > 1);
+                                                    }
+                                                } else {
+                                                    token[aa] = "<em class='s0'>" + word[0] + "</em>";
+                                                    wordlen   = word.length;
+                                                    if (wordlen > 1) {
+                                                        do {
+                                                            token[aa] = token[aa] + " ";
+                                                            wordlen   -= 1;
+                                                        } while (wordlen > 1);
+                                                    }
+                                                }
+                                                break;
+                                            }
                                         }
                                     }
                                 }
                             }());
-                        }
-                        for (a = 0; a < indent; a += 1) {
-                            build.push(tab);
-                        }
-                        for (a = 0; a < b; a += 1) {
-                            if (types[a] === "comment" || (token[a] !== "x;" && token[a] !== "x{" && token[a] !== "x}")) {
-                                build.push(token[a]);
-                            }
-                            if (jpres === true && lines[lineinc] !== undefined && a === lines[lineinc][0] && level[a] !== "x" && level[a] !== "s") {
-                                if (token[a] === "+" || token[a] === "-" || token[a] === "*" || token[a] === "/") {
-                                    if (a < b - 1 && types[a + 1] !== "comment" && types[a + 1] !== "comment-inline") {
-                                        nl(indent);
-                                        build.push(tab);
-                                        level[a] = "x";
-                                    } else {
-                                        indent = level[a];
-                                        if (lines[lineinc][1] === true) {
-                                            build.push("\n");
+                            scope = 0;
+                            for (a = 0; a < b; a += 1) {
+                                if (typeof meta[a] === "number") {
+                                    folder();
+                                }
+                                if (comfold === -1 && types[a] === "comment" && ((token[a].indexOf("/*") === 0 && token[a].indexOf("\n") > 0) || types[a + 1] === "comment" || (lines[linesinc] !== undefined && lines[linesinc - 1][1] === true))) {
+                                    folder();
+                                    comfold = a;
+                                }
+                                if (comfold > -1 && types[a] !== "comment") {
+                                    foldclose();
+                                    comfold = -1;
+                                }
+                                if (types[a] === "comment" && token[a].indexOf("/*") === 0) {
+                                    build.push(blockline(token[a]));
+                                } else {
+                                    if (typeof meta[a] === "number") {
+                                        scope += 1;
+                                        if (scope > 16) {
+                                            scope = 16;
                                         }
-                                        nl(indent);
-                                        build.push(tab);
-                                        build.push(token[a + 1]);
-                                        nl(indent);
-                                        build.push(tab);
-                                        level[a + 1] = "x";
-                                        a            += 1;
-                                    }
-                                } else if (lines[lineinc][1] === true && token[a].charAt(0) !== "=" && token[a].charAt(0) !== "!" && (types[a] !== "start" || (a < b - 1 && types[a + 1] !== "end"))) {
-                                    if (a < b - 1 && (types[a + 1] === "comment" || types[a + 1] === "comment-inline" || (token[a] !== "." && token[a] !== "," && types[a + 1] !== "separator"))) {
-                                        if (token[a] !== "x}" || isNaN(level[a]) === true || level[a] === "x") {
-                                            build.push("\n");
+                                        build.push(token[a]);
+                                    } else if (typeof meta[a] !== "string" && typeof meta[a] !== "number") {
+                                        build.push(token[a]);
+                                        scope    -= 1;
+                                        buildlen = build.length - 1;
+                                        do {
+                                            buildlen -= 1;
+                                        } while (buildlen > 0 && build[buildlen].indexOf("</li><li") < 0);
+                                        build[buildlen] = build[buildlen].replace(/class\='l\d+'/, "class='l" + scope + "'");
+                                    } else if (token[a] !== "x;" && token[a] !== "x{" && token[a] !== "x}") {
+                                        if (types[a] === "comment") {
+                                            if (a === 0) {
+                                                build[0] = "<ol class='data'><li class='c0'>";
+                                            } else {
+                                                buildlen = build.length - 1;
+                                                if (build[buildlen].indexOf("<li") < 0) {
+                                                    do {
+                                                        build[buildlen] = build[buildlen].replace(/<em class\='[a-z]\d+'>/g, "").replace(/<\/em>/g, "");
+                                                        buildlen        -= 1;
+                                                        if (buildlen > 0 && build[buildlen] === undefined) {
+                                                            buildlen -= 1;
+                                                        }
+                                                    } while (buildlen > 0 && build[buildlen - 1] !== undefined && build[buildlen].indexOf("<li") < 0);
+                                                }
+                                                build[buildlen] = build[buildlen].replace(/class\='l\d+'/, "class='c0'");
+                                            }
                                         }
+                                        build.push(token[a]);
                                     }
                                 }
-                                lineinc += 1;
-                            }
-                            if (a < b - 1 && types[a + 1] === "comment" && jcomment === "noindent") {
-                                nl(jlevel);
-                            } else if (level[a] === "s" && token[a] !== "x}") {
-                                build.push(" ");
-                            } else if (level[a] !== "x" && (token[a] !== "x}" || (lineinc > 0 && lines[lineinc - 1][1] === true && lines[lineinc - 1][0] === a))) {
-                                indent = level[a];
-                                nl(indent);
-                            }
-                            if (lines[lineinc] !== undefined && lines[lineinc][0] < a) {
-                                lineinc += 1;
-                            }
-                        }
-                        return build.join("");
-                    }()).replace(/(\s+)$/, "");
-                }
-                if (summary !== "diff" && jsscope === false) {
-                    stats.space.space -= 1;
-                    //the analysis report is generated in this function
-                    (function jspretty__report() {
-                        var originalSize = source.length - 1,
-                            noOfLines    = result.split("\n").length,
-                            newlines     = stats.space.newline,
-                            total        = {
-                                chars  : 0,
-                                comment: {
-                                    token: stats.commentBlock.token + stats.commentLine.token,
-                                    chars: stats.commentBlock.chars + stats.commentLine.chars
-                                },
-                                literal: {
-                                    token: stats.number.token + stats.regex.token + stats.string.token,
-                                    chars: stats.number.chars + stats.regex.chars + stats.string.chars
-                                },
-                                space  : stats.space.newline + stats.space.other + stats.space.space + stats.space.tab,
-                                syntax : {
-                                    token: stats.string.quote + stats.comma + stats.semicolon + stats.container,
-                                    chars: 0
-                                },
-                                token  : 0
-                            },
-                            output       = [],
-                            zero         = function jspretty__report_zero(x, y) {
-                                if (y === 0) {
-                                    return "0.00%";
+                                if (jpres === true && lines[linesinc] !== undefined && a === lines[linesinc][0] && level[a] !== "x" && level[a] !== "s") {
+                                    if (token[a] === "+" || token[a] === "-" || token[a] === "*" || token[a] === "/") {
+                                        if (a < b - 1 && types[a + 1] !== "comment" && types[a + 1] !== "comment-inline") {
+                                            nl(indent);
+                                            build.push(tab);
+                                            level[a] = "x";
+                                        } else {
+                                            indent = level[a];
+                                            if (lines[linesinc][1] === true) {
+                                                build.push("\n");
+                                            }
+                                            nl(indent);
+                                            build.push(tab);
+                                            build.push(token[a + 1]);
+                                            nl(indent);
+                                            build.push(tab);
+                                            level[a + 1] = "x";
+                                            a            += 1;
+                                        }
+                                    } else if (lines[linesinc][1] === true && token[a].charAt(0) !== "=" && token[a].charAt(0) !== "!" && (types[a] !== "start" || (a < b - 1 && types[a + 1] !== "end"))) {
+                                        if ((token[a] !== "x}" || isNaN(level[a]) === true) && (a < b - 1 && (types[a + 1] === "comment" || types[a + 1] === "comment-inline" || (token[a] !== "." && token[a] !== "," && types[a + 1] !== "separator")))) {
+                                            data.push("<li>");
+                                            data.push(linecount);
+                                            data.push("</li>");
+                                            linecount += 1;
+                                            if (types[a] === "comment") {
+                                                build.push("<em>&#xA;</em></li><li class='c0'>");
+                                            } else {
+                                                commentfix += 1;
+                                                nl(indent);
+                                            }
+                                        }
+                                    }
+                                    linesinc += 1;
                                 }
-                                return ((x / y) * 100).toFixed(2) + "%";
-                            };
-                        total.syntax.chars = total.syntax.token + stats.operator.chars;
-                        total.syntax.token += stats.operator.token;
-                        total.token        = stats.server.token + stats.word.token + total.comment.token + total.literal.token + total.space + total.syntax.token;
-                        total.chars        = stats.server.chars + stats.word.chars + total.comment.chars + total.literal.chars + total.space + total.syntax.chars;
-                        if (newlines === 0) {
-                            newlines = 1;
-                        }
-                        output.push("<div id='doc'>");
-                        output.push("<p><em>");
-                        output.push(semi);
-                        output.push("</em> instance");
-                        if (semi !== 1) {
-                            output.push("s");
-                        }
-                        output.push(" of <strong>missing semicolons</strong> counted.</p>");
-                        output.push("<p><em>");
-                        output.push(news);
-                        output.push("</em> unnessary instance");
-                        if (news !== 1) {
-                            output.push("s");
-                        }
-                        output.push(" of the keyword <strong>new</strong> counted.</p>");
-                        output.push("<table class='analysis' summary='JavaScript character size comparison'><caption>JavaScript data report</caption><thead><tr><th>Data Label</th><th>Input</th><th>Output</th><th>Literal Increase</th><th>Percentage Increase</th></tr>");
-                        output.push("</thead><tbody><tr><th>Total Character Size</th><td>");
-                        output.push(originalSize);
-                        output.push("</td><td>");
-                        output.push(result.length);
-                        output.push("</td><td>");
-                        output.push(result.length - originalSize);
-                        output.push("</td><td>");
-                        output.push((((result.length - originalSize) / originalSize) * 100).toFixed(2));
-                        output.push("%</td></tr><tr><th>Total Lines of Code</th><td>");
-                        output.push(newlines);
-                        output.push("</td><td>");
-                        output.push(noOfLines);
-                        output.push("</td><td>");
-                        output.push(noOfLines - newlines);
-                        output.push("</td><td>");
-                        output.push((((noOfLines - newlines) / newlines) * 100).toFixed(2));
-                        output.push("%</td></tr></tbody></table>");
-                        output.push("<table class='analysis' summary='JavaScript component analysis'><caption>JavaScript component analysis</caption><thead><tr><th>JavaScript Component</th><th>Component Quantity</th><th>Percentage Quantity from Section</th>");
-                        output.push("<th>Percentage Qauntity from Total</th><th>Character Length</th><th>Percentage Length from Section</th><th>Percentage Length from Total</th></tr></thead><tbody>");
-                        output.push("<tr><th>Total Accounted</th><td>");
-                        output.push(total.token);
-                        output.push("</td><td>100.00%</td><td>100.00%</td><td>");
-                        output.push(total.chars);
-                        output.push("</td><td>100.00%</td><td>100.00%</td></tr><tr><th colspan='7'>Comments</th></tr><tr><th>Block Comments</th><td>");
-                        output.push(stats.commentBlock.token);
-                        output.push("</td><td>");
-                        output.push(zero(stats.commentBlock.token, total.comment.token));
-                        output.push("</td><td>");
-                        output.push(zero(stats.commentBlock.token, total.token));
-                        output.push("</td><td>");
-                        output.push(stats.commentBlock.chars);
-                        output.push("</td><td>");
-                        output.push(zero(stats.commentBlock.chars, total.comment.chars));
-                        output.push("</td><td>");
-                        output.push(zero(stats.commentBlock.chars, total.chars));
-                        output.push("</td></tr><tr><th>Inline Comments</th><td>");
-                        output.push(stats.commentLine.token);
-                        output.push("</td><td>");
-                        output.push(zero(stats.commentLine.token, total.comment.token));
-                        output.push("</td><td>");
-                        output.push(zero(stats.commentLine.token, total.token));
-                        output.push("</td><td>");
-                        output.push(stats.commentLine.chars);
-                        output.push("</td><td>");
-                        output.push(zero(stats.commentLine.chars, total.comment.chars));
-                        output.push("</td><td>");
-                        output.push(zero(stats.commentLine.chars, total.chars));
-                        output.push("</td></tr><tr><th>Comment Total</th><td>");
-                        output.push(total.comment.token);
-                        output.push("</td><td>100.00%</td><td>");
-                        output.push(zero(total.comment.token, total.token));
-                        output.push("</td><td>");
-                        output.push(total.comment.chars);
-                        output.push("</td><td>100.00%</td><td>");
-                        output.push(zero(total.comment.chars, total.chars));
-                        output.push("</td></tr><tr><th colspan='7'>Whitespace Outside of Strings and Comments</th></tr><tr><th>New Lines</th><td>");
-                        output.push(stats.space.newline);
-                        output.push("</td><td>");
-                        output.push(zero(stats.space.newline, total.space));
-                        output.push("</td><td>");
-                        output.push(zero(stats.space.newline, total.token));
-                        output.push("</td><td>");
-                        output.push(stats.space.newline);
-                        output.push("</td><td>");
-                        output.push(zero(stats.space.newline, total.space));
-                        output.push("</td><td>");
-                        output.push(zero(stats.space.newline, total.chars));
-                        output.push("</td></tr><tr><th>Spaces</th><td>");
-                        output.push(stats.space.space);
-                        output.push("</td><td>");
-                        output.push(zero(stats.space.space, total.space));
-                        output.push("</td><td>");
-                        output.push(zero(stats.space.space, total.token));
-                        output.push("</td><td>");
-                        output.push(stats.space.space);
-                        output.push("</td><td>");
-                        output.push(zero(stats.space.space, total.space));
-                        output.push("</td><td>");
-                        output.push(zero(stats.space.space, total.chars));
-                        output.push("</td></tr><tr><th>Tabs</th><td>");
-                        output.push(stats.space.tab);
-                        output.push("</td><td>");
-                        output.push(zero(stats.space.tab, total.space));
-                        output.push("</td><td>");
-                        output.push(zero(stats.space.tab, total.token));
-                        output.push("</td><td>");
-                        output.push(stats.space.tab);
-                        output.push("</td><td>");
-                        output.push(zero(stats.space.tab, total.space));
-                        output.push("</td><td>");
-                        output.push(zero(stats.space.tab, total.chars));
-                        output.push("</td></tr><tr><th>Other Whitespace</th><td>");
-                        output.push(stats.space.other);
-                        output.push("</td><td>");
-                        output.push(zero(stats.space.other, total.space));
-                        output.push("</td><td>");
-                        output.push(zero(stats.space.other, total.token));
-                        output.push("</td><td>");
-                        output.push(stats.space.other);
-                        output.push("</td><td>");
-                        output.push(zero(stats.space.other, total.space));
-                        output.push("</td><td>");
-                        output.push(zero(stats.space.other, total.chars));
-                        output.push("</td></tr><tr><th>Total Whitespace</th><td>");
-                        output.push(total.space);
-                        output.push("</td><td>100.00%</td><td>");
-                        output.push(zero(total.space, total.token));
-                        output.push("</td><td>");
-                        output.push(total.space);
-                        output.push("</td><td>100.00%</td><td>");
-                        output.push(zero(total.space, total.chars));
-                        output.push("</td></tr><tr><th colspan='7'>Literals</th></tr><tr><th>Strings</th><td>");
-                        output.push(stats.string.token);
-                        output.push("</td><td>");
-                        output.push(zero(stats.string.token, total.literal.token));
-                        output.push("</td><td>");
-                        output.push(zero(stats.string.token, total.token));
-                        output.push("</td><td>");
-                        output.push(stats.string.chars);
-                        output.push("</td><td>");
-                        output.push(zero(stats.string.chars, total.literal.chars));
-                        output.push("</td><td>");
-                        output.push(zero(stats.string.chars, total.chars));
-                        output.push("</td></tr><tr><th>Numbers</th><td>");
-                        output.push(stats.number.token);
-                        output.push("</td><td>");
-                        output.push(zero(stats.number.token, total.literal.token));
-                        output.push("</td><td>");
-                        output.push(zero(stats.number.token, total.token));
-                        output.push("</td><td>");
-                        output.push(stats.number.chars);
-                        output.push("</td><td>");
-                        output.push(zero(stats.number.chars, total.literal.chars));
-                        output.push("</td><td>");
-                        output.push(zero(stats.number.chars, total.chars));
-                        output.push("</td></tr><tr><th>Regular Expressions</th><td>");
-                        output.push(stats.regex.token);
-                        output.push("</td><td>");
-                        output.push(zero(stats.regex.token, total.literal.token));
-                        output.push("</td><td>");
-                        output.push(zero(stats.regex.token, total.token));
-                        output.push("</td><td>");
-                        output.push(stats.regex.chars);
-                        output.push("</td><td>");
-                        output.push(zero(stats.regex.chars, total.literal.chars));
-                        output.push("</td><td>");
-                        output.push(zero(stats.regex.chars, total.chars));
-                        output.push("</td></tr><tr><th>Total Literals</th><td>");
-                        output.push(total.literal.token);
-                        output.push("</td><td>100.00%</td><td>");
-                        output.push(zero(total.literal.token, total.token));
-                        output.push("</td><td>");
-                        output.push(total.literal.chars);
-                        output.push("</td><td>100.00%</td><td>");
-                        output.push(zero(total.literal.chars, total.chars));
-                        output.push("</td></tr><tr><th colspan='7'>Syntax Characters</th></tr><tr><th>Quote Characters</th><td>");
-                        output.push(stats.string.quote);
-                        output.push("</td><td>");
-                        output.push(zero(stats.string.quote, total.syntax.token));
-                        output.push("</td><td>");
-                        output.push(zero(stats.string.quote, total.token));
-                        output.push("</td><td>");
-                        output.push(stats.string.quote);
-                        output.push("</td><td>");
-                        output.push(zero(stats.string.quote, total.syntax.chars));
-                        output.push("</td><td>");
-                        output.push(zero(stats.string.quote, total.chars));
-                        output.push("</td></tr><tr><th>Commas</th><td>");
-                        output.push(stats.comma);
-                        output.push("</td><td>");
-                        output.push(zero(stats.comma, total.syntax.token));
-                        output.push("</td><td>");
-                        output.push(zero(stats.comma, total.token));
-                        output.push("</td><td>");
-                        output.push(stats.comma);
-                        output.push("</td><td>");
-                        output.push(zero(stats.comma, total.syntax.chars));
-                        output.push("</td><td>");
-                        output.push(zero(stats.comma, total.chars));
-                        output.push("</td></tr><tr><th>Containment Characters</th><td>");
-                        output.push(stats.container);
-                        output.push("</td><td>");
-                        output.push(zero(stats.container, total.syntax.token));
-                        output.push("</td><td>");
-                        output.push(zero(stats.container, total.token));
-                        output.push("</td><td>");
-                        output.push(stats.container);
-                        output.push("</td><td>");
-                        output.push(zero(stats.container, total.syntax.chars));
-                        output.push("</td><td>");
-                        output.push(zero(stats.container, total.chars));
-                        output.push("</td></tr><tr><th>Semicolons</th><td>");
-                        output.push(stats.semicolon);
-                        output.push("</td><td>");
-                        output.push(zero(stats.semicolon, total.syntax.token));
-                        output.push("</td><td>");
-                        output.push(zero(stats.semicolon, total.token));
-                        output.push("</td><td>");
-                        output.push(stats.semicolon);
-                        output.push("</td><td>");
-                        output.push(zero(stats.semicolon, total.syntax.chars));
-                        output.push("</td><td>");
-                        output.push(zero(stats.semicolon, total.chars));
-                        output.push("</td></tr><tr><th>Operators</th><td>");
-                        output.push(stats.operator.token);
-                        output.push("</td><td>");
-                        output.push(zero(stats.operator.token, total.syntax.token));
-                        output.push("</td><td>");
-                        output.push(zero(stats.operator.token, total.token));
-                        output.push("</td><td>");
-                        output.push(stats.operator.chars);
-                        output.push("</td><td>");
-                        output.push(zero(stats.operator.chars, total.syntax.chars));
-                        output.push("</td><td>");
-                        output.push(zero(stats.operator.chars, total.chars));
-                        output.push("</td></tr><tr><th>Total Syntax Characters</th><td>");
-                        output.push(total.syntax.token);
-                        output.push("</td><td>100.00%</td><td>");
-                        output.push(zero(total.syntax.token, total.token));
-                        output.push("</td><td>");
-                        output.push(total.syntax.chars);
-                        output.push("</td><td>100.00%</td><td>");
-                        output.push(zero(total.syntax.chars, total.chars));
-                        output.push("</td></tr>");
-                        output.push("<tr><th colspan='7'>Keywords and Variables</th></tr><tr><th>Words</th><td>");
-                        output.push(stats.word.token);
-                        output.push("</td><td>100.00%</td><td>");
-                        output.push(zero(stats.word.token, total.token));
-                        output.push("</td><td>");
-                        output.push(stats.word.chars);
-                        output.push("</td><td>100.00%</td><td>");
-                        output.push(zero(stats.word.chars, total.chars));
-                        output.push("</td></tr>");
-                        output.push("<tr><th colspan='7'>Server-side Tags</th></tr><tr><th>Server Tags</th><td>");
-                        output.push(stats.server.token);
-                        output.push("</td><td>100.00%</td><td>");
-                        output.push(zero(stats.server.token, total.token));
-                        output.push("</td><td>");
-                        output.push(stats.server.chars);
-                        output.push("</td><td>100.00%</td><td>");
-                        output.push(zero(stats.server.chars, total.chars));
-                        output.push("</td></tr></tbody></table></div>");
-                        summary = output.join("");
-                    }());
+                                if (a < b - 1 && types[a + 1] === "comment" && jcomment === "noindent") {
+                                    nl(jlevel);
+                                } else if (level[a] === "s" && token[a] !== "x}") {
+                                    build.push(" ");
+                                } else if (level[a] !== "x" && token[a] === "x}" && typeof meta[a + 1] !== "string" && typeof meta[a + 1] !== "number") {
+                                    build[build.length - 1] = removeEm(build[build.length - 1]);
+                                } else if (level[a] !== "x" && (token[a] !== "x}" || (linesinc > 0 && lines[linesinc - 1][1] === true && lines[linesinc - 1][0] === a))) {
+                                    indent = level[a];
+                                    nl(indent);
+                                }
+                                if (lines[linesinc] !== undefined && lines[linesinc][0] < a) {
+                                    linesinc += 1;
+                                }
+                                if (folderItem.length > 0) {
+                                    if (a === folderItem[folderItem.length - 1][1] && comfold === -1) {
+                                        foldclose();
+                                    }
+                                }
+                            }
+                            last = build[build.length - 1];
+                            if (last.indexOf("<li") > 0) {
+                                build[build.length - 1] = "<em>&#xA;</em></li>";
+                            } else if (last.indexOf("</li>") < 0) {
+                                build.push("<em>&#xA;</em></li>");
+                            }
+                            build.push("</ol></div>");
+                            last = build.join("");
+                            if (last.match(/<li/g) !== null) {
+                                scope = last.match(/<li/g).length;
+                                if (linecount - 1 > scope) {
+                                    linecount -= 1;
+                                    do {
+                                        data.pop();
+                                        data.pop();
+                                        data.pop();
+                                        linecount -= 1;
+                                    } while (linecount > scope);
+                                }
+                            }
+                            data.push("</ol>");
+                            build   = [
+                                "<p>Scope analysis does not provide support for undeclared variables.</p>", "<p><em>", semi, "</em> instances of <strong>missing semicolons</strong> counted.</p>", "<p><em>", news, "</em> unnecessary instances of the keyword <strong>new</strong> counted.</p>", data.join(""), last
+                            ];
+                            summary = build.join("");
+                            data    = [];
+                            build   = [];
+                            return "";
+                        }()).replace(/(\s+)$/, "");
+                    } else {
+                        result = (function jspretty__result() {
+                            var a       = 0,
+                                b       = token.length,
+                                build   = [],
+                                lineinc = 0,
+                                indent  = jlevel,
+                                tab     = (function jspretty__result_tab() {
+                                    var aa = jchar,
+                                        bb = jsize,
+                                        cc = [];
+                                    for (bb; bb > 0; bb -= 1) {
+                                        cc.push(aa);
+                                    }
+                                    return cc.join("");
+                                }()),
+                                nl      = function jspretty__result_nl(x) {
+                                    var dd = 0;
+                                    build.push("\n");
+                                    for (dd; dd < x; dd += 1) {
+                                        build.push(tab);
+                                    }
+                                };
+                            if (jvarspace === true) {
+                                (function jspretty__result_varSpaces() {
+                                    var aa          = 0,
+                                        varListLen  = 0,
+                                        cc          = 0,
+                                        longest     = 0,
+                                        longTest    = 0,
+                                        tokenInList = "",
+                                        longList    = [],
+                                        joins       = function jspretty__result_varSpaces_joins(x) {
+                                            var xlen    = token[x].length,
+                                                endTest = false,
+                                                mixTest = false,
+                                                perTest = false,
+                                                period  = function jspretty__result_varSpaces_joins_periodInit() {
+                                                    return;
+                                                },
+                                                ending  = function jspretty__result_varSpaces_joins_endingInit() {
+                                                    return;
+                                                };
+                                            period = function jspretty__result_varSpaces_joins_period() {
+                                                perTest = true;
+                                                do {
+                                                    x    -= 2;
+                                                    xlen += token[x].length + 1;
+                                                } while (x > 1 && token[x - 1] === ".");
+                                                if (token[x] === ")" || token[x] === "]") {
+                                                    x       += 1;
+                                                    xlen    -= 1;
+                                                    mixTest = true;
+                                                    ending();
+                                                }
+                                            };
+                                            ending = function jspretty__result_varSpaces_joins_ending() {
+                                                var yy = 0;
+                                                endTest = true;
+                                                for (x -= 1; x > -1; x -= 1) {
+                                                    xlen += token[x].length;
+                                                    if (types[x] === "start" || types[x] === "method") {
+                                                        yy += 1;
+                                                        if (yy === 1) {
+                                                            if (mixTest === true) {
+                                                                return;
+                                                            }
+                                                            break;
+                                                        }
+                                                    }
+                                                    if (types[x] === "end") {
+                                                        yy -= 1;
+                                                    }
+                                                    if (types[x] === "operator") {
+                                                        if (level[x] === "s") {
+                                                            xlen += 1;
+                                                        }
+                                                        if (level[x - 1] === "s") {
+                                                            xlen += 1;
+                                                        }
+                                                    }
+                                                    if (token[x] === ";" || token[x] === "x;" || token[x] === "}") {
+                                                        return;
+                                                    }
+                                                }
+                                                if (types[x - 1] === "word" || types[x - 1] === "literal") {
+                                                    x    -= 1;
+                                                    xlen += token[x].length;
+                                                }
+                                                if (types[x] === "word" && token[x - 1] === ".") {
+                                                    period();
+                                                }
+                                                if (token[x] === "{") {
+                                                    return;
+                                                }
+                                                if (token[x - 1] === ")" || token[x - 1] === "]") {
+                                                    xlen -= 1;
+                                                    ending();
+                                                }
+                                            };
+                                            if (types[x] === "word" && token[x - 1] === ".") {
+                                                period();
+                                                if (endTest === false) {
+                                                    xlen += 1;
+                                                }
+                                            } else if (token[x] === ")" || token[x] === "]") {
+                                                ending();
+                                                if (perTest === false) {
+                                                    xlen += 1;
+                                                }
+                                            } else {
+                                                xlen += 1;
+                                            }
+                                            return xlen;
+                                        };
+                                    for (aa = varlist.length - 1; aa > -1; aa -= 1) {
+                                        if (varlist[aa] !== undefined) {
+                                            varListLen = varlist[aa].length;
+                                            longest    = 0;
+                                            longList   = [];
+                                            for (cc = 0; cc < varListLen; cc += 1) {
+                                                longTest = joins(varlist[aa][cc]);
+                                                if (longTest > longest) {
+                                                    longest = longTest;
+                                                }
+                                                longList.push(longTest);
+                                            }
+                                            for (cc = 0; cc < varListLen; cc += 1) {
+                                                tokenInList = token[varlist[aa][cc]];
+                                                if (longList[cc] < longest) {
+                                                    do {
+                                                        tokenInList  += " ";
+                                                        longList[cc] += 1;
+                                                    } while (longList[cc] < longest);
+                                                }
+                                                token[varlist[aa][cc]] = tokenInList;
+                                            }
+                                        }
+                                    }
+                                }());
+                            }
+                            for (a = 0; a < indent; a += 1) {
+                                build.push(tab);
+                            }
+                            for (a = 0; a < b; a += 1) {
+                                if (types[a] === "comment" || (token[a] !== "x;" && token[a] !== "x{" && token[a] !== "x}")) {
+                                    build.push(token[a]);
+                                }
+                                if (jpres === true && lines[lineinc] !== undefined && a === lines[lineinc][0] && level[a] !== "x" && level[a] !== "s") {
+                                    if (token[a] === "+" || token[a] === "-" || token[a] === "*" || token[a] === "/") {
+                                        if (a < b - 1 && types[a + 1] !== "comment" && types[a + 1] !== "comment-inline") {
+                                            nl(indent);
+                                            build.push(tab);
+                                            level[a] = "x";
+                                        } else {
+                                            indent = level[a];
+                                            if (lines[lineinc][1] === true) {
+                                                build.push("\n");
+                                            }
+                                            nl(indent);
+                                            build.push(tab);
+                                            build.push(token[a + 1]);
+                                            nl(indent);
+                                            build.push(tab);
+                                            level[a + 1] = "x";
+                                            a            += 1;
+                                        }
+                                    } else if (lines[lineinc][1] === true && token[a].charAt(0) !== "=" && token[a].charAt(0) !== "!" && (types[a] !== "start" || (a < b - 1 && types[a + 1] !== "end"))) {
+                                        if (a < b - 1 && (types[a + 1] === "comment" || types[a + 1] === "comment-inline" || (token[a] !== "." && token[a] !== "," && types[a + 1] !== "separator"))) {
+                                            if (token[a] !== "x}" || isNaN(level[a]) === true || level[a] === "x") {
+                                                build.push("\n");
+                                            }
+                                        }
+                                    }
+                                    lineinc += 1;
+                                }
+                                if (a < b - 1 && types[a + 1] === "comment" && jcomment === "noindent") {
+                                    nl(jlevel);
+                                } else if (level[a] === "s" && token[a] !== "x}") {
+                                    build.push(" ");
+                                } else if (level[a] !== "x" && (token[a] !== "x}" || (lineinc > 0 && lines[lineinc - 1][1] === true && lines[lineinc - 1][0] === a))) {
+                                    indent = level[a];
+                                    nl(indent);
+                                }
+                                if (lines[lineinc] !== undefined && lines[lineinc][0] < a) {
+                                    lineinc += 1;
+                                }
+                            }
+                            return build.join("");
+                        }()).replace(/(\s+)$/, "");
+                    }
+                    if (summary !== "diff" && jsscope === false) {
+                        stats.space.space -= 1;
+                        //the analysis report is generated in this function
+                        (function jspretty__report() {
+                            var originalSize = source.length - 1,
+                                noOfLines    = result.split("\n").length,
+                                newlines     = stats.space.newline,
+                                total        = {
+                                    chars  : 0,
+                                    comment: {
+                                        token: stats.commentBlock.token + stats.commentLine.token,
+                                        chars: stats.commentBlock.chars + stats.commentLine.chars
+                                    },
+                                    literal: {
+                                        token: stats.number.token + stats.regex.token + stats.string.token,
+                                        chars: stats.number.chars + stats.regex.chars + stats.string.chars
+                                    },
+                                    space  : stats.space.newline + stats.space.other + stats.space.space + stats.space.tab,
+                                    syntax : {
+                                        token: stats.string.quote + stats.comma + stats.semicolon + stats.container,
+                                        chars: 0
+                                    },
+                                    token  : 0
+                                },
+                                output       = [],
+                                zero         = function jspretty__report_zero(x, y) {
+                                    if (y === 0) {
+                                        return "0.00%";
+                                    }
+                                    return ((x / y) * 100).toFixed(2) + "%";
+                                };
+                            total.syntax.chars = total.syntax.token + stats.operator.chars;
+                            total.syntax.token += stats.operator.token;
+                            total.token        = stats.server.token + stats.word.token + total.comment.token + total.literal.token + total.space + total.syntax.token;
+                            total.chars        = stats.server.chars + stats.word.chars + total.comment.chars + total.literal.chars + total.space + total.syntax.chars;
+                            if (newlines === 0) {
+                                newlines = 1;
+                            }
+                            output.push("<div id='doc'>");
+                            output.push("<p><em>");
+                            output.push(semi);
+                            output.push("</em> instance");
+                            if (semi !== 1) {
+                                output.push("s");
+                            }
+                            output.push(" of <strong>missing semicolons</strong> counted.</p>");
+                            output.push("<p><em>");
+                            output.push(news);
+                            output.push("</em> unnessary instance");
+                            if (news !== 1) {
+                                output.push("s");
+                            }
+                            output.push(" of the keyword <strong>new</strong> counted.</p>");
+                            output.push("<table class='analysis' summary='JavaScript character size comparison'><caption>JavaScript data report</caption><thead><tr><th>Data Label</th><th>Input</th><th>Output</th><th>Literal Increase</th><th>Percentage Increase</th></tr>");
+                            output.push("</thead><tbody><tr><th>Total Character Size</th><td>");
+                            output.push(originalSize);
+                            output.push("</td><td>");
+                            output.push(result.length);
+                            output.push("</td><td>");
+                            output.push(result.length - originalSize);
+                            output.push("</td><td>");
+                            output.push((((result.length - originalSize) / originalSize) * 100).toFixed(2));
+                            output.push("%</td></tr><tr><th>Total Lines of Code</th><td>");
+                            output.push(newlines);
+                            output.push("</td><td>");
+                            output.push(noOfLines);
+                            output.push("</td><td>");
+                            output.push(noOfLines - newlines);
+                            output.push("</td><td>");
+                            output.push((((noOfLines - newlines) / newlines) * 100).toFixed(2));
+                            output.push("%</td></tr></tbody></table>");
+                            output.push("<table class='analysis' summary='JavaScript component analysis'><caption>JavaScript component analysis</caption><thead><tr><th>JavaScript Component</th><th>Component Quantity</th><th>Percentage Quantity from Section</th>");
+                            output.push("<th>Percentage Qauntity from Total</th><th>Character Length</th><th>Percentage Length from Section</th><th>Percentage Length from Total</th></tr></thead><tbody>");
+                            output.push("<tr><th>Total Accounted</th><td>");
+                            output.push(total.token);
+                            output.push("</td><td>100.00%</td><td>100.00%</td><td>");
+                            output.push(total.chars);
+                            output.push("</td><td>100.00%</td><td>100.00%</td></tr><tr><th colspan='7'>Comments</th></tr><tr><th>Block Comments</th><td>");
+                            output.push(stats.commentBlock.token);
+                            output.push("</td><td>");
+                            output.push(zero(stats.commentBlock.token, total.comment.token));
+                            output.push("</td><td>");
+                            output.push(zero(stats.commentBlock.token, total.token));
+                            output.push("</td><td>");
+                            output.push(stats.commentBlock.chars);
+                            output.push("</td><td>");
+                            output.push(zero(stats.commentBlock.chars, total.comment.chars));
+                            output.push("</td><td>");
+                            output.push(zero(stats.commentBlock.chars, total.chars));
+                            output.push("</td></tr><tr><th>Inline Comments</th><td>");
+                            output.push(stats.commentLine.token);
+                            output.push("</td><td>");
+                            output.push(zero(stats.commentLine.token, total.comment.token));
+                            output.push("</td><td>");
+                            output.push(zero(stats.commentLine.token, total.token));
+                            output.push("</td><td>");
+                            output.push(stats.commentLine.chars);
+                            output.push("</td><td>");
+                            output.push(zero(stats.commentLine.chars, total.comment.chars));
+                            output.push("</td><td>");
+                            output.push(zero(stats.commentLine.chars, total.chars));
+                            output.push("</td></tr><tr><th>Comment Total</th><td>");
+                            output.push(total.comment.token);
+                            output.push("</td><td>100.00%</td><td>");
+                            output.push(zero(total.comment.token, total.token));
+                            output.push("</td><td>");
+                            output.push(total.comment.chars);
+                            output.push("</td><td>100.00%</td><td>");
+                            output.push(zero(total.comment.chars, total.chars));
+                            output.push("</td></tr><tr><th colspan='7'>Whitespace Outside of Strings and Comments</th></tr><tr><th>New Lines</th><td>");
+                            output.push(stats.space.newline);
+                            output.push("</td><td>");
+                            output.push(zero(stats.space.newline, total.space));
+                            output.push("</td><td>");
+                            output.push(zero(stats.space.newline, total.token));
+                            output.push("</td><td>");
+                            output.push(stats.space.newline);
+                            output.push("</td><td>");
+                            output.push(zero(stats.space.newline, total.space));
+                            output.push("</td><td>");
+                            output.push(zero(stats.space.newline, total.chars));
+                            output.push("</td></tr><tr><th>Spaces</th><td>");
+                            output.push(stats.space.space);
+                            output.push("</td><td>");
+                            output.push(zero(stats.space.space, total.space));
+                            output.push("</td><td>");
+                            output.push(zero(stats.space.space, total.token));
+                            output.push("</td><td>");
+                            output.push(stats.space.space);
+                            output.push("</td><td>");
+                            output.push(zero(stats.space.space, total.space));
+                            output.push("</td><td>");
+                            output.push(zero(stats.space.space, total.chars));
+                            output.push("</td></tr><tr><th>Tabs</th><td>");
+                            output.push(stats.space.tab);
+                            output.push("</td><td>");
+                            output.push(zero(stats.space.tab, total.space));
+                            output.push("</td><td>");
+                            output.push(zero(stats.space.tab, total.token));
+                            output.push("</td><td>");
+                            output.push(stats.space.tab);
+                            output.push("</td><td>");
+                            output.push(zero(stats.space.tab, total.space));
+                            output.push("</td><td>");
+                            output.push(zero(stats.space.tab, total.chars));
+                            output.push("</td></tr><tr><th>Other Whitespace</th><td>");
+                            output.push(stats.space.other);
+                            output.push("</td><td>");
+                            output.push(zero(stats.space.other, total.space));
+                            output.push("</td><td>");
+                            output.push(zero(stats.space.other, total.token));
+                            output.push("</td><td>");
+                            output.push(stats.space.other);
+                            output.push("</td><td>");
+                            output.push(zero(stats.space.other, total.space));
+                            output.push("</td><td>");
+                            output.push(zero(stats.space.other, total.chars));
+                            output.push("</td></tr><tr><th>Total Whitespace</th><td>");
+                            output.push(total.space);
+                            output.push("</td><td>100.00%</td><td>");
+                            output.push(zero(total.space, total.token));
+                            output.push("</td><td>");
+                            output.push(total.space);
+                            output.push("</td><td>100.00%</td><td>");
+                            output.push(zero(total.space, total.chars));
+                            output.push("</td></tr><tr><th colspan='7'>Literals</th></tr><tr><th>Strings</th><td>");
+                            output.push(stats.string.token);
+                            output.push("</td><td>");
+                            output.push(zero(stats.string.token, total.literal.token));
+                            output.push("</td><td>");
+                            output.push(zero(stats.string.token, total.token));
+                            output.push("</td><td>");
+                            output.push(stats.string.chars);
+                            output.push("</td><td>");
+                            output.push(zero(stats.string.chars, total.literal.chars));
+                            output.push("</td><td>");
+                            output.push(zero(stats.string.chars, total.chars));
+                            output.push("</td></tr><tr><th>Numbers</th><td>");
+                            output.push(stats.number.token);
+                            output.push("</td><td>");
+                            output.push(zero(stats.number.token, total.literal.token));
+                            output.push("</td><td>");
+                            output.push(zero(stats.number.token, total.token));
+                            output.push("</td><td>");
+                            output.push(stats.number.chars);
+                            output.push("</td><td>");
+                            output.push(zero(stats.number.chars, total.literal.chars));
+                            output.push("</td><td>");
+                            output.push(zero(stats.number.chars, total.chars));
+                            output.push("</td></tr><tr><th>Regular Expressions</th><td>");
+                            output.push(stats.regex.token);
+                            output.push("</td><td>");
+                            output.push(zero(stats.regex.token, total.literal.token));
+                            output.push("</td><td>");
+                            output.push(zero(stats.regex.token, total.token));
+                            output.push("</td><td>");
+                            output.push(stats.regex.chars);
+                            output.push("</td><td>");
+                            output.push(zero(stats.regex.chars, total.literal.chars));
+                            output.push("</td><td>");
+                            output.push(zero(stats.regex.chars, total.chars));
+                            output.push("</td></tr><tr><th>Total Literals</th><td>");
+                            output.push(total.literal.token);
+                            output.push("</td><td>100.00%</td><td>");
+                            output.push(zero(total.literal.token, total.token));
+                            output.push("</td><td>");
+                            output.push(total.literal.chars);
+                            output.push("</td><td>100.00%</td><td>");
+                            output.push(zero(total.literal.chars, total.chars));
+                            output.push("</td></tr><tr><th colspan='7'>Syntax Characters</th></tr><tr><th>Quote Characters</th><td>");
+                            output.push(stats.string.quote);
+                            output.push("</td><td>");
+                            output.push(zero(stats.string.quote, total.syntax.token));
+                            output.push("</td><td>");
+                            output.push(zero(stats.string.quote, total.token));
+                            output.push("</td><td>");
+                            output.push(stats.string.quote);
+                            output.push("</td><td>");
+                            output.push(zero(stats.string.quote, total.syntax.chars));
+                            output.push("</td><td>");
+                            output.push(zero(stats.string.quote, total.chars));
+                            output.push("</td></tr><tr><th>Commas</th><td>");
+                            output.push(stats.comma);
+                            output.push("</td><td>");
+                            output.push(zero(stats.comma, total.syntax.token));
+                            output.push("</td><td>");
+                            output.push(zero(stats.comma, total.token));
+                            output.push("</td><td>");
+                            output.push(stats.comma);
+                            output.push("</td><td>");
+                            output.push(zero(stats.comma, total.syntax.chars));
+                            output.push("</td><td>");
+                            output.push(zero(stats.comma, total.chars));
+                            output.push("</td></tr><tr><th>Containment Characters</th><td>");
+                            output.push(stats.container);
+                            output.push("</td><td>");
+                            output.push(zero(stats.container, total.syntax.token));
+                            output.push("</td><td>");
+                            output.push(zero(stats.container, total.token));
+                            output.push("</td><td>");
+                            output.push(stats.container);
+                            output.push("</td><td>");
+                            output.push(zero(stats.container, total.syntax.chars));
+                            output.push("</td><td>");
+                            output.push(zero(stats.container, total.chars));
+                            output.push("</td></tr><tr><th>Semicolons</th><td>");
+                            output.push(stats.semicolon);
+                            output.push("</td><td>");
+                            output.push(zero(stats.semicolon, total.syntax.token));
+                            output.push("</td><td>");
+                            output.push(zero(stats.semicolon, total.token));
+                            output.push("</td><td>");
+                            output.push(stats.semicolon);
+                            output.push("</td><td>");
+                            output.push(zero(stats.semicolon, total.syntax.chars));
+                            output.push("</td><td>");
+                            output.push(zero(stats.semicolon, total.chars));
+                            output.push("</td></tr><tr><th>Operators</th><td>");
+                            output.push(stats.operator.token);
+                            output.push("</td><td>");
+                            output.push(zero(stats.operator.token, total.syntax.token));
+                            output.push("</td><td>");
+                            output.push(zero(stats.operator.token, total.token));
+                            output.push("</td><td>");
+                            output.push(stats.operator.chars);
+                            output.push("</td><td>");
+                            output.push(zero(stats.operator.chars, total.syntax.chars));
+                            output.push("</td><td>");
+                            output.push(zero(stats.operator.chars, total.chars));
+                            output.push("</td></tr><tr><th>Total Syntax Characters</th><td>");
+                            output.push(total.syntax.token);
+                            output.push("</td><td>100.00%</td><td>");
+                            output.push(zero(total.syntax.token, total.token));
+                            output.push("</td><td>");
+                            output.push(total.syntax.chars);
+                            output.push("</td><td>100.00%</td><td>");
+                            output.push(zero(total.syntax.chars, total.chars));
+                            output.push("</td></tr>");
+                            output.push("<tr><th colspan='7'>Keywords and Variables</th></tr><tr><th>Words</th><td>");
+                            output.push(stats.word.token);
+                            output.push("</td><td>100.00%</td><td>");
+                            output.push(zero(stats.word.token, total.token));
+                            output.push("</td><td>");
+                            output.push(stats.word.chars);
+                            output.push("</td><td>100.00%</td><td>");
+                            output.push(zero(stats.word.chars, total.chars));
+                            output.push("</td></tr>");
+                            output.push("<tr><th colspan='7'>Server-side Tags</th></tr><tr><th>Server Tags</th><td>");
+                            output.push(stats.server.token);
+                            output.push("</td><td>100.00%</td><td>");
+                            output.push(zero(stats.server.token, total.token));
+                            output.push("</td><td>");
+                            output.push(stats.server.chars);
+                            output.push("</td><td>100.00%</td><td>");
+                            output.push(zero(stats.server.chars, total.chars));
+                            output.push("</td></tr></tbody></table></div>");
+                            summary = output.join("");
+                        }());
+                    }
                 }
-                token   = [];
-                types   = [];
-                level   = [];
-                lines   = [];
-                meta    = [];
-                varlist = [];
                 return result;
             },
             markupmin     = function markupmin(args) {
@@ -5636,7 +5747,7 @@ var prettydiff = function prettydiff(api) {
                             y = y.replace(/>/g, "\nprettydiffcdatae");
                             return y;
                         };
-                    x = x.replace(/\/+<!\[+[A-Z]+\[+/g, start).replace(/\/+\]+>/g, end);
+                    x = x.replace(/\/*<\!\[+[A-Z]+\[+/g, start).replace(/\/*\]+>/g, end);
                     if (mhtml === true) {
                         x = x.replace(/<\!\[endif\]\-\->/g, "<!--[endif]-->");
                     }
@@ -8639,33 +8750,63 @@ var prettydiff = function prettydiff(api) {
                     spacetest     = (/^\s+$/g),
                     apioutput     = "",
                     apidiffout    = "",
+                    //api.comments - if comments should receive indentation or not
                     ccomm         = (api.comments === "noindent") ? "noindent" : "indent",
-                    ccond         = (api.conditional === true) ? true : false,
-                    ccontent      = (api.content === true) ? true : false,
+                    //api.conditional - should IE conditional comments be preserved during markup minification
+                    ccond         = (api.conditional === true || api.conditional === "true") ? true : false,
+                    //api.content - should content be normalized during a diff operation
+                    ccontent      = (api.content === true || api.content === "true") ? true : false,
+                    //api.context - should the diff report only include the differences, if so then buffered by how many lines of code
                     ccontext      = (api.context === "" || (/^(\s+)$/).test(api.context) || isNaN(api.context)) ? "" : Number(api.context),
-                    ccorrect      = (api.correct === true) ? true : false,
+                    //api.correct - should JSPretty make some corrections for sloppy JS
+                    ccorrect      = (api.correct === true || api.correct === "true") ? true : false,
+                    //api.csvchar - what character should be used as a separator
                     ccsvchar      = (typeof api.csvchar === "string" && api.csvchar.length > 0) ? api.csvchar : ",",
+                    //api.diff - source code to compare with
                     cdiff         = (typeof api.diff === "string" && api.diff.length > 0 && (/^(\s+)$/).test(api.diff) === false) ? api.diff : "",
-                    cdiffcomments = (api.diffcomments === true) ? true : false,
+                    //api.diffcomments - should comments be included in the diff operation
+                    cdiffcomments = (api.diffcomments === true || api.diffcomments === "trie") ? true : false,
+                    //api.difflabel - a text label to describe the diff code
                     cdifflabel    = (typeof api.difflabel === "string" && api.difflabel.length > 0) ? api.difflabel : "new",
+                    //api.diffview - should the diff report be a single column showing both sources simultaneously "inline" or showing the sources in separate columns "sidebyside"
                     cdiffview     = (api.diffview === "inline") ? "inline" : "sidebyside",
-                    cforce        = (api.force_indent === true) ? true : false,
-                    chtml         = (api.html === true || (typeof api.html === "string" && api.html === "html-yes")) ? true : false,
+                    //api.force_indent - should markup beautification always force indentation even if disruptive
+                    cforce        = (api.force_indent === true || api.force_indent === "true") ? true : false,
+                    //api.html - should markup be presumed to be HTML with all the aloppiness HTML allows
+                    chtml         = (api.html === true || api.html === "true" || (typeof api.html === "string" && api.html === "html-yes")) ? true : false,
+                    //api.inchar - what character should be used to create a single identation
                     cinchar       = (typeof api.inchar === "string" && api.inchar.length > 0) ? api.inchar : " ",
+                    //api.indent - should JSPretty format JavaScript in the normal KNR style or push curly braces onto a separate line like the "allman" style
                     cindent       = (api.indent === "allman") ? "allman" : "",
+                    //api.inlevel - should indentation in JSPretty be buffered with additional indentation?  Useful when supplying code to sites accepting markdown
                     cinlevel      = (isNaN(api.inlevel) || Number(api.inlevel) < 1) ? 0 : Number(api.inlevel),
+                    //api.insize - how many characters from api.inchar should constitute a single indentation
                     cinsize       = (isNaN(api.insize)) ? 4 : Number(api.insize),
+                    //api.jsscope - do you want to enable the jsscope feature of JSPretty?  This feature will output formatted HTML instead of text code showing which variables are declared at which functional depth
                     cjsscope      = (api.jsscope === true) ? true : false,
+                    //api.lang - which programming language will we be analyzing
                     clang         = (typeof api.lang === "string" && (api.lang === "javascript" || api.lang === "css" || api.lang === "markup" || api.lang === "html" || api.lang === "csv" || api.lang === "text")) ? api.lang : "auto",
+                    //api.mode - is this a minify, beautify, or diff operation
                     cmode         = (typeof api.mode === "string" && (api.mode === "minify" || api.mode === "beautify")) ? api.mode : "diff",
-                    cpreserve     = (api.preserve === false) ? false : true,
-                    cquote        = (api.quote === true) ? true : false,
-                    csemicolon    = (api.semicolon === true) ? true : false,
+                    //api.obfuscate - when minifying code with JSPretty should we make it sloppy and change variable names to make the code extra small?
+                    cobfuscate    = (api.obfuscate === true || api.obfuscate === "true") ? true : false,
+                    //api.preserve - should empty lines be preserved in beautify operations of JSPretty?
+                    cpreserve     = (api.preserve === false || api.preserve === "false") ? false : true,
+                    //api.quote - should all single quote characters be converted to double quote characters during a diff operation to reduce the number of false positive comparisons
+                    cquote        = (api.quote === true || api.quote === "true") ? true : false,
+                    //api.semicolon - should trailing semicolons be removed during a diff operation to reduce the number of false positive comparisons
+                    csemicolon    = (api.semicolon === true || api.semicolon === "true") ? true : false,
+                    //api.source - the source code in minify and beautify operations or "base" code in operations 
                     csource       = (typeof api.source === "string" && api.source.length > 0 && (/^(\s+)$/).test(api.source) === false) ? api.source : ((cmode === "diff") ? "" : "Source sample is missing."),
+                    //api.sourcelabel - a text label to describe the api.source code for the diff report
                     csourcelabel  = (typeof api.sourcelabel === "string" && api.sourcelabel.length > 0) ? api.sourcelabel : "base",
-                    cspace        = (api.space === false) ? false : true,
+                    //api.space - should JSPretty include a space between a function keyword and the next adjacent opening parenthesis character in beautification operations
+                    cspace        = (api.space === false || api.space === "false") ? false : true,
+                    //api.style - should JavaScript and CSS code receive indentation if embedded inline in markup
                     cstyle        = (api.style === "noindent") ? "noindent" : "indent",
-                    ctopcoms      = (api.topcoms === true) ? true : false,
+                    //api.topcoms - should comments at the top of a JavaScript or CSS source be preserved during minify operations
+                    ctopcoms      = (api.topcoms === true || api.topcoms === "true") ? true : false,
+                    //api.wrap - in markup beautification should text content wrap after the first complete word up to a certain character length
                     cwrap         = (isNaN(api.wrap)) ? 0 : Number(api.wrap),
                     proctime      = function core__proctime() {
                         var minuteString = "",
@@ -8789,13 +8930,93 @@ var prettydiff = function prettydiff(api) {
                         }
                         for (c = 0; c < b; c += 1) {
                             if (build[c][1]) {
-                                if (build[c][0] === "api.mode") {
-                                    if (build[c][1] === "beautify") {
-                                        cmode = "beautify";
-                                    } else if (build[c][1] === "minify") {
-                                        cmode = "minify";
-                                    } else if (build[c][1] === "diff") {
-                                        cmode = "diff";
+                                if (build[c][0] === "api.comments") {
+                                    if (build[c][1] === "indent") {
+                                        ccomm = "indent";
+                                    } else if (build[c][1] === "noindent") {
+                                        ccomm = "noindent";
+                                    }
+                                } else if (build[c][0] === "api.conditional") {
+                                    if (build[c][1] === "true") {
+                                        ccond = true;
+                                    } else if (build[c][1] === "false") {
+                                        ccond = false;
+                                    }
+                                } else if (build[c][0] === "api.content") {
+                                    if (build[c][1] === "true") {
+                                        ccontent = true;
+                                    } else if (build[c][1] === "false") {
+                                        ccontent = false;
+                                    }
+                                } else if (build[c][0] === "api.context" && ((/\D/).test(build[c][1]) === false || build[c][1] === "")) {
+                                    ccontext = build[c][1];
+                                } else if (build[c][0] === "api.correct") {
+                                    if (build[c][1] === "true") {
+                                        ccorrect = true;
+                                    } else if (build[c][1] === "false") {
+                                        ccorrect = false;
+                                    }
+                                } else if (build[c][0] === "api.csvchar") {
+                                    ccsvchar = build[c][1];
+                                } else if (build[c][0] === "api.diffcomments") {
+                                    if (build[c][1] === "true") {
+                                        cdiffcomments = true;
+                                    } else if (build[c][1] === "false") {
+                                        cdiffcomments = false;
+                                    }
+                                } else if (build[c][0] === "api.difflabel") {
+                                    cdifflabel = build[c][1];
+                                } else if (build[c][0] === "api.diffview") {
+                                    if (build[c][1] === "sidebyside") {
+                                        cdiffview = "sidebyside";
+                                    } else if (build[c][1] === "inline") {
+                                        cdiffview = "inline";
+                                    }
+                                } else if (build[c][0] === "api.force_indent") {
+                                    if (build[c][1] === "true") {
+                                        cforce = true;
+                                    } else if (build[c][1] === "false") {
+                                        cforce = false;
+                                    }
+                                } else if (build[c][0] === "api.html") {
+                                    if (build[c][1] === "html-no") {
+                                        chtml = "html-no";
+                                    } else if (build[c][1] === "html-yes") {
+                                        chtml = "html-yes";
+                                    }
+                                } else if (build[c][0] === "api.inchar") {
+                                    cinchar = build[c][1];
+                                } else if (build[c][0] === "api.indent") {
+                                    if (build[c][1] === "knr") {
+                                        cindent = "knr";
+                                    } else if (build[c][1] === "allman") {
+                                        cindent = "allman";
+                                    }
+                                } else if (build[c][0] === "api.inlevel") {
+                                    if (build[c][1] === "true") {
+                                        cinlevel = true;
+                                    } else if (build[c][1] === "false") {
+                                        cinlevel = false;
+                                    }
+                                } else if (build[c][0] === "api.insize" && (/\D/).test(build[c][1]) === false) {
+                                    cinsize = build[c][1];
+                                } else if (build[c][0] === "api.jslines") {
+                                    if (build[c][1] === "true") {
+                                        cpreserve = true;
+                                    } else if (build[c][1] === "false") {
+                                        cpreserve = false;
+                                    }
+                                } else if (build[c][0] === "api.jsscope") {
+                                    if (build[c][1] === "true") {
+                                        cjsscope = true;
+                                    } else if (build[c][1] === "false") {
+                                        cjsscope = false;
+                                    }
+                                } else if (build[c][0] === "api.jsspace") {
+                                    if (build[c][1] === "true") {
+                                        cspace = true;
+                                    } else if (build[c][1] === "false") {
+                                        cspace = false;
                                     }
                                 } else if (build[c][0] === "api.lang") {
                                     if (build[c][1] === "auto") {
@@ -8811,43 +9032,19 @@ var prettydiff = function prettydiff(api) {
                                     } else if (build[c][1] === "text") {
                                         clang = "text";
                                     }
-                                } else if (build[c][0] === "api.csvchar") {
-                                    ccsvchar = build[c][1];
-                                } else if (build[c][0] === "api.insize" && (/\D/).test(build[c][1]) === false) {
-                                    cinsize = build[c][1];
-                                } else if (build[c][0] === "api.inchar") {
-                                    cinchar = build[c][1];
-                                } else if (build[c][0] === "api.comments") {
-                                    if (build[c][1] === "indent") {
-                                        ccomm = "indent";
-                                    } else if (build[c][1] === "noindent") {
-                                        ccomm = "noindent";
+                                } else if (build[c][0] === "api.mode") {
+                                    if (build[c][1] === "beautify") {
+                                        cmode = "beautify";
+                                    } else if (build[c][1] === "minify") {
+                                        cmode = "minify";
+                                    } else if (build[c][1] === "diff") {
+                                        cmode = "diff";
                                     }
-                                } else if (build[c][0] === "api.indent") {
-                                    if (build[c][1] === "knr") {
-                                        cindent = "knr";
-                                    } else if (build[c][1] === "allman") {
-                                        cindent = "allman";
-                                    }
-                                } else if (build[c][0] === "api.style") {
-                                    if (build[c][1] === "indent") {
-                                        cstyle = "indent";
-                                    } else if (build[c][1] === "noindent") {
-                                        cstyle = "noindent";
-                                    }
-                                } else if (build[c][0] === "api.html") {
-                                    if (build[c][1] === "html-no") {
-                                        chtml = "html-no";
-                                    } else if (build[c][1] === "html-yes") {
-                                        chtml = "html-yes";
-                                    }
-                                } else if (build[c][0] === "api.context" && ((/\D/).test(build[c][1]) === false || build[c][1] === "")) {
-                                    ccontext = build[c][1];
-                                } else if (build[c][0] === "api.content") {
+                                } else if (build[c][0] === "api.obfuscate") {
                                     if (build[c][1] === "true") {
-                                        ccontent = true;
+                                        cobfuscate = true;
                                     } else if (build[c][1] === "false") {
-                                        ccontent = false;
+                                        cobfuscate = false;
                                     }
                                 } else if (build[c][0] === "api.quote") {
                                     if (build[c][1] === "true") {
@@ -8861,69 +9058,19 @@ var prettydiff = function prettydiff(api) {
                                     } else if (build[c][1] === "false") {
                                         csemicolon = false;
                                     }
-                                } else if (build[c][0] === "api.diffview") {
-                                    if (build[c][1] === "sidebyside") {
-                                        cdiffview = "sidebyside";
-                                    } else if (build[c][1] === "inline") {
-                                        cdiffview = "inline";
+                                } else if (build[c][0] === "api.style") {
+                                    if (build[c][1] === "indent") {
+                                        cstyle = "indent";
+                                    } else if (build[c][1] === "noindent") {
+                                        cstyle = "noindent";
                                     }
                                 } else if (build[c][0] === "api.sourcelabel") {
                                     csourcelabel = build[c][1];
-                                } else if (build[c][0] === "api.difflabel") {
-                                    cdifflabel = build[c][1];
                                 } else if (build[c][0] === "api.topcoms") {
                                     if (build[c][1] === "true") {
                                         ctopcoms = true;
                                     } else if (build[c][1] === "false") {
                                         ctopcoms = false;
-                                    }
-                                } else if (build[c][0] === "api.force_indent") {
-                                    if (build[c][1] === "true") {
-                                        cforce = true;
-                                    } else if (build[c][1] === "false") {
-                                        cforce = false;
-                                    }
-                                } else if (build[c][0] === "api.conditional") {
-                                    if (build[c][1] === "true") {
-                                        ccond = true;
-                                    } else if (build[c][1] === "false") {
-                                        ccond = false;
-                                    }
-                                } else if (build[c][0] === "api.diffcomments") {
-                                    if (build[c][1] === "true") {
-                                        cdiffcomments = true;
-                                    } else if (build[c][1] === "false") {
-                                        cdiffcomments = false;
-                                    }
-                                } else if (build[c][0] === "api.jsspace") {
-                                    if (build[c][1] === "true") {
-                                        cspace = true;
-                                    } else if (build[c][1] === "false") {
-                                        cspace = false;
-                                    }
-                                } else if (build[c][0] === "api.jsscope") {
-                                    if (build[c][1] === "true") {
-                                        cjsscope = true;
-                                    } else if (build[c][1] === "false") {
-                                        cjsscope = false;
-                                    }
-                                } else if (build[c][0] === "api.jslines") {
-                                    if (build[c][1] === "true") {
-                                        cpreserve = true;
-                                    } else if (build[c][1] === "false") {
-                                        cpreserve = false;
-                                    }
-                                } else if (build[c][0] === "api.inlevel") {
-                                    if (build[c][1] === "true") {
-                                        cinlevel = true;
-                                    } else if (build[c][1] === "false") {
-                                        cinlevel = false;
-                                    }
-                                } else if (build[c][0] === "api.correct") {
-                                    if (build[c][1] === "true") {
-                                        ccorrect = true;
-                                    } else if (build[c][1] === "false") {
-                                        ccorrect = false;
                                     }
                                 } else if (build[c][0] === "api.wrap" && isNaN(build[c][1]) === false) {
                                     cwrap = Number(build[c][1]);
@@ -9068,12 +9215,12 @@ var prettydiff = function prettydiff(api) {
                     } else if (clang === "text") {
                         apioutput = csource;
                     } else {
-                        apioutput = jsmin({
-                            source  : csource,
-                            level   : 2,
-                            type    : "javascript",
-                            alter   : true,
-                            fcomment: ctopcoms
+                        apioutput = jspretty({
+                            source   : csource,
+                            correct  : ccorrect,
+                            mode     : cmode,
+                            topcoms  : ctopcoms,
+                            obfuscate: cobfuscate
                         });
                     }
                     return (function core__minifyReport() {
@@ -9422,16 +9569,16 @@ var prettydiff = function prettydiff(api) {
         diffview     : 140101, //diffview library
         documentation: 140127, //documentation.xhtml
         jsmin        : 140127, //jsmin library (fulljsmin.js)
-        jspretty     : 140131, //jspretty library
-        markup_beauty: 140127, //markup_beauty library
+        jspretty     : 140210, //jspretty library
+        markup_beauty: 140207, //markup_beauty library
         markupmin    : 140101, //markupmin library
-        prettydiff   : 140203, //this file
-        webtool      : 140131, //prettydiff.com.xhtml
+        prettydiff   : 140210, //this file
+        webtool      : 140210, //prettydiff.com.xhtml
         api          : {
-            dom        : 140203,
-            nodeLocal  : 140127,
+            dom        : 140210,
+            nodeLocal  : 140210,
             nodeService: 121106, //no longer maintained
-            wsh        : 140127
+            wsh        : 140210
         },
         addon        : {
             cmjs : 140127, //CodeMirror JavaScript
