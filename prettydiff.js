@@ -2725,7 +2725,7 @@ var prettydiff = function prettydiff(api) {
                                     stats.space.newline += 1;
                                     build.pop();
                                 }
-                                if (jsscope === true && (jmode === "beautify" || (jmode === "minify" && jobfuscate === false))) {
+                                if (jsscope === true && jmode === "beautify") {
                                     output = build.join("").replace(/\&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
                                 } else {
                                     output = build.join("");
@@ -2795,7 +2795,7 @@ var prettydiff = function prettydiff(api) {
                                 output = build.join("");
                             }
                             a = a + (output.length - 1);
-                            if (jsscope === true && (jmode === "beautify" || (jmode === "minify" && jobfuscate === false))) {
+                            if (jsscope === true && jmode === "beautify") {
                                 output = output.replace(/\&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
                             }
                             return output;
@@ -2857,7 +2857,7 @@ var prettydiff = function prettydiff(api) {
                             } else {
                                 a = ee;
                             }
-                            if (jsscope === true && (jmode === "beautify" || (jmode === "minify" && jobfuscate === false))) {
+                            if (jsscope === true && jmode === "beautify") {
                                 output = build.join("").replace(/\&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
                             } else {
                                 output = build.join("");
@@ -3420,585 +3420,601 @@ var prettydiff = function prettydiff(api) {
                     asi(a);
                 }());
 
-                //this function is the pretty-print and var finding algorithm
-                (function jspretty__algorithm() {
-                    var a          = 0,
-                        b          = token.length,
-                        lcount     = 0,
-                        indent     = jlevel,
-                        obj        = [],
-                        list       = [],
-                        listtest   = [],
-                        lastlist   = false,
-                        ternary    = [],
-                        varline    = [],
-                        casetest   = [],
-                        fortest    = 0,
-                        ctype      = "",
-                        ctoke      = "",
-                        ltype      = types[0],
-                        ltoke      = token[0],
-                        varlen     = [],
-                        methodtest = [],
-                        assignlist = [false],
-                        separator  = function jspretty__algorithm_separator() {
-                            if (types[a - 1] === "comment-inline" && a > 1) {
-                                return (function jspretty__algorithm_commentfix() {
-                                    var c    = 0,
-                                        d    = b,
-                                        last = token[a - 1];
-                                    level[a - 2] = "x";
-                                    level[a - 1] = "x";
-                                    for (c = a; c < d; c += 1) {
-                                        token[c - 1] = token[c];
-                                        types[c - 1] = types[c];
-                                        if (token[c] === ";" || token[c] === "x;" || token[c] === "{" || token[c] === "x{" || c === lines[lcount][0]) {
-                                            token[c] = last;
-                                            types[c] = "comment-inline";
-                                            a        -= 1;
-                                            return;
-                                        }
-                                    }
-                                    token[c - 1] = last;
-                                    types[c - 1] = "comment-inline";
-                                    a            -= 1;
-                                }());
-                            }
-                            if (ctoke === ".") {
-                                level[a - 1] = "x";
-                                return level.push("x");
-                            }
-                            if (ctoke === ",") {
-                                level[a - 1] = "x";
-                                if (ternary.length > 0) {
-                                    ternary[ternary.length - 1] = false;
-                                }
-                                if (listtest[listtest.length - 1] === false) {
-                                    listtest[listtest.length - 1] = true;
-                                    (function jspretty__algorithm_separator_listTest() {
-                                        var c         = 0,
-                                            d         = 0,
-                                            assign    = false,
-                                            compare   = false,
-                                            semicolon = false;
-                                        if (methodtest[methodtest.length - 1] === true) {
-                                            list[list.length - 1] = true;
-                                            return;
-                                        }
-                                        for (c = a - 1; c > -1; c -= 1) {
-                                            if (types[c] === "end") {
-                                                d += 1;
-                                            }
-                                            if (types[c] === "start" || types[c] === "method") {
-                                                d -= 1;
-                                                if (token[c] === "[" && d === -1) {
-                                                    obj[obj.length - 1] = false;
-                                                }
-                                            }
-                                            if (d === 0) {
-                                                if (semicolon === false && token[c] === "return") {
-                                                    list[list.length - 1] = true;
-                                                    return;
-                                                }
-                                                if (assign === false && (token[c] === "=" || token[c] === ";")) {
-                                                    assign = true;
-                                                }
-                                                if (compare === false && (token[c] === "&&" || token[c] === "||")) {
-                                                    compare = true;
-                                                }
-                                                if (semicolon === false && token[c] === ";") {
-                                                    semicolon = true;
-                                                }
-                                            }
-                                            if (d === -1) {
-                                                if (types[c] === "method") {
-                                                    list[list.length - 1] = true;
-                                                } else if (token[c] === "{" || token[c] === "x{") {
-                                                    if (token[c - 1] !== ")") {
-                                                        obj[obj.length - 1] = true;
-                                                    } else if (compare === false && semicolon === false) {
-                                                        for (c = c - 1; c > -1; c -= 1) {
-                                                            if (types[c] === "end") {
-                                                                d += 1;
-                                                            }
-                                                            if (types[c] === "start" || types[c] === "method") {
-                                                                d -= 1;
-                                                            }
-                                                            if (d === -1 && token[c] === "(") {
-                                                                if (token[c - 1] === "function" || token[c - 2] === "function" || token[c - 1] === "if" || token[c - 1] === "for") {
-                                                                    return;
-                                                                }
-                                                                break;
-                                                            }
-                                                        }
-                                                    }
-                                                } else if (compare === false && semicolon === false && ((token[c] === "(" && token[c - 1] === "for") || token[c] === "[")) {
-                                                    list[list.length - 1] = true;
-                                                    return;
-                                                }
-                                                if (compare === false && semicolon === false && varline[varline.length - 1] === false && (assign === false || token[c] === "(")) {
-                                                    list[list.length - 1] = true;
-                                                }
+                if (jmode === "beautify" || (jmode === "minify" && jobfuscate === true)) {
+                    //this function is the pretty-print and var finding algorithm
+                    (function jspretty__algorithm() {
+                        var a          = 0,
+                            b          = token.length,
+                            lcount     = 0,
+                            indent     = jlevel,
+                            obj        = [],
+                            list       = [],
+                            listtest   = [],
+                            lastlist   = false,
+                            ternary    = [],
+                            varline    = [],
+                            casetest   = [],
+                            fortest    = 0,
+                            ctype      = "",
+                            ctoke      = "",
+                            ltype      = types[0],
+                            ltoke      = token[0],
+                            varlen     = [],
+                            methodtest = [],
+                            assignlist = [false],
+                            separator  = function jspretty__algorithm_separator() {
+                                if (types[a - 1] === "comment-inline" && a > 1) {
+                                    return (function jspretty__algorithm_commentfix() {
+                                        var c    = 0,
+                                            d    = b,
+                                            last = token[a - 1];
+                                        level[a - 2] = "x";
+                                        level[a - 1] = "x";
+                                        for (c = a; c < d; c += 1) {
+                                            token[c - 1] = token[c];
+                                            types[c - 1] = types[c];
+                                            if (token[c] === ";" || token[c] === "x;" || token[c] === "{" || token[c] === "x{" || c === lines[lcount][0]) {
+                                                token[c] = last;
+                                                types[c] = "comment-inline";
+                                                a        -= 1;
                                                 return;
                                             }
                                         }
+                                        token[c - 1] = last;
+                                        types[c - 1] = "comment-inline";
+                                        a            -= 1;
                                     }());
                                 }
-                                if (obj[obj.length - 1] === true) {
-                                    return level.push(indent);
+                                if (ctoke === ".") {
+                                    level[a - 1] = "x";
+                                    return level.push("x");
                                 }
-                                if (list[list.length - 1] === true) {
-                                    return (function jspretty__algorithm_separator_inList() {
-                                        var c = 0,
-                                            d = 0;
-                                        for (c = a - 1; c > -1; c -= 1) {
-                                            if (types[c] === "end") {
-                                                d += 1;
+                                if (ctoke === ",") {
+                                    level[a - 1] = "x";
+                                    if (ternary.length > 0) {
+                                        ternary[ternary.length - 1] = false;
+                                    }
+                                    if (listtest[listtest.length - 1] === false) {
+                                        listtest[listtest.length - 1] = true;
+                                        (function jspretty__algorithm_separator_listTest() {
+                                            var c         = 0,
+                                                d         = 0,
+                                                assign    = false,
+                                                compare   = false,
+                                                semicolon = false;
+                                            if (methodtest[methodtest.length - 1] === true) {
+                                                list[list.length - 1] = true;
+                                                return;
                                             }
-                                            if (types[c] === "start" || types[c] === "method") {
-                                                d -= 1;
-                                            }
-                                            if (d === -1) {
-                                                if (token[c] === "[" && token[c + 1] !== "]" && token[c + 2] !== "]") {
-                                                    level[c] = indent;
-                                                }
-                                                return level.push("s");
-                                            }
-                                        }
-                                        return level.push("s");
-                                    }());
-                                }
-                                if (varline[varline.length - 1] === true && fortest === 0) {
-                                    if (ltoke !== "]") {
-                                        (function jspretty__algorithm_separator_varline() {
-                                            var c     = 0,
-                                                brace = false;
                                             for (c = a - 1; c > -1; c -= 1) {
-                                                if (token[c] === "]") {
-                                                    brace = true;
+                                                if (types[c] === "end") {
+                                                    d += 1;
                                                 }
-                                                if (types[c] === "method" || types[c] === "start") {
-                                                    if (token[c] === "[" && token[c + 1] !== "]" && brace === false) {
-                                                        level[c] = indent;
+                                                if (types[c] === "start" || types[c] === "method") {
+                                                    d -= 1;
+                                                    if (token[c] === "[" && d === -1) {
+                                                        obj[obj.length - 1] = false;
+                                                    }
+                                                }
+                                                if (d === 0) {
+                                                    if (semicolon === false && token[c] === "return") {
+                                                        list[list.length - 1] = true;
+                                                        return;
+                                                    }
+                                                    if (assign === false && (token[c] === "=" || token[c] === ";")) {
+                                                        assign = true;
+                                                    }
+                                                    if (compare === false && (token[c] === "&&" || token[c] === "||")) {
+                                                        compare = true;
+                                                    }
+                                                    if (semicolon === false && token[c] === ";") {
+                                                        semicolon = true;
+                                                    }
+                                                }
+                                                if (d === -1) {
+                                                    if (types[c] === "method") {
+                                                        list[list.length - 1] = true;
+                                                    } else if (token[c] === "{" || token[c] === "x{") {
+                                                        if (token[c - 1] !== ")") {
+                                                            obj[obj.length - 1] = true;
+                                                        } else if (compare === false && semicolon === false) {
+                                                            for (c = c - 1; c > -1; c -= 1) {
+                                                                if (types[c] === "end") {
+                                                                    d += 1;
+                                                                }
+                                                                if (types[c] === "start" || types[c] === "method") {
+                                                                    d -= 1;
+                                                                }
+                                                                if (d === -1 && token[c] === "(") {
+                                                                    if (token[c - 1] === "function" || token[c - 2] === "function" || token[c - 1] === "if" || token[c - 1] === "for") {
+                                                                        return;
+                                                                    }
+                                                                    break;
+                                                                }
+                                                            }
+                                                        }
+                                                    } else if (compare === false && semicolon === false && ((token[c] === "(" && token[c - 1] === "for") || token[c] === "[")) {
+                                                        list[list.length - 1] = true;
+                                                        return;
+                                                    }
+                                                    if (compare === false && semicolon === false && varline[varline.length - 1] === false && (assign === false || token[c] === "(")) {
+                                                        list[list.length - 1] = true;
                                                     }
                                                     return;
                                                 }
                                             }
                                         }());
                                     }
-                                    return level.push(indent);
-                                }
-                                return level.push(indent);
-                            }
-                            if (ctoke === ";" || ctoke === "x;") {
-                                if (ternary.length > 0) {
-                                    ternary[ternary.length - 1] = false;
-                                }
-                                level[a - 1] = "x";
-                                if (fortest === 0) {
-                                    if (varline[varline.length - 1] === true) {
-                                        varline[varline.length - 1] = false;
-                                        if ((methodtest.length === 0 || methodtest[methodtest.length - 1] === false) && varlen.length > 0 && varlen[varlen.length - 1].length > 1) {
-                                            varlist.push(varlen[varlen.length - 1]);
+                                    if (obj[obj.length - 1] === true) {
+                                        return level.push(indent);
+                                    }
+                                    if (list[list.length - 1] === true) {
+                                        return (function jspretty__algorithm_separator_inList() {
+                                            var c = 0,
+                                                d = 0;
+                                            for (c = a - 1; c > -1; c -= 1) {
+                                                if (types[c] === "end") {
+                                                    d += 1;
+                                                }
+                                                if (types[c] === "start" || types[c] === "method") {
+                                                    d -= 1;
+                                                }
+                                                if (d === -1) {
+                                                    if (token[c] === "[" && token[c + 1] !== "]" && token[c + 2] !== "]") {
+                                                        level[c] = indent;
+                                                    }
+                                                    return level.push("s");
+                                                }
+                                            }
+                                            return level.push("s");
+                                        }());
+                                    }
+                                    if (varline[varline.length - 1] === true && fortest === 0) {
+                                        if (ltoke !== "]") {
+                                            (function jspretty__algorithm_separator_varline() {
+                                                var c     = 0,
+                                                    brace = false;
+                                                for (c = a - 1; c > -1; c -= 1) {
+                                                    if (token[c] === "]") {
+                                                        brace = true;
+                                                    }
+                                                    if (types[c] === "method" || types[c] === "start") {
+                                                        if (token[c] === "[" && token[c + 1] !== "]" && brace === false) {
+                                                            level[c] = indent;
+                                                        }
+                                                        return;
+                                                    }
+                                                }
+                                            }());
                                         }
-                                        varlen.pop();
-                                        indent -= 1;
+                                        return level.push(indent);
                                     }
                                     return level.push(indent);
                                 }
-                                if (fortest > 0) {
-                                    if (varline[varline.length - 1] === true) {
-                                        varline[varline.length - 1] = false;
+                                if (ctoke === ";" || ctoke === "x;") {
+                                    if (ternary.length > 0) {
+                                        ternary[ternary.length - 1] = false;
+                                    }
+                                    level[a - 1] = "x";
+                                    if (fortest === 0) {
+                                        if (varline[varline.length - 1] === true) {
+                                            varline[varline.length - 1] = false;
+                                            if ((methodtest.length === 0 || methodtest[methodtest.length - 1] === false) && varlen.length > 0 && varlen[varlen.length - 1].length > 1) {
+                                                varlist.push(varlen[varlen.length - 1]);
+                                            }
+                                            varlen.pop();
+                                            indent -= 1;
+                                        }
+                                        return level.push(indent);
+                                    }
+                                    if (fortest > 0) {
+                                        if (varline[varline.length - 1] === true) {
+                                            varline[varline.length - 1] = false;
+                                        }
+                                        return level.push("s");
                                     }
                                     return level.push("s");
                                 }
-                                return level.push("s");
-                            }
-                        },
-                        method     = function jspretty__algorithm_method() {
-                            level[a - 1] = "x";
-                            level.push("x");
-                            list.push(false);
-                            listtest.push(false);
-                            methodtest.push(true);
-                            obj.push(false);
-                            ternary.push(false);
-                            assignlist.push(false);
-                            if (fortest > 0) {
-                                fortest += 1;
-                            }
-                        },
-                        start      = function jspretty__algorithm_start() {
-                            list.push(false);
-                            listtest.push(false);
-                            methodtest.push(false);
-                            ternary.push(false);
-                            assignlist.push(false);
-                            if (ctoke !== "(") {
-                                indent += 1;
-                            }
-                            if (ltoke === "for") {
-                                fortest = 1;
-                            }
-                            if (ctoke === "{" || ctoke === "x{") {
-                                casetest.push(false);
-                                varlen.push([]);
-                                if (ctoke === "{") {
-                                    varline.push(false);
-                                }
-                                if (ltoke === "=" || ltoke === ";" || ltoke === "," || ltoke === ":" || ltoke === "?" || ltoke === "return" || ltoke === "in" || ltype === "start" || ltype === "method") {
-                                    obj.push(true);
-                                } else {
-                                    obj.push(false);
-                                }
-                                if (jbrace && ltype !== "operator" && ltoke !== "return") {
-                                    level[a - 1] = indent - 1;
-                                } else if (ltoke === ")") {
-                                    level[a - 1] = "s";
-                                } else if (ltoke === "{" || ltoke === "x{" || ltoke === "[" || ltoke === "}" || ltoke === "x}") {
-                                    level[a - 1] = indent - 1;
-                                }
-                                if (jsscope === true) {
-                                    meta.push("");
-                                }
-                                return level.push(indent);
-                            }
-                            obj.push(false);
-                            if (ctoke === "(") {
-                                if (ltoke === "-" && token[a - 2] === "(") {
-                                    level[a - 2] = "x";
-                                }
-                                if (ltoke === "function" || ltoke === "switch" || ltoke === "for" || ltoke === "while") {
-                                    methodtest[methodtest.length - 1] = true;
-                                }
-                                if (jsscope === true) {
-                                    if (ltoke === "function" || token[a - 2] === "function") {
-                                        meta.push(0);
-                                    } else {
-                                        meta.push("");
-                                    }
-                                }
-                                if (fortest > 0 && ltoke !== "for") {
-                                    fortest += 1;
-                                }
-                                if (ltoke === "}" || ltoke === "x}") {
-                                    level[a - 1] = indent;
-                                    return level.push("x");
-                                }
-                                if ((ltoke === "-" && (a < 2 || (token[a - 2] !== ")" && token[a - 2] !== "]" && types[a - 2] !== "word" && types[a - 2] !== "literal"))) || (jspace === false && ltoke === "function")) {
-                                    level[a - 1] = "x";
-                                }
-                                return level.push("x");
-                            }
-                            if (ctoke === "[") {
-                                if (jsscope === true) {
-                                    meta.push("");
-                                }
-                                if (ltoke === "[") {
-                                    list[list.length - 2] = true;
-                                }
-                                if (ltoke === "return") {
-                                    level[a - 1] = "s";
-                                } else if (ltoke === "]" || ltype === "word" || ltoke === ")") {
-                                    level[a - 1] = "x";
-                                } else if (ltoke === "[" || ltoke === "{" || ltoke === "x{") {
-                                    level[a - 1] = indent - 1;
-                                }
-                                return (function jspretty__algorithm_start_squareBrace() {
-                                    var c = 0;
-                                    for (c = a + 1; c < b; c += 1) {
-                                        if (token[c] === "]") {
-                                            return level.push("x");
-                                        }
-                                        if (token[c] === ",") {
-                                            return level.push(indent);
-                                        }
-                                    }
-                                    return level.push("x");
-                                }());
-                            }
-                            if (jsscope === true && meta[a] === undefined) {
-                                meta.push("");
-                            }
-                            return level.push("x");
-                        },
-                        end        = function jspretty__algorithm_end() {
-                            if (fortest === 1 && ctoke === ")" && varline[varline.length - 1] === true) {
-                                varline[varline.length - 1] = false;
-                            }
-                            if (ctoke !== ")") {
-                                indent -= 1;
-                            } else if (fortest > 0 && ctoke === ")") {
-                                fortest -= 1;
-                            }
-                            if (ctoke === "}" || ctoke === "x}") {
-                                if (types[a - 1] !== "comment" && types[a - 1] !== "comment-inline" && ltoke !== "{" && ltoke !== "x{" && ltype !== "end" && ltype !== "literal" && ltype !== "separator" && ltoke !== "++" && ltoke !== "--" && varline[varline.length - 1] === false && (a < 2 || token[a - 2] !== ";" || ltoke === "break" || ltoke === "return")) {
-                                    (function jspretty__algorithm_end_curlyBrace() {
-                                        var c       = 0,
-                                            d       = 1,
-                                            assign  = false,
-                                            listlen = list.length;
-                                        for (c = a - 1; c > -1; c -= 1) {
-                                            if (types[c] === "end") {
-                                                d += 1;
-                                            }
-                                            if (types[c] === "start" || types[c] === "method") {
-                                                d -= 1;
-                                            }
-                                            if (d === 1) {
-                                                if (token[c] === "=" || token[c] === ";") {
-                                                    assign = true;
-                                                }
-                                                if (c > 0 && token[c] === "return" && (token[c - 1] === ")" || token[c - 1] === "{" || token[c - 1] === "x{" || token[c - 1] === "}" || token[c - 1] === "x}" || token[c - 1] === ";")) {
-                                                    indent       -= 1;
-                                                    level[a - 1] = indent;
-                                                    return;
-                                                }
-                                                if ((token[c] === ":" && ternary[ternary.length - 1] === false) || (token[c] === "," && assign === false && varline[varline.length - 1] === false)) {
-                                                    return;
-                                                }
-                                                if ((c === 0 || token[c - 1] === "{" || token[c - 1] === "x{") || token[c] === "for" || token[c] === "if" || token[c] === "do" || token[c] === "function" || token[c] === "while" || token[c] === "var") {
-                                                    if (list[listlen - 1] === false && listlen > 1 && (a === b - 1 || token[a + 1] !== ")") && obj[obj.length - 1] === false) {
-                                                        indent -= 1;
-                                                    }
-                                                    if (varline[varline.length - 1] === true) {
-                                                        indent -= 1;
-                                                    }
-                                                    return;
-                                                }
-                                            }
-                                        }
-                                    }());
-                                }
-                                if (jsscope === true) {
-                                    (function jspretty__algorithm_end_jsscope() {
-                                        var c     = 0,
-                                            d     = 1,
-                                            build = [],
-                                            paren = false;
-                                        for (c = a - 1; c > -1; c -= 1) {
-                                            if (types[c] === "end") {
-                                                d += 1;
-                                            } else if (types[c] === "start" || types[c] === "method") {
-                                                d -= 1;
-                                            }
-                                            if (d < 0) {
-                                                return;
-                                            }
-                                            if (d === 1) {
-                                                if (meta[c] === "v" && token[c] !== build[build.length - 1]) {
-                                                    build.push(token[c]);
-                                                } else if (token[c] === ")") {
-                                                    paren = true;
-                                                } else if (paren === true && types[c] === "word" && token[c] !== build[build.length - 1]) {
-                                                    build.push(token[c]);
-                                                }
-                                            }
-                                            if (c > 0 && token[c - 1] === "function" && types[c] === "word" && token[c] !== build[build.length - 1]) {
-                                                build.push(token[c]);
-                                            }
-                                            if (d === 0) {
-                                                if (types[c] === "separator" || types[c] === "operator" || types[c] === "literal" || token[c] === "if" || token[c] === "else" || token[c] === "for" || token[c] === "switch" || token[c] === "do" || token[c] === "return" || token[c] === "while" || token[c] === "catch" || token[c] === "try") {
-                                                    return;
-                                                }
-                                                if (token[c] === "function") {
-                                                    if (types[c + 1] === "word") {
-                                                        meta[c + 2] = a;
-                                                    } else {
-                                                        meta[c + 1] = a;
-                                                    }
-                                                    meta.push(build);
-                                                    return;
-                                                }
-                                            }
-                                        }
-                                    }());
-                                }
-                                casetest.pop();
-                            }
-                            if ((types[a - 1] === "comment" && token[a - 1].substr(0, 2) === "//") || types[a - 1] === "comment-inline") {
-                                level[a - 1] = indent;
-                                level.push("x");
-                            } else if ((ltoke === "{" && ctoke === "}") || (ltoke === "[" && ctoke === "]")) {
+                            },
+                            method     = function jspretty__algorithm_method() {
                                 level[a - 1] = "x";
                                 level.push("x");
-                            } else if (ctoke === "]") {
-                                if (list[list.length - 1] === true || (ltoke === "]" && level[a - 2] === indent + 1)) {
-                                    level[a - 1] = indent;
-                                } else if (level[a - 1] === "s") {
-                                    level[a - 1] = "x";
+                                list.push(false);
+                                listtest.push(false);
+                                methodtest.push(true);
+                                obj.push(false);
+                                ternary.push(false);
+                                assignlist.push(false);
+                                if (fortest > 0) {
+                                    fortest += 1;
                                 }
-                                if (list[list.length - 1] === false) {
+                            },
+                            start      = function jspretty__algorithm_start() {
+                                list.push(false);
+                                listtest.push(false);
+                                methodtest.push(false);
+                                ternary.push(false);
+                                assignlist.push(false);
+                                if (ctoke !== "(") {
+                                    indent += 1;
+                                }
+                                if (ltoke === "for") {
+                                    fortest = 1;
+                                }
+                                if (ctoke === "{" || ctoke === "x{") {
+                                    casetest.push(false);
+                                    varlen.push([]);
+                                    if (ctoke === "{") {
+                                        varline.push(false);
+                                    }
+                                    if (ltoke === "=" || ltoke === ";" || ltoke === "," || ltoke === ":" || ltoke === "?" || ltoke === "return" || ltoke === "in" || ltype === "start" || ltype === "method") {
+                                        obj.push(true);
+                                    } else {
+                                        obj.push(false);
+                                    }
+                                    if (jbrace && ltype !== "operator" && ltoke !== "return") {
+                                        level[a - 1] = indent - 1;
+                                    } else if (ltoke === ")") {
+                                        level[a - 1] = "s";
+                                    } else if (ltoke === "{" || ltoke === "x{" || ltoke === "[" || ltoke === "}" || ltoke === "x}") {
+                                        level[a - 1] = indent - 1;
+                                    }
+                                    if (jsscope === true) {
+                                        meta.push("");
+                                    }
+                                    return level.push(indent);
+                                }
+                                obj.push(false);
+                                if (ctoke === "(") {
+                                    if (ltoke === "-" && token[a - 2] === "(") {
+                                        level[a - 2] = "x";
+                                    }
+                                    if (ltoke === "function" || ltoke === "switch" || ltoke === "for" || ltoke === "while") {
+                                        methodtest[methodtest.length - 1] = true;
+                                    }
+                                    if (jsscope === true) {
+                                        if (ltoke === "function" || token[a - 2] === "function") {
+                                            meta.push(0);
+                                        } else {
+                                            meta.push("");
+                                        }
+                                    }
+                                    if (fortest > 0 && ltoke !== "for") {
+                                        fortest += 1;
+                                    }
+                                    if (ltoke === "}" || ltoke === "x}") {
+                                        level[a - 1] = indent;
+                                        return level.push("x");
+                                    }
+                                    if ((ltoke === "-" && (a < 2 || (token[a - 2] !== ")" && token[a - 2] !== "]" && types[a - 2] !== "word" && types[a - 2] !== "literal"))) || (jspace === false && ltoke === "function")) {
+                                        level[a - 1] = "x";
+                                    }
+                                    return level.push("x");
+                                }
+                                if (ctoke === "[") {
+                                    if (jsscope === true) {
+                                        meta.push("");
+                                    }
+                                    if (ltoke === "[") {
+                                        list[list.length - 2] = true;
+                                    }
+                                    if (ltoke === "return") {
+                                        level[a - 1] = "s";
+                                    } else if (ltoke === "]" || ltype === "word" || ltoke === ")") {
+                                        level[a - 1] = "x";
+                                    } else if (ltoke === "[" || ltoke === "{" || ltoke === "x{") {
+                                        level[a - 1] = indent - 1;
+                                    }
+                                    return (function jspretty__algorithm_start_squareBrace() {
+                                        var c = 0;
+                                        for (c = a + 1; c < b; c += 1) {
+                                            if (token[c] === "]") {
+                                                return level.push("x");
+                                            }
+                                            if (token[c] === ",") {
+                                                return level.push(indent);
+                                            }
+                                        }
+                                        return level.push("x");
+                                    }());
+                                }
+                                if (jsscope === true && meta[a] === undefined) {
+                                    meta.push("");
+                                }
+                                return level.push("x");
+                            },
+                            end        = function jspretty__algorithm_end() {
+                                if (fortest === 1 && ctoke === ")" && varline[varline.length - 1] === true) {
+                                    varline[varline.length - 1] = false;
+                                }
+                                if (ctoke !== ")") {
+                                    indent -= 1;
+                                } else if (fortest > 0 && ctoke === ")") {
+                                    fortest -= 1;
+                                }
+                                if (ctoke === "}" || ctoke === "x}") {
+                                    if (types[a - 1] !== "comment" && types[a - 1] !== "comment-inline" && ltoke !== "{" && ltoke !== "x{" && ltype !== "end" && ltype !== "literal" && ltype !== "separator" && ltoke !== "++" && ltoke !== "--" && varline[varline.length - 1] === false && (a < 2 || token[a - 2] !== ";" || ltoke === "break" || ltoke === "return")) {
+                                        (function jspretty__algorithm_end_curlyBrace() {
+                                            var c       = 0,
+                                                d       = 1,
+                                                assign  = false,
+                                                listlen = list.length;
+                                            for (c = a - 1; c > -1; c -= 1) {
+                                                if (types[c] === "end") {
+                                                    d += 1;
+                                                }
+                                                if (types[c] === "start" || types[c] === "method") {
+                                                    d -= 1;
+                                                }
+                                                if (d === 1) {
+                                                    if (token[c] === "=" || token[c] === ";") {
+                                                        assign = true;
+                                                    }
+                                                    if (c > 0 && token[c] === "return" && (token[c - 1] === ")" || token[c - 1] === "{" || token[c - 1] === "x{" || token[c - 1] === "}" || token[c - 1] === "x}" || token[c - 1] === ";")) {
+                                                        indent       -= 1;
+                                                        level[a - 1] = indent;
+                                                        return;
+                                                    }
+                                                    if ((token[c] === ":" && ternary[ternary.length - 1] === false) || (token[c] === "," && assign === false && varline[varline.length - 1] === false)) {
+                                                        return;
+                                                    }
+                                                    if ((c === 0 || token[c - 1] === "{" || token[c - 1] === "x{") || token[c] === "for" || token[c] === "if" || token[c] === "do" || token[c] === "function" || token[c] === "while" || token[c] === "var") {
+                                                        if (list[listlen - 1] === false && listlen > 1 && (a === b - 1 || token[a + 1] !== ")") && obj[obj.length - 1] === false) {
+                                                            indent -= 1;
+                                                        }
+                                                        if (varline[varline.length - 1] === true) {
+                                                            indent -= 1;
+                                                        }
+                                                        return;
+                                                    }
+                                                }
+                                            }
+                                        }());
+                                    }
+                                    if (jsscope === true) {
+                                        (function jspretty__algorithm_end_jsscope() {
+                                            var c     = 0,
+                                                d     = 1,
+                                                build = [],
+                                                paren = false;
+                                            for (c = a - 1; c > -1; c -= 1) {
+                                                if (types[c] === "end") {
+                                                    d += 1;
+                                                } else if (types[c] === "start" || types[c] === "method") {
+                                                    d -= 1;
+                                                }
+                                                if (d < 0) {
+                                                    return;
+                                                }
+                                                if (d === 1) {
+                                                    if (meta[c] === "v" && token[c] !== build[build.length - 1]) {
+                                                        build.push(token[c]);
+                                                    } else if (token[c] === ")") {
+                                                        paren = true;
+                                                    } else if (paren === true && types[c] === "word" && token[c] !== build[build.length - 1]) {
+                                                        build.push(token[c]);
+                                                    }
+                                                }
+                                                if (c > 0 && token[c - 1] === "function" && types[c] === "word" && token[c] !== build[build.length - 1]) {
+                                                    build.push(token[c]);
+                                                }
+                                                if (d === 0) {
+                                                    if (types[c] === "separator" || types[c] === "operator" || types[c] === "literal" || token[c] === "if" || token[c] === "else" || token[c] === "for" || token[c] === "switch" || token[c] === "do" || token[c] === "return" || token[c] === "while" || token[c] === "catch" || token[c] === "try") {
+                                                        return;
+                                                    }
+                                                    if (token[c] === "function") {
+                                                        if (types[c + 1] === "word") {
+                                                            meta[c + 2] = a;
+                                                        } else {
+                                                            meta[c + 1] = a;
+                                                        }
+                                                        meta.push(build);
+                                                        return;
+                                                    }
+                                                }
+                                            }
+                                        }());
+                                    }
+                                    casetest.pop();
+                                }
+                                if ((types[a - 1] === "comment" && token[a - 1].substr(0, 2) === "//") || types[a - 1] === "comment-inline") {
+                                    level[a - 1] = indent;
+                                    level.push("x");
+                                } else if ((ltoke === "{" && ctoke === "}") || (ltoke === "[" && ctoke === "]")) {
+                                    level[a - 1] = "x";
+                                    level.push("x");
+                                } else if (ctoke === "]") {
+                                    if (list[list.length - 1] === true || (ltoke === "]" && level[a - 2] === indent + 1)) {
+                                        level[a - 1] = indent;
+                                    } else if (level[a - 1] === "s") {
+                                        level[a - 1] = "x";
+                                    }
+                                    if (list[list.length - 1] === false) {
+                                        if (ltoke === "}" || ltoke === "x}") {
+                                            level[a - 1] = indent;
+                                        }
+                                        (function jspretty__algorithm_end_squareBrace() {
+                                            var c = 0,
+                                                d = 1;
+                                            for (c = a - 1; c > -1; c -= 1) {
+                                                if (token[c] === "]") {
+                                                    d += 1;
+                                                }
+                                                if (token[c] === "[") {
+                                                    d -= 1;
+                                                    if (d === 0) {
+                                                        if (c > 0 && (token[c + 1] === "{" || token[c + 1] === "x{" || token[c + 1] === "[")) {
+                                                            level[c] = indent + 1;
+                                                            return;
+                                                        }
+                                                        if (token[c + 1] !== "[" || lastlist === false) {
+                                                            level[c] = "x";
+                                                            return;
+                                                        }
+                                                        return;
+                                                    }
+                                                }
+                                            }
+                                        }());
+                                    }
+                                    level.push("x");
+                                } else if (ctoke === ")") {
+                                    level[a - 1] = "x";
+                                    level.push("s");
+                                } else if ((ctoke === "}" || ctoke === "x}") && obj[obj.length - 1] === false && ltype === "word" && list[list.length - 1] === false && casetest[casetest.length - 1] === false) {
+                                    indent       += 1;
+                                    level[a - 1] = indent;
+                                    level.push(indent);
+                                } else if (ctoke === "}" || ctoke === "x}" || list[list.length - 1] === true) {
+                                    level[a - 1] = indent;
+                                    level.push("x");
+                                } else {
+                                    level.push("x");
+                                }
+                                lastlist = list[list.length - 1];
+                                list.pop();
+                                listtest.pop();
+                                methodtest.pop();
+                                ternary.pop();
+                                if (ctoke === "}") {
+                                    if (varline[varline.length - 1] === true || (obj[obj.length - 1] === true && ltoke !== "{")) {
+                                        if (varlen.length > 0 && assignlist[assignlist.length - 1] === false) {
+                                            if (varlen[varlen.length - 1].length > 1) {
+                                                varlist.push(varlen[varlen.length - 1]);
+                                            }
+                                        }
+                                    }
+                                    varlen.pop();
+                                    varline.pop();
+                                }
+                                assignlist.pop();
+                                obj.pop();
+                                if (jsscope === true && meta[a] === undefined) {
+                                    meta.push("");
+                                }
+                            },
+                            operator   = function jspretty__algorithm_operator() {
+                                if (ctoke === "!") {
+                                    if (ltoke === "(") {
+                                        level[a - 1] = "x";
+                                    }
                                     if (ltoke === "}" || ltoke === "x}") {
                                         level[a - 1] = indent;
                                     }
-                                    (function jspretty__algorithm_end_squareBrace() {
-                                        var c = 0,
-                                            d = 1;
+                                    return level.push("x");
+                                }
+                                if (ctoke === "?") {
+                                    if (ternary.length === 0) {
+                                        ternary.push(true);
+                                    } else {
+                                        ternary[ternary.length - 1] = true;
+                                    }
+                                }
+                                if (ctoke === ":") {
+                                    if (ternary[ternary.length - 1] === false) {
+                                        level[a - 1] = "x";
+                                    } else {
+                                        level[a - 1] = "s";
+                                    }
+                                    return (function jspretty__algorithm_operator_colon() {
+                                        var c      = 0,
+                                            d      = 0,
+                                            listin = (varlen.length > 0) ? varlen[varlen.length - 1][varlen[varlen.length - 1].length - 1] + 1 : 0,
+                                            listop = token[listin],
+                                            assign = (listop === undefined || listop.indexOf("=") > -1) ? false : true;
+                                        if (listin === 0) {
+                                            return;
+                                        }
+                                        if (obj[obj.length - 1] === true && varlen.length > 0 && (listop === undefined || (assign === true && types[listin] === "operator"))) {
+                                            c = a - 1;
+                                            if (types[c] === "comment" || types[c] === "comment-inline") {
+                                                do {
+                                                    c -= 1;
+                                                } while (types[c] === "comment" || types[c] === "comment-inline");
+                                            }
+                                            if (ternary[ternary.length - 1] === false) {
+                                                varlen[varlen.length - 1].push(c);
+                                            }
+                                        }
                                         for (c = a - 1; c > -1; c -= 1) {
-                                            if (token[c] === "]") {
+                                            if (types[c] === "start" || types[c] === "method") {
                                                 d += 1;
                                             }
-                                            if (token[c] === "[") {
+                                            if (types[c] === "end") {
                                                 d -= 1;
-                                                if (d === 0) {
-                                                    if (c > 0 && (token[c + 1] === "{" || token[c + 1] === "x{" || token[c + 1] === "[")) {
-                                                        level[c] = indent + 1;
-                                                        return;
+                                            }
+                                            if (d > 0) {
+                                                if (d === 1 && token[c] === "{" && ternary[ternary.length - 1] === false) {
+                                                    obj[obj.length - 1] = true;
+                                                }
+                                                break;
+                                            }
+                                            if (d === 0) {
+                                                if (ternary[ternary.length - 1] === false && (token[c] === "case" || token[c] === "default")) {
+                                                    if (token[a + 1] !== "case") {
+                                                        indent += 1;
                                                     }
-                                                    if (token[c + 1] !== "[" || lastlist === false) {
-                                                        level[c] = "x";
-                                                        return;
-                                                    }
+                                                    return level.push(indent);
+                                                }
+                                                if (token[c] === "," && ternary[ternary.length - 1] === false) {
+                                                    obj[obj.length - 1] = true;
+                                                }
+                                            }
+                                        }
+                                        return level.push("s");
+                                    }());
+                                }
+                                if (ctoke === "++" || ctoke === "--") {
+                                    if (ltype === "literal" || ltype === "word") {
+                                        level[a - 1] = "x";
+                                        level.push("s");
+                                    } else if (a < b - 1 && (types[a + 1] === "literal" || types[a + 1] === "word")) {
+                                        level.push("x");
+                                    } else {
+                                        level.push("s");
+                                    }
+                                    return;
+                                }
+                                level[a - 1] = "s";
+                                if (ctoke.indexOf("=") > -1 && ctoke !== "==" && ctoke !== "===" && ctoke !== "!=" && ctoke !== "!==" && ctoke !== ">=" && ctoke !== "<=" && varline[varline.length - 1] === false && methodtest[methodtest.length - 1] === false && obj[obj.length - 1] === false) {
+                                    if (assignlist[assignlist.length - 1] === true) {
+                                        (function jspretty__algorithm_operator_assignTest() {
+                                            var c = 0,
+                                                d = "";
+                                            for (c = a - 1; c > -1; c -= 1) {
+                                                d = token[c];
+                                                if (d === ";") {
+                                                    return varlen[varlen.length - 1].push(a - 1);
+                                                }
+                                                if (d.indexOf("=") > -1 && d !== "==" && d !== "===" && d !== "!=" && d !== "!==" && d !== ">=" && d !== "<=") {
                                                     return;
                                                 }
                                             }
-                                        }
-                                    }());
-                                }
-                                level.push("x");
-                            } else if (ctoke === ")") {
-                                level[a - 1] = "x";
-                                level.push("s");
-                            } else if ((ctoke === "}" || ctoke === "x}") && obj[obj.length - 1] === false && ltype === "word" && list[list.length - 1] === false && casetest[casetest.length - 1] === false) {
-                                indent       += 1;
-                                level[a - 1] = indent;
-                                level.push(indent);
-                            } else if (ctoke === "}" || ctoke === "x}" || list[list.length - 1] === true) {
-                                level[a - 1] = indent;
-                                level.push("x");
-                            } else {
-                                level.push("x");
-                            }
-                            lastlist = list[list.length - 1];
-                            list.pop();
-                            listtest.pop();
-                            methodtest.pop();
-                            ternary.pop();
-                            if (ctoke === "}") {
-                                if (varline[varline.length - 1] === true || (obj[obj.length - 1] === true && ltoke !== "{")) {
-                                    if (varlen.length > 0 && assignlist[assignlist.length - 1] === false) {
-                                        if (varlen[varlen.length - 1].length > 1) {
-                                            varlist.push(varlen[varlen.length - 1]);
-                                        }
+                                        }());
                                     }
-                                }
-                                varlen.pop();
-                                varline.pop();
-                            }
-                            assignlist.pop();
-                            obj.pop();
-                            if (jsscope === true && meta[a] === undefined) {
-                                meta.push("");
-                            }
-                        },
-                        operator   = function jspretty__algorithm_operator() {
-                            if (ctoke === "!") {
-                                if (ltoke === "(") {
-                                    level[a - 1] = "x";
-                                }
-                                if (ltoke === "}" || ltoke === "x}") {
-                                    level[a - 1] = indent;
-                                }
-                                return level.push("x");
-                            }
-                            if (ctoke === "?") {
-                                if (ternary.length === 0) {
-                                    ternary.push(true);
-                                } else {
-                                    ternary[ternary.length - 1] = true;
-                                }
-                            }
-                            if (ctoke === ":") {
-                                if (ternary[ternary.length - 1] === false) {
-                                    level[a - 1] = "x";
-                                } else {
-                                    level[a - 1] = "s";
-                                }
-                                return (function jspretty__algorithm_operator_colon() {
-                                    var c      = 0,
-                                        d      = 0,
-                                        listin = (varlen.length > 0) ? varlen[varlen.length - 1][varlen[varlen.length - 1].length - 1] + 1 : 0,
-                                        listop = token[listin],
-                                        assign = (listop === undefined || listop.indexOf("=") > -1) ? false : true;
-                                    if (listin === 0) {
-                                        return;
-                                    }
-                                    if (obj[obj.length - 1] === true && varlen.length > 0 && (listop === undefined || (assign === true && types[listin] === "operator"))) {
-                                        c = a - 1;
-                                        if (types[c] === "comment" || types[c] === "comment-inline") {
-                                            do {
-                                                c -= 1;
-                                            } while (types[c] === "comment" || types[c] === "comment-inline");
-                                        }
-                                        if (ternary[ternary.length - 1] === false) {
-                                            varlen[varlen.length - 1].push(c);
-                                        }
-                                    }
-                                    for (c = a - 1; c > -1; c -= 1) {
-                                        if (types[c] === "start" || types[c] === "method") {
-                                            d += 1;
-                                        }
-                                        if (types[c] === "end") {
-                                            d -= 1;
-                                        }
-                                        if (d > 0) {
-                                            if (d === 1 && token[c] === "{" && ternary[ternary.length - 1] === false) {
-                                                obj[obj.length - 1] = true;
-                                            }
-                                            break;
-                                        }
-                                        if (d === 0) {
-                                            if (ternary[ternary.length - 1] === false && (token[c] === "case" || token[c] === "default")) {
-                                                if (token[a + 1] !== "case") {
-                                                    indent += 1;
-                                                }
-                                                return level.push(indent);
-                                            }
-                                            if (token[c] === "," && ternary[ternary.length - 1] === false) {
-                                                obj[obj.length - 1] = true;
-                                            }
-                                        }
-                                    }
-                                    return level.push("s");
-                                }());
-                            }
-                            if (ctoke === "++" || ctoke === "--") {
-                                if (ltype === "literal" || ltype === "word") {
-                                    level[a - 1] = "x";
-                                    level.push("s");
-                                } else if (a < b - 1 && (types[a + 1] === "literal" || types[a + 1] === "word")) {
-                                    level.push("x");
-                                } else {
-                                    level.push("s");
-                                }
-                                return;
-                            }
-                            level[a - 1] = "s";
-                            if (ctoke.indexOf("=") > -1 && ctoke !== "==" && ctoke !== "===" && ctoke !== "!=" && ctoke !== "!==" && ctoke !== ">=" && ctoke !== "<=" && varline[varline.length - 1] === false && methodtest[methodtest.length - 1] === false && obj[obj.length - 1] === false) {
-                                if (assignlist[assignlist.length - 1] === true) {
-                                    (function jspretty__algorithm_operator_assignTest() {
+                                    (function jspretty__algorithm_operator_assignSpaces() {
                                         var c = 0,
-                                            d = "";
-                                        for (c = a - 1; c > -1; c -= 1) {
-                                            d = token[c];
-                                            if (d === ";") {
-                                                return varlen[varlen.length - 1].push(a - 1);
+                                            d = 0,
+                                            e = false,
+                                            f = "";
+                                        for (c = a + 1; c < b; c += 1) {
+                                            if (types[c] === "start" || types[c] === "method") {
+                                                if (e === true && types[c] === "start" && token[c] !== "[") {
+                                                    if (assignlist[assignlist.length - 1] === true) {
+                                                        assignlist[assignlist.length - 1] = false;
+                                                        if (varlen[varlen.length - 1].length > 1) {
+                                                            varlist.push(varlen[varlen.length - 1]);
+                                                        }
+                                                        varlen.pop();
+                                                    }
+                                                    break;
+                                                }
+                                                d += 1;
                                             }
-                                            if (d.indexOf("=") > -1 && d !== "==" && d !== "===" && d !== "!=" && d !== "!==" && d !== ">=" && d !== "<=") {
-                                                return;
+                                            if (types[c] === "end") {
+                                                d -= 1;
                                             }
-                                        }
-                                    }());
-                                }
-                                (function jspretty__algorithm_operator_assignSpaces() {
-                                    var c = 0,
-                                        d = 0,
-                                        e = false,
-                                        f = "";
-                                    for (c = a + 1; c < b; c += 1) {
-                                        if (types[c] === "start" || types[c] === "method") {
-                                            if (e === true && types[c] === "start" && token[c] !== "[") {
+                                            if (d < 0) {
                                                 if (assignlist[assignlist.length - 1] === true) {
                                                     assignlist[assignlist.length - 1] = false;
                                                     if (varlen[varlen.length - 1].length > 1) {
@@ -4008,252 +4024,238 @@ var prettydiff = function prettydiff(api) {
                                                 }
                                                 break;
                                             }
-                                            d += 1;
-                                        }
-                                        if (types[c] === "end") {
-                                            d -= 1;
-                                        }
-                                        if (d < 0) {
-                                            if (assignlist[assignlist.length - 1] === true) {
-                                                assignlist[assignlist.length - 1] = false;
-                                                if (varlen[varlen.length - 1].length > 1) {
-                                                    varlist.push(varlen[varlen.length - 1]);
-                                                }
-                                                varlen.pop();
-                                            }
-                                            break;
-                                        }
-                                        if (d === 0) {
-                                            if (e === true) {
-                                                if (types[c] === "operator" || token[c] === ";" || token[c] === "var") {
-                                                    f = token[c];
-                                                    if (f !== undefined && f.indexOf("=") > -1 && f !== "==" && f !== "===" && f !== "!=" && f !== "!==" && f !== ">=" && f !== "<=") {
-                                                        if (assignlist[assignlist.length - 1] === false) {
-                                                            varlen.push([a - 1]);
-                                                            assignlist[assignlist.length - 1] = true;
-                                                        }
-                                                    }
-                                                    if ((token[c] === ";" || token[c] === "var") && assignlist[assignlist.length - 1] === true) {
-                                                        assignlist[assignlist.length - 1] = false;
-                                                        if (varlen.length > 0) {
-                                                            if (varlen[varlen.length - 1].length > 1) {
-                                                                varlist.push(varlen[varlen.length - 1]);
+                                            if (d === 0) {
+                                                if (e === true) {
+                                                    if (types[c] === "operator" || token[c] === ";" || token[c] === "var") {
+                                                        f = token[c];
+                                                        if (f !== undefined && f.indexOf("=") > -1 && f !== "==" && f !== "===" && f !== "!=" && f !== "!==" && f !== ">=" && f !== "<=") {
+                                                            if (assignlist[assignlist.length - 1] === false) {
+                                                                varlen.push([a - 1]);
+                                                                assignlist[assignlist.length - 1] = true;
                                                             }
-                                                            varlen.pop();
                                                         }
+                                                        if ((token[c] === ";" || token[c] === "var") && assignlist[assignlist.length - 1] === true) {
+                                                            assignlist[assignlist.length - 1] = false;
+                                                            if (varlen.length > 0) {
+                                                                if (varlen[varlen.length - 1].length > 1) {
+                                                                    varlist.push(varlen[varlen.length - 1]);
+                                                                }
+                                                                varlen.pop();
+                                                            }
+                                                        }
+                                                        return;
                                                     }
-                                                    return;
+                                                    if (assignlist[assignlist.length - 1] === true && (token[c] === "return" || token[c] === "break" || token[c] === "continue" || token[c] === "throw")) {
+                                                        assignlist[assignlist.length - 1] = false;
+                                                        if (varlen[varlen.length - 1].length > 1) {
+                                                            varlist.push(varlen[varlen.length - 1]);
+                                                        }
+                                                        varlen.pop();
+                                                    }
                                                 }
-                                                if (assignlist[assignlist.length - 1] === true && (token[c] === "return" || token[c] === "break" || token[c] === "continue" || token[c] === "throw")) {
-                                                    assignlist[assignlist.length - 1] = false;
-                                                    if (varlen[varlen.length - 1].length > 1) {
-                                                        varlist.push(varlen[varlen.length - 1]);
-                                                    }
-                                                    varlen.pop();
+                                                if (token[c] === ";") {
+                                                    e = true;
                                                 }
                                             }
-                                            if (token[c] === ";") {
-                                                e = true;
-                                            }
+                                        }
+                                    }());
+                                }
+                                if ((ctoke === "-" && ltoke === "return") || ltoke === "=") {
+                                    return level.push("x");
+                                }
+                                level.push("s");
+                            },
+                            word       = function jspretty__algorithm_word() {
+                                var next    = token[a + 1],
+                                    compare = (next === undefined || next === "==" || next === "===" || next === "!=" || next === "!==" || next === ">=" || next === "<=" || next.indexOf("=") < 0) ? false : true;
+                                if (varline[varline.length - 1] === true && (ltoke === "," || ltoke === "var")) {
+                                    if (fortest === 0 && (methodtest[methodtest.length - 1] === false || methodtest.length === 0)) {
+                                        if (types[a + 1] === "operator" && compare === true && varlen.length > 0 && token[varlen[varlen.length - 1][varlen[varlen.length - 1].length - 1] + 1] !== ":") {
+                                            varlen[varlen.length - 1].push(a);
                                         }
                                     }
-                                }());
-                            }
-                            if ((ctoke === "-" && ltoke === "return") || ltoke === "=") {
-                                return level.push("x");
-                            }
-                            level.push("s");
-                        },
-                        word       = function jspretty__algorithm_word() {
-                            var next    = token[a + 1],
-                                compare = (next === undefined || next === "==" || next === "===" || next === "!=" || next === "!==" || next === ">=" || next === "<=" || next.indexOf("=") < 0) ? false : true;
-                            if (varline[varline.length - 1] === true && (ltoke === "," || ltoke === "var")) {
-                                if (fortest === 0 && (methodtest[methodtest.length - 1] === false || methodtest.length === 0)) {
-                                    if (types[a + 1] === "operator" && compare === true && varlen.length > 0 && token[varlen[varlen.length - 1][varlen[varlen.length - 1].length - 1] + 1] !== ":") {
-                                        varlen[varlen.length - 1].push(a);
-                                    }
-                                }
-                                if (jsscope === true) {
-                                    meta.push("v");
-                                }
-                            } else if (jsscope === true) {
-                                if (ltoke === "function") {
-                                    meta.push("v");
-                                } else {
-                                    meta.push("");
-                                }
-                            }
-                            if (ltoke === "}" || ltoke === "x}") {
-                                level[a - 1] = indent;
-                            }
-                            if (ctoke === "else" && ltoke === "}" && token[a - 2] === "x}") {
-                                level[a - 3] -= 1;
-                            }
-                            if (varline.length === 1 && varline[0] === true && (ltoke === "var" || ltoke === "," || (ltoke === "function" && types[a + 1] === "method"))) {
-                                globals.push(ctoke);
-                            }
-                            if (ctoke === "new") {
-                                (function jspretty__algorithm_word_new() {
-                                    var c       = 0,
-                                        nextish = (typeof next === "string") ? next : "",
-                                        apiword = (nextish === "") ? [] : [
-                                            "Date", "RegExp", "Error", "XMLHttpRequest", "FileReader", "ActiveXObject", "DataView", "ArrayBuffer", "Proxy", "DOMParser", "ParallelArray", "Int8Array", "Uint8Array", "Int16Array", "Uint16Array", "Int32Array", "Uint32Array", "Float32Array", "Float64Array", "Canvas", "CustomAnimation", "FadeAnimation", "Flash", "FormField", "Frame", "HotKey", "Image", "MenuItem", "MoveAnimation", "Point", "Rectangle", "ResizeAnimation", "RotateAnimation", "ScrollBar", "Shadow", "SQLite", "Text", "TextArea", "Timer", "URL", "Web", "Window"
-                                        ],
-                                        apilen  = apiword.length;
-                                    for (c = 0; c < apilen; c += 1) {
-                                        if (nextish === apiword[c]) {
-                                            return;
-                                        }
-                                    }
-                                    news += 1;
                                     if (jsscope === true) {
-                                        token[a] = "<strong class='new'>" + token[a] + "</strong>";
+                                        meta.push("v");
                                     }
-                                }());
-                            }
-                            if (ctoke === "function" && jspace === false && a < b - 1 && token[a + 1] === "(") {
-                                return level.push("x");
-                            }
-                            if (ctoke === "return") {
-                                listtest[listtest.length - 1] = false;
-                            }
-                            if (ltoke === "-" && a > 1) {
-                                if (types[a - 2] === "operator" || token[a - 2] === ",") {
-                                    level[a - 1] = "x";
-                                } else if (types[a - 2] === "start" || types[a - 2] === "method") {
-                                    level[a - 2] = "x";
-                                    level[a - 1] = "x";
+                                } else if (jsscope === true) {
+                                    if (ltoke === "function") {
+                                        meta.push("v");
+                                    } else {
+                                        meta.push("");
+                                    }
                                 }
-                            } else if (ctoke === "while" && (ltoke === "}" || ltoke === "x}")) {
-                                (function jspretty__algorithm_word_curlyBrace() {
-                                    var c = 0,
-                                        d = 0;
-                                    for (c = a - 1; c > -1; c -= 1) {
-                                        if (token[c] === "}" || token[c] === "x}") {
-                                            d += 1;
-                                        }
-                                        if (token[c] === "{" || token[c] === "x{") {
-                                            d -= 1;
-                                        }
-                                        if (d === 0) {
-                                            if (token[c - 1] === "do") {
-                                                level[a - 1] = "s";
+                                if (ltoke === "}" || ltoke === "x}") {
+                                    level[a - 1] = indent;
+                                }
+                                if (ctoke === "else" && ltoke === "}" && token[a - 2] === "x}") {
+                                    level[a - 3] -= 1;
+                                }
+                                if (varline.length === 1 && varline[0] === true && (ltoke === "var" || ltoke === "," || (ltoke === "function" && types[a + 1] === "method"))) {
+                                    globals.push(ctoke);
+                                }
+                                if (ctoke === "new") {
+                                    (function jspretty__algorithm_word_new() {
+                                        var c       = 0,
+                                            nextish = (typeof next === "string") ? next : "",
+                                            apiword = (nextish === "") ? [] : [
+                                                "Date", "RegExp", "Error", "XMLHttpRequest", "FileReader", "ActiveXObject", "DataView", "ArrayBuffer", "Proxy", "DOMParser", "ParallelArray", "Int8Array", "Uint8Array", "Int16Array", "Uint16Array", "Int32Array", "Uint32Array", "Float32Array", "Float64Array", "Canvas", "CustomAnimation", "FadeAnimation", "Flash", "FormField", "Frame", "HotKey", "Image", "MenuItem", "MoveAnimation", "Point", "Rectangle", "ResizeAnimation", "RotateAnimation", "ScrollBar", "Shadow", "SQLite", "Text", "TextArea", "Timer", "URL", "Web", "Window"
+                                            ],
+                                            apilen  = apiword.length;
+                                        for (c = 0; c < apilen; c += 1) {
+                                            if (nextish === apiword[c]) {
                                                 return;
                                             }
-                                            level[a - 1] = indent;
-                                            return;
                                         }
+                                        news += 1;
+                                        if (jsscope === true) {
+                                            token[a] = "<strong class='new'>" + token[a] + "</strong>";
+                                        }
+                                    }());
+                                }
+                                if (ctoke === "function" && jspace === false && a < b - 1 && token[a + 1] === "(") {
+                                    return level.push("x");
+                                }
+                                if (ctoke === "return") {
+                                    listtest[listtest.length - 1] = false;
+                                }
+                                if (ltoke === "-" && a > 1) {
+                                    if (types[a - 2] === "operator" || token[a - 2] === ",") {
+                                        level[a - 1] = "x";
+                                    } else if (types[a - 2] === "start" || types[a - 2] === "method") {
+                                        level[a - 2] = "x";
+                                        level[a - 1] = "x";
                                     }
-                                }());
-                            } else if (ctoke === "in" || ((ctoke === "else" || ctoke === "catch") && (ltoke === "}" || ltoke === "x}"))) {
-                                level[a - 1] = "s";
-                            } else if (ctoke === "var") {
-                                if (methodtest.length === 0 || methodtest[methodtest.length - 1] === false) {
-                                    varlen.push([]);
-                                }
-                                if (ltype === "end") {
+                                } else if (ctoke === "while" && (ltoke === "}" || ltoke === "x}")) {
+                                    (function jspretty__algorithm_word_curlyBrace() {
+                                        var c = 0,
+                                            d = 0;
+                                        for (c = a - 1; c > -1; c -= 1) {
+                                            if (token[c] === "}" || token[c] === "x}") {
+                                                d += 1;
+                                            }
+                                            if (token[c] === "{" || token[c] === "x{") {
+                                                d -= 1;
+                                            }
+                                            if (d === 0) {
+                                                if (token[c - 1] === "do") {
+                                                    level[a - 1] = "s";
+                                                    return;
+                                                }
+                                                level[a - 1] = indent;
+                                                return;
+                                            }
+                                        }
+                                    }());
+                                } else if (ctoke === "in" || ((ctoke === "else" || ctoke === "catch") && (ltoke === "}" || ltoke === "x}"))) {
+                                    level[a - 1] = "s";
+                                } else if (ctoke === "var") {
+                                    if (methodtest.length === 0 || methodtest[methodtest.length - 1] === false) {
+                                        varlen.push([]);
+                                    }
+                                    if (ltype === "end") {
+                                        level[a - 1] = indent;
+                                    }
+                                    if (varline.length === 0) {
+                                        varline.push(true);
+                                    } else {
+                                        varline[varline.length - 1] = true;
+                                    }
+                                    if (fortest === 0) {
+                                        indent += 1;
+                                    }
+                                } else if (ctoke === "default" || ctoke === "case") {
+                                    if (casetest[casetest.length - 1] === false) {
+                                        if (ltoke === "{" || ltoke === "x{") {
+                                            indent -= 1;
+                                        }
+                                        level[a - 1]                  = indent;
+                                        casetest[casetest.length - 1] = true;
+                                    } else if ((ltoke === ":" && (ctoke === "default" || types[a - 1] === "comment-inline" || types[a - 1] === "comment")) || ltoke !== ":") {
+                                        indent       -= 1;
+                                        level[a - 1] = indent;
+                                    }
+                                } else if ((ctoke === "break" || ctoke === "return") && casetest[casetest.length - 1] === true) {
                                     level[a - 1] = indent;
+                                    (function jspretty__algorithm_word_break() {
+                                        var c = 0;
+                                        for (c = a + 1; c < b; c += 1) {
+                                            if (token[c] === "}" || token[c] === "x}") {
+                                                casetest[casetest.length - 1] = false;
+                                                return;
+                                            }
+                                            if (token[c] === "{" || token[c] === "x{" || token[c] === "[") {
+                                                return;
+                                            }
+                                            if (token[c] === "case" || token[c] === "default" || token[c] === "switch") {
+                                                indent                        -= 1;
+                                                casetest[casetest.length - 1] = false;
+                                                return;
+                                            }
+                                        }
+                                    }());
                                 }
-                                if (varline.length === 0) {
-                                    varline.push(true);
+                                level.push("s");
+                            };
+                        for (a = 0; a < b; a += 1) {
+                            if (jsscope === true && types[a] !== "start" && types[a] !== "word" && types[a] !== "end") {
+                                meta.push("");
+                            }
+                            ctype = types[a];
+                            ctoke = token[a];
+                            if (a - 1 > lines[lcount][0]) {
+                                lcount += 1;
+                            }
+                            if (ctype === "comment") {
+                                if (ltoke === "=" && (/^(\/\*\*\s*@[a-z_]+\s)/).test(ctoke) === true) {
+                                    level[a - 1] = "s";
                                 } else {
-                                    varline[varline.length - 1] = true;
-                                }
-                                if (fortest === 0) {
-                                    indent += 1;
-                                }
-                            } else if (ctoke === "default" || ctoke === "case") {
-                                if (casetest[casetest.length - 1] === false) {
-                                    if (ltoke === "{" || ltoke === "x{") {
-                                        indent -= 1;
-                                    }
-                                    level[a - 1]                  = indent;
-                                    casetest[casetest.length - 1] = true;
-                                } else if ((ltoke === ":" && (ctoke === "default" || types[a - 1] === "comment-inline" || types[a - 1] === "comment")) || ltoke !== ":") {
-                                    indent       -= 1;
                                     level[a - 1] = indent;
                                 }
-                            } else if ((ctoke === "break" || ctoke === "return") && casetest[casetest.length - 1] === true) {
-                                level[a - 1] = indent;
-                                (function jspretty__algorithm_word_break() {
-                                    var c = 0;
-                                    for (c = a + 1; c < b; c += 1) {
-                                        if (token[c] === "}" || token[c] === "x}") {
-                                            casetest[casetest.length - 1] = false;
-                                            return;
-                                        }
-                                        if (token[c] === "{" || token[c] === "x{" || token[c] === "[") {
-                                            return;
-                                        }
-                                        if (token[c] === "case" || token[c] === "default" || token[c] === "switch") {
-                                            indent                        -= 1;
-                                            casetest[casetest.length - 1] = false;
-                                            return;
-                                        }
-                                    }
-                                }());
-                            }
-                            level.push("s");
-                        };
-                    for (a = 0; a < b; a += 1) {
-                        if (jsscope === true && types[a] !== "start" && types[a] !== "word" && types[a] !== "end") {
-                            meta.push("");
-                        }
-                        ctype = types[a];
-                        ctoke = token[a];
-                        if (a - 1 > lines[lcount][0]) {
-                            lcount += 1;
-                        }
-                        if (ctype === "comment") {
-                            if (ltoke === "=" && (/^(\/\*\*\s*@[a-z_]+\s)/).test(ctoke) === true) {
-                                level[a - 1] = "s";
-                            } else {
-                                level[a - 1] = indent;
-                            }
-                            level.push(indent);
-                        }
-                        if (ctype === "comment-inline") {
-                            if (a < b - 1 && (token[a + 1] === "{" || token[a + 1] === "x{")) {
-                                token[a]     = token[a + 1];
-                                types[a]     = "start";
-                                token[a + 1] = ctoke;
-                                types[a + 1] = ctype;
-                                a            -= 1;
-                            } else {
-                                level[a - 1] = "s";
                                 level.push(indent);
                             }
+                            if (ctype === "comment-inline") {
+                                if (a < b - 1 && (token[a + 1] === "{" || token[a + 1] === "x{")) {
+                                    token[a]     = token[a + 1];
+                                    types[a]     = "start";
+                                    token[a + 1] = ctoke;
+                                    types[a + 1] = ctype;
+                                    a            -= 1;
+                                } else {
+                                    level[a - 1] = "s";
+                                    level.push(indent);
+                                }
+                            }
+                            if (ctype === "regex") {
+                                level.push("x");
+                            }
+                            if (ctype === "literal") {
+                                level.push("s");
+                            }
+                            if (ctype === "separator") {
+                                separator();
+                            }
+                            if (ctype === "method") {
+                                method();
+                            }
+                            if (ctype === "start") {
+                                start();
+                            }
+                            if (ctype === "end") {
+                                end();
+                            }
+                            if (ctype === "operator") {
+                                operator();
+                            }
+                            if (ctype === "word") {
+                                word();
+                            }
+                            if (ctype !== "comment" && ctype !== "comment-inline") {
+                                ltype = ctype;
+                                ltoke = ctoke;
+                            }
                         }
-                        if (ctype === "regex") {
-                            level.push("x");
-                        }
-                        if (ctype === "literal") {
-                            level.push("s");
-                        }
-                        if (ctype === "separator") {
-                            separator();
-                        }
-                        if (ctype === "method") {
-                            method();
-                        }
-                        if (ctype === "start") {
-                            start();
-                        }
-                        if (ctype === "end") {
-                            end();
-                        }
-                        if (ctype === "operator") {
-                            operator();
-                        }
-                        if (ctype === "word") {
-                            word();
-                        }
-                        if (ctype !== "comment" && ctype !== "comment-inline") {
-                            ltype = ctype;
-                            ltoke = ctoke;
-                        }
-                    }
-                }());
+                    }());
+                }
 
                 if (jmode === "minify") {
                     result = (function jspretty__minify() {
@@ -6973,7 +6975,7 @@ var prettydiff = function prettydiff(api) {
                                         level.push(0);
                                     }
                                 } else if (token[i - 1] === "T_script") {
-                                    level.push(0);
+                                    startSafety();
                                     if (scriptStart.test(build[i]) === true) {
                                         test     = true;
                                         build[i] = build[i].replace(scriptStart, "");
@@ -6994,7 +6996,7 @@ var prettydiff = function prettydiff(api) {
                                             insize  : msize,
                                             inchar  : mchar,
                                             preserve: true,
-                                            inlevel : 0,
+                                            inlevel : level[i],
                                             space   : true,
                                             braces  : args.indent,
                                             comments: mcomm,
@@ -7007,9 +7009,15 @@ var prettydiff = function prettydiff(api) {
                                         build[i] = cdata[0] + "\n" + build[i];
                                     }
                                     if (test1 === true) {
-                                        build[i] = build[i] + "\n-->";
+                                        level.push(level[i]);
+                                        build.splice(i + 1, 0, "-->");
+                                        cinfo.splice(i + 1, 0, "external");
+                                        token.splice(i + 1, 0, "T_content");
                                     } else if (cdata1[0] !== "") {
-                                        build[i] = build[i] + "\n" + cdata1[0];
+                                        level.push(level[i]);
+                                        build.splice(i + 1, 0, cdata1[0]);
+                                        cinfo.splice(i + 1, 0, "external");
+                                        token.splice(i + 1, 0, "T_content");
                                     }
                                     build[i] = build[i].replace(/(\/\/(\s)+\-\->(\s)*)$/, "//-->").replace(/^(\s*)/, "").replace(/(\s*)$/, "");
                                 } else if (token[i - 1] === "T_style") {
@@ -7322,7 +7330,7 @@ var prettydiff = function prettydiff(api) {
                             if (level[i] !== "x" && cinfo[i - 1] !== "start") {
                                 build[i] = end_math(build[i]);
                             }
-                        } else if (cinfo[i] === "external" && mstyle === "indent") {
+                        } else if (cinfo[i] === "external" && mstyle === "indent" && build[i - 1].toLowerCase().indexOf("<style") > -1) {
                             build[i] = script_math(build[i]);
                         } else if (level[i] !== "x" && (cinfo[i - 1] !== "content" && (cinfo[i - 1] !== "mixed_start" || mforce === true))) {
                             if (build[i].charAt(0) === " ") {
@@ -7855,11 +7863,6 @@ var prettydiff = function prettydiff(api) {
                         summary = summaryLanguage + score + tables;
                     }());
                 }
-                token = [];
-                cinfo = [];
-                level = [];
-                inner = [];
-                sum   = [];
                 return build.join("").replace(/^\s+/, "").replace(/\s*<\/prettydiffli>/g, "");
             },
             diffview      = function diffview(args) {
@@ -9569,13 +9572,13 @@ var prettydiff = function prettydiff(api) {
         diffview     : 140101, //diffview library
         documentation: 140127, //documentation.xhtml
         jsmin        : 140127, //jsmin library (fulljsmin.js)
-        jspretty     : 140210, //jspretty library
-        markup_beauty: 140207, //markup_beauty library
+        jspretty     : 140213, //jspretty library
+        markup_beauty: 140213, //markup_beauty library
         markupmin    : 140101, //markupmin library
-        prettydiff   : 140210, //this file
+        prettydiff   : 140213, //this file
         webtool      : 140210, //prettydiff.com.xhtml
         api          : {
-            dom        : 140210,
+            dom        : 140213,
             nodeLocal  : 140210,
             nodeService: 121106, //no longer maintained
             wsh        : 140210

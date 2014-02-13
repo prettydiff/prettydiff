@@ -746,7 +746,7 @@ var exports = "",
                             pd.o.codeMinnOut.value = output[0];
                         }
                     }
-                    if (output[1] !== "" && pd.o.report.minn.box !== null && pd.o.maxInputs.innerHTML.replace(/\s+/g, " ") === "Maximize Inputs") {
+                    if (pd.o.report.minn.box !== null) {
                         if (autotest === true) {
                             output[1] = output[1].replace("seconds </em</p>", "seconds </em</p> <p>Language is set to <strong>auto</strong>. Presumed language is <em>" + api.lang + "</em>.</p>");
                             api.lang  = "auto";
