@@ -5397,9 +5397,11 @@ var prettydiff = function prettydiff(api) {
                 var i             = 0,
                     x             = (typeof args.source === "string") ? args.source.split("") : "Error: no content supplied to markup.",
                     comments      = (args.comments !== "comments" && args.comments !== "beautify" && args.comments !== "diff") ? "" : args.comments,
-                    presume_html  = (args.presume_html === true) ? true : false,
-                    top_comments  = (args.top_comments === true) ? true : false,
-                    conditional   = (args.conditional === true) ? true : false,
+                    presume_html  = (args.presume_html === true || args.presume_html === "true") ? true : false,
+                    top_comments  = (args.top_comments === true || args.top_comments === "true") ? true : false,
+                    conditional   = (args.conditional === true || args.conditional === "true") ? true : false,
+                    correct       = (args.correct === true || args.correct === "true") ? true : false,
+                    obfuscate     = (args.obfuscate === true || args.obfuscate === "true") ? true : false,
                     markupspace   = function markupmin__markupspace() {
                         var a     = 0,
                             store = [],
@@ -5544,12 +5546,12 @@ var prettydiff = function prettydiff(api) {
                                         fcomment: top_comments
                                     }) + cdataE;
                                 } else {
-                                    script = cdataS + jsmin({
-                                        source  : script,
-                                        level   : 2,
-                                        type    : "javascript",
-                                        alter   : true,
-                                        fcomment: top_comments
+                                    script = cdataS + jspretty({
+                                        source   : script,
+                                        correct  : correct,
+                                        mode     : "minify",
+                                        topcoms  : top_comments,
+                                        obfuscate: obfuscate
                                     }) + cdataE;
                                 }
                             }
@@ -9213,10 +9215,13 @@ var prettydiff = function prettydiff(api) {
                             comments    : "",
                             presume_html: chtml,
                             top_comments: ctopcoms,
-                            conditional : ccond
+                            conditional : ccond,
+                            correct     : ccorrect,
+                            obfuscate   : cobfuscate
                         });
                     } else if (clang === "text") {
-                        apioutput = csource;
+                        apioutput  = csource;
+                        apidiffout = "";
                     } else {
                         apioutput = jspretty({
                             source   : csource,
@@ -9574,8 +9579,8 @@ var prettydiff = function prettydiff(api) {
         jsmin        : 140127, //jsmin library (fulljsmin.js)
         jspretty     : 140213, //jspretty library
         markup_beauty: 140213, //markup_beauty library
-        markupmin    : 140101, //markupmin library
-        prettydiff   : 140213, //this file
+        markupmin    : 140217, //markupmin library
+        prettydiff   : 140217, //this file
         webtool      : 140210, //prettydiff.com.xhtml
         api          : {
             dom        : 140213,
