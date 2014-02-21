@@ -401,9 +401,13 @@ var exports = "",
                 lang = pd.auto(value);
             }
             if (x.options.mode !== lang) {
-                if (lang === "javascript" || lang === "text") {
+                if (lang === "javascript") {
                     x.setOption("mode", "javascript");
                     x.setOption("mode", "javascript");
+                }
+                if (lang === "text") {
+                    x.setOption("mode", null);
+                    x.setOption("mode", null);
                 }
                 if (lang === "markup") {
                     x.setOption("mode", "xml");
@@ -1169,7 +1173,7 @@ var exports = "",
                                     if (xhr.status === 200 || xhr.status === 0) {
                                         api.diff = xhr.responseText.replace(/\r\n/g, "\n");
                                         if (completes === true) {
-                                            if (pd.test.cm === true) {
+                                            if (pd.test.cm === true && api.lang === "auto") {
                                                 cmlang();
                                             }
                                             output = pd.application(api);
@@ -1204,7 +1208,7 @@ var exports = "",
                             if (xhr.status === 200 || xhr.status === 0) {
                                 api.source = xhr.responseText.replace(/\r\n/g, "\n");
                                 if (pd.mode !== "diff" || (requestd === true && completed === true)) {
-                                    if (pd.test.cm === true) {
+                                    if (pd.test.cm === true && api.lang === "auto") {
                                         cmlang();
                                     }
                                     output = pd.application(api);
@@ -1223,7 +1227,7 @@ var exports = "",
             }());
         }
         if (requests === false && requestd === false) {
-            if (pd.test.cm === true) {
+            if (pd.test.cm === true && api.lang === "auto") {
                 cmlang();
             }
             output = pd.application(api);
@@ -1259,8 +1263,8 @@ var exports = "",
 
     //this function allows typing of tab characters into textareas
     //without the textarea loosing focus
-    pd.fixtabs             = function dom__fixtabs(e) {
-        var x     = this,
+    pd.fixtabs             = function dom__fixtabs(e, node) {
+        var x     = node || this,
             start = "",
             end   = "",
             val   = "",
@@ -1276,6 +1280,7 @@ var exports = "",
         x.value          = start + "\t" + end;
         x.selectionStart = sel + 1;
         x.selectionEnd   = sel + 1;
+        event.preventDefault();
         return false;
     };
 
@@ -2102,7 +2107,7 @@ var exports = "",
                             storage = "";
                         }
                         if (pd.test.cm === true) {
-                            if (langtest === true && pd.o.lang.selectedIndex === 0) {
+                            if (langtest === true && lang === "auto") {
                                 lang = pd.auto(storage);
                                 if (lang === "html") {
                                     lang = "htmlembedded";
@@ -2122,7 +2127,7 @@ var exports = "",
                     }
                 }
                 if (pd.test.cm === true && pd.o.codeBeauOut !== null) {
-                    if (langtest === true && pd.o.lang.selectedIndex === 0) {
+                    if (langtest === true && lang === "auto") {
                         if (lang === "" && pd.test.ls === true && localStorage.codeBeautify !== undefined) {
                             lang = pd.auto(localStorage.codeBeautify);
                             if (lang === "html") {
@@ -2188,7 +2193,7 @@ var exports = "",
                             storage = "";
                         }
                         if (pd.test.cm === true) {
-                            if (langtest === true && pd.o.lang.selectedIndex === 0) {
+                            if (langtest === true && lang === "auto") {
                                 lang = pd.auto(storage);
                                 if (lang === "html") {
                                     lang = "htmlembedded";
@@ -2208,7 +2213,7 @@ var exports = "",
                     }
                 }
                 if (pd.test.cm === true && pd.o.codeMinnOut !== null) {
-                    if (langtest === true && pd.o.lang.selectedIndex === 0) {
+                    if (langtest === true && lang === "auto") {
                         if (lang === "" && pd.test.ls === true && localStorage.codeMinify !== undefined) {
                             lang = pd.auto(localStorage.codeMinify);
                             if (lang === "html") {
@@ -2299,7 +2304,7 @@ var exports = "",
                             storage = "";
                         }
                         if (pd.test.cm === true) {
-                            if (langtest === true && pd.o.lang.selectedIndex === 0) {
+                            if (langtest === true && lang === "auto") {
                                 lang = pd.auto(storage);
                                 if (lang === "htmlembedded") {
                                     lang = "htmlembedded";
@@ -2325,7 +2330,7 @@ var exports = "",
                             storage = "";
                         }
                         if (pd.test.cm === true) {
-                            if (langtest === true && pd.o.lang.selectedIndex === 0) {
+                            if (langtest === true && lang === "auto") {
                                 lang = pd.auto(storage);
                                 if (lang === "html") {
                                     lang = "htmlembedded";
@@ -2551,6 +2556,62 @@ var exports = "",
             }
         }
         if (x === pd.o.lang) {
+            if (pd.test.cm === true) {
+                if (lang === "auto") {
+                    if (pd.mode === "diff") {
+                        lang = pd.auto(pd.cm.diffBase.getValue());
+                    }
+                    if (pd.mode === "beau") {
+                        lang = pd.auto(pd.cm.beauIn.getValue());
+                    }
+                    if (pd.mode === "minn") {
+                        lang = pd.auto(pd.cm.minnIn.getValue());
+                    }
+                }
+                if (lang === "javascript") {
+                    pd.cm.diffBase.setOption("mode", "javascript");
+                    pd.cm.diffNew.setOption("mode", "javascript");
+                    pd.cm.beauIn.setOption("mode", "javascript");
+                    pd.cm.beauOut.setOption("mode", "javascript");
+                    pd.cm.minnIn.setOption("mode", "javascript");
+                    pd.cm.minnOut.setOption("mode", "javascript");
+                } else if (lang === "html") {
+                    pd.cm.diffBase.setOption("mode", "htmlembedded");
+                    pd.cm.diffNew.setOption("mode", "htmlembedded");
+                    pd.cm.beauIn.setOption("mode", "htmlembedded");
+                    pd.cm.beauOut.setOption("mode", "htmlembedded");
+                    pd.cm.minnIn.setOption("mode", "htmlembedded");
+                    pd.cm.minnOut.setOption("mode", "htmlembedded");
+                } else if (lang === "css") {
+                    pd.cm.diffBase.setOption("mode", "text/x-scss");
+                    pd.cm.diffNew.setOption("mode", "text/x-scss");
+                    pd.cm.beauIn.setOption("mode", "text/x-scss");
+                    pd.cm.beauOut.setOption("mode", "text/x-scss");
+                    pd.cm.minnIn.setOption("mode", "text/x-scss");
+                    pd.cm.minnOut.setOption("mode", "text/x-scss");
+                } else if (lang === "markup") {
+                    pd.cm.diffBase.setOption("mode", "xml");
+                    pd.cm.diffNew.setOption("mode", "xml");
+                    pd.cm.beauIn.setOption("mode", "xml");
+                    pd.cm.beauOut.setOption("mode", "xml");
+                    pd.cm.minnIn.setOption("mode", "xml");
+                    pd.cm.minnOut.setOption("mode", "xml");
+                } else if (lang === "text") {
+                    pd.cm.diffBase.setOption("mode", null);
+                    pd.cm.diffNew.setOption("mode", null);
+                    pd.cm.beauIn.setOption("mode", null);
+                    pd.cm.beauOut.setOption("mode", null);
+                    pd.cm.minnIn.setOption("mode", null);
+                    pd.cm.minnOut.setOption("mode", null);
+                } else {
+                    pd.cm.diffBase.setOption("mode", lang);
+                    pd.cm.diffNew.setOption("mode", lang);
+                    pd.cm.beauIn.setOption("mode", lang);
+                    pd.cm.beauOut.setOption("mode", lang);
+                    pd.cm.minnIn.setOption("mode", lang);
+                    pd.cm.minnOut.setOption("mode", lang);
+                }
+            }
             pd.hideBeauOut();
         }
         pd.options(x);
@@ -2579,7 +2640,13 @@ var exports = "",
                         }
                     }
                     pd.o.codeBeauIn.onkeyup   = pd.recycle;
-                    pd.o.codeBeauIn.onkeydown = pd.keydown;
+                    pd.o.codeBeauIn.onkeydown = function dom_hideBeauOut_bindBeauInDown(e) {
+                        var event = e || window.event;
+                        if (pd.test.cm === false) {
+                            pd.fixtabs(event, pd.o.codeBeauIn);
+                        }
+                        pd.keydown(event);
+                    };
                 }
             };
         if (pd.o.codeBeauOut === null) {
@@ -3245,6 +3312,7 @@ var exports = "",
             title       = {},
             statdump    = [],
             langtest    = (pd.o.lang !== null && pd.o.lang.nodeName.toLowerCase() === "select") ? true : false,
+            lang        = (pd.o.lang !== null) ? lang = "auto" : ((langtest === true) ? pd.o.lang[pd.o.lang.selectedIndex].value : pd.o.lang.value),
             hideBeauOut = function dom__load_hideBeauOut() {
                 pd.hideBeauOut();
                 pd.options(this);
@@ -3477,7 +3545,9 @@ var exports = "",
                 };
                 pd.o.codeBeauIn.onkeydown = function dom__load_bindBeauInDown(e) {
                     var event = e || window.event;
-                    pd.fixtabs();
+                    if (pd.test.cm === false) {
+                        pd.fixtabs(event, pd.o.codeBeauIn);
+                    }
                     pd.keydown(event);
                 };
             }
@@ -3488,24 +3558,28 @@ var exports = "",
                 };
                 pd.o.codeMinnIn.onkeydown = function dom__load_bindMinnInDown(e) {
                     var event = e || window.event;
-                    pd.fixtabs();
+                    if (pd.test.cm === false) {
+                        pd.fixtabs(event, pd.o.codeMinnIn);
+                    }
                     pd.keydown(event);
                 };
             }
             if (pd.o.codeDiffBase !== null) {
-                pd.o.codeDiffBase.onkeydown = pd.fixtabs;
                 if (pd.test.cm === true) {
                     pd.o.codeDiffBase.onkeyup = function dom__load_bindAutoDiffBase() {
                         pd.langkey(pd.cm.diffBase);
                     };
+                } else {
+                    pd.o.codeDiffBase.onkeydown = pd.fixtabs;
                 }
             }
             if (pd.o.codeDiffNew !== null) {
-                pd.o.codeDiffNew.onkeydown = pd.fixtabs;
                 if (pd.test.cm === true) {
                     pd.o.codeDiffNew.onkeyup = function dom__load_bindAutoDiffNew() {
                         pd.langkey(pd.cm.diffNew);
                     };
+                } else {
+                    pd.o.codeDiffNew.onkeydown = pd.fixtabs;
                 }
             }
             if (pd.o.report.diff.box !== null) {
@@ -3891,7 +3965,14 @@ var exports = "",
                                 }
                             }
                             if (pd.test.cm === true) {
-                                if (value === "html") {
+                                if (value === "javascript") {
+                                    pd.cm.diffBase.setOption("mode", "javascript");
+                                    pd.cm.diffNew.setOption("mode", "javascript");
+                                    pd.cm.beauIn.setOption("mode", "javascript");
+                                    pd.cm.beauOut.setOption("mode", "javascript");
+                                    pd.cm.minnIn.setOption("mode", "javascript");
+                                    pd.cm.minnOut.setOption("mode", "javascript");
+                                } else if (value === "html") {
                                     pd.cm.diffBase.setOption("mode", "htmlembedded");
                                     pd.cm.diffNew.setOption("mode", "htmlembedded");
                                     pd.cm.beauIn.setOption("mode", "htmlembedded");
@@ -3912,7 +3993,14 @@ var exports = "",
                                     pd.cm.beauOut.setOption("mode", "xml");
                                     pd.cm.minnIn.setOption("mode", "xml");
                                     pd.cm.minnOut.setOption("mode", "xml");
-                                } else if (value !== "javascript") {
+                                } else if (id === "text") {
+                                    pd.cm.diffBase.setOption("mode", null);
+                                    pd.cm.diffNew.setOption("mode", null);
+                                    pd.cm.beauIn.setOption("mode", null);
+                                    pd.cm.beauOut.setOption("mode", null);
+                                    pd.cm.minnIn.setOption("mode", null);
+                                    pd.cm.minnOut.setOption("mode", null);
+                                } else {
                                     pd.cm.diffBase.setOption("mode", value);
                                     pd.cm.diffNew.setOption("mode", value);
                                     pd.cm.beauIn.setOption("mode", value);
@@ -3998,7 +4086,7 @@ var exports = "",
                             name = "";
                         }
                         if (pd.test.cm === true) {
-                            if (langtest === true && pd.o.lang.selectedIndex === 0) {
+                            if (langtest === true && lang === "auto") {
                                 id = pd.auto(name);
                                 if (id === "html") {
                                     id = "htmlembedded";
@@ -4007,7 +4095,11 @@ var exports = "",
                                 } else if (id === "markup") {
                                     id = "xml";
                                 }
-                                pd.cm.diffBase.setOption("mode", id);
+                                if (id === "text") {
+                                    pd.cm.diffBase.setOption("mode", null);
+                                } else {
+                                    pd.cm.diffBase.setOption("mode", id);
+                                }
                             }
                             pd.cm.diffBase.setValue(name);
                         } else {
@@ -4029,7 +4121,7 @@ var exports = "",
                             name = "";
                         }
                         if (pd.test.cm === true) {
-                            if (langtest === true && pd.o.lang.selectedIndex === 0) {
+                            if (langtest === true && lang === auto) {
                                 id = pd.auto(name);
                                 if (id === "html") {
                                     id = "htmlembedded";
@@ -4038,7 +4130,11 @@ var exports = "",
                                 } else if (id === "markup") {
                                     id = "xml";
                                 }
-                                pd.cm.diffNew.setOption("mode", id);
+                                if (id === "text") {
+                                    pd.cm.diffNew.setOption("mode", null);
+                                } else {
+                                    pd.cm.diffNew.setOption("mode", id);
+                                }
                             }
                             pd.cm.diffNew.setValue(name);
                         } else {
