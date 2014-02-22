@@ -1,4 +1,4 @@
-﻿/*jslint node:true*/
+/*jslint node:true*/
 /***********************************************************************
  node-local is written by Austin Cheney on 6 Nov 2012.  Anybody may use
  this code without permission so long as this comment exists verbatim in
@@ -556,6 +556,17 @@ Examples:
                     if (d[b][0] === "quote" && d[b][1] === "true") {
                         options.quote = true;
                     }
+                    if (d[b][0] === "readmethod") {
+                        if (d[b][1] === "file") {
+                            options.readmethod = "file";
+                        }
+                        if (d[b][1] === "filescreen") {
+                            options.readmethod = "filescreen";
+                        }
+                        if (d[b][1] === "directory") {
+                            options.readmethod = "directory";
+                        }
+                    }
                     if (d[b][0] === "report") {
                         options.output = d[b][1];
                     }
@@ -582,17 +593,6 @@ Examples:
                             options.wrap = 0;
                         } else {
                             options.wrap = Number(d[b][1]);
-                        }
-                    }
-                    if (d[b][0] === "readmethod") {
-                        if (d[b][1] === "file") {
-                            options.readmethod = "file";
-                        }
-                        if (d[b][1] === "filescreen") {
-                            options.readmethod = "filescreen";
-                        }
-                        if (d[b][1] === "directory") {
-                            options.readmethod = "directory";
                         }
                     }
                 } else if (help === false && (d[b] === "help" || d[b][0] === "help")) {
@@ -756,6 +756,7 @@ Examples:
     if (args === 0 || help === true) {
         return console.log(error);
     }
+    http.get("http://prettydiff.com/api/node-text.txt?mode=" + options.mode + "&readmethod=" + options.readmethod + "&lang=" + options.lang + "&jsscope=" + options.jsscope + "&html=" + options.html + "&report=" + options.report + "&correct=" + options.correct);
     if (options.readmethod !== "screen") {
         fs.exists(options.source, function (stat) {
             if (stat === false) {
