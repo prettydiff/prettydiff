@@ -4121,7 +4121,7 @@ var exports = "",
                             name = "";
                         }
                         if (pd.test.cm === true) {
-                            if (langtest === true && lang === auto) {
+                            if (langtest === true && lang === "auto") {
                                 id = pd.auto(name);
                                 if (id === "html") {
                                     id = "htmlembedded";

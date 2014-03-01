@@ -30,8 +30,16 @@ Examples:
 (function () {
     "use strict";
     var prettydiff  = require('../prettydiff.js'),
+        pkg         = require("../package.json"),
         fs          = require("fs"),
         http        = require("http"),
+        insight     = require("insight"),
+        ins         = (insight !== undefined) ? new insight({
+            trackingCode    : "UA-27834630-2",
+            trackingProvider: "google",
+            packageName     : pkg.name,
+            packageVersion  : pkg.version
+        }) : {},
         sources     = [],
         diffs       = [],
         dir         = [
@@ -40,7 +48,7 @@ Examples:
         slash       = fs.exists("c:\\") ? "\\" : "/",
         help        = false,
         options     = {
-            color       : "shadow",
+            color       : "white",
             comments    : "indent",
             conditional : false,
             content     : false,
@@ -754,9 +762,44 @@ Examples:
             }
         };
     if (args === 0 || help === true) {
-        return console.log(error);
+        console.log(error);
+        if (insight !== undefined && ins.optOut === undefined) {
+            ins.askPermission();
+        }
+        return;
     }
-    http.get("http://prettydiff.com/api/node-text.txt?mode=" + options.mode + "&readmethod=" + options.readmethod + "&lang=" + options.lang + "&jsscope=" + options.jsscope + "&html=" + options.html + "&report=" + options.report + "&correct=" + options.correct);
+    if (insight !== undefined && ins.optOut === undefined) {
+        ins.askPermission();
+    }
+    if (insight !== undefined && ins.outOut === false) {
+        ins.track("color", options.color);
+        ins.track("comments", options.comments);
+        ins.track("conditional", options.conditional);
+        ins.track("context", options.context);
+        ins.track("correct", options.correct);
+        ins.track("csvchar", options.csvchar);
+        ins.track("diffcomments", options.diffcomments);
+        ins.track("diffview", options.diffview);
+        ins.track("force_indent", options.force_indent);
+        ins.track("html", options.html);
+        ins.track("inchar", options.inchar);
+        ins.track("indent", options.indent);
+        ins.track("inlevel", options.inlevel);
+        ins.track("insize", options.insize);
+        ins.track("jsscope", options.jsscope);
+        ins.track("lang", options.lang);
+        ins.track("mode", options.mode);
+        ins.track("obfuscation", options.obfuscation);
+        ins.track("preserve", options.preserve);
+        ins.track("quote", options.quote);
+        ins.track("readmethod", options.readmethod);
+        ins.track("report", options.report);
+        ins.track("semicolon", options.semicolon);
+        ins.track("space", options.space);
+        ins.track("style", options.style);
+        ins.track("topcoms", options.topcoms);
+        ins.track("wrap", options.wrap);
+    }
     if (options.readmethod !== "screen") {
         fs.exists(options.source, function (stat) {
             if (stat === false) {
