@@ -1,0 +1,27 @@
+MOVE 0 TO Z-ANZ-VAR /* Zähler-Variable auf 0 setzen
+MOVE 0 TO ANZ-VAR   /* Zähler-Variable auf 0 setzen
+
+/TYPE    $FTOS.LMSLIBD.V61
+/CALL    $FTOS.LMSLIBD.V61
+
+/TYPE    $FTOS.LMSLIBD.V61(FTPC.FTOS)
+/CALL    $FTOS.LMSLIBD.V61(FTPC.FTOS)
+
+R-P86-ALT  := HIST
+R-P114-ALT := HIST
+
+<Row>
+<title/>
+<fname>ROB                 </fname>
+<mname>E                   </mname>
+<lname>WEEKER              </lname>
+<name_suffix>SR   </name_suffix>
+</Row>
+<Row>
+<title>MR   </title>
+<fname>ROB                 </fname>
+<mname>E                   </mname>
+<lname>WEEKER              </lname>
+<name_suffix>SR   </name_suffix>
+</Row>
+

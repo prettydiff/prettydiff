@@ -1,0 +1,2887 @@
+
+
+
+<!DOCTYPE html>
+<html class="no-js" xmlns:fb="http://ogp.me/ns/fb#">
+    <head>
+
+
+
+
+
+
+
+
+
+<!--<COMMENT TITLE="MONITOR"></COMMENT>-->
+<meta name="rating" content="GENERAL"/>
+<meta name="robots" content="noodp"/>
+<title>Travelocity Travel: Vacations, Cheap Flights, Airline Tickets & Airfares</title>
+<meta name="description" content="Plan your trip with Travelocity. Buy airline tickets, read reviews & reserve a hotel. Find deals on vacations, rental cars & cruises. Great prices guaranteed!">
+<meta name="keywords" content="Travelocity, Travel, Cheap Flights, Hotels, Vacations, Cruises, Cheap Airfare, Airline Tickets, Travel Agency, Car Rental, Hotel Reservations, Vacation Packages, Cruise Deals">
+<meta name="msvalidate.01" content="ADF9631428903DBA778A77046B80A4A8" />
+<meta name="msvalidate.01" content="3F675B8EC041A0CA8496F5CA19F92C16" /> <!-- Bing Webmaster Tools -->
+<meta name="p:domain_verify" content="f23066f9248025f1b2e079c7089ce26f" />  <!-- Pinterest -->
+<meta name="verify-v1" content="aeVxP6zTHeQzT620ipj5+ikXd/VXcdlKoYUJ/C6vVdY=" />
+<META name="y_key" content="016fe886aca30800" />
+<meta property="fb:page_id" content="64067037679" />
+<link href="www.travelocity.com" rel="canonical" />
+<script src="/minify/popunder-min-4092290603.js?v=release-2014-02-r1-2874-962065-1"></script><!-- 0 ms -->
+<script src="/minify/intentmedia-min-388305251.js?v=release-2014-02-r1-2874-962065-1"></script><!-- 0 ms -->
+<!--[if IE 7]>
+<script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.4.2/jquery.min.js"></script>
+<![endif]-->
+<![if !(IE 7)]>
+<script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.6.4/jquery.min.js"></script>
+<![endif]>
+<script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.8.16/jquery-ui.min.js"></script>
+
+<script src="/minify/external.yui.bundle.min-min-3495740330.js?v=release-2014-02-r1-2874-962065-2"></script><!-- 0 ms -->
+
+
+<script type="text/javascript">
+var calConfig = exp.core.date.CalendarControl.config = exp.core.date.CalendarControl.Config;
+var DPDisplay = exp.core.date.datePickerDisplay = exp.core.date.DatePickerDisplay('CalFrame', '/static/default/default/html/calendar/v3.0.0/calendar.html');
+exp.core.date.CalendarControl.config.setFormatConfig('mmddyy', '/');
+exp.core.date.CalendarControl.config.setUnitConfig(0, ['January','February','March','April','May','June','July','August','September','October','November','December'], ['S','M','T','W','T','F','S']);
+exp.core.date.CalendarControl.config.setTextConfig('Close');
+var g_calendar = exp.core.date.calendar = exp.core.date.Calendar(exp.core.date.CalendarControl.config);
+
+var g_datepicker = exp.core.date.datePicker = exp.core.date.DatePickerControl(exp.core.date.calendar, DPDisplay, true);
+var g_dateUpdater = exp.core.date.dateUpdater = exp.core.date.DateUpdater(exp.core.date.calendar, exp.core.date.CalendarControl.config);
+function getDatePicker() {return g_datepicker;}
+DPDisplay.useAphrodite2 = exp.core.date.datePickerDisplay;
+</script>
+
+<link rel="stylesheet" href="/minify/fusion.v2.3.core-min-1471479639.css?v=release-2014-02-r1-2874-962065-1" /><!-- 16 ms -->
+<!--[if IE 6]>
+<link rel="stylesheet" href="/minify/fusion.v2.3.coreIE6-min-3866661693.css?v=release-2014-02-r1-2874-962065-1" /><!-- 0 ms -->
+<![endif]-->
+<style type="text/css">
+	#divFooter { clear: both; }
+	.clearfix:after { content: "."; display: block; height: 0; clear: both; visibility: hidden; }
+	.clearfix { display: inline-block; }
+	/* Hides from IE-mac \*/
+	* html .clearfix { height: 1%; }
+	.clearfix { display: block; }
+	/* End hide from IE-mac */
+
+	#xp_hp_contentContainer { padding-top:16px;}
+	#xp_hp_aCol { position:relative; z-index:1; margin-top: 0px;}
+	#xp_hp_bCol {position:relative; z-index:0;}
+
+	/* for psf widgets */
+	.xp-brand-colWidth{width:146px;}
+	.xp-brand-colPadding{padding-right:16px;}
+	.xp-brand-noUnderline{text-decoration:none !important;}
+
+	#xp_brand_widget .xp-h-large-secondary { font-size: 1.6em; }
+	#xp_brand_widget .xp-h-large {color:#333333 !important;font-family:arial;font-size:16px;text-transform:uppercase;}
+	#xp_brand_widget #xp_brand_image { margin-bottom: 3px; }
+	#xp_brand_widget .xp-s-dv {border-bottom:medium none;padding-bottom:0px !important;}
+	#xp_brand_widget #xp_brand_link_cnt {width:76px;}
+	#xp_brand_widget #xp_brand_link_cnt .top {padding-bottom:4px;vertical-align:bottom;}
+	#xp_brand_widget #xp_brand_link_cnt a {font-size:12px;color:#004e93;}
+	#xp_brand_widget #xp_brand_price_cnt {width:70px;text-align:right;}
+	#xp_brand_widget #xp_brand_price_cnt a {color:#004e93;}
+	#xp_brand_widget #xp_brand_price_cnt .top {padding-bottom:4px;vertical-align:bottom;}
+	#xp_brand_widget #xp_brand_price_lnk {font-size:22px;}
+	#xp_destinationDeals_nav { margin-bottom: 0 !important; }
+
+	.xp-content-table {width:100%}
+	.xp-dropdown {font-size:12px; background:#CECECE; padding:8px 0px 0px 16px;}
+	.xp-t-body-21 {font-size:21px;vertical-align:middle;}
+	.xp-t-body-logo {background:no-repeat center center;height:25px;width:125px;}
+	#xp_destinationDeals_widget .xp-bx-rnd-cnt{margin:0;padding:0 0 0;}
+	.xp-content-table th{background:#CECECE !important;text-align:left;padding:8px 0px 8px 16px;border-bottom:1px solid #ccc;border-top:none;font-weight:normal;}
+	.xp-content-table td {padding:8px 8px 8px 16px;border-bottom:1px dotted #ccc;}
+	.xp-content-table td a {font-weight:bold; color: #004e93;}
+	.xp-content-table .xp-content-table-last-td {background:#fff;text-align:center;padding-left:0px;}
+	.xp-content-table .xp-nested-table { border:0px; padding:8px 0px 8px 0px;}
+	.xp-l-text:hover {color:#004e93;}
+	.xp-s-bestvalue {color:#f37737 !important;font-weight:bold;position:absolute;top:-18px;padding-left:0 !important;}
+	.tab-wrap {margin-bottom: 0px;}
+	.tab-wrap .panes { border: none; padding-top:0px;}
+	.tab-wrap .panes .tab-content { padding: 0; }
+	.tab-wrap .panes .tab-content .tab-box-inner { padding-top: 0; }
+	.tab-wrap .tab-content .tab-box-inner { margin-top: 0; }
+	ul.tabs a { padding: 6px 16px; color: #004e93; }
+
+	#xp_destinationDeals_navlist li { font-size:12px; }
+	#xp_destinationDeals_widget .xp-bx-rnd-cnt{margin:0;padding:0 0 0;}
+	#xp_destinationDeals_widget .xp-s-paragraph-half div{padding:8px 16px 8px 8px;}
+	.xp_clear_navlist { clear:both; }
+	#xp_destinationDeals_widget .xp-pl-widget {margin-bottom:16px;}
+	#xp_destinationDeals_widget .xp-h-large {
+		font-weight:normal;text-transform:uppercase;font-size:16px;font-family:arial;color:#333 !important;margin:0; padding:14px 0 0 16px;}
+	#xp_destinationDeals_widget .starRating span {display:none;}
+
+	/* SEO widget */
+	.SEOInfoSection {width:628px; line-height:14px; margin-bottom:14px;}
+	.SEOInfoSection .SEOInfoA {float:left; width:166px;}
+	.SEOInfoSection .SEOInfoB {float:left; width:460px;}
+	.SEOInfoSection .SEOInfoSub {margin-top:16px; font-weight:bold;}
+	.SEOInfoSection .top16 {margin-top:16px; font-size:14px;}
+
+	.SEOInfoSection h1.SEOMain {margin-bottom:14px;}
+	.SEOInfoSection h3.SEOHead {margin-bottom:7px;}
+	.SEOInfoSection .activityInfoCol ul {margin-top:0;margin-left:14px; }
+	.SEOInfoSection .activityInfoCol {float:left; width:205px;}
+	/* End SEO widget */
+	
+
+
+	/* begin Travel Tools Widget */
+	  .toolTitles {color: #004E93; font-size: 12px; line-height: 19px; text-decoration: none;}
+	  .toolLinks {font-size: 1em; font-weight: normal;}
+	  .navLink { color: #004E93; font-size: 11px; font-weight: bold; text-decoration: none;}
+	/*End Travel Tools Widget */
+
+    .text
+    {
+        width: 380px;
+    }
+</style>
+<link rel="stylesheet" type="text/css" href="/static/publish/region_us/css/home.css?v=2" />
+
+<script src="/minify/tealeaf-bundle-min-2357928261.js?v=release-2014-02-r1-2874-962065-1"></script><!-- 0 ms -->
+
+<link rel="stylesheet" href="/minify/wizard-popup-min-2468453993.css?v=release-2014-02-r1-2874-962065-1" /><!-- 0 ms -->
+        <!--<COMMENT TITLE="MONITOR"></COMMENT>-->
+		
+		<link rel="stylesheet" type="text/css" href="/static/publish/region_us/css/rewards_unrealdeals_storefront.css" />
+        <link rel="stylesheet" type="text/css" href="/static/publish/travelocity/css/tvly_below_wizard.css" />
+		
+    </head>
+
+    <body class="homepage">
+
+<link rel="stylesheet" href="/minify/new-header-min-3026463305.css?v=release-2014-02-r1-2874-962065-1" /><!-- 0 ms -->
+
+        <style>#phoneContact {margin-top:0px;}</style>
+        <script>window.jQuery || document.write('<script src="//ajax.googleapis.com/ajax/libs/jquery/1.6.4/jquery.min.js"><\/script>')</script>
+<script src="/minify/new-header-dropdown-min-2551923448.js?v=release-2014-02-r1-2874-962065-1"></script><!-- 0 ms -->
+        <script>
+          if (typeof $LAB !== 'undefined') {
+            oldLAB = $LAB;
+          }
+          $LAB = {};
+          $LAB.queueScript = function(src) {};
+          $LAB.queueWait = function(src) {};
+        </script>
+<!--ActivityId:ff43ffe3-f243-472d-a963-477dec20da08;-->
+
+
+<script>
+  var header_feedBackUrl = "////www.travelocity.com/p/info-other/feedback.htm";
+  $LAB
+.queueScript("/minify/header-bundle-min-2176243423.js?v=release-2014-02-r1-2874-962065-1")
+;
+  if (typeof $LAB !== 'undefined' && typeof $LAB.queueWait == 'function') {
+    $LAB.queueWait(function(){
+      addScratchpadBadge();
+    });
+  }
+</script>
+
+
+
+
+
+
+<div class="site-header site-header-primary tv-header ">
+
+  <div class="cols-row" role="banner">
+
+<a id="header-tv-logo" data-tid="header-tv-logo" href="/" target="_top" class="logo header-tv-logo " data-onclick="xp.nav.trackAnalytics(this,'a','Header.ExpediaLogo')">Travelocity</a>
+
+    <ul class="mobile-language-links cf">
+    </ul>
+
+    <!-- Responsive Menu Toggle -->
+    <label for="menuToggle" id="mobile-toggle-header-link" class="btn off-canvas-btn menu-toggle-btn">
+      <span class="icon icon-offcanvas" id="header-mobile-toggle"></span>
+    </label>
+    <input type="checkbox" id="menuToggle" class="hidden toggle-checkbox" value="show menu"/>
+    <!-- / End Responsive Menu Toggle -->
+
+    <div class="site-navigation cf" role="navigation" id="globalSiteNavigation">
+      <ul class="utility-nav below726 nav-group cf">
+<li id="shop-menu"> <a id="header-shop-menu" data-tid="header-shop-menu" href="#shop-menu" class="nav-tab" data-control="menu" data-onclick="xp.nav.trackAnalytics(this,'a','Header.ShopHeading'); return false;"> Shop Travel<span class="icon icon-toggle180"></span> </a> <div class="menu"> <ul> <li> <a id="sub-menu-header-shop-home" target="_top" href="http://www.travelocity.com/" data-onclick="xp.nav.trackAnalytics(this,'a','Header.Home')"> Home </a> </li><li> <a id="sub-menu-header-shop-package" target="_top" href="http://www.travelocity.com/Vacations" data-onclick="xp.nav.trackAnalytics(this,'a','Header.VacationPackages')"> Vacation Packages </a> </li><li> <a id="sub-menu-header-shop-hotel" target="_top" href="http://www.travelocity.com/Hotels" data-onclick="xp.nav.trackAnalytics(this,'a','Header.Hotels')"> Hotels </a> </li><li> <a id="sub-menu-header-shop-car" target="_top" href="http://www.travelocity.com/Car-Rental" data-onclick="xp.nav.trackAnalytics(this,'a','Header.Cars')"> Cars </a> </li><li> <a id="sub-menu-header-shop-flight" target="_top" href="http://www.travelocity.com/Flights" data-onclick="xp.nav.trackAnalytics(this,'a','Header.Flights')"> Flights </a> </li><li> <a id="sub-menu-header-shop-cruise" target="_top" href="http://www.travelocity.com/Cruises" data-onclick="xp.nav.trackAnalytics(this,'a','Header.Cruises')"> Cruises </a> </li><li> <a id="sub-menu-header-shop-activity" target="_top" href="http://www.travelocity.com/Activities" data-onclick="xp.nav.trackAnalytics(this,'a','Header.ThingsToDo')"> Things to Do </a> </li><li> <a id="sub-menu-header-shop-deals" target="_top" href="http://www.travelocity.com/Travel-Deals" data-onclick="xp.nav.trackAnalytics(this,'a','Header.Deals')"> Deals </a> </li> </ul> </div> </li>      </ul>
+      <ul class="shop-nav nav-group cf">
+<li id="utility-menu"> <a id="header-account-menu" data-tid="header-account-menu" href="#utility-menu" class="nav-tab" data-control="menu" rel="nofollow" data-onclick="xp.nav.trackAnalytics(this,'a','Header.AccountHeading'); return false;">Account<span class="icon icon-toggle180"></span> </a> <div class="menu"> <ul> <li> <a id="header-account-signin" data-tid="header-account-signin" target="_top" href="http://www.travelocity.com/user/login?" rel="nofollow" data-onclick="appendRedirectionUrl(this); xp.nav.trackAnalytics(this,'a','Header.Signin'); return false;"> Sign In </a> </li> <li> <a id="header-account-register" data-tid="header-account-register" target="_top" href="http://travel.travelocity.com/mystuff/ShowCreateAccount.do" rel="nofollow" data-onclick="xp.nav.trackAnalytics(this,'a','Header.CreateAccount')"> Create an Account </a> </li> </ul> </div> </li><li id="utility-link">
+  <a id="header-itineraries" target="_top" data-tid="header-itineraries" href="http://www.travelocity.com/trips" class="nav-tab" rel="nofollow" data-onclick="xp.nav.trackAnalytics(this,'a','Header.MyItineraries');">My Trips</a>
+</li>
+<li id="support-menu">
+<a id="header-support-menu" data-tid="header-support-menu" href="#support-menu" target="_top" class="nav-tab" data-control="menu" rel="nofollow" data-onclick="xp.nav.trackAnalytics(this,'a','Header.SupportHeading'); return false;">
+  Support<span class="icon icon-toggle180"></span>
+</a>
+<div class="menu">
+  <ul>
+    <li>
+      <a id="header-support-cs" data-tid="header-support-cs" href="http://www.travelocity.com/p/support.htm" target="_top" rel="nofollow" data-onclick="xp.nav.trackAnalytics(this,'a','Header.CustSupport')">
+        Customer Support
+      </a>
+    </li>
+    <li>
+      <a id="header-support-feedback" data-tid="header-support-feedback" href="" target="_top" rel="nofollow" data-onclick="xp.nav.trackAnalytics(this,'a','Header.Feedback');headerFeedback();return false;">
+        Feedback
+      </a>
+    </li>
+  </ul>
+</div>
+      </ul>
+    </div> <!-- /.site-navigation -->
+  </div> <!-- /.cols-row role="banner" -->
+
+</div> <!-- /.site-header -->
+
+<div class="site-header tv-header site-header-secondary">
+  <div class="cols-row">
+    <!-- home -->
+    <div class="site-navigation all-in cf">
+      <ul class="utility-nav nav-group cf">
+        <!-- jdbk-test: model.domain: www.travelocity.com - request.serverName: www.travelocity.com -->
+
+
+
+
+
+<li id="all-in-home-header-link" class="selected-tab "> <a id="primary-header-home" target="_top" href="http://www.travelocity.com/" data-onclick="xp.nav.trackAnalytics(this,'a','Header.Home')"> Home </a> </li><li id="all-in-package-header-link"> <a id="primary-header-package" target="_top" href="http://www.travelocity.com/Vacations" data-onclick="xp.nav.trackAnalytics(this,'a','Header.VacationPackages')"> Vacation Packages </a> </li><li id="all-in-hotel-header-link"> <a id="primary-header-hotel" target="_top" href="http://www.travelocity.com/Hotels" data-onclick="xp.nav.trackAnalytics(this,'a','Header.Hotels')"> Hotels </a> </li><li id="all-in-car-header-link"> <a id="primary-header-car" target="_top" href="http://www.travelocity.com/Car-Rental" data-onclick="xp.nav.trackAnalytics(this,'a','Header.Cars')"> Cars </a> </li><li id="all-in-flight-header-link"> <a id="primary-header-flight" target="_top" href="http://www.travelocity.com/Flights" data-onclick="xp.nav.trackAnalytics(this,'a','Header.Flights')"> Flights </a> </li><li id="all-in-cruise-header-link"> <a id="primary-header-cruise" target="_top" href="http://www.travelocity.com/Cruises" data-onclick="xp.nav.trackAnalytics(this,'a','Header.Cruises')"> Cruises </a> </li><li id="all-in-activity-header-link"> <a id="primary-header-activity" target="_top" href="http://www.travelocity.com/Activities" data-onclick="xp.nav.trackAnalytics(this,'a','Header.ThingsToDo')"> Things to Do </a> </li><li id="all-in-deals-header-link"> <a id="primary-header-deals" target="_top" href="http://www.travelocity.com/Travel-Deals" data-onclick="xp.nav.trackAnalytics(this,'a','Header.Deals')"> Deals </a> </li>
+      </ul>
+    </div> <!-- /.site-navigation all-in -->
+
+     <!-- end if block for !model.isBlank -->
+
+  </div> <!-- /.cols-row role="banner" -->
+</div> <!-- /.site-header -->
+
+<span id="scratchpad-badge-guid" data-id="94f178d3-d3a3-4bac-90dc-b123db6b1d58" style="display: none;"></span>
+<span id="scratchpad-badge-tuid" data-id="-1" style="display: none;"></span>
+<span id="scratchpad-badge-url" data-id="http://userhistory.expedia.com/service" style="display: none;"></span>
+        <script>
+          if (typeof oldLAB !== 'undefined') {
+            $LAB = oldLAB;
+          } else {
+            delete $LAB;
+          }
+        </script>
+        <div class="wpOuter"><div class="wpInner">
+<div id="ad_WALLPAPER"
+     name="ad"
+     class="ad"
+     style="overflow:hidden;height:645px;width:280px;margin-left:auto;margin-right:auto;"
+     ></div>
+<script>
+(function(w) { var useAlternateUrl = (true && window.location.hostname && window.location.hostname === "www.travelocity.com"); w.expads = w.expads || {}; w.expads.slots = w.expads.slots || {}; w.expads.slots["ad_WALLPAPER"] = { location : "HOME", sublocation : "SEARCH", placement : "WALLPAPER", url : useAlternateUrl ? "//shop.travelocity.com/js.ng/" : "/js.ng/", size : "280X645", comptest : "" }; })(window);</script>
+</div></div>
+
+
+        <div id="xp_hp_contentContainer" class="xp-grd-ctn xp-grd-widget xp-b-clearfix">
+            <div id="xp_hp_aCol" class="xp-grd-col-10 module">
+                    <input type="hidden" id="PostToSearch" value="/Search" />
+
+
+
+
+
+
+
+
+<script src="/minify/exp.search.common.v2-min-109799387.js?v=release-2014-02-r1-2874-962065-1"></script><!-- 0 ms -->
+
+<!--[if IE 7]>
+	<style>
+		.xp-w-bx-cnt-lob label {padding-top:0px;}
+		.xp-w-bx-cnt-flightType label {padding-top:0px; }
+		.xp-w-cell-dateField select {margin-top: 1px;}
+		.homepage .xp-w-bx-cnt-inn-bot {padding: 10px 12px 22px; position: relative;}
+		.homepage .xp_uw_lowerMerchContainer{margin-top: -28px; position: relative;}
+		.pbestPriceGuaranteeImage{margin-bottom: 0px;}
+		#flightHotelButton{margin-top: 1px;}
+		#flightHotelCarButton{margin-top: 1px;}
+	</style>
+<![endif]-->
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<script src="/minify/external.zparse-min-2667184730.js?v=release-2014-02-r1-2874-962065-1"></script><!-- 0 ms -->
+<script type="text/javascript">
+    expNamespace('cx.exp.widgetlibrary.search.common.container');
+</script>
+<div id="container" class="xp-b-clearfix xp-pl-widget">
+	<input type="hidden" name="uw_wizardstate" id="uw_wizardstate" value="">
+    <div class="xp-w-rnd-out-top"><span><!-- --></span></div>
+	<div id="xp_uw_cnt-out" class="xp-w-rnd-out-cnt">
+<h2 class="xp-h-headline xp-t-large xp-t-color-2nd xp-s-row xp-item-desc">PLAN YOUR TRIP ON TRAVELOCITY</h2>		<div class="xp-w-rnd-inn-top"><span><!-- --></span></div>
+		<div id="xp_uw_cnt-inn" class="xp-w-rnd-inn-cnt">
+			<div id="xp_uw_topContainer" class="xp-w-bx-cnt-inn-top xp-b-clearfix">
+				<p id="xp_uw_ajaxErrorContainer" class="errorMessage xp-b-noXpend" >Sorry,we had a problem. Please try again.</p>
+					<div id="xp_uw_lobContainer" class="xp-w-bx-cnt-lob" >
+                            <div class="xp-w-lob-pos">
+								<div id="existing_upsell" style="visibility:visible">
+<div class='upsell-en_US'>
+	<span>Book flight + Hotel at the same time, save up to $525. Click to learn more.</span>
+</div>
+								</div>
+                            </div>
+							<ul class="xp-w-lob-sa">
+										
+    <li>
+		<div class="xp-b-clearfix">
+			<input id="flight-only" class="wizardRadio xp-b-left" wizardType="flightOnly" type="radio" checked name="srch"/>
+			<label id="flight-only-label" for="flight-only" class="xp-b-left xp-w-label-lob">
+													Flight
+			</label>
+		</div>
+    </li>
+										                                  
+    <li>
+		<div class="xp-b-clearfix">
+			<input id="hot-only" class="wizardRadio xp-b-left" wizardType="hotelOnly" type="radio"  name="srch"/>
+			<label id="hot-only-label" for="hot-only" class="xp-b-left xp-w-label-lob">
+                                                Hotel
+			</label>
+		</div>
+    </li>
+    <li>
+		<div class="xp-b-clearfix">
+			<input id="car-only" class="wizardRadio xp-b-left" wizardType="carOnly" type="radio"  name="srch"/>
+			<label id="car-only-label" for="car-only" class="xp-b-left xp-w-label-lob">
+												Car
+			</label>
+		</div>
+    </li>
+    <li>
+		<div class="xp-b-clearfix">
+			<input id="activities-only" class="wizardRadio xp-b-left" wizardType="activitiesOnly" type="radio"  name="srch"/>
+			<label id="activities-only-label" for="activities-only" class="xp-b-left xp-w-label-lob">
+												Activities
+			</label>
+		</div>
+    </li>
+    <li>
+		<div class="xp-b-clearfix">
+			<input id="cruise-only" class="wizardRadio xp-b-left" wizardType="cruiseOnly" type="radio"  name="srch"/>
+			<label id="cruise-only-label" for="cruise-only" class="xp-b-left xp-w-label-lob">
+											Cruise
+			</label>
+		</div>
+    </li>
+							</ul>
+								<div class="xp-w-lob-pac" style="">
+							<div  class="xp-w-lobTL" ><!-- --></div>
+							<div  class="xp-w-lobBL" ><!-- --></div>
+							<div  class="xp-w-lobTR" ><!-- --></div>
+							<div  class="xp-w-lobBR" ><!-- --></div>							
+                            <ul>
+										
+    <li>
+		<div class="xp-b-clearfix">
+			<input id="flight-hot" class="wizardRadio xp-b-left" wizardType="flightAndHotel" type="radio"  name="srch"/>
+			<label id="flight-hot-label" for="flight-hot" class="xp-b-left xp-w-label-lob">
+													Flight + Hotel
+			</label>
+		</div>
+    </li>
+										                                 
+    <li>
+		<div class="xp-b-clearfix">
+			<input id="flight-car" class="wizardRadio xp-b-left" wizardType="flightAndCar" type="radio"  name="srch"/>
+			<label id="flight-car-label" for="flight-car" class="xp-b-left xp-w-label-lob">
+												Flight + Car
+			</label>
+		</div>
+    </li>
+										
+    <li>
+		<div class="xp-b-clearfix">
+			<input id="flight-hot-car" class="wizardRadio xp-b-left" wizardType="flightHotelAndCar" type="radio"  name="srch"/>
+			<label id="flight-hot-car-label" for="flight-hot-car" class="xp-b-left xp-w-label-lob">
+												Flight + Hotel + Car
+			</label>
+		</div>
+    </li>
+										
+    <li>
+		<div class="xp-b-clearfix">
+			<input id="hot-car" class="wizardRadio xp-b-left" wizardType="hotelAndCar" type="radio"  name="srch"/>
+			<label id="hot-car-label" for="hot-car" class="xp-b-left xp-w-label-lob">
+													Hotel + Car
+			</label>
+		</div>
+    </li>
+							</ul>
+                        </div>
+				</div>
+			</div>
+
+
+			<div id="xp_uw_bottomContainer" class="xp-w-bx-cnt-inn-bot xp-b-clearfix" style="">
+				<script type="text/javascript">
+					cx.exp.widgetlibrary.search.common.container.requestURI = "/Home.htm";
+				</script>
+
+				<div id="xp_uw_form" class="xp-b-clearfix">
+						
+
+
+
+
+
+
+
+
+
+
+
+
+		<script type="text/javascript">
+		if (typeof(cx.exp.search.common.setABValue)!='undefined')
+		{	 
+	  	            cx.exp.search.common.setABValue('842', '0'); 
+	  	            cx.exp.search.common.setABValue('808', '0'); 
+		}
+		</script>
+
+
+
+<div id="uw_flight_wiz">
+
+<FORM NAME="fltWizFrm" method="post" action="/Home.htm"  id="fltWizFrm"
+>	
+		<input type="hidden" name="action" id="action" value="">
+		<input type="hidden" name="uw_flight_add_multi_dest_hidden" id="uw_flight_add_multi_dest_hidden" value="false">
+		<input type="hidden" name="uw_flight_default_date" id="uw_flight_default_date" value="02/19/2014">
+<input type="hidden" name="flightSearchWizard_inpBundType" value=""  />
+
+	<!-- destination and date panel -->
+<div>
+    <h2 class="xp-w-wiztitle">Flight</h2>
+
+<!-- error  panel -->
+<fieldset id="errorPnl">
+	<div id="errDiv" class="xp-b-noXpend xp-w-row"><!-- div for error messages  --></div>
+	<span id="requiredFieldMessage" class="xp-b-noXpend" > Please complete the highlighted fields below</span>
+	<span id="dateSequenceMessage" class="xp-b-noXpend" > The check-out date must occur after the check-in date. Please change the date</span>
+	<span id="dateFormatMessage" class="xp-b-noXpend" > Date format should be mm/dd/yy</span>
+	<span id="ageRequiredMessage" class="xp-b-noXpend" > Please provide the ages of children below</span> 
+  <span id="priorToCurrentDateMessage" class="xp-b-noXpend" > The check-in or check-out date is prior to the current date.</span>
+  <div id="maxNumberofTravellersMessage" class="xp-b-noXpend" > We are only able to book between 1 and 6 travellers. Please adjust the number of travellers for your search.</div>
+	<div id="notequalmessage" class="xp-b-noXpend" > Leaving from and going to field must be different</div>
+	<div id="dateSequenceMessage2" class="xp-b-noXpend" > The highlighted departure date is prior to the previous departure date.</div>
+    <div id="uw_errorMessage_childrenMustNotBeAlone" class="xp-b-noXpend" > Children must not be allowed to travel without either a Senior or Adult.</div>
+    <span id="dateBookedTooFarOut" class="xp-b-noXpend" > We can only accept dates that occur between 02/18/2014 and 01/14/2015. Please enter a new date.</span>
+	
+</fieldset>
+<!-- end of error panel -->
+
+	<fieldset id="uw_flight_types_pnl" class="xp-s-row">
+		<ul id="uw_flight_type" class="xp-b-noSpace xp-w-bx-cnt-flightType">
+				<li class="xp-w-bx-cnt-fli">
+<input type="radio" name="flightSearchWizard_inpFlightType" value="RoundTrip" id="uw_flight_type0" class="xp-b-floatL" checked="checked">
+</input>					<label id="uw_flight_type_return_label" for="uw_flight_type0" class="xp-b-floatL">Roundtrip</label>
+				</li>
+				<li class="xp-w-bx-cnt-fli">
+<input type="radio" name="flightSearchWizard_inpFlightType" value="OneWay" id="uw_flight_type1" class="xp-b-floatL">
+</input>					<label id="uw_flight_ow_return_label" for="uw_flight_type1" class="xp-b-floatL">One way</label>
+				</li>
+				<li class="xp-w-bx-cnt-fli xp-w-cell-last">
+<input type="radio" name="flightSearchWizard_inpFlightType" value="Multi" id="uw_flight_type2" class="xp-b-floatL">
+</input>						<label id="uw_flight_ow_muliple_label" for="uw_flight_type2" class="xp-b-floatL">Multiple Destinations</label>
+				</li>
+		</ul>
+	</fieldset>
+
+
+	<fieldset id="uw_flight_pnl">
+		<div class="xp-w-rnd-inn-cnt">
+			<div class="xp-w-row xp-b-clearfix">
+				<div id="uw_flight_origin" class="xp-w-cell-large">
+					<label id="uw_flight_origin_label" for="uw_flight_origin_input"><span id='uw_flight_text1' class='xp-w-blue'>Flight 1: </span>Leaving from:</label> 
+							<input type="text" value="" id="uw_flight_origin_input" required="true" requiredmessage="requiredFieldMessage" maxLength="100"/>
+							<input type="hidden" name="flightSearchWizard_inpOrigin" id="uw_flight_origin_input_tla"/>
+							<input type='hidden' id='hidden_tla_uw_flight_origin_input' name="hiddenDepartureLocationCodes" value=''/>
+				</div>
+				<div id="uw_flight_dep_date" class="xp-w-cell-small">
+					<label id="uw_flight_dep_date_label" for="uw_flight_dep_date_input" >Departing:</label>
+<input type="text" name="flightSearchWizard_inpDepartureDate" value="mm/dd/yy" id="uw_flight_dep_date_input" maxlength="12" requiredmessage="requiredFieldMessage" priortocurrentdatemessage="priorToCurrentDateMessage" priorToCurrentDate="true" datemessage="dateFormatMessage" format="allow" autocomplete="off" date="true" required="true" />
+				</div>
+				<div id="uw_flight_dep_time" class="xp-w-cell-mid xp-w-cell-last">
+					<label id="uw_flight_dep_time_label" for="uw_flight_dep_time_input" >Time:</label>
+<select name="flightSearchWizard_inpDepartureTime" id="uw_flight_dep_time_input">
+<option value="12AM" >								12 AM							
+</option>
+<option value="1AM" >								1 AM							
+</option>
+<option value="2AM" >								2 AM							
+</option>
+<option value="3AM" >								3 AM							
+</option>
+<option value="4AM" >								4 AM							
+</option>
+<option value="5AM" >								5 AM							
+</option>
+<option value="6AM" >								6 AM							
+</option>
+<option value="7AM" >								7 AM							
+</option>
+<option value="8AM" >								8 AM							
+</option>
+<option value="9AM" >								9 AM							
+</option>
+<option value="10AM" >								10 AM							
+</option>
+<option value="11AM" >								11 AM							
+</option>
+<option value="12PM" >								12 PM							
+</option>
+<option value="1PM" >								1 PM							
+</option>
+<option value="2PM" >								2 PM							
+</option>
+<option value="3PM" >								3 PM							
+</option>
+<option value="4PM" >								4 PM							
+</option>
+<option value="5PM" >								5 PM							
+</option>
+<option value="6PM" >								6 PM							
+</option>
+<option value="7PM" >								7 PM							
+</option>
+<option value="8PM" >								8 PM							
+</option>
+<option value="9PM" >								9 PM							
+</option>
+<option value="10PM" >								10 PM							
+</option>
+<option value="11PM" >								11 PM							
+</option>
+<option value="362"  selected="selected">								Any							
+</option>
+<option value="361" >								Morn.							
+</option>
+<option value="721" >								Noon							
+</option>
+<option value="1081" >								Eve.							
+</option>
+</select>
+				</div>
+			</div>
+
+			<div class="xp-w-row xp-b-clearfix">
+				<div id="uw_flight_dest" class="xp-w-cell xp-w-cell-large">
+					<label id="uw_flight_destination_label" for="uw_flight_destination_input">Going to:</label>
+							<input type="text" value="" id="uw_flight_destination_input" class="xp-b-clear" required="true" requiredmessage="requiredFieldMessage" notEqual="uw_flight_origin_input" notequalmessage="notequalmessage" maxLength="100"/>
+							<input type="hidden" name="flightSearchWizard_inpDestination" id="uw_flight_destination_input_tla"/>
+							<input type="hidden" id="hidden_tla_uw_flight_destination_input" name="hiddenArrivalLocationCodes" value=""/>
+				</div>
+				<div id="uw_flight_ret_date_container">
+					<div id="uw_flight_ret_date" class="xp-w-cell-small">
+						<label id="uw_flight_return_date_label" for="uw_flight_return_date_input">Returning:</label>
+<input type="text" name="flightSearchWizard_inpReturnDate" value="mm/dd/yy" id="uw_flight_return_date_input" maxlength="12" requiredmessage="requiredFieldMessage" priortocurrentdatemessage="priorToCurrentDateMessage" priorToCurrentDate="true" afterEqual="uw_flight_dep_date_input" format="allow" datemessage="dateFormatMessage" autocomplete="off" date="true" required="true" afterequalmessage="dateSequenceMessage" />
+					</div>
+					<div id="uw_flight_ret_time" class="xp-w-cell-mid xp-w-cell-last">
+							<label id="uw_flight_return_time_label" for="uw_flight_return_time">Time:</label>
+<select name="flightSearchWizard_inpReturnTime" id="uw_flight_return_time">
+<option value="12AM" >									12 AM
+</option>
+<option value="1AM" >									1 AM
+</option>
+<option value="2AM" >									2 AM
+</option>
+<option value="3AM" >									3 AM
+</option>
+<option value="4AM" >									4 AM
+</option>
+<option value="5AM" >									5 AM
+</option>
+<option value="6AM" >									6 AM
+</option>
+<option value="7AM" >									7 AM
+</option>
+<option value="8AM" >									8 AM
+</option>
+<option value="9AM" >									9 AM
+</option>
+<option value="10AM" >									10 AM
+</option>
+<option value="11AM" >									11 AM
+</option>
+<option value="12PM" >									12 PM
+</option>
+<option value="1PM" >									1 PM
+</option>
+<option value="2PM" >									2 PM
+</option>
+<option value="3PM" >									3 PM
+</option>
+<option value="4PM" >									4 PM
+</option>
+<option value="5PM" >									5 PM
+</option>
+<option value="6PM" >									6 PM
+</option>
+<option value="7PM" >									7 PM
+</option>
+<option value="8PM" >									8 PM
+</option>
+<option value="9PM" >									9 PM
+</option>
+<option value="10PM" >									10 PM
+</option>
+<option value="11PM" >									11 PM
+</option>
+<option value="362"  selected="selected">									Any
+</option>
+<option value="361" >									Morn.
+</option>
+<option value="721" >									Noon
+</option>
+<option value="1081" >									Eve.
+</option>
+</select>
+					</div>
+				</div>
+			</div>
+			<div id="uw_flight_multi_dest_container"></div>
+
+		</div>
+	</fieldset>
+</div>
+<!-- end of destination and date panel -->
+	
+<!-- traveller selection panel -->
+<fieldset id="uw_flight_trvlr_pnl">
+	<div id="uw_flight_trvlr_container" class="xp-w-section xp-b-clearfix">
+		<div class="xp-w-rnd-inn-cnt">
+			<div class="xp-w-row xp-b-clearfix">
+        	<div id="uw_flight_trvlr_adult" class="xp-w-cell-small">
+					<label id="uw_flight_adults_label" for="uw_flight_adults_input">
+						Adult<br />(18-64)
+					</label>
+<select name="flightSearchWizard_inpNumAdults" id="uw_flight_adults_input">
+							<option value="0" >0</option>
+
+							<option value="1"  selected="selected">1</option>
+
+							<option value="2" >2</option>
+
+							<option value="3" >3</option>
+
+							<option value="4" >4</option>
+
+							<option value="5" >5</option>
+
+							<option value="6" >6</option>
+
+</select>
+				</div>
+				<div id="uw_flight_trvlr_seniors" class="xp-w-cell-small"  >
+					<label id="uw_flight_seniors_label" for="uw_flight_seniors_input">
+						Seniors<br />(65+)
+					</label>
+<select name="flightSearchWizard_inpNumSeniors" id="uw_flight_seniors_input">
+								<option value="0"  selected="selected">0</option>
+
+								<option value="1" >1</option>
+
+								<option value="2" >2</option>
+
+								<option value="3" >3</option>
+
+								<option value="4" >4</option>
+
+								<option value="5" >5</option>
+
+								<option value="6" >6</option>
+
+</select>
+                </div>
+				<div id="uw_flight_trvlr_children" class="xp-w-cell-small"  >
+					<label id="uw_flight_children_label" for="uw_flight_children_input">
+						Children<br />(0-17)
+					</label>
+<select name="flightSearchWizard_inpNumChildren" id="uw_flight_children_input">
+							<option value="0"  selected="selected">0</option>
+					
+							<option value="1" >1</option>
+					
+							<option value="2" >2</option>
+					
+							<option value="3" >3</option>
+					
+							<option value="4" >4</option>
+					
+							<option value="5" >5</option>
+					
+							<option value="6" >6</option>
+					
+</select>
+                </div>
+                
+                
+			</div>
+		</div>
+	</div>
+</fieldset>
+
+<!-- children age panel -->
+<fieldset id="uw_flight_child_age_pnl" class="xp-b-noXpend">
+	<div id="uw_flight_child_age_pnl_ttl" class="xp-w-row xp-t-mLine">
+			<p id="uw_child_div_label" class="xp-t-bold xp-s-bottom-s">Specify the ages of children at time of travel:</p>
+			<p id="uw_child_sb_div_label" class="xp-t-body xp-s-bottom-s">Discounts may be offered to children of certain ages.</p>
+			<a id="uw_flight_age_rules" href="/pub/agent.dll?qscr=hgen&rhtx=HTX_FLTSRCH_RT&hfnm=h_FW_default.htx#travs">Airline age rules and unaccompanied minors</a>
+	</div>
+	<div id="uw_flight_child_age_container" class="xp-w-row xp-b-clearfix"></div>
+</fieldset>
+<!-- end of children age panel -->
+
+<!-- children options panel -->
+<fieldset id="uw_flight_infants_container" class="xp-b-noXpend">
+	<div id="uw_flight_infants_ttl">
+		<p id="uw_flight_infants_desc_sub_label" class="xp-w-row xp-t-body">Children under 2 years old can travel in laps or seats</p>
+	</div>
+	<div class="xp-s-title">
+			<div id="uw-hfc-chldOptRow1" class="xp-w-infantOption xp-b-clearfix" >
+			<div id="uw_flight_infants_wo_seat_cnt">
+				<input type="radio" name="flightSearchWizard_inpInfantsInLap" value="2" id="uw_flight_infants_wo_seat_inp" class="xp-b-left xp-w-radiobutton" checked="checked">
+</input><label id="uw_flight_infants_wo_seat" for="uw_flight_infants_wo_seat_inp" class="xp-b-left">Infant(s) without a reserved seat (in an adult's lap)</label>
+			</div>
+		</div>
+		
+			<div id="Div1" class="xp-w-infantOption xp-b-clearfix" >
+			<div id="uw_flight_infants_seat_cnt">
+				<input type="radio" name="flightSearchWizard_inpInfantsInLap" value="1" id="uw_flight_infants_seat_inp" class="xp-b-left xp-w-radiobutton">
+</input><label id="uw_flight_infants_seat" for="uw_flight_infants_seat_inp" class="xp-b-left">Infant(s) in a reserved seat</label>
+			</div>
+		</div>
+	</div>
+
+</fieldset>
+<!-- end of children options panel -->
+	<!-- additional options panel -->
+	<div class="xp-b-clearfix" id="uw_flight_add" >
+	<fieldset id="uw_flight_add_show_pnl">
+		<div class="xp-b-floatL">
+			<p><span id="uw_flight_show_additional_link_cnt" class="xp-l-il xp-l-expand xp-t-body xp-t-bold"><a class="xp-l-right" href="#" id="uw_flight_show_additional_link"><span class="xp-l-text">Show Additional Options</span><span class="xp-l-icn"></span></a></span></p>
+		</div>
+	</fieldset>
+
+<fieldset id="uw_flight_add_hide_pnl" class="xp-b-noXpend" >
+	<div class="xp-b-floatL xp-s-title">
+		<p><span id="uw_flight_hide_additional_link_cnt" class="xp-l-il xp-l-collapse xp-t-body xp-t-bold"><a class="xp-l-right" href="#" id="uw_flight_hide_additional_link"><span class="xp-l-text">Hide Additional Options</span><span class="xp-l-icn"></span></a></span></p>
+	</div>
+	<p id="uw_flight_low_fare_label" class="xp-w-row xp-w-section xp-b-clear xp-t-body">Low fare note: To increase your chances of finding low fares, leave the following unselected.</p>
+	<div  id="uw_flight_directFlights_div" class="xp-w-row xp-b-clearfix">
+			<input type="checkbox" name="flightSearchWizard_inpIsNonstopOnly" value="ON" id="uw_flight_directFlights_input" class="xp-w-checkbox xp-b-left">
+</input><label id="uw_flight_directFlights_label" for="uw_flight_directFlights_input" class="xp-b-left">Direct flights only</label>
+	</div>
+	<div id="uw_flight_refundFlights_div" class="xp-w-row xp-b-clearfix"  >
+			<input type="checkbox" name="flightSearchWizard_inpIsAvoidChangePenalty" value="ON" id="uw_flight_refundFlights_input" class="xp-w-checkbox xp-b-left">
+</input><label id="uw_flight_refundFlights_label" for="uw_flight_refundFlights_input" class="xp-b-left">Refundable flights only</label>
+	</div>
+
+		<div class="xp-w-row xp-b-clearfix">
+			<div id="uw_flight_prefAirline_div" class="xp-w-cell xp-w-cell-half">
+				<label id="uw_flight_prefAirline_label" for="uw_flight_prefAirline_input">Preferred airline:</label>
+<select name="flightSearchWizard_inpFlightAirlinePreference" id="uw_flight_prefAirline_input">
+					<option value=""  selected="selected">No Preference</option>
+
+<option value="JP" >							Adria Airways
+</option>
+<option value="A3" >							Aegean
+</option>
+<option value="EI" >							Aer Lingus
+</option>
+<option value="SU" >							Aeroflot-Russian Airlines
+</option>
+<option value="2K" >							AeroGal
+</option>
+<option value="AR" >							Aerolineas Argentinas
+</option>
+<option value="VW" >							Aeromar Airlines
+</option>
+<option value="AM" >							Aeromexico
+</option>
+<option value="KC" >							Air Astana
+</option>
+<option value="BT" >							Air Baltic
+</option>
+<option value="BP" >							Air Botswana
+</option>
+<option value="AC" >							Air Canada
+</option>
+<option value="TX" >							Air Caraibes
+</option>
+<option value="CA" >							Air China
+</option>
+<option value="XK" >							Air Corsica
+</option>
+<option value="UX" >							Air Europa
+</option>
+<option value="AF" >							Air France
+</option>
+<option value="AI" >							Air India
+</option>
+<option value="LT" >							Air Lituanica
+</option>
+<option value="MD" >							Air Madagascar
+</option>
+<option value="KM" >							Air Malta
+</option>
+<option value="MK" >							Air Mauritius
+</option>
+<option value="NZ" >							Air New Zealand
+</option>
+<option value="OG" >							Air Onix
+</option>
+<option value="TN" >							Air Tahiti Nui
+</option>
+<option value="TS" >							Air Transat
+</option>
+<option value="AB" >							airberlin
+</option>
+<option value="FL" >							AirTran Airways
+</option>
+<option value="AS" >							Alaska Airlines
+</option>
+<option value="AZ" >							Alitalia
+</option>
+<option value="NH" >							All Nippon Airways
+</option>
+<option value="AA" >							American Airlines
+</option>
+<option value="OZ" >							Asiana Airlines
+</option>
+<option value="KP" >							ASKY
+</option>
+<option value="OS" >							Austrian Airlines
+</option>
+<option value="AV" >							Avianca
+</option>
+<option value="9V" >							Aviones de Oriente C.A. (AVIOR)
+</option>
+<option value="JV" >							Bearskin Airlines
+</option>
+<option value="4B" >							Boutique Air
+</option>
+<option value="BA" >							British Airways
+</option>
+<option value="SN" >							Brussels Airlines
+</option>
+<option value="BW" >							Caribbean Airlines
+</option>
+<option value="V3" >							Carpatair
+</option>
+<option value="CX" >							Cathay Pacific
+</option>
+<option value="KX" >							Cayman Airways
+</option>
+<option value="CI" >							China Airlines
+</option>
+<option value="MU" >							China Eastern Airlines
+</option>
+<option value="CZ" >							China Southern Airlines
+</option>
+<option value="DE" >							Condor
+</option>
+<option value="CM" >							Copa
+</option>
+<option value="SS" >							Corsair
+</option>
+<option value="CY" >							Cyprus Airways
+</option>
+<option value="OK" >							Czech Airlines
+</option>
+<option value="F7" >							Darwin Airline
+</option>
+<option value="DL" >							Delta
+</option>
+<option value="MS" >							Egyptair
+</option>
+<option value="LY" >							El Al
+</option>
+<option value="EK" >							Emirates
+</option>
+<option value="OV" >							Estonian Air
+</option>
+<option value="ET" >							Ethiopian Airlines
+</option>
+<option value="EY" >							Etihad Airways
+</option>
+<option value="BR" >							EVA Airways
+</option>
+<option value="FJ" >							Fiji Airways
+</option>
+<option value="AY" >							Finnair
+</option>
+<option value="BE" >							Flybe
+</option>
+<option value="GA" >							Garuda
+</option>
+<option value="G3" >							GOL Linhas Aereas Inteligentes
+</option>
+<option value="GF" >							Gulf Air
+</option>
+<option value="HU" >							Hainan Airlines
+</option>
+<option value="HA" >							Hawaiian Airlines
+</option>
+<option value="HX" >							Hong Kong Airlines
+</option>
+<option value="IB" >							Iberia
+</option>
+<option value="FI" >							Icelandair
+</option>
+<option value="7I" >							Insel Air International
+</option>
+<option value="4O" >							Interjet
+</option>
+<option value="JL" >							Japan Airlines
+</option>
+<option value="9W" >							Jet Airways
+</option>
+<option value="B6" >							JetBlue Airways
+</option>
+<option value="KQ" >							Kenya Airways
+</option>
+<option value="IT" >							Kingfisher Airlines
+</option>
+<option value="KL" >							KLM
+</option>
+<option value="KE" >							Korean Air
+</option>
+<option value="LR" >							LACSA
+</option>
+<option value="LA" >							LAN Airlines
+</option>
+<option value="4M" >							Lan Argentina
+</option>
+<option value="XL" >							LAN Ecuador
+</option>
+<option value="LP" >							LAN Peru
+</option>
+<option value="QV" >							Lao Airlines
+</option>
+<option value="LO" >							LOT-Polish Airlines
+</option>
+<option value="LH" >							Lufthansa
+</option>
+<option value="LG" >							Luxair
+</option>
+<option value="MH" >							Malaysia Airlines
+</option>
+<option value="IG" >							Meridiana fly
+</option>
+<option value="ME" >							Middle East Airlines
+</option>
+<option value="HG" >							Niki
+</option>
+<option value="OA" >							Olympic
+</option>
+<option value="WY" >							Oman Air
+</option>
+<option value="KS" >							PenAir
+</option>
+<option value="PR" >							Philippine Airlines
+</option>
+<option value="PU" >							Pluna Lineas Aereas Uruguayas
+</option>
+<option value="PD" >							Porter Airlines
+</option>
+<option value="PW" >							PrecisionAir
+</option>
+<option value="P0" >							Proflight Commuter
+</option>
+<option value="QF" >							Qantas Airways
+</option>
+<option value="QR" >							Qatar Airways
+</option>
+<option value="AT" >							Royal Air Maroc
+</option>
+<option value="RJ" >							Royal Jordanian
+</option>
+<option value="S7" >							S7 Airlines
+</option>
+<option value="SK" >							SAS
+</option>
+<option value="S4" >							SATA Internacional
+</option>
+<option value="SV" >							Saudi Arabian Airlines
+</option>
+<option value="BB" >							Seaborne Airlines
+</option>
+<option value="SC" >							Shandong Airlines
+</option>
+<option value="ZH" >							Shenzhen Airlines
+</option>
+<option value="3M" >							Silver Airways
+</option>
+<option value="SQ" >							Singapore Airlines
+</option>
+<option value="SA" >							South African Airways
+</option>
+<option value="NK" >							Spirit Airlines
+</option>
+<option value="UL" >							SriLankan Airlines
+</option>
+<option value="SY" >							Sun Country Airlines
+</option>
+<option value="PY" >							Surinam Airways
+</option>
+<option value="LX" >							Swiss International Air Lines
+</option>
+<option value="DT" >							TAAG Angola Airlines
+</option>
+<option value="TA" >							TACA Airlines
+</option>
+<option value="JJ" >							TAM Airlines
+</option>
+<option value="TP" >							TAP Portugal
+</option>
+<option value="RO" >							Tarom-Romanian Air Transport
+</option>
+<option value="TG" >							Thai Airways International
+</option>
+<option value="TJ" >							Tradewind Aviation
+</option>
+<option value="UN" >							Transaero Airlines
+</option>
+<option value="TK" >							Turkish Airlines
+</option>
+<option value="PS" >							Ukraine International Airlines
+</option>
+<option value="UA" >							United
+</option>
+<option value="US" >							US Airways
+</option>
+<option value="UT" >							Utair Aviation
+</option>
+<option value="VN" >							Vietnam Airlines
+</option>
+<option value="VX" >							Virgin America
+</option>
+<option value="VS" >							Virgin Atlantic
+</option>
+<option value="VA" >							Virgin Australia
+</option>
+<option value="V2" >							Vision Airlines
+</option>
+<option value="Y4" >							Volaris
+</option>
+<option value="WS" >							WestJet
+</option>
+<option value="WM" >							Windward Island Airways International
+</option>
+<option value="MF" >							Xiamen Airlines
+</option>
+<option value="SE" >							XL Airways
+</option>
+</select>
+			</div>
+			<div id="uw_flight_class_div" class="xp-w-cell xp-w-cell-half xp-w-cell-last">
+				<label id="uw_flight_class_label" for="uw_flight_class_input">Class:</label>
+<select name="flightSearchWizard_inpFlightClass" id="uw_flight_class_input">
+								<option  value=1>
+									First Class
+								</option>						
+								<option  value=2>
+									Business
+								</option>
+								<option  selected='selected'  value="3">
+									Economy/Coach
+								</option>
+								<option  value=5>
+									Premium Economy
+								</option>
+</select>
+			</div>
+		</div>
+			<p class="xp-w-row"><span class="xp-l-il xp-l-info"><a class="xp-l-right" href="javascript:void(0);" id="uw_flight_airline_tt_link"><span class="xp-l-text">More info</span><span class="xp-l-icn"></span></a></span></p>
+			<!-- toolTip -->
+			<div id="uw_flight_airline_tt" class="xp-bx-cs-tt-outCnt">
+				<div id="uw_flight_airline_tt_arrow" class="xp-b-floatL xp-w-cs-tt-arrow"><!-- --></div>
+				<div class="xp-bx-cs-tt-rnd-top"><span><!-- --></span></div>
+				<div id="uw_flight_airline_tt_bg" class="xp-w-cs-tt-cnt">
+					<div class="xp-w-cs-innercnt xp-b-clearfix">
+						<p id="uw_flight_airline_tt_close" class="xp-b-floatR xp-l-il xp-bx-cs-tt-close">
+							<a href="#" class="xp-l-close-2nd"><span>Close</span><span class="xp-l-icn"><!-- --></span></a></p>
+						
+						<div class="xp-bx-cs-tt-row">
+							<h3 id="uw_flight_airline_tt_title" class="xp-s-row">
+								No preference search
+							</h3>
+							<p id="uw_flight_airline_tt_text" class="xp-t-body xp-t-lHeight-med">
+A no preference search covers those airlines to which Travelocity has access, which is most airlines. The flights displayed are those for which Travelocity was able to confirm availability. By searching for flights on just one airline, you may be able to find additional choices and possibly even lower prices.							</p>
+						</div>
+					</div>
+				</div>
+				<div class="xp-bx-cs-tt-rnd-bot"><span><!-- --></span></div>
+			</div>
+			<!-- toolTip -->
+
+</fieldset>
+</div>
+
+	<!-- end of additional options panel -->
+
+
+
+<!-- search button  -->
+		<p id="uw-flight-submit" class="xp-b-clearfix uw-submit-button"><span class="xp-b-right">
+			<span class="xp-b-leftSubmit2"><!-- --></span>
+			<a href="#" id="uw_flight_submit_lnk" class="xp-b-submit2" onClick="try{trackClick(this, 'a', document.getElementById('pageId').value + '.SrchWzd.Flight');}catch(e){}">Search For Flights</a>
+			<span class="xp-b-rightSubmit2"><!-- --></span>
+		</span></p>
+		
+<!-- AB testing -->
+		
+<!-- cross-sell search button  -->
+		<br />
+		<p id="uw-flight-fh-submit" class="xp-b-clearfix"><span class="xp-b-right">
+			<span class="xp-b-leftSubmit2"><!-- --></span>
+			<a href="#" id="uw_flight_fh_submit_lnk" class="xp-b-submit2" onClick="try{trackClick(this, 'a', document.getElementById('pageId').value + '.SrchWzd.FH');}catch(e){}">Search for Flight+Hotel</a>
+			<span class="xp-b-rightSubmit2"><!-- --></span>
+		</span></p>
+</FORM>
+<FORM NAME="flightSearchForm" method="get" action="/Flights-Search"  id="flightSearchForm"
+>	
+</FORM>
+</div>
+
+<div class="wiz-template" id="flMultidestTemplate" data-template="
+	<div class='xp-w-rnd-inn-cnt'>
+		<div class='xp-w-row xp-b-clearfix'>
+			<div id='uw_flight_leavingfrom_container@{flightno}' class='xp-w-cell xp-w-cell-large'>
+				<label id='uw_flight_origin_label@{flightno}' for='uw_flight_origin_input@{flightno}'><span id='uw_flight_text@{flightno}' class='xp-w-blue'>Flight @{flightno}:</span> Leaving from:</label> 
+				<input type='text' name='flightSearchWizard_inpMultiLeavingFrom' id='uw_flight_origin_input@{flightno}' maxLength='100' value='@{multiOrig}'/>
+				<input type='hidden' id='hidden_tla_uw_flight_origin_input@{flightno}' name='hiddenDepartureLocationCodes' value=''/>
+			</div>
+				<div id='uw_flight_dep_time_container@{flightno}' class='xp-w-cell-small'>
+					<label id='uw_flight_dep_date_label@{flightno}' for='uw_flight_dep_date_input@{flightno}' style='display: block;'>Departing:</label>
+					<input type='text' name='flightSearchWizard_inpMultiDepartureDate' id='uw_flight_dep_date_input@{flightno}' maxlength='12' autocomplete='off' date='false' datemessage='dateFormatMessage' requiredmessage='requiredFieldMessage' value='@{multiDate0}'/>
+				</div>
+					<div class='xp-w-cell xp-w-cell-mid xp-w-cell-last'>
+						<label id='uw_flight_return_time_label@{flightno}' for='uw_flight_dep_time_input@{flightno}'>Time:</label>
+						<select name='flightSearchWizard_inpMultiDepartureTime' id='uw_flight_dep_time_input@{flightno}'>
+							<option value =12AM [:if '12AM'==timeindex:]selected='selected'[:/if:]>
+								12 AM							
+							</option>										
+							<option value =1AM [:if '1AM'==timeindex:]selected='selected'[:/if:]>
+								1 AM							
+							</option>										
+							<option value =2AM [:if '2AM'==timeindex:]selected='selected'[:/if:]>
+								2 AM							
+							</option>										
+							<option value =3AM [:if '3AM'==timeindex:]selected='selected'[:/if:]>
+								3 AM							
+							</option>										
+							<option value =4AM [:if '4AM'==timeindex:]selected='selected'[:/if:]>
+								4 AM							
+							</option>										
+							<option value =5AM [:if '5AM'==timeindex:]selected='selected'[:/if:]>
+								5 AM							
+							</option>										
+							<option value =6AM [:if '6AM'==timeindex:]selected='selected'[:/if:]>
+								6 AM							
+							</option>										
+							<option value =7AM [:if '7AM'==timeindex:]selected='selected'[:/if:]>
+								7 AM							
+							</option>										
+							<option value =8AM [:if '8AM'==timeindex:]selected='selected'[:/if:]>
+								8 AM							
+							</option>										
+							<option value =9AM [:if '9AM'==timeindex:]selected='selected'[:/if:]>
+								9 AM							
+							</option>										
+							<option value =10AM [:if '10AM'==timeindex:]selected='selected'[:/if:]>
+								10 AM							
+							</option>										
+							<option value =11AM [:if '11AM'==timeindex:]selected='selected'[:/if:]>
+								11 AM							
+							</option>										
+							<option value =12PM [:if '12PM'==timeindex:]selected='selected'[:/if:]>
+								12 PM							
+							</option>										
+							<option value =1PM [:if '1PM'==timeindex:]selected='selected'[:/if:]>
+								1 PM							
+							</option>										
+							<option value =2PM [:if '2PM'==timeindex:]selected='selected'[:/if:]>
+								2 PM							
+							</option>										
+							<option value =3PM [:if '3PM'==timeindex:]selected='selected'[:/if:]>
+								3 PM							
+							</option>										
+							<option value =4PM [:if '4PM'==timeindex:]selected='selected'[:/if:]>
+								4 PM							
+							</option>										
+							<option value =5PM [:if '5PM'==timeindex:]selected='selected'[:/if:]>
+								5 PM							
+							</option>										
+							<option value =6PM [:if '6PM'==timeindex:]selected='selected'[:/if:]>
+								6 PM							
+							</option>										
+							<option value =7PM [:if '7PM'==timeindex:]selected='selected'[:/if:]>
+								7 PM							
+							</option>										
+							<option value =8PM [:if '8PM'==timeindex:]selected='selected'[:/if:]>
+								8 PM							
+							</option>										
+							<option value =9PM [:if '9PM'==timeindex:]selected='selected'[:/if:]>
+								9 PM							
+							</option>										
+							<option value =10PM [:if '10PM'==timeindex:]selected='selected'[:/if:]>
+								10 PM							
+							</option>										
+							<option value =11PM [:if '11PM'==timeindex:]selected='selected'[:/if:]>
+								11 PM							
+							</option>										
+							<option value =362 [:if '362'==timeindex:]selected='selected'[:/if:]>
+								Any							
+							</option>										
+							<option value =361 [:if '361'==timeindex:]selected='selected'[:/if:]>
+								Morn.							
+							</option>										
+							<option value =721 [:if '721'==timeindex:]selected='selected'[:/if:]>
+								Noon							
+							</option>										
+							<option value =1081 [:if '1081'==timeindex:]selected='selected'[:/if:]>
+								Eve.							
+							</option>										
+						</select>				
+					</div>
+			</div>
+		</div>
+		<div class='xp-w-row xp-b-clearfix'>
+			<div id='uw_flight_goingto_container@{flightno}' class='xp-w-cell xp-w-cell-large'>
+				<label id='uw_flight_destination_label@{flightno}' for='uw_flight_destination_input@{flightno}'>Going to:</label>
+				<input type='text' name='flightSearchWizard_inpMultiGoingTo' id='uw_flight_destination_input@{flightno}' class='xp-b-clear' notEqual='uw_flight_origin_input@{flightno}' notequalmessage='notequalmessage' maxLength='100' value='@{multiDest}'/>
+				<input type='hidden' id='hidden_tla_uw_flight_destination_input@{flightno}' name='hiddenArrivalLocationCodes' value=''/>
+			</div>
+		</div>
+	</div>
+	
+"></div>
+
+<div class="wiz-template" id="flChildAgeEntryTemplate" data-template="
+	<label id='uw_flight_child_age_label@{childno}' for='uw_flight_child_age_input@{childno}' class='xp-w-label-narrow-child'>Child @{childno}:</label>
+    <select id='uw_flight_child_age_input@{childno}' name='flightSearchWizard_inpChildAges' mask='@{agemask}' message='ageRequiredMessage'>
+        <option value='-1'>-?-</option>
+        <option value='0' [:if 0==childAge:]selected='selected'[:/if:]>&lt;1</option>
+            [:list 1..17 as j:]
+                <option value='@{j}' [:if j==childAge:]selected='selected'[:/if:]>@{j}</option>
+            [:/list:]
+    </select>
+"></div>
+
+<!-- end of traveller selection panel -->
+
+
+
+<script type="text/javascript" id="flightOnlyJs">
+flightOnlyFn = function(model){
+
+		var typeaheadO = {};
+		typeaheadO.id = 'uw_flight_origin_input';
+		typeaheadO.On = true;
+		typeaheadO.MinChar = 3;
+		typeaheadO.MaxItems =  10;
+		typeaheadO.Path = 'http://suggest.expedia.com/hint/es/v1/ac';
+		typeaheadO.Locale = "en_US";
+		typeaheadO.lob = "FLIGHTS";
+		typeaheadO.closeText = "Close";
+		typeaheadO.contiueText = "Continue typing to refine search";
+        typeaheadO.logTASelections = true;
+        typeaheadO.SelectionLogPath = 'http://suggest.expedia.com/hint/es/v1/acclick';
+		typeaheadO.itemClickedEvent = function(typeahead) {
+										    if(typeahead && typeahead.On){
+											    tlaSelector.selectedTypeAhead('uw_flight_origin_input', 'hidden_tla_uw_flight_origin_input', typeahead);
+										    }
+										};
+		TA.setup(typeaheadO);
+		TA.init('uw_flight_origin_input');
+		var typeaheadD = {};
+		typeaheadD.id = 'uw_flight_destination_input';
+		typeaheadD.On = true;
+		typeaheadD.MinChar = 3;
+		typeaheadD.MaxItems =  10;
+		typeaheadD.Path = 'http://suggest.expedia.com/hint/es/v1/ac';
+		typeaheadD.Locale = "en_US";
+		typeaheadD.lob = "FLIGHTS";
+		typeaheadD.closeText = "Close";
+		typeaheadD.contiueText = "Continue typing to refine search";
+        typeaheadD.logTASelections = true;
+        typeaheadD.SelectionLogPath = 'http://suggest.expedia.com/hint/es/v1/acclick';
+		typeaheadD.itemClickedEvent = function(typeahead) {
+										    if(typeahead && typeahead.On){
+											    tlaSelector.selectedTypeAhead('uw_flight_destination_input', 'hidden_tla_uw_flight_destination_input', typeahead);
+										    }
+										};
+		TA.setup(typeaheadD);
+		TA.init('uw_flight_destination_input');
+
+	//toolTip
+		cx.exp.search.flight.tooltipIsOpen = false;
+		cx.exp.search.flight.tooltipLinkAction = "open";
+		cx.exp.search.flight.tooltipChgState = function(event, action)
+		{
+			if(action==="changeable")
+			{
+				action = cx.exp.search.flight.tooltipLinkAction;
+			}
+			
+			if(action==="open")
+			{
+				cx.exp.search.flight.tooltip.show();
+				cx.exp.search.flight.tooltipIsOpen = true;
+				cx.exp.search.flight.tooltipLinkAction = "close"
+				YAHOO.util.Event.stopEvent(event);
+			}
+			else if ((action==="close" || action==="closeByBody") && cx.exp.search.flight.tooltipIsOpen)
+			{
+				cx.exp.search.flight.tooltip.hide();
+				cx.exp.search.flight.tooltipIsOpen = false;
+				cx.exp.search.flight.tooltipLinkAction = "open"
+				if (action==="close") {YAHOO.util.Event.stopEvent(event);}
+			}
+		}
+		cx.exp.search.flight.tooltip = new YAHOO.widget.Overlay("uw_flight_airline_tt", { 
+													context:["uw_flight_airline_tt_link","tl","tr", ["beforeShow", "windowResize"], [27,-31]],
+													visible:false, 
+													width:"416px",
+													zindex:"999"
+													}); 
+		cx.exp.search.flight.tooltip.render(); 
+
+		YAHOO.util.Event.addListener("uw_flight_airline_tt_link", "click", cx.exp.search.flight.tooltipChgState, "changeable", true); 
+		YAHOO.util.Event.addListener("uw_flight_airline_tt_close", "click", cx.exp.search.flight.tooltipChgState, "close", true); 
+		YAHOO.util.Event.addListener("uw_flight_airline_tt", "click", cx.exp.search.flight.tooltipChgState, "open", true); 
+		YAHOO.util.Event.addListener(document.body, "click", cx.exp.search.flight.tooltipChgState, "closeByBody", true); 
+	//toolTip
+
+		newModel = 	new cx.exp.search.common.model({
+							nRooms:			1,			
+							numAdults: 		[1,],
+                            numChildren:    [0,], 
+							numSeniors: 	[0,], 
+							childAges:		[[],],
+                            infantOnLap:    true,
+							origin:"",
+							searchNear:"",
+							isDefaultTravellers: true,            						
+						prefillEveryField: false
+					});
+
+	if (!model) {
+		model = newModel;
+	}else{
+		model.mergeUnchangedDefaults(newModel);
+	}
+
+	var flightWizardDTO = new cx.exp.search.common.template.flightWizardDTO({
+		agetemplate : 'flChildAgeEntryTemplate',
+		ageHTMLStyles : ['xp-w-cell-xsmall'],
+		chldAgeDiv : 'uw_child_age_div0',
+		inpChldAge : 'uw_flight_child_age_input0',
+		chldAgeCnt : 'uw_flight_child_age_container',
+		inpAdults : 'uw_flight_adults_input',
+		inpSeniors : 'uw_flight_seniors_input',
+		countChldSelect : 'uw_flight_children_input',
+
+		chldAgePnlDiv : 'uw_flight_child_age_pnl',
+		chldOptPnlDiv : 'uw_flight_infants_container',
+		swAddOptPnlDiv : 'uw_flight_add_show_pnl',
+		hdAddOptPnlDiv : 'uw_flight_add_hide_pnl',
+		addOptPnl : 'uw_flight_add',
+
+		inpFlightAirlinePreference : 'uw_flight_prefAirline_input',
+		inpFlightClass : 'uw_flight_class_input',
+		inpIsNonstopOnly : 'uw_flight_directFlights_input',
+		inpIsAvoidChangePenalty : 'uw_flight_refundFlights_input',
+		inpInfantsOnSeat : 'uw_flight_infants_seat_inp',
+		inpInfantsOnLap : 'uw_flight_infants_wo_seat_inp',
+		returnDateContainer : 'uw_flight_ret_date_container',
+		multipleDestinationsContainer : 'uw_flight_multi_dest_container',
+		flightTypeCheckboxes : 'uw_flight_type',
+		flightDestination : 'uw_flight_destination0',
+		hasFlexDate : false,
+		elmPrefix : 'uw_flight_'
+	});
+		
+	var config = new cx.exp.search.flight.config( {
+		formId : 'fltWizFrm',
+		parentDivId : 'uw_flight_wiz',
+		lob : 'flightOnly',
+		dynModel : model,		
+		flightWizardDTO : flightWizardDTO,
+		minimumCalendarOffset : '02/18/2014',
+		maximumCalendarOffset :	'01/14/2015',
+		calendarMinDayOffset : '0',
+		defaultAdultSelected : 1,
+		defaultChildSelected : 0,
+		defaultSeniorSelected : 0,
+		maximumAdultCount : 6,
+		maximumChildCount : 6,
+		maximumSeniorCount : 6,
+		dateFormat : 'mm/dd/yy',
+		defaultTimeCode : '362',
+		multidestTotalCount: '5',
+		maxNumberofTravellers: 6,
+		hasXsellHotelFlight : true,
+		searchActionFlightOnly : 'flightSearchWizard@searchFlights',
+		hasShopSurvey : false,
+		searchActionFlightHotel : 'flightSearchWizard@searchFlightHotel',
+        siteId: 80001,
+		postToSearch: '/Search',
+		isTypeAheadEnabled : true,
+		minTypeAheadChars : 3,
+		maxTypeAheadItems :  10,
+		typeaheadEndpoint : 'http://suggest.expedia.com/hint/es/v1/ac',
+		typeaheadLocale : "en_US",
+		allAbTestIds : "842.0|808.0",
+		typeaheadLob : "FLIGHTS",
+		typeaheadCloseText : "Close",
+		typeaheadContiueText : "Continue typing to refine search"			
+	});
+	
+	cx.exp.search.common.replaceAction("fltWizFrm", cx.exp.widgetlibrary.search.common.container.requestURI);
+	return cx.exp.search.flight.wizard.subscribe(null, null, config);
+}
+
+
+</script>
+
+					<div id="divInterstitial" class="xp-w-cont-spinner"></div>
+				</div>
+                
+                    <div id="lowerMerchContainer" class="xp_uw_lowerMerchContainer">
+<a href="/p/info-other/guarantees.htm?mcicid=hp.bpg"><img class="pbestPriceGuaranteeImage" src="//media.travelocitycustomercare.com/media/content/expus/graphics/other/bpg/101019_wizard_bpg_150x35_tvly.jpg" width="150" height="34" alt="Travelocity Price Guarantee" /></a>                    </div>
+                
+			
+			</div>
+		</div>
+<div class="xp-w-rnd-inn-wht-bot"><span><!-- --></span></div>	</div>
+	<div class="xp-w-rnd-out-bot"><span><!-- --></span></div>
+</div>
+<script type="text/javascript">
+    try {cx.exp.search.common.setABValue('1791', '0')} catch (e) {};
+</script>
+
+<script type="text/javascript">
+cx.exp.widgetlibrary.search.common.container.titleDiv = YAHOO.util.Dom.get("xp_uw_title");
+cx.exp.widgetlibrary.search.common.container.wizardDiv = YAHOO.util.Dom.get('xp_uw_form');
+cx.exp.widgetlibrary.search.common.container.ajaxErrDiv = YAHOO.util.Dom.get("xp_uw_ajaxErrorContainer");
+cx.exp.widgetlibrary.search.common.container.interstitialDiv = YAHOO.util.Dom.get('divInterstitial');
+cx.exp.widgetlibrary.search.common.container.ajaxTimeout = parseInt('10000');
+cx.exp.widgetlibrary.search.common.container.spinnerDelay = parseInt('2000');
+cx.exp.widgetlibrary.search.common.container.timer;
+cx.exp.widgetlibrary.search.common.container.wizardType = '';
+cx.exp.widgetlibrary.search.common.container.wizardObj = null;
+cx.exp.widgetlibrary.search.common.container.cacheWizardContent = new Object();
+cx.exp.widgetlibrary.search.common.container.historyObject = null;
+cx.exp.widgetlibrary.search.common.container.radioButtons = YAHOO.util.Dom.getElementsByClassName("wizardRadio", "input", "xp_uw_lobContainer");
+cx.exp.widgetlibrary.search.common.container.selectedRadioButton = null; //will be init in the .subscribeAllEvents function
+
+
+// for drop down - AJAX call
+expNamespace('cx.exp.widgetlibrary.search.common.dropdown');
+
+cx.exp.widgetlibrary.search.common.dropdown.AjaxObject = {
+	    handleSuccess:function(response){
+	        try{ 
+	            var responseObject = YAHOO.lang.JSON.parse(response.responseText).response;
+	            var dropDownDestinationId = document.getElementById("dropDown_destinationId");
+				var destinationSelectElement = document.getElementById(dropDownDestinationId.value);
+				var browser=navigator.appName;
+				if(browser=="Microsoft Internet Explorer")
+				{
+					var optionHTML = responseObject.destinationList;
+					var selectHTML = '<select>'+optionHTML+'</select>';
+					var objE = document.createElement("div"); 
+					objE.innerHTML = selectHTML; 
+					var selectDOM = objE.childNodes[0];
+					destinationSelectElement.options.length=0;
+			      	destinationSelectElement.innerHTML = '';
+			      var selectedNum = -1;
+			      var optionCount = 0;
+			      for (var i = 0, num = selectDOM.childNodes.length; i < num; i++) 
+			      {
+			        if(selectDOM.childNodes[0].selected && selectedNum == -1)
+			        {
+			             selectedNum = optionCount;
+			        }
+			        if(selectDOM.childNodes[0].nodeName=="OPTION")
+			        {
+			             optionCount++;
+			        }
+			      	destinationSelectElement.appendChild(selectDOM.childNodes[0]);
+			      }
+			      destinationSelectElement.selectedIndex = selectedNum; 
+				}
+				else
+				{
+					destinationSelectElement.innerHTML = responseObject.destinationList;
+				}
+	        }catch (e){ 
+	            if(window.console && console.log){console.log("There was a problem updating the destination options! exception: " + e);}
+	        } 
+	    },
+	    handleFailure:function(response){
+	    	var namespace = cx.exp.widgetlibrary.search.common.container;
+	    },
+	    startRequest:function(url) {
+	        //set disable state to radio buttons before async call started
+	        cx.exp.widgetlibrary.search.common.dropdown.Callback.argument = { wizardType: cx.exp.widgetlibrary.search.common.container.wizardType};
+	        YAHOO.util.Connect.asyncRequest('GET', url , cx.exp.widgetlibrary.search.common.dropdown.Callback , null);
+	    }
+	};
+
+cx.exp.widgetlibrary.search.common.dropdown.changeSelectedDestination = function (selectElement) {
+	var index = selectElement.selectedIndex;
+	var selectedDestValue = selectElement.options[index].value;
+	if(selectedDestValue=='others')
+	{
+		// TODO drop down here is where the popup window for other POSs should live 
+		window.open('http://www.expedia.com','otherPOSs','height=100,width=400,top=0,left=0,toolbar=no,menubar=no,scrollbars=no,resizable=no,location=no,status=no');
+		
+		selectElement.options[0].selected = true;
+	}
+};
+
+cx.exp.widgetlibrary.search.common.dropdown.updateDestinationByOrigin = function() {
+
+	// for dropdown, initial the destination based on the current origin/initial origin to empty(default hint)
+    var dropDownOriginId = document.getElementById("dropDown_originId");
+    if(dropDownOriginId!=null)
+    {
+    	var originSelectElement = document.getElementById(dropDownOriginId.value);
+		cx.exp.widgetlibrary.search.common.dropdown.changeSelectedOrigin(originSelectElement);
+    }
+  
+};
+
+cx.exp.widgetlibrary.search.common.dropdown.changeSelectedOrigin = function (selectElement) {
+	
+	var namespace = cx.exp.widgetlibrary.search.common.container;
+	var index = selectElement.selectedIndex;
+	if(index==null || index==-1)
+	{
+		index = 0;
+	}
+	var selectedOriginValue = selectElement.options[index].value;
+
+	if(selectedOriginValue=='others')
+	{
+		// TODO drop down here is where the popup window for other POSs should live 
+		window.open('http://www.expedia.com','otherPOSs','height=100,width=400,top=0,left=0,toolbar=no,menubar=no,scrollbars=no,resizable=no,location=no,status=no');
+		
+		selectElement.options[0].selected = true;
+		selectedOriginValue='';
+	}
+	
+	var randomnumber=Math.floor(Math.random()*11000000000);
+	var sUrl = '/ws/SearchWizardWebService/v1/populateDestination?type=' + namespace.wizardType;
+    sUrl = sUrl + '&factory=com.expedia.e3.cx.expedia.widgetlibrary.search.common.impl.searchWizardContentHelper.home'
+    sUrl = sUrl + '&response=json' + '&rand=' + randomnumber;
+
+ 	// for drop down
+    	sUrl = sUrl + '&isDropDownOnBool=false'
+			+ '&selectedOrigin='+selectedOriginValue
+    		+ '&isOriginGroupByCountry=false'
+    		+ '&isDestGroupByCountry=false'
+    		+ '&isTopCitiesOnBool=false';
+    var dropDownIsPackage = document.getElementById("dropDown_isPackage");
+    if(dropDownIsPackage!=null)
+    {
+    	var dropDownIsPackageValue = dropDownIsPackage.value;
+  		sUrl = sUrl + '&isPackage='+dropDownIsPackageValue;
+    }
+  	    
+   cx.exp.widgetlibrary.search.common.dropdown.AjaxObject.startRequest(sUrl);  
+    //YAHOO.util.Connect.asyncRequest('GET', url , cx.exp.widgetlibrary.search.common.dropdown.Callback , null);
+};
+
+cx.exp.widgetlibrary.search.common.dropdown.Callback = { 
+	    success:cx.exp.widgetlibrary.search.common.dropdown.AjaxObject.handleSuccess, 
+	    failure:cx.exp.widgetlibrary.search.common.dropdown.AjaxObject.handleFailure, 
+	    scope:cx.exp.widgetlibrary.search.common.dropdown.AjaxObject.AjaxObject, 
+	    timeout:cx.exp.widgetlibrary.search.common.container.ajaxTimeout, 
+		argument: { wizardType: '' }
+	};
+
+
+
+//enable/disable state of LOB selector radio buttons
+cx.exp.widgetlibrary.search.common.container.disableRadioButtons = function(state){
+    var radioButtons = cx.exp.widgetlibrary.search.common.container.radioButtons;
+    for (var i=0; i<radioButtons.length; i++) {
+        if(state===true){ //disabling
+            radioButtons[i].setAttribute('disabled', 'true');
+        } else { //enableing
+            radioButtons[i].removeAttribute('disabled');
+            //set the selected radio button
+            if(radioButtons[i].getAttribute('wizardtype') != cx.exp.widgetlibrary.search.common.container.selectedRadioButton){
+                radioButtons[i].checked = false;
+            } else {
+                radioButtons[i].checked = true;
+            }
+        }
+    }
+};
+
+cx.exp.widgetlibrary.search.common.container.AjaxObject = {
+    handleSuccess:function(response){
+        var namespace = cx.exp.widgetlibrary.search.common.container;
+        try{ 
+            var responseObject = YAHOO.lang.JSON.parse(response.responseText).response;
+            var content = new Object();
+			
+            // update the html in the relevant elements to that returned from the web service.
+            if (!(YAHOO.lang.isNull(namespace.titleDiv) || YAHOO.lang.isUndefined(namespace.titleDiv))) {
+                var titleHTML = responseObject.title;
+                if (YAHOO.lang.isUndefined(titleHTML)) {
+                    titleHTML = '';
+                }
+                namespace.titleDiv.innerHTML = titleHTML;
+                content.title = titleHTML;
+            }
+            if (!(YAHOO.lang.isNull(namespace.wizardDiv) || YAHOO.lang.isUndefined(namespace.wizardDiv))) {
+                var wizardHTML = responseObject.wizard;
+                if (YAHOO.lang.isUndefined(wizardHTML)) {
+                    wizardHTML = "";
+                }
+                namespace.wizardDiv.innerHTML = wizardHTML;
+                content.wizard = wizardHTML;               
+            }
+            namespace.cacheWizardContent[response.argument.wizardType] = content;
+
+			// Note: the wizard's JavaScript code needs to be parsed (note the naming convention wizardType+'Js')
+            var jsCode = document.getElementById(response.argument.wizardType + "Js");
+			if (jsCode) {
+                eval(jsCode.innerHTML);
+            }
+
+			// Let's start up the wizard by calling it's initializer function (note the naming convention wizardType+'Fn')
+			eval('namespace.wizardObj = '+response.argument.wizardType + 'Fn(namespace.historyObject);');
+			
+			// for dropdown, initial the destination based on the current origin/initial origin to empty(default hint)
+			cx.exp.widgetlibrary.search.common.dropdown.updateDestinationByOrigin();
+			
+            //if the response was OK set the selectedRadioButton value to the new selected wizardType
+            namespace.selectedRadioButton = response.argument.wizardType;
+        }catch (e){ 
+            namespace.showError(true);
+            if(window.console && console.log){console.log("There was a problem updating the wizard values! exception: " + e);}
+        } finally {
+	        if (namespace.timer){
+	        	clearTimeout(namespace.timer);
+	        }        
+            namespace.showSpinner(false);
+            //remove disable state from radio buttons after async call finished
+            namespace.disableRadioButtons(false);
+			
+        }
+    },
+    handleFailure:function(response){
+    	var namespace = cx.exp.widgetlibrary.search.common.container;
+    	if (namespace.timer){
+        	clearTimeout(namespace.timer);
+        }
+        namespace.showSpinner(false);
+        namespace.showError(true);
+        //remove disable state from radio buttons after async call finished
+        namespace.disableRadioButtons(false);
+    },
+    startRequest:function(url) {
+        //set disable state to radio buttons before async call started
+        cx.exp.widgetlibrary.search.common.container.disableRadioButtons(true);
+        cx.exp.widgetlibrary.search.common.container.Callback.argument = { wizardType: cx.exp.widgetlibrary.search.common.container.wizardType};
+        YAHOO.util.Connect.asyncRequest('GET', url , cx.exp.widgetlibrary.search.common.container.Callback , null);
+    }
+};
+
+cx.exp.widgetlibrary.search.common.container.Callback = { 
+    success:cx.exp.widgetlibrary.search.common.container.AjaxObject.handleSuccess, 
+    failure:cx.exp.widgetlibrary.search.common.container.AjaxObject.handleFailure, 
+    scope:cx.exp.widgetlibrary.search.common.container.AjaxObject.AjaxObject, 
+    timeout:cx.exp.widgetlibrary.search.common.container.ajaxTimeout, 
+	argument: { wizardType: '' }
+};
+
+cx.exp.widgetlibrary.search.common.container.showSpinner = function (show) {
+    var namespace = cx.exp.widgetlibrary.search.common.container;
+    if(show) {
+        YAHOO.util.Dom.setStyle(namespace.wizardDiv, 'display','none');
+        YAHOO.util.Dom.setStyle(namespace.interstitialDiv, 'display','block');
+    }else {
+    	YAHOO.util.Dom.setStyle(namespace.wizardDiv, 'display','block');
+        YAHOO.util.Dom.setStyle(namespace.interstitialDiv, 'display','none');
+    }
+};
+
+cx.exp.widgetlibrary.search.common.container.showError = function (show) {
+    var namespace = cx.exp.widgetlibrary.search.common.container;
+    if(show) {
+        YAHOO.util.Dom.setStyle(namespace.ajaxErrDiv, 'display','block');        
+    }else {
+        YAHOO.util.Dom.setStyle(namespace.ajaxErrDiv, 'display','none');
+    }
+};
+
+cx.exp.widgetlibrary.search.common.dropdown.hideOrShowCallCenter = function(wizardType){
+    if(false) {
+        if($('#cx_cs_small').length){
+            if (wizardType == 'flightOnly') {
+                $('#cx_cs_small').css("display", "none");
+            }
+            else {
+                $('#cx_cs_small').css("display", "block");
+            }
+        }
+    }
+}
+
+
+cx.exp.widgetlibrary.search.common.dropdown.hideOrShowBPG = function(wizardType){
+        if($("#lowerMerchContainer").length){
+            if (wizardType == 'flightOnly' && false) {
+				$("#lowerMerchContainer").css("display", "none");
+            }
+            else if (wizardType == 'hotelOnly' && false) {
+				$("#lowerMerchContainer").css("display", "none");
+            }
+            else if (wizardType == 'carOnly' && false) {
+				$("#lowerMerchContainer").css("display", "none");
+            }
+            else if (wizardType == 'flightAndHotel' && false) {
+				$("#lowerMerchContainer").css("display", "none");
+            }
+            else if (wizardType == 'activitiesOnly' && false) {
+				$("#lowerMerchContainer").css("display", "none");
+            }
+            else {
+                $("#lowerMerchContainer").css("display", "block");
+            }
+        }
+}
+
+cx.exp.widgetlibrary.search.common.container.changeWizardContent = function(){
+
+	var selectedLob = this.getAttribute('wizardType');
+
+	if (false) {
+		if (selectedLob == 'flightAndHotel') {
+			// show image and text line			
+			document.getElementById('pkgLPBenefitText').style.visibility = "visible";
+			document.getElementById('pkgLPBenefitInfo').style.paddingLeft = "5px";
+			document.getElementById('pkgLPBenefitInfo').style.paddingBottom = "5px";
+			document.getElementById('pkgLPBenefitInfo').style.visibility = "visible";
+			document.getElementById('pkgLPBenefitInfo').style.display = "block";
+			document.getElementById('existing_upsell').style.visibility = "hidden";
+		}
+		else {
+			// hide image and text line
+			document.getElementById('pkgLPBenefitText').style.visibility = "hidden";
+			document.getElementById('pkgLPBenefitInfo').style.visibility = "hidden";
+			document.getElementById('pkgLPBenefitInfo').style.display = "none";
+			document.getElementById('existing_upsell').style.visibility = "visible";
+		}
+	}
+
+    cx.exp.widgetlibrary.search.common.dropdown.hideOrShowCallCenter(selectedLob);
+    cx.exp.widgetlibrary.search.common.dropdown.hideOrShowBPG(selectedLob);
+
+	var namespace = cx.exp.widgetlibrary.search.common.container, radioButton;
+	if (namespace.wizardObj){
+
+		namespace.historyObject = namespace.wizardObj.saveToObj(namespace.wizardObj, namespace.historyObject);
+	}
+
+    namespace.wizardType = selectedLob;
+
+    // Redirect Cruise LOB for TVLY US, set LOB to default for back button
+        if (selectedLob == 'cruiseOnly') {
+        	$('#flight-only').prop('checked', true);
+        	namespace.wizardType = 'flightOnly';
+        	window.location.href = '/Cruises';
+        }
+
+    var content = namespace.cacheWizardContent[namespace.wizardType];
+
+    if (!YAHOO.lang.isUndefined(content)) {
+        if (!(YAHOO.lang.isNull(namespace.titleDiv) || YAHOO.lang.isUndefined(namespace.titleDiv))) {
+            namespace.titleDiv.innerHTML = content.title;
+        }
+        if (!(YAHOO.lang.isNull(namespace.wizardDiv) || YAHOO.lang.isUndefined(namespace.wizardDiv))) {
+            namespace.wizardDiv.innerHTML = content.wizard;
+        }
+		// Note: the wizard's JavaScript code has been already parsed, no need to eval() the script tag contents again
+		// Let's start up the wizard by calling it's initializer function (note the naming convention wizardType+'Fn')
+		eval('namespace.wizardObj = '+namespace.wizardType + 'Fn(namespace.historyObject);');
+		// for dropdown, initial the destination based on the current origin/initial origin to empty(default hint)
+       cx.exp.widgetlibrary.search.common.dropdown.updateDestinationByOrigin();
+		
+        return;
+    }
+    if(namespace.spinnerDelay){
+     	namespace.timer = window.setTimeout(function(){ namespace.showSpinner(true); }, namespace.spinnerDelay);
+	}else {
+		namespace.showSpinner(true);
+	}
+    namespace.showError(false);
+		var randomnumber=Math.floor(Math.random()*11000000000);
+    var sUrl = '/ws/SearchWizardWebService/v1/handleRequest?type=' + namespace.wizardType;
+    sUrl = sUrl + '&factory=com.expedia.e3.cx.expedia.widgetlibrary.search.common.impl.searchWizardContentHelper.home'
+    sUrl = sUrl + '&response=json' + '&rand=' + randomnumber;
+
+ 	// for drop down
+    	sUrl = sUrl + '&isDropDownOnBool=false'
+    		+ '&isOriginGroupByCountry=false'
+    		+ '&isDestGroupByCountry=false'
+    		+ '&isTopCitiesOnBool=false'
+    		+ '&isPackage=false'
+    		+ '&isAddtionalOff=false';
+    
+    namespace.AjaxObject.startRequest(sUrl);  
+};
+
+cx.exp.widgetlibrary.search.common.container.subscribeAllEvents = function() {
+    var namespace = cx.exp.widgetlibrary.search.common.container, radioButton; 
+    var content = new Object();
+	var defaultLob = 'flightOnly';
+    //initial the selectedRadioButton (will be run once)
+    cx.exp.widgetlibrary.search.common.container.selectedRadioButton = defaultLob;
+
+    if (!(YAHOO.lang.isNull(namespace.titleDiv) || YAHOO.lang.isUndefined(namespace.titleDiv))) {
+        content.title = namespace.titleDiv.innerHTML
+    }
+    if (!(YAHOO.lang.isNull(namespace.wizardDiv) || YAHOO.lang.isUndefined(namespace.wizardDiv))) {
+    	content.wizard = namespace.wizardDiv.innerHTML
+    }
+    namespace.cacheWizardContent[defaultLob] = content;
+
+	// Since this function is the entry point to wizard JS functionality,
+	// let's whether we have a saved wizard state available (back button support)
+	var history = YAHOO.util.Dom.get('uw_wizardstate').value;
+	// preloadNonDefault will contain the wizard type that should be initially on the page IF it is other than the default wizard
+	// otherwise (if we don't need to change the default shown wizard) it can be null.
+	var preloadNonDefault = null;
+	if (history){
+		namespace.historyObject = new cx.exp.search.common.model(YAHOO.lang.JSON.parse(history));
+		if (defaultLob == namespace.historyObject.lob){
+			// Default wizard needs to be shown - already rendered on the page
+			// Let's start up the wizard by calling it's initializer function (note the naming convention wizardType+'Fn')
+			eval('namespace.wizardObj = '+namespace.historyObject.lob + 'Fn(namespace.historyObject);');
+			
+			 // for dropdown, initial the destination based on the current origin/initial origin to empty(default hint)
+			cx.exp.widgetlibrary.search.common.dropdown.updateDestinationByOrigin();
+		}
+		else{
+			// We need to show a wizard other than the default)
+		    preloadNonDefault = namespace.historyObject.lob;
+		}
+	}
+	else
+	{
+		// Previously saved wizard state not available. Default wizard will be shown.
+		// Let's start up the wizard by calling it's initializer function (note the naming convention wizardType+'Fn')
+		eval('namespace.wizardObj = '+'flightOnlyFn(null);');
+	}
+    cx.exp.widgetlibrary.search.common.dropdown.hideOrShowCallCenter(defaultLob);
+    cx.exp.widgetlibrary.search.common.dropdown.hideOrShowBPG(defaultLob);
+
+    var radioButtons = cx.exp.widgetlibrary.search.common.container.radioButtons;
+    for (var i=0; i<radioButtons.length; i++) {
+        var radioButton = radioButtons[i];
+        if (!(YAHOO.lang.isNull(radioButton) || YAHOO.lang.isUndefined(radioButton))) {
+               YAHOO.util.Event.addListener(radioButton, "click", namespace.changeWizardContent);
+				if (preloadNonDefault === radioButton.getAttribute('wizardType')){
+					// If we need to activate a wizard other than the default one, let's manually call the LOB change handler
+					namespace.changeWizardContent.call(radioButton); 
+				}
+				else if (!preloadNonDefault && radioButton.checked && defaultLob != radioButton.getAttribute('wizardType')){
+					// If a radio button is pre-selected, make sure we have the right wizard
+					namespace.changeWizardContent.call(radioButton);
+				}
+        }
+    }
+};
+
+YAHOO.util.Event.onDOMReady(cx.exp.widgetlibrary.search.common.container.subscribeAllEvents);
+</script>
+
+
+    <script type="text/javascript">
+        try {
+            if (window.jQuery) {
+                if (jQuery('#hot-only:checked').length > 0) {
+                    jQuery(window).load(function() {
+                        loadHotelSRScripts(3000);
+                    });
+                } else {
+                    jQuery("body").delegate("#hot-only", "change", function(){
+                        loadHotelSRScripts(500);
+                    });
+                }
+            }
+        } catch(e) {}
+        function loadHotelSRScripts(delay) {
+            setTimeout(function() { 
+try{jQuery.ajax({url:"/minify/hotelSearch.css-min-1759673176.css?v=release-2014-02-r1-2874-962065-1",cache:true,async:true,dataType:"text"});}catch(e){}
+try{jQuery.ajax({url:"/minify/hotelSearch.js-min-729500602.js?v=release-2014-02-r1-2874-962065-1",cache:true,async:true,dataType:"text"});}catch(e){}
+            }, delay);
+        }
+    </script>
+
+                
+<div class="box " id="travelocity_gastr">
+  <br/>
+<a href="http://shop.travelocity.com/vc/tvly/go-and-smell-the-roses/">
+<div id="variant1_small">
+</div>
+<div id="variant1_large">
+</div>
+</a>
+</div>
+            </div>
+
+            <div id="xp_hp_bCol" class="xp-grd-col-8 module xp-grd-last" >
+
+<style>
+    a, a:visited {
+        color: #004e93;
+    }
+    div#slide-holder div#slide-controls {
+        background-color: #004074;
+    }
+    div#slide-holder div#slide-controls div.text {
+        color: #fff;
+    }
+    span.offerline2 a {
+        color: #fff;
+    }
+    .rvTabs, .rvRecTitle, .rvTabH, .rvTabF, .rvTabP {
+        background-color: #cecece !important;
+    }
+</style>
+
+
+
+<iframe id="ad_CXHOMECORE" class="ad" scrolling="no" frameborder="0" marginheight="0" marginwidth="0" height="268" width="416" style="border:none;overflow:hidden;width:416px;height:268px;" allowtransparency="true"></iframe>
+<script type="text/javascript">
+(function() {
+    var e = document.getElementById('ad_CXHOMECORE');
+    if (e) {
+        var useAlternateUrl = (true && window.location.hostname && window.location.hostname === "www.travelocity.com");
+        var url = useAlternateUrl ? "//shop.travelocity.com/html.cms/TPID=80001&EAPID=0&activity=ff43ffe3-f243-472d-a963-477dec20da08&LANGID=1033&SECURE=0&ip=10.186.108.6&USERTYPE=SHOPPER&EMAIL=NO&PLACEMENT=CXHOMECORE&LOCATION=HOME&SUBLOCATION=SEARCH&ADSIZE=416X268" : "/html.cms/TPID=80001&EAPID=0&activity=ff43ffe3-f243-472d-a963-477dec20da08&LANGID=1033&SECURE=0&ip=10.186.108.6&USERTYPE=SHOPPER&EMAIL=NO&PLACEMENT=CXHOMECORE&LOCATION=HOME&SUBLOCATION=SEARCH&ADSIZE=416X268";
+        if (typeof globalAdTileId == "undefined") {
+            datePart = new Date().getTime().toString();
+            datePart = datePart.substring(datePart.length - 8)
+            randomPart = Math.floor((Math.random() * 1e8)).toString();
+            window.globalAdTileId = datePart + randomPart;
+        }
+        url += "&tile=" + window.globalAdTileId;
+        e.src = url;
+    }
+})();
+</script>
+<div style="height:18px;"></div>
+
+
+	<div style="font-family:Arial;font-size:12px;width:416px;">
+
+
+
+<link rel="stylesheet" type="text/css" href="/static/publish/region_us/css/slider.css" />
+<script type="text/javascript" src="/static/publish/travelocity/js/doubleclickSlider.js"></script>
+<script type="text/javascript">
+	var _siteRoot='index.html',_root='index.html';
+    if(!window.slider) var slider={};
+	slider.data=[ 
+                  // {"id":"slide-1","client":"","desc":""},
+				  // {"id":"slide-2","client":"","desc":""},
+				  // {"id":"slide-3","client":"","desc":""},
+				  // {"id":"slide-4","client":"","desc":""},
+				  // {"id":"slide-5","client":"","desc":""},
+				  // {"id":"slide-6","client":"","desc":""} 
+                  ];
+</script>
+
+<style>
+    a, a:visited {
+        color: #004e93;
+    }
+    div#slide-holder div#slide-controls {
+        background-color: #004074;
+    }
+    div#slide-holder div#slide-controls div.text {
+        color: #fff;
+    }
+    span.offerline2 a {
+        color: #fff;
+    }
+</style>
+
+<div class="wrap">
+    <div id="slide-holder">
+        <div id="slide-runner">
+            <div id="slide-1" class="SliderBox" style="z-index: 6;">
+
+<iframe id="ad_CXHOMECORE_1" class="ad" scrolling="no" frameborder="0" marginheight="0" marginwidth="0" height="224" width="416" style="border:none;overflow:hidden;width:416px;height:224px;" allowtransparency="true"></iframe>
+<script type="text/javascript">
+(function() {
+    var e = document.getElementById('ad_CXHOMECORE_1');
+    if (e) {
+        var useAlternateUrl = (true && window.location.hostname && window.location.hostname === "www.travelocity.com");
+        var url = useAlternateUrl ? "//shop.travelocity.com/html.cms/TPID=80001&EAPID=0&activity=ff43ffe3-f243-472d-a963-477dec20da08&LANGID=1033&SECURE=0&ip=10.186.108.6&USERTYPE=SHOPPER&EMAIL=NO&PLACEMENT=CXHOMECORE_1&LOCATION=HOME&SUBLOCATION=SEARCH&ADSIZE=416X224" : "/html.cms/TPID=80001&EAPID=0&activity=ff43ffe3-f243-472d-a963-477dec20da08&LANGID=1033&SECURE=0&ip=10.186.108.6&USERTYPE=SHOPPER&EMAIL=NO&PLACEMENT=CXHOMECORE_1&LOCATION=HOME&SUBLOCATION=SEARCH&ADSIZE=416X224";
+        if (typeof globalAdTileId == "undefined") {
+            datePart = new Date().getTime().toString();
+            datePart = datePart.substring(datePart.length - 8)
+            randomPart = Math.floor((Math.random() * 1e8)).toString();
+            window.globalAdTileId = datePart + randomPart;
+        }
+        url += "&tile=" + window.globalAdTileId;
+        e.src = url;
+    }
+})();
+</script>
+            </div>
+        </div>
+        <div id="slide-controls">
+			<div class="text">Daily Deal</div>
+            <div id="slide-nav"></div>
+        </div>
+    </div>
+</div>
+
+<div style="clear:both;"></div>
+	</div>
+
+
+            </div>
+            <div id="belowColWide">
+<!--[if lt IE 8]>
+<style type="text/css">
+.dividerLine { margin: 25px 0px 12px 0px;}
+span.offerline2  {
+	content: ".";
+	display: inline-block;
+	height: 12px;
+	clear: both;
+}
+</style>
+<![endif]-->
+<script src="/static/publish/travelocity/js/adslider.js"></script>
+
+
+
+
+
+
+
+
+
+
+<style>
+.HPSectionInfo a:link, .HPSectionInfo a:visited, .HPSectionInfo a:hover, .HPSectionInfo a:active {color: #00355f;text-decoration: none;}
+.HPfindyours {height: 80px; width: 162px; margin-bottom: 3px;}
+.everywhere_adcontainer {float:left;margin-left:68px;height:146px;}
+.everywhere_adBox {float:left;margin-left:16px;width:146px;height:146px;overflow:hidden;}
+.social_box {float:left;width:149px;height:146px;margin:0;}
+.social_box a {float:left;display:block;margin-bottom:12px;}
+.social_box a.social_col1 {margin-right:12px;}
+</style>
+
+<!-- Travelocity Everywhere --> 
+<div id="subColDeal" class="HPEverywhere" style="margin-bottom:25px;">
+    <div class="column HPDealCol1">
+        <h2 class="ExpediaHeadings">
+            <span class="ExpediaHeadingsColorA">Take Travelocity</span><br />
+            <span class="ExpediaHeadingsColorB">Everywhere</span>
+        </h2>
+        <p class="HPDealSubCol">
+            Travelocity is your companion on mobile, on Facebook, on Twitter, and more.
+        </p>        
+    </div>
+    <div class="everywhere_adcontainer">
+        <div class="everywhere_adBox" style="margin-left:0;" >
+<div id="ad_CENTERTOP1"
+     name="ad"
+     class="ad"
+     style="overflow:hidden;height:146px;width:146px;margin-left:auto;margin-right:auto;"
+     ></div>
+<script>
+(function(w) { var useAlternateUrl = (true && window.location.hostname && window.location.hostname === "www.travelocity.com"); w.expads = w.expads || {}; w.expads.slots = w.expads.slots || {}; w.expads.slots["ad_CENTERTOP1"] = { location : "HOME", sublocation : "SEARCH", placement : "CENTERTOP1", url : useAlternateUrl ? "//shop.travelocity.com/js.ng/" : "/js.ng/", size : "146X146", comptest : "" }; })(window);</script>
+        </div>
+        <div class="everywhere_adBox">
+<div id="ad_CENTERTOP2"
+     name="ad"
+     class="ad"
+     style="overflow:hidden;height:146px;width:146px;margin-left:auto;margin-right:auto;"
+     ></div>
+<script>
+(function(w) { var useAlternateUrl = (true && window.location.hostname && window.location.hostname === "www.travelocity.com"); w.expads = w.expads || {}; w.expads.slots = w.expads.slots || {}; w.expads.slots["ad_CENTERTOP2"] = { location : "HOME", sublocation : "SEARCH", placement : "CENTERTOP2", url : useAlternateUrl ? "//shop.travelocity.com/js.ng/" : "/js.ng/", size : "146X146", comptest : "" }; })(window);</script>
+        </div>
+        <div class="everywhere_adBox">
+<div id="ad_CENTERTOP3"
+     name="ad"
+     class="ad"
+     style="overflow:hidden;height:146px;width:146px;margin-left:auto;margin-right:auto;"
+     ></div>
+<script>
+(function(w) { var useAlternateUrl = (true && window.location.hostname && window.location.hostname === "www.travelocity.com"); w.expads = w.expads || {}; w.expads.slots = w.expads.slots || {}; w.expads.slots["ad_CENTERTOP3"] = { location : "HOME", sublocation : "SEARCH", placement : "CENTERTOP3", url : useAlternateUrl ? "//shop.travelocity.com/js.ng/" : "/js.ng/", size : "146X146", comptest : "" }; })(window);</script>
+        </div>
+        <div class="everywhere_adBox">
+            <div class="social_box">
+                <a href="https://www.facebook.com/travelocity" class="social_col1" onClick="s_exp_trackClick(this,'e','Homepage.Facebook.Icon')" target="_blank"><img src="http://media.travelocitycustomercare.com/media/content/expus/graphics/launch/home/tvly/facebook_68x68.png" alt="Facebook icon" /></a>
+                <a href="https://twitter.com/travelocity" class="social_col2" onClick="s_exp_trackClick(this,'e','Homepage.Twitter.Icon')" target="_blank"><img src="http://media.travelocitycustomercare.com/media/content/expus/graphics/launch/home/tvly/twitter_68x68.png" alt="Twitter icon" /></a>
+                <a href="https://plus.google.com/+Travelocity" class="social_col1" onClick="s_exp_trackClick(this,'e','Homepage.GooglePlus.Icon')" target="_blank"><img src="http://media.travelocitycustomercare.com/media/content/expus/graphics/launch/home/tvly/google-plus_68x68.png" alt="Google Plus icon" /></a>
+                <a href="http://www.youtube.com/travelocity" class="social_col2" onClick="s_exp_trackClick(this,'e','Homepage.YouTube.Icon')" target="_blank"><img src="http://media.travelocitycustomercare.com/media/content/expus/graphics/launch/home/tvly/youtube_68x68.png" alt="YouTube icon" /></a>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="dividerLine clear"></div>
+<style>
+/*	#subColDeal {
+		padding-top: 70px;
+	}*/
+</style>
+
+<div id="subColDeal">
+	<div class="column HPDealCol1">
+		<h2 class="ExpediaHeadings">
+			<span class="ExpediaHeadingsColorA">Today's</span><br />
+			<span class="ExpediaHeadingsColorB">Top Deals</span>
+		</h2>
+		<p class="HPDealSubCol">
+			Start your search with a look<br />at the best rates on our site.
+		</p>
+	</div>
+<div id="dealsleftarrow"></div>
+<div id="now_adcontainer" class="adcontainer">
+	<div id="now_ads" class="inner_adcontainer">
+
+			
+			<div class="adBox" style="left: 0px;">
+				<div class="adcontent">
+					<a href="http://www.travelocity.com/p/promo/deals?promo=springbreak&mcicid=249425447"><img src="http://media.travelocitycustomercare.com/media/content/expus/graphics/promos/other/travelhook/131220_spring-break-sale_146x146.jpg" /></a>
+					<span class="offertext">
+						<a href="http://www.travelocity.com/p/promo/deals?promo=springbreak&mcicid=249425447"></a>
+					</span>
+					<span class="offerline2"><a href="http://www.travelocity.com/p/promo/deals?promo=springbreak&mcicid=249425447">Warm up with Savings </a></span>
+					
+				</div>
+			</div>
+
+			
+			<div class="adBox" style="left: 162px;">
+				<div class="adcontent">
+					<a href="http://www.travelocity.com/p/promo/deals?promo=long-weekend&mcicid=249425787"><img src="http://media.travelocitycustomercare.com/media/content/expus/graphics/promos/other/travelhook/131220_long-weekend_146x146.jpg" /></a>
+					<span class="offertext">
+						<a href="http://www.travelocity.com/p/promo/deals?promo=long-weekend&mcicid=249425787"></a>
+					</span>
+					<span class="offerline2"><a href="http://www.travelocity.com/p/promo/deals?promo=long-weekend&mcicid=249425787">Enjoy an Extra Day and Save </a></span>
+					
+				</div>
+			</div>
+
+			
+			<div class="adBox" style="left: 324px;">
+				<div class="adcontent">
+					<a href="http://www.travelocity.com/vc/flights-sem/ski/?mcicid=249426350"><img src="http://media.travelocitycustomercare.com/media/content/expus/graphics/promos/other/travelhook/140204_ski-sale_146x146.jpg" /></a>
+					<span class="offertext">
+						<a href="http://www.travelocity.com/vc/flights-sem/ski/?mcicid=249426350"></a>
+					</span>
+					<span class="offerline2"><a href="http://www.travelocity.com/vc/flights-sem/ski/?mcicid=249426350">Save Big on the Coolest Slopes </a></span>
+					
+				</div>
+			</div>
+
+			
+			<div class="adBox" style="left: 486px;">
+				<div class="adcontent">
+					<a href="http://www.travelocity.com/c/content/site/en/TRAVELOCITY/cruises/promotions/travelocity-cruise-super-sale.html?mcicid=249426441"><img src="http://media.travelocitycustomercare.com/media/content/expus/graphics/promos/other/travelhook/140102_cruise-super-sale-exp-thumb_146x146.jpg" /></a>
+					<span class="offertext">
+						<a href="http://www.travelocity.com/c/content/site/en/TRAVELOCITY/cruises/promotions/travelocity-cruise-super-sale.html?mcicid=249426441"></a>
+					</span>
+					<span class="offerline2"><a href="http://www.travelocity.com/c/content/site/en/TRAVELOCITY/cruises/promotions/travelocity-cruise-super-sale.html?mcicid=249426441">Get up to $500 in Cruise Cash </a></span>
+					
+				</div>
+			</div>
+
+			
+			<div class="adBox" style="left: 648px;">
+				<div class="adcontent">
+					<a href="http://www.travelocity.com//p/promo/deals?promo=hotels-four-star-under-250&mcicid=249426506"><img src="http://media.travelocitycustomercare.com/media/content/expus/graphics/promos/other/travelhook/140103_hotel-thumbs-luxury_146x146.jpg" /></a>
+					<span class="offertext">
+						<a href="http://www.travelocity.com//p/promo/deals?promo=hotels-four-star-under-250&mcicid=249426506"></a>
+					</span>
+					<span class="offerline2"><a href="http://www.travelocity.com//p/promo/deals?promo=hotels-four-star-under-250&mcicid=249426506">Spend Less for More </a></span>
+					
+				</div>
+			</div>
+
+			
+			<div class="adBox" style="left: 810px;">
+				<div class="adcontent">
+					<a href="http://www.travelocity.com/p/promo/deals?promo=last-minute&mcicid=249426589"><img src="http://media.travelocitycustomercare.com/media/content/expus/graphics/promos/other/travelhook/140204_last-minute_146x146.jpg" /></a>
+					<span class="offertext">
+						<a href="http://www.travelocity.com/p/promo/deals?promo=last-minute&mcicid=249426589"></a>
+					</span>
+					<span class="offerline2"><a href="http://www.travelocity.com/p/promo/deals?promo=last-minute&mcicid=249426589">Deals for This Weekend and Next </a></span>
+					
+				</div>
+			</div>
+
+			
+			<div class="adBox" style="left: 972px;">
+				<div class="adcontent">
+					<a href="http://www.travelocity.com/p/multi-deal/getaway-day.htm?mcicid=251541916"><img src="http://media.travelocitycustomercare.com/media/content/expus/graphics/promos/other/travelhook/getaway-day.jpg" /></a>
+					<span class="offertext">
+						<a href="http://www.travelocity.com/p/multi-deal/getaway-day.htm?mcicid=251541916"></a>
+					</span>
+					<span class="offerline2"><a href="http://www.travelocity.com/p/multi-deal/getaway-day.htm?mcicid=251541916">New Getaway Deals Each Day </a></span>
+					
+				</div>
+			</div>
+	</div>
+</div>
+<div id="dealsrightarrow"></div>		
+<script>
+var options = {
+	forward: '#dealsrightarrow',
+	backward: '#dealsleftarrow',
+	innercontainer: '#now_ads',
+	movedistance: 162,
+	interval: 1000,
+	maxdisplayed: 4,
+	useheadline: true,
+	outercontainer: '#subColDeal'
+};
+$('#now_adcontainer').adslider(options);
+</script></div>
+<div class="dividerLine clear"></div><div id="subColValue">
+	<div class="column HPDealCol1">
+		<h2 class="ExpediaHeadings">
+			<span class="ExpediaHeadingsColorA">Featured</span><br />
+			<span class="ExpediaHeadingsColorB">Offers</span>
+		</h2>
+		<p class="HPDealSubCol">
+			See what's in store<br />from our travel partners.
+		</p>
+	</div>
+<div id="valueleftarrow" class="inactive"></div>
+<div id="everyday_adcontainer" class="adcontainer">
+	<div id="everyday_ads" class="inner_adcontainer">
+
+			
+			<div class="adBox" style="left: 0px;">
+				<div class="adcontent">
+					<a href="http://www.travelocity.com/p/promo/deals?promo=default&mcicid=245516336#!hotel/template/closest/;destination:choose;dow:Anytime;minstar:3;minprice:25;staylength:3;lat:36.110796;lng:-115.169757;miles:25;dates:5;region:800045;airport:LAS;zoom:4;destination_name:The%20Strip"><img src="http://media.travelocitycustomercare.com/media/content/expus/graphics/promos/other/travelhook/140103_las-vegas-sale_146x146.jpg" /></a>
+					<span class="offertext">
+						<a href="http://www.travelocity.com/p/promo/deals?promo=default&mcicid=245516336#!hotel/template/closest/;destination:choose;dow:Anytime;minstar:3;minprice:25;staylength:3;lat:36.110796;lng:-115.169757;miles:25;dates:5;region:800045;airport:LAS;zoom:4;destination_name:The%20Strip"></a>
+					</span>
+					<span class="offerline2"><a href="http://www.travelocity.com/p/promo/deals?promo=default&mcicid=245516336#!hotel/template/closest/;destination:choose;dow:Anytime;minstar:3;minprice:25;staylength:3;lat:36.110796;lng:-115.169757;miles:25;dates:5;region:800045;airport:LAS;zoom:4;destination_name:The%20Strip">Go to Vegas! </a></span>
+					
+				</div>
+			</div>
+
+			
+			<div class="adBox" style="left: 162px;">
+				<div class="adcontent">
+					<a href="http://www.travelocity.com/p/promo/deals?promo=default&mcicid=245516338#!hotel/template/closest/;destination:choose;dow:Anytime;minstar:3;minprice:25;staylength:3;lat:40.760016;lng:-73.983777;miles:25;dates:5;region:800077;airport:NYC;zoom:4;destination_name:Broadway%20-%20Times%20Square"><img src="http://media.travelocitycustomercare.com/media/content/expus/graphics/promos/other/travelhook/140103_nyc-sale_146x146.jpg" /></a>
+					<span class="offertext">
+						<a href="http://www.travelocity.com/p/promo/deals?promo=default&mcicid=245516338#!hotel/template/closest/;destination:choose;dow:Anytime;minstar:3;minprice:25;staylength:3;lat:40.760016;lng:-73.983777;miles:25;dates:5;region:800077;airport:NYC;zoom:4;destination_name:Broadway%20-%20Times%20Square"></a>
+					</span>
+					<span class="offerline2"><a href="http://www.travelocity.com/p/promo/deals?promo=default&mcicid=245516338#!hotel/template/closest/;destination:choose;dow:Anytime;minstar:3;minprice:25;staylength:3;lat:40.760016;lng:-73.983777;miles:25;dates:5;region:800077;airport:NYC;zoom:4;destination_name:Broadway%20-%20Times%20Square">Great deals in the Big Apple </a></span>
+					
+				</div>
+			</div>
+
+			
+			<div class="adBox" style="left: 324px;">
+				<div class="adcontent">
+					<a href="http://www.travelocity.com/p/promo/deals?promo=default&mcicid=246488718"><img src="http://media.travelocitycustomercare.com/media/content/expus/graphics/promos/other/travelhook/140103_generic_2_146x146.jpg" /></a>
+					<span class="offertext">
+						<a href="http://www.travelocity.com/p/promo/deals?promo=default&mcicid=246488718"></a>
+					</span>
+					<span class="offerline2"><a href="http://www.travelocity.com/p/promo/deals?promo=default&mcicid=246488718">Hurry These Deals Won't Last </a></span>
+					
+				</div>
+			</div>
+
+			
+			<div class="adBox" style="left: 486px;">
+				<div class="adcontent">
+					<a href="http://www.travelocity.com/p/promo/deals?promo=flights&mcicid=247493982"><img src="http://media.travelocitycustomercare.com/media/content/expus/graphics/promos/other/travelhook/140103_generic_1_146x146.jpg" /></a>
+					<span class="offertext">
+						<a href="http://www.travelocity.com/p/promo/deals?promo=flights&mcicid=247493982"></a>
+					</span>
+					<span class="offerline2"><a href="http://www.travelocity.com/p/promo/deals?promo=flights&mcicid=247493982">Great Airfare Deals </a></span>
+					
+				</div>
+			</div>
+	</div>
+</div>
+<div id="valuerightarrow" class="inactive"></div>
+<script>
+var options = {
+	forward: '#valuerightarrow',
+	backward: '#valueleftarrow',
+	innercontainer: '#everyday_ads',
+	movedistance: 162,
+	interval: 1000,
+	maxdisplayed: 4,
+	useheadline: true,
+	outercontainer: '#subColValue'
+};
+$('#everyday_adcontainer').adslider(options);
+</script></div>
+<div class="dividerLine clear"></div>
+
+
+
+
+
+
+
+
+<div class="column HPWhyCol">
+		<h2 class="ExpediaHeadings">
+			<span class="ExpediaHeadingsColorA">Why book with</span><br />
+			<span class="ExpediaHeadingsColorB">Travelocity?</span>
+		</h2>
+	</div>
+
+	<div class="column HPWhyCol1">
+		<h4 class="HPSectionInfo ExpediaHeadingsColorB"><img src="//media.travelocitycustomercare.com/media/content/expus/graphics/launch/home/tvly/20120511_hp_check_tvly.png" class="HPcheckmark" alt="*" />Largest Selection</h4>
+		<ul class="xp-t-body-global HPWhyBook">
+			<li>140,000+ hotels worldwide</li>
+			<li>130+ airlines</li>
+			<li>Over 3 million guest reviews</li>
+		</ul>
+	</div>
+	<div class="column HPWhyCol2">
+			<h4 class="HPSectionInfo ExpediaHeadingsColorB"><img src="//media.travelocitycustomercare.com/media/content/expus/graphics/launch/home/tvly/20120511_hp_check_tvly.png" class="HPcheckmark" alt="*" />Save More</h4>
+			<ul class="xp-t-body-global HPWhyBook">
+				<li><a href="/p/info-other/guarantees.htm?mcicid=hp.bpginfo">Get the best rates, or get a refund&mdash;plus a $50 coupon</a></li>
+				<li><a href="/p/promo/deals?promo=packages?mcicid=hp.pkgsaveinfo">Save up to $525 on flight + hotel packages</a></li>
+			</ul>
+	</div>
+
+	<div class="column HPWhyCol3">
+		<h4 class="HPSectionInfo ExpediaHeadingsColorB"><img src="//media.travelocitycustomercare.com/media/content/expus/graphics/launch/home/tvly/20120511_hp_check_tvly.png" class="HPcheckmark"  alt="*" />We're Always Here</h4>
+		<ul class="xp-t-body-global HPWhyBook">
+			<li><a href="http://shop.travelocity.com/p/support.htm">Call or email us, anytime</a></li>
+			<li>Get 24-hour support before, during, and after your trip</li>
+		</ul>
+	</div>
+
+	<div class="dividerLine clear top16"></div>
+ <!-- need to use newsletter_wide -->
+
+
+
+
+
+
+
+
+
+
+
+<div class="HPETravel">
+		<div  class="column HPETravelCol1">
+			<h1 class="ExpediaHeadings">
+				<span class="ExpediaHeadingsColorA">Travelocity</span><br />
+				<span class="ExpediaHeadingsColorB">Travel</span>
+			</h1>
+			<p class="xp-t-body-global">
+				Plan your next vacation with Travelocity. We make it easy to get great deals on flights, hotels, and flight + hotel vacations.
+			</p>
+		</div>
+
+		<div  class="column HPETravelMap1">
+			<h2 class="ExpediaHeadings">
+				<span class="ExpediaHeadingsColorA">Browse</span><br />
+				<span class="ExpediaHeadingsColorB">by Continent</span>
+			</h2>
+			<p class="xp-t-body-global">
+				<a href="/Asia.d6023099.Destination-Travel-Guide">Asia</a>
+				<span class="HPgreyline">|</span>
+				<a href="/Africa-And-Indian-Ocean.d6023185.Destination-Travel-Guide">Africa</a>
+				<span class="HPgreyline">|</span>
+				<a href="/United-States-Of-America.d201.Destination-Travel-Guide">United States</a>
+				<br />
+				<a href="/Canada.d31.Destination-Travel-Guide">Canada</a>
+				<span class="HPgreyline">|</span>
+				<a href="/South-America.d6023117.Destination-Travel-Guide">South America</a>
+				<span class="HPgreyline">|</span>
+				<a href="/Europe.d6022967.Destination-Travel-Guide">Europe</a>
+				<br />
+				<a href="/Australia-New-Zealand-And-The-South-Pacific.d6023180.Destination-Travel-Guide">Australia &amp; South Pacific</a>
+				<span class="HPgreyline">|</span>
+				<a href="/Mexico-And-Central-America.d6023181.Destination-Travel-Guide">Mexico &amp; Central America</a>
+				<span class="HPgreyline">|</span>
+				<a href="/Caribbean.d6022969.Destination-Travel-Guide">Caribbean</a>
+			</p>
+		</div>
+
+		<div class="column HPETravelMap2">
+	<img src="http://media.travelocitycustomercare.com/media/content/expus/graphics/launch/home/20120511_hp_map.png" width="275" height="131" alt="world map" />
+		</div>
+	</div>
+
+	<div class="dividerLine clear"></div>
+
+
+
+
+
+
+
+
+
+<p class="legaltext"><span class="belowClmnLegalText">*Savings based on vacation package bookings in 2011 as compared to the price of the same components booked separately. Savings will vary based on origin/destination, length of trip, stay dates and selected travel supplier(s). Savings not available on all packages.</span></p>
+            </div>
+        </div>
+		
+
+<script>
+(function(w) { var options = { dataType: "script", cache: true, url: "/minify/de-min-3706002713.js?v=release-2014-02-r1-2874-962065-1" }; $.when( $.ajax(options), $.Deferred(function(deferred) { w.expads = w.expads || {}; w.expads.targeting = {"TPID":"80001","LANGID":1033,"EAPID":"0","activity":"ff43ffe3-f243-472d-a963-477dec20da08","ip":"10.186.108.6","USERTYPE":["SHOPPER"],"EMAIL":false,"SECURE":false}; $(deferred.resolve); }) ).done(function() { $(document).ready(function() { w.expads.initialize(); }); }) ; })(window);</script>
+
+<link rel="stylesheet" href="/minify/new-footer-css-min-1375106963.css?v=release-2014-02-r1-2874-962065-1" /><!-- 0 ms -->
+
+  <script>window.jQuery || document.write('<script src="//ajax.googleapis.com/ajax/libs/jquery/1.6.4/jquery.min.js"><\/script>')</script>
+
+<script src="/minify/new-footer-js-min-655066841.js?v=release-2014-02-r1-2874-962065-1"></script><!-- 0 ms -->
+  <!--[if IE 7 ]> <div class="no-uitk ie7"> <![endif]-->
+  <div class="no-uitk">
+
+
+
+
+
+
+
+<div id="site-footer-background" class="site-footer-background tv-footer">
+    <div id="site-footer-wrap" class="site-footer-wrap cols-nested">
+
+<ul class="segmented-list trip-planning">
+	<!-- SWXL widget : c -->
+</ul>
+<div class="logo-wrap cf">
+    <span id="footer-logo" class="logo">Travelocity</span>
+</div>
+        <div class="site-footer cf sub-footer" role="contentinfo">
+
+
+
+
+
+
+
+
+
+
+<ul id="expedia-links" class="expedia-links">
+    <li><a href=" http://www.travelocity.com/about/main/0,,TRAVELOCITY:EN|ABOUT,00.html" data-onclick="xp.nav.trackAnalytics(this,'a','Footer.CorporateLink')">About Travelocity</a></li>
+    <li><a href="http://shop.travelocity.com/p/support.htm" data-onclick="xp.nav.trackAnalytics(this,'a','Footer.CorporateLink')">Customer Support</a></li>
+    <li><a href="http://phx.corporate-ir.net/phoenix.zhtml?c=75787&p=irol-news&nyo=0" data-onclick="xp.nav.trackAnalytics(this,'a','Footer.CorporateLink')">Press Releases</a></li>
+    <li><a href="http://www.travelocity.com/mediakit/index.html" data-onclick="xp.nav.trackAnalytics(this,'a','Footer.CorporateLink')">Advertising</a></li>
+    <li><a href="http://www.travelocity.com/about/main/0,,TRAVELOCITY:EN%7CAFFILIATE_PROG,00.html" data-onclick="xp.nav.trackAnalytics(this,'a','Footer.CorporateLink')">Become an Affiliate</a></li>
+    <li><a href="http://www.travelocity.com/sitemap" data-onclick="xp.nav.trackAnalytics(this,'a','Footer.CorporateLink')">Site Map</a></li>
+    <li><a href="http://www.travelocity.com/about/jobs" data-onclick="xp.nav.trackAnalytics(this,'a','Footer.CorporateLink')">Jobs</a></li>
+    <li><a href="http://www.youtube.com/travelocity" data-onclick="xp.nav.trackAnalytics(this,'a','Footer.CorporateLink')">TV Ads</a></li>
+    
+</ul><ul class="segmented-list ">
+  <li class="toggle">
+    <a href="#globalSites" aria-controls="globalSites" class="toggle-trigger" data-control="toggle" data-transition="fade">    Global Sites
+<span class="icon icon-expand"></span></a>
+    <div id="globalSites" class="toggle-pane" role="region" aria-expanded="false">
+      <div class="toggle-inner">
+<ul id="global-sites-list" class="global-sites-list">
+     <li><a href="http://www.travelocity.com.ar" title="Travelocity.com.ar" data-onclick="xp.nav.trackAnalytics(this,'a','Footer.AllSites')"><span class="flag ar"></span> Argentina</a></li>
+     <li><a href="http://www.travelocity.ca" title="Travelocity.ca" data-onclick="xp.nav.trackAnalytics(this,'a','Footer.AllSites')"><span class="flag ca"></span> Canada</a></li>
+     <li><a href="http://www.fr.lastminute.com/" title="Travelocity.fr" data-onclick="xp.nav.trackAnalytics(this,'a','Footer.AllSites')"><span class="flag fr"></span> France</a></li>
+     <li><a href="http://www.lastminute.de/" title="Travelocity.de" data-onclick="xp.nav.trackAnalytics(this,'a','Footer.AllSites')"><span class="flag de"></span> Germany</a></li>
+     <li><a href="http://www.lastminute.ie/" title="Travelocity.ie" data-onclick="xp.nav.trackAnalytics(this,'a','Footer.AllSites')"><span class="flag ie"></span> Ireland</a></li>
+     <li><a href="http://www.it.lastminute.com/" title="Travelocity.it" data-onclick="xp.nav.trackAnalytics(this,'a','Footer.AllSites')"><span class="flag it"></span> Italy</a></li>
+     <li><a href="http://www.travelocity.com.mx" title="Travelocity.mx" data-onclick="xp.nav.trackAnalytics(this,'a','Footer.AllSites')"><span class="flag mx"></span> Mexico</a></li>
+     <li><a href="http://www.es.lastminute.com/" title="Travelocity.es" data-onclick="xp.nav.trackAnalytics(this,'a','Footer.AllSites')"><span class="flag es"></span> Spain</a></li>
+     <li><a href="http://www.travelocity.co.uk" title="Travelocity.co.uk" data-onclick="xp.nav.trackAnalytics(this,'a','Footer.AllSites')"><span class="flag uk"></span> United Kingdom</a></li>
+</ul>      </div>
+    </div>
+  </li>
+  <li class="toggle">
+    <a href="#otherLinks" aria-controls="otherLinks" class="toggle-trigger" data-control="toggle" data-transition="fade">    Other Links
+<span class="icon icon-expand"></span></a>
+    <div id="otherLinks" class="toggle-pane" role="region" aria-expanded="false">
+      <div class="toggle-inner">
+
+<div id="other-links-wrap">
+    <ul id="other-links" class="other-links">
+        <li><a href=" http://www.travelocity.com/Vacations" data-onclick="xp.nav.trackAnalytics(this,'a','Footer.LocalLinks')">Vacation Packages</a></li>
+        <li><a href="http://www.travelocity.com/Flights" data-onclick="xp.nav.trackAnalytics(this,'a','Footer.LocalLinks')">Flights</a></li>
+        <li><a href="http://www.travelocity.com/Hotels" data-onclick="xp.nav.trackAnalytics(this,'a','Footer.LocalLinks')">Hotels</a></li>
+        <li><a href="http://www.travelocity.com/Car-Rental" data-onclick="xp.nav.trackAnalytics(this,'a','Footer.LocalLinks')">Cars</a></li>
+        <li><a href="http://www.travelocity.com/Cruises" data-onclick="xp.nav.trackAnalytics(this,'a','Footer.Sitemaps')">Cruise</a></li>
+        <li><a href="http://www.travelocity.com/c/content/site/en/TRAVELOCITY/brand/promotions/gnome-store.html" data-onclick="xp.nav.trackAnalytics(this,'a','Footer.Sitemaps')">Travelocity Merchandise</a></li>
+        <li><a href="http://www.travelocity.com/guarantee" data-onclick="xp.nav.trackAnalytics(this,'a','Footer.Sitemaps')">Travelocity Guarantees</a></li>
+        <li><a href="https://travel.travelocity.com/mystuff/ShowCreateAccount.do" data-onclick="xp.nav.trackAnalytics(this,'a','Footer.Sitemaps')">Subscribe</a></li>
+    </ul>
+</div>
+      </div>
+    </div>
+  </li>
+  <li class="toggle">
+    <a href="#partnerServices" aria-controls="partnerServices" class="toggle-trigger" data-control="toggle" data-transition="fade">    Travelocity Partners
+<span class="icon icon-expand"></span></a>
+    <div id="partnerServices" class="toggle-pane" role="region" aria-expanded="false">
+      <div class="toggle-inner">
+<ul id="partner-service-links" class="partner-service-links">
+    <li><a href="http://www.igougo.com/" data-onclick="xp.nav.trackAnalytics(this,'a','Footer.PartnerService')">IgoUgo</a></li>
+    <li><a href="http://www.travelocitylatino.com/" data-onclick="xp.nav.trackAnalytics(this,'a','Footer.PartnerService')">Latin America</a></li>
+    <li><a href="http://Vacations.com" data-onclick="xp.nav.trackAnalytics(this,'a','Footer.PartnerService')">Vacations.com</a></li>
+    <li><a href="http://www.travelocity.com/blog" data-onclick="xp.nav.trackAnalytics(this,'a','Footer.PartnerService')">Window Seat Blog</a></li>
+    <li><a href="http://www.travelocitypartnernetwork.com/" data-onclick="xp.nav.trackAnalytics(this,'a','Footer.PartnerService')">Travelocity Partner Network</a></li>
+</ul>      </div>
+    </div>
+  </li>
+</ul>
+
+
+
+<p id="legal" class="legal">
+    &copy; 1996-2014 Travelocity.com LP. All rights reserved. Travelocity, the Stars Design, and The Roaming Gnome Design are trademarks of Travelocity.com LP. Use of this Web site constitutes acceptance of the <a href="http://shop.travelocity.com/p/info-other/legal.htm">Travelocity User Agreement</a> and <a href="http://shop.travelocity.com/p/info-other/privacy-policy.htm">Privacy Policy.</a> CST# 2056372-50
+</p>
+
+        </div>
+    </div>
+</div>
+
+
+  </div>
+
+
+<div style="display:none;">
+	<input type="hidden" id="pageId" value="Homepage" />
+</div>
+<script type="text/javascript">
+if('undefined' != typeof(fnTHJSInc) && fnTHJSInc)
+{
+	fnTHJSInc();
+}
+
+function trackClick(linkObj,linkType,linkID)
+{
+	if('undefined' != typeof(s_exp_trackClick) && s_exp_trackClick)
+	{
+		s_exp_trackClick(linkObj,linkType,linkID);
+	}
+}
+</script>
+
+<script src="/minify/exp.core.tracking-min-4143621409.js?v=release-2014-02-r1-2874-962065-1"></script><!-- 0 ms -->
+
+	<script language="javascript" type="text/javascript">
+
+	var s_account = "expedia80001";
+
+	//We only want to log s_BrandEAPID for a select group of tpid/eapid pairs.
+	//Enter the pair below and set the value to the logged eapid
+	//s_BrandEAPID table, lookup is 'expedia<Tpid>-<EAPID>'
+	s_BrandEAPIDTable = new Object();
+	s_BrandEAPIDTable['expedia30035-327'] = '327';
+	s_BrandEAPIDTable['expedia30036-392'] = '392';
+	s_BrandEAPIDTable['expedia30009-314'] = '314';
+	s_BrandEAPIDTable['expedia6-10122'] = '10122';
+	s_BrandEAPIDTable['expedia30007-711'] = '711';
+	s_BrandEAPIDTable['expedia30007-712'] = '712';
+
+	var s_BrandEAPID = '';
+	if('undefined' != typeof(s_BrandEAPIDTable['expedia80001-']))
+	{
+		s_BrandEAPID = s_BrandEAPIDTable['expedia80001-'];
+	}
+
+	//This returns empty string if not in test env
+	var s_accountDevPostfix = '';
+
+	//If s_BrandEAPID is set then the OM code will append it to s_account
+	//So append the dev postfix to account if blank, but s_BrandEAPID otherwise
+	if (s_BrandEAPID.length > 0) {
+		s_BrandEAPID += s_accountDevPostfix;
+	} else {
+		s_account += s_accountDevPostfix;
+	}
+
+	//This is for future use so that OM can add 'dev' by itself
+	s_exp_isTest = s_accountDevPostfix.length > 0;
+	</script>
+<script src="/minify/siteAnalytics-min-1743523796.js?v=release-2014-02-r1-2874-962065-1"></script><!-- 0 ms -->
+	<script language='javascript' type='text/javascript' >
+	s_exp.pageName = 'Homepage';
+	s_exp.server = 'www.travelocity.com';
+	s_exp.channel = '';
+
+	if('undefined' != typeof(RecentlyViewedData) && RecentlyViewedData){RecentlyViewedData.omniTrac(s_exp);}
+	s_exp.prop2 = '';
+		s_exp.prop3 = '';
+
+        s_exp.prop4 = '';
+        if(s_exp.prop4 == "")
+        {
+        }
+
+    if(s_exp.prop4 == "")
+    {
+    }
+
+    s_exp.prop5 = '';
+    s_exp.prop6 = '';
+	s_exp.prop11 = '-1';
+	s_exp.prop12 = '94f178d3d3a34bac90dcb123db6b1d58';
+
+
+	
+	
+	if (typeof(s_prop34)!='undefined') {s_exp.prop34 = s_prop34;s_exp.eVar34=s_prop34;}
+
+    if (typeof(s_prop36)!='undefined') {s_exp.prop36 = s_prop36;}
+
+	if ('undefined' != typeof(OmnitureABIds)){
+		 for (var i = 0; i < OmnitureABIds.length; i++) {
+			PLSetABTestIDAndValue(OmnitureABIds[i]);
+		}
+	}
+
+
+	s_exp.eVar2 = s_exp.prop2;
+	s_exp.eVar3 = s_exp.prop3;
+	s_exp.eVar4 = s_exp.prop4;
+        s_exp.eVar5 = s_exp.prop5;
+        s_exp.eVar6 = s_exp.prop6;
+	s_exp.eVar28 = '';
+	s_exp.eVar45 = '';
+
+	if (typeof(s_OpaqueBannerVisible)!='undefined') {s_exp.events = 'event12';}
+
+        s_exp.prop4 = '';
+        if(s_exp.prop4 == "")
+        {
+        }
+
+    if(s_exp.prop4 == "")
+    {
+    }
+
+    s_exp.prop1 = '';
+    s_exp.prop30 = '1033';
+    s_exp.eVar54 = s_exp.prop30;
+    s_exp.eVar37 = '';
+    s_exp.prop37 = s_exp.eVar37;
+    s_exp.prop10 = '';
+
+
+
+
+	if(typeof s_exp_products != "undefined")
+	{
+	   s_exp.products = s_exp_products;
+
+		if(typeof s_exp_channel != "undefined")
+		{
+			s_exp.channel = s_exp_channel; //override the default
+		}
+
+		if(typeof s_exp_events != "undefined")
+		{
+			s_exp.events = s_exp_events;  //override the default
+		}
+
+		if(typeof s_exp_prop25 != "undefined")
+		{
+			s_exp.prop25 = s_exp_prop25;
+		}
+
+		if(typeof s_exp_eVar25 != "undefined")
+		{
+			s_exp.eVar25 = s_exp_eVar25;
+		}
+
+		if(typeof s_exp_eVar30 != "undefined")
+		{
+			s_exp.eVar30 = s_exp_eVar30;
+		}
+
+		if(typeof s_exp_currencyCode != "undefined")
+		{
+			s_exp.currencyCode = s_exp_currencyCode;
+		}
+	}
+	//Homepage
+	
+
+
+
+	if ('undefined' != typeof(s_analyticsLoggingCallback)) {
+		s_analyticsLoggingCallback(s_exp);
+	}
+
+	if ('undefined' != typeof(ProductSiteAnalyticsLogger)
+	 && 'undefined' != typeof(ProductSiteAnalyticsLogger.updateOmniture))
+	{
+		ProductSiteAnalyticsLogger.updateOmniture(s_exp);
+	}
+  </script>
+    <div id="sCodeDiv"><!-- s_code will load here --></div>
+	<script language="javascript" type="text/javascript"><!--
+    var s_code=s_exp.t();if(s_code)document.getElementById('sCodeDiv').innerHTML = s_code;
+	//--></script>
+
+		<script language="javascript" type="text/javascript" src="/static/default/default/scripts/contentReflowTvly.js?v=release-2014-02-r1.2874.962065"></script>
+		<script language="javascript" type="text/javascript" src="/static/default/default/scripts/forceNewWizardBucket.js?v=release-2014-02-r1.2874.962065"></script>
+
+
+
+<iframe src='http://pixel.fetchback.com/serve/fb/pdj?cat=&name=landing&sid=6055' scrolling='no' width='1' height='1' marginheight='0' marginwidth='0' frameborder='0'></iframe>
+
+
+
+<img src="http://www.wtp101.com/pixel?id=18922" width="1" height="1" border="0" />
+
+
+
+<script type="text/javascript">
+$LAB.queueWait(function(){
+    adroll_adv_id = "MBCGQFA76BBKPGQQRTCAWS";
+    adroll_pix_id = "7FJR6V2CSZBVLK57J2P4MT";
+    $(document).ready(function() {
+        __adroll_loaded=true;
+        var scr = document.createElement("script");
+        var host = (("https:" == document.location.protocol) ? "https://s.adroll.com" : "http://a.adroll.com");
+        scr.setAttribute('async', 'true');
+        scr.type = "text/javascript";
+        scr.src = host + "/j/roundtrip.js";
+        ((document.getElementsByTagName('head') || [null])[0] ||
+        document.getElementsByTagName('script')[0].parentNode).appendChild(scr);
+    });
+}).runQueue();
+</script>
+
+
+<!-- PART 1: This is the code that will collect the dynamic values; must be placed above PART 2 -->
+<!--
+PLEASE INCLUDE THIS COMMENT ON THE WEB PAGE WITH THE TAG
+Remarketing tags may not be associated with personally identifiable information
+or placed on pages related to sensitive categories.  For more information on
+this, see http://google.com/ads/remarketingsetup
+-->
+
+
+<script type="text/javascript">
+    var google_tag_params = {
+        site: 'US',
+        pagetype: 'home'
+    };
+
+    /* &lt;![CDATA[ */
+    var google_conversion_id = 984745899;
+    var google_custom_params = window.google_tag_params;
+    var google_remarketing_only = true;
+    /* ]]&gt; */
+
+$LAB.queueScript('//www.googleadservices.com/pagead/conversion.js');
+$LAB.runQueue();
+</script>
+
+<noscript>
+    <div style="display:inline;">
+        <img height="1" width="1" style="border-style:none;" alt=""
+            src="//googleads.g.doubleclick.net/pagead/viewthroughconversion/984745899/?value=0&amp;guid=ON&amp;script=0"/>
+    </div>
+</noscript>
+
+
+
+
+<script type="text/javascript">
+
+$LAB.queueScript('http://img.pulsemgr.com/script/pm/100/');
+$LAB.queueWait(function(){
+    if (pulse) {
+        pulse.setPartnerId('30355');
+        pulse.setSite('www.travelocity.com');
+        pulse.set('prf','');
+        pulse.add('pce','0');
+        pulse.add('pty','hp');
+        pulse.pulse();
+    }
+});
+$LAB.runQueue();
+</script>
+
+
+
+        <!--2262 == 0 -->
+
+
+        <!-- Begin omniture click tracking for homepage wizard radio buttons -->
+        <script>
+            $(function () {
+                var wizardRadioButtonContainer = document.getElementById('xp_uw_lobContainer'),
+                    wizardRadioButtons = $(wizardRadioButtonContainer).find('.wizardRadio');
+                $(wizardRadioButtons).bind("change", function(e) {
+                   var wizardRadioOmnitureMap = {
+                      'flight-only'     : 'HP.RB.FLIGHT',
+                      'hot-only'        : 'HP.RB.HOTEL',
+                      'car-only'        : 'HP.RB.CAR',
+                      'activities-only' : 'HP.RB.LX',
+                      'cruise-only'     : 'HP.RB.CRUISE',
+                      'flight-hot'      : 'HP.RB.FLIGHT:HOTEL',
+                      'flight-car'      : 'HP.RB.FLIGHT:CAR',
+                      'flight-hot-car'  : 'HP.RB.FLIGHT:HOTEL:CAR',
+                      'hot-car'         : 'HP.RB.HOTEL:CAR'
+                    },
+                    omnitureKey = $(this).attr("id");
+                    s_exp_trackClick(this, 'a', wizardRadioOmnitureMap[omnitureKey]);
+                });
+            });
+        </script>
+        <!-- end omniture click tracking for homepage wizard radio buttons -->
+        
+        <!-- Show either big or small Unreal Deal placement based on available space -->
+		<script type="text/javascript">
+			$(function () {
+				var recentBoxHeight = $('#xp_hp_bCol').height(); 
+				var wizardHeight = $('#xp_hp_aCol').height();
+				var availableContentSpace = recentBoxHeight - wizardHeight;   
+				if(availableContentSpace <= 200)
+				{
+					$('#variant1_small').show();
+				}       
+				else
+				{
+					$('#variant1_large').show();
+				}
+			});	 
+        </script>	
+		
+    </body>
+</html>

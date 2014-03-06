@@ -1,4 +1,4 @@
-function bW() {
+﻿function bW() {
         function () {
             for (var a in bU) bU[a](0, 1)
 if (b) {
