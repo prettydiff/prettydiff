@@ -1424,7 +1424,7 @@ var exports = "",
                     bodyLocal    = body,
                     headingLocal = heading,
                     leftLocal    = left,
-                    topLocal     = top,
+                    topLocal     = (top > 1) ? top : 1,
                     width        = 17,
                     height       = 3,
                     leftTarget   = 0,
@@ -2631,7 +2631,7 @@ var exports = "",
                         }
                         if (node.parentNode.getAttribute("class") === "tall") {
                             node.style.width = "49%";
-                            if (pd.test.load === false && pd.test.cm === false) {
+                            if (pd.test.load === false && pd.test.cm === false && pd.o.maxInputs.innerHTML.replace(/\s+/g, "").toLowerCase() === "maximizeinputs") {
                                 pd.o.codeBeauIn.style.height = "31.7em";
                             }
                         } else {
@@ -3296,6 +3296,7 @@ var exports = "",
         delete localStorage.commentString;
         delete localStorage.settings;
         delete localStorage.stat;
+        pd.o.modeDiff.click();
         location.reload();
     };
 

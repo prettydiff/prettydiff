@@ -8350,6 +8350,20 @@ var prettydiff = function prettydiff(api) {
                                                         lenComp.pop();
                                                         lenComp.pop();
                                                         earlyOut = true;
+                                                    } else if (dataB[matchNextB[1] + matchCount] === dataA[matchNextB[1]] && strStart + dataB.slice(matchNextB[0] + matchCount, matchNextB[1] + matchCount).join("") === dataA.slice(matchNextB[0], matchNextB[1]).join("")) {
+                                                        dataB[b + (matchCount - 1)] = dataB[b + (matchCount - 1)] + strEnd;
+                                                        dataA[b] = dataA[b].replace(strStart, strStart + strEnd);
+                                                        b += matchCount;
+                                                        dataMinLength += matchCount;
+                                                        do {
+                                                            dataA.unshift("");
+                                                            matchCount -= 1;
+                                                        } while (matchCount > 0);
+                                                        matchNextB.pop();
+                                                        matchNextB.pop();
+                                                        lenComp.pop();
+                                                        lenComp.pop();
+                                                        earlyOut = true;
                                                     } else {
                                                         mBTest = true;
                                                     }
@@ -8409,6 +8423,36 @@ var prettydiff = function prettydiff(api) {
                                         } else {
                                             dataA.push(strEnd);
                                             dataB.push(strEnd);
+                                        }
+                                        if (dataA.length < dataB.length && dataB[dataB.length - 1].indexOf(strEnd) < 0) {
+                                            d = dataB.length - 1;
+                                            dataA.push(strStart + " ");
+                                            if (dataB[b].indexOf(strStart + strEnd) > -1) {
+                                                dataB[dataMinLength - 1] = strStart + dataB[dataMinLength - 1];
+                                            } else {
+                                                dataB[dataMinLength] = strStart + dataB[dataMinLength];
+                                            }
+                                            for (c = dataMinLength; c < d; c += 1) {
+                                                dataA.push(" ");
+                                            }
+                                            dataA[d] = dataA[d] + strEnd;
+                                            dataB[d] = dataB[d] + strEnd;
+                                            errorout += 1;
+                                        }
+                                        if (dataB.length < dataA.length && dataA[dataA.length - 1].indexOf(strEnd) < 0) {
+                                            d = dataA.length - 1;
+                                            dataB.push(strStart + " ");
+                                            if (dataA[b].indexOf(strStart + strEnd) > -1) {
+                                                dataA[dataMinLength - 1] = strStart + dataA[dataMinLength - 1];
+                                            } else {
+                                                dataA[dataMinLength] = strStart + dataA[dataMinLength];
+                                            }
+                                            for (c = dataMinLength; c < d; c += 1) {
+                                                dataB.push(" ");
+                                            }
+                                            dataA[d] = dataA[d] + strEnd;
+                                            dataB[d] = dataB[d] + strEnd;
+                                            errorout += 1;
                                         }
                                         break;
                                     }
@@ -9594,16 +9638,16 @@ var prettydiff = function prettydiff(api) {
         css          : 140129, //diffview.css file
         csvbeauty    : 140114, //csvbeauty library
         csvmin       : 131224, //csvmin library
-        diffview     : 140301, //diffview library
+        diffview     : 140305, //diffview library
         documentation: 140127, //documentation.xhtml
         jsmin        : 140127, //jsmin library (fulljsmin.js)
         jspretty     : 140220, //jspretty library
         markup_beauty: 140220, //markup_beauty library
         markupmin    : 140220, //markupmin library
-        prettydiff   : 140301, //this file
+        prettydiff   : 140305, //this file
         webtool      : 140210, //prettydiff.com.xhtml
         api          : {
-            dom        : 140301,
+            dom        : 140305,
             nodeLocal  : 140301,
             nodeService: 121106, //no longer maintained
             wsh        : 140210
