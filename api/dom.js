@@ -2658,7 +2658,9 @@ var exports = "",
                 if (pd.o.codeBeauIn !== null) {
                     node                         = pd.o.codeBeauIn.parentNode;
                     node.style.width             = "100%";
-                    pd.o.codeBeauIn.style.height = "31.7em";
+                    if (pd.o.maxInputs.innerHTML.replace(/\s+/g, "").toLowerCase() === "maximizeinputs") {
+                        pd.o.codeBeauIn.style.height = "31.7em";
+                    }
                     if (pd.test.cm === true) {
                         pd.o.codeBeauIn.onkeyup = function dom__hideBeauOut_langkey() {
                             pd.langkey(pd.cm.beauIn);

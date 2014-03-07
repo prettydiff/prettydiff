@@ -1877,6 +1877,9 @@ var prettydiff = function prettydiff(api) {
                     jsscope    = (args.jsscope === true || args.jsscope === "true" || (jmode === "minify" && jobfuscate === true)) ? true : false,
                     jtopcoms   = (args.topcoms === true || args.topcoms === "true") ? true : false,
                     jvarspace  = (args.varspace === false || args.varspace === "false") ? false : true,
+                    sourcemap  = [
+                        0, ""
+                    ],
                     token      = [],
                     types      = [],
                     level      = [],
@@ -3006,6 +3009,10 @@ var prettydiff = function prettydiff(api) {
                             ltoke                    = generic("/*", "*\/");
                             stats.commentBlock.token += 1;
                             stats.commentBlock.chars += ltoke.length;
+                            if (ltoke.indexOf("# sourceMappingURL=") === 2) {
+                                sourcemap[0] = token.length;
+                                sourcemap[1] = ltoke;
+                            }
                             if (jcomment !== "nocomment") {
                                 ltype = "comment";
                                 token.push(ltoke);
@@ -3018,6 +3025,10 @@ var prettydiff = function prettydiff(api) {
                             ltoke                   = generic("//", "\r");
                             stats.commentLine.token += 1;
                             stats.commentLine.chars += ltoke.length;
+                            if (ltoke.indexOf("# sourceMappingURL=") === 2) {
+                                sourcemap[0] = token.length;
+                                sourcemap[1] = ltoke;
+                            }
                             if (jcomment !== "nocomment") {
                                 token.push(ltoke);
                                 types.push(ltype);
@@ -3421,6 +3432,10 @@ var prettydiff = function prettydiff(api) {
                         token.length, false
                     ]);
                     asi(a);
+                    if (sourcemap[0] === token.length - 1) {
+                        token.push("\n" + sourcemap[1]);
+                        types.push("literal");
+                    }
                 }());
 
                 if (jmode === "beautify" || (jmode === "minify" && jobfuscate === true)) {
@@ -6156,7 +6171,7 @@ var prettydiff = function prettydiff(api) {
                                                         if (ename.charAt(0) === "<") {
                                                             ename = ename.substr(1);
                                                         }
-                                                        if (((name === "li " || name === "li>") && (ename === "/ul>" || ename === "/ol>")) || (((name === "/ul>" && previous.indexOf("<ul") < 0) || (name === "/ol>" && previous.indexOf("<ol") < 0)) && ename !== "/li>")) {
+                                                        if (((name === "li " || name === "li>") && (ename === "/ul>" || ename === "/ol>" || (ename !== "/li>" && ename !== "ul>" && ename !== "ol>"))) || (((name === "/ul>" && previous.indexOf("<ul") < 0) || (name === "/ol>" && previous.indexOf("<ol") < 0)) && ename !== "/li>")) {
                                                             build.push("</prettydiffli>");
                                                             token.push("T_tag_end");
                                                             buildLen += 1;
@@ -7410,13 +7425,13 @@ var prettydiff = function prettydiff(api) {
                         if (mwrap > 0 && (cinfo[i] === "content" || cinfo[i] === "mixed_start" || cinfo[i] === "mixed_both" || cinfo[i] === "mixed_end")) {
                             text_wrap(build[i]);
                         }
-                        if (cinfo[i] === "end" && (mforce === true || (cinfo[i - 1] !== "content" && cinfo[i - 1] !== "mixed_start"))) {
+                        if (build[i] === "</prettydiffli>" || build[i] === " </prettydiffli>") {
+                            build[i] = "";
+                        } else if (cinfo[i] === "end" && (mforce === true || (cinfo[i - 1] !== "content" && cinfo[i - 1] !== "mixed_start"))) {
                             if (build[i].charAt(0) === " ") {
                                 build[i] = build[i].substr(1);
                             }
-                            if (build[i] === "</prettydiffli>") {
-                                build[i] = "";
-                            } else if (level[i] !== "x" && cinfo[i - 1] !== "start") {
+                            if (level[i] !== "x" && cinfo[i - 1] !== "start") {
                                 build[i] = end_math(build[i]);
                             }
                         } else if (cinfo[i] === "external" && mstyle === "indent" && build[i - 1].toLowerCase().indexOf("<style") > -1) {
@@ -9732,13 +9747,13 @@ var prettydiff = function prettydiff(api) {
         diffview     : 140305, //diffview library
         documentation: 140127, //documentation.xhtml
         jsmin        : 140127, //jsmin library (fulljsmin.js)
-        jspretty     : 140220, //jspretty library
-        markup_beauty: 140305, //markup_beauty library
+        jspretty     : 140306, //jspretty library
+        markup_beauty: 140306, //markup_beauty library
         markupmin    : 140220, //markupmin library
-        prettydiff   : 140305, //this file
+        prettydiff   : 140306, //this file
         webtool      : 140210, //prettydiff.com.xhtml
         api          : {
-            dom        : 140305,
+            dom        : 140306,
             nodeLocal  : 140301,
             nodeService: 121106, //no longer maintained
             wsh        : 140210
