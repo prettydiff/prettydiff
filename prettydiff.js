@@ -2251,6 +2251,196 @@ var prettydiff = function prettydiff(api) {
                                 lines[lines.length - 1][0] += 1;
                             }
                         },
+                        braceFinder  = function jspretty__tokenize_braceFinder() {
+                            if (lengtha < token.length) {
+                                lengtha = token.length - 2;
+                                if (types[lengtha] === "comment" || types[lengtha] === "comment-inline") {
+                                    do {
+                                        lengtha -= 1;
+                                    } while (lengtha > -1 && (types[lengtha] === "comment" || types[lengtha] === "comment-inline"));
+                                }
+                                lasttwo = [
+                                    token[lengtha], types[lengtha]
+                                ];
+                                lengtha = token.length;
+                                if (lengtha === 0) {
+                                    lengtha = 1;
+                                }
+                                if (ltoke === "}") {
+                                    block.bcount[block.bcount.length - 1] -= 1;
+                                    if (block.prior[block.prior.length - 1] === true) {
+                                        block.pcount[block.pcount.length - 1] -= 1;
+                                    }
+                                    if (block.method > 0 && block.method[block.method.length - 1] > 0) {
+                                        block.method[block.method.length - 1] -= 1;
+                                    }
+                                    if (block.method[block.method.length - 1] > 0) {
+                                        block.method[block.method.length - 1] -= 1;
+                                    } else if (token[lengtha - 2] !== "{" && types[lengtha - 3] !== "operator") {
+                                        objtest();
+                                    }
+                                }
+                                if (ltoke === "{") {
+                                    block.bcount[block.bcount.length - 1] += 1;
+                                    if (block.prior[block.prior.length - 1] === true) {
+                                        block.pcount[block.pcount.length - 1] += 1;
+                                    }
+                                    if (lasttwo[0] === "else" || (block.word[block.word.length - 2] === "else" && block.word[block.word.length - 1] === "if")) {
+                                        block.prev[block.prev.length - 1] = true;
+                                    }
+                                }
+                                if (token[lengtha - 3] === "else" && lasttwo[0] !== "{" && lasttwo[0] !== "x{" && lasttwo[0] !== "if") {
+                                    token.pop();
+                                    types.pop();
+                                    token.pop();
+                                    types.pop();
+                                    token.push(block.cs);
+                                    types.push("start");
+                                    block.prev.push(false);
+                                    token.push(lasttwo[0]);
+                                    types.push(lasttwo[1]);
+                                    token.push(ltoke);
+                                    types.push(ltype);
+                                    if (lines.length > 0 && types[lines[lines.length - 1][0]] !== "comment") {
+                                        lines[lines.length - 1][0] += 1;
+                                    }
+                                    lengtha += 1;
+                                }
+                                if ((ltoke === "}" || ltoke === ";") && block.count === 0 && block.simple.length > 0 && block.method[block.method.length - 1] === 0) {
+                                    if (ltoke === "}" && block.prior[block.prior.length - 1] === true && block.pcount[block.pcount.length - 1] === 0) {
+                                        blockpop();
+                                        if (block.simple.length === 0) {
+                                            block.start = -1;
+                                        }
+                                    } else if (ltoke === ";" && (block.brace[block.brace.length - 1] === "else" || (block.prior[block.prior.length - 1] === false && block.start > -1))) {
+                                        if ((token[block.start - 1] === "while" && token[block.start] === "(" && lengtha - 1 === block.brace[block.brace.length - 1]) || (block.word[block.word.length - 1] === "while" && lengtha - 2 === block.brace[block.brace.length - 1])) {
+                                            blockpop();
+                                            if (block.simple.length === 0) {
+                                                block.start = -1;
+                                            }
+                                        } else if (block.bcount[block.bcount.length - 1] === 0) {
+                                            //verify else is connected to the
+                                            //correct "if" before closing it
+                                            do {
+                                                if (block.prior[block.prior.length - 1] === false && block.brace[block.brace.length - 1] !== lengtha - 2) {
+                                                    token.push(block.ce);
+                                                    types.push("end");
+                                                    if (lines.length > 0 && types[lines[lines.length - 1][0]] !== "comment") {
+                                                        lines[lines.length - 1][0] += 1;
+                                                    }
+                                                }
+                                                commentcheck();
+                                                lengtha += 1;
+                                                blockpop();
+                                            } while (block.simple.length > 0 && block.prior[block.prior.length - 1] === false && block.bcount[block.bcount.length - 1] === 0);
+                                            ltoke = "}";
+                                            ltype = "end";
+                                            if (block.simple.length === 0) {
+                                                block.start = -1;
+                                            }
+                                        }
+                                    }
+                                }
+                                if (block.flag === false && (ltoke === "for" || ltoke === "if" || ltoke === "while" || ltoke === "do" || ltoke === "else") && (block.brace.length === 0 || block.brace[block.brace.length - 1] === "else" || block.brace[block.brace.length - 1] < lengtha - 1)) {
+                                    if (ltoke === "while" && (lasttwo[0] === "}" || lasttwo[0] === "x}")) {
+                                        whiletest();
+                                    }
+                                    if (block.dotest === true) {
+                                        block.dotest = false;
+                                    } else {
+                                        if ((ltoke === "if" && lasttwo[0] === "else") || (ltoke === "while" && token[block.start] === "do")) {
+                                            blockpop();
+                                        } else if (ltoke === "if" && (lasttwo[0] === "{" || lasttwo[0] === "x{") && token[lengtha - 3] === "else" && block.word[block.word.length - 2] === "else" && block.word[block.word.length - 1] === "if") {
+                                            token.pop();
+                                            types.pop();
+                                            token.pop();
+                                            types.pop();
+                                            token.push("if");
+                                            types.push("word");
+                                        }
+                                        if (ltoke === "do") {
+                                            block.bcount.push(0);
+                                            block.brace.push(lengtha - 1);
+                                            block.method.push(0);
+                                            block.pcount.push(0);
+                                            block.prior.push(false);
+                                            block.simple.push(true);
+                                            block.flag  = false;
+                                            block.count = 0;
+                                        } else if (ltoke === "else") {
+                                            elsestart();
+                                        } else {
+                                            block.method.push(0);
+                                            block.pcount.push(0);
+                                            block.prior.push(false);
+                                            block.simple.push(false);
+                                            block.flag = true;
+                                        }
+                                        block.start = lengtha;
+                                        block.word.push(ltoke);
+                                    }
+                                }
+                                if (block.start > -1) {
+                                    if (block.flag === true && block.simple[block.simple.length - 1] === false) {
+                                        if (ltoke === "(") {
+                                            block.count += 1;
+                                        }
+                                        if (ltoke === ")") {
+                                            block.count -= 1;
+                                            if (block.count === 0) {
+                                                block.bcount.push(0);
+                                                block.brace.push(lengtha - 1);
+                                                block.flag = false;
+                                            }
+                                        }
+                                    }
+                                    if (ltoke === "for" && lasttwo[0] === "else") {
+                                        token.pop();
+                                        types.pop();
+                                        token.push(block.cs);
+                                        types.push("start");
+                                        token.push(ltoke);
+                                        types.push(ltype);
+                                        if (lines.length > 0 && types[lines[lines.length - 1][0]] !== "comment") {
+                                            lines[lines.length - 1][0] += 1;
+                                        }
+                                        lengtha += 1;
+                                    } else if ((block.flag === false || lasttwo[0] === "else" || (lasttwo[0] === ")" && (ltoke === "if" || ltoke === "for" || ltoke === "while"))) && block.count === 0 && lengtha - 2 === block.brace[block.brace.length - 1]) {
+                                        if (block.word[block.word.length - 1] === "else" && (ltoke === "{" || lasttwo[0] === "{" || lasttwo[0] === "x{")) {
+                                            if (lasttwo[0] === "{" || lasttwo[0] === "x{") {
+                                                token[token.length - 2] = token[token.length - 1];
+                                                types[types.length - 2] = types[types.length - 1];
+                                                token.pop();
+                                                types.pop();
+                                                if (lines.length > 0 && types[lines[lines.length - 1][0]] !== "comment") {
+                                                    lines[lines.length - 1][0] -= 1;
+                                                }
+                                            }
+                                            block.prev.push(true);
+                                        } else if (ltoke === "{") {
+                                            block.prior[block.prior.length - 1]   = true;
+                                            block.pcount[block.pcount.length - 1] = 1;
+                                            block.prev.push(true);
+                                        } else if (block.brace[block.brace.length - 1] !== -1) {
+                                            token.pop();
+                                            types.pop();
+                                            token.push(block.cs);
+                                            types.push("start");
+                                            token.push(ltoke);
+                                            types.push(ltype);
+                                            if (lines.length > 0 && types[lines[lines.length - 1][0]] !== "comment") {
+                                                lines[lines.length - 1][0] += 1;
+                                            }
+                                            block.prev.push(false);
+                                            lengtha += 1;
+                                        }
+                                    } else if (ltoke === "{" && lasttwo[0] === "else" && block.brace[block.brace.length - 1] === "else") {
+                                        blockpop();
+                                        block.prev.push(true);
+                                    }
+                                }
+                            }
+                        },
                         asi          = function jspretty__tokenize_asi(z) {
                             var length    = token.length - 1,
                                 last      = token[length],
@@ -2265,35 +2455,37 @@ var prettydiff = function prettydiff(api) {
                                 space     = (/\s/),
                                 colon     = false,
                                 elsetest  = false,
-                                futureTest = function () {
-                                    if (space.test(c[z]) === true) {
+                                earlyflag = false,
+                                futureTest = function (x) {
+                                    if (space.test(c[x]) === true) {
                                         do {
-                                            z += 1;
-                                        } while (z < b && space.test(c[z]) === true);
+                                            x += 1;
+                                        } while (x < b && space.test(c[x]) === true);
                                     }
-                                    if (c[z] === "/" && c[z + 1] === "/") {
-                                        z += 1;
+                                    if (c[x] === "/" && c[x + 1] === "/") {
+                                        x += 1;
                                         do {
-                                            z += 1;
-                                        } while (z < b && c[z] !== "\n" && c[z] !== "\r");
+                                            x += 1;
+                                        } while (x < b && c[x] !== "\n" && c[x] !== "\r");
                                     }
-                                    if (c[z] === "/" && c[z + 1] === "*") {
-                                        z += 1;
+                                    if (c[x] === "/" && c[x + 1] === "*") {
+                                        x += 1;
                                         do {
-                                            z += 1;
-                                        } while (z < b && c[z - 1] === "*" && c[z] === "/");
+                                            x += 1;
+                                        } while (x < b && c[x - 1] === "*" && c[x] === "/");
                                     }
-                                    if (space.test(c[z]) === true || (c[z] === "/" && c[z + 1] === "/") || (c[z] === "/" && c[z + 1] === "*")) {
-                                        futureTest();
+                                    if (space.test(c[x]) === true || (c[x] === "/" && c[x + 1] === "/") || (c[x] === "/" && c[x + 1] === "*")) {
+                                        futureTest(x);
                                     }
-                                    if (c[z] === ":" || c[z] === "," || c[z] === "]") {
+                                    if (c[x] === ":" || c[x] === "," || c[x] === "]" || c[x] === ")") {
+                                        earlyflag = true;
                                         return;
                                     }
-                                    nextCharA = c[z];
-                                    nextCharB = c[z + 1];
+                                    nextCharA = c[x];
+                                    nextCharB = c[x + 1];
                                 };
-                            futureTest();
-                            if (last === "else" || last === "var") {
+                            futureTest(z);
+                            if (earlyflag === true || last === "else" || last === "var") {
                                 return;
                             }
                             if (last === "return" || last === "break" || last === "continue" || last === "throw") {
@@ -2357,7 +2549,7 @@ var prettydiff = function prettydiff(api) {
                                     }
                                 }
                             }
-                            if (asiTest === false && (last === ";" || last === "x;" || last === "," || last === ":" || last === "{" || last === "x{" || last === "[" || nextCharB === "]" || (nextCharA !== "}" && (nextCharB === ";" || nextCharB === "," || nextCharB === "." || nextCharB === "(")) || nextCharB === "+" || nextCharB === "*" || nextCharB === "-" || nextCharB === "%" || nextCharB === "!" || nextCharB === "=" || nextCharB === "^" || nextCharB === "?" || ltype === "operator" || ltype === "comment" || ltype === "comment-inline" || (nextCharB === "/" && c[z + 2] !== "/" && c[z + 2] !== "*"))) {
+                            if (asiTest === false && (last === ";" || last === "x;" || last === "," || last === ":" || last === "{" || last === "x{" || last === "[" || nextCharB === "]" || last === "." || (last !== ")" && nextCharA !== "}" && c[z] !== "\n" && c[z] !== "\r" && (nextCharB === ";" || nextCharB === "," || nextCharB === "." || nextCharB === "(")) || nextCharB === "+" || nextCharB === "*" || nextCharB === "-" || nextCharB === "%" || nextCharB === "!" || nextCharB === "=" || nextCharB === "^" || nextCharB === "?" || (ltype === "operator" && types[lengtha - 1] !== "word") || ltype === "comment" || (ltype === "comment-inline" && nextCharA === "}") || (nextCharB === "/" && c[z + 2] !== "/" && c[z + 2] !== "*"))) {
                                 return;
                             }
                             if (asiTest === false && (last === ")" || last === "]" || token[length - 1] === "break" || token[length - 1] === "return" || token[length - 1] === "continue" || token[length - 1] === "throw" || (nextCharA === "}" && (token[length - 1] === "{" || token[length - 1] === "x{")))) {
@@ -2569,12 +2761,12 @@ var prettydiff = function prettydiff(api) {
                                                 if (token[jj] === "function") {
                                                     if ((types[jj - 1] === "operator" && token[jj - 1] !== ":") || token[jj - 1] === "(" || token[jj - 1] === "[") {
                                                         asiTest = true;
-                                                    } else {
-                                                        return;
+                                                        break;
                                                     }
-                                                } else {
-                                                    asiTest = true;
+                                                    return;
                                                 }
+                                                asiTest = true;
+                                                break;
                                             }
                                         }
                                     }
@@ -2629,6 +2821,7 @@ var prettydiff = function prettydiff(api) {
                                         block.start = -1;
                                     }
                                 }
+                                braceFinder();
                             }
                         },
                         newarray     = function jspretty__tokenize_newarray() {
@@ -2990,6 +3183,7 @@ var prettydiff = function prettydiff(api) {
                         },
                         word         = function jspretty__tokenize_word() {
                             var f      = wordTest,
+                                g      = 1,
                                 build  = [],
                                 output = "";
                             do {
@@ -3002,7 +3196,36 @@ var prettydiff = function prettydiff(api) {
                                 types[types.length - 1] = "start";
                             }
                             if (types.length > 2 && output === "function" && ltype === "method" && (token[token.length - 2] === "}" || token[token.length - 2] === "x}")) {
-                                types[types.length - 1] = "start";
+                                if (token[token.length - 2] === "}") {
+                                    for (f = token.length - 3; f > -1; f -= 1) {
+                                        if (types[f] === "end") {
+                                            g += 1;
+                                        } else if (types[f] === "start" || types[f] === "end") {
+                                            g -= 1;
+                                        }
+                                        if (g === 0) {
+                                            break;
+                                        }
+                                    }
+                                    if (token[f] === "{" && token[f - 1] === ")") {
+                                        g = 1;
+                                        for (f -= 2; f > -1; f -= 1) {
+                                            if (types[f] === "end") {
+                                                g += 1;
+                                            } else if (types[f] === "start" || types[f] === "end") {
+                                                g -= 1;
+                                            }
+                                            if (g === 0) {
+                                                break;
+                                            }
+                                        }
+                                        if (token[f - 1] !== "function" && token[f - 2] !== "function") {
+                                            types[types.length - 1] = "start";
+                                        }
+                                    }
+                                } else {
+                                    types[types.length - 1] = "start";
+                                }
                             }
                             if (output === "function" && block.start > -1) {
                                 if (types[lengtha - 1] === "method" || token[lengtha - 1] === "=") {
@@ -3029,10 +3252,12 @@ var prettydiff = function prettydiff(api) {
                             } else {
                                 token.push(output);
                                 types.push("word");
+                                ltoke = output;
+                                ltype = "word";
                                 stats.word.token += 1;
                                 stats.word.chars += output.length;
                             }
-                            lengtha += 1;
+                            braceFinder();
                         };
                     for (a = 0; a < b; a += 1) {
                         lengtha = token.length;
@@ -3115,6 +3340,7 @@ var prettydiff = function prettydiff(api) {
                             stats.regex.chars += ltoke.length;
                             token.push(ltoke);
                             types.push(ltype);
+                            braceFinder();
                         } else if (c[a] === "\"") {
                             if (wordTest > -1) {
                                 word();
@@ -3126,6 +3352,7 @@ var prettydiff = function prettydiff(api) {
                             stats.string.quote += 2;
                             token.push(ltoke);
                             types.push(ltype);
+                            braceFinder();
                         } else if (c[a] === "'") {
                             if (wordTest > -1) {
                                 word();
@@ -3137,6 +3364,7 @@ var prettydiff = function prettydiff(api) {
                             stats.string.quote += 2;
                             token.push(ltoke);
                             types.push(ltype);
+                            braceFinder();
                         } else if (c[a] === "-" && (a < b - 1 && c[a + 1] !== "=" && c[a + 1] !== "-") && (ltype === "literal" || ltype === "word") && ltoke !== "return" && (ltoke === ")" || ltoke === "]" || ltype === "word" || ltype === "literal")) {
                             if (wordTest > -1) {
                                 word();
@@ -3147,6 +3375,7 @@ var prettydiff = function prettydiff(api) {
                             ltype                = "operator";
                             token.push(ltoke);
                             types.push(ltype);
+                            braceFinder();
                         } else if (wordTest === -1 && ((/\d/).test(c[a]) || (a !== b - 2 && c[a] === "-" && c[a + 1] === "." && (/\d/).test(c[a + 2])) || (a !== b - 1 && (c[a] === "-" || c[a] === ".") && (/\d/).test(c[a + 1])))) {
                             if (wordTest > -1) {
                                 word();
@@ -3164,6 +3393,7 @@ var prettydiff = function prettydiff(api) {
                             }
                             token.push(ltoke);
                             types.push(ltype);
+                            braceFinder();
                         } else if (c[a] === ",") {
                             if (wordTest > -1) {
                                 word();
@@ -3177,6 +3407,7 @@ var prettydiff = function prettydiff(api) {
                                 token.push(ltoke);
                                 types.push(ltype);
                             }
+                            braceFinder();
                         } else if (c[a] === ".") {
                             if (wordTest > -1) {
                                 word();
@@ -3190,6 +3421,7 @@ var prettydiff = function prettydiff(api) {
                             ltype = "separator";
                             token.push(ltoke);
                             types.push(ltype);
+                            braceFinder();
                         } else if (c[a] === ";") {
                             if (wordTest > -1) {
                                 word();
@@ -3206,11 +3438,10 @@ var prettydiff = function prettydiff(api) {
                             ltype = "separator";
                             token.push(ltoke);
                             types.push(ltype);
+                            braceFinder();
                         } else if (c[a] === "(") {
                             if (wordTest > -1) {
                                 word();
-                                ltoke = token[lengtha - 1];
-                                ltype = types[lengtha - 1];
                             }
                             stats.container += 1;
                             if (ltype === "comment" || ltype === "comment-inline" || ltype === "start") {
@@ -3225,6 +3456,7 @@ var prettydiff = function prettydiff(api) {
                             ltoke = "(";
                             token.push(ltoke);
                             types.push(ltype);
+                            braceFinder();
                         } else if (c[a] === "[") {
                             if (wordTest > -1) {
                                 word();
@@ -3234,6 +3466,7 @@ var prettydiff = function prettydiff(api) {
                             ltype           = "start";
                             token.push(ltoke);
                             types.push(ltype);
+                            braceFinder();
                         } else if (c[a] === "{") {
                             if (wordTest > -1) {
                                 word();
@@ -3258,6 +3491,7 @@ var prettydiff = function prettydiff(api) {
                             }
                             token.push(ltoke);
                             types.push(ltype);
+                            braceFinder();
                         } else if (c[a] === ")") {
                             if (wordTest > -1) {
                                 word();
@@ -3278,6 +3512,7 @@ var prettydiff = function prettydiff(api) {
                                 token.push(ltoke);
                                 types.push(ltype);
                             }
+                            braceFinder();
                         } else if (c[a] === "]") {
                             if (wordTest > -1) {
                                 word();
@@ -3294,6 +3529,7 @@ var prettydiff = function prettydiff(api) {
                             ltype = "end";
                             token.push(ltoke);
                             types.push(ltype);
+                            braceFinder();
                         } else if (c[a] === "}") {
                             if (wordTest > -1) {
                                 word();
@@ -3321,6 +3557,7 @@ var prettydiff = function prettydiff(api) {
                             ltype           = "end";
                             token.push(ltoke);
                             types.push(ltype);
+                            braceFinder();
                         } else if (c[a] === "=" || c[a] === "&" || c[a] === "<" || c[a] === ">" || c[a] === "+" || c[a] === "-" || c[a] === "*" || c[a] === "/" || c[a] === "!" || c[a] === "?" || c[a] === "|" || c[a] === "^" || c[a] === ":" || c[a] === "%") {
                             if (wordTest > -1) {
                                 word();
@@ -3331,198 +3568,9 @@ var prettydiff = function prettydiff(api) {
                             stats.operator.chars += ltoke.length;
                             token.push(ltoke);
                             types.push(ltype);
+                            braceFinder();
                         } else if (wordTest < 0 && c[a] !== "") {
                             wordTest = a;
-                        }
-                        //everything in this condition is dedicated to
-                        //curly brace insertion
-                        if (lengtha < token.length) {
-                            lengtha = token.length - 2;
-                            if (types[lengtha] === "comment" || types[lengtha] === "comment-inline") {
-                                do {
-                                    lengtha -= 1;
-                                } while (lengtha > -1 && (types[lengtha] === "comment" || types[lengtha] === "comment-inline"));
-                            }
-                            lasttwo = [
-                                token[lengtha], types[lengtha]
-                            ];
-                            lengtha = token.length;
-                            if (lengtha === 0) {
-                                lengtha = 1;
-                            }
-                            if (ltoke === "}") {
-                                block.bcount[block.bcount.length - 1] -= 1;
-                                if (block.prior[block.prior.length - 1] === true) {
-                                    block.pcount[block.pcount.length - 1] -= 1;
-                                }
-                                if (block.method > 0 && block.method[block.method.length - 1] > 0) {
-                                    block.method[block.method.length - 1] -= 1;
-                                }
-                                if (block.method[block.method.length - 1] > 0) {
-                                    block.method[block.method.length - 1] -= 1;
-                                } else if (token[lengtha - 2] !== "{" && types[lengtha - 3] !== "operator") {
-                                    objtest();
-                                }
-                            }
-                            if (ltoke === "{") {
-                                block.bcount[block.bcount.length - 1] += 1;
-                                if (block.prior[block.prior.length - 1] === true) {
-                                    block.pcount[block.pcount.length - 1] += 1;
-                                }
-                                if (lasttwo[0] === "else" || (block.word[block.word.length - 2] === "else" && block.word[block.word.length - 1] === "if")) {
-                                    block.prev[block.prev.length - 1] = true;
-                                }
-                            }
-                            if (token[lengtha - 3] === "else" && lasttwo[0] !== "{" && lasttwo[0] !== "x{" && lasttwo[0] !== "if") {
-                                token.pop();
-                                types.pop();
-                                token.pop();
-                                types.pop();
-                                token.push(block.cs);
-                                types.push("start");
-                                block.prev.push(false);
-                                token.push(lasttwo[0]);
-                                types.push(lasttwo[1]);
-                                token.push(ltoke);
-                                types.push(ltype);
-                                if (lines.length > 0 && types[lines[lines.length - 1][0]] !== "comment") {
-                                    lines[lines.length - 1][0] += 1;
-                                }
-                                lengtha += 1;
-                            }
-                            if ((ltoke === "}" || ltoke === ";") && block.count === 0 && block.simple.length > 0 && block.method[block.method.length - 1] === 0) {
-                                if (ltoke === "}" && block.prior[block.prior.length - 1] === true && block.pcount[block.pcount.length - 1] === 0) {
-                                    blockpop();
-                                    if (block.simple.length === 0) {
-                                        block.start = -1;
-                                    }
-                                } else if (ltoke === ";" && (block.brace[block.brace.length - 1] === "else" || (block.prior[block.prior.length - 1] === false && block.start > -1))) {
-                                    if ((token[block.start - 1] === "while" && token[block.start] === "(" && lengtha - 1 === block.brace[block.brace.length - 1]) || (block.word[block.word.length - 1] === "while" && lengtha - 2 === block.brace[block.brace.length - 1])) {
-                                        blockpop();
-                                        if (block.simple.length === 0) {
-                                            block.start = -1;
-                                        }
-                                    } else if (block.bcount[block.bcount.length - 1] === 0) {
-                                        //verify else is connected to the
-                                        //correct "if" before closing it
-                                        do {
-                                            if (block.prior[block.prior.length - 1] === false && block.brace[block.brace.length - 1] !== lengtha - 2) {
-                                                token.push(block.ce);
-                                                types.push("end");
-                                                if (lines.length > 0 && types[lines[lines.length - 1][0]] !== "comment") {
-                                                    lines[lines.length - 1][0] += 1;
-                                                }
-                                            }
-                                            commentcheck();
-                                            lengtha += 1;
-                                            blockpop();
-                                        } while (block.simple.length > 0 && block.prior[block.prior.length - 1] === false && block.bcount[block.bcount.length - 1] === 0);
-                                        ltoke = "}";
-                                        ltype = "end";
-                                        if (block.simple.length === 0) {
-                                            block.start = -1;
-                                        }
-                                    }
-                                }
-                            }
-                            if (block.flag === false && (ltoke === "for" || ltoke === "if" || ltoke === "while" || ltoke === "do" || ltoke === "else") && (block.brace.length === 0 || block.brace[block.brace.length - 1] === "else" || block.brace[block.brace.length - 1] < lengtha - 1)) {
-                                if (ltoke === "while" && (lasttwo[0] === "}" || lasttwo[0] === "x}")) {
-                                    whiletest();
-                                }
-                                if (block.dotest === true) {
-                                    block.dotest = false;
-                                } else {
-                                    if ((ltoke === "if" && lasttwo[0] === "else") || (ltoke === "while" && token[block.start] === "do")) {
-                                        blockpop();
-                                    } else if (ltoke === "if" && (lasttwo[0] === "{" || lasttwo[0] === "x{") && token[lengtha - 3] === "else" && block.word[block.word.length - 2] === "else" && block.word[block.word.length - 1] === "if") {
-                                        token.pop();
-                                        types.pop();
-                                        token.pop();
-                                        types.pop();
-                                        token.push("if");
-                                        types.push("word");
-                                    }
-                                    if (ltoke === "do") {
-                                        block.bcount.push(0);
-                                        block.brace.push(lengtha - 1);
-                                        block.method.push(0);
-                                        block.pcount.push(0);
-                                        block.prior.push(false);
-                                        block.simple.push(true);
-                                        block.flag  = false;
-                                        block.count = 0;
-                                    } else if (ltoke === "else") {
-                                        elsestart();
-                                    } else {
-                                        block.method.push(0);
-                                        block.pcount.push(0);
-                                        block.prior.push(false);
-                                        block.simple.push(false);
-                                        block.flag = true;
-                                    }
-                                    block.start = lengtha;
-                                    block.word.push(ltoke);
-                                }
-                            }
-                            if (block.start > -1) {
-                                if (block.flag === true && block.simple[block.simple.length - 1] === false) {
-                                    if (ltoke === "(") {
-                                        block.count += 1;
-                                    }
-                                    if (ltoke === ")") {
-                                        block.count -= 1;
-                                        if (block.count === 0) {
-                                            block.bcount.push(0);
-                                            block.brace.push(lengtha - 1);
-                                            block.flag = false;
-                                        }
-                                    }
-                                }
-                                if (ltoke === "for" && lasttwo[0] === "else") {
-                                    token.pop();
-                                    types.pop();
-                                    token.push(block.cs);
-                                    types.push("start");
-                                    token.push(ltoke);
-                                    types.push(ltype);
-                                    if (lines.length > 0 && types[lines[lines.length - 1][0]] !== "comment") {
-                                        lines[lines.length - 1][0] += 1;
-                                    }
-                                    lengtha += 1;
-                                } else if ((block.flag === false || lasttwo[0] === "else" || (lasttwo[0] === ")" && (ltoke === "if" || ltoke === "for" || ltoke === "while"))) && block.count === 0 && lengtha - 2 === block.brace[block.brace.length - 1]) {
-                                    if (block.word[block.word.length - 1] === "else" && (ltoke === "{" || lasttwo[0] === "{" || lasttwo[0] === "x{")) {
-                                        if (lasttwo[0] === "{" || lasttwo[0] === "x{") {
-                                            token[token.length - 2] = token[token.length - 1];
-                                            types[types.length - 2] = types[types.length - 1];
-                                            token.pop();
-                                            types.pop();
-                                            if (lines.length > 0 && types[lines[lines.length - 1][0]] !== "comment") {
-                                                lines[lines.length - 1][0] -= 1;
-                                            }
-                                        }
-                                        block.prev.push(true);
-                                    } else if (ltoke === "{") {
-                                        block.prior[block.prior.length - 1]   = true;
-                                        block.pcount[block.pcount.length - 1] = 1;
-                                        block.prev.push(true);
-                                    } else if (block.brace[block.brace.length - 1] !== -1) {
-                                        token.pop();
-                                        types.pop();
-                                        token.push(block.cs);
-                                        types.push("start");
-                                        token.push(ltoke);
-                                        types.push(ltype);
-                                        if (lines.length > 0 && types[lines[lines.length - 1][0]] !== "comment") {
-                                            lines[lines.length - 1][0] += 1;
-                                        }
-                                        block.prev.push(false);
-                                        lengtha += 1;
-                                    }
-                                } else if (ltoke === "{" && lasttwo[0] === "else" && block.brace[block.brace.length - 1] === "else") {
-                                    blockpop();
-                                    block.prev.push(true);
-                                }
-                            }
                         }
                     }
                     lines.push([
@@ -4465,14 +4513,14 @@ var prettydiff = function prettydiff(api) {
                             if (types[a] !== "comment") {
                                 comtest = true;
                             }
-                            if (types[a] === "comment" && comtest === false) {
+                            if (types[a] === "word" && (types[a + 1] === "word" || types[a + 1] === "literal" || token[a + 1] === "x{" || types[a + 1] === "comment" || types[a + 1] === "comment-inline")) {
+                                build.push(token[a]);
+                                build.push(" ");
+                            } else if (types[a] === "comment" && comtest === false) {
                                 build.push(token[a]);
                                 build.push("\n");
                             } else if (token[a] === "x;" && token[a + 1] !== "}") {
                                 build.push(";");
-                            } else if (types[a] === "word" && (types[a + 1] === "word" || types[a + 1] === "literal")) {
-                                build.push(token[a]);
-                                build.push(" ");
                             } else if (token[a] !== "x;" && token[a] !== "x{" && token[a] !== "x}" && types[a] !== "comment" && types[a] !== "comment-inline") {
                                 build.push(token[a]);
                             }
@@ -9852,10 +9900,10 @@ var prettydiff = function prettydiff(api) {
         diffview     : 140305, //diffview library
         documentation: 140127, //documentation.xhtml
         jsmin        : 140127, //jsmin library (fulljsmin.js)
-        jspretty     : 140308, //jspretty library
+        jspretty     : 140309, //jspretty library
         markup_beauty: 140306, //markup_beauty library
         markupmin    : 140220, //markupmin library
-        prettydiff   : 140308, //this file
+        prettydiff   : 140309, //this file
         webtool      : 140210, //prettydiff.com.xhtml
         api          : {
             dom        : 140306,
