@@ -241,6 +241,7 @@
                     outerror("Error: Source file is required.");
                 }
                 if (fail === false) {
+                    args.api = "wsf";
                     args.comments = (WScript.Arguments.Named("comments") === "noindent") ? "noindent" : "indent";
                     args.conditional = ((WScript.Arguments.Named("conditional") === "true" || WScript.Arguments.Named("conditional") === true) ? true : false) || false;
                     args.content = ((WScript.Arguments.Named("content") === "true" || WScript.Arguments.Named("content") === true) ? true : false) || false;
@@ -306,7 +307,7 @@
                         report.push("<?xml version='1.0' encoding='UTF-8' ?><!DOCTYPE html PUBLIC '-//W3C//DTD XHTML 1.1//EN' 'http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd'><html xmlns='http://www.w3.org/1999/xhtml' xml:lang='en'><head><title>Pretty Diff - The difference tool</title><meta name='robots' content='index, follow'/> <meta name='DC.title' content='Pretty Diff - The difference tool'/> <link rel='canonical' href='http://prettydiff.com/' type='application/xhtml+xml'/><meta http-equiv='Content-Type' content='application/xhtml+xml;charset=UTF-8'/><meta http-equiv='Content-Style-Type' content='text/css'/><style type='text/css'>");
                         report.push(css.body);
                         report.push(css["s" + color]);
-                        report.push("</style></head><body class='");
+                        report.push("#doc p em{color:#090}</style></head><body class='");
                         report.push(color);
                         report.push("' id='webtool'><h1><a href='http://prettydiff.com/'>Pretty Diff - The difference tool</a></h1><div id='doc'>");
                         report.push(pd[1]);

@@ -103,7 +103,7 @@ Examples:
             }
             a.push(css.core);
             a.push(css["s" + options.color]);
-            a.push("</style></head><body class='");
+            a.push("#doc p em{color:#090}</style></head><body id='webtool' class='");
             a.push(options.color);
             a.push("'><h1><a href='http://prettydiff.com/'>Pretty Diff - The difference tool</a></h1><div id='doc'>");
             a.push(result[1]);
@@ -768,6 +768,7 @@ Examples:
         }
         return;
     }
+    options.api = "node-local";
     if (insight !== undefined && ins.optOut === undefined) {
         ins.askPermission();
     }

@@ -913,28 +913,11 @@ var exports = "",
             }
         }
 
-        //examples of static options with appropriate types
-        //api.comments     = "indent";
-        //api.content      = false;
-        //api.diff         = "";
-        //api.diffview     = "sidebyside";
-        //api.force_indent = false;
-        //api.html         = false;
-        //api.insize       = 4;
-        //api.indent       = "";
-        //api.lang         = "auto";
-        //api.mode         = "diff";
-        //api.quote        = false;
-        //api.semicolon    = false;
-        //api.style        = "indent";
-        //api.topcoms      = false;
-        //api.conditional  = false;
-        //api.inlevel      = 0;
-
         //gather updated dom nodes
-        api.lang         = (pd.o.lang === null) ? "javascript" : (pd.o.lang.nodeName.toLowerCase() === "select") ? pd.o.lang[pd.o.lang.selectedIndex].value.toLowerCase() : pd.o.lang.value.toLowerCase();
-        node             = pd.$$("csvchar");
-        api.csvchar      = (node === null || node.value.length === 0) ? "," : node.value;
+        api.lang    = (pd.o.lang === null) ? "javascript" : (pd.o.lang.nodeName.toLowerCase() === "select") ? pd.o.lang[pd.o.lang.selectedIndex].value.toLowerCase() : pd.o.lang.value.toLowerCase();
+        node        = pd.$$("csvchar");
+        api.csvchar = (node === null || node.value.length === 0) ? "," : node.value;
+        api.api     = "dom";
 
         //determine options based upon mode of operations
         if (pd.mode === "beau") {
@@ -1087,7 +1070,7 @@ var exports = "",
                 api.context       = (context !== null && context.value !== "" && isNaN(context.value) === false) ? Number(context.value) : "";
                 api.diffcomments  = (comments === null || comments.checked === false) ? false : true;
                 api.difflabel     = (newLabel === null) ? "new" : newLabel.value;
-                api.diffview      = (inline === null || inline.checked === false) ? false : true;
+                api.diffview      = (inline === null || inline.checked === false) ? "sidebyside" : "inline";
                 api.indent        = (indent === null || indent.checked === false) ? "knr" : "allman";
                 api.insize        = (quantity === null || isNaN(quantity.value) === true) ? 4 : Number(quantity.value);
                 api.preserve      = (preserve === null || preserve.checked === false) ? false : true;
@@ -2145,6 +2128,7 @@ var exports = "",
                     pd.cm.beauOut.setValue(" ");
                 }
             }
+            pd.hideBeauOut();
             pd.test.render.beau = true;
         }
         if (a === pd.o.modeMinn) {
@@ -3813,6 +3797,9 @@ var exports = "",
                     inputs[a].onchange = pd.codeOps;
                     if (pd.settings.language !== undefined) {
                         inputs[a].selectedIndex = Number(pd.settings.language);
+                        if (pd.o.lang[pd.o.lang.selectedIndex].value === "text" && pd.mode !== "diff") {
+                            inputs[a].selectedIndex = 0;
+                        }
                         pd.codeOps(inputs[a]);
                     }
                 } else {
