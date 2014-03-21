@@ -8991,9 +8991,9 @@ var prettydiff = function prettydiff(api) {
                                             if (context < 0 && ((baseTextArray[baseStart - 1] !== newTextArray[newStart - 1]) || (baseStart === 0 && newStart === 0)) && baseTextArray[baseStart + 1] === newTextArray[newStart + 1] && ((baseEnd - baseStart > 1) || (newEnd - newStart > 1))) {
                                                 if (a === opcodesLength - 1) {
                                                     if (baseEnd > newEnd) {
-                                                        data[0].push("<li class=\"fold\" onclick=\"pd.difffold(this," + foldcount + "," + baseEnd + ")\">- " + (baseStart + 1) + "</li>");
+                                                        data[0].push("<li class=\"fold\" onclick=\"pd.difffold(this," + foldcount + "," + (baseEnd + 2) + ")\">- " + (baseStart + 1) + "</li>");
                                                     } else {
-                                                        data[0].push("<li class=\"fold\" onclick=\"pd.difffold(this," + foldcount + "," + newEnd + ")\">- " + (baseStart + 1) + "</li>");
+                                                        data[0].push("<li class=\"fold\" onclick=\"pd.difffold(this," + foldcount + "," + (newEnd + 2) + ")\">- " + (baseStart + 1) + "</li>");
                                                     }
                                                 } else {
                                                     foldstart = data[0].length;
