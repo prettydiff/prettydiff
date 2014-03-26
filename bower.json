@@ -1,6 +1,6 @@
-﻿{
+{
   "name": "prettydiff",
-  "version": "0.0.260",
+  "version": "1.0.0",
   "main": "./prettydiff.js",
   "ignore": [
     ".git",
