@@ -1,0 +1,22 @@
+{
+    "name"        : "prettydiff",
+    "author"      : "Austin Cheney <edward.a.cheney.mil@mail.mil> (http://prettydiff.com/)",
+    "version"     : "1.0.2",
+    "description" : "File comparison tool to accurately diff between file versions regardless of comments or minification to the whitespace. It can also beautify (pretty print) and minify HTML.",
+    "keywords"    : [
+        "diff", "prettydiff", "pretty diff", "pretty print", "pretty-print", "beautify", "minify", "xml", "html", "css", "javascript"
+    ],
+    "homepage"    : "http://prettydiff.com/",
+    "main"        : "prettydiff.js",
+    "bugs"        : {
+        "url"  : "https://groups.google.com/forum/#!forum/pretty-diff",
+        "email": "pretty-diff@googlegroups.com"
+    },
+    "repository"  : {
+        "type": "git",
+        "url" : "git://github.com/austincheney/Pretty-Diff.git"
+    },
+    "dependencies": {
+        "insight": "*"
+    }
+}
