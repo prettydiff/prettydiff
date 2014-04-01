@@ -1256,6 +1256,7 @@ var exports = "",
         for (a = 0; a < listLen; a += 1) {
             lists.push(listnodes[a].getElementsByTagName("li"));
         }
+        max = (max >= lists[0].length) ? lists[0].length : max;
         if (inner.charAt(0) === "-") {
             self.innerHTML = "+" + inner.substr(1);
             for (a = min; a < max; a += 1) {
