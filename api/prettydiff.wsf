@@ -270,6 +270,7 @@
                     args.topcoms = ((WScript.Arguments.Named("topcoms") === "true" || WScript.Arguments.Named("topcoms") === true) ? true : false) || false;
                     args.wrap = (isNaN(WScript.Arguments.Named("force_indent"))) ? 0 : WScript.Arguments.Named("force_indent");
                     color = WScript.Arguments.Named("color") || "shadow";
+                    args.inchar = args.inchar.replace(/\\t/g, "\u0009").replace(/\\n/g, "\u000a").replace(/\\r/g, "\u000d").replace(/\\f/g, "\u000c").replace(/\\b/g, "\u0008");
                     if (args.inlevel < 1) {
                         args.inlevel = 0;
                     }
