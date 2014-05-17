@@ -1220,7 +1220,7 @@ var prettydiff = function prettydiff(api) {
                     ret = ret.slice(1, ret.length);
                 }
                 if (type === "css") {
-                    ret = ret.replace(/\: #/g, ":#").replace(/\; #/g, ";#").replace(/\, #/g, ",#").replace(/\s+/g, " ").replace(/\} /g, "}").replace(/\{ /g, "{").replace(/\\\)/g, "~PDpar~").replace(/\)/g, ") ").replace(/\) ;/g, ");").replace(/\d%\.?[a-z0-9]/g, fixpercent);
+                    ret = ret.replace(/\s+\{/g, "{").replace(/\: #/g, ":#").replace(/\; #/g, ";#").replace(/\, #/g, ",#").replace(/\s+/g, " ").replace(/\} /g, "}").replace(/\{ /g, "{").replace(/\\\)/g, "~PDpar~").replace(/\)/g, ") ").replace(/\) ;/g, ");").replace(/\d%\.?[a-z0-9]/g, fixpercent);
                     if (alter === true) {
                         ret = ret.replace(/@charset("|')?[\w\-]+("|')?;?/gi, "").replace(/(#|\.)?[\w]*\{\}/gi, "").replace(/\w\s*:[\w\s\!\.\-%]*\d+\.0*(?!\d)/g, endZero).replace(/(:| )0+\.\d+/g, startZero).replace(/\w+(\-\w+)*:((((\-?(\d*\.\d+)|\d+)[a-zA-Z]+)|0) )+(((\-?(\d*\.\d+)|\d+)[a-zA-Z]+)|0)/g, sameDist).replace(/\};/g, "}").replace(/^;/, "").replace(/ \}/g, "}");
                         ret = ret.replace(/:\.?0(\%|px|in|cm|mm|em|ex|pt|pc)/g, ":0").replace(/ 0?\.?0+(\%|px|in|cm|mm|em|ex|pt|pc)/g, " 0").replace(/bottom:none/g, "bottom:0").replace(/top:none/g, "top:0").replace(/left:none/g, "left:0").replace(/right:none/, "right:0").replace(/:0 0 0 0/g, ":0").replace(/:(\s*([0-9]+\.)?[0-9]+(%|in|cm|mm|em|ex|pt|pc|px)?)+\-([0-9]*\.)?[0-9]/g, fixNegative);
@@ -9968,22 +9968,22 @@ var prettydiff = function prettydiff(api) {
     edition    = {
         charDecoder  : 131224, //charDecoder library
         cleanCSS     : 140220, //cleanCSS library
-        css          : 140320, //diffview.css file
+        css          : 140516, //diffview.css file
         csvbeauty    : 140114, //csvbeauty library
         csvmin       : 131224, //csvmin library
         diffview     : 140401, //diffview library
         documentation: 140127, //documentation.xhtml
-        jsmin        : 140127, //jsmin library (fulljsmin.js)
+        jsmin        : 140516, //jsmin library (fulljsmin.js)
         jspretty     : 140409, //jspretty library
         markup_beauty: 140306, //markup_beauty library
         markupmin    : 140220, //markupmin library
-        prettydiff   : 140409, //this file
+        prettydiff   : 140516, //this file
         webtool      : 140210, //prettydiff.com.xhtml
         api          : {
             dom        : 140401,
-            nodeLocal  : 140401,
+            nodeLocal  : 140425,
             nodeService: 121106, //no longer maintained
-            wsh        : 140401
+            wsh        : 140425
         },
         addon        : {
             cmjs : 140127, //CodeMirror JavaScript
