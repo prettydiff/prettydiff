@@ -3339,10 +3339,7 @@ var prettydiff = function prettydiff(api) {
                                 token.push(ltoke);
                                 types.push(ltype);
                             }
-                        } else if (c[a] === "/" && (lengtha > 0 && (types[lengtha - 1] !== "word" || ltoke === "typeof" || ltoke === "return") && ltype !== "literal" && ltype !== "end")) {
-                            if (wordTest > -1) {
-                                word();
-                            }
+                        } else if (c[a] === "/" && wordTest === -1 && (lengtha > 0 && (types[lengtha - 1] !== "word" || ltoke === "typeof" || ltoke === "return") && ltype !== "literal" && ltype !== "end")) {
                             ltoke             = regex();
                             ltype             = "regex";
                             stats.regex.token += 1;
@@ -8236,7 +8233,7 @@ var prettydiff = function prettydiff(api) {
                                             bestsize            = 0;
                                         for (b = lowFirst; b < highFirst; b += 1) {
                                             for (c = 0; c < sContextLength; c += 1) {
-                                                if (secondInContext[c][1] === sourceFirst[b] && (sourceFirst[b] !== sourceSecond[b] || b === highFirst - 1 || (sourceFirst[b] === sourceSecond[b] && sourceFirst[b + 1] !== sourceSecond[b + 1]))) {
+                                                if (secondInContext[c][1] === sourceFirst[b] && (sourceFirst[b] !== sourceSecond[b] || b === highFirst - 1 || sourceFirst[b + 1] === sourceSecond[b + 1])) {
                                                     sContextCompareLine = secondInContext[c][0];
                                                     break;
                                                 }
@@ -8683,6 +8680,33 @@ var prettydiff = function prettydiff(api) {
                                             break;
                                         }
                                     }
+
+                                    if (dataA[b + 1] === dataB[lenComp[0]]) {
+                                        dataA[b] += strEnd;
+                                        dataB[lenComp[0] - 1] += strEnd;
+                                        for (c = lenComp[0] - (b + 1); c > 0; c -= 1) {
+                                            dataA.unshift("");
+                                        }
+                                        if (lenComp[0] < dataMinLength && dataA[b] !== undefined && dataB[b] !== undefined) {
+                                            b = lenComp[0];
+                                        } else {
+                                            b = Math.max(dataA.length, dataB.length);
+                                            break;
+                                        }
+                                    }
+                                    if (dataB[b + 1] === dataA[lenComp[0]]) {
+                                        dataB[b] += strEnd;
+                                        dataA[lenComp[0] - 1] += strEnd;
+                                        for (c = lenComp[0] - (b + 1); c > 0; c -= 1) {
+                                            dataB.unshift("");
+                                        }
+                                        if (lenComp[0] < dataMinLength && dataA[b] !== undefined && dataB[b] !== undefined) {
+                                            b = lenComp[0];
+                                        } else {
+                                            b = Math.max(dataA.length, dataB.length);
+                                            break;
+                                        }
+                                    }
                                     if (lenComp[0] === dataMinLength || lenComp[1] === dataMinLength) {
                                         if (dataA[b].replace(regStart, "") === dataB[dataB.length - 1]) {
                                             dataA[b]                = strStart + strEnd + dataA[b].replace(regStart, "");
@@ -8728,7 +8752,7 @@ var prettydiff = function prettydiff(api) {
                                     }
                                     if (dataA[lenComp[0]] === dataB[b].substring(strStart.length)) {
                                         if (dataA[lenComp[0]] === dataB[b].substring(strStart.length)) {
-                                            dataA[lenComp[0]] = dataA[lenComp[0]] + strEnd;
+                                            dataA[lenComp[0] - 1] = dataA[lenComp[0] - 1] + strEnd;
                                         } else {
                                             dataA[lenComp[0]] = dataA[lenComp[0]] + strEnd;
                                         }
@@ -8739,7 +8763,7 @@ var prettydiff = function prettydiff(api) {
                                         }
                                     } else if (dataB[lenComp[1]] === dataA[b].substring(strStart.length)) {
                                         if (dataB[lenComp[1]] === dataA[b].substring(strStart.length)) {
-                                            dataB[lenComp[1]] = dataB[lenComp[1]] + strEnd;
+                                            dataB[lenComp[1] - 1] = dataB[lenComp[1] - 1] + strEnd;
                                         } else {
                                             dataB[lenComp[1]] = dataB[lenComp[1]] + strEnd;
                                         }
@@ -8778,12 +8802,12 @@ var prettydiff = function prettydiff(api) {
                                     }
                                     if (lenComp[1] - lenComp[0] > 0) {
                                         for (c = (lenComp[1] - lenComp[0]) + b; c > b; c -= 1) {
-                                            dataA.splice(0, 0, "");
+                                            dataA.unshift("");
                                         }
                                     }
                                     if (lenComp[0] - lenComp[1] > 0) {
                                         for (c = (lenComp[0] - lenComp[1]) + b; c > b; c -= 1) {
-                                            dataB.splice(0, 0, "");
+                                            dataB.unshift("");
                                         }
                                     }
                                     if (earlyOut === false) {
@@ -8977,7 +9001,7 @@ var prettydiff = function prettydiff(api) {
                                 }
                             } else {
                                 if (btest === false && ntest === false && typeof baseTextArray[baseStart] === "string" && typeof newTextArray[newStart] === "string") {
-                                    if (context < 0 && baseTextArray[baseStart - 1] === newTextArray[newStart - 1] && baseTextArray[baseStart] !== newTextArray[newStart]) {
+                                    if (context < 0 && (foldstart === 3 || baseTextArray[baseStart - 1] === newTextArray[newStart - 1]) && baseTextArray[baseStart] !== newTextArray[newStart]) {
                                         data[0][foldstart] = data[0][foldstart].replace("xxx", foldcount);
                                     }
                                     if (baseTextArray[baseStart] === "" && newTextArray[newStart] !== "") {
@@ -9971,13 +9995,13 @@ var prettydiff = function prettydiff(api) {
         css          : 140516, //diffview.css file
         csvbeauty    : 140114, //csvbeauty library
         csvmin       : 131224, //csvmin library
-        diffview     : 140401, //diffview library
+        diffview     : 140603, //diffview library
         documentation: 140127, //documentation.xhtml
         jsmin        : 140516, //jsmin library (fulljsmin.js)
-        jspretty     : 140409, //jspretty library
+        jspretty     : 140603, //jspretty library
         markup_beauty: 140306, //markup_beauty library
         markupmin    : 140220, //markupmin library
-        prettydiff   : 140516, //this file
+        prettydiff   : 140603, //this file
         webtool      : 140210, //prettydiff.com.xhtml
         api          : {
             dom        : 140401,

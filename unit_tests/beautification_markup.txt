@@ -1,5 +1,3 @@
-Each line is one test unit, but multiple units (or all) can run at once
-
 <a t="<b><f>asdf<f></b>"><c>qwer <d/>asdf </c> </a>
 <z><w><j/><k/><x><q> <r s="<e>f</e>"/></q> </x><n/></w> <g>type<u o="<th>"/> </g></z>
 <m> <![if gt IE 6]><noscript><![endif]> <![if gt IE 6]></noscript><![endif]> </m>
@@ -9,7 +7,8 @@ Each line is one test unit, but multiple units (or all) can run at once
 <a><script><!-- var a = ""; --></script></a>
 <a><style><![CDATA[ a {color:red} ]]></style></a>
 <a><script><![CDATA[ var a = ""; ]]></script></a>
-<a><script>//<![CDATA[ var a = ""; //]]></script></a>
+<a><script>//<![CDATA[ var a = ""; //]]>
+</script></a>
 <!DOCTYPE heuristic [<!-- "<" --><!-- ">" --><!-- "<" --><!ELEMENT purpose: ["asdf"]- - (#PCDATA)><!-- "#" -->]>
 <a> <script type="text/javascript" src="asdf"></script> </a>
 <a> <script src="asdf"></script> </a>

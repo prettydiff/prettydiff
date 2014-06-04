@@ -1,0 +1,31 @@
+add :: Int -> Int -> Int -- Unique lines
+add = (+) -- Unique lines
+ 
+sum2 :: Int -> Int
+sum2 = add 2
+ 
+mult2 :: Int -> Int
+mult2 = (*) 2
+ 
+mult2sum2 :: Int -> Int
+mult2sum2 = sum2 . mult2
+ 
+doSomething :: Int -> Int -- Unique lines
+doSomething a = (mult2sum2 a) * a
+
+
+
+add :: Int -> Int -> Int -- Unique lines
+add = (+) -- Unique lines
+ 
+by2 :: (Int -> Int -> Int) -> Int -> Int
+by2 a = a 2
+ 
+by4 :: (Int -> Int -> Int) -> Int -> Int
+by4 a = a 4
+ 
+mult4sum2 :: Int -> Int
+mult4sum2 = by2 add . by4 (*)
+ 
+doSomething :: Int -> Int -- Unique lines
+doSomething a = (mult4sum2 a) * a
