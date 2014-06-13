@@ -340,7 +340,7 @@ var exports = "",
             }
             b = a.replace(/\[[a-zA-Z][\w\-]*\=("|')?[a-zA-Z][\w\-]*("|')?\]/g, "").split("");
             c = b.length;
-            if ((/^([\s\w]*<)/).test(a) === false && (/(>[\s\w]*)$/).test(a) === false) {
+            if ((/^([\s\w\-]*<)/).test(a) === false && (/(>[\s\w\-]*)$/).test(a) === false) {
                 for (d = 1; d < c; d += 1) {
                     if (flaga === false) {
                         if (b[d] === "*" && b[d - 1] === "/") {
