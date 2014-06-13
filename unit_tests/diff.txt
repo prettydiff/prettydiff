@@ -1,14 +1,16 @@
-MOVE 0 TO Z-ANZ-VAR /* Zähler-Variable auf 0 setzen
-MOVE 0 TO ANZ-VAR   /* Zähler-Variable auf 0 setzen
-
-/TYPE    $FTOS.LMSLIBD.V61
-/CALL    $FTOS.LMSLIBD.V61
-
-/TYPE    $FTOS.LMSLIBD.V61(FTPC.FTOS)
-/CALL    $FTOS.LMSLIBD.V61(FTPC.FTOS)
-
+IF RNGZ2 < 0
 R-P86-ALT  := HIST
+/TYPE    $FTOS.LMSLIBD.V61(FTPC.FTOS)
+/TYPE    $FTOS.LMSLIBD.V61
+MOVE 'D1' TO RZUGUP
+MOVE 0 TO Z-ANZ-VAR /* ZÃ¤hler-Variable auf 0 setzen
+
+IF P672-NGZ2 < 0
 R-P114-ALT := HIST
+/CALL    $FTOS.LMSLIBD.V61(FTPC.FTOS)
+/CALL    $FTOS.LMSLIBD.V61
+MOVE 'D1' TO P672SCHA
+MOVE 0 TO ANZ-VAR   /* ZÃ¤hler-Variable auf 0 setzen
 
 <Row>
 <title/>
@@ -24,4 +26,3 @@ R-P114-ALT := HIST
 <lname>WEEKER              </lname>
 <name_suffix>SR   </name_suffix>
 </Row>
-
