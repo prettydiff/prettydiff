@@ -2,18 +2,18 @@
 /*jslint nomen: true */
 /*global edition, document, localStorage, window, prettydiff, markup_beauty, cleanCSS, jsmin, csvbeauty, csvmin, markupmin, jspretty, diffview, XMLHttpRequest, location, ActiveXObject, FileReader, navigator, setTimeout, codeMirror*/
 /***********************************************************************
-This is written by Austin Cheney on 3 Mar 2009. Anybody may use this;
-code without permission so long as this comment exists verbatim in each;
-instance of its use.
+ This is written by Austin Cheney on 3 Mar 2009. Anybody may use this;
+ code without permission so long as this comment exists verbatim in each;
+ instance of its use.
 
-http: //www.travelocity.com/ 
-http: //mailmarkup.org/
-http: //prettydiff.com/
+ http: //www.travelocity.com/
+ http: //mailmarkup.org/
+ http: //prettydiff.com/
 
-CodeMirror
-Copyright (C) 2013 by Marijn Haverbeke <marijnh@gmail.com> and others
-http://codemirror.com/   - MIT License
-***********************************************************************/
+ CodeMirror
+ Copyright (C) 2013 by Marijn Haverbeke <marijnh@gmail.com> and others
+ http://codemirror.com/   - MIT License
+ ***********************************************************************/
 var exports = "",
     _gaq    = [],
     pd      = {};
@@ -519,7 +519,7 @@ var exports = "",
         document.onmousedown     = null;
     };
 
-    pd.keydown = function dom__keydown(e) {
+    pd.keydown             = function dom__keydown(e) {
         var event = e || window.event;
         if (pd.test.keypress === true && (pd.test.keystore.length === 0 || event.keyCode !== pd.test.keystore[pd.test.keystore.length - 1]) && event.keyCode !== 17) {
             pd.test.keystore.push(event.keyCode);
@@ -1246,13 +1246,13 @@ var exports = "",
 
     //allows visual folding of consecutive equal lines in a diff report
     pd.difffold            = function dom__difffold(self, min, max) {
-        var a = 0,
-            b = 0,
-            inner = self.innerHTML,
-            lists = [],
-            parent = self.parentNode.parentNode,
-            listnodes = (parent.getAttribute("class" === "diff")) ? parent.getElementsByTagName("ol") : parent.parentNode.getElementsByTagName("ol"),
-            listLen = listnodes.length;
+        var a         = 0,
+            b         = 0,
+            inner     = self.innerHTML,
+            lists     = [],
+            parent    = self.parentNode.parentNode,
+            listnodes = (parent.getAttribute("class") === "diff") ? parent.getElementsByTagName("ol") : parent.parentNode.getElementsByTagName("ol"),
+            listLen   = listnodes.length;
         for (a = 0; a < listLen; a += 1) {
             lists.push(listnodes[a].getElementsByTagName("li"));
         }
@@ -2672,8 +2672,8 @@ var exports = "",
             if (state === true) {
                 pd.o.codeBeauOut.parentNode.style.display = "none";
                 if (pd.o.codeBeauIn !== null) {
-                    node                         = pd.o.codeBeauIn.parentNode;
-                    node.style.width             = "100%";
+                    node             = pd.o.codeBeauIn.parentNode;
+                    node.style.width = "100%";
                     if (pd.o.maxInputs.innerHTML.replace(/\s+/g, "").toLowerCase() === "maximizeinputs") {
                         pd.o.codeBeauIn.style.height = "31.7em";
                     }
@@ -3331,7 +3331,7 @@ var exports = "",
             title       = {},
             statdump    = [],
             langtest    = (pd.o.lang !== null && pd.o.lang.nodeName.toLowerCase() === "select") ? true : false,
-            lang        = (pd.o.lang !== null) ? lang = "auto" : ((langtest === true) ? pd.o.lang[pd.o.lang.selectedIndex].value : pd.o.lang.value),
+            lang        = (pd.o.lang !== null) ? "auto" : ((langtest === true) ? pd.o.lang[pd.o.lang.selectedIndex].value : pd.o.lang.value),
             hideBeauOut = function dom__load_hideBeauOut() {
                 pd.hideBeauOut();
                 pd.options(this);
