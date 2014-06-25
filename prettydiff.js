@@ -10025,7 +10025,7 @@ var prettydiff = function prettydiff(api) {
         prettydiff   : 140612, //this file
         webtool      : 140210, //prettydiff.com.xhtml
         api          : {
-            dom        : 140612,
+            dom        : 140617,
             nodeLocal  : 140425,
             nodeService: 121106, //no longer maintained
             wsh        : 140425
