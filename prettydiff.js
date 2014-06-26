@@ -6425,12 +6425,20 @@ var prettydiff = function prettydiff(api) {
                         },
                         end        = y.length;
                     for (i = 0; i < end; i += 1) {
-                        if (token[token.length - 1] === "T_script" && (/\s/).test(y[i]) === false && (i > end - 8 || y.slice(i, i + 8).join("").toLowerCase() !== "</script")) {
+                        if (token[token.length - 1] === "T_script" && (i > end - 8 || y.slice(i, i + 8).join("").toLowerCase() !== "</script")) {
                             build.push(cgather("script"));
-                            token.push("T_content");
-                        } else if (token[token.length - 1] === "T_style" && (/\s/).test(y[i]) === false && (i > end - 7 || y.slice(i, i + 7).join("").toLowerCase() !== "</style")) {
+                            if ((/^(\s+)$/).test(build[length - 1]) === true) {
+                                build.pop();
+                            } else {
+                                token.push("T_content");
+                            }
+                        } else if (token[token.length - 1] === "T_style" &&  (i > end - 7 || y.slice(i, i + 7).join("").toLowerCase() !== "</style")) {
                             build.push(cgather("style"));
-                            token.push("T_content");
+                            if ((/^(\s+)$/).test(build[length - 1]) === true) {
+                                build.pop();
+                            } else {
+                                token.push("T_content");
+                            }
                         } else if (y[i] === "<" && y[i + 1] === "!") {
                             if (y[i + 2] === "-" && y[i + 3] === "-") {
                                 if (mhtml === true && y[i + 3] === "-" && y[i + 4] === "[" && y[i + 5] === "i" && y[i + 6] === "f") {
@@ -6513,12 +6521,20 @@ var prettydiff = function prettydiff(api) {
                                 }
                             }
                         } else if (y[i - 1] === ">" && (y[i] !== "<" || (y[i] !== " " && y[i + 1] !== "<"))) {
-                            if (token[token.length - 1] === "T_script" && (/\s/).test(y[i]) === false) {
+                            if (token[token.length - 1] === "T_script") {
                                 build.push(cgather("script"));
-                                token.push("T_content");
-                            } else if (token[token.length - 1] === "T_style" && (/\s/).test(y[i]) === false) {
+                                if ((/^(\s+)$/).test(build[length - 1]) === true) {
+                                    build.pop();
+                                } else {
+                                    token.push("T_content");
+                                }
+                            } else if (token[token.length - 1] === "T_style") {
                                 build.push(cgather("style"));
-                                token.push("T_content");
+                                if ((/^(\s+)$/).test(build[length - 1]) === true) {
+                                    build.pop();
+                                } else {
+                                    token.push("T_content");
+                                }
                             } else if (y[i - 1] + y[i] + y[i + 1] !== "> <") {
                                 build.push(cgather("other"));
                                 token.push("T_content");
@@ -8692,7 +8708,19 @@ var prettydiff = function prettydiff(api) {
                                         }
                                     }
 
-                                    if (dataA[b + 1] === dataB[lenComp[0]]) {
+                                    if (dataA[b].replace(regStart, "") === dataB[lenComp[0] + 1] && b !== lenComp[0]) {
+                                        dataA[b] = dataA[b].replace(regStart, strStart + strEnd);
+                                        dataB[lenComp[0]] = dataB[lenComp[0]] + strEnd;
+                                        for (c = lenComp[0] - b; c > 0; c -= 1) {
+                                           dataA.unshift("");
+                                        }
+                                        if (lenComp[0] + 1 < dataMinLength && dataA[b] !== undefined && dataB[b] !== undefined) {
+                                            b = lenComp[0] + 1;
+                                        } else {
+                                            b = Math.max(dataA.length, dataB.length);
+                                            break;
+                                        }
+                                    } else if (dataA[b + 1] === dataB[lenComp[0]]) {
                                         dataA[b]              += strEnd;
                                         dataB[lenComp[0] - 1] += strEnd;
                                         for (c = lenComp[0] - (b + 1); c > 0; c -= 1) {
@@ -8705,7 +8733,19 @@ var prettydiff = function prettydiff(api) {
                                             break;
                                         }
                                     }
-                                    if (dataB[b + 1] === dataA[lenComp[0]]) {
+                                    if (dataB[b].replace(regStart, "") === dataA[lenComp[0] + 1] && b !== lenComp[0]) {
+                                        dataB[b] = dataB[b].replace(regStart, strStart + strEnd);
+                                        dataA[lenComp[0]] = dataA[lenComp[0]] + strEnd;
+                                        for (c = lenComp[0] - b; c > 0; c -= 1) {
+                                            dataB.unshift("");
+                                        }
+                                        if (lenComp[0] + 1 < dataMinLength && dataA[b] !== undefined && dataB[b] !== undefined) {
+                                            b = lenComp[0] + 1;
+                                        } else {
+                                            b = Math.max(dataA.length, dataB.length);
+                                            break;
+                                        }
+                                    } else if (dataB[b + 1] === dataA[lenComp[0]]) {
                                         dataB[b]              += strEnd;
                                         dataA[lenComp[0] - 1] += strEnd;
                                         for (c = lenComp[0] - (b + 1); c > 0; c -= 1) {
@@ -10016,16 +10056,16 @@ var prettydiff = function prettydiff(api) {
         css          : 140516, //diffview.css file
         csvbeauty    : 140114, //csvbeauty library
         csvmin       : 131224, //csvmin library
-        diffview     : 140612, //diffview library
+        diffview     : 140625, //diffview library
         documentation: 140127, //documentation.xhtml
         jsmin        : 140516, //jsmin library (fulljsmin.js)
         jspretty     : 140603, //jspretty library
-        markup_beauty: 140612, //markup_beauty library
+        markup_beauty: 140625, //markup_beauty library
         markupmin    : 140220, //markupmin library
-        prettydiff   : 140612, //this file
+        prettydiff   : 140625, //this file
         webtool      : 140210, //prettydiff.com.xhtml
         api          : {
-            dom        : 140617,
+            dom        : 140612,
             nodeLocal  : 140425,
             nodeService: 121106, //no longer maintained
             wsh        : 140425
