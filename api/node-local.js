@@ -35,8 +35,8 @@ Examples:
         pkg         = require("../package.json"),
         fs          = require("fs"),
         http        = require("http"),
-        insight     = require("insight"),
-        ins         = (insight !== undefined) ? new insight({
+        Insight     = require("insight"),
+        ins         = (Insight !== undefined) ? new Insight({
             trackingCode    : "UA-27834630-2",
             trackingProvider: "google",
             packageName     : pkg.name,
@@ -766,15 +766,15 @@ Examples:
         };
     if (args === 0 || help === true) {
         console.log(error);
-        if (insight !== undefined && ins.optOut === undefined) {
+        if (Insight !== undefined && ins.optOut === undefined) {
             ins.askPermission();
         }
         return;
     }
-    if (insight !== undefined && ins.optOut === undefined) {
+    if (Insight !== undefined && ins.optOut === undefined) {
         ins.askPermission();
     }
-    if (insight !== undefined && ins.outOut === false) {
+    if (Insight !== undefined && ins.outOut === false) {
         ins.track("color", options.color);
         ins.track("comments", options.comments);
         ins.track("conditional", options.conditional);

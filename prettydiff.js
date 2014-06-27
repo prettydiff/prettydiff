@@ -6427,14 +6427,14 @@ var prettydiff = function prettydiff(api) {
                     for (i = 0; i < end; i += 1) {
                         if (token[token.length - 1] === "T_script" && (i > end - 8 || y.slice(i, i + 8).join("").toLowerCase() !== "</script")) {
                             build.push(cgather("script"));
-                            if ((/^(\s+)$/).test(build[length - 1]) === true) {
+                            if ((/^(\s+)$/).test(build[build.length - 1]) === true) {
                                 build.pop();
                             } else {
                                 token.push("T_content");
                             }
                         } else if (token[token.length - 1] === "T_style" &&  (i > end - 7 || y.slice(i, i + 7).join("").toLowerCase() !== "</style")) {
                             build.push(cgather("style"));
-                            if ((/^(\s+)$/).test(build[length - 1]) === true) {
+                            if ((/^(\s+)$/).test(build[build.length - 1]) === true) {
                                 build.pop();
                             } else {
                                 token.push("T_content");
@@ -6523,14 +6523,14 @@ var prettydiff = function prettydiff(api) {
                         } else if (y[i - 1] === ">" && (y[i] !== "<" || (y[i] !== " " && y[i + 1] !== "<"))) {
                             if (token[token.length - 1] === "T_script") {
                                 build.push(cgather("script"));
-                                if ((/^(\s+)$/).test(build[length - 1]) === true) {
+                                if ((/^(\s+)$/).test(build[build.length - 1]) === true) {
                                     build.pop();
                                 } else {
                                     token.push("T_content");
                                 }
                             } else if (token[token.length - 1] === "T_style") {
                                 build.push(cgather("style"));
-                                if ((/^(\s+)$/).test(build[length - 1]) === true) {
+                                if ((/^(\s+)$/).test(build[build.length - 1]) === true) {
                                     build.pop();
                                 } else {
                                     token.push("T_content");
@@ -8712,7 +8712,7 @@ var prettydiff = function prettydiff(api) {
                                         dataA[b] = dataA[b].replace(regStart, strStart + strEnd);
                                         dataB[lenComp[0]] = dataB[lenComp[0]] + strEnd;
                                         for (c = lenComp[0] - b; c > 0; c -= 1) {
-                                           dataA.unshift("");
+                                            dataA.unshift("");
                                         }
                                         if (lenComp[0] + 1 < dataMinLength && dataA[b] !== undefined && dataB[b] !== undefined) {
                                             b = lenComp[0] + 1;
@@ -10060,15 +10060,15 @@ var prettydiff = function prettydiff(api) {
         documentation: 140127, //documentation.xhtml
         jsmin        : 140516, //jsmin library (fulljsmin.js)
         jspretty     : 140603, //jspretty library
-        markup_beauty: 140625, //markup_beauty library
+        markup_beauty: 140627, //markup_beauty library
         markupmin    : 140220, //markupmin library
-        prettydiff   : 140625, //this file
+        prettydiff   : 140627, //this file
         webtool      : 140210, //prettydiff.com.xhtml
         api          : {
             dom        : 140612,
-            nodeLocal  : 140425,
+            nodeLocal  : 140627,
             nodeService: 121106, //no longer maintained
-            wsh        : 140425
+            wsh        : 140627
         },
         addon        : {
             cmjs : 140127, //CodeMirror JavaScript
