@@ -3353,7 +3353,7 @@ var exports = "",
             title       = {},
             statdump    = [],
             langtest    = (pd.o.lang !== null && pd.o.lang.nodeName.toLowerCase() === "select") ? true : false,
-            lang        = (pd.o.lang !== null) ? "auto" : ((langtest === true) ? pd.o.lang[pd.o.lang.selectedIndex].value : pd.o.lang.value),
+            lang        = (pd.o.lang !== null) ? "auto" : ((langtest === true) ? pd.o.lang[pd.o.lang.selectedIndex].value : ((pd.o.lang === null) ? "text" : pd.o.lang.value)),
             hideBeauOut = function dom__load_hideBeauOut() {
                 pd.hideBeauOut();
                 pd.options(this);
