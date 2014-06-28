@@ -25,9 +25,15 @@ in the following modes:
   * file - the input and the output reside in files
   * directory - everything in a directory is processed into a specified output directory except ".", "..", and subdirectories
 
-In your Node.js script include Pretty Diff with this code:
+Execute in the context of a NodeJS application:
 
-    var prettydiff = require("prettydiff");
+    var prettydiff = require("prettydiff"),
+        args       = {
+            source: "asdf",
+            diff  : "asdd",
+            lang  : "text"
+        },
+        output     = prettydiff.api(args);
 
 From the command line execute api/node-local.js similar to these
 examples:
@@ -49,6 +55,16 @@ Pretty Diff would be executed using the following on CLI:
 
     cscript prettydiff.wsf
     cscript prettydiff.wsf /source:"myFile.xml" /mode:"beautify"
+
+Execute with vanilla JS
+-----------------------
+
+    var args   = {
+            source: "asdf",
+            diff  : "asdd",
+            lang  : "text"
+        },
+        output = prettydiff(args);
 
 Pre-Inventory:
 --------------
