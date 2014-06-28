@@ -947,9 +947,7 @@ var exports = "",
                     style       = {},
                     wrap        = {};
                 if (pd.o.codeBeauIn !== null) {
-                    if (pd.test.cm === true) {
-                        api.source = pd.cm.beauIn.getValue();
-                    } else {
+                    if (pd.test.cm === false) {
                         api.source = pd.o.codeBeauIn.value;
                     }
                 }
@@ -1024,9 +1022,7 @@ var exports = "",
                     obfuscate   = pd.$$("obfuscate-yes");
                 if (pd.o.codeMinnIn !== null) {
                     pd.o.codeMinnIn = pd.$$("minifyinput");
-                    if (pd.test.cm === true) {
-                        api.source = pd.cm.minnIn.getValue();
-                    } else {
+                    if (pd.test.cm === false) {
                         api.source = pd.o.codeMinnIn.value;
                     }
                 }
@@ -1210,11 +1206,37 @@ var exports = "",
             }());
         }
         if (requests === false && requestd === false) {
-            if (pd.test.cm === true && api.lang === "auto") {
-                cmlang();
+            //sometimes the CodeMirror getValue method fires too early
+            //on copy/paste.  I put in a 50ms delay in this case to
+            //prevent operations from old input
+            if (pd.test.cm === true && api.mode !== "diff") {
+                if (api.mode === "beautify") {
+                    setTimeout(function () {
+                        api.source = pd.cm.beauIn.getValue();
+                        if (pd.test.cm === true && api.lang === "auto") {
+                            cmlang();
+                        }
+                        output = pd.application(api);
+                        execOutput();
+                    }, 50);
+                }
+                if (api.mode === "minify") {
+                    setTimeout(function () {
+                        api.source = pd.cm.minnIn.getValue();
+                        if (pd.test.cm === true && api.lang === "auto") {
+                            cmlang();
+                        }
+                        output = pd.application(api);
+                        execOutput();
+                    }, 50);
+                }
+            } else {
+                if (pd.test.cm === true && api.lang === "auto") {
+                    cmlang();
+                }
+                output = pd.application(api);
+                execOutput();
             }
-            output = pd.application(api);
-            execOutput();
         }
     };
 
