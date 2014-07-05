@@ -272,6 +272,8 @@ background: url("data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAQAAAACCAYAAAB/q
 .CodeMirror-foldgutter-folded {
   color: #555;
   cursor: pointer;
+  font-size: 1.5em;
+  margin-top: -0.1em;
 }
 .CodeMirror-foldgutter-open:after {
   content: "\25BE";
@@ -381,7 +383,7 @@ span.cm-error {
 .cm-s-shadow span.cm-link {color: #f63;}
 .cm-s-shadow .CodeMirror-matchingbracket {color: #fe0;}
 
-.cm-s-white.CodeMirror {background: #fff;border-color:#999;}
+.cm-s-white.CodeMirror {background: #fff;border-color:#ccc;}
 .cm-s-white div.CodeMirror-selected {background:#ccc;}
 .cm-s-white .CodeMirror-gutters,
 .cm-s-white .CodeMirror-code div:hover,

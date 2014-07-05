@@ -102,6 +102,8 @@ var exports = "",
         addNo       : pd.$$("additional_no"),
         addOps      : pd.$$("addOptions"),
         addYes      : pd.$$("additional_yes"),
+        announce    : pd.$$("announcement"),
+        announcetext: "",
         beau        : pd.$$("Beautify"),
         beauOps     : pd.$$("beauops"),
         codeBeauIn  : pd.$$("beautyinput"),
@@ -598,6 +600,23 @@ var exports = "",
                             pd.o.codeBeauOut.value = output[0];
                         }
                     }
+                    if (pd.o.announce !== null && pd.o.announce.innerHTML !== pd.o.announcetext) {
+                        if (api.lang === "markup") {
+                            pd.o.announce.innerHTML = (function () {
+                                var a      = 0,
+                                    p      = output[1].split("<p><strong>"),
+                                    length = p.length;
+                                for (a = 0; a < length; a += 1) {
+                                    if (p[a].indexOf(" more ") > -1 && p[a].indexOf("start tag") > -1 && p[a].indexOf("end tag") > -1) {
+                                        return "Notice: " + p[a].substring(0, p[a].indexOf("<"));
+                                    }
+                                }
+                                return "";
+                            }());
+                        } else {
+                            pd.o.announce.innerHTML = "";
+                        }
+                    }
                     if (pd.o.report.beau.box !== null) {
                         if (output[1] !== "") {
                             if (autotest === true) {
@@ -688,6 +707,9 @@ var exports = "",
                     }
                 }
                 if (api.mode === "diff" && pd.o.report.diff.box !== null) {
+                    if (pd.o.announce !== null && pd.o.announce.innerHTML !== pd.o.announcetext) {
+                        pd.o.announce.innerHTML = "";
+                    }
                     if (autotest === true) {
                         output[1] = output[1].replace("seconds </em></p>", "seconds </em></p> <p>Language is set to <strong>auto</strong>. Presumed language is <em>" + api.lang + "</em>.</p>");
                         api.lang  = "auto";
@@ -738,6 +760,9 @@ var exports = "",
                     }
                 }
                 if (api.mode === "minify") {
+                    if (pd.o.announce !== null && pd.o.announce.innerHTML !== pd.o.announcetext) {
+                        pd.o.announce.innerHTML = "";
+                    }
                     if (output[0].length > 125000) {
                         pd.test.filled.min = true;
                     } else {
@@ -768,43 +793,9 @@ var exports = "",
                     }
                 }
                 if (pd.test.ls === true) {
-                    (function dom__recycle_storage() {
-                        var lango    = {},
-                            size     = 0,
-                            codesize = 0;
-                        //this logic attempts to prevent writes to localStorage if they are likely to exceed 5mb of storage
-                        if (api.mode === "beautify") {
-                            codesize = api.source.length + pd.o.length.diffBase + pd.o.length.diffNew + pd.o.length.minn;
-                            if (api.source.length < 2096000 && codesize < 4800000) {
-                                localStorage.codeBeautify = api.source;
-                                pd.o.length.beau          = api.source.length;
-                            } else {
-                                localStorage.codeBeautify = "";
-                                pd.o.length.beau          = 0;
-                            }
-                        } else if (api.mode === "minify") {
-                            codesize = api.source.length + pd.o.length.beau + pd.o.length.diffBase + pd.o.length.diffNew;
-                            if (api.source.length < 2096000 && codesize < 4800000) {
-                                localStorage.codeMinify = api.source;
-                                pd.o.length.minn        = api.source.length;
-                            } else {
-                                localStorage.codeMinify = "";
-                                pd.o.length.minn        = 0;
-                            }
-                        } else if (api.mode === "diff") {
-                            codesize = pd.o.length.beau + pd.o.length.minn + api.source.length + api.diff.length;
-                            if (api.source.length < 2096000 && api.diff.length < 2096000 && codesize < 4800000) {
-                                localStorage.codeDiffBase = api.source;
-                                localStorage.codeDiffNew  = api.diff;
-                                pd.o.length.diffBase      = api.source.length;
-                                pd.o.length.diffNew       = api.diff.length;
-                            } else {
-                                localStorage.codeDiffBase = "";
-                                localStorage.codeDiffNew  = "";
-                                pd.o.length.diffBase      = 0;
-                                pd.o.length.diffNew       = 0;
-                            }
-                        }
+                    (function dom__recycle_stats() {
+                        var lango = {},
+                            size  = 0;
                         if (api.lang === "auto" && typeof output[1] === "string") {
                             lango = (/Language set to <strong>auto<\/strong>\. Presumed language is <em>\w+<\/em>\./).exec(output[1]);
                             if (lango !== null) {
@@ -905,13 +896,6 @@ var exports = "",
                 return false;
             }
         }
-        if (pd.test.ls === true && pd.o.report.stat.box !== null) {
-            pd.stat.usage += 1;
-            node          = pd.$$("stusage");
-            if (node !== null) {
-                node.innerHTML = pd.stat.usage;
-            }
-        }
 
         //gather updated dom nodes
         api.lang    = (pd.o.lang === null) ? "javascript" : (pd.o.lang.nodeName.toLowerCase() === "select") ? pd.o.lang[pd.o.lang.selectedIndex].value.toLowerCase() : pd.o.lang.value.toLowerCase();
@@ -947,7 +931,9 @@ var exports = "",
                     style       = {},
                     wrap        = {};
                 if (pd.o.codeBeauIn !== null) {
-                    if (pd.test.cm === false) {
+                    if (pd.test.cm === true) {
+                        api.source = pd.cm.beauIn.getValue();
+                    } else {
                         api.source = pd.o.codeBeauIn.value;
                     }
                 }
@@ -1022,7 +1008,9 @@ var exports = "",
                     obfuscate   = pd.$$("obfuscate-yes");
                 if (pd.o.codeMinnIn !== null) {
                     pd.o.codeMinnIn = pd.$$("minifyinput");
-                    if (pd.test.cm === false) {
+                    if (pd.test.cm === true) {
+                        api.source = pd.cm.minnIn.getValue();
+                    } else {
                         api.source = pd.o.codeMinnIn.value;
                     }
                 }
@@ -1169,6 +1157,51 @@ var exports = "",
                             xhr.send();
                         }
                     }());
+                }
+            }());
+        }
+        if (pd.test.ls === true) {
+            if (pd.o.report.stat.box !== null) {
+                pd.stat.usage += 1;
+                node          = pd.$$("stusage");
+                if (node !== null) {
+                    node.innerHTML = pd.stat.usage;
+                }
+            }
+            (function () {
+                var codesize = 0;
+                //this logic attempts to prevent writes to localStorage if they are likely to exceed 5mb of storage
+                if (api.mode === "beautify") {
+                    codesize = api.source.length + pd.o.length.diffBase + pd.o.length.diffNew + pd.o.length.minn;
+                    if (api.source.length < 2096000 && codesize < 4800000) {
+                        localStorage.codeBeautify = api.source;
+                        pd.o.length.beau          = api.source.length;
+                    } else {
+                        localStorage.codeBeautify = "";
+                        pd.o.length.beau          = 0;
+                    }
+                } else if (api.mode === "minify") {
+                    codesize = api.source.length + pd.o.length.beau + pd.o.length.diffBase + pd.o.length.diffNew;
+                    if (api.source.length < 2096000 && codesize < 4800000) {
+                        localStorage.codeMinify = api.source;
+                        pd.o.length.minn        = api.source.length;
+                    } else {
+                        localStorage.codeMinify = "";
+                        pd.o.length.minn        = 0;
+                    }
+                } else if (api.mode === "diff") {
+                    codesize = pd.o.length.beau + pd.o.length.minn + api.source.length + api.diff.length;
+                    if (api.source.length < 2096000 && api.diff.length < 2096000 && codesize < 4800000) {
+                        localStorage.codeDiffBase = api.source;
+                        localStorage.codeDiffNew  = api.diff;
+                        pd.o.length.diffBase      = api.source.length;
+                        pd.o.length.diffNew       = api.diff.length;
+                    } else {
+                        localStorage.codeDiffBase = "";
+                        localStorage.codeDiffNew  = "";
+                        pd.o.length.diffBase      = 0;
+                        pd.o.length.diffNew       = 0;
+                    }
                 }
             }());
         }
@@ -3223,7 +3256,27 @@ var exports = "",
             button.innerHTML        = "Show Options";
             button.setAttribute("title", "Click on this button to see additional options and settings.");
             pd.options(button);
+            if (pd.o.announce !== null) {
+                pd.o.announce.setAttribute("class", "big");
+                pd.o.announce.parentNode.removeChild(pd.o.announce);
+                pd.o.announce.innerHTML = "";
+                if (pd.$$("codeInput") !== null) {
+                    pd.$$("codeInput").insertBefore(pd.o.announce, pd.$$("codeInput").firstChild);
+                }
+            }
             return false;
+        }
+        if (pd.o.announce !== null) {
+            pd.o.announce.parentNode.removeChild(pd.o.announce);
+            if (pd.$$("introduction") !== null) {
+                if (pd.$$("update") === null) {
+                    pd.$$("introduction").appendChild(pd.o.announce);
+                } else {
+                    pd.$$("introduction").insertBefore(pd.o.announce, pd.$$("update"));
+                }
+            }
+            pd.o.announce.setAttribute("class", "normal");
+            pd.o.announce.innerHTML = pd.o.announcetext;
         }
         if (pd.$$("codeInput") !== null && fgroup !== null) {
             node = pd.$$("language");
@@ -3391,6 +3444,9 @@ var exports = "",
                     return false;
                 }
             };
+        if (pd.o.announce !== null) {
+            pd.o.announcetext = pd.o.announce.innerHTML;
+        }
         if (page === "webtool") {
             node = pd.$$("hideOptions");
             if (node !== null && node.innerHTML.replace(/\s+/, " ") === "Default Display") {
