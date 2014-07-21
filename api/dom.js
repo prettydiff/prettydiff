@@ -459,8 +459,10 @@ var exports = "",
     //colSlider stuff is used with the horizontal dragging of columns in
     //the diff report
     pd.colSliderProperties = [];
-    pd.colSliderGrab       = function dom__colSliderGrab(x) {
-        var diffRight   = x.parentNode,
+    pd.colSliderGrab       = function dom__colSliderGrab(e) {
+        var e = e || window.event,
+            node = this,
+            diffRight   = node.parentNode,
             diff        = diffRight.parentNode,
             subOffset   = 0,
             counter     = pd.colSliderProperties[0],
@@ -475,13 +477,16 @@ var exports = "",
             maxAdjust   = max - 15,
             withinRange = false,
             diffLeft    = diffRight.previousSibling,
-            drop        = function DOM_colSliderGrab_drop() {
-                x.style.cursor       = status + "-resize";
+            drop        = function DOM_colSliderGrab_drop(f) {
+                f = f || window.event;
+                f.preventDefault();
+                node.style.cursor       = status + "-resize";
                 document.onmousemove = null;
                 document.onmouseup   = null;
             },
             boxmove     = function DOM_colSliderGrab_boxmove(f) {
                 f         = f || window.event;
+                f.preventDefault();
                 subOffset = offset - f.clientX;
                 if (subOffset > minAdjust && subOffset < maxAdjust) {
                     withinRange = true;
@@ -498,15 +503,16 @@ var exports = "",
                 }
                 document.onmouseup = drop;
             };
-        if (typeof pd.o === "object" && pd.o.re !== null) {
-            offset += pd.o.re.offsetLeft;
-            offset -= pd.o.rf.scrollLeft;
+        e.preventDefault();
+        if (typeof pd.o === "object" && pd.o.report.diff.box !== null) {
+            offset += pd.o.report.diff.box.offsetLeft;
+            offset -= pd.o.report.diff.body.scrollLeft;
         } else {
             subOffset = (document.body.parentNode.scrollLeft > document.body.scrollLeft) ? document.body.parentNode.scrollLeft : document.body.scrollLeft;
             offset    -= subOffset;
         }
-        offset             += x.clientWidth;
-        x.style.cursor     = "ew-resize";
+        offset             += node.clientWidth;
+        node.style.cursor     = "ew-resize";
         diff.style.width   = (total / 10) + "em";
         diff.style.display = "inline-block";
         if (diffLeft.nodeType !== 1) {
@@ -679,6 +685,16 @@ var exports = "",
                                     pd.beaurows[0] = diffList[0].getElementsByTagName("li");
                                     pd.beaurows[1] = diffList[1].getElementsByTagName("li");
                                 }
+                                (function () {
+                                    var a = 0,
+                                        b = pd.beaurows[0].length,
+                                        c = [];
+                                    for (a = 0; a < b; a += 1) {
+                                        if (pd.beaurows[0][a].getAttribute("class") === "fold") {
+                                            pd.beaurows[0][a].onclick = pd.beaufold;
+                                        }
+                                    }
+                                }());
                             } else {
                                 if (parent.innerHTML.indexOf("save") > -1) {
                                     if (parent.style === undefined || parent.style.display === "block") {
@@ -728,16 +744,29 @@ var exports = "",
                     if (buttons[1].parentNode.style.display === "none") {
                         pd.minimize(buttons[1].onclick, 1, buttons[1]);
                     }
-                    if (api.diffview === "sidebyside" && pd.o.report.diff.body.innerHTML.toLowerCase().indexOf("<textarea") === -1) {
+                    if (pd.o.report.diff.body.innerHTML.toLowerCase().indexOf("<textarea") === -1) {
                         diffList = pd.o.report.diff.body.getElementsByTagName("ol");
-                        if (diffList.length < 3 || diffList[0] === null || diffList[1] === null || diffList[2] === null) {
-                            pd.colSliderProperties = [
-                                0, 0, 0, 0, 0
-                            ];
-                        } else {
-                            pd.colSliderProperties = [
-                                diffList[0].clientWidth, diffList[1].clientWidth, diffList[2].parentNode.clientWidth, diffList[2].parentNode.parentNode.clientWidth, diffList[2].parentNode.offsetLeft - diffList[2].parentNode.parentNode.offsetLeft
-                            ];
+                        (function () {
+                            var cells = diffList[0].getElementsByTagName("li"),
+                                len = cells.length,
+                                a = 0;
+                            for (a = 0; a < len; a += 1) {
+                                if (cells[a].getAttribute("class") === "fold") {
+                                    cells[a].onclick = pd.difffold;
+                                }
+                            }
+                        }());
+                        if (api.diffview === "sidebyside") {
+                            if (diffList.length < 3 || diffList[0] === null || diffList[1] === null || diffList[2] === null) {
+                                pd.colSliderProperties = [
+                                    0, 0, 0, 0, 0
+                                ];
+                            } else {
+                                pd.colSliderProperties = [
+                                    diffList[0].clientWidth, diffList[1].clientWidth, diffList[2].parentNode.clientWidth, diffList[2].parentNode.parentNode.clientWidth, diffList[2].parentNode.offsetLeft - diffList[2].parentNode.parentNode.offsetLeft
+                                ];
+                                diffList[2].onmousedown = pd.colSliderGrab;
+                            }
                         }
                     }
                     if (pd.o.save !== null && pd.o.save.checked === true) {
@@ -1136,7 +1165,7 @@ var exports = "",
                         requestd = true;
                         if (slashIndex > 0 || api.diff.indexOf("http") === 0) {
                             xhr.onreadystatechange = function dom__recycle_xhrDiff_stateChange() {
-                                if (xhr.readystate === 4) {
+                                if (xhr.readyState === 4) {
                                     if (xhr.status === 200 || xhr.status === 0) {
                                         api.diff = xhr.responseText.replace(/\r\n/g, "\n");
                                         if (completes === true) {
@@ -1276,8 +1305,12 @@ var exports = "",
     //allows visual folding of function in the JSPretty jsscope HTML
     //output
     pd.beaurows            = [];
-    pd.beaufold            = function dom__beaufold(self, min, max) {
-        var a = 0,
+    pd.beaufold            = function dom__beaufold() {
+        var self = this,
+            title = self.getAttribute("title").split("line "),
+            min = Number(title[1].substr(0, title[1].indexOf(" "))),
+            max = Number(title[2]),
+            a = 0,
             b = "";
         if (self.innerHTML.charAt(0) === "-") {
             for (a = min; a < max; a += 1) {
@@ -1290,8 +1323,8 @@ var exports = "",
                 pd.beaurows[0][a].style.display = "block";
                 pd.beaurows[1][a].style.display = "block";
                 if (pd.beaurows[0][a].getAttribute("class") === "fold" && pd.beaurows[0][a].innerHTML.charAt(0) === "+") {
-                    b = pd.beaurows[0][a].getAttribute("onclick");
-                    b = b.substring(b.lastIndexOf(",") + 1, b.indexOf(")"));
+                    b = pd.beaurows[0][a].getAttribute('title');
+                    b = b.substring(b.indexOf('to line ') + 1);
                     a = Number(b) - 1;
                 }
             }
@@ -1300,9 +1333,13 @@ var exports = "",
     };
 
     //allows visual folding of consecutive equal lines in a diff report
-    pd.difffold            = function dom__difffold(self, min, max) {
+    pd.difffold            = function dom__difffold() {
         var a         = 0,
             b         = 0,
+            self = this,
+            title = self.getAttribute("title").split("line "),
+            min = Number(title[1].substr(0, title[1].indexOf(" "))),
+            max = Number(title[2]),
             inner     = self.innerHTML,
             lists     = [],
             parent    = self.parentNode.parentNode,
@@ -1377,6 +1414,9 @@ var exports = "",
             fileError = function dom__file_init2() {
                 return;
             };
+        if (files === undefined) {
+            return;
+        }
         if (pd.test.fs === true && files[0] !== null && typeof files[0] === "object") {
             if (input.nodeName === "input") {
                 input = input.parentNode.parentNode.getElementsByTagName("textarea")[0];
@@ -1793,6 +1833,8 @@ var exports = "",
             content    = [],
             lastChild  = {},
             pageHeight = 0,
+            diffstring = "];(function(){var cells=document.getElementsByTagName('ol')[0].getElemensByTagName('li'),len=cells.length,a=0;for(a=0;a<len;a+=1){if(cells[a].getAttribute('class')==='fold'){cells[a].onclick=pd.difffold;}}if(d.length>3){d[2].onmousedown=pd.colSliderGrab;}}());pd.difffold=function dom__difffold(){var self=this,title=self.getAttribute('title').split('line '),min=Number(title[1].substr(0,title[1].indexOf(' '))),max=Number(title[2]),a=0,b=0,inner=self.innerHTML,lists=[],parent=self.parentNode.parentNode,listnodes=(parent.getAttribute('class'==='diff'))?parent.getElementsByTagName('ol'):parent.parentNode.getElementsByTagName('ol'),listLen=listnodes.length;for(a=0;a<listLen;a+=1){lists.push(listnodes[a].getElementsByTagName('li'));}max=(max>=lists[0].length)?lists[0].length:max;if(inner.charAt(0)===' - '){self.innerHTML='+'+inner.substr(1);for(a=min;a<max;a+=1){for(b=0;b<listLen;b+=1){lists[b][a].style.display='none';}}}else{self.innerHTML=' - '+inner.substr(1);for(a=min;a<max;a+=1){for(b=0;b<listLen;b+=1){lists[b][a].style.display='block';}}}};pd.colSliderProperties=[d[0].clientWidth,d[1].clientWidth,d[2].parentNode.clientWidth,d[2].parentNode.parentNode.clientWidth,d[2].parentNode.offsetLeft-d[2].parentNode.parentNode.offsetLeft,];pd.colSliderGrab=function dom__colSliderGrab(e){var e=e||window.event,node=this,diffRight=node.parentNode,diff=diffRight.parentNode,subOffset=0,counter=pd.colSliderProperties[0],data=pd.colSliderProperties[1],width=pd.colSliderProperties[2],total=pd.colSliderProperties[3],offset=(pd.colSliderProperties[4]),min=0,max=data-1,status='ew',minAdjust=min+15,maxAdjust=max-15,withinRange=false,diffLeft=diffRight.previousSibling,drop=function DOM_colSliderGrab_drop(f){f=f||window.event;f.preventDefault();node.style.cursor=status+'-resize';document.onmousemove=null;document.onmouseup=null;},boxmove=function DOM_colSliderGrab_boxmove(f){f=f||window.event;f.preventDefault();subOffset=offset-f.clientX;if(subOffset>minAdjust&&subOffset<maxAdjust){withinRange=true;}if(withinRange===true&&subOffset>maxAdjust){diffRight.style.width=((total-counter-2)/10)+'em';status='e';}else if(withinRange===true&&subOffset<minAdjust){diffRight.style.width=(width/10)+'em';status='w';}else if(subOffset<max&&subOffset>min){diffRight.style.width=((width+subOffset)/10)+'em';status='ew';}document.onmouseup=drop;};e.preventDefault();if(typeof pd.o==='object'&&pd.o.report.diff.box!==null){offset+=pd.o.report.diff.box.offsetLeft;offset-=pd.o.report.diff.body.scrollLeft;}else{subOffset=(document.body.parentNode.scrollLeft>document.body.scrollLeft)?document.body.parentNode.scrollLeft:document.body.scrollLeft;offset-=subOffset;}offset+=node.clientWidth;node.style.cursor='ew-resize';diff.style.width=(total/10)+'em';diff.style.display='inline-block';if(diffLeft.nodeType!==1){do{diffLeft=diffLeft.previousSibling;}while(diffLeft.nodeType!==1);}diffLeft.style.display='block';diffRight.style.width=(diffRight.clientWidth/10)+'em';diffRight.style.position='absolute';document.onmousemove=boxmove;document.onmousedown=null;};",
+            beaustring = "var data=document.getElementById('pd-jsscope'),pd={};pd.beaurows=[];pd.beaurows[0]=data.getElementsByTagName('ol')[0].getElementsByTagName('li');pd.beaurows[1]=data.getElementsByTagName('ol')[1].getElementsByTagName('li');pd.beaufold=function dom__beaufold(){var self=this,title=self.getAttribute('title').split('line '),min=Number(title[1].substr(0,title[1].indexOf(' '))),max=Number(title[2]),a=0,b='';if(self.innerHTML.charAt(0)==='-'){for(a=min;a<max;a+=1){pd.beaurows[0][a].style.display='none';pd.beaurows[1][a].style.display='none';}self.innerHTML='+'+self.innerHTML.substr(1);}else{for(a=min;a<max;a+=1){pd.beaurows[0][a].style.display='block';pd.beaurows[1][a].style.display='block';if(pd.beaurows[0][a].getAttribute('class')==='fold'&&pd.beaurows[0][a].innerHTML.charAt(0)==='+'){b=pd.beaurows[0][a].getAttribute('title');b=b.substring('to line ');a=Number(b)-1;}}self.innerHTML='-'+self.innerHTML.substr(1);}};(function(){var len=pd.beaurows[0].length,a=0;for(a=0;a<len;a+=1){if(pd.beaurows[0][a].getAttribute('class')==='fold'){pd.beaurows[0][a].onclick=pd.beaufold;}}}());",
             span       = pd.$$("inline"),
             inline     = (span === null || span.checked === false) ? false : true,
             type       = "";
@@ -1829,8 +1871,7 @@ var exports = "",
                     build.push(pd.colSliderProperties[3]);
                     build.push(",");
                     build.push(pd.colSliderProperties[4]);
-                    build.push("];pd.colSliderGrab=function(x){'use strict';var a=x.parentNode,b=a.parentNode,c=0,counter=pd.colSliderProperties[0],data=pd.colSliderProperties[1],width=pd.colSliderProperties[2],total=pd.colSliderProperties[3],offset=(pd.colSliderProperties[4]),min=0,max=data-1,status='ew',g=min+15,h=max-15,k=false,z=a.previousSibling,ua=navigator.userAgent.toLowerCase(),ie=0,drop=function(g){x.style.cursor=status+'-resize';g=null;document.onmousemove=null;document.onmouseup=null;},boxmove=function(f){f=f||window.event;c=offset-f.clientX;if(c>g&&c<h){k=true;}if(k===true&&c>h){a.style.width=((total-counter-2)/ 10)+'em';status='e';}else if(k===true&&c<g){a.style.width=(width/10)+'em';status='w';}else if(c<max&&c>min){a.style.width=((width+c)/ 10)+'em';status='ew';}document.onmouseup=drop;};if(typeof pd.o==='object'&&typeof pd.o.report.diff.box==='object'){offset+=pd.o.report.diff.box.offsetLeft;offset-=pd.o.report.diff.body.scrollLeft;}else{c=(document.body.parentNode.scrollLeft>document.body.scrollLeft)?document.body.parentNode.scrollLeft:document.body.scrollLeft;offset-=c;}offset+=x.clientWidth;x.style.cursor='ew-resize';b.style.width=(total/10)+'em';b.style.display='inline-block';if(z.nodeType!==1){do{z=z.previousSibling;}while(z.nodeType!==1);}z.style.display='block';a.style.width=(a.clientWidth/10)+'em';a.style.position='absolute';document.onmousemove=boxmove;document.onmousedown=null;};");
-                    build.push("pd.difffold=function dom__difffold(self,min,max){\"use strict\";var a=0,b=0,inner=self.innerHTML,lists=[],parent=self.parentNode.parentNode,listnodes=(parent.getAttribute(\"class\"===\"diff\"))?parent.getElementsByTagName(\"ol\"):parent.parentNode.getElementsByTagName(\"ol\"),listLen=listnodes.length;for(a=0;a<listLen;a+=1){lists.push(listnodes[a].getElementsByTagName(\"li\"));}if(inner.charAt(0)===\"-\"){self.innerHTML=\"+\"+inner.substr(1);for(a=min;a<max;a+=1){for(b=0;b<listLen;b+=1){lists[b][a].style.display=\"none\";}}}else{self.innerHTML=\"-\"+inner.substr(1);for(a=min;a<max;a+=1){for(b=0;b<listLen;b+=1){lists[b][a].style.display=\"block\";}}}};");
+                    build.push(diffstring);
                     build.push("]]></script>");
                 }
             } else if (top === pd.o.report.beau.box) {
@@ -1843,10 +1884,7 @@ var exports = "",
                 build.push("<script type='");
                 build.push(type);
                 build.push("'><![CDATA[");
-                build.push("var data=document.getElementById('pd-jsscope'),pd={};pd.beaurows=[];");
-                build.push("pd.beaurows[0]=data.getElementsByTagName('ol')[0].getElementsByTagName('li');");
-                build.push("pd.beaurows[1]=data.getElementsByTagName('ol')[1].getElementsByTagName('li');");
-                build.push("pd.beaufold=function dom__beaufold(self,min,max){var a=0,b='';if(self.innerHTML.charAt(0)==='-'){for(a=min;a<max;a+=1){pd.beaurows[0][a].style.display='none';pd.beaurows[1][a].style.display='none';}self.innerHTML='+'+self.innerHTML.substr(1);}else{for(a=min;a<max;a+=1){pd.beaurows[0][a].style.display='block';pd.beaurows[1][a].style.display='block';if(pd.beaurows[0][a].getAttribute('class')==='fold'&&pd.beaurows[0][a].innerHTML.charAt(0)==='+'){b=pd.beaurows[0][a].getAttribute('onclick');b=b.substring(b.lastIndexOf(',')+1,b.indexOf(')'));a=Number(b)-1;}}self.innerHTML='-'+self.innerHTML.substr(1);}};");
+                build.push(beaustring);
                 build.push("]]></script>");
             }
             build.push("</body></html>");
@@ -1916,8 +1954,7 @@ var exports = "",
                         build.push(pd.colSliderProperties[3]);
                         build.push(",");
                         build.push(pd.colSliderProperties[4]);
-                        build.push("];pd.colSliderGrab=function(x){'use strict';var a=x.parentNode,b=a.parentNode,c=0,counter=pd.colSliderProperties[0],data=pd.colSliderProperties[1],width=pd.colSliderProperties[2],total=pd.colSliderProperties[3],offset=(pd.colSliderProperties[4]),min=0,max=data-1,status='ew',g=min+15,h=max-15,k=false,z=a.previousSibling,ua=navigator.userAgent.toLowerCase(),ie=0,drop=function(g){x.style.cursor=status+'-resize';g=null;document.onmousemove=null;document.onmouseup=null;},boxmove=function(f){f=f||window.event;c=offset-f.clientX;if(c&gt;g&amp;&amp;c&lt;h){k=true;}if(k===true&amp;&amp;c&gt;h){a.style.width=((total-counter-2)/ 10)+'em';status='e';}else if(k===true&amp;&amp;c&lt;g){a.style.width=(width/10)+'em';status='w';}else if(c&lt;max&amp;&amp;c&gt;min){a.style.width=((width+c)/ 10)+'em';status='ew';}document.onmouseup=drop;};if(typeof pd.o==='object'&amp;&amp;typeof pd.o.report.diff.box==='object'){offset+=pd.o.report.diff.box.offsetLeft;offset-=pd.o.report.diff.body.scrollLeft;}else{c=(document.body.parentNode.scrollLeft&gt;document.body.scrollLeft)?document.body.parentNode.scrollLeft:document.body.scrollLeft;offset-=c;}offset+=x.clientWidth;x.style.cursor='ew-resize';b.style.width=(total/10)+'em';b.style.display='inline-block';if(z.nodeType!==1){do{z=z.previousSibling;}while(z.nodeType!==1);}z.style.display='block';a.style.width=(a.clientWidth/10)+'em';a.style.position='absolute';document.onmousemove=boxmove;document.onmousedown=null;};");
-                        build.push("pd.difffold=function dom__difffold(self,min,max){\"use strict\";var a=0,b=0,inner=self.innerHTML,lists=[],parent=self.parentNode.parentNode,listnodes=(parent.getAttribute(\"class\"===\"diff\"))?parent.getElementsByTagName(\"ol\"):parent.parentNode.getElementsByTagName(\"ol\"),listLen=listnodes.length;for(a=0;a<listLen;a+=1){lists.push(listnodes[a].getElementsByTagName(\"li\"));}if(inner.charAt(0)===\"-\"){self.innerHTML=\"+\"+inner.substr(1);for(a=min;a<max;a+=1){for(b=0;b<listLen;b+=1){lists[b][a].style.display=\"none\";}}}else{self.innerHTML=\"-\"+inner.substr(1);for(a=min;a<max;a+=1){for(b=0;b<listLen;b+=1){lists[b][a].style.display=\"block\";}}}};");
+                        build.push(diffstring);
                         build.push("]]&gt;&lt;/script&gt;");
                     }
                 } else if (top === pd.o.report.beau.box) {
@@ -1934,10 +1971,7 @@ var exports = "",
                     build.push("&lt;script type='");
                     build.push(type);
                     build.push("'&gt;&lt;![CDATA[");
-                    build.push("var data=document.getElementById('pd-jsscope'),pd={};pd.beaurows=[];");
-                    build.push("pd.beaurows[0]=data.getElementsByTagName('ol')[0].getElementsByTagName('li');");
-                    build.push("pd.beaurows[1]=data.getElementsByTagName('ol')[1].getElementsByTagName('li');");
-                    build.push("pd.beaufold=function dom__beaufold(self,min,max){var a=0,b='';if(self.innerHTML.charAt(0)==='-'){for(a=min;a&lt;max;a+=1){pd.beaurows[0][a].style.display='none';pd.beaurows[1][a].style.display='none';}self.innerHTML='+'+self.innerHTML.substr(1);}else{for(a=min;a&lt;max;a+=1){pd.beaurows[0][a].style.display='block';pd.beaurows[1][a].style.display='block';if(pd.beaurows[0][a].getAttribute('class')==='fold'&amp;&amp;pd.beaurows[0][a].innerHTML.charAt(0)==='+'){b=pd.beaurows[0][a].getAttribute('onclick');b=b.substring(b.lastIndexOf(',')+1,b.indexOf(')'));a=Number(b)-1;}}self.innerHTML='-'+self.innerHTML.substr(1);}};");
+                    build.push(beaustring);
                     build.push("]]&gt;&lt;/script&gt;");
                 }
                 build.push("&lt;/body&gt;&lt;/html&gt;</textarea>");
@@ -4507,7 +4541,7 @@ if ((/^(file:\/\/)/).test(location.href) === false) {
                 }
             }
             if (line > 0) {
-                sFormattedMessage = "[" + file + " (" + line + ")] " + message + " " + mode + " " + pd.o.la[pd.o.la.selectedIndex].value;
+                sFormattedMessage = "[" + file + " (" + line + ")] " + message + " " + mode + " " + pd.o.lang[pd.o.lang.selectedIndex].value;
                 _gaq.push([
                     "_trackEvent", "Exceptions", "Application", sFormattedMessage, null, true
                 ]);
