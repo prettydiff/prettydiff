@@ -598,6 +598,18 @@ var exports = "",
 
                 node      = pd.$$("showOptionsCallOut");
                 pd.zIndex += 1;
+                if (pd.o.announce !== null && pd.o.announce.innerHTML !== pd.o.announcetext && api.lang === "auto") {
+                    if (api.lang === "auto") {
+                        /*if (api.mode === "diff") {
+                            console.log(output[1]);
+                        }
+                        if (api.mode === "beautify") {*/
+                            presumedLanguage = output[1].split("Presumed language is <em>")[1];
+                            presumedLanguage = presumedLanguage.substring(0, presumedLanguage.indexOf("</em>"));
+                        //}
+                    }
+                    pd.o.announce.innerHTML = "Language is set to <strong>auto</strong>. Presumed language is <em>" + presumedLanguage + "</em>.";
+                }
                 if (api.mode === "beautify") {
                     if (pd.o.codeBeauOut !== null) {
                         if (pd.test.cm === true) {
@@ -607,8 +619,8 @@ var exports = "",
                         }
                     }
                     if (pd.o.announce !== null && pd.o.announce.innerHTML !== pd.o.announcetext) {
-                        if (api.lang === "markup") {
-                            pd.o.announce.innerHTML = (function () {
+                        if (api.lang === "markup" || presumedLanguage === "markup") {
+                            lang = (function () {
                                 var a      = 0,
                                     p      = output[1].split("<p><strong>"),
                                     length = p.length;
@@ -619,8 +631,9 @@ var exports = "",
                                 }
                                 return "";
                             }());
-                        } else {
-                            pd.o.announce.innerHTML = "";
+                            if (lang !== "") {
+                                pd.o.announce.innerHTML = lang;
+                            }
                         }
                     }
                     if (pd.o.report.beau.box !== null) {
@@ -641,7 +654,7 @@ var exports = "",
                         parent = pd.o.report.beau.box.getElementsByTagName("p")[0];
                         h3     = pd.o.report.beau.box.getElementsByTagName("h3")[0].style.width;
                         if (api.jsscope === true && (api.lang === "auto" || api.lang === "javascript") && output[0].indexOf("Error:") !== 0) {
-                            if (api.lang === "auto") {
+                            if (api.lang === "auto" && presumedLanguage === "") {
                                 presumedLanguage = output[1].split("Presumed language is <em>")[1];
                                 presumedLanguage = presumedLanguage.substring(0, presumedLanguage.indexOf("</em>"));
                             }
@@ -723,7 +736,7 @@ var exports = "",
                     }
                 }
                 if (api.mode === "diff" && pd.o.report.diff.box !== null) {
-                    if (pd.o.announce !== null && pd.o.announce.innerHTML !== pd.o.announcetext) {
+                    if (pd.o.announce !== null && pd.o.announce.innerHTML !== pd.o.announcetext && api.lang !== "auto") {
                         pd.o.announce.innerHTML = "";
                     }
                     if (autotest === true) {
@@ -789,7 +802,7 @@ var exports = "",
                     }
                 }
                 if (api.mode === "minify") {
-                    if (pd.o.announce !== null && pd.o.announce.innerHTML !== pd.o.announcetext) {
+                    if (pd.o.announce !== null && pd.o.announce.innerHTML !== pd.o.announcetext && api.lang !== "auto") {
                         pd.o.announce.innerHTML = "";
                     }
                     if (output[0].length > 125000) {
