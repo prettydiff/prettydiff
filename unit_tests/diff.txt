@@ -4,6 +4,7 @@ R-P86-ALT  := HIST
 /TYPE    $FTOS.LMSLIBD.V61
 MOVE 'D1' TO RZUGUP
 MOVE 0 TO Z-ANZ-VAR /* ZÃ¤hler-Variable auf 0 setzen
+if (build[i].charAt(0) !== " " && ((cinfo[i - 1] === "comment" && cinfo[i - 2] === "start"))) {
 
 IF P672-NGZ2 < 0
 R-P114-ALT := HIST
@@ -11,6 +12,7 @@ R-P114-ALT := HIST
 /CALL    $FTOS.LMSLIBD.V61
 MOVE 'D1' TO P672SCHA
 MOVE 0 TO ANZ-VAR   /* ZÃ¤hler-Variable auf 0 setzen
+if (build[i].charAt(0) !== " " && ((cinfo[i - 1] === "comment" && (cinfo[i - 2] === "start" || (level[i - 1] === "x" && level[i - 2] === "x"))))) {
 
 <Row>
 <title/>

@@ -460,7 +460,7 @@ var exports = "",
     //the diff report
     pd.colSliderProperties = [];
     pd.colSliderGrab       = function dom__colSliderGrab(e) {
-        var e = e || window.event,
+        var event = e || window.event,
             node = this,
             diffRight   = node.parentNode,
             diff        = diffRight.parentNode,
@@ -503,7 +503,7 @@ var exports = "",
                 }
                 document.onmouseup = drop;
             };
-        e.preventDefault();
+        event.preventDefault();
         if (typeof pd.o === "object" && pd.o.report.diff.box !== null) {
             offset += pd.o.report.diff.box.offsetLeft;
             offset -= pd.o.report.diff.body.scrollLeft;
@@ -600,13 +600,8 @@ var exports = "",
                 pd.zIndex += 1;
                 if (pd.o.announce !== null && pd.o.announce.innerHTML !== pd.o.announcetext && api.lang === "auto") {
                     if (api.lang === "auto") {
-                        /*if (api.mode === "diff") {
-                            console.log(output[1]);
-                        }
-                        if (api.mode === "beautify") {*/
-                            presumedLanguage = output[1].split("Presumed language is <em>")[1];
-                            presumedLanguage = presumedLanguage.substring(0, presumedLanguage.indexOf("</em>"));
-                        //}
+                        presumedLanguage = output[1].split("Presumed language is <em>")[1];
+                        presumedLanguage = presumedLanguage.substring(0, presumedLanguage.indexOf("</em>"));
                     }
                     pd.o.announce.innerHTML = "Language is set to <strong>auto</strong>. Presumed language is <em>" + presumedLanguage + "</em>.";
                 }
@@ -700,8 +695,7 @@ var exports = "",
                                 }
                                 (function () {
                                     var a = 0,
-                                        b = pd.beaurows[0].length,
-                                        c = [];
+                                        b = pd.beaurows[0].length;
                                     for (a = 0; a < b; a += 1) {
                                         if (pd.beaurows[0][a].getAttribute("class") === "fold") {
                                             pd.beaurows[0][a].onclick = pd.beaufold;

@@ -309,7 +309,8 @@ var prettydiff = function prettydiff(api) {
                     ch = ",";
                 } else {
                     ch = charDecoder(ch);
-                }(function csvmin__logic() {
+                }
+                (function csvmin__logic() {
                     var multiline     = function csvmin__logic_multiline(x) {
                             var output = [],
                                 y      = 0,
@@ -1763,7 +1764,8 @@ var prettydiff = function prettydiff(api) {
                     };
                 if (source === "Error: no source supplied to cleanCSS.") {
                     return source;
-                }(function cleanCSS__tab() {
+                }
+                (function cleanCSS__tab() {
                     var i      = 0,
                         output = [];
                     for (i = 0; i < nsize; i += 1) {
@@ -1773,7 +1775,8 @@ var prettydiff = function prettydiff(api) {
                 }());
                 if ("\n" === source.charAt(0)) {
                     source = source.substr(1);
-                }(function cleanCSS__fixSyntaxReplace() {
+                }
+                (function cleanCSS__fixSyntaxReplace() {
                     var chars        = source.split(""),
                         buildLen     = chars.length,
                         f            = 0,
@@ -2455,9 +2458,10 @@ var prettydiff = function prettydiff(api) {
                                             block.flag  = false;
                                             block.count = 0;
                                             block.start = a;
-                                        } else if (ltoke === "else") {
-                                            return elsestart();
                                         } else {
+                                            if (ltoke === "else") {
+                                                return elsestart();
+                                            }
                                             block.method.push(0);
                                             block.pcount.push(0);
                                             block.prior.push(false);
@@ -2902,23 +2906,15 @@ var prettydiff = function prettydiff(api) {
                                     if (block.bcount[block.bcount.length - 1] < 1) {
                                         jj = block.simple.length;
                                         do {
-                                            if (block.prior[block.prior.length - 1] === false && block.bcount[block.bcount.length - 1] < 1) {
-                                                token.push("x}");
-                                                types.push("end");
-                                                if (lines.length > 0 && types[lines[lines.length - 1][0]] !== "comment") {
-                                                    lines[lines.length - 1][0] += 1;
-                                                }
-                                                blockpop();
-                                                lengtha += 1;
-                                                jj      -= 1;
+                                            token.push("x}");
+                                            types.push("end");
+                                            if (lines.length > 0 && types[lines[lines.length - 1][0]] !== "comment") {
+                                                lines[lines.length - 1][0] += 1;
                                             }
-                                            /*else if (block.bcount[block.bcount.length - 1] > 0) {
-                                                blockpop();
-                                                jj -= 1;
-                                            } */ else {
-                                                break;
-                                            }
-                                        } while (jj > 0 && block.prior[block.prior.length - 1] === false);
+                                            blockpop();
+                                            lengtha += 1;
+                                            jj      -= 1;
+                                        } while (jj > 0 && block.prior[block.prior.length - 1] === false && block.prior[block.prior.length - 1] === false && block.bcount[block.bcount.length - 1] < 1);
                                     }
                                     ltoke = "}";
                                     ltype = "end";
@@ -3717,9 +3713,9 @@ var prettydiff = function prettydiff(api) {
                             functest   = function () {
                                 var aa   = 0,
                                     bb   = 1,
-                                    semi = (token[a - 1] === "}") ? true : false;
+                                    curl = (token[a - 1] === "}") ? true : false;
                                 for (aa = a - 2; aa > -1; aa -= 1) {
-                                    if (semi === true) {
+                                    if (curl === true) {
                                         if (token[aa] === "}") {
                                             bb += 1;
                                         }
@@ -3739,7 +3735,7 @@ var prettydiff = function prettydiff(api) {
                                         return false;
                                     }
                                     if (bb === 0) {
-                                        if (token[aa - 1] === ")" && semi === false) {
+                                        if (token[aa - 1] === ")" && curl === false) {
                                             bb = 1;
                                             for (aa -= 2; aa > -1; aa -= 1) {
                                                 if (token[aa] === ")") {
@@ -3757,7 +3753,7 @@ var prettydiff = function prettydiff(api) {
                                             }
                                             return false;
                                         }
-                                        if (semi === false && token[aa + 1] === "function") {
+                                        if (curl === false && token[aa + 1] === "function") {
                                             return true;
                                         }
                                         return false;
@@ -4005,8 +4001,12 @@ var prettydiff = function prettydiff(api) {
                                     if (fortest > 0 && ltoke !== "for") {
                                         fortest += 1;
                                     }
-                                    if ((ltoke === "}" || ltoke === ")") && functest() === true) {
-                                        level[a - 1] = "x";
+                                    if (ltoke === "}" || ltoke === ")") {
+                                        if (functest() === true) {
+                                            level[a - 1] = "x";
+                                        } else {
+                                            level[a - 1] = indent;
+                                        }
                                     }
                                     if (ltoke === "}" || ltoke === "x}") {
                                         return level.push("x");
@@ -4160,7 +4160,8 @@ var prettydiff = function prettydiff(api) {
                                     if (list[list.length - 1] === false) {
                                         if (ltoke === "}" || ltoke === "x}") {
                                             level[a - 1] = indent;
-                                        }(function jspretty__algorithm_end_squareBrace() {
+                                        }
+                                        (function jspretty__algorithm_end_squareBrace() {
                                             var c = 0,
                                                 d = 1;
                                             for (c = a - 1; c > -1; c -= 1) {
@@ -4325,7 +4326,8 @@ var prettydiff = function prettydiff(api) {
                                                 }
                                             }
                                         }());
-                                    }(function jspretty__algorithm_operator_assignSpaces() {
+                                    }
+                                    (function jspretty__algorithm_operator_assignSpaces() {
                                         var c = 0,
                                             d = 0,
                                             e = false,
@@ -4898,12 +4900,6 @@ var prettydiff = function prettydiff(api) {
                                     }
                                 },
                                 indent     = jlevel,
-                                removeEm   = function jspretty__resultScope_removeEm(x) {
-                                    var em   = x.lastIndexOf("<em "),
-                                        noem = x.substring(em),
-                                        end  = noem.indexOf("'>");
-                                    return x.substring(0, em) + noem.substring(end + 2).replace("</em>", "");
-                                },
                                 tab        = (function jspretty__resultScope_tab() {
                                     var aa = jchar,
                                         bb = jsize,
@@ -5089,7 +5085,8 @@ var prettydiff = function prettydiff(api) {
                                         scope = 16;
                                     }
                                 }
-                            }(function jspretty__resultScope_globals() {
+                            }
+                            (function jspretty__resultScope_globals() {
                                 var aa          = 0,
                                     bb          = token.length,
                                     globalLocal = globals,
@@ -6117,7 +6114,8 @@ var prettydiff = function prettydiff(api) {
                     mvarspace = (args.varspace === false || args.varspace === "false") ? false : true;
                 if (mhtml === true) {
                     x = x.replace(/<\!\[if /g, "<!--[if ").replace(/<\!\[endif\]>/g, "<![endif]-->");
-                }(function markup_beauty__findNestedTags() {
+                }
+                (function markup_beauty__findNestedTags() {
                     var data = (function markup_beauty__findNestedTags_angleBraces() {
                             var a               = 0,
                                 b               = 0,
@@ -8552,7 +8550,8 @@ var prettydiff = function prettydiff(api) {
                             };
                         if (baseTextLines === "" || newTextLines === "") {
                             return "";
-                        }(function diffview__opcodes_diffArray() {
+                        }
+                        (function diffview__opcodes_diffArray() {
                             (function diffview__opcodes_diffArray_determineReverse() {
                                 if (baseTextArray.length > newTextArray.length) {
                                     reverse      = true;
@@ -8693,7 +8692,8 @@ var prettydiff = function prettydiff(api) {
                                     }
                                 }
                             }());
-                        }());
+                        }
+                        ());
                         return answer;
                     }());
                 return (function diffview__report() {
@@ -10262,13 +10262,13 @@ var prettydiff = function prettydiff(api) {
         diffview     : 140720, //diffview library
         documentation: 140628, //documentation.xhtml
         jsmin        : 140516, //jsmin library (fulljsmin.js)
-        jspretty     : 140720, //jspretty library
+        jspretty     : 140721, //jspretty library
         markup_beauty: 140705, //markup_beauty library
         markupmin    : 140705, //markupmin library
-        prettydiff   : 140720, //this file
+        prettydiff   : 140721, //this file
         webtool      : 140210, //prettydiff.com.xhtml
         api          : {
-            dom        : 140720,
+            dom        : 140721,
             nodeLocal  : 140720,
             nodeService: 121106, //no longer maintained
             wsh        : 140720
