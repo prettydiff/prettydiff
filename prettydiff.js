@@ -4198,12 +4198,11 @@ var prettydiff = function prettydiff(api) {
                                         level[a - 2] = indent + 2;
                                     }
                                     level[a - 1] = indent;
-
                                     level.push("x");
                                 } else {
                                     level.push("x");
                                 }
-                                if (ctoke === "x}" && types[a + 1] !== "word" && types[a + 1] !== "end" && (ltoke === ";" || ltoke === "x;")) {
+                                if (ctoke === "x}" && types[a + 1] !== "word" && a < b - 1 && types[a + 1] !== "end" && (ltoke === ";" || ltoke === "x;")) {
                                     level[a - 1] = "x";
                                 }
                                 lastlist = list[list.length - 1];
@@ -4998,7 +4997,7 @@ var prettydiff = function prettydiff(api) {
                                                     if (types[x] === "end") {
                                                         yy -= 1;
                                                     }
-                                                    if (types[x] === "operator") {
+                                                    if (types[x] === "operator" || types[x] === "separator") {
                                                         if (level[x] === "s") {
                                                             xlen += 1;
                                                         }
@@ -5006,7 +5005,7 @@ var prettydiff = function prettydiff(api) {
                                                             xlen += 1;
                                                         }
                                                     }
-                                                    if (token[x] === ";" || token[x] === "x;" || token[x] === "}") {
+                                                    if (token[x] === ";" || token[x] === "x;" || token[x] === "}" || token[x] === "x}") {
                                                         return;
                                                     }
                                                 }
@@ -5338,7 +5337,7 @@ var prettydiff = function prettydiff(api) {
                                                     if (types[x] === "end") {
                                                         yy -= 1;
                                                     }
-                                                    if (types[x] === "operator") {
+                                                    if (types[x] === "operator" || types[x] === "separator") {
                                                         if (level[x] === "s") {
                                                             xlen += 1;
                                                         }
@@ -5346,7 +5345,7 @@ var prettydiff = function prettydiff(api) {
                                                             xlen += 1;
                                                         }
                                                     }
-                                                    if (token[x] === ";" || token[x] === "x;" || token[x] === "}") {
+                                                    if (token[x] === ";" || token[x] === "x;" || token[x] === "}" || token[x] === "x}") {
                                                         return;
                                                     }
                                                 }
@@ -8692,8 +8691,7 @@ var prettydiff = function prettydiff(api) {
                                     }
                                 }
                             }());
-                        }
-                        ());
+                        }());
                         return answer;
                     }());
                 return (function diffview__report() {
@@ -10262,13 +10260,13 @@ var prettydiff = function prettydiff(api) {
         diffview     : 140720, //diffview library
         documentation: 140628, //documentation.xhtml
         jsmin        : 140516, //jsmin library (fulljsmin.js)
-        jspretty     : 140721, //jspretty library
+        jspretty     : 140724, //jspretty library
         markup_beauty: 140705, //markup_beauty library
         markupmin    : 140705, //markupmin library
-        prettydiff   : 140721, //this file
+        prettydiff   : 140724, //this file
         webtool      : 140210, //prettydiff.com.xhtml
         api          : {
-            dom        : 140721,
+            dom        : 140724,
             nodeLocal  : 140720,
             nodeService: 121106, //no longer maintained
             wsh        : 140720

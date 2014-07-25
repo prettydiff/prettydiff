@@ -614,7 +614,7 @@ var exports = "",
                         }
                     }
                     if (pd.o.announce !== null && pd.o.announce.innerHTML !== pd.o.announcetext) {
-                        if (api.lang === "markup" || presumedLanguage === "markup") {
+                        if (api.lang === "markup" || presumedLanguage === "markup" || presumedLanguage === "HTML" || presumedLanguage === "XHTML" || presumedLanguage === "XML" || presumedLanguage === "JSTL") {
                             lang = (function () {
                                 var a      = 0,
                                     p      = output[1].split("<p><strong>"),
