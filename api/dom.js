@@ -654,7 +654,7 @@ var exports = "",
                     pd.cm.minnOut.setOption("mode", lang);
                 }
             },
-            execOutput = function dom__recycle_execOutput() {console.log(api.elseline);
+            execOutput = function dom__recycle_execOutput() {
                 var diffList         = [],
                     button           = {},
                     buttons          = {},
@@ -668,6 +668,7 @@ var exports = "",
                         presumedLanguage = presumedLanguage.substring(0, presumedLanguage.indexOf("</em>"));
                     }
                     pd.o.announce.innerHTML = "Language is set to <strong>auto</strong>. Presumed language is <em>" + presumedLanguage + "</em>.";
+                    presumedLnaguage = presumedLanguage.toLowerCase();
                 }
                 if (api.mode === "beautify") {
                     if (pd.o.codeBeauOut !== null) {
@@ -678,7 +679,7 @@ var exports = "",
                         }
                     }
                     if (pd.o.announce !== null && pd.o.announce.innerHTML !== pd.o.announcetext) {
-                        if (api.lang === "markup" || presumedLanguage === "markup" || presumedLanguage === "HTML" || presumedLanguage === "XHTML" || presumedLanguage === "XML" || presumedLanguage === "JSTL") {
+                        if (api.lang === "markup" || presumedLanguage === "markup" || presumedLanguage === "html" || presumedLanguage === "xhtml" || presumedLanguage === "xml" || presumedLanguage === "jstl") {
                             lang = (function () {
                                 var a      = 0,
                                     p      = output[1].split("<p><strong>"),
@@ -1134,7 +1135,7 @@ var exports = "",
             api.jsscope = false;
             (function dom__recycle_diff() {
                 var baseLabel   = pd.$$("baselabel"),
-                    comments    = pd.$$("diffcommentsy"),
+                    comments    = pd.$$("diffcommentsn"),
                     chars       = pd.$$("diff-space"),
                     conditional = {},
                     content     = pd.$$("diffcontentn"),
@@ -1191,7 +1192,7 @@ var exports = "",
                 }
                 if (api.lang === "auto" || api.lang === "javascript") {
                     elseline     = pd.$$("jselselined-yes");
-                    preserve     = pd.$$("jslinesd-no")
+                    preserve     = pd.$$("jslinesd-no");
                     space        = pd.$$("jsspaced-no");
                     api.elseline = (elseline === null || elseline.checked === false) ? false : true;
                     api.preserve = (preserve === null || preserve.checked === false) ? false : true;

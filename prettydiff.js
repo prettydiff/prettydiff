@@ -2001,31 +2001,6 @@ var prettydiff = function prettydiff(api) {
                             block.prior.pop();
                             block.simple.pop();
                         },
-                        commentcheck = function jspretty__tokenize_commentcheck() {
-                            var aa = 0,
-                                bb = 0,
-                                cc = token.length - 1;
-                            if ((token[cc] !== "}" && token[cc] !== "x}") || block.prior[block.prior.length - 1] === true) {
-                                return;
-                            }
-                            for (aa = cc - 1; aa > -1; aa -= 1) {
-                                if (types[aa] === "end") {
-                                    bb += 1;
-                                }
-                                if (types[aa] === "start" || types[aa] === "method") {
-                                    bb -= 1;
-                                }
-                                if (bb === -1) {
-                                    break;
-                                }
-                            }
-                            if ((token[aa] === "{" || token[aa] === "x{") && (types[aa - 1] === "comment" || types[aa - 1] === "comment-inline")) {
-                                token.pop();
-                                types.pop();
-                                token.splice(aa, 1);
-                                types.splice(aa, 1);
-                            }
-                        },
                         commaComment = function jspretty__tokenize_commacomment() {
                             var x = types.length;
                             do {
@@ -2033,145 +2008,6 @@ var prettydiff = function prettydiff(api) {
                             } while (types[x - 1] === "comment" || types[x - 1] === "comment-inline");
                             token.splice(x, 0, ",");
                             types.splice(x, 0, "separator");
-                        },
-                        elsestart    = function jspretty__tokenize_elsestart() {
-                            var bb       = 0,
-                                r        = 0,
-                                x        = block.word.length - 1,
-                                y        = token.length - 1,
-                                z        = 0,
-                                comments = [],
-                                endtest  = "",
-                                btest    = (block.bcount[block.bcount.length - 1] > 0) ? true : false,
-                                iftest   = (token[token.length - 2] === "x}" && token[token.length - 3] === "x}") ? true : false,
-                                test     = (function jspretty__tokenize_elsestart_test() {
-                                    var g     = a + 1,
-                                        space = /\s/;
-                                    for (g; g < b; g += 1) {
-                                        if (c[g] === "{") {
-                                            return true;
-                                        }
-                                        if (space.test(c[g]) === false) {
-                                            return false;
-                                        }
-                                    }
-                                }());
-                            if (test === true) {
-                                return;
-                            }
-                            if (token[token.length - 2] === "}" || btest === true || block.simple.length === 0) {
-                                blockpop();
-                                block.bcount.push(0);
-                                block.brace.push("else");
-                                block.method.push(0);
-                                block.pcount.push(0);
-                                block.prior.push(false);
-                                block.simple.push(true);
-                                block.flag  = false;
-                                block.count = 0;
-                                block.start = a;
-                                return;
-                            }
-                            types.pop();
-                            token.pop();
-                            if (btest === false && (iftest === false || (iftest === true && (block.word[block.word.length - 1] !== "if" || block.word[block.word.length - 2] !== "if")))) {
-                                block.bcount.push(0);
-                                block.brace.push("else");
-                                block.method.push(0);
-                                block.pcount.push(0);
-                                block.prior.push(false);
-                                block.simple.push(true);
-                                block.flag  = false;
-                                block.count = 0;
-                                block.start = a;
-                            }
-                            for (y; y > -1; y -= 1) {
-                                if (token[y] === "}" || token[y] === "x}") {
-                                    r += 1;
-                                }
-                                if (token[y] === "{" || token[y] === "x{") {
-                                    r -= 1;
-                                }
-                                if (token[y] === "if") {
-                                    bb += 1;
-                                }
-                                if (token[y] === "else" && token[y + 1] !== "if") {
-                                    bb -= 1;
-                                }
-                                if (r < 0) {
-                                    break;
-                                }
-                            }
-                            for (x; x > -1; x -= 1) {
-                                if (block.word[x] !== "if" && block.word[x] !== "else") {
-                                    bb -= 1;
-                                }
-                                if (block.word[x] === "if") {
-                                    if (block.prev[x] === true) {
-                                        bb -= 1;
-                                    }
-                                    break;
-                                }
-                            }
-                            if (block.prev[block.prev.length - 1] === true || (token[token.length - 2] !== "}" && token[token.length - 2] !== "x}" && block.prev[block.prev.length - 1] === false)) {
-                                token.push("else");
-                                types.push("word");
-                                return;
-                            }
-                            r = a - 4;
-                            if ((/\s/).test(c[r]) === true) {
-                                do {
-                                    r -= 1;
-                                } while ((/\s/).test(c[r]) === true);
-                            }
-                            if (c[r] === "}" || c[r] === "x}") {
-                                token.push("else");
-                                types.push("word");
-                                return;
-                            }
-                            for (bb -= 1; bb > -1; bb -= 1) {
-                                if (types[types.length - 1] === "comment" || types[types.length - 1] === "comment-inline") {
-                                    comments.push([
-                                        token[token.length - 1], types[types.length - 1]
-                                    ]);
-                                    if (lines[lines.length - 1][0] === token.length - 2) {
-                                        lines[lines.length - 1][0] -= 3;
-                                    }
-                                    token.pop();
-                                    types.pop();
-                                }
-                                z -= 1;
-                                if ((token[token.length - 2] !== "}" && token[token.length - 2] !== "x}") || block.prev[z] === true) {
-                                    break;
-                                }
-                                token.pop();
-                                types.pop();
-                                if (lines.length > 0 && types[lines[lines.length - 1][0]] !== "comment") {
-                                    lines[lines.length - 1][0] -= 1;
-                                }
-                                block.bcount.push(0);
-                                block.brace.push("else");
-                                block.method.push(0);
-                                block.pcount.push(0);
-                                block.prior.push(false);
-                                block.simple.push(true);
-                                block.start = a;
-                            }
-                            if (types[types.length - 1] === "end") {
-                                endtest = token[token.length - 1];
-                                token.pop();
-                                types.pop();
-                            }
-                            for (r = comments.length - 1; r > -1; r -= 1) {
-                                token.push(comments[r][0]);
-                                types.push(comments[r][1]);
-                            }
-                            if (endtest !== "") {
-                                token.push(endtest);
-                                types.push("end");
-                            }
-                            token.push("else");
-                            types.push("word");
                         },
                         methodtest   = function jspretty__tokenize_methodtest() {
                             var cc = 0,
@@ -2203,7 +2039,7 @@ var prettydiff = function prettydiff(api) {
                                 }
                                 if (dd === -1) {
                                     if (ifMethod === true) {
-                                        if (types[cc] === "start" && types[cc + 1] === "start") {
+                                        if (types[cc] === "start" && types[cc + 1] === "start" && token[cc + 2] !== "function") {
                                             do {
                                                 cc += 1;
                                             } while (types[cc] === "start");
@@ -2237,45 +2073,6 @@ var prettydiff = function prettydiff(api) {
                                     }
                                     if (token[cc - 1] !== "=" && token[cc - 1] !== "==" && token[cc - 1] !== "===" && (token[cc] === "{" || token[cc] === "x{") && block.method.length > 0 && ((types[cc - 1] === "operator" && token[cc - 1] !== ":") || token[cc - 1] === "{" || token[cc - 1] === "x{" || token[cc - 1] === "[")) {
                                         block.method[block.method.length - 1] -= 1;
-                                    }
-                                    return;
-                                }
-                            }
-                        },
-                        whiletest    = function jspretty__tokenize_whiletest() {
-                            var cc = 0,
-                                dd = 1;
-                            for (cc = token.length - 3; cc > -1; cc -= 1) {
-                                if (token[cc] === "}" || token[cc] === "x}") {
-                                    dd += 1;
-                                }
-                                if (token[cc] === "{" || token[cc] === "x{") {
-                                    dd -= 1;
-                                }
-                                if (dd === 0 && token[cc] === "do") {
-                                    block.dotest = true;
-                                    token.pop();
-                                    types.pop();
-                                    do {
-                                        dd -= 1;
-                                        block.brace.push(-1);
-                                        block.simple.push(false);
-                                        block.method.push(0);
-                                        block.start = a;
-                                        token.pop();
-                                        types.pop();
-                                    } while (dd > 0);
-                                    if (block.start === -1) {
-                                        block.start = 0;
-                                    }
-                                    block.flag  = false;
-                                    block.count = 0;
-                                    token.push("while");
-                                    return types.push("word");
-                                }
-                                if (dd === 0) {
-                                    if (token[cc - 1] === "do") {
-                                        block.dotest = true;
                                     }
                                     return;
                                 }
@@ -2333,7 +2130,210 @@ var prettydiff = function prettydiff(api) {
                             }
                         },
                         braceFinder  = function jspretty__tokenize_braceFinder() {
-                            var lstart = false;
+                            var elsestart    = function jspretty__tokenize_braceFinder_elsestart() {
+                                    var bb       = 0,
+                                        r        = 0,
+                                        x        = block.word.length - 1,
+                                        y        = token.length - 1,
+                                        z        = 0,
+                                        comments = [],
+                                        endtest  = "",
+                                        btest    = (block.bcount[block.bcount.length - 1] > 0) ? true : false,
+                                        iftest   = (token[token.length - 2] === "x}" && token[token.length - 3] === "x}") ? true : false,
+                                        test     = (function jspretty__tokenize_braceFinder_elsestart_test() {
+                                            var g     = a + 1,
+                                                space = /\s/;
+                                            for (g; g < b; g += 1) {
+                                                if (c[g] === "{") {
+                                                    return true;
+                                                }
+                                                if (space.test(c[g]) === false) {
+                                                    return false;
+                                                }
+                                            }
+                                        }());
+                                    if (test === true) {
+                                        return;
+                                    }
+                                    if (token[token.length - 2] === "}" || btest === true || block.simple.length === 0) {
+                                        blockpop();
+                                        block.bcount.push(0);
+                                        block.brace.push("else");
+                                        block.method.push(0);
+                                        block.pcount.push(0);
+                                        block.prior.push(false);
+                                        block.simple.push(true);
+                                        block.flag  = false;
+                                        block.count = 0;
+                                        block.start = a;
+                                        return;
+                                    }
+                                    types.pop();
+                                    token.pop();
+                                    if (btest === false && (iftest === false || (iftest === true && (block.word[block.word.length - 1] !== "if" || block.word[block.word.length - 2] !== "if")))) {
+                                        block.bcount.push(0);
+                                        block.brace.push("else");
+                                        block.method.push(0);
+                                        block.pcount.push(0);
+                                        block.prior.push(false);
+                                        block.simple.push(true);
+                                        block.flag  = false;
+                                        block.count = 0;
+                                        block.start = a;
+                                    }
+                                    for (y; y > -1; y -= 1) {
+                                        if (token[y] === "}" || token[y] === "x}") {
+                                            r += 1;
+                                        }
+                                        if (token[y] === "{" || token[y] === "x{") {
+                                            r -= 1;
+                                        }
+                                        if (token[y] === "if") {
+                                            bb += 1;
+                                        }
+                                        if (token[y] === "else" && token[y + 1] !== "if") {
+                                            bb -= 1;
+                                        }
+                                        if (r < 0) {
+                                            break;
+                                        }
+                                    }
+                                    for (x; x > -1; x -= 1) {
+                                        if (block.word[x] !== "if" && block.word[x] !== "else") {
+                                            bb -= 1;
+                                        }
+                                        if (block.word[x] === "if") {
+                                            if (block.prev[x] === true) {
+                                                bb -= 1;
+                                            }
+                                            break;
+                                        }
+                                    }
+                                    if (block.prev[block.prev.length - 1] === true || (token[token.length - 2] !== "}" && token[token.length - 2] !== "x}" && block.prev[block.prev.length - 1] === false)) {
+                                        token.push("else");
+                                        types.push("word");
+                                        return;
+                                    }
+                                    r = a - 4;
+                                    if ((/\s/).test(c[r]) === true) {
+                                        do {
+                                            r -= 1;
+                                        } while ((/\s/).test(c[r]) === true);
+                                    }
+                                    if (c[r] === "}" || c[r] === "x}") {
+                                        token.push("else");
+                                        types.push("word");
+                                        return;
+                                    }
+                                    for (bb -= 1; bb > -1; bb -= 1) {
+                                        if (types[types.length - 1] === "comment" || types[types.length - 1] === "comment-inline") {
+                                            comments.push([
+                                                token[token.length - 1], types[types.length - 1]
+                                            ]);
+                                            if (lines[lines.length - 1][0] === token.length - 2) {
+                                                lines[lines.length - 1][0] -= 3;
+                                            }
+                                            token.pop();
+                                            types.pop();
+                                        }
+                                        z -= 1;
+                                        if ((token[token.length - 2] !== "}" && token[token.length - 2] !== "x}") || block.prev[z] === true) {
+                                            break;
+                                        }
+                                        token.pop();
+                                        types.pop();
+                                        if (lines.length > 0 && types[lines[lines.length - 1][0]] !== "comment") {
+                                            lines[lines.length - 1][0] -= 1;
+                                        }
+                                        block.bcount.push(0);
+                                        block.brace.push("else");
+                                        block.method.push(0);
+                                        block.pcount.push(0);
+                                        block.prior.push(false);
+                                        block.simple.push(true);
+                                        block.start = a;
+                                    }
+                                    if (types[types.length - 1] === "end") {
+                                        endtest = token[token.length - 1];
+                                        token.pop();
+                                        types.pop();
+                                    }
+                                    for (r = comments.length - 1; r > -1; r -= 1) {
+                                        token.push(comments[r][0]);
+                                        types.push(comments[r][1]);
+                                    }
+                                    if (endtest !== "") {
+                                        token.push(endtest);
+                                        types.push("end");
+                                    }
+                                    token.push("else");
+                                    types.push("word");
+                                },
+                                whiletest    = function jspretty__tokenize_braceFinder_whiletest() {
+                                    var cc = 0,
+                                        dd = 1;
+                                    for (cc = token.length - 3; cc > -1; cc -= 1) {
+                                        if (token[cc] === "}" || token[cc] === "x}") {
+                                            dd += 1;
+                                        }
+                                        if (token[cc] === "{" || token[cc] === "x{") {
+                                            dd -= 1;
+                                        }
+                                        if (dd === 0 && token[cc] === "do") {
+                                            block.dotest = true;
+                                            token.pop();
+                                            types.pop();
+                                            do {
+                                                dd -= 1;
+                                                block.brace.push(-1);
+                                                block.simple.push(false);
+                                                block.method.push(0);
+                                                block.start = a;
+                                                token.pop();
+                                                types.pop();
+                                            } while (dd > 0);
+                                            if (block.start === -1) {
+                                                block.start = 0;
+                                            }
+                                            block.flag  = false;
+                                            block.count = 0;
+                                            token.push("while");
+                                            return types.push("word");
+                                        }
+                                        if (dd === 0) {
+                                            if (token[cc - 1] === "do") {
+                                                block.dotest = true;
+                                            }
+                                            return;
+                                        }
+                                    }
+                                },
+                                commentcheck = function jspretty__tokenize_braceFinder_commentcheck() {
+                                    var aa = 0,
+                                        bb = 0,
+                                        cc = token.length - 1;
+                                    if ((token[cc] !== "}" && token[cc] !== "x}") || block.prior[block.prior.length - 1] === true) {
+                                        return;
+                                    }
+                                    for (aa = cc - 1; aa > -1; aa -= 1) {
+                                        if (types[aa] === "end") {
+                                            bb += 1;
+                                        }
+                                        if (types[aa] === "start" || types[aa] === "method") {
+                                            bb -= 1;
+                                        }
+                                        if (bb === -1) {
+                                            break;
+                                        }
+                                    }
+                                    if ((token[aa] === "{" || token[aa] === "x{") && (types[aa - 1] === "comment" || types[aa - 1] === "comment-inline")) {
+                                        token.pop();
+                                        types.pop();
+                                        token.splice(aa, 1);
+                                        types.splice(aa, 1);
+                                    }
+                                },
+                                lstart       = false;
                             if (lengtha < token.length) {
                                 lengtha = token.length - 2;
                                 if (types[lengtha] === "comment" || types[lengtha] === "comment-inline") {
@@ -2663,7 +2663,7 @@ var prettydiff = function prettydiff(api) {
                                         kk -= 1;
                                     }
                                     if (kk < 0 && jj < length - 1) {
-                                        if (token[jj] === "else" || token[jj] === "try" || ((token[length - 1] === "{" || token[length - 1] === "x{") && (token[jj - 1] === "if" || token[jj - 1] === "for" || token[jj - 1] === "while" || token[jj - 1] === "catch")) || ((token[jj] === "{" || token[jj] === "x{") && jj < length - 1 && colon === false)) {
+                                        if (token[jj - 1] === "function" || token[jj] === "else" || token[jj] === "try" || ((token[length - 1] === "{" || token[length - 1] === "x{") && (token[jj - 1] === "if" || token[jj - 1] === "for" || token[jj - 1] === "while" || token[jj - 1] === "catch")) || ((token[jj] === "{" || token[jj] === "x{") && jj < length - 1 && colon === false)) {
                                             kk      = 0;
                                             asiTest = true;
                                             break;
