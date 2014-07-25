@@ -668,7 +668,7 @@ var exports = "",
                         presumedLanguage = presumedLanguage.substring(0, presumedLanguage.indexOf("</em>"));
                     }
                     pd.o.announce.innerHTML = "Language is set to <strong>auto</strong>. Presumed language is <em>" + presumedLanguage + "</em>.";
-                    presumedLnaguage = presumedLanguage.toLowerCase();
+                    presumedLanguage = presumedLanguage.toLowerCase();
                 }
                 if (api.mode === "beautify") {
                     if (pd.o.codeBeauOut !== null) {
