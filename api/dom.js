@@ -527,6 +527,70 @@ var exports = "",
         document.onmousedown     = null;
     };
 
+    //allows visual folding of function in the JSPretty jsscope HTML
+    //output
+    pd.beaurows            = [];
+    pd.beaufold            = function dom__beaufold() {
+        var self = this,
+            title = self.getAttribute("title").split("line "),
+            min = Number(title[1].substr(0, title[1].indexOf(" "))),
+            max = Number(title[2]),
+            a = 0,
+            b = "";
+        if (self.innerHTML.charAt(0) === "-") {
+            for (a = min; a < max; a += 1) {
+                pd.beaurows[0][a].style.display = "none";
+                pd.beaurows[1][a].style.display = "none";
+            }
+            self.innerHTML = "+" + self.innerHTML.substr(1);
+        } else {
+            for (a = min; a < max; a += 1) {
+                pd.beaurows[0][a].style.display = "block";
+                pd.beaurows[1][a].style.display = "block";
+                if (pd.beaurows[0][a].getAttribute("class") === "fold" && pd.beaurows[0][a].innerHTML.charAt(0) === "+") {
+                    b = pd.beaurows[0][a].getAttribute('title');
+                    b = b.substring(b.indexOf('to line ') + 1);
+                    a = Number(b) - 1;
+                }
+            }
+            self.innerHTML = "-" + self.innerHTML.substr(1);
+        }
+    };
+
+    //allows visual folding of consecutive equal lines in a diff report
+    pd.difffold            = function dom__difffold() {
+        var a         = 0,
+            b         = 0,
+            self = this,
+            title = self.getAttribute("title").split("line "),
+            min = Number(title[1].substr(0, title[1].indexOf(" "))),
+            max = Number(title[2]),
+            inner     = self.innerHTML,
+            lists     = [],
+            parent    = self.parentNode.parentNode,
+            listnodes = (parent.getAttribute("class") === "diff") ? parent.getElementsByTagName("ol") : parent.parentNode.getElementsByTagName("ol"),
+            listLen   = listnodes.length;
+        for (a = 0; a < listLen; a += 1) {
+            lists.push(listnodes[a].getElementsByTagName("li"));
+        }
+        max = (max >= lists[0].length) ? lists[0].length : max;
+        if (inner.charAt(0) === "-") {
+            self.innerHTML = "+" + inner.substr(1);
+            for (a = min; a < max; a += 1) {
+                for (b = 0; b < listLen; b += 1) {
+                    lists[b][a].style.display = "none";
+                }
+            }
+        } else {
+            self.innerHTML = "-" + inner.substr(1);
+            for (a = min; a < max; a += 1) {
+                for (b = 0; b < listLen; b += 1) {
+                    lists[b][a].style.display = "block";
+                }
+            }
+        }
+    };
+
     pd.keydown             = function dom__keydown(e) {
         var event = e || window.event;
         if (pd.test.keypress === true && (pd.test.keystore.length === 0 || event.keyCode !== pd.test.keystore[pd.test.keystore.length - 1]) && event.keyCode !== 17) {
@@ -590,7 +654,7 @@ var exports = "",
                     pd.cm.minnOut.setOption("mode", lang);
                 }
             },
-            execOutput = function dom__recycle_execOutput() {
+            execOutput = function dom__recycle_execOutput() {console.log(api.elseline);
                 var diffList         = [],
                     button           = {},
                     buttons          = {},
@@ -956,6 +1020,7 @@ var exports = "",
                 var comments    = pd.$$("incomment-no"),
                     chars       = pd.$$("beau-space"),
                     emptyLines  = {},
+                    elseline    = {},
                     forceIndent = {},
                     html        = {},
                     indent      = {},
@@ -1002,12 +1067,14 @@ var exports = "",
                 }
                 if (api.lang === "auto" || api.lang === "javascript") {
                     emptyLines   = pd.$$("jslines-no");
+                    elseline     = pd.$$("jselseline-yes");
                     indent       = pd.$$("jsindent-all");
                     jscorrect    = pd.$$("jscorrect-yes");
                     jsscope      = pd.$$("jsscope-yes");
                     jsspace      = pd.$$("jsspace-no");
                     offset       = pd.$$("jsinlevel");
                     api.correct  = (jscorrect === null || jscorrect.checked === false) ? false : true;
+                    api.elseline = (elseline === null || elseline.checked === false) ? false : true;
                     api.indent   = (indent === null || indent.checked === false) ? "knr" : "allman";
                     api.inlevel  = (offset === null || isNaN(offset.value) === true) ? 0 : Number(offset.value);
                     api.jsscope  = (jsscope === null || jsscope.checked === false) ? false : true;
@@ -1072,17 +1139,18 @@ var exports = "",
                     conditional = {},
                     content     = pd.$$("diffcontentn"),
                     context     = pd.$$("contextSize"),
+                    elseline    = {},
                     forceIndent = {},
                     html        = {},
                     indent      = pd.$$("jsindentd-all"),
                     inline      = pd.$$("inline"),
                     newLabel    = pd.$$("newlabel"),
-                    preserve    = pd.$$("jslinesd-no"),
+                    preserve    = {},
                     quantity    = pd.$$("diff-quan"),
                     quote       = pd.$$("diffquoten"),
                     style       = {},
                     semicolon   = pd.$$("diffscolonn"),
-                    space       = pd.$$("jsspaced-no"),
+                    space       = {},
                     wrap        = {};
                 pd.o.codeDiffBase = pd.$$("baseText");
                 pd.o.codeDiffNew  = pd.$$("newText");
@@ -1093,11 +1161,9 @@ var exports = "",
                 api.diffview      = (inline === null || inline.checked === false) ? "sidebyside" : "inline";
                 api.indent        = (indent === null || indent.checked === false) ? "knr" : "allman";
                 api.insize        = (quantity === null || isNaN(quantity.value) === true) ? 4 : Number(quantity.value);
-                api.preserve      = (preserve === null || preserve.checked === false) ? false : true;
                 api.quote         = (quote === null || quote.checked === false) ? false : true;
                 api.semicolon     = (semicolon === null || semicolon.checked === false) ? false : true;
                 api.sourcelabel   = (baseLabel === null) ? "base" : baseLabel.value;
-                api.space         = (space === null || space.checked === false) ? true : false;
                 if (chars === null || chars.checked === false) {
                     chars = pd.$$("diff-tab");
                     if (chars === null || chars.checked === false) {
@@ -1122,6 +1188,14 @@ var exports = "",
                     }
                 } else {
                     api.inchar = " ";
+                }
+                if (api.lang === "auto" || api.lang === "javascript") {
+                    elseline     = pd.$$("jselselined-yes");
+                    preserve     = pd.$$("jslinesd-no")
+                    space        = pd.$$("jsspaced-no");
+                    api.elseline = (elseline === null || elseline.checked === false) ? false : true;
+                    api.preserve = (preserve === null || preserve.checked === false) ? false : true;
+                    api.space    = (space === null || space.checked === false) ? true : false;
                 }
                 if (api.lang === "auto" || api.lang === "markup" || api.lang === "html" || api.lang === "xml" || api.lang === "jstl") {
                     conditional      = pd.$$("conditionald-yes");
@@ -1305,70 +1379,6 @@ var exports = "",
                 }
                 output = pd.application(api);
                 execOutput();
-            }
-        }
-    };
-
-    //allows visual folding of function in the JSPretty jsscope HTML
-    //output
-    pd.beaurows            = [];
-    pd.beaufold            = function dom__beaufold() {
-        var self = this,
-            title = self.getAttribute("title").split("line "),
-            min = Number(title[1].substr(0, title[1].indexOf(" "))),
-            max = Number(title[2]),
-            a = 0,
-            b = "";
-        if (self.innerHTML.charAt(0) === "-") {
-            for (a = min; a < max; a += 1) {
-                pd.beaurows[0][a].style.display = "none";
-                pd.beaurows[1][a].style.display = "none";
-            }
-            self.innerHTML = "+" + self.innerHTML.substr(1);
-        } else {
-            for (a = min; a < max; a += 1) {
-                pd.beaurows[0][a].style.display = "block";
-                pd.beaurows[1][a].style.display = "block";
-                if (pd.beaurows[0][a].getAttribute("class") === "fold" && pd.beaurows[0][a].innerHTML.charAt(0) === "+") {
-                    b = pd.beaurows[0][a].getAttribute('title');
-                    b = b.substring(b.indexOf('to line ') + 1);
-                    a = Number(b) - 1;
-                }
-            }
-            self.innerHTML = "-" + self.innerHTML.substr(1);
-        }
-    };
-
-    //allows visual folding of consecutive equal lines in a diff report
-    pd.difffold            = function dom__difffold() {
-        var a         = 0,
-            b         = 0,
-            self = this,
-            title = self.getAttribute("title").split("line "),
-            min = Number(title[1].substr(0, title[1].indexOf(" "))),
-            max = Number(title[2]),
-            inner     = self.innerHTML,
-            lists     = [],
-            parent    = self.parentNode.parentNode,
-            listnodes = (parent.getAttribute("class") === "diff") ? parent.getElementsByTagName("ol") : parent.parentNode.getElementsByTagName("ol"),
-            listLen   = listnodes.length;
-        for (a = 0; a < listLen; a += 1) {
-            lists.push(listnodes[a].getElementsByTagName("li"));
-        }
-        max = (max >= lists[0].length) ? lists[0].length : max;
-        if (inner.charAt(0) === "-") {
-            self.innerHTML = "+" + inner.substr(1);
-            for (a = min; a < max; a += 1) {
-                for (b = 0; b < listLen; b += 1) {
-                    lists[b][a].style.display = "none";
-                }
-            }
-        } else {
-            self.innerHTML = "-" + inner.substr(1);
-            for (a = min; a < max; a += 1) {
-                for (b = 0; b < listLen; b += 1) {
-                    lists[b][a].style.display = "block";
-                }
             }
         }
     };

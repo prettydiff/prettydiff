@@ -50,6 +50,8 @@
                             error.push("* diffview     - string  - This determines whether the diff HTML output should display as a side-by-side comparison or if the differences should display in a single table column. Defaults to 'sidebyside'.");
                             error.push("                 Accepted values: sidebyside, inline");
                             error.push("");
+                            error.push("* elseline     - boolean - The keyword 'else' will be pushed to a new line if this is true. Defaults to false.");
+                            error.push("");
                             error.push("* force_indent - boolean - If lang is 'markup' this will force indentation upon all content and tags without regard for the creation of new text nodes. Default is false.");
                             error.push("");
                             error.push("* help         - string  - This list of argument definitions. The value is unnecessary and is required only to pass in use of the parameter.");
@@ -249,7 +251,8 @@
                     args.csvchar = WScript.Arguments.Named("csvchar") || ",";
                     args.diffcomments = (WScript.Arguments.Named("diffcomments") === "true" || WScript.Arguments.Named("diffcomments") === true) ? true : false;
                     args.difflabel = WScript.Arguments.Named("difflabel") || "new";
-                    args.diffview = (WScript.Arguments.Named("diffview") === "inline") ? "inline" : "sidebyside";
+                    args.diffview = (WScript.Arguments.Named("diffview") === "inline") ? "inline" : "sidebyside
+                    args.elseline = (WScript.Arguments.Name("elseline") === "true" || WScript.Arguments.Name("elseline") === true) ? true : false;
                     args.force_indent = (WScript.Arguments.Named("force_indent") === "true" || WScript.Arguments.Named("force_indent") === true) ? true : false;
                     args.html = (WScript.Arguments.Named("html") === "true" || WScript.Arguments.Named("html") === true) ? true : false;
                     args.inchar = WScript.Arguments.Named("inchar") || " ";

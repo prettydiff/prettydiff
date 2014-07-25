@@ -53,6 +53,7 @@ Examples:
             diffcomments: false,
             difflabel   : "new",
             diffview    : "sidebyside",
+            elseline    : false,
             force_indent: false,
             html        : false,
             inchar      : " ",
@@ -201,6 +202,10 @@ Examples:
             a.push("                           differences should display in a single table column.");
             a.push("                           Defaults to 'sidebyside'.");
             a.push("                 Accepted values: sidebyside, inline");
+            a.push("");
+            a.push("* elseline     - boolean - If elseline is true then the keyword 'else' is forced");
+            a.push("                           onto a new line in JavaScript beautification.");
+            a.push("                           Defaults to false.");
             a.push("");
             a.push("* force_indent - boolean - If lang is 'markup' this will force indentation upon");
             a.push("                           all content and tags without regard for the creation");
@@ -513,6 +518,9 @@ Examples:
                     }
                     if (d[b][0] === "diffview" && d[b][1] === "inline") {
                         options.diffview = "inline";
+                    }
+                    if (d[b][0] === "elseline" && d[b][1] === "true") {
+                        options.elseline = true;
                     }
                     if (d[b][0] === "force_indent" && d[b][1] === "true") {
                         options.force_indent = true;
