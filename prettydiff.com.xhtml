@@ -64,7 +64,7 @@
                     <li><a href="jspretty.xhtml">JSPretty</a></li>
                     <li><a href="http://g6auc.me.uk/widgets.html">JSPretty Widget</a></li>
                 </ul>
-                <p id="announcement">Pretty Diff updated its web interface to support <a href="http://codemirror.com/">CodeMirror</a>, and can be disabled with URI parameter <em>codemirror=false</em>.</p>
+                <p id="announcement" class="normal">Pretty Diff updated its web interface to support <a href="http://codemirror.com/">CodeMirror</a>, and can be disabled with URI parameter <em>codemirror=false</em>.</p>
                 <p id="update">Updated:
                 </p>
                 <span class="clear"></span>
@@ -327,15 +327,6 @@
                     <p><label class="label" for="diff-wrap">Wrap Text (Markup Only)</label>
                         <span>
                             <input id="diff-wrap" title="Determines how long text can be before wrapping. Use a value of 0 to eliminate wrapping." type="text" value="72"/></span></p>
-                    <p><strong>Style of Indent (JavaScript Only)</strong>
-                        <span>
-                            <input checked="checked" id="jsindentd-knr" name="jsindentdiff" title="This JavaScript only option sets opening curly braces at the end of the current line of code." type="radio"/>
-                            <label for="jsindentd-knr">K&amp;R Style</label></span>
-                        <span>
-                            <input id="jsindentd-all" name="jsindentdiff" title="This JavaScript only option moves opening curly braces onto a new line for visibility of brace contents apart from other code." type="radio"/>
-                            <label for="jsindentd-all">Allman (ANSI) Style &mdash; Sets opening
-                                curly braces on a new line.</label></span>
-                    </p>
                     <p><strong>Indent Style/Script (Markup Only)</strong>
                         <span>
                             <input checked="checked" id="inscriptd-yes" name="inscriptd" title="This markup only option sets the baseline for script and style definition from the identation point of the opening markup tag plus one indentation step." type="radio"/>
@@ -352,6 +343,14 @@
                             <input id="htmld-yes" name="presumehtmld" title="This option determines whether HTML tags like &lt;br&gt; and lt;hr&gt; should be evaluated as singletons, such as &lt;br/&gt; and lt;hr/&gt;." type="radio"/>
                             <label for="htmld-yes">Tolerate HTML foolishness</label></span>
                     </p>
+                    <p><strong>Force Indentation (Markup Only)</strong>
+                        <span>
+                            <input checked="checked" id="dforce_indent-no" name="dforce_indent" title="This markup only option maintains document integrity with regard to indentation that would create text nodes adjacent to content that did not exist before." type="radio"/>
+                            <label for="dforce_indent-no">Maintain Code Integrity</label></span>
+                        <span>
+                            <input id="dforce_indent-yes" name="dforce_indent" title="This markup only option forces indentation for all content and elements without regard for integrity of document structure or content." type="radio"/><label for="dforce_indent-yes">Always
+                                Force Indentation</label></span>
+                    </p>
                     <p><strong>IE Comments (HTML Only)</strong>
                         <span>
                             <input checked="checked" id="conditionald-no" name="conditionald" title="Use this option to remove HTML contitional comments used by Internet Explorer." type="radio"/>
@@ -360,13 +359,14 @@
                             <input id="conditionald-yes" name="conditionald" title="Use this option to keep HTML contitional comments used by Internet Explorer." type="radio"/>
                             <label for="conditionald-yes">Preserve HTML conditional comments</label></span>
                     </p>
-                    <p><strong>Force Indentation (Markup Only)</strong>
+                    <p><strong>Style of Indent (JavaScript Only)</strong>
                         <span>
-                            <input checked="checked" id="dforce_indent-no" name="dforce_indent" title="This markup only option maintains document integrity with regard to indentation that would create text nodes adjacent to content that did not exist before." type="radio"/>
-                            <label for="dforce_indent-no">Maintain Code Integrity</label></span>
+                            <input checked="checked" id="jsindentd-knr" name="jsindentdiff" title="This JavaScript only option sets opening curly braces at the end of the current line of code." type="radio"/>
+                            <label for="jsindentd-knr">K&amp;R Style</label></span>
                         <span>
-                            <input id="dforce_indent-yes" name="dforce_indent" title="This markup only option forces indentation for all content and elements without regard for integrity of document structure or content." type="radio"/><label for="dforce_indent-yes">Always
-                                Force Indentation</label></span>
+                            <input id="jsindentd-all" name="jsindentdiff" title="This JavaScript only option moves opening curly braces onto a new line for visibility of brace contents apart from other code." type="radio"/>
+                            <label for="jsindentd-all">Allman (ANSI) Style &mdash; Sets opening
+                                curly braces on a new line.</label></span>
                     </p>
                     <p><strong>Function Space (JavaScript Only)</strong>
                         <span>
@@ -383,6 +383,14 @@
                         <span>
                             <input id="jslinesd-no" name="jslinesd" title="This JavaScript only option removes all empty lines." type="radio"/>
                             <label for="jslinesd-no">Remove Empty Lines</label></span>
+                    </p>
+                    <p><strong>Else on New Line (JavaScript Only)</strong>
+                        <span>
+                            <input checked="checked" id="jselselined-no" name="jselselined" title="This JavaScript only option will precede the 'else' keyword with a space." type="radio"/>
+                            <label for="jselselined-no">A space precedes 'else'</label></span>
+                        <span>
+                            <input id="jselselined-yes" name="jselselined" title="This JavaScript only option will force the 'else' keyword onto a new line." type="radio"/>
+                            <label for="jselselined-yes">Force 'else' keyword onto a new line</label></span>
                     </p>
                 </fieldset>
             </div>
@@ -418,17 +426,6 @@
                     </p>
                 </fieldset>
                 <fieldset><legend>Advanced Options</legend>
-                    <p><label class="label" for="beau-wrap">Wrap Text (Markup Only)</label>
-                        <span>
-                            <input id="beau-wrap" title="Determines how long text can be before wrapping. Use a value of 0 to eliminate wrapping." type="text" value="72"/></span></p>
-                    <p><strong>Scope Analysis (JavaScript Only)</strong>
-                        <span>
-                            <input checked="checked" id="jsscope-no" name="jsscope" title="This option will causes standard text beautification for JavaScript" type="radio"/>
-                            <label for="jsscope-no">Standard Beautification</label></span>
-                        <span>
-                            <input id="jsscope-yes" name="jsscope" title="This option will display a colorful HTML output of the code that color codes variables to the scope they are declared so as to illustrate the nature of closure and inheritance." type="radio"/>
-                            <label for="jsscope-yes">Scope Analysis Output</label></span>
-                    </p>
                     <p><strong>Indent Comments</strong>
                         <span>
                             <input checked="checked" id="incomment-yes" name="incomment" title="This option will cause comments to be indented." type="radio"/>
@@ -437,15 +434,10 @@
                             <input id="incomment-no" name="incomment" title="This option will force comments to the start of the line without the benefit of indentation." type="radio"/>
                             <label for="incomment-no">No Comment Indentation</label></span>
                     </p>
-                    <p><strong>Style of Indent (JavaScript Only)</strong>
+                    
+                    <p><label class="label" for="beau-wrap">Wrap Text (Markup Only)</label>
                         <span>
-                            <input checked="checked" id="jsindent-knr" name="jsindent" title="This JavaScript only option sets opening curly braces at the end of the current line of code." type="radio"/>
-                            <label for="jsindent-knr">K&amp;R Style</label></span>
-                        <span>
-                            <input id="jsindent-all" name="jsindent" title="This JavaScript only option moves opening curly braces onto a new line for visibility of brace contents apart from other code." type="radio"/>
-                            <label for="jsindent-all">Allman (ANSI) Style &mdash; Sets opening curly
-                                braces on a new line.</label></span>
-                    </p>
+                            <input id="beau-wrap" title="Determines how long text can be before wrapping. Use a value of 0 to eliminate wrapping." type="text" value="72"/></span></p>
                     <p><strong>Indent Style/Script (Markup Only)</strong>
                         <span>
                             <input checked="checked" id="inscript-yes" name="inscript" title="This markup only option sets the baseline for script and style definition from the identation point of the opening markup tag plus one indentation step." type="radio"/>
@@ -470,6 +462,22 @@
                             <input id="bforce_indent-yes" name="bforce_indent" title="This markup only option forces indentation for all content and elements without regard for integrity of document structure or content." type="radio"/><label for="bforce_indent-yes">Always
                                 Force Indentation</label></span>
                     </p>
+                    <p><strong>Scope Analysis (JavaScript Only)</strong>
+                        <span>
+                            <input checked="checked" id="jsscope-no" name="jsscope" title="This option will causes standard text beautification for JavaScript" type="radio"/>
+                            <label for="jsscope-no">Standard Beautification</label></span>
+                        <span>
+                            <input id="jsscope-yes" name="jsscope" title="This option will display a colorful HTML output of the code that color codes variables to the scope they are declared so as to illustrate the nature of closure and inheritance." type="radio"/>
+                            <label for="jsscope-yes">Scope Analysis Output</label></span>
+                    </p><p><strong>Style of Indent (JavaScript Only)</strong>
+                        <span>
+                            <input checked="checked" id="jsindent-knr" name="jsindent" title="This JavaScript only option sets opening curly braces at the end of the current line of code." type="radio"/>
+                            <label for="jsindent-knr">K&amp;R Style</label></span>
+                        <span>
+                            <input id="jsindent-all" name="jsindent" title="This JavaScript only option moves opening curly braces onto a new line for visibility of brace contents apart from other code." type="radio"/>
+                            <label for="jsindent-all">Allman (ANSI) Style &mdash; Sets opening curly
+                                braces on a new line.</label></span>
+                    </p>
                     <p><strong>Function Space (JavaScript Only)</strong>
                         <span>
                             <input checked="checked" id="jsspace-yes" name="jsspace" title="This JavaScript only option retains a single space between the 'function' keyword and the opening parenthesis character of anonymous functions." type="radio"/>
@@ -493,6 +501,14 @@
                         <span>
                             <input id="jscorrect-yes" name="jscorrect" title="This JavaScript only option automatically converts some sloppy behaviors into known best practices." type="radio"/>
                             <label for="jscorrect-yes">Correct for Sloppiness</label></span>
+                    </p>
+                    <p><strong>Else on New Line (JavaScript Only)</strong>
+                        <span>
+                            <input checked="checked" id="jselseline-no" name="jselseline" title="This JavaScript only option will precede the 'else' keyword with a space." type="radio"/>
+                            <label for="jselseline-no">A space precedes 'else'</label></span>
+                        <span>
+                            <input id="jselseline-yes" name="jselseline" title="This JavaScript only option will force the 'else' keyword onto a new line." type="radio"/>
+                            <label for="jselseline-yes">Force 'else' keyword onto a new line</label></span>
                     </p>
                 </fieldset>
             </div>

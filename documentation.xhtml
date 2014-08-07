@@ -662,27 +662,9 @@
             </div>
             <div id="beau_css"><h3>CSS</h3>
                 <p>CSS beautification uses
-                    <a href="lib/cleanCSS.js">cleanCSS</a>
-                    function originally written by Anthony Lieuallen. I have modified it to
-                    for better conformity against JSLint and also for some minor
-                    beautification tweaks and customized indentation. I can no longer
-                    remember any specific errors I have found and corrected from
-                    modification of this function. I am using this code with permission from
-                    the original author.</p>
-                <p>CSS is beautified so that the contents of each object are indented
-                    and a new line is added after termination of each property
-                    declaration.</p>
-                <h4>CSS Summary</h4>
-                <p>An unassgined anonymous function creates the summary report by
-                    assigning its output to a variable named
-                    <em>summary</em>. Variable
-                    <em>summary</em>
-                    is not provided a scope by cleanCSS so it must be provided a scope by the
-                    consuming application or it will become an implied global, or an
-                    undeclared variable error in strict mode. It is intended to be supplied
-                    as closure so that it may access the interior of cleanCSS, but can be
-                    accessed outside cleanCSS. This summary reports the number of HTTP
-                    requests and what those requests are.</p>
+                    <a href="lib/csspretty.js">csspretty</a>
+                    function. A minimalist parser that is capable of quick extension and deep
+                    analysis.</p>
             </div>
             <div id="beau_csv"><h3>CSV</h3>
                 <p>CSV typically stands for
@@ -846,35 +828,16 @@
         </div>
         <div id="minification"><h2>Minification</h2>
             <div id="mini_javascript"><h3>JavaScript</h3>
-                <p>A heavily modified
-                    <a href="lib/fulljsmin.js">JSMin</a>
-                    is used to perform minification of both JavaScript and CSS. This code is
-                    originally written in C language by Douglas Crockford and converted to
-                    JavaScript by Franck Marcia. I am using this code in accordance with the
-                    licensing expressed in the JavaScript form of this code from Mr. Marcia.
-                    This code is modified to recognize differences in requirements for
-                    JavaScript and CSS, for better conformance to the JSLint tool, and I
-                    added a semicolon insertion mechanism for sloppy JavaScript. This
-                    function is also enhanced so that it will always minify code down to a
-                    single line, which makes the optional semicolon insertion mechanism
-                    necessary.</p>
-                <p>This custom fork of JSMin contains an automated semicolon insertion
-                    (ASI) mechanism. This mechanism is applied in the Pretty Diff tool by
-                    default, but only for minification operations and only for the
-                    JavaScript language. To apply ASI using the custom fork of JSMin
-                    directly the following arguments must evaluate as follows:</p>
-                <ul><li>type !== "css"</li>
-                    <li>alter === true</li>
-                    <li>level === 2</li></ul>
+                <p>The custom built
+                    <a href="lib/jspretty.js">csspretty</a>
+                    library is used to analyze and minify JavaScript code. It is also capable
+                    of providing some minor auto-correction, such as inserting missing
+                    semicolons and curly braces.</p>
             </div>
             <div id="mini_css"><h3>CSS</h3>
-                <p>CSS uses the exact same modified
-                    <a href="lib/fulljsmin.js">JSMin</a>
-                    application described for JavaScript. The minification is largely
-                    identical except that "-", ".", and "\" are recognized as string
-                    characters and not operators or comments. The "$" and "/" characters are
-                    removed from this list. Some extra whitespace is inserted to preseve
-                    naming conventions that do not exist in JavaScript.</p>
+                <p>The custom built
+                    <a href="lib/csspretty.js">csspretty</a>
+                    library is used to analyze and minify CSS code.</p>
             </div>
             <div id="mini_csv"><h3>CSV</h3>
                 <p>CSV typically stands for
@@ -948,23 +911,14 @@
                     differences.</p>
             </div>
             <div id="pd_diffprocess"><h3>Diff Process</h3>
-                <p>JavaScript code is first minified using
-                    <a href="lib/fulljsmin.js">JSMin</a>
-                    and then beautified using
-                    <a href="lib/jspretty.js">jspretty</a>. This prevents differences from
-                    comments or whitespace interfering with the analysis of the code. It
-                    also allows beautified code to be flawlessly compared with minified
-                    code. CSV is first minified with
+                <p>JavaScript code is beautified with
+                    <a href="lib/jspretty.js">jspretty</a>
+                    and then compared. CSV is first minified with
                     <a href="lib/csvmin.js">csvmin</a>
                     and then beautified with
-                    <a href="lib/csvbeauty.js">csvbeauty</a>. CSS is first minified using
-                    <a href="lib/fulljsmin.js">JSmin</a>
-                    for CSS and then beautified using
-                    <a href="lib/cleanCSS.js">cleanCSS.js</a>
-                    for the same reasons mentioned for JavaScript. Markup is first minified
-                    using
-                    <a href="lib/markupmin.js">markupmin</a>
-                    and then beautified using
+                    <a href="lib/csvbeauty.js">csvbeauty</a>. CSS is beautified with
+                    <a href="lib/csspretty.js">csspretty</a>
+                    and then compared. Markup is beautified using
                     <a href="lib/markup_beauty.js">markup-beautify</a>. Plain text is diffed
                     without any minification or beautification. If code that needs to be
                     compared that is not compatible with the other processes then use the
@@ -1085,17 +1039,6 @@
                         <td></td>
                     </tr>
                     <tr>
-                        <td><a href="lib/cleanCSS.js">cleanCSS.js</a></td>
-                        <td>
-                            <span><a href="http://arantius.com/">Anthony Lieuallen</a>
-                                - Original</span>
-                            <span><a href="http://prettydiff.com/">Austin Cheney</a>
-                                - Major Revision</span>
-                        </td>
-                        <td>Beautifies CSS code.</td>
-                        <td></td>
-                    </tr>
-                    <tr>
                         <td><a href="cm/codemirror.css">codemirror.css</a></td>
                         <td><a href="http://codemirror.com/">CodeMirror team</a></td>
                         <td>CSS for the CodeMirror editor.</td>
@@ -1105,6 +1048,12 @@
                         <td><a href="cm/codemirror.js">codemirror.js</a></td>
                         <td><a href="http://codemirror.com/">CodeMirror team</a></td>
                         <td>JavaScript for the CodeMirror editor.</td>
+                        <td></td>
+                    </tr>
+                    <tr>
+                        <td><a href="lib/csspretty.js">csspretty.js</a></td>
+                        <td><a href="http://prettydiff.com/">Austin Cheney</a></td>
+                        <td>CSS parser.</td>
                         <td></td>
                     </tr>
                     <tr>
@@ -1154,19 +1103,6 @@
                         <td><a href="http://prettydiff.com/">Austin Cheney</a></td>
                         <td>A supplemental JavaScript file providing DOM access and interaction
                             with the web tool.</td>
-                        <td></td>
-                    </tr>
-                    <tr>
-                        <td><a href="lib/fulljsmin.js">fulljsmin.js</a></td>
-                        <td>
-                            <span><a href="http://www.crockford.com/">Douglas Crockford</a>
-                                - Original</span>
-                            <span><a href="http://fmarcia.info/jsmin/test.html">Franck Marcia</a>
-                                - JavaScript Adaptation</span>
-                            <span><a href="http://prettydiff.com/">Austin Cheney</a>
-                                - Major Revision</span>
-                        </td>
-                        <td>Minifies JavaScript code and CSS code.</td>
                         <td></td>
                     </tr>
                     <tr>
@@ -1225,9 +1161,6 @@
                     </tr>
                 </tbody>
             </table>
-            <p>* I only claim to be a revision author where I completely rewrote or
-                extended functional output opposed to merely reorganizing the original
-                logic of the code for JSLint compliance.</p>
             <p>Please send comments, feedback, and requests to
                 <a href="mailto:austin.cheney@us.army.mil">austin.cheney@us.army.mil</a>.</p>
         </div>

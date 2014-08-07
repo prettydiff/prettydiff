@@ -460,8 +460,8 @@ var exports = "",
     //the diff report
     pd.colSliderProperties = [];
     pd.colSliderGrab       = function dom__colSliderGrab(e) {
-        var event = e || window.event,
-            node = this,
+        var event       = e || window.event,
+            node        = this,
             diffRight   = node.parentNode,
             diff        = diffRight.parentNode,
             subOffset   = 0,
@@ -480,12 +480,12 @@ var exports = "",
             drop        = function DOM_colSliderGrab_drop(f) {
                 f = f || window.event;
                 f.preventDefault();
-                node.style.cursor       = status + "-resize";
+                node.style.cursor    = status + "-resize";
                 document.onmousemove = null;
                 document.onmouseup   = null;
             },
             boxmove     = function DOM_colSliderGrab_boxmove(f) {
-                f         = f || window.event;
+                f = f || window.event;
                 f.preventDefault();
                 subOffset = offset - f.clientX;
                 if (subOffset > minAdjust && subOffset < maxAdjust) {
@@ -512,7 +512,7 @@ var exports = "",
             offset    -= subOffset;
         }
         offset             += node.clientWidth;
-        node.style.cursor     = "ew-resize";
+        node.style.cursor  = "ew-resize";
         diff.style.width   = (total / 10) + "em";
         diff.style.display = "inline-block";
         if (diffLeft.nodeType !== 1) {
@@ -531,12 +531,12 @@ var exports = "",
     //output
     pd.beaurows            = [];
     pd.beaufold            = function dom__beaufold() {
-        var self = this,
+        var self  = this,
             title = self.getAttribute("title").split("line "),
-            min = Number(title[1].substr(0, title[1].indexOf(" "))),
-            max = Number(title[2]),
-            a = 0,
-            b = "";
+            min   = Number(title[1].substr(0, title[1].indexOf(" "))),
+            max   = Number(title[2]),
+            a     = 0,
+            b     = "";
         if (self.innerHTML.charAt(0) === "-") {
             for (a = min; a < max; a += 1) {
                 pd.beaurows[0][a].style.display = "none";
@@ -561,10 +561,10 @@ var exports = "",
     pd.difffold            = function dom__difffold() {
         var a         = 0,
             b         = 0,
-            self = this,
-            title = self.getAttribute("title").split("line "),
-            min = Number(title[1].substr(0, title[1].indexOf(" "))),
-            max = Number(title[2]),
+            self      = this,
+            title     = self.getAttribute("title").split("line "),
+            min       = Number(title[1].substr(0, title[1].indexOf(" "))),
+            max       = Number(title[2]),
             inner     = self.innerHTML,
             lists     = [],
             parent    = self.parentNode.parentNode,
@@ -619,9 +619,8 @@ var exports = "",
             cmlang     = function dom__recycle_cmlang() {
                 if (api.lang === "auto") {
                     autotest = true;
-                    api.lang = pd.auto(api.source);
+                    lang     = pd.auto(api.source);
                 }
-                lang = api.lang;
                 if (lang === "html") {
                     lang = "htmlembedded";
                 } else if (lang === "css") {
@@ -663,12 +662,25 @@ var exports = "",
                 node      = pd.$$("showOptionsCallOut");
                 pd.zIndex += 1;
                 if (pd.o.announce !== null && pd.o.announce.innerHTML !== pd.o.announcetext && api.lang === "auto") {
-                    if (api.lang === "auto") {
-                        presumedLanguage = output[1].split("Presumed language is <em>")[1];
-                        presumedLanguage = presumedLanguage.substring(0, presumedLanguage.indexOf("</em>"));
+                    pd.o.announce.style.color = "#00f";
+                    presumedLanguage          = output[1].split("Presumed language is <em>")[1];
+                    if (api.mode === "beautify" && presumedLanguage !== undefined) {
+                        if (presumedLanguage !== undefined) {
+                            presumedLanguage        = presumedLanguage.substring(0, presumedLanguage.indexOf("</em>"));
+                            pd.o.announce.innerHTML = "Language is set to <strong>auto</strong>. Presumed language is <em>" + presumedLanguage + "</em>.";
+                            presumedLanguage        = presumedLanguage.toLowerCase();
+                        }
+                    } else {
+                        presumedLanguage = lang;
+                        if (lang === "javascript") {
+                            lang = "JavaScript";
+                        } else if (lang === "text") {
+                            lang = "plain text";
+                        } else if (lang !== "markup") {
+                            lang = lang.toUpperCase();
+                        }
+                        pd.o.announce.innerHTML = "Language is set to <strong>auto</strong>. Presumed language is <em>" + lang + "</em>.";
                     }
-                    pd.o.announce.innerHTML = "Language is set to <strong>auto</strong>. Presumed language is <em>" + presumedLanguage + "</em>.";
-                    presumedLanguage = presumedLanguage.toLowerCase();
                 }
                 if (api.mode === "beautify") {
                     if (pd.o.codeBeauOut !== null) {
@@ -692,7 +704,8 @@ var exports = "",
                                 return "";
                             }());
                             if (lang !== "") {
-                                pd.o.announce.innerHTML = lang;
+                                pd.o.announce.style.color = "#c00";
+                                pd.o.announce.innerHTML   = lang;
                             }
                         }
                     }
@@ -820,8 +833,8 @@ var exports = "",
                         diffList = pd.o.report.diff.body.getElementsByTagName("ol");
                         (function () {
                             var cells = diffList[0].getElementsByTagName("li"),
-                                len = cells.length,
-                                a = 0;
+                                len   = cells.length,
+                                a     = 0;
                             for (a = 0; a < len; a += 1) {
                                 if (cells[a].getAttribute("class") === "fold") {
                                     cells[a].onclick = pd.difffold;
@@ -834,7 +847,7 @@ var exports = "",
                                     0, 0, 0, 0, 0
                                 ];
                             } else {
-                                pd.colSliderProperties = [
+                                pd.colSliderProperties  = [
                                     diffList[0].clientWidth, diffList[1].clientWidth, diffList[2].parentNode.clientWidth, diffList[2].parentNode.parentNode.clientWidth, diffList[2].parentNode.offsetLeft - diffList[2].parentNode.parentNode.offsetLeft
                                 ];
                                 diffList[2].onmousedown = pd.colSliderGrab;
@@ -1135,7 +1148,7 @@ var exports = "",
             api.jsscope = false;
             (function dom__recycle_diff() {
                 var baseLabel   = pd.$$("baselabel"),
-                    comments    = pd.$$("diffcommentsn"),
+                    comments    = pd.$$("diffcommentsy"),
                     chars       = pd.$$("diff-space"),
                     conditional = {},
                     content     = pd.$$("diffcontentn"),
@@ -1157,7 +1170,7 @@ var exports = "",
                 pd.o.codeDiffNew  = pd.$$("newText");
                 api.content       = (content === null || content.checked === false) ? false : true;
                 api.context       = (context !== null && context.value !== "" && isNaN(context.value) === false) ? Number(context.value) : "";
-                api.diffcomments  = (comments === null || comments.checked === false) ? false : true;
+                api.diffcomments  = (comments !== null && comments.checked === true) ? true : false;
                 api.difflabel     = (newLabel === null) ? "new" : newLabel.value;
                 api.diffview      = (inline === null || inline.checked === false) ? "sidebyside" : "inline";
                 api.indent        = (indent === null || indent.checked === false) ? "knr" : "allman";
@@ -1359,8 +1372,12 @@ var exports = "",
                         api.source = pd.cm.beauIn.getValue();
                         if (pd.test.cm === true && api.lang === "auto") {
                             cmlang();
+                            api.lang = lang;
+                            output   = pd.application(api);
+                            api.lang = "auto";
+                        } else {
+                            output = pd.application(api);
                         }
-                        output = pd.application(api);
                         execOutput();
                     }, 50);
                 }
@@ -1369,16 +1386,24 @@ var exports = "",
                         api.source = pd.cm.minnIn.getValue();
                         if (pd.test.cm === true && api.lang === "auto") {
                             cmlang();
+                            api.lang = lang;
+                            output   = pd.application(api);
+                            api.lang = "auto";
+                        } else {
+                            output = pd.application(api);
                         }
-                        output = pd.application(api);
                         execOutput();
                     }, 50);
                 }
             } else {
                 if (pd.test.cm === true && api.lang === "auto") {
                     cmlang();
+                    api.lang = lang;
+                    output   = pd.application(api);
+                    api.lang = "auto";
+                } else {
+                    output = pd.application(api);
                 }
-                output = pd.application(api);
                 execOutput();
             }
         }
@@ -3311,7 +3336,8 @@ var exports = "",
             if (pd.o.announce !== null) {
                 pd.o.announce.setAttribute("class", "big");
                 pd.o.announce.parentNode.removeChild(pd.o.announce);
-                pd.o.announce.innerHTML = "";
+                pd.o.announce.innerHTML   = "";
+                pd.o.announce.style.color = "#000";
                 if (pd.$$("codeInput") !== null) {
                     pd.$$("codeInput").insertBefore(pd.o.announce, pd.$$("codeInput").firstChild);
                 }
@@ -3327,6 +3353,7 @@ var exports = "",
                     pd.$$("introduction").insertBefore(pd.o.announce, pd.$$("update"));
                 }
             }
+            pd.o.announce.style.color = "#000";
             pd.o.announce.setAttribute("class", "normal");
             pd.o.announce.innerHTML = pd.o.announcetext;
         }
@@ -4369,8 +4396,8 @@ var exports = "",
                                 date, row[b].innerHTML
                             ]);
                             break;
-                        case "cleanCSS.js":
-                            date               = edition.cleanCSS;
+                        case "csspretty.js":
+                            date               = edition.csspretty;
                             dateCell.innerHTML = conversion(date);
                             dateList.push([
                                 date, row[b].innerHTML
@@ -4413,13 +4440,6 @@ var exports = "",
                             break;
                         case "dom.js":
                             date               = edition.api.dom;
-                            dateCell.innerHTML = conversion(date);
-                            dateList.push([
-                                date, row[b].innerHTML
-                            ]);
-                            break;
-                        case "fulljsmin.js":
-                            date               = edition.jsmin;
                             dateCell.innerHTML = conversion(date);
                             dateList.push([
                                 date, row[b].innerHTML
