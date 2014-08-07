@@ -731,13 +731,6 @@ var prettydiff = function prettydiff(api) {
                                                 if (test[0] === true && test[1] === true && test[2] === true && test[3] === true) {
                                                     set.splice(start + 1, yy);
                                                     leng -= yy + 1;
-                                                    if (mode === "beautify") {
-                                                        yy = token[set[start][0]].length - name.length;
-                                                        do {
-                                                            name = name + " ";
-                                                            yy   -= 1;
-                                                        } while (yy > 0);
-                                                    }
                                                     token[set[start][0]] = name;
                                                     if (zero.test(value[0]) === true) {
                                                         value[0] = "0";
@@ -761,6 +754,40 @@ var prettydiff = function prettydiff(api) {
                                                         value.splice(1, 1);
                                                     }
                                                     token[set[start][2]] = value.join(" ");
+                                                    if (mode === "beautify") {
+                                                        if (token[set[start][0]].charAt(token[set[start][0]].length - 1) === " ") {
+                                                            yy = token[set[start][0]].length - name.length;
+                                                            do {
+                                                                name = name + " ";
+                                                                yy   -= 1;
+                                                            } while (yy > 0);
+                                                        } else {
+                                                            (function () {
+                                                                var aaa = 0,
+                                                                    bbb = 0,
+                                                                    ccc = 0,
+                                                                    lenp = p.length;
+                                                                for (aaa = 0; aaa < lenp; aaa += 1) {
+                                                                    token[p[aaa]] = token[p[aaa]].replace(/(\s+)$/, "");
+                                                                    if (token[p[aaa]].indexOf(name + "-") === 0) {
+                                                                        p.splice(aaa, 1);
+                                                                        lenp -= 1;
+                                                                    } else if (token[p[aaa]].replace().length > bbb) {
+                                                                        bbb = token[p[aaa]].length;
+                                                                    }
+                                                                }
+                                                                for (aaa = 0; aaa < lenp; aaa += 1) {
+                                                                    if (token[p[aaa]].length < bbb) {
+                                                                        ccc = bbb - token[p[aaa]].length;
+                                                                        do {
+                                                                            token[p[aaa]] = token[p[aaa]] + " ";
+                                                                            ccc -= 1;
+                                                                        } while (ccc > 0);
+                                                                    }
+                                                                }
+                                                            }());
+                                                        }
+                                                    }
                                                 }
                                                 break;
                                             }
