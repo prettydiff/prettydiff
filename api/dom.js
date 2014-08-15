@@ -337,7 +337,7 @@ var exports = "",
                 join  = "",
                 flaga = false,
                 flagb = false;
-            if (a === undefined || (/^(\s*#)/).test(a) === true) {
+            if (a === undefined || (/^(\s*#)/).test(a) === true || (/\n\s*(\.|@)mixin\(?\s*/).test(a) === true) {
                 return "css";
             }
             b = a.replace(/\[[a-zA-Z][\w\-]*\=("|')?[a-zA-Z][\w\-]*("|')?\]/g, "").split("");
@@ -374,7 +374,7 @@ var exports = "",
                     return "text";
                 }
                 if ((/^(\s*[\$\.#@a-z0-9])|^(\s*\/\*)|^(\s*\*\s*\{)/i).test(a) === true && (/^(\s*if\s*\()/).test(a) === false && a.indexOf("{") !== -1 && (/\=\s*(\{|\[|\()/).test(join) === false && ((/(\+|\-|\=|\*|\?)\=/).test(join) === false || ((/\=+('|")?\)/).test(a) === true && (/;\s*base64/).test(a) === true)) && (/function(\s+\w+)*\s*\(/).test(join) === false) {
-                    if ((/^(\s*return;?\s*\{)/).test(a) === true && (/(\};?\s*)$/).test(a) === true) {
+                    if ((/:\s*(\{|\(|\[)/).test(a) === true || ((/^(\s*return;?\s*\{)/).test(a) === true && (/(\};?\s*)$/).test(a) === true)) {
                         return "javascript";
                     }
                     return "css";
