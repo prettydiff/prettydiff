@@ -931,6 +931,10 @@ var prettydiff = function prettydiff(api) {
                             }()),
                             nl       = function csspretty__beautify_nl(tabs) {
                                 var aa = 0;
+                                if (types[a + 1] === "selector" && spacel[line] === a + 1) {
+                                    line += 1;
+                                    build.push("\r\n");
+                                }
                                 build.push("\r\n");
                                 for (aa = 0; aa < tabs; aa += 1) {
                                     build.push(tab);
@@ -986,7 +990,7 @@ var prettydiff = function prettydiff(api) {
                                 build.push(" ");
                             };
                         for (a = 0; a < len; a += 1) {
-                            if (a === spacel[line]) {
+                            if (a === spacel[line] && types[a] !== "selector") {
                                 build.push("\r\n");
                                 line += 1;
                             }
@@ -9477,7 +9481,7 @@ var prettydiff = function prettydiff(api) {
     edition    = {
         charDecoder  : 131224, //charDecoder library
         css          : 140806, //diffview.css file
-        csspretty    : 140814, //csspretty library
+        csspretty    : 140815, //csspretty library
         csvbeauty    : 140114, //csvbeauty library
         csvmin       : 131224, //csvmin library
         diffview     : 140720, //diffview library
@@ -9485,10 +9489,10 @@ var prettydiff = function prettydiff(api) {
         jspretty     : 140814, //jspretty library
         markup_beauty: 140705, //markup_beauty library
         markupmin    : 140705, //markupmin library
-        prettydiff   : 140814, //this file
+        prettydiff   : 140815, //this file
         webtool      : 140806, //prettydiff.com.xhtml
         api          : {
-            dom        : 140814,
+            dom        : 140815,
             nodeLocal  : 140725,
             nodeService: 121106, //no longer maintained
             wsh        : 140725

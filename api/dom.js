@@ -97,6 +97,73 @@ var exports = "",
         return document.getElementById(x);
     };
 
+    //language detection
+    pd.auto        = function dom__auto(a) {
+        var b     = [],
+            c     = 0,
+            d     = 0,
+            join  = "",
+            flaga = false,
+            flagb = false;
+        if (a === undefined || (/^(\s*#)/).test(a) === true || (/\n\s*(\.|@)mixin\(?\s*/).test(a) === true) {
+            return "css";
+        }
+        b = a.replace(/\[[a-zA-Z][\w\-]*\=("|')?[a-zA-Z][\w\-]*("|')?\]/g, "").split("");
+        c = b.length;
+        if ((/^([\s\w\-]*<)/).test(a) === false && (/(>[\s\w\-]*)$/).test(a) === false) {
+            for (d = 1; d < c; d += 1) {
+                if (flaga === false) {
+                    if (b[d] === "*" && b[d - 1] === "/") {
+                        b[d - 1] = "";
+                        flaga    = true;
+                    } else if (flagb === false && b[d] === "f" && d < c - 6 && b[d + 1] === "i" && b[d + 2] === "l" && b[d + 3] === "t" && b[d + 4] === "e" && b[d + 5] === "r" && b[d + 6] === ":") {
+                        flagb = true;
+                    }
+                } else if (flaga === true && b[d] === "*" && d !== c - 1 && b[d + 1] === "/") {
+                    flaga    = false;
+                    b[d]     = "";
+                    b[d + 1] = "";
+                } else if (flagb === true && b[d] === ";") {
+                    flagb = false;
+                    b[d]  = "";
+                }
+                if (flaga === true || flagb === true) {
+                    b[d] = "";
+                }
+            }
+            join = b.join("");
+            if ((/^(\s*\{)/).test(a) === true && (/(\}\s*)$/).test(a) && a.indexOf(",") !== -1) {
+                return "javascript";
+            }
+            if ((/((\}?(\(\))?\)*;?\s*)|([a-z0-9]("|')?\)*);?(\s*\})*)$/i).test(a) === true && ((/(var\s+[a-z]+[a-zA-Z0-9]*)/).test(a) === true || (/(\=\s*function)|(\s*function\s+(\w*\s+)?\()/).test(a) === true || a.indexOf("{") === -1 || (/^(\s*if\s+\()/).test(a) === true)) {
+                if (a.indexOf("(") > -1 || a.indexOf("=") > -1 || (a.indexOf(";") > -1 && a.indexOf("{") > -1) || pd.mode !== "diff") {
+                    return "javascript";
+                }
+                return "text";
+            }
+            if ((/^(\s*[\$\.#@a-z0-9])|^(\s*\/\*)|^(\s*\*\s*\{)/i).test(a) === true && (/^(\s*if\s*\()/).test(a) === false && a.indexOf("{") !== -1 && (/\=\s*(\{|\[|\()/).test(join) === false && ((/(\+|\-|\=|\*|\?)\=/).test(join) === false || ((/\=+('|")?\)/).test(a) === true && (/;\s*base64/).test(a) === true)) && (/function(\s+\w+)*\s*\(/).test(join) === false) {
+                if ((/:\s*(\{|\(|\[)/).test(a) === true || ((/^(\s*return;?\s*\{)/).test(a) === true && (/(\};?\s*)$/).test(a) === true)) {
+                    return "javascript";
+                }
+                return "css";
+            }
+            if (pd.mode === "diff") {
+                return "text";
+            }
+            return "javascript";
+        }
+        if (((/(>[\w\s:]*)?<(\/|\!)?[\w\s:\-\[]+/).test(a) === true && (/^([\s\w]*<)/).test(a) === true && (/(>[\s\w]*)$/).test(a) === true) || ((/^(\s*<s((cript)|(tyle)))/i).test(a) === true && (/(<\/s((cript)|(tyle))>\s*)$/i).test(a) === true)) {
+            if ((/^(\s*<\!doctype html>)/i).test(a) === true || (/^(\s*<html)/i).test(a) === true || ((/^(\s*<\!DOCTYPE\s+((html)|(HTML))\s+PUBLIC\s+)/).test(a) === true && (/XHTML\s+1\.1/).test(a) === false && (/XHTML\s+1\.0\s+(S|s)((trict)|(TRICT))/).test(a) === false)) {
+                return "html";
+            }
+            return "markup";
+        }
+        if (pd.mode === "diff") {
+            return "text";
+        }
+        return "javascript";
+    };
+
     //shared DOM nodes
     pd.o                  = {
         addNo       : pd.$$("additional_no"),
@@ -329,72 +396,6 @@ var exports = "",
             mode             : "javascript",
             readOnly         : true
         });
-        //language detection
-        pd.auto        = function dom__auto(a) {
-            var b     = [],
-                c     = 0,
-                d     = 0,
-                join  = "",
-                flaga = false,
-                flagb = false;
-            if (a === undefined || (/^(\s*#)/).test(a) === true || (/\n\s*(\.|@)mixin\(?\s*/).test(a) === true) {
-                return "css";
-            }
-            b = a.replace(/\[[a-zA-Z][\w\-]*\=("|')?[a-zA-Z][\w\-]*("|')?\]/g, "").split("");
-            c = b.length;
-            if ((/^([\s\w\-]*<)/).test(a) === false && (/(>[\s\w\-]*)$/).test(a) === false) {
-                for (d = 1; d < c; d += 1) {
-                    if (flaga === false) {
-                        if (b[d] === "*" && b[d - 1] === "/") {
-                            b[d - 1] = "";
-                            flaga    = true;
-                        } else if (flagb === false && b[d] === "f" && d < c - 6 && b[d + 1] === "i" && b[d + 2] === "l" && b[d + 3] === "t" && b[d + 4] === "e" && b[d + 5] === "r" && b[d + 6] === ":") {
-                            flagb = true;
-                        }
-                    } else if (flaga === true && b[d] === "*" && d !== c - 1 && b[d + 1] === "/") {
-                        flaga    = false;
-                        b[d]     = "";
-                        b[d + 1] = "";
-                    } else if (flagb === true && b[d] === ";") {
-                        flagb = false;
-                        b[d]  = "";
-                    }
-                    if (flaga === true || flagb === true) {
-                        b[d] = "";
-                    }
-                }
-                join = b.join("");
-                if ((/^(\s*\{)/).test(a) === true && (/(\}\s*)$/).test(a) && a.indexOf(",") !== -1) {
-                    return "javascript";
-                }
-                if ((/((\}?(\(\))?\)*;?\s*)|([a-z0-9]("|')?\)*);?(\s*\})*)$/i).test(a) === true && ((/(var\s+[a-z]+[a-zA-Z0-9]*)/).test(a) === true || (/(\=\s*function)|(\s*function\s+(\w*\s+)?\()/).test(a) === true || a.indexOf("{") === -1 || (/^(\s*if\s+\()/).test(a) === true)) {
-                    if (a.indexOf("(") > -1 || a.indexOf("=") > -1 || (a.indexOf(";") > -1 && a.indexOf("{") > -1) || pd.mode !== "diff") {
-                        return "javascript";
-                    }
-                    return "text";
-                }
-                if ((/^(\s*[\$\.#@a-z0-9])|^(\s*\/\*)|^(\s*\*\s*\{)/i).test(a) === true && (/^(\s*if\s*\()/).test(a) === false && a.indexOf("{") !== -1 && (/\=\s*(\{|\[|\()/).test(join) === false && ((/(\+|\-|\=|\*|\?)\=/).test(join) === false || ((/\=+('|")?\)/).test(a) === true && (/;\s*base64/).test(a) === true)) && (/function(\s+\w+)*\s*\(/).test(join) === false) {
-                    if ((/:\s*(\{|\(|\[)/).test(a) === true || ((/^(\s*return;?\s*\{)/).test(a) === true && (/(\};?\s*)$/).test(a) === true)) {
-                        return "javascript";
-                    }
-                    return "css";
-                }
-                if (pd.mode === "diff") {
-                    return "text";
-                }
-                return "javascript";
-            }
-            if (((/(>[\w\s:]*)?<(\/|\!)?[\w\s:\-\[]+/).test(a) === true && (/^([\s\w]*<)/).test(a) === true && (/(>[\s\w]*)$/).test(a) === true) || ((/^(\s*<s((cript)|(tyle)))/i).test(a) === true && (/(<\/s((cript)|(tyle))>\s*)$/i).test(a) === true)) {
-                if ((/^(\s*<\!doctype html>)/i).test(a) === true || (/^(\s*<html)/i).test(a) === true || ((/^(\s*<\!DOCTYPE\s+((html)|(HTML))\s+PUBLIC\s+)/).test(a) === true && (/XHTML\s+1\.1/).test(a) === false && (/XHTML\s+1\.0\s+(S|s)((trict)|(TRICT))/).test(a) === false)) {
-                    return "html";
-                }
-                return "markup";
-            }
-            if (pd.mode === "diff") {
-                return "text";
-            }
-            return "javascript";
-        };
         //execute pd.auto onkeyup for codeBeauIn and codeMinnIn
         pd.langkey     = function dom__langkey(x) {
             var value = x.getValue(),
@@ -620,6 +621,7 @@ var exports = "",
                 if (api.lang === "auto") {
                     autotest = true;
                     lang     = pd.auto(api.source);
+                    api.lang = lang;
                 }
                 if (lang === "html") {
                     lang = "htmlembedded";
@@ -628,29 +630,34 @@ var exports = "",
                 } else if (lang === "markup") {
                     lang = "xml";
                 }
-                if (pd.mode === "diff") {
-                    if (pd.cm.diffBase.options.mode !== lang) {
-                        if (lang === "text") {
-                            pd.cm.diffBase.setOption("mode", null);
-                        } else {
-                            pd.cm.diffBase.setOption("mode", lang);
+                if (pd.test.cm === true) {
+                    if (pd.mode === "diff") {
+                        if (pd.cm.diffBase.options.mode !== lang) {
+                            if (lang === "text") {
+                                pd.cm.diffBase.setOption("mode", null);
+                            } else {
+                                pd.cm.diffBase.setOption("mode", lang);
+                            }
+                        }
+                        if (pd.cm.diffNew.options.mode !== lang) {
+                            if (lang === "text") {
+                                pd.cm.diffNew.setOption("mode", null);
+                            } else {
+                                pd.cm.diffNew.setOption("mode", lang);
+                            }
                         }
                     }
-                    if (pd.cm.diffNew.options.mode !== lang) {
-                        if (lang === "text") {
-                            pd.cm.diffNew.setOption("mode", null);
-                        } else {
-                            pd.cm.diffNew.setOption("mode", lang);
-                        }
+                    if (pd.mode === "beau" && pd.cm.beauIn.options.mode !== lang) {
+                        pd.cm.beauIn.setOption("mode", lang);
+                        pd.cm.beauOut.setOption("mode", lang);
+                    }
+                    if (pd.mode === "minn" && pd.cm.minnIn.options.mode !== lang) {
+                        pd.cm.minnIn.setOption("mode", lang);
+                        pd.cm.minnOut.setOption("mode", lang);
                     }
                 }
-                if (pd.mode === "beau" && pd.cm.beauIn.options.mode !== lang) {
-                    pd.cm.beauIn.setOption("mode", lang);
-                    pd.cm.beauOut.setOption("mode", lang);
-                }
-                if (pd.mode === "minn" && pd.cm.minnIn.options.mode !== lang) {
-                    pd.cm.minnIn.setOption("mode", lang);
-                    pd.cm.minnOut.setOption("mode", lang);
+                if (lang === "text/x-scss") {
+                    lang = "css";
                 }
             },
             execOutput = function dom__recycle_execOutput() {
@@ -661,26 +668,22 @@ var exports = "",
 
                 node      = pd.$$("showOptionsCallOut");
                 pd.zIndex += 1;
-                if (pd.o.announce !== null && pd.o.announce.innerHTML !== pd.o.announcetext && api.lang === "auto") {
+                if (pd.o.announce !== null && pd.o.announce.innerHTML !== pd.o.announcetext && autotest === true) {
                     pd.o.announce.style.color = "#00f";
-                    presumedLanguage          = output[1].split("Presumed language is <em>")[1];
-                    if (api.mode === "beautify" && presumedLanguage !== undefined) {
-                        if (presumedLanguage !== undefined) {
-                            presumedLanguage        = presumedLanguage.substring(0, presumedLanguage.indexOf("</em>"));
-                            pd.o.announce.innerHTML = "Language is set to <strong>auto</strong>. Presumed language is <em>" + presumedLanguage + "</em>.";
-                            presumedLanguage        = presumedLanguage.toLowerCase();
-                        }
-                    } else {
-                        presumedLanguage = lang;
-                        if (lang === "javascript") {
-                            lang = "JavaScript";
-                        } else if (lang === "text") {
-                            lang = "plain text";
-                        } else if (lang !== "markup") {
-                            lang = lang.toUpperCase();
-                        }
-                        pd.o.announce.innerHTML = "Language is set to <strong>auto</strong>. Presumed language is <em>" + lang + "</em>.";
+                    presumedLanguage = lang;
+                    if (lang === "javascript") {
+                        lang = "JavaScript";
+                    } else if (lang === "text") {
+                        lang = "plain text";
+                    } else if (lang !== "markup") {
+                        lang = lang.toUpperCase();
                     }
+                    pd.o.announce.innerHTML = "Language is set to <strong>auto</strong>. Presumed language is <em>" + lang + "</em>.";
+                }
+                if (autotest === true) {
+                    api.lang === "auto";
+                } else {
+                    pd.o.announce.innerHTML = "";
                 }
                 if (api.mode === "beautify") {
                     if (pd.o.codeBeauOut !== null) {
@@ -808,7 +811,7 @@ var exports = "",
                     }
                 }
                 if (api.mode === "diff" && pd.o.report.diff.box !== null) {
-                    if (pd.o.announce !== null && pd.o.announce.innerHTML !== pd.o.announcetext && api.lang !== "auto") {
+                    if (pd.o.announce !== null && pd.o.announce.innerHTML !== pd.o.announcetext && autotest === false) {
                         pd.o.announce.innerHTML = "";
                     }
                     if (autotest === true) {
@@ -874,7 +877,7 @@ var exports = "",
                     }
                 }
                 if (api.mode === "minify") {
-                    if (pd.o.announce !== null && pd.o.announce.innerHTML !== pd.o.announcetext && api.lang !== "auto") {
+                    if (pd.o.announce !== null && pd.o.announce.innerHTML !== pd.o.announcetext && autotest === false) {
                         pd.o.announce.innerHTML = "";
                     }
                     if (output[0].length > 125000) {
@@ -1264,7 +1267,7 @@ var exports = "",
                                     if (xhr.status === 200 || xhr.status === 0) {
                                         api.diff = xhr.responseText.replace(/\r\n/g, "\n");
                                         if (completes === true) {
-                                            if (pd.test.cm === true && api.lang === "auto") {
+                                            if (api.lang === "auto") {
                                                 cmlang();
                                             }
                                             output = pd.application(api);
@@ -1344,7 +1347,7 @@ var exports = "",
                             if (xhr.status === 200 || xhr.status === 0) {
                                 api.source = xhr.responseText.replace(/\r\n/g, "\n");
                                 if (pd.mode !== "diff" || (requestd === true && completed === true)) {
-                                    if (pd.test.cm === true && api.lang === "auto") {
+                                    if (api.lang === "auto") {
                                         cmlang();
                                     }
                                     output = pd.application(api);
@@ -1363,6 +1366,9 @@ var exports = "",
             }());
         }
         if (requests === false && requestd === false) {
+            if (api.lang === "auto") {
+                cmlang();
+            }
             //sometimes the CodeMirror getValue method fires too early
             //on copy/paste.  I put in a 50ms delay in this case to
             //prevent operations from old input
@@ -1370,40 +1376,19 @@ var exports = "",
                 if (api.mode === "beautify") {
                     setTimeout(function () {
                         api.source = pd.cm.beauIn.getValue();
-                        if (pd.test.cm === true && api.lang === "auto") {
-                            cmlang();
-                            api.lang = lang;
-                            output   = pd.application(api);
-                            api.lang = "auto";
-                        } else {
-                            output = pd.application(api);
-                        }
+                        output = pd.application(api);
                         execOutput();
                     }, 50);
                 }
                 if (api.mode === "minify") {
                     setTimeout(function () {
                         api.source = pd.cm.minnIn.getValue();
-                        if (pd.test.cm === true && api.lang === "auto") {
-                            cmlang();
-                            api.lang = lang;
-                            output   = pd.application(api);
-                            api.lang = "auto";
-                        } else {
-                            output = pd.application(api);
-                        }
+                        output = pd.application(api);
                         execOutput();
                     }, 50);
                 }
             } else {
-                if (pd.test.cm === true && api.lang === "auto") {
-                    cmlang();
-                    api.lang = lang;
-                    output   = pd.application(api);
-                    api.lang = "auto";
-                } else {
-                    output = pd.application(api);
-                }
+                output = pd.application(api);
                 execOutput();
             }
         }
