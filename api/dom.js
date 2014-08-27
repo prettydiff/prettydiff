@@ -98,7 +98,7 @@ var exports = "",
     };
 
     //language detection
-    pd.auto        = function dom__auto(a) {
+    pd.auto               = function dom__auto(a) {
         var b     = [],
             c     = 0,
             d     = 0,
@@ -668,8 +668,7 @@ var exports = "",
 
                 node      = pd.$$("showOptionsCallOut");
                 pd.zIndex += 1;
-                if (pd.o.announce !== null && pd.o.announce.innerHTML !== pd.o.announcetext && autotest === true) {
-                    pd.o.announce.style.color = "#00f";
+                if (autotest === true) {
                     presumedLanguage = lang;
                     if (lang === "javascript") {
                         lang = "JavaScript";
@@ -678,7 +677,12 @@ var exports = "",
                     } else if (lang !== "markup") {
                         lang = lang.toUpperCase();
                     }
-                    pd.o.announce.innerHTML = "Language is set to <strong>auto</strong>. Presumed language is <em>" + lang + "</em>.";
+                } else {
+                    lang = api.lang;
+                }
+                if (pd.o.announce !== null && pd.o.announce.innerHTML !== pd.o.announcetext) {
+                    pd.o.announce.style.color = "#00f";
+                    pd.o.announce.innerHTML   = "Language is set to <strong>auto</strong>. Presumed language is <em>" + lang + "</em>.";
                 }
                 if (autotest === true) {
                     api.lang === "auto";
@@ -911,58 +915,32 @@ var exports = "",
                 }
                 if (pd.test.ls === true) {
                     (function dom__recycle_stats() {
-                        var lango = {},
-                            size  = 0;
-                        if (api.lang === "auto" && typeof output[1] === "string") {
-                            lango = (/Language set to <strong>auto<\/strong>\. Presumed language is <em>\w+<\/em>\./).exec(output[1]);
-                            if (lango !== null) {
-                                lang = lango.toString();
-                                lang = lang.substring(lang.indexOf("<em>") + 4, lang.indexOf("</em>"));
-                                if (lang === "JavaScript" || lang === "JSON") {
-                                    pd.stat.js += 1;
-                                    node       = pd.$$("stjs");
-                                    if (node !== null) {
-                                        node.innerHTML = pd.stat.js;
-                                    }
-                                } else if (lang === "CSS") {
-                                    pd.stat.css += 1;
-                                    node        = pd.$$("stcss");
-                                    if (node !== null) {
-                                        node.innerHTML = pd.stat.css;
-                                    }
-                                } else if (lang === "HTML" || lang === "markup") {
-                                    pd.stat.markup += 1;
-                                    node           = pd.$$("stmarkup");
-                                    if (node !== null) {
-                                        node.innerHTML = pd.stat.markup;
-                                    }
-                                }
-                            }
-                        } else if (api.lang === "csv") {
+                        var size = 0;
+                        if (lang === "csv") {
                             pd.stat.csv += 1;
                             node        = pd.$$("stcsv");
                             if (node !== null) {
                                 node.innerHTML = pd.stat.csv;
                             }
-                        } else if (api.lang === "text") {
+                        } else if (lang === "plain text") {
                             pd.stat.text += 1;
                             node         = pd.$$("sttext");
                             if (node !== null) {
                                 node.innerHTML = pd.stat.text;
                             }
-                        } else if (api.lang === "javascript") {
+                        } else if (lang === "javascript") {
                             pd.stat.js += 1;
                             node       = pd.$$("stjs");
                             if (node !== null) {
                                 node.innerHTML = pd.stat.js;
                             }
-                        } else if (api.lang === "markup" || api.lang === "html") {
+                        } else if (lang === "markup" || lang === "html") {
                             pd.stat.markup += 1;
                             node           = pd.$$("stmarkup");
                             if (node !== null) {
                                 node.innerHTML = pd.stat.markup;
                             }
-                        } else if (api.lang === "css") {
+                        } else if (lang === "css") {
                             pd.stat.css += 1;
                             node        = pd.$$("stcss");
                             if (node !== null) {
@@ -1376,14 +1354,14 @@ var exports = "",
                 if (api.mode === "beautify") {
                     setTimeout(function () {
                         api.source = pd.cm.beauIn.getValue();
-                        output = pd.application(api);
+                        output     = pd.application(api);
                         execOutput();
                     }, 50);
                 }
                 if (api.mode === "minify") {
                     setTimeout(function () {
                         api.source = pd.cm.minnIn.getValue();
-                        output = pd.application(api);
+                        output     = pd.application(api);
                         execOutput();
                     }, 50);
                 }
