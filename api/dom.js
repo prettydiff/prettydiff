@@ -3590,10 +3590,9 @@ var exports = "",
                         pd.stat.large = statdump[12];
                     }
                     pd.stat.visit = Number(pd.stat.visit) + 1;
-                    if (pd.stat.fdate === "") {
-                        pd.stat.fdate = new Date().toLocaleDateString();
-                    }
-                    pd.stat.avdate = (((Date.now() - Date.parse(statdump[2])) / 86400000) / Number(statdump[0])).toFixed(2);
+                }
+                if (pd.stat.fdate === "") {
+                    pd.stat.fdate = new Date().toLocaleDateString();
                 }
                 if (pd.test.json === true) {
                     if (localStorage.commentString !== undefined) {
@@ -3609,7 +3608,7 @@ var exports = "",
                             if (pd.stat.fdate === "") {
                                 pd.stat.fdate = new Date().toLocaleDateString();
                             }
-                            pd.stat.avdate = (((Date.now() - Date.parse(pd.stat.fdate)) / 86400000) / Number(statdump[0])).toFixed(2);
+                            pd.stat.avday = Math.round(pd.stat.visit / ((Date.now() - Date.parse(pd.stat.fdate)) / 86400000));
                         }
                         node = pd.$$("stvisit");
                         if (node !== null) {

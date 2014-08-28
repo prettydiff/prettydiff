@@ -3261,7 +3261,7 @@ var prettydiff = function prettydiff(api) {
                                         fortest += 1;
                                     }
                                     if (ltoke === "}" || ltoke === ")") {
-                                        if (functest() === true) {
+                                        if (types[a - 1] !== "comment" && types[a - 1] !== "comment-inline" && functest() === true) {
                                             level[a - 1] = "x";
                                         } else {
                                             level[a - 1] = indent;
@@ -9512,13 +9512,13 @@ var prettydiff = function prettydiff(api) {
         csvmin       : 131224, //csvmin library
         diffview     : 140827, //diffview library
         documentation: 140806, //documentation.xhtml
-        jspretty     : 140814, //jspretty library
+        jspretty     : 140828, //jspretty library
         markup_beauty: 140705, //markup_beauty library
         markupmin    : 140705, //markupmin library
-        prettydiff   : 140827, //this file
+        prettydiff   : 140828, //this file
         webtool      : 140806, //prettydiff.com.xhtml
         api          : {
-            dom        : 140827,
+            dom        : 140828,
             nodeLocal  : 140725,
             nodeService: 121106, //no longer maintained
             wsh        : 140725
