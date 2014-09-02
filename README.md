@@ -155,7 +155,9 @@ License:
   - used as markup-beauty function
  <http://prettydiff.com/lib/markup_beauty.js>
 
- -----------------------------------------------------------------------
+------------------------------------------------------------------------
+
+
  The code mentioned above has significantly expanded documentation in
  each of the respective function's external JS file as linked above and
  from the documentation page:
