@@ -98,6 +98,7 @@ License:
 
  * The use of diffview.js and prettydiff.js must contain the following
  copyright:
+ 
  Copyright (c) 2007, Snowtide Informatics Systems, Inc.
  All rights reserved.
 
@@ -115,16 +116,6 @@ License:
  - used as diffview function
  <http://prettydiff.com/lib/diffview.js>
 
- * The author of fulljsmin.js and date of creation must be stated as:
- Franck Marcia - 31 Aug 2006
-
- - used as jsmin function:
- <http://prettydiff.com/lib/fulljsmin.js>
-
- * The fulljsmin.js is used with permission from the author of jsminc.c
- and such must be stated as:
- Copyright (c) 2002 Douglas Crockford  (www.crockford.com)
-
  * JSPretty is written by Austin Cheney.  Use of this function requires
  that credit be given to Austin Cheney.
  http://prettydiff.com/
@@ -132,11 +123,12 @@ License:
  - used as jspretty function
  <http://prettydiff.com/lib/jspretty.js>
 
- * cleanCSS.js is originally written by Anthony Lieuallen
- http://tools.arantius.com/tabifier
+ * CSSPretty is written by Austin Cheney.  Use of this function requires
+ that credit be given to Austin Cheney.
+ http://prettydiff.com/
 
- - used as cleanCSS function
- <http://prettydiff.com/lib/cleanCSS.js>
+ - used as csspretty function
+ <http://prettydiff.com/lib/csspretty.js>
 
  * charDecoder.js is written by Austin Cheney.  Use of this function
  requires that credit be given to Austin Cheney.
@@ -178,16 +170,17 @@ License:
 
  -----------------------------------------------------------------------
  * The code mentioned above has significantly expanded documentation in
- each of the respective function's external JS file as linked from the
- documentation page:
+ each of the respective function's external JS file as linked above and
+ from the documentation page:
  <http://prettydiff.com/documentation.php>
 
- * The compilation of cssClean, csvbeauty, csvmin, jsmin, jsdifflib,
- markup_beauty, markupmin, and js-beautify in this manner is a result of
- the prettydiff() function contained in prettydiff.js.  The per
- character highlighting is the result of the charcomp() function also
- contained in prettydiff.js. Any use or redistribution of these
- functions must mention the following:
+ * The compilation of csspretty, csvbeauty, csvmin, jspretty, jsdifflib,
+ markup_beauty, and markupmin in this manner is a result of the
+ prettydiff() function contained in prettydiff.js.  The per character
+ highlighting is the result of the charcomp() function also contained in
+ prettydiff.js. Any use or redistribution of these functions must
+ mention the following:
+ 
  Prettydiff created by Austin Cheney originally on 3 Mar 2009.
  <http://prettydiff.com/>
 
