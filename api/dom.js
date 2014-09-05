@@ -1,4 +1,4 @@
-/*prettydiff.com api.topcoms: true*/
+/*prettydiff.com api.topcoms: true, api.inchar: " ", api.insize: 4, api.vertical: true */
 /*jslint nomen: true */
 /*global edition, document, localStorage, window, prettydiff, markup_beauty, cleanCSS, jsmin, csvbeauty, csvmin, markupmin, jspretty, diffview, XMLHttpRequest, location, ActiveXObject, FileReader, navigator, setTimeout, codeMirror*/
 /***********************************************************************
@@ -685,7 +685,7 @@ var exports = "",
                     pd.o.announce.innerHTML   = "Language is set to <strong>auto</strong>. Presumed language is <em>" + lang + "</em>.";
                 }
                 if (autotest === true) {
-                    api.lang === "auto";
+                    api.lang = "auto";
                 } else {
                     pd.o.announce.innerHTML = "";
                 }
@@ -1025,7 +1025,8 @@ var exports = "",
                     offset      = {},
                     quantity    = pd.$$("beau-quan"),
                     style       = {},
-                    wrap        = {};
+                    wrap        = {},
+                    vertical    = {};
                 if (pd.o.codeBeauIn !== null) {
                     if (pd.test.cm === true) {
                         api.source = pd.cm.beauIn.getValue();
@@ -1068,6 +1069,7 @@ var exports = "",
                     jsscope      = pd.$$("jsscope-yes");
                     jsspace      = pd.$$("jsspace-no");
                     offset       = pd.$$("jsinlevel");
+                    vertical     = pd.$$("vertical-yes");
                     api.correct  = (jscorrect === null || jscorrect.checked === false) ? false : true;
                     api.elseline = (elseline === null || elseline.checked === false) ? false : true;
                     api.indent   = (indent === null || indent.checked === false) ? "knr" : "allman";
@@ -1075,6 +1077,7 @@ var exports = "",
                     api.jsscope  = (jsscope === null || jsscope.checked === false) ? false : true;
                     api.preserve = (emptyLines === null || emptyLines.checked === false) ? true : false;
                     api.space    = (jsspace === null || jsspace.checked === false) ? true : false;
+                    api.vertical = (vertical === null || vertical.checked === false) ? false : true;
                 }
                 if (api.lang === "auto" || api.lang === "markup" || api.lang === "html" || api.lang === "xml" || api.lang === "jstl") {
                     forceIndent      = pd.$$("bforce_indent-yes");
@@ -1151,7 +1154,7 @@ var exports = "",
                 pd.o.codeDiffNew  = pd.$$("newText");
                 api.content       = (content === null || content.checked === false) ? false : true;
                 api.context       = (context !== null && context.value !== "" && isNaN(context.value) === false) ? Number(context.value) : "";
-                api.diffcomments  = (comments !== null && comments.checked === true) ? true : false;
+                api.diffcomments  = (comments === null || comments.checked === false) ? false : true;
                 api.difflabel     = (newLabel === null) ? "new" : newLabel.value;
                 api.diffview      = (inline === null || inline.checked === false) ? "sidebyside" : "inline";
                 api.indent        = (indent === null || indent.checked === false) ? "knr" : "allman";
@@ -3144,7 +3147,7 @@ var exports = "",
                         "api.diffview", "sidebyside"
                     ];
                 }
-                if (id === "topcoms") {
+                if (id === "topcoms-yes") {
                     data = [
                         "api.topcoms", "true"
                     ];
@@ -3152,6 +3155,16 @@ var exports = "",
                 if (id === "topcoms-no") {
                     data = [
                         "api.topcoms", "false"
+                    ];
+                }
+                if (id === "vertical-yes") {
+                    data = [
+                        "api.vertical", "true"
+                    ];
+                }
+                if (id === "vertical-no") {
+                    data = [
+                        "api.vertical", "false"
                     ];
                 }
                 if (data.length === 0) {

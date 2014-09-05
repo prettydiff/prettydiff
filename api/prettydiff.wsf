@@ -96,6 +96,8 @@
                             error.push("");
                             error.push("* topcoms      - boolean - If mode is 'minify' this determines whether comments above the first line of code should be kept. Default is false.");
                             error.push("");
+                            error.push("* vertical     - boolean - If you ever wanted to see your object properties, variable lists, or assignment lists vertically aligned for faster and easier reading this option is for you. It accepts boolean values and defaults to");
+                            error.push("");
                             error.push("* wrap         - string  - The number of characters text content in a markup document is allowed before wrapping onto a new line.  Default is 0 which disables text wrapping.");
                             error.push("");
                             //error.push("* readmethod   - string  - The readmethod determines the quantity of files to read. The default value is 'file' which will operate against a single file. The value 'file' requires that you point to an actual file for the source and diff arguments. The values 'directory' and 'subdirectory' require directories for values to source and diff. The value 'directory' will include all files location in the target directory, but not any child directories.");
@@ -269,7 +271,8 @@
                     args.sourcelabel = WScript.Arguments.Named("sourcelabel") || "base";
                     args.space = (WScript.Arguments.Named("space") === "false" || WScript.Arguments.Named("space") === false) ? false : true;
                     args.style = (WScript.Arguments.Named("style")) ? "noindent" : "indent";
-                    args.topcoms = (WScript.Arguments.Named("topcoms") === "true" || WScript.Arguments.Named("topcoms") === true) ? true : false;
+                    args.topcoms = (WScript.Arguments.Named("topcoms") === "false" || WScript.Arguments.Named("topcoms") === false) ? false : true;
+                    args.vertical = (WScript.Arguments.Named("vertical") === "true" || WScript.Arguments.Named("vertical") === true) ? true : false;
                     args.wrap = (isNaN(WScript.Arguments.Named("force_indent"))) ? 0 : WScript.Arguments.Named("force_indent");
                     color = WScript.Arguments.Named("color") || "shadow";
                     args.inchar = args.inchar.replace(/\\t/g, "\u0009").replace(/\\n/g, "\u000a").replace(/\\r/g, "\u000d").replace(/\\f/g, "\u000c").replace(/\\b/g, "\u0008");
