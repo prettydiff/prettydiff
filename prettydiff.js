@@ -511,8 +511,27 @@ var prettydiff = function prettydiff(api) {
                                 if (type === "start") {
                                     stats.selectors.count += 1;
                                     stats.selectors.chars += itemsize;
-                                    types[aa]             = "selector";
-                                    token[aa]             = token[aa].replace(/\s*\,\s*/g, ",");
+                                    if (types[aa - 1] !== "comment" && types[aa - 1] !== "comment-inline" && types[aa - 1] !== "end" && types[aa - 1] !== "start" && types[aa - 1] !== "semi" && types[aa - 1] !== undefined) {
+                                        (function csspretty__tokenize_item_selparts() {
+                                            var parts = [],
+                                                cc    = aa,
+                                                dd    = 0;
+                                            do {
+                                                parts.push(token[cc]);
+                                                cc -= 1;
+                                            } while (types[cc] !== "comment" && types[cc] !== "comment-inline" && types[cc] !== "end" && types[cc] !== "start" && types[cc] !== "semi" && types[cc] !== undefined);
+                                            parts.reverse();
+                                            cc += 1;
+                                            dd = aa - cc;
+                                            token.splice(cc, dd);
+                                            types.splice(cc, dd);
+                                            aa        -= dd;
+                                            token[aa] = parts.join("").replace(/\s*\,(\s*)/g, ",");
+                                        }());
+                                    } else {
+                                        token[aa] = token[aa].replace(/\s*\,(\s*)/g, ",");
+                                    }
+                                    types[aa] = "selector";
                                 } else if (type === "end") {
                                     types[aa] = "value";
                                     if (smode !== "diff") {
@@ -668,7 +687,7 @@ var prettydiff = function prettydiff(api) {
                             types.push("item");
                             token.push(out.join("").replace(/\s+/g, " ").replace(/^\s/, "").replace(/\s$/, ""));
                         },
-                        properties = function csspretty__tokenize_properties() {
+                        properties = function csspretty__tokenize_properties() { //console.log(token);console.log(types);
                             var aa    = 0,
                                 bb    = 1,
                                 cc    = 0,
@@ -1152,7 +1171,7 @@ var prettydiff = function prettydiff(api) {
                 return output;
             },
             jspretty      = function jspretty(args) {
-                var jsource     = (typeof args.source === "string" && args.source.length > 0) ? args.source + " " : "Error: no source code supplied to jspretty!",
+                var jsource    = (typeof args.source === "string" && args.source.length > 0) ? args.source + " " : "Error: no source code supplied to jspretty!",
                     jbrace     = (args.braces === "allman") ? true : false,
                     jchar      = (typeof args.inchar === "string" && args.inchar.length > 0) ? args.inchar : " ",
                     jcomment   = (args.comments === "noindent") ? "noindent" : (args.comments === "nocomment") ? "nocomment" : "indent",
@@ -2211,7 +2230,7 @@ var prettydiff = function prettydiff(api) {
                                     token.pop();
                                     token.pop();
                                     types.pop();
-                                    types.pop();
+                                    tyoes.pop();
                                     types.pop();
                                     types.pop();
                                     token.push("[");
@@ -9524,7 +9543,7 @@ var prettydiff = function prettydiff(api) {
     edition    = {
         charDecoder  : 131224, //charDecoder library
         css          : 140806, //diffview.css file
-        csspretty    : 140904, //csspretty library
+        csspretty    : 140907, //csspretty library
         csvbeauty    : 140114, //csvbeauty library
         csvmin       : 131224, //csvmin library
         diffview     : 140827, //diffview library
@@ -9532,7 +9551,7 @@ var prettydiff = function prettydiff(api) {
         jspretty     : 140904, //jspretty library
         markup_beauty: 140705, //markup_beauty library
         markupmin    : 140705, //markupmin library
-        prettydiff   : 140904, //this file
+        prettydiff   : 140907, //this file
         webtool      : 140806, //prettydiff.com.xhtml
         api          : {
             dom        : 140904,
