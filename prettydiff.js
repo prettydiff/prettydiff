@@ -2230,7 +2230,7 @@ var prettydiff = function prettydiff(api) {
                                     token.pop();
                                     token.pop();
                                     types.pop();
-                                    tyoes.pop();
+                                    types.pop();
                                     types.pop();
                                     types.pop();
                                     token.push("[");
