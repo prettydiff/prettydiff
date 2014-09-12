@@ -9536,19 +9536,19 @@ var prettydiff = function prettydiff(api) {
     //the edition values use the format YYMMDD for dates.
     edition    = {
         charDecoder  : 131224, //charDecoder library
-        css          : 140806, //diffview.css file
+        css          : 140912, //diffview.css file
         csspretty    : 140911, //csspretty library
         csvbeauty    : 140114, //csvbeauty library
         csvmin       : 131224, //csvmin library
         diffview     : 140827, //diffview library
-        documentation: 140911, //documentation.xhtml
+        documentation: 140912, //documentation.xhtml
         jspretty     : 140911, //jspretty library
         markup_beauty: 140911, //markup_beauty library
         markupmin    : 140911, //markupmin library
         prettydiff   : 140911, //this file
         webtool      : 140911, //prettydiff.com.xhtml
         api          : {
-            dom        : 140911,
+            dom        : 140912,
             nodeLocal  : 140911,
             wsh        : 140911
         },

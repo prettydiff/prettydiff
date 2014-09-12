@@ -2918,6 +2918,16 @@ var exports = "",
             (function dom__options_comment() {
                 var a    = 0,
                     data = [];
+                if (id === "daplhasort-no" || id === "balphasort-no" || id === "malphasort-no") {
+                    data = [
+                        "api.alphasort", "false"
+                    ];
+                }
+                if (id === "daplhasort-yes" || id === "balphasort-yes" || id === "malphasort-yes") {
+                    data = [
+                        "api.alphasort", "true"
+                    ];
+                }
                 if (id === "baselabel") {
                     data = [
                         "api.sourcelabel", "\"" + item.value + "\""
@@ -4452,13 +4462,6 @@ var exports = "",
                             break;
                         case "node-local.js":
                             date               = edition.api.nodeLocal;
-                            dateCell.innerHTML = conversion(date);
-                            dateList.push([
-                                date, row[b].innerHTML
-                            ]);
-                            break;
-                        case "node-service.js":
-                            date               = edition.api.nodeService;
                             dateCell.innerHTML = conversion(date);
                             dateList.push([
                                 date, row[b].innerHTML

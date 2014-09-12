@@ -83,13 +83,7 @@
                         <li><a href="#pd_diffoptions">Diff Options</a></li>
                     </ol>
                 </li>
-                <li><a href="#external">External Resources</a>
-                    <ol>
-                        <li><a href="#ext_validation">Validation</a></li>
-                        <li><a href="#ext_documenation">Documentation</a></li>
-                        <li><a href="#ext_editors">Editors</a></li>
-                    </ol>
-                </li>
+                <li><a href="#checklist_option">Checklist - Adding New Options</a></li>
                 <li><a href="#components">Component Files</a></li>
             </ol>
         </div>
@@ -991,42 +985,45 @@
                     code is beautified and before diff operation execution.</p>
             </div>
         </div>
-        <div id="external"><h2>External Resources</h2>
-            <div id="ext_validation"><h3>Validation</h3>
-                <ul>
-                    <li><a href="http://jslint.com/">JSLint</a>
-                        is recommend for JavaScript as the most complete source of automated
-                        JavaScript validation.</li>
-                    <li><a href="http://jshint.com/">JSHint</a>
-                        is a fork of JSLint.</li>
-                    <li><a href="http://validator.w3.org/">W3C Markup Validation Service</a>
-                        is recommended as the most complete validation source for all variants of
-                        (X)HTML.</li>
-                    <li><a href="http://jigsaw.w3.org/css-validator/">W3C CSS Validation
-                        Service</a>
-                        is recommended as the most accurate CSS validation application.</li>
-                </ul>
-            </div>
-            <div id="ext_documentation"><h3>Documentation</h3>
-                <ul>
-                    <li><a href="http://naturaldocs.org/">Natural Docs</a>
-                        is a tool for automatically grabbing, archiving, sorting, and formatting
-                        code documentation.</li>
-                    <li><a href="http://openjsan.org/">JSAN</a>
-                        is an online archive of JavaScript application modules and documentation
-                        schemes.</li>
-                </ul>
-            </div>
-            <div id="ext_editors"><h3>Editors</h3>
-                <ul>
-                    <li><a href="http://www.miscutil.com/apps/xmleditor/">aws XML Editor</a>
-                        is an XML tree viewer and editor written in JavaScript and proxy for
-                        conversion to JSON.</li>
-                    <li><a href="http://notepad-plus-plus.org/">Notepad ++</a>
-                        is an open source code editor that is light weight and supports syntax
-                        highlighting for more than 30 languages.</li>
-                </ul>
-            </div>
+        <div id="checklist_option"><h2>Checklist - Adding New Options</h2>
+            <ol>
+                <li>Define the option in this documentation file.</li>
+                <li>Add the new option to Prettydiff's <em>core</em> function.
+                    <ol>
+                        <li>Define the options default with a variable at the top of <em>core</em>.</li>
+                        <li>Add the new option, and its values, to the <em>pdcomment</em> child function.</li>
+                        <li>Add the new option to each appropriate library reference for each appropriate mode.</li>
+                    </ol>
+                </li>
+                <li>Add the new option to the appropriate library files.
+                    <ol>
+                        <li>Write a brief description of the new option in the libraries' top comments.</li>
+                        <li>Define the option's default using a variable at the top of the library.</li>
+                        <li>Add the appropriate functionality to the library for the option to do its job.</li>
+                    </ol>
+                </li>
+                <li>Add the new option to node-local.js and prettydiff.wsf.
+                    <ol>
+                        <li>Add the new option to the <em>help/error</em> documentation.</li>
+                        <li>Add the new option to the default option list.</li>
+                        <li>Define the new option's default by using an assignment to a property on the object passed into Prettydiff.</li>
+                    </ol>
+                </li>
+                <li>Add the new option to dom.js.
+                    <ol>
+                        <li>Add the new object to the appropriate modes in the <em>recycle</em> function to be passed to Prettydiff.</li>
+                        <li>Add the new object to the <em>options</em> function to build out the option string that displays in the web tool.</li>
+                    </ol>
+                </li>
+                <li>Add the new option to the HTML (prettydiff.com.xhtml) for each mode as appropriate.</li>
+                <li>Test the new option.
+                    <ol>
+                        <li>Verify the option works as intended for each point of interaction added to the HTML.</li>
+                        <li>Verify the option is added to the option string.</li>
+                        <li>Verify the change of interaction on the HTML is saved by clearing cache and refreshing the page.</li>
+                    </ol>
+                </li>
+            </ol>
         </div>
         <div id="components"><h2>Components Files</h2>
             <table summary="components, authors, and dates of modification"><caption>A
@@ -1165,7 +1162,7 @@
                 </tbody>
             </table>
             <p>Please send comments, feedback, and requests to
-                <a href="mailto:austin.cheney@us.army.mil">austin.cheney@us.army.mil</a>.</p>
+                <a href="mailto:edward.a.cheney.mil@mail.mil">edward.a.cheney.mil@mail.mil</a>.</p>
         </div>
         <script src="prettydiff.js" type="application/javascript"></script>
         <script src="api/dom.js" type="application/javascript"></script>
