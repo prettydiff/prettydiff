@@ -25,6 +25,8 @@
                         if (WScript.Arguments.Count() === 0 || help === true) {
                             error.push("Arguments      - Type    - Definition");
                             error.push("-------------------------------------");
+                            error.push("* alphasort    - boolean - If true items will be sorted by type and then alphabetically in their respective scope. Defaults to false. Perfectly safe in CSS but considered harmful in LESS and SASS.");
+                            error.push("");
                             error.push("* color        - string  - The color scheme of the reports. Default is shadow.");
                             error.push("                 Accepted values: default, coffee, dark, canvas, shadow, white");
                             error.push("");
@@ -245,6 +247,7 @@
                 }
                 if (fail === false) {
                     args.api = "wsf";
+                    args.alphasort = (WScript.Arguments.Named("alphasort") === "true" || WScript.Arguments.Named("alphasort") === true) ? true : false;
                     args.comments = (WScript.Arguments.Named("comments") === "noindent") ? "noindent" : "indent";
                     args.conditional = (WScript.Arguments.Named("conditional") === "true" || WScript.Arguments.Named("conditional") === true) ? true : false;
                     args.content = (WScript.Arguments.Named("content") === "true" || WScript.Arguments.Named("content") === true) ? true : false;

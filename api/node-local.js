@@ -59,6 +59,7 @@ Examples:
             0, 0, 0, 0
         ],
         options       = {
+            alphasort   : false,
             color       : "white",
             comments    : "indent",
             conditional : false,
@@ -303,6 +304,11 @@ Examples:
             var a = [];
             a.push("Arguments      - Type    - Definition");
             a.push("-------------------------------------");
+            a.push("* alphasort    - boolean - If true items will be sorted by type and then");
+            a.push("                           alphabetically in their respective scope. Defaults");
+            a.push("                           to false. Perfectly safe in CSS but considered");
+            a.push("                           harmful in LESS and SASS.");
+            a.push("");
             a.push("* color        - string  - The color scheme of the reports. Default is shadow.");
             a.push("                 Accepted values: default, coffee, dark, canvas, shadow, white");
             a.push("");
@@ -573,6 +579,9 @@ Examples:
                 if (d[b].length === 2) {
                     if (d[b][0] === "" && d[b][1] === "help") {
                         help = true;
+                    }
+                    if (d[b][0] === "alphasort" && d[b][1] === "true") {
+                        options.alphasort = true;
                     }
                     if (d[b][0] === "color" && (d[b][1] === "default" || d[b][1] === "coffee" || d[b][1] === "dark" || d[b][1] === "canvas" || d[b][1] === "white")) {
                         options.color = d[b][1];

@@ -680,7 +680,7 @@ var exports = "",
                 } else {
                     lang = api.lang;
                 }
-                if (pd.o.announce !== null && pd.o.announce.innerHTML !== pd.o.announcetext) {
+                if (autotest === true && pd.o.announce !== null && pd.o.announce.innerHTML !== pd.o.announcetext) {
                     pd.o.announce.style.color = "#00f";
                     pd.o.announce.innerHTML   = "Language is set to <strong>auto</strong>. Presumed language is <em>" + lang + "</em>.";
                 }
@@ -719,8 +719,7 @@ var exports = "",
                     if (pd.o.report.beau.box !== null) {
                         if (output[1] !== "") {
                             if (autotest === true) {
-                                output[1] = output[1].replace("seconds </em></p>", "seconds </em></p> <p>Language is set to <strong>auto</strong>. Presumed language is <em>" + api.lang + "</em>.</p>");
-                                api.lang  = "auto";
+                                output[1] = output[1].replace("seconds </em></p>", "seconds </em></p> <p>Language is set to <strong>auto</strong>. Presumed language is <em>" + lang + "</em>.</p>");
                             }
                             pd.o.report.beau.body.innerHTML    = output[1];
                             pd.o.report.beau.box.style.zIndex  = pd.zIndex;
@@ -819,7 +818,7 @@ var exports = "",
                         pd.o.announce.innerHTML = "";
                     }
                     if (autotest === true) {
-                        output[1] = output[1].replace("seconds </em></p>", "seconds </em></p> <p>Language is set to <strong>auto</strong>. Presumed language is <em>" + api.lang + "</em>.</p>");
+                        output[1] = output[1].replace("seconds </em></p>", "seconds </em></p> <p>Language is set to <strong>auto</strong>. Presumed language is <em>" + lang + "</em>.</p>");
                         api.lang  = "auto";
                     }
                     buttons = pd.o.report.diff.box.getElementsByTagName("p")[0].getElementsByTagName("button");
@@ -916,6 +915,7 @@ var exports = "",
                 if (pd.test.ls === true) {
                     (function dom__recycle_stats() {
                         var size = 0;
+                        lang = lang.toLowerCase();
                         if (lang === "csv") {
                             pd.stat.csv += 1;
                             node        = pd.$$("stcsv");
@@ -934,7 +934,7 @@ var exports = "",
                             if (node !== null) {
                                 node.innerHTML = pd.stat.js;
                             }
-                        } else if (lang === "markup" || lang === "html") {
+                        } else if (lang === "markup" || lang === "html" || lang === "xml") {
                             pd.stat.markup += 1;
                             node           = pd.$$("stmarkup");
                             if (node !== null) {
@@ -1012,7 +1012,8 @@ var exports = "",
                 }
             }
             (function dom__recycle_beautify() {
-                var comments    = pd.$$("incomment-no"),
+                var alphasort   = pd.$$("balphasort-yes"),
+                    comments    = pd.$$("incomment-no"),
                     chars       = pd.$$("beau-space"),
                     emptyLines  = {},
                     elseline    = {},
@@ -1034,8 +1035,9 @@ var exports = "",
                         api.source = pd.o.codeBeauIn.value;
                     }
                 }
-                api.comments = (comments === null || comments.checked === false) ? false : true;
-                api.insize   = (quantity === null || isNaN(quantity.value) === true) ? 4 : Number(quantity.value);
+                api.alphasort = (alphasort === null || alphasort.checked === false) ? false : true;
+                api.comments  = (comments === null || comments.checked === false) ? false : true;
+                api.insize    = (quantity === null || isNaN(quantity.value) === true) ? 4 : Number(quantity.value);
                 if (chars === null || chars.checked === false) {
                     chars = pd.$$("beau-tab");
                     if (chars === null || chars.checked === false) {
@@ -1103,7 +1105,8 @@ var exports = "",
                 }
             }
             (function dom__recycle_minify() {
-                var conditional = pd.$$("conditionalm-yes"),
+                var alphasort   = pd.$$("malphasort-yes"),
+                    conditional = pd.$$("conditionalm-yes"),
                     html        = pd.$$("htmlm-yes"),
                     topcoms     = pd.$$("topcoms-yes"),
                     obfuscate   = pd.$$("obfuscate-yes");
@@ -1115,6 +1118,7 @@ var exports = "",
                         api.source = pd.o.codeMinnIn.value;
                     }
                 }
+                api.alphasort   = (alphasort === null || alphasort.checked === false) ? false : true;
                 api.conditional = (conditional === null || conditional.checked === false) ? false : true;
                 api.html        = (html === null || html.checked === false) ? false : true;
                 api.topcoms     = (topcoms === null || topcoms.checked === false) ? false : true;
@@ -1123,7 +1127,7 @@ var exports = "",
             api.mode = "minify";
         }
         if (pd.mode === "diff") {
-            if (typeof prettydiff !== "function") {
+            if (typeof prettydiff !== "function" && diffview !== undefined) {
                 pd.application = diffview;
             }
             if (typeof pd.application !== "function") {
@@ -1131,7 +1135,8 @@ var exports = "",
             }
             api.jsscope = false;
             (function dom__recycle_diff() {
-                var baseLabel   = pd.$$("baselabel"),
+                var alphasort   = pd.$$("dalphasort-yes"),
+                    baseLabel   = pd.$$("baselabel"),
                     comments    = pd.$$("diffcommentsy"),
                     chars       = pd.$$("diff-space"),
                     conditional = {},
@@ -1152,9 +1157,10 @@ var exports = "",
                     wrap        = {};
                 pd.o.codeDiffBase = pd.$$("baseText");
                 pd.o.codeDiffNew  = pd.$$("newText");
+                api.alphasort     = (alphasort === null || alphasort.checked === false) ? false : true;
                 api.content       = (content === null || content.checked === false) ? false : true;
                 api.context       = (context !== null && context.value !== "" && isNaN(context.value) === false) ? Number(context.value) : "";
-                api.diffcomments  = (comments === null || comments.checked === false) ? false : true;
+                api.diffcomments  = (comments === null || comments.checked === true) ? true : false;
                 api.difflabel     = (newLabel === null) ? "new" : newLabel.value;
                 api.diffview      = (inline === null || inline.checked === false) ? "sidebyside" : "inline";
                 api.indent        = (indent === null || indent.checked === false) ? "knr" : "allman";
@@ -4013,10 +4019,13 @@ var exports = "",
                     inputs[a].click();
                 }
             }
-            inputs    = pd.$$("thirdparties").getElementsByTagName("a");
-            inputsLen = inputs.length;
-            for (a = 0; a < inputsLen; a += 1) {
-                inputs[a].onclick = thirdparty;
+            node = pd.$$("thirdparties");
+            if (node !== null) {
+                inputs    = node.getElementsByTagName("a");
+                inputsLen = inputs.length;
+                for (a = 0; a < inputsLen; a += 1) {
+                    inputs[a].onclick = thirdparty;
+                }
             }
             //webkit users get sucky textareas, because they refuse to
             //accept bugs related to long scrolling errors
