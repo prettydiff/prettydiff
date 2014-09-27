@@ -389,6 +389,16 @@
                         Any string is accepted, but this property is only used if the mode
                         property is set to
                         <em>"diff"</em>.</li>
+                    <li>diffcli - An option only available from the node-local.js API file
+                        for Node.js. This option will output a list of differences in color to
+                        the console. If more than one file is compared it will indicate which
+                        files are deleted or new. It takes a boolean and defaults to false. If
+                        the
+                        <em>output</em>
+                        option is omitted the diffcli option is assigned a value of true. If true
+                        and the
+                        <em>context</em>
+                        option is omitted it will default to a value of "2".</li>
                     <li>diffcomments - Use this argument to retain code comments so that
                         code and comments can be compared by the diff process. This property
                         takes boolean types and defaults to false.</li>
@@ -988,39 +998,59 @@
         <div id="checklist_option"><h2>Checklist - Adding New Options</h2>
             <ol>
                 <li>Define the option in this documentation file.</li>
-                <li>Add the new option to Prettydiff's <em>core</em> function.
+                <li>Add the new option to Prettydiff's
+                    <em>core</em>
+                    function. 
                     <ol>
-                        <li>Define the options default with a variable at the top of <em>core</em>.</li>
-                        <li>Add the new option, and its values, to the <em>pdcomment</em> child function.</li>
-                        <li>Add the new option to each appropriate library reference for each appropriate mode.</li>
+                        <li>Define the options default with a variable at the top of
+                            <em>core</em>.</li>
+                        <li>Add the new option, and its values, to the
+                            <em>pdcomment</em>
+                            child function.</li>
+                        <li>Add the new option to each appropriate library reference for each
+                            appropriate mode.</li>
                     </ol>
                 </li>
                 <li>Add the new option to the appropriate library files.
                     <ol>
-                        <li>Write a brief description of the new option in the libraries' top comments.</li>
-                        <li>Define the option's default using a variable at the top of the library.</li>
-                        <li>Add the appropriate functionality to the library for the option to do its job.</li>
+                        <li>Write a brief description of the new option in the libraries' top
+                            comments.</li>
+                        <li>Define the option's default using a variable at the top of the
+                            library.</li>
+                        <li>Add the appropriate functionality to the library for the option to
+                            do its job.</li>
                     </ol>
                 </li>
                 <li>Add the new option to node-local.js and prettydiff.wsf.
                     <ol>
-                        <li>Add the new option to the <em>help/error</em> documentation.</li>
+                        <li>Add the new option to the
+                            <em>help/error</em>
+                            documentation.</li>
                         <li>Add the new option to the default option list.</li>
-                        <li>Define the new option's default by using an assignment to a property on the object passed into Prettydiff.</li>
+                        <li>Define the new option's default by using an assignment to a property
+                            on the object passed into Prettydiff.</li>
                     </ol>
                 </li>
                 <li>Add the new option to dom.js.
                     <ol>
-                        <li>Add the new object to the appropriate modes in the <em>recycle</em> function to be passed to Prettydiff.</li>
-                        <li>Add the new object to the <em>options</em> function to build out the option string that displays in the web tool.</li>
+                        <li>Add the new object to the appropriate modes in the
+                            <em>recycle</em>
+                            function to be passed to Prettydiff.</li>
+                        <li>Add the new object to the
+                            <em>options</em>
+                            function to build out the option string that displays in the web
+                            tool.</li>
                     </ol>
                 </li>
-                <li>Add the new option to the HTML (prettydiff.com.xhtml) for each mode as appropriate.</li>
+                <li>Add the new option to the HTML (prettydiff.com.xhtml) for each mode
+                    as appropriate.</li>
                 <li>Test the new option.
                     <ol>
-                        <li>Verify the option works as intended for each point of interaction added to the HTML.</li>
+                        <li>Verify the option works as intended for each point of interaction
+                            added to the HTML.</li>
                         <li>Verify the option is added to the option string.</li>
-                        <li>Verify the change of interaction on the HTML is saved by clearing cache and refreshing the page.</li>
+                        <li>Verify the change of interaction on the HTML is saved by clearing
+                            cache and refreshing the page.</li>
                     </ol>
                 </li>
             </ol>

@@ -40,8 +40,11 @@ Examples:
         dfiledump     = [],
         sState        = [],
         dState        = [],
+        clidata       = [
+            [], []
+        ],
         slash         = ((/^([a-zA-Z]:\\)/).test(cwd) === true) ? "\\" : "/",
-        method        = "",
+        method        = "auto",
         startTime     = Date.now(),
         dir           = [
             0, 0, 0
@@ -56,7 +59,7 @@ Examples:
         },
         help          = false,
         diffCount     = [
-            0, 0, 0, 0
+            0, 0
         ],
         options       = {
             alphasort   : false,
@@ -68,6 +71,7 @@ Examples:
             correct     : false,
             csvchar     : ",",
             diff        : "",
+            diffcli     : false,
             diffcomments: false,
             difflabel   : "new",
             diffview    : "sidebyside",
@@ -96,7 +100,26 @@ Examples:
             vertical    : false,
             wrap        : 0
         },
+        colors = {
+            del: {
+                lineStart: "\x1B[31m",
+                lineEnd  : "\x1B[39m",
+                charStart: "\x1B[1m",
+                charEnd  : "\x1B[22m"
+            },
+            ins: {
+                lineStart: "\x1B[32m",
+                lineEnd  : "\x1B[39m",
+                charStart: "\x1B[1m",
+                charEnd  : "\x1B[22m"
+            },
+            filepath: {
+                start: "\x1B[36m",
+                end  : "\x1B[39m"
+            }
+        },
 
+        //ending messaging with stats
         ender     = function () {
             var plural = (function () {
                     var a = 0,
@@ -108,6 +131,16 @@ Examples:
                         } else {
                             arr.push("s");
                         }
+                    }
+                    if (clidata[1].length === 1) {
+                        arr.push("");
+                    } else {
+                        arr.push("s");
+                    }
+                    if (clidata[0].length === 1) {
+                        arr.push("");
+                    } else {
+                        arr.push("s");
                     }
                     return arr;
                 }()),
@@ -126,7 +159,23 @@ Examples:
             } else {
                 diffCount.push(sfiledump.length + " files");
             }
-            log.push("\nPretty Diff ");
+            if (options.diffcli === true && options.mode === "diff") {
+                if (clidata[0].length > 0) {
+                    log.push("\nFiles deleted:\n")
+                    log.push(colors.del.lineStart);
+                    log.push(clidata[0].join("\n"));
+                    log.push(colors.del.lineEnd);
+                    log.push("\n\n");
+                }
+                if (clidata[1].length > 0) {
+                    log.push("\nFiles inserted:\n");
+                    log.push(colors.ins.lineStart);
+                    log.push(clidata[1].join("\n"));
+                    log.push(colors.ins.lineEnd);
+                    log.push("\n\n");
+                }
+            }
+            log.push("Pretty Diff ");
             if (options.mode === "diff") {
                 log.push("found ");
                 log.push(diffCount[0]);
@@ -135,7 +184,7 @@ Examples:
                 log.push(" in ");
                 log.push(diffCount[1]);
                 log.push(" file");
-                log.push(plural[0]);
+                log.push(plural[1]);
                 log.push(" out of ");
             } else if (options.mode === "beautify") {
                 log.push("beautified ");
@@ -144,12 +193,12 @@ Examples:
             }
             log.push(diffCount[diffCount.length - 1]);
             log.push(". ");
-            if (options.mode === "diff") {
-                log.push(diffCount[2]);
-                log.push(" new file");
+            if (options.mode === "diff" && (method === "directory" || method === "subdirectory")) {
+                log.push(clidata[1].length);
+                log.push(" file");
                 log.push(plural[2]);
-                log.push(". ");
-                log.push(diffCount[3]);
+                log.push(" added. ");
+                log.push(clidata[0].length);
                 log.push(" file");
                 log.push(plural[3]);
                 log.push(" deleted. Executed in ");
@@ -162,9 +211,12 @@ Examples:
             if (time !== 1) {
                 log.push("s");
             }
-            log.push(".");
+            log.push(".\n");
             console.log(log.join(""));
         },
+
+        //extract errorcount from diff
+        //report files for ender stats
         counter       = function (x) {
             var num = Number(x.substring(14, x.indexOf("</em>")));
             if (num > 0) {
@@ -230,75 +282,6 @@ Examples:
             ];
         },
 
-        //write output to a file
-        //executed from fileComplete
-        fileWrite   = function (data) {
-            var dirs      = data.localpath.split(slash),
-                suffix    = (options.mode === "diff") ? "-diff.html" : "-report.html",
-                filename  = dirs[dirs.length - 1],
-                count     = 1,
-                finalpath = "",
-                report    = [
-                    "", ""
-                ],
-                writing   = function (ending) {
-                    fs.writeFile(address.oabspath + slash + finalpath + ending, report[0], function (err) {
-                        if (err !== null) {
-                            console.log("\nError writing report output.\n");
-                            console.log(err);
-                        } else if (method === "file") {
-                            console.log("\nReport successfully written to file.");
-                        }
-                    });
-                },
-                files  = function () {
-                    if (options.mode === "diff" || (options.mode === "beautify" && options.jsscope === true)) {
-                        writing(suffix);
-                    } else {
-                        if (options.report === true) {
-                            writing(suffix);
-                        }
-                        writing("");
-                    }
-                    if (data.last === true) {
-                        ender();
-                    }
-                },
-                newdir = function () {
-                    fs.mkdir(address.oabspath + slash + dirs.slice(0, count).join(slash), function () {
-                        count += 1;
-                        if (count < dirs.length + 1) {
-                            newdir();
-                        } else {
-                            files();
-                        }
-                    });
-                };
-            dirs.pop();
-            options.source = sfiledump[data.index];
-            if (options.mode === "diff") {
-                finalpath = (dirs.length > 0) ? "__" + dirs.join("__") + "__" + filename : filename;
-                options.diff = dfiledump[data.index];
-            } else {
-                finalpath = (method === "file") ? filename : dirs.join(slash) + slash + filename;
-            }
-            report = reports();
-            if (options.mode === "diff") {
-                report[0].replace(/<strong>Number of differences:<\/strong> <em>\d+<\/em> difference/, counter);
-            }
-            if (report[0].indexOf("Error") === 0) {
-                if (data.last === true) {
-                    ender();
-                }
-                return console.log(report[0]);
-            }
-            if (dirs.length > 0 && options.mode !== "diff") {
-                newdir();
-            } else {
-                files();
-            }
-        },
-
         //instructions
         error         = (function () {
             var a = [];
@@ -343,6 +326,10 @@ Examples:
             a.push("");
             a.push("* diff         - string  - The file to be compared to the source file. This is");
             a.push("                           required if mode is 'diff'.");
+            a.push("");
+            a.push("* diffcli      - boolean - If true only text lines of the code differences are");
+            a.push("                           returned instead of an HTML diff report. Default is");
+            a.push("                           false.");
             a.push("");
             a.push("* diffcomments - boolean - If true then comments will be preserved so that both");
             a.push("                           code and comments are compared by the diff engine.");
@@ -607,6 +594,9 @@ Examples:
                     if (d[b][0] === "diff" && d[b][1].length > 0) {
                         options.diff = pathslash(d[b][0], d[b][1]);
                     }
+                    if (d[b][0] === "diffcli" && d[b][1] === "true") {
+                        options.diffcli = true;
+                    }
                     if (d[b][0] === "diffcomments" && d[b][1] === "true") {
                         options.diffcomments = true;
                     }
@@ -718,6 +708,75 @@ Examples:
             return c;
         }()),
 
+        //write output to a file
+        //executed from fileComplete
+        fileWrite   = function (data) {
+            var dirs      = data.localpath.split(slash),
+                suffix    = (options.mode === "diff") ? "-diff.html" : "-report.html",
+                filename  = dirs[dirs.length - 1],
+                count     = 1,
+                finalpath = "",
+                report    = [
+                    "", ""
+                ],
+                writing   = function (ending) {
+                    fs.writeFile(address.oabspath + slash + finalpath + ending, report[0], function (err) {
+                        if (err !== null) {
+                            console.log("\nError writing report output.\n");
+                            console.log(err);
+                        } else if (method === "file") {
+                            console.log("\nReport successfully written to file.");
+                        }
+                    });
+                },
+                files  = function () {
+                    if (options.mode === "diff" || (options.mode === "beautify" && options.jsscope === true)) {
+                        writing(suffix);
+                    } else {
+                        if (options.report === true) {
+                            writing(suffix);
+                        }
+                        writing("");
+                    }
+                    if (data.last === true) {
+                        ender();
+                    }
+                },
+                newdir = function () {
+                    fs.mkdir(address.oabspath + slash + dirs.slice(0, count).join(slash), function () {
+                        count += 1;
+                        if (count < dirs.length + 1) {
+                            newdir();
+                        } else {
+                            files();
+                        }
+                    });
+                };
+            dirs.pop();
+            options.source = sfiledump[data.index];
+            if (options.mode === "diff") {
+                finalpath = (dirs.length > 0) ? "__" + dirs.join("__") + "__" + filename : filename;
+                options.diff = dfiledump[data.index];
+            } else {
+                finalpath = (method === "file") ? filename : dirs.join(slash) + slash + filename;
+            }
+            report = reports();
+            if (options.mode === "diff") {
+                report[0].replace(/<strong>Number of differences:<\/strong> <em>\d+<\/em> difference/, counter);
+            }
+            if (report[0].indexOf("Error") === 0) {
+                if (data.last === true) {
+                    ender();
+                }
+                return console.log(report[0]);
+            }
+            if (dirs.length > 0 && options.mode !== "diff") {
+                newdir();
+            } else {
+                files();
+            }
+        },
+
         //write output to screen
         //executed from fileComplete
         screenWrite   = function () {
@@ -727,6 +786,54 @@ Examples:
             }
             report = prettydiff.api(options);
             return console.log(report[0]);
+        },
+
+        //write diff output to a command line interface
+        //much like git diff
+        cliWrite = function (data) {
+            var a = 0,
+                b = 0,
+                output = [],
+                pdlen = 0;
+            options.source = sfiledump[data.index];
+            options.diff = dfiledump[data.index];
+            if (options.source.indexOf("undefined") === 0) {
+                options.source = options.source.replace("undefined", "");
+            }
+            if (options.diff.indexOf("undefined") === 0) {
+                options.diff = options.diff.replace("undefined", "");
+            }
+            if (typeof options.context !== "number" || options.context < 0) {
+                console.log("\n" + colors.filepath.start + data.localpath + colors.filepath.end);
+            }
+            output = prettydiff.api(options);
+            diffCount[0] += output[output.length - 1];
+            diffCount[1] += 1;
+            pdlen = output[0].length;
+            if (output[5].length === 0) {
+                console.log("\n" + colors.filepath.start + data.localpath + "\nLine: " + output[0][a] + colors.filepath.end);
+            }
+            for (a = 0; a < pdlen; a += 1) {
+                if (output[5].length > 0 && output[5][b] !== undefined) {
+                    if (output[5][b][0] + 1 === output[0][a]) {
+                        console.log("\n" + colors.filepath.start + data.localpath + "\nLine: " + output[0][a] + colors.filepath.end);
+                        b += 1;
+                    } else if (output[5][b][1] + 1 === output[2][a]) {
+                        console.log("\n" + colors.filepath.start + data.localpath + "\nLine: " + output[2][a] + colors.filepath.end);
+                        b += 1;
+                    }
+                }
+                if (output[4][a] === "delete") {
+                    console.log(colors.del.lineStart + output[1][a].replace(/\x1B/g, "\\x1B").replace(/<p(d)>/g, colors.del.charStart).replace(/<\/pd>/g, colors.del.charEnd) + colors.del.lineEnd);
+                } else if (output[4][a] === "insert") {
+                    console.log(colors.ins.lineStart + output[3][a].replace(/\x1B/g, "\\x1B").replace(/<p(d)>/g, colors.ins.charStart).replace(/<\/pd>/g, colors.ins.charEnd) + colors.ins.lineEnd);
+                } else if (output[4][a] === "equal") {
+                    console.log(output[3][a]);
+                } else if (output[4][a] === "replace") {
+                    console.log(colors.del.lineStart + output[1][a].replace(/\x1B/g, "\\x1B").replace(/<p(d)>/g, colors.del.charStart).replace(/<\/pd>/g, colors.del.charEnd) + colors.del.lineEnd);
+                    console.log(colors.ins.lineStart + output[3][a].replace(/\x1B/g, "\\x1B").replace(/<p(d)>/g, colors.ins.charStart).replace(/<\/pd>/g, colors.ins.charEnd) + colors.ins.lineEnd);
+                }
+            }
         },
 
         //is a file read operation complete?
@@ -744,7 +851,9 @@ Examples:
                 data.last = false;
             }
             if ((options.mode === "diff" && sState[data.index] === true && dState[data.index] === true && sfiledump[data.index] !== dfiledump[data.index]) || (options.mode !== "diff" && sState[data.index] === true)) {
-                if (method === "filescreen") {
+                if (options.diffcli === true) {
+                    cliWrite(data);
+                } else if (method === "filescreen") {
                     screenWrite();
                 } else if (method === "file" || method === "directory" || method === "subdirectory") {
                     fileWrite(data);
@@ -753,7 +862,7 @@ Examples:
                 if (options.mode === "diff") {
                     dState[data.index] = false;
                 }
-            } else if (data.last === true) {
+            } else if (data.last === true && data.type !== "diff") {
                 ender();
             }
         },
@@ -786,6 +895,7 @@ Examples:
                     file[0] += chunk;
                     if (file[0].length === file[1]) {
                         data.file = file[0];
+                        options.source = file[0];
                         fileComplete(data);
                     }
                 });
@@ -861,13 +971,17 @@ Examples:
                                                         });
                                                     } else {
                                                         if (sfiles.path[b] < dfiles.path[b]) {
-                                                            diffCount[3] += 1;
+                                                            if (options.diffcli === true) {
+                                                                clidata[0].push(sfiles.path[b]);
+                                                            }
                                                             if (length === dfiles.path.length) {
                                                                 length += 1;
                                                             }
                                                             dfiles.path.splice(b, 0, "");
                                                         } else if (dfiles.path[b] < sfiles.path[b]) {
-                                                            diffCount[2] += 1;
+                                                            if (options.diffcli === true) {
+                                                                clidata[1].push(dfiles.path[b]);
+                                                            }
                                                             if (length === sfiles.path.length) {
                                                                 length += 1;
                                                             }
@@ -981,8 +1095,11 @@ Examples:
         }
         options.report = true;
     }
-    if (options.output === "") {
-        console.log("No output option is specified, so no files written.\n");
+    if (options.output === "" && options.mode === "diff") {
+        options.diffcli = true;
+        if (process.argv.join(" ").indexOf(" context:") === -1) {
+            options.context = 2;
+        }
     }
     if (method === "file" && options.output === "") {
         return console.log("Error: 'readmethod' is value 'file' and argument 'output' is empty");
@@ -1012,6 +1129,9 @@ Examples:
                         if (options.output === "") {
                             method = "filescreen";
                         } else {
+                            if (options.output === "" && options.mode !== "diff") {
+                                console.log("\x1B[91m\nNo output option is specified, so no files written.\n\x1B[39m");
+                            }
                             method = "file";
                             if (options.output === "") {
                                 return console.log("Error: 'readmethod' is value 'file' and argument 'output' is empty");
