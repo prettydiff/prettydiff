@@ -8656,7 +8656,7 @@ var prettydiff = function prettydiff(api) {
                     apidiffout    = "",
                     builder       = {},
                     //api.alphasort - allows a user to disable alphabetic sorting of properites in css
-                    calphasort    = (api.alphasort === false || api.alphasort === "false") ? false : true,
+                    calphasort    = (api.alphasort === true || api.alphasort === "true") ? true : false,
                     //determines api source as necessary to make a decision about whether to supply externally need JS functions to reports
                     capi          = (api.api === undefined || api.api.length === 0) ? "" : api.api,
                     //api.comments - if comments should receive indentation or not
