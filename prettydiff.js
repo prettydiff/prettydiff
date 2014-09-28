@@ -870,7 +870,7 @@ var prettydiff = function prettydiff(api) {
                                                         }
                                                     }
                                                     token[set[start][2]] = value.join(" ");
-                                                    if (smode === "beautify") {
+                                                    if (smode === "beautify" && svertical === true) {
                                                         if (token[set[start][0]].charAt(token[set[start][0]].length - 1) === " ") {
                                                             yy = token[set[start][0]].length - name.length;
                                                             do {
@@ -9488,7 +9488,7 @@ var prettydiff = function prettydiff(api) {
     edition    = {
         charDecoder  : 131224, //charDecoder library
         css          : 140927, //diffview.css file
-        csspretty    : 140911, //csspretty library
+        csspretty    : 140928, //csspretty library
         csvbeauty    : 140114, //csvbeauty library
         csvmin       : 131224, //csvmin library
         diffview     : 140927, //diffview library
@@ -9496,7 +9496,7 @@ var prettydiff = function prettydiff(api) {
         jspretty     : 140911, //jspretty library
         markup_beauty: 140911, //markup_beauty library
         markupmin    : 140911, //markupmin library
-        prettydiff   : 140927, //this file
+        prettydiff   : 140928, //this file
         webtool      : 140927, //prettydiff.com.xhtml
         api          : {
             dom        : 140927,
