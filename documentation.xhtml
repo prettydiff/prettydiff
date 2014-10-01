@@ -31,18 +31,19 @@
                 <option>Shadow</option>
                 <option selected="selected">White</option></select>
         </p>
+        <p><strong>Since this tool is client-side JavaScript only, meaning that
+            execution occurs on the local computer only and resulting output is not
+            transmitted or stored, it is safe for processing classified
+            information.</strong></p>
         <p>For any questions, comments, requests, or feedback please join the
             <a href="https://groups.google.com/d/forum/pretty-diff">Pretty Diff
                 mailing list</a>.
             Find
             <a href="https://github.com/austincheney/Pretty-Diff">Pretty Diff on
                 GitHub</a>.</p>
-        <p><strong>Since this tool is client-side JavaScript only, meaning that
-            execution occurs on the local computer only and resulting output is not
-            transmitted or stored, it is safe for processing classified
-            information.</strong></p>
         <div id="doc_contents"><h2>Table of Contents</h2>
             <ol>
+                <li><a href="#intro">Introduction</a></li>
                 <li><a href="#knownissues">Known Issues</a></li>
                 <li><a href="#execution">Execution</a></li>
                 <li><a href="#parameters">Web Tool URI Parameters</a></li>
@@ -87,6 +88,20 @@
                 <li><a href="#components">Component Files</a></li>
             </ol>
         </div>
+        <div id="intro"><h2>Introduction</h2>
+            <div><p>This tool was originally created to compare minified code by
+                attaching a beautifier and minifier to a file comparison tool. Over the
+                years it has grown into custom language parsers capable of performing a
+                variety of language analysis. This application is 100% vanilla JavaScript and API independent.</p>
+            <p>Some of the available features:</p>
+            <ul>
+                <li>Full integration with Node.js with full recursive directory analysis just like the traditional diff.c program</li>
+                <li>JavaScript code analysis tool that colors variables by depth of scope up to a depth of 16 functions</li>
+                <li>Vertical alignment of property and variable assignments in beautification of JavaScript and CSS</li>
+                <li>Alphabetizing of attributes in XML/HTML and properties in CSS</li>
+            </ul>
+            </div>
+        </div>
         <div id="knownissues"><h2>Known Issues</h2>
             <ol><li>Webkit browsers, such as Google Chrome and Apple Safari, do not
                 support beautification of white space characters or layout in textarea
@@ -100,9 +115,6 @@
                     "$#gt;", may appear respectively as, "%#lt;" and "%#gt;", if those
                     collections of characters are interrupted by starting or end of a
                     difference.</li>
-                <li>Server-side parsing tags, such as PHP or ASP, are mutilated during
-                    markup beautification and markup minification only if placed inside
-                    segments of JavaScript or CSS.</li>
                 <li>Markup beautification will output flawed data if less than
                     characters, "&lt;", are included into sections of content and not
                     escaped. This error occurs regardless if less than characters embedded

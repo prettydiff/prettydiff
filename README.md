@@ -196,5 +196,3 @@ Acknowledgements
   - JS Pretty widget
  * Andreas Greuel - https://plus.google.com/105958105635636993368/posts
   - diffview.js QA
- * Maria Ramos - http://www.webhostinghub.com/support/es/misc/
-  - Spanish language documentation

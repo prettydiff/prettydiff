@@ -43,6 +43,7 @@
                 <input id="modeminify" name="mode" title="This option tells thetool to return white space compressed code. Force this display by default with the address parameter 'm=minify'." type="radio"/>
                 <label for="modeminify" title="This option tells thetool to return white space compressed code. Force this display by default with the address parameter 'm=minify'.">Minify</label></span>
         </p>
+        <p id="announcement" class="big"></p>
         <p id="update">Updated:
         </p>
         <div id="top">
@@ -77,7 +78,6 @@
                     <li><a href="jspretty.xhtml">JSPretty</a></li>
                     <li><a href="http://g6auc.me.uk/widgets.html">JSPretty Widget</a></li>
                 </ul>
-                <p id="announcement" class="normal">Pretty Diff updated its web interface to support <a href="http://codemirror.com/">CodeMirror</a>, and can be disabled with URI parameter <em>codemirror=false</em>.</p>
                 <span class="clear"></span>
             </div>
         </div>
@@ -294,7 +294,7 @@
                     <p id="difftypep"><label class="label" for="diff-char">Indentation
                         character</label>
                         <span>
-                            <input class="unchecked" id="diff-char" title="Accessibility Note:In order for this field to be accepted by the application the radio button labeled 'Indent with Other Characters' must be checked. This text field allows entry of any text characters to constitute indentation." type="text" value="Click me for custom input"/>
+                            <input class="unchecked" id="diff-char" title="Accessibility Note: In order for this field to be accepted by the application the radio button labeled 'Indent with Other Characters' must be checked. This text field allows entry of any text characters to constitute indentation." type="text" value="Click me for custom input"/>
                         </span>
                         <span id="diff-other-span">
                             <input id="diff-other" name="diffchar" title="This option is only provided for functional reasons so as to enable the 'diff-char' text field and ignore its peer radio buttons from the application." type="radio"/>
@@ -400,7 +400,7 @@
                     </p>
                     <p><label class="label" for="beau-char">Indentation character</label>
                         <span>
-                            <input class="unchecked" id="beau-char" title="Accessibility Note:In order for this field to be accepted by the application the radio button labeled 'Indent with Other Characters' must be checked. This text field allows entry of any text characters to constitute indentation." type="text" value="Click me for custom input"/>
+                            <input class="unchecked" id="beau-char" title="Accessibility Note: In order for this field to be accepted by the application the radio button labeled 'Indent with Other Characters' must be checked. This text field allows entry of any text characters to constitute indentation." type="text" value="Click me for custom input"/>
                         </span>
                         <span id="beau-other-span">
                             <input id="beau-other" name="beauchar" title="This option is only provided for functional reasons so as to enable the 'beau-char' text field and ignore its peer radio buttons from the application." type="radio"/>
@@ -463,11 +463,14 @@
                     </p>
                     <p><strong>Vertically Align (CSS / JavaScript)</strong>
                         <span>
-                            <input checked="checked" id="vertical-no" name="vertical" title="This option prevents padding of variable and property names." type="radio"/>
-                            <label for="vertical-no">Normal assignments</label></span>
+                            <input id="vertical-jsonly" checked="checked" name="vertical" title="This option provides vertical alignment of assignments only to JavaScript and not CSS like languages." type="radio"/>
+                            <label for="vertical-jsonly">JavaScript only</label></span>
                         <span>
                             <input id="vertical-yes" name="vertical" title="This option causes lists of assignments and properties to be vertically aligned for faster reading." type="radio"/>
-                            <label for="vertical-no">Vertically align assignments</label></span>
+                            <label for="vertical-yes">Vertically alignment</label></span>
+                        <span>
+                            <input id="vertical-no" name="vertical" title="This option prevents padding of variable and property names." type="radio"/>
+                            <label for="vertical-no">Normal assignments</label></span>
                     </p>
                     <p><strong>Scope Analysis (JavaScript Only)</strong>
                         <span>
