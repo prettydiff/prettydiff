@@ -455,6 +455,7 @@ var pd = {};
     pd.colSliderProperties = [];
     pd.colSliderGrab       = function dom__colSliderGrab(e) {
         var event       = e || window.event,
+            touch       = (e.type === "touchstart") ? true : false,
             node        = this,
             diffRight   = node.parentNode,
             diff        = diffRight.parentNode,
@@ -463,7 +464,7 @@ var pd = {};
             data        = pd.colSliderProperties[1],
             width       = pd.colSliderProperties[2],
             total       = pd.colSliderProperties[3],
-            offset      = (pd.colSliderProperties[4]),
+            offset      = pd.colSliderProperties[4],
             min         = 0,
             max         = data - 1,
             status      = "ew",
@@ -474,14 +475,23 @@ var pd = {};
             drop        = function DOM_colSliderGrab_drop(f) {
                 f = f || window.event;
                 f.preventDefault();
-                node.style.cursor    = status + "-resize";
-                document.onmousemove = null;
-                document.onmouseup   = null;
+                node.style.cursor = status + "-resize";
+                if (touch === true) {
+                    document.ontouchmove = null;
+                    document.ontouchend  = null;
+                } else {
+                    document.onmousemove = null;
+                    document.onmouseup   = null;
+                }
             },
             boxmove     = function DOM_colSliderGrab_boxmove(f) {
                 f = f || window.event;
                 f.preventDefault();
-                subOffset = offset - f.clientX;
+                if (touch === true) {
+                    subOffset = offset - f.touches[0].clientX;
+                } else {
+                    subOffset = offset - f.clientX;
+                }
                 if (subOffset > minAdjust && subOffset < maxAdjust) {
                     withinRange = true;
                 }
@@ -495,7 +505,11 @@ var pd = {};
                     diffRight.style.width = ((width + subOffset) / 10) + "em";
                     status                = "ew";
                 }
-                document.onmouseup = drop;
+                if (touch === true) {
+                    document.ontouchend = drop;
+                } else {
+                    document.onmouseup = drop;
+                }
             };
         event.preventDefault();
         if (typeof pd.o === "object" && pd.o.report.diff.box !== null) {
@@ -517,8 +531,13 @@ var pd = {};
         diffLeft.style.display   = "block";
         diffRight.style.width    = (diffRight.clientWidth / 10) + "em";
         diffRight.style.position = "absolute";
-        document.onmousemove     = boxmove;
-        document.onmousedown     = null;
+        if (touch === true) {
+            document.ontouchmove  = boxmove;
+            document.ontouchstart = false;
+        } else {
+            document.onmousemove = boxmove;
+            document.onmousedown = null;
+        }
     };
 
     //allows visual folding of function in the JSPretty jsscope HTML
@@ -667,14 +686,16 @@ var pd = {};
                         lang = "JavaScript";
                     } else if (lang === "text") {
                         lang = "plain text";
+                    } else if (lang === "htmlembedded") {
+                        lang = "HTML";
                     } else if (lang !== "markup") {
                         lang = lang.toUpperCase();
                     }
                 } else {
                     lang = api.lang;
                 }
-                if (autotest === true && pd.o.announce !== null && pd.o.announce.innerHTML === "") {
-                    pd.o.announce.innerHTML   = "Language is set to <strong>auto</strong>. <span>Presumed language is <em>" + lang + "</em>.</span>";
+                if (autotest === true && pd.o.announce !== null) {
+                    pd.o.announce.innerHTML = "Code type is set to <strong>auto</strong>. <span>Presumed language is <em>" + lang + "</em>.</span>";
                 }
                 if (autotest === true) {
                     api.lang = "auto";
@@ -845,10 +866,11 @@ var pd = {};
                                     0, 0, 0, 0, 0
                                 ];
                             } else {
-                                pd.colSliderProperties  = [
+                                pd.colSliderProperties   = [
                                     diffList[0].clientWidth, diffList[1].clientWidth, diffList[2].parentNode.clientWidth, diffList[2].parentNode.parentNode.clientWidth, diffList[2].parentNode.offsetLeft - diffList[2].parentNode.parentNode.offsetLeft
                                 ];
-                                diffList[2].onmousedown = pd.colSliderGrab;
+                                diffList[2].onmousedown  = pd.colSliderGrab;
+                                diffList[2].ontouchstart = pd.colSliderGrab;
                             }
                         }
                     }
@@ -1837,7 +1859,7 @@ var pd = {};
             content    = [],
             lastChild  = {},
             pageHeight = 0,
-            diffstring = "];(function(){var cells=document.getElementsByTagName('ol')[0].getElemensByTagName('li'),len=cells.length,a=0;for(a=0;a<len;a+=1){if(cells[a].getAttribute('class')==='fold'){cells[a].onmousedown=pd.difffold;}}if(d.length>3){d[2].onmousedown=pd.colSliderGrab;}}());pd.difffold=function dom__difffold(){var self=this,title=self.getAttribute('title').split('line '),min=Number(title[1].substr(0,title[1].indexOf(' '))),max=Number(title[2]),a=0,b=0,inner=self.innerHTML,lists=[],parent=self.parentNode.parentNode,listnodes=(parent.getAttribute('class'==='diff'))?parent.getElementsByTagName('ol'):parent.parentNode.getElementsByTagName('ol'),listLen=listnodes.length;for(a=0;a<listLen;a+=1){lists.push(listnodes[a].getElementsByTagName('li'));}max=(max>=lists[0].length)?lists[0].length:max;if(inner.charAt(0)===' - '){self.innerHTML='+'+inner.substr(1);for(a=min;a<max;a+=1){for(b=0;b<listLen;b+=1){lists[b][a].style.display='none';}}}else{self.innerHTML=' - '+inner.substr(1);for(a=min;a<max;a+=1){for(b=0;b<listLen;b+=1){lists[b][a].style.display='block';}}}};pd.colSliderProperties=[d[0].clientWidth,d[1].clientWidth,d[2].parentNode.clientWidth,d[2].parentNode.parentNode.clientWidth,d[2].parentNode.offsetLeft-d[2].parentNode.parentNode.offsetLeft,];pd.colSliderGrab=function dom__colSliderGrab(e){var e=e||window.event,node=this,diffRight=node.parentNode,diff=diffRight.parentNode,subOffset=0,counter=pd.colSliderProperties[0],data=pd.colSliderProperties[1],width=pd.colSliderProperties[2],total=pd.colSliderProperties[3],offset=(pd.colSliderProperties[4]),min=0,max=data-1,status='ew',minAdjust=min+15,maxAdjust=max-15,withinRange=false,diffLeft=diffRight.previousSibling,drop=function DOM_colSliderGrab_drop(f){f=f||window.event;f.preventDefault();node.style.cursor=status+'-resize';document.onmousemove=null;document.onmouseup=null;},boxmove=function DOM_colSliderGrab_boxmove(f){f=f||window.event;f.preventDefault();subOffset=offset-f.clientX;if(subOffset>minAdjust&&subOffset<maxAdjust){withinRange=true;}if(withinRange===true&&subOffset>maxAdjust){diffRight.style.width=((total-counter-2)/10)+'em';status='e';}else if(withinRange===true&&subOffset<minAdjust){diffRight.style.width=(width/10)+'em';status='w';}else if(subOffset<max&&subOffset>min){diffRight.style.width=((width+subOffset)/10)+'em';status='ew';}document.onmouseup=drop;};e.preventDefault();if(typeof pd.o==='object'&&pd.o.report.diff.box!==null){offset+=pd.o.report.diff.box.offsetLeft;offset-=pd.o.report.diff.body.scrollLeft;}else{subOffset=(document.body.parentNode.scrollLeft>document.body.scrollLeft)?document.body.parentNode.scrollLeft:document.body.scrollLeft;offset-=subOffset;}offset+=node.clientWidth;node.style.cursor='ew-resize';diff.style.width=(total/10)+'em';diff.style.display='inline-block';if(diffLeft.nodeType!==1){do{diffLeft=diffLeft.previousSibling;}while(diffLeft.nodeType!==1);}diffLeft.style.display='block';diffRight.style.width=(diffRight.clientWidth/10)+'em';diffRight.style.position='absolute';document.onmousemove=boxmove;document.onmousedown=null;};",
+            diffstring = "];(function(){var cells=document.getElementsByTagName('ol')[0].getElemensByTagName('li'),len=cells.length,a=0;for(a=0;a<len;a+=1){if(cells[a].getAttribute('class')==='fold'){cells[a].onmousedown=pd.difffold;}}if(d.length>3){d[2].onmousedown=pd.colSliderGrab;d[2].ontouchstart=pd.colSliderGrab;}}());pd.difffold=function dom__difffold(){var self=this,title=self.getAttribute('title').split('line '),min=Number(title[1].substr(0,title[1].indexOf(' '))),max=Number(title[2]),a=0,b=0,inner=self.innerHTML,lists=[],parent=self.parentNode.parentNode,listnodes=(parent.getAttribute('class'==='diff'))?parent.getElementsByTagName('ol'):parent.parentNode.getElementsByTagName('ol'),listLen=listnodes.length;for(a=0;a<listLen;a+=1){lists.push(listnodes[a].getElementsByTagName('li'));}max=(max>=lists[0].length)?lists[0].length:max;if(inner.charAt(0)===' - '){self.innerHTML='+'+inner.substr(1);for(a=min;a<max;a+=1){for(b=0;b<listLen;b+=1){lists[b][a].style.display='none';}}}else{self.innerHTML=' - '+inner.substr(1);for(a=min;a<max;a+=1){for(b=0;b<listLen;b+=1){lists[b][a].style.display='block';}}}};pd.colSliderProperties=[d[0].clientWidth,d[1].clientWidth,d[2].parentNode.clientWidth,d[2].parentNode.parentNode.clientWidth,d[2].parentNode.offsetLeft-d[2].parentNode.parentNode.offsetLeft,];pd.colSliderGrab=function dom__colSliderGrab(e){var e=e||window.event,node=this,diffRight=node.parentNode,diff=diffRight.parentNode,subOffset=0,counter=pd.colSliderProperties[0],data=pd.colSliderProperties[1],width=pd.colSliderProperties[2],total=pd.colSliderProperties[3],offset=(pd.colSliderProperties[4]),min=0,max=data-1,status='ew',minAdjust=min+15,maxAdjust=max-15,withinRange=false,diffLeft=diffRight.previousSibling,drop=function DOM_colSliderGrab_drop(f){f=f||window.event;f.preventDefault();node.style.cursor=status+'-resize';document.onmousemove=null;document.onmouseup=null;},boxmove=function DOM_colSliderGrab_boxmove(f){f=f||window.event;f.preventDefault();subOffset=offset-f.clientX;if(subOffset>minAdjust&&subOffset<maxAdjust){withinRange=true;}if(withinRange===true&&subOffset>maxAdjust){diffRight.style.width=((total-counter-2)/10)+'em';status='e';}else if(withinRange===true&&subOffset<minAdjust){diffRight.style.width=(width/10)+'em';status='w';}else if(subOffset<max&&subOffset>min){diffRight.style.width=((width+subOffset)/10)+'em';status='ew';}document.onmouseup=drop;};e.preventDefault();if(typeof pd.o==='object'&&pd.o.report.diff.box!==null){offset+=pd.o.report.diff.box.offsetLeft;offset-=pd.o.report.diff.body.scrollLeft;}else{subOffset=(document.body.parentNode.scrollLeft>document.body.scrollLeft)?document.body.parentNode.scrollLeft:document.body.scrollLeft;offset-=subOffset;}offset+=node.clientWidth;node.style.cursor='ew-resize';diff.style.width=(total/10)+'em';diff.style.display='inline-block';if(diffLeft.nodeType!==1){do{diffLeft=diffLeft.previousSibling;}while(diffLeft.nodeType!==1);}diffLeft.style.display='block';diffRight.style.width=(diffRight.clientWidth/10)+'em';diffRight.style.position='absolute';document.onmousemove=boxmove;document.onmousedown=null;};",
             beaustring = "var data=document.getElementById('pd-jsscope'),pd={};pd.beaurows=[];pd.beaurows[0]=data.getElementsByTagName('ol')[0].getElementsByTagName('li');pd.beaurows[1]=data.getElementsByTagName('ol')[1].getElementsByTagName('li');pd.beaufold=function dom__beaufold(){var self=this,title=self.getAttribute('title').split('line '),min=Number(title[1].substr(0,title[1].indexOf(' '))),max=Number(title[2]),a=0,b='';if(self.innerHTML.charAt(0)==='-'){for(a=min;a<max;a+=1){pd.beaurows[0][a].style.display='none';pd.beaurows[1][a].style.display='none';}self.innerHTML='+'+self.innerHTML.substr(1);}else{for(a=min;a<max;a+=1){pd.beaurows[0][a].style.display='block';pd.beaurows[1][a].style.display='block';if(pd.beaurows[0][a].getAttribute('class')==='fold'&&pd.beaurows[0][a].innerHTML.charAt(0)==='+'){b=pd.beaurows[0][a].getAttribute('title');b=b.substring('to line ');a=Number(b)-1;}}self.innerHTML='-'+self.innerHTML.substr(1);}};(function(){var len=pd.beaurows[0].length,a=0;for(a=0;a<len;a+=1){if(pd.beaurows[0][a].getAttribute('class')==='fold'){pd.beaurows[0][a].onmousedown=pd.beaufold;}}}());",
             span       = pd.$$("inline"),
             inline     = (span === null || span.checked === false) ? false : true,
@@ -1900,7 +1922,7 @@ var pd = {};
 
             //prompt to save file created above.  below is the creation
             //of the modal with instructions about file extension.
-            lastChild = pd.o.page.lastChild;
+            lastChild     = pd.o.page.lastChild;
             if (lastChild.nodeType > 1 || lastChild.nodeName.toLowerCase() === "script") {
                 do {
                     lastChild = lastChild.previousSibling;
@@ -2023,14 +2045,22 @@ var pd = {};
             heading    = box.firstChild,
             boxLeft    = box.offsetLeft,
             boxTop     = box.offsetTop,
+            touchXNow  = 0,
+            touchYNow  = 0,
+            touch      = (e.type === "touchstart") ? true : false,
             filled     = ((box === pd.o.report.diff.box && pd.test.filled.diff === true) || (box === pd.o.report.beau.box && pd.test.filled.beau === true) || (box === pd.o.report.minn.box && pd.test.filled.minn === true) || (box === pd.o.report.stat.box && pd.test.filled.stat === true)) ? true : false,
             drop       = function dom__grab_drop() {
                 var innerHeight  = window.innerHeight,
                     headingWidth = box.getElementsByTagName("h3")[0].clientWidth;
-                boxLeft              = box.offsetLeft;
-                boxTop               = box.offsetTop;
-                document.onmousemove = null;
-                document.onmouseup   = null;
+                boxLeft = box.offsetLeft;
+                boxTop  = box.offsetTop;
+                if (touch === true) {
+                    document.ontouchmove = null;
+                    document.ontouchend  = null;
+                } else {
+                    document.onmousemove = null;
+                    document.onmouseup   = null;
+                }
                 if (boxTop < 10) {
                     box.style.top = "1em";
                 }
@@ -2049,10 +2079,16 @@ var pd = {};
             boxmove    = function dom__grab_boxmove(f) {
                 f = f || window.event;
                 f.preventDefault();
-                box.style.right    = "auto";
-                box.style.left     = ((boxLeft + (f.clientX - box.mouseX)) / 10) + "em";
-                box.style.top      = ((boxTop + (f.clientY - box.mouseY)) / 10) + "em";
-                document.onmouseup = drop;
+                box.style.right = "auto";
+                if (touch === true) {
+                    box.style.left      = ((boxLeft + (f.touches[0].clientX - touchXNow)) / 10) + "em";
+                    box.style.top       = ((boxTop + (f.touches[0].clientY - touchYNow)) / 10) + "em";
+                    document.ontouchend = drop;
+                } else {
+                    box.style.left     = ((boxLeft + (f.clientX - box.mouseX)) / 10) + "em";
+                    box.style.top      = ((boxTop + (f.clientY - box.mouseY)) / 10) + "em";
+                    document.onmouseup = drop;
+                }
                 return false;
             };
         e = e || window.event;
@@ -2088,13 +2124,20 @@ var pd = {};
                 heading = heading.previousSibling;
             } while (heading.nodeType !== 1);
         }
-        body.style.opacity   = ".5";
-        heading.style.top    = (box.clientHeight / 20) + "0em";
-        box.style.height     = ".1em";
-        box.mouseX           = e.clientX;
-        box.mouseY           = e.clientY;
-        document.onmousemove = boxmove;
-        document.onmousedown = null;
+        body.style.opacity = ".5";
+        heading.style.top  = (box.clientHeight / 20) + "0em";
+        box.style.height   = ".1em";
+        box.mouseX         = e.clientX;
+        box.mouseY         = e.clientY;
+        if (touch === true) {
+            touchXNow             = e.touches[0].clientX;
+            touchYNow             = e.touches[0].clientY;
+            document.ontouchmove  = boxmove;
+            document.ontouchstart = null;
+        } else {
+            document.onmousemove = boxmove;
+            document.onmousedown = null;
+        }
         pd.options(box);
         return false;
     };
@@ -3294,42 +3337,42 @@ var pd = {};
 
     //alter tool on page load in reflection to saved state
     (function dom__load() {
-        var a           = 0,
-            inputs      = [],
-            inputsLen   = 0,
-            id          = "",
-            name        = "",
-            type        = "",
-            node        = {},
-            buttons     = {},
-            title       = {},
-            statdump    = [],
-            langtest    = (pd.o.lang !== null && pd.o.lang.nodeName.toLowerCase() === "select") ? true : false,
-            lang        = (pd.o.lang !== null) ? "auto" : ((langtest === true) ? pd.o.lang[pd.o.lang.selectedIndex].value : ((pd.o.lang === null) ? "text" : pd.o.lang.value)),
-            thirdparty  = function dom__load_thirdparty() {
+        var a          = 0,
+            inputs     = [],
+            inputsLen  = 0,
+            id         = "",
+            name       = "",
+            type       = "",
+            node       = {},
+            buttons    = {},
+            title      = {},
+            statdump   = [],
+            langtest   = (pd.o.lang !== null && pd.o.lang.nodeName.toLowerCase() === "select") ? true : false,
+            lang       = (pd.o.lang !== null) ? "auto" : ((langtest === true) ? pd.o.lang[pd.o.lang.selectedIndex].value : ((pd.o.lang === null) ? "text" : pd.o.lang.value)),
+            thirdparty = function dom__load_thirdparty() {
                 var that = this,
                     href = that.getAttribute("href");
                 window.open(href, 'thirdparty');
                 return false;
             },
-            resize      = function dom__load_resize(e) {
+            resize     = function dom__load_resize(e) {
                 var that = this;
                 pd.resize(e, that);
             },
-            save        = function dom__load_save() {
+            save       = function dom__load_save() {
                 var that = this;
                 pd.save(that);
             },
-            grab        = function dom__load_grab(e) {
+            grab       = function dom__load_grab(e) {
                 var that = this;
                 pd.grab(e, that);
             },
-            top         = function dom__load_top() {
+            top        = function dom__load_top() {
                 var that = this;
                 pd.top(that.parentNode);
             },
-            page        = (pd.o.page === null) ? "" : pd.o.page.getAttribute("id"),
-            backspace   = function dom__load_backspace(event) {
+            page       = (pd.o.page === null) ? "" : pd.o.page.getAttribute("id"),
+            backspace  = function dom__load_backspace(event) {
                 var aa = event || window.event,
                     bb = aa.srcElement || aa.target;
                 if (aa.keyCode === 8) {
@@ -3578,8 +3621,9 @@ var pd = {};
                     pd.o.report.diff.box.ondrop      = pd.filedrop;
                 }
                 pd.o.report.diff.body.onmousedown = top;
-                title                         = pd.o.report.diff.box.getElementsByTagName("h3")[0];
-                title.onmousedown             = grab;
+                title                             = pd.o.report.diff.box.getElementsByTagName("h3")[0];
+                title.onmousedown                 = grab;
+                title.ontouchstart                = grab;
                 if (pd.settings.diffreport.min === false) {
                     buttons               = pd.o.report.diff.box.getElementsByTagName("p")[0];
                     buttons.style.display = "block";
@@ -3609,16 +3653,17 @@ var pd = {};
                     pd.o.report.beau.box.ondrop      = pd.filedrop;
                 }
                 pd.o.report.beau.body.onmousedown = top;
-                title                         = pd.o.report.beau.box.getElementsByTagName("h3")[0];
-                title.onmousedown             = grab;
-                buttons                       = pd.o.report.beau.box.getElementsByTagName("p")[0];
-                node                          = pd.$$("jsscope-yes");
+                title                             = pd.o.report.beau.box.getElementsByTagName("h3")[0];
+                title.onmousedown                 = grab;
+                title.ontouchstart                = grab;
+                buttons                           = pd.o.report.beau.box.getElementsByTagName("p")[0];
+                node                              = pd.$$("jsscope-yes");
                 if (node !== null && node.checked === true) {
                     if (pd.test.agent.indexOf("firefox") > 0 || pd.test.agent.indexOf("presto") > 0) {
                         node = document.createElement("a");
                         node.setAttribute("href", "#");
-                        node.onmousedown   = save;
-                        node.innerHTML = "<button class='save' title='Convert report to text that can be saved.'>S</button>";
+                        node.onmousedown = save;
+                        node.innerHTML   = "<button class='save' title='Convert report to text that can be saved.'>S</button>";
                         buttons.insertBefore(node, buttons.firstChild);
                     } else {
                         node = document.createElement("button");
@@ -3656,8 +3701,9 @@ var pd = {};
                     pd.o.report.minn.box.ondrop      = pd.filedrop;
                 }
                 pd.o.report.minn.body.onmousedown = top;
-                title                         = pd.o.report.minn.box.getElementsByTagName("h3")[0];
-                title.onmousedown             = grab;
+                title                             = pd.o.report.minn.box.getElementsByTagName("h3")[0];
+                title.onmousedown                 = grab;
+                title.ontouchstart                = grab;
                 if (pd.settings.minnreport.min === false) {
                     buttons               = pd.o.report.minn.box.getElementsByTagName("p")[0];
                     buttons.style.display = "block";
@@ -3687,8 +3733,9 @@ var pd = {};
                     pd.o.report.stat.box.ondrop      = pd.filedrop;
                 }
                 pd.o.report.stat.body.onmousedown = top;
-                title                         = pd.o.report.stat.box.getElementsByTagName("h3")[0];
-                title.onmousedown             = grab;
+                title                             = pd.o.report.stat.box.getElementsByTagName("h3")[0];
+                title.onmousedown                 = grab;
+                title.ontouchstart                = grab;
                 if (pd.settings.statreport.min === false) {
                     buttons               = pd.o.report.stat.box.getElementsByTagName("p")[0];
                     buttons.style.display = "block";
@@ -3718,9 +3765,10 @@ var pd = {};
                 id   = inputs[a].getAttribute("id");
                 if (type === "radio") {
                     name = inputs[a].getAttribute("name");
-                    if (name === "mode" || name === "diffdisplay") {
+                    if (name === "mode") {
                         inputs[a].onmousedown = pd.prettyvis;
-                        if (id !== "modediff" && inputs[a].checked === true) {
+                        if (pd.settings[name] === id) {
+                            inputs[a].checked = true;
                             pd.prettyvis(inputs[a]);
                         }
                     } else if (name === "diffchar" || name === "beauchar" || name === "minnchar") {
@@ -3829,7 +3877,7 @@ var pd = {};
                     title = inputs[a].parentNode;
                     if (title.nodeName.toLowerCase() === "a") {
                         if (pd.test.agent.indexOf("firefox") < 0 && pd.test.agent.indexOf("presto") < 0) {
-                            buttons      = title.parentNode;
+                            buttons          = title.parentNode;
                             node.onmousedown = save;
                             title.removeChild(node);
                             buttons.removeChild(title);

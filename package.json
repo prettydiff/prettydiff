@@ -1,19 +1,55 @@
 {
-    "name"        : "prettydiff",
-    "author"      : "Austin Cheney <edward.a.cheney.mil@mail.mil> (http://prettydiff.com/)",
-    "version"     : "1.3.4",
-    "description" : "File comparison tool to accurately diff between file versions regardless of comments or minification to the whitespace. It can also beautify (pretty print) and minify HTML.",
-    "keywords"    : [
-        "diff", "prettydiff", "pretty diff", "pretty print", "pretty-print", "beautify", "minify", "xml", "html", "css", "javascript"
-    ],
-    "homepage"    : "http://prettydiff.com/",
-    "main"        : "prettydiff.js",
-    "bugs"        : {
-        "url"  : "https://groups.google.com/forum/#!forum/pretty-diff",
-        "email": "pretty-diff@googlegroups.com"
-    },
-    "repository"  : {
-        "type": "git",
-        "url" : "git://github.com/austincheney/Pretty-Diff.git"
+  "name": "prettydiff",
+  "author": {
+    "name": "Austin Cheney",
+    "email": "edward.a.cheney.mil@mail.mil",
+    "url": "http://prettydiff.com/"
+  },
+  "version": "1.3.5",
+  "description": "File comparison tool to accurately diff between file versions regardless of comments or minification to the whitespace. It can also beautify (pretty print) and minify HTML.",
+  "keywords": [
+    "diff",
+    "prettydiff",
+    "pretty diff",
+    "pretty print",
+    "pretty-print",
+    "beautify",
+    "minify",
+    "xml",
+    "html",
+    "css",
+    "javascript"
+  ],
+  "homepage": "http://prettydiff.com/",
+  "main": "prettydiff.js",
+  "bugs": {
+    "url": "https://groups.google.com/forum/#!forum/pretty-diff",
+    "email": "pretty-diff@googlegroups.com"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/austincheney/Pretty-Diff.git"
+  },
+  "gitHead": "54744543cf128f5d6fba9638e46eaf9993cf0e5d",
+  "_id": "prettydiff@1.3.4",
+  "scripts": {},
+  "_shasum": "90cba33e3efcd98e4bc24af4658708e482bf1a29",
+  "_from": "prettydiff@*",
+  "_npmVersion": "1.4.23",
+  "_npmUser": {
+    "name": "austincheney",
+    "email": "edward.a.cheney.mil@mail.mil"
+  },
+  "maintainers": [
+    {
+      "name": "austincheney",
+      "email": "edward.a.cheney.mil@mail.mil"
     }
+  ],
+  "dist": {
+    "shasum": "90cba33e3efcd98e4bc24af4658708e482bf1a29",
+    "tarball": "http://registry.npmjs.org/prettydiff/-/prettydiff-1.3.4.tgz"
+  },
+  "directories": {},
+  "_resolved": "http://registry.npmjs.org/prettydiff/-/prettydiff-1.3.4.tgz"
 }

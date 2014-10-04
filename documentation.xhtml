@@ -43,7 +43,12 @@
                 GitHub</a>.</p>
         <div id="doc_contents"><h2>Table of Contents</h2>
             <ol>
-                <li><a href="#intro">Introduction</a></li>
+                <li><a href="#about">About This Application</a>
+                    <ol>
+                        <li><a href="#about_intro">Introduction</a></li>
+                        <li><a href="#about_features">Some Available Features</a></li>
+                    </ol>
+                </li>
                 <li><a href="#knownissues">Known Issues</a></li>
                 <li><a href="#execution">Execution</a></li>
                 <li><a href="#parameters">Web Tool URI Parameters</a></li>
@@ -88,17 +93,22 @@
                 <li><a href="#components">Component Files</a></li>
             </ol>
         </div>
-        <div id="intro"><h2>Introduction</h2>
-            <div><p>This tool was originally created to compare minified code by
+        <div id="about"><h2>About This Application</h2>
+            <div id="about_intro">
+            <h3>Introduction</h3>
+            <p>This tool was originally created to compare minified code by
                 attaching a beautifier and minifier to a file comparison tool. Over the
                 years it has grown into custom language parsers capable of performing a
-                variety of language analysis. This application is 100% vanilla JavaScript and API independent.</p>
-            <p>Some of the available features:</p>
+                variety of language analysis. This application is 100% vanilla JavaScript and is API independent.</p>
+            </div>
+            <div id="about_features">
+            <h3>Some Available Features</h3>
             <ul>
-                <li>Full integration with Node.js with full recursive directory analysis just like the traditional diff.c program</li>
-                <li>JavaScript code analysis tool that colors variables by depth of scope up to a depth of 16 functions</li>
-                <li>Vertical alignment of property and variable assignments in beautification of JavaScript and CSS</li>
+                <li>Full integration to Node.js with recursive directory analysis just like the traditional diff.c program. See the guide for <a href="guide/diffcli.xhtml">command line diff output</a> for more information.</li>
+                <li>JavaScript code analysis tool that colors variables by depth of scope up to a depth of 16 functions.  See the <em>jsscope</em> option.</li>
+                <li>Optional vertical alignment of property and variable assignments in beautification of JavaScript and CSS</li>
                 <li>Alphabetizing of attributes in XML/HTML and properties in CSS</li>
+                <li>Optional automated corrections to JavaScript to bring sloppy code closer to <a href="http://jshint.com/">JSHint</a> and <a href="http://jslint.com/">JSLint</a> compliance.</li>
             </ul>
             </div>
         </div>
