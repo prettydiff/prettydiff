@@ -3289,6 +3289,7 @@ var pd = {};
         localStorage.settings  = "{\"diffreport\":{},\"beaureport\":{},\"minnreport\":{},\"statreport\":{}}";
         pd.commentString       = [];
         pd.o.comment.innerHTML = "/*prettydiff.com */";
+        pd.o.modeDiff.checked  = true;
         location.reload();
     };
 
