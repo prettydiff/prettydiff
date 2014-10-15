@@ -164,6 +164,10 @@ var prettydiff = function prettydiff(api) {
                 return time;
             }()),
             summary       = "",
+            //Library to provide a character entity representation for
+            //UTF8/16.  Requires a browser to access the actual characters.
+            //This library is ignored in other environments.  Only used in
+            //csvmin and csvbeauty libraries.
             charDecoder   = function charDecoder(input) {
                 var a         = 0,
                     b         = 0,
@@ -177,7 +181,7 @@ var prettydiff = function prettydiff(api) {
                     unit      = (/u\![0-9a-f]{4,5}\+/),
                     htmln     = (/\&\#[0-9]{1,6}\;/),
                     htmlt     = (/\&\![0-9]{1,6}\;/);
-                if ((pd === undefined || pd.o.rh === null || pd.o.rh === undefined || typeof pd.o.rh.innerHTML !== "string") || (input.search(unit) === -1 && input.search(uni) === -1 && input.search(htmlt) === -1 && input.search(htmln) === -1)) {
+                if ((pd === undefined || pd.o === undefined || pd.o.report === undefined || pd.o.report.beau === null || pd.o.report.beau === undefined || typeof pd.o.report.beau.innerHTML !== "string") || (input.search(unit) === -1 && input.search(uni) === -1 && input.search(htmlt) === -1 && input.search(htmln) === -1)) {
                     return input;
                 }
                 inputLenA = input.length;
@@ -224,12 +228,14 @@ var prettydiff = function prettydiff(api) {
                     if (type[b][1] === "h") {
                         entity[b] = parseInt(entity[b], 16);
                     }
-                    pd.o.rh.innerHTML = "&#" + parseInt(entity[b], 10) + ";";
-                    entity[b]         = pd.o.rh.innerHTML;
+                    pd.o.report.beau.innerHTML = "&#" + parseInt(entity[b], 10) + ";";
+                    entity[b]         = pd.o.report.beau.innerHTML;
                     output.push(entity[b]);
                 }
                 return output.join("");
             },
+            //Library to change CSV (and similar formats) to something
+            //human readable.
             csvbeauty     = function csvbeauty(source, ch) {
                 var errorLocation  = "",
                     a              = 0,
@@ -292,6 +298,8 @@ var prettydiff = function prettydiff(api) {
                 }
                 return source.replace(/\{csvquote\}/g, "\"").replace(/\{prettydiffcsv/g, "{csv");
             },
+            //Library to regress changes made by csvbeauty back to
+            //the standard format.
             csvmin        = function csvmin(source, ch) {
                 if (ch === "") {
                     ch = ",";
@@ -358,6 +366,7 @@ var prettydiff = function prettydiff(api) {
                 }
                 return source.replace(/\{\-\}/g, "\n");
             },
+            //Library to parse/beautify/minify CSS (and similar langauges).
             csspretty     = function csspretty(args) {
                 var ssource    = (typeof args.source !== "string" || args.source === "" || (/^(\s+)$/).test(args.source) === true) ? "Error: no source supplied to csspretty." : args.source,
                     salphasort = (args.alphasort === true || args.alphasort === "true") ? true : false,
@@ -1043,7 +1052,7 @@ var prettydiff = function prettydiff(api) {
                             };
                         for (a = 0; a < len; a += 1) {
                             if (types[a] === "start") {
-                                if (types[a - 1] === "colon") {
+                                if (types[a - 1] === "colon" && types[a - 2] !== "color") {
                                     build.push(" ");
                                 }
                                 build.push(token[a]);
@@ -1074,7 +1083,7 @@ var prettydiff = function prettydiff(api) {
                                     nl(indent);
                                 }
                             } else {
-                                if (types[a] === "value" && types[a - 1] !== "semi") {
+                                if (types[a] === "value" && types[a - 1] !== "semi" && (types[a - 1] !== "colon" || (types[a - 1] === "colon" && token[a - 2] !== "&"))) {
                                     build.push(" ");
                                 }
                                 build.push(token[a]);
@@ -1170,6 +1179,7 @@ var prettydiff = function prettydiff(api) {
                 }
                 return output;
             },
+            //Library to parse/beautify/minify JavaScript.
             jspretty      = function jspretty(args) {
                 var jsource    = (typeof args.source === "string" && args.source.length > 0) ? args.source + " " : "Error: no source code supplied to jspretty!",
                     jbrace     = (args.braces === "allman") ? true : false,
@@ -5073,6 +5083,7 @@ var prettydiff = function prettydiff(api) {
                 }
                 return result;
             },
+            //Library to minify markup (HTML/XML)
             markupmin     = function markupmin(args) {
                 var i             = 0,
                     x             = (typeof args.source === "string") ? args.source.split("") : "Error: no content supplied to markup.",
@@ -5405,6 +5416,7 @@ var prettydiff = function prettydiff(api) {
                     return output;
                 }());
             },
+            //Library to parse/beautify markup (HTML/XML)
             markup_beauty = function markup_beauty(args) {
                 var token      = [],
                     build      = [],
@@ -7660,6 +7672,7 @@ var prettydiff = function prettydiff(api) {
                 }
                 return build.join("").replace(/^\s+/, "");
             },
+            //Library to compare text input
             diffview      = function diffview(args) {
                 var errorout      = 0,
                     diffline      = 0,
@@ -9493,9 +9506,9 @@ var prettydiff = function prettydiff(api) {
     },
     //the edition values use the format YYMMDD for dates.
     edition    = {
-        charDecoder  : 131224, //charDecoder library
+        charDecoder  : 141014, //charDecoder library
         css          : 141004, //diffview.css file
-        csspretty    : 140929, //csspretty library
+        csspretty    : 141014, //csspretty library
         csvbeauty    : 140114, //csvbeauty library
         csvmin       : 131224, //csvmin library
         diffview     : 140927, //diffview library
@@ -9503,10 +9516,10 @@ var prettydiff = function prettydiff(api) {
         jspretty     : 140930, //jspretty library
         markup_beauty: 141004, //markup_beauty library
         markupmin    : 140911, //markupmin library
-        prettydiff   : 141004, //this file
+        prettydiff   : 141014, //this file
         webtool      : 140930, //prettydiff.com.xhtml
         api          : {
-            dom      : 141004,
+            dom      : 141014,
             nodeLocal: 141004,
             wsh      : 141004
         },

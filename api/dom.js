@@ -751,8 +751,9 @@ var pd = {};
                                 presumedLanguage = presumedLanguage.substring(0, presumedLanguage.indexOf("</em>"));
                             }
                             if (presumedLanguage.toLowerCase() === "javascript" || api.lang === "javascript") {
-                                pd.top(pd.o.report.beau.box);
-                                pd.o.report.beau.box.style.display = "block";
+                                if (pd.o.report.beau.body.style.display === "none") {
+                                    pd.grab({type: "onmousedown"}, pd.o.report.beau.box.getElementsByTagName("h3")[0]);
+                                }
                                 if (parent.innerHTML.indexOf("save") < 0) {
                                     if (parent.style === undefined || parent.style.display === "block") {
                                         pd.o.report.beau.box.getElementsByTagName("h3")[0].style.width = (Number(h3.substr(0, h3.length - 2)) - 3) + "em";
@@ -1263,7 +1264,8 @@ var pd = {};
                 api.mode = "diff";
                 if (domain.test(api.diff) === true && pd.test.xhr === true) {
                     (function dom__recycle_xhrDiff() {
-                        var protocolRemove = (api.diff.indexOf("file:///") === 0) ? api.diff.split(":///")[1] : api.diff.split("://")[1],
+                        var filetest       = (api.diff.indexOf("file:///") === 0) ? true : false,
+                            protocolRemove = (filetest === true) ? api.diff.split(":///")[1] : api.diff.split("://")[1],
                             slashIndex     = (protocolRemove !== undefined) ? protocolRemove.indexOf("/") : 0,
                             xhr            = (typeof XMLHttpRequest === "function" || typeof XMLHttpRequest === "object") ? new XMLHttpRequest() : new ActiveXObject("Microsoft.XMLHTTP");
                         if (typeof protocolRemove !== "string" || protocolRemove.length === 0) {
@@ -1289,7 +1291,11 @@ var pd = {};
                                     }
                                 }
                             };
-                            xhr.open("GET", "proxy.php?x=" + api.diff.replace(/(\s*)$/, "").replace(/%26/g, "&").replace(/%3F/, "?"), true);
+                            if (filetest === true) {
+                                xhr.open("GET", api.diff.replace(/(\s*)$/, "").replace(/%26/g, "&").replace(/%3F/, "?"), true);
+                            } else {
+                                xhr.open("GET", "proxy.php?x=" + api.diff.replace(/(\s*)$/, "").replace(/%26/g, "&").replace(/%3F/, "?"), true);
+                            }
                             xhr.send();
                         }
                     }());
@@ -1343,7 +1349,8 @@ var pd = {};
         }
         if (domain.test(api.source) === true && pd.test.xhr === true) {
             (function dom__recycle_xhrSource() {
-                var protocolRemove = (api.source.indexOf("file:///") === 0) ? api.source.split(":///")[1] : api.source.split("://")[1],
+                var filetest       = (api.source.indexOf("file:///") === 0) ? true : false,
+                    protocolRemove = (filetest === true) ? api.source.split(":///")[1] : api.source.split("://")[1],
                     slashIndex     = (protocolRemove !== undefined) ? protocolRemove.indexOf("/") : 0,
                     xhr            = (typeof XMLHttpRequest === "function" || typeof XMLHttpRequest === "object") ? new XMLHttpRequest() : new ActiveXObject("Microsoft.XMLHTTP");
                 if (typeof protocolRemove !== "string" || protocolRemove.length === 0) {
@@ -1369,7 +1376,11 @@ var pd = {};
                             }
                         }
                     };
-                    xhr.open("GET", "proxy.php?x=" + api.source.replace(/(\s*)$/, "").replace(/%26/g, "&").replace(/%3F/, "?"), true);
+                    if (filetest === true) {
+                        xhr.open("GET", api.source.replace(/(\s*)$/, "").replace(/%26/g, "&").replace(/%3F/, "?"), true);
+                    } else {
+                        xhr.open("GET", "proxy.php?x=" + api.source.replace(/(\s*)$/, "").replace(/%26/g, "&").replace(/%3F/, "?"), true);
+                    }
                     xhr.send();
                 }
             }());
@@ -2035,7 +2046,7 @@ var pd = {};
     };
 
     //basic drag and drop for the report windows
-    pd.grab                = function dom__grab(e, x) {
+    pd.grab                = function dom__grab(e, x) {console.log(x)
         var box        = x.parentNode,
             parent     = box.getElementsByTagName("p")[0],
             save       = (parent.innerHTML.indexOf("save") > -1) ? true : false,
@@ -2107,7 +2118,9 @@ var pd = {};
             return false;
         }
         pd.top(box);
-        e.preventDefault();
+        if (e.preventDefault !== undefined) {
+            e.preventDefault();
+        }
         if (body.nodeType !== 1) {
             do {
                 body = body.previousSibling;
