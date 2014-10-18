@@ -2046,7 +2046,7 @@ var pd = {};
     };
 
     //basic drag and drop for the report windows
-    pd.grab                = function dom__grab(e, x) {console.log(x)
+    pd.grab                = function dom__grab(e, x) {
         var box        = x.parentNode,
             parent     = box.getElementsByTagName("p")[0],
             save       = (parent.innerHTML.indexOf("save") > -1) ? true : false,
