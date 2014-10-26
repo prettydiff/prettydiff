@@ -695,6 +695,7 @@ var pd = {};
                     lang = api.lang;
                 }
                 if (autotest === true && pd.o.announce !== null) {
+                    pd.o.announce.style.color = "#00c";
                     pd.o.announce.innerHTML = "Code type is set to <strong>auto</strong>. <span>Presumed language is <em>" + lang + "</em>.</span>";
                 }
                 if (autotest === true) {
