@@ -201,7 +201,7 @@ var prettydiff = function prettydiff(api) {
                     builder       = {},
                     //api.alphasort - allows a user to disable alphabetic sorting of properites in css
                     calphasort    = (api.alphasort === true || api.alphasort === "true") ? true : false,
-                    //determines api source as necessary to make a decision about whether to supply externally need JS functions to reports
+                    //determines api source as necessary to make a decision about whether to supply externally needed JS functions to reports
                     capi          = (api.api === undefined || api.api.length === 0) ? "" : api.api,
                     //api.comments - if comments should receive indentation or not
                     ccomm         = (api.comments === "noindent") ? "noindent" : ((api.comments === "nocomment") ? "nocomment" : "indent"),
@@ -774,6 +774,7 @@ var prettydiff = function prettydiff(api) {
                             force_indent: cforce,
                             html        : chtml,
                             inchar      : cinchar,
+                            inlevel     : cinlevel,
                             insize      : cinsize,
                             mode        : "beautify",
                             source      : csource,
@@ -2906,10 +2907,10 @@ var prettydiff = function prettydiff(api) {
                                 newStart  += 1;
                             }
                         } else {
+                            if (context < 0 && (foldstart === 3 || baseTextArray[baseStart - 1] === newTextArray[newStart - 1]) && baseTextArray[baseStart] !== newTextArray[newStart]) {
+                                data[0][foldstart] = data[0][foldstart].replace("xxx", foldcount);
+                            }
                             if (btest === false && ntest === false && typeof baseTextArray[baseStart] === "string" && typeof newTextArray[newStart] === "string") {
-                                if (context < 0 && (foldstart === 3 || baseTextArray[baseStart - 1] === newTextArray[newStart - 1]) && baseTextArray[baseStart] !== newTextArray[newStart]) {
-                                    data[0][foldstart] = data[0][foldstart].replace("xxx", foldcount);
-                                }
                                 if (baseTextArray[baseStart] === "" && newTextArray[newStart] !== "") {
                                     change = "insert";
                                 }
@@ -5897,7 +5898,7 @@ var prettydiff = function prettydiff(api) {
                         if (types[a] !== "comment") {
                             comtest = true;
                         }
-                        if (types[a] === "markup") {
+                        if (types[a] === "markup" && typeof markupmin === "function") {
                             build.push(markupmin({
                                 source: token[a]
                             }));
@@ -6410,7 +6411,11 @@ var prettydiff = function prettydiff(api) {
                                         if (level[a] !== "x") {
                                             nl(indent + 1);
                                         }
-                                        build.push(markupBuild());
+                                        if (typeof markup_beauty === "function") {
+                                            build.push(markupBuild());
+                                        } else {
+                                            build.push(token[a].replace(/\n\s*/g, " "));
+                                        }
                                     } else if (types[a] === "comment") {
                                         if (a === 0) {
                                             build[0] = "<ol class='data'><li class='c0'>";
@@ -6684,10 +6689,14 @@ var prettydiff = function prettydiff(api) {
                                     if (level[a] !== "x") {
                                         nl(indent + 1);
                                     }
-                                    build.push(markup_beauty({
-                                        inlevel: indent + 1,
-                                        source : token[a]
-                                    }));
+                                    if (typeof markup_beauty === "function") {
+                                        build.push(markup_beauty({
+                                            inlevel: indent + 1,
+                                            source : token[a]
+                                        }));
+                                    } else {
+                                        build.push(token[a].replace(/\n\s*/g, " "));
+                                    }
                                 } else {
                                     build.push(token[a]);
                                 }
@@ -7225,6 +7234,7 @@ var prettydiff = function prettydiff(api) {
                         if (store[store.length - 1] !== ">" || (type === "script" && store[store.length - 3] === "]" && store[store.length - 2] === "]" && store[store.length - 1] === ">")) {
                             if (type === "style") {
                                 if (typeof csspretty !== "function") {
+                                    x[i] = cdataS + script + cdataE;
                                     return;
                                 }
                                 script = cdataS + csspretty({
@@ -7235,6 +7245,7 @@ var prettydiff = function prettydiff(api) {
                                 }) + cdataE;
                             } else {
                                 if (typeof jspretty !== "function") {
+                                    x[i] = cdataS + script + cdataE;
                                     return;
                                 }
                                 script = cdataS + jspretty({
@@ -9739,15 +9750,15 @@ var prettydiff = function prettydiff(api) {
         csspretty    : 140929, //csspretty library
         csvbeauty    : 140114, //csvbeauty library
         csvmin       : 131224, //csvmin library
-        diffview     : 140927, //diffview library
-        documentation: 141004, //documentation.xhtml
+        diffview     : 141027, //diffview library
+        documentation: 141027, //documentation.xhtml
         jspretty     : 140930, //jspretty library
         markup_beauty: 141025, //markup_beauty library
-        markupmin    : 141025, //markupmin library
-        prettydiff   : 141025, //this file
-        webtool      : 140930, //prettydiff.com.xhtml
+        markupmin    : 141027, //markupmin library
+        prettydiff   : 141027, //this file
+        webtool      : 141027, //prettydiff.com.xhtml
         api          : {
-            dom      : 141025,
+            dom      : 141027,
             nodeLocal: 141004,
             wsh      : 141004
         },

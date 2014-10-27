@@ -26,7 +26,7 @@
             - Documentation</h1>
         <p id="dcolorScheme"><label class="label" for="colorScheme">Color
             Scheme</label>
-            <select id="colorScheme" onchange="pd.colorScheme(this)"><option>Default</option>
+            <select id="colorScheme"><option>Default</option>
                 <option>Canvas</option>
                 <option>Shadow</option>
                 <option selected="selected">White</option></select>
@@ -46,7 +46,6 @@
                 <li><a href="#about">About This Application</a>
                     <ol>
                         <li><a href="#about_intro">Introduction</a></li>
-                        <li><a href="#about_features">Some Available Features</a></li>
                     </ol>
                 </li>
                 <li><a href="#knownissues">Known Issues</a></li>
@@ -55,10 +54,9 @@
                 <li><a href="#pdfunction">Pretty Diff Function</a>
                     <ol>
                         <li><a href="#function_overview">Overview</a></li>
+                        <li><a href="#function_properties">Pretty Diff API</a></li>
                         <li><a href="#function_practices">Practices of Pretty Diff</a></li>
-                        <li><a href="#function_properties">Properties of Pretty Diff's One
-                            Function Argument</a></li>
-                        <li><a href="#function_option">Option String</a></li>
+                        <li><a href="#function_option">Option Comment</a></li>
                         <li><a href="#function_io">Input and Output</a></li>
                         <li><a href="#function_nodejs">Executing with Node.js</a></li>
                         <li><a href="#function_wsh">Executing with Windows Script Host</a></li>
@@ -70,7 +68,6 @@
                         <li><a href="#beau_css">CSS</a></li>
                         <li><a href="#beau_csv">CSV</a></li>
                         <li><a href="#beau_markup">Markup</a></li>
-                        <li><a href="#beau_options">Beautification Options</a></li>
                     </ol>
                 </li>
                 <li><a href="#minification">Minification</a>
@@ -79,14 +76,12 @@
                         <li><a href="#mini_css">CSS</a></li>
                         <li><a href="#mini_csv">CSV</a></li>
                         <li><a href="#mini_markup">Markup</a></li>
-                        <li><a href="#mini_options">Minification Options</a></li>
                     </ol>
                 </li>
                 <li><a href="#prettydiff">Pretty Diff</a>
                     <ol>
                         <li><a href="#pd_diffcode">Diff Code</a></li>
                         <li><a href="#pd_diffprocess">Diff Process</a></li>
-                        <li><a href="#pd_diffoptions">Diff Options</a></li>
                     </ol>
                 </li>
                 <li><a href="#checklist_option">Checklist - Adding New Options</a></li>
@@ -95,21 +90,12 @@
         </div>
         <div id="about"><h2>About This Application</h2>
             <div id="about_intro">
-            <h3>Introduction</h3>
-            <p>This tool was originally created to compare minified code by
-                attaching a beautifier and minifier to a file comparison tool. Over the
-                years it has grown into custom language parsers capable of performing a
-                variety of language analysis. This application is 100% vanilla JavaScript and is API independent.</p>
-            </div>
-            <div id="about_features">
-            <h3>Some Available Features</h3>
-            <ul>
-                <li>Full integration to Node.js with recursive directory analysis just like the traditional diff.c program. See the guide for <a href="guide/diffcli.xhtml">command line diff output</a> for more information.</li>
-                <li>JavaScript code analysis tool that colors variables by depth of scope up to a depth of 16 functions.  See the <em>jsscope</em> option.</li>
-                <li>Optional vertical alignment of property and variable assignments in beautification of JavaScript and CSS</li>
-                <li>Alphabetizing of attributes in XML/HTML and properties in CSS</li>
-                <li>Optional automated corrections to JavaScript to bring sloppy code closer to <a href="http://jshint.com/">JSHint</a> and <a href="http://jslint.com/">JSLint</a> compliance.</li>
-            </ul>
+                <h3>Introduction</h3>
+                <p>This tool was originally created to compare minified code by
+                    attaching a beautifier and minifier to a file comparison tool. Over the
+                    years it has grown into custom language parsers capable of performing a
+                    variety of language analysis. This application is 100% vanilla
+                    JavaScript and is API independent.</p>
             </div>
         </div>
         <div id="knownissues"><h2>Known Issues</h2>
@@ -134,39 +120,38 @@
             <div>
                 <ul>
                     <li><h3>Execute in a NodeJS app:</h3>
-                        <span class="code">var prettydiff = require("prettydiff"),</span>
-                        <span class="code">&nbsp;&nbsp;&nbsp;&nbsp;args
-                            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;= {</span>
-                        <span class="code">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;source:
-                            "asdf",</span>
-                        <span class="code">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;diff
-                            &nbsp;: "asdd",</span>
-                        <span class="code">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;lang
-                            &nbsp;: "text",</span>
-                        <span class="code">&nbsp;&nbsp;&nbsp;&nbsp;},</span>
-                        <span class="code">&nbsp;&nbsp;&nbsp;&nbsp;output
-                            &nbsp;&nbsp;&nbsp;&nbsp;= prettydiff.api(args);</span>
+                        <code>var prettydiff = require("prettydiff"),</code>
+                        <code>&nbsp;&nbsp;&nbsp;&nbsp;args &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=
+                            {</code>
+                        <code>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;source:
+                            "asdf",</code>
+                        <code>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;diff &nbsp;:
+                            "asdd",</code>
+                        <code>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;lang &nbsp;:
+                            "text",</code>
+                        <code>&nbsp;&nbsp;&nbsp;&nbsp;},</code>
+                        <code>&nbsp;&nbsp;&nbsp;&nbsp;output &nbsp;&nbsp;&nbsp;&nbsp;=
+                            prettydiff.api(args);</code>
                     </li>
                     <li><h3>Execute on command line with NodeJS:</h3>
-                        <span class="code">>node c:\\prettydiff\\api\\node-local.js
+                        <code>&gt; node c:\\prettydiff\\api\\node-local.js
                             source:"c:\mydirectory\myfile.js" readmethod:"file"
-                            diff:"c:\myotherfile.js"</span>
+                            diff:"c:\myotherfile.js"</code>
                     </li>
                     <li><h3>Execute with WSH:</h3>
-                        <span class="code">>cscript prettydiff.wsf /source:"myFile.xml"
-                            /mode:"beautify"</span>
+                        <code>&gt; cscript prettydiff.wsf /source:"myFile.xml"
+                            /mode:"beautify"</code>
                     </li>
                     <li><h3>Execute from JavaScript:</h3>
-                        <span class="code">var args &nbsp;&nbsp;= {</span>
-                        <span class="code">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;source:
-                            "asdf",</span>
-                        <span class="code">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;diff
-                            &nbsp;: "asdd",</span>
-                        <span class="code">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;lang
-                            &nbsp;: "text",</span>
-                        <span class="code">&nbsp;&nbsp;&nbsp;&nbsp;},</span>
-                        <span class="code">&nbsp;&nbsp;&nbsp;&nbsp;output =
-                            prettydiff(args);</span>
+                        <code>var args &nbsp;&nbsp;= {</code>
+                        <code>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;source:
+                            "asdf",</code>
+                        <code>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;diff &nbsp;:
+                            "asdd",</code>
+                        <code>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;lang &nbsp;:
+                            "text",</code>
+                        <code>&nbsp;&nbsp;&nbsp;&nbsp;},</code>
+                        <code>&nbsp;&nbsp;&nbsp;&nbsp;output = prettydiff(args);</code>
                     </li>
                 </ul>
             </div>
@@ -236,34 +221,523 @@
                 <p>Pretty Diff is an application written entirely in JavaScript and
                     expressed as a single function named 'prettydiff()'. This application
                     was originally written as a means to algorithmically difference between
-                    two file similar pieces of code regardless of minification. The result
-                    is a fast difference engine offering many options that allows access to
-                    the world's most advanced markup beautification algorithm.</p>
+                    two similar pieces of code regardless of minification and other white
+                    space differences. The result is a fast difference engine offering many
+                    options that allows access to the world's most advanced markup
+                    beautification algorithm.</p>
                 <p>While the Pretty Diff application is expressed as a single function
-                    it is actually a collection of several components of which many were
-                    started by different authors for unrelated projects. Every one of those
-                    components that began externally have been heavily modified for either
-                    increased processing efficiency, expanded functionality, or JSLint
-                    compliance. As a result each of those components must be considered a
-                    fork of the originally maintained code that is unique to Pretty
-                    Diff.</p>
-                <p>The Pretty Diff application is completely isolated from DOM methods
-                    with only one exception. This means the prettydiff() function receives
-                    all data from its one argument and returns output. At this time the
+                    it contains a few libraries. These libraries are a diff engine and a few
+                    language parsers for providing beautification and minification. The
+                    libraries can be used independently of Pretty Diff. Browse the libraries
+                    in the local
+                    <em><a href="lib">lib</a></em>
+                    directory.</p>
+                <p>The Pretty Diff application is completely environment agnostic. It
+                    can run on the command line, web browser, or any other environment. All
+                    that is required is an appropriate API. Feel free to write your own or
+                    use the ones provided in the local
+                    <em><a href="api">API</a></em>
+                    directory.</p>
+                <p>There is one exception in the Pretty Diff application to complete
+                    environmental isolation. At this time the
                     <a href="lib/charDecoder.js">charDecoder.js</a>
-                    code is entirely reliant upon DOM access to allow an external application
-                    transform character entity references into character literals. The only
-                    solution to allow similar functionality without DOM access is to include
-                    a character map with the charDecoder function. There are no plans, at
-                    this time, to write a JavaScript formulation of the Unicode character
-                    map.</p>
-                <p>The Pretty Diff function receives input from a single argument that
-                    is an object literal containing named properties as discussed in detail
-                    a few sections down. If the input is valid Pretty Diff will return an
-                    array of two values. The first value is the beautified source code if in
-                    "Beautify" mode, the minified source code if in "Minify" mode, or an
-                    HTML formatted diff report if in "Pretty Diff" mode. The second output
-                    value is an HTML formatted analysis report of the submitted code.</p></div>
+                    code is entirely reliant upon DOM access. This library transforms
+                    character entity references into literal characters and vise versa.
+                    Pretty Diff does not contain a Unicode character map, so this library is
+                    reliant upon execution in a web browser, but it does degrade gracefully
+                    in other environments.</p>
+                <p>The Pretty Diff function receives input from a single argument. This
+                    argument is a really big object literal that specifies the code to
+                    process and options on how to process it. Read about the various options
+                    in the
+                    <a href="#function_properties">Pretty Diff API</a>
+                    section of this document.</p>
+            </div>
+            <div id="function_properties"><h3>Pretty Diff API</h3>
+                <ol>
+                    <li><h4>alphasort</h4>
+                        <ul>
+                            <li><h5>Description</h5>
+                                Allows alphabetic sorting of properties in CSS. In most cases use of this
+                                option is perfectly safe in CSS, but can result in conflicts for SCSS
+                                and LESS code.</li>
+                            <li><h5>Type</h5>
+                                boolean</li>
+                            <li><h5>Default</h5>
+                                false</li>
+                            <li><h5>As labeled in the HTML tool</h5>
+                                Alphabetic Sorting (CSS Only)</li>
+                        </ul>
+                    </li>
+                    <li><h4>api</h4>
+                        <ul>
+                            <li><h5>Description</h5>
+                                Used internally to decide if some small JavaScript functions need to be
+                                included with report output based upon the operating environment.</li>
+                        </ul>
+                    </li>
+                    <li><h4>comments</h4>
+                        <ul>
+                            <li><h5>Description</h5>Determines whether comments should be indented.
+                                This property is only used in beautification mode.</li>
+                            <li><h5>Type</h5>
+                                string</li>
+                            <li><h5>Accepted values</h5>
+                                indent, noindent</li>
+                            <li><h5>Default</h5>
+                                indent</li>
+                            <li><h5>As labeled in the HTML tool</h5>
+                                Indent Comments</li>
+                        </ul>
+                    </li>
+                    <li><h4>conditional</h4>
+                        <ul>
+                            <li><h5>Description</h5>Retain Internet Explorer conditional HTML
+                                comments during minification of HTML.</li>
+                            <li><h5>Type</h5>
+                                boolean</li>
+                            <li><h5>Default</h5>
+                                false</li>
+                            <li><h5>As labeled in the HTML tool</h5>
+                                IE Comments (HTML Only)</li>
+                        </ul>
+                    </li>
+                    <li><h4>content</h4>
+                        <ul>
+                            <li><h5>Description</h5>Determines if string literals in JavaScript and
+                                content in markup should be normalized to a literal value of
+                                <em>text</em>
+                                prior to a diff operation. This property is only used if mode is set to
+                                    diff.</li>
+                            <li><h5>Type</h5>
+                                boolean</li>
+                            <li><h5>Default</h5>
+                                false</li>
+                            <li><h5>As labeled in the HTML tool</h5>
+                                Ignore Content (Markup / JavaScript)</li>
+                        </ul>
+                    </li>
+                    <li><h4>context</h4>
+                        <ul>
+                            <li><h5>Description</h5>In the diff mode a numeric value sets the number
+                                of matching (equivalent) lines to precede and follow each line
+                                containing a difference to provide code context. An empty or non-numeric
+                                value returns a diff report with all lines of code.</li>
+                            <li><h5>Type</h5>
+                                string or number</li>
+                            <li><h5>Default</h5>
+                                no value (empty string)</li>
+                            <li><h5>As labeled in the HTML tool</h5>
+                                Context size (optional)</li>
+                        </ul>
+                    </li>
+                    <li><h4>correct</h4>
+                        <ul>
+                            <li><h5>Description</h5>
+                                A limited attempt to automatically correct certain stylistic code
+                                problems that JSLint complains about. This option will insert missing
+                                semicolons, insert missing curly braces, convert some instances of "--"
+                                and "++" operators to "-=" and "+=" respectively, and convert "new
+                                Object()" and "new Array()" into "{}" and "[]" respectively.</li>
+                            <li><h5>Type</h5>
+                                boolean</li>
+                            <li><h5>Default</h5>
+                                false</li>
+                            <li><h5>As labeled in the HTML tool</h5>
+                                Fix Sloppy Code (JavaScript Only)</li>
+                        </ul>
+                    </li>
+                    <li><h4>csvchar</h4>
+                        <ul>
+                            <li><h5>Description</h5>
+                                Stores the string value used as a data separator for the
+                                <em>"csv"</em>
+                                language. Any string is accepted, but if value of lang property is not
+                                    set to
+                                <em>"csv"</em>
+                                this property is ignored.</li>
+                            <li><h5>Type</h5>
+                                string</li>
+                            <li><h5>Default</h5>
+                                , (comma)</li>
+                            <li><h5>As labeled in the HTML tool</h5>
+                                Character separator</li>
+                        </ul>
+                    </li>
+                    <li><h4>diff</h4>
+                        <ul>
+                            <li><h5>Description</h5>
+                                Code sample to compare the source code sample against. This property is
+                                required when mode is set to diff, but is otherwise ignored.</li>
+                            <li><h5>Type</h5>
+                                string</li>
+                            <li><h5>Default</h5>
+                                none</li>
+                            <li><h5>As labeled in the HTML tool</h5>
+                                New Text</li>
+                        </ul>
+                    </li>
+                    <li><h4>diffcli</h4>
+                        <ul>
+                            <li><h5>Description</h5>
+                                An option only available from the node-local.js API file for Node.js.
+                                This option will output a list of differences in color to the console.
+                                If more than one file is compared it will indicate which files are
+                                deleted or new. If the
+                                <em>output</em>
+                                option is not specified the node-local.js will convert the diffcli option
+                                    to a value of true. If the value of diffcli is true and the context
+                                    option is omitted the context option will be provided a value of 2.</li>
+                            <li><h5>Type</h5>
+                                boolean</li>
+                            <li><h5>Default</h5>
+                                false</li>
+                            <li><h5>As labeled in the HTML tool</h5>
+                                not in the HTML tool</li>
+                        </ul>
+                    </li>
+                    <li><h4>diffcomments</h4>
+                        <ul>
+                            <li><h5>Description</h5>
+                                Retain code comments so that code and comments can be compared by the
+                                diff process.</li>
+                            <li><h5>Type</h5>
+                                boolean</li>
+                            <li><h5>Default</h5>
+                                false</li>
+                            <li><h5>As labeled in the HTML tool</h5>
+                                Code Comments</li>
+                        </ul>
+                    </li>
+                    <li><h4>difflabel</h4>
+                        <ul>
+                            <li><h5>Description</h5>
+                                Sets a label describing the value of diff code sample.</li>
+                            <li><h5>Type</h5>
+                                string</li>
+                            <li><h5>Default</h5>
+                                new</li>
+                            <li><h5>As labeled in the HTML tool</h5>
+                                New label (optional)</li>
+                        </ul>
+                    </li>
+                    <li><h4>diffview</h4>
+                        <ul>
+                            <li><h5>Description</h5>
+                                Determines if the diff report should be expressed is a side-by-side
+                                comparison or a single column inline view.</li>
+                            <li><h5>Type</h5>
+                                string</li>
+                            <li><h5>Accepted values</h5>
+                                sidebyside, inline</li>
+                            <li><h5>Default</h5>
+                                sidebyside</li>
+                            <li><h5>As labeled in the HTML tool</h5>
+                                Diff View Type</li>
+                        </ul>
+                    </li>
+                    <li><h4>elseline</h4>
+                        <ul>
+                            <li><h5>Description</h5>
+                                If the "else" keyword should be pushed onto a new line in JavaScript
+                                beautification.</li>
+                            <li><h5>Type</h5>
+                                boolean</li>
+                            <li><h5>Default</h5>
+                                false</li>
+                            <li><h5>As labeled in the HTML tool</h5>
+                                Else on New Line (JavaScript Only)</li>
+                        </ul>
+                    </li>
+                    <li><h4>force_indentation</h4>
+                        <ul>
+                            <li><h5>Description</h5>
+                                Allows every piece of code and content in a markup language to be
+                                indented without regard for the creation of white space tokens or code
+                                semantics.</li>
+                            <li><h5>Type</h5>
+                                boolean</li>
+                            <li><h5>Default</h5>
+                                false</li>
+                            <li><h5>As labeled in the HTML tool</h5>
+                                Force Indentation (Markup Only)</li>
+                        </ul>
+                    </li>
+                    <li><h4>html</h4>
+                        <ul>
+                            <li><h5>Description</h5>
+                                Forces markup code to be interpreted as HTML. HTML mode identifies
+                                certain tags as singletons by tag name even if they are no closed with
+                                "/>" syntax. It also ignores beautification on "&lt;pre&gt;" elements
+                                and tolerates "&lt;li&gt;" elements that do not a closing "&lt;/li&gt;"
+                                tag. This option will be automatically assigned a value of true if the
+                                lang option is provided a value of "auto" and the code can be identified
+                                as HTML.</li>
+                            <li><h5>Type</h5>
+                                boolean</li>
+                            <li><h5>Default</h5>
+                                false</li>
+                            <li><h5>As labeled in the HTML tool</h5>
+                                Presume HTML (Markup Only)</li>
+                        </ul>
+                    </li>
+                    <li><h4>inchar</h4>
+                        <ul>
+                            <li><h5>Description</h5>
+                                Stores the character literal used for an indentation. A single
+                                indentation is the result of this value repeated the number of times
+                                specified in the insize option.</li>
+                            <li><h5>Type</h5>
+                                string</li>
+                            <li><h5>Default</h5>
+                                (a single space)</li>
+                            <li><h5>As labeled in the HTML tool</h5>
+                                Indentation character</li>
+                        </ul>
+                    </li>
+                    <li><h4>indent</h4>
+                        <ul>
+                            <li><h5>Description</h5>
+                                Sets the style of indentation during JavaScript beautification. The
+                                default value
+                                <strong>"knr"</strong>
+                                sets a JSLint compliant beautification scheme and the other value
+                                <strong>"allman"</strong>
+                                puts opening curly braces on their own line.</li>
+                            <li><h5>Type</h5>
+                                string</li>
+                            <li><h5>Accepts</h5>
+                                knr, allman</li>
+                            <li><h5>Default</h5>
+                                knr</li>
+                            <li><h5>As labeled in the HTML tool</h5>
+                                Indentation character</li>
+                        </ul>
+                    </li>
+                    <li><h4>inlevel</h4>
+                        <ul><li>Pads JavaScript and markup beautification with additional
+                            indentation. Useful in the case of submitting code to a markupdown
+                            format that identifies code by a padding of 4 spaces for each code
+                            line.</li>
+                            <li><h5>Type</h5>
+                                number</li>
+                            <li><h5>Default</h5>
+                                0</li>
+                            <li><h5>As labeled in the HTML tool</h5>
+                                Indentation character</li>
+                        </ul>
+                    </li>
+                    <li><h4>insize</h4>
+                        <ul>
+                            <li><h5>Description</h5>
+                                Stores the number of times the inchar value must repeat to comprise a
+                                single indentation.</li>
+                            <li><h5>Type</h5>
+                                number</li>
+                            <li><h5>Default</h5>
+                                4</li>
+                            <li><h5>As labeled in the HTML tool</h5>
+                                Indentation size</li>
+                        </ul>
+                    </li>
+                    <li><h4>jsscope</h4>
+                        <ul>
+                            <li><h5>Description</h5>
+                                Produce HTML output for JavaScript beautification that colors variables
+                                based upon their scope of declaration. Using colors this feature
+                                highlights inheritance, scope depth, and closure.</li>
+                            <li><h5>Type</h5>
+                                boolean</li>
+                            <li><h5>Default</h5>
+                                false</li>
+                            <li><h5>As labeled in the HTML tool</h5>
+                                Scope Analysis (JavaScript Only)</li>
+                        </ul>
+                    </li>
+                    <li><h4>lang</h4>
+                        <ul>
+                            <li><h5>Description</h5>
+                                Tells the diff program which language it is receiving. The value "auto"
+                                allows the application to determine between CSS, JavaScript, and Markup
+                                without human effort. If the auto value cannot determine the language it
+                                will default to a value of text if the mode is diff or it will default
+                                to a value of JavaScript for other modes.</li>
+                            <li><h5>Type</h5>
+                                string</li>
+                            <li><h5>Accepted values</h5>
+                                auto, css, csv, javascript, markup, text</li>
+                            <li><h5>Default</h5>
+                                auto</li>
+                            <li><h5>As labeled in the HTML tool</h5>
+                                Code type</li>
+                        </ul>
+                    </li>
+                    <li><h4>mode</h4>
+                        <ul>
+                            <li><h5>Description</h5>
+                                The operation to be performed.</li>
+                            <li><h5>Type</h5>
+                                string</li>
+                            <li><h5>Accepted values</h5>
+                                beautify, diff, minify</li>
+                            <li><h5>Default</h5>
+                                diff</li>
+                            <li><h5>As labeled in the HTML tool</h5>
+                                Function</li>
+                        </ul>
+                    </li>
+                    <li><h4>obfuscate</h4>
+                        <ul>
+                            <li><h5>Description</h5>
+                                A converts reference names into smaller names during JavaScript
+                                minification.</li>
+                            <li><h5>Type</h5>
+                                boolean</li>
+                            <li><h5>Default</h5>
+                                false</li>
+                            <li><h5>As labeled in the HTML tool</h5>
+                                Obfuscation (JavaScript)</li>
+                        </ul>
+                    </li>
+                    <li><h4>preserve</h4>
+                        <ul>
+                            <li><h5>Description</h5>
+                                Retain empty lines in JavaScript. A consecutive empty lines will be
+                                converted to a single empty line.</li>
+                            <li><h5>Type</h5>
+                                boolean</li>
+                            <li><h5>Default</h5>
+                                true</li>
+                            <li><h5>As labeled in the HTML tool</h5>
+                                Empty Lines (JavaScript Only)</li>
+                        </ul>
+                    </li>
+                    <li><h4>quote</h4>
+                        <ul>
+                            <li><h5>Description</h5>
+                                Normalize single quote characters to double quote characters prior to a
+                                diff operation.</li>
+                            <li><h5>Type</h5>
+                                boolean</li>
+                            <li><h5>Default</h5>
+                                false</li>
+                            <li><h5>As labeled in the HTML tool</h5>
+                                Diff Quotes</li>
+                        </ul>
+                    </li>
+                    <li><h4>semicolon</h4>
+                        <ul>
+                            <li><h5>Descriptiong</h5>
+                                If semicolon characters at the end of a line should be removed prior to a
+                                diff operation.</li>
+                            <li><h5>Type</h5>
+                                boolean</li>
+                            <li><h5>Default</h5>
+                                false</li>
+                            <li><h5>As labeled in the HTML tool</h5>
+                                Trailing Semicolons</li>
+                        </ul>
+                    </li>
+                    <li><h4>source</h4>
+                        <ul>
+                            <li><h5>Description</h5>
+                                A code sample to operate upon.</li>
+                            <li><h5>Type</h5>
+                                string</li>
+                            <li><h5>Default</h5>
+                                none</li>
+                            <li><h5>As labeled in the HTML tool</h5>
+                                Base Text (diff), Beautification input (beauty), Minification input
+                                (minify)</li>
+                        </ul>
+                    </li>
+                    <li><h4>sourcelabel</h4>
+                        <ul>
+                            <li><h5>Descriptiong</h5>
+                                Sets a label describing the value of source property in the diff
+                                report.</li>
+                            <li><h5>Type</h5>
+                                string</li>
+                            <li><h5>Default</h5>
+                                Base</li>
+                            <li><h5>As labeled in the HTML tool</h5>
+                                Base label (optional)</li>
+                        </ul>
+                    </li>
+                    <li><h4>space</h4>
+                        <ul>
+                            <li><h5>Description</h5>
+                                Inserts a space following a function keyword for anonymous functions in
+                                JavaScript beautification.</li>
+                            <li><h5>Type</h5>
+                                boolean</li>
+                            <li><h5>Default</h5>
+                                true</li>
+                            <li><h5>As labeled in the HTML tool</h5>
+                                Function Space (JavaScript Only)</li>
+                        </ul>
+                    </li>
+                    <li><h4>style</h4>
+                        <ul>
+                            <li><h5>Description</h5>
+                                Whether CSS and JavaScript code should be indented according to the
+                                surrounding markup or if they should be indented starting from 0. This
+                                property is only applied to markup code containing CSS and
+                                JavaScript.</li>
+                            <li><h5>Type</h5>
+                                boolean</li>
+                            <li><h5>Default</h5>
+                                true</li>
+                            <li><h5>As labeled in the HTML tool</h5>
+                                Indent Style/Script (Markup Only)</li>
+                        </ul>
+                    </li>
+                    <li><h4>topcoms</h4>
+                        <ul>
+                            <li><h5>Description</h5>
+                                If minification should include into the output all comments at the top of
+                                JavaScript or CSS input before any code.</li>
+                            <li><h5>Type</h5>
+                                boolean</li>
+                            <li><h5>Default</h5>
+                                false</li>
+                            <li><h5>As labeled in the HTML tool</h5>
+                                Top Comments (JavaScript / CSS)</li>
+                        </ul>
+                    </li>
+                    <li><h4>vertical</h4>
+                        <ul>
+                            <li><h5>Description</h5>
+                                If lists of assignments or properties should be vertically aligned for
+                                faster and easier reading. Although this option is a boolean it also
+                                accepts a value of
+                                <em>jsonly</em>
+                                so that it may be applied to JavaScript but not CSS. This option is safe
+                                    to both JavaScript and CSS, but will cause warnings in certain CSS
+                                    linters.</li>
+                            <li><h5>Type</h5>
+                                boolean</li>
+                            <li><h5>Default</h5>
+                                false</li>
+                            <li><h5>As labeled in the HTML tool</h5>
+                                Top Comments (JavaScript / CSS)</li>
+                        </ul>
+                    </li>
+                    <li><h4>wrap</h4>
+                        <ul>
+                            <li><h5>Description</h5>
+                                How many columns wide text content may be in a markup document before
+                                wrapping onto a new line. The value 0 disables text wrapping.</li>
+                            <li><h5>Type</h5>
+                                number</li>
+                            <li><h5>Default</h5>
+                                72</li>
+                            <li><h5>As labeled in the HTML tool</h5>
+                                Wrap text (Markup Only)</li>
+                        </ul>
+                    </li>
+                </ol>
+            </div>
             <div id="function_practices"><h3>Practices of Pretty Diff</h3>
                 <p>Pretty Diff hopes to encourage conventions of efficiency, but not at
                     cost to recursion, regression testing, or altered functionality. For
@@ -274,10 +748,10 @@
                     upon markup the functionality of the code is certainly changed. Consider
                     these two examples:</p>
                 <ol>
-                    <li><span class="code">&lt;p&gt;This is a paragraph with a text field.
-                        &lt;input type="text"/&gt;&lt;/p&gt;</span></li>
-                    <li><span class="code">&lt;p&gt;This is a paragraph with a text
-                        field.&lt;input type="text"/&gt;&lt;/p&gt;</span></li>
+                    <li><code>&lt;p&gt;This is a paragraph with a text field. &lt;input
+                        type="text"/&gt;&lt;/p&gt;</code></li>
+                    <li><code>&lt;p&gt;This is a paragraph with a text field.&lt;input
+                        type="text"/&gt;&lt;/p&gt;</code></li>
                 </ol>
                 <p>The difference between the two examples above is the difference of a
                     single space character between the period and the input tag. In markup
@@ -299,18 +773,17 @@
                     characters from flawed beautification schemes. Consider the following
                     two examples:</p>
                 <ol>
-                    <li><span class="code">&lt;p&gt;This is a statement with a &lt;a
-                        href="#"&gt;hyperlink&lt;/a&gt;.&lt;/p&gt;</span></li>
+                    <li><code>&lt;p&gt;This is a statement with a &lt;a
+                        href="#"&gt;hyperlink&lt;/a&gt;.&lt;/p&gt;</code></li>
                     <li>
-                        <span class="code">&lt;p&gt;</span>
-                        <span class="code">&nbsp;&nbsp;&nbsp;&nbsp;This is a statement with
-                            a</span>
-                        <span class="code">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;a
-                            href="#"&gt;</span>
-                        <span class="code">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;hyperlink</span>
-                        <span class="code">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;/a&gt;</span>
-                        <span class="code">&nbsp;&nbsp;&nbsp;&nbsp;.</span>
-                        <span class="code">&lt;/p&gt;</span></li>
+                        <code>&lt;p&gt;</code>
+                        <code>&nbsp;&nbsp;&nbsp;&nbsp;This is a statement with a</code>
+                        <code>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;a
+                            href="#"&gt;</code>
+                        <code>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;hyperlink</code>
+                        <code>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;/a&gt;</code>
+                        <code>&nbsp;&nbsp;&nbsp;&nbsp;.</code>
+                        <code>&lt;/p&gt;</code></li>
                 </ol>
                 <p>The differences between the two prior examples is that the second
                     example introduces white space tokens where they do not exist in the
@@ -325,7 +798,7 @@
                 <p>Code must never be minified if it cannot be automatically recovered
                     into an easily readable form and must never be beautified if such
                     beautification changes how the code is parsed. This is the importance of
-                    regression. The most extreme form of minification is referred to
+                    regression. The most extreme form of minification is referred to as
                     obfuscation. Obfuscation removes all code comments and all white space
                     characters not absolutely required for syntax compliance, but goes one
                     step further and changes all variable and command names to the fewest
@@ -357,218 +830,30 @@
                     regression. Superior minification can be performed by supplying minor
                     functional changes to the code which be easily and intelligently
                     reversed without error or prior knowledge of the code sample.</p></div>
-            <div id="function_properties"><h3>Properties of Pretty Diff's One
-                Function Argument</h3>
-                <p><strong>Please note:</strong>
-                    As of 19 June 2011 Pretty Diff application no longer accepts formal
-                    function arguments. It only accepts a single argument, named
-                    <em>api</em>, which is an object literal that stores the application
-                        options as the following object properties.</p>
-                <ol>
-                    <li>alphasort - If you wish to sort properties in CSS by type and then
-                        alphabetically this is your option. Accepts a boolean value and defaults
-                        to
-                        <em>false</em>. This option is perfectly safe in CSS but causes problems
-                        in SASS and LESS.</li>
-                    <li>comments - This property determines whether comments should be
-                        indented. This property is only used if the source property is set to
-                        <em>beautify</em>. Acceptable values are:
-                        <strong>indent</strong>
-                        and 
-                        <strong>noindent</strong>.</li>
-                    <li>conditional - Use this argument to retain conditional HTML comments
-                        used by Internet Explorer in minification of HTML. This property takes
-                        boolean types and defaults to false.</li>
-                    <li>content - This property determines if string literals in JavaScript
-                        and content in markup should be normalized to a value of
-                        <em>text</em>
-                        prior to a diff operation. This property is only used if mode property is
-                        set to
-                        <em>"diff"</em>. Acceptable values are boolean
-                        <strong>false</strong>
-                        and 
-                        <strong>true</strong>.</li>
-                    <li>context - The value of this property stores a number or empty string
-                        so as to trigger the
-                        <em>Context Size</em>
-                        diff option. This property is only used if mode property is set to
-                        <em>"diff"</em>.</li>
-                    <li>correct - The
-                        <em>correct</em>
-                        property is a limited attempt to automatically correct certain stylistic
-                        code problems that JSLint complains about. This property accepts a
-                        boolean type and defaults to
-                        <em>false</em>.</li>
-                    <li>csvchar - This property stores the string value used as a data
-                        separator for the
-                        <em>"csv"</em>
-                        language. Any string is accepted, but if value of lang property is not
-                        set to
-                        <em>"csv"</em>
-                        the value of this property is ignored.</li>
-                    <li>diff - The string value of this property stores the data that is to
-                        be differenced against value of the source property in a diff operation.
-                        Any string is accepted, but this property is only used if the mode
-                        property is set to
-                        <em>"diff"</em>.</li>
-                    <li>diffcli - An option only available from the node-local.js API file
-                        for Node.js. This option will output a list of differences in color to
-                        the console. If more than one file is compared it will indicate which
-                        files are deleted or new. It takes a boolean and defaults to false. If
-                        the
-                        <em>output</em>
-                        option is omitted the diffcli option is assigned a value of true. If true
-                        and the
-                        <em>context</em>
-                        option is omitted it will default to a value of "2".</li>
-                    <li>diffcomments - Use this argument to retain code comments so that
-                        code and comments can be compared by the diff process. This property
-                        takes boolean types and defaults to false.</li>
-                    <li>difflabel - The value of this property sets a label describing the
-                        value of diff property. Any string is accepted.</li>
-                    <li>diffview - This property determines if the diff report should be
-                        expressed is a side-by-side comparison or a single inline view. This
-                        property is only used if mode property is set to
-                        <em>"diff"</em>. Acceptable values are:
-                        <strong>"sidebyside"</strong>
-                        and 
-                        <strong>"inline"</strong>.</li>
-                    <li>force_indentation - This property determines if every piece of code
-                        and content must be indented or if the source should be beautified
-                        according to its semantics so that white space tokens are not added or
-                        removed. This property accepts boolean values and defaults to
-                        <strong>"false"</strong>.</li>
-                    <li>html - This property determiens if the application must presume
-                        markup input to be an SGML form of the HTML language. This property is
-                        only used if lang property is set to
-                        <em>"markup"</em>. Acceptable values are
-                        <strong>"html-no"</strong>
-                        and 
-                        <strong>"html-yes"</strong>.</li>
-                    <li>inchar - This property stores the character literal used for an
-                        indentation. Any string is accepted. A single indentation is the result
-                        of this value repeated
-                        <em>insize</em>
-                        times.</li>
-                    <li>indent - This property sets the style of indentation during
-                        JavaScript beautification. The default value
-                        <strong>"knr"</strong>
-                        sets a JSLint compliant beautification scheme and the other value
-                        <strong>"allman"</strong>
-                        puts opening curly braces on their own line.</li>
-                    <li>inlevel - The inlevel property pads JavaScript beautification with
-                        additional indentation. This property accepts a number and defaults to
-                        0.</li>
-                    <li>insize - This property stores the character length of an indention.
-                        An integer or string containing an integer is accepted. If anything else
-                        is supplied this property defaults to a value of
-                        <strong>"4"</strong>.</li>
-                    <li>jscorrect - This JavaScript only property determines if sloppiness
-                        should corrected for in the beautified output. Semicolons and curly
-                        braces are added where missing. Operators "++" and "--" are converted to
-                        "+= 1" provided they are not adjacent to arithmetic or arguments of a
-                        method. "new Object()" and "new Array()" are converted to "{}" and "[]".
-                        This argument accepts a boolean value and defaults to "false".</li>
-                    <li>jsscope - This property, if provided a value of boolean true, will
-                        produce HTML output for JavaScript beautification that colors variables
-                        based upon their scope of declaration. This feature highlights
-                        inheritance, scope depth, and closure.</li>
-                    <li>lang - This property tells the diff program which language it is
-                        receiving. Acceptable values are:
-                        <strong>"auto"</strong>,
-                        <strong>"javascript"</strong>,
-                        <strong>"css"</strong>,
-                        <strong>"csv"</strong>,
-                        <strong>"markup"</strong>, and
-                        <strong>"text"</strong>. The value "auto" allows the application to
-                        determine between CSS, JavaScript, and Markup without human effort.</li>
-                    <li>mode - This property determiens the operation to be performed.
-                        Acceptable values are:
-                        <strong>"beautify"</strong>,
-                        <strong>"minify"</strong>, and
-                        <strong>"diff"</strong>.</li>
-                    <li>quote - This property determines if single quote characters should
-                        be converted to double quote characters prior to a diff operation. This
-                        property is only used if mode property is set to
-                        <em>"diff"</em>. Acceptable values are boolean
-                        <strong>false</strong>
-                        and 
-                        <strong>true</strong>.</li>
-                    <li>preserve - This property, if provided a boolean value of false, will
-                        remove all empty lines from JavaScript beautification.</li>
-                    <li>semicolon - This property determines if semicolon characters at the
-                        end of a line should be removed prior to a diff operation. This property
-                        is only used if mode property is set to
-                        <em>"diff"</em>. Acceptable values are boolean
-                        <strong>false</strong>
-                        and 
-                        <strong>true</strong>.</li>
-                    <li>source - The string value of this property is code that is to be
-                        beautified, minified, or represents the base text in a diff operation.
-                        Any string data is accepted.</li>
-                    <li>sourcelabel - The value of this property sets a label describing the
-                        value of source property in the diff report. Any string is
-                        accepted.</li>
-                    <li>space - This property, provided a boolean value of false, will
-                        remove the space following a function keyword for anonymous functions in
-                        JavaScript beautification.</li>
-                    <li>style - This property determines whether CSS and JavaScript code
-                        should be indented according to the surrounding markup or if they should
-                        be indented starting from 0. This property is only used if lang property
-                        is set to
-                        <em>"markup"</em>
-                        and mode property is set to
-                        <em>"beautify"</em>
-                        or 
-                        <em>"diff"</em>. Acceptable values are
-                        <strong>"indent"</strong>
-                        and 
-                        <strong>"noindent"</strong>.</li>
-                    <li>topcoms - This property determines whether minification should
-                        ignore comments at the top of JavaScript or CSS input before any code.
-                        This property is only used if the mode property is set to
-                        <em>"minify"</em>. It accepts values of boolean
-                        <strong>"true"</strong>
-                        or 
-                        <strong>"false"</strong>.</li>
-                    <li>vertical - If you ever wanted to see your object properties,
-                        variable lists, or assignment lists vertically aligned for faster and
-                        easier reading this option is for you. It accepts boolean values and
-                        defaults to
-                        <strong>false</strong>.</li>
-                    <li>wrap - This argument accepts numeric values only and defaults to 0.
-                        The wrap argument determines how many columns text content may be in a
-                        markup document before wrapping onto a new line. The value 0 disables
-                        text wrapping.</li>
-                </ol>
-            </div>
-            <div id="function_option"><h3>Option String</h3>
-                <p>The Pretty Diff option string is similar in convention to the JSLint
-                    option string. Pretty Diff will only process the first option string it
-                    encounters, but it will search the diff code if the option cannot be
-                    found in the source code. In order for the option string to be
-                    recognized it must start with
+            <div id="function_option"><h3>Option Comment</h3>
+                <p>The Pretty Diff option comment is similar in convention to the JSLint
+                    option comment. In the case where multiple Pretty Diff option comments
+                    are present in a document only the first will be processed. If in diff
+                    mode and an option comment is present in the diff code but not the
+                    source code then this option comment will be processed. In order for the
+                    option comment to be recognized it must start with
                     <strong>/*prettydiff.com</strong>
                     and end with
-                    <strong>*/</strong>. The options are listed in this string separated by
+                    <strong>*/</strong>. The options are listed in this comment separated by
                     commas as a colon separated name value pair. The options match the exact
                     value definition for the Pretty Diff application properties above and
                     options that allow abstract values must have their values enclosed in
                     either single or double quotes. The options can be listed in any order.
-                    To prevent possible corruption of the option string it should be
-                    separated from other code comments or content. These are examples of
-                    appropriate option strings:<ul>
-                        <li>/*prettydiff.com api.mode:beautify, api.lang:javascript,
-                            api.inchar:"abc"*/</li>
-                        <li>&lt;!--/*prettydiff.com api.mode: beautify, api.lang: javascript,
-                            api.inchar: "abc", api.html: html-yes */--&gt;</li></ul>
-                </p>
+                    The option comment should be separated from other comments to prevent
+                    any possibility of corrupted interpretation. These are examples of
+                    appropriate option strings:</p>
+                <ul>
+                    <li>/*prettydiff.com api.mode:beautify, api.lang:javascript,
+                        api.inchar:"abc"*/</li>
+                    <li>&lt;!--/*prettydiff.com api.mode: beautify, api.lang: javascript,
+                        api.inchar: "abc", api.html: true */--&gt;</li></ul>
             </div>
             <div id="function_io"><h3>Input and Output</h3>
-                <p>The prettydiff function accepts all code input from JavaScript
-                    variables supplied to the function's source property and diff property.
-                    The code supplied to the diff property is used only during diff
-                    operations and is otherwise ignored.</p>
                 <p>The function outputs an array of two indexes. The first array index
                     is always the processed data and the second array index contains some
                     metadata. In the case of the "beautify" and "minify" operations the
@@ -579,8 +864,10 @@
                     and a some minor metadata about the number of errors in the second array
                     index with both indexes formatted as HTML and neither comprising a
                     complete HTML document. To form the diff output of the prettydiff
-                    function into a single HTML document I typically supply the following
-                    extra code:</p>
+                    function into a single HTML document I supply the following extra code
+                    from the various files in the
+                    <a href="api">api</a>
+                    directory:</p>
                 <ol><li>output = prettydiff(...);</li>
                     <li>heading = '&lt;?xml version="1.0" encoding="UTF-8" ?&gt;&lt;!DOCTYPE
                         html PUBLIC "-//W3C//DTD XHTML 1.1//EN"
@@ -629,10 +916,7 @@
                 <p>Some Node.js API files are supplied as part of the Pretty Diff
                     project. An actively maintained API for use on the local file system is
                     supplied as
-                    <a href="api/node-local.js">api/node-local.js</a>. An API for executing
-                    Pretty Diff as a service is also supplied, but is no longer maintained
-                    at
-                    <a href="api/node-service.js">api/node-service.js</a>.</p>
+                    <a href="api/node-local.js">api/node-local.js</a>.</p>
             </div>
             <div id="function_wsh"><h3>Executing with
                     <a href="http://msdn.microsoft.com/en-us/library/9bbdkx3k%28v=VS.85%29.aspx">Windows
@@ -665,18 +949,13 @@
         </div>
         <div id="beautification"><h2>Beautification</h2>
             <div id="beau_javascript"><h3>JavaScript</h3>
-                <p>JavaScript beautification uses
+                <p>JavaScript beautification uses the
                     <a href="lib/jspretty.js">jspretty</a>
-                    function. This code is used in accordance with licensing provided in
-                    documentation embedded within the original code.</p>
-                <p>JavaScript is beautified in accordance with conventions expressed by
-                    JSLint beautification scheme. This essentially means that spaces are
-                    added after commas, object contents are indented, and a new line is
-                    added after each statement termination and object closing.</p>
-                <p>jspretty now warns on unnecessary use of the
+                    library. JavaScript is beautified in a manner that conforms to the rules
+                    of JSHint and JSLint. jspretty counts unnecessary use of the
                     <em>new</em>
-                    keyword, which is any use except immediately preceeding one of these
-                    global objects:</p>
+                    keyword in its report summary, which is any use except immediately
+                    preceeding one of these global objects:</p>
                 <blockquote>"Date", "RegExp", "Error", "XMLHttpRequest", "FileReader",
                     "ActiveXObject", "DataView", "ArrayBuffer", "Proxy", "DOMParser",
                     "ParallelArray", "Int8Array", "Uint8Array", "Int16Array", "Uint16Array",
@@ -690,24 +969,23 @@
                     assigns its output to a variable named
                     <em>summary</em>. Variable
                     <em>summary</em>
-                    is not provided a scope by jspretty.js, so it must be provided a scope by
-                    a consuming function or it will become an implied global, or an
-                    undeclared variable error in strict mode. It is intended to be provided
-                    to jspretty as closure so that it can access the interior of jspretty
-                    and be accessed outside of jspretty.</p>
+                    is not declared within jspretty. It is used as a closure from a higher
+                    scope so that it may be externally available and yet still access all
+                    the internals of jspretty.</p>
             </div>
             <div id="beau_css"><h3>CSS</h3>
                 <p>CSS beautification uses
                     <a href="lib/csspretty.js">csspretty</a>
-                    function. A minimalist parser that is capable of quick extension and deep
-                    analysis.</p>
+                    library. A minimalist parser that is capable of quick extension and deep
+                    analysis. csspretty is written to supply extended support for the
+                    conventions of SCSS and LESS grammars.</p>
             </div>
             <div id="beau_csv"><h3>CSV</h3>
                 <p>CSV typically stands for
                     <em>comma separated values</em>, but in this tool it stands for
                     character separated values. The
                     <a href="lib/csvbeauty.js">csvbeauty</a>
-                    function takes a sequence of characters and splits the input upon that
+                    library takes a sequence of characters and splits the input upon that
                     supplied sequence onto new lines. Prior existing line breaks, if they
                     were quoted, are converted to a space contained by braces:
                     <em>{ }</em>. Unquote line breaks are converted into two simultaneous
@@ -722,7 +1000,7 @@
                     improve ledgibility.</p>
                 <p>CSV beautification uses
                     <a href="lib/charDecoder.js">charDecoder</a>
-                    to decode Unicode character entities. The charDecode function accepts any
+                    to decode Unicode character entities. The charDecode library accepts any
                     combination of HTML decimal Unicode entities and Unicode hexidecimal
                     entities. HTML decimal entities must begin with an ampersand and pound
                     character '&amp;#', be immediately followed with between one and six
@@ -753,16 +1031,10 @@
             <div id="beau_markup"><h3>Markup</h3>
                 <p>Markup beautification uses the
                     <a href="lib/markup_beauty.js">markup_beauty</a>
-                    function of the application. This function operates upon a pattern based
-                    logic of referrential integrity. This means decisions are made through
-                    exposure to the pattern as established so far. Unfortunately, this
-                    requires defined logic to consider all possible combinations of
-                    patterns. At this point the beautification appears to work for more than
-                    99.9% of pattern combinations, but undefined combinations are
-                    continually being discovered. If an error in my logic is discovered
-                    please
-                    <a href="mailto:austin.cheney@us.army.mil">contact me</a>
-                    so that I am supply you with a corrected application.</p>
+                    library, which operates upon a pattern based logic of referential
+                    integrity. This means decisions are made through exposure to the pattern
+                    as established so far. Unfortunately, this requires defined logic to
+                    consider all possible combinations of patterns.</p>
                 <p>The markup beautification is based upon syntax conventions only and
                     absolutely not upon vocabulary. The two exceptions are that the contents
                     of a script tag are presumed to be JavaScript if the tag does not
@@ -811,12 +1083,6 @@
                         output&lt;/strong&gt;"/&gt;</em>.
                     The only limitation is that the nested tags must be quoted in either
                     double or single quotes.</p>
-                <p>On 12 April 2011 support was added for complex nested SGML tags. This
-                    support is limited to the points of conflict with the terse syntax
-                    requirements of XML. In the case of such conflicts markup_beauty chooses
-                    to comply with XML syntax in opposition to SGML flexibility. This is of
-                    particular concern to tags that use the "<em>&lt;?</em>"
-                    syntax.</p>
                 <h4>Markup Summary</h4>
                 <p>The markup_beauty function contains, at its end, an unassigned
                     anonymous function that creates the summary report and assigns its
@@ -832,35 +1098,6 @@
                     formula to compute a performance rating that reenforces reliance upon
                     structure and elaboration of content. This function also displays each
                     HTML element making a HTTP request.</p></div>
-            <div id="beau_options"><h3>Beautification Options</h3>
-                <p>The
-                    <em>Indentation Size</em>
-                    is merely a multiplier of the specified indentation character. Each
-                    component of the total application computes indentation from multiplying
-                    the indentation size by the indendation character independently so that
-                    the components may be used without the others and with minimal or no
-                    modification.</p>
-                <p>The
-                    <em>Indentation Characters</em>
-                    option allows a choice of space, tab, new line, or a string of text
-                    characters from the HTML tool. The code will literally allow anything
-                    that can be expressed as a character or series of characters.</p>
-                <p>The
-                    <em>Indent Comments</em>
-                    option determines if comments should be indented in accordance to the
-                    neighboring code or if comments should not be indented at all.</p>
-                <p>The
-                    <em>Indent Style/Script</em>
-                    option is only available for markup beautification. This option
-                    determines if the contents of style or script should be indented to
-                    match the indentation of their parent tag or if their indentation should
-                    begin from the left.</p>
-                <p>The
-                    <em>Presume SGML type HTML</em>
-                    option is only available for the markup type of code. When this option is
-                    enabled all tag names that are "presumed" as singleton tags in HTML 4.01
-                    are treated as singletons regardless of their syntax.</p>
-            </div>
         </div>
         <div id="minification"><h2>Minification</h2>
             <div id="mini_javascript"><h3>JavaScript</h3>
@@ -880,12 +1117,12 @@
                     <em>comma separated values</em>, but in this tool it stands for
                     character separated values. The
                     <a href="lib/csvmin.js">csvmin</a>
-                    function reverts all changes inflicted by the
+                    library reverts all changes inflicted by the
                     <a href="lib/csvbeauty.js">csvbeauty</a>
-                    function.</p>
+                    library.</p>
                 <p>CSV beautification uses
                     <a href="lib/charDecoder.js">charDecoder</a>
-                    to decode Unicode character entities. The charDecode function accepts any
+                    to decode Unicode character entities. The charDecode library accepts any
                     combination of HTML decimal Unicode entities and Unicode hexidecimal
                     entities. HTML decimal entities must begin with an ampersand and pound
                     character '&amp;#', be immediately followed with between one and six
@@ -913,27 +1150,16 @@
                     the supplied entity. In summary, if your browser has limited support for
                     Unicode characters you must expect equally limited results when using
                     entity references. csvmin does not revert any changes supplied by the
-                    charDecoder function.</p></div>
+                    charDecoder library.</p></div>
             <div id="mini_markup"><h3>Markup</h3>
                 <p>Markup is minified using
-                    <a href="lib/markupmin.js">markupmin</a>. This function does little more
+                    <a href="lib/markupmin.js">markupmin</a>. This library does little more
                     than tokenize a run of whitespace characters into a single space
                     character and scrubbing of comments. It does, however, preserve
                     whitespace inside ASP and PHP tags and preserve SSI tags. It will also
                     assume the contents of a script tag are JavaScript and minify them
                     according, and also assumes the contents of style tags are CSS and
                     minifies them as such.</p>
-            </div>
-            <div id="mini_options"><h3>Minification Options</h3>
-                <p>The
-                    <em>Presume SGML type HTML</em>
-                    option is only available for the markup type of code. When this option is
-                    enabled all tag names that are "presumed" as singleton tags in HTML 4.01
-                    are treated as singletons regardless of their syntax. The
-                    <em>conditional</em>
-                    argument accepts boolean types and defaults to a value of false. The
-                    conditional argument allows the output to retain HTML conditional
-                    comments supported by Internet Explorer if the value is true.</p>
             </div>
         </div>
         <div id="prettydiff"><h2>Pretty Diff</h2>
@@ -942,80 +1168,23 @@
                     <a href="lib/diffview.js">diffview</a>. Originally by Snowtide
                     Informatics Systems. diffview is almost entirely rewritten from scratch
                     so that JavaScript arrays are used to store the dynamic output instead
-                    of DOM objects. This change has result in a 3.5x faster response rate.
+                    of DOM objects. This change has result in a faster and more extensible application.
                     charcomp is the function used to highlight per character
                     differences.</p>
             </div>
             <div id="pd_diffprocess"><h3>Diff Process</h3>
-                <p>JavaScript code is beautified with
+                <p>JavaScript code is beautified with the
                     <a href="lib/jspretty.js">jspretty</a>
-                    and then compared. CSV is first minified with
+                    library and then compared. CSV is first minified with
                     <a href="lib/csvmin.js">csvmin</a>
                     and then beautified with
                     <a href="lib/csvbeauty.js">csvbeauty</a>. CSS is beautified with
-                    <a href="lib/csspretty.js">csspretty</a>
-                    and then compared. Markup is beautified using
-                    <a href="lib/markup_beauty.js">markup-beautify</a>. Plain text is diffed
+                    the <a href="lib/csspretty.js">csspretty</a>
+                    library and then compared. Markup is beautified using the
+                    <a href="lib/markup_beauty.js">markup-beautify</a> library. Plain text is compared
                     without any minification or beautification. If code that needs to be
-                    compared that is not compatible with the other processes then use the
-                    plain text mode.</p>
-                <p>Only after the automated beautification does the diff process begin.
-                    The difflib finds differences per line and sends its results, as an
-                    array of numeric values where to look in the code, over the diffview.
-                    Diffview takes the opcodes supplied by difflib and then builds an array
-                    where the code is pumped into HTML table cell code. Once the view is
-                    completely built it is immediately inserted into the page using
-                    innerHTML. You cannot see the output at this point because it is set to
-                    display none until charcomp finishes.</p>
-                <p>charcomp finds the table cells with a class of "replace" and only
-                    works on those cells. Before performing any comparison it converts
-                    non-breaking space references into actual spaces to reduce processing
-                    requirements, and converts angle brackets into entity references, and
-                    converts entity references for quotes into actual quotes. In JavaScript
-                    a single quote compares to true against a double quote even if both are
-                    string literals, so I invented character references that I could convert
-                    back to quotes within the context of the comparison function so that
-                    they actually do become string literals that comparable. Once a
-                    difference is located it is wrapped in an em tag.</p></div>
-            <div id="pd_diffoptions"><h3>Diff Options</h3>
-                <p><em>Print or Save Output</em>
-                    option dumps the HTML output as raw text into a textarea. Please copy the
-                    text out of this new textarea at the bottom of the page and paste it
-                    into a new text file to be saved with the file extension of 'html'. If
-                    the output is to be printed please use landscape instead of portrait
-                    orientation for the paper in order to achieve the best results.</p>
-                <p>The
-                    <em>Context Size</em>
-                    option provides padding to the lines of code differences with lines of
-                    code that are not different. This option expects to receive a number or
-                    empty value only. If anything else is entered an empty value will be
-                    processed. An empty value negates this option by returning all supplied
-                    code with differences highlighted. If there is no differences are
-                    discovered this option is negated.</p>
-                <p><em>JavaScript Toleration</em>
-                    is exactly the same as described in Minification Options above.
-                    <em>Indentation Size</em>
-                    are exactly the same as described in Beautification Options above.
-                    <em>Indentation Characters</em>,
-                    <em>Indent Style/Script</em>, and
-                    <em>Presume SGML type HTML</em>
-                    are exactly the same as described in Beautification Options above.</p>
-                <p>The
-                    <em>Diff View Type</em>
-                    option provides two choices. The first choice, Side by Side View, reports
-                    the output into two columns that display a side by side comparison of
-                    the differences. The second choice, Inline View, displays the output
-                    into a single column so that the differences can be seen in a vertical
-                    comparison.</p>
-                <p><em>Diff Quotes</em>
-                    is an option to normalize all single quote characters, &#39;, to double
-                    quote characters, &#34;. This option is off by default and it functions
-                    after input code is beautified and before diff operation execution.</p>
-                <p><em>Trailing Semicolons</em>
-                    is an option to remove semicolon characters just before a new line
-                    character. This option is off by default and it functions after input
-                    code is beautified and before diff operation execution.</p>
-            </div>
+                    compared is not compatible with the other processes then use the
+                    plain text mode.</p></div>
         </div>
         <div id="checklist_option"><h2>Checklist - Adding New Options</h2>
             <ol>

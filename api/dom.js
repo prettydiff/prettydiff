@@ -1087,7 +1087,7 @@ var pd = {};
                     jscorrect    = pd.$$("jscorrect-yes");
                     jsscope      = pd.$$("jsscope-yes");
                     jsspace      = pd.$$("jsspace-no");
-                    offset       = pd.$$("jsinlevel");
+                    offset       = pd.$$("inlevel");
                     verticalj    = pd.$$("vertical-jsonly");
                     verticaly    = pd.$$("vertical-yes");
                     api.correct  = (jscorrect === null || jscorrect.checked === false) ? false : true;
@@ -4245,6 +4245,7 @@ var pd = {};
                         node.selectedIndex = pd.settings.colorScheme;
                     }
                     pd.colorScheme(node);
+                    node.onchange = pd.colorScheme;
                 }
                 componentArea = pd.$$("components");
                 if (componentArea !== null) {
