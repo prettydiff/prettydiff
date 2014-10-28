@@ -3,11 +3,13 @@
 <html xml:lang='en' xmlns='http://www.w3.org/1999/xhtml'>
     <head>
         <title>Pretty Diff - The difference tool</title>
-        <meta content="index, follow" name="robots"/>
-        <meta content="Pretty Diff - The difference tool" name="DC.title"/>
+        <link href="diffview.css" media="all" rel="stylesheet" type="text/css"/>
         <link href='http://prettydiff.com/documentation.xhtml' rel='canonical' type='application/xhtml+xml'/>
         <link href="http://prettydiff.com/images/favicon.ico" rel="icon" type="image/x-icon"/>
         <link href="http://prettydiff.com/labels.rdf" rel="meta" title="ICRA labels" type="application/rdf+xml"/>
+        <meta content="width=device-width, initial-scale=1" name="viewport"/>
+        <meta content="index, follow" name="robots"/>
+        <meta content="Pretty Diff - The difference tool" name="DC.title"/>
         <meta content='(pics-1.1 "http://www.icra.org/pics/vocabularyv03/" l gen true for "http://prettydiff.com" r (n 0 s 0 v 0 l 0 oa 0 ob 0 oc 0 od 0 oe 0 of 0 og 0 oh 0 c 1) gen true for "http://www.prettydiff.com" r (n 0 s 0 v 0 l 0 oa 0 ob 0 oc 0 od 0 oe 0 of 0 og 0 oh 0 c 1))' http-equiv="pics-Label"/>
         <meta content="Austin Cheney" name="author"/>
         <meta content="Pretty Diff tool can minify, beautify (pretty-print), or diff between minified and beautified code. This tool can even beautify and minify HTML." name="description"/>
@@ -19,10 +21,21 @@
         <meta content="text/css" http-equiv="content-style-type"/>
         <meta content="application/javascript" http-equiv="content-script-type"/>
         <meta content="qL8AV9yjL2-ZFGV9ey6wU3t7pTZdpD4lIetUSiNen7E" name="google-site-verification"/>
-        <link href="diffview.css" media="all" rel="stylesheet" type="text/css"/>
     </head>
     <body class="white" id="doc">
-        <h1><a href="http://prettydiff.com/">Pretty Diff</a>
+        <h1>
+            <svg height="2000.000000pt"
+                    preserveAspectRatio="xMidYMid meet"
+                    version="1.0"
+                    viewBox="0 0 2000.000000 2000.000000"
+                    width="2000.000000pt"
+                    xmlns="http://www.w3.org/2000/svg">
+                    <g fill="#999"
+                        stroke="none"
+                        transform="translate(0.000000,2000.000000) scale(0.100000,-0.100000)">
+                        <path d="M14871 18523 c-16 -64 -611 -2317 -946 -3588 -175 -660 -319 -1202 -320 -1204 -2 -2 -50 39 -107 91 -961 876 -2202 1358 -3498 1358 -1255 0 -2456 -451 -3409 -1279 -161 -140 -424 -408 -560 -571 -507 -607 -870 -1320 -1062 -2090 -58 -232 -386 -1479 -2309 -8759 -148 -563 -270 -1028 -270 -1033 0 -4 614 -8 1365 -8 l1364 0 10 38 c16 63 611 2316 946 3587 175 660 319 1202 320 1204 2 2 50 -39 107 -91 543 -495 1169 -862 1863 -1093 1707 -568 3581 -211 4965 946 252 210 554 524 767 796 111 143 312 445 408 613 229 406 408 854 525 1320 57 225 380 1451 2310 8759 148 563 270 1028 270 1033 0 4 -614 8 -1365 8 l-1364 0 -10 -37z m-4498 -5957 c477 -77 889 -256 1245 -542 523 -419 850 -998 954 -1689 18 -121 18 -549 0 -670 -80 -529 -279 -972 -612 -1359 -412 -480 -967 -779 -1625 -878 -121 -18 -549 -18 -670 0 -494 74 -918 255 -1283 548 -523 419 -850 998 -954 1689 -18 121 -18 549 0 670 104 691 431 1270 954 1689 365 293 828 490 1283 545 50 6 104 13 120 15 72 10 495 -3 588 -18z"/></g>
+                </svg>
+            <a href="prettydiff.com.xhtml">Pretty Diff</a>
             - Documentation</h1>
         <p id="dcolorScheme"><label class="label" for="colorScheme">Color
             Scheme</label>
@@ -35,7 +48,7 @@
             execution occurs on the local computer only and resulting output is not
             transmitted or stored, it is safe for processing classified
             information.</strong></p>
-        <p>For any questions, comments, requests, or feedback please join the
+        <p>Explore some <a href="samples.xhtml">samples</a>. For any questions, comments, requests, or feedback please join the
             <a href="https://groups.google.com/d/forum/pretty-diff">Pretty Diff
                 mailing list</a>.
             Find
@@ -46,6 +59,8 @@
                 <li><a href="#about">About This Application</a>
                     <ol>
                         <li><a href="#about_intro">Introduction</a></li>
+                        <li><a href="#about_guides">Informational Guides</a></li>
+                        <li><a href="#about_unrelated">Unrelated Guides</a></li>
                     </ol>
                 </li>
                 <li><a href="#knownissues">Known Issues</a></li>
@@ -97,6 +112,20 @@
                     variety of language analysis. This application is 100% vanilla
                     JavaScript and is API independent.</p>
             </div>
+            <div id="about_guides">
+                <h3>Informational Guides</h3>
+                <ol>
+                    <li><a href="guide/tag_ignore.xhtml">Ignoring specified tags from markup beautification</a></li>
+                    <li><a href="guide/diffcli.xhtml">So its kind like recursive command line diff, but in JavaScript</a></li>
+                    <li><a href="guide/react_jsx.xhtml">Processing the JSX format from Facebook's React</a></li>
+                </ol>
+            </div>
+            <div id="about_unrelated">
+                <h3>Unrelated Guides</h3>
+                <ol>
+                    <li><a href="guide/unrelated_dom.xhtml">The DOM Explained, Quick and Simple</a></li>
+                </ol>
+            </div>
         </div>
         <div id="knownissues"><h2>Known Issues</h2>
             <ol><li>Webkit browsers, such as Google Chrome and Apple Safari, do not
@@ -107,10 +136,6 @@
                     <a href="https://bugs.webkit.org/show_bug.cgi?id=51168">51168</a>
                     and 
                     <a href="https://bugs.webkit.org/show_bug.cgi?id=90739">90739</a>.</li>
-                <li>In the difference report this collection of characters, "$#lt;" and
-                    "$#gt;", may appear respectively as, "%#lt;" and "%#gt;", if those
-                    collections of characters are interrupted by starting or end of a
-                    difference.</li>
                 <li>Markup beautification will output flawed data if less than
                     characters, "&lt;", are included into sections of content and not
                     escaped. This error occurs regardless if less than characters embedded

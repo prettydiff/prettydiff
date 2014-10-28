@@ -1,0 +1,82 @@
+html {
+    font-size: 10px;
+}
+body {
+    font-family: Arial;
+    max-width: 80em;
+}
+#doc div {
+padding: 1em;
+}
+#dcolorScheme {
+margin-top: -3em
+}
+p {
+    font-size: 2em;
+    line-height: 1.5;
+}
+body#doc ol li {
+    font-size: 2em;
+}
+p em {
+    color: #003;
+    font-weight: bold;
+}
+p a {
+    color: #339;
+    font-weight: bold;
+}
+#doc code {
+font-size: 2em;
+    margin-bottom: 1em
+}
+code.commandLine {
+    background   : #000;
+    border-radius: 0.5em;
+    color        : #fff;
+    font-family  : monospace;
+    padding      : 0.2em;
+    white-space  : pre-wrap;
+    border:0.1em solid #999;
+}
+code.commandLine .delete {
+    color: #b00;
+}
+code.commandLine .insert {
+    color: #090;
+}
+code.commandLine .meta {
+    color: #adf;
+}
+code.commandLine .delete strong {
+    color: #f00;
+}
+code.commandLine .insert strong {
+    color: #0f0;
+}
+h1 {
+    font-size: 3.25em;
+}
+h1 span {
+    display: block;
+    font-size: 0.5em;
+    margin-top: 1em;
+}
+#doc h2 {
+float: none;
+font-size: 2.5em;
+border-style: none;
+margin: 0 0 2em
+}
+#doc h3{
+font-size: 2em;
+}
+h1 svg {
+    border: 0.025em solid #000;
+    width: 1.475em;
+    height: 1.475em;
+    margin-bottom: -0.1em;
+}
+h2 {
+    font-size: 1.8em;
+}

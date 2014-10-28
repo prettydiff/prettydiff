@@ -9751,12 +9751,12 @@ var prettydiff = function prettydiff(api) {
         csvbeauty    : 140114, //csvbeauty library
         csvmin       : 131224, //csvmin library
         diffview     : 141027, //diffview library
-        documentation: 141027, //documentation.xhtml
+        documentation: 141028, //documentation.xhtml
         jspretty     : 140930, //jspretty library
         markup_beauty: 141025, //markup_beauty library
         markupmin    : 141027, //markupmin library
-        prettydiff   : 141027, //this file
-        webtool      : 141027, //prettydiff.com.xhtml
+        prettydiff   : 141028, //this file
+        webtool      : 141028, //prettydiff.com.xhtml
         api          : {
             dom      : 141027,
             nodeLocal: 141004,
