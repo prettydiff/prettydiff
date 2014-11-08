@@ -15,8 +15,18 @@ p {
     font-size: 2em;
     line-height: 1.5;
 }
-body#doc ol li {
-    font-size: 2em;
+body#doc ol li,
+body#doc ul li {
+    font-size: 1.8em;
+}
+li {
+    display: list-item;
+}
+ol li {
+    list-style: decimal;
+}
+ul li {
+    list-style: disc;
 }
 p em {
     color: #003;
@@ -70,6 +80,10 @@ margin: 0 0 2em
 }
 #doc h3{
 font-size: 2em;
+}
+#doc h4 {
+    font-size: 1.8em;
+    margin-top: 0;
 }
 h1 svg {
     border: 0.025em solid #000;

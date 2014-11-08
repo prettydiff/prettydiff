@@ -53,43 +53,51 @@
                     is a JavaScript template framework coming out of Facebook. Perhaps the
                     most exciting feature of this technology is its data format for defining
                     templates called
-                    <a href="http://facebook.github.io/react/docs/displaying-data.html">JSX</a>.
+                    <a href="http://facebook.github.io/jsx/">JSX</a>.
                         Essentially, JSX allows writing HTML template code directly into a
-                        JavaScript function using XML syntax.</p>
+                        JavaScript function using XML syntax. Version 0.12 of React brought big changes to JSX to include:</p>
+                <ul>
+                    <li>Elimination of the previously required identifying pragma comment</li>
+                    <li>JavaScript comments may occur freely within the XML body outside of curly braces</li>
+                    <li>The means to walk in and out of JavaScript syntax and XML.</li>
+                </ul>
             </div>
-            <div><h3>JSX Pragma</h3>
-                <p>JSX requires a pragma state to appear at the top of the code. When
-                    Pretty Diff's
-                    <a href="../lib/jspretty.js">jspretty</a>
-                    library encounters the pragma statement before any uncommented code it
-                    will automatically interpret the document as JSX format without any
-                    setting or option. The pragma is comment like the following:</p>
-                <code>/** @jsx React.DOM*/</code>
-                <p>For jspretty to recognize the pragma the following conditions must
-                    apply.</p>
-                <ol>
-                    <li>The comment must start with
-                        <em>/**</em>.</li>
-                    <li>The comment must end with
-                        <em>*/</em>.</li>
-                    <li>The comment must contain the case-sensitive string
-                        <em>@jsx React.DOM</em>.</li>
-                    <li>The comment must occur before any uncommented code.</li>
-                    <li>The comment may contain additional asterisks and white space
-                        characters, but not any other characters.</li>
-                </ol>
+            <div><h3>Overview of Pretty Diff support</h3>
+                <p>Pretty Diff claims to fully integrate v0.12 JSX support into all its modes and features. Supporting JSX properly means providing an XML parser to
+                a JavaScript parser which can also call upon that JavaScript parser from within areas of JSX's XML tags. A good markup parser also makes use of a minifier to normalize white space within an XML element, aside from JavaScript comments that do not otherwise occur in XML. Pretty Diff makes use of these three parsers:</p>
+                <ul>
+                    <li><a href="../lib/jspretty.js">jspretty</a></li>
+                    <li><a href="../lib/markupmin.js">markupmin</a></li>
+                    <li><a href="../lib/markup_beauty.js">markup_beauty</a></li>
+                </ul>
+                <p>In order to support prior existing features of Pretty Diff, namely <a href="diffcli.xhtml">command line access to multiple various files</a>, JSX language detection is automatic and not provided as a user selectable choice.</p>
+                <p>Accounting for such novel complexity opens the potential for parsing problems that are otherwise entirely absent. For example, Pretty Diff does not claim support for intermixing the tag nesting features of JSTL syntax with the capabilities of JSX since each of these languages are supersets whose syntax violates each other. JSX parsing complexity is also challenging in that movement between various parsers is frequent and multidimensional, which makes debugging a bit more challenging compared to regular JavaScript or HTML.</p>
             </div>
-            <div><h3>Markup embedded within JavaScript</h3>
-                <p>If in JSX mode the jspretty library will expect angle braces to
-                    represent XML tags and not JavaScript operators. If angle braces need to
-                    represent operators then they must be contained by curly braces. Once an
-                    angle brace is encountered it is interpreted as an XML start tag
-                    expecting an XML end tag or a lone XML singleton. The markup language
-                    token will be isolated and sent to the
-                    <a href="../lib/markupmin.js">markupmin</a>
-                    library for minification or the
-                    <a href="../lib/markup_beauty.js">markup_beauty</a>
-                    library for beautification.</p>
+            <div><h3>How Pretty Diff parses JSX</h3>
+                <div><h4>Parsing with jspretty</h4>
+                <p>JSX language is automatically detected from a JavaScript code sample. This means the code sample must begin as JavaScript syntax. If a document begins as XML syntax it will be parsed only as HTML or XML. JSX is detected by looking for less than characters, &lt;, that start an XML tag. These characters are operators in JavaScript syntax, so I look to see if the less than character is preceeded immediately optionally by any white space characters or opening parenthesis and then preceeded by either a <em>return</em> keyword or any operator. Once an XML body is detected it is followed all the way to the end of the XML body. This XML body is represented as a single token in the jspretty parser for hand off directly to markupmin, if in minify mode, or to the markup_beauty parser. Along with handing over a code sample the depth of indentation is also handed over so that the markup can be indented accoding to the wrapping JavaScript.</p>
+                </div>
+                <div><h4>Parsing with markupmin</h4>
+                <p>The markup_beauty parser always makes use of the markupmin parser to normalize extraneously characters out of its syntax.</p>
+                <p>An enhancement to the markupmin parser does all the heavy lifting for JSX. Three forms of JavaScript syntax are recognized within a JSX body:</p>
+                <ul>
+                    <li>Block comments that begin with <em>/*</em> and end with <em>*/</em></li>
+                    <li>Line comments that begin with <em>//</em> and end with <em>\n</em></li>
+                    <li>All other JavaScript code may freely occur inside or outside an XML tag so long as it is wrapped curly braces</li>
+                </ul>
+                <p>Curly brace JavaScript, whether inside or outside of an XML tag, is packaged for handing back off to jspretty. This allows beautified or minified JavaScript to be included within the larger XML code sample that is handed back off to jspretty in a later step. If this sub-sample of JavaScript contains XML tags jspretty will interprete the tags correctly passing them back through this process as individual parsing tokens for precise interpretation.</p>
+                <p>JavaScript comments are not passed back to jspretty. Line breaks are properly maintained for block comments and after line comments. White space preceeding lines of code in block comments may not be precisely preserved by the entire Pretty Diff process. This is a non-critical edge case that occurs from various different parsers touching this code at various different times and sometimes more than once.</p>
+                <p>If in minify mode markupmin will pass its output back to jspretty.</p>
+                <p>This process allows for separate handing of embedded JavaScript and proper handling for XML syntax. markupmin expects to return a string and markup_beauty only expects to receive a string. JSX code is fully parsed at this point ares features minimal complexity, aside from the intermixing of XML and JavaScript syntax, compared to regular HTML/XML. To streamline processing markupmin will join the array of tokens with an internal separator, <em>pdjsxSep</em>, and hand the code off to markup_beauty flagged as JSX code.</p>
+                </div>
+                <div><h4>Parsing with markup_beauty</h4>
+                <p>Once markup_beauty receives output from markupmin flagged as JSX it parses the input by splitting the source string on <em>pdjsxSep</em>. The resulting array is presumed as fully parsed and passed through regular XML beautification. Alphabetic sorting of tag attributes continues to occur. JavaScript comments embedded within a tag are treated as attributes and alphabetized accordingly. The beautified JSX is padded to match the indentation of the supplying JavaScript and then passed back to jspretty as a beautified XML body.</p>
+                <p>The markup_beauty and markupmin libraries continue to support the <a href="tag_ignore.xhtml">ignore attribute</a>. When the attribute is present the correspoding code will not be beautified.</p>
+                </div>
+                <div><h4>Return to jspretty</h4>
+                    <p>The JSX code returned to jspretty from markup_beauty is beautified as a single code block. This code block may span multiple lines whose indentation may slightly differ in context to the containing JavaScript. This is especially true of jspretty's jsscope feature where each line of code is formatted as HTML for output. The jspretty library will supply to finishing touches to the indentation of the XML block to ensure each line of code is properly padded to match the indentation of the JavaScript code and yet still maintain the beautification provided by markup_beauty.</p>
+                </div>
+                <p>There are likely to arise edge cases that I am not currently aware of. When a bug is encountered please announce it to the world by opening an issue on <a href="https://github.com/austincheney/prettydiff/issues">Github</a>.</p>
             </div>
         </div>
         <p>For additional options check out the
