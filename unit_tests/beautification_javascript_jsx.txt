@@ -1,0 +1,47 @@
+var ListItem = React.createClass({
+    render: function () {
+        return (
+            <li className="ListItem">
+                <a href={ "/items/" + this.props.item.id }>
+                    this.props.item.name
+                </a>
+            </li>
+        );
+    }
+});
+
+var List = React.createClass({
+    renderList: function () {
+        return this.props.items.map(function (item) {
+            return <ListItem item={item} key={item.id} />;
+        });
+    },
+
+    render: function () {
+        return <ul className="List">
+                this.renderList()
+            </ul>
+    }
+});
+var content = (
+        <Nav>
+            {/* child comment, put {} around */}
+            <Person
+                /* multi
+         line
+         comment */
+         //attr="test"
+                name={window.isLoggedIn ? window.name : ''} // end of line comment
+            />
+        </Nav>
+    );
+var qwer = <Dropdown> A dropdown list <Menu> <MenuItem>Do Something</MenuItem> <MenuItem>Do Something Fun!</MenuItem> <MenuItem>Do Something Else</MenuItem> </Menu> </DropDown>; render(dropdown);
+
+// JSX
+var box = <Box>
+    {shouldShowAnswer(user) ?
+        <Answer value={false}>no</Answer> : <Box.Comment>
+        Text Content
+        </Box.Comment>}
+    </Box>;
+var a = function () {return <tsdf>asdf</tsdf>;};

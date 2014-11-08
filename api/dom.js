@@ -677,13 +677,16 @@ var pd = {};
                     button           = {},
                     buttons          = {},
                     presumedLanguage = "";
-
                 node      = pd.$$("showOptionsCallOut");
                 pd.zIndex += 1;
                 if (autotest === true) {
                     presumedLanguage = lang;
                     if (lang === "javascript") {
-                        lang = "JavaScript";
+                        if (output[1].indexOf("React JSX") > 0) {
+                            lang = "React JSX";
+                        } else {
+                            lang = "JavaScript";
+                        }
                     } else if (lang === "text") {
                         lang = "plain text";
                     } else if (lang === "htmlembedded") {
@@ -696,7 +699,7 @@ var pd = {};
                 }
                 if (autotest === true && pd.o.announce !== null) {
                     pd.o.announce.style.color = "#00c";
-                    pd.o.announce.innerHTML = "Code type is set to <strong>auto</strong>. <span>Presumed language is <em>" + lang + "</em>.</span>";
+                    pd.o.announce.innerHTML   = "Code type is set to <strong>auto</strong>. <span>Presumed language is <em>" + lang + "</em>.</span>";
                 }
                 if (autotest === true) {
                     api.lang = "auto";
@@ -724,7 +727,7 @@ var pd = {};
                                 }
                                 return "";
                             }());
-                            if (lang !== "") {
+                            if (lang.indexOf("end tag") > 0) {
                                 pd.o.announce.style.color = "#c00";
                                 pd.o.announce.innerHTML   = lang;
                             }
@@ -732,10 +735,10 @@ var pd = {};
                     }
                     if (pd.o.report.beau.box !== null) {
                         if (output[1] !== "") {
+                            pd.o.report.beau.body.innerHTML = output[1];
                             if (autotest === true) {
-                                output[1] = output[1].replace("seconds </em></p>", "seconds </em></p> <p>Language is set to <strong>auto</strong>. Presumed language is <em>" + lang + "</em>.</p>");
+                                pd.o.report.beau.body.firstChild.innerHTML = "Code type is set to <strong>auto</strong>. <span>Presumed language is <em>" + lang + "</em>.</span>";
                             }
-                            pd.o.report.beau.body.innerHTML    = output[1];
                             pd.o.report.beau.box.style.zIndex  = pd.zIndex;
                             pd.o.report.beau.box.style.display = "block";
                         }
@@ -752,9 +755,6 @@ var pd = {};
                                 presumedLanguage = presumedLanguage.substring(0, presumedLanguage.indexOf("</em>"));
                             }
                             if (presumedLanguage.toLowerCase() === "javascript" || api.lang === "javascript") {
-                                if (pd.o.report.beau.body.style.display === "none") {
-                                    pd.grab({type: "onmousedown"}, pd.o.report.beau.box.getElementsByTagName("h3")[0]);
-                                }
                                 if (parent.innerHTML.indexOf("save") < 0) {
                                     if (parent.style === undefined || parent.style.display === "block") {
                                         pd.o.report.beau.box.getElementsByTagName("h3")[0].style.width = (Number(h3.substr(0, h3.length - 2)) - 3) + "em";
@@ -774,6 +774,11 @@ var pd = {};
                                         var that = this;
                                         pd.save(that);
                                     };
+                                }
+                                if (pd.o.report.beau.body.style.display === "none") {
+                                    pd.grab({
+                                        type: "onmousedown"
+                                    }, pd.o.report.beau.box.getElementsByTagName("h3")[0]);
                                 }
                                 button = pd.o.report.beau.box.getElementsByTagName("p")[0];
                                 if (pd.o.report.beau.body.style.display === "none") {
@@ -832,10 +837,6 @@ var pd = {};
                     if (pd.o.announce !== null && pd.o.announce.innerHTML !== pd.o.announcetext && autotest === false) {
                         pd.o.announce.innerHTML = "";
                     }
-                    if (autotest === true) {
-                        output[1] = output[1].replace("seconds </em></p>", "seconds </em></p> <p>Language is set to <strong>auto</strong>. Presumed language is <em>" + lang + "</em>.</p>");
-                        api.lang  = "auto";
-                    }
                     buttons = pd.o.report.diff.box.getElementsByTagName("p")[0].getElementsByTagName("button");
                     if (output[0].length > 125000) {
                         pd.test.filled.diff = true;
@@ -846,6 +847,9 @@ var pd = {};
                         pd.o.report.diff.body.innerHTML = "<p><strong>Error:</strong> Please try using the option labeled <em>Plain Text (diff only)</em>. <span style='display:block'>The input does not appear to be markup, CSS, or JavaScript.</span></p>";
                     } else {
                         pd.o.report.diff.body.innerHTML = output[1] + output[0];
+                        if (autotest === true) {
+                            pd.o.report.diff.body.firstChild.innerHTML = "Code type is set to <strong>auto</strong>. <span>Presumed language is <em>" + lang + "</em>.</span>";
+                        }
                     }
                     if (buttons[1].parentNode.style.display === "none") {
                         pd.minimize(buttons[1].onmousedown, 1, buttons[1]);
@@ -916,7 +920,10 @@ var pd = {};
                             output[1] = output[1].replace("seconds </em</p>", "seconds </em</p> <p>Language is set to <strong>auto</strong>. Presumed language is <em>" + api.lang + "</em>.</p>");
                             api.lang  = "auto";
                         }
-                        pd.o.report.minn.body.innerHTML    = output[1];
+                        pd.o.report.minn.body.innerHTML = output[1];
+                        if (autotest === true) {
+                            pd.o.report.minn.body.firstChild.innerHTML = "Code type is set to <strong>auto</strong>. <span>Presumed language is <em>" + lang + "</em>.</span>";
+                        }
                         pd.o.report.minn.box.style.zIndex  = pd.zIndex;
                         pd.o.report.minn.box.style.display = "block";
                     }
@@ -1388,6 +1395,7 @@ var pd = {};
         }
         if (requests === false && requestd === false) {
             if (api.lang === "auto") {
+                autotest = true;
                 cmlang();
             }
             //sometimes the CodeMirror getValue method fires too early
@@ -2215,7 +2223,7 @@ var pd = {};
             }
             if (lang === "csv" && pd.o.beauOps !== null) {
                 pd.o.beauOps.style.display = "none";
-            } else {
+            } else if (pd.o.beauOps !== null) {
                 pd.o.beauOps.style.display = "block";
             }
             if (pd.test.render.beau === false) {
@@ -2721,7 +2729,7 @@ var pd = {};
             diffChar  = pd.$$("diff-char"),
             beauOther = pd.$$("beau-other"),
             diffOther = pd.$$("diff-other");
-        if (pd.mode === "beau") {
+        if (pd.mode === "beau" && beauOther !== null && beauChar !== null) {
             if (node === beauOther || node === beauChar) {
                 beauOther.checked = true;
                 beauChar.setAttribute("class", "checked");
@@ -2735,7 +2743,7 @@ var pd = {};
                     beauChar.value = "Click me for custom input";
                 }
             }
-        } else if (pd.mode === "diff") {
+        } else if (pd.mode === "diff" && diffOther !== null && diffChar !== null) {
             if (node === diffOther) {
                 diffOther.checked = true;
                 diffChar.setAttribute("class", "checked");
@@ -2790,14 +2798,22 @@ var pd = {};
 
     //store tool changes into localStorage to maintain state
     pd.options             = function dom__options(x) {
-        var item   = (x.nodeType === 1) ? x : this,
-            node   = item.nodeName.toLowerCase(),
-            name   = item.getAttribute("name"),
-            type   = item.getAttribute("type"),
-            id     = item.getAttribute("id"),
-            classy = item.getAttribute("class"),
+        var item   = (x !== null && x.nodeType === 1) ? x : this,
+            node   = "",
+            name   = "",
+            type   = "",
+            id     = "",
+            classy = "",
             h3     = {},
             body   = {};
+        if (item.nodeType !== 1) {
+            return;
+        }
+        node = item.nodeName.toLowerCase();
+        name = item.getAttribute("name");
+        type = item.getAttribute("type");
+        id   = item.getAttribute("id")
+        classy = item.getAttribute("class");
         if (pd.test.load === true) {
             return;
         }
@@ -2956,12 +2972,12 @@ var pd = {};
                 }
                 if (id === "htmld-no" || id === "html-no" || id === "htmlm-no") {
                     data = [
-                        "api.html", "html-no"
+                        "api.html", "false"
                     ];
                 }
                 if (id === "htmld-yes" || id === "html-yes" || id === "htmln-yes") {
                     data = [
-                        "api.html", "html-yes"
+                        "api.html", "true"
                     ];
                 }
                 if (id === "incomment-no") {
@@ -2977,6 +2993,11 @@ var pd = {};
                 if (id === "inline") {
                     data = [
                         "api.diffview", "inline"
+                    ];
+                }
+                if (id === "inlevel") {
+                    data = [
+                        "api.inlevel", "\"" + item.value + "\""
                     ];
                 }
                 if (id === "inscriptd-no" || id === "inscript-no") {
@@ -2999,6 +3020,16 @@ var pd = {};
                         "api.correct", "true"
                     ];
                 }
+                if (id === "jselseline-no") {
+                    data = [
+                        "api.elseline", "false"
+                    ];
+                }
+                if (id === "jselseline-yes") {
+                    data = [
+                        "api.elseline", "true"
+                    ];
+                }
                 if (id === "jsindentd-all" || id === "jsindent-all") {
                     data = [
                         "api.indent", "allman"
@@ -3007,11 +3038,6 @@ var pd = {};
                 if (id === "jsindentd-knr" || id === "jsindent-knr") {
                     data = [
                         "api.indent", "knr"
-                    ];
-                }
-                if (id === "jsinlevel") {
-                    data = [
-                        "api.inlevel", "\"" + item.value + "\""
                     ];
                 }
                 if (id === "jslinesd-no" || id === "jslines-no") {
@@ -3124,6 +3150,12 @@ var pd = {};
                 }
             }());
         }
+    };
+
+    pd.clearComment        = function dom__clearComment() {
+        delete localStorage.commentString;
+        pd.commentString       = [];
+        pd.o.comment.innerHTML = "/*prettydiff.com */";
     };
 
     //maximize textareas and hide options
@@ -3419,6 +3451,9 @@ var pd = {};
                 } else {
                     node.innerHTML = "Maximize Inputs";
                 }
+            }
+            if (pd.$$("option_commentClear") !== null) {
+                pd.$$("option_commentClear").onmousedown = pd.clearComment;
             }
             document.onkeypress    = backspace;
             document.onkeydown     = backspace;
