@@ -57,6 +57,24 @@
                     C++, but unlike these other languages scope follows a separate and
                     unrelated model.</p>
             </div>
+            <div><h3>Key Points</h3>
+                <ol>
+                    <li>Functions provide scope.</li>
+                    <li>Closure is crossing scope boundaries.</li>
+                    <li>Variables are resolved through a succession of scope, scope
+                        chain.</li>
+                    <li>Where in the scope chain variables are declared structions a
+                        functional application.</li>
+                    <li>The
+                        <a href="../prettydiff.js">Pretty Diff</a>
+                        application is an example of functional programming and
+                        decomposition.</li>
+                    <li>Leaky functions allow for manually controlled side effects.</li>
+                    <li>ECMAScript 6 will introduce block scope with the
+                        <em>let</em>
+                        keyword.</li>
+                </ol>
+            </div>
             <div><h3>JSScope</h3>
                 <p>Each of the following code samples is prepared using the
                     <em>jsscope</em>
@@ -197,8 +215,17 @@
                     the reference declaration into a higher scope to enable access. By
                     balancing the needs of access versus the need to localize references the
                     placement of variables in your application will be natural without
-                    extensive manual effort.
-                </p>
+                    extensive manual effort.</p>
+                <p>I commonly use arrays as closures. This is particularly helpful when
+                    writing language parsers. An array stores all the data about a code
+                    sample into fragments I call tokens. A variety of analysis needs to be
+                    performed against this data. By declaring the array high in a parsing
+                    library it can be accessed by a variety of functions each containing a
+                    different type of analysis. This is helpful because I can access the
+                    array regardless of scope depth no differently than a local variable and
+                    the changes made to the array are made in the scope where the array is
+                    declared. There are no objects to extend and no instructions to control
+                    reuse or access.</p>
             </div>
             <div><h3>Using Pretty Diff as an Example</h3>
                 <p>Even after the concepts of functional programming are taught they
