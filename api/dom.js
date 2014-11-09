@@ -542,26 +542,29 @@ var pd = {};
 
     //allows visual folding of function in the JSPretty jsscope HTML
     //output
-    pd.beaurows            = [];
     pd.beaufold            = function dom__beaufold() {
         var self  = this,
             title = self.getAttribute("title").split("line "),
             min   = Number(title[1].substr(0, title[1].indexOf(" "))),
             max   = Number(title[2]),
             a     = 0,
-            b     = "";
+            b     = "",
+            list = [
+                this.parentNode.getElementsByTagName("li"),
+                this.parentNode.nextSibling.getElementsByTagName("li")
+            ];
         if (self.innerHTML.charAt(0) === "-") {
             for (a = min; a < max; a += 1) {
-                pd.beaurows[0][a].style.display = "none";
-                pd.beaurows[1][a].style.display = "none";
+                list[0][a].style.display = "none";
+                list[1][a].style.display = "none";
             }
             self.innerHTML = "+" + self.innerHTML.substr(1);
         } else {
             for (a = min; a < max; a += 1) {
-                pd.beaurows[0][a].style.display = "block";
-                pd.beaurows[1][a].style.display = "block";
-                if (pd.beaurows[0][a].getAttribute("class") === "fold" && pd.beaurows[0][a].innerHTML.charAt(0) === "+") {
-                    b = pd.beaurows[0][a].getAttribute('title');
+                list[0][a].style.display = "block";
+                list[1][a].style.display = "block";
+                if (list[0][a].getAttribute("class") === "fold" && list[0][a].innerHTML.charAt(0) === "+") {
+                    b = list[0][a].getAttribute('title');
                     b = b.substring(b.indexOf('to line ') + 1);
                     a = Number(b) - 1;
                 }
@@ -793,16 +796,13 @@ var pd = {};
                                 pd.o.report.beau.box.style.top   = (pd.settings.beaureport.top / 10) + "em";
                                 pd.o.report.beau.box.style.right = "auto";
                                 diffList                         = pd.o.report.beau.body.getElementsByTagName("ol");
-                                if (diffList.length > 0) {
-                                    pd.beaurows[0] = diffList[0].getElementsByTagName("li");
-                                    pd.beaurows[1] = diffList[1].getElementsByTagName("li");
-                                }
                                 (function () {
                                     var a = 0,
-                                        b = pd.beaurows[0].length;
+                                        list = diffList[0].getElementsByTagName("li"),
+                                        b = list.length;
                                     for (a = 0; a < b; a += 1) {
-                                        if (pd.beaurows[0][a].getAttribute("class") === "fold") {
-                                            pd.beaurows[0][a].onmousedown = pd.beaufold;
+                                        if (list[a].getAttribute("class") === "fold") {
+                                            list[a].onmousedown = pd.beaufold;
                                         }
                                     }
                                 }());
@@ -813,7 +813,6 @@ var pd = {};
                                     }
                                     parent.removeChild(parent.firstChild);
                                 }
-                                pd.beaurows = [];
                             }
                         } else {
                             if (parent.innerHTML.indexOf("save") > -1) {
@@ -822,7 +821,6 @@ var pd = {};
                                 }
                                 parent.removeChild(parent.firstChild);
                             }
-                            pd.beaurows = [];
                         }
                     }
                     if (pd.test.ls === true) {
@@ -4424,6 +4422,29 @@ var pd = {};
                     }
                     componentArea.innerHTML = output.join("");
                 }
+                (function dom__foldSearch() {
+                    var div = document.getElementsByTagName("div"),
+                        len = div.length,
+                        a = 0,
+                        b = 0,
+                        ol = [],
+                        li = [],
+                        lilen = 0;
+                    for (a = 0; a < len; a += 1) {
+                        if (div[a].getAttribute("class") === "beautify") {
+                            ol = div[a].getElementsByTagName("ol");
+                            if (ol[0].getAttribute("class") === "count") {
+                                li = ol[0].getElementsByTagName("li");
+                                lilen = li.length;
+                                for (b = 0; b < lilen; b += 1) {
+                                    if (li[b].getAttribute("class") === "fold") {
+                                        li[b].onmousedown = pd.beaufold;
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }());
             }());
         }
         pd.test.load = false;

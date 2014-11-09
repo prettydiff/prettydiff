@@ -29,8 +29,13 @@ ul li {
     list-style: disc;
 }
 p em {
-    color: #003;
     font-weight: bold;
+}
+.white p em {
+    color: #003;
+}
+.shadow p em {
+    color: #696;
 }
 p a {
     color: #339;
@@ -84,6 +89,10 @@ font-size: 2em;
 #doc h4 {
     font-size: 1.8em;
     margin-top: 0;
+}
+#doc .beautify h4 {
+    position: absolute;
+    left: -200em;
 }
 h1 svg {
     border: 0.025em solid #000;
