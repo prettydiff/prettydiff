@@ -2810,7 +2810,7 @@ var pd = {};
         node = item.nodeName.toLowerCase();
         name = item.getAttribute("name");
         type = item.getAttribute("type");
-        id   = item.getAttribute("id")
+        id   = item.getAttribute("id");
         classy = item.getAttribute("class");
         if (pd.test.load === true) {
             return;
@@ -4425,20 +4425,20 @@ var pd = {};
                 (function dom__foldSearch() {
                     var div = document.getElementsByTagName("div"),
                         len = div.length,
-                        a = 0,
-                        b = 0,
+                        inca = 0,
+                        incb = 0,
                         ol = [],
                         li = [],
                         lilen = 0;
-                    for (a = 0; a < len; a += 1) {
-                        if (div[a].getAttribute("class") === "beautify") {
-                            ol = div[a].getElementsByTagName("ol");
+                    for (inca = 0; inca < len; inca += 1) {
+                        if (div[inca].getAttribute("class") === "beautify") {
+                            ol = div[inca].getElementsByTagName("ol");
                             if (ol[0].getAttribute("class") === "count") {
                                 li = ol[0].getElementsByTagName("li");
                                 lilen = li.length;
-                                for (b = 0; b < lilen; b += 1) {
-                                    if (li[b].getAttribute("class") === "fold") {
-                                        li[b].onmousedown = pd.beaufold;
+                                for (incb = 0; incb < lilen; incb += 1) {
+                                    if (li[incb].getAttribute("class") === "fold") {
+                                        li[incb].onmousedown = pd.beaufold;
                                     }
                                 }
                             }
