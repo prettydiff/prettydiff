@@ -5461,7 +5461,7 @@ var prettydiff = function prettydiff(api) {
                             }
                         },
                         operator   = function jspretty__algorithm_operator() {
-                            if (ctoke === "!" || c[a] === "...") {
+                            if (ctoke === "!" || ctoke === "...") {
                                 if (ltoke === "(") {
                                     level[a - 1] = "x";
                                 }
@@ -10175,7 +10175,7 @@ var prettydiff = function prettydiff(api) {
         jspretty     : 141110, //jspretty library
         markup_beauty: 141107, //markup_beauty library
         markupmin    : 141107, //markupmin library
-        prettydiff   : 141110, //this file
+        prettydiff   : 141111, //this file
         webtool      : 141107, //prettydiff.com.xhtml
         api          : {
             dom      : 141109,
