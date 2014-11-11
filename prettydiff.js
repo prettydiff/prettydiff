@@ -4737,12 +4737,19 @@ var prettydiff = function prettydiff(api) {
                             word();
                         }
                         stats.operator.token += 1;
-                        stats.operator.chars += 1;
                         if (lines[lines.length - 1] !== undefined && lines[lines.length - 1][0] === lengtha - 1) {
                             lines.pop();
                         }
-                        ltoke = ".";
-                        ltype = "separator";
+                        if (c[a + 1] === "." && c[a + 2] === ".") {
+                            ltoke                = "...";
+                            ltype                = "operator";
+                            stats.operator.chars += 3;
+                            a                    += 2;
+                        } else {
+                            ltoke                = ".";
+                            ltype                = "separator";
+                            stats.operator.chars += 1;
+                        }
                         token.push(ltoke);
                         types.push(ltype);
                         braceFinder();
@@ -5454,7 +5461,7 @@ var prettydiff = function prettydiff(api) {
                             }
                         },
                         operator   = function jspretty__algorithm_operator() {
-                            if (ctoke === "!") {
+                            if (ctoke === "!" || c[a] === "...") {
                                 if (ltoke === "(") {
                                     level[a - 1] = "x";
                                 }
@@ -10165,10 +10172,10 @@ var prettydiff = function prettydiff(api) {
         csvmin       : 131224, //csvmin library
         diffview     : 141107, //diffview library
         documentation: 141109, //documentation.xhtml
-        jspretty     : 141107, //jspretty library
+        jspretty     : 141110, //jspretty library
         markup_beauty: 141107, //markup_beauty library
         markupmin    : 141107, //markupmin library
-        prettydiff   : 141107, //this file
+        prettydiff   : 141110, //this file
         webtool      : 141107, //prettydiff.com.xhtml
         api          : {
             dom      : 141109,
