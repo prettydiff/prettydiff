@@ -47,8 +47,6 @@
                     <li><a href="http://g6auc.me.uk/widgets.html">JSPretty Widget</a></li>
                 </ul>
                 <p id="announcement" style="visibility: hidden"></p>
-                <p id="update">Updated:
-                </p>
                 <span class="clear"></span>
             </div>
         </div>
@@ -66,6 +64,8 @@
                 <input id="modeminify" name="mode" title="This option tells thetool to return white space compressed code. Force this display by default with the address parameter 'm=minify'." type="radio"/>
                 <label for="modeminify" title="This option tells thetool to return white space compressed code. Force this display by default with the address parameter 'm=minify'.">Minify</label></span>
         </p>
+                <p id="update">Updated:
+                </p>
         <div id="codeInput">
             <div id="Beautify" style="display:none;"><h2 title="The term pretty-print is synonymous with code beautification.">Beautify
                 Code</h2>
@@ -120,7 +120,7 @@
             <input id="modebeautify" type="hidden" checked="checked"/>
             <input id="language" type="hidden" value="javascript"/>
             <p><label class="label" for="colorScheme">Color scheme</label>
-                <select id="colorScheme"><option>Default</option><option>Coffee</option><option>Dark</option><option>Canvas</option><option selected="selected">Shadow</option><option>White</option></select>
+                <select id="colorScheme"><option>Default</option><option>Canvas</option><option selected="selected">Shadow</option><option>White</option></select>
             </p>
             <p><strong>Auto-Correct sloppiness</strong>
                 <span>
@@ -144,7 +144,7 @@
                         <input class="unchecked" id="beau-char" title="Accessibility Note:In order for this field to be accepted by the application the radio button labeled 'Indent with Other Characters' must be checked. This text field allows entry of any text characters to constitute indentation." type="text" value="Click me for custom input"/>
                     </span>
                     <span id="beau-other-span" style="display:none">
-                        <input id="beau-other" name="beauchar" onclick="pd.indentchar(this);" title="This option is only provided for functional reasons so as to enable the 'beau-char' text field and ignore its peer radio buttons from the application." type="radio"/>
+                        <input id="beau-other" name="beauchar" title="This option is only provided for functional reasons so as to enable the 'beau-char' text field and ignore its peer radio buttons from the application." type="radio"/>
                         <label for="beau-other">Indent with other characters</label></span>
                     <span>
                         <input checked="checked" id="beau-space" name="beauchar" title="This option indicates a space character will be the character of indentation." type="radio"/>
