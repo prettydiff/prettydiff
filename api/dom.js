@@ -1023,13 +1023,27 @@ var pd = {};
         if (pd.mode === "beau") {
             if (pd.application === undefined) {
                 if (api.lang === "markup" || api.lang === "html" || api.lang === "xml" || api.lang === "jstl") {
-                    pd.application = markup_beauty;
+                    pd.application = function dom__markup_beauty() {
+                        var code = markup_beauty(api),
+                            sum = (summary === undefined) ? "" : summary;
+                        return [code, sum];
+                    };
                 } else if (api.lang === "csv") {
-                    pd.application = csvbeauty;
+                    pd.application = function csvbeauty() {
+                        return [csvbeauty(api), ""];
+                    };
                 } else if (api.lang === "css" || api.lang === "scss") {
-                    pd.application = cleanCSS;
+                    pd.application = function dom__csspretty_beau() {
+                        var code = csspretty(api),
+                            sum = (summary === undefined) ? "" : summary;
+                        return [code, sum];
+                    };
                 } else {
-                    pd.application = jspretty;
+                    pd.application = function dom__jspretty_beau() {
+                        var code = jspretty(api),
+                            sum = (summary === undefined) ? "" : summary;
+                        return [code, sum];
+                    };
                 }
             }
             (function dom__recycle_beautify() {
@@ -1126,11 +1140,27 @@ var pd = {};
         if (pd.mode === "minn") {
             if (pd.application === undefined) {
                 if (api.lang === "markup" || api.lang === "html" || api.lang === "xml" || api.lang === "jstl") {
-                    pd.application = markupmin;
+                    pd.application = function dom__markupmin() {
+                        var code = markupmin(api),
+                            sum = (summary === undefined) ? "" : summary;
+                        return [code, sum];
+                    };
                 } else if (api.lang === "csv") {
-                    pd.application = csvmin;
+                    pd.application = function csvmin() {
+                        return [csvmin(api), ""];
+                    };
+                } else if (api.lang === "css" || api.lang === "scss") {
+                    pd.application = function dom__csspretty_min() {
+                        var code = csspretty(api),
+                            sum = (summary === undefined) ? "" : summary;
+                        return [code, sum];
+                    };
                 } else {
-                    pd.application = jsmin;
+                    pd.application = function dom__jspretty_min() {
+                        var code = jspretty(api),
+                            sum = (summary === undefined) ? "" : summary;
+                        return [code, sum];
+                    };
                 }
             }
             (function dom__recycle_minify() {

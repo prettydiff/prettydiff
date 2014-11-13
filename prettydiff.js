@@ -10177,7 +10177,7 @@ var prettydiff = function prettydiff(api) {
         prettydiff   : 141111, //this file
         webtool      : 141112, //prettydiff.com.xhtml
         api          : {
-            dom      : 141109,
+            dom      : 141112,
             nodeLocal: 141004,
             wsh      : 141004
         },
