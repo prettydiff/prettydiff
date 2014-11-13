@@ -5823,7 +5823,6 @@ var prettydiff = function prettydiff(api) {
                     }
                 }());
             }
-
             if (jscorrect === true) {
                 (function jspretty__jscorrect() {
                     var a = 0,
@@ -10166,17 +10165,17 @@ var prettydiff = function prettydiff(api) {
     //the edition values use the format YYMMDD for dates.
     edition    = {
         charDecoder  : 141025, //charDecoder library
-        css          : 141109, //diffview.css file
+        css          : 141112, //diffview.css file
         csspretty    : 140929, //csspretty library
         csvbeauty    : 140114, //csvbeauty library
         csvmin       : 131224, //csvmin library
         diffview     : 141107, //diffview library
-        documentation: 141109, //documentation.xhtml
+        documentation: 141112, //documentation.xhtml
         jspretty     : 141110, //jspretty library
         markup_beauty: 141107, //markup_beauty library
         markupmin    : 141107, //markupmin library
         prettydiff   : 141111, //this file
-        webtool      : 141107, //prettydiff.com.xhtml
+        webtool      : 141112, //prettydiff.com.xhtml
         api          : {
             dom      : 141109,
             nodeLocal: 141004,
