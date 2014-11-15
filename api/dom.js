@@ -549,9 +549,8 @@ var pd = {};
             max   = Number(title[2]),
             a     = 0,
             b     = "",
-            list = [
-                this.parentNode.getElementsByTagName("li"),
-                this.parentNode.nextSibling.getElementsByTagName("li")
+            list  = [
+                this.parentNode.getElementsByTagName("li"), this.parentNode.nextSibling.getElementsByTagName("li")
             ];
         if (self.innerHTML.charAt(0) === "-") {
             for (a = min; a < max; a += 1) {
@@ -717,8 +716,8 @@ var pd = {};
                             pd.o.codeBeauOut.value = output[0];
                         }
                     }
-                    if (pd.o.announce !== null && pd.o.announce.innerHTML !== pd.o.announcetext) {
-                        if (api.lang === "markup" || presumedLanguage === "markup" || presumedLanguage === "html" || presumedLanguage === "xhtml" || presumedLanguage === "xml" || presumedLanguage === "jstl") {
+                    if (pd.o.announce !== null) {
+                        if (api.lang === "markup" || presumedLanguage === "markup" || presumedLanguage === "html" || presumedLanguage === "htmlembedded" || presumedLanguage === "xhtml" || presumedLanguage === "xml" || presumedLanguage === "jstl") {
                             lang = (function () {
                                 var a      = 0,
                                     p      = output[1].split("<p><strong>"),
@@ -797,9 +796,9 @@ var pd = {};
                                 pd.o.report.beau.box.style.right = "auto";
                                 diffList                         = pd.o.report.beau.body.getElementsByTagName("ol");
                                 (function () {
-                                    var a = 0,
+                                    var a    = 0,
                                         list = diffList[0].getElementsByTagName("li"),
-                                        b = list.length;
+                                        b    = list.length;
                                     for (a = 0; a < b; a += 1) {
                                         if (list[a].getAttribute("class") === "fold") {
                                             list[a].onmousedown = pd.beaufold;
@@ -1025,24 +1024,32 @@ var pd = {};
                 if (api.lang === "markup" || api.lang === "html" || api.lang === "xml" || api.lang === "jstl") {
                     pd.application = function dom__markup_beauty() {
                         var code = markup_beauty(api),
-                            sum = (summary === undefined) ? "" : summary;
-                        return [code, sum];
+                            sum  = (summary === undefined) ? "" : summary;
+                        return [
+                            code, sum
+                        ];
                     };
                 } else if (api.lang === "csv") {
                     pd.application = function csvbeauty() {
-                        return [csvbeauty(api), ""];
+                        return [
+                            csvbeauty(api), ""
+                        ];
                     };
                 } else if (api.lang === "css" || api.lang === "scss") {
                     pd.application = function dom__csspretty_beau() {
                         var code = csspretty(api),
-                            sum = (summary === undefined) ? "" : summary;
-                        return [code, sum];
+                            sum  = (summary === undefined) ? "" : summary;
+                        return [
+                            code, sum
+                        ];
                     };
                 } else {
                     pd.application = function dom__jspretty_beau() {
                         var code = jspretty(api),
-                            sum = (summary === undefined) ? "" : summary;
-                        return [code, sum];
+                            sum  = (summary === undefined) ? "" : summary;
+                        return [
+                            code, sum
+                        ];
                     };
                 }
             }
@@ -1142,24 +1149,32 @@ var pd = {};
                 if (api.lang === "markup" || api.lang === "html" || api.lang === "xml" || api.lang === "jstl") {
                     pd.application = function dom__markupmin() {
                         var code = markupmin(api),
-                            sum = (summary === undefined) ? "" : summary;
-                        return [code, sum];
+                            sum  = (summary === undefined) ? "" : summary;
+                        return [
+                            code, sum
+                        ];
                     };
                 } else if (api.lang === "csv") {
                     pd.application = function csvmin() {
-                        return [csvmin(api), ""];
+                        return [
+                            csvmin(api), ""
+                        ];
                     };
                 } else if (api.lang === "css" || api.lang === "scss") {
                     pd.application = function dom__csspretty_min() {
                         var code = csspretty(api),
-                            sum = (summary === undefined) ? "" : summary;
-                        return [code, sum];
+                            sum  = (summary === undefined) ? "" : summary;
+                        return [
+                            code, sum
+                        ];
                     };
                 } else {
                     pd.application = function dom__jspretty_min() {
                         var code = jspretty(api),
-                            sum = (summary === undefined) ? "" : summary;
-                        return [code, sum];
+                            sum  = (summary === undefined) ? "" : summary;
+                        return [
+                            code, sum
+                        ];
                     };
                 }
             }
@@ -2837,10 +2852,10 @@ var pd = {};
         if (item.nodeType !== 1) {
             return;
         }
-        node = item.nodeName.toLowerCase();
-        name = item.getAttribute("name");
-        type = item.getAttribute("type");
-        id   = item.getAttribute("id");
+        node   = item.nodeName.toLowerCase();
+        name   = item.getAttribute("name");
+        type   = item.getAttribute("type");
+        id     = item.getAttribute("id");
         classy = item.getAttribute("class");
         if (pd.test.load === true) {
             return;
@@ -4453,18 +4468,18 @@ var pd = {};
                     componentArea.innerHTML = output.join("");
                 }
                 (function dom__foldSearch() {
-                    var div = document.getElementsByTagName("div"),
-                        len = div.length,
-                        inca = 0,
-                        incb = 0,
-                        ol = [],
-                        li = [],
+                    var div   = document.getElementsByTagName("div"),
+                        len   = div.length,
+                        inca  = 0,
+                        incb  = 0,
+                        ol    = [],
+                        li    = [],
                         lilen = 0;
                     for (inca = 0; inca < len; inca += 1) {
                         if (div[inca].getAttribute("class") === "beautify") {
                             ol = div[inca].getElementsByTagName("ol");
                             if (ol[0].getAttribute("class") === "count") {
-                                li = ol[0].getElementsByTagName("li");
+                                li    = ol[0].getElementsByTagName("li");
                                 lilen = li.length;
                                 for (incb = 0; incb < lilen; incb += 1) {
                                     if (li[incb].getAttribute("class") === "fold") {

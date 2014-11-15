@@ -5,7 +5,7 @@
     "email": "edward.a.cheney.mil@mail.mil",
     "url": "http://prettydiff.com/"
   },
-  "version": "1.5.8",
+  "version": "1.5.9",
   "description": "File comparison tool to accurately diff between file versions regardless of comments or minification to the whitespace. It can also beautify (pretty print) and minify HTML.",
   "keywords": [
     "diff",
@@ -31,9 +31,9 @@
     "url": "git://github.com/austincheney/Pretty-Diff.git"
   },
   "gitHead": "54744543cf128f5d6fba9638e46eaf9993cf0e5d",
-  "_id": "prettydiff@1.3.6",
+  "_id": "prettydiff@1.5.8",
   "scripts": {},
-  "_shasum": "e6a1cbdc7ab73a74dec15fb8caef1a78b35fcc87",
+  "_shasum": "9f36c7c3326b5eab805b6c8725fc23c75841ade9",
   "_from": "prettydiff@*",
   "_npmVersion": "1.4.23",
   "_npmUser": {
@@ -47,9 +47,9 @@
     }
   ],
   "dist": {
-    "shasum": "e6a1cbdc7ab73a74dec15fb8caef1a78b35fcc87",
-    "tarball": "http://registry.npmjs.org/prettydiff/-/prettydiff-1.3.6.tgz"
+    "shasum": "9f36c7c3326b5eab805b6c8725fc23c75841ade9",
+    "tarball": "http://registry.npmjs.org/prettydiff/-/prettydiff-1.5.8.tgz"
   },
   "directories": {},
-  "_resolved": "http://registry.npmjs.org/prettydiff/-/prettydiff-1.3.6.tgz"
+  "_resolved": "http://registry.npmjs.org/prettydiff/-/prettydiff-1.5.8.tgz"
 }

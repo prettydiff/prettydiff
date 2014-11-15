@@ -4921,6 +4921,19 @@ var prettydiff = function prettydiff(api) {
                 }
             }());
 
+            if (jsxstatus === true && jsscope === true && token[0] === "{") {
+                jsscope = false;
+                (function jspretty__jsxScope() {
+                    var a = 0,
+                        len = token.length;
+                    for (a = 0; a < len; a += 1) {
+                        if (types[a] === "word" && token[a - 1] !== ".") {
+                            token[a] = "[pdjsxscope]" + token[a] + "[/pdjsxscope]";
+                        }
+                    }
+                }());
+            }
+
             if (jmode === "beautify" || (jmode === "minify" && jobfuscate === true)) {
                 //this function is the pretty-print and var finding algorithm
                 (function jspretty__algorithm() {
@@ -6080,10 +6093,10 @@ var prettydiff = function prettydiff(api) {
                                         } while (varbuildlen > 1);
                                     }
                                 }
-                                if (hh > 0 && jvertical === true) {
+                                if (hh > 0) {
                                     for (ee = metax - 1; ee > a; ee -= 1) {
-                                        varbuild = token[ee].split(" ");
                                         if (types[ee] === "word") {
+                                            varbuild = token[ee].split(" ");
                                             for (ff = 0; ff < hh; ff += 1) {
                                                 if (varbuild[0] === metameta[ff] && token[ee - 1] !== ".") {
                                                     if (token[ee - 1] === "function" && token[ee + 1] === "(") {
@@ -6135,6 +6148,7 @@ var prettydiff = function prettydiff(api) {
                                     }
                                 }
                             },
+                            //findvarsMarkup = function jspretty__resultScope_findvarsMarkup() {},
                             indent      = jlevel,
                             tab         = (function jspretty__resultScope_tab() {
                                 var aa = jchar,
@@ -6221,13 +6235,62 @@ var prettydiff = function prettydiff(api) {
                                         }
                                         return 0;
                                     }()),
-                                    markup   = markup_beauty({
-                                        inchar : jchar,
-                                        inlevel: mindent,
-                                        insize : jsize,
-                                        jsx    : true,
-                                        source : token[a]
-                                    }).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").split("\n"),
+                                    markup   = (function jspretty__resultScope_markupBuild_varscope() {
+                                        var item = markup_beauty({
+                                            inchar : jchar,
+                                            inlevel: mindent,
+                                            insize : jsize,
+                                            jsscope: true,
+                                            jsx    : true,
+                                            source : token[a]
+                                        }),
+                                        emscope = function jsscope__resultScope_markupBuild_varscope_emscope(x) {
+                                            return "<em class='s" + x.replace("[pdjsxem", "").replace("]", "") + "'>";
+                                        },
+                                        word = "",
+                                        newword = "",
+                                        inca = 0,
+                                        incb = 0,
+                                        lena = meta.length,
+                                        lenb = 0,
+                                        scope = [];
+                                        if (item.indexOf("[pdjsxscope]") < 0) {
+                                            return item.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").split("\n");
+                                        }
+                                        do {
+                                            newword = "";
+                                            scope = [];
+                                            word = item.substring(item.indexOf("[pdjsxscope]") + 12, item.indexOf("[/pdjsxscope]"));
+                                            for (inca = 0; inca < lena; inca += 1) {
+                                                if (typeof meta[inca] === "number" && inca < a && a < meta[inca]) {
+                                                    scope.push(meta[inca]);
+                                                    lenb = meta[meta[inca]].length;
+                                                    for (incb = 0; incb < lenb; incb += 1) {
+                                                        if (meta[meta[inca]][incb] === word) {
+                                                            newword = "[pdjsxem" + (scope.length + 1) + "]" + word + "[/pdjsxem]";
+                                                        }
+                                                    }
+                                                    if (incb < lenb) {
+                                                        break;
+                                                    }
+                                                    scope.pop();
+                                                }
+                                            }
+                                            if (newword === "") {
+                                                lenb = globals.length;
+                                                for (incb = 0; incb < lenb; incb += 1) {
+                                                    if (word === globals[incb]) {
+                                                        newword = "[pdjsxem0]" + word + "[/pdjsxem]";
+                                                    }
+                                                }
+                                                if (newword === "") {
+                                                    newword = word;
+                                                }
+                                            }
+                                            item = item.replace("[pdjsxscope]" + word + "[/pdjsxscope]", newword);
+                                        } while (item.indexOf("[pdjsxscope]") > -1);
+                                        return item.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/\[pdjsxem\d+\]/g, emscope).replace(/\[\/pdjsxem\]/g, "</em>").split("\n");
+                                    }()),
                                     len      = 0,
                                     c        = 0,
                                     spaces   = 0,
@@ -7198,12 +7261,13 @@ var prettydiff = function prettydiff(api) {
                 comments      = (args.comments !== "comments" && args.comments !== "beautify" && args.comments !== "nocomment") ? "" : args.comments,
                 presume_html  = (args.presume_html === true || args.presume_html === "true") ? true : false,
                 top_comments  = (args.top_comments === true || args.top_comments === "true") ? true : false,
-                conditional   = (args.conditional === true || args.conditional === "true") ? true : false,
+                conditional   = (presume_html === true || args.conditional === true || args.conditional === "true") ? true : false,
                 correct       = (args.correct === true || args.correct === "true") ? true : false,
                 minjsx        = (args.jsx === true || args.jsx === "true") ? true : false,
                 obfuscate     = (args.obfuscate === true || args.obfuscate === "true") ? true : false,
                 inchar        = (typeof args.inchar === "string" && args.inchar.length > 0) ? args.inchar : " ",
                 insize        = (isNaN(args.insize) === false && Number(args.insize) >= 0) ? Number(args.insize) : 4,
+                jsscope       = (args.jsscope === true || args.jsscope === "true") ? true : false,
                 preserve      = function markupmin__preserve(endTag) {
                     var a     = 0,
                         end   = x.length,
@@ -7261,6 +7325,7 @@ var prettydiff = function prettydiff(api) {
                         source: store.join(""),
                         inchar: inchar,
                         insize: insize,
+                        jsscope: jsscope,
                         jsx   : true,
                         mode  : (comments === "beautify") ? "beautify" : "minify"
                     }).replace(tabReg, "{").replace(/(\s*\}\s*)$/, "}");
@@ -7516,9 +7581,23 @@ var prettydiff = function prettydiff(api) {
                     var a       = 0,
                         end     = x.length,
                         store   = [],
+                        comment = "",
                         jsxtest = (minjsx === true) ? true : false;
                     if (x[i] === "\n") {
                         x[i] = " ";
+                        if (minjsx === true && x[i + 1] === "/") {
+                            if (x[i + 2] === "/") {
+                                comment = "//";
+                            } else if (x[i + 2] === "*") {
+                                comment = "/*";
+                            }
+                        }
+                    } else if (minjsx === true && x[i] === "/") {
+                        if (x[i + 1] === "/") {
+                            comment = "//";
+                        } else if (x[i + 1] === "*") {
+                            comment = "/*";
+                        }
                     }
                     for (a = i; a < end; a += 1) {
                         if (x[a] === "<") {
@@ -7533,9 +7612,19 @@ var prettydiff = function prettydiff(api) {
                         }
                         store.push(x[a]);
                         x[a] = "";
+                        if (comment !== "") {
+                            if (store[store.length - 2] === "*" && store[store.length - 1] === "/" && comment === "/*") {
+                                break;
+                            } else if (store[store.length - 1] === "\n" && comment === "//") {
+                                break;
+                            }
+                        }
                     }
                     i    = a - 1;
-                    x[i] = store.join("").replace(/\s+/g, " ");
+                    x[i] = store.join("");
+                    if (comment === "") {
+                        x[i] = x[i].replace(/\s+/g, " ");
+                    }
                 };
             (function markupmin__algorithm() {
                 var a      = 0,
@@ -7707,6 +7796,7 @@ var prettydiff = function prettydiff(api) {
                 mforce     = (args.force_indent === "true" || args.force_indent === true) ? true : false,
                 mhtml      = (args.html === "true" || args.html === true) ? true : false,
                 minlevel   = (isNaN(args.inlevel) === true) ? 0 : Number(args.inlevel),
+                mjsscope   = (args.jsscope === true || args.jsscope === "true") ? true : false,
                 mjsx       = (args.jsx === true || args.jsx === "true") ? true : false,
                 mmode      = (typeof args.mode === "string") ? args.mode : "beautify",
                 msize      = (isNaN(args.insize) === true) ? 4 : Number(args.insize),
@@ -8096,6 +8186,7 @@ var prettydiff = function prettydiff(api) {
                             presume_html: false,
                             inchar      : mchar,
                             insize      : msize,
+                            jsscope     : mjsscope,
                             jsx         : true,
                             conditional : (mhtml === true) ? true : false
                         }).split("pdjsxSep"),
@@ -8759,7 +8850,7 @@ var prettydiff = function prettydiff(api) {
                             }());
                         }
                         if (build[i].charAt(0) !== " ") {
-                            if (cinfo[i - 1] === "singleton" || cinfo[i - 1] === "content") {
+                            if (cinfo[i - 1] === "singleton" || cinfo[i - 1] === "content" || cinfo[i - 1] === "parse") {
                                 return level.push("x");
                             }
                             return (function markup_beauty__algorithm_end_singletonContent() {
@@ -8891,10 +8982,10 @@ var prettydiff = function prettydiff(api) {
                                         }
                                     }
                                 }());
-                                if (i - 1 === 0 && cinfo[0] === "start" && (build[i].charAt(0) === " " || cinfo[i] !== "singleton")) {
+                                if (i - 1 === 0 && cinfo[0] === "start" && (build[i].charAt(0) === " " || (cinfo[i] !== "singleton" && cinfo[i] !== "parse"))) {
                                     return level.push(minlevel + 1);
                                 }
-                                if (cinfo[refA] === "mixed_start" || cinfo[refA] === "content" || cinfo[i - 1] === "mixed_start" || cinfo[i - 1] === "content" || (cinfo[i] === "singleton" && (cinfo[i - 1] === "start" || cinfo[i - 1] === "singleton" || cinfo[i - 1] === "end") && build[i].charAt(0) !== " ")) {
+                                if (cinfo[refA] === "mixed_start" || cinfo[refA] === "content" || cinfo[i - 1] === "mixed_start" || cinfo[i - 1] === "content" || ((cinfo[i] === "singleton" || cinfo[i] === "parse") && (cinfo[i - 1] === "start" || cinfo[i - 1] === "singleton" || cinfo[i - 1] === "end") && build[i].charAt(0) !== " ")) {
                                     return level.push("x");
                                 }
                                 if ((cinfo[i - 1] === "comment" && level[i - 1] === 0) || ((cinfo[refC] === "mixed_start" || cinfo[refC] === "content") && cinfo[refB] === "end" && (cinfo[refA] === "mixed_end" || cinfo[refA] === "mixed_both"))) {
@@ -9409,26 +9500,15 @@ var prettydiff = function prettydiff(api) {
                             item = item.slice(0, item.length - 1);
                         }
                         indents = indent.join("");
-                        if (mjsx === true && item.indexOf("\n") > 0) {
-                            item = item.replace(indents, "");
-                            (function markup_beauty__apply_indentation_jsxblock() {
-                                var mline    = item.split("\n"),
-                                    len      = mline.length,
-                                    blockcom = false;
+                        if (mjsx === true && item.indexOf("\n") > 0 && (/^( ?\/\*)/).test(item) === true) {
+                            (function markup_beauty__apply_indentation_jsxComment() {
+                                var mline = item.replace(/\s*\*\/\s*/, "").split("\n"),
+                                    len = mline.length,
+                                    a = 0;
                                 for (a = 1; a < len; a += 1) {
-                                    if (blockcom === true) {
-                                        mline[a] = tab + tab + indents + mline[a].replace(/^(\s+)/, "").replace(indents, "");
-                                        if (mline[a].indexOf("*" + "/") > 2) {
-                                            blockcom = false;
-                                        }
-                                    } else if (a < len - 1 || mline[a].charAt(mline[a].length - 1) !== "}") {
-                                        mline[a] = tab + indents + mline[a].replace(/^(\s+)/, "").replace(indents, "");
-                                    }
-                                    if (mline[a].indexOf("/*") > -1) {
-                                        blockcom = true;
-                                    }
+                                    mline[a] = tab + tab + mline[a];
                                 }
-                                item = mline.join("\n");
+                                item = mline.join("\n") + "\n" + tab + "*/";
                             }());
                         }
                         if (i > 0) {
@@ -10165,19 +10245,19 @@ var prettydiff = function prettydiff(api) {
     //the edition values use the format YYMMDD for dates.
     edition    = {
         charDecoder  : 141025, //charDecoder library
-        css          : 141112, //diffview.css file
+        css          : 141115, //diffview.css file
         csspretty    : 140929, //csspretty library
         csvbeauty    : 140114, //csvbeauty library
         csvmin       : 131224, //csvmin library
         diffview     : 141107, //diffview library
         documentation: 141112, //documentation.xhtml
-        jspretty     : 141110, //jspretty library
-        markup_beauty: 141107, //markup_beauty library
-        markupmin    : 141107, //markupmin library
-        prettydiff   : 141111, //this file
-        webtool      : 141112, //prettydiff.com.xhtml
+        jspretty     : 141115, //jspretty library
+        markup_beauty: 141115, //markup_beauty library
+        markupmin    : 141115, //markupmin library
+        prettydiff   : 141115, //this file
+        webtool      : 141115, //prettydiff.com.xhtml
         api          : {
-            dom      : 141112,
+            dom      : 141115,
             nodeLocal: 141004,
             wsh      : 141004
         },
