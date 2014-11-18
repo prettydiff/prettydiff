@@ -3471,6 +3471,26 @@ var pd = {};
                     }
                     return false;
                 }
+            },
+            cmdisable  = function dom__load_cmdisable() {
+                var el    = this,
+                    id    = el.getAttribute("id"),
+                    loc   = location.href.indexOf("codemirror=false"),
+                    place = [];
+                pd.options(el);
+                if (id.indexOf("-yes") > 0 && loc > 0) {
+                    place = location.href.split("codemirror=false");
+                    if (place[1].indexOf("&") < 0 && place[1].indexOf("%26") < 0) {
+                        place[0]      = place[0].slice(0, place[0].length - 1);
+                        location.href = place.join("");
+                    }
+                } else if (id.indexOf("-no") > 0 && loc < 0) {
+                    if (location.href.indexOf("?") < location.href.length - 1 && location.href.indexOf("?") > 0) {
+                        location.href = location.href + "&codemirror=false";
+                    } else {
+                        location.href = location.href + "?codemirror=false";
+                    }
+                }
             };
         pd.fixHeight();
         window.onresize = pd.fixHeight;
@@ -3871,6 +3891,8 @@ var pd = {};
                         if (id === "jsscope-yes" && inputs[a].checked === true) {
                             pd.hideBeauOut(true);
                         }
+                    } else if (name === "codemirror-radio") {
+                        inputs[a].onmousedown = cmdisable;
                     } else {
                         inputs[a].onmousedown = pd.options;
                     }

@@ -71,6 +71,7 @@
                     decomposable applications in JavaScript without OOP, and doing so will
                     increase your programming speed, reduce the complexity of your code, and
                     shrink the lines of code in your applications.</p>
+                <blockquote>No matter what language you work in, programming in a functional style provides benefits. You should do it whenever it is convenient, and you should think hard about the decision when it isn't convenient. <span>&mdash; <a href="http://gamasutra.com/view/news/169296/Indepth_Functional_programming_in_C.php">John Carmack</a></span></blockquote>
             </div>
             <div><h3>Key Points</h3>
                 <ol>
@@ -334,6 +335,14 @@
                     replace all uses of the var keyword. ECMAScript 6 is not final at the
                     time of this writing and I await to see how its use always my
                     perceptions of functional programming in JavaScript.</p>
+            </div>
+            <div><h3>Faulty Criticisms</h3>
+                <p>These are actual criticisms to this approach I have heard. I wish I were making this up.</p>
+                <ul>
+                    <li><strong>This style of coding will produce a big messy file.</strong> This style of coding may result in a large code file if the given application is large, but large and messy are entirely unrelated just as with literature and novels. This approach to writing code will likely help to make less messy, because the declarations are bound to the architecture that defines the depth of scope for the application. Most JavaScript applications tend to always become large messy files as the result of build systems from application pre-processors, like: Grunt, Gulp, or Browserify. The functional approach commonly results in substantially less code since there are fewer declarations and fewer logical conventions in the code.</li>
+                    <li><strong>Everything can access the same variables, which will be a conflict of too many things accessing the variables at once.</strong> JavaScript execution is so far always synchronous and single threaded. Without events and other externalizing APIs it is impossible that collisions will occur from different things attempting to access a variable at the same time. Even with events and externalizing APIs this is incredibly unlikely to occur and even more unlikely that it will cause a problem.</li>
+                    <li><strong>This is not the computer science definition of inheritance.</strong> Inheritance is an English language word that has existed since Middle English when the language was trying to merge higher French vocabulary with the common Germanic vocabulary regularly in use. All uses of this word in programming subscribe to the proper dictionary definition. Perhaps this statement was meant to describe this use of inheritance as foreign to formalized concepts of object oriented programming, which assumes one believes this is the limit of computer science education.</li>
+                </ul>
             </div>
             <p>If you believe anything in this article is in error or need of
                 improvement please
