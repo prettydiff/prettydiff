@@ -1,6 +1,6 @@
 /*prettydiff.com api.topcoms: true, api.inchar: " ", api.insize: 4, api.vertical: true */
 /*jslint nomen: true */
-/*global edition, document, localStorage, window, prettydiff, markup_beauty, cleanCSS, jsmin, csvbeauty, csvmin, markupmin, jspretty, diffview, XMLHttpRequest, location, ActiveXObject, FileReader, navigator, setTimeout, codeMirror*/
+/*global edition, document, localStorage, window, prettydiff, summary, markup_beauty, cleanCSS, csspretty, csvbeauty, csvmin, markupmin, jspretty, diffview, XMLHttpRequest, location, ActiveXObject, FileReader, navigator, setTimeout, codeMirror*/
 /***********************************************************************
  This is written by Austin Cheney on 3 Mar 2009. Anybody may use this;
  code without permission so long as this comment exists verbatim in each;
@@ -550,7 +550,7 @@ var pd = {};
             a     = 0,
             b     = "",
             list  = [
-                this.parentNode.getElementsByTagName("li"), this.parentNode.nextSibling.getElementsByTagName("li")
+                self.parentNode.getElementsByTagName("li"), self.parentNode.nextSibling.getElementsByTagName("li")
             ];
         if (self.innerHTML.charAt(0) === "-") {
             for (a = min; a < max; a += 1) {
@@ -563,8 +563,8 @@ var pd = {};
                 list[0][a].style.display = "block";
                 list[1][a].style.display = "block";
                 if (list[0][a].getAttribute("class") === "fold" && list[0][a].innerHTML.charAt(0) === "+") {
-                    b = list[0][a].getAttribute('title');
-                    b = b.substring(b.indexOf('to line ') + 1);
+                    b = list[0][a].getAttribute("title");
+                    b = b.substring(b.indexOf("to line ") + 1);
                     a = Number(b) - 1;
                 }
             }
@@ -751,7 +751,7 @@ var pd = {};
                         }
                         parent = pd.o.report.beau.box.getElementsByTagName("p")[0];
                         h3     = pd.o.report.beau.box.getElementsByTagName("h3")[0].style.width;
-                        if (api.jsscope === true && (api.lang === "auto" || api.lang === "javascript") && output[0].indexOf("Error:") !== 0) {
+                        if (pd.o.jsscope.checked === true && (api.lang === "auto" || api.lang === "javascript") && output[0].indexOf("Error:") !== 0) {
                             if (api.lang === "auto" && presumedLanguage === "") {
                                 presumedLanguage = output[1].split("Presumed language is <em>")[1];
                                 presumedLanguage = presumedLanguage.substring(0, presumedLanguage.indexOf("</em>"));
@@ -795,16 +795,18 @@ var pd = {};
                                 pd.o.report.beau.box.style.top   = (pd.settings.beaureport.top / 10) + "em";
                                 pd.o.report.beau.box.style.right = "auto";
                                 diffList                         = pd.o.report.beau.body.getElementsByTagName("ol");
-                                (function () {
-                                    var a    = 0,
-                                        list = diffList[0].getElementsByTagName("li"),
-                                        b    = list.length;
-                                    for (a = 0; a < b; a += 1) {
-                                        if (list[a].getAttribute("class") === "fold") {
-                                            list[a].onmousedown = pd.beaufold;
+                                if (diffList.length > 0) {
+                                    (function () {
+                                        var a    = 0,
+                                            list = diffList[0].getElementsByTagName("li"),
+                                            b    = list.length;
+                                        for (a = 0; a < b; a += 1) {
+                                            if (list[a].getAttribute("class") === "fold") {
+                                                list[a].onmousedown = pd.beaufold;
+                                            }
                                         }
-                                    }
-                                }());
+                                    }());
+                                }
                             } else {
                                 if (parent.innerHTML.indexOf("save") > -1) {
                                     if (parent.style === undefined || parent.style.display === "block") {
@@ -992,9 +994,8 @@ var pd = {};
         }
         if (typeof event === "object" && event.type === "keyup") {
             //jsscope does not get the convenience of keypress execution, because its overhead is costly
-            node = pd.$$("jsscope-yes");
             //do not execute keypress from alt, home, end, or arrow keys
-            if ((node !== null && node.checked === true && pd.mode === "beau") || event.altKey === true || event.keyCode === 16 || event.keyCode === 18 || event.keyCode === 35 || event.keyCode === 36 || event.keyCode === 37 || event.keyCode === 38 || event.keyCode === 39 || event.keyCode === 40) {
+            if ((pd.o.jsscope !== null && pd.o.jsscope.checked === true && pd.mode === "beau") || event.altKey === true || event.keyCode === 16 || event.keyCode === 18 || event.keyCode === 35 || event.keyCode === 36 || event.keyCode === 37 || event.keyCode === 38 || event.keyCode === 39 || event.keyCode === 40) {
                 return false;
             }
             if (pd.test.keypress === true) {
@@ -1063,7 +1064,7 @@ var pd = {};
                     html        = {},
                     indent      = {},
                     jscorrect   = {},
-                    jsscope     = {},
+                    jshtml      = {},
                     jsspace     = {},
                     offset      = {},
                     quantity    = pd.$$("beau-quan"),
@@ -1111,7 +1112,7 @@ var pd = {};
                     elseline     = pd.$$("jselseline-yes");
                     indent       = pd.$$("jsindent-all");
                     jscorrect    = pd.$$("jscorrect-yes");
-                    jsscope      = pd.$$("jsscope-yes");
+                    jshtml       = pd.$$("jsscope-html");
                     jsspace      = pd.$$("jsspace-no");
                     offset       = pd.$$("inlevel");
                     verticalj    = pd.$$("vertical-jsonly");
@@ -1120,9 +1121,15 @@ var pd = {};
                     api.elseline = (elseline === null || elseline.checked === false) ? false : true;
                     api.indent   = (indent === null || indent.checked === false) ? "knr" : "allman";
                     api.inlevel  = (offset === null || isNaN(offset.value) === true) ? 0 : Number(offset.value);
-                    api.jsscope  = (jsscope === null || jsscope.checked === false) ? false : true;
                     api.preserve = (emptyLines === null || emptyLines.checked === false) ? true : false;
                     api.space    = (jsspace === null || jsspace.checked === false) ? true : false;
+                    if (pd.o.jsscope !== null && pd.o.jsscope.checked === true) {
+                        api.jsscope = "report";
+                    } else if (jshtml !== null && jshtml.checked === true) {
+                        api.jsscope = "html";
+                    } else {
+                        api.jsscope = "none";
+                    }
                     if (verticalj !== null && verticalj.checked === true) {
                         api.vertical = "jsonly";
                     } else if (verticaly !== null && verticaly.checked === true) {
@@ -1923,7 +1930,7 @@ var pd = {};
             lastChild  = {},
             pageHeight = 0,
             diffstring = "];(function(){var cells=document.getElementsByTagName('ol')[0].getElemensByTagName('li'),len=cells.length,a=0;for(a=0;a<len;a+=1){if(cells[a].getAttribute('class')==='fold'){cells[a].onmousedown=pd.difffold;}}if(d.length>3){d[2].onmousedown=pd.colSliderGrab;d[2].ontouchstart=pd.colSliderGrab;}}());pd.difffold=function dom__difffold(){var self=this,title=self.getAttribute('title').split('line '),min=Number(title[1].substr(0,title[1].indexOf(' '))),max=Number(title[2]),a=0,b=0,inner=self.innerHTML,lists=[],parent=self.parentNode.parentNode,listnodes=(parent.getAttribute('class'==='diff'))?parent.getElementsByTagName('ol'):parent.parentNode.getElementsByTagName('ol'),listLen=listnodes.length;for(a=0;a<listLen;a+=1){lists.push(listnodes[a].getElementsByTagName('li'));}max=(max>=lists[0].length)?lists[0].length:max;if(inner.charAt(0)===' - '){self.innerHTML='+'+inner.substr(1);for(a=min;a<max;a+=1){for(b=0;b<listLen;b+=1){lists[b][a].style.display='none';}}}else{self.innerHTML=' - '+inner.substr(1);for(a=min;a<max;a+=1){for(b=0;b<listLen;b+=1){lists[b][a].style.display='block';}}}};pd.colSliderProperties=[d[0].clientWidth,d[1].clientWidth,d[2].parentNode.clientWidth,d[2].parentNode.parentNode.clientWidth,d[2].parentNode.offsetLeft-d[2].parentNode.parentNode.offsetLeft,];pd.colSliderGrab=function dom__colSliderGrab(e){var e=e||window.event,node=this,diffRight=node.parentNode,diff=diffRight.parentNode,subOffset=0,counter=pd.colSliderProperties[0],data=pd.colSliderProperties[1],width=pd.colSliderProperties[2],total=pd.colSliderProperties[3],offset=(pd.colSliderProperties[4]),min=0,max=data-1,status='ew',minAdjust=min+15,maxAdjust=max-15,withinRange=false,diffLeft=diffRight.previousSibling,drop=function DOM_colSliderGrab_drop(f){f=f||window.event;f.preventDefault();node.style.cursor=status+'-resize';document.onmousemove=null;document.onmouseup=null;},boxmove=function DOM_colSliderGrab_boxmove(f){f=f||window.event;f.preventDefault();subOffset=offset-f.clientX;if(subOffset>minAdjust&&subOffset<maxAdjust){withinRange=true;}if(withinRange===true&&subOffset>maxAdjust){diffRight.style.width=((total-counter-2)/10)+'em';status='e';}else if(withinRange===true&&subOffset<minAdjust){diffRight.style.width=(width/10)+'em';status='w';}else if(subOffset<max&&subOffset>min){diffRight.style.width=((width+subOffset)/10)+'em';status='ew';}document.onmouseup=drop;};e.preventDefault();if(typeof pd.o==='object'&&pd.o.report.diff.box!==null){offset+=pd.o.report.diff.box.offsetLeft;offset-=pd.o.report.diff.body.scrollLeft;}else{subOffset=(document.body.parentNode.scrollLeft>document.body.scrollLeft)?document.body.parentNode.scrollLeft:document.body.scrollLeft;offset-=subOffset;}offset+=node.clientWidth;node.style.cursor='ew-resize';diff.style.width=(total/10)+'em';diff.style.display='inline-block';if(diffLeft.nodeType!==1){do{diffLeft=diffLeft.previousSibling;}while(diffLeft.nodeType!==1);}diffLeft.style.display='block';diffRight.style.width=(diffRight.clientWidth/10)+'em';diffRight.style.position='absolute';document.onmousemove=boxmove;document.onmousedown=null;};",
-            beaustring = "var data=document.getElementById('pd-jsscope'),pd={};pd.beaurows=[];pd.beaurows[0]=data.getElementsByTagName('ol')[0].getElementsByTagName('li');pd.beaurows[1]=data.getElementsByTagName('ol')[1].getElementsByTagName('li');pd.beaufold=function dom__beaufold(){var self=this,title=self.getAttribute('title').split('line '),min=Number(title[1].substr(0,title[1].indexOf(' '))),max=Number(title[2]),a=0,b='';if(self.innerHTML.charAt(0)==='-'){for(a=min;a<max;a+=1){pd.beaurows[0][a].style.display='none';pd.beaurows[1][a].style.display='none';}self.innerHTML='+'+self.innerHTML.substr(1);}else{for(a=min;a<max;a+=1){pd.beaurows[0][a].style.display='block';pd.beaurows[1][a].style.display='block';if(pd.beaurows[0][a].getAttribute('class')==='fold'&&pd.beaurows[0][a].innerHTML.charAt(0)==='+'){b=pd.beaurows[0][a].getAttribute('title');b=b.substring('to line ');a=Number(b)-1;}}self.innerHTML='-'+self.innerHTML.substr(1);}};(function(){var len=pd.beaurows[0].length,a=0;for(a=0;a<len;a+=1){if(pd.beaurows[0][a].getAttribute('class')==='fold'){pd.beaurows[0][a].onmousedown=pd.beaufold;}}}());",
+            beaustring = "pd.beaufold=function dom__beaufold(){var self=this,title=self.getAttribute('title').split('line '),min=Number(title[1].substr(0,title[1].indexOf(' '))),max=Number(title[2]),a=0,b='',list=[self.parentNode.getElementsByTagName('li'),self.parentNode.nextSibling.getElementsByTagName('li')];if(self.innerHTML.charAt(0)==='-'){for(a=min;a<max;a+=1){list[0][a].style.display='none';list[1][a].style.display='none';}self.innerHTML='+'+self.innerHTML.substr(1);}else{for(a=min;a<max;a+=1){list[0][a].style.display='block';list[1][a].style.display='block';if(list[0][a].getAttribute('class')==='fold'&&list[0][a].innerHTML.charAt(0)==='+'){b=list[0][a].getAttribute('title');b=b.substring(b.indexOf('to line ')+1);a=Number(b)-1;}}self.innerHTML='-'+self.innerHTML.substr(1);}};",
             span       = pd.$$("inline"),
             inline     = (span === null || span.checked === false) ? false : true,
             type       = "";
@@ -2316,11 +2323,7 @@ var pd = {};
                     pd.cm.beauOut.setValue(" ");
                 }
             }
-            if (pd.o.jsscope.checked === true) {
-                pd.hideBeauOut(true);
-            } else {
-                pd.hideBeauOut();
-            }
+            pd.hideBeauOut(a);
             pd.test.render.beau = true;
         }
         if (a === pd.o.modeMinn) {
@@ -2712,18 +2715,14 @@ var pd = {};
                     pd.cm.minnOut.setOption("mode", lang);
                 }
             }
-            if (pd.o.jsscope.checked === true) {
-                pd.hideBeauOut(true);
-            } else {
-                pd.hideBeauOut();
-            }
+            pd.hideBeauOut(x);
         }
         pd.options(x);
     };
 
-    pd.hideBeauOut         = function dom__hideBeauOut(test) {
+    pd.hideBeauOut         = function dom__hideBeauOut(x) {
         var node    = {},
-            state   = (test === true || this === pd.o.jsscope) ? true : false,
+            state   = (x === pd.o.jsscope) ? true : false,
             restore = function dom__hideBeauOut_restore() {
                 pd.o.codeBeauOut.parentNode.style.display = "block";
                 if (pd.o.codeBeauIn !== null) {
@@ -2738,7 +2737,7 @@ var pd = {};
                         pd.keydown(event);
                     };
                 }
-                pd.options(pd.$$("jsscope-no"));
+                pd.options(x);
             };
         if (pd.o.codeBeauOut === null) {
             return;
@@ -2755,7 +2754,7 @@ var pd = {};
                         };
                     }
                 }
-                pd.options(pd.$$("jsscope-yes"));
+                pd.options(x);
             } else {
                 restore();
             }
@@ -3093,6 +3092,11 @@ var pd = {};
                         "api.jslines", "true"
                     ];
                 }
+                if (id === "jsscope-html") {
+                    data = [
+                        "api.jsscope", "true"
+                    ];
+                }
                 if (id === "jsscope-no") {
                     data = [
                         "api.jsscope", "false"
@@ -3427,42 +3431,42 @@ var pd = {};
 
     //alter tool on page load in reflection to saved state
     (function dom__load() {
-        var a          = 0,
-            inputs     = [],
-            inputsLen  = 0,
-            id         = "",
-            name       = "",
-            type       = "",
-            node       = {},
-            buttons    = {},
-            title      = {},
-            statdump   = [],
-            langtest   = (pd.o.lang !== null && pd.o.lang.nodeName.toLowerCase() === "select") ? true : false,
-            lang       = (pd.o.lang !== null) ? "auto" : ((langtest === true) ? pd.o.lang[pd.o.lang.selectedIndex].value : ((pd.o.lang === null) ? "text" : pd.o.lang.value)),
-            thirdparty = function dom__load_thirdparty() {
+        var a           = 0,
+            inputs      = [],
+            inputsLen   = 0,
+            id          = "",
+            name        = "",
+            type        = "",
+            node        = {},
+            buttons     = {},
+            title       = {},
+            statdump    = [],
+            langtest    = (pd.o.lang !== null && pd.o.lang.nodeName.toLowerCase() === "select") ? true : false,
+            lang        = (pd.o.lang !== null) ? "auto" : ((langtest === true) ? pd.o.lang[pd.o.lang.selectedIndex].value : ((pd.o.lang === null) ? "text" : pd.o.lang.value)),
+            thirdparty  = function dom__load_thirdparty() {
                 var that = this,
                     href = that.getAttribute("href");
                 window.open(href, 'thirdparty');
                 return false;
             },
-            resize     = function dom__load_resize(e) {
+            resize      = function dom__load_resize(e) {
                 var that = this;
                 pd.resize(e, that);
             },
-            save       = function dom__load_save() {
+            save        = function dom__load_save() {
                 var that = this;
                 pd.save(that);
             },
-            grab       = function dom__load_grab(e) {
+            grab        = function dom__load_grab(e) {
                 var that = this;
                 pd.grab(e, that);
             },
-            top        = function dom__load_top() {
+            top         = function dom__load_top() {
                 var that = this;
                 pd.top(that.parentNode);
             },
-            page       = (pd.o.page === null) ? "" : pd.o.page.getAttribute("id"),
-            backspace  = function dom__load_backspace(event) {
+            page        = (pd.o.page === null) ? "" : pd.o.page.getAttribute("id"),
+            backspace   = function dom__load_backspace(event) {
                 var aa = event || window.event,
                     bb = aa.srcElement || aa.target;
                 if (aa.keyCode === 8) {
@@ -3472,25 +3476,28 @@ var pd = {};
                     return false;
                 }
             },
-            cmdisable  = function dom__load_cmdisable() {
-                var el    = this,
-                    id    = el.getAttribute("id"),
-                    loc   = location.href.indexOf("codemirror=false"),
-                    place = [];
+            cmdisable   = function dom__load_cmdisable() {
+                var el     = this,
+                    elId   = el.getAttribute("id"),
+                    loc    = location.href.indexOf("codemirror=false"),
+                    place  = [],
+                    symbol = "?";
                 pd.options(el);
-                if (id.indexOf("-yes") > 0 && loc > 0) {
+                if (elId.indexOf("-yes") > 0 && loc > 0) {
                     place = location.href.split("codemirror=false");
                     if (place[1].indexOf("&") < 0 && place[1].indexOf("%26") < 0) {
                         place[0]      = place[0].slice(0, place[0].length - 1);
                         location.href = place.join("");
                     }
-                } else if (id.indexOf("-no") > 0 && loc < 0) {
+                } else if (elId.indexOf("-no") > 0 && loc < 0) {
                     if (location.href.indexOf("?") < location.href.length - 1 && location.href.indexOf("?") > 0) {
-                        location.href = location.href + "&codemirror=false";
-                    } else {
-                        location.href = location.href + "?codemirror=false";
+                        symbol = "&";
                     }
+                    location.href = location.href + symbol + "codemirror=false";
                 }
+            },
+            hideBeauOut = function dom__load_hideBeauOut() {
+                pd.hideBeauOut(this);
             };
         pd.fixHeight();
         window.onresize = pd.fixHeight;
@@ -3887,9 +3894,9 @@ var pd = {};
                     } else if (name === "diffchar" || name === "beauchar" || name === "minnchar") {
                         inputs[a].onmousedown = pd.indentchar;
                     } else if (name === "jsscope") {
-                        inputs[a].onmousedown = pd.hideBeauOut;
+                        inputs[a].onmousedown = hideBeauOut;
                         if (id === "jsscope-yes" && inputs[a].checked === true) {
-                            pd.hideBeauOut(true);
+                            pd.hideBeauOut(inputs[a]);
                         }
                     } else if (name === "codemirror-radio") {
                         inputs[a].onmousedown = cmdisable;
@@ -4156,7 +4163,7 @@ var pd = {};
                             if (pd.o.jsscope !== null) {
                                 pd.o.jsscope.checked = true;
                             }
-                            pd.hideBeauOut(true);
+                            pd.hideBeauOut(pd.o.jsscope);
                         } else if (params[b].indexOf("jscorrect") === 0) {
                             node = pd.$$("jscorrect-yes");
                             if (node !== null) {

@@ -82,7 +82,7 @@ Examples:
             indent      : "",
             inlevel     : 0,
             insize      : 4,
-            jsscope     : false,
+            jsscope     : "none",
             lang        : "auto",
             mode        : "diff",
             obfuscation : false,
@@ -252,8 +252,7 @@ Examples:
             if (options.jsscope === true && options.mode === "beautify" && (options.lang === "javascript" || options.lang === "auto")) {
                 a.push(result[0]);
                 a.push("<script type='application/javascript'><![CDATA[");
-                a.push("var data=document.getElementById('pd-jsscope'),pd={};pd.beaurows=[];");
-                a.push("var data=document.getElementById('pd-jsscope'),pd={};pd.beaurows=[];pd.beaurows[0]=data.getElementsByTagName('ol')[0].getElementsByTagName('li');pd.beaurows[1]=data.getElementsByTagName('ol')[1].getElementsByTagName('li');pd.beaufold=function dom__beaufold(){var self=this,title=self.getAttribute('title').split('line '),min=Number(title[1].substr(0,title[1].indexOf(' '))),max=Number(title[2]),a=0,b='';if(self.innerHTML.charAt(0)==='-'){for(a=min;a<max;a+=1){pd.beaurows[0][a].style.display='none';pd.beaurows[1][a].style.display='none';}self.innerHTML='+'+self.innerHTML.substr(1);}else{for(a=min;a<max;a+=1){pd.beaurows[0][a].style.display='block';pd.beaurows[1][a].style.display='block';if(pd.beaurows[0][a].getAttribute('class')==='fold'&&pd.beaurows[0][a].innerHTML.charAt(0)==='+'){b=pd.beaurows[0][a].getAttribute('title');b=b.substring('to line ');a=Number(b)-1;}}self.innerHTML='-'+self.innerHTML.substr(1);}};(function(){var len=pd.beaurows[0].length,a=0;for(a=0;a<len;a+=1){if(pd.beaurows[0][a].getAttribute('class')==='fold'){pd.beaurows[0][a].onclick=pd.beaufold;}}}());");
+                a.push("var pd={};pd.beaufold=function dom__beaufold(){'use strict';var self=this,title=self.getAttribute('title').split('line '),min=Number(title[1].substr(0,title[1].indexOf(' '))),max=Number(title[2]),a=0,b='',list=[self.parentNode.getElementsByTagName('li'),self.parentNode.nextSibling.getElementsByTagName('li')];if(self.innerHTML.charAt(0)==='-'){for(a=min;a<max;a+=1){list[0][a].style.display='none';list[1][a].style.display='none';}self.innerHTML='+'+self.innerHTML.substr(1);}else{for(a=min;a<max;a+=1){list[0][a].style.display='block';list[1][a].style.display='block';if(list[0][a].getAttribute('class')==='fold'&&list[0][a].innerHTML.charAt(0)==='+'){b=list[0][a].getAttribute('title');b=b.substring(b.indexOf('to line ')+1);a=Number(b)-1;}}self.innerHTML='-'+self.innerHTML.substr(1);}};(function(){'use strict';var lists=document.getElementsByTagName('ol'),listslen=lists.length,list=[],listlen=0,a=0,b=0;for(a=0;a<listslen;a+=1){if(lists[a].getAttribute('class')==='count'&&lists[a].parentNode.getAttribute('class')==='beautify'){list=lists[a].getElementsByTagName('li');listlen=list.length;for(b=0;b<listlen;b+=1){if(list[b].getAttribute('class')==='fold'){list[b].onmousedown=pd.beaufold;}}}}}());");
                 a.push("]]></script></body></html>");
                 return a.join("");
             }
@@ -367,6 +366,7 @@ Examples:
             a.push("                           determines if opening curly braces will exist on the");
             a.push("                           same line as their condition or be forced onto a new");
             a.push("                           line. Defaults to 'knr'.");
+            a.push("                 Accepted values: knr, allman");
             a.push("");
             a.push("* inlevel      - number  - How much indentation padding should be applied to");
             a.push("                           JavaScript beautification?  Default is 0.");
@@ -374,10 +374,14 @@ Examples:
             a.push("* insize       - number  - The number of characters to comprise a single");
             a.push("                           indentation. Defaults to '4'.");
             a.push("");
-            a.push("* jsscope      - boolean - Produces HTML formatted output of JavaScript");
-            a.push("                           beautification coloring variables based upon their");
-            a.push("                           scope. Default is false.");
-            a.push("                 Accepted values: knr, allman");
+            a.push("* jsscope      - string  - If 'html' JavaScript beautification produces HTML");
+            a.push("                           formatted output coloring function scope and");
+            a.push("                           variables to indicate scope depth and inheritance.");
+            a.push("                           The value 'report' is similar to the value 'html',");
+            a.push("                           except that it forms the entirety of an HTML");
+            a.push("                           document. Default is 'none', which just returns");
+            a.push("                           beautified JavaScript in text format.");
+            a.push("                 Accepted values: none, report, html");
             a.push("");
             a.push("* lang         - string  - The programming language of the source file.");
             a.push("                           Defaults to auto.");
@@ -628,8 +632,12 @@ Examples:
                     if (d[b][0] === "insize" && isNaN(d[b][1]) === false) {
                         options.insize = Number(d[b][1]);
                     }
-                    if (d[b][0] === "jsscope" && d[b][1] === "true") {
-                        options.jsscope = true;
+                    if (d[b][0] === "jsscope") {
+                        if (d[b][1] === "report" || d[b][1] === "html") {
+                            options.jsscope = d[b][1];
+                        } else {
+                            options.jsscope = "none";
+                        }
                     }
                     if (d[b][0] === "lang" && (d[b][1] === "markup" || d[b][1] === "javascript" || d[b][1] === "css" || d[b][1] === "html" || d[b][1] === "csv" || d[b][1] === "text")) {
                         options.lang = d[b][1];

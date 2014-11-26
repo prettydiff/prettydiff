@@ -155,7 +155,7 @@
                     <em>globalNumber</em>
                     can be accessed together to perform an addition operation that provides a
                     value of 30,
-                    <strong>but only from inside the function</strong>.</p><div class='beautify' data-prettydiff-ignore="true"><ol class='count'><li>1</li><li class="fold" title="folds from line 2 to line 5">- 2</li><li>3</li><li>4</li><li>5</li><li>6</li></ol><ol class='data'><li>var <em class='s0'>globalNumber</em> = 10,<em>&#xA;</em></li><li class='l0'>    <em class='s0'>outer</em>        = function () <em class='s1'>{</em><em>&#xA;</em></li><li class='l1'><em class='l0'>    </em>    var <em class='s1'>a</em> = 20;<em>&#xA;</em></li><li class='l1'><em class='l0'>    </em>    return <em class='s1'>a</em> + <em class='s0'>globalNumber</em>;<em>&#xA;</em></li><li class='l0'><em class='l0'>    </em><em class='s1'>}</em>;<em>&#xA;</em></li><li class='l0'>return <em class='s0'>outer</em>(); //returns 30<em>&#xA;</em></li></ol></div>
+                    <strong>but only from inside the function</strong>.</p><div class='beautify' data-prettydiff-ignore="true"><h4>A simpled code example of closure.</h4> <ol class='count'><li>1</li><li class="fold" title="folds from line 2 to line 5">- 2</li><li>3</li><li>4</li><li>5</li><li>6</li></ol><ol class='data'><li>var <em class='s0'>globalNumber</em> = 10,<em>&#xA;</em></li><li class='l0'>    <em class='s0'>outer</em>        = function () <em class='s1'>{</em><em>&#xA;</em></li><li class='l1'><em class='l0'>    </em>    var <em class='s1'>a</em> = 20;<em>&#xA;</em></li><li class='l1'><em class='l0'>    </em>    return <em class='s1'>a</em> + <em class='s0'>globalNumber</em>;<em>&#xA;</em></li><li class='l0'><em class='l0'>    </em><em class='s1'>}</em>;<em>&#xA;</em></li><li class='l0'>return <em class='s0'>outer</em>(); //returns 30<em>&#xA;</em></li></ol></div>
             </div>
             <div><h3>Closure</h3>
                 <p>Most simply speaking closure is the process of crossing a scope
@@ -203,7 +203,7 @@
                     references in the lexical inheritance model of programming. Everytime
                     JavaScript encounters a variable reference it attempts to resolve this
                     reference in the local scope. If the reference is declared in the local
-                    function then it is each to find and the program and knows which scope
+                    function then it is easy to find and the program and knows which scope
                     the reference is bound. Looking at the third code sample variable
                     <em>globalNumber</em>
                     is used in the scope of function
@@ -264,8 +264,8 @@
                     example of functional programming architecture. I recommend opening the
                     prettydiff.js file in a code editor that allows code folding on blocks
                     and functions, because the application file is rather large. After the
-                    file contents are in your code editor fold absolutely everything that
-                    you can so that code looks like less than 200 lines.</p>
+                    file contents are in your code editor fold absolutely everything so that
+                    you can see code that looks like less than 200 lines.</p>
                 <p>The Pretty Diff application is a single function named
                     <em>prettydiff</em>. When I write code in JavaScript I always declare my
                     variables at the very top of their function. This is not required, but
