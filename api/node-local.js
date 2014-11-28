@@ -633,7 +633,9 @@ Examples:
                         options.insize = Number(d[b][1]);
                     }
                     if (d[b][0] === "jsscope") {
-                        if (d[b][1] === "report" || d[b][1] === "html") {
+                        if (d[b][1] === "true") {
+                            options.jsscope = "report";
+                        } else if (d[b][1] === "report" || d[b][1] === "html") {
                             options.jsscope = d[b][1];
                         } else {
                             options.jsscope = "none";

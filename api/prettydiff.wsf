@@ -265,7 +265,7 @@
                     args.indent = (WScript.Arguments.Named("indent") === "allman") ? "allman" : "knr";
                     args.inlevel = (isNaN(WScript.Arguments.Named("inlevel"))) ? 0 : Number(WScript.Arguments.Named("inlevel"));
                     args.insize = (isNaN(WScript.Arguments.Named("insize"))) ? 4 : Number(WScript.Arguments.Named("insize"));
-                    args.jsscope = (WScript.Arguments.Named("jsscope") === "none" || WScript.Arguments.Named("jsscope") === "report") ? WScript.Arguments.Named("jsscope") : "none";
+                    args.jsscope = (WScript.Arguments.Named("jsscope") === "html" || WScript.Arguments.Named("jsscope") === "report") ? WScript.Arguments.Named("jsscope") : "none";
                     args.lang = WScript.Arguments.Named("lang") || "auto";
                     args.mode = WScript.Arguments.Named("mode") || "diff";
                     args.obfuscate = WScript.Arguments.Named("obfuscate") || false;
