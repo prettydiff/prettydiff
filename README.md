@@ -124,39 +124,6 @@ License:
 
  @licend  The above is the entire license notice for Pretty Diff.
 
-------------------------------------------------------------------------
-
-
- The code mentioned above has significantly expanded documentation in
- each of the respective function's external JS file as linked above and
- from the documentation page:
- <http://prettydiff.com/documentation.php>
-
- The compilation of csspretty, csvbeauty, csvmin, jspretty, jsdifflib,
- markup_beauty, and markupmin in this manner is a result of the
- prettydiff() function contained in prettydiff.js.  The per character
- highlighting is the result of the charcomp() function also contained in
- prettydiff.js. Any use or redistribution of these functions must
- mention the following:
- 
- Prettydiff created by Austin Cheney originally on 3 Mar 2009.
- <http://prettydiff.com/>
-
- Join the Pretty Diff mailing list at:
- https://groups.google.com/d/forum/pretty-diff
-
- In addition to the previously stated requirements any use of any
- component, aside from directly using the full files in their entirety,
- must restate the license mentioned at the top of each concerned file.
-
-
- If each and all these conditions are met use and redistribution of
- prettydiff and its required assets is unlimited without author
- permission.
-
-   @licend  The above is the entire license notice for the JavaScript
-   code in this page.
-
 Acknowledgements
 ----------------
  
