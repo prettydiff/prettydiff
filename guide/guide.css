@@ -57,7 +57,13 @@ p a {
     white-space  : pre;
 }
 code span {
-    color: #999;
+    color: #ccc;
+}
+.red {
+    color: #c00;
+}
+.blue {
+    color: #00c;
 }
 code.commandLine {
     background   : #000;

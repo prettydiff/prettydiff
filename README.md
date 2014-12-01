@@ -81,79 +81,48 @@ Pre-Inventory:
 License:
 --------
 
-   @source: http://prettydiff.com/documentation.php
+ @source: http://prettydiff.com/prettydiff.js
+ @documentation - English: http://prettydiff.com/documentation.php
 
-   @licstart  The following is the entire license notice for the
-   JavaScript code in this page.
-
-
- Created by Austin Cheney originally on 3 Mar 2009.
+ @licstart  The following is the entire license notice for Pretty Diff.
+ 
  This code may not be used or redistributed unless the following
  conditions are met:
 
- * There is no licensing associated with diffview.css.  Please use,
- redistribute, and alter to your content.  However, diffview.css
- provided from Pretty Diff is different from and not aligned with
- diffview.css originally from Snowtide Informatics.  The use of
- diffview.js and prettydiff.js must contain the following copyright:
- 
+ * Prettydiff created by Austin Cheney originally on 3 Mar 2009.
+ http://prettydiff.com/
+ * The use of diffview.js and prettydiff.js must contain the following
+ copyright:
  Copyright (c) 2007, Snowtide Informatics Systems, Inc.
  All rights reserved.
-
   - Redistributions of source code must retain the above copyright
  notice, this list of conditions and the following disclaimer.
   - Redistributions in binary form must reproduce the above copyright
  notice, this list of conditions and the following disclaimer in the
  documentation and/or other materials provided with the
  distribution.
-  - Neither the name of the Snowtide Informatics Systems nor the names
- of its contributors may be used to endorse or promote products
+  - Neither the name of the Snowtide Informatics Systems nor the
+ names of its contributors may be used to endorse or promote products
  derived from this software without specific prior written
  permission.
   - used as diffview function
- <http://prettydiff.com/lib/diffview.js>
+  http://prettydiff.com/lib/diffview.js
+ * CodeMirror
+ Copyright (C) 2013 by Marijn Haverbeke marijnh@gmail.com and others
+ http://codemirror.com - MIT License
+ * The code mentioned above has significantly expanded documentation in
+ each of the respective function's external JS file as linked from the
+ documentation page:
+ http://prettydiff.com/documentation.php
+ * In addition to the previously stated requirements any use of any
+ component, aside from directly using the full files in their entirety,
+ must restate the license mentioned at the top of each concerned file.
 
- * JSPretty is written by Austin Cheney.  Use of this function requires
- that credit be given to Austin Cheney.
- http://prettydiff.com/
-  - used as jspretty function
- <http://prettydiff.com/lib/jspretty.js>
+ If each and all these conditions are met use, extension, alteration,
+ and redistribution of Pretty Diff and its required assets is unlimited
+ and free without author permission.
 
- * CSSPretty is written by Austin Cheney.  Use of this function requires
- that credit be given to Austin Cheney.
- http://prettydiff.com/
-  - used as csspretty function
- <http://prettydiff.com/lib/csspretty.js>
-
- * charDecoder.js is written by Austin Cheney.  Use of this function
- requires that credit be given to Austin Cheney.
- http://prettydiff.com/
-  - used as charDecoder function
- <http://prettydiff.com/lib/charDecoder.js>
-
- * csvbeauty.js is written by Austin Cheney.  Use of this function
- requires that credit be given to Austin Cheney.
- http://prettydiff.com/
-  - used as csvbeauty function
- <http://prettydiff.com/lib/csvbeauty.js>
-
- * csvmin.js is written by Austin Cheney.  Use of this function requires
- that credit be given to Austin Cheney.
- http://prettydiff.com/
-  - used as csvmin function
- <http://prettydiff.com/lib/csvmin.js>
-
- * markupmin.js is written by Austin Cheney.  Use of this function
- requires that credit be given to Austin Cheney.
- http://prettydiff.com/
-  - used as markupmin function
- <http://prettydiff.com/lib/markupmin.js>
-
- * markup_beauty.js is written by Austin Cheney.  Use of this function
- requires that credit be given to Austin Cheney.
- http://prettydiff.com/
-  - used as markup-beauty function
- <http://prettydiff.com/lib/markup_beauty.js>
+ @licend  The above is the entire license notice for Pretty Diff.
 
 ------------------------------------------------------------------------
 
