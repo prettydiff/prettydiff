@@ -95,73 +95,6 @@ var pd = {};
         return document.getElementById(x);
     };
 
-    //language detection
-    pd.auto               = function dom__auto(a) {
-        var b     = [],
-            c     = 0,
-            d     = 0,
-            join  = "",
-            flaga = false,
-            flagb = false;
-        if (a === undefined || (/^(\s*#)/).test(a) === true || (/\n\s*(\.|@)mixin\(?\s*/).test(a) === true) {
-            return "css";
-        }
-        b = a.replace(/\[[a-zA-Z][\w\-]*\=("|')?[a-zA-Z][\w\-]*("|')?\]/g, "").split("");
-        c = b.length;
-        if ((/^([\s\w\-]*<)/).test(a) === false && (/(>[\s\w\-]*)$/).test(a) === false) {
-            for (d = 1; d < c; d += 1) {
-                if (flaga === false) {
-                    if (b[d] === "*" && b[d - 1] === "/") {
-                        b[d - 1] = "";
-                        flaga    = true;
-                    } else if (flagb === false && b[d] === "f" && d < c - 6 && b[d + 1] === "i" && b[d + 2] === "l" && b[d + 3] === "t" && b[d + 4] === "e" && b[d + 5] === "r" && b[d + 6] === ":") {
-                        flagb = true;
-                    }
-                } else if (flaga === true && b[d] === "*" && d !== c - 1 && b[d + 1] === "/") {
-                    flaga    = false;
-                    b[d]     = "";
-                    b[d + 1] = "";
-                } else if (flagb === true && b[d] === ";") {
-                    flagb = false;
-                    b[d]  = "";
-                }
-                if (flaga === true || flagb === true) {
-                    b[d] = "";
-                }
-            }
-            join = b.join("");
-            if ((/^(\s*\{)/).test(a) === true && (/(\}\s*)$/).test(a) && a.indexOf(",") !== -1) {
-                return "javascript";
-            }
-            if ((/((\}?(\(\))?\)*;?\s*)|([a-z0-9]("|')?\)*);?(\s*\})*)$/i).test(a) === true && ((/(var\s+[a-z]+[a-zA-Z0-9]*)/).test(a) === true || (/(\=\s*function)|(\s*function\s+(\w*\s+)?\()/).test(a) === true || a.indexOf("{") === -1 || (/^(\s*if\s+\()/).test(a) === true)) {
-                if (a.indexOf("(") > -1 || a.indexOf("=") > -1 || (a.indexOf(";") > -1 && a.indexOf("{") > -1) || pd.mode !== "diff") {
-                    return "javascript";
-                }
-                return "text";
-            }
-            if ((/^(\s*[\$\.#@a-z0-9])|^(\s*\/\*)|^(\s*\*\s*\{)/i).test(a) === true && (/^(\s*if\s*\()/).test(a) === false && a.indexOf("{") !== -1 && (/\=\s*(\{|\[|\()/).test(join) === false && ((/(\+|\-|\=|\*|\?)\=/).test(join) === false || ((/\=+('|")?\)/).test(a) === true && (/;\s*base64/).test(a) === true)) && (/function(\s+\w+)*\s*\(/).test(join) === false) {
-                if ((/:\s*(\{|\(|\[)/).test(a) === true || ((/^(\s*return;?\s*\{)/).test(a) === true && (/(\};?\s*)$/).test(a) === true)) {
-                    return "javascript";
-                }
-                return "css";
-            }
-            if (pd.mode === "diff") {
-                return "text";
-            }
-            return "javascript";
-        }
-        if (((/(>[\w\s:]*)?<(\/|\!)?[\w\s:\-\[]+/).test(a) === true && (/^([\s\w]*<)/).test(a) === true && (/(>[\s\w]*)$/).test(a) === true) || ((/^(\s*<s((cript)|(tyle)))/i).test(a) === true && (/(<\/s((cript)|(tyle))>\s*)$/i).test(a) === true)) {
-            if ((/^(\s*<\!doctype html>)/i).test(a) === true || (/^(\s*<html)/i).test(a) === true || ((/^(\s*<\!DOCTYPE\s+((html)|(HTML))\s+PUBLIC\s+)/).test(a) === true && (/XHTML\s+1\.1/).test(a) === false && (/XHTML\s+1\.0\s+(S|s)((trict)|(TRICT))/).test(a) === false)) {
-                return "html";
-            }
-            return "markup";
-        }
-        if (pd.mode === "diff") {
-            return "text";
-        }
-        return "javascript";
-    };
-
     //shared DOM nodes
     pd.o                  = {
         announce    : pd.$$("announcement"),
@@ -180,6 +113,7 @@ var pd = {};
         diffOps     : pd.$$("diffops"),
         jsscope     : pd.$$("jsscope-yes"),
         lang        : pd.$$("language"),
+        langdefault : pd.$$("lang-default"),
         length      : {
             beau    : 0,
             diffBase: 0,
@@ -213,6 +147,68 @@ var pd = {};
     pd.o.report.diff.body = (pd.o.report.diff.box === null) ? null : pd.o.report.diff.box.getElementsByTagName("div")[0];
     pd.o.report.minn.body = (pd.o.report.minn.box === null) ? null : pd.o.report.minn.box.getElementsByTagName("div")[0];
     pd.o.report.stat.body = (pd.o.report.stat.box === null) ? null : pd.o.report.stat.box.getElementsByTagName("div")[0];
+
+    //language detection
+    pd.auto               = function dom__auto(a) {
+        var b     = [],
+            c     = 0,
+            d     = 0,
+            join  = "",
+            flaga = false,
+            flagb = false,
+            defaultt = (pd.o.langdefault === null) ? "javascript" : pd.o.langdefault[pd.o.langdefault.selectedIndex].value;
+        if (a === undefined || (/^(\s*#)/).test(a) === true || (/\n\s*(\.|@)mixin\(?\s*/).test(a) === true) {
+            return "css";
+        }
+        b = a.replace(/\[[a-zA-Z][\w\-]*\=("|')?[a-zA-Z][\w\-]*("|')?\]/g, "").split("");
+        c = b.length;
+        if ((/^([\s\w\-]*<)/).test(a) === false && (/(>[\s\w\-]*)$/).test(a) === false) {
+            for (d = 1; d < c; d += 1) {
+                if (flaga === false) {
+                    if (b[d] === "*" && b[d - 1] === "/") {
+                        b[d - 1] = "";
+                        flaga    = true;
+                    } else if (flagb === false && b[d] === "f" && d < c - 6 && b[d + 1] === "i" && b[d + 2] === "l" && b[d + 3] === "t" && b[d + 4] === "e" && b[d + 5] === "r" && b[d + 6] === ":") {
+                        flagb = true;
+                    }
+                } else if (flaga === true && b[d] === "*" && d !== c - 1 && b[d + 1] === "/") {
+                    flaga    = false;
+                    b[d]     = "";
+                    b[d + 1] = "";
+                } else if (flagb === true && b[d] === ";") {
+                    flagb = false;
+                    b[d]  = "";
+                }
+                if (flaga === true || flagb === true) {
+                    b[d] = "";
+                }
+            }
+            join = b.join("");
+            if ((/^(\s*(\{|\[))/).test(a) === true && (/((\]|\})\s*)$/).test(a) && a.indexOf(",") !== -1) {
+                return "javascript";
+            }
+            if ((/((\}?(\(\))?\)*;?\s*)|([a-z0-9]("|')?\)*);?(\s*\})*)$/i).test(a) === true && ((/(var\s+[a-z]+[a-zA-Z0-9]*)/).test(a) === true || (/(\=\s*function)|(\s*function\s+(\w*\s+)?\()/).test(a) === true || a.indexOf("{") === -1 || (/^(\s*if\s+\()/).test(a) === true)) {
+                if (a.indexOf("(") > -1 || a.indexOf("=") > -1 || (a.indexOf(";") > -1 && a.indexOf("{") > -1)) {
+                    return "javascript";
+                }
+                return defaultt;
+            }
+            if ((/^(\s*[\$\.#@a-z0-9])|^(\s*\/\*)|^(\s*\*\s*\{)/i).test(a) === true && (/^(\s*if\s*\()/).test(a) === false && a.indexOf("{") !== -1 && (/\=\s*(\{|\[|\()/).test(join) === false && ((/(\+|\-|\=|\*|\?)\=/).test(join) === false || ((/\=+('|")?\)/).test(a) === true && (/;\s*base64/).test(a) === true)) && (/function(\s+\w+)*\s*\(/).test(join) === false) {
+                if ((/:\s*(\{|\(|\[)/).test(a) === true || ((/^(\s*return;?\s*\{)/).test(a) === true && (/(\};?\s*)$/).test(a) === true)) {
+                    return "javascript";
+                }
+                return "css";
+            }
+            return defaultt;
+        }
+        if (((/(>[\w\s:]*)?<(\/|\!)?[\w\s:\-\[]+/).test(a) === true && (/^([\s\w]*<)/).test(a) === true && (/(>[\s\w]*)$/).test(a) === true) || ((/^(\s*<s((cript)|(tyle)))/i).test(a) === true && (/(<\/s((cript)|(tyle))>\s*)$/i).test(a) === true)) {
+            if ((/^(\s*<\!doctype html>)/i).test(a) === true || (/^(\s*<html)/i).test(a) === true || ((/^(\s*<\!DOCTYPE\s+((html)|(HTML))\s+PUBLIC\s+)/).test(a) === true && (/XHTML\s+1\.1/).test(a) === false && (/XHTML\s+1\.0\s+(S|s)((trict)|(TRICT))/).test(a) === false)) {
+                return "html";
+            }
+            return "markup";
+        }
+        return defaultt;
+    };
 
     //the various CSS color themes
     pd.css                = {
@@ -716,25 +712,6 @@ var pd = {};
                             pd.o.codeBeauOut.value = output[0];
                         }
                     }
-                    if (pd.o.announce !== null) {
-                        if (api.lang === "markup" || presumedLanguage === "markup" || presumedLanguage === "html" || presumedLanguage === "htmlembedded" || presumedLanguage === "xhtml" || presumedLanguage === "xml" || presumedLanguage === "jstl") {
-                            lang = (function () {
-                                var a      = 0,
-                                    p      = output[1].split("<p><strong>"),
-                                    length = p.length;
-                                for (a = 0; a < length; a += 1) {
-                                    if (p[a].indexOf(" more ") > -1 && p[a].indexOf("start tag") > -1 && p[a].indexOf("end tag") > -1) {
-                                        return "Notice: " + p[a].substring(0, p[a].indexOf("<"));
-                                    }
-                                }
-                                return "";
-                            }());
-                            if (lang.indexOf("end tag") > 0) {
-                                pd.o.announce.style.color = "#c00";
-                                pd.o.announce.innerHTML   = lang;
-                            }
-                        }
-                    }
                     if (pd.o.report.beau.box !== null) {
                         if (output[1] !== "") {
                             pd.o.report.beau.body.innerHTML = output[1];
@@ -821,6 +798,28 @@ var pd = {};
                                     pd.o.report.beau.box.getElementsByTagName("h3")[0].style.width = (Number(h3.substr(0, h3.length - 2)) + 3) + "em";
                                 }
                                 parent.removeChild(parent.firstChild);
+                            }
+                        }
+                    }
+                    if (pd.o.announce !== null) {
+                        if (api.lang === "markup" || presumedLanguage === "markup" || presumedLanguage === "html" || presumedLanguage === "htmlembedded" || presumedLanguage === "xhtml" || presumedLanguage === "xml" || presumedLanguage === "jstl") {
+                            lang = (function () {
+                                var a      = 0,
+                                    p      = output[1].split("<p><strong>"),
+                                    length = p.length;
+                                for (a = 0; a < length; a += 1) {
+                                    if (p[a].indexOf(" more ") > -1 && p[a].indexOf("start tag") > -1 && p[a].indexOf("end tag") > -1) {
+                                        return "Notice: " + p[a].substring(0, p[a].indexOf("<"));
+                                    }
+                                    if (p[a].indexOf("Duplicate id") > -1) {
+                                        return "<strong>" + p[a].slice(0, p[a].length - 4);
+                                    }
+                                }
+                                return "";
+                            }());
+                            if (lang.indexOf("end tag") > 0 || lang.indexOf("Duplicate id") > 0) {
+                                pd.o.announce.style.color = "#c00";
+                                pd.o.announce.innerHTML   = lang;
                             }
                         }
                     }
@@ -1015,6 +1014,7 @@ var pd = {};
 
         //gather updated dom nodes
         api.lang    = (pd.o.lang === null) ? "javascript" : (pd.o.lang.nodeName.toLowerCase() === "select") ? pd.o.lang[pd.o.lang.selectedIndex].value.toLowerCase() : pd.o.lang.value.toLowerCase();
+        api.langdefault = pd.o.langdefault[pd.o.langdefault.selectedIndex].value;
         node        = pd.$$("csvchar");
         api.csvchar = (node === null || node.value.length === 0) ? "," : node.value;
         api.api     = "dom";
@@ -2659,6 +2659,14 @@ var pd = {};
             }
         }
         if (x === pd.o.lang) {
+            if (pd.o.langdefault !== null) {
+                if (lang === "auto") {
+                    pd.o.langdefault.parentNode.style.display = "block";
+                    pd.o.langdefault.disabled = false;
+                } else {
+                    pd.o.langdefault.parentNode.style.display = "none";
+                }
+            }
             if (pd.test.cm === true) {
                 if (lang === "auto") {
                     if (pd.mode === "diff") {
@@ -3117,6 +3125,9 @@ var pd = {};
                         "api.jsspace", "true"
                     ];
                 }
+                if (id === "lang-default") {
+                    data = ["api.langdefault", item[item.selectedIndex].value];
+                }
                 if (id === "langauge") {
                     data = [
                         "api.lang", "\"" + item.value + "\""
@@ -3476,8 +3487,8 @@ var pd = {};
                     return false;
                 }
             },
-            cmdisable   = function dom__load_cmdisable() {
-                var el     = this,
+            cmdisable   = function dom__load_cmdisable(x) {
+                var el     = (typeof x === "object") ? x : this,
                     elId   = el.getAttribute("id"),
                     loc    = location.href.indexOf("codemirror=false"),
                     place  = [],
@@ -3899,6 +3910,9 @@ var pd = {};
                             pd.hideBeauOut(inputs[a]);
                         }
                     } else if (name === "codemirror-radio") {
+                        if (id === "codemirror-no" && inputs[a].checked === true && pd.test.cm === true) {
+                            cmdisable(inputs[a]);
+                        }
                         inputs[a].onmousedown = cmdisable;
                     } else {
                         inputs[a].onmousedown = pd.options;

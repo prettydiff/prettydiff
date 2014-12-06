@@ -56,7 +56,7 @@
             Find
             <a href="https://github.com/austincheney/Pretty-Diff">Pretty Diff on
                 GitHub</a>.</p>
-        <div id="doc_contents"><h2>Table of Contents</h2>
+        <div id="doc_contents" role="navigation"><h2>Table of Contents</h2>
             <ol>
                 <li><a href="#about">About This Application</a>
                     <ol>
@@ -663,6 +663,25 @@
                                 auto</li>
                             <li><h5>As labeled in the HTML tool</h5>
                                 Code type</li>
+                        </ul>
+                    </li>
+                    <li><h4>langdefault</h4>
+                        <ul>
+                            <li><h5>Description</h5>
+                                If the
+                                <em>lang</em>
+                                option is set to a value of "auto" the value of langdefault determines
+                                    what the default language should be in case where a language cannot be
+                                    detected from the code sample.</li>
+                            <li><h5>Type</h5>
+                                string</li>
+                            <li><h5>Accepted values</h5>
+                                css, csv, javascript, markup, text</li>
+                            <li><h5>Default</h5>
+                                javascript (dom.js - HTML tool), text (node-local.js and
+                                prettydiff.wsf)</li>
+                            <li><h5>As labeled in the HTML tool</h5>
+                                Auto detect default</li>
                         </ul>
                     </li>
                     <li><h4>mode</h4>
@@ -1338,6 +1357,10 @@
                             cache and refreshing the page.</li>
                     </ol>
                 </li>
+                <li>Add the appropriate description of the option to the API
+                    documentation.</li>
+                <li>If necessary write a guide to more fully describe the benefit and
+                    impact of the new feature.</li>
             </ol>
         </div>
         <div id="components"><h2>Components Files</h2>

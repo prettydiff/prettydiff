@@ -34,7 +34,7 @@
             <li id="displayOps-hide"><button id="hideOptions" title="Clicking this button will visually hide everything except for textarea elements and one 'Execute' button." type="button">Show
                 Options</button></li>
         </ul>
-        <p class="append" id="functionGroup"><strong>Function</strong>
+        <p class="append" id="functionGroup" role="navigation"><strong>Function</strong>
             <span>
                 <input checked="checked" id="modediff" name="mode" title="This option tells the tool to generate a diff (code comparison) report. Force this display by default with the address parameter 'm=diff'." type="radio"/>
                 <label for="modediff" title="This option tells the tool to generate a diff (code comparison) report. Force this display by default with the address parameter 'm=diff'.">Compare</label></span>
@@ -45,10 +45,10 @@
                 <input id="modeminify" name="mode" title="This option tells thetool to return white space compressed code. Force this display by default with the address parameter 'm=minify'." type="radio"/>
                 <label for="modeminify" title="This option tells thetool to return white space compressed code. Force this display by default with the address parameter 'm=minify'.">Minify</label></span>
         </p>
-        <p class="big" id="announcement"></p>
+        <p class="big" id="announcement" role="alert"></p>
         <p id="update">Updated:
         </p>
-        <div id="top">
+        <div id="top" aria-hidden="true">
             <h1 title="Pretty Diff is a language aware code comparison tool featuring automatic language detection. Some of the supported languages include: XML, SGML, JSTL, HTML, CSS, SCSS, CSV, JavaScript, and JSON">
                 <svg height="2000.000000pt"
                     preserveAspectRatio="xMidYMid meet"
@@ -93,7 +93,7 @@
                 <span class="clear"></span>
             </div>
         </div>
-        <div id="codeInput">
+        <div id="codeInput" role="main">
             <div id="diffBase"><h2>Base Text</h2>
                 <p class="labeltext"><input id="baselabel" type="text" value="base"/>
                     <label for="baselabel">Base label (optional)</label></p>
@@ -144,7 +144,7 @@
         <p class="button" id="button-primary"><button type="button" value="Execute">Execute</button></p>
         <div id="reports"><h2>Reporting data which updates with each use of the
             tool</h2>
-            <div class="box" id="diffreport">
+            <div class="box" id="diffreport" role="dialog_nonmodal">
                 <p class="buttons" style="display:none">
                     <a href="#"><button class="save" title="Convert diff report to text that can be saved.">S</button></a>
                     <button class="minimize" title="Minimize this dialogue ">&uarr;</button>
@@ -154,7 +154,7 @@
                     Report</span></h3>
                 <div class="body" id="diffreportbody" style="display:none" xml:space="preserve"></div>
             </div>
-            <div class="box" id="beaureport">
+            <div class="box" id="beaureport" role="dialog_nonmodal">
                 <p class="buttons" style="display:none">
                     <button class="minimize" title="Minimize this dialogue">&uarr;</button>
                     <button class="maximize" title="Maximize this dialogue to the browser window.">&uarr;</button>
@@ -163,7 +163,7 @@
                     Report</span></h3>
                 <div class="body" id="beaureportbody" style="display:none" xml:space="preserve"></div>
             </div>
-            <div class="box" id="minnreport">
+            <div class="box" id="minnreport" role="dialog_nonmodal">
                 <p class="buttons" style="display:none">
                     <button class="minimize" title="Minimize this dialogue">&uarr;</button>
                     <button class="maximize" title="Maximize this dialogue to the browser window.">&uarr;</button>
@@ -172,7 +172,7 @@
                     Report</span></h3>
                 <div class="body" id="minreportbody" style="display:none" xml:space="preserve"></div>
             </div>
-            <div class="box" id="statreport">
+            <div class="box" id="statreport" role="dialog_nonmodal">
                 <p class="buttons" style="display:none">
                     <button class="minimize" title="Minimize this dialogue">&uarr;</button>
                     <button class="maximize" title="Maximize this dialogue to the browser window.">&uarr;</button>
@@ -220,7 +220,7 @@
                 </div>
             </div>
         </div>
-        <div class="options" id="options"><h2>Main Options</h2>
+        <div class="options" id="options" role="toolbar"><h2>Main Options</h2>
             <p><strong>CodeMirror Editor</strong>
                 <span><input checked="checked" id="codemirror-yes" name="codemirror-radio" title="This radio button will restore the CodeMirror functionality and refresh the page." type="radio"/>
                     <label for="codemirror-yes">Enable CodeMirror</label></span>
@@ -234,22 +234,36 @@
                     <option>Shadow</option>
                     <option selected="selected">White</option></select>
             </p>
-            <p><label class="label" for="language" title="Choose a specific language with this list. Pick a language by default with the 'l' address parameter, for example 'l=html'.">Code
-                type</label>
-                <select id="language" title="Choose a specific language with this list. Pick a language by default with the 'l' address parameter, for example 'l=html'."><option selected="selected" value="auto">Auto
-                    Detect</option>
-                    <option value="css">CSS</option>
-                    <option value="csv">CSV</option>
-                    <option value="html">HTML</option>
-                    <option value="javascript">JavaScript</option>
-                    <option value="javascript">JSON</option>
-                    <option value="markup">JSTL</option>
-                    <option value="markup">markup (non-specific)</option>
-                    <option value="text">Plain Text</option>
-                    <option value="css">SCSS (SASS)</option>
-                    <option value="markup">SGML</option>
-                    <option value="markup">XML</option></select>
-            </p>
+            <p><label class="label" for="language" title="Choose a specific language with this list or force a language selection using the 'l' (as in letter) address parameter, for example 'l=html'.">Code type</label> <select id="language" title="Choose a specific language with this list or force a language selection using the 'l' (as in letter) address parameter, for example 'l=html'.">
+        <option selected="selected" value="auto">Auto Detect</option>
+        <option value="css">CSS</option>
+        <option value="csv">CSV</option>
+        <option value="html">HTML</option>
+        <option value="javascript">JSON</option>
+        <option value="javascript">JSX</option>
+        <option value="javascript">JavaScript</option>
+        <option value="css">LESS</option>
+        <option value="markup">JSTL</option>
+        <option value="markup">markup (non-specific)</option>
+        <option value="text">Plain Text</option>
+        <option value="css">SCSS (SASS)</option>
+        <option value="markup">SGML</option>
+        <option value="markup">XML</option>
+    </select></p>
+    <p><label class="label" for="lang-default" title="Force a language choice when auto-detect cannot make a decision">Auto detect default</label> <select id="lang-default" title="Force a language choice when auto-detect cannot make a decision">
+        <option value="css">CSS</option>
+        <option value="csv">CSV</option>
+        <option value="html">HTML</option>
+        <option value="javascript">JSON</option>
+        <option value="javascript" selected="selected">JavaScript</option>
+        <option value="css">LESS</option>
+        <option value="markup">JSTL</option>
+        <option value="markup">markup (non-specific)</option>
+        <option value="text">Plain Text</option>
+        <option value="css">SCSS (SASS)</option>
+        <option value="markup">SGML</option>
+        <option value="markup">XML</option>
+    </select></p>
             <p id="csvcharp" style="display:none;"><label class="label" for="csvchar">Character
                 separator</label>
                 <input id="csvchar" title="If the language type is set to CSV this field will allow definition of the separating character. Please read the documentation for advanced usage." type="text" value=","/></p>
@@ -258,7 +272,7 @@
                 <textarea cols="30" id="option_comment" readonly="readonly" rows="2" title="This area contains a configuration string as a code comment. This string can be applied to the top of JavaScript and CSS code to supply instructions to the Pretty Diff tool without need to set options in the user interface.">/*prettydiff.com
                     */</textarea></p>
         </div>
-        <div id="addOptions">
+        <div id="addOptions" role="toolbar">
             <div class="options" id="diffops"><h2>Diff Options</h2>
                 <fieldset><legend>Diff Report Options</legend>
                     <p><strong>Print or Save Output</strong>
@@ -609,14 +623,7 @@
         <div id="diffoutput"><p id="emailme">Please post comments, feedback, and
             requests on the
                 <a href="https://groups.google.com/d/forum/pretty-diff">Pretty Diff
-                    mailing list</a>.</p>
-            <p>Created by
-                <a href="http://mailmarkup.org/">Austin Cheney</a>
-                on 3 Mar 2009. This is a heavy modification of JavaScript tools:
-                <a href="https://github.com/cemerick/jsdifflib/">jsdifflib</a>,
-                <a href="https://github.com/austincheney/Pretty-Diff/blob/master/lib/jspretty.js">jspretty</a>,
-                <a href="https://github.com/austincheney/Pretty-Diff/blob/master/lib/markup_beauty.js">markup_beauty</a>,
-                and other custom written libraries.</p>
+                    mailing list</a> or at <a href="https://github.com/austincheney/prettydiff">Github</a>.</p>
         </div>
         <script src="cm/codemirror.js" type="application/javascript"></script>
         <script src="prettydiff.js" type="application/javascript"></script>
