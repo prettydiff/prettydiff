@@ -5630,9 +5630,12 @@ var prettydiff = function prettydiff(api) {
                                     }
                                     news += 1;
                                     if (jsscope !== "none") {
-                                        token[a] = "<strong class='new'>" + token[a] + "</strong>";
+                                        token[a] = "<strong class='new'>new</strong>";
                                     }
                                 }());
+                            }
+                            if (ctoke === "this" && jsscope !== "none") {
+                                token[a] = "<strong class='new'>this</strong>";
                             }
                             if (ctoke === "function" && jspace === false && a < b - 1 && token[a + 1] === "(") {
                                 return level.push("x");
@@ -6494,6 +6497,9 @@ var prettydiff = function prettydiff(api) {
                                                         buildlen -= 1;
                                                     }
                                                 } while (buildlen > 0 && build[buildlen - 1] !== undefined && build[buildlen].indexOf("<li") < 0);
+                                            }
+                                            if ((/^(<em>&#xA;<\/em><\/li><li class='l\d+'>)$/).test(build[buildlen - 1]) === true) {
+                                                build[buildlen - 1] = build[buildlen - 1].replace(/class\='l\d+'/, "class='c0'");
                                             }
                                             build[buildlen] = build[buildlen].replace(/class\='l\d+'/, "class='c0'");
                                         }
@@ -10168,19 +10174,19 @@ var prettydiff = function prettydiff(api) {
     //the edition values use the format YYMMDD for dates.
     edition    = {
         charDecoder  : 141025, //charDecoder library
-        css          : 141205, //diffview.css file
+        css          : 141209, //diffview.css file
         csspretty    : 140929, //csspretty library
         csvbeauty    : 140114, //csvbeauty library
         csvmin       : 131224, //csvmin library
         diffview     : 141205, //diffview library
         documentation: 141205, //documentation.xhtml
-        jspretty     : 141205, //jspretty library
+        jspretty     : 141209, //jspretty library
         markup_beauty: 141205, //markup_beauty library
         markupmin    : 141126, //markupmin library
-        prettydiff   : 141205, //this file
+        prettydiff   : 141209, //this file
         webtool      : 141205, //prettydiff.com.xhtml
         api          : {
-            dom      : 141205,
+            dom      : 141209,
             nodeLocal: 141202,
             wsh      : 141202
         },

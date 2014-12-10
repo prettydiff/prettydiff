@@ -680,7 +680,7 @@ var pd = {};
                 if (autotest === true) {
                     presumedLanguage = lang;
                     if (lang === "javascript") {
-                        if (output[1].indexOf("React JSX") > 0) {
+                        if (output[1].indexOf("React JSX") > 0 && ((api.jsscope === "report" && output[1].indexOf("auto = \"Code type is presumed to be React JSX\";") < 0) || api.jsscope !== "report")) {
                             lang = "React JSX";
                         } else {
                             lang = "JavaScript";
@@ -919,7 +919,7 @@ var pd = {};
                             api.lang  = "auto";
                         }
                         pd.o.report.minn.body.innerHTML = output[1];
-                        if (autotest === true) {
+                        if (autotest === true && pd.o.report.minn.body.firstChild !== null) {
                             pd.o.report.minn.body.firstChild.innerHTML = "Code type is set to <strong>auto</strong>. <span>Presumed language is <em>" + lang + "</em>.</span>";
                         }
                         pd.o.report.minn.box.style.zIndex  = pd.zIndex;
@@ -2323,7 +2323,9 @@ var pd = {};
                     pd.cm.beauOut.setValue(" ");
                 }
             }
-            pd.hideBeauOut(a);
+            if (pd.test.load === false && pd.o.jsscope.checked === true) {
+                pd.hideBeauOut(pd.o.jsscope);
+            }
             pd.test.render.beau = true;
         }
         if (a === pd.o.modeMinn) {
@@ -2723,7 +2725,9 @@ var pd = {};
                     pd.cm.minnOut.setOption("mode", lang);
                 }
             }
-            pd.hideBeauOut(x);
+            if (pd.test.load === false) {
+                pd.hideBeauOut(x);
+            }
         }
         pd.options(x);
     };
@@ -3896,10 +3900,15 @@ var pd = {};
                 id   = inputs[a].getAttribute("id");
                 if (type === "radio") {
                     name = inputs[a].getAttribute("name");
+                    if (id === pd.settings[name]) {
+                        inputs[a].checked = true;
+                        if (name === "beauchar" || name === "diffchar") {
+                            pd.indentchar(inputs[a]);
+                        }
+                    }
                     if (name === "mode") {
                         inputs[a].onmousedown = pd.prettyvis;
                         if (pd.settings[name] === id) {
-                            inputs[a].checked = true;
                             pd.prettyvis(inputs[a]);
                         }
                     } else if (name === "diffchar" || name === "beauchar" || name === "minnchar") {
@@ -3916,12 +3925,6 @@ var pd = {};
                         inputs[a].onmousedown = cmdisable;
                     } else {
                         inputs[a].onmousedown = pd.options;
-                    }
-                    if (id === pd.settings[name]) {
-                        inputs[a].checked = true;
-                        if (name === "beauchar" || name === "diffchar") {
-                            pd.indentchar(inputs[a]);
-                        }
                     }
                 } else if (type === "text") {
                     if (pd.test.cm === true && (id === "diff-quan" || id === "beau-quan" || id === "minn-quan")) {
