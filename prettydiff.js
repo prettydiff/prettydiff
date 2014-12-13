@@ -6286,13 +6286,14 @@ var prettydiff = function prettydiff(api) {
                                             };
                                         period = function jspretty__resultScope_varSpaces_joins_period() {
                                             perTest = true;
+                                            xlen    += 1;
                                             do {
                                                 x    -= 2;
                                                 xlen += token[x].length + 1;
                                             } while (x > 1 && token[x - 1] === ".");
                                             if (token[x] === ")" || token[x] === "]") {
                                                 x       += 1;
-                                                xlen    -= 1;
+                                                xlen    -= 2;
                                                 mixTest = true;
                                                 ending();
                                             }
@@ -6343,9 +6344,6 @@ var prettydiff = function prettydiff(api) {
                                         };
                                         if (types[x] === "word" && token[x - 1] === ".") {
                                             period();
-                                            if (endTest === false) {
-                                                xlen += 1;
-                                            }
                                         } else if (token[x] === ")" || token[x] === "]") {
                                             ending();
                                             if (perTest === false) {
@@ -6724,13 +6722,14 @@ var prettydiff = function prettydiff(api) {
                                             };
                                         period = function jspretty__result_varSpaces_joins_period() {
                                             perTest = true;
+                                            xlen    += 1;
                                             do {
                                                 x    -= 2;
                                                 xlen += token[x].length + 1;
                                             } while (x > 1 && token[x - 1] === ".");
                                             if (token[x] === ")" || token[x] === "]") {
                                                 x       += 1;
-                                                xlen    -= 1;
+                                                xlen    -= 2;
                                                 mixTest = true;
                                                 ending();
                                             }
@@ -6781,9 +6780,6 @@ var prettydiff = function prettydiff(api) {
                                         };
                                         if (types[x] === "word" && token[x - 1] === ".") {
                                             period();
-                                            if (endTest === false) {
-                                                xlen += 1;
-                                            }
                                         } else if (token[x] === ")" || token[x] === "]") {
                                             ending();
                                             if (perTest === false) {
@@ -10174,19 +10170,19 @@ var prettydiff = function prettydiff(api) {
     //the edition values use the format YYMMDD for dates.
     edition    = {
         charDecoder  : 141025, //charDecoder library
-        css          : 141209, //diffview.css file
+        css          : 141213, //diffview.css file
         csspretty    : 140929, //csspretty library
         csvbeauty    : 140114, //csvbeauty library
         csvmin       : 131224, //csvmin library
         diffview     : 141205, //diffview library
         documentation: 141205, //documentation.xhtml
-        jspretty     : 141209, //jspretty library
+        jspretty     : 141213, //jspretty library
         markup_beauty: 141205, //markup_beauty library
         markupmin    : 141126, //markupmin library
-        prettydiff   : 141209, //this file
+        prettydiff   : 141213, //this file
         webtool      : 141205, //prettydiff.com.xhtml
         api          : {
-            dom      : 141209,
+            dom      : 141213,
             nodeLocal: 141202,
             wsh      : 141202
         },

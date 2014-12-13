@@ -680,7 +680,7 @@ var pd = {};
                 if (autotest === true) {
                     presumedLanguage = lang;
                     if (lang === "javascript") {
-                        if (output[1].indexOf("React JSX") > 0 && ((api.jsscope === "report" && output[1].indexOf("auto = \"Code type is presumed to be React JSX\";") < 0) || api.jsscope !== "report")) {
+                        if (output[1].indexOf("React JSX") > 0 && ((api.jsscope === "report" && (/Code type is presumed to be React JSX/).test(output[1]) === false && (/Presumed language is &lt;em&gt;React JSX/).test(output[1]) === false) || api.jsscope !== "report")) {
                             lang = "React JSX";
                         } else {
                             lang = "JavaScript";
@@ -2217,7 +2217,7 @@ var pd = {};
     //toggle between tool modes and vertical/horizontal orientation of
     //textareas
     pd.prettyvis           = function dom__prettyvis(x) {
-        var a           = (x.nodeType === 1) ? x : this,
+        var a           = {},
             b           = 0,
             lang        = (pd.o.lang === null) ? "javascript" : ((pd.o.lang.nodeName === "select") ? pd.o.lang[pd.o.lang.selectedIndex].value : pd.o.lang.value),
             langOps     = [],
@@ -2237,6 +2237,17 @@ var pd = {};
                     }
                 }
             };
+        if (x.nodeType === 1) {
+            if (x.nodeName.toLowerCase() === "input") {
+                a = x;
+            } else {
+                a = x.getElementsByTagName("input")[0];
+            }
+        } else if (this.nodeName.toLowerCase() === "input") {
+            a = this;
+        } else {
+            a = this.getElementsByTagName("input")[0];
+        }
         node = pd.$$("showOptionsCallOut");
         if (node !== null) {
             node.parentNode.removeChild(node);
@@ -2541,9 +2552,9 @@ var pd = {};
 
     //alters available options depending upon language selection
     pd.codeOps             = function dom__codeOps(node) {
-        var x    = (node.nodeType === 1) ? node : this,
+        var x    = {},
             lang = "",
-            xml  = (x.getElementsByTagName("option")[x.selectedIndex].innerHTML === "XML" || x.getElementsByTagName("option")[x.selectedIndex].innerHTML === "JSTL") ? true : false,
+            xml  = false,
             dqp  = pd.$$("diffquanp"),
             dqt  = pd.$$("difftypep"),
             db   = pd.$$("diffbeautify"),
@@ -2554,6 +2565,18 @@ var pd = {};
             hn   = pd.$$("htmlm-no"),
             hy   = pd.$$("html-yes"),
             hz   = pd.$$("html-no");
+        if (node.nodeType === 1) {
+            if (node.nodeName.toLowerCase() === "input" || node.nodeName.toLowerCase() === "select") {
+                x = node;
+            } else {
+                x = node.getElementsByTagName("input")[0];
+            }
+        } else if (this.nodeName.toLowerCase() === "input" || this.nodeName.toLowerCase() === "select") {
+            x = this;
+        } else {
+            x = this.getElementsByTagName("input")[0];
+        }
+        xml = (x.getElementsByTagName("option")[x.selectedIndex].innerHTML === "XML" || x.getElementsByTagName("option")[x.selectedIndex].innerHTML === "JSTL") ? true : false;
         lang = (pd.o.lang === null) ? "javascript" : (pd.o.lang.nodeName === "select") ? pd.o.lang[pd.o.lang.selectedIndex].value : pd.o.lang.value;
         if (pd.o.modeDiff !== null && pd.o.modeDiff.checked === true) {
             if (pd.o.minnOps !== null) {
@@ -2734,7 +2757,7 @@ var pd = {};
 
     pd.hideBeauOut         = function dom__hideBeauOut(x) {
         var node    = {},
-            state   = (x === pd.o.jsscope) ? true : false,
+            state   = false,
             restore = function dom__hideBeauOut_restore() {
                 pd.o.codeBeauOut.parentNode.style.display = "block";
                 if (pd.o.codeBeauIn !== null) {
@@ -2751,6 +2774,10 @@ var pd = {};
                 }
                 pd.options(x);
             };
+        if (x.nodeType === 1 && x.nodeName.toLowerCase() !== "input") {
+            x = x.getElementsByTagName("input")[0];
+        }
+        state   = (x === pd.o.jsscope) ? true : false;
         if (pd.o.codeBeauOut === null) {
             return;
         }
@@ -2778,11 +2805,22 @@ var pd = {};
     //provides interaction to simulate a text input into a radio button
     //set with appropriate accessibility response
     pd.indentchar          = function dom__indentchar(x) {
-        var node      = (this.nodeName === undefined) ? x : this,
+        var node      = {},
             beauChar  = pd.$$("beau-char"),
             diffChar  = pd.$$("diff-char"),
             beauOther = pd.$$("beau-other"),
             diffOther = pd.$$("diff-other");
+        if (x.nodeType === 1) {
+            if (x.nodeName.toLowerCase() === "input") {
+                node = x;
+            } else {
+                node = x.getElementsByTagName("input")[0];
+            }
+        } else if (this.nodeName.toLowerCase() === "input") {
+            node = this;
+        } else {
+            node = this.getElementsByTagName("input")[0];
+        }
         if (pd.mode === "beau" && beauOther !== null && beauChar !== null) {
             if (node === beauOther || node === beauChar) {
                 beauOther.checked = true;
@@ -2852,7 +2890,7 @@ var pd = {};
 
     //store tool changes into localStorage to maintain state
     pd.options             = function dom__options(x) {
-        var item   = (x !== null && x.nodeType === 1) ? x : this,
+        var item   = {},
             node   = "",
             name   = "",
             type   = "",
@@ -2860,6 +2898,17 @@ var pd = {};
             classy = "",
             h3     = {},
             body   = {};
+        if (x.nodeType === 1) {
+            if (x.nodeName.toLowerCase() === "input" || x.nodeName.toLowerCase() === "select" || x.nodeName.toLowerCase() === "div") {
+                item = x;
+            } else {
+                item = x.getElementsByTagName("input")[0];
+            }
+        } else if (this.nodeName.toLowerCase() === "input" || this.nodeName.toLowerCase() === "select" || this.nodeName.toLowerCase() === "div") {
+            item = this;
+        } else {
+            item = this.getElementsByTagName("input")[0];
+        }
         if (item.nodeType !== 1) {
             return;
         }
@@ -3492,7 +3541,7 @@ var pd = {};
                 }
             },
             cmdisable   = function dom__load_cmdisable(x) {
-                var el     = (typeof x === "object") ? x : this,
+                var el     = (typeof x === "object" && x.nodeType === 1) ? x : this,
                     elId   = el.getAttribute("id"),
                     loc    = location.href.indexOf("codemirror=false"),
                     place  = [],
@@ -3907,14 +3956,14 @@ var pd = {};
                         }
                     }
                     if (name === "mode") {
-                        inputs[a].onmousedown = pd.prettyvis;
+                        inputs[a].parentNode.onmousedown = pd.prettyvis;
                         if (pd.settings[name] === id) {
                             pd.prettyvis(inputs[a]);
                         }
                     } else if (name === "diffchar" || name === "beauchar" || name === "minnchar") {
-                        inputs[a].onmousedown = pd.indentchar;
+                        inputs[a].parentNode.onmousedown = pd.indentchar;
                     } else if (name === "jsscope") {
-                        inputs[a].onmousedown = hideBeauOut;
+                        inputs[a].parentNode.onmousedown = hideBeauOut;
                         if (id === "jsscope-yes" && inputs[a].checked === true) {
                             pd.hideBeauOut(inputs[a]);
                         }
@@ -3922,9 +3971,9 @@ var pd = {};
                         if (id === "codemirror-no" && inputs[a].checked === true && pd.test.cm === true) {
                             cmdisable(inputs[a]);
                         }
-                        inputs[a].onmousedown = cmdisable;
+                        inputs[a].parentNode.onmousedown = cmdisable;
                     } else {
-                        inputs[a].onmousedown = pd.options;
+                        inputs[a].parentNode.onmousedown = pd.options;
                     }
                 } else if (type === "text") {
                     if (pd.test.cm === true && (id === "diff-quan" || id === "beau-quan" || id === "minn-quan")) {
@@ -3960,7 +4009,7 @@ var pd = {};
                         inputs[a].value = pd.settings[id];
                     }
                     if (id === "diff-char" || id === "beau-char") {
-                        inputs[a].onmousedown = pd.indentchar;
+                        inputs[a].parentNode.onmousedown = pd.indentchar;
                     }
                 } else if (type === "file") {
                     inputs[a].onchange = pd.file;
