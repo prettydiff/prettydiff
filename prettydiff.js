@@ -10155,7 +10155,7 @@ var prettydiff = function prettydiff(api) {
                             if (duplicates.length === 0) {
                                 return "";
                             }
-                            return "<p><strong>Duplicate id attribute values detected:</strong> " + duplicates.join(", ") + "</p>";
+                            return "<p><strong class='duplicate'>Duplicate id attribute values detected:</strong> " + duplicates.join(", ") + "</p>";
                         }());
                     summary = summaryLanguage + duplicate + score + tables;
                 }());
