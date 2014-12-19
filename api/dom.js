@@ -1069,7 +1069,7 @@ var pd = {};
                     style       = {},
                     wrap        = {},
                     verticalj   = {},
-                    verticaly   = {};
+                    verticaly   = pd.$$("vertical-yes");
                 if (pd.o.codeBeauIn !== null) {
                     if (pd.test.cm === true) {
                         api.source = pd.cm.beauIn.getValue();
@@ -1105,6 +1105,9 @@ var pd = {};
                 } else {
                     api.inchar = " ";
                 }
+                if (verticaly !== null && verticaly.checked === true) {
+                    api.vertical = true;
+                }
                 if (api.lang === "auto" || api.lang === "javascript") {
                     emptyLines   = pd.$$("jslines-no");
                     elseline     = pd.$$("jselseline-yes");
@@ -1114,7 +1117,6 @@ var pd = {};
                     jsspace      = pd.$$("jsspace-no");
                     offset       = pd.$$("inlevel");
                     verticalj    = pd.$$("vertical-jsonly");
-                    verticaly    = pd.$$("vertical-yes");
                     api.correct  = (jscorrect === null || jscorrect.checked === false) ? false : true;
                     api.elseline = (elseline === null || elseline.checked === false) ? false : true;
                     api.indent   = (indent === null || indent.checked === false) ? "knr" : "allman";
@@ -1130,9 +1132,7 @@ var pd = {};
                     }
                     if (verticalj !== null && verticalj.checked === true) {
                         api.vertical = "jsonly";
-                    } else if (verticaly !== null && verticaly.checked === true) {
-                        api.vertical = true;
-                    } else {
+                    } else if (verticaly === null || verticaly.checked === false) {
                         api.vertical = false;
                     }
                 }
@@ -2769,6 +2769,9 @@ var pd = {};
                         pd.keydown(event);
                     };
                 }
+                if (x === undefined) {
+                    return;
+                }
                 pd.options(x);
             };
         if (x.nodeType === 1 && x.nodeName.toLowerCase() !== "input") {
@@ -2895,7 +2898,7 @@ var pd = {};
             classy = "",
             h3     = {},
             body   = {};
-        if (x.nodeType === 1) {
+        if (x !== undefined && x.nodeType === 1) {
             if (x.nodeName.toLowerCase() === "input" || x.nodeName.toLowerCase() === "select" || x.nodeName.toLowerCase() === "div") {
                 item = x;
             } else {
