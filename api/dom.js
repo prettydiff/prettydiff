@@ -1,5 +1,4 @@
 /*prettydiff.com api.topcoms: true, api.inchar: " ", api.insize: 4, api.vertical: true */
-/*jslint nomen: true */
 /*global edition, document, localStorage, window, prettydiff, summary, markup_beauty, cleanCSS, csspretty, csvbeauty, csvmin, markupmin, jspretty, diffview, XMLHttpRequest, location, ActiveXObject, FileReader, navigator, setTimeout, codeMirror*/
 /***********************************************************************
  This is written by Austin Cheney on 3 Mar 2009. Anybody may use this;
@@ -749,9 +748,8 @@ var pd = {};
                                         button.innerHTML = "S";
                                     }
                                     parent.insertBefore(button, parent.firstChild);
-                                    button.onmousedown = function dom__recycle_beauSave() {
-                                        var that = this;
-                                        pd.save(that);
+                                    button.onclick = function dom__recycle_beauSave() {
+                                        pd.save(this);
                                     };
                                 }
                                 if (pd.o.report.beau.body.style.display === "none") {
@@ -767,7 +765,7 @@ var pd = {};
                                     } else {
                                         button = buttons[0];
                                     }
-                                    pd.save(button.onmousedown, 1, button);
+                                    pd.save(button.onclick, 1, button);
                                 }
                                 pd.o.report.beau.box.style.top   = (pd.settings.beaureport.top / 10) + "em";
                                 pd.o.report.beau.box.style.right = "auto";
@@ -850,7 +848,7 @@ var pd = {};
                         }
                     }
                     if (buttons[1].parentNode.style.display === "none") {
-                        pd.minimize(buttons[1].onmousedown, 1, buttons[1]);
+                        pd.minimize(buttons[1].onclick, 1, buttons[1]);
                     }
                     if (pd.o.report.diff.body.innerHTML.toLowerCase().indexOf("<textarea") === -1) {
                         diffList = pd.o.report.diff.body.getElementsByTagName("ol");
@@ -1985,9 +1983,8 @@ var pd = {};
             }
             build.push("</body></html>");
             x.setAttribute("href", "data:text/prettydiff;charset=utf-8," + encodeURIComponent(build.join("")));
-            x.onmousedown = function dom__save_rebind() {
-                var that = this;
-                pd.save(that);
+            x.onclick = function dom__save_rebind() {
+                pd.save(this);
             };
 
             //prompt to save file created above.  below is the creation
@@ -3577,7 +3574,7 @@ var pd = {};
                     id             = (location.href.indexOf("prettydiff.com/") > -1) ? "php" : "xhtml";
                     node.innerHTML = "<strong>New to Pretty Diff?</strong> Click on the <em>Show Options</em> button in the top right corner to see more options or read the <a href='documentation." + id + "'>documentation</a>.";
                     node.setAttribute("id", "showOptionsCallOut");
-                    node.onmousedown = function () {
+                    node.onclick = function () {
                         var self = document.getElementById("showOptionsCallOut");
                         self.parentNode.removeChild(self);
                     };
@@ -3587,7 +3584,7 @@ var pd = {};
                 }
             }
             if (pd.$$("option_commentClear") !== null) {
-                pd.$$("option_commentClear").onmousedown = pd.clearComment;
+                pd.$$("option_commentClear").onclick = pd.clearComment;
             }
             document.onkeypress    = backspace;
             document.onkeydown     = backspace;
@@ -3846,7 +3843,7 @@ var pd = {};
                     if (pd.test.agent.indexOf("firefox") > 0 || pd.test.agent.indexOf("presto") > 0) {
                         node = document.createElement("a");
                         node.setAttribute("href", "#");
-                        node.onmousedown = save;
+                        node.onclick = save;
                         node.innerHTML   = "<button class='save' title='Convert report to text that can be saved.'>S</button>";
                         buttons.insertBefore(node, buttons.firstChild);
                     } else {
@@ -4045,36 +4042,36 @@ var pd = {};
                 id   = inputs[a].getAttribute("id");
                 if (name === null) {
                     if (inputs[a].value === "Execute") {
-                        inputs[a].onmousedown = pd.recycle;
+                        inputs[a].onclick = pd.recycle;
                     } else if (id === "resetOptions") {
-                        inputs[a].onmousedown = pd.reset;
+                        inputs[a].onclick = pd.reset;
                     } else if (id === "hideOptions") {
-                        inputs[a].onmousedown = pd.hideOptions;
+                        inputs[a].onclick = pd.hideOptions;
                     }
                 } else if (name === "minimize") {
-                    inputs[a].onmousedown = pd.minimize;
+                    inputs[a].onclick = pd.minimize;
                 } else if (name === "maximize") {
-                    inputs[a].onmousedown = pd.maximize;
+                    inputs[a].onclick = pd.maximize;
                     if (pd.settings[inputs[a].parentNode.parentNode.getAttribute("id")].max === true) {
                         pd.maximize(inputs[a]);
                     }
                 } else if (name === "resize") {
-                    inputs[a].onmousedown = resize;
+                    inputs[a].onclick = resize;
                 } else if (name === "save") {
                     node  = inputs[a];
                     title = inputs[a].parentNode;
                     if (title.nodeName.toLowerCase() === "a") {
                         if (pd.test.agent.indexOf("firefox") < 0 && pd.test.agent.indexOf("presto") < 0) {
                             buttons          = title.parentNode;
-                            node.onmousedown = save;
+                            node.onclick = save;
                             title.removeChild(node);
                             buttons.removeChild(title);
                             buttons.insertBefore(node, buttons.firstChild);
                         } else {
-                            title.onmousedown = save;
+                            title.onclick = save;
                         }
                     } else {
-                        node.onmousedown = save;
+                        node.onclick = save;
                     }
                 }
             }
@@ -4083,7 +4080,7 @@ var pd = {};
                 inputs    = node.getElementsByTagName("a");
                 inputsLen = inputs.length;
                 for (a = 0; a < inputsLen; a += 1) {
-                    inputs[a].onmousedown = thirdparty;
+                    inputs[a].onclick = thirdparty;
                 }
             }
             //webkit users get sucky textareas, because they refuse to
