@@ -6275,7 +6275,6 @@ var prettydiff = function prettydiff(api) {
                                     longList    = [],
                                     joins       = function jspretty__resultScope_varSpaces_joins(x) {
                                         var xlen    = token[x].length,
-                                            endTest = false,
                                             mixTest = false,
                                             perTest = false,
                                             period  = function jspretty__resultScope_varSpaces_joins_periodInit() {
@@ -6300,7 +6299,6 @@ var prettydiff = function prettydiff(api) {
                                         };
                                         ending = function jspretty__resultScope_varSpaces_joins_ending() {
                                             var yy = 0;
-                                            endTest = true;
                                             for (x -= 1; x > -1; x -= 1) {
                                                 xlen += token[x].length;
                                                 if (types[x] === "start" || types[x] === "method") {
@@ -6711,7 +6709,6 @@ var prettydiff = function prettydiff(api) {
                                     longList    = [],
                                     joins       = function jspretty__result_varSpaces_joins(x) {
                                         var xlen    = token[x].length,
-                                            endTest = false,
                                             mixTest = false,
                                             perTest = false,
                                             period  = function jspretty__result_varSpaces_joins_periodInit() {
@@ -6736,7 +6733,6 @@ var prettydiff = function prettydiff(api) {
                                         };
                                         ending = function jspretty__result_varSpaces_joins_ending() {
                                             var yy = 0;
-                                            endTest = true;
                                             for (x -= 1; x > -1; x -= 1) {
                                                 xlen += token[x].length;
                                                 if (types[x] === "start" || types[x] === "method") {
@@ -10148,17 +10144,18 @@ var prettydiff = function prettydiff(api) {
                             var a          = 0,
                                 b          = id.length,
                                 duplicates = [],
-                                output     = "<p><strong>Duplicate id values detected: ";
+                                value      = "";
                             id.sort();
                             for (a = 1; a < b; a += 1) {
-                                if (id[a] === id[a - 1]) {
+                                if (id[a] === id[a - 1] && id[a] !== value) {
                                     duplicates.push(id[a]);
+                                    value = id[a];
                                 }
                             }
                             if (duplicates.length === 0) {
                                 return "";
                             }
-                            return "<p><strong>Duplicate id attribute values detected</strong>: " + duplicates.join(", ") + "</p>";
+                            return "<p><strong>Duplicate id attribute values detected:</strong> " + duplicates.join(", ") + "</p>";
                         }());
                     summary = summaryLanguage + duplicate + score + tables;
                 }());
@@ -10170,19 +10167,19 @@ var prettydiff = function prettydiff(api) {
     //the edition values use the format YYMMDD for dates.
     edition    = {
         charDecoder  : 141025, //charDecoder library
-        css          : 141213, //diffview.css file
+        css          : 141218, //diffview.css file
         csspretty    : 140929, //csspretty library
         csvbeauty    : 140114, //csvbeauty library
         csvmin       : 131224, //csvmin library
         diffview     : 141205, //diffview library
         documentation: 141205, //documentation.xhtml
-        jspretty     : 141213, //jspretty library
-        markup_beauty: 141205, //markup_beauty library
+        jspretty     : 141218, //jspretty library
+        markup_beauty: 141218, //markup_beauty library
         markupmin    : 141126, //markupmin library
-        prettydiff   : 141213, //this file
+        prettydiff   : 141218, //this file
         webtool      : 141205, //prettydiff.com.xhtml
         api          : {
-            dom      : 141213,
+            dom      : 141218,
             nodeLocal: 141202,
             wsh      : 141202
         },

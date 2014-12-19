@@ -3078,7 +3078,7 @@ var pd = {};
                         "api.html", "false"
                     ];
                 }
-                if (id === "htmld-yes" || id === "html-yes" || id === "htmln-yes") {
+                if (id === "htmld-yes" || id === "html-yes" || id === "htmlm-yes") {
                     data = [
                         "api.html", "true"
                     ];
@@ -3956,14 +3956,14 @@ var pd = {};
                         }
                     }
                     if (name === "mode") {
-                        inputs[a].parentNode.onmousedown = pd.prettyvis;
+                        inputs[a].onclick = pd.prettyvis;
                         if (pd.settings[name] === id) {
                             pd.prettyvis(inputs[a]);
                         }
                     } else if (name === "diffchar" || name === "beauchar" || name === "minnchar") {
-                        inputs[a].parentNode.onmousedown = pd.indentchar;
+                        inputs[a].onclick = pd.indentchar;
                     } else if (name === "jsscope") {
-                        inputs[a].parentNode.onmousedown = hideBeauOut;
+                        inputs[a].onclick = hideBeauOut;
                         if (id === "jsscope-yes" && inputs[a].checked === true) {
                             pd.hideBeauOut(inputs[a]);
                         }
@@ -3971,9 +3971,9 @@ var pd = {};
                         if (id === "codemirror-no" && inputs[a].checked === true && pd.test.cm === true) {
                             cmdisable(inputs[a]);
                         }
-                        inputs[a].parentNode.onmousedown = cmdisable;
+                        inputs[a].onclick = cmdisable;
                     } else {
-                        inputs[a].parentNode.onmousedown = pd.options;
+                        inputs[a].onclick = pd.options;
                     }
                 } else if (type === "text") {
                     if (pd.test.cm === true && (id === "diff-quan" || id === "beau-quan" || id === "minn-quan")) {
@@ -4009,7 +4009,7 @@ var pd = {};
                         inputs[a].value = pd.settings[id];
                     }
                     if (id === "diff-char" || id === "beau-char") {
-                        inputs[a].parentNode.onmousedown = pd.indentchar;
+                        inputs[a].onclick = pd.indentchar;
                     }
                 } else if (type === "file") {
                     inputs[a].onchange = pd.file;
