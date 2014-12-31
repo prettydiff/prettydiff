@@ -48,7 +48,7 @@
         <p class="big" id="announcement" role="alert"></p>
         <p id="update">Updated:
         </p>
-        <div id="top" aria-hidden="true">
+        <div aria-hidden="true" id="top">
             <h1 title="Pretty Diff is a language aware code comparison tool featuring automatic language detection. Some of the supported languages include: XML, SGML, JSTL, HTML, CSS, SCSS, CSV, JavaScript, and JSON">
                 <svg height="2000.000000pt"
                     preserveAspectRatio="xMidYMid meet"
@@ -234,36 +234,42 @@
                     <option>Shadow</option>
                     <option selected="selected">White</option></select>
             </p>
-            <p><label class="label" for="language" title="Choose a specific language with this list or force a language selection using the 'l' (as in letter) address parameter, for example 'l=html'.">Code type</label> <select id="language" title="Choose a specific language with this list or force a language selection using the 'l' (as in letter) address parameter, for example 'l=html'.">
-        <option selected="selected" value="auto">Auto Detect</option>
-        <option value="css">CSS</option>
-        <option value="csv">CSV</option>
-        <option value="html">HTML</option>
-        <option value="javascript">JSON</option>
-        <option value="javascript">JSX</option>
-        <option value="javascript">JavaScript</option>
-        <option value="css">LESS</option>
-        <option value="markup">JSTL</option>
-        <option value="markup">markup (non-specific)</option>
-        <option value="text">Plain Text</option>
-        <option value="css">SCSS (SASS)</option>
-        <option value="markup">SGML</option>
-        <option value="markup">XML</option>
-    </select></p>
-    <p><label class="label" for="lang-default" title="Force a language choice when auto-detect cannot make a decision">Auto detect default</label> <select id="lang-default" title="Force a language choice when auto-detect cannot make a decision">
-        <option value="css">CSS</option>
-        <option value="csv">CSV</option>
-        <option value="html">HTML</option>
-        <option value="javascript">JSON</option>
-        <option value="javascript" selected="selected">JavaScript</option>
-        <option value="css">LESS</option>
-        <option value="markup">JSTL</option>
-        <option value="markup">markup (non-specific)</option>
-        <option value="text">Plain Text</option>
-        <option value="css">SCSS (SASS)</option>
-        <option value="markup">SGML</option>
-        <option value="markup">XML</option>
-    </select></p>
+            <p><label class="label" for="language" title="Choose a specific language with this list or force a language selection using the 'l' (as in letter) address parameter, for example 'l=html'.">Code
+                type</label>
+                <select id="language" title="Choose a specific language with this list or force a language selection using the 'l' (as in letter) address parameter, for example 'l=html'.">
+                    <option selected="selected" value="auto">Auto Detect</option>
+                    <option value="css">CSS</option>
+                    <option value="csv">CSV</option>
+                    <option value="html">HTML</option>
+                    <option value="javascript">JSON</option>
+                    <option value="javascript">JSX</option>
+                    <option value="javascript">JavaScript</option>
+                    <option value="css">LESS</option>
+                    <option value="markup">JSTL</option>
+                    <option value="markup">markup (non-specific)</option>
+                    <option value="text">Plain Text</option>
+                    <option value="css">SCSS (SASS)</option>
+                    <option value="markup">SGML</option>
+                    <option value="markup">XML</option>
+                </select>
+            </p>
+            <p><label class="label" for="lang-default" title="Force a language choice when auto-detect cannot make a decision">Auto
+                detect default</label>
+                <select id="lang-default" title="Force a language choice when auto-detect cannot make a decision">
+                    <option value="css">CSS</option>
+                    <option value="csv">CSV</option>
+                    <option value="html">HTML</option>
+                    <option value="javascript">JSON</option>
+                    <option selected="selected" value="javascript">JavaScript</option>
+                    <option value="css">LESS</option>
+                    <option value="markup">JSTL</option>
+                    <option value="markup">markup (non-specific)</option>
+                    <option value="text">Plain Text</option>
+                    <option value="css">SCSS (SASS)</option>
+                    <option value="markup">SGML</option>
+                    <option value="markup">XML</option>
+                </select>
+            </p>
             <p id="csvcharp" style="display:none;"><label class="label" for="csvchar">Character
                 separator</label>
                 <input id="csvchar" title="If the language type is set to CSV this field will allow definition of the separating character. Please read the documentation for advanced usage." type="text" value=","/></p>
@@ -321,6 +327,14 @@
                         <span>
                             <input id="diffcommentsy" name="diffcomments" title="This option will allow comparison of all comments and code." type="radio"/><label for="diffcommentsy">Compare
                                 code and comments</label></span>
+                    </p>
+                    <p><strong>Sort Objects (JavaScript Only)</strong>
+                        <span>
+                            <input checked="checked" id="dobjectsortn" name="dobjectsort" title="This option does not alphabetize JavaScript object properties." type="radio"/>
+                            <label for="dobjectsortn">Maintain object order</label></span>
+                        <span>
+                            <input id="dobjectsorty" name="dobjectsort" title="This option will sort object properties alphabetically." type="radio"/>
+                            <label for="dobjectsorty">Alphabetize object properties</label></span>
                     </p>
                     <p><strong>Ignore Content (Markup / JavaScript)</strong>
                         <span>
@@ -531,6 +545,14 @@
                             <input id="jsscope-html" name="jsscope" title="This option outputs HTML so that a colorful code snippet is created for use in web pages." type="radio"/>
                             <label for="jsscope-html">HTML output</label></span>
                     </p>
+                    <p><strong>Sort Objects (JavaScript Only)</strong>
+                        <span>
+                            <input checked="checked" id="bobjectsortn" name="bobjectsort" title="This option does not alphabetize JavaScript object properties." type="radio"/>
+                            <label for="bobjectsortn">Maintain object order</label></span>
+                        <span>
+                            <input id="bobjectsorty" name="bobjectsort" title="This option will sort object properties alphabetically." type="radio"/>
+                            <label for="bbobjectsorty">Alphabetize object properties</label></span>
+                    </p>
                     <p><strong>Style of Indent (JavaScript Only)</strong>
                         <span>
                             <input checked="checked" id="jsindent-knr" name="jsindent" title="This JavaScript only option sets opening curly braces at the end of the current line of code." type="radio"/>
@@ -617,13 +639,23 @@
                         <label for="obfuscate-yes">Shorten variable names and remove some
                             semicolons (Warning: changes to variable names cannot be undone)</label></span>
                 </p>
+                <p><strong>Sort Objects (JavaScript Only)</strong>
+                    <span>
+                        <input checked="checked" id="mobjectsortn" name="mobjectsort" title="This option does not alphabetize JavaScript object properties." type="radio"/>
+                        <label for="mobjectsortn">Maintain object order</label></span>
+                    <span>
+                        <input id="mobjectsorty" name="mobjectsort" title="This option will sort object properties alphabetically." type="radio"/>
+                        <label for="mobjectsorty">Alphabetize object properties</label></span>
+                </p>
             </div>
             <p class="button"><button type="button" value="Execute">Execute</button></p>
         </div>
         <div id="diffoutput"><p id="emailme">Please post comments, feedback, and
             requests on the
                 <a href="https://groups.google.com/d/forum/pretty-diff">Pretty Diff
-                    mailing list</a> or at <a href="https://github.com/austincheney/prettydiff">Github</a>.</p>
+                    mailing list</a>
+                or at
+                <a href="https://github.com/austincheney/prettydiff">Github</a>.</p>
         </div>
         <script src="cm/codemirror.js" type="application/javascript"></script>
         <script src="prettydiff.js" type="application/javascript"></script>

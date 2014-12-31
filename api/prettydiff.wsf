@@ -75,10 +75,15 @@
                             error.push("* lang         - string  - The programming language of the source file. Defauls to auto.");
                             error.push("                 Accepted values: auto, markup, javascript, css, html, csv, text");
                             error.push("");
+                            error.push("* langdefault  - string  - The fallback value if option lang is provided the value 'auto' and the language cannot be detected.");
+                            error.push("                 Accepted values: markup, javascript, css, html, csv, text");
+                            error.push("");
                             error.push("* mode         - string  - The operation to be performed. Defaults to 'diff'.");
                             error.push("                 Accepted values: diff, beautify, minify.");
                             error.push("");
                             error.push("* obfuscate    - boolean - If JavaScript minification should result in smaller variable names and fewer simicolons. Default is false.");
+                            error.push("");
+                            error.push("* objsort      - boolean - If true properties of object literals will be sorted alphabetically in JavaScript and JSON.");
                             error.push("");
                             error.push("* output       - string  - The location of the output file. If the file does not exist it will be created. If this argument is missing output will print to screen.");
                             error.push("");
@@ -267,8 +272,10 @@
                     args.insize = (isNaN(WScript.Arguments.Named("insize"))) ? 4 : Number(WScript.Arguments.Named("insize"));
                     args.jsscope = (WScript.Arguments.Named("jsscope") === "html" || WScript.Arguments.Named("jsscope") === "report") ? WScript.Arguments.Named("jsscope") : "none";
                     args.lang = WScript.Arguments.Named("lang") || "auto";
+                    args.langdefault = (WScript.Arguments.Named("langdefault") === "markup" || WScript.Arguments.Named("langdefault") === "html" || WScript.Arguments.Named("langdefault") === "css" || WScript.Arguments.Named("langdefault") === "csv" || WScript.Arguments.Named("langdefault") === "javascript") ? WScript.Arguments.Named("langdefault") : "text";
                     args.mode = WScript.Arguments.Named("mode") || "diff";
                     args.obfuscate = WScript.Arguments.Named("obfuscate") || false;
+                    args.objsort = (WScript.Arguments.Named("objsort") === "true" || WScript.Arguments.Named("objsort") === true) ? true : false;
                     args.quote = (WScript.Arguments.Named("quote") === "true" || WScript.Arguments.Named("quote") === true) ? true : false;
                     args.preserve = (WScript.Arguments.Named("preserve") === "false" || WScript.Arguments.Named("preserve") === false) ? false : true;
                     args.semicolon = (WScript.Arguments.Named("semicolon") === "true" || WScript.Arguments.Named("semicolon") === true) ? true : false;

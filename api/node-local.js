@@ -84,8 +84,10 @@ Examples:
             insize      : 4,
             jsscope     : "none",
             lang        : "auto",
+            langdefault : "text",
             mode        : "diff",
-            obfuscation : false,
+            obfuscate   : false,
+            objsort     : false,
             output      : "",
             preserve    : true,
             quote       : false,
@@ -387,12 +389,19 @@ Examples:
             a.push("                           Defaults to auto.");
             a.push("                 Accepted values: auto, markup, javascript, css, html, csv, text");
             a.push("");
+            a.push("* langdefault  - string  - The fallback option if lang is set to 'auto' and a");
+            a.push("                           language cannot be detected.");
+            a.push("                 Accepted values: markup, javascript, css, html, csv, text");
+            a.push("");
             a.push("* mode         - string  - The operation to be performed. Defaults to 'diff'.");
             a.push("                 Accepted values: diff, beautify, minify.");
             a.push("");
-            a.push("* obfuscation  - boolean - If JavaScript minification should result in smaller");
+            a.push("* obfuscate    - boolean - If JavaScript minification should result in smaller");
             a.push("                           variable names and fewer simicolons.  Default is");
             a.push("                           false.");
+            a.push("");
+            a.push("* objsort      - boolean - If true properties of object literals are sorted");
+            a.push("                           alphabetically by key name in JavaScript and JSON.");
             a.push("");
             a.push("* output       - string  - The path of the directory, if readmethod is value");
             a.push("                           'directory', or path and name of the file to write");
@@ -647,11 +656,17 @@ Examples:
                             options.html = true;
                         }
                     }
+                    if (d[b][0] === "langdefault" && (d[b][1] === "markup" || d[b][1] === "javascript" || d[b][1] === "css" || d[b][1] === "html" || d[b][1] === "csv")) {
+                        options.langdefault = d[b][1];
+                    }
                     if (d[b][0] === "mode" && (d[b][1] === "minify" || d[b][1] === "beautify")) {
                         options.mode = d[b][1];
                     }
-                    if (d[b][0] === "obfuscation" && d[b][1] === "true") {
+                    if (d[b][0] === "obfuscate" && d[b][1] === "true") {
                         options.obfuscation = true;
+                    }
+                    if (d[b][0] === "objsort" && d[b][1] === "true") {
+                        options.objsort = true;
                     }
                     if (d[b][0] === "output" && d[b][1].length > 0) {
                         options.output = pathslash(d[b][0], d[b][1]);
