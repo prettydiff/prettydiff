@@ -1236,36 +1236,44 @@ var prettydiff = function prettydiff(api) {
                                     token[aa] = value(token[aa]);
                                 }
                                 if (smode === "beautify" || (smode === "diff" && sdiffcomm === true)) {
-                                    if (coms.length > 0 && ltype !== "semi" && ltype !== "end" && ltype !== "start") {
-                                        aa = coms.length - 1;
-                                        do {
-                                            token.pop();
-                                            types.pop();
-                                            aa -= 1;
-                                        } while (aa > 0);
-                                        if (smode === "diff") {
-                                            token.push("x;");
-                                        } else {
-                                            token.push(";");
-                                        }
-                                        types.push("semi");
-                                        bb = coms.length - 1;
-                                        do {
-                                            token.push(coms[aa]);
-                                            if (coms[aa].indexOf("//") === 0) {
-                                                types.push("comment-inline");
-                                            } else {
-                                                types.push("comment");
-                                            }
-                                            aa += 1;
-                                        } while (aa < bb);
+                                    if (token[token.length - 2] === "{") {
+                                        types[types.length - 1] = "propvar";
+                                        stats.values.count -= 1;
+                                        stats.values.chars -= itemsize;
+                                        stats.variables.count += 1;
+                                        stats.variables.chars += itemsize;
                                     } else {
-                                        if (smode === "diff") {
-                                            token.push("x;");
+                                        if (coms.length > 0 && ltype !== "semi" && ltype !== "end" && ltype !== "start") {
+                                            aa = coms.length - 1;
+                                            do {
+                                                token.pop();
+                                                types.pop();
+                                                aa -= 1;
+                                            } while (aa > 0);
+                                            if (smode === "diff") {
+                                                token.push("x;");
+                                            } else {
+                                                token.push(";");
+                                            }
+                                            types.push("semi");
+                                            bb = coms.length - 1;
+                                            do {
+                                                token.push(coms[aa]);
+                                                if (coms[aa].indexOf("//") === 0) {
+                                                    types.push("comment-inline");
+                                                } else {
+                                                    types.push("comment");
+                                                }
+                                                aa += 1;
+                                            } while (aa < bb);
                                         } else {
-                                            token.push(";");
+                                            if (smode === "diff") {
+                                                token.push("x;");
+                                            } else {
+                                                token.push(";");
+                                            }
+                                            types.push("semi");
                                         }
-                                        types.push("semi");
                                     }
                                 }
                                 stats.values.count += 1;
@@ -10349,7 +10357,7 @@ var prettydiff = function prettydiff(api) {
     edition    = {
         charDecoder  : 141025, //charDecoder library
         css          : 141218, //diffview.css file
-        csspretty    : 141230, //csspretty library
+        csspretty    : 150101, //csspretty library
         csvbeauty    : 140114, //csvbeauty library
         csvmin       : 131224, //csvmin library
         diffview     : 141205, //diffview library
@@ -10357,7 +10365,7 @@ var prettydiff = function prettydiff(api) {
         jspretty     : 141230, //jspretty library
         markup_beauty: 141218, //markup_beauty library
         markupmin    : 141126, //markupmin library
-        prettydiff   : 141230, //this file
+        prettydiff   : 150101, //this file
         webtool      : 141230, //prettydiff.com.xhtml
         api          : {
             dom      : 141230,
