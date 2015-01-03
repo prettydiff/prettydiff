@@ -88,11 +88,7 @@
  */
 var prettydiff = function prettydiff(api) {
         "use strict";
-        var startTime     = (function startTime() {
-                var date = new Date(),
-                    time = date.getTime();
-                return time;
-            }()),
+        var startTime     = Date.now(),
             jsxstatus     = false,
             summary       = "",
             charDecoder   = function init_charDecoder() {
@@ -120,9 +116,9 @@ var prettydiff = function prettydiff(api) {
                 return;
             },
 
-            //everything above, except "startTime" is a library.  Here
-            //is the logic that puts it all together into a combined
-            //application
+            //everything above, except "startTime", "jsxstatus", and
+            //"summary" is a library.  Here is the logic that puts it
+            //all together into a combined application
             core          = function core(api) {
                 var auto          = "",
                     spacetest     = (/^\s+$/g),
@@ -206,8 +202,7 @@ var prettydiff = function prettydiff(api) {
                             hourString   = "",
                             minutes      = 0,
                             hours        = 0,
-                            now          = new Date(),
-                            elapsed      = ((now.getTime() - startTime) / 1000),
+                            elapsed      = ((Date.now() - startTime) / 1000),
                             secondString = elapsed.toFixed(3),
                             plural       = function core__proctime_plural(x, y) {
                                 var a = "";
@@ -3186,7 +3181,7 @@ var prettydiff = function prettydiff(api) {
                             keylen = 0,
                             keyend = 0,
                             start = 0,
-                            sort = function (x, y) {
+                            sort = function jspretty__tokenize_objtest_sort(x, y) {
                                 var xx = x[0],
                                     yy = y[0];
                                 if (types[xx] === "comment" || types[xx] === "comment-inline") {
@@ -3199,7 +3194,7 @@ var prettydiff = function prettydiff(api) {
                                         yy += 1;
                                     } while (types[yy] === "comment" || types[yy] === "comment-inline");
                                 }
-                                if (token[xx] > token[yy]) {
+                                if (token[xx].toLowerCase() > token[yy].toLowerCase()) {
                                     return 1;
                                 }
                                 return 0;
@@ -3273,7 +3268,7 @@ var prettydiff = function prettydiff(api) {
                                 if (keys.length > 0 && keys[keys.length - 1][0] > cc + 1) {
                                     keys.push([cc + 1, keys[keys.length - 1][0] - 1, keys[keys.length - 1][2]]);
                                 }
-                                if (jobjsort === true && keys.length > 1 && (token[cc - 1] === "=" || token[cc - 1] === ":" || token[cc - 1] === "(" || token[cc - 1] === "[" || cc === 0)) {
+                                if (jobjsort === true && keys.length > 1 && (token[cc - 1] === "=" || token[cc - 1] === ":" || token[cc - 1] === "(" || token[cc - 1] === "[" || token[cc - 1] === "," || cc === 0)) {
                                     keys.sort(sort);
                                     keylen = keys.length;
                                     commaTest = false;
@@ -9869,8 +9864,7 @@ var prettydiff = function prettydiff(api) {
                                 avgTypes   = [],
                                 avgChars   = [];
                             for (a = 0; a < lengthToken; a += 1) {
-                                switch (cinfo[a]) {
-                                case "end":
+                                if (cinfo[a] === "end") {
                                     types[1]      += 1;
                                     totalTypes[0] += 1;
                                     chars[1]      += sum[a].length;
@@ -9878,98 +9872,80 @@ var prettydiff = function prettydiff(api) {
                                         chars[1] -= 1;
                                         chars[2] += 1;
                                     }
-                                    break;
-                                case "singleton":
+                                } else if (cinfo[a] === "singleton") {
                                     types[2]      += 1;
                                     totalTypes[0] += 1;
                                     chars[2]      += sum[a].length;
                                     if (((build[a].indexOf("<embed ") !== -1 || build[a].indexOf("<img ") !== -1 || build[a].indexOf("<iframe ") !== -1) && (build[a].indexOf("src") !== -1 && build[a].indexOf("src=\"\"") === -1 && build[a].indexOf("src=''") === -1)) || (build[a].indexOf("<link ") !== -1 && build[a].indexOf("rel") !== -1 && build[a].indexOf("canonical") === -1)) {
                                         requests.push(build[a]);
                                     }
-                                    break;
-                                case "comment":
+                                } else if (cinfo[a] === "comment") {
                                     types[3]      += 1;
                                     totalTypes[0] += 1;
                                     chars[3]      += sum[a].length;
-                                    break;
-                                case "content":
+                                } else if (cinfo[a] === "content") {
                                     types[4]      += 1;
                                     totalTypes[1] += 1;
                                     chars[4]      += sum[a].length;
-                                    break;
-                                case "mixed_start":
+                                } else if (cinfo[a] === "mixed_start") {
                                     types[5]      += 1;
                                     totalTypes[1] += 1;
                                     chars[5]      += (sum[a].length - 1);
-                                    break;
-                                case "mixed_end":
+                                } else if (cinfo[a] === "mixed_end") {
                                     types[6]      += 1;
                                     totalTypes[1] += 1;
                                     chars[6]      += (sum[a].length - 1);
-                                    break;
-                                case "mixed_both":
+                                } else if (cinfo[a] === "mixed_both") {
                                     types[7]      += 1;
                                     totalTypes[1] += 1;
                                     chars[7]      += (sum[a].length - 2);
-                                    break;
-                                case "parse":
+                                } else if (cinfo[a] === "parse") {
                                     types[10] += 1;
                                     chars[10] += sum[a].length;
-                                    break;
-                                case "external":
+                                } else if (cinfo[a] === "external") {
                                     types[17]     += 1;
                                     totalTypes[2] += 1;
                                     chars[17]     += sum[a].length;
                                     if (((build[a].indexOf("<script") !== -1 || build[a].indexOf("<embed ") !== -1 || build[a].indexOf("<img ") !== -1 || build[a].indexOf("<iframe ") !== -1) && (build[a].indexOf("src") !== -1 && build[a].indexOf("src=\"\"") === -1 && build[a].indexOf("src=''") === -1)) || (build[a].indexOf("<link ") !== -1 && build[a].indexOf("rel") !== -1 && build[a].indexOf("canonical") === -1)) {
                                         requests.push(build[a]);
                                     }
-                                    break;
-                                default:
-                                    switch (token[a]) {
-                                    case "T_tag_start":
+                                } else {
+                                    if (token[a] === "T_tag_start") {
                                         types[0]      += 1;
                                         totalTypes[0] += 1;
                                         chars[0]      += sum[a].length;
                                         if (((build[a].indexOf("<embed ") !== -1 || build[a].indexOf("<img ") !== -1 || build[a].indexOf("<iframe ") !== -1) && (build[a].indexOf("src") !== -1 && build[a].indexOf("src=\"\"") === -1 && build[a].indexOf("src=''") === -1)) || (build[a].indexOf("<link ") !== -1 && build[a].indexOf("rel") !== -1 && build[a].indexOf("canonical") === -1)) {
                                             requests.push(build[a]);
                                         }
-                                        break;
-                                    case "T_sgml":
+                                    } else if (token[a] === "T_sgml") {
                                         types[8] += 1;
                                         chars[8] += sum[a].length;
-                                        break;
-                                    case "T_xml":
+                                    } else if (token[a] === "T_xml") {
                                         types[9] += 1;
                                         chars[9] += sum[a].length;
-                                        break;
-                                    case "T_ssi":
+                                    } else if (token[a] === "T_ssi") {
                                         types[11]     += 1;
                                         totalTypes[3] += 1;
                                         chars[11]     += sum[a].length;
-                                        break;
-                                    case "T_asp":
+                                    } else if (token[a] === "T_asp") {
                                         types[12]     += 1;
                                         totalTypes[3] += 1;
                                         chars[12]     += sum[a].length;
-                                        break;
-                                    case "T_php":
+                                    } else if (token[a] === "T_php") {
                                         types[13]     += 1;
                                         totalTypes[3] += 1;
                                         chars[13]     += sum[a].length;
-                                        break;
-                                    case "T_script":
+                                    } else if (token[a] === "T_script") {
                                         types[15]     += 1;
                                         totalTypes[2] += 1;
                                         chars[15]     += sum[a].length;
                                         if (build[a].indexOf(" src") !== -1) {
                                             requests.push(build[a]);
                                         }
-                                        break;
-                                    case "T_style":
+                                    } else if (token[a] === "T_style") {
                                         types[16]     += 1;
                                         totalTypes[2] += 1;
                                         chars[16]     += sum[a].length;
-                                        break;
                                     }
                                 }
                             }
@@ -10005,8 +9981,7 @@ var prettydiff = function prettydiff(api) {
                                 output   = [],
                                 types    = "",
                                 chars    = "";
-                            switch (x) {
-                            case 0:
+                            if (x === 0) {
                                 if ((stats[2][x] / lengthToken) < 0.7) {
                                     types = "bad";
                                 } else {
@@ -10017,8 +9992,7 @@ var prettydiff = function prettydiff(api) {
                                 } else {
                                     chars = "good";
                                 }
-                                break;
-                            case 1:
+                            } else if (x === 1) {
                                 if ((stats[2][x] / lengthToken) < 0.25) {
                                     types = "bad";
                                 } else {
@@ -10029,8 +10003,7 @@ var prettydiff = function prettydiff(api) {
                                 } else {
                                     chars = "good";
                                 }
-                                break;
-                            case 2:
+                            } else if (x === 2) {
                                 if ((stats[2][x] / lengthToken) > 0.05) {
                                     types = "bad";
                                 } else {
@@ -10041,7 +10014,6 @@ var prettydiff = function prettydiff(api) {
                                 } else {
                                     chars = "good";
                                 }
-                                break;
                             }
                             output = ["</th><td>"];
                             output.push(stats[2][x]);
@@ -10362,10 +10334,10 @@ var prettydiff = function prettydiff(api) {
         csvmin       : 131224, //csvmin library
         diffview     : 141205, //diffview library
         documentation: 141230, //documentation.xhtml
-        jspretty     : 141230, //jspretty library
-        markup_beauty: 141218, //markup_beauty library
+        jspretty     : 150102, //jspretty library
+        markup_beauty: 150102, //markup_beauty library
         markupmin    : 141126, //markupmin library
-        prettydiff   : 150101, //this file
+        prettydiff   : 150102, //this file
         webtool      : 141230, //prettydiff.com.xhtml
         api          : {
             dom      : 141230,
