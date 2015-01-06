@@ -383,11 +383,11 @@
                     </p>
                     <p><strong>Presume HTML (Markup Only)</strong>
                         <span>
-                            <input checked="checked" id="htmld-no" name="presumehtmld" title="Use this option to ignore HTML specific vocabulary and instead focus purely on syntax." type="radio"/>
-                            <label for="htmld-no">Strict XML syntax</label></span>
+                            <input checked="checked" id="htmld-yes" name="presumehtmld" title="This option determines whether HTML tags like &lt;br&gt; and lt;hr&gt; should be evaluated as singletons, such as &lt;br/&gt; and lt;hr/&gt;." type="radio"/>
+                            <label for="htmld-yes">Tolerate HTML sillyness</label></span>
                         <span>
-                            <input id="htmld-yes" name="presumehtmld" title="This option determines whether HTML tags like &lt;br&gt; and lt;hr&gt; should be evaluated as singletons, such as &lt;br/&gt; and lt;hr/&gt;." type="radio"/>
-                            <label for="htmld-yes">Tolerate HTML foolishness</label></span>
+                            <input id="htmld-no" name="presumehtmld" title="Use this option to ignore HTML specific vocabulary and instead focus purely on syntax." type="radio"/>
+                            <label for="htmld-no">Strict XML syntax</label></span>
                     </p>
                     <p><strong>Force Indentation (Markup Only)</strong>
                         <span>
@@ -405,11 +405,19 @@
                             <input id="conditionald-yes" name="conditionald" title="Use this option to keep HTML contitional comments used by Internet Explorer." type="radio"/>
                             <label for="conditionald-yes">Preserve HTML conditional comments</label></span>
                     </p>
-                    <p><strong>Alphabetic Sorting (CSS Only)</strong>
-                        <span><input checked="checked" id="dalphasort-no" name="dalphasort" title="Turn sorting off for CSS. Use this option for LESS and SASS code" type="radio"/>
-                            <label for="dalphasort-no">Turn off sorting</label></span>
-                        <span><input id="dalphasort-yes" name="dalphasort" title="Sort CSS properties alphabetically. Disable this option for LESS and SASS code" type="radio"/>
-                            <label for="dalphasort-yes">Sort by property name</label></span>
+                    <p><strong>Property Sorting (CSS / JavaScript)</strong>
+                        <span>
+                            <input checked="checked" id="dobjsort-jsonly" name="dobjsort" title="Sort JavaScript object properties alphabetically by key name." type="radio"/>
+                            <label for="dobjsort-jsonly">Sort JavaScript objects</label></span>
+                        <span>
+                            <input id="dobjsort-cssonly" name="dobjsort" title="Sort CSS properties alphabetically by property name." type="radio"/>
+                            <label for="dobjsort-cssonly">Sort CSS properties</label></span>
+                        <span>
+                            <input id="dobjsort-all" name="dobjsort" title="Sort CSS properties and JavaScript object properties alphabetically by key/property name." type="radio"/>
+                            <label for="dobjsort-all">Sort by key/property</label></span>
+                        <span>
+                            <input id="dobjsort-none" name="dobjsort" title="Turn sorting off for CSS and JavaScript." type="radio"/>
+                            <label for="dobjsort-none">Do not sort</label></span>
                     </p>
                     <p><strong>Style of Indent (JavaScript Only)</strong>
                         <span>
@@ -501,11 +509,11 @@
                     </p>
                     <p><strong>Presume HTML (Markup Only)</strong>
                         <span>
-                            <input checked="checked" id="html-no" name="presumehtml" title="Use this option to ignore HTML specific vocabulary and instead focus purely on syntax." type="radio"/>
-                            <label for="html-no">Strict XML syntax</label></span>
+                            <input checked="checked" id="html-yes" name="presumehtml" title="This option determines whether HTML tags like &lt;br&gt; and lt;hr&gt; should be evaluated as singletons, such as &lt;br/&gt; and lt;hr/&gt;." type="radio"/>
+                            <label for="html-yes">Tolerate HTML sillyness</label></span>
                         <span>
-                            <input id="html-yes" name="presumehtml" title="This option determines whether HTML tags like &lt;br&gt; and lt;hr&gt; should be evaluated as singletons, such as &lt;br/&gt; and lt;hr/&gt;." type="radio"/>
-                            <label for="html-yes">Tolerate HTML foolishness</label></span>
+                            <input id="html-no" name="presumehtml" title="Use this option to ignore HTML specific vocabulary and instead focus purely on syntax." type="radio"/>
+                            <label for="html-no">Strict XML syntax</label></span>
                     </p>
                     <p><strong>Force Indentation (Markup Only)</strong>
                         <span>
@@ -515,24 +523,33 @@
                             <input id="bforce_indent-yes" name="bforce_indent" title="This markup only option forces indentation for all content and elements without regard for integrity of document structure or content." type="radio"/><label for="bforce_indent-yes">Always
                                 force indentation</label></span>
                     </p>
-                    <p><strong>Alphabetic Sorting (CSS Only)</strong>
+                    <p><strong>Property Sorting (CSS / JavaScript)</strong>
                         <span>
-                            <input checked="checked" id="balphasort-no" name="balphasort" title="Turn sorting off for CSS. Use this option for LESS and SASS code" type="radio"/>
-                            <label for="balphasort-no">Turn off sorting</label></span>
+                            <input checked="checked" id="bobjsort-jsonly" name="bobjsort" title="Sort JavaScript object properties alphabetically by key name." type="radio"/>
+                            <label for="bobjsort-jsonly">Sort JavaScript objects</label></span>
                         <span>
-                            <input id="balphasort-yes" name="balphasort" title="Sort CSS properties alphabetically. Disable this option for LESS and SASS code" type="radio"/>
-                            <label for="balphasort-yes">Sort by property name</label></span>
+                            <input id="bobjsort-cssonly" name="bobjsort" title="Sort CSS properties alphabetically by property name." type="radio"/>
+                            <label for="bobjsort-cssonly">Sort CSS properties</label></span>
+                        <span>
+                            <input id="bobjsort-all" name="bobjsort" title="Sort CSS properties and JavaScript object properties alphabetically by key/property name." type="radio"/>
+                            <label for="bobjsort-all">Sort by key/property</label></span>
+                        <span>
+                            <input id="bobjsort-none" name="bobjsort" title="Turn sorting off for CSS and JavaScript." type="radio"/>
+                            <label for="bobjsort-none">Do not sort</label></span>
                     </p>
                     <p><strong>Vertically Align (CSS / JavaScript)</strong>
                         <span>
                             <input checked="checked" id="vertical-jsonly" name="vertical" title="This option provides vertical alignment of assignments only to JavaScript and not CSS like languages." type="radio"/>
-                            <label for="vertical-jsonly">JavaScript only</label></span>
+                            <label for="vertical-jsonly">Vertically align JavaScript</label></span>
                         <span>
-                            <input id="vertical-yes" name="vertical" title="This option causes lists of assignments and properties to be vertically aligned for faster reading." type="radio"/>
-                            <label for="vertical-yes">Vertical alignment</label></span>
+                            <input id="vertical-cssonly" name="vertical" title="This option causes lists of CSS properties to be vertically aligned for faster reading." type="radio"/>
+                            <label for="vertical-cssonly">Vertically align CSS</label></span>
                         <span>
-                            <input id="vertical-no" name="vertical" title="This option prevents padding of variable and property names." type="radio"/>
-                            <label for="vertical-no">Normal assignments</label></span>
+                            <input id="vertical-all" name="vertical" title="This option pads property names in JavaScript and CSS like languages so that their values are vertically aligned." type="radio"/>
+                            <label for="vertical-all">Vertically align CSS/JS</label></span>
+                        <span>
+                            <input id="vertical-none" name="vertical" title="This option prevents padding of variable and property names for vertical alignment in all languages." type="radio"/>
+                            <label for="vertical-none">Do not vertical align</label></span>
                     </p>
                     <p><strong>Scope Analysis (JavaScript Only)</strong>
                         <span>
@@ -544,14 +561,6 @@
                         <span>
                             <input id="jsscope-html" name="jsscope" title="This option outputs HTML so that a colorful code snippet is created for use in web pages." type="radio"/>
                             <label for="jsscope-html">HTML output</label></span>
-                    </p>
-                    <p><strong>Sort Objects (JavaScript Only)</strong>
-                        <span>
-                            <input checked="checked" id="bobjectsortn" name="bobjectsort" title="This option does not alphabetize JavaScript object properties." type="radio"/>
-                            <label for="bobjectsortn">Maintain object order</label></span>
-                        <span>
-                            <input id="bobjectsorty" name="bobjectsort" title="This option will sort object properties alphabetically." type="radio"/>
-                            <label for="bbobjectsorty">Alphabetize object properties</label></span>
                     </p>
                     <p><strong>Style of Indent (JavaScript Only)</strong>
                         <span>
@@ -600,11 +609,11 @@
                 Options</h2>
                 <p><strong>Presume HTML (Markup Only)</strong>
                     <span>
-                        <input checked="checked" id="htmlm-no" name="presumehtmlm" title="Use this option to ignore HTML specific vocabulary and instead focus purely on syntax." type="radio"/>
-                        <label for="htmlm-no">Strict XML syntax</label></span>
+                        <input checked="checked" id="htmlm-yes" name="presumehtmlm" title="This option determines whether HTML tags like &lt;br&gt; and lt;hr&gt; should be evaluated as singletons, such as &lt;br/&gt; and lt;hr/&gt;." type="radio"/>
+                        <label for="htmlm-yes">Tolerate HTML sillyness</label></span>
                     <span>
-                        <input id="htmlm-yes" name="presumehtmlm" title="This option determines whether HTML tags like &lt;br&gt; and lt;hr&gt; should be evaluated as singletons, such as &lt;br/&gt; and lt;hr/&gt;." type="radio"/>
-                        <label for="htmlm-yes">Tolerate HTML foolishness</label></span>
+                        <input id="htmlm-no" name="presumehtmlm" title="Use this option to ignore HTML specific vocabulary and instead focus purely on syntax." type="radio"/>
+                        <label for="htmlm-no">Strict XML syntax</label></span>
                 </p>
                 <p><strong>IE Comments (HTML Only)</strong>
                     <span>
@@ -614,15 +623,21 @@
                         <input id="conditionalm-yes" name="conditionalm" title="Use this option to keep HTML contitional comments used by Internet Explorer." type="radio"/>
                         <label for="conditionalm-yes">Preserve HTML conditional comments</label></span>
                 </p>
-                <p><strong>Alphabetic Sorting (CSS Only)</strong>
+                <p><strong>Property Sorting (CSS / JavaScript)</strong>
                     <span>
-                        <input checked="checked" id="malphasort-no" name="malphasort" title="Turn sorting off for CSS. Use this option for LESS and SASS code" type="radio"/>
-                        <label for="malphasort-no">Turn off sorting</label></span>
+                        <input checked="checked" id="mobjsort-jsonly" name="mobjsort" title="Sort JavaScript object properties alphabetically by key name." type="radio"/>
+                        <label for="mobjsort-jsonly">Sort JavaScript objects</label></span>
                     <span>
-                        <input id="malphasort-yes" name="malphasort" title="Sort CSS properties alphabetically. Disable this option for LESS and SASS code" type="radio"/>
-                        <label for="malphasort-yes">Sort by property name</label></span>
+                        <input id="mobjsort-cssonly" name="mobjsort" title="Sort CSS properties alphabetically by property name." type="radio"/>
+                        <label for="mobjsort-cssonly">Sort CSS properties</label></span>
+                    <span>
+                        <input id="mobjsort-all" name="mobjsort" title="Sort CSS properties and JavaScript object properties alphabetically by key/property name." type="radio"/>
+                        <label for="mobjsort-all">Sort by key/property</label></span>
+                    <span>
+                        <input id="mobjsort-none" name="mobjsort" title="Turn sorting off for CSS and JavaScript." type="radio"/>
+                        <label for="mobjsort-none">Do not sort</label></span>
                 </p>
-                <p><strong>Top Comments (JavaScript / CSS)</strong>
+                <p><strong>Top Comments (CSS / JavaScript)</strong>
                     <span>
                         <input checked="checked" id="topcoms-no" name="topcoms" title="Use this remove all comments in JavaScript and CSS including comments above the first line of code." type="radio"/>
                         <label for="topcoms-no">Minify all comments</label></span>
@@ -638,14 +653,6 @@
                         <input id="obfuscate-yes" name="obfuscate" title="Use this option to shorten variable names and remove some semicolons." type="radio"/>
                         <label for="obfuscate-yes">Shorten variable names and remove some
                             semicolons (Warning: changes to variable names cannot be undone)</label></span>
-                </p>
-                <p><strong>Sort Objects (JavaScript Only)</strong>
-                    <span>
-                        <input checked="checked" id="mobjectsortn" name="mobjectsort" title="This option does not alphabetize JavaScript object properties." type="radio"/>
-                        <label for="mobjectsortn">Maintain object order</label></span>
-                    <span>
-                        <input id="mobjectsorty" name="mobjectsort" title="This option will sort object properties alphabetically." type="radio"/>
-                        <label for="mobjectsorty">Alphabetize object properties</label></span>
                 </p>
             </div>
             <p class="button"><button type="button" value="Execute">Execute</button></p>

@@ -62,7 +62,6 @@ Examples:
             0, 0
         ],
         options       = {
-            alphasort   : false,
             color       : "white",
             comments    : "indent",
             conditional : false,
@@ -87,7 +86,7 @@ Examples:
             langdefault : "text",
             mode        : "diff",
             obfuscate   : false,
-            objsort     : false,
+            objsort     : "none",
             output      : "",
             preserve    : true,
             quote       : false,
@@ -99,7 +98,7 @@ Examples:
             space       : true,
             style       : "indent",
             topcoms     : false,
-            vertical    : false,
+            vertical    : "none",
             wrap        : 0
         },
         colors = {
@@ -288,11 +287,6 @@ Examples:
             var a = [];
             a.push("Arguments      - Type    - Definition");
             a.push("-------------------------------------");
-            a.push("* alphasort    - boolean - If true items will be sorted by type and then");
-            a.push("                           alphabetically in their respective scope. Defaults");
-            a.push("                           to false. Perfectly safe in CSS but considered");
-            a.push("                           harmful in LESS and SASS.");
-            a.push("");
             a.push("* color        - string  - The color scheme of the reports. Default is shadow.");
             a.push("                 Accepted values: default, coffee, dark, canvas, shadow, white");
             a.push("");
@@ -400,8 +394,9 @@ Examples:
             a.push("                           variable names and fewer simicolons.  Default is");
             a.push("                           false.");
             a.push("");
-            a.push("* objsort      - boolean - If true properties of object literals are sorted");
-            a.push("                           alphabetically by key name in JavaScript and JSON.");
+            a.push("* objsort      - string  - Sorts properties by key name in JavaScript and/or");
+            a.push("                           CSS. Defaults to 'none', which turns off sorting.");
+            a.push("                 Accepted values: all, css, js, none");
             a.push("");
             a.push("* output       - string  - The path of the directory, if readmethod is value");
             a.push("                           'directory', or path and name of the file to write");
@@ -467,8 +462,9 @@ Examples:
             a.push("                           above the first line of code should be kept. Default");
             a.push("                           is false.");
             a.push("");
-            a.push("* vertical     - boolean - If lists of assignments and properties should be");
-            a.push("                           vertically aligned. Default is false.");
+            a.push("* vertical     - string  - If lists of assignments and properties should be");
+            a.push("                           vertically aligned. Default is 'none'.");
+            a.push("                 Accepted values: all, css, js, none");
             a.push("");
             a.push("* wrap         - number  - How many characters wide text can be before wrapping");
             a.push("                           from markup beautification. The default value is 0, ");
@@ -487,6 +483,7 @@ Examples:
                 d         = [],
                 e         = [],
                 f         = 0,
+                alphasort = false,
                 pathslash = function (name, x) {
                     var y    = x.indexOf("://"),
                         z    = "",
@@ -581,7 +578,7 @@ Examples:
                         help = true;
                     }
                     if (d[b][0] === "alphasort" && d[b][1] === "true") {
-                        options.alphasort = true;
+                        alphasort = true;
                     }
                     if (d[b][0] === "color" && (d[b][1] === "default" || d[b][1] === "coffee" || d[b][1] === "dark" || d[b][1] === "canvas" || d[b][1] === "white")) {
                         options.color = d[b][1];
@@ -665,8 +662,12 @@ Examples:
                     if (d[b][0] === "obfuscate" && d[b][1] === "true") {
                         options.obfuscation = true;
                     }
-                    if (d[b][0] === "objsort" && d[b][1] === "true") {
-                        options.objsort = true;
+                    if (d[b][0] === "objsort") {
+                        if (d[b][1] === "all" || d[b][1] === "css" || d[b][1] === "js")) {
+                            options.objsort = d[b][1];
+                        } else if (d[b][1] === "true") {
+                            options.objsort = "all";
+                        }
                     }
                     if (d[b][0] === "output" && d[b][1].length > 0) {
                         options.output = pathslash(d[b][0], d[b][1]);
@@ -716,8 +717,12 @@ Examples:
                     if (d[b][0] === "topcoms" && d[b][1] === "true") {
                         options.topcoms = true;
                     }
-                    if (d[b][0] === "vertical" && d[b][1] === "true") {
-                        options.vertical = true;
+                    if (d[b][0] === "vertical") {
+                        if (d[b][1] === "all" || d[b][1] === "css" || d[b][1] === "js")) {
+                            options.vertical = d[b][1];
+                        } else if (d[b][1] === "true") {
+                            options.vertical = "all";
+                        }
                     }
                     if (d[b][0] === "wrap") {
                         if (isNaN(d[b][1])) {
@@ -729,6 +734,9 @@ Examples:
                 } else if (help === false && (d[b] === "help" || d[b][0] === "help")) {
                     help = true;
                 }
+            }
+            if (alphasort === true) {
+                options.objsort = "all";
             }
             return c;
         }()),

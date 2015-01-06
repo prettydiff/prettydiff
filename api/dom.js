@@ -813,6 +813,9 @@ var pd = {};
                                         return "Notice: " + p[a].substring(0, p[a].indexOf("<"));
                                     }
                                     if (p[a].indexOf("Duplicate id") > -1) {
+                                        if (p[a].indexOf("Execution time") > -1) {
+                                            return p[a].slice(p[a].indexOf("<strong class='duplicate"), p[a].length - 4);
+                                        }
                                         return "<strong>" + p[a].slice(0, p[a].length - 4);
                                     }
                                 }
@@ -1056,8 +1059,7 @@ var pd = {};
                 }
             }
             (function dom__recycle_beautify() {
-                var alphasort   = pd.$$("balphasort-yes"),
-                    comments    = pd.$$("incomment-no"),
+                var comments    = pd.$$("incomment-no"),
                     chars       = pd.$$("beau-space"),
                     emptyLines  = {},
                     elseline    = {},
@@ -1067,13 +1069,16 @@ var pd = {};
                     jscorrect   = {},
                     jshtml      = {},
                     jsspace     = {},
+                    objsorta    = pd.$$("bobjsort-all"),
+                    objsortc    = pd.$$("bobjsort-cssonly"),
+                    objsortj    = pd.$$("bobjsort-jsonly"),
                     offset      = {},
                     quantity    = pd.$$("beau-quan"),
                     style       = {},
-                    wrap        = {},
-                    verticalj   = {},
-                    objsort     = {},
-                    verticaly   = pd.$$("vertical-yes");
+                    verticala   = pd.$$("vertical-all"),
+                    verticalc   = pd.$$("vertical-cssonly"),
+                    verticalj   = pd.$$("vertical-jsonly"),
+                    wrap        = {};
                 if (pd.o.codeBeauIn !== null) {
                     if (pd.test.cm === true) {
                         api.source = pd.cm.beauIn.getValue();
@@ -1081,7 +1086,24 @@ var pd = {};
                         api.source = pd.o.codeBeauIn.value;
                     }
                 }
-                api.alphasort = (alphasort === null || alphasort.checked === false) ? false : true;
+                if (objsorta !== null && objsorta.checked === true) {
+                    api.objsort = "all";
+                } else if (objsortc !== null && objsortc.checked === true) {
+                    api.objsort = "css";
+                } else if (objsortj !== null && objsortj.checked === true) {
+                    api.objsort = "js";
+                } else {
+                    api.objsort = "none";
+                }
+                if (verticala !== null && verticala.checked === true) {
+                    api.vertical = "all";
+                } else if (verticalc !== null && verticalc.checked === true) {
+                    api.vertical = "css";
+                } else if (verticalj !== null && verticalj.checked === true) {
+                    api.vertical = "js";
+                } else {
+                    api.vertical = "none";
+                }
                 api.comments  = (comments === null || comments.checked === false) ? false : true;
                 api.insize    = (quantity === null || isNaN(quantity.value) === true) ? 4 : Number(quantity.value);
                 if (chars === null || chars.checked === false) {
@@ -1109,9 +1131,6 @@ var pd = {};
                 } else {
                     api.inchar = " ";
                 }
-                if (verticaly !== null && verticaly.checked === true) {
-                    api.vertical = true;
-                }
                 if (api.lang === "auto" || api.lang === "javascript") {
                     emptyLines   = pd.$$("jslines-no");
                     elseline     = pd.$$("jselseline-yes");
@@ -1119,14 +1138,11 @@ var pd = {};
                     jscorrect    = pd.$$("jscorrect-yes");
                     jshtml       = pd.$$("jsscope-html");
                     jsspace      = pd.$$("jsspace-no");
-                    objsort      = pd.$$("bobjectsorty");
                     offset       = pd.$$("inlevel");
-                    verticalj    = pd.$$("vertical-jsonly");
                     api.correct  = (jscorrect === null || jscorrect.checked === false) ? false : true;
                     api.elseline = (elseline === null || elseline.checked === false) ? false : true;
                     api.indent   = (indent === null || indent.checked === false) ? "knr" : "allman";
                     api.inlevel  = (offset === null || isNaN(offset.value) === true) ? 0 : Number(offset.value);
-                    api.objsort  = (objsort === null || objsort.checked === false) ? false : true;
                     api.preserve = (emptyLines === null || emptyLines.checked === false) ? true : false;
                     api.space    = (jsspace === null || jsspace.checked === false) ? true : false;
                     if (pd.o.jsscope !== null && pd.o.jsscope.checked === true) {
@@ -1135,11 +1151,6 @@ var pd = {};
                         api.jsscope = "html";
                     } else {
                         api.jsscope = "none";
-                    }
-                    if (verticalj !== null && verticalj.checked === true) {
-                        api.vertical = "jsonly";
-                    } else if (verticaly === null || verticaly.checked === false) {
-                        api.vertical = false;
                     }
                 }
                 if (api.lang === "auto" || api.lang === "markup" || api.lang === "html" || api.lang === "xml" || api.lang === "jstl") {
@@ -1190,12 +1201,13 @@ var pd = {};
                 }
             }
             (function dom__recycle_minify() {
-                var alphasort   = pd.$$("malphasort-yes"),
-                    conditional = pd.$$("conditionalm-yes"),
+                var conditional = pd.$$("conditionalm-yes"),
                     html        = pd.$$("htmlm-yes"),
                     topcoms     = pd.$$("topcoms-yes"),
                     obfuscate   = pd.$$("obfuscate-yes"),
-                    objsort     = pd.$$("mobjectsorty");
+                    objsorta    = pd.$$("mobjsort-all"),
+                    objsortc    = pd.$$("mobjsort-cssonly"),
+                    objsortj    = pd.$$("mobjsort-jsonly");
                 if (pd.o.codeMinnIn !== null) {
                     pd.o.codeMinnIn = pd.$$("minifyinput");
                     if (pd.test.cm === true) {
@@ -1204,12 +1216,19 @@ var pd = {};
                         api.source = pd.o.codeMinnIn.value;
                     }
                 }
-                api.alphasort   = (alphasort === null || alphasort.checked === false) ? false : true;
+                if (objsorta !== null && objsorta.checked === true) {
+                    api.objsort = "all";
+                } else if (objsortc !== null && objsortc.checked === true) {
+                    api.objsort = "css";
+                } else if (objsortj !== null && objsortj.checked === true) {
+                    api.objsort = "js";
+                } else {
+                    api.objsort = "none";
+                }
                 api.conditional = (conditional === null || conditional.checked === false) ? false : true;
                 api.html        = (html === null || html.checked === false) ? false : true;
                 api.topcoms     = (topcoms === null || topcoms.checked === false) ? false : true;
                 api.obfuscate   = (obfuscate === null || obfuscate.checked === false) ? false : true;
-                api.objsort     = (objsort === null || objsort.checked === false) ? false : true;
             }());
             api.mode = "minify";
         }
@@ -1222,8 +1241,7 @@ var pd = {};
             }
             api.jsscope = false;
             (function dom__recycle_diff() {
-                var alphasort   = pd.$$("dalphasort-yes"),
-                    baseLabel   = pd.$$("baselabel"),
+                var baseLabel   = pd.$$("baselabel"),
                     comments    = pd.$$("diffcommentsy"),
                     chars       = pd.$$("diff-space"),
                     conditional = {},
@@ -1235,7 +1253,9 @@ var pd = {};
                     indent      = pd.$$("jsindentd-all"),
                     inline      = pd.$$("inline"),
                     newLabel    = pd.$$("newlabel"),
-                    objsort     = {},
+                    objsorta    = pd.$$("dobjsort-all"),
+                    objsortc    = pd.$$("dobjsort-cssonly"),
+                    objsortj    = pd.$$("dobjsort-jsonly"),
                     preserve    = {},
                     quantity    = pd.$$("diff-quan"),
                     quote       = pd.$$("diffquoten"),
@@ -1245,7 +1265,6 @@ var pd = {};
                     wrap        = {};
                 pd.o.codeDiffBase = pd.$$("baseText");
                 pd.o.codeDiffNew  = pd.$$("newText");
-                api.alphasort     = (alphasort === null || alphasort.checked === false) ? false : true;
                 api.content       = (content === null || content.checked === false) ? false : true;
                 api.context       = (context !== null && context.value !== "" && isNaN(context.value) === false) ? Number(context.value) : "";
                 api.diffcomments  = (comments === null || comments.checked === true) ? true : false;
@@ -1256,6 +1275,15 @@ var pd = {};
                 api.quote         = (quote === null || quote.checked === false) ? false : true;
                 api.semicolon     = (semicolon === null || semicolon.checked === false) ? false : true;
                 api.sourcelabel   = (baseLabel === null) ? "base" : baseLabel.value;
+                if (objsorta !== null && objsorta.checked === true) {
+                    api.objsort = "all";
+                } else if (objsortc !== null && objsortc.checked === true) {
+                    api.objsort = "css";
+                } else if (objsortj !== null && objsortj.checked === true) {
+                    api.objsort = "js";
+                } else {
+                    api.objsort = "none";
+                }
                 if (chars === null || chars.checked === false) {
                     chars = pd.$$("diff-tab");
                     if (chars === null || chars.checked === false) {
@@ -1283,11 +1311,9 @@ var pd = {};
                 }
                 if (api.lang === "auto" || api.lang === "javascript") {
                     elseline     = pd.$$("jselselined-yes");
-                    objsort      = pd.$$("dobjectsorty");
                     preserve     = pd.$$("jslinesd-no");
                     space        = pd.$$("jsspaced-no");
                     api.elseline = (elseline === null || elseline.checked === false) ? false : true;
-                    api.objsort  = (objsort === null || objsort.checked === false) ? false : true;
                     api.preserve = (preserve === null || preserve.checked === false) ? false : true;
                     api.space    = (space === null || space.checked === false) ? true : false;
                 }
@@ -2552,6 +2578,9 @@ var pd = {};
                 pd.test.render.diff = true;
             }
         }
+        if (pd.o.announce !== null && (a === pd.o.modeBeau || a === pd.o.modeMinn || a === pd.o.modeDiff)) {
+            pd.o.announce.innerHTML = "";
+        }
         if (a.nodeType === undefined) {
             return;
         }
@@ -2964,29 +2993,29 @@ var pd = {};
             (function dom__options_comment() {
                 var a    = 0,
                     data = [];
-                if (id === "daplhasort-no" || id === "balphasort-no" || id === "malphasort-no") {
-                    data = [
-                        "api.alphasort", "false"
-                    ];
-                }
-                if (id === "daplhasort-yes" || id === "balphasort-yes" || id === "malphasort-yes") {
-                    data = [
-                        "api.alphasort", "true"
-                    ];
-                }
                 if (id === "baselabel") {
                     data = [
                         "api.sourcelabel", "\"" + item.value + "\""
                     ];
                 }
-                if (id === "dobjectsortn" || id === "bobjectsortn" || id === "mobjectsortn") {
+                if (id === "bobjsort-all" || id === "dobjsort-all" || id === "mobjsort-all") {
                     data = [
-                        "api.objsort", "false"
+                        "api.objsort", "all"
                     ];
                 }
-                if (id === "dobjectsorty" || id === "bobjectsorty" || id === "mobjectsorty") {
+                if (id === "bobjsort-css" || id === "dobjsort-css" || id === "mobjsort-css") {
                     data = [
-                        "api.objsort", "true"
+                        "api.objsort", "css"
+                    ];
+                }
+                if (id === "bobjsort-js" || id === "dobjsort-js" || id === "mobjsort-js") {
+                    data = [
+                        "api.objsort", "js"
+                    ];
+                }
+                if (id === "bobjsort-none" || id === "dobjsort-none" || id === "mobjsort-none") {
+                    data = [
+                        "api.objsort", "none"
                     ];
                 }
                 if (id === "conditionald-no" || id === "conditionalm-no") {
@@ -3247,14 +3276,24 @@ var pd = {};
                         "api.topcoms", "false"
                     ];
                 }
-                if (id === "vertical-yes") {
+                if (id === "vertical-all") {
                     data = [
-                        "api.vertical", "true"
+                        "api.vertical", "all"
                     ];
                 }
-                if (id === "vertical-no") {
+                if (id === "vertical-cssonly") {
                     data = [
-                        "api.vertical", "false"
+                        "api.vertical", "css"
+                    ];
+                }
+                if (id === "vertical-jsonly") {
+                    data = [
+                        "api.vertical", "js"
+                    ];
+                }
+                if (id === "vertical-none") {
+                    data = [
+                        "api.vertical", "none"
                     ];
                 }
                 if (data.length === 0) {

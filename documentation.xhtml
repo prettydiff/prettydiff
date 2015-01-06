@@ -343,20 +343,6 @@
             </div>
             <div id="function_properties"><h3>Pretty Diff API</h3>
                 <ol>
-                    <li><h4>alphasort</h4>
-                        <ul>
-                            <li><h5>Description</h5>
-                                Allows alphabetic sorting of properties in CSS. In most cases use of this
-                                option is perfectly safe in CSS, but can result in conflicts for SCSS
-                                and LESS code.</li>
-                            <li><h5>Type</h5>
-                                boolean</li>
-                            <li><h5>Default</h5>
-                                false</li>
-                            <li><h5>As labeled in the HTML tool</h5>
-                                Alphabetic Sorting (CSS Only)</li>
-                        </ul>
-                    </li>
                     <li><h4>api</h4>
                         <ul>
                             <li><h5>Description</h5>
@@ -714,14 +700,16 @@
                     <li><h4>objsort</h4>
                         <ul>
                             <li><h5>Description</h5>
-                                If true properties of object literals are sorted alphabetically by key
-                                name in JavaScript and JSON.</li>
+                                Sorts properties of objects in JavaScript and/or CSS. The accepted values
+                                determine which language this option should be applied.</li>
                             <li><h5>Type</h5>
-                                boolean</li>
+                                string</li>
+                            <li><h5>Accepted values</h5>
+                                all, css, js, none</li>
                             <li><h5>Default</h5>
-                                false</li>
+                                none</li>
                             <li><h5>As labeled in the HTML tool</h5>
-                                Sort Objects (JavaScript Only)</li>
+                                Property Sorting (CSS / JavaScript)</li>
                         </ul>
                     </li>
                     <li><h4>preserve</h4>
@@ -827,25 +815,23 @@
                             <li><h5>Default</h5>
                                 false</li>
                             <li><h5>As labeled in the HTML tool</h5>
-                                Top Comments (JavaScript / CSS)</li>
+                                Top Comments (CSS / JavaScript)</li>
                         </ul>
                     </li>
                     <li><h4>vertical</h4>
                         <ul>
                             <li><h5>Description</h5>
                                 If lists of assignments or properties should be vertically aligned for
-                                faster and easier reading. Although this option is a boolean it also
-                                accepts a value of
-                                <em>jsonly</em>
-                                so that it may be applied to JavaScript but not CSS. This option is safe
-                                    to both JavaScript and CSS, but will cause warnings in certain CSS
-                                    linters.</li>
+                                faster and easier reading. The accepted values determine to which
+                                language this option should be applied.</li>
                             <li><h5>Type</h5>
                                 boolean</li>
+                            <li><h5>Accepted values</h5>
+                                all, css, js, none</li>
                             <li><h5>Default</h5>
-                                false</li>
+                                none</li>
                             <li><h5>As labeled in the HTML tool</h5>
-                                Top Comments (JavaScript / CSS)</li>
+                                Vertically Align (CSS / JavaScript)</li>
                         </ul>
                     </li>
                     <li><h4>wrap</h4>

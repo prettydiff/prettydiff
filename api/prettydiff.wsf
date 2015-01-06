@@ -25,8 +25,6 @@
                         if (WScript.Arguments.Count() === 0 || help === true) {
                             error.push("Arguments      - Type    - Definition");
                             error.push("-------------------------------------");
-                            error.push("* alphasort    - boolean - If true items will be sorted by type and then alphabetically in their respective scope. Defaults to false. Perfectly safe in CSS but considered harmful in LESS and SASS.");
-                            error.push("");
                             error.push("* color        - string  - The color scheme of the reports. Default is shadow.");
                             error.push("                 Accepted values: default, coffee, dark, canvas, shadow, white");
                             error.push("");
@@ -83,7 +81,8 @@
                             error.push("");
                             error.push("* obfuscate    - boolean - If JavaScript minification should result in smaller variable names and fewer simicolons. Default is false.");
                             error.push("");
-                            error.push("* objsort      - boolean - If true properties of object literals will be sorted alphabetically in JavaScript and JSON.");
+                            error.push("* objsort      - string  - Sorts properties by key name in JavaScript and/or CSS. Defaults to 'none', which turns off sorting.");
+                            error.push("                 Accepted values: all, css, js, none");
                             error.push("");
                             error.push("* output       - string  - The location of the output file. If the file does not exist it will be created. If this argument is missing output will print to screen.");
                             error.push("");
@@ -104,7 +103,8 @@
                             error.push("");
                             error.push("* topcoms      - boolean - If mode is 'minify' this determines whether comments above the first line of code should be kept. Default is false.");
                             error.push("");
-                            error.push("* vertical     - boolean - If you ever wanted to see your object properties, variable lists, or assignment lists vertically aligned for faster and easier reading this option is for you. It accepts boolean values and defaults to");
+                            error.push("* vertical     - string  - If lists of assignments and properties should be vertically aligned. Default is 'none'.");
+                            error.push("                 Accepted values: all, css, js, none");
                             error.push("");
                             error.push("* wrap         - string  - The number of characters text content in a markup document is allowed before wrapping onto a new line.  Default is 0 which disables text wrapping.");
                             error.push("");
@@ -253,7 +253,6 @@
                 }
                 if (fail === false) {
                     args.api = "wsf";
-                    args.alphasort = (WScript.Arguments.Named("alphasort") === "true" || WScript.Arguments.Named("alphasort") === true) ? true : false;
                     args.comments = (WScript.Arguments.Named("comments") === "noindent") ? "noindent" : "indent";
                     args.conditional = (WScript.Arguments.Named("conditional") === "true" || WScript.Arguments.Named("conditional") === true) ? true : false;
                     args.content = (WScript.Arguments.Named("content") === "true" || WScript.Arguments.Named("content") === true) ? true : false;
@@ -275,7 +274,7 @@
                     args.langdefault = (WScript.Arguments.Named("langdefault") === "markup" || WScript.Arguments.Named("langdefault") === "html" || WScript.Arguments.Named("langdefault") === "css" || WScript.Arguments.Named("langdefault") === "csv" || WScript.Arguments.Named("langdefault") === "javascript") ? WScript.Arguments.Named("langdefault") : "text";
                     args.mode = WScript.Arguments.Named("mode") || "diff";
                     args.obfuscate = WScript.Arguments.Named("obfuscate") || false;
-                    args.objsort = (WScript.Arguments.Named("objsort") === "true" || WScript.Arguments.Named("objsort") === true) ? true : false;
+                    args.objsort = (WScript.Arguments.Named("objsort") === "all" || WScript.Arguments.Named("objsort") === "css" || WScript.Arguments.Named("objsort") === "js") ? WScript.Arguments.Named("objsort") : "none";
                     args.quote = (WScript.Arguments.Named("quote") === "true" || WScript.Arguments.Named("quote") === true) ? true : false;
                     args.preserve = (WScript.Arguments.Named("preserve") === "false" || WScript.Arguments.Named("preserve") === false) ? false : true;
                     args.semicolon = (WScript.Arguments.Named("semicolon") === "true" || WScript.Arguments.Named("semicolon") === true) ? true : false;
@@ -283,12 +282,18 @@
                     args.space = (WScript.Arguments.Named("space") === "false" || WScript.Arguments.Named("space") === false) ? false : true;
                     args.style = (WScript.Arguments.Named("style")) ? "noindent" : "indent";
                     args.topcoms = (WScript.Arguments.Named("topcoms") === "false" || WScript.Arguments.Named("topcoms") === false) ? false : true;
-                    args.vertical = (WScript.Arguments.Named("vertical") === "true" || WScript.Arguments.Named("vertical") === true) ? true : false;
+                    args.vertical = (WScript.Arguments.Named("vertical") === "all" || WScript.Arguments.Named("vertical") === "css" || WScript.Arguments.Named("vertical") === "js") ? WScript.Arguments.Named("vertical") : "none";
                     args.wrap = (isNaN(WScript.Arguments.Named("force_indent"))) ? 0 : WScript.Arguments.Named("force_indent");
                     color = WScript.Arguments.Named("color") || "shadow";
                     args.inchar = args.inchar.replace(/\\t/g, "\u0009").replace(/\\n/g, "\u000a").replace(/\\r/g, "\u000d").replace(/\\f/g, "\u000c").replace(/\\b/g, "\u0008");
                     if (args.inlevel < 1) {
                         args.inlevel = 0;
+                    }
+                    if (WScript.Arguments.Named("objsort") === "true" || WScript.Arguments.Named("alphasort") === "true") {
+                        args.objsort = "all";
+                    }
+                    if (WScript.Arguments.Named("vertical") === "true") {
+                        args.vertical = "all";
                     }
                     if (args.mode !== "diff" && args.mode !== "beautify" && args.mode !== "minify") {
                         args.mode = "diff";
