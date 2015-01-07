@@ -7394,7 +7394,6 @@ var prettydiff = function prettydiff(api) {
                     "E", "r", "r", "o", "r", ":", " ", "n", "o", " ", "c", "o", "n", "t", "e", "n", "t", " ", "s", "u", "p", "p", "l", "i", "e", "d", " ", "t", "o", " ", "m", "a", "r", "k", "u", "p", "."
                 ],
                 comments      = (args.comments !== "comments" && args.comments !== "beautify" && args.comments !== "nocomment") ? "" : args.comments,
-                conditional   = (presume_html === true || args.conditional === true || args.conditional === "true") ? true : false,
                 correct       = (args.correct === true || args.correct === "true") ? true : false,
                 inchar        = (typeof args.inchar === "string" && args.inchar.length > 0) ? args.inchar : " ",
                 insize        = (isNaN(args.insize) === false && Number(args.insize) >= 0) ? Number(args.insize) : 4,
@@ -7403,6 +7402,7 @@ var prettydiff = function prettydiff(api) {
                 obfuscate     = (args.obfuscate === true || args.obfuscate === "true") ? true : false,
                 objsort     = (args.objsort === true || args.objsort === "true") ? true : false,
                 presume_html  = (args.presume_html === true || args.presume_html === "true") ? true : false,
+                conditional   = (presume_html === true || args.conditional === true || args.conditional === "true") ? true : false,
                 top_comments  = (args.top_comments === true || args.top_comments === "true") ? true : false,
                 preserve      = function markupmin__preserve(endTag) {
                     var a     = 0,
@@ -10344,8 +10344,8 @@ var prettydiff = function prettydiff(api) {
         documentation: 150105, //documentation.xhtml
         jspretty     : 150105, //jspretty library
         markup_beauty: 150105, //markup_beauty library
-        markupmin    : 150105, //markupmin library
-        prettydiff   : 150105, //this file
+        markupmin    : 150106, //markupmin library
+        prettydiff   : 150106, //this file
         webtool      : 150105, //prettydiff.com.xhtml
         api          : {
             dom      : 150105,
