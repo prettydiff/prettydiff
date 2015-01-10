@@ -350,6 +350,18 @@
                                 included with report output based upon the operating environment.</li>
                         </ul>
                     </li>
+                    <li><h4>color <strong>(node-local.js only)</strong></h4>
+                        <ul>
+                            <li><h5>Description</h5>
+                                Specifies which color scheme to apply to the output file.</li>
+                            <li><h5>Type</h5>
+                                string</li>
+                            <li><h5>Default</h5>
+                                white</li>
+                            <li><h5>Accepted values</h5>
+                                canvas, default, shadow, white</li>
+                        </ul>
+                    </li>
                     <li><h4>comments</h4>
                         <ul>
                             <li><h5>Description</h5>Determines whether comments should be indented.
@@ -537,6 +549,12 @@
                                 Force Indentation (Markup Only)</li>
                         </ul>
                     </li>
+                    <li><h4>help (node-local.js only)</h4>
+                        <ul>
+                            <li><h5>Description</h5>
+                                Displays documenation to the command line or console.</li>
+                        </ul>
+                    </li>
                     <li><h4>html</h4>
                         <ul>
                             <li><h5>Description</h5>
@@ -712,17 +730,27 @@
                                 Property Sorting (CSS / JavaScript)</li>
                         </ul>
                     </li>
+                    <li><h4>output <strong>(node-local.js only)</strong></h4>
+                        <ul>
+                            <li><h5>Description</h5>
+                                Determines the location of where files should be saved.</li>
+                            <li><h5>Type</h5>
+                                string</li>
+                        </ul>
+                    </li>
                     <li><h4>preserve</h4>
                         <ul>
                             <li><h5>Description</h5>
-                                Retain empty lines in JavaScript. A consecutive empty lines will be
+                                Retain empty lines in either JavaScript or CSS like languages. Consecutive empty lines will be
                                 converted to a single empty line.</li>
                             <li><h5>Type</h5>
-                                boolean</li>
+                                string</li>
+                            <li><h5>Accepted values</h5>
+                                all, css, js, none</li>
                             <li><h5>Default</h5>
-                                true</li>
+                                none</li>
                             <li><h5>As labeled in the HTML tool</h5>
-                                Empty Lines (JavaScript Only)</li>
+                                Empty Lines (CSS / JavaScript)</li>
                         </ul>
                     </li>
                     <li><h4>quote</h4>
@@ -736,6 +764,28 @@
                                 false</li>
                             <li><h5>As labeled in the HTML tool</h5>
                                 Diff Quotes</li>
+                        </ul>
+                    </li>
+                    <li><h4>readmethod <strong>(node-local.js only)</strong></h4>
+                        <ul>
+                            <li><h5>Description</h5>
+                                Determines how input should be received. The value <em>auto</em> changes to directory, file, or screen depending on the source type. The value <em>directory</em> will read all files from a single directory. The value <em>file</em> reads the contents of a single file. The value <em>filescreen</em> reads the contents of a file but outputs the result to the console. The value <em>screen</em> will look to the console for code input and outputs to the console. The value <em>subdirectory</em> will recursively read files in subdirectories.</li>
+                            <li><h5>Type</h5>
+                                string</li>
+                            <li><h5>Default</h5>
+                                screen</li>
+                            <li><h5>Accepted values</h5>
+                                auto, directory, file, filescreen, screen, subdirectory</li>
+                        </ul>
+                    </li>
+                    <li><h4>report <strong>(node-local.js only)</strong></h4>
+                        <ul>
+                            <li><h5>Description</h5>
+                                Determines if a meta data report should be generated.</li>
+                            <li><h5>Type</h5>
+                                boolean</li>
+                            <li><h5>Default</h5>
+                                true</li>
                         </ul>
                     </li>
                     <li><h4>semicolon</h4>

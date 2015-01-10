@@ -88,7 +88,7 @@ Examples:
             obfuscate   : false,
             objsort     : "none",
             output      : "",
-            preserve    : true,
+            preserve    : "none",
             quote       : false,
             readmethod  : "screen",
             report      : true,
@@ -288,7 +288,7 @@ Examples:
             a.push("Arguments      - Type    - Definition");
             a.push("-------------------------------------");
             a.push("* color        - string  - The color scheme of the reports. Default is shadow.");
-            a.push("                 Accepted values: default, coffee, dark, canvas, shadow, white");
+            a.push("                 Accepted values: default, canvas, shadow, white");
             a.push("");
             a.push("* comments     - string  - If mode is 'beautify' this will determine whether");
             a.push("                           comments should always start at position 0 of each");
@@ -403,10 +403,11 @@ Examples:
             a.push("                           the output.  If the directory path or file exists it");
             a.push("                           will be over written else it will be created.");
             a.push("");
-            a.push("* preserve     - boolean - Should empty lines be removed during JavaScript");
-            a.push("                           beautification? Default value is true which retains");
-            a.push("                           one empty line for any series of empty lines in the");
-            a.push("                           code input.");
+            a.push("* preserve     - string  - Should empty lines be removed during JavaScript or");
+            a.push("                           CSS beautification? Default value is true which");
+            a.push("                           retains one empty line for any series of empty lines");
+            a.push("                           in the code input.");
+            a.push("                 Accepted values: all, css, js, none");
             a.push("");
             a.push("* quote        - boolean - If true and mode is 'diff' then all single quote");
             a.push("                           characters will be replaced by double quote");
@@ -577,9 +578,6 @@ Examples:
                     if (d[b][0] === "" && d[b][1] === "help") {
                         help = true;
                     }
-                    if (d[b][0] === "alphasort" && d[b][1] === "true") {
-                        alphasort = true;
-                    }
                     if (d[b][0] === "color" && (d[b][1] === "default" || d[b][1] === "coffee" || d[b][1] === "dark" || d[b][1] === "canvas" || d[b][1] === "white")) {
                         options.color = d[b][1];
                     }
@@ -672,8 +670,12 @@ Examples:
                     if (d[b][0] === "output" && d[b][1].length > 0) {
                         options.output = pathslash(d[b][0], d[b][1]);
                     }
-                    if (d[b][0] === "preserve" && d[b][1] === "false") {
-                        options.preserve = false;
+                    if (d[b][0] === "preserve") {
+                        if (d[b][1] === "all" || d[b][1] === "css" || d[b][1] === "js")) {
+                            options.preserve = d[b][1];
+                        } else if (d[b][1] === "true") {
+                            options.preserve = "all";
+                        }
                     }
                     if (d[b][0] === "quote" && d[b][1] === "true") {
                         options.quote = true;

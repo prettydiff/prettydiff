@@ -9,9 +9,9 @@ div {
 }
 #doc .beautify {
     font-family: "Courier New",Courier,"Lucida Console",monospace;
-    padding    : 0;
-    overflow   : scroll;
     max-width  : 100%;
+    overflow   : scroll;
+    padding    : 0;
 }
 #dcolorScheme {
     margin-top: -3em;
@@ -67,12 +67,14 @@ code span {
 }
 code.commandLine {
     background   : #000;
+    border       : 0.1em solid #999;
     border-radius: 0.5em;
     color        : #fff;
     font-family  : monospace;
+    max-width    : 100%;
+    overflow     : scroll;
     padding      : 0.2em;
     white-space  : pre-wrap;
-    border       : 0.1em solid #999;
 }
 code.commandLine .delete {
     color: #b00;
@@ -103,22 +105,22 @@ h1 span {
     margin-top: 1em;
 }
 #doc h2 {
+    border-style: none;
     clear       : both;
     display     : block;
     float       : none;
-    border-style: none;
     margin      : 0 0 2em;
 }
 #doc h4 {
     margin-top: 0;
 }
 #doc .beautify h4 {
-    position: absolute;
     left    : -200em;
+    position: absolute;
 }
 h1 svg {
     border       : 0.025em solid #000;
-    width        : 1.475em;
     height       : 1.475em;
     margin-bottom: -0.1em;
+    width        : 1.475em;
 }

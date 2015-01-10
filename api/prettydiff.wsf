@@ -26,7 +26,7 @@
                             error.push("Arguments      - Type    - Definition");
                             error.push("-------------------------------------");
                             error.push("* color        - string  - The color scheme of the reports. Default is shadow.");
-                            error.push("                 Accepted values: default, coffee, dark, canvas, shadow, white");
+                            error.push("                 Accepted values: default, canvas, shadow, white");
                             error.push("");
                             error.push("* comments     - string  - If mode is 'beautify' this will determine whether comments should always start at position 0 of each line or if comments should be indented according to the code. Default is 'indent'.");
                             error.push("                 Accepted values: indent, noindent");
@@ -86,7 +86,8 @@
                             error.push("");
                             error.push("* output       - string  - The location of the output file. If the file does not exist it will be created. If this argument is missing output will print to screen.");
                             error.push("");
-                            error.push("* preserve     - boolean - If true runs of empty lines are condensed into a single empty line of beautified JavaScript. If false empty lines are removed. Default is true.");
+                            error.push("* preserve     - string  - Runs of empty lines are condensed into a single empty line of beautified JavaScript or CSS. Default is 'none'.");
+                            error.push("                 Accepted values: all, css, js, none");
                             error.push("");
                             error.push("* quote        - boolean - If true and mode is 'diff' then all single quote characters will be replaced by double quote characters in both the source and diff file input so as to eliminate some differences from the diff report HTML output.");
                             error.push("");
@@ -276,7 +277,7 @@
                     args.obfuscate = WScript.Arguments.Named("obfuscate") || false;
                     args.objsort = (WScript.Arguments.Named("objsort") === "all" || WScript.Arguments.Named("objsort") === "css" || WScript.Arguments.Named("objsort") === "js") ? WScript.Arguments.Named("objsort") : "none";
                     args.quote = (WScript.Arguments.Named("quote") === "true" || WScript.Arguments.Named("quote") === true) ? true : false;
-                    args.preserve = (WScript.Arguments.Named("preserve") === "false" || WScript.Arguments.Named("preserve") === false) ? false : true;
+                    args.preserve = (WScript.Arguments.Named("preserve") === "all" || WScript.Arguments.Named("preserve") === "css" || WScript.Arguments.Named("preserve") === "js") ? WScript.Arguments.Named("preserve") : "none";
                     args.semicolon = (WScript.Arguments.Named("semicolon") === "true" || WScript.Arguments.Named("semicolon") === true) ? true : false;
                     args.sourcelabel = WScript.Arguments.Named("sourcelabel") || "base";
                     args.space = (WScript.Arguments.Named("space") === "false" || WScript.Arguments.Named("space") === false) ? false : true;
@@ -291,6 +292,9 @@
                     }
                     if (WScript.Arguments.Named("objsort") === "true" || WScript.Arguments.Named("alphasort") === "true") {
                         args.objsort = "all";
+                    }
+                    if (WScript.Arguments.Named("preserve") === "true") {
+                        args.preserve = "all";
                     }
                     if (WScript.Arguments.Named("vertical") === "true") {
                         args.vertical = "all";
