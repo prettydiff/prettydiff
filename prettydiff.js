@@ -939,7 +939,7 @@ var prettydiff = function prettydiff(api) {
                                 inline       : cdiffview,
                                 newTextLines : apidiffout,
                                 newTextName  : cdifflabel,
-                                tchar        : achar,
+                                tchar        : cchar,
                                 tsize        : cinsize
                             });
                         }
@@ -1354,7 +1354,7 @@ var prettydiff = function prettydiff(api) {
                                     token.pop();
                                     types.pop();
                                     lines.pop();
-                                } while (types[types.length - 1] !== "semi" && types[types.length - 1] !== "start");
+                                } while (types.length > 1 && types[types.length - 1] !== "semi" && types[types.length - 1] !== "start");
                                 token.push(out.join(""));
                                 types.push(type);
                                 lines.push(0);
@@ -2078,8 +2078,8 @@ var prettydiff = function prettydiff(api) {
                 diffline      = 0,
                 baseTextLines = (typeof args.baseTextLines === "string") ? args.baseTextLines : "",
                 newTextLines  = (typeof args.newTextLines === "string") ? args.newTextLines : "",
-                baseTextName  = (typeof args.baseTextName === "string") ? args.baseTextName : "Base Source",
-                newTextName   = (typeof args.newTextName === "string") ? args.newTextName : "New Source",
+                baseTextName  = (typeof args.baseTextName === "string") ? args.baseTextName.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;") : "Base Source",
+                newTextName   = (typeof args.newTextName === "string") ? args.newTextName.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;") : "New Source",
                 diffcli       = (args.diffcli === true || args.diffcli === "true") ? true : false,
                 context       = ((/^([0-9]+)$/).test(args.contextSize)) ? Number(args.contextSize) : -1,
                 tsize         = ((/^([0-9]+)$/).test(args.tsize)) ? Number(args.tsize) : 4,
@@ -2643,7 +2643,7 @@ var prettydiff = function prettydiff(api) {
                                         dataA[currentdiff[1]] = strEnd + dataA[currentdiff[1]];
                                     }
                                 }
-                                if (currentdiff[1] > currentdiff[0]) {
+                                if (currentdiff[1] > currentdiff[0] && currentdiff[1] - currentdiff[0] < 1000) {
                                     if (currentdiff[2] === 1) {
                                         do {
                                             dataA.unshift("");
@@ -10377,23 +10377,23 @@ var prettydiff = function prettydiff(api) {
             cmjs : 140127
         },
         api          : {
-            dom      : 150109,
-            nodeLocal: 150109,
-            wsh      : 150109
+            dom      : 150118,
+            nodeLocal: 150118,
+            wsh      : 150118
         },
         charDecoder  : 141025,
-        css          : 150109, //diffview.css file
-        csspretty    : 150109, //csspretty library
+        css          : 150118, //diffview.css file
+        csspretty    : 150118, //csspretty library
         csvbeauty    : 140114, //csvbeauty library
         csvmin       : 131224, //csvmin library
-        diffview     : 150105, //diffview library
+        diffview     : 150118, //diffview library
         documentation: 150109, //documentation.xhtml
         jspretty     : 150109, //jspretty library
         latest       : 0,
         markup_beauty: 150105, //markup_beauty library
         markupmin    : 150106, //markupmin library
-        prettydiff   : 150109, //this file
-        webtool      : 150109 //prettydiff.com.xhtml
+        prettydiff   : 150118, //this file
+        webtool      : 150118 //prettydiff.com.xhtml
     };
 edition.latest = (function edition_latest() {
     "use strict";

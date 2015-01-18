@@ -3,7 +3,7 @@
 <html xml:lang='en' xmlns='http://www.w3.org/1999/xhtml'>
     <head>
         <title>Pretty Diff - The difference tool</title>
-        <link href='http://prettydiff.com' rel='canonical' type='application/xhtml+xml'/>
+        <link href="http://prettydiff.com" rel="canonical" type="application/xhtml+xml"/>
         <link href="http://prettydiff.com/images/favicon.ico" rel="icon" type="image/x-icon"/>
         <link href="http://prettydiff.com/labels.rdf" rel="meta" title="ICRA labels" type="application/rdf+xml"/>
         <link href="humans.txt" rel="author" type="text/plain"/>
@@ -12,7 +12,7 @@
         <meta content="width=device-width, initial-scale=1" name="viewport"/>
         <meta content="index, follow" name="robots"/>
         <meta content="Pretty Diff - The difference tool" name="DC.title"/>
-        <meta content='(pics-1.1 "http://www.icra.org/pics/vocabularyv03/" l gen true for "http://prettydiff.com" r (n 0 s 0 v 0 l 0 oa 0 ob 0 oc 0 od 0 oe 0 of 0 og 0 oh 0 c 1) gen true for "http://www.prettydiff.com" r (n 0 s 0 v 0 l 0 oa 0 ob 0 oc 0 od 0 oe 0 of 0 og 0 oh 0 c 1))' http-equiv="pics-Label"/>
+        <meta content="(pics-1.1 'http://www.icra.org/pics/vocabularyv03/' l gen true for 'http://prettydiff.com' r (n 0 s 0 v 0 l 0 oa 0 ob 0 oc 0 od 0 oe 0 of 0 og 0 oh 0 c 1) gen true for 'http://www.prettydiff.com' r (n 0 s 0 v 0 l 0 oa 0 ob 0 oc 0 od 0 oe 0 of 0 og 0 oh 0 c 1))" http-equiv="pics-Label"/>
         <meta content="Austin Cheney" name="author"/>
         <meta content="Pretty Diff tool can minify, beautify (pretty-print), or diff between minified and beautified code. This tool can even beautify and minify HTML." name="description"/>
         <meta content="Global" name="distribution"/>
@@ -27,11 +27,12 @@
         <meta content="images/pdlogo.svg" name="msapplication-TileImage"/>
     </head>
     <body class="white" id="webtool">
+        <p id="arialive" style="display:none" aria-live="polite"></p>
         <ul id="displayOps">
             <li><button id="resetOptions" title="Clicking this button will clear all stored data and reset all options to the default configuration. I recommend refreshing the page after clicking this button." type="button">Reset
                 Options</button></li>
             <li><a class="button" href="documentation.xhtml">Documentation</a></li>
-            <li id="displayOps-hide"><button id="hideOptions" title="Clicking this button will visually hide everything except for textarea elements and one 'Execute' button." type="button">Show
+            <li id="displayOps-hide"><button id="hideOptions" tabindex="-1" title="Clicking this button will visually hide everything except for textarea elements and one 'Execute' button." type="button">Show
                 Options</button></li>
         </ul>
         <p class="append" id="functionGroup" role="navigation"><strong>Function</strong>
@@ -48,7 +49,7 @@
         <p class="big" id="announcement" role="alert"></p>
         <p id="update">Updated:
         </p>
-        <div aria-hidden="true" id="top">
+        <div aria-hidden="true" id="top" tabindex="-1">
             <h1 title="Pretty Diff is a language aware code comparison tool featuring automatic language detection. Some of the supported languages include: XML, SGML, JSTL, HTML, CSS, SCSS, CSV, JavaScript, and JSON">
                 <svg height="2000.000000pt"
                     preserveAspectRatio="xMidYMid meet"
@@ -78,22 +79,23 @@
                     This tool executes entirely on the client computer without leaking any
                     submitted data over the internet.</p>
                 <ul>
-                    <li><a href="documentation.xhtml">English documentation</a></li>
+                    <li><a href="documentation.xhtml" tabindex="-1">English documentation</a></li>
                 </ul>
                 <ul>
-                    <li><a href="samples.xhtml">samples</a></li>
-                    <li><a href="https://groups.google.com/d/forum/pretty-diff">mailing
+                    <li><a href="samples.xhtml" tabindex="-1">samples</a></li>
+                    <li><a href="https://groups.google.com/d/forum/pretty-diff" tabindex="-1">mailing
                         list</a></li>
-                    <li><a href="https://github.com/austincheney/Pretty-Diff">GitHub</a></li>
-                    <li><a href="api/node-local.js">Node.js</a></li>
-                    <li><a href="api/prettydiff.wsf">WSH</a></li>
-                    <li><a href="jspretty.xhtml">JSPretty</a></li>
-                    <li><a href="http://g6auc.me.uk/widgets.html">JSPretty Widget</a></li>
+                    <li><a href="https://github.com/austincheney/Pretty-Diff" tabindex="-1">GitHub</a></li>
+                    <li><a href="api/node-local.js" tabindex="-1">Node.js</a></li>
+                    <li><a href="api/prettydiff.wsf" tabindex="-1">WSH</a></li>
+                    <li><a href="jspretty.xhtml" tabindex="-1">JSPretty</a></li>
+                    <li><a href="http://g6auc.me.uk/widgets.html" tabindex="-1">JSPretty Widget</a></li>
                 </ul>
                 <span class="clear"></span>
             </div>
         </div>
         <div id="codeInput" role="main">
+            <p id="textareaTabKey" style="display:none">Hold <strong>shift</strong> and press <strong>control</strong> key twice to focus on the previous element or press <strong>control</strong> twice to focus away from this textarea.</p>
             <div id="diffBase"><h2>Base Text</h2>
                 <p class="labeltext"><input id="baselabel" type="text" value="base"/>
                     <label for="baselabel">Base label (optional)</label></p>
@@ -144,33 +146,34 @@
         <p class="button" id="button-primary"><button type="button" value="Execute">Execute</button></p>
         <div id="reports"><h2>Reporting data which updates with each use of the
             tool</h2>
-            <div class="box" id="diffreport" role="dialog_nonmodal">
+            <div class="box" id="feedreport" role="dialog_nonmodal" style="display:none">
                 <p class="buttons" style="display:none">
-                    <a href="#"><button class="save" title="Convert diff report to text that can be saved.">S</button></a>
                     <button class="minimize" title="Minimize this dialogue ">&uarr;</button>
                     <button class="maximize" title="Maximize this dialogue to the browser window.">&uarr;</button>
                     <button class="resize" title="Resize this dialogue.">&harr;</button></p>
-                <h3 class="heading" title="Grab this title element to open this dialogue or move it around around the screen."><span>Diff
-                    Report</span></h3>
-                <div class="body" id="diffreportbody" style="display:none" xml:space="preserve"></div>
+                <h3 class="heading" title="Grab this title element to open this dialogue or move it around around the screen."><span>Feedback</span></h3>
+                <div class="body" id="feedreportbody" style="display:none" xml:space="preserve"><p class="radiogroup"><span class="feedlabel">How likely are you to recommend Pretty Diff to a friend or coworker?</span>
+                    <span><label for="feedradio1" class="feedradio1">1</label><input type="radio" name="feedradio" value="1" id="feedradio1"/> <span>Never</span></span>
+                    <span><label for="feedradio2" class="feedradio2">2</label><input type="radio" name="feedradio" value="2" id="feedradio2"/> <span>Not Likely</span></span>
+                    <span><label for="feedradio3" class="feedradio3">3</label><input type="radio" name="feedradio" value="3" id="feedradio3"/> <span>Rarely</span></span>
+                    <span><label for="feedradio4" class="feedradio4">4</label><input type="radio" name="feedradio" value="4" id="feedradio4"/> <span>Maybe</span></span>
+                    <span><label for="feedradio5" class="feedradio5">5</label><input type="radio" name="feedradio" value="5" id="feedradio5"/> <span>Probably</span></span>
+                    <span><label for="feedradio6" class="feedradio6">6</label><input type="radio" name="feedradio" value="6" id="feedradio6"/> <span>Frequently</span></span>
+                    <span><label for="feedradio7" class="feedradio7">7</label><input type="radio" name="feedradio" value="7" id="feedradio7"/> <span>Always</span></span>
+                </p>
+                <p><label for="feedtextarea">What is your primary reason for the above answer?</label> <textarea id="feedtextarea"></textarea></p>
+                <p><label for="feedemail">Email address (optional)</label> <input type="text" id="feedemail"/></p>
+                <p><button type="button" id="feedsubmit">Submit feedback</button></p></div>
             </div>
-            <div class="box" id="beaureport" role="dialog_nonmodal">
+            <div class="box" id="codereport" role="dialog_nonmodal">
                 <p class="buttons" style="display:none">
+                    <a href="#"><button class="save" title="Convert diff report to text that can be saved.">S</button></a>
                     <button class="minimize" title="Minimize this dialogue">&uarr;</button>
                     <button class="maximize" title="Maximize this dialogue to the browser window.">&uarr;</button>
                     <button class="resize" title="Resize this dialogue.">&harr;</button></p>
-                <h3 class="heading" title="Grab this title element to open this dialogue or move it around the screen."><span>Beautify
+                <h3 class="heading" title="Grab this title element to open this dialogue or move it around the screen."><span>Code
                     Report</span></h3>
-                <div class="body" id="beaureportbody" style="display:none" xml:space="preserve"></div>
-            </div>
-            <div class="box" id="minnreport" role="dialog_nonmodal">
-                <p class="buttons" style="display:none">
-                    <button class="minimize" title="Minimize this dialogue">&uarr;</button>
-                    <button class="maximize" title="Maximize this dialogue to the browser window.">&uarr;</button>
-                    <button class="resize" title="Resize this dialogue.">&harr;</button></p>
-                <h3 class="heading" title="Grab this title element to open this dialogue or move it around the screen."><span>Minify
-                    Report</span></h3>
-                <div class="body" id="minreportbody" style="display:none" xml:space="preserve"></div>
+                <div class="body" id="codereportbody" style="display:none" xml:space="preserve"></div>
             </div>
             <div class="box" id="statreport" role="dialog_nonmodal">
                 <p class="buttons" style="display:none">
@@ -222,17 +225,20 @@
         </div>
         <div class="options" id="options" role="toolbar"><h2>Main Options</h2>
             <p><strong>CodeMirror Editor</strong>
-                <span><input checked="checked" id="codemirror-yes" name="codemirror-radio" title="This radio button will restore the CodeMirror functionality and refresh the page." type="radio"/>
+                <span>
+                    <input checked="checked" id="codemirror-yes" name="codemirror-radio" title="This radio button will restore the CodeMirror functionality and refresh the page." type="radio"/>
                     <label for="codemirror-yes">Enable CodeMirror</label></span>
-                <span><input id="codemirror-no" name="codemirror-radio" title="This radio button will remove the CodeMirror functionality and refresh the page." type="radio"/>
-                    <label for="codemirror-no">Disable CodeMirror (Faster)</label></span>
+                <span>
+                    <input id="codemirror-no" name="codemirror-radio" title="This radio button will remove the CodeMirror functionality and refresh the page." type="radio"/>
+                    <label for="codemirror-no">Disable CodeMirror (Faster and more accessible)</label></span>
             </p>
             <p><label class="label" for="colorScheme" title="Pick a color theme with this list of options. Force a theme by default with the address parameter 'c', for example 'c=shadow'.">Color
                 Scheme</label>
-                <select id="colorScheme" title="Pick a color theme with this list of options. Force a theme by default with the address parameter 'c', for example 'c=shadow'."><option>Default</option>
+                <select id="colorScheme" title="Pick a color theme with this list of options. Force a theme by default with the address parameter 'c', for example 'c=shadow'.">
                     <option>Canvas</option>
                     <option>Shadow</option>
-                    <option selected="selected">White</option></select>
+                    <option selected="selected">White</option>
+                </select>
             </p>
             <p><label class="label" for="language" title="Choose a specific language with this list or force a language selection using the 'l' (as in letter) address parameter, for example 'l=html'.">Code
                 type</label>
@@ -287,8 +293,7 @@
                             <label for="diff-save">&mdash; Generates HTML report as raw text inside
                                 a text area.</label></span>
                     </p>
-                    <p><label class="label" for="contextSize">Context size
-                        (optional)</label>
+                    <p><label class="label" for="contextSize">Context size</label>
                         <span>
                             <input id="contextSize" title="A diff report formatting option. If the value is empty or, not 0, or not a positive integer then a diff is generated showing the entirety of the code samples. If the value is 0 or a positive integer then this value dictates how many 'equal' lines of code will display in the report between lines with differences." type="text" value=""/>
                             <label for="contextSize">&mdash; This sets number of matching lines of
