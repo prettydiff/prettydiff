@@ -77,6 +77,20 @@ var pd = {};
         xhr        : (typeof XMLHttpRequest === "function" || typeof XMLHttpRequest === "object" || typeof ActiveXObject === "function")
     };
 
+    //beacon error messages so that they are reported and fixed
+    if (pd.test.xhr === true && pd.test.domain === true) {
+        window.onerror = function dom__error(message, url, line, column, obj) {
+            var xhr = (typeof XMLHttpRequest === "function" || typeof XMLHttpRequest === "object") ? new XMLHttpRequest() : new ActiveXObject("Microsoft.XMLHTTP"),
+                datapack = (column === undefined) ? "Line " + line + " of " + url + "\n\n" + message : "Line " + line + " at column " + column + " of " + url + "\n\n" + message;
+            xhr.withCredentials = true;
+            xhr.open("POST", "http://prettydiff.com:8000/error/", true);
+            xhr.setRequestHeader("Content-type", "application/json; charset=utf-8");
+            xhr.send(datapack);
+            console.error(datapack);
+            return true;
+        };
+    }
+
     //global color property so that HTML generated reports know which
     //CSS theme to apply
     pd.color              = "white";
@@ -99,12 +113,9 @@ var pd = {};
         pdate : "",
         text  : 0,
         usage : 0,
+        useday: 0,
         visit : 0
     };
-
-    //bounce allows the Google Analytics code to know that interaction
-    //on the page is not a bounced visit
-    pd.bounce             = true;
 
     //shorthand for document.getElementById method
     pd.$$                 = function dom__$$(x) {
@@ -688,7 +699,18 @@ var pd = {};
                 var diffList         = [],
                     button           = {},
                     buttons          = {},
-                    presumedLanguage = "";
+                    presumedLanguage = "",
+                    removeSave = function dom__recycle_execOutput_removeSave() {
+                        if (parent.innerHTML.indexOf("save") > -1) {
+                            if (parent.style === undefined || parent.style.display === "block") {
+                                pd.o.report.code.box.getElementsByTagName("h3")[0].style.width = (Number(h3.substr(0, h3.length - 2)) + 3) + "em";
+                            }
+                            if (parent.firstChild.nodeType > 1) {
+                                parent.removeChild(parent.firstChild);
+                            }
+                            parent.removeChild(parent.firstChild);
+                        }
+                    };
                 node      = pd.$$("showOptionsCallOut");
                 pd.zIndex += 1;
                 if (autotest === true) {
@@ -730,6 +752,9 @@ var pd = {};
                         if (output[1] !== "") {
                             pd.o.report.code.body.innerHTML = output[1];
                             if (autotest === true) {
+                                if (pd.o.report.code.body.firstChild.nodeType > 1) {
+                                    pd.o.report.code.body.removeChild(pd.o.report.code.body.firstChild);
+                                }
                                 pd.o.report.code.body.firstChild.innerHTML = "Code type is set to <strong>auto</strong>. <span>Presumed language is <em>" + lang + "</em>.</span>";
                             }
                             pd.o.report.code.box.style.zIndex  = pd.zIndex;
@@ -761,6 +786,9 @@ var pd = {};
                                         button.setAttribute("class", "save");
                                         button.setAttribute("title", "Save output.");
                                         button.innerHTML = "S";
+                                    }
+                                    if (parent.firstChild.nodeType > 1) {
+                                        parent.removeChild(parent.firstChild);
                                     }
                                     parent.insertBefore(button, parent.firstChild);
                                     button.onclick = function dom__recycle_beauSave() {
@@ -798,20 +826,10 @@ var pd = {};
                                     }());
                                 }
                             } else {
-                                if (parent.innerHTML.indexOf("save") > -1) {
-                                    if (parent.style === undefined || parent.style.display === "block") {
-                                        pd.o.report.code.box.getElementsByTagName("h3")[0].style.width = (Number(h3.substr(0, h3.length - 2)) + 3) + "em";
-                                    }
-                                    parent.removeChild(parent.firstChild);
-                                }
+                                removeSave();
                             }
                         } else {
-                            if (parent.innerHTML.indexOf("save") > -1) {
-                                if (parent.style === undefined || parent.style.display === "block") {
-                                    pd.o.report.code.box.getElementsByTagName("h3")[0].style.width = (Number(h3.substr(0, h3.length - 2)) + 3) + "em";
-                                }
-                                parent.removeChild(parent.firstChild);
-                            }
+                            removeSave();
                         }
                     }
                     if (pd.o.announce !== null) {
@@ -862,6 +880,9 @@ var pd = {};
                     } else {
                         pd.o.report.code.body.innerHTML = output[1] + output[0];
                         if (autotest === true) {
+                            if (pd.o.report.code.body.firstChild.nodeType > 1) {
+                                pd.o.report.code.body.removeChild(pd.o.report.code.body.firstChild);
+                            }
                             pd.o.report.code.body.firstChild.innerHTML = "Code type is set to <strong>auto</strong>. <span>Presumed language is <em>" + lang + "</em>.</span>";
                         }
                     }
@@ -936,6 +957,9 @@ var pd = {};
                         }
                         pd.o.report.code.body.innerHTML = output[1];
                         if (autotest === true && pd.o.report.code.body.firstChild !== null) {
+                            if (pd.o.report.code.body.firstChild.nodeType > 1) {
+                                pd.o.report.code.body.removeChild(pd.o.report.code.body.firstChild);
+                            }
                             pd.o.report.code.body.firstChild.innerHTML = "Code type is set to <strong>auto</strong>. <span>Presumed language is <em>" + lang + "</em>.</span>";
                         }
                         pd.o.report.code.box.style.zIndex  = pd.zIndex;
@@ -1428,9 +1452,14 @@ var pd = {};
         if (pd.test.ls === true) {
             if (pd.o.report.stat.box !== null) {
                 pd.stat.usage += 1;
+                pd.stat.useday = Math.round(pd.stat.usage / ((Date.now() - Date.parse(pd.stat.fdate)) / 86400000));
                 node          = pd.$$("stusage");
                 if (node !== null) {
                     node.innerHTML = pd.stat.usage;
+                }
+                node          = pd.$$("stuseday");
+                if (node !== null) {
+                    node.innerHTML = pd.stat.useday;
                 }
             }
             (function () {
@@ -1672,11 +1701,11 @@ var pd = {};
     };
 
     //provide a means for keyboard users to escape a textarea
-    pd.areaTabOut          = function dom__areaTabOut(e) {
-        var node  = document.activeElement,
-            event = e || window.event,
-            len   = pd.test.tabesc.length,
+    pd.areaTabOut          = function dom__areaTabOut(event, node) {
+        var len   = pd.test.tabesc.length,
             esc   = false;
+        node = node || this;
+        event = event || window.event;
         if (node.nodeName.toLowerCase() === "textarea") {
             if (pd.test.cm === true) {
                 node = node.parentNode.parentNode;
@@ -2146,9 +2175,9 @@ var pd = {};
                 f                = f || window.event;
                 body.style.width = ((bodyWidth + ((f.clientX - 4) - body.mouseX)) / 10) + "em";
                 if (save === true) {
-                    heading.style.width = (((bodyWidth + (f.clientX - body.mouseX)) / 10) - 9.8) + "em";
+                    heading.style.width = (((bodyWidth + (f.clientX - body.mouseX)) / 10) - 10.15) + "em";
                 } else {
-                    heading.style.width = (((bodyWidth + (f.clientX - body.mouseX)) / 10) - 6.8) + "em";
+                    heading.style.width = (((bodyWidth + (f.clientX - body.mouseX)) / 10) - 7.15) + "em";
                 }
                 body.style.height  = ((bodyHeight + ((f.clientY - 36) - body.mouseY)) / 10) + "em";
                 document.onmouseup = drop;
@@ -2353,7 +2382,7 @@ var pd = {};
             minifyTest = (parent.style.display === "none") ? true : false,
             minButton  = (save === true) ? box.getElementsByTagName("button")[1] : box.getElementsByTagName("button")[0],
             body       = box.getElementsByTagName("div")[0],
-            heading    = box.firstChild,
+            heading    = (box.firstChild.nodeType > 1) ? box.firstChild.nextSibling : box.firstChild,
             boxLeft    = box.offsetLeft,
             boxTop     = box.offsetTop,
             touchXNow  = 0,
@@ -2469,7 +2498,6 @@ var pd = {};
                 xhr.withCredentials = true;
                 xhr.open("POST", "http://prettydiff.com:8000/feedback/", true);
                 xhr.setRequestHeader("Content-type", "application/json; charset=utf-8");
-                xhr.setRequestHeader("Authorization", "@#RQW56rERFDAW#$%Rasae12");
                 xhr.send(JSON.stringify(datapack));
                 pd.o.report.feed.box.getElementsByTagName("button")[0].click();
             };
@@ -2506,7 +2534,7 @@ var pd = {};
             stats   : pd.stat
         };
         sendit();
-    }
+    };
 
     //toggle between tool modes and vertical/horizontal orientation of
     //textareas
@@ -3950,7 +3978,6 @@ var pd = {};
             if (pd.o.announce !== null) {
                 pd.o.announcetext = pd.o.announce.innerHTML;
             }
-            window.onkeydown = pd.areaTabOut;
             node             = pd.$$("hideOptions");
             if (node !== null && node.innerHTML.replace(/\s+/, " ") === "Default Display") {
                 if (pd.test.ls === false || localStorage.settings === undefined) {
@@ -4081,6 +4108,7 @@ var pd = {};
                                 pd.stat.fdate = new Date().toLocaleDateString();
                             }
                             pd.stat.avday = Math.round(pd.stat.visit / ((Date.now() - Date.parse(pd.stat.fdate)) / 86400000));
+                            pd.stat.useday = Math.round(pd.stat.usage / ((Date.now() - Date.parse(pd.stat.fdate)) / 86400000));
                         }
                         node = pd.$$("stvisit");
                         if (node !== null) {
@@ -4089,6 +4117,10 @@ var pd = {};
                         node = pd.$$("stusage");
                         if (node !== null) {
                             node.innerHTML = pd.stat.usage;
+                        }
+                        node = pd.$$("stuseday");
+                        if (node !== null) {
+                            node.innerHTML = pd.stat.useday;
                         }
                         node = pd.$$("stfdate");
                         if (node !== null) {
@@ -4153,30 +4185,58 @@ var pd = {};
                     var event = e || window.event;
                     pd.recycle(event);
                 };
-                pd.o.codeBeauIn.onkeydown = function dom__load_bindBeauInDown(e) {
-                    var event = e || window.event;
-                    if (pd.test.cm === false) {
-                        pd.fixtabs(event, pd.o.codeBeauIn);
+                if (pd.test.cm === true) {
+                    pd.o.codeBeauIn.getElementsByTagName("textarea")[0].onfocus = textareafocus;
+                    pd.o.codeBeauIn.getElementsByTagName("textarea")[0].onblur  = textareablur;
+                    pd.o.codeBeauIn.getElementsByTagName("textarea")[0].onkeydown = function dom__load_bindBeauInDownCM(e) {
+                        var event = e || window.event;
+                        pd.areaTabOut(event, this);
+                        pd.keydown(event);
                     }
-                    pd.keydown(event);
-                };
-                pd.o.codeBeauIn.onfocus   = textareafocus;
-                pd.o.codeBeauIn.onblur    = textareablur;
+                } else {
+                    pd.o.codeBeauIn.onfocus   = textareafocus;
+                    pd.o.codeBeauIn.onblur    = textareablur;
+                    pd.o.codeBeauIn.onkeydown = function dom__load_bindBeauInDown(e) {
+                        var event = e || window.event;
+                        pd.fixtabs(event, pd.o.codeBeauIn);
+                        pd.areaTabOut(event, this);
+                        pd.keydown(event);
+                    };
+                }
+            }
+            if (pd.o.codeBeauOut !== null && pd.test.cm === true) {
+                pd.o.codeBeauOut.getElementsByTagName("textarea")[0].onfocus = textareafocus;
+                pd.o.codeBeauOut.getElementsByTagName("textarea")[0].onblur  = textareablur;
+                pd.o.codeBeauOut.getElementsByTagName("textarea")[0].onkeydown = pd.areaTabOut;
             }
             if (pd.o.codeMinnIn !== null) {
                 pd.o.codeMinnIn.onkeyup   = function dom__load_bindMinnInUp(e) {
                     var event = e || window.event;
                     pd.recycle(event);
                 };
-                pd.o.codeMinnIn.onkeydown = function dom__load_bindMinnInDown(e) {
-                    var event = e || window.event;
-                    if (pd.test.cm === false) {
-                        pd.fixtabs(event, pd.o.codeMinnIn);
+                if (pd.test.cm === true) {
+                    pd.o.codeMinnIn.getElementsByTagName("textarea")[0].onfocus = textareafocus;
+                    pd.o.codeMinnIn.getElementsByTagName("textarea")[0].onblur  = textareablur;
+                    pd.o.codeMinnIn.getElementsByTagName("textarea")[0].onkeydown = function dom__load_bindMinnInDownCM(e) {
+                        var event = e || window.event;
+                        pd.areaTabOut(event, this);
+                        pd.keydown(event);
                     }
-                    pd.keydown(event);
-                };
-                pd.o.codeMinnIn.onfocus   = textareafocus;
-                pd.o.codeMinnIn.onblur    = textareablur;
+                } else {
+                    pd.o.codeMinnIn.onfocus   = textareafocus;
+                    pd.o.codeMinnIn.onblur    = textareablur;
+                    pd.o.codeMinnIn.onkeydown = function dom__load_bindMinnInDown(e) {
+                        var event = e || window.event;
+                        pd.fixtabs(event, this);
+                        pd.areaTabOut(event, this);
+                        pd.keydown(event);
+                    };
+                }
+            }
+            if (pd.o.codeMinnOut !== null && pd.test.cm === true) {
+                pd.o.codeMinnOut.getElementsByTagName("textarea")[0].onfocus = textareafocus;
+                pd.o.codeMinnOut.getElementsByTagName("textarea")[0].onblur  = textareablur;
+                pd.o.codeMinnOut.getElementsByTagName("textarea")[0].onkeydown = pd.areaTabOut;
             }
             if (pd.o.codeDiffBase !== null) {
                 if (pd.test.cm === true) {
@@ -4185,10 +4245,15 @@ var pd = {};
                     };
                     pd.o.codeDiffBase.getElementsByTagName("textarea")[0].onfocus = textareafocus;
                     pd.o.codeDiffBase.getElementsByTagName("textarea")[0].onblur  = textareablur;
+                    pd.o.codeDiffBase.getElementsByTagName("textarea")[0].onkeydown = pd.areaTabOut;
                 } else {
-                    pd.o.codeDiffBase.onkeydown = pd.fixtabs;
                     pd.o.codeDiffBase.onfocus   = textareafocus;
                     pd.o.codeDiffBase.onblur    = textareablur;
+                    pd.o.codeDiffBase.onkeydown = function dom__load_bindDiffBaseDown(e) {
+                        var event = e || window.event;
+                        pd.fixtabs(event, this);
+                        pd.areaTabOut(event, this);
+                    };
                 }
             }
             if (pd.o.codeDiffNew !== null) {
@@ -4198,10 +4263,15 @@ var pd = {};
                     };
                     pd.o.codeDiffNew.getElementsByTagName("textarea")[0].onfocus = textareafocus;
                     pd.o.codeDiffNew.getElementsByTagName("textarea")[0].onblur  = textareablur;
+                    pd.o.codeDiffNew.getElementsByTagName("textarea")[0].onkeydown = pd.areaTabOut;
                 } else {
                     pd.o.codeDiffNew.onkeydown = pd.fixtabs;
                     pd.o.codeDiffNew.onfocus   = textareafocus;
-                    pd.o.codeDiffNew.onblur    = textareablur;
+                    pd.o.codeDiffNew.onkeydown = function dom__load_bindDiffNewDown(e) {
+                        var event = e || window.event;
+                        pd.fixtabs(event, this);
+                        pd.areaTabOut(event, this);
+                    };
                 }
             }
             if (pd.test.domain === false) {
@@ -4765,6 +4835,26 @@ var pd = {};
                 if (node !== null) {
                     node.parentNode.parentNode.style.display = "block";
                 }
+            }
+            if (pd.settings.feedback === undefined) {
+                pd.settings.feedback = {
+                    newb: false,
+                    veteran: false
+                };
+            }
+            if (pd.settings.feedback.newb === false && pd.stat.usage > 9 && pd.stat.visit < 5 && pd.test.domain === true && pd.o.report.feed.box !== null) {
+                pd.settings.feedback.newb = true;
+                if (pd.test.json === true && pd.test.ls === true) {
+                    localStorage.settings = JSON.stringify(pd.settings);
+                }
+                pd.o.report.feed.box.getElementsByTagName("button")[0].click();
+            }
+            if (pd.settings.feedback.veteran === false && pd.stat.usage > 2500 && pd.test.domain === true && pd.o.report.feed.box !== null) {
+                pd.settings.feedback.veteran = true;
+                if (pd.test.json === true && pd.test.ls === true) {
+                    localStorage.settings = JSON.stringify(pd.settings);
+                }
+                pd.o.report.feed.box.getElementsByTagName("button")[0].click();
             }
         }
         if (page === "doc") {
