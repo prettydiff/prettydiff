@@ -2508,7 +2508,8 @@ var pd = {};
             datapack = {
                 name    : pd.settings.knownname,
                 settings: pd.settings,
-                stats   : pd.stat
+                stats   : pd.stat,
+                type    : "auto"
             };
             sendit();
             return;
@@ -2531,7 +2532,8 @@ var pd = {};
             name    : pd.settings.knownname,
             rating  : a + 1,
             settings: pd.settings,
-            stats   : pd.stat
+            stats   : pd.stat,
+            type    : "feedback"
         };
         sendit();
     };
