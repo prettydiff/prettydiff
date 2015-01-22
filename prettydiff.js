@@ -1789,7 +1789,7 @@ var prettydiff = function prettydiff(api) {
                         };
                     for (a = 0; a < len; a += 1) {
                         if (types[a] === "start") {
-                            if (token[a - 1].charAt(token[a - 1].length - 1) === "#") {
+                            if (a > 0 && token[a - 1].charAt(token[a - 1].length - 1) === "#") {
                                 build.push(token[a]);
                             } else {
                                 if (types[a - 1] === "colon") {
@@ -2826,7 +2826,7 @@ var prettydiff = function prettydiff(api) {
                                 newStart  += 1;
                             }
                         } else if (inline === true) {
-                            if (context < 0 && baseTextArray[baseStart - 1] === newTextArray[newStart - 1] && baseTextArray[baseStart] !== newTextArray[newStart]) {
+                            if (context < 0 && baseTextArray[baseStart - 1] === newTextArray[newStart - 1] && baseTextArray[baseStart] !== newTextArray[newStart] && foldstart > 0) {
                                 data[0][foldstart] = data[0][foldstart].replace("xxx", foldcount);
                             }
                             if (ntest === true || change === "insert") {
@@ -10377,22 +10377,22 @@ var prettydiff = function prettydiff(api) {
             cmjs : 140127
         },
         api          : {
-            dom      : 150120,
+            dom      : 150121,
             nodeLocal: 150118,
             wsh      : 150118
         },
         charDecoder  : 141025,
-        css          : 150118, //diffview.css file
+        css          : 150121, //diffview.css file
         csspretty    : 150118, //csspretty library
         csvbeauty    : 140114, //csvbeauty library
         csvmin       : 131224, //csvmin library
-        diffview     : 150118, //diffview library
+        diffview     : 150121, //diffview library
         documentation: 150109, //documentation.xhtml
         jspretty     : 150109, //jspretty library
         latest       : 0,
         markup_beauty: 150105, //markup_beauty library
         markupmin    : 150106, //markupmin library
-        prettydiff   : 150118, //this file
+        prettydiff   : 150121, //this file
         webtool      : 150120 //prettydiff.com.xhtml
     };
 edition.latest = (function edition_latest() {

@@ -1,5 +1,5 @@
 /*prettydiff.com api.topcoms: true, api.inchar: " ", api.insize: 4, api.vertical: true */
-/*global edition, document, localStorage, window, prettydiff, summary, markup_beauty, csspretty, csvbeauty, csvmin, markupmin, jspretty, diffview, XMLHttpRequest, location, ActiveXObject, FileReader, navigator, setTimeout, codeMirror, AudioContext, ArrayBuffer, Uint8Array*/
+/*global console, edition, document, localStorage, window, prettydiff, summary, markup_beauty, csspretty, csvbeauty, csvmin, markupmin, jspretty, diffview, XMLHttpRequest, location, ActiveXObject, FileReader, navigator, setTimeout, codeMirror, AudioContext, ArrayBuffer, Uint8Array*/
 /***********************************************************************
  This is written by Austin Cheney on 3 Mar 2009. Anybody may use this;
  code without permission so long as this comment exists verbatim in each;
@@ -79,14 +79,14 @@ var pd = {};
 
     //beacon error messages so that they are reported and fixed
     if (pd.test.xhr === true && pd.test.domain === true) {
-        window.onerror = function dom__error(message, url, line, column, obj) {
+        window.onerror = function dom__error(message, url, line, column) {
             var xhr = (typeof XMLHttpRequest === "function" || typeof XMLHttpRequest === "object") ? new XMLHttpRequest() : new ActiveXObject("Microsoft.XMLHTTP"),
-                datapack = (column === undefined) ? "Line " + line + " of " + url + "\n\n" + message : "Line " + line + " at column " + column + " of " + url + "\n\n" + message;
+                datapack = (column === undefined) ? "Line " + line + " of " + url + "\n\n" + message : "Line " + line + " at column " + column + " of " + url + "\n\n" + message + "\n\n" + pd.test.agent;
             xhr.withCredentials = true;
             xhr.open("POST", "http://prettydiff.com:8000/error/", true);
             xhr.setRequestHeader("Content-type", "application/json; charset=utf-8");
             xhr.send(datapack);
-            console.error(datapack);
+            console.error(datapack + "\nHelp a guy out and open a bug: https://github.com/austincheney/prettydiff/issues");
             return true;
         };
     }
@@ -761,9 +761,9 @@ var pd = {};
                             pd.o.report.code.box.style.display = "block";
                         }
                         if (output[1].length > 125000) {
-                            pd.test.filled.beau = true;
+                            pd.test.filled.code = true;
                         } else {
-                            pd.test.filled.beau = false;
+                            pd.test.filled.code = false;
                         }
                         parent = pd.o.report.code.box.getElementsByTagName("p")[0];
                         h3     = pd.o.report.code.box.getElementsByTagName("h3")[0].style.width;
@@ -871,15 +871,15 @@ var pd = {};
                     }
                     buttons = pd.o.report.code.box.getElementsByTagName("p")[0].getElementsByTagName("button");
                     if (output[0].length > 125000) {
-                        pd.test.filled.diff = true;
+                        pd.test.filled.code = true;
                     } else {
-                        pd.test.filled.diff = false;
+                        pd.test.filled.code = false;
                     }
-                    if ((/^(<p><strong>Error:<\/strong> Please try using the option labeled ((&lt;)|<)em((&gt;)|>)Plain Text \(diff only\)((&lt;)|<)\/em((&gt;)|>)\.)/).test(output[0])) {
+                    if ((/^(<p><strong>Error:<\/strong> Please try using the option labeled ((&lt;)|<)em((&gt;)|>)Plain Text \(diff only\)((&lt;)|<)\/em((&gt;)|>)\.)/).test(output[0]) === true) {
                         pd.o.report.code.body.innerHTML = "<p><strong>Error:</strong> Please try using the option labeled <em>Plain Text (diff only)</em>. <span style='display:block'>The input does not appear to be markup, CSS, or JavaScript.</span></p>";
                     } else {
                         pd.o.report.code.body.innerHTML = output[1] + output[0];
-                        if (autotest === true) {
+                        if (autotest === true && pd.o.report.code.body.firstChild !== null) {
                             if (pd.o.report.code.body.firstChild.nodeType > 1) {
                                 pd.o.report.code.body.removeChild(pd.o.report.code.body.firstChild);
                             }
@@ -891,16 +891,18 @@ var pd = {};
                     }
                     if (pd.o.report.code.body.innerHTML.toLowerCase().indexOf("<textarea") === -1) {
                         diffList = pd.o.report.code.body.getElementsByTagName("ol");
-                        (function () {
-                            var cells = diffList[0].getElementsByTagName("li"),
-                                len   = cells.length,
-                                a     = 0;
-                            for (a = 0; a < len; a += 1) {
-                                if (cells[a].getAttribute("class") === "fold") {
-                                    cells[a].onmousedown = pd.difffold;
+                        if (diffList.length > 0) {
+                            (function () {
+                                var cells = diffList[0].getElementsByTagName("li"),
+                                    len   = cells.length,
+                                    a     = 0;
+                                for (a = 0; a < len; a += 1) {
+                                    if (cells[a].getAttribute("class") === "fold") {
+                                        cells[a].onmousedown = pd.difffold;
+                                    }
                                 }
-                            }
-                        }());
+                            }());
+                        }
                         if (api.diffview === "sidebyside") {
                             if (diffList.length < 3 || diffList[0] === null || diffList[1] === null || diffList[2] === null) {
                                 pd.colSliderProperties = [
@@ -939,9 +941,9 @@ var pd = {};
                         pd.o.announce.innerHTML = "";
                     }
                     if (output[0].length > 125000) {
-                        pd.test.filled.min = true;
+                        pd.test.filled.code = true;
                     } else {
-                        pd.test.filled.min = false;
+                        pd.test.filled.code = false;
                     }
                     if (pd.o.codeMinnOut !== null) {
                         if (pd.test.cm === true) {
@@ -2094,8 +2096,8 @@ var pd = {};
     };
 
     //maximize report window to available browser window
-    pd.maximize            = function dom__maximize() {
-        var x       = this,
+    pd.maximize            = function dom__maximize(node) {
+        var x       = node || this,
             parent  = x.parentNode,
             save    = (parent.innerHTML.indexOf("save") > -1) ? true : false,
             box     = parent.parentNode,
@@ -2298,7 +2300,6 @@ var pd = {};
                     content           = bodyInner.split(classQuote);
                     classQuote        = classQuote + content[1];
                     bodyInner         = content[0];
-                    build.push(bodyInner);
                     build.push(" <p>This is the generated output. Please copy the text output, paste into a text file, and save as a &quot;.html&quot; file.</p> <textarea rows='40' cols='80' id='textreport'>");
                     build.push("&lt;?xml version='1.0' encoding='UTF-8' ?&gt;&lt;!DOCTYPE html PUBLIC '-//W3C//DTD XHTML 1.1//EN' 'http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd'&gt;&lt;html xmlns='http://www.w3.org/1999/xhtml' xml:lang='en'&gt;&lt;head&gt;&lt;title&gt;Pretty Diff - The difference tool&lt;/title&gt;&lt;meta name='robots' content='index, follow'/&gt; &lt;meta name='DC.title' content='Pretty Diff - The difference tool'/&gt; &lt;link rel='canonical' href='http://prettydiff.com/' type='application/xhtml+xml'/&gt;&lt;meta http-equiv='Content-Type' content='application/xhtml+xml;charset=UTF-8'/&gt;&lt;meta http-equiv='Content-Style-Type' content='text/css'/&gt;&lt;style type='text/css'&gt;" + pd.css.core + pd.css["s" + pd.color] + "&lt;/style&gt;&lt;/head&gt;&lt;body class='" + pd.color + "' id='webtool'&gt;&lt;h1&gt;&lt;a href='http://prettydiff.com/'&gt;Pretty Diff - The difference tool&lt;/a&gt;&lt;/h1&gt;&lt;div id='doc'&gt;");
                     build.push(bodyInner.replace(/\&/g, "&amp;").replace(/>/g, "&gt;").replace(/</g, "&lt;"));
@@ -2318,15 +2319,14 @@ var pd = {};
                         build.push(pd.colSliderProperties[3]);
                         build.push(",");
                         build.push(pd.colSliderProperties[4]);
-                        build.push(diffstring);
+                        build.push(diffstring.replace(/\&/g, "&amp;").replace(/>/g, "&gt;").replace(/</g, "&lt;"));
                         build.push("]]&gt;&lt;/script&gt;");
                     }
                 } else if (top === pd.o.report.code.box) {
-                    classQuote = (bodyInner.indexOf("<div class='beautify' id='pd-jsscope'>") > -1) ? "<div class='beautify' id='pd-jsscope'>" : "<div class=\"beautify\" id=\"pd-jsscope\">";
+                    classQuote = (bodyInner.indexOf("<div class='beautify'") > -1) ? "<div class='beautify'" : "<div class=\"beautify\"";
                     content    = bodyInner.split(classQuote);
                     classQuote = classQuote + content[1];
                     bodyInner  = content[0];
-                    build.push(bodyInner);
                     build.push(" <p>This is the generated output. Please copy the text output, paste into a text file, and save as a &quot;.html&quot; file.</p> <textarea rows='40' cols='80' id='textreport'>");
                     build.push("&lt;?xml version='1.0' encoding='UTF-8' ?&gt;&lt;!DOCTYPE html PUBLIC '-//W3C//DTD XHTML 1.1//EN' 'http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd'&gt;&lt;html xmlns='http://www.w3.org/1999/xhtml' xml:lang='en'&gt;&lt;head&gt;&lt;title&gt;Pretty Diff - The difference tool&lt;/title&gt;&lt;meta name='robots' content='index, follow'/&gt; &lt;meta name='DC.title' content='Pretty Diff - The difference tool'/&gt; &lt;link rel='canonical' href='http://prettydiff.com/' type='application/xhtml+xml'/&gt;&lt;meta http-equiv='Content-Type' content='application/xhtml+xml;charset=UTF-8'/&gt;&lt;meta http-equiv='Content-Style-Type' content='text/css'/&gt;&lt;style type='text/css'&gt;" + pd.css.core + pd.css["s" + pd.color] + "&lt;/style&gt;&lt;/head&gt;&lt;body class='" + pd.color + "' id='webtool'&gt;&lt;h1&gt;&lt;a href='http://prettydiff.com/'&gt;Pretty Diff - The difference tool&lt;/a&gt;&lt;/h1&gt;&lt;div id='doc'&gt;");
                     build.push(bodyInner.replace(/\&/g, "&amp;").replace(/>/g, "&gt;").replace(/</g, "&lt;"));
@@ -2335,19 +2335,24 @@ var pd = {};
                     build.push("&lt;script type='");
                     build.push(type);
                     build.push("'&gt;&lt;![CDATA[");
-                    build.push(beaustring);
+                    build.push(beaustring.replace(/\&/g, "&amp;").replace(/>/g, "&gt;").replace(/</g, "&lt;"));
                     build.push("]]&gt;&lt;/script&gt;");
                 }
                 build.push("&lt;/body&gt;&lt;/html&gt;</textarea>");
             }
             x.innerHTML = "H";
             x.setAttribute("title", "Convert output to rendered HTML.");
+            body.innerHTML = build.join("");
         } else {
-            classQuote = "<p>This is the generated output. Please copy the text output, paste into a text file, and save as a \".html\" file.</p>";
             if (bodyInner !== "") {
                 bodyInner = bodyInner.replace(/ xmlns\="http:\/\/www\.w3\.org\/1999\/xhtml"/g, "").replace(/&lt;/g, "<").replace(/&gt;/g, ">").replace(/&amp;/g, "&");
+                classQuote = (bodyInner.indexOf("<div id='doc'>") > 0) ? "<div id='doc'>" : "<div id=\"doc\">";
                 content   = bodyInner.split(classQuote);
-                build.push(content[0]);
+                if (content[1].indexOf("<script") > -1) {
+                    content[1] = classQuote + (content[1].substring(0, content[1].indexOf("<script")));
+                } else {
+                    content[1] = classQuote + (content[1].substring(0, content[1].indexOf("</body")));
+                }
                 if (pd.mode === "diff") {
                     classQuote = (content[1].indexOf("<div class='diff'") > -1) ? "<div class='diff'" : "<div class=\"diff\"";
                     if (pd.colSliderProperties.length === 0 && x.innerHTML === "S" && inline === true) {
@@ -2357,20 +2362,24 @@ var pd = {};
                         ];
                     }
                 } else if (pd.mode === "beau") {
-                    classQuote = (content[1].indexOf("<div class='beautify' id='pd-jsscope'>") > -1) ? "<div class='beautify' id='pd-jsscope'>" : "<div class=\"beautify\" id=\"pd-jsscope\">";
-                }
-                content[1] = content[1].substring(content[1].indexOf(classQuote) + classQuote.length, content[1].length);
-                if (content[1].indexOf("<script") > -1) {
-                    content[1] = classQuote + (content[1].substring(0, content[1].indexOf("<script")));
-                } else {
-                    content[1] = classQuote + (content[1].substring(0, content[1].indexOf("</body")));
+                    classQuote = (content[1].indexOf("<div class='beautify'") > -1) ? "<div class='beautify'" : "<div class=\"beautify\"";
                 }
                 build.push(content[1]);
             }
             x.innerHTML = "S";
             x.setAttribute("title", "Convert report to text that can be saved.");
+            body.innerHTML = build.join("");
+            content = body.getElementsByTagName("ol")[0].getElementsByTagName("li");
+            for (pageHeight = content.length - 1; pageHeight > -1; pageHeight -= 1) {
+                if (content[pageHeight].getAttribute("class") === "fold") {
+                    if (pd.mode === "beau") {
+                        content[pageHeight].onmousedown = pd.beaufold;
+                    } else if (pd.mode === "diff") {
+                        content[pageHeight].onmousedown = pd.difffold;
+                    }
+                }
+            }
         }
-        body.innerHTML = build.join("");
         pd.options(x.parentNode);
     };
 
@@ -2488,12 +2497,11 @@ var pd = {};
     pd.feedsubmit          = function dom__feedsubmit(auto) {
         var datapack  = {},
             namecheck = JSON.parse(localStorage.settings),
-            xhr       = {},
             radios    = [],
             text      = (pd.$$("feedtextarea") === null) ? "" : pd.$$("feedtextarea").value,
             a         = 0,
             email     = (pd.$$("feedemail") === null) ? "" : pd.$$("feedemail").value,
-            xhr       = (typeof XMLHttpRequest === "function" || typeof XMLHttpRequest === "object") ? new XMLHttpRequest() : new ActiveXObject("Microsoft.XMLHTTP"),
+            xhr       = {},
             sendit    = function dom__feedsubmit_sendit() {
                 xhr.withCredentials = true;
                 xhr.open("POST", "http://prettydiff.com:8000/feedback/", true);
@@ -2504,6 +2512,7 @@ var pd = {};
         if (pd.test.xhr === false || pd.test.json === false) {
             return;
         }
+        xhr = (typeof XMLHttpRequest === "function" || typeof XMLHttpRequest === "object") ? new XMLHttpRequest() : new ActiveXObject("Microsoft.XMLHTTP");
         if (auto === true) {
             datapack = {
                 name    : pd.settings.knownname,
@@ -3233,6 +3242,9 @@ var pd = {};
                 item = x;
             } else {
                 item = x.getElementsByTagName("input")[0];
+                if (item === undefined) {
+                    return;
+                }
             }
         } else if (this.nodeName.toLowerCase() === "input" || this.nodeName.toLowerCase() === "select" || this.nodeName.toLowerCase() === "div") {
             item = this;
@@ -3808,7 +3820,7 @@ var pd = {};
                 nametry = JSON.stringify(localStorage.settings);
             }
             if (localStorage.settings === undefined || nametry.knownname === undefined) {
-                nametry.knownname = "\"" + Math.random().toString.slice(2) + Math.random().toString.slice(2) + "\"";
+                nametry.knownname = "\"" + Math.random().toString().slice(2) + Math.random().toString().slice(2) + "\"";
             }
             pd.settings.knownname = nametry.knownname;
         }
@@ -4194,7 +4206,7 @@ var pd = {};
                         var event = e || window.event;
                         pd.areaTabOut(event, this);
                         pd.keydown(event);
-                    }
+                    };
                 } else {
                     pd.o.codeBeauIn.onfocus   = textareafocus;
                     pd.o.codeBeauIn.onblur    = textareablur;
@@ -4223,7 +4235,7 @@ var pd = {};
                         var event = e || window.event;
                         pd.areaTabOut(event, this);
                         pd.keydown(event);
-                    }
+                    };
                 } else {
                     pd.o.codeMinnIn.onfocus   = textareafocus;
                     pd.o.codeMinnIn.onblur    = textareablur;
