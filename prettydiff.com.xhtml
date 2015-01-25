@@ -17,7 +17,7 @@
         <meta content="Pretty Diff tool can minify, beautify (pretty-print), or diff between minified and beautified code. This tool can even beautify and minify HTML." name="description"/>
         <meta content="Global" name="distribution"/>
         <meta content="en" http-equiv="Content-Language"/>
-        <meta content="application/xhtml+xml;charset=UTF-8" http-equiv="Content-Type"/>
+        <meta content="application/xhtml+xml,charset=UTF-8" http-equiv="Content-Type"/>
         <meta content="blendTrans(Duration=0)" http-equiv="Page-Enter"/>
         <meta content="blendTrans(Duration=0)" http-equiv="Page-Exit"/>
         <meta content="text/css" http-equiv="content-style-type"/>
@@ -95,7 +95,7 @@
             </div>
         </div>
         <div id="codeInput" role="main">
-            <p id="textareaTabKey" style="display:none">Hold <strong>shift</strong> and press <strong>control</strong> key twice to focus on the previous element or press <strong>control</strong> twice to focus away from this textarea.</p>
+            <p id="textareaTabKey" style="display:none"><strong>Accessibility note:</strong> Hold <em>shift</em> and press <em>control</em> key twice to focus on the previous element or press <em>control</em> twice to focus away from this textarea.</p>
             <div id="diffBase"><h2>Base Text</h2>
                 <p class="labeltext"><input id="baselabel" type="text" value="base"/>
                     <label for="baselabel">Base label (optional)</label></p>
@@ -440,6 +440,14 @@
                             <input id="dobjsort-none" name="dobjsort" title="Turn sorting off for CSS and JavaScript." type="radio"/>
                             <label for="dobjsort-none">Do not sort</label></span>
                     </p>
+                    <p><strong>Brace Padding (JavaScript Only)</strong>
+                        <span>
+                            <input checked="checked" id="dbracepadding-no" name="dbracepadding" title="This option does not pad braces in JavaScript with spaces." type="radio"/>
+                            <label for="dbracepadding-no">No brace padding</label></span>
+                        <span>
+                            <input id="dbracepadding-yes" name="dbracepadding" title="Inserts a space after the start of a contain and before the end of the container in JavaScript if the contents of that container are not indented; such as: conditions, function arguments, and escaped sequences of template strings." type="radio"/>
+                            <label for="dbracepadding-yes">Pads container characters from their contents.</label></span>
+                    </p>
                     <p><strong>Style of Indent (JavaScript Only)</strong>
                         <span>
                             <input checked="checked" id="jsindentd-knr" name="jsindentdiff" title="This JavaScript only option sets opening curly braces at the end of the current line of code." type="radio"/>
@@ -577,6 +585,14 @@
                         <span>
                             <input id="vertical-none" name="vertical" title="This option prevents padding of variable and property names for vertical alignment in all languages." type="radio"/>
                             <label for="vertical-none">Do not vertical align</label></span>
+                    </p>
+                    <p><strong>Brace Padding (JavaScript Only)</strong>
+                        <span>
+                            <input checked="checked" id="bracepadding-no" name="bracepadding" title="This option does not pad braces in JavaScript with spaces." type="radio"/>
+                            <label for="bracepadding-no">No brace padding</label></span>
+                        <span>
+                            <input id="bracepadding-yes" name="bracepadding" title="Inserts a space after the start of a contain and before the end of the container in JavaScript if the contents of that container are not indented; such as: conditions, function arguments, and escaped sequences of template strings." type="radio"/>
+                            <label for="bracepadding-yes">Pads container characters from their contents.</label></span>
                     </p>
                     <p><strong>Scope Analysis (JavaScript Only)</strong>
                         <span>

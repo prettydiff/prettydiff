@@ -25,6 +25,10 @@
                         if (WScript.Arguments.Count() === 0 || help === true) {
                             error.push("Arguments      - Type    - Definition");
                             error.push("-------------------------------------");
+                            error.push("* bracepadding - boolean - Inserts a space after the start of a contain and before the end of the container in JavaScript if the contents of that container are not indented; such as: conditions, function arguments, and escaped sequences of template strings. Default is false.");
+                            error.push("");
+                            error.push("* braces       - string  - If lang is 'javascript' and mode is 'beautify' this determines if opening curly braces will exist on the same line as their condition or be forced onto a new line. Defaults to 'knr'.");
+                            error.push("                 Accepted values: knr, allman");
                             error.push("* color        - string  - The color scheme of the reports. Default is shadow.");
                             error.push("                 Accepted values: default, canvas, shadow, white");
                             error.push("");
@@ -60,8 +64,6 @@
                             error.push("");
                             error.push("* inchar       - string  - The string characters to comprise a single indentation. Any string combination is accepted. Defaults to space ' '.");
                             error.push("");
-                            error.push("* indent       - string  - If lang is 'javascript' and mode is 'beautify' this determines if opening curly braces will exist on the same line as their condition or be forced onto a new line. Defaults to 'knr'.");
-                            error.push("                 Accepted values: knr, allman");
                             error.push("");
                             error.push("* inlevel      - number  - The number of tabs to pad the output.  Default is '0'.");
                             error.push("");
@@ -253,6 +255,8 @@
                 }
                 if (fail === false) {
                     args.api = "wsf";
+                    args.bracepadding = (WScript.Arguments.Named("bracepadding") === "true" || WScript.Arguments.Named("bracepadding") === true) ? true : false;
+                    args.braces = (WScript.Arguments.Named("indent") === "allman") ? "allman" : "knr";
                     args.comments = (WScript.Arguments.Named("comments") === "noindent") ? "noindent" : "indent";
                     args.conditional = (WScript.Arguments.Named("conditional") === "true" || WScript.Arguments.Named("conditional") === true) ? true : false;
                     args.content = (WScript.Arguments.Named("content") === "true" || WScript.Arguments.Named("content") === true) ? true : false;
@@ -266,7 +270,6 @@
                     args.force_indent = (WScript.Arguments.Named("force_indent") === "true" || WScript.Arguments.Named("force_indent") === true) ? true : false;
                     args.html = (WScript.Arguments.Named("html") === "true" || WScript.Arguments.Named("html") === true) ? true : false;
                     args.inchar = WScript.Arguments.Named("inchar") || " ";
-                    args.indent = (WScript.Arguments.Named("indent") === "allman") ? "allman" : "knr";
                     args.inlevel = (isNaN(WScript.Arguments.Named("inlevel"))) ? 0 : Number(WScript.Arguments.Named("inlevel"));
                     args.insize = (isNaN(WScript.Arguments.Named("insize"))) ? 4 : Number(WScript.Arguments.Named("insize"));
                     args.jsscope = (WScript.Arguments.Named("jsscope") === "html" || WScript.Arguments.Named("jsscope") === "report") ? WScript.Arguments.Named("jsscope") : "none";
@@ -297,6 +300,9 @@
                     }
                     if (WScript.Arguments.Named("vertical") === "true") {
                         args.vertical = "all";
+                    }
+                    if (WScript.Arguments.Named("indent") === "allman") {
+                        args.braces = "allman";
                     }
                     if (args.mode !== "diff" && args.mode !== "beautify" && args.mode !== "minify") {
                         args.mode = "diff";
@@ -347,18 +353,10 @@
                         if (args.mode === "diff") {
                             report.push("<p>Accessibility note. &lt;em&gt; tags in the output represent character differences per lines compared.</p>");
                             report.push(pd[0]);
-                            if (args.diffview !== "inline") {
-                                report.push("<script type='application/javascript'><![CDATA[");
-                                report.push("var pd={},d = document.getElementsByTagName('ol');pd.colSliderProperties=[");
-                                report.push("d[0].clientWidth,");
-                                report.push("d[1].clientWidth,");
-                                report.push("d[2].parentNode.clientWidth,");
-                                report.push("d[2].parentNode.parentNode.clientWidth,");
-                                report.push("d[2].parentNode.offsetLeft - d[2].parentNode.parentNode.offsetLeft");
-                                report.push("];(function(){var cells=document.getElementsByTagName('ol')[0].getElemensByTagName('li'),len=cells.length,a=0;for(a=0;a<len;a+=1){if(cells[a].getAttribute('class')==='fold'){cells[a].onclick=pd.difffold;}}if(d.length>3){d[2].onmousedown=pd.colSliderGrab;d[2].ontouchstart=colSliderGrab;}}());pd.difffold=function dom__difffold(){var self=this,title=self.getAttribute('title').split('line '),min=Number(title[1].substr(0,title[1].indexOf(' '))),max=Number(title[2]),a=0,b=0,inner=self.innerHTML,lists=[],parent=self.parentNode.parentNode,listnodes=(parent.getAttribute('class'==='diff'))?parent.getElementsByTagName('ol'):parent.parentNode.getElementsByTagName('ol'),listLen=listnodes.length;for(a=0;a<listLen;a+=1){lists.push(listnodes[a].getElementsByTagName('li'));}max=(max>=lists[0].length)?lists[0].length:max;if(inner.charAt(0)===' - '){self.innerHTML='+'+inner.substr(1);for(a=min;a<max;a+=1){for(b=0;b<listLen;b+=1){lists[b][a].style.display='none';}}}else{self.innerHTML=' - '+inner.substr(1);for(a=min;a<max;a+=1){for(b=0;b<listLen;b+=1){lists[b][a].style.display='block';}}}};pd.colSliderProperties=[d[0].clientWidth,d[1].clientWidth,d[2].parentNode.clientWidth,d[2].parentNode.parentNode.clientWidth,d[2].parentNode.offsetLeft-d[2].parentNode.parentNode.offsetLeft,];pd.colSliderGrab=function dom__colSliderGrab(e){var e=e||window.event,node=this,diffRight=node.parentNode,diff=diffRight.parentNode,subOffset=0,counter=pd.colSliderProperties[0],data=pd.colSliderProperties[1],width=pd.colSliderProperties[2],total=pd.colSliderProperties[3],offset=(pd.colSliderProperties[4]),min=0,max=data-1,status='ew',minAdjust=min+15,maxAdjust=max-15,withinRange=false,diffLeft=diffRight.previousSibling,drop=function DOM_colSliderGrab_drop(f){f=f||window.event;f.preventDefault();node.style.cursor=status+'-resize';document.onmousemove=null;document.onmouseup=null;},boxmove=function DOM_colSliderGrab_boxmove(f){f=f||window.event;f.preventDefault();subOffset=offset-f.clientX;if(subOffset>minAdjust&&subOffset<maxAdjust){withinRange=true;}if(withinRange===true&&subOffset>maxAdjust){diffRight.style.width=((total-counter-2)/10)+'em';status='e';}else if(withinRange===true&&subOffset<minAdjust){diffRight.style.width=(width/10)+'em';status='w';}else if(subOffset<max&&subOffset>min){diffRight.style.width=((width+subOffset)/10)+'em';status='ew';}document.onmouseup=drop;};e.preventDefault();if(typeof pd.o==='object'&&pd.o.report.diff.box!==null){offset+=pd.o.report.diff.box.offsetLeft;offset-=pd.o.report.diff.body.scrollLeft;}else{subOffset=(document.body.parentNode.scrollLeft>document.body.scrollLeft)?document.body.parentNode.scrollLeft:document.body.scrollLeft;offset-=subOffset;}offset+=node.clientWidth;node.style.cursor='ew-resize';diff.style.width=(total/10)+'em';diff.style.display='inline-block';if(diffLeft.nodeType!==1){do{diffLeft=diffLeft.previousSibling;}while(diffLeft.nodeType!==1);}diffLeft.style.display='block';diffRight.style.width=(diffRight.clientWidth/10)+'em';diffRight.style.position='absolute';document.onmousemove=boxmove;document.onmousedown=null;};");
-                                report.push("]]></s");
-                                report.push("cript>");
-                            }
+                            report.push("<script type='application/javascript'><![CDATA[");
+                            report.push("var pd={};pd.colSliderProperties=[];(function(){var d=document.getElementsByTagName('ol'),cells=d[0].getElemensByTagName('li'),len=cells.length,a=0;pd.colSliderProperties=[d[0].clientWidth,d[1].clientWidth,d[2].parentNode.clientWidth,d[2].parentNode.parentNode.clientWidth,d[2].parentNode.offsetLeft-d[2].parentNode.parentNode.offsetLeft,];for(a=0;a<len;a+=1){if(cells[a].getAttribute('class')==='fold'){cells[a].onmousedown=pd.difffold;}}if(d.length>3){d[2].onmousedown=pd.colSliderGrab;d[2].ontouchstart=pd.colSliderGrab;}}());pd.difffold=function dom__difffold(){var a=0,b=0,self=this,title=self.getAttribute('title').split('line '),min=Number(title[1].substr(0,title[1].indexOf(' '))),max=Number(title[2]),inner=self.innerHTML,lists=[],parent=self.parentNode.parentNode,listnodes=(parent.getAttribute('class')==='diff')?parent.getElementsByTagName('ol'):parent.parentNode.getElementsByTagName('ol'),listLen=listnodes.length;for(a=0;a<listLen;a+=1){lists.push(listnodes[a].getElementsByTagName('li'));}for(a=0;a<min;a+=1){if(lists[0][a].getAttribute('class')==='empty'){min+=1;max+=1;}}max=(max>=lists[0].length)?lists[0].length:max;if(inner.charAt(0)==='-'){self.innerHTML='+'+inner.substr(1);for(a=min;a<max;a+=1){for(b=0;b<listLen;b+=1){lists[b][a].style.display='none';}}}else{self.innerHTML='-'+inner.substr(1);for(a=min;a<max;a+=1){for(b=0;b<listLen;b+=1){lists[b][a].style.display='block';}}}};pd.colSliderGrab=function dom__colSliderGrab(e){var event=e||window.event,touch=(e.type==='touchstart')?true:false,node=this,diffRight=node.parentNode,diff=diffRight.parentNode,subOffset=0,counter=pd.colSliderProperties[0],data=pd.colSliderProperties[1],width=pd.colSliderProperties[2],total=pd.colSliderProperties[3],offset=pd.colSliderProperties[4],min=0,max=data-1,status='ew',minAdjust=min+15,maxAdjust=max-15,withinRange=false,diffLeft=diffRight.previousSibling,drop=function dom__colSliderGrab_drop(f){f=f||window.event;f.preventDefault();node.style.cursor=status+'-resize';if(touch===true){document.ontouchmove=null;document.ontouchend=null;}else{document.onmousemove=null;document.onmouseup=null;}},boxmove=function dom__colSliderGrab_boxmove(f){f=f||window.event;f.preventDefault();if(touch===true){subOffset=offset-f.touches[0].clientX;}else{subOffset=offset-f.clientX;}if(subOffset>minAdjust&&subOffset<maxAdjust){withinRange=true;}if(withinRange===true&&subOffset>maxAdjust){diffRight.style.width=((total-counter-2)/10)+'em';status='e';}else if(withinRange===true&&subOffset<minAdjust){diffRight.style.width=(width/10)+'em';status='w';}else if(subOffset<max&&subOffset>min){diffRight.style.width=((width+subOffset)/10)+'em';status='ew';}if(touch===true){document.ontouchend=drop;}else{document.onmouseup=drop;}};event.preventDefault();if(typeof pd.o==='object'&&pd.o.report.code.box!==null){offset+=pd.o.report.code.box.offsetLeft;offset-=pd.o.report.code.body.scrollLeft;}else{subOffset=(document.body.parentNode.scrollLeft>document.body.scrollLeft)?document.body.parentNode.scrollLeft:document.body.scrollLeft;offset-=subOffset;}offset+=node.clientWidth;node.style.cursor='ew-resize';diff.style.width=(total/10)+'em';diff.style.display='inline-block';if(diffLeft.nodeType!==1){do{diffLeft=diffLeft.previousSibling;}while(diffLeft.nodeType!==1);}diffLeft.style.display='block';diffRight.style.width=(diffRight.clientWidth/10)+'em';diffRight.style.position='absolute';if(touch===true){document.ontouchmove=boxmove;document.ontouchstart=false;}else{document.onmousemove=boxmove;document.onmousedown=null;}};");
+                            report.push("]]></s");
+                            report.push("cript>");
                         }
                         report.push("</body></html>");
                     }
