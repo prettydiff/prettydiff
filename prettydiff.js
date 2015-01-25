@@ -8637,11 +8637,11 @@ var prettydiff = function prettydiff(api) {
                                 } else if ((y[a - 1] !== "\\" || y[a - 2] === "\\") && ((comment === "'" && y[a] === "'") || (comment === "\"" && y[a] === "\"") || (comment === "/" && y[a] === "/") || (comment === "//" && (y[a] === "\n" || (y[a - 4] && y[a - 4] === "/" && y[a - 3] === "/" && y[a - 2] === "-" && y[a - 1] === "-" && y[a] === ">"))) || (comment === ("/" + "*") && y[a - 1] === "*" && y[a] === "/"))) {
                                     comment = "";
                                 }
-                                if (((type === "script" && comment === "") || type === "style") && y[a] === "<" && y[a + 1] === "/" && y[a + 2].toLowerCase() === "s") {
-                                    if (type === "script" && (y[a + 3].toLowerCase() === "c" && y[a + 4].toLowerCase() === "r" && y[a + 5].toLowerCase() === "i" && y[a + 6].toLowerCase() === "p" && y[a + 7].toLowerCase() === "t")) {
+                                if (a < endd - 2 && ((type === "script" && comment === "") || type === "style") && y[a] === "<" && y[a + 1] === "/" && y[a + 2].toLowerCase() === "s") {
+                                    if (type === "script" && a < endd - 7 && (y[a + 3].toLowerCase() === "c" && y[a + 4].toLowerCase() === "r" && y[a + 5].toLowerCase() === "i" && y[a + 6].toLowerCase() === "p" && y[a + 7].toLowerCase() === "t")) {
                                         break;
                                     }
-                                    if (type === "style" && (y[a + 3].toLowerCase() === "t" && y[a + 4].toLowerCase() === "y" && y[a + 5].toLowerCase() === "l" && y[a + 6].toLowerCase() === "e")) {
+                                    if (type === "style" && a < endd - 6 && (y[a + 3].toLowerCase() === "t" && y[a + 4].toLowerCase() === "y" && y[a + 5].toLowerCase() === "l" && y[a + 6].toLowerCase() === "e")) {
                                         break;
                                     }
                                 } else if (type === "other" && y[a] === "<") {
@@ -8709,17 +8709,17 @@ var prettydiff = function prettydiff(api) {
                                 build.push(builder("%>"));
                                 token.push("T_asp");
                             }
-                        } else if (y[i] === "<" && y[i + 1] === "?") {
+                        } else if (y[i] === "<" && y[i + 1] === "?" && i < end - 4) {
                             if (y[i + 2].toLowerCase() === "x" && y[i + 3].toLowerCase() === "m" && y[i + 4].toLowerCase() === "l") {
                                 token.push("T_xml");
                             } else if (y[i + 2].toLowerCase() === "p" && y[i + 3].toLowerCase() === "h" && y[i + 4].toLowerCase() === "p") {
                                 token.push("T_php");
                             }
                             build.push(builder("?>"));
-                        } else if (mhtml === true && y[i] === "<" && y[i + 1].toLowerCase() === "p" && y[i + 2].toLowerCase() === "r" && y[i + 3].toLowerCase() === "e") {
+                        } else if (mhtml === true && y[i] === "<" && i < end - 3 && y[i + 1].toLowerCase() === "p" && y[i + 2].toLowerCase() === "r" && y[i + 3].toLowerCase() === "e") {
                             build.push(builder("</pre>"));
                             token.push("T_ignore");
-                        } else if (y[i] === "<" && y[i + 1].toLowerCase() === "s" && y[i + 2].toLowerCase() === "c" && y[i + 3].toLowerCase() === "r" && y[i + 4].toLowerCase() === "i" && y[i + 5].toLowerCase() === "p" && y[i + 6].toLowerCase() === "t") {
+                        } else if (y[i] === "<" && i < end - 6 && y[i + 1].toLowerCase() === "s" && y[i + 2].toLowerCase() === "c" && y[i + 3].toLowerCase() === "r" && y[i + 4].toLowerCase() === "i" && y[i + 5].toLowerCase() === "p" && y[i + 6].toLowerCase() === "t") {
                             scriptflag = i;
                             build.push(builder(">"));
                             if (last.indexOf(" type=\"syntaxhighlighter\"") !== -1) {
@@ -8735,7 +8735,7 @@ var prettydiff = function prettydiff(api) {
                             } else {
                                 token.push("T_tag_start");
                             }
-                        } else if (y[i] === "<" && y[i + 1].toLowerCase() === "s" && y[i + 2].toLowerCase() === "t" && y[i + 3].toLowerCase() === "y" && y[i + 4].toLowerCase() === "l" && y[i + 5].toLowerCase() === "e") {
+                        } else if (y[i] === "<" && i < end - 5 && y[i + 1].toLowerCase() === "s" && y[i + 2].toLowerCase() === "t" && y[i + 3].toLowerCase() === "y" && y[i + 4].toLowerCase() === "l" && y[i + 5].toLowerCase() === "e") {
                             build.push(builder(">"));
                             last = build[build.length - 1].toLowerCase().replace(/'/g, "\"");
                             if (last.indexOf(" type=\"") === -1 || last.indexOf(" type=\"text/css\"") !== -1) {
@@ -8797,7 +8797,9 @@ var prettydiff = function prettydiff(api) {
                                 token.push("T_content");
                             }
                         }
-                        last = build[build.length - 1].toLowerCase().replace(/'/g, "\"");
+                        if (build.length > 0) {
+                            last = build[build.length - 1].toLowerCase().replace(/'/g, "\"");
+                        }
                     }
                 }());
             }
@@ -10479,9 +10481,9 @@ var prettydiff = function prettydiff(api) {
         documentation: 150124, //documentation.xhtml
         jspretty     : 150124, //jspretty library
         latest       : 0,
-        markup_beauty: 150124, //markup_beauty library
+        markup_beauty: 150125, //markup_beauty library
         markupmin    : 150124, //markupmin library
-        prettydiff   : 150124, //this file
+        prettydiff   : 150125, //this file
         webtool      : 150124 //prettydiff.com.xhtml
     };
 edition.latest = (function edition_latest() {
