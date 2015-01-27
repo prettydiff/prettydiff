@@ -9576,6 +9576,7 @@ var prettydiff = function prettydiff(api) {
                                         inchar      : mchar,
                                         inlevel     : level[i],
                                         insize      : msize,
+                                        objsort     : mobjsort,
                                         preserve    : true,
                                         source      : build[i],
                                         space       : true,
@@ -10478,12 +10479,12 @@ var prettydiff = function prettydiff(api) {
         csvbeauty    : 140114, //csvbeauty library
         csvmin       : 131224, //csvmin library
         diffview     : 150124, //diffview library
-        documentation: 150124, //documentation.xhtml
+        documentation: 150126, //documentation.xhtml
         jspretty     : 150124, //jspretty library
         latest       : 0,
-        markup_beauty: 150125, //markup_beauty library
+        markup_beauty: 150126, //markup_beauty library
         markupmin    : 150124, //markupmin library
-        prettydiff   : 150125, //this file
+        prettydiff   : 150126, //this file
         webtool      : 150124 //prettydiff.com.xhtml
     };
 edition.latest = (function edition_latest() {

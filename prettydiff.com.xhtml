@@ -27,7 +27,7 @@
         <meta content="images/pdlogo.svg" name="msapplication-TileImage"/>
     </head>
     <body class="white" id="webtool">
-        <p id="arialive" style="display:none" aria-live="polite"></p>
+        <p aria-live="polite" id="arialive" style="display:none"></p>
         <ul id="displayOps">
             <li><button id="resetOptions" title="Clicking this button will clear all stored data and reset all options to the default configuration. I recommend refreshing the page after clicking this button." type="button">Reset
                 Options</button></li>
@@ -79,7 +79,8 @@
                     This tool executes entirely on the client computer without leaking any
                     submitted data over the internet.</p>
                 <ul>
-                    <li><a href="documentation.xhtml" tabindex="-1">English documentation</a></li>
+                    <li><a href="documentation.xhtml" tabindex="-1">English
+                        documentation</a></li>
                 </ul>
                 <ul>
                     <li><a href="samples.xhtml" tabindex="-1">samples</a></li>
@@ -89,13 +90,22 @@
                     <li><a href="api/node-local.js" tabindex="-1">Node.js</a></li>
                     <li><a href="api/prettydiff.wsf" tabindex="-1">WSH</a></li>
                     <li><a href="jspretty.xhtml" tabindex="-1">JSPretty</a></li>
-                    <li><a href="http://g6auc.me.uk/widgets.html" tabindex="-1">JSPretty Widget</a></li>
+                    <li><a href="http://g6auc.me.uk/widgets.html" tabindex="-1">JSPretty
+                        Widget</a></li>
                 </ul>
                 <span class="clear"></span>
             </div>
         </div>
         <div id="codeInput" role="main">
-            <p id="textareaTabKey" style="display:none"><strong>Accessibility note:</strong> Hold <em>shift</em> and press <em>control</em> key twice to focus on the previous element or press <em>control</em> twice to focus away from this textarea.</p>
+            <p id="textareaTabKey" style="display:none"><strong>Accessibility
+                note:</strong>
+                Hold 
+                <em>shift</em>
+                and press
+                <em>control</em>
+                key twice to focus on the previous element or press
+                <em>control</em>
+                twice to focus away from this textarea.</p>
             <div id="diffBase"><h2>Base Text</h2>
                 <p class="labeltext"><input id="baselabel" type="text" value="base"/>
                     <label for="baselabel">Base label (optional)</label></p>
@@ -152,18 +162,33 @@
                     <button class="maximize" title="Maximize this dialogue to the browser window.">&uarr;</button>
                     <button class="resize" title="Resize this dialogue.">&harr;</button></p>
                 <h3 class="heading" title="Grab this title element to open this dialogue or move it around around the screen."><span>Feedback</span></h3>
-                <div class="body" id="feedreportbody" style="display:none" xml:space="preserve"><p class="radiogroup"><span class="feedlabel">How likely are you to recommend Pretty Diff to a friend or coworker?</span>
-                    <span><label for="feedradio1" class="feedradio1">1</label><input type="radio" name="feedradio" value="1" id="feedradio1"/> <span>Never</span></span>
-                    <span><label for="feedradio2" class="feedradio2">2</label><input type="radio" name="feedradio" value="2" id="feedradio2"/> <span>Not Likely</span></span>
-                    <span><label for="feedradio3" class="feedradio3">3</label><input type="radio" name="feedradio" value="3" id="feedradio3"/> <span>Rarely</span></span>
-                    <span><label for="feedradio4" class="feedradio4">4</label><input type="radio" name="feedradio" value="4" id="feedradio4"/> <span>Maybe</span></span>
-                    <span><label for="feedradio5" class="feedradio5">5</label><input type="radio" name="feedradio" value="5" id="feedradio5"/> <span>Probably</span></span>
-                    <span><label for="feedradio6" class="feedradio6">6</label><input type="radio" name="feedradio" value="6" id="feedradio6"/> <span>Frequently</span></span>
-                    <span><label for="feedradio7" class="feedradio7">7</label><input type="radio" name="feedradio" value="7" id="feedradio7"/> <span>Always</span></span>
-                </p>
-                <p><label for="feedtextarea">What is your primary reason for the above answer?</label> <textarea id="feedtextarea"></textarea></p>
-                <p><label for="feedemail">Email address (optional)</label> <input type="text" id="feedemail"/></p>
-                <p><button type="button" id="feedsubmit">Submit feedback</button></p></div>
+                <div class="body" id="feedreportbody" style="display:none" xml:space="preserve">
+                    <p id="feedintro">Please feel free to submit feedback about Pretty Diff at any time by answering the following questions.</p>
+                    <p class="radiogroup"><span class="feedlabel">How likely are you to
+                        recommend Pretty Diff to a friend or coworker?</span>
+                        <span><label class="feedradio1" for="feedradio1">1</label><input id="feedradio1" name="feedradio" type="radio" value="1"/>
+                            <span>Never</span></span>
+                        <span><label class="feedradio2" for="feedradio2">2</label><input id="feedradio2" name="feedradio" type="radio" value="2"/>
+                            <span>Not Likely</span></span>
+                        <span><label class="feedradio3" for="feedradio3">3</label><input id="feedradio3" name="feedradio" type="radio" value="3"/>
+                            <span>Rarely</span></span>
+                        <span><label class="feedradio4" for="feedradio4">4</label><input id="feedradio4" name="feedradio" type="radio" value="4"/>
+                            <span>Maybe</span></span>
+                        <span><label class="feedradio5" for="feedradio5">5</label><input id="feedradio5" name="feedradio" type="radio" value="5"/>
+                            <span>Probably</span></span>
+                        <span><label class="feedradio6" for="feedradio6">6</label><input id="feedradio6" name="feedradio" type="radio" value="6"/>
+                            <span>Frequently</span></span>
+                        <span><label class="feedradio7" for="feedradio7">7</label><input id="feedradio7" name="feedradio" type="radio" value="7"/>
+                            <span>Always</span></span>
+                    </p>
+                    <p><label for="feedtextarea">What is your primary reason for the above
+                        answer?</label>
+                        <textarea id="feedtextarea"></textarea>
+                    </p>
+                    <p><label for="feedemail">Email address (optional)</label>
+                        <input id="feedemail" type="text"/></p>
+                    <p><button id="feedsubmit" type="button">Submit feedback</button></p>
+                </div>
             </div>
             <div class="box" id="codereport" role="dialog_nonmodal">
                 <p class="buttons" style="display:none">
@@ -232,7 +257,8 @@
                     <label for="codemirror-yes">Enable CodeMirror</label></span>
                 <span>
                     <input id="codemirror-no" name="codemirror-radio" title="This radio button will remove the CodeMirror functionality and refresh the page." type="radio"/>
-                    <label for="codemirror-no">Disable CodeMirror (Faster and more accessible)</label></span>
+                    <label for="codemirror-no">Disable CodeMirror (Faster and more
+                        accessible)</label></span>
             </p>
             <p><label class="label" for="colorScheme" title="Pick a color theme with this list of options. Force a theme by default with the address parameter 'c', for example 'c=shadow'.">Color
                 Scheme</label>
@@ -446,7 +472,8 @@
                             <label for="dbracepadding-no">No brace padding</label></span>
                         <span>
                             <input id="dbracepadding-yes" name="dbracepadding" title="Inserts a space after the start of a contain and before the end of the container in JavaScript if the contents of that container are not indented; such as: conditions, function arguments, and escaped sequences of template strings." type="radio"/>
-                            <label for="dbracepadding-yes">Pads container characters from their contents.</label></span>
+                            <label for="dbracepadding-yes">Pads container characters from their
+                                contents.</label></span>
                     </p>
                     <p><strong>Style of Indent (JavaScript Only)</strong>
                         <span>
@@ -592,7 +619,8 @@
                             <label for="bracepadding-no">No brace padding</label></span>
                         <span>
                             <input id="bracepadding-yes" name="bracepadding" title="Inserts a space after the start of a contain and before the end of the container in JavaScript if the contents of that container are not indented; such as: conditions, function arguments, and escaped sequences of template strings." type="radio"/>
-                            <label for="bracepadding-yes">Pads container characters from their contents.</label></span>
+                            <label for="bracepadding-yes">Pads container characters from their
+                                contents.</label></span>
                     </p>
                     <p><strong>Scope Analysis (JavaScript Only)</strong>
                         <span>

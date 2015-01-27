@@ -2551,11 +2551,15 @@ var pd = {};
             email     = (pd.$$("feedemail") === null) ? "" : pd.$$("feedemail").value,
             xhr       = {},
             sendit    = function dom__feedsubmit_sendit() {
+                var node = pd.$$("feedintro");
                 xhr.withCredentials = true;
                 xhr.open("POST", "http://prettydiff.com:8000/feedback/", true);
                 xhr.setRequestHeader("Content-type", "application/json; charset=utf-8");
                 xhr.send(JSON.stringify(datapack));
                 pd.o.report.feed.box.getElementsByTagName("button")[0].click();
+                if (node !== null) {
+                    node.innerHTML = "Please feel free to submit feedback about Pretty Diff at any time by answering the following questions.";
+                }
             };
         if (pd.test.xhr === false || pd.test.json === false) {
             return;
@@ -2571,7 +2575,7 @@ var pd = {};
             sendit();
             return;
         }
-        if (pd.$$("feedradio1") === null || text.replace(/\s/g, "") === "" || namecheck.knownname !== pd.settings.knownname) {
+        if (pd.$$("feedradio1") === null || namecheck.knownname !== pd.settings.knownname) {
             return;
         }
         radios = pd.$$("feedradio1").parentNode.parentNode.getElementsByTagName("input");
@@ -4909,8 +4913,12 @@ var pd = {};
                     veteran: false
                 };
             }
-            if (pd.settings.feedback.newb === false && pd.stat.usage > 9 && pd.stat.visit < 5 && pd.test.domain === true && pd.o.report.feed.box !== null) {
+            if (pd.settings.feedback.newb === false && pd.stat.usage > 2 && pd.stat.visit < 5 && pd.test.domain === true && pd.o.report.feed.box !== null) {
                 pd.settings.feedback.newb = true;
+                node = pd.$$("feedintro");
+                if (node !== null) {
+                    node.innerHTML = "Thank you for trying Pretty Diff. Please let me know what you think of this tool.";
+                }
                 if (pd.test.json === true && pd.test.ls === true) {
                     localStorage.settings = JSON.stringify(pd.settings);
                 }
@@ -4918,6 +4926,9 @@ var pd = {};
             }
             if (pd.settings.feedback.veteran === false && pd.stat.usage > 2500 && pd.test.domain === true && pd.o.report.feed.box !== null) {
                 pd.settings.feedback.veteran = true;
+                if (node !== null) {
+                    node.innerHTML = "Thank you for the loyal and frequent use of this tool. Would you mind sparing a few seconds on a brief survey?";
+                }
                 if (pd.test.json === true && pd.test.ls === true) {
                     localStorage.settings = JSON.stringify(pd.settings);
                 }
