@@ -3175,9 +3175,6 @@ var prettydiff = function prettydiff(api) {
             if (jsource === "Error: no source code supplied to jspretty!") {
                 return jsource;
             }
-            if (jmode === "minify" && jsscope === "none") {
-                jsscope = "min";
-            }
             //this function tokenizes the source code into an array
             //of literals and syntax tokens
             (function jspretty__tokenize() {
@@ -5527,7 +5524,7 @@ var prettydiff = function prettydiff(api) {
                                 } else if (ltoke === "{" || ltoke === "x{" || ltoke === "[" || ltoke === "}" || ltoke === "x}") {
                                     level[a - 1] = indent - 1;
                                 }
-                                if (jsscope !== "none") {
+                                if (jsscope !== "none" || jmode === "minify") {
                                     meta.push("");
                                 }
                                 return level.push(indent);
@@ -5540,7 +5537,7 @@ var prettydiff = function prettydiff(api) {
                                 if (ltoke === "function" || ltoke === "switch" || ltoke === "for" || ltoke === "while") {
                                     methodtest[methodtest.length - 1] = true;
                                 }
-                                if (jsscope !== "none") {
+                                if (jsscope !== "none" || jmode === "minify") {
                                     if (ltoke === "function" || token[a - 2] === "function") {
                                         meta.push(0);
                                     } else {
@@ -5569,7 +5566,7 @@ var prettydiff = function prettydiff(api) {
                                 return level.push("x");
                             }
                             if (ctoke === "[") {
-                                if (jsscope !== "none") {
+                                if (jsscope !== "none" || jmode === "minify") {
                                     meta.push("");
                                 }
                                 if (ltoke === "[") {
@@ -5595,7 +5592,7 @@ var prettydiff = function prettydiff(api) {
                                     return level.push("x");
                                 }());
                             }
-                            if (jsscope !== "none" && meta[a] === undefined) {
+                            if (jsscope !== "none" || jmode === "minify") {
                                 meta.push("");
                             }
                             return level.push("x");
