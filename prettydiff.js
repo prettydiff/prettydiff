@@ -596,7 +596,10 @@ var prettydiff = function prettydiff(api) {
                                     auto  = "unknown";
                                 }
                             } else if ((/^(\s*[\$\.#@a-z0-9])|^(\s*\/\*)|^(\s*\*\s*\{)/i).test(a) === true && (/^(\s*if\s*\()/).test(a) === false && a.indexOf("{") !== -1 && (/\=\s*(\{|\[|\()/).test(join) === false && ((/(\+|\-|\=|\*|\?)\=/).test(join) === false || ((/\=+('|")?\)/).test(a) === true && (/;\s*base64/).test(a) === true)) && (/function(\s+\w+)*\s*\(/).test(join) === false) {
-                                if ((/:\s*(\{|\(|\[)/).test(a) === true || ((/^(\s*return;?\s*\{)/).test(a) === true && (/(\};?\s*)$/).test(a) === true)) {
+                                if ((/((public)|(private))\s+(((static)?\s+(v|V)oid)|(class)|(final))/).test(a) === true) {
+                                    clang = "text";
+                                    auto  = "Java (not supported yet)";
+                                } else if ((/:\s*(\{|\(|\[)/).test(a) === true || ((/^(\s*return;?\s*\{)/).test(a) === true && (/(\};?\s*)$/).test(a) === true)) {
                                     clang = "javascript";
                                     auto  = "JavaScript";
                                 } else {
@@ -607,7 +610,7 @@ var prettydiff = function prettydiff(api) {
                                 clang = clangdefault;
                                 auto  = "unknown";
                             }
-                        } else if (((/(>[\w\s:]*)?<(\/|\!)?[\w\s:\-\[]+/).test(a) === true && (/^([\s\w]*<)/).test(a) === true && (/(>[\s\w]*)$/).test(a) === true) || (/^(\s*<s((cript)|(tyle)))/i.test(a) === true && /(<\/s((cript)|(tyle))>\s*)$/i.test(a) === true)) {
+                        } else if (((/(>[\w\s:]*)?<(\/|\!)?[\w\s:\-\[]+/).test(a) === true && ((/^([\s\w]*<)/).test(a) === true || (/(>[\s\w]*)$/).test(a) === true)) || (/^(\s*<s((cript)|(tyle)))/i.test(a) === true && /(<\/s((cript)|(tyle))>\s*)$/i.test(a) === true)) {
                             clang = "markup";
                             if ((/^(\s*<\?xml)/).test(a) === true) {
                                 if ((/XHTML\s+1\.1/).test(a) === true || (/XHTML\s+1\.0\s+(S|s)((trict)|(TRICT))/).test(a) === true) {
@@ -3172,6 +3175,9 @@ var prettydiff = function prettydiff(api) {
             if (jsource === "Error: no source code supplied to jspretty!") {
                 return jsource;
             }
+            if (jmode === "minify" && jsscope === "none") {
+                jsscope = "min";
+            }
             //this function tokenizes the source code into an array
             //of literals and syntax tokens
             (function jspretty__tokenize() {
@@ -4353,6 +4359,70 @@ var prettydiff = function prettydiff(api) {
                             }
                         }
                         for (ee = base; ee < jj; ee += 1) {
+                            if ((start === "\"" || start === "'") && (c[ee] === "\n" || c[ee] === "\r")) {
+                                stats = {
+                                    comma       : 0,
+                                    commentBlock: {
+                                        chars: 0,
+                                        token: 0
+                                    },
+                                    commentLine : {
+                                        chars: 0,
+                                        token: 0
+                                    },
+                                    container   : 0,
+                                    number      : {
+                                        chars: 0,
+                                        token: 0
+                                    },
+                                    operator    : {
+                                        chars: 0,
+                                        token: 0
+                                    },
+                                    regex       : {
+                                        chars: 0,
+                                        token: 0
+                                    },
+                                    semicolon   : 0,
+                                    server      : {
+                                        chars: 0,
+                                        token: 0
+                                    },
+                                    space       : {
+                                        newline: 0,
+                                        other  : 0,
+                                        space  : 0,
+                                        tab    : 0
+                                    },
+                                    string      : {
+                                        chars: 0,
+                                        quote: 0,
+                                        token: 0
+                                    },
+                                    word        : {
+                                        chars: 0,
+                                        token: 0
+                                    }
+                                };
+                                f     = a;
+                                do {
+                                    f -= 1;
+                                } while (c[f] !== "\n" && c[f] !== "\r" && f > 0);
+                                output = c.slice(f, ee).join("");
+                                g      = types.length;
+                                do {
+                                    g -= 1;
+                                } while (g > 0 && types[g] !== "comment");
+                                if (token[g].indexOf("//") === 0 && output.replace(/^\s+/, "").indexOf(token[g + 1]) === 0 && (token[g].split("\"").length % 2 === 1 || token[g].split("'").length % 2 === 1)) {
+                                    output = "\n" + token[g] + output;
+                                }
+                                b     = 1;
+                                token = [""];
+                                types = [""];
+                                ltoke = token[0];
+                                ltype = types[0];
+                                return "Error: unterminated string in JavaScript\n" + output;
+                            }
                             build.push(c[ee]);
                             if (c[ee] === end[endlen] || (rtest === true && (c[ee] === "\n" || ee === jj - 1))) {
                                 if (endlen > 0) {
@@ -4888,27 +4958,16 @@ var prettydiff = function prettydiff(api) {
                         types.push(ltype);
                         lines.push(0);
                         braceFinder();
-                    } else if (c[a] === "\"") {
+                    } else if (c[a] === "\"" || c[a] === "'") {
                         if (wordTest > -1) {
                             word();
                         }
-                        ltoke              = generic("\"", "\"");
+                        ltoke              = generic(c[a], c[a]);
                         ltype              = "literal";
                         stats.string.token += 1;
-                        stats.string.chars += ltoke.length - 2;
-                        stats.string.quote += 2;
-                        token.push(ltoke);
-                        types.push(ltype);
-                        lines.push(0);
-                        braceFinder();
-                    } else if (c[a] === "'") {
-                        if (wordTest > -1) {
-                            word();
+                        if (ltoke.length > 1) {
+                            stats.string.chars += ltoke.length - 2;
                         }
-                        ltoke              = generic("'", "'");
-                        ltype              = "literal";
-                        stats.string.token += 1;
-                        stats.string.chars += ltoke.length - 2;
                         stats.string.quote += 2;
                         token.push(ltoke);
                         types.push(ltype);
@@ -10469,7 +10528,7 @@ var prettydiff = function prettydiff(api) {
             cmjs : 140127
         },
         api          : {
-            dom      : 150124,
+            dom      : 150127,
             nodeLocal: 150124,
             wsh      : 150124
         },
@@ -10480,11 +10539,11 @@ var prettydiff = function prettydiff(api) {
         csvmin       : 131224, //csvmin library
         diffview     : 150124, //diffview library
         documentation: 150126, //documentation.xhtml
-        jspretty     : 150124, //jspretty library
+        jspretty     : 150127, //jspretty library
         latest       : 0,
         markup_beauty: 150126, //markup_beauty library
         markupmin    : 150124, //markupmin library
-        prettydiff   : 150126, //this file
+        prettydiff   : 150127, //this file
         webtool      : 150124 //prettydiff.com.xhtml
     };
 edition.latest = (function edition_latest() {

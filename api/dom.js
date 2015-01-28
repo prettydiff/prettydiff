@@ -181,6 +181,7 @@ var pd = {};
         jsscope     : pd.$$("jsscope-yes"),
         lang        : pd.$$("language"),
         langdefault : pd.$$("lang-default"),
+        langproper  : "",
         length      : {
             beau    : 0,
             diffBase: 0,
@@ -221,6 +222,7 @@ var pd = {};
             flagb    = false,
             defaultt = (pd.o.langdefault === null) ? "javascript" : pd.o.langdefault[pd.o.langdefault.selectedIndex].value;
         if (a === undefined || (/^(\s*#)/).test(a) === true || (/\n\s*(\.|@)mixin\(?\s*/).test(a) === true) {
+            pd.langproper = "bobjsort-css";
             return "css";
         }
         b = a.replace(/\[[a-zA-Z][\w\-]*\=("|')?[a-zA-Z][\w\-]*("|')?\]/g, "").split("");
@@ -248,28 +250,49 @@ var pd = {};
             }
             join = b.join("");
             if ((/^(\s*(\{|\[))/).test(a) === true && (/((\]|\})\s*)$/).test(a) && a.indexOf(",") !== -1) {
+                pd.langproper = "JavaScript";
                 return "javascript";
             }
             if ((/((\}?(\(\))?\)*;?\s*)|([a-z0-9]("|')?\)*);?(\s*\})*)$/i).test(a) === true && ((/(var\s+[a-z]+[a-zA-Z0-9]*)/).test(a) === true || (/(\=\s*function)|(\s*function\s+(\w*\s+)?\()/).test(a) === true || a.indexOf("{") === -1 || (/^(\s*if\s+\()/).test(a) === true)) {
                 if (a.indexOf("(") > -1 || a.indexOf("=") > -1 || (a.indexOf(";") > -1 && a.indexOf("{") > -1)) {
+                    pd.langproper = "JavaScript";
                     return "javascript";
                 }
+                pd.langproper = "unknown";
                 return defaultt;
             }
             if ((/^(\s*[\$\.#@a-z0-9])|^(\s*\/\*)|^(\s*\*\s*\{)/i).test(a) === true && (/^(\s*if\s*\()/).test(a) === false && a.indexOf("{") !== -1 && (/\=\s*(\{|\[|\()/).test(join) === false && ((/(\+|\-|\=|\*|\?)\=/).test(join) === false || ((/\=+('|")?\)/).test(a) === true && (/;\s*base64/).test(a) === true)) && (/function(\s+\w+)*\s*\(/).test(join) === false) {
+                if ((/((public)|(private))\s+(((static)?\s+(v|V)oid)|(class)|(final))/).test(a) === true) {
+                    pd.langproper = "Java (not supported yet)";
+                    return "text";
+                }
                 if ((/:\s*(\{|\(|\[)/).test(a) === true || ((/^(\s*return;?\s*\{)/).test(a) === true && (/(\};?\s*)$/).test(a) === true)) {
+                    pd.langproper = "JavaScript";
                     return "javascript";
                 }
+                pd.langproper = "CSS";
                 return "css";
             }
+            pd.langproper = "unknown";
             return defaultt;
         }
-        if (((/(>[\w\s:]*)?<(\/|\!)?[\w\s:\-\[]+/).test(a) === true && (/^([\s\w]*<)/).test(a) === true && (/(>[\s\w]*)$/).test(a) === true) || ((/^(\s*<s((cript)|(tyle)))/i).test(a) === true && (/(<\/s((cript)|(tyle))>\s*)$/i).test(a) === true)) {
+        if (((/(>[\w\s:]*)?<(\/|\!)?[\w\s:\-\[]+/).test(a) === true && ((/^([\s\w]*<)/).test(a) === true || (/(>[\s\w]*)$/).test(a) === true)) || ((/^(\s*<s((cript)|(tyle)))/i).test(a) === true && (/(<\/s((cript)|(tyle))>\s*)$/i).test(a) === true)) {
             if ((/^(\s*<\!doctype html>)/i).test(a) === true || (/^(\s*<html)/i).test(a) === true || ((/^(\s*<\!DOCTYPE\s+((html)|(HTML))\s+PUBLIC\s+)/).test(a) === true && (/XHTML\s+1\.1/).test(a) === false && (/XHTML\s+1\.0\s+(S|s)((trict)|(TRICT))/).test(a) === false)) {
+                pd.langproper = "HTML";
                 return "html";
+            }
+            if ((/^(\s*<\?xml)/).test(a) === true) {
+                if ((/XHTML\s+1\.1/).test(a) === true || (/XHTML\s+1\.0\s+(S|s)((trict)|(TRICT))/).test(a) === true) {
+                    pd.langproper = "XHTML";
+                } else {
+                    pd.langproper = "XML";
+                }
+            } else {
+                pd.langproper = "markup";
             }
             return "markup";
         }
+        pd.langproper = "unknown";
         return defaultt;
     };
 
@@ -746,26 +769,20 @@ var pd = {};
                 node      = pd.$$("showOptionsCallOut");
                 pd.zIndex += 1;
                 if (autotest === true) {
-                    presumedLanguage = lang;
-                    if (lang === "javascript") {
-                        if (output[1].indexOf("React JSX") > 0 && ((api.jsscope === "report" && (/Code type is presumed to be React JSX/).test(output[1]) === false && (/Presumed language is &lt;em&gt;React JSX/).test(output[1]) === false) || api.jsscope !== "report")) {
-                            lang = "React JSX";
-                        } else {
-                            lang = "JavaScript";
+                    presumedLanguage = pd.langproper;
+                    if (pd.langproper === "javascript") {
+                        if (output[1] !== undefined && output[1].indexOf("React JSX") > 0 && ((api.jsscope === "report" && (/Code type is presumed to be React JSX/).test(output[1]) === false && (/Presumed language is &lt;em&gt;React JSX/).test(output[1]) === false) || api.jsscope !== "report")) {
+                            pd.langproper = "React JSX";
                         }
-                    } else if (lang === "text") {
-                        lang = "plain text";
-                    } else if (lang === "htmlembedded") {
-                        lang = "HTML";
-                    } else if (lang !== "markup") {
-                        lang = lang.toUpperCase();
+                    } else if (pd.langproper === "text") {
+                        pd.langproper = "plain text";
                     }
                 } else {
-                    lang = api.lang;
+                    pd.langproper = api.lang;
                 }
                 if (autotest === true && pd.o.announce !== null) {
                     pd.o.announce.style.color = "#00c";
-                    pd.o.announce.innerHTML   = "Code type is set to <strong>auto</strong>. <span>Presumed language is <em>" + lang + "</em>.</span>";
+                    pd.o.announce.innerHTML   = "Code type is set to <strong>auto</strong>. <span>Presumed language is <em>" + pd.langproper + "</em>.</span>";
                 }
                 if (autotest === true) {
                     api.lang = "auto";
@@ -1001,7 +1018,7 @@ var pd = {};
                             if (node !== null) {
                                 node.innerHTML = pd.stat.js;
                             }
-                        } else if (lang === "markup" || lang === "html" || lang === "xml") {
+                        } else if (lang === "markup" || lang === "html" || lang === "xml" || lang === "xhtml") {
                             pd.stat.markup += 1;
                             node           = pd.$$("stmarkup");
                             if (node !== null) {
@@ -4915,7 +4932,7 @@ var pd = {};
             }
             if (pd.settings.feedback.newb === false && pd.stat.usage > 2 && pd.stat.visit < 5 && pd.test.domain === true && pd.o.report.feed.box !== null) {
                 pd.settings.feedback.newb = true;
-                node = pd.$$("feedintro");
+                node                      = pd.$$("feedintro");
                 if (node !== null) {
                     node.innerHTML = "Thank you for trying Pretty Diff. Please let me know what you think of this tool.";
                 }
