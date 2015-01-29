@@ -780,14 +780,16 @@ var pd = {};
                 } else {
                     pd.langproper = api.lang;
                 }
-                if (autotest === true && pd.o.announce !== null) {
-                    pd.o.announce.style.color = "#00c";
-                    pd.o.announce.innerHTML   = "Code type is set to <strong>auto</strong>. <span>Presumed language is <em>" + pd.langproper + "</em>.</span>";
+                if (pd.o.announce !== null) {
+                    if (autotest === true) {
+                        pd.o.announce.style.color = "#00c";
+                        pd.o.announce.innerHTML   = "Code type is set to <strong>auto</strong>. <span>Presumed language is <em>" + pd.langproper + "</em>.</span>";
+                    } else {
+                        pd.o.announce.innerHTML = "";
+                    }
                 }
                 if (autotest === true) {
                     api.lang = "auto";
-                } else {
-                    pd.o.announce.innerHTML = "";
                 }
                 if (api.mode === "beautify") {
                     if (pd.o.codeBeauOut !== null) {
@@ -800,6 +802,11 @@ var pd = {};
                     if (pd.o.report.code.box !== null) {
                         if (output[1] !== "") {
                             pd.o.report.code.body.innerHTML = output[1];
+                            if (pd.o.announce !== null && pd.$$("jserror") !== null) {
+                                pd.o.announce.innerHTML                                     = "<strong>" + pd.$$("jserror").getElementsByTagName("strong")[0].innerHTML + "</strong> <span>See 'Code Report' for details</span>";
+                                pd.o.announce.style.color                                   = "inherit";
+                                pd.o.announce.getElementsByTagName("strong")[0].style.color = "#c00";
+                            }
                             if (autotest === true) {
                                 if (pd.o.report.code.body.firstChild.nodeType > 1) {
                                     pd.o.report.code.body.removeChild(pd.o.report.code.body.firstChild);
@@ -4649,7 +4656,7 @@ var pd = {};
                     if (list[2].charAt(0) === "0") {
                         list[2] = list[2].substr(1);
                     }
-                    return "Updated: " + list[2] + " " + month[list[1]] + " 20" + list[0];
+                    return "Updated: " + list[2] + " " + month[list[1]] + " 20" + list[0] + "<span>Version: <span>" + edition.version + "</span></span>";
                 }());
             }
             if (pd.o.comment !== null) {

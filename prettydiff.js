@@ -3125,6 +3125,7 @@ var prettydiff = function prettydiff(api) {
                 meta          = [],
                 varlist       = [],
                 markupvar     = [],
+                error         = "",
                 news          = 0,
                 stats         = {
                     comma       : 0,
@@ -4356,69 +4357,19 @@ var prettydiff = function prettydiff(api) {
                             }
                         }
                         for (ee = base; ee < jj; ee += 1) {
-                            if ((start === "\"" || start === "'") && (c[ee] === "\n" || c[ee] === "\r")) {
-                                stats = {
-                                    comma       : 0,
-                                    commentBlock: {
-                                        chars: 0,
-                                        token: 0
-                                    },
-                                    commentLine : {
-                                        chars: 0,
-                                        token: 0
-                                    },
-                                    container   : 0,
-                                    number      : {
-                                        chars: 0,
-                                        token: 0
-                                    },
-                                    operator    : {
-                                        chars: 0,
-                                        token: 0
-                                    },
-                                    regex       : {
-                                        chars: 0,
-                                        token: 0
-                                    },
-                                    semicolon   : 0,
-                                    server      : {
-                                        chars: 0,
-                                        token: 0
-                                    },
-                                    space       : {
-                                        newline: 0,
-                                        other  : 0,
-                                        space  : 0,
-                                        tab    : 0
-                                    },
-                                    string      : {
-                                        chars: 0,
-                                        quote: 0,
-                                        token: 0
-                                    },
-                                    word        : {
-                                        chars: 0,
-                                        token: 0
-                                    }
-                                };
-                                f     = a;
+                            if ((start === "\"" || start === "'") && (c[ee] === "\n" || c[ee] === "\r") && error === "") {
+                                f = a;
                                 do {
                                     f -= 1;
                                 } while (c[f] !== "\n" && c[f] !== "\r" && f > 0);
-                                output = c.slice(f, ee).join("");
-                                g      = types.length;
+                                error = c.slice(f, ee).join("");
+                                g     = types.length;
                                 do {
                                     g -= 1;
                                 } while (g > 0 && types[g] !== "comment");
-                                if (token[g].indexOf("//") === 0 && output.replace(/^\s+/, "").indexOf(token[g + 1]) === 0 && (token[g].split("\"").length % 2 === 1 || token[g].split("'").length % 2 === 1)) {
-                                    output = "\n" + token[g] + output;
+                                if (token[g].indexOf("//") === 0 && error.replace(/^\s+/, "").indexOf(token[g + 1]) === 0 && (token[g].split("\"").length % 2 === 1 || token[g].split("'").length % 2 === 1)) {
+                                    error = token[g] + error;
                                 }
-                                b     = 1;
-                                token = [""];
-                                types = [""];
-                                ltoke = token[0];
-                                ltype = types[0];
-                                return "Error: unterminated string in JavaScript\n" + output;
                             }
                             build.push(c[ee]);
                             if (c[ee] === end[endlen] || (rtest === true && (c[ee] === "\n" || ee === jj - 1))) {
@@ -7288,6 +7239,16 @@ var prettydiff = function prettydiff(api) {
                             newlines = 1;
                         }
                         output.push("<div class='doc'>");
+                        if (error !== "") {
+                            output.push("<p id=\"jserror\"><strong>Error: unterminated string in JavaScript.</strong> <code><span>");
+                            if (error.indexOf("\n") > 0) {
+                                output.push(error.replace("\n", "</span>"));
+                            } else {
+                                output.push(error);
+                                output.push("</span>");
+                            }
+                            output.push("</code></p>");
+                        }
                         output.push("<p><em>");
                         output.push(semi);
                         output.push("</em> instance");
@@ -10525,22 +10486,23 @@ var prettydiff = function prettydiff(api) {
             cmjs : 140127
         },
         api          : {
-            dom      : 150127,
+            dom      : 150128,
             nodeLocal: 150124,
             wsh      : 150124
         },
         charDecoder  : 141025,
-        css          : 150124, //diffview.css file
+        css          : 150128, //diffview.css file
         csspretty    : 150124, //csspretty library
         csvbeauty    : 140114, //csvbeauty library
         csvmin       : 131224, //csvmin library
         diffview     : 150124, //diffview library
         documentation: 150126, //documentation.xhtml
-        jspretty     : 150127, //jspretty library
+        jspretty     : 150128, //jspretty library
         latest       : 0,
         markup_beauty: 150126, //markup_beauty library
         markupmin    : 150124, //markupmin library
-        prettydiff   : 150127, //this file
+        prettydiff   : 150128, //this file
+        version      : "1.8.5", //version number
         webtool      : 150124 //prettydiff.com.xhtml
     };
 edition.latest = (function edition_latest() {
