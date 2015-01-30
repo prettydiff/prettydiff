@@ -97,6 +97,7 @@ var pd = {};
                     mode    : pd.mode,
                     options : pd.commentString,
                     settings: pd.settings,
+                    stat    : pd.stat,
                     source  : pd.source,
                     url     : url
                 },
@@ -253,7 +254,7 @@ var pd = {};
                 pd.langproper = "JavaScript";
                 return "javascript";
             }
-            if ((/((\}?(\(\))?\)*;?\s*)|([a-z0-9]("|')?\)*);?(\s*\})*)$/i).test(a) === true && ((/(var\s+[a-z]+[a-zA-Z0-9]*)/).test(a) === true || (/(\=\s*function)|(\s*function\s+(\w*\s+)?\()/).test(a) === true || a.indexOf("{") === -1 || (/^(\s*if\s+\()/).test(a) === true)) {
+            if ((/((\}?(\(\))?\)*;?\s*)|([a-z0-9]("|')?\)*);?(\s*\})*)$/i).test(a) === true && ((/(var\s+[a-z]+[a-zA-Z0-9]*)/).test(a) === true || (/((\=|(\$\())\s*function)|(\s*function\s+(\w*\s+)?\()/).test(a) === true || a.indexOf("{") === -1 || (/^(\s*if\s+\()/).test(a) === true)) {
                 if (a.indexOf("(") > -1 || a.indexOf("=") > -1 || (a.indexOf(";") > -1 && a.indexOf("{") > -1)) {
                     pd.langproper = "JavaScript";
                     return "javascript";
@@ -811,7 +812,7 @@ var pd = {};
                                 if (pd.o.report.code.body.firstChild.nodeType > 1) {
                                     pd.o.report.code.body.removeChild(pd.o.report.code.body.firstChild);
                                 }
-                                pd.o.report.code.body.firstChild.innerHTML = "Code type is set to <strong>auto</strong>. <span>Presumed language is <em>" + lang + "</em>.</span>";
+                                pd.o.report.code.body.firstChild.innerHTML = "Code type is set to <strong>auto</strong>. <span>Presumed language is <em>" + pd.langproper + "</em>.</span>";
                             }
                             pd.o.report.code.box.style.zIndex  = pd.zIndex;
                             pd.o.report.code.box.style.display = "block";
@@ -911,7 +912,7 @@ var pd = {};
                             if (pd.o.report.code.body.firstChild.nodeType > 1) {
                                 pd.o.report.code.body.removeChild(pd.o.report.code.body.firstChild);
                             }
-                            pd.o.report.code.body.firstChild.innerHTML = "Code type is set to <strong>auto</strong>. <span>Presumed language is <em>" + lang + "</em>.</span>";
+                            pd.o.report.code.body.firstChild.innerHTML = "Code type is set to <strong>auto</strong>. <span>Presumed language is <em>" + pd.langproper + "</em>.</span>";
                         }
                     }
                     if (buttons[1].parentNode.style.display === "none") {
@@ -990,7 +991,7 @@ var pd = {};
                             if (pd.o.report.code.body.firstChild.nodeType > 1) {
                                 pd.o.report.code.body.removeChild(pd.o.report.code.body.firstChild);
                             }
-                            pd.o.report.code.body.firstChild.innerHTML = "Code type is set to <strong>auto</strong>. <span>Presumed language is <em>" + lang + "</em>.</span>";
+                            pd.o.report.code.body.firstChild.innerHTML = "Code type is set to <strong>auto</strong>. <span>Presumed language is <em>" + pd.langproper + "</em>.</span>";
                         }
                         pd.o.report.code.box.style.zIndex  = pd.zIndex;
                         pd.o.report.code.box.style.display = "block";
@@ -1975,7 +1976,7 @@ var pd = {};
     //minimize report windows to the default size and location
     pd.minimize            = function dom__minimize(e, steps, node) {
         var x         = node || this,
-            parent    = x.parentNode,
+            parent    = (x.parentNode.nodeName.toLowerCase() === "a") ? x.parentNode.parentNode : x.parentNode,
             box       = parent.parentNode,
             finale    = 0,
             id        = box.getAttribute("id"),
@@ -4043,9 +4044,16 @@ var pd = {};
             },
             textareafocus = function dom__load_textareafocus() {
                 var tabkey = pd.$$("textareaTabKey");
-                tabkey.style.display        = "block";
                 tabkey.style.zIndex         = pd.zIndex + 10;
                 pd.$$("arialive").innerHTML = tabkey.innerHTML;
+                if (pd.mode === "diff") {
+                    tabkey.style.right = "51%";
+                    tabkey.style.left  = "auto";
+                } else {
+                    tabkey.style.left  = "51%";
+                    tabkey.style.right = "auto";
+                }
+                tabkey.style.display = "block";
                 if (pd.test.cm === true) {
                     this.parentNode.parentNode.setAttribute("class", this.parentNode.parentNode.getAttribute("class") + " filefocus");
                 }
@@ -4360,8 +4368,8 @@ var pd = {};
                     pd.o.codeDiffNew.getElementsByTagName("textarea")[0].onblur    = textareablur;
                     pd.o.codeDiffNew.getElementsByTagName("textarea")[0].onkeydown = pd.areaTabOut;
                 } else {
-                    pd.o.codeDiffNew.onkeydown = pd.fixtabs;
                     pd.o.codeDiffNew.onfocus   = textareafocus;
+                    pd.o.codeDiffNew.onblur    = textareablur;
                     pd.o.codeDiffNew.onkeydown = function dom__load_bindDiffNewDown(e) {
                         var event = e || window.event;
                         pd.fixtabs(event, this);
@@ -4416,7 +4424,7 @@ var pd = {};
                 title.ontouchstart                = grab;
                 buttons                           = pd.o.report.code.box.getElementsByTagName("p")[0];
                 node                              = pd.$$("jsscope-yes");
-                if (node !== null && node.checked === true) {
+                if (node !== null && node.checked === true && buttons.innerHTML.indexOf("save") < 0) {
                     if (pd.test.agent.indexOf("firefox") > 0 || pd.test.agent.indexOf("presto") > 0) {
                         node = document.createElement("a");
                         node.setAttribute("href", "#");
