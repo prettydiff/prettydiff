@@ -80,8 +80,12 @@ var pd = {};
         xhr        : (typeof XMLHttpRequest === "function" || typeof XMLHttpRequest === "object" || typeof ActiveXObject === "function")
     };
 
+    if (pd.test.agent.indexOf("msie 8.0;") > 0) {
+        document.getElementsByTagName("body")[0].innerHTML = "<h1>Pretty Diff</h1> <p>Sorry, but Pretty Diff no longer supports IE8. <a href='http://www.microsoft.com/en-us/download/internet-explorer.aspx'>Please upgrade</a> and try again.</p>";
+        return;
+    }
     //beacon error messages so that they are reported and fixed
-    pd.error  = function dom__errorShell() {
+    pd.error = function dom__errorShell() {
         return;
     };
     if (pd.test.xhr === true && pd.test.domain === true) {
@@ -97,8 +101,8 @@ var pd = {};
                     mode    : pd.mode,
                     options : pd.commentString,
                     settings: pd.settings,
-                    stat    : pd.stat,
                     source  : pd.source,
+                    stat    : pd.stat,
                     url     : url
                 },
                 words      = message.toLowerCase(),
@@ -1913,7 +1917,9 @@ var pd = {};
                 reader         = new FileReader();
                 reader.onload  = fileLoad;
                 reader.onerror = fileError;
-                reader.readAsText(files[a], "UTF-8");
+                if (files[a] !== undefined) {
+                    reader.readAsText(files[a], "UTF-8");
+                }
             }
             pd.recycle();
         }
