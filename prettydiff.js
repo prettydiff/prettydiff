@@ -3252,7 +3252,7 @@ var prettydiff = function prettydiff(api) {
                         var cc        = 0,
                             dd        = 0,
                             ee        = 0,
-                            end       = token.length - 2,
+                            end       = token.length - 1,
                             keys      = [],
                             keylen    = 0,
                             keyend    = 0,
@@ -3279,6 +3279,9 @@ var prettydiff = function prettydiff(api) {
                             pairToken = [],
                             pairTypes = [],
                             pairLines = [];
+                        do {
+                            end -= 1;
+                        } while (end > 0 && (token[end] === "," || types[end] === "comment" || types[end] === "comment-inline"));
                         for (cc = end; cc > -1; cc -= 1) {
                             if (types[cc] === "end") {
                                 dd += 1;
@@ -5081,7 +5084,7 @@ var prettydiff = function prettydiff(api) {
                         if (ltype === "comment" || ltype === "comment-inline") {
                             do {
                                 lengtha -= 1;
-                            } while (types[lengtha] === "comment" || ltype === "comment-inline");
+                            } while (lengtha > 0 && (types[lengtha] === "comment" || ltype === "comment-inline"));
                             ltoke   = token[lengtha];
                             lengtha = token.length;
                         }
@@ -5092,6 +5095,7 @@ var prettydiff = function prettydiff(api) {
                             token.push(ltoke);
                             types.push(ltype);
                             lines.push(0);
+                            objtest(false);
                         } else {
                             if (ltoke !== ";" && lengthb < token.length) {
                                 asi(a);
