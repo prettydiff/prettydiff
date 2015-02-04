@@ -4337,11 +4337,15 @@ var prettydiff = function prettydiff(api) {
                             f -= 1;
                         } while (c[f] !== "\n" && c[f] !== "\r" && f > 0);
                         error.push(c.slice(f, start).join(""));
-                        do {
-                            g -= 1;
-                        } while (g > 0 && types[g] !== "comment");
-                        if (token[g].indexOf("//") === 0 && error[1].replace(/^\s+/, "").indexOf(token[g + 1]) === 0 && (token[g].split("\"").length % 2 === 1 || token[g].split("'").length % 2 === 1)) {
-                            error[1] = [message, token[g] + error[1]];
+                        if (g > 1) {
+                            do {
+                                g -= 1;
+                            } while (g > 0 && types[g] !== "comment");
+                        }
+                        if (g > 0 && token[g].indexOf("//") === 0 && error[1].replace(/^\s+/, "").indexOf(token[g + 1]) === 0 && (token[g].split("\"").length % 2 === 1 || token[g].split("'").length % 2 === 1)) {
+                            error = [message, token[g] + error[1]];
+                        } else {
+                            error = [message, error[1]];
                         }
                     },
                     generic        = function jspretty__tokenize_genericBuilder(start, ending) {
@@ -10508,11 +10512,11 @@ var prettydiff = function prettydiff(api) {
         csvmin       : 131224, //csvmin library
         diffview     : 150201, //diffview library
         documentation: 150126, //documentation.xhtml
-        jspretty     : 150203, //jspretty library
+        jspretty     : 150204, //jspretty library
         latest       : 0,
         markup_beauty: 150203, //markup_beauty library
         markupmin    : 150124, //markupmin library
-        prettydiff   : 150203, //this file
+        prettydiff   : 150204, //this file
         version      : "1.8.9", //version number
         webtool      : 150124 //prettydiff.com.xhtml
     };
