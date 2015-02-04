@@ -2181,7 +2181,7 @@ var pd = {};
 
     //maximize report window to available browser window
     pd.maximize            = function dom__maximize(node) {
-        var x       = node || this,
+        var x       = (node.nodeType === 1) ? node : this,
             parent  = {},
             save    = false,
             box     = {},
@@ -2192,7 +2192,6 @@ var pd = {};
             left    = (document.body.parentNode.scrollLeft > document.body.scrollLeft) ? document.body.parentNode.scrollLeft : document.body.scrollLeft,
             buttons = [],
             resize  = {};
-        pd.top(box);
         if (x.nodeType !== 1) {
             return;
         }
@@ -2204,6 +2203,7 @@ var pd = {};
         id      = box.getAttribute("id");
         heading = box.getElementsByTagName("h3")[0];
         body    = box.getElementsByTagName("div")[0];
+        pd.top(box);
 
         //maximize
         if (x.innerHTML === "\u2191") {
