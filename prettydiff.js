@@ -1012,7 +1012,7 @@ var prettydiff = function prettydiff(api) {
                             ];
                         }
                         return [
-                            a[1][0], auto + proctime() + a[0]
+                            a[1][0], auto + proctime() + a[0] + " <p>Accessibility note. &lt;em&gt; tags in the output represent presentation for variable coloring and scope.</p>"
                         ];
                     }());
                 }
@@ -4342,7 +4342,7 @@ var prettydiff = function prettydiff(api) {
                                 g -= 1;
                             } while (g > 0 && types[g] !== "comment");
                         }
-                        if (g > 0 && token[g].indexOf("//") === 0 && error[1].replace(/^\s+/, "").indexOf(token[g + 1]) === 0 && (token[g].split("\"").length % 2 === 1 || token[g].split("'").length % 2 === 1)) {
+                        if (g > -1 && g < token.length && token[g].indexOf("//") === 0 && error[1].replace(/^\s+/, "").indexOf(token[g + 1]) === 0 && (token[g].split("\"").length % 2 === 1 || token[g].split("'").length % 2 === 1)) {
                             error = [message, token[g] + error[1]];
                         } else {
                             error = [message, error[1]];
@@ -7243,12 +7243,12 @@ var prettydiff = function prettydiff(api) {
                         output.push("<div class='doc'>");
                         if (error.length > 0) {
                             output.push("<p id=\"jserror\"><strong>Error: ");
-                            output.push(error[0]);
+                            output.push(error[0].replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;"));
                             output.push("</strong> <code><span>");
                             if (error.indexOf("\n") > 0) {
-                                output.push(error[1].replace("\n", "</span>"));
+                                output.push(error[1].replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace("\n", "</span>"));
                             } else {
-                                output.push(error[1]);
+                                output.push(error[1].replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;"));
                                 output.push("</span>");
                             }
                             output.push("</code></p>");
@@ -10501,23 +10501,23 @@ var prettydiff = function prettydiff(api) {
             cmjs : 140127
         },
         api          : {
-            dom      : 150201,
+            dom      : 150206,
             nodeLocal: 150124,
             wsh      : 150124
         },
         charDecoder  : 141025,
-        css          : 150203, //diffview.css file
+        css          : 150206, //diffview.css file
         csspretty    : 150203, //csspretty library
         csvbeauty    : 140114, //csvbeauty library
         csvmin       : 131224, //csvmin library
         diffview     : 150201, //diffview library
         documentation: 150126, //documentation.xhtml
-        jspretty     : 150204, //jspretty library
+        jspretty     : 150206, //jspretty library
         latest       : 0,
         markup_beauty: 150203, //markup_beauty library
         markupmin    : 150124, //markupmin library
-        prettydiff   : 150204, //this file
-        version      : "1.8.9", //version number
+        prettydiff   : 150206, //this file
+        version      : "1.8.12", //version number
         webtool      : 150124 //prettydiff.com.xhtml
     };
 edition.latest = (function edition_latest() {
