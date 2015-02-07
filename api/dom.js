@@ -2584,7 +2584,7 @@ var pd = {};
 
     pd.feedsubmit          = function dom__feedsubmit(auto) {
         var datapack  = {},
-            namecheck = JSON.parse(localStorage.settings),
+            namecheck = (localStorage.settings !== undefined) ? JSON.parse(localStorage.settings) : {},
             radios    = [],
             text      = (pd.$$("feedtextarea") === null) ? "" : pd.$$("feedtextarea").value,
             a         = 0,
@@ -4135,6 +4135,8 @@ var pd = {};
             pd.settings.feedreport = {};
             pd.settings.codereport = {};
             pd.settings.statreport = {};
+            pd.settings.feedreport.newb = false;
+            pd.settings.feedreport.veteran = false;
             pd.keypress            = {
                 date    : {},
                 keys    : [],
@@ -4201,6 +4203,9 @@ var pd = {};
                         pd.commentString = JSON.parse(localStorage.commentString);
                     }
                     if (localStorage.settings !== undefined) {
+                        if (localStorage.settings.indexOf(":undefined") > 0) {
+                            localStorage.settings = localStorage.settings.replace(/:undefined/g, ":false");
+                        }
                         pd.settings = JSON.parse(localStorage.settings);
                         if (pd.settings.knownname === undefined) {
                             pd.settings.knownname = "\"" + Math.random().toString().slice(2) + Math.random().toString().slice(2) + "\"";
@@ -5011,6 +5016,9 @@ var pd = {};
                     };
                 node = pd.$$("colorScheme");
                 if (node !== null) {
+                    if (localStorage.settings.indexOf(":undefined") > 0) {
+                        localStorage.settings = localStorage.settings.replace(/:undefined/g, ":false");
+                    }
                     pd.settings = (pd.test.ls === true && pd.test.json === true && localStorage.settings !== undefined) ? JSON.parse(localStorage.settings) : {};
                     if (colorParam.indexOf("c=") === 0 || colorParam.indexOf("&c=") > -1) {
                         if (colorParam.indexOf("&c=") > -1) {

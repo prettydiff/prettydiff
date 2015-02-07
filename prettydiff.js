@@ -10517,7 +10517,7 @@ var prettydiff = function prettydiff(api) {
         markup_beauty: 150203, //markup_beauty library
         markupmin    : 150124, //markupmin library
         prettydiff   : 150206, //this file
-        version      : "1.8.12", //version number
+        version      : "1.8.13", //version number
         webtool      : 150124 //prettydiff.com.xhtml
     };
 edition.latest = (function edition_latest() {
