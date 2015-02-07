@@ -8649,7 +8649,7 @@ var prettydiff = function prettydiff(api) {
                                         comment = "//";
                                     } else if (y[a] === "/" && y[a + 1] && y[a + 1] === "*") {
                                         comment = "/" + "*";
-                                    } else if (y[a] === "'" || y[a] === "\"" || y[a] === "/") {
+                                    } else if (y[a] === "'" || y[a] === "\"" || (y[a] === "/" && y[a - 1] !== "<")) {
                                         if (y[a] === "/") {
                                             for (b = a - 1; b > 0; b -= 1) {
                                                 if ((/\s/).test(y[b]) === false) {
@@ -8753,13 +8753,14 @@ var prettydiff = function prettydiff(api) {
                         } else if (y[i] === "<" && i < end - 6 && y[i + 1].toLowerCase() === "s" && y[i + 2].toLowerCase() === "c" && y[i + 3].toLowerCase() === "r" && y[i + 4].toLowerCase() === "i" && y[i + 5].toLowerCase() === "p" && y[i + 6].toLowerCase() === "t") {
                             scriptflag = i;
                             build.push(builder(">"));
+                            last = build[build.length - 1];
                             if (last.indexOf(" type=\"syntaxhighlighter\"") !== -1) {
                                 i                       = scriptflag;
                                 build[build.length - 1] = builder("</script>");
                                 token.push("T_ignore");
                             } else if (last.charAt(last.length - 2) === "/") {
                                 token.push("T_singleton");
-                            } else if (last.indexOf(" type=\"") === -1 || last.indexOf(" type=\"text/javascript\"") !== -1 || last.indexOf(" type=\"application/javascript\"") !== -1 || last.indexOf(" type=\"application/x-javascript\"") !== -1 || last.indexOf(" type=\"text/ecmascript\"") !== -1 || last.indexOf(" type=\"application/ecmascript\"") !== -1 || last.indexOf(" type=\"text/cjs\"") !== -1) {
+                            } else if (last.indexOf(" type=\"") === -1 || last.indexOf(" type=\"text/javascript\"") > -1 || last.indexOf(" type=\"application/javascript\"") > -1 || last.indexOf(" type=\"application/x-javascript\"") > -1 || last.indexOf(" type=\"text/ecmascript\"") > -1 || last.indexOf(" type=\"application/ecmascript\"") > -1 || last.indexOf(" type=\"text/cjs\"") > -1 || last.indexOf(" type=\"text/jsx\"") > -1) {
                                 token.push("T_script");
                             } else if (build[build.length - 1].indexOf(" data-prettydiff-ignore") > 0) {
                                 token.push("T_ignore");
@@ -10501,7 +10502,7 @@ var prettydiff = function prettydiff(api) {
             cmjs : 140127
         },
         api          : {
-            dom      : 150206,
+            dom      : 150207,
             nodeLocal: 150124,
             wsh      : 150124
         },
@@ -10514,10 +10515,10 @@ var prettydiff = function prettydiff(api) {
         documentation: 150126, //documentation.xhtml
         jspretty     : 150206, //jspretty library
         latest       : 0,
-        markup_beauty: 150203, //markup_beauty library
+        markup_beauty: 150207, //markup_beauty library
         markupmin    : 150124, //markupmin library
-        prettydiff   : 150206, //this file
-        version      : "1.8.13", //version number
+        prettydiff   : 150207, //this file
+        version      : "1.8.14", //version number
         webtool      : 150124 //prettydiff.com.xhtml
     };
 edition.latest = (function edition_latest() {

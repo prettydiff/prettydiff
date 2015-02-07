@@ -5016,7 +5016,7 @@ var pd = {};
                     };
                 node = pd.$$("colorScheme");
                 if (node !== null) {
-                    if (localStorage.settings.indexOf(":undefined") > 0) {
+                    if (localStorage.settings !== undefined && localStorage.settings.indexOf(":undefined") > 0) {
                         localStorage.settings = localStorage.settings.replace(/:undefined/g, ":false");
                     }
                     pd.settings = (pd.test.ls === true && pd.test.json === true && localStorage.settings !== undefined) ? JSON.parse(localStorage.settings) : {};
