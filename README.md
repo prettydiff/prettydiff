@@ -1,13 +1,14 @@
-Pretty Diff
-===========
+Try it online at http://prettydiff.com/.
+
+![Pretty Diff logo](http://prettydiff.com/images/pdlogoxs.svg) Pretty Diff
+===
 
 [![Gitter](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/prettydiff/prettydiff?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
 
-Try it online at http://prettydiff.com/ or [join the mailing list](https://groups.google.com/d/forum/pretty-diff "Pretty Diff mailing list").
----------------------------------------------------------------------
+[![NPM stats](https://nodei.co/npm/prettydiff.svg?downloadRank=true&downloads=true)](https://www.npmjs.org/package/prettydiff)
 
 api/dom.js
-----------
+---
 
 Please feel free to use prettydiff.com.xhtml file to supplement dom.js.  Otherwise, dom.js requires supplemental assistance to map DOM nodes from an HTML source to the properties of the pd.o object found in dom.js.  dom.js is fault tolerant so most of the nodes mapped by pd.o need not be supported from custom HTML.
 
@@ -17,15 +18,17 @@ To run Pretty Diff using dom.js include the following two script tags and bind t
     <script type="application/javascript" src="api/dom.js"></script>
 
 Node.js / CommonJS / RequireJS
-------------------------------
+---
 
 Node.js support is provided by api/node-local.js.  This file can execute
 in the following modes:
 
+  * auto - Determine if the resource is text, a file, or a directory and process as such (except that directories are processed with the subdirectory option)
   * screen - code input is on the command line and output is to the command line
   * filescreen - code input is in a file and the output is to the command line
   * file - the input and the output reside in files
   * directory - everything in a directory is processed into a specified output directory except ".", "..", and subdirectories
+  * subdirectory - process the entire directory tree
 
 Execute in the context of a NodeJS application:
 
@@ -59,7 +62,7 @@ Pretty Diff would be executed using the following on CLI:
     cscript prettydiff.wsf /source:"myFile.xml" /mode:"beautify"
 
 Execute with vanilla JS
------------------------
+---
 
     var args   = {
             source: "asdf",
@@ -68,8 +71,8 @@ Execute with vanilla JS
         },
         output = prettydiff(args);
 
-Pre-Inventory:
---------------
+Notes:
+---
 
   * The component files are provided for access to individual functions
    independent of the Pretty Diff application.  The component code is
@@ -81,7 +84,7 @@ Pre-Inventory:
    http://prettydiff.com/documentation.php
 
 License:
---------
+---
 
  @source: http://prettydiff.com/prettydiff.js
  @documentation - English: http://prettydiff.com/documentation.php
@@ -127,7 +130,7 @@ License:
  @licend  The above is the entire license notice for Pretty Diff.
 
 Acknowledgements
-----------------
+---
  
  * Harry Whitfield - http://g6auc.me.uk/
   - JS Pretty QA
