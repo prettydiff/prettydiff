@@ -1,5 +1,5 @@
 /*prettydiff.com api.topcoms: true, api.inchar: " ", api.insize: 4, api.vertical: true */
-/*global console, edition, document, localStorage, window, prettydiff, summary, markup_beauty, csspretty, csvbeauty, csvmin, markupmin, jspretty, diffview, XMLHttpRequest, location, ActiveXObject, FileReader, navigator, setTimeout, codeMirror, AudioContext, ArrayBuffer, Uint8Array*/
+/*global console, edition, document, localStorage, window, prettydiff, summary, markup_beauty, csspretty, csvbeauty, csvmin, markupmin, jspretty, diffview, XMLHttpRequest, location, ActiveXObject, FileReader, navigator, setTimeout, CodeMirror, AudioContext, ArrayBuffer, Uint8Array*/
 /***********************************************************************
  This is written by Austin Cheney on 3 Mar 2009. Anybody may use this;
  code without permission so long as this comment exists verbatim in each;
@@ -34,7 +34,7 @@ var pd = {};
         audio      : ((typeof AudioContext === "function" || typeof AudioContext === "object") && AudioContext !== null) ? new AudioContext() : null,
 
         //delect if CodeMirror is supported
-        cm         : (location.href.toLowerCase().indexOf("codemirror=false") < 0 && (typeof codeMirror === "object" || typeof codeMirror === "function")) ? true : false,
+        cm         : (location.href.toLowerCase().indexOf("codemirror=false") < 0 && (typeof CodeMirror === "object" || typeof CodeMirror === "function")) ? true : false,
 
         //am I served from the Pretty Diff domain
         domain     : (location.href.indexOf("prettydiff.com") < 15) ? true : false,
@@ -84,6 +84,7 @@ var pd = {};
         document.getElementsByTagName("body")[0].innerHTML = "<h1>Pretty Diff</h1> <p>Sorry, but Pretty Diff no longer supports IE8. <a href='http://www.microsoft.com/en-us/download/internet-explorer.aspx'>Please upgrade</a> and try again.</p>";
         return;
     }
+
     //beacon error messages so that they are reported and fixed
     pd.error = function dom__errorShell() {
         return;
@@ -311,7 +312,7 @@ var pd = {};
 
     if (pd.test.cm === true) {
         pd.cm          = {};
-        pd.cm.diffBase = codeMirror(function (x) {
+        pd.cm.diffBase = CodeMirror(function (x) {
             var node = pd.$$("diffBase");
             if (pd.o.codeDiffBase === null) {
                 if (node === null) {
@@ -338,7 +339,7 @@ var pd = {};
             tabSize          : 4,
             theme            : "white"
         });
-        pd.cm.diffNew  = codeMirror(function (x) {
+        pd.cm.diffNew  = CodeMirror(function (x) {
             var node = pd.$$("diffNew");
             if (pd.o.codeDiffNew === null) {
                 if (node === null) {
@@ -365,7 +366,7 @@ var pd = {};
             tabSize          : 4,
             theme            : "white"
         });
-        pd.cm.beauIn   = codeMirror(function (x) {
+        pd.cm.beauIn   = CodeMirror(function (x) {
             var node = pd.$$("Beautify");
             if (pd.o.codeBeauIn === null) {
                 if (node === null) {
@@ -392,7 +393,7 @@ var pd = {};
             tabSize          : 4,
             theme            : "white"
         });
-        pd.cm.beauOut  = codeMirror(function (x) {
+        pd.cm.beauOut  = CodeMirror(function (x) {
             var node = pd.$$("Beautify");
             if (pd.o.codeBeauOut === null) {
                 if (node === null) {
@@ -420,7 +421,7 @@ var pd = {};
             tabSize          : 4,
             theme            : "white"
         });
-        pd.cm.minnIn   = codeMirror(function (x) {
+        pd.cm.minnIn   = CodeMirror(function (x) {
             var node = pd.$$("Minify");
             if (pd.o.codeMinnIn === null) {
                 if (node === null) {
@@ -447,7 +448,7 @@ var pd = {};
             tabSize          : 4,
             theme            : "white"
         });
-        pd.cm.minnOut  = codeMirror(function (x) {
+        pd.cm.minnOut  = CodeMirror(function (x) {
             var node = pd.$$("Minify");
             if (pd.o.codeMinnOut === null) {
                 if (node === null) {
@@ -715,6 +716,7 @@ var pd = {};
             domain     = (/^((https?:\/\/)|(file:\/\/\/))/),
             event      = e || window.event,
             lang       = "",
+            errortext  = "",
             node       = {},
             requests   = false,
             requestd   = false,
@@ -797,9 +799,9 @@ var pd = {};
                 if (autotest === true) {
                     api.lang = "auto";
                 }
-                button = pd.o.report.code.box.getElementsByTagName("button")[0];
+                button = pd.o.report.code.box.getElementsByTagName("p")[0].getElementsByTagName("button")[0];
                 if (button.getAttribute("class") === "save" && button.innerHTML === "H") {
-                    chromeSave = true;
+                    chromeSave       = true;
                     button.innerHTML = "S";
                 }
                 if (api.mode === "beautify") {
@@ -863,7 +865,7 @@ var pd = {};
                     }
                     if (pd.o.announce !== null) {
                         if (api.lang === "markup" || presumedLanguage === "markup" || presumedLanguage === "html" || presumedLanguage === "htmlembedded" || presumedLanguage === "xhtml" || presumedLanguage === "xml" || presumedLanguage === "jstl") {
-                            lang = (function () {
+                            errortext = (function () {
                                 var a      = 0,
                                     p      = output[1].split("<p><strong>"),
                                     length = p.length;
@@ -880,9 +882,9 @@ var pd = {};
                                 }
                                 return "";
                             }());
-                            if (lang.indexOf("end tag") > 0 || lang.indexOf("Duplicate id") > 0) {
+                            if (errortext.indexOf("end tag") > 0 || errortext.indexOf("Duplicate id") > 0) {
                                 pd.o.announce.style.color = "#c00";
-                                pd.o.announce.innerHTML   = lang;
+                                pd.o.announce.innerHTML   = errortext;
                             }
                         }
                     }
@@ -990,7 +992,7 @@ var pd = {};
                         }
                     }
                 }
-                buttons = pd.o.report.code.box.getElementsByTagName("button");
+                buttons = pd.o.report.code.box.getElementsByTagName("p")[0].getElementsByTagName("button");
                 if (chromeSave === true) {
                     pd.save(buttons[0]);
                 } else if (pd.o.save !== null && pd.o.save.checked === true) {
@@ -1000,7 +1002,7 @@ var pd = {};
                         pd.save(buttons[0]);
                     }
                 }
-                if (buttons[1].parentNode.style.display === "none") {
+                if (buttons[1].parentNode.style.display === "none" && (pd.mode === "diff" || (pd.mode === "beau" && api.jsscope === "report" && lang === "javascript"))) {
                     pd.minimize(buttons[1].onclick, 1, buttons[1]);
                 }
                 if (pd.test.ls === true) {
@@ -1977,19 +1979,20 @@ var pd = {};
     //minimize report windows to the default size and location
     pd.minimize            = function dom__minimize(e, steps, node) {
         var x         = node || this,
-            parent    = (x.parentNode.nodeName.toLowerCase() === "a") ? x.parentNode.parentNode : x.parentNode,
-            box       = parent.parentNode,
+            parent    = {},
+            box       = {},
             finale    = 0,
-            id        = box.getAttribute("id"),
-            body      = box.getElementsByTagName("div")[0],
-            heading   = box.getElementsByTagName("h3")[0],
-            buttons   = parent.getElementsByTagName("button"),
-            save      = (parent.innerHTML.indexOf("save") > -1) ? true : false,
-            buttonMin = (save === true) ? buttons[1] : buttons[0],
-            buttonMax = (save === true) ? buttons[2] : buttons[1],
-            left      = (box.offsetLeft / 10),
-            top       = (box.offsetTop / 10),
-            buttonRes = (save === true) ? buttons[3] : buttons[2],
+            id        = "",
+            body      = {},
+            heading   = {},
+            buttons   = [],
+            save      = false,
+            buttonMin = {},
+            buttonMax = {},
+            left      = 0,
+            top       = 0,
+            buttonRes = {},
+            clicktest = false,
             step      = (typeof steps !== "number") ? 50 : (steps < 1) ? 1 : steps,
             growth    = function dom__minimize_growth() {
                 var boxLocal     = box,
@@ -2102,6 +2105,24 @@ var pd = {};
                 shrink();
                 return false;
             };
+        if (x.parentNode.nodeName.toLowerCase() === "h3") {
+            heading = x.parentNode;
+            box     = heading.parentNode;
+            parent  = box.getElementsByTagName("p")[0];
+        } else {
+            parent  = (x.parentNode.nodeName.toLowerCase() === "a") ? x.parentNode.parentNode : x.parentNode;
+            box     = parent.parentNode;
+            heading = box.getElementsByTagName("h3")[0];
+        }
+        id                      = box.getAttribute("id");
+        body                    = box.getElementsByTagName("div")[0];
+        buttons                 = parent.getElementsByTagName("button");
+        save                    = (parent.innerHTML.indexOf("save") > -1) ? true : false;
+        buttonMin               = (save === true) ? buttons[1] : buttons[0];
+        buttonMax               = (save === true) ? buttons[2] : buttons[1];
+        left                    = (box.offsetLeft / 10);
+        top                     = (box.offsetTop / 10);
+        buttonRes               = (save === true) ? buttons[3] : buttons[2];
         buttonRes.style.display = "block";
         if (box === pd.o.report.feed.box) {
             if (pd.test.filled.feed === true) {
@@ -2126,7 +2147,7 @@ var pd = {};
             e.preventDefault();
         }
         //shrink
-        if (x.innerHTML === "\u035f") {
+        if (buttonMin.innerHTML === "\u035f") {
             if (buttonMax.innerHTML === "\u2191") {
                 pd.settings[id].top    = box.offsetTop;
                 pd.settings[id].left   = box.offsetLeft;
@@ -2143,40 +2164,38 @@ var pd = {};
                 pd.settings[id].height += 35.5;
                 pd.settings[id].width  += 3;
             }
-            pd.settings[id].max           = false;
-            buttonMin.innerHTML           = "\u2191";
-            box.style.borderWidth         = "0em";
-            box.style.top                 = "auto";
-            box.style.zIndex              = "2";
-            parent.style.display          = "none";
-            heading.style.borderLeftStyle = "solid";
-            heading.style.borderTopStyle  = "solid";
-            heading.style.cursor          = "pointer";
-            heading.style.margin          = "0em 0em -3.2em 0.1em";
+            pd.settings[id].max                                    = false;
+            box.style.borderWidth                                  = "0em";
+            box.style.top                                          = "auto";
+            box.style.zIndex                                       = "2";
+            parent.style.display                                   = "none";
+            heading.style.borderLeftStyle                          = "solid";
+            heading.style.borderTopStyle                           = "solid";
+            heading.getElementsByTagName("button")[0].style.cursor = "pointer";
+            heading.style.margin                                   = "0em 0em -3.2em 0.1em";
             shrinkage();
-            x.innerHTML = "\u2191";
+            buttonMin.innerHTML = "\u2191";
 
             //grow
         } else {
             pd.top(box);
-            buttonMin.innerHTML           = "\u2191";
-            parent.style.display          = "block";
-            box.style.borderWidth         = ".1em";
-            box.style.right               = "auto";
-            body.style.display            = "block";
-            heading.style.cursor          = "move";
-            heading.style.borderLeftStyle = "none";
-            heading.style.borderTopStyle  = "none";
-            heading.style.margin          = "0.1em 1.7em -3.2em 0.1em";
+            parent.style.display                                   = "block";
+            box.style.borderWidth                                  = ".1em";
+            box.style.right                                        = "auto";
+            body.style.display                                     = "block";
+            heading.getElementsByTagName("button")[0].style.cursor = "move";
+            heading.style.borderLeftStyle                          = "none";
+            heading.style.borderTopStyle                           = "none";
+            heading.style.margin                                   = "0.1em 1.7em -3.2em 0.1em";
             growth();
-            x.innerHTML = "\u035f";
+            buttonMin.innerHTML = "\u035f";
         }
         return false;
     };
 
     //maximize report window to available browser window
     pd.maximize            = function dom__maximize(node) {
-        var x       = node || this,
+        var x       = (node.nodeType === 1) ? node : this,
             parent  = {},
             save    = false,
             box     = {},
@@ -2389,7 +2408,7 @@ var pd = {};
                     classQuote = classQuote + content[1];
                     bodyInner  = content[0];
                     build.push(" <p>This is the generated output. Please copy the text output, paste into a text file, and save as a &quot;.html&quot; file.</p> <textarea rows='40' cols='80' id='textreport'>");
-                    build.push("&lt;?xml version='1.0' encoding='UTF-8' ?&gt;&lt;!DOCTYPE html PUBLIC '-//W3C//DTD XHTML 1.1//EN' 'http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd'&gt;&lt;html xmlns='http://www.w3.org/1999/xhtml' xml:lang='en'&gt;&lt;head&gt;&lt;title&gt;Pretty Diff - The difference tool&lt;/title&gt;&lt;meta name='robots' content='index, follow'/&gt; &lt;meta name='DC.title' content='Pretty Diff - The difference tool'/&gt; &lt;link rel='canonical' href='http://prettydiff.com/' type='application/xhtml+xml'/&gt;&lt;meta http-equiv='Content-Type' content='application/xhtml+xml;charset=UTF-8'/&gt;&lt;meta http-equiv='Content-Style-Type' content='text/css'/&gt;&lt;style type='text/css'&gt;" + pd.css.core + pd.css["s" + pd.color] + "&lt;/style&gt;&lt;/head&gt;&lt;body class='" + pd.color + "' id='webtool'&gt;&lt;h1&gt;&lt;a href='http://prettydiff.com/'&gt;Pretty Diff - The difference tool&lt;/a&gt;&lt;/h1&gt;");
+                    build.push("&lt;?xml version='1.0' encoding='UTF-8' ?&gt;&lt;!DOCTYPE html PUBLIC '-//W3C//DTD XHTML 1.1//EN' 'http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd'&gt;&lt;html xmlns='http://www.w3.org/1999/xhtml' xml:lang='en'&gt;&lt;head&gt;&lt;title&gt;Pretty Diff - The difference tool&lt;/title&gt;&lt;meta name='robots' content='index, follow'/&gt; &lt;meta name='DC.title' content='Pretty Diff - The difference tool'/&gt; &lt;link rel='canonical' href='http://prettydiff.com/' type='application/xhtml+xml'/&gt;&lt;meta http-equiv='Content-Type' content='application/xhtml+xml;charset=UTF-8'/&gt;&lt;meta http-equiv='Content-Style-Type' content='text/css'/&gt;&lt;style type='text/css'&gt;" + pd.css.core + pd.css["s" + pd.color] + "&lt;/style&gt;&lt;/head&gt;&lt;body class='" + pd.color + "' id='webtool'&gt;&lt;h1&gt;&lt;a href='http://prettydiff.com/'&gt;Pretty Diff - The difference tool&lt;/a&gt;&lt;/h1&gt;&lt;div class=\"pdsavecontent\"&gt;");
                     build.push(bodyInner.replace(/\&/g, "&amp;").replace(/>/g, "&gt;").replace(/</g, "&lt;"));
                     if (content.length === 2) {
                         build.push(classQuote.replace(/\&/g, "&amp;").replace(/>/g, "&gt;").replace(/</g, "&lt;"));
@@ -2408,7 +2427,7 @@ var pd = {};
                         }
                     }
                 }
-                build.push("&lt;/body&gt;&lt;/html&gt;</textarea>");
+                build.push("&lt;/div&gt;&lt;/body&gt;&lt;/html&gt;</textarea>");
             }
             x.innerHTML = "H";
             x.setAttribute("title", "Convert output to rendered HTML.");
@@ -2419,13 +2438,9 @@ var pd = {};
             }
             if (bodyInner !== "") {
                 if (bodyInner.indexOf("<textarea") > -1) {
-                    bodyInner  = bodyInner.replace(/&lt;/g, "<").replace(/&gt;/g, ">").replace(/&amp;/g, "&");
+                    bodyInner = bodyInner.replace(/&lt;/g, "<").replace(/&gt;/g, ">").replace(/&amp;/g, "&");
                 }
-                if (pd.mode === "diff") {
-                    classQuote = (bodyInner.indexOf("<div class='diff'") > -1) ? "<div class='diff'" : "<div class=\"diff\"";
-                } else if (pd.mode === "beau") {
-                    classQuote = (bodyInner.indexOf("<div class='beautify'") > -1) ? "<div class='beautify'" : "<div class=\"beautify\"";
-                }
+                classQuote = (bodyInner.indexOf("<div class='pdsavecontent'") > -1) ? "<div class='pdsavecontent'>" : "<div class=\"pdsavecontent\">";
                 content    = bodyInner.split(classQuote);
                 if (content[0].indexOf("</h1>") > -1) {
                     build.push(content[0].split("</h1>")[1]);
@@ -2434,11 +2449,9 @@ var pd = {};
                 }
                 if (content.length > 1) {
                     if (content[1].indexOf("<script") > -1) {
-                        content[1] = classQuote + (content[1].substring(0, content[1].indexOf("<script")));
+                        content[1] = content[1].substring(0, content[1].indexOf("<script"));
                     } else if (content[1].indexOf("</body") > -1) {
-                        content[1] = classQuote + (content[1].substring(0, content[1].indexOf("</body")));
-                    } else {
-                        content[1] = classQuote + content[1];
+                        content[1] = content[1].substring(0, content[1].indexOf("</body") - 6);
                     }
                     build.push(content[1]);
                 }
@@ -2449,7 +2462,7 @@ var pd = {};
             content        = body.getElementsByTagName("ol");
             if (content.length > 0) {
                 if (pd.mode === "diff") {
-                    pd.colSliderProperties   = [
+                    pd.colSliderProperties  = [
                         content[0].clientWidth, content[1].clientWidth, content[2].parentNode.clientWidth, content[2].parentNode.parentNode.clientWidth, content[2].parentNode.offsetLeft - content[2].parentNode.parentNode.offsetLeft
                     ];
                     content[2].onmousedown  = pd.colSliderGrab;
@@ -2472,11 +2485,13 @@ var pd = {};
 
     //basic drag and drop for the report windows
     pd.grab                = function dom__grab(e, x) {
-        var box        = x.parentNode,
+        var box        = x.parentNode.parentNode,
             parent     = box.getElementsByTagName("p")[0],
             save       = (parent.innerHTML.indexOf("save") > -1) ? true : false,
             minifyTest = (parent.style.display === "none") ? true : false,
-            minButton  = (save === true) ? box.getElementsByTagName("button")[1] : box.getElementsByTagName("button")[0],
+            buttons    = box.getElementsByTagName("p")[0].getElementsByTagName("button"),
+            minButton  = (save === true) ? buttons[1] : buttons[0],
+            resize     = (save === true) ? buttons[3] : buttons[2],
             body       = box.getElementsByTagName("div")[0],
             heading    = (box.firstChild.nodeType > 1) ? box.firstChild.nextSibling : box.firstChild,
             boxLeft    = box.offsetLeft,
@@ -2511,7 +2526,9 @@ var pd = {};
                 body.style.opacity = "1";
                 box.style.height   = "auto";
                 heading.style.top  = "100%";
+                resize.style.top   = "100%";
                 pd.options(box);
+                event.preventDefault();
                 return false;
             },
             boxmove    = function dom__grab_boxmove(f) {
@@ -2531,11 +2548,6 @@ var pd = {};
             };
         e = e || window.event;
         if (minifyTest === true) {
-            if (save === true) {
-                minButton = box.getElementsByTagName("button")[1];
-            } else {
-                minButton = box.getElementsByTagName("button")[0];
-            }
             if (filled === true) {
                 box.style.right = "auto";
             } else {
@@ -2567,6 +2579,7 @@ var pd = {};
         body.style.opacity = ".5";
         heading.style.top  = (box.clientHeight / 20) + "0em";
         box.style.height   = ".1em";
+        resize.style.top   = ((Number(body.style.height.replace("em", "")) + 5.27) / 1.9925) + "em";
         box.mouseX         = e.clientX;
         box.mouseY         = e.clientY;
         if (touch === true) {
@@ -4099,6 +4112,12 @@ var pd = {};
                 } else {
                     button.innerHTML = "S";
                 }
+            },
+            headerfocus   = function dom__load_headerfocus() {
+                this.onclick = pd.minimize;
+            },
+            headerblur    = function dom__load_headerblur() {
+                this.onclick = null;
             };
         pd.fixHeight();
         window.onresize = pd.fixHeight;
@@ -4127,17 +4146,17 @@ var pd = {};
             if (pd.$$("option_commentClear") !== null) {
                 pd.$$("option_commentClear").onclick = pd.clearComment;
             }
-            document.onkeypress    = backspace;
-            document.onkeydown     = backspace;
-            pd.zIndex              = 10;
-            pd.mode                = "diff";
-            pd.settings            = {};
-            pd.settings.feedreport = {};
-            pd.settings.codereport = {};
-            pd.settings.statreport = {};
-            pd.settings.feedreport.newb = false;
+            document.onkeypress            = backspace;
+            document.onkeydown             = backspace;
+            pd.zIndex                      = 10;
+            pd.mode                        = "diff";
+            pd.settings                    = {};
+            pd.settings.feedreport         = {};
+            pd.settings.codereport         = {};
+            pd.settings.statreport         = {};
+            pd.settings.feedreport.newb    = false;
             pd.settings.feedreport.veteran = false;
-            pd.keypress            = {
+            pd.keypress                    = {
                 date    : {},
                 keys    : [],
                 state   : false,
@@ -4407,19 +4426,21 @@ var pd = {};
                     pd.o.report.feed.box.ondrop      = pd.filedrop;
                 }
                 pd.o.report.feed.body.onmousedown = top;
-                title                             = pd.o.report.feed.box.getElementsByTagName("h3")[0];
+                title                             = pd.o.report.feed.box.getElementsByTagName("h3")[0].getElementsByTagName("button")[0];
                 title.onmousedown                 = grab;
                 title.ontouchstart                = grab;
+                title.onfocus                     = headerfocus;
+                title.onblur                      = headerblur;
                 if (pd.settings.feedreport.min === false) {
                     buttons               = pd.o.report.feed.box.getElementsByTagName("p")[0];
                     buttons.style.display = "block";
                     title.style.cursor    = "move";
                     if (buttons.innerHTML.indexOf("save") > 0) {
                         buttons.getElementsByTagName("button")[1].innerHTML = "\u035f";
-                        title.style.width                                   = ((pd.settings.feedreport.width / 10) - 9.75) + "em";
+                        title.parentNode.style.width                        = ((pd.settings.feedreport.width / 10) - 9.75) + "em";
                     } else {
                         buttons.getElementsByTagName("button")[0].innerHTML = "\u035f";
-                        title.style.width                                   = ((pd.settings.feedreport.width / 10) - 6.75) + "em";
+                        title.parentNode.style.width                        = ((pd.settings.feedreport.width / 10) - 6.75) + "em";
                     }
                     if (pd.settings.feedreport.top < 15) {
                         pd.settings.feedreport.top = 15;
@@ -4440,9 +4461,11 @@ var pd = {};
                     pd.o.report.code.box.ondrop      = pd.filedrop;
                 }
                 pd.o.report.code.body.onmousedown = top;
-                title                             = pd.o.report.code.box.getElementsByTagName("h3")[0];
+                title                             = pd.o.report.code.box.getElementsByTagName("h3")[0].getElementsByTagName("button")[0];
                 title.onmousedown                 = grab;
                 title.ontouchstart                = grab;
+                title.onfocus                     = headerfocus;
+                title.onblur                      = headerblur;
                 buttons                           = pd.o.report.code.box.getElementsByTagName("p")[0];
                 node                              = pd.$$("jsscope-yes");
                 if (node !== null && node.checked === true && buttons.innerHTML.indexOf("save") < 0) {
@@ -4450,7 +4473,7 @@ var pd = {};
                         node = document.createElement("a");
                         node.setAttribute("href", "#");
                         node.onclick   = save;
-                        node.innerHTML = "<button class='save' title='Convert report to text that can be saved.'>S</button>";
+                        node.innerHTML = "<button class='save' title='Convert report to text that can be saved.' tabindex='-1'>S</button>";
                         buttons.insertBefore(node, buttons.firstChild);
                     } else {
                         node = document.createElement("button");
@@ -4465,10 +4488,10 @@ var pd = {};
                     title.style.cursor    = "move";
                     if (buttons.innerHTML.indexOf("save") > 0) {
                         buttons.getElementsByTagName("button")[1].innerHTML = "\u035f";
-                        title.style.width                                   = ((pd.settings.codereport.width / 10) - 9.75) + "em";
+                        title.parentNode.style.width                        = ((pd.settings.codereport.width / 10) - 9.75) + "em";
                     } else {
                         buttons.getElementsByTagName("button")[0].innerHTML = "\u035f";
-                        title.style.width                                   = ((pd.settings.codereport.width / 10) - 6.75) + "em";
+                        title.parentNode.style.width                        = ((pd.settings.codereport.width / 10) - 6.75) + "em";
                     }
                     if (pd.settings.codereport.top < 15) {
                         pd.settings.codereport.top = 15;
@@ -4488,19 +4511,21 @@ var pd = {};
                     pd.o.report.stat.box.ondrop      = pd.filedrop;
                 }
                 pd.o.report.stat.body.onmousedown = top;
-                title                             = pd.o.report.stat.box.getElementsByTagName("h3")[0];
+                title                             = pd.o.report.stat.box.getElementsByTagName("h3")[0].getElementsByTagName("button")[0];
                 title.onmousedown                 = grab;
                 title.ontouchstart                = grab;
+                title.onfocus                     = headerfocus;
+                title.onblur                      = headerblur;
                 if (pd.settings.statreport.min === false) {
                     buttons               = pd.o.report.stat.box.getElementsByTagName("p")[0];
                     buttons.style.display = "block";
                     title.style.cursor    = "move";
                     if (buttons.innerHTML.indexOf("save") > 0) {
                         buttons.getElementsByTagName("button")[1].innerHTML = "\u035f";
-                        title.style.width                                   = ((pd.settings.statreport.width / 10) - 9.75) + "em";
+                        title.parentNode.style.width                        = ((pd.settings.statreport.width / 10) - 9.75) + "em";
                     } else {
                         buttons.getElementsByTagName("button")[0].innerHTML = "\u035f";
-                        title.style.width                                   = ((pd.settings.statreport.width / 10) - 6.75) + "em";
+                        title.parentNode.style.width                        = ((pd.settings.statreport.width / 10) - 6.75) + "em";
                     }
                     if (pd.settings.statreport.top < 15) {
                         pd.settings.statreport.top = 15;
@@ -4534,7 +4559,7 @@ var pd = {};
                     }
                     if (name === "mode") {
                         inputs[a].onclick = pd.prettyvis;
-                        if (pd.settings[name] === id) {
+                        if (pd.settings[name] === id || inputs[a].checked === true) {
                             pd.prettyvis(inputs[a]);
                         }
                     } else if (name === "diffchar" || name === "beauchar" || name === "minnchar") {
@@ -4547,6 +4572,9 @@ var pd = {};
                     } else if (name === "codemirror-radio") {
                         if (id === "codemirror-no" && inputs[a].checked === true && pd.test.cm === true) {
                             cmdisable(inputs[a]);
+                        }
+                        if (id === "codemirror-yes" && inputs[a].checked === true && pd.test.cm === false) {
+                            pd.$$("codemirror-no").checked = true;
                         }
                         inputs[a].onclick = cmdisable;
                     } else {
@@ -4653,6 +4681,7 @@ var pd = {};
                             title.removeChild(node);
                             buttons.removeChild(title);
                             buttons.insertBefore(node, buttons.firstChild);
+                            inputs[a].removeAttribute("tabindex");
                         } else {
                             title.onclick = save;
                         }

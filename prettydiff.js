@@ -10498,16 +10498,16 @@ var prettydiff = function prettydiff(api) {
     //the edition values use the format YYMMDD for dates.
     edition    = {
         addon        : {
-            cmcss: 140705,
-            cmjs : 140127
+            cmcss: 150208,
+            cmjs : 150208
         },
         api          : {
-            dom      : 150207,
+            dom      : 150208,
             nodeLocal: 150124,
             wsh      : 150124
         },
         charDecoder  : 141025,
-        css          : 150206, //diffview.css file
+        css          : 150208, //diffview.css file
         csspretty    : 150203, //csspretty library
         csvbeauty    : 140114, //csvbeauty library
         csvmin       : 131224, //csvmin library
@@ -10518,7 +10518,7 @@ var prettydiff = function prettydiff(api) {
         markup_beauty: 150207, //markup_beauty library
         markupmin    : 150124, //markupmin library
         prettydiff   : 150207, //this file
-        version      : "1.8.14", //version number
+        version      : "1.8.15", //version number
         webtool      : 150124 //prettydiff.com.xhtml
     };
 edition.latest = (function edition_latest() {
