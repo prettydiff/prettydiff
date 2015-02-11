@@ -10546,7 +10546,7 @@ var prettydiff = function prettydiff(api) {
             cmjs : 150210
         },
         api          : {
-            dom      : 150210,
+            dom      : 150211,
             nodeLocal: 150124,
             wsh      : 150124
         },
@@ -10562,7 +10562,7 @@ var prettydiff = function prettydiff(api) {
         markup_beauty: 150210, //markup_beauty library
         markupmin    : 150124, //markupmin library
         prettydiff   : 150210, //this file
-        version      : "1.8.16", //version number
+        version      : "1.8.17", //version number
         webtool      : 150208 //prettydiff.com.xhtml
     };
 edition.latest = (function edition_latest() {

@@ -3746,7 +3746,7 @@ var pd = {};
     };
 
     pd.clearComment        = function dom__clearComment() {
-        localStorage.commentString = "";
+        localStorage.commentString = "[]";
         pd.commentString       = [];
         pd.o.comment.innerHTML = "/*prettydiff.com */";
     };
@@ -3920,7 +3920,7 @@ var pd = {};
         localStorage.codeDiffBase = "";
         localStorage.codeDiffNew = "";
         localStorage.codeMinify = "";
-        localStorage.commentString = "";
+        localStorage.commentString = "[]";
         if (pd.settings === undefined || pd.settings.knownname === undefined) {
             if (localStorage.settings !== undefined) {
                 nametry = JSON.stringify(localStorage.settings);
@@ -4225,7 +4225,7 @@ var pd = {};
                     pd.stat.fdate = Date.now();
                 }
                 if (pd.test.json === true) {
-                    if (localStorage.commentString !== undefined) {
+                    if (localStorage.commentString !== undefined && localStroage.commentString !== "") {
                         pd.commentString = JSON.parse(localStorage.commentString);
                     }
                     if (localStorage.settings !== undefined) {
