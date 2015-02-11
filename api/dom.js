@@ -3746,7 +3746,7 @@ var pd = {};
     };
 
     pd.clearComment        = function dom__clearComment() {
-        delete localStorage.commentString;
+        localStorage.commentString = "";
         pd.commentString       = [];
         pd.o.comment.innerHTML = "/*prettydiff.com */";
     };
@@ -3916,11 +3916,11 @@ var pd = {};
     pd.reset               = function dom__reset() {
         var nametry = {},
             name    = "";
-        delete localStorage.codeBeautify;
-        delete localStorage.codeDiffBase;
-        delete localStorage.codeDiffNew;
-        delete localStorage.codeMinify;
-        delete localStorage.commentString;
+        localStorage.codeBeautify = "";
+        localStorage.codeDiffBase = "";
+        localStorage.codeDiffNew = "";
+        localStorage.codeMinify = "";
+        localStorage.commentString = "";
         if (pd.settings === undefined || pd.settings.knownname === undefined) {
             if (localStorage.settings !== undefined) {
                 nametry = JSON.stringify(localStorage.settings);
@@ -4072,6 +4072,9 @@ var pd = {};
             },
             textareafocus = function dom__load_textareafocus() {
                 var tabkey = pd.$$("textareaTabKey");
+                if (tabkey === null) {
+                    return;
+                }
                 tabkey.style.zIndex         = pd.zIndex + 10;
                 pd.$$("arialive").innerHTML = tabkey.innerHTML;
                 if (pd.mode === "diff") {
@@ -4087,7 +4090,11 @@ var pd = {};
                 }
             },
             textareablur  = function dom__load_textareablur() {
-                pd.$$("textareaTabKey").style.display = "none";
+                var node = pd.$$("textareaTabKey");
+                if (node === null) {
+                    return;
+                }
+                node.style.display = "none";
                 if (pd.test.cm === true) {
                     this.parentNode.parentNode.setAttribute("class", this.parentNode.parentNode.getAttribute("class").replace(" filefocus", ""));
                 }
@@ -4754,10 +4761,13 @@ var pd = {};
                             value = params[b].toLowerCase().substr(2);
                             if (value === "beautify" && pd.o.modeBeau !== null) {
                                 pd.prettyvis(pd.o.modeBeau);
+                                pd.o.modeBeau.checked = true;
                             } else if (value === "minify" && pd.o.modeMinn !== null) {
                                 pd.prettyvis(pd.o.modeMinn);
+                                pd.o.modeMinn.checked = true;
                             } else if (value === "diff" && pd.o.modeDiff !== null) {
                                 pd.prettyvis(pd.o.modeDiff);
+                                pd.o.modeDiff.checked = true;
                             }
                         } else if (params[b].indexOf("s=") === 0) {
                             source = params[b].substr(2);

@@ -8424,7 +8424,7 @@ CodeMirror.registerHelper("fold", "indent", function(cm, start) {
 
   function toTagEnd(iter) {
     for (;;) {
-      var gt = iter.text.indexOf(">", iter.ch);
+      var gt = (typeof iter.text === "string") ? iter.text.indexOf(">", iter.ch) : 0;
       if (gt == -1) { if (nextLine(iter)) continue; else return; }
       if (!tagAt(iter, gt + 1)) { iter.ch = gt + 1; continue; }
       var lastSlash = iter.text.lastIndexOf("/", gt);
