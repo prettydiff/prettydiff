@@ -4225,7 +4225,7 @@ var pd = {};
                     pd.stat.fdate = Date.now();
                 }
                 if (pd.test.json === true) {
-                    if (localStorage.commentString !== undefined && localStroage.commentString !== "") {
+                    if (localStorage.commentString !== undefined && localStorage.commentString !== "") {
                         pd.commentString = JSON.parse(localStorage.commentString);
                     }
                     if (localStorage.settings !== undefined) {

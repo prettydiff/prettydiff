@@ -1,6 +1,6 @@
 {
     "name"        : "prettydiff",
-    "version"     : "1.8.17",
+    "version"     : "1.8.18",
     "main"        : "./",
     "dependencies": {},
     "ignore"      : [
