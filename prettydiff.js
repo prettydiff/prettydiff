@@ -4024,7 +4024,7 @@ var prettydiff = function prettydiff(api) {
                                     if (token[jj - 1] === "catch" && token[jj] === "(") {
                                         return;
                                     }
-                                    if (c[a] === ")" && token[jj] === "(" && (token[jj - 1] === "function" || (types[jj - 1] === "word" && token[jj - 2] === "function"))) {
+                                    if ((c[a] === ")" || ((/\s/).test(c[a]) === true && c[a - 1] === ")")) && token[jj] === "(" && (token[jj - 1] === "function" || token[jj - 1] === "while" || token[jj - 1] === "catch" || (types[jj - 1] === "word" && token[jj - 2] === "function"))) {
                                         return;
                                     }
                                 }
@@ -4883,11 +4883,21 @@ var prettydiff = function prettydiff(api) {
                             types.push(ltype);
                             lines.push(0);
                         }
-                    } else if (c[a] === "/" && wordTest === -1 && (lengtha > 0 && (types[lengtha - 1] !== "word" || ltoke === "typeof" || ltoke === "return") && ltype !== "literal" && ltype !== "end")) {
-                        ltoke             = regex();
-                        ltype             = "regex";
-                        stats.regex.token += 1;
-                        stats.regex.chars += ltoke.length;
+                    } else if (c[a] === "/" && (lengtha > 0 && (types[lengtha - 1] !== "word" || ltoke === "typeof" || ltoke === "return") && ltype !== "literal" && ltype !== "end")) {
+                        if (wordTest > -1) {
+                            word();
+                        }
+                        if (ltoke === "return" || ltype !== "word") {
+                            ltoke             = regex();
+                            ltype             = "regex";
+                            stats.regex.token += 1;
+                            stats.regex.chars += ltoke.length;
+                        } else {
+                            stats.operator.token += 1;
+                            stats.operator.chars += 1;
+                            ltoke                = "/";
+                            ltype                = "operator";
+                        }
                         token.push(ltoke);
                         types.push(ltype);
                         lines.push(0);
@@ -10543,26 +10553,26 @@ var prettydiff = function prettydiff(api) {
     edition    = {
         addon        : {
             cmcss: 150208,
-            cmjs : 150210
+            cmjs : 150212
         },
         api          : {
-            dom      : 150211,
+            dom      : 150212,
             nodeLocal: 150124,
             wsh      : 150124
         },
         charDecoder  : 141025,
-        css          : 150208, //diffview.css file
+        css          : 150212, //diffview.css file
         csspretty    : 150203, //csspretty library
         csvbeauty    : 140114, //csvbeauty library
         csvmin       : 131224, //csvmin library
         diffview     : 150210, //diffview library
-        documentation: 150126, //documentation.xhtml
-        jspretty     : 150210, //jspretty library
+        documentation: 150212, //documentation.xhtml
+        jspretty     : 150212, //jspretty library
         latest       : 0,
         markup_beauty: 150210, //markup_beauty library
         markupmin    : 150124, //markupmin library
-        prettydiff   : 150210, //this file
-        version      : "1.8.18", //version number
+        prettydiff   : 150212, //this file
+        version      : "1.8.19", //version number
         webtool      : 150208 //prettydiff.com.xhtml
     };
 edition.latest = (function edition_latest() {

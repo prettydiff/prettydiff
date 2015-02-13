@@ -13,7 +13,7 @@
   else if (typeof define == "function" && define.amd) // AMD
     return define([], mod);
   else // Plain browser env
-    this.CodeMirror = mod();
+    this.codeMirror = mod();
 })(function() {
   "use strict";
 
@@ -58,8 +58,8 @@
   // A CodeMirror instance represents an editor. This is the object
   // that user code is usually dealing with.
 
-  function CodeMirror(place, options) {
-    if (!(this instanceof CodeMirror)) return new CodeMirror(place, options);
+  function codeMirror(place, options) {
+    if (!(this instanceof codeMirror)) return new codeMirror(place, options);
 
     this.options = options = options ? copyObj(options) : {};
     // Determine effective options based on given values and defaults.
@@ -254,7 +254,7 @@
   // Used to get the editor into a consistent state again when options change.
 
   function loadMode(cm) {
-    cm.doc.mode = CodeMirror.getMode(cm.options, cm.doc.modeOption);
+    cm.doc.mode = codeMirror.getMode(cm.options, cm.doc.modeOption);
     resetModeState(cm);
   }
 
@@ -503,7 +503,7 @@
     clear: function() {}
   }, NullScrollbars.prototype);
 
-  CodeMirror.scrollbarModel = {"native": NativeScrollbars, "null": NullScrollbars};
+  codeMirror.scrollbarModel = {"native": NativeScrollbars, "null": NullScrollbars};
 
   function initScrollbars(cm) {
     if (cm.display.scrollbars) {
@@ -512,7 +512,7 @@
         rmClass(cm.display.wrapper, cm.display.scrollbars.addClass);
     }
 
-    cm.display.scrollbars = new CodeMirror.scrollbarModel[cm.options.scrollbarStyle](function(node) {
+    cm.display.scrollbars = new codeMirror.scrollbarModel[cm.options.scrollbarStyle](function(node) {
       cm.display.wrapper.insertBefore(node, cm.display.scrollbarFiller);
       on(node, "mousedown", function() {
         if (cm.state.focused) setTimeout(bind(focusInput, cm), 0);
@@ -1059,14 +1059,14 @@
   // POSITION OBJECT
 
   // A Pos instance represents a position within the text.
-  var Pos = CodeMirror.Pos = function(line, ch) {
+  var Pos = codeMirror.Pos = function(line, ch) {
     if (!(this instanceof Pos)) return new Pos(line, ch);
     this.line = line; this.ch = ch;
   };
 
   // Compare two positions, return 0 if they are the same, a negative
   // number when a is less, and a positive number otherwise.
-  var cmp = CodeMirror.cmpPos = function(a, b) { return a.line - b.line || a.ch - b.ch; };
+  var cmp = codeMirror.cmpPos = function(a, b) { return a.line - b.line || a.ch - b.ch; };
 
   function copyPos(x) {return Pos(x.line, x.ch);}
   function maxPos(a, b) { return cmp(a, b) < 0 ? b : a; }
@@ -3184,7 +3184,7 @@
     else if (dy == null) dy = e.wheelDelta;
     return {x: dx, y: dy};
   };
-  CodeMirror.wheelEventPixels = function(e) {
+  codeMirror.wheelEventPixels = function(e) {
     var delta = wheelEventDelta(e);
     delta.x *= wheelPixelsPerUnit;
     delta.y *= wheelPixelsPerUnit;
@@ -3523,7 +3523,7 @@
 
   // Compute the position of the end of a change (its 'to' property
   // refers to the pre-change end).
-  var changeEnd = CodeMirror.changeEnd = function(change) {
+  var changeEnd = codeMirror.changeEnd = function(change) {
     if (!change.text) return change.to;
     return Pos(change.from.line + change.text.length - 1,
                lst(change.text).length + (change.text.length == 1 ? change.from.ch : 0));
@@ -4138,8 +4138,8 @@
   // CodeMirror.prototype, for backwards compatibility and
   // convenience.
 
-  CodeMirror.prototype = {
-    constructor: CodeMirror,
+  codeMirror.prototype = {
+    constructor: codeMirror,
     focus: function(){window.focus(); focusInput(this); fastPoll(this);},
 
     setOption: function(option, value) {
@@ -4166,7 +4166,7 @@
     },
 
     addOverlay: methodOp(function(spec, options) {
-      var mode = spec.token ? spec : CodeMirror.getMode(this.options, spec);
+      var mode = spec.token ? spec : codeMirror.getMode(this.options, spec);
       if (mode.startState) throw new Error("Overlays may not be stateful.");
       this.state.overlays.push({mode: mode, modeSpec: spec, opaque: options && options.opaque});
       this.state.modeGen++;
@@ -4242,7 +4242,7 @@
     getModeAt: function(pos) {
       var mode = this.doc.mode;
       if (!mode.innerMode) return mode;
-      return CodeMirror.innerMode(mode, this.getTokenAt(pos).state).mode;
+      return codeMirror.innerMode(mode, this.getTokenAt(pos).state).mode;
     },
 
     getHelper: function(pos, type) {
@@ -4576,23 +4576,23 @@
     getScrollerElement: function(){return this.display.scroller;},
     getGutterElement: function(){return this.display.gutters;}
   };
-  eventMixin(CodeMirror);
+  eventMixin(codeMirror);
 
   // OPTION DEFAULTS
 
   // The default configuration options.
-  var defaults = CodeMirror.defaults = {};
+  var defaults = codeMirror.defaults = {};
   // Functions to run when options are changed.
-  var optionHandlers = CodeMirror.optionHandlers = {};
+  var optionHandlers = codeMirror.optionHandlers = {};
 
   function option(name, deflt, handle, notOnInit) {
-    CodeMirror.defaults[name] = deflt;
+    codeMirror.defaults[name] = deflt;
     if (handle) optionHandlers[name] =
       notOnInit ? function(cm, val, old) {if (old != Init) handle(cm, val, old);} : handle;
   }
 
   // Passed to option handlers when there is no old value.
-  var Init = CodeMirror.Init = {toString: function(){return "CodeMirror.Init";}};
+  var Init = codeMirror.Init = {toString: function(){return "CodeMirror.Init";}};
 
   // These two are, on init, called from the constructor because they
   // have to be initialized before the editor can start at all.
@@ -4627,7 +4627,7 @@
   }, true);
   option("keyMap", "default", function(cm, val, old) {
     var next = getKeyMap(val);
-    var prev = old != CodeMirror.Init && getKeyMap(old);
+    var prev = old != codeMirror.Init && getKeyMap(old);
     if (prev && prev.detach) prev.detach(cm, next);
     if (next.attach) next.attach(cm, prev || null);
   });
@@ -4697,25 +4697,25 @@
   // MODE DEFINITION AND QUERYING
 
   // Known modes, by name and by MIME
-  var modes = CodeMirror.modes = {}, mimeModes = CodeMirror.mimeModes = {};
+  var modes = codeMirror.modes = {}, mimeModes = codeMirror.mimeModes = {};
 
   // Extra arguments are stored as the mode's dependencies, which is
   // used by (legacy) mechanisms like loadmode.js to automatically
   // load a mode. (Preferred mechanism is the require/define calls.)
-  CodeMirror.defineMode = function(name, mode) {
-    if (!CodeMirror.defaults.mode && name != "null") CodeMirror.defaults.mode = name;
+  codeMirror.defineMode = function(name, mode) {
+    if (!codeMirror.defaults.mode && name != "null") codeMirror.defaults.mode = name;
     if (arguments.length > 2)
       mode.dependencies = Array.prototype.slice.call(arguments, 2);
     modes[name] = mode;
   };
 
-  CodeMirror.defineMIME = function(mime, spec) {
+  codeMirror.defineMIME = function(mime, spec) {
     mimeModes[mime] = spec;
   };
 
   // Given a MIME type, a {name, ...options} config object, or a name
   // string, return a mode config object.
-  CodeMirror.resolveMode = function(spec) {
+  codeMirror.resolveMode = function(spec) {
     if (typeof spec == "string" && mimeModes.hasOwnProperty(spec)) {
       spec = mimeModes[spec];
     } else if (spec && typeof spec.name == "string" && mimeModes.hasOwnProperty(spec.name)) {
@@ -4724,7 +4724,7 @@
       spec = createObj(found, spec);
       spec.name = found.name;
     } else if (typeof spec == "string" && /^[\w\-]+\/[\w\-]+\+xml$/.test(spec)) {
-      return CodeMirror.resolveMode("application/xml");
+      return codeMirror.resolveMode("application/xml");
     }
     if (typeof spec == "string") return {name: spec};
     else return spec || {name: "null"};
@@ -4732,10 +4732,10 @@
 
   // Given a mode spec (anything that resolveMode accepts), find and
   // initialize an actual mode object.
-  CodeMirror.getMode = function(options, spec) {
-    var spec = CodeMirror.resolveMode(spec);
+  codeMirror.getMode = function(options, spec) {
+    var spec = codeMirror.resolveMode(spec);
     var mfactory = modes[spec.name];
-    if (!mfactory) return CodeMirror.getMode(options, "text/plain");
+    if (!mfactory) return codeMirror.getMode(options, "text/plain");
     var modeObj = mfactory(options, spec);
     if (modeExtensions.hasOwnProperty(spec.name)) {
       var exts = modeExtensions[spec.name];
@@ -4754,39 +4754,39 @@
   };
 
   // Minimal default mode.
-  CodeMirror.defineMode("null", function() {
+  codeMirror.defineMode("null", function() {
     return {token: function(stream) {stream.skipToEnd();}};
   });
-  CodeMirror.defineMIME("text/plain", "null");
+  codeMirror.defineMIME("text/plain", "null");
 
   // This can be used to attach properties to mode objects from
   // outside the actual mode definition.
-  var modeExtensions = CodeMirror.modeExtensions = {};
-  CodeMirror.extendMode = function(mode, properties) {
+  var modeExtensions = codeMirror.modeExtensions = {};
+  codeMirror.extendMode = function(mode, properties) {
     var exts = modeExtensions.hasOwnProperty(mode) ? modeExtensions[mode] : (modeExtensions[mode] = {});
     copyObj(properties, exts);
   };
 
   // EXTENSIONS
 
-  CodeMirror.defineExtension = function(name, func) {
-    CodeMirror.prototype[name] = func;
+  codeMirror.defineExtension = function(name, func) {
+    codeMirror.prototype[name] = func;
   };
-  CodeMirror.defineDocExtension = function(name, func) {
+  codeMirror.defineDocExtension = function(name, func) {
     Doc.prototype[name] = func;
   };
-  CodeMirror.defineOption = option;
+  codeMirror.defineOption = option;
 
   var initHooks = [];
-  CodeMirror.defineInitHook = function(f) {initHooks.push(f);};
+  codeMirror.defineInitHook = function(f) {initHooks.push(f);};
 
-  var helpers = CodeMirror.helpers = {};
-  CodeMirror.registerHelper = function(type, name, value) {
-    if (!helpers.hasOwnProperty(type)) helpers[type] = CodeMirror[type] = {_global: []};
+  var helpers = codeMirror.helpers = {};
+  codeMirror.registerHelper = function(type, name, value) {
+    if (!helpers.hasOwnProperty(type)) helpers[type] = codeMirror[type] = {_global: []};
     helpers[type][name] = value;
   };
-  CodeMirror.registerGlobalHelper = function(type, name, predicate, value) {
-    CodeMirror.registerHelper(type, name, value);
+  codeMirror.registerGlobalHelper = function(type, name, predicate, value) {
+    codeMirror.registerHelper(type, name, value);
     helpers[type]._global.push({pred: predicate, val: value});
   };
 
@@ -4795,7 +4795,7 @@
   // Utility functions for working with state. Exported because nested
   // modes need to do this for their inner modes.
 
-  var copyState = CodeMirror.copyState = function(mode, state) {
+  var copyState = codeMirror.copyState = function(mode, state) {
     if (state === true) return state;
     if (mode.copyState) return mode.copyState(state);
     var nstate = {};
@@ -4807,13 +4807,13 @@
     return nstate;
   };
 
-  var startState = CodeMirror.startState = function(mode, a1, a2) {
+  var startState = codeMirror.startState = function(mode, a1, a2) {
     return mode.startState ? mode.startState(a1, a2) : true;
   };
 
   // Given a mode and a state (for that mode), find the inner mode and
   // state at the position that the state refers to.
-  CodeMirror.innerMode = function(mode, state) {
+  codeMirror.innerMode = function(mode, state) {
     while (mode.innerMode) {
       var info = mode.innerMode(state);
       if (!info || info.mode == mode) break;
@@ -4827,7 +4827,7 @@
 
   // Commands are parameter-less actions that can be performed on an
   // editor, mostly used for keybindings.
-  var commands = CodeMirror.commands = {
+  var commands = codeMirror.commands = {
     selectAll: function(cm) {cm.setSelection(Pos(cm.firstLine(), 0), Pos(cm.lastLine()), sel_dontScroll);},
     singleSelection: function(cm) {
       cm.setSelection(cm.getCursor("anchor"), cm.getCursor("head"), sel_dontScroll);
@@ -4984,7 +4984,7 @@
 
   // STANDARD KEYMAPS
 
-  var keyMap = CodeMirror.keyMap = {};
+  var keyMap = codeMirror.keyMap = {};
 
   keyMap.basic = {
     "Left": "goCharLeft", "Right": "goCharRight", "Up": "goLineUp", "Down": "goLineDown",
@@ -5051,7 +5051,7 @@
   // like normalization and multi-stroke key bindings. It compiles a
   // new normalized keymap, and then updates the old object to reflect
   // this.
-  CodeMirror.normalizeKeyMap = function(keymap) {
+  codeMirror.normalizeKeyMap = function(keymap) {
     var copy = {};
     for (var keyname in keymap) if (keymap.hasOwnProperty(keyname)) {
       var value = keymap[keyname];
@@ -5078,7 +5078,7 @@
     return keymap;
   };
 
-  var lookupKey = CodeMirror.lookupKey = function(key, map, handle, context) {
+  var lookupKey = codeMirror.lookupKey = function(key, map, handle, context) {
     map = getKeyMap(map);
     var found = map.call ? map.call(key, context) : map[key];
     if (found === false) return "nothing";
@@ -5097,13 +5097,13 @@
 
   // Modifier key presses don't count as 'real' key presses for the
   // purpose of keymap fallthrough.
-  var isModifierKey = CodeMirror.isModifierKey = function(value) {
+  var isModifierKey = codeMirror.isModifierKey = function(value) {
     var name = typeof value == "string" ? value : keyNames[value.keyCode];
     return name == "Ctrl" || name == "Alt" || name == "Shift" || name == "Mod";
   };
 
   // Look up the name of a key as indicated by an event object.
-  var keyName = CodeMirror.keyName = function(event, noShift) {
+  var keyName = codeMirror.keyName = function(event, noShift) {
     if (presto && event.keyCode == 34 && event["char"]) return false;
     var base = keyNames[event.keyCode], name = base;
     if (name == null || event.altGraphKey) return false;
@@ -5120,7 +5120,7 @@
 
   // FROMTEXTAREA
 
-  CodeMirror.fromTextArea = function(textarea, options) {
+  codeMirror.fromTextArea = function(textarea, options) {
     if (!options) options = {};
     options.value = textarea.value;
     if (!options.tabindex && textarea.tabindex)
@@ -5153,7 +5153,7 @@
     }
 
     textarea.style.display = "none";
-    var cm = CodeMirror(function(node) {
+    var cm = codeMirror(function(node) {
       textarea.parentNode.insertBefore(node, textarea.nextSibling);
     }, options);
     cm.save = save;
@@ -5177,7 +5177,7 @@
   // Fed to the mode parsers, provides helper functions to make
   // parsers more succinct.
 
-  var StringStream = CodeMirror.StringStream = function(string, tabSize) {
+  var StringStream = codeMirror.StringStream = function(string, tabSize) {
     this.pos = this.start = 0;
     this.string = string;
     this.tabSize = tabSize || 8;
@@ -5261,7 +5261,7 @@
   // marker continues beyond the start/end of the line. Markers have
   // links back to the lines they currently touch.
 
-  var TextMarker = CodeMirror.TextMarker = function(doc, type) {
+  var TextMarker = codeMirror.TextMarker = function(doc, type) {
     this.lines = [];
     this.type = type;
     this.doc = doc;
@@ -5453,7 +5453,7 @@
   // A shared marker spans multiple linked documents. It is
   // implemented as a meta-marker-object controlling multiple normal
   // markers.
-  var SharedTextMarker = CodeMirror.SharedTextMarker = function(markers, primary) {
+  var SharedTextMarker = codeMirror.SharedTextMarker = function(markers, primary) {
     this.markers = markers;
     this.primary = primary;
     for (var i = 0; i < markers.length; ++i)
@@ -5848,7 +5848,7 @@
 
   // Line widgets are block elements displayed above or below a line.
 
-  var LineWidget = CodeMirror.LineWidget = function(cm, node, options) {
+  var LineWidget = codeMirror.LineWidget = function(cm, node, options) {
     if (options) for (var opt in options) if (options.hasOwnProperty(opt))
       this[opt] = options[opt];
     this.cm = cm;
@@ -5921,7 +5921,7 @@
 
   // Line objects. These hold state related to a line, including
   // highlighting info (the styles array).
-  var Line = CodeMirror.Line = function(text, markedSpans, estimateHeight) {
+  var Line = codeMirror.Line = function(text, markedSpans, estimateHeight) {
     this.text = text;
     attachMarkedSpans(this, markedSpans);
     this.height = estimateHeight ? estimateHeight(this) : 1;
@@ -5966,13 +5966,13 @@
   function callBlankLine(mode, state) {
     if (mode.blankLine) return mode.blankLine(state);
     if (!mode.innerMode) return;
-    var inner = CodeMirror.innerMode(mode, state);
+    var inner = codeMirror.innerMode(mode, state);
     if (inner.mode.blankLine) return inner.mode.blankLine(inner.state);
   }
 
   function readToken(mode, stream, state, inner) {
     for (var i = 0; i < 10; i++) {
-      if (inner) inner[0] = CodeMirror.innerMode(mode, state).mode;
+      if (inner) inner[0] = codeMirror.innerMode(mode, state).mode;
       var style = mode.token(stream, state);
       if (stream.pos > stream.start) return style;
     }
@@ -6551,7 +6551,7 @@
   };
 
   var nextDocId = 0;
-  var Doc = CodeMirror.Doc = function(text, mode, firstLine) {
+  var Doc = codeMirror.Doc = function(text, mode, firstLine) {
     if (!(this instanceof Doc)) return new Doc(text, mode, firstLine);
     if (firstLine == null) firstLine = 0;
 
@@ -6868,7 +6868,7 @@
       return copy;
     },
     unlinkDoc: function(other) {
-      if (other instanceof CodeMirror) other = other.doc;
+      if (other instanceof codeMirror) other = other.doc;
       if (this.linked) for (var i = 0; i < this.linked.length; ++i) {
         var link = this.linked[i];
         if (link.doc != other) continue;
@@ -6898,7 +6898,7 @@
   // Set up methods on CodeMirror's prototype to redirect to the editor's document.
   var dontDelegate = "iter insert remove copy getEditor".split(" ");
   for (var prop in Doc.prototype) if (Doc.prototype.hasOwnProperty(prop) && indexOf(dontDelegate, prop) < 0)
-    CodeMirror.prototype[prop] = (function(method) {
+    codeMirror.prototype[prop] = (function(method) {
       return function() {return method.apply(this.doc, arguments);};
     })(Doc.prototype[prop]);
 
@@ -7287,18 +7287,18 @@
   // Due to the fact that we still support jurassic IE versions, some
   // compatibility wrappers are needed.
 
-  var e_preventDefault = CodeMirror.e_preventDefault = function(e) {
+  var e_preventDefault = codeMirror.e_preventDefault = function(e) {
     if (e.preventDefault) e.preventDefault();
     else e.returnValue = false;
   };
-  var e_stopPropagation = CodeMirror.e_stopPropagation = function(e) {
+  var e_stopPropagation = codeMirror.e_stopPropagation = function(e) {
     if (e.stopPropagation) e.stopPropagation();
     else e.cancelBubble = true;
   };
   function e_defaultPrevented(e) {
     return e.defaultPrevented != null ? e.defaultPrevented : e.returnValue == false;
   }
-  var e_stop = CodeMirror.e_stop = function(e) {e_preventDefault(e); e_stopPropagation(e);};
+  var e_stop = codeMirror.e_stop = function(e) {e_preventDefault(e); e_stopPropagation(e);};
 
   function e_target(e) {return e.target || e.srcElement;}
   function e_button(e) {
@@ -7317,7 +7317,7 @@
   // Lightweight event framework. on/off also work on DOM nodes,
   // registering native DOM handlers.
 
-  var on = CodeMirror.on = function(emitter, type, f) {
+  var on = codeMirror.on = function(emitter, type, f) {
     if (emitter.addEventListener)
       emitter.addEventListener(type, f, false);
     else if (emitter.attachEvent)
@@ -7329,7 +7329,7 @@
     }
   };
 
-  var off = CodeMirror.off = function(emitter, type, f) {
+  var off = codeMirror.off = function(emitter, type, f) {
     if (emitter.removeEventListener)
       emitter.removeEventListener(type, f, false);
     else if (emitter.detachEvent)
@@ -7342,7 +7342,7 @@
     }
   };
 
-  var signal = CodeMirror.signal = function(emitter, type /*, values...*/) {
+  var signal = codeMirror.signal = function(emitter, type /*, values...*/) {
     var arr = emitter._handlers && emitter._handlers[type];
     if (!arr) return;
     var args = Array.prototype.slice.call(arguments, 2);
@@ -7418,7 +7418,7 @@
 
   // Returned or thrown by various protocols to signal 'I'm not
   // handling this'.
-  var Pass = CodeMirror.Pass = {toString: function(){return "CodeMirror.Pass";}};
+  var Pass = codeMirror.Pass = {toString: function(){return "CodeMirror.Pass";}};
 
   // Reused option objects for setSelection & friends
   var sel_dontScroll = {scroll: false}, sel_mouse = {origin: "*mouse"}, sel_move = {origin: "+move"};
@@ -7431,7 +7431,7 @@
 
   // Counts the column offset in a string, taking tabs into account.
   // Used mostly to find indentation.
-  var countColumn = CodeMirror.countColumn = function(string, end, tabSize, startIndex, startValue) {
+  var countColumn = codeMirror.countColumn = function(string, end, tabSize, startIndex, startValue) {
     if (end == null) {
       end = string.search(/[^\s\u00a0]/);
       if (end == -1) end = string.length;
@@ -7515,7 +7515,7 @@
   }
 
   var nonASCIISingleCaseWordChar = /[\u00df\u0590-\u05f4\u0600-\u06ff\u3040-\u309f\u30a0-\u30ff\u3400-\u4db5\u4e00-\u9fcc\uac00-\ud7af]/;
-  var isWordCharBasic = CodeMirror.isWordChar = function(ch) {
+  var isWordCharBasic = codeMirror.isWordChar = function(ch) {
     return /\w/.test(ch) || ch > "\x80" &&
       (ch.toUpperCase() != ch.toLowerCase() || nonASCIISingleCaseWordChar.test(ch));
   };
@@ -7592,7 +7592,7 @@
   };
 
   function classTest(cls) { return new RegExp("(^|\\s)" + cls + "(?:$|\\s)\\s*"); }
-  var rmClass = CodeMirror.rmClass = function(node, cls) {
+  var rmClass = codeMirror.rmClass = function(node, cls) {
     var current = node.className;
     var match = classTest(cls).exec(current);
     if (match) {
@@ -7600,7 +7600,7 @@
       node.className = current.slice(0, match.index) + (after ? match[1] + after : "");
     }
   };
-  var addClass = CodeMirror.addClass = function(node, cls) {
+  var addClass = codeMirror.addClass = function(node, cls) {
     var current = node.className;
     if (!classTest(cls).test(current)) node.className += (current ? " " : "") + cls;
   };
@@ -7683,7 +7683,7 @@
 
   // See if "".split is the broken IE version, if so, provide an
   // alternative way to split lines.
-  var splitLines = CodeMirror.splitLines = "\n\nb".split(/\n/).length != 3 ? function(string) {
+  var splitLines = codeMirror.splitLines = "\n\nb".split(/\n/).length != 3 ? function(string) {
     var pos = 0, result = [], l = string.length;
     while (pos <= l) {
       var nl = string.indexOf("\n", pos);
@@ -7736,7 +7736,7 @@
                   173: "-", 186: ";", 187: "=", 188: ",", 189: "-", 190: ".", 191: "/", 192: "`", 219: "[", 220: "\\",
                   221: "]", 222: "'", 63232: "Up", 63233: "Down", 63234: "Left", 63235: "Right", 63272: "Delete",
                   63273: "Home", 63275: "End", 63276: "PageUp", 63277: "PageDown", 63302: "Insert"};
-  CodeMirror.keyNames = keyNames;
+  codeMirror.keyNames = keyNames;
   (function() {
     // Number keys
     for (var i = 0; i < 10; i++) keyNames[i + 48] = keyNames[i + 96] = String(i);
@@ -8039,9 +8039,9 @@
 
   // THE END
 
-  CodeMirror.version = "4.12.0";
+  codeMirror.version = "4.12.0";
 
-  return CodeMirror;
+  return codeMirror;
 });
 
 
@@ -8052,12 +8052,12 @@
   else if (typeof define == "function" && define.amd) // AMD
     define(["../../lib/codemirror", "./foldcode"], mod);
   else // Plain browser env
-    mod(CodeMirror);
-})(function(CodeMirror) {
+    mod(codeMirror);
+})(function(codeMirror) {
   "use strict";
 
-  CodeMirror.defineOption("foldGutter", false, function(cm, val, old) {
-    if (old && old != CodeMirror.Init) {
+  codeMirror.defineOption("foldGutter", false, function(cm, val, old) {
+    if (old && old != codeMirror.Init) {
       cm.clearGutter(cm.state.foldGutter.options.gutter);
       cm.state.foldGutter = null;
       cm.off("gutterClick", onGutterClick);
@@ -8079,7 +8079,7 @@
     }
   });
 
-  var Pos = CodeMirror.Pos;
+  var Pos = codeMirror.Pos;
 
   function State(options) {
     this.options = options;
@@ -8186,11 +8186,11 @@
   else if (typeof define == "function" && define.amd) // AMD
     define(["../../lib/codemirror"], mod);
   else // Plain browser env
-    mod(CodeMirror);
-})(function(CodeMirror) {
+    mod(codeMirror);
+})(function(codeMirror) {
 "use strict";
 
-CodeMirror.registerHelper("fold", "brace", function(cm, start) {
+codeMirror.registerHelper("fold", "brace", function(cm, start) {
   var line = start.line, lineText = cm.getLine(line);
   var startCh, tokenType;
 
@@ -8204,7 +8204,7 @@ CodeMirror.registerHelper("fold", "brace", function(cm, start) {
         continue;
       }
       if (pass == 1 && found < start.ch) break;
-      tokenType = cm.getTokenTypeAt(CodeMirror.Pos(line, found + 1));
+      tokenType = cm.getTokenTypeAt(codeMirror.Pos(line, found + 1));
       if (!/^(comment|string)/.test(tokenType)) return found + 1;
       at = found - 1;
     }
@@ -8226,7 +8226,7 @@ CodeMirror.registerHelper("fold", "brace", function(cm, start) {
       if (nextClose < 0) nextClose = text.length;
       pos = Math.min(nextOpen, nextClose);
       if (pos == text.length) break;
-      if (cm.getTokenTypeAt(CodeMirror.Pos(i, pos + 1)) == tokenType) {
+      if (cm.getTokenTypeAt(codeMirror.Pos(i, pos + 1)) == tokenType) {
         if (pos == nextOpen) ++count;
         else if (!--count) { end = i; endCh = pos; break outer; }
       }
@@ -8234,20 +8234,20 @@ CodeMirror.registerHelper("fold", "brace", function(cm, start) {
     }
   }
   if (end == null || line == end && endCh == startCh) return;
-  return {from: CodeMirror.Pos(line, startCh),
-          to: CodeMirror.Pos(end, endCh)};
+  return {from: codeMirror.Pos(line, startCh),
+          to: codeMirror.Pos(end, endCh)};
 });
 
-CodeMirror.registerHelper("fold", "import", function(cm, start) {
+codeMirror.registerHelper("fold", "import", function(cm, start) {
   function hasImport(line) {
     if (line < cm.firstLine() || line > cm.lastLine()) return null;
-    var start = cm.getTokenAt(CodeMirror.Pos(line, 1));
-    if (!/\S/.test(start.string)) start = cm.getTokenAt(CodeMirror.Pos(line, start.end + 1));
+    var start = cm.getTokenAt(codeMirror.Pos(line, 1));
+    if (!/\S/.test(start.string)) start = cm.getTokenAt(codeMirror.Pos(line, start.end + 1));
     if (start.type != "keyword" || start.string != "import") return null;
     // Now find closing semicolon, return its position
     for (var i = line, e = Math.min(cm.lastLine(), line + 10); i <= e; ++i) {
       var text = cm.getLine(i), semi = text.indexOf(";");
-      if (semi != -1) return {startCh: start.end, end: CodeMirror.Pos(i, semi)};
+      if (semi != -1) return {startCh: start.end, end: codeMirror.Pos(i, semi)};
     }
   }
 
@@ -8259,14 +8259,14 @@ CodeMirror.registerHelper("fold", "import", function(cm, start) {
     if (next == null) break;
     end = next.end;
   }
-  return {from: cm.clipPos(CodeMirror.Pos(start, has.startCh + 1)), to: end};
+  return {from: cm.clipPos(codeMirror.Pos(start, has.startCh + 1)), to: end};
 });
 
-CodeMirror.registerHelper("fold", "include", function(cm, start) {
+codeMirror.registerHelper("fold", "include", function(cm, start) {
   function hasInclude(line) {
     if (line < cm.firstLine() || line > cm.lastLine()) return null;
-    var start = cm.getTokenAt(CodeMirror.Pos(line, 1));
-    if (!/\S/.test(start.string)) start = cm.getTokenAt(CodeMirror.Pos(line, start.end + 1));
+    var start = cm.getTokenAt(codeMirror.Pos(line, 1));
+    if (!/\S/.test(start.string)) start = cm.getTokenAt(codeMirror.Pos(line, start.end + 1));
     if (start.type == "meta" && start.string.slice(0, 8) == "#include") return start.start + 8;
   }
 
@@ -8277,8 +8277,8 @@ CodeMirror.registerHelper("fold", "include", function(cm, start) {
     if (next == null) break;
     ++end;
   }
-  return {from: CodeMirror.Pos(start, has + 1),
-          to: cm.clipPos(CodeMirror.Pos(end))};
+  return {from: codeMirror.Pos(start, has + 1),
+          to: cm.clipPos(codeMirror.Pos(end))};
 });
 
 });
@@ -8289,11 +8289,11 @@ CodeMirror.registerHelper("fold", "include", function(cm, start) {
   else if (typeof define == "function" && define.amd) // AMD
     define(["../../lib/codemirror"], mod);
   else // Plain browser env
-    mod(CodeMirror);
-})(function(CodeMirror) {
+    mod(codeMirror);
+})(function(codeMirror) {
 "use strict";
 
-CodeMirror.registerGlobalHelper("fold", "comment", function(mode) {
+codeMirror.registerGlobalHelper("fold", "comment", function(mode) {
   return mode.blockCommentStart && mode.blockCommentEnd;
 }, function(cm, start) {
   var mode = cm.getModeAt(start), startToken = mode.blockCommentStart, endToken = mode.blockCommentEnd;
@@ -8310,7 +8310,7 @@ CodeMirror.registerGlobalHelper("fold", "comment", function(mode) {
       continue;
     }
     if (pass == 1 && found < start.ch) return;
-    if (/comment/.test(cm.getTokenTypeAt(CodeMirror.Pos(line, found + 1)))) {
+    if (/comment/.test(cm.getTokenTypeAt(codeMirror.Pos(line, found + 1)))) {
       startCh = found + startToken.length;
       break;
     }
@@ -8332,8 +8332,8 @@ CodeMirror.registerGlobalHelper("fold", "comment", function(mode) {
     }
   }
   if (end == null || line == end && endCh == startCh) return;
-  return {from: CodeMirror.Pos(line, startCh),
-          to: CodeMirror.Pos(end, endCh)};
+  return {from: codeMirror.Pos(line, startCh),
+          to: codeMirror.Pos(end, endCh)};
 });
 
 });
@@ -8344,15 +8344,15 @@ CodeMirror.registerGlobalHelper("fold", "comment", function(mode) {
   else if (typeof define == "function" && define.amd) // AMD
     define(["../../lib/codemirror"], mod);
   else // Plain browser env
-    mod(CodeMirror);
-})(function(CodeMirror) {
+    mod(codeMirror);
+})(function(codeMirror) {
 "use strict";
 
-CodeMirror.registerHelper("fold", "indent", function(cm, start) {
+codeMirror.registerHelper("fold", "indent", function(cm, start) {
   var tabSize = cm.getOption("tabSize"), firstLine = cm.getLine(start.line);
   if (!/\S/.test(firstLine)) return;
   var getIndent = function(line) {
-    return CodeMirror.countColumn(line, null, tabSize);
+    return codeMirror.countColumn(line, null, tabSize);
   };
   var myIndent = getIndent(firstLine);
   var lastLineInFold = null;
@@ -8373,8 +8373,8 @@ CodeMirror.registerHelper("fold", "indent", function(cm, start) {
     }
   }
   if (lastLineInFold) return {
-    from: CodeMirror.Pos(start.line, firstLine.length),
-    to: CodeMirror.Pos(lastLineInFold, cm.getLine(lastLineInFold).length)
+    from: codeMirror.Pos(start.line, firstLine.length),
+    to: codeMirror.Pos(lastLineInFold, cm.getLine(lastLineInFold).length)
   };
 });
 
@@ -8386,11 +8386,11 @@ CodeMirror.registerHelper("fold", "indent", function(cm, start) {
   else if (typeof define == "function" && define.amd) // AMD
     define(["../../lib/codemirror"], mod);
   else // Plain browser env
-    mod(CodeMirror);
-})(function(CodeMirror) {
+    mod(codeMirror);
+})(function(codeMirror) {
   "use strict";
 
-  var Pos = CodeMirror.Pos;
+  var Pos = codeMirror.Pos;
   function cmp(a, b) { return a.line - b.line || a.ch - b.ch; }
 
   var nameStartChar = "A-Z_a-z\\u00C0-\\u00D6\\u00D8-\\u00F6\\u00F8-\\u02FF\\u0370-\\u037D\\u037F-\\u1FFF\\u200C-\\u200D\\u2070-\\u218F\\u2C00-\\u2FEF\\u3001-\\uD7FF\\uF900-\\uFDCF\\uFDF0-\\uFFFD";
@@ -8513,7 +8513,7 @@ CodeMirror.registerHelper("fold", "indent", function(cm, start) {
     }
   }
 
-  CodeMirror.registerHelper("fold", "xml", function(cm, start) {
+  codeMirror.registerHelper("fold", "xml", function(cm, start) {
     var iter = new Iter(cm, start.line, 0);
     for (;;) {
       var openTag = toNextTag(iter), end;
@@ -8525,7 +8525,7 @@ CodeMirror.registerHelper("fold", "indent", function(cm, start) {
       }
     }
   });
-  CodeMirror.findMatchingTag = function(cm, pos, range) {
+  codeMirror.findMatchingTag = function(cm, pos, range) {
     var iter = new Iter(cm, pos.line, pos.ch, range);
     if (iter.text.indexOf(">") == -1 && iter.text.indexOf("<") == -1) return;
     var end = toTagEnd(iter), to = end && Pos(iter.line, iter.ch);
@@ -8542,7 +8542,7 @@ CodeMirror.registerHelper("fold", "indent", function(cm, start) {
     }
   };
 
-  CodeMirror.findEnclosingTag = function(cm, pos, range) {
+  codeMirror.findEnclosingTag = function(cm, pos, range) {
     var iter = new Iter(cm, pos.line, pos.ch, range);
     for (;;) {
       var open = findMatchingOpen(iter);
@@ -8554,7 +8554,7 @@ CodeMirror.registerHelper("fold", "indent", function(cm, start) {
   };
 
   // Used by addon/edit/closetag.js
-  CodeMirror.scanForClosingTag = function(cm, pos, name, end) {
+  codeMirror.scanForClosingTag = function(cm, pos, name, end) {
     var iter = new Iter(cm, pos.line, pos.ch, end ? {from: 0, to: end} : null);
     return findMatchingClose(iter, name);
   };
@@ -8566,8 +8566,8 @@ CodeMirror.registerHelper("fold", "indent", function(cm, start) {
   else if (typeof define == "function" && define.amd) // AMD
     define(["../../lib/codemirror"], mod);
   else // Plain browser env
-    mod(CodeMirror);
-})(function(CodeMirror) {
+    mod(codeMirror);
+})(function(codeMirror) {
   "use strict";
 
   function doFold(cm, pos, options, force) {
@@ -8577,7 +8577,7 @@ CodeMirror.registerHelper("fold", "indent", function(cm, start) {
     } else {
       var finder = getOption(cm, options, "rangeFinder");
     }
-    if (typeof pos == "number") pos = CodeMirror.Pos(pos, 0);
+    if (typeof pos == "number") pos = codeMirror.Pos(pos, 0);
     var minSize = getOption(cm, options, "minFoldSize");
 
     function getRange(allowFolded) {
@@ -8596,15 +8596,15 @@ CodeMirror.registerHelper("fold", "indent", function(cm, start) {
 
     var range = getRange(true);
     if (getOption(cm, options, "scanUp")) while (!range && pos.line > cm.firstLine()) {
-      pos = CodeMirror.Pos(pos.line - 1, 0);
+      pos = codeMirror.Pos(pos.line - 1, 0);
       range = getRange(false);
     }
     if (!range || range.cleared || force === "unfold") return;
 
     var myWidget = makeWidget(cm, options);
-    CodeMirror.on(myWidget, "mousedown", function(e) {
+    codeMirror.on(myWidget, "mousedown", function(e) {
       myRange.clear();
-      CodeMirror.e_preventDefault(e);
+      codeMirror.e_preventDefault(e);
     });
     var myRange = cm.markText(range.from, range.to, {
       replacedWith: myWidget,
@@ -8612,9 +8612,9 @@ CodeMirror.registerHelper("fold", "indent", function(cm, start) {
       __isFold: true
     });
     myRange.on("clear", function(from, to) {
-      CodeMirror.signal(cm, "unfold", cm, from, to);
+      codeMirror.signal(cm, "unfold", cm, from, to);
     });
-    CodeMirror.signal(cm, "fold", cm, range.from, range.to);
+    codeMirror.signal(cm, "fold", cm, range.from, range.to);
   }
 
   function makeWidget(cm, options) {
@@ -8629,44 +8629,44 @@ CodeMirror.registerHelper("fold", "indent", function(cm, start) {
   }
 
   // Clumsy backwards-compatible interface
-  CodeMirror.newFoldFunction = function(rangeFinder, widget) {
+  codeMirror.newFoldFunction = function(rangeFinder, widget) {
     return function(cm, pos) { doFold(cm, pos, {rangeFinder: rangeFinder, widget: widget}); };
   };
 
   // New-style interface
-  CodeMirror.defineExtension("foldCode", function(pos, options, force) {
+  codeMirror.defineExtension("foldCode", function(pos, options, force) {
     doFold(this, pos, options, force);
   });
 
-  CodeMirror.defineExtension("isFolded", function(pos) {
+  codeMirror.defineExtension("isFolded", function(pos) {
     var marks = this.findMarksAt(pos);
     for (var i = 0; i < marks.length; ++i)
       if (marks[i].__isFold) return true;
   });
 
-  CodeMirror.commands.toggleFold = function(cm) {
+  codeMirror.commands.toggleFold = function(cm) {
     cm.foldCode(cm.getCursor());
   };
-  CodeMirror.commands.fold = function(cm) {
+  codeMirror.commands.fold = function(cm) {
     cm.foldCode(cm.getCursor(), null, "fold");
   };
-  CodeMirror.commands.unfold = function(cm) {
+  codeMirror.commands.unfold = function(cm) {
     cm.foldCode(cm.getCursor(), null, "unfold");
   };
-  CodeMirror.commands.foldAll = function(cm) {
+  codeMirror.commands.foldAll = function(cm) {
     cm.operation(function() {
       for (var i = cm.firstLine(), e = cm.lastLine(); i <= e; i++)
-        cm.foldCode(CodeMirror.Pos(i, 0), null, "fold");
+        cm.foldCode(codeMirror.Pos(i, 0), null, "fold");
     });
   };
-  CodeMirror.commands.unfoldAll = function(cm) {
+  codeMirror.commands.unfoldAll = function(cm) {
     cm.operation(function() {
       for (var i = cm.firstLine(), e = cm.lastLine(); i <= e; i++)
-        cm.foldCode(CodeMirror.Pos(i, 0), null, "unfold");
+        cm.foldCode(codeMirror.Pos(i, 0), null, "unfold");
     });
   };
 
-  CodeMirror.registerHelper("fold", "combine", function() {
+  codeMirror.registerHelper("fold", "combine", function() {
     var funcs = Array.prototype.slice.call(arguments, 0);
     return function(cm, start) {
       for (var i = 0; i < funcs.length; ++i) {
@@ -8676,7 +8676,7 @@ CodeMirror.registerHelper("fold", "indent", function(cm, start) {
     };
   });
 
-  CodeMirror.registerHelper("fold", "auto", function(cm, start) {
+  codeMirror.registerHelper("fold", "auto", function(cm, start) {
     var helpers = cm.getHelpers(start, "fold");
     for (var i = 0; i < helpers.length; i++) {
       var cur = helpers[i](cm, start);
@@ -8685,13 +8685,13 @@ CodeMirror.registerHelper("fold", "indent", function(cm, start) {
   });
 
   var defaultOptions = {
-    rangeFinder: CodeMirror.fold.auto,
+    rangeFinder: codeMirror.fold.auto,
     widget: "\u2194",
     minFoldSize: 0,
     scanUp: false
   };
 
-  CodeMirror.defineOption("foldOptions", null);
+  codeMirror.defineOption("foldOptions", null);
 
   function getOption(cm, options, name) {
     if (options && options[name] !== undefined)
@@ -8702,7 +8702,7 @@ CodeMirror.registerHelper("fold", "indent", function(cm, start) {
     return defaultOptions[name];
   }
 
-  CodeMirror.defineExtension("foldOption", function(options, name) {
+  codeMirror.defineExtension("foldOption", function(options, name) {
     return getOption(this, options, name);
   });
 });
@@ -8713,12 +8713,12 @@ CodeMirror.registerHelper("fold", "indent", function(cm, start) {
   else if (typeof define == "function" && define.amd) // AMD
     define(["../../lib/codemirror", "../fold/xml-fold"], mod);
   else // Plain browser env
-    mod(CodeMirror);
-})(function(CodeMirror) {
+    mod(codeMirror);
+})(function(codeMirror) {
   "use strict";
 
-  CodeMirror.defineOption("matchTags", false, function(cm, val, old) {
-    if (old && old != CodeMirror.Init) {
+  codeMirror.defineOption("matchTags", false, function(cm, val, old) {
+    if (old && old != codeMirror.Init) {
       cm.off("cursorActivity", doMatchTags);
       cm.off("viewportChange", maybeUpdateMatch);
       clear(cm);
@@ -8744,7 +8744,7 @@ CodeMirror.registerHelper("fold", "indent", function(cm, start) {
       if (cm.somethingSelected()) return;
       var cur = cm.getCursor(), range = cm.getViewport();
       range.from = Math.min(range.from, cur.line); range.to = Math.max(cur.line + 1, range.to);
-      var match = CodeMirror.findMatchingTag(cm, cur, range);
+      var match = codeMirror.findMatchingTag(cm, cur, range);
       if (!match) return;
       if (cm.state.matchBothTags) {
         var hit = match.at == "open" ? match.open : match.close;
@@ -8762,8 +8762,8 @@ CodeMirror.registerHelper("fold", "indent", function(cm, start) {
     if (cm.state.failedTagMatch) doMatchTags(cm);
   }
 
-  CodeMirror.commands.toMatchingTag = function(cm) {
-    var found = CodeMirror.findMatchingTag(cm, cm.getCursor());
+  codeMirror.commands.toMatchingTag = function(cm) {
+    var found = codeMirror.findMatchingTag(cm, cm.getCursor());
     if (found) {
       var other = found.at == "close" ? found.open : found.close;
       if (other) cm.extendSelection(other.to, other.from);
@@ -8777,10 +8777,10 @@ CodeMirror.registerHelper("fold", "indent", function(cm, start) {
   else if (typeof define == "function" && define.amd) // AMD
     define(["../../lib/codemirror"], mod);
   else // Plain browser env
-    mod(CodeMirror);
-})(function(CodeMirror) {
-  CodeMirror.defineOption("showTrailingSpace", false, function(cm, val, prev) {
-    if (prev == CodeMirror.Init) prev = false;
+    mod(codeMirror);
+})(function(codeMirror) {
+  codeMirror.defineOption("showTrailingSpace", false, function(cm, val, prev) {
+    if (prev == codeMirror.Init) prev = false;
     if (prev && !val)
       cm.removeOverlay("trailingspace");
     else if (!prev && val)
@@ -8802,12 +8802,12 @@ CodeMirror.registerHelper("fold", "indent", function(cm, start) {
   else if (typeof define == "function" && define.amd) // AMD
     define(["../../lib/codemirror"], mod);
   else // Plain browser env
-    mod(CodeMirror);
-})(function(CodeMirror) {
+    mod(codeMirror);
+})(function(codeMirror) {
 "use strict";
 
-CodeMirror.defineMode("css", function(config, parserConfig) {
-  if (!parserConfig.propertyKeywords) parserConfig = CodeMirror.resolveMode("text/css");
+codeMirror.defineMode("css", function(config, parserConfig) {
+  if (!parserConfig.propertyKeywords) parserConfig = codeMirror.resolveMode("text/css");
 
   var indentUnit = config.indentUnit,
       tokenHooks = parserConfig.tokenHooks,
@@ -9404,7 +9404,7 @@ CodeMirror.defineMode("css", function(config, parserConfig) {
 
   var allWords = mediaTypes_.concat(mediaFeatures_).concat(propertyKeywords_)
     .concat(nonStandardPropertyKeywords_).concat(colorKeywords_).concat(valueKeywords_);
-  CodeMirror.registerHelper("hintWords", "css", allWords);
+  codeMirror.registerHelper("hintWords", "css", allWords);
 
   function tokenCComment(stream, state) {
     var maybeEnd = false, ch;
@@ -9428,7 +9428,7 @@ CodeMirror.defineMode("css", function(config, parserConfig) {
     return ["comment", "comment"];
   }
 
-  CodeMirror.defineMIME("text/css", {
+  codeMirror.defineMIME("text/css", {
     mediaTypes: mediaTypes,
     mediaFeatures: mediaFeatures,
     propertyKeywords: propertyKeywords,
@@ -9451,7 +9451,7 @@ CodeMirror.defineMode("css", function(config, parserConfig) {
     name: "css"
   });
 
-  CodeMirror.defineMIME("text/x-scss", {
+  codeMirror.defineMIME("text/x-scss", {
     mediaTypes: mediaTypes,
     mediaFeatures: mediaFeatures,
     propertyKeywords: propertyKeywords,
@@ -9492,7 +9492,7 @@ CodeMirror.defineMode("css", function(config, parserConfig) {
     helperType: "scss"
   });
 
-  CodeMirror.defineMIME("text/x-less", {
+  codeMirror.defineMIME("text/x-less", {
     mediaTypes: mediaTypes,
     mediaFeatures: mediaFeatures,
     propertyKeywords: propertyKeywords,
@@ -9536,11 +9536,11 @@ CodeMirror.defineMode("css", function(config, parserConfig) {
   else if (typeof define == "function" && define.amd) // AMD
     define(["../../lib/codemirror", "../htmlmixed/htmlmixed"], mod);
   else // Plain browser env
-    mod(CodeMirror);
-})(function(CodeMirror) {
+    mod(codeMirror);
+})(function(codeMirror) {
 "use strict";
 
-CodeMirror.defineMode("htmlembedded", function(config, parserConfig) {
+codeMirror.defineMode("htmlembedded", function(config, parserConfig) {
 
   //config settings
   var scriptStartRegex = parserConfig.scriptStartRegex || /^<%/i,
@@ -9572,12 +9572,12 @@ CodeMirror.defineMode("htmlembedded", function(config, parserConfig) {
 
   return {
     startState: function() {
-      scriptingMode = scriptingMode || CodeMirror.getMode(config, parserConfig.scriptingModeSpec);
-      htmlMixedMode = htmlMixedMode || CodeMirror.getMode(config, "htmlmixed");
+      scriptingMode = scriptingMode || codeMirror.getMode(config, parserConfig.scriptingModeSpec);
+      htmlMixedMode = htmlMixedMode || codeMirror.getMode(config, "htmlmixed");
       return {
           token :  parserConfig.startOpen ? scriptingDispatch : htmlDispatch,
-          htmlState : CodeMirror.startState(htmlMixedMode),
-          scriptState : CodeMirror.startState(scriptingMode)
+          htmlState : codeMirror.startState(htmlMixedMode),
+          scriptState : codeMirror.startState(scriptingMode)
       };
     },
 
@@ -9595,8 +9595,8 @@ CodeMirror.defineMode("htmlembedded", function(config, parserConfig) {
     copyState: function(state) {
       return {
        token : state.token,
-       htmlState : CodeMirror.copyState(htmlMixedMode, state.htmlState),
-       scriptState : CodeMirror.copyState(scriptingMode, state.scriptState)
+       htmlState : codeMirror.copyState(htmlMixedMode, state.htmlState),
+       scriptState : codeMirror.copyState(scriptingMode, state.scriptState)
       };
     },
 
@@ -9607,10 +9607,10 @@ CodeMirror.defineMode("htmlembedded", function(config, parserConfig) {
   };
 }, "htmlmixed");
 
-CodeMirror.defineMIME("application/x-ejs", { name: "htmlembedded", scriptingModeSpec:"javascript"});
-CodeMirror.defineMIME("application/x-aspx", { name: "htmlembedded", scriptingModeSpec:"text/x-csharp"});
-CodeMirror.defineMIME("application/x-jsp", { name: "htmlembedded", scriptingModeSpec:"text/x-java"});
-CodeMirror.defineMIME("application/x-erb", { name: "htmlembedded", scriptingModeSpec:"ruby"});
+codeMirror.defineMIME("application/x-ejs", { name: "htmlembedded", scriptingModeSpec:"javascript"});
+codeMirror.defineMIME("application/x-aspx", { name: "htmlembedded", scriptingModeSpec:"text/x-csharp"});
+codeMirror.defineMIME("application/x-jsp", { name: "htmlembedded", scriptingModeSpec:"text/x-java"});
+codeMirror.defineMIME("application/x-erb", { name: "htmlembedded", scriptingModeSpec:"ruby"});
 
 });
 //htmlmixed.js
@@ -9620,26 +9620,26 @@ CodeMirror.defineMIME("application/x-erb", { name: "htmlembedded", scriptingMode
   else if (typeof define == "function" && define.amd) // AMD
     define(["../../lib/codemirror", "../xml/xml", "../javascript/javascript", "../css/css"], mod);
   else // Plain browser env
-    mod(CodeMirror);
-})(function(CodeMirror) {
+    mod(codeMirror);
+})(function(codeMirror) {
 "use strict";
 
-CodeMirror.defineMode("htmlmixed", function(config, parserConfig) {
-  var htmlMode = CodeMirror.getMode(config, {name: "xml",
+codeMirror.defineMode("htmlmixed", function(config, parserConfig) {
+  var htmlMode = codeMirror.getMode(config, {name: "xml",
                                              htmlMode: true,
                                              multilineTagIndentFactor: parserConfig.multilineTagIndentFactor,
                                              multilineTagIndentPastTag: parserConfig.multilineTagIndentPastTag});
-  var cssMode = CodeMirror.getMode(config, "css");
+  var cssMode = codeMirror.getMode(config, "css");
 
   var scriptTypes = [], scriptTypesConf = parserConfig && parserConfig.scriptTypes;
   scriptTypes.push({matches: /^(?:text|application)\/(?:x-)?(?:java|ecma)script$|^$/i,
-                    mode: CodeMirror.getMode(config, "javascript")});
+                    mode: codeMirror.getMode(config, "javascript")});
   if (scriptTypesConf) for (var i = 0; i < scriptTypesConf.length; ++i) {
     var conf = scriptTypesConf[i];
-    scriptTypes.push({matches: conf.matches, mode: conf.mode && CodeMirror.getMode(config, conf.mode)});
+    scriptTypes.push({matches: conf.matches, mode: conf.mode && codeMirror.getMode(config, conf.mode)});
   }
   scriptTypes.push({matches: /./,
-                    mode: CodeMirror.getMode(config, "text/plain")});
+                    mode: codeMirror.getMode(config, "text/plain")});
 
   function html(stream, state) {
     var tagName = state.htmlState.tagName;
@@ -9705,9 +9705,9 @@ CodeMirror.defineMode("htmlmixed", function(config, parserConfig) {
 
     copyState: function(state) {
       if (state.localState)
-        var local = CodeMirror.copyState(state.localMode, state.localState);
+        var local = codeMirror.copyState(state.localMode, state.localState);
       return {token: state.token, localMode: state.localMode, localState: local,
-              htmlState: CodeMirror.copyState(htmlMode, state.htmlState)};
+              htmlState: codeMirror.copyState(htmlMode, state.htmlState)};
     },
 
     token: function(stream, state) {
@@ -9720,7 +9720,7 @@ CodeMirror.defineMode("htmlmixed", function(config, parserConfig) {
       else if (state.localMode.indent)
         return state.localMode.indent(state.localState, textAfter);
       else
-        return CodeMirror.Pass;
+        return codeMirror.Pass;
     },
 
     innerMode: function(state) {
@@ -9729,7 +9729,7 @@ CodeMirror.defineMode("htmlmixed", function(config, parserConfig) {
   };
 }, "xml", "javascript", "css");
 
-CodeMirror.defineMIME("text/html", "htmlmixed");
+codeMirror.defineMIME("text/html", "htmlmixed");
 
 });
 //javascript.js
@@ -9739,11 +9739,11 @@ CodeMirror.defineMIME("text/html", "htmlmixed");
   else if (typeof define == "function" && define.amd) // AMD
     define(["../../lib/codemirror"], mod);
   else // Plain browser env
-    mod(CodeMirror);
-})(function(CodeMirror) {
+    mod(codeMirror);
+})(function(codeMirror) {
 "use strict";
 
-CodeMirror.defineMode("javascript", function(config, parserConfig) {
+codeMirror.defineMode("javascript", function(config, parserConfig) {
   var indentUnit = config.indentUnit;
   var statementIndent = parserConfig.statementIndent;
   var jsonldMode = parserConfig.jsonld;
@@ -10369,7 +10369,7 @@ CodeMirror.defineMode("javascript", function(config, parserConfig) {
     },
 
     indent: function(state, textAfter) {
-      if (state.tokenize == tokenComment) return CodeMirror.Pass;
+      if (state.tokenize == tokenComment) return codeMirror.Pass;
       if (state.tokenize != tokenBase) return 0;
       var firstChar = textAfter && textAfter.charAt(0), lexical = state.lexical;
       // Kludge to prevent 'maybelse' from blocking lexical scope pops
@@ -10406,18 +10406,18 @@ CodeMirror.defineMode("javascript", function(config, parserConfig) {
   };
 });
 
-CodeMirror.registerHelper("wordChars", "javascript", /[\w$]/);
+codeMirror.registerHelper("wordChars", "javascript", /[\w$]/);
 
-CodeMirror.defineMIME("text/javascript", "javascript");
-CodeMirror.defineMIME("text/ecmascript", "javascript");
-CodeMirror.defineMIME("application/javascript", "javascript");
-CodeMirror.defineMIME("application/x-javascript", "javascript");
-CodeMirror.defineMIME("application/ecmascript", "javascript");
-CodeMirror.defineMIME("application/json", {name: "javascript", json: true});
-CodeMirror.defineMIME("application/x-json", {name: "javascript", json: true});
-CodeMirror.defineMIME("application/ld+json", {name: "javascript", jsonld: true});
-CodeMirror.defineMIME("text/typescript", { name: "javascript", typescript: true });
-CodeMirror.defineMIME("application/typescript", { name: "javascript", typescript: true });
+codeMirror.defineMIME("text/javascript", "javascript");
+codeMirror.defineMIME("text/ecmascript", "javascript");
+codeMirror.defineMIME("application/javascript", "javascript");
+codeMirror.defineMIME("application/x-javascript", "javascript");
+codeMirror.defineMIME("application/ecmascript", "javascript");
+codeMirror.defineMIME("application/json", {name: "javascript", json: true});
+codeMirror.defineMIME("application/x-json", {name: "javascript", json: true});
+codeMirror.defineMIME("application/ld+json", {name: "javascript", jsonld: true});
+codeMirror.defineMIME("text/typescript", { name: "javascript", typescript: true });
+codeMirror.defineMIME("application/typescript", { name: "javascript", typescript: true });
 
 });
 //matchbrackets.js
@@ -10427,12 +10427,12 @@ CodeMirror.defineMIME("application/typescript", { name: "javascript", typescript
   else if (typeof define == "function" && define.amd) // AMD
     define(["../../lib/codemirror"], mod);
   else // Plain browser env
-    mod(CodeMirror);
-})(function(CodeMirror) {
+    mod(codeMirror);
+})(function(codeMirror) {
   var ie_lt8 = /MSIE \d/.test(navigator.userAgent) &&
     (document.documentMode == null || document.documentMode < 8);
 
-  var Pos = CodeMirror.Pos;
+  var Pos = codeMirror.Pos;
 
   var matching = {"(": ")>", ")": "(<", "[": "]>", "]": "[<", "{": "}>", "}": "{<"};
 
@@ -10521,8 +10521,8 @@ CodeMirror.defineMIME("application/typescript", { name: "javascript", typescript
     });
   }
 
-  CodeMirror.defineOption("matchBrackets", false, function(cm, val, old) {
-    if (old && old != CodeMirror.Init)
+  codeMirror.defineOption("matchBrackets", false, function(cm, val, old) {
+    if (old && old != codeMirror.Init)
       cm.off("cursorActivity", doMatchBrackets);
     if (val) {
       cm.state.matchBrackets = typeof val == "object" ? val : {};
@@ -10530,11 +10530,11 @@ CodeMirror.defineMIME("application/typescript", { name: "javascript", typescript
     }
   });
 
-  CodeMirror.defineExtension("matchBrackets", function() {matchBrackets(this, true);});
-  CodeMirror.defineExtension("findMatchingBracket", function(pos, strict, config){
+  codeMirror.defineExtension("matchBrackets", function() {matchBrackets(this, true);});
+  codeMirror.defineExtension("findMatchingBracket", function(pos, strict, config){
     return findMatchingBracket(this, pos, strict, config);
   });
-  CodeMirror.defineExtension("scanForBracket", function(pos, dir, style, config){
+  codeMirror.defineExtension("scanForBracket", function(pos, dir, style, config){
     return scanForBracket(this, pos, dir, style, config);
   });
 });
@@ -10545,11 +10545,11 @@ CodeMirror.defineMIME("application/typescript", { name: "javascript", typescript
   else if (typeof define == "function" && define.amd) // AMD
     define(["../../lib/codemirror"], mod);
   else // Plain browser env
-    mod(CodeMirror);
-})(function(CodeMirror) {
+    mod(codeMirror);
+})(function(codeMirror) {
 "use strict";
 
-CodeMirror.defineMode("xml", function(config, parserConfig) {
+codeMirror.defineMode("xml", function(config, parserConfig) {
   var indentUnit = config.indentUnit;
   var multilineTagIndentFactor = parserConfig.multilineTagIndentFactor || 1;
   var multilineTagIndentPastTag = parserConfig.multilineTagIndentPastTag;
@@ -10867,7 +10867,7 @@ CodeMirror.defineMode("xml", function(config, parserConfig) {
         else
           return state.indented + indentUnit;
       }
-      if (context && context.noIndent) return CodeMirror.Pass;
+      if (context && context.noIndent) return codeMirror.Pass;
       if (state.tokenize != inTag && state.tokenize != inText)
         return fullLine ? fullLine.match(/^(\s*)/)[0].length : 0;
       // Indent the starts of attribute names.
@@ -10914,10 +10914,10 @@ CodeMirror.defineMode("xml", function(config, parserConfig) {
   };
 });
 
-CodeMirror.defineMIME("text/xml", "xml");
-CodeMirror.defineMIME("application/xml", "xml");
-if (!CodeMirror.mimeModes.hasOwnProperty("text/html"))
-  CodeMirror.defineMIME("text/html", {name: "xml", htmlMode: true});
+codeMirror.defineMIME("text/xml", "xml");
+codeMirror.defineMIME("application/xml", "xml");
+if (!codeMirror.mimeModes.hasOwnProperty("text/html"))
+  codeMirror.defineMIME("text/html", {name: "xml", htmlMode: true});
 
 });
   

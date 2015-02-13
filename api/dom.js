@@ -1,5 +1,5 @@
 /*prettydiff.com api.topcoms: true, api.inchar: " ", api.insize: 4, api.vertical: true */
-/*global console, edition, document, localStorage, window, prettydiff, summary, markup_beauty, csspretty, csvbeauty, csvmin, markupmin, jspretty, diffview, XMLHttpRequest, location, ActiveXObject, FileReader, navigator, setTimeout, CodeMirror, AudioContext, ArrayBuffer, Uint8Array*/
+/*global console, edition, document, localStorage, window, prettydiff, summary, markup_beauty, csspretty, csvbeauty, csvmin, markupmin, jspretty, diffview, XMLHttpRequest, location, ActiveXObject, FileReader, navigator, setTimeout, codeMirror, AudioContext, ArrayBuffer, Uint8Array*/
 /***********************************************************************
  This is written by Austin Cheney on 3 Mar 2009. Anybody may use this;
  code without permission so long as this comment exists verbatim in each;
@@ -34,7 +34,7 @@ var pd = {};
         audio      : ((typeof AudioContext === "function" || typeof AudioContext === "object") && AudioContext !== null) ? new AudioContext() : null,
 
         //delect if CodeMirror is supported
-        cm         : (location.href.toLowerCase().indexOf("codemirror=false") < 0 && (typeof CodeMirror === "object" || typeof CodeMirror === "function")) ? true : false,
+        cm         : (location.href.toLowerCase().indexOf("codemirror=false") < 0 && (typeof codeMirror === "object" || typeof codeMirror === "function")) ? true : false,
 
         //am I served from the Pretty Diff domain
         domain     : (location.href.indexOf("prettydiff.com") < 15) ? true : false,
@@ -312,7 +312,7 @@ var pd = {};
 
     if (pd.test.cm === true) {
         pd.cm          = {};
-        pd.cm.diffBase = CodeMirror(function (x) {
+        pd.cm.diffBase = codeMirror(function (x) {
             var node = pd.$$("diffBase");
             if (pd.o.codeDiffBase === null) {
                 if (node === null) {
@@ -339,7 +339,7 @@ var pd = {};
             tabSize          : 4,
             theme            : "white"
         });
-        pd.cm.diffNew  = CodeMirror(function (x) {
+        pd.cm.diffNew  = codeMirror(function (x) {
             var node = pd.$$("diffNew");
             if (pd.o.codeDiffNew === null) {
                 if (node === null) {
@@ -366,7 +366,7 @@ var pd = {};
             tabSize          : 4,
             theme            : "white"
         });
-        pd.cm.beauIn   = CodeMirror(function (x) {
+        pd.cm.beauIn   = codeMirror(function (x) {
             var node = pd.$$("Beautify");
             if (pd.o.codeBeauIn === null) {
                 if (node === null) {
@@ -393,7 +393,7 @@ var pd = {};
             tabSize          : 4,
             theme            : "white"
         });
-        pd.cm.beauOut  = CodeMirror(function (x) {
+        pd.cm.beauOut  = codeMirror(function (x) {
             var node = pd.$$("Beautify");
             if (pd.o.codeBeauOut === null) {
                 if (node === null) {
@@ -421,7 +421,7 @@ var pd = {};
             tabSize          : 4,
             theme            : "white"
         });
-        pd.cm.minnIn   = CodeMirror(function (x) {
+        pd.cm.minnIn   = codeMirror(function (x) {
             var node = pd.$$("Minify");
             if (pd.o.codeMinnIn === null) {
                 if (node === null) {
@@ -448,7 +448,7 @@ var pd = {};
             tabSize          : 4,
             theme            : "white"
         });
-        pd.cm.minnOut  = CodeMirror(function (x) {
+        pd.cm.minnOut  = codeMirror(function (x) {
             var node = pd.$$("Minify");
             if (pd.o.codeMinnOut === null) {
                 if (node === null) {
@@ -1767,7 +1767,7 @@ var pd = {};
         if (event.keyCode === 16 && pd.test.tabesc.length > 0) {
             pd.test.tabesc = [];
         }
-        if (event.keyCode === 17) {
+        if (event.keyCode === 17 || event.keyCode === 224) {
             pd.tabtrue = true;
         }
     };
@@ -1775,11 +1775,13 @@ var pd = {};
     //provide a means for keyboard users to escape a textarea
     pd.areaTabOut          = function dom__areaTabOut(event, node) {
         var len = pd.test.tabesc.length,
-            esc = false;
+            esc = false,
+            key = 0;
         node  = node || this;
         event = event || window.event;
-        if (event.keyCode === 17) {
-            if (pd.tabtrue === false && (pd.test.tabesc[0] === 17 || len > 1)) {
+        key = event.keyCode;
+        if (key === 17 || key === 224) {
+            if (pd.tabtrue === false && (pd.test.tabesc[0] === 17 || pd.test.tabesc[0] === 224 || len > 1)) {
                 return;
             }
             pd.tabtrue = false;
@@ -1798,16 +1800,20 @@ var pd = {};
         if (esc === true) {
             esc        = false;
             pd.tabtrue = false;
-            if (len === 0 && (event.keyCode === 16 || event.keyCode === 17)) {
-                return pd.test.tabesc.push(event.keyCode);
+            if ((len  === 1 && pd.test.tabesc[0] !== 16 && key !== pd.test.tabesc[0]) || (len === 2 && key !== pd.test.tabesc[1])) {
+                pd.test.tabesc = [];
+                return;
             }
-            if (len === 1 && event.keyCode === 17) {
-                if (pd.test.tabesc[0] === 17) {
+            if (len === 0 && (key === 16 || key === 17 || key === 224)) {
+                return pd.test.tabesc.push(key);
+            }
+            if (len === 1 && (key === 17 || key === 224)) {
+                if (pd.test.tabesc[0] === 17 || pd.test.tabesc[0] === 224) {
                     esc = true;
                 } else {
-                    return pd.test.tabesc.push(17);
+                    return pd.test.tabesc.push(key);
                 }
-            } else if (len === 2 && event.keyCode === 17) {
+            } else if (len === 2 && (key === 17 || key === 224)) {
                 esc = true;
             } else if (len > 0) {
                 pd.test.tabesc = [];
@@ -1849,12 +1855,9 @@ var pd = {};
                     }
                 }
                 pd.test.tabesc = [];
-                return;
             }
-            pd.sequence(event);
-        } else {
-            pd.sequence(event);
         }
+        pd.sequence(event);
     };
 
     //intelligently raise the z-index of the report windows
@@ -1992,7 +1995,6 @@ var pd = {};
             left      = 0,
             top       = 0,
             buttonRes = {},
-            clicktest = false,
             step      = (typeof steps !== "number") ? 50 : (steps < 1) ? 1 : steps,
             growth    = function dom__minimize_growth() {
                 var boxLocal     = box,
@@ -3930,6 +3932,20 @@ var pd = {};
             }
             pd.settings.knownname = name;
         }
+        if (pd.settings === undefined) {
+            pd.settings = {
+                feedreport: {
+                    newb: false,
+                    veteran: false
+                }
+            };
+        }
+        if (pd.settings.feedreport === undefined) {
+            pd.settings.feedreport = {
+                newb: false,
+                veteran: false
+            };
+        }
         localStorage.settings  = "{\"feedreport\":{\"newb\":" + pd.settings.feedreport.newb + ",\"veteran\":" + pd.settings.feedreport.veteran + "},\"codereport\":{},\"statreport\":{},\"knownname\":" + pd.settings.knownname + "}";
         pd.commentString       = [];
         pd.o.comment.innerHTML = "/*prettydiff.com */";
@@ -4026,6 +4042,9 @@ var pd = {};
                     }
                     return false;
                 }
+                if (aa.type === "keydown") {
+                    pd.sequence(aa);
+                }
             },
             cmdisable     = function dom__load_cmdisable(x) {
                 var el     = (typeof x === "object" && x.nodeType === 1) ? x : this,
@@ -4090,11 +4109,11 @@ var pd = {};
                 }
             },
             textareablur  = function dom__load_textareablur() {
-                var node = pd.$$("textareaTabKey");
-                if (node === null) {
+                var tabkey = pd.$$("textareaTabKey");
+                if (tabkey === null) {
                     return;
                 }
-                node.style.display = "none";
+                tabkey.style.display = "none";
                 if (pd.test.cm === true) {
                     this.parentNode.parentNode.setAttribute("class", this.parentNode.parentNode.getAttribute("class").replace(" filefocus", ""));
                 }
@@ -4245,6 +4264,8 @@ var pd = {};
                             delete pd.settings.minnreport;
                             pd.settings.feedreport = {};
                             pd.settings.codereport = {};
+                            pd.settings.feedreport.newb = false;
+                            pd.settings.feedreport.veteran = false;
                         }
                     }
                     if (localStorage.stat !== undefined) {
@@ -5055,7 +5076,7 @@ var pd = {};
                     };
                 node = pd.$$("colorScheme");
                 if (node !== null) {
-                    if (localStorage.settings !== undefined && localStorage.settings.indexOf(":undefined") > 0) {
+                    if (localStorage.settings !== undefined && localStorage.settings !== null && localStorage.settings.indexOf(":undefined") > 0) {
                         localStorage.settings = localStorage.settings.replace(/:undefined/g, ":false");
                     }
                     pd.settings = (pd.test.ls === true && pd.test.json === true && localStorage.settings !== undefined) ? JSON.parse(localStorage.settings) : {};
