@@ -62,6 +62,7 @@ Examples:
             0, 0
         ],
         options       = {
+            api         : "",
             bracepadding: false,
             braces      : "knr",
             color       : "white",
@@ -261,7 +262,7 @@ Examples:
                 a.push("<p>Accessibility note. &lt;em&gt; tags in the output represent character differences per lines compared.</p>");
                 a.push(result[0]);
                 a.push("<script type='application/javascript'><![CDATA[");
-                a.push("var pd={};pd.colSliderProperties=[];(function(){var d=document.getElementsByTagName('ol'),cells=d[0].getElemensByTagName('li'),len=cells.length,a=0;pd.colSliderProperties=[d[0].clientWidth,d[1].clientWidth,d[2].parentNode.clientWidth,d[2].parentNode.parentNode.clientWidth,d[2].parentNode.offsetLeft-d[2].parentNode.parentNode.offsetLeft,];for(a=0;a<len;a+=1){if(cells[a].getAttribute('class')==='fold'){cells[a].onmousedown=pd.difffold;}}if(d.length>3){d[2].onmousedown=pd.colSliderGrab;d[2].ontouchstart=pd.colSliderGrab;}}());pd.difffold=function dom__difffold(){var a=0,b=0,self=this,title=self.getAttribute('title').split('line '),min=Number(title[1].substr(0,title[1].indexOf(' '))),max=Number(title[2]),inner=self.innerHTML,lists=[],parent=self.parentNode.parentNode,listnodes=(parent.getAttribute('class')==='diff')?parent.getElementsByTagName('ol'):parent.parentNode.getElementsByTagName('ol'),listLen=listnodes.length;for(a=0;a<listLen;a+=1){lists.push(listnodes[a].getElementsByTagName('li'));}for(a=0;a<min;a+=1){if(lists[0][a].getAttribute('class')==='empty'){min+=1;max+=1;}}max=(max>=lists[0].length)?lists[0].length:max;if(inner.charAt(0)==='-'){self.innerHTML='+'+inner.substr(1);for(a=min;a<max;a+=1){for(b=0;b<listLen;b+=1){lists[b][a].style.display='none';}}}else{self.innerHTML='-'+inner.substr(1);for(a=min;a<max;a+=1){for(b=0;b<listLen;b+=1){lists[b][a].style.display='block';}}}};pd.colSliderGrab=function dom__colSliderGrab(e){var event=e||window.event,touch=(e.type==='touchstart')?true:false,node=this,diffRight=node.parentNode,diff=diffRight.parentNode,subOffset=0,counter=pd.colSliderProperties[0],data=pd.colSliderProperties[1],width=pd.colSliderProperties[2],total=pd.colSliderProperties[3],offset=pd.colSliderProperties[4],min=0,max=data-1,status='ew',minAdjust=min+15,maxAdjust=max-15,withinRange=false,diffLeft=diffRight.previousSibling,drop=function dom__colSliderGrab_drop(f){f=f||window.event;f.preventDefault();node.style.cursor=status+'-resize';if(touch===true){document.ontouchmove=null;document.ontouchend=null;}else{document.onmousemove=null;document.onmouseup=null;}},boxmove=function dom__colSliderGrab_boxmove(f){f=f||window.event;f.preventDefault();if(touch===true){subOffset=offset-f.touches[0].clientX;}else{subOffset=offset-f.clientX;}if(subOffset>minAdjust&&subOffset<maxAdjust){withinRange=true;}if(withinRange===true&&subOffset>maxAdjust){diffRight.style.width=((total-counter-2)/10)+'em';status='e';}else if(withinRange===true&&subOffset<minAdjust){diffRight.style.width=(width/10)+'em';status='w';}else if(subOffset<max&&subOffset>min){diffRight.style.width=((width+subOffset)/10)+'em';status='ew';}if(touch===true){document.ontouchend=drop;}else{document.onmouseup=drop;}};event.preventDefault();if(typeof pd.o==='object'&&pd.o.report.code.box!==null){offset+=pd.o.report.code.box.offsetLeft;offset-=pd.o.report.code.body.scrollLeft;}else{subOffset=(document.body.parentNode.scrollLeft>document.body.scrollLeft)?document.body.parentNode.scrollLeft:document.body.scrollLeft;offset-=subOffset;}offset+=node.clientWidth;node.style.cursor='ew-resize';diff.style.width=(total/10)+'em';diff.style.display='inline-block';if(diffLeft.nodeType!==1){do{diffLeft=diffLeft.previousSibling;}while(diffLeft.nodeType!==1);}diffLeft.style.display='block';diffRight.style.width=(diffRight.clientWidth/10)+'em';diffRight.style.position='absolute';if(touch===true){document.ontouchmove=boxmove;document.ontouchstart=false;}else{document.onmousemove=boxmove;document.onmousedown=null;}};");
+                a.push("var pd={};pd.colSliderProperties=[];(function(){var d=document.getElementsByTagName('ol'),cells=d[0].getElemensByTagName('li'),len=cells.length,a=0;pd.colSliderProperties=[d[0].clientWidth,d[1].clientWidth,d[2].parentNode.clientWidth,d[2].parentNode.parentNode.clientWidth,d[2].parentNode.offsetLeft-d[2].parentNode.parentNode.offsetLeft,];for(a=0;a<len;a+=1){if(cells[a].getAttribute('class')==='fold'){cells[a].onmousedown=pd.difffold;}}if(d.length>3){d[2].onmousedown=pd.colSliderGrab;d[2].ontouchstart=pd.colSliderGrab;}}());pd.difffold=function dom__difffold(){var a=0,b=0,self=this,title=self.getAttribute('title').split('line '),min=Number(title[1].substr(0,title[1].indexOf(' '))),max=Number(title[2]),inner=self.innerHTML,lists=[],parent=self.parentNode.parentNode,listnodes=(parent.getAttribute('class')==='diff')?parent.getElementsByTagName('ol'):parent.parentNode.getElementsByTagName('ol'),listLen=listnodes.length;for(a=0;a<listLen;a+=1){lists.push(listnodes[a].getElementsByTagName('li'));}if(lists.length>3){for(a=0;a<min;a+=1){if(lists[0][a].getAttribute('class')==='empty'){min+=1;max+=1;}}}max=(max>=lists[0].length)?lists[0].length:max;if(inner.charAt(0)==='-'){self.innerHTML='+'+inner.substr(1);for(a=min;a<max;a+=1){for(b=0;b<listLen;b+=1){lists[b][a].style.display='none';}}}else{self.innerHTML='-'+inner.substr(1);for(a=min;a<max;a+=1){for(b=0;b<listLen;b+=1){lists[b][a].style.display='block';}}}};pd.colSliderGrab=function dom__colSliderGrab(e){var event=e||window.event,touch=(e.type==='touchstart')?true:false,node=this,diffRight=node.parentNode,diff=diffRight.parentNode,subOffset=0,counter=pd.colSliderProperties[0],data=pd.colSliderProperties[1],width=pd.colSliderProperties[2],total=pd.colSliderProperties[3],offset=pd.colSliderProperties[4],min=0,max=data-1,status='ew',minAdjust=min+15,maxAdjust=max-15,withinRange=false,diffLeft=diffRight.previousSibling,drop=function dom__colSliderGrab_drop(f){f=f||window.event;f.preventDefault();node.style.cursor=status+'-resize';if(touch===true){document.ontouchmove=null;document.ontouchend=null;}else{document.onmousemove=null;document.onmouseup=null;}},boxmove=function dom__colSliderGrab_boxmove(f){f=f||window.event;f.preventDefault();if(touch===true){subOffset=offset-f.touches[0].clientX;}else{subOffset=offset-f.clientX;}if(subOffset>minAdjust&&subOffset<maxAdjust){withinRange=true;}if(withinRange===true&&subOffset>maxAdjust){diffRight.style.width=((total-counter-2)/10)+'em';status='e';}else if(withinRange===true&&subOffset<minAdjust){diffRight.style.width=(width/10)+'em';status='w';}else if(subOffset<max&&subOffset>min){diffRight.style.width=((width+subOffset)/10)+'em';status='ew';}if(touch===true){document.ontouchend=drop;}else{document.onmouseup=drop;}};event.preventDefault();if(typeof pd.o==='object'&&pd.o.report.code.box!==null){offset+=pd.o.report.code.box.offsetLeft;offset-=pd.o.report.code.body.scrollLeft;}else{subOffset=(document.body.parentNode.scrollLeft>document.body.scrollLeft)?document.body.parentNode.scrollLeft:document.body.scrollLeft;offset-=subOffset;}offset+=node.clientWidth;node.style.cursor='ew-resize';diff.style.width=(total/10)+'em';diff.style.display='inline-block';if(diffLeft.nodeType!==1){do{diffLeft=diffLeft.previousSibling;}while(diffLeft.nodeType!==1);}diffLeft.style.display='block';diffRight.style.width=(diffRight.clientWidth/10)+'em';diffRight.style.position='absolute';if(touch===true){document.ontouchmove=boxmove;document.ontouchstart=false;}else{document.onmousemove=boxmove;document.onmousedown=null;}};");
                 a.push("]]></script>");
                 a.push("</body></html>");
                 return [
@@ -576,6 +577,9 @@ Examples:
                     if (d[b][0] === "" && d[b][1] === "help") {
                         help = true;
                     }
+                    if (d[b][0] === "api") {
+                        options.api = "node";
+                    }
                     if ((d[b][0] === "braces" && d[b][1] === "allman") || (d[b][0] === "indent" && d[b][1] === "allman")) {
                         options.braces = "allman";
                     }
@@ -810,49 +814,37 @@ Examples:
             }
         },
 
-        //write output to screen
-        //executed from fileComplete
-        screenWrite   = function () {
-            var report = [];
-            if (options.jsscope === true && options.mode === "beautify" && (options.lang === "javascript" || options.lang === "auto")) {
-                return reports();
-            }
-            report = prettydiff.api(options);
-            return console.log(report[0]);
-        },
-
-        //write diff output to a command line interface
-        //much like git diff
-        cliWrite = function (data) {
+        //write the CLI output
+        cliWrite = function (output, path) {console.log(output);
             var a = 0,
                 b = 0,
-                output = [],
-                pdlen = 0;
-            options.source = sfiledump[data.index];
-            options.diff = dfiledump[data.index];
-            if (options.source.indexOf("undefined") === 0) {
-                options.source = options.source.replace("undefined", "");
-            }
-            if (options.diff.indexOf("undefined") === 0) {
-                options.diff = options.diff.replace("undefined", "");
-            }
-            if (typeof options.context !== "number" || options.context < 0) {
-                console.log("\n" + colors.filepath.start + data.localpath + colors.filepath.end);
-            }
-            output = prettydiff.api(options);
+                plural = "",
+                pdlen = output[0].length;
             diffCount[0] += output[output.length - 1];
             diffCount[1] += 1;
-            pdlen = output[0].length;
-            if (output[5].length === 0) {
-                console.log("\n" + colors.filepath.start + data.localpath + "\nLine: " + output[0][a] + colors.filepath.end);
+            if (diffCount[0] !== 1) {
+                plural = "s";
+            }
+            if (options.readmethod === "screen") {
+                console.log("\nScreen input with " + diffCount[0] + " difference" + plural);
+            } else if (output[5].length === 0) {
+                console.log("\n" + colors.filepath.start + path + "\nLine: " + output[0][a] + colors.filepath.end);
             }
             for (a = 0; a < pdlen; a += 1) {
                 if (output[5].length > 0 && output[5][b] !== undefined) {
                     if (output[5][b][0] + 1 === output[0][a]) {
-                        console.log("\n" + colors.filepath.start + data.localpath + "\nLine: " + output[0][a] + colors.filepath.end);
+                        if (options.readmethod === "screen") {
+                            console.log("\nLine: " + output[0][a] + colors.filepath.end);
+                        } else {
+                            console.log("\n" + colors.filepath.start + path + "\nLine: " + output[0][a] + colors.filepath.end);
+                        }
                         b += 1;
                     } else if (output[5][b][1] + 1 === output[2][a]) {
-                        console.log("\n" + colors.filepath.start + data.localpath + "\nLine: " + output[2][a] + colors.filepath.end);
+                        if (options.readmethod === "screen") {
+                            console.log("\nLine: " + output[2][a] + colors.filepath.end);
+                        } else {
+                            console.log("\n" + colors.filepath.start + path + "\nLine: " + output[2][a] + colors.filepath.end);
+                        }
                         b += 1;
                     }
                 }
@@ -867,6 +859,37 @@ Examples:
                     console.log(colors.ins.lineStart + output[3][a].replace(/\x1B/g, "\\x1B").replace(/<p(d)>/g, colors.ins.charStart).replace(/<\/pd>/g, colors.ins.charEnd) + colors.ins.lineEnd);
                 }
             }
+        },
+
+        //write output to screen
+        //executed from fileComplete
+        screenWrite   = function () {
+            var report = [];
+            if (options.jsscope === true && options.mode === "beautify" && (options.lang === "javascript" || options.lang === "auto")) {
+                return reports();
+            }
+            report = prettydiff.api(options);
+            if (options.diffcli === true) {
+                return cliWrite(report);
+            }
+            return console.log(report[0]);
+        },
+
+        //generate the diff output
+        //for CLI from files
+        cliFile = function (data) {
+            options.source = sfiledump[data.index];
+            options.diff = dfiledump[data.index];
+            if (options.source.indexOf("undefined") === 0) {
+                options.source = options.source.replace("undefined", "");
+            }
+            if (options.diff.indexOf("undefined") === 0) {
+                options.diff = options.diff.replace("undefined", "");
+            }
+            if (typeof options.context !== "number" || options.context < 0) {
+                console.log("\n" + colors.filepath.start + data.localpath + colors.filepath.end);
+            }
+            cliWrite(prettydiff.api(options), data.localpath);
         },
 
         //is a file read operation complete?
@@ -907,7 +930,6 @@ Examples:
                 encoding: "utf8"
             }, function (err, dump) {
                 if (err !== null) {
-                    //return console.log("failed to read:\n" + data.absolutepath);
                     return readLocalFile(data);
                 }
                 data.file += dump;
@@ -1129,7 +1151,9 @@ Examples:
         options.report = true;
     }
     if (options.output === "" && options.mode === "diff") {
-        options.diffcli = true;
+        if (options.readmethod !== "screen") {
+            options.diffcli = true;
+        }
         if (process.argv.join(" ").indexOf(" context:") === -1) {
             options.context = 2;
         }
@@ -1179,7 +1203,9 @@ Examples:
                         return screenWrite();
                     }
                     state = false;
-                    return console.log("source is not a directory or file");
+                    if (options.readmethod !== "screen") {
+                        return console.log("source is not a directory or file");
+                    }
                 }
                 if (dir[2] === 1 && method !== "directory" && method !== "subdirectory") {
                     state = false;

@@ -675,10 +675,12 @@ var pd = {};
         for (a = 0; a < listLen; a += 1) {
             lists.push(listnodes[a].getElementsByTagName("li"));
         }
-        for (a = 0; a < min; a += 1) {
-            if (lists[0][a].getAttribute("class") === "empty") {
-                min += 1;
-                max += 1;
+        if (lists.length > 3) {
+            for (a = 0; a < min; a += 1) {
+                if (lists[0][a].getAttribute("class") === "empty") {
+                    min += 1;
+                    max += 1;
+                }
             }
         }
         max = (max >= lists[0].length) ? lists[0].length : max;
@@ -1284,6 +1286,7 @@ var pd = {};
                 var conditional = pd.$$("conditionalm-yes"),
                     html        = pd.$$("htmlm-yes"),
                     topcoms     = pd.$$("topcoms-yes"),
+                    correct     = pd.$$("mjscorrect-yes"),
                     obfuscate   = pd.$$("obfuscate-yes"),
                     objsorta    = pd.$$("mobjsort-all"),
                     objsortc    = pd.$$("mobjsort-cssonly"),
@@ -1305,6 +1308,7 @@ var pd = {};
                 } else {
                     api.objsort = "none";
                 }
+                api.correct     = (correct === null || correct.checked === false) ? false : true;
                 api.conditional = (conditional === null || conditional.checked === false) ? false : true;
                 api.html        = (html === null || html.checked === false) ? false : true;
                 api.topcoms     = (topcoms === null || topcoms.checked === false) ? false : true;
@@ -1909,7 +1913,7 @@ var pd = {};
             };
             fileError = function dom__file_onerror(e) {
                 var event = e || window.event;
-                input.value = "Error reading file: " + files[a].name + "\n\nThis is the browser's descriptiong: " + event.target.error.name;
+                input.value = "Error reading file:\n\nThis is the browser's descriptiong: " + event.target.error.name;
                 fileCount   = -1;
             };
             fileCount = files.length;
@@ -3595,12 +3599,12 @@ var pd = {};
                         "api.style", "indent"
                     ];
                 }
-                if (id === "jscorrect-no") {
+                if (id === "jscorrect-no" || id === "mjscorrect-no") {
                     data = [
                         "api.correct", "false"
                     ];
                 }
-                if (id === "jscorrect-yes") {
+                if (id === "jscorrect-yes" || id === "mjscorrect-yes") {
                     data = [
                         "api.correct", "true"
                     ];
@@ -3764,9 +3768,6 @@ var pd = {};
         }
         text = button.innerHTML.replace(/\s+/g, " ");
         if (text === "Default Display" || text === "Maximize Inputs") {
-            if (pd.o.displayTall !== null && pd.o.displayTall.checked === false) {
-                pd.prettyvis(pd.o.displayTall);
-            }
             node = pd.$$("top");
             if (node !== null) {
                 node.style.display = "none";
@@ -3819,7 +3820,9 @@ var pd = {};
             pd.options(button);
             if (pd.o.announce !== null) {
                 pd.o.announce.setAttribute("class", "big");
-                pd.o.announce.parentNode.removeChild(pd.o.announce);
+                if (pd.o.announce.parentNode !== null) {
+                    pd.o.announce.parentNode.removeChild(pd.o.announce);
+                }
                 pd.o.announce.innerHTML   = "";
                 pd.o.announce.style.color = "#000";
                 if (pd.$$("codeInput") !== null) {
@@ -3833,7 +3836,7 @@ var pd = {};
             if (pd.$$("introduction") !== null) {
                 if (pd.$$("update") === null) {
                     pd.$$("introduction").appendChild(pd.o.announce);
-                } else {
+                } else if (pd.$$("update").parentNode === pd.$$("introduction")) {
                     pd.$$("introduction").insertBefore(pd.o.announce, pd.$$("update"));
                 }
             }
