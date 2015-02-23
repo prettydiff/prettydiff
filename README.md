@@ -4,6 +4,8 @@ Try it online at http://prettydiff.com/.
 ===
 
 [![Gitter](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/prettydiff/prettydiff?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
+[![npm version](https://badge.fury.io/js/prettydiff.svg)](http://badge.fury.io/js/prettydiff)
+[![Dependency Status](https://david-dm.org/prettydiff/prettydiff.svg)](https://david-dm.org/prettydiff/prettydiff)
 
 [![NPM stats](https://nodei.co/npm/prettydiff.svg?downloadRank=true&downloads=true)](https://www.npmjs.org/package/prettydiff)
 
