@@ -3200,7 +3200,8 @@ var prettydiff = function prettydiff(api) {
                         var cc        = 0,
                             dd        = 0,
                             ee        = 0,
-                            end       = token.length - 1,
+                            startlen  = token.length - 1,
+                            end       = startlen,
                             keys      = [],
                             keylen    = 0,
                             keyend    = 0,
@@ -3258,7 +3259,7 @@ var prettydiff = function prettydiff(api) {
                                     }
                                 }
                             }
-                            if (dd < 0 && cc < end) {
+                            if (dd < 0 && cc < startlen) {
                                 if (keys.length > 0 && keys[keys.length - 1][0] > cc + 1) {
                                     keys.push([
                                         cc + 1, keys[keys.length - 1][0] - 1, keys[keys.length - 1][2]
@@ -10030,12 +10031,12 @@ var prettydiff = function prettydiff(api) {
         csvmin       : 131224, //csvmin library
         diffview     : 150221, //diffview library
         documentation: 150221, //documentation.xhtml
-        jspretty     : 150221, //jspretty library
+        jspretty     : 150228, //jspretty library
         latest       : 0,
         markup_beauty: 150221, //markup_beauty library
         markupmin    : 150124, //markupmin library
-        prettydiff   : 150221, //this file
-        version      : "1.9.0", //version number
+        prettydiff   : 150228, //this file
+        version      : "1.9.1", //version number
         webtool      : 150208 //prettydiff.com.xhtml
     };
 edition.latest = (function edition_latest() {
