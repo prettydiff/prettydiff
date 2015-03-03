@@ -28,14 +28,13 @@
     </head>
     <body class="white" id="webtool">
         <p aria-live="polite" id="arialive" style="display:none"></p>
-        <ul id="displayOps">
-            <li><button id="resetOptions" title="Clicking this button will clear all stored data and reset all options to the default configuration. I recommend refreshing the page after clicking this button." type="button">Reset
-                Options</button></li>
-            <li><a class="button" href="documentation.xhtml">Documentation</a></li>
-            <li id="displayOps-hide"><button id="hideOptions" tabindex="-1" title="Clicking this button will visually hide everything except for textarea elements and one 'Execute' button." type="button">Show
-                Options</button></li>
+        <ul id="infolinks">
+            <!--li><a href="news.xhtml">News</a></li-->
+            <li><a href="overview.xhtml">Overview</a></li>
+            <li><a href="samples.xhtml">Samples</a></li>
+            <li><a href="documentation.xhtml">Documentation</a></li>
         </ul>
-        <p class="append" id="functionGroup" role="navigation"><strong>Function</strong>
+        <p id="functionGroup" role="navigation"><strong>Function</strong>
             <span>
                 <input checked="checked" id="modediff" name="mode" title="This option tells the tool to generate a diff (code comparison) report. Force this display by default with the address parameter 'm=diff'." type="radio"/>
                 <label for="modediff" title="This option tells the tool to generate a diff (code comparison) report. Force this display by default with the address parameter 'm=diff'.">Compare</label></span>
@@ -49,53 +48,6 @@
         <p class="big" id="announcement" role="alert"></p>
         <p id="update">Updated:
         </p>
-        <div aria-hidden="true" id="top" tabindex="-1">
-            <h1 title="Pretty Diff is a language aware code comparison tool featuring automatic language detection. Some of the supported languages include: XML, SGML, JSTL, HTML, CSS, SCSS, CSV, JavaScript, and JSON">
-                <svg height="2000.000000pt"
-                    preserveAspectRatio="xMidYMid meet"
-                    version="1.0"
-                    viewBox="0 0 2000.000000 2000.000000"
-                    width="2000.000000pt"
-                    xmlns="http://www.w3.org/2000/svg">
-                    <g fill="#999"
-                        stroke="none"
-                        transform="translate(0.000000,2000.000000) scale(0.100000,-0.100000)">
-                        <path d="M14871 18523 c-16 -64 -611 -2317 -946 -3588 -175 -660 -319 -1202 -320 -1204 -2 -2 -50 39 -107 91 -961 876 -2202 1358 -3498 1358 -1255 0 -2456 -451 -3409 -1279 -161 -140 -424 -408 -560 -571 -507 -607 -870 -1320 -1062 -2090 -58 -232 -386 -1479 -2309 -8759 -148 -563 -270 -1028 -270 -1033 0 -4 614 -8 1365 -8 l1364 0 10 38 c16 63 611 2316 946 3587 175 660 319 1202 320 1204 2 2 50 -39 107 -91 543 -495 1169 -862 1863 -1093 1707 -568 3581 -211 4965 946 252 210 554 524 767 796 111 143 312 445 408 613 229 406 408 854 525 1320 57 225 380 1451 2310 8759 148 563 270 1028 270 1033 0 4 -614 8 -1365 8 l-1364 0 -10 -37z m-4498 -5957 c477 -77 889 -256 1245 -542 523 -419 850 -998 954 -1689 18 -121 18 -549 0 -670 -80 -529 -279 -972 -612 -1359 -412 -480 -967 -779 -1625 -878 -121 -18 -549 -18 -670 0 -494 74 -918 255 -1283 548 -523 419 -850 998 -954 1689 -18 121 -18 549 0 670 104 691 431 1270 954 1689 365 293 828 490 1283 545 50 6 104 13 120 15 72 10 495 -3 588 -18z"/></g></svg>
-                <span id="title_text">Pretty Diff - The difference tool</span></h1>
-            <div id="introduction"><h2>Introduction</h2>
-                <p class="information">Use this free open-source file comparison tool to
-                    accurately diff between file versions
-                    <em>regardless of comments or minification</em>
-                    to the whitespace. This tool is written entirely in JavaScript and it can
-                    also beautify (pretty-print) and minify HTML. Since this tool is
-                    client-side JavaScript only, meaning that the execution occurs on the
-                    local computer only and the resulting output is not transmitted or
-                    stored, it is safe for processing classified information. Please note
-                    that this tool is not a validation service. Pretty Diff is a language
-                    aware code comparison tool featuring automatic language detection. Some
-                    of the supported languages include: XML, SGML, JSTL, HTML, CSS, SCSS,
-                    CSV, JavaScript, and JSON.</p>
-                <p><strong>Confidential:</strong>
-                    This tool executes entirely on the client computer without leaking any
-                    submitted data over the internet.</p>
-                <ul>
-                    <li><a href="documentation.xhtml" tabindex="-1">English
-                        documentation</a></li>
-                </ul>
-                <ul>
-                    <li><a href="samples.xhtml" tabindex="-1">samples</a></li>
-                    <li><a href="https://groups.google.com/d/forum/pretty-diff" tabindex="-1">mailing
-                        list</a></li>
-                    <li><a href="https://github.com/austincheney/Pretty-Diff" tabindex="-1">GitHub</a></li>
-                    <li><a href="api/node-local.js" tabindex="-1">Node.js</a></li>
-                    <li><a href="api/prettydiff.wsf" tabindex="-1">WSH</a></li>
-                    <li><a href="jspretty.xhtml" tabindex="-1">JSPretty</a></li>
-                    <li><a href="http://g6auc.me.uk/widgets.html" tabindex="-1">JSPretty
-                        Widget</a></li>
-                </ul>
-                <span class="clear"></span>
-            </div>
-        </div>
         <div id="codeInput" role="main">
             <p id="textareaTabKey" style="display:none"><strong>Accessibility
                 note:</strong>
@@ -251,6 +203,8 @@
             </div>
         </div>
         <div class="options" id="options" role="toolbar"><h2>Main Options</h2>
+            <p class="resetbutton"><button id="resetOptions" title="Clicking this button will clear all stored data and reset all options to the default configuration. I recommend refreshing the page after clicking this button." type="button">Reset
+                Options</button></p>
             <p><strong>CodeMirror Editor</strong>
                 <span>
                     <input checked="checked" id="codemirror-yes" name="codemirror-radio" title="This radio button will restore the CodeMirror functionality and refresh the page." type="radio"/>
@@ -403,9 +357,9 @@
                             <input id="diff-line" name="diffchar" title="This option makes a new line character the character of indentation." type="radio"/>
                             <label for="diff-line">Indent new line</label></span>
                     </p>
-                    <p><label class="label" for="diff-wrap">Wrap text (Markup Only)</label>
+                    <p><label class="label" for="diff-wrap">Wrap text (Markup / JavaScript)</label>
                         <span>
-                            <input id="diff-wrap" title="Determines how long text can be before wrapping. Use a value of 0 to eliminate wrapping." type="text" value="72"/></span></p>
+                            <input id="diff-wrap" title="Determines how long text and strings can be before wrapping. Use a value of 0 to eliminate wrapping." type="text" value="80"/></span></p>
                     <p><strong>Indent Style/Script (Markup Only)</strong>
                         <span>
                             <input checked="checked" id="inscriptd-yes" name="inscriptd" title="This markup only option sets the baseline for script and style definition from the identation point of the opening markup tag plus one indentation step." type="radio"/>
@@ -501,6 +455,14 @@
                             <label for="jselselined-yes">Force 'else' keyword onto a new
                                 line</label></span>
                     </p>
+                    <p><strong>Brace Lines (JavaScript Only)</strong>
+                        <span>
+                            <input checked="checked" id="dbraceline-no" name="dbraceline" title="In JavaScript do not pad blocks with empty lines." type="radio"/>
+                            <label for="dbraceline-no">Normal blocks</label></span>
+                        <span>
+                            <input id="dbraceline-yes" name="dbraceline" title="In JavaScript pad blocks with empty lines." type="radio"/>
+                            <label for="draceline-yes">Pad JavaScript blocks with empty lines</label></span>
+                    </p>
                 </fieldset>
             </div>
             <div class="options" id="beauops" style="display:none;"><h2 title="The term pretty-print is synonymous with code beautification.">Beautify
@@ -544,9 +506,20 @@
                             <input id="incomment-no" name="incomment" title="This option will force comments to the start of the line without the benefit of indentation." type="radio"/>
                             <label for="incomment-no">No comment indentation</label></span>
                     </p>
-                    <p><label class="label" for="beau-wrap">Wrap text (Markup Only)</label>
+                    <p><label class="label" for="beau-wrap">Wrap text (Markup / JavaScript)</label>
                         <span>
-                            <input id="beau-wrap" title="Determines how long text can be before wrapping. Use a value of 0 to eliminate wrapping." type="text" value="72"/></span></p>
+                            <input id="beau-wrap" title="Determines how long text and strings can be before wrapping. Use a value of 0 to eliminate wrapping." type="text" value="80"/></span></p>
+                    <p><strong>Quotes (Markup / JavaScript)</strong>
+                        <span>
+                            <input checked="checked" id="bquoteconvert-double" name="bquoteconvert" title="Convert double quotes to single quotes for JavaScript strings and markup attributes." type="radio"/>
+                            <label for="bquoteconvert-double">Convert to double quotes</label></span>
+                        <span>
+                            <input id="bquoteconvert-single" name="bquoteconvert" title="Convert single quotes to double quotes for JavaScript strings and markup attributes." type="radio"/>
+                            <label for="bquoteconvert-single">Convert to single quotes</label></span>
+                        <span>
+                            <input id="bquoteconvert-none" name="bquoteconvert" title="Do not convert quote characters." type="radio"/>
+                            <label for="bquoteconvert-none">Leave the quotes alone</label></span>
+                    </p>
                     <p><strong>Indent Style/Script (Markup Only)</strong>
                         <span>
                             <input checked="checked" id="inscript-yes" name="inscript" title="This markup only option sets the baseline for script and style definition from the identation point of the opening markup tag plus one indentation step." type="radio"/>
@@ -632,6 +605,7 @@
                         <span>
                             <input id="jsscope-html" name="jsscope" title="This option outputs HTML so that a colorful code snippet is created for use in web pages." type="radio"/>
                             <label for="jsscope-html">HTML output</label></span>
+                        <span>Read about <a href="guide/jshtml.xhtml">HTML output</a> and <a href="guide/closure_with_jsscope.xhtml">scope</a> with this feature</span>
                     </p>
                     <p><strong>Style of Indent (JavaScript Only)</strong>
                         <span>
@@ -666,10 +640,54 @@
                             <input id="jselseline-yes" name="jselseline" title="This JavaScript only option will force the 'else' keyword onto a new line." type="radio"/>
                             <label for="jselseline-yes">Force 'else' keyword onto a new line</label></span>
                     </p>
+                    <p><strong>Brace Lines (JavaScript Only)</strong>
+                        <span>
+                            <input checked="checked" id="bbraceline-no" name="bbraceline" title="In JavaScript do not pad blocks with empty lines." type="radio"/>
+                            <label for="bbraceline-no">Normal blocks</label></span>
+                        <span>
+                            <input id="bbraceline-yes" name="bbraceline" title="In JavaScript pad blocks with empty lines." type="radio"/>
+                            <label for="braceline-yes">Pad JavaScript blocks with empty lines</label></span>
+                    </p>
+                    <p><strong>Variable Lists (JavaScript Only)</strong>
+                        <span>
+                            <input checked="checked" id="bvarword-list" name="bvarword" title="In JavaScript change consecutive variable declarations into a comma separated list with a single var keyword." type="radio"/>
+                            <label for="bvardword-list">Comma separated list</label></span>
+                        <span>
+                            <input id="bvarword-each" name="bvarword" title="In JavaScript change a comma separated list of variables into individual statements each starting with a var keyword." type="radio"/>
+                            <label for="bvardword-each">Separate variables</label></span>
+                        <span>
+                            <input id="bvarword-none" name="bvarword" title="Ignore this option." type="radio"/>
+                            <label for="bvardword-none">Leave the variables alone</label></span>
+                    </p>
+                    <p><label class="label" for="bstyleguide">Style Guide (JavaScript Only)</label>
+                        <select id="bstyleguide">
+                            <option value="" selected="selected">None</option>
+                            <option value="airbnb">AirBnB</option>
+                            <option value="crockford">Crockford</option>
+                            <option value="google">Google</option>
+                            <option value="grunt">Grunt</option>
+                            <option value="jquery">jQuery</option>
+                            <option value="mrdoobs">Mr. Doob's</option>
+                            <option value="mediawiki">MediaWiki</option>
+                            <option value="yandex">Yandex</option>
+                        </select>
+                        <span>Read about <a href="guide/styleguide.xhtml">style guide support</a></span>
+                    </p>
                 </fieldset>
             </div>
             <div class="options" id="miniops" style="display:none;"><h2>Minify
                 Options</h2>
+                <p><strong>Quotes (Markup / JavaScript)</strong>
+                    <span>
+                        <input checked="checked" id="mquoteconvert-double" name="mquoteconvert" title="Convert double quotes to single quotes for JavaScript strings and markup attributes." type="radio"/>
+                        <label for="mquoteconvert-double">Convert to double quotes</label></span>
+                    <span>
+                        <input id="mquoteconvert-single" name="mquoteconvert" title="Convert single quotes to double quotes for JavaScript strings and markup attributes." type="radio"/>
+                        <label for="mquoteconvert-single">Convert to single quotes</label></span>
+                    <span>
+                        <input id="mquoteconvert-none" name="mquoteconvert" title="Do not convert quote characters." type="radio"/>
+                        <label for="mquoteconvert-none">Leave the quotes alone</label></span>
+                </p>
                 <p><strong>Presume HTML (Markup Only)</strong>
                     <span>
                         <input checked="checked" id="htmlm-yes" name="presumehtmlm" title="This option determines whether HTML tags like &lt;br&gt; and lt;hr&gt; should be evaluated as singletons, such as &lt;br/&gt; and lt;hr/&gt;." type="radio"/>

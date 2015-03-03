@@ -63,6 +63,7 @@ Examples:
         ],
         options       = {
             api         : "",
+            braceline   : false,
             bracepadding: false,
             braces      : "knr",
             color       : "white",
@@ -92,6 +93,7 @@ Examples:
             output      : "",
             preserve    : "none",
             quote       : false,
+            quoteConvert: "none",
             readmethod  : "screen",
             report      : true,
             semicolon   : false,
@@ -99,7 +101,9 @@ Examples:
             sourcelabel : "base",
             space       : true,
             style       : "indent",
+            styleguide  : "none",
             topcoms     : false,
+            varword     : "none",
             vertical    : "none",
             wrap        : 0
         },
@@ -280,6 +284,10 @@ Examples:
             var a = [];
             a.push("Arguments      - Type    - Definition");
             a.push("-------------------------------------");
+            a.push("* braceline    - boolean - If true a new line character will be inserted after");
+            a.push("                           opening curly braces and before closing curly braces.");
+            a.push("                           Default is false.");
+            a.push("");
             a.push("* bracepadding - boolean - Inserts a space after the start of a contain and");
             a.push("                           before the end of the container in JavaScript if the");
             a.push("                           contents of that container are not indented; such as:");
@@ -414,6 +422,12 @@ Examples:
             a.push("                           as to eliminate some differences from the diff");
             a.push("                           report HTML output.");
             a.push("");
+            a.push("* quoteConvert - string  - If the quotes of JavaScript strings or markup");
+            a.push("                           attributes should be converted to single quotes or");
+            a.push("                           double quotes. The default is 'none', which performs");
+            a.push("                           no conversion.");
+            a.push("                 Accepted values: double, single, none");
+            a.push("");
             a.push("* readmethod   - string  - The readmethod determines if operating with IO from");
             a.push("                           command line or IO from files.  Default value is");
             a.push("                           'screen':");
@@ -458,19 +472,31 @@ Examples:
             a.push("                           Default is 'indent'.");
             a.push("                 Accepted values: indent, noindent");
             a.push("");
+            a.push("* styleguide   - string  - Provides a collection of option presets to easily");
+            a.push("                           conform to popular JavaScript style guides. Default");
+            a.push("                           is 'none'.");
+            a.push("                 Accepted values: airbnb, crockford, google, grunt, jquery,");
+            a.push("                                  mediawiki, yandex, none");
+            a.push("");
             a.push("* topcoms      - boolean - If mode is 'minify' this determines whether comments");
             a.push("                           above the first line of code should be kept. Default");
             a.push("                           is false.");
+            a.push("");
+            a.push("* varword      - string  - If consecutive JavaScript variables should be merged");
+            a.push("                           into a comma separated list ('list') or the opposite");
+            a.push("                           ('each'). Default is 'none'.");
+            a.push("                 Accepted values: each, list, none");
             a.push("");
             a.push("* vertical     - string  - If lists of assignments and properties should be");
             a.push("                           vertically aligned. Default is 'none'.");
             a.push("                 Accepted values: all, css, js, none");
             a.push("");
-            a.push("* wrap         - number  - How many characters wide text can be before wrapping");
-            a.push("                           from markup beautification. The default value is 0, ");
-            a.push("                           which turns this feature off. Wrapping occurs on the");
-            a.push("                           last space character prior to the given character");
-            a.push("                           width");
+            a.push("* wrap         - number  - How many characters text content in markup or strings");
+            a.push("                           in JavaScript can be before wrapping. The default");
+            a.push("                           value is 0, which turns this feature off. A value of");
+            a.push("                           -1 will concatenate strings in JavaScript separated by");
+            a.push("                           a '+' operator. In markup wrapping occurs on the last");
+            a.push("                           space character prior to the given character width");
             a.push("");
             return a.join("\n");
         }()),
@@ -580,6 +606,12 @@ Examples:
                     if (d[b][0] === "api") {
                         options.api = "node";
                     }
+                    if (d[b][0] === "braceline" && d[b][1] === "true") {
+                        options.braceline = true;
+                    }
+                    if (d[b][0] === "bracepadding" && d[b][1] === "true") {
+                        options.bracepadding = true;
+                    }
                     if ((d[b][0] === "braces" && d[b][1] === "allman") || (d[b][0] === "indent" && d[b][1] === "allman")) {
                         options.braces = "allman";
                     }
@@ -682,6 +714,9 @@ Examples:
                     if (d[b][0] === "quote" && d[b][1] === "true") {
                         options.quote = true;
                     }
+                    if (d[b][0] === "quoteConvert" && (d[b][1] === "single" || d[b][1] === "double")) {
+                        options.quoteConvert = d[b][1];
+                    }
                     if (d[b][0] === "readmethod") {
                         if (d[b][1] === "auto") {
                             options.readmethod = "auto";
@@ -718,8 +753,14 @@ Examples:
                     if (d[b][0] === "style" && d[b][1] === "noindent") {
                         options.style = "noindent";
                     }
+                    if (d[b][0] === "styleguide") {
+                        options.styleguide = d[b][1];
+                    }
                     if (d[b][0] === "topcoms" && d[b][1] === "true") {
                         options.topcoms = true;
+                    }
+                    if (d[b][0] === "varword" && (d[b][1] === "each" || d[b][1] === "list")) {
+                        options.varword = d[b][1];
                     }
                     if (d[b][0] === "vertical") {
                         if (d[b][1] === "all" || d[b][1] === "css" || d[b][1] === "js") {

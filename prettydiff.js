@@ -127,6 +127,8 @@ var prettydiff = function prettydiff(api) {
                     builder       = {},
                     //determines api source as necessary to make a decision about whether to supply externally needed JS functions to reports
                     capi          = (api.api === undefined || api.api.length === 0) ? "" : api.api,
+                    //braceline - should a new line pad the interior of blocks (curly braces) in JavaScript
+                    cbraceline    = (api.braceline === true || api.braceline === "true") ? true : false,
                     //api.bracepadding - should curly braces be padded with a space in JavaScript?
                     cbracepadding = (api.bracepadding === true || api.bracepadding === "true") ? true : false,
                     //api.indent - should JSPretty format JavaScript in the normal KNR style or push curly braces onto a separate line like the "allman" style
@@ -181,6 +183,8 @@ var prettydiff = function prettydiff(api) {
                     cpreserve     = (api.preserve === "all" || (api.preserve === "css" && clang !== "javascript") || (api.preserve === "js" && clang !== "css")) ? true : false,
                     //api.quote - should all single quote characters be converted to double quote characters during a diff operation to reduce the number of false positive comparisons
                     cquote        = (api.quote === true || api.quote === "true") ? true : false,
+                    //api.quoteConvert - convert " to ' (or ' to ") of string literals or markup attributes
+                    cquoteConvert = (api.quoteConvert === "single" || api.quoteConvert === "double") ? api.quoteConvert : "none",
                     //api.semicolon - should trailing semicolons be removed during a diff operation to reduce the number of false positive comparisons
                     csemicolon    = (api.semicolon === true || api.semicolon === "true") ? true : false,
                     //api.source - the source code in minify and beautify operations or "base" code in operations 
@@ -191,8 +195,12 @@ var prettydiff = function prettydiff(api) {
                     cspace        = (api.space === false || api.space === "false") ? false : true,
                     //api.style - should JavaScript and CSS code receive indentation if embedded inline in markup
                     cstyle        = (api.style === "noindent") ? "noindent" : "indent",
+                    //api.styleguide - preset of beautification options to bring a JavaScript sample closer to conformance of a given style guide
+                    cstyleguide   = (typeof api.styleguide === "string") ? api.styleguide : "",
                     //api.topcoms - should comments at the top of a JavaScript or CSS source be preserved during minify operations
                     ctopcoms      = (api.topcoms === true || api.topcoms === "true") ? true : false,
+                    //varword - should consecutive variables be merged into a comma separated list or the opposite
+                    cvarword      = (api.varword === "each" || api.varword === "list") ? api.varword : "none",
                     //api.vertical - whether or not to vertically align lists of assigns in CSS and JavaScript
                     cvertical     = (api.vertical === "all" || (api.vertical === "css" && clang !== "javascript") || (api.vertical === "js" && clang !== "css")) ? true : false,
                     //api.wrap - in markup beautification should text content wrap after the first complete word up to a certain character length
@@ -318,7 +326,13 @@ var prettydiff = function prettydiff(api) {
                         }
                         for (c = 0; c < b; c += 1) {
                             if (typeof build[c][1] === "string") {
-                                if (build[c][0] === "bracepadding") {
+                                if (build[c][0] === "braceline") {
+                                    if (build[c][1] === "true") {
+                                        cbraceline = true;
+                                    } else if (build[c][1] === "false") {
+                                        cbraceline = false;
+                                    }
+                                } else if (build[c][0] === "bracepadding") {
                                     if (build[c][1] === "true") {
                                         cbracepadding = true;
                                     } else if (build[c][1] === "false") {
@@ -486,25 +500,43 @@ var prettydiff = function prettydiff(api) {
                                     } else if (build[c][1] === "false") {
                                         cquote = false;
                                     }
+                                } else if (build[c][0] === "api.quoteConvert") {
+                                    if (build[c][1] === "single") {
+                                        cquoteConvert = "single";
+                                    } else if (build[c][1] === "double") {
+                                        cquoteConvert = "double";
+                                    } else if (build[c][1] === "none") {
+                                        cquoteConvert = "none";
+                                    }
                                 } else if (build[c][0] === "api.semicolon") {
                                     if (build[c][1] === "true") {
                                         csemicolon = true;
                                     } else if (build[c][1] === "false") {
                                         csemicolon = false;
                                     }
+                                } else if (build[c][0] === "api.sourcelabel") {
+                                    csourcelabel = build[c][1];
                                 } else if (build[c][0] === "api.style") {
                                     if (build[c][1] === "indent") {
                                         cstyle = "indent";
                                     } else if (build[c][1] === "noindent") {
                                         cstyle = "noindent";
                                     }
-                                } else if (build[c][0] === "api.sourcelabel") {
-                                    csourcelabel = build[c][1];
+                                } else if (build[c][0] === "api.styleguide") {
+                                    cstyleguide = build[c][1];
                                 } else if (build[c][0] === "api.topcoms") {
                                     if (build[c][1] === "true") {
                                         ctopcoms = true;
                                     } else if (build[c][1] === "false") {
                                         ctopcoms = false;
+                                    }
+                                } else if (build[c][0] === "api.varword") {
+                                    if (build[c][1] === "each") {
+                                        cvarword = "each";
+                                    } else if (build[c][1] === "list") {
+                                        cvarword = "list";
+                                    } else if (build[c][1] === "none") {
+                                        cvarword = "none";
                                     }
                                 } else if (build[c][0] === "api.vertical") {
                                     if (build[c][1] === "all" || build[c][1] === "true") {
@@ -654,10 +686,11 @@ var prettydiff = function prettydiff(api) {
                 if (cmode === "minify") {
                     if (clang === "css") {
                         apioutput = csspretty({
-                            mode   : cmode,
-                            objsort: cobjsort,
-                            source : csource,
-                            topcoms: ctopcoms
+                            mode        : cmode,
+                            objsort     : cobjsort,
+                            quoteConvert: cquoteConvert,
+                            source      : csource,
+                            topcoms     : ctopcoms
                         });
                     } else if (clang === "csv") {
                         apioutput = csvmin(csource, ccsvchar);
@@ -667,7 +700,9 @@ var prettydiff = function prettydiff(api) {
                             conditional : ccond,
                             objsort     : cobjsort,
                             presume_html: chtml,
+                            quoteConvert: cquoteConvert,
                             source      : csource,
+                            styleguide  : cstyleguide,
                             top_comments: ctopcoms
                         });
                     } else if (clang === "text") {
@@ -675,12 +710,16 @@ var prettydiff = function prettydiff(api) {
                         apidiffout = "";
                     } else {
                         apioutput = jspretty({
-                            correct  : ccorrect,
-                            mode     : cmode,
-                            obfuscate: cobfuscate,
-                            objsort  : cobjsort,
-                            source   : csource,
-                            topcoms  : ctopcoms
+                            correct     : ccorrect,
+                            mode        : cmode,
+                            obfuscate   : cobfuscate,
+                            objsort     : cobjsort,
+                            quoteConvert: cquoteConvert,
+                            source      : csource,
+                            styleguide  : cstyleguide,
+                            varword     : "list",
+                            wrap        : -1,
+                            topcoms     : ctopcoms
                         });
                     }
                     return (function core__minifyReport() {
@@ -704,6 +743,9 @@ var prettydiff = function prettydiff(api) {
                                 windowsSize       = sizeOld + lines;
                                 windowsDifference = windowsSize - sizeNew;
                                 percentWindows    = ((windowsDifference / windowsSize) * 100).toFixed(2) + "%";
+                                if (summary !== "") {
+                                    output.push("<p><strong class='duplicate'>Duplicate id attribute values detected:</strong> " + summary + "</p>");
+                                }
                                 output.push("<div class='doc'><table class='analysis' summary='Minification efficiency report'><caption>Minification efficiency report</caption><thead><tr><th colspan='2'>Output Size</th><th colspan='2'>Number of Lines From Input</th></tr></thead><tbody><tr><td colspan='2'>");
                                 output.push(sizeNew);
                                 output.push("</td><td colspan='2'>");
@@ -734,14 +776,15 @@ var prettydiff = function prettydiff(api) {
                 if (cmode === "beautify") {
                     if (clang === "css") {
                         apioutput  = csspretty({
-                            comm    : ccomm,
-                            inchar  : cinchar,
-                            insize  : cinsize,
-                            mode    : cmode,
-                            objsort : cobjsort,
-                            preserve: cpreserve,
-                            source  : csource,
-                            vertical: (api.vertical === "jsonly") ? false : cvertical
+                            comm        : ccomm,
+                            inchar      : cinchar,
+                            insize      : cinsize,
+                            mode        : cmode,
+                            objsort     : cobjsort,
+                            preserve    : cpreserve,
+                            quoteConvert: cquoteConvert,
+                            source      : csource,
+                            vertical    : (api.vertical === "jsonly") ? false : cvertical
                         });
                         apidiffout = summary;
                     } else if (clang === "csv") {
@@ -749,6 +792,7 @@ var prettydiff = function prettydiff(api) {
                         apidiffout = "";
                     } else if (clang === "markup") {
                         apioutput  = markup_beauty({
+                            braceline   : cbraceline,
                             bracepadding: cbracepadding,
                             braces      : cbraces,
                             comments    : ccomm,
@@ -759,8 +803,13 @@ var prettydiff = function prettydiff(api) {
                             insize      : cinsize,
                             mode        : "beautify",
                             objsort     : cobjsort,
+                            quoteConvert: cquoteConvert,
+                            preserve    : cpreserve,
                             source      : csource,
+                            space       : cspace,
                             style       : cstyle,
+                            styleguide  : cstyleguide,
+                            varword     : cvarword,
                             vertical    : (api.vertical === "jsonly") ? "jsonly" : cvertical,
                             wrap        : cwrap
                         });
@@ -773,6 +822,7 @@ var prettydiff = function prettydiff(api) {
                         apidiffout = "";
                     } else {
                         apioutput  = jspretty({
+                            braceline   : cbraceline,
                             bracepadding: cbracepadding,
                             braces      : cbraces,
                             comments    : ccomm,
@@ -784,8 +834,11 @@ var prettydiff = function prettydiff(api) {
                             jsscope     : cjsscope,
                             objsort     : cobjsort,
                             preserve    : cpreserve,
+                            quoteConvert: cquoteConvert,
                             source      : csource,
                             space       : cspace,
+                            styleguide  : cstyleguide,
+                            varword     : cvarword,
                             vertical    : (api.vertical === "jsonly") ? true : cvertical
                         });
                         apidiffout = summary;
@@ -798,7 +851,7 @@ var prettydiff = function prettydiff(api) {
                     }
                     if (capi === "" && cjsscope === true && clang === "javascript") {
                         builder.head       = "<?xml version='1.0' encoding='UTF-8' ?><!DOCTYPE html PUBLIC '-//W3C//DTD XHTML 1.1//EN' 'http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd'><html xmlns='http://www.w3.org/1999/xhtml' xml:lang='en'><head><title>Pretty Diff - The difference tool</title><meta name='robots' content='index, follow'/> <meta name='DC.title' content='Pretty Diff - The difference tool'/> <link rel='canonical' href='http://prettydiff.com/' type='application/xhtml+xml'/><meta http-equiv='Content-Type' content='application/xhtml+xml;charset=UTF-8'/><meta http-equiv='Content-Style-Type' content='text/css'/><style type='text/css'>";
-                        builder.cssCore    = "body{font-family:\"Arial\";font-size:10px;overflow-y:scroll;}#samples #dcolorScheme{position:relative;z-index:1000}#apireturn textarea{font-size:1.2em;height:50em;width:100%}button{border-radius:.9em;display:block;font-weight:bold;width:100%}div .button{text-align:center}div button{display:inline-block;font-weight:bold;margin:1em 0;padding:1em 2em}button:hover{cursor:pointer}#introduction{clear:both;margin:0 0 0 5.6em;position:relative;top:-2.75em}#introduction ul{clear:both;height:3em;margin:0 0 0 -5.5em;overflow:hidden;width:100em}#introduction li{clear:none;display:block;float:left;font-size:1.4em;margin:0 4.95em -1em 0}#introduction li li{font-size:1em;margin-left:2em}#introduction .information,#webtool #introduction h2{left:-90em;position:absolute;top:0;width:10em}#introduction h2{float:none}#displayOps{float:right;font-size:1.5em;font-weight:bold;margin-right:1em;width:22.5em}#displayOps.default{position:static}#displayOps.maximized{margin-bottom:-2em;position:relative}#displayOps li{clear:none;display:block;float:left;list-style:none;margin:2em 0 0;text-align:right;width:9em}h1{float:left;font-size:2em;margin:0 .5em .5em 0}#hideOptions{margin-left:5em;padding:0}#title_text{border-style:solid;border-width:.05em;display:block;float:left;font-size:1em;margin-left:.55em;padding:.1em}h1 svg,h1 img{border-style:solid;border-width:.05em;float:left;height:2em;width:2em}h1 span{font-size:.5em}h2,h3{background:#fff;border-style:solid;border-width:.075em;display:inline-block;font-size:1.8em;font-weight:bold;margin:0 .5em .5em 0;padding:0 .2em}#doc h3{margin-top:.5em}h3{font-size:1.6em}h4{font-size:1.4em}fieldset{border-radius:.9em;clear:both;margin:3.5em 0 -2em;padding:0 0 0 1em}legend{border-style:solid;border-width:.1em;font-size:1.2em;font-weight:bold;margin-left:-.25em}.button{margin:1em 0;text-align:center}.button button{display:block;font-size:2em;height:1.5em;margin:0 auto;padding:0;width:50%}#diffreport{right:57.8em}#beaureport{right:38.8em}#minnreport{right:19.8em}#statreport{right:.8em}#statreport .body p,#statreport .body li,#statreport .body h3{font-size:1.2em}#statreport .body h3{margin-top:0}#statreport .body ul{margin-top:1em}#reports{height:4em}#reports h2{display:none}.box{border-style:solid;border-width:0;left:auto;margin:0;padding:0;position:absolute;z-index:10}.box button{border-radius:0;border-style:solid;border-width:.1em;display:block;float:right;font-family:'Lucida Console','Trebuchet MS','Arial';height:1.75em;padding:0;position:absolute;right:0;text-align:center;top:0;width:1.75em;z-index:7}.box button.resize{border-width:.05em;cursor:se-resize;font-size:1.667em;font-weight:normal;height:.8em;line-height:.5em;margin:-.85em 0 0;position:absolute;right:.05em;top:100%;width:.85em}.box button.minimize{margin:.35em 4em 0 0}.box button.maximize{margin:.35em 1.75em 0 0}.box button.save{margin:.35em 6.25em 0 0}.box .buttons{float:right;margin:0}.box h3.heading{cursor:pointer;float:left;font-size:1em;height:3em;margin:0 0 -3.2em;position:relative;width:17em;z-index:6}.box h3.heading span{display:block;font-size:1.8em;padding:.25em 0 0 .5em}.box .body{clear:both;height:20em;margin-top:-.1em;overflow:scroll;padding:4.25em 1em 1em;position:relative;right:0;top:0;width:75em;z-index:5}.options{border-radius:0 0 .9em .9em;clear:both;margin-bottom:1em;padding:1em 1em 3.5em;width:auto}label{display:inline;font-size:1.4em}ol li{font-size:1.4em;list-style-type:decimal}ol li li{font-size:1em}body#doc ol li{font-size:1.1em}ul{margin:-1.4em 0 2em;padding:0}ul li{list-style-type:none}li{clear:both;margin:1em 0 1em 3em}li h4{display:inline;float:left;margin:.4em 0;text-align:left;width:14em}p{clear:both;font-size:1.2em;margin:0 0 1em}#option_comment{height:2.5em;margin-bottom:-1.5em;width:100%}.difflabel{display:block;height:0}#beau-other-span,#diff-other-span{text-indent:-200em;width:0}.options p span{display:block;float:left;font-size:1.2em}#top{min-width:80em}#top em{font-weight:bold}#update{clear:left;float:right;font-weight:bold;padding:.5em;position:absolute;right:1em;top:11em}#announcement{height:2.5em;margin:0 -5em -4.75em;width:27.5em}#textreport{width:100%}#options{float:left;margin:0;width:19em}#options label{width:auto}#options p{clear:both;font-size:1em;margin:0;padding:0}#options p span{clear:both;float:none;height:2em;margin:0 0 0 2em}#csvchar{width:11.8em}#language,#csvchar,#colorScheme{margin:0 0 1em 2em}#codeInput{margin-left:22.5em}#Beautify.wide p,#Beautify.tall p.file,#Minify.wide p,#Minify.tall p.file{clear:none;float:none}#diffops p,#miniops p,#beauops p{clear:both;font-size:1em;padding-top:1em}#options p strong,#diffops p strong,#miniops p strong,#beauops p strong,#options .label,#diffops .label,#miniops .label,#beauops .label{display:block;float:left;font-size:1.2em;font-weight:bold;margin-bottom:1em;width:17.5em}input[type=\"radio\"]{margin:0 .25em}input[type=\"file\"]{box-shadow:none}select{border-style:inset;border-width:.1em;width:11.85em}.options input,.options label{border-style:none;display:block;float:left}.options span label{margin-left:.4em;white-space:nowrap;width:12em}.options p span label{font-size:1em}#webtool .options input[type=text]{margin-right:1em;width:11.6em}#webtool .options input[type=text],div input,textarea{border-style:inset;border-width:.1em}textarea{display:inline-block;height:10em;margin:0}strong label{font-size:1em;width:inherit}strong.new{background:#ff6;font-style:italic}#miniops span strong,#diffops span strong,#beauops span strong{display:inline;float:none;font-size:1em;width:auto}#Beautify .input label,#Beautify .output label,#Minify .input label,#Minify .output label{display:block;font-size:1.05em;font-weight:bold}#beautyinput,#minifyinput,#baseText,#newText,#beautyoutput,#minifyoutput{font-size:1em}.clear{clear:both;display:block}.wide,.tall,#diffBase,#diffNew{border-radius:0 0 .9em .9em;margin-bottom:1em}#diffBase,#diffNew{padding:1em}#diffBase p,#diffNew p{clear:none;float:none}#diffBase.wide textarea,#diffNew.wide textarea{height:10.1em}.wide,.tall{padding:1em 1.25em 0}#diff .addsource{cursor:pointer;margin-bottom:1em;padding:0}#diff .addsource input{display:block;float:left;margin:.5em .5em -1.5em}#diff .addsource label{cursor:pointer;display:inline-block;font-size:1.2em;padding:.5em .5em .5em 2em}.wide label{float:none;margin-right:0;width:100%}.wide #beautyinput,.wide #minifyinput,.wide #beautyoutput,.wide #minifyoutput{height:14.8em;margin:0;width:99.5%}.tall .input{clear:none;float:left}.tall .output{clear:none;float:right;margin-top:-2.4em}.tall .input,.tall .output{width:49%}.tall .output label{text-align:right}.tall .input textarea{height:31.7em}.tall .output textarea{height:34em}.tall textarea{margin:0 0 -.1em;width:100%}.tall #beautyinput,.tall #minifyinput{float:left}.tall #beautyoutput,.tall #minifyoutput{float:right}.wide{width:auto}#diffBase.difftall,#diffNew.difftall{margin-bottom:1.3em;padding:1em 1% .9em;width:47.5%}#diffBase.difftall{float:left}#diffNew.difftall{float:right}.file input,.labeltext input{display:inline-block;margin:0 .7em 0 0;width:16em}.labeltext,.file{font-size:.9em;font-weight:bold;margin-bottom:1em}.difftall textarea{height:30.6em;margin-bottom:.5em}#diffBase textarea,#diffNew textarea{width:99.5%}.input,.output{margin:0}#diffBase.wide,#diffNew.wide{padding:.8em 1em}#diffBase.wide{margin-bottom:1.2em}#diffoutput{width:100%}#diffoutput p em,#diffoutput li em,.analysis .bad,.analysis .good{font-weight:bold}#diffoutput ul{font-size:1.2em;margin-top:1em}#diffoutput ul li{display:list-item;list-style-type:disc}.analysis th{text-align:left}.analysis td{text-align:right}#doc ul{margin-top:1em}#doc ul li{font-size:1.2em}body#doc ul li{font-size:1.1em}#doc ol li span{display:block;margin-left:2em}.diff,.beautify{border-style:solid;border-width:.2em;display:inline-block;font-family:'Courier New',Courier,'Lucida Console',monospace;margin:0 1em 1em 0;position:relative}.beautify .data em{display:inline-block;font-style:normal;font-weight:bold;padding-top:.5em}.diff .skip{border-style:none none solid;border-width:0 0 .1em}.diff li,.diff p,.diff h3,.beautify li{font-size:1.1em}.diff .diff-left,.diff .diff-right{display:table-cell}.diff .diff-left{border-style:none none none solid;border-width:0 0 0 .1em}.diff .diff-right{border-style:none none none solid;border-width:0 0 0 .1em;margin-left:-.1em;min-width:16.5em;right:0;top:0}.diff-right .data ol{min-width:16.5em}.diff-right .data{border-style:none solid none none;border-width:0 .1em 0 0;width:100%}.diff-right .data li{min-width:16.5em}.diff ol,.beautify ol{display:table-cell;margin:0;padding:0}.diff li,.beautify li{border-style:none none solid;border-width:0 0 .1em;display:block;line-height:1.2;list-style-type:none;margin:0;padding-bottom:0;padding-right:.5em}.diff li{padding-top:.5em}.beautify .count li{padding-top:.5em}@media screen and (-webkit-min-device-pixel-ratio:0) {.beautify .count li{padding-top:.546em}}#doc .beautify .count li.fold{color:#900;cursor:pointer;font-weight:bold;padding-left:.5em}.diff .count,.beautify .count{border-style:solid;border-width:0 .1em 0 0;font-weight:normal;padding:0;text-align:right}.diff .count li,.beautify .count li{padding-left:2em}.diff .data,.beautify .data{text-align:left;white-space:pre}.diff .data li,.beautify .data li{letter-spacing:.1em;padding-left:.5em;white-space:pre}#webtool .diff h3{border-style:none solid solid;border-width:0 .1em .2em;box-shadow:none;display:block;font-family:Verdana;margin:0 0 0 -.1em;padding:.2em 2em;text-align:left}.diff li em{font-style:normal;margin:0 -.09em;padding:.05em 0}.diff p.author{border-style:solid;border-width:.2em .1em .1em;margin:0;overflow:hidden;padding:.4em;text-align:right}#dcolorScheme{float:right;margin:-2em 0 0 0}#dcolorScheme label{display:inline-block;font-size:1em;margin-right:1em}body#doc{font-size:.8em;max-width:80em}#doc th{font-weight:bold}#doc td span{display:block}#doc table,.box .body table{border-collapse:collapse;border-style:solid;border-width:.2em;clear:both}#doc table{font-size:1.2em}body#doc table{font-size:1em}#doc td,#doc th{border-left-style:solid;border-left-width:.1em;border-top-style:solid;border-top-width:.1em;padding:.5em}#doc em,.box .body em{font-style:normal;font-weight:bold}#doc div{margin-bottom:2em}#doc div div{clear:both;margin-bottom:1em}#doc h2{font-size:1.6em;margin:.5em .5em .5em 0}#doc ol{clear:both}#doc_contents li{font-size:1.75em;margin:1em 0 0}#doc_contents ol ol li{font-size:.75em;list-style:lower-alpha;margin:.5em 0 0}#doc_contents ol{padding-bottom:1em}#doc #doc_contents ol ol{background-color:inherit;border-style:none;margin:.25em .3em 0 0;padding-bottom:0}#doc_contents a{text-decoration:none}#diffoutput #thirdparties li{display:inline-block;list-style-type:none}#thirdparties a{border-style:none;display:block;height:4em;text-decoration:none}button,fieldset,.box h3.heading,.box .body,.options,.diff .replace em,.diff .delete em,.diff .insert em,.wide,.tall,#diffBase,#diffNew,#doc div,#doc div div,#doc ol,#option_comment,#update,#thirdparties img,#diffoutput #thirdparties{border-style:solid;border-width:.1em}#apitest p{clear:both;padding-top:.75em}#apitest label,#apitest select,#apitest input,#apitest textarea{float:left}#apitest label{width:20em}#apitest select,#apitest input,#apitest textarea{width:30em}#pdsamples{list-style-position:inside;margin:-12em 0 0 0;padding:0;position:relative;z-index:10}#pdsamples li{border-radius:1em;border-style:solid;border-width:.1em;margin:0 0 3em;padding:1em}#pdsamples li div{border-radius:1em;border-style:solid;border-width:.1em;margin:0;padding:1em}#pdsamples li p{display:inline-block;font-size:1em;margin:0}#pdsamples li p a{display:block;margin:0 0 1em 2em}#pdsamples li ul{margin:0 0 0 2em}#samples #pdsamples li li{background:none transparent;border-style:none;display:list-item;list-style:disc outside;margin:0;padding:.5em}#modalSave span{background:#000;display:block;left:0;opacity:.5;position:absolute;top:0;z-index:9000}#modalSave p{background:#eee;color:#333;font-size:3em;padding:1em;position:absolute;text-align:center;top:10em;width:25em;z-index:9001}#modalSave p em{display:block;font-size:.75em;margin-top:1em}#modalSave p strong{color:#c00;font-weight:bold}@media print{p,.options,#Beautify,#Minify,#diff,ul{display:none}div{width:100%}html td{font-size:.8em;white-space:normal}}";
+                        builder.cssCore    = "body{font-family:'Arial';font-size:10px;overflow-y:scroll;}#samples #dcolorScheme{position:relative;z-index:1000}#apireturn textarea{font-size:1.2em;height:50em;width:100%}button{border-radius:.9em;display:block;font-weight:bold;width:100%}div .button{text-align:center}div button{display:inline-block;font-weight:bold;margin:1em 0;padding:1em 2em}button:hover{cursor:pointer}#introduction{clear:both;margin:0 0 0 5.6em;position:relative;top:-2.75em}#introduction ul{clear:both;height:3em;margin:0 0 0 -5.5em;overflow:hidden;width:100em}#introduction li{clear:none;display:block;float:left;font-size:1.4em;margin:0 4.95em -1em 0}#introduction li li{font-size:1em;margin-left:2em}#introduction .information,#webtool #introduction h2{left:-90em;position:absolute;top:0;width:10em}#introduction h2{float:none}#displayOps{float:right;font-size:1.5em;font-weight:bold;margin-right:1em;width:22.5em}#displayOps.default{position:static}#displayOps.maximized{margin-bottom:-2em;position:relative}#displayOps li{clear:none;display:block;float:left;list-style:none;margin:2em 0 0;text-align:right;width:9em}h1{float:left;font-size:2em;margin:0 .5em .5em 0}#hideOptions{margin-left:5em;padding:0}#title_text{border-style:solid;border-width:.05em;display:block;float:left;font-size:1em;margin-left:.55em;padding:.1em}h1 svg,h1 img{border-style:solid;border-width:.05em;float:left;height:2em;width:2em}h1 span{font-size:.5em}h2,h3{background:#fff;border-style:solid;border-width:.075em;display:inline-block;font-size:1.8em;font-weight:bold;margin:0 .5em .5em 0;padding:0 .2em}#doc h3{margin-top:.5em}h3{font-size:1.6em}h4{font-size:1.4em}fieldset{border-radius:.9em;clear:both;margin:3.5em 0 -2em;padding:0 0 0 1em}legend{border-style:solid;border-width:.1em;font-size:1.2em;font-weight:bold;margin-left:-.25em}.button{margin:1em 0;text-align:center}.button button{display:block;font-size:2em;height:1.5em;margin:0 auto;padding:0;width:50%}#diffreport{right:57.8em}#beaureport{right:38.8em}#minnreport{right:19.8em}#statreport{right:.8em}#statreport .body p,#statreport .body li,#statreport .body h3{font-size:1.2em}#statreport .body h3{margin-top:0}#statreport .body ul{margin-top:1em}#reports{height:4em}#reports h2{display:none}.box{border-style:solid;border-width:0;left:auto;margin:0;padding:0;position:absolute;z-index:10}.box button{border-radius:0;border-style:solid;border-width:.1em;display:block;float:right;font-family:'Lucida Console','Trebuchet MS','Arial';height:1.75em;padding:0;position:absolute;right:0;text-align:center;top:0;width:1.75em;z-index:7}.box button.resize{border-width:.05em;cursor:se-resize;font-size:1.667em;font-weight:normal;height:.8em;line-height:.5em;margin:-.85em 0 0;position:absolute;right:.05em;top:100%;width:.85em}.box button.minimize{margin:.35em 4em 0 0}.box button.maximize{margin:.35em 1.75em 0 0}.box button.save{margin:.35em 6.25em 0 0}.box .buttons{float:right;margin:0}.box h3.heading{cursor:pointer;float:left;font-size:1em;height:3em;margin:0 0 -3.2em;position:relative;width:17em;z-index:6}.box h3.heading span{display:block;font-size:1.8em;padding:.25em 0 0 .5em}.box .body{clear:both;height:20em;margin-top:-.1em;overflow:scroll;padding:4.25em 1em 1em;position:relative;right:0;top:0;width:75em;z-index:5}.options{border-radius:0 0 .9em .9em;clear:both;margin-bottom:1em;padding:1em 1em 3.5em;width:auto}label{display:inline;font-size:1.4em}ol li{font-size:1.4em;list-style-type:decimal}ol li li{font-size:1em}body#doc ol li{font-size:1.1em}ul{margin:-1.4em 0 2em;padding:0}ul li{list-style-type:none}li{clear:both;margin:1em 0 1em 3em}li h4{display:inline;float:left;margin:.4em 0;text-align:left;width:14em}p{clear:both;font-size:1.2em;margin:0 0 1em}#option_comment{height:2.5em;margin-bottom:-1.5em;width:100%}.difflabel{display:block;height:0}#beau-other-span,#diff-other-span{text-indent:-200em;width:0}.options p span{display:block;float:left;font-size:1.2em}#top{min-width:80em}#top em{font-weight:bold}#update{clear:left;float:right;font-weight:bold;padding:.5em;position:absolute;right:1em;top:11em}#announcement{height:2.5em;margin:0 -5em -4.75em;width:27.5em}#textreport{width:100%}#options{float:left;margin:0;width:19em}#options label{width:auto}#options p{clear:both;font-size:1em;margin:0;padding:0}#options p span{clear:both;float:none;height:2em;margin:0 0 0 2em}#csvchar{width:11.8em}#language,#csvchar,#colorScheme{margin:0 0 1em 2em}#codeInput{margin-left:22.5em}#Beautify.wide p,#Beautify.tall p.file,#Minify.wide p,#Minify.tall p.file{clear:none;float:none}#diffops p,#miniops p,#beauops p{clear:both;font-size:1em;padding-top:1em}#options p strong,#diffops p strong,#miniops p strong,#beauops p strong,#options .label,#diffops .label,#miniops .label,#beauops .label{display:block;float:left;font-size:1.2em;font-weight:bold;margin-bottom:1em;width:17.5em}input[type='radio']{margin:0 .25em}input[type='file']{box-shadow:none}select{border-style:inset;border-width:.1em;width:11.85em}.options input,.options label{border-style:none;display:block;float:left}.options span label{margin-left:.4em;white-space:nowrap;width:12em}.options p span label{font-size:1em}#webtool .options input[type=text]{margin-right:1em;width:11.6em}#webtool .options input[type=text],div input,textarea{border-style:inset;border-width:.1em}textarea{display:inline-block;height:10em;margin:0}strong label{font-size:1em;width:inherit}strong.new{background:#ff6;font-style:italic}#miniops span strong,#diffops span strong,#beauops span strong{display:inline;float:none;font-size:1em;width:auto}#Beautify .input label,#Beautify .output label,#Minify .input label,#Minify .output label{display:block;font-size:1.05em;font-weight:bold}#beautyinput,#minifyinput,#baseText,#newText,#beautyoutput,#minifyoutput{font-size:1em}.clear{clear:both;display:block}.wide,.tall,#diffBase,#diffNew{border-radius:0 0 .9em .9em;margin-bottom:1em}#diffBase,#diffNew{padding:1em}#diffBase p,#diffNew p{clear:none;float:none}#diffBase.wide textarea,#diffNew.wide textarea{height:10.1em}.wide,.tall{padding:1em 1.25em 0}#diff .addsource{cursor:pointer;margin-bottom:1em;padding:0}#diff .addsource input{display:block;float:left;margin:.5em .5em -1.5em}#diff .addsource label{cursor:pointer;display:inline-block;font-size:1.2em;padding:.5em .5em .5em 2em}.wide label{float:none;margin-right:0;width:100%}.wide #beautyinput,.wide #minifyinput,.wide #beautyoutput,.wide #minifyoutput{height:14.8em;margin:0;width:99.5%}.tall .input{clear:none;float:left}.tall .output{clear:none;float:right;margin-top:-2.4em}.tall .input,.tall .output{width:49%}.tall .output label{text-align:right}.tall .input textarea{height:31.7em}.tall .output textarea{height:34em}.tall textarea{margin:0 0 -.1em;width:100%}.tall #beautyinput,.tall #minifyinput{float:left}.tall #beautyoutput,.tall #minifyoutput{float:right}.wide{width:auto}#diffBase.difftall,#diffNew.difftall{margin-bottom:1.3em;padding:1em 1% .9em;width:47.5%}#diffBase.difftall{float:left}#diffNew.difftall{float:right}.file input,.labeltext input{display:inline-block;margin:0 .7em 0 0;width:16em}.labeltext,.file{font-size:.9em;font-weight:bold;margin-bottom:1em}.difftall textarea{height:30.6em;margin-bottom:.5em}#diffBase textarea,#diffNew textarea{width:99.5%}.input,.output{margin:0}#diffBase.wide,#diffNew.wide{padding:.8em 1em}#diffBase.wide{margin-bottom:1.2em}#diffoutput{width:100%}#diffoutput p em,#diffoutput li em,.analysis .bad,.analysis .good{font-weight:bold}#diffoutput ul{font-size:1.2em;margin-top:1em}#diffoutput ul li{display:list-item;list-style-type:disc}.analysis th{text-align:left}.analysis td{text-align:right}#doc ul{margin-top:1em}#doc ul li{font-size:1.2em}body#doc ul li{font-size:1.1em}#doc ol li span{display:block;margin-left:2em}.diff,.beautify{border-style:solid;border-width:.2em;display:inline-block;font-family:'Courier New',Courier,'Lucida Console',monospace;margin:0 1em 1em 0;position:relative}.beautify .data em{display:inline-block;font-style:normal;font-weight:bold;padding-top:.5em}.diff .skip{border-style:none none solid;border-width:0 0 .1em}.diff li,.diff p,.diff h3,.beautify li{font-size:1.1em}.diff .diff-left,.diff .diff-right{display:table-cell}.diff .diff-left{border-style:none none none solid;border-width:0 0 0 .1em}.diff .diff-right{border-style:none none none solid;border-width:0 0 0 .1em;margin-left:-.1em;min-width:16.5em;right:0;top:0}.diff-right .data ol{min-width:16.5em}.diff-right .data{border-style:none solid none none;border-width:0 .1em 0 0;width:100%}.diff-right .data li{min-width:16.5em}.diff ol,.beautify ol{display:table-cell;margin:0;padding:0}.diff li,.beautify li{border-style:none none solid;border-width:0 0 .1em;display:block;line-height:1.2;list-style-type:none;margin:0;padding-bottom:0;padding-right:.5em}.diff li{padding-top:.5em}.beautify .count li{padding-top:.5em}@media screen and (-webkit-min-device-pixel-ratio:0) {.beautify .count li{padding-top:.546em}}#doc .beautify .count li.fold{color:#900;cursor:pointer;font-weight:bold;padding-left:.5em}.diff .count,.beautify .count{border-style:solid;border-width:0 .1em 0 0;font-weight:normal;padding:0;text-align:right}.diff .count li,.beautify .count li{padding-left:2em}.diff .data,.beautify .data{text-align:left;white-space:pre}.diff .data li,.beautify .data li{letter-spacing:.1em;padding-left:.5em;white-space:pre}#webtool .diff h3{border-style:none solid solid;border-width:0 .1em .2em;box-shadow:none;display:block;font-family:Verdana;margin:0 0 0 -.1em;padding:.2em 2em;text-align:left}.diff li em{font-style:normal;margin:0 -.09em;padding:.05em 0}.diff p.author{border-style:solid;border-width:.2em .1em .1em;margin:0;overflow:hidden;padding:.4em;text-align:right}#dcolorScheme{float:right;margin:-2em 0 0 0}#dcolorScheme label{display:inline-block;font-size:1em;margin-right:1em}body#doc{font-size:.8em;max-width:80em}#doc th{font-weight:bold}#doc td span{display:block}#doc table,.box .body table{border-collapse:collapse;border-style:solid;border-width:.2em;clear:both}#doc table{font-size:1.2em}body#doc table{font-size:1em}#doc td,#doc th{border-left-style:solid;border-left-width:.1em;border-top-style:solid;border-top-width:.1em;padding:.5em}#doc em,.box .body em{font-style:normal;font-weight:bold}#doc div{margin-bottom:2em}#doc div div{clear:both;margin-bottom:1em}#doc h2{font-size:1.6em;margin:.5em .5em .5em 0}#doc ol{clear:both}#doc_contents li{font-size:1.75em;margin:1em 0 0}#doc_contents ol ol li{font-size:.75em;list-style:lower-alpha;margin:.5em 0 0}#doc_contents ol{padding-bottom:1em}#doc #doc_contents ol ol{background-color:inherit;border-style:none;margin:.25em .3em 0 0;padding-bottom:0}#doc_contents a{text-decoration:none}#diffoutput #thirdparties li{display:inline-block;list-style-type:none}#thirdparties a{border-style:none;display:block;height:4em;text-decoration:none}button,fieldset,.box h3.heading,.box .body,.options,.diff .replace em,.diff .delete em,.diff .insert em,.wide,.tall,#diffBase,#diffNew,#doc div,#doc div div,#doc ol,#option_comment,#update,#thirdparties img,#diffoutput #thirdparties{border-style:solid;border-width:.1em}#apitest p{clear:both;padding-top:.75em}#apitest label,#apitest select,#apitest input,#apitest textarea{float:left}#apitest label{width:20em}#apitest select,#apitest input,#apitest textarea{width:30em}#pdsamples{list-style-position:inside;margin:-12em 0 0 0;padding:0;position:relative;z-index:10}#pdsamples li{border-radius:1em;border-style:solid;border-width:.1em;margin:0 0 3em;padding:1em}#pdsamples li div{border-radius:1em;border-style:solid;border-width:.1em;margin:0;padding:1em}#pdsamples li p{display:inline-block;font-size:1em;margin:0}#pdsamples li p a{display:block;margin:0 0 1em 2em}#pdsamples li ul{margin:0 0 0 2em}#samples #pdsamples li li{background:none transparent;border-style:none;display:list-item;list-style:disc outside;margin:0;padding:.5em}#modalSave span{background:#000;display:block;left:0;opacity:.5;position:absolute;top:0;z-index:9000}#modalSave p{background:#eee;color:#333;font-size:3em;padding:1em;position:absolute;text-align:center;top:10em;width:25em;z-index:9001}#modalSave p em{display:block;font-size:.75em;margin-top:1em}#modalSave p strong{color:#c00;font-weight:bold}@media print{p,.options,#Beautify,#Minify,#diff,ul{display:none}div{width:100%}html td{font-size:.8em;white-space:normal}}";
                         builder.cssColor   = "html .white,body.white{color:#333}body.white button{background:#eee;border-color:#222;box-shadow:0 .1em .2em rgba(64,64,64,0.75);color:#666;text-shadow:.05em .05em .1em #ccc}.white button:hover,.white button:active{background:#999;color:#eee;text-shadow:.1em .1em .1em #333}.white a{color:#009}.white #title_text{border-color:#fff;color:#333}.white #introduction h2{border-color:#999;color:#333}.white h1 svg{background:#eee;border-color:#999;box-shadow:0 .1em .2em rgba(150,150,150,0.5)}.white h2,.white h3{background:#eee;border-color:#eee;box-shadow:none;padding-left:0;text-shadow:none}.white fieldset{background:#ddd;border-color:#999}.white legend{background:#fff;border-color:#999;color:#333;text-shadow:none}.white .box{background:#666;border-color:#999;box-shadow:0 .4em .8em rgba(64,64,64,0.75)}.white .box button{box-shadow:0 .1em .2em rgba(0,0,0,0.75);text-shadow:.1em .1em .1em rgba(0,0,0,.5)}.white .box button.resize{background:#bbf;border-color:#446;color:#446}.white .box button.resize:hover{background:#ddf;border-color:#228;color:#228}.white .box button.save{background:#d99;border-color:#300;color:#300}.white .box button.save:hover{background:#fcc;border-color:#822;color:#822}.white .box button.minimize{background:#bbf;border-color:#006;color:#006}.white .box button.minimize:hover{background:#eef;border-color:#228;color:#228}.white .box button.maximize{background:#9c9;border-color:#030;color:#030}.white .box button.maximize:hover{background:#cfc;border-color:#060;color:#060}.white .box h3.heading{background:#ddd;border-color:#888;box-shadow:.2em .2em .4em #666}.white .box h3.heading:hover{background:#333;color:#eee}.white .box .body{background:#eee;border-color:#888;box-shadow:0 0 .4em rgba(64,64,64,0.75)}.white .options{background:#eee;border-color:#999;box-shadow:0 .2em .4em rgba(64,64,64,0.5);text-shadow:.05em .05em .1em #ccc}.white .options h2,.white #Beautify h2,.white #Minify h2,.white #diffBase h2,.white #diffNew h2{background:#eee;border-color:#eee;box-shadow:none;text-shadow:none}.white #option_comment{background:#ddd;border-color:#999}.white #top em{color:#00f}.white #update{background:#eee;border-color:#999;box-shadow:0 .1em .2em rgba(64,64,64,0.5)}.white .wide,.white .tall,.white #diffBase,.white #diffNew{background:#eee;border-color:#999;box-shadow:0 .2em .4em rgba(64,64,64,0.5)}.white .file input,.white .labeltext input{border-color:#fff}#webtool.white input.unchecked{background:#ccc;color:#666}.white .options input[type=text],.white .options select{border-color:#999}.white #beautyoutput,.white #minifyoutput{background:#ddd}.white #diffoutput p em,.white #diffoutput li em{color:#c00}.white .analysis .bad{background-color:#ebb;color:#400}.white .analysis .good{background-color:#cec;color:#040}.white #doc .analysis thead th,.white #doc .analysis th[colspan]{background:#eef}.white div input{border-color:#999}.white textarea{border-color:#999}.white textarea:hover{background:#eef8ff}.white .diff,.white .beautify,.white .diff ol,.white .beautify ol,.white .diff .diff-left,.white .diff .diff-right,.white h3,.white p.author{border-color:#999}.white .diff .count li,.white .beautify .count li{background:#eed;border-color:#bbc;color:#886}.white .diff h3{background:#ddd;border-bottom-color:#bbc}.white .diff .empty{background-color:#ddd;border-color:#ccc}.white .diff .replace{background-color:#fea;border-color:#dd8}.white .diff .data .replace em{background-color:#ffd;border-color:#963;color:#630}.white .diff .delete{background-color:#fbb;border-color:#eaa}.white .diff .data .delete em{background-color:#fdd;border-color:#700;color:#600}.white .diff .equal,.white .beautify .data li{background-color:#fff;border-color:#eee}.white .beautify .data em.s1{color:#f66}.white .beautify .data em.s2{color:#12f}.white .beautify .data em.s3{color:#090}.white .beautify .data em.s4{color:#d6d}.white .beautify .data em.s5{color:#7cc}.white .beautify .data em.s6{color:#c85}.white .beautify .data em.s7{color:#737}.white .beautify .data em.s8{color:#6d0}.white .beautify .data em.s9{color:#dd0s}.white .beautify .data em.s10{color:#893}.white .beautify .data em.s11{color:#b97}.white .beautify .data em.s12{color:#bbb}.white .beautify .data em.s13{color:#cc3}.white .beautify .data em.s14{color:#333}.white .beautify .data em.s15{color:#9d9}.white .beautify .data em.s16{color:#880}.white .beautify .data .l0{background:#fff}.white .beautify .data .l1{background:#fed}.white .beautify .data .l2{background:#def}.white .beautify .data .l3{background:#efe}.white .beautify .data .l4{background:#fef}.white .beautify .data .l5{background:#eef}.white .beautify .data .l6{background:#fff8cc}.white .beautify .data .l7{background:#ede}.white .beautify .data .l8{background:#efc}.white .beautify .data .l9{background:#ffd}.white .beautify .data .l10{background:#edc}.white .beautify .data .l11{background:#fdb}.white .beautify .data .l12{background:#f8f8f8}.white .beautify .data .l13{background:#ffb}.white .beautify .data .l14{background:#eec}.white .beautify .data .l15{background:#cfc}.white .beautify .data .l16{background:#eea}.white .beautify .data .c0{background:#ddd}.white .beautify .data li{color:#777}.white .diff .skip{background-color:#efefef;border-color:#ddd}.white .diff .insert{background-color:#bfb;border-color:#aea}.white .diff .data .insert em{background-color:#efc;border-color:#070;color:#050}.white .diff p.author{background:#efefef;border-top-color:#bbc}.white #doc table,.white .box .body table{background:#fff;border-color:#999}.white #doc strong,.white .box .body strong{color:#c00}.white .box .body em,.white .box .body #doc em{color:#090}.white #thirdparties img,.white #diffoutput #thirdparties{border-color:#999}.white #thirdparties img{box-shadow:.2em .2em .4em #999}.white #diffoutput #thirdparties{background:#eee}.white #doc div,#doc.white div{background:#ddd;border-color:#999}.white #doc ol,#doc.white ol{background:#eee;border-color:#999}.white #doc div div,#doc.white div div{background:#eee;border-color:#999}.white #doc table,#doc.white table{background:#fff;border-color:#999}.white #doc th,#doc.white th{background:#ddd;border-left-color:#999;border-top-color:#999}.white #doc tr:hover,#doc.white tr:hover{background:#ddd}#doc.white em{color:#060}.white #doc div:hover,#doc.white div:hover{background:#ccc}.white #doc div div:hover,#doc.white div div:hover,#doc.white div ol:hover{background:#fff}.white #pdsamples li{background:#eee;border-color:#999}.white #pdsamples li div{background:#ddd;border-color:#999}.white #pdsamples li div a{color:#47a}.white #pdsamples li p a{color:#009}";
                         builder.cssExtra   = "body{background:#eee}#doc p em{color:#090}";
                         builder.body       = "</style></head><body id='webtool' class='";
@@ -871,6 +924,7 @@ var prettydiff = function prettydiff(api) {
                             objsort     : cobjsort,
                             source      : csource,
                             style       : cstyle,
+                            styleguide  : cstyleguide,
                             vertical    : false,
                             wrap        : cwrap
                         }).replace(/\n[\t]* \/>/g, "");
@@ -889,6 +943,7 @@ var prettydiff = function prettydiff(api) {
                             objsort     : cobjsort,
                             source      : cdiff,
                             style       : cstyle,
+                            styleguide  : cstyleguide,
                             vertical    : false,
                             wrap        : cwrap
                         }).replace(/\n[\t]* \/>/g, "");
@@ -910,7 +965,9 @@ var prettydiff = function prettydiff(api) {
                             preserve    : false,
                             source      : csource,
                             space       : cspace,
-                            vertical    : false
+                            styleguide  : cstyleguide,
+                            vertical    : false,
+                            wrap        : cwrap
                         });
                         apidiffout = jspretty({
                             bracepadding: cbracepadding,
@@ -926,7 +983,9 @@ var prettydiff = function prettydiff(api) {
                             preserve    : false,
                             source      : cdiff,
                             space       : cspace,
-                            vertical    : false
+                            styleguide  : cstyleguide,
+                            vertical    : false,
+                            wrap        : cwrap
                         });
                     }
                     if (cquote === true) {
@@ -995,7 +1054,7 @@ var prettydiff = function prettydiff(api) {
                         }
                         if (capi === "") {
                             builder.head          = "<?xml version='1.0' encoding='UTF-8' ?><!DOCTYPE html PUBLIC '-//W3C//DTD XHTML 1.1//EN' 'http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd'><html xmlns='http://www.w3.org/1999/xhtml' xml:lang='en'><head><title>Pretty Diff - The difference tool</title><meta name='robots' content='index, follow'/> <meta name='DC.title' content='Pretty Diff - The difference tool'/> <link rel='canonical' href='http://prettydiff.com/' type='application/xhtml+xml'/><meta http-equiv='Content-Type' content='application/xhtml+xml;charset=UTF-8'/><meta http-equiv='Content-Style-Type' content='text/css'/><style type='text/css'>";
-                            builder.cssCore       = "body{font-family:\"Arial\";font-size:10px;overflow-y:scroll;}#samples #dcolorScheme{position:relative;z-index:1000}#apireturn textarea{font-size:1.2em;height:50em;width:100%}button{border-radius:.9em;display:block;font-weight:bold;width:100%}div .button{text-align:center}div button{display:inline-block;font-weight:bold;margin:1em 0;padding:1em 2em}button:hover{cursor:pointer}#introduction{clear:both;margin:0 0 0 5.6em;position:relative;top:-2.75em}#introduction ul{clear:both;height:3em;margin:0 0 0 -5.5em;overflow:hidden;width:100em}#introduction li{clear:none;display:block;float:left;font-size:1.4em;margin:0 4.95em -1em 0}#introduction li li{font-size:1em;margin-left:2em}#introduction .information,#webtool #introduction h2{left:-90em;position:absolute;top:0;width:10em}#introduction h2{float:none}#displayOps{float:right;font-size:1.5em;font-weight:bold;margin-right:1em;width:22.5em}#displayOps.default{position:static}#displayOps.maximized{margin-bottom:-2em;position:relative}#displayOps li{clear:none;display:block;float:left;list-style:none;margin:2em 0 0;text-align:right;width:9em}h1{float:left;font-size:2em;margin:0 .5em .5em 0}#hideOptions{margin-left:5em;padding:0}#title_text{border-style:solid;border-width:.05em;display:block;float:left;font-size:1em;margin-left:.55em;padding:.1em}h1 svg,h1 img{border-style:solid;border-width:.05em;float:left;height:2em;width:2em}h1 span{font-size:.5em}h2,h3{background:#fff;border-style:solid;border-width:.075em;display:inline-block;font-size:1.8em;font-weight:bold;margin:0 .5em .5em 0;padding:0 .2em}#doc h3{margin-top:.5em}h3{font-size:1.6em}h4{font-size:1.4em}fieldset{border-radius:.9em;clear:both;margin:3.5em 0 -2em;padding:0 0 0 1em}legend{border-style:solid;border-width:.1em;font-size:1.2em;font-weight:bold;margin-left:-.25em}.button{margin:1em 0;text-align:center}.button button{display:block;font-size:2em;height:1.5em;margin:0 auto;padding:0;width:50%}#diffreport{right:57.8em}#beaureport{right:38.8em}#minnreport{right:19.8em}#statreport{right:.8em}#statreport .body p,#statreport .body li,#statreport .body h3{font-size:1.2em}#statreport .body h3{margin-top:0}#statreport .body ul{margin-top:1em}#reports{height:4em}#reports h2{display:none}.box{border-style:solid;border-width:0;left:auto;margin:0;padding:0;position:absolute;z-index:10}.box button{border-radius:0;border-style:solid;border-width:.1em;display:block;float:right;font-family:'Lucida Console','Trebuchet MS','Arial';height:1.75em;padding:0;position:absolute;right:0;text-align:center;top:0;width:1.75em;z-index:7}.box button.resize{border-width:.05em;cursor:se-resize;font-size:1.667em;font-weight:normal;height:.8em;line-height:.5em;margin:-.85em 0 0;position:absolute;right:.05em;top:100%;width:.85em}.box button.minimize{margin:.35em 4em 0 0}.box button.maximize{margin:.35em 1.75em 0 0}.box button.save{margin:.35em 6.25em 0 0}.box .buttons{float:right;margin:0}.box h3.heading{cursor:pointer;float:left;font-size:1em;height:3em;margin:0 0 -3.2em;position:relative;width:17em;z-index:6}.box h3.heading span{display:block;font-size:1.8em;padding:.25em 0 0 .5em}.box .body{clear:both;height:20em;margin-top:-.1em;overflow:scroll;padding:4.25em 1em 1em;position:relative;right:0;top:0;width:75em;z-index:5}.options{border-radius:0 0 .9em .9em;clear:both;margin-bottom:1em;padding:1em 1em 3.5em;width:auto}label{display:inline;font-size:1.4em}ol li{font-size:1.4em;list-style-type:decimal}ol li li{font-size:1em}body#doc ol li{font-size:1.1em}ul{margin:-1.4em 0 2em;padding:0}ul li{list-style-type:none}li{clear:both;margin:1em 0 1em 3em}li h4{display:inline;float:left;margin:.4em 0;text-align:left;width:14em}p{clear:both;font-size:1.2em;margin:0 0 1em}#option_comment{height:2.5em;margin-bottom:-1.5em;width:100%}.difflabel{display:block;height:0}#beau-other-span,#diff-other-span{text-indent:-200em;width:0}.options p span{display:block;float:left;font-size:1.2em}#top{min-width:80em}#top em{font-weight:bold}#update{clear:left;float:right;font-weight:bold;padding:.5em;position:absolute;right:1em;top:11em}#announcement{height:2.5em;margin:0 -5em -4.75em;width:27.5em}#textreport{width:100%}#options{float:left;margin:0;width:19em}#options label{width:auto}#options p{clear:both;font-size:1em;margin:0;padding:0}#options p span{clear:both;float:none;height:2em;margin:0 0 0 2em}#csvchar{width:11.8em}#language,#csvchar,#colorScheme{margin:0 0 1em 2em}#codeInput{margin-left:22.5em}#Beautify.wide p,#Beautify.tall p.file,#Minify.wide p,#Minify.tall p.file{clear:none;float:none}#diffops p,#miniops p,#beauops p{clear:both;font-size:1em;padding-top:1em}#options p strong,#diffops p strong,#miniops p strong,#beauops p strong,#options .label,#diffops .label,#miniops .label,#beauops .label{display:block;float:left;font-size:1.2em;font-weight:bold;margin-bottom:1em;width:17.5em}input[type=\"radio\"]{margin:0 .25em}input[type=\"file\"]{box-shadow:none}select{border-style:inset;border-width:.1em;width:11.85em}.options input,.options label{border-style:none;display:block;float:left}.options span label{margin-left:.4em;white-space:nowrap;width:12em}.options p span label{font-size:1em}#webtool .options input[type=text]{margin-right:1em;width:11.6em}#webtool .options input[type=text],div input,textarea{border-style:inset;border-width:.1em}textarea{display:inline-block;height:10em;margin:0}strong label{font-size:1em;width:inherit}strong.new{background:#ff6;font-style:italic}#miniops span strong,#diffops span strong,#beauops span strong{display:inline;float:none;font-size:1em;width:auto}#Beautify .input label,#Beautify .output label,#Minify .input label,#Minify .output label{display:block;font-size:1.05em;font-weight:bold}#beautyinput,#minifyinput,#baseText,#newText,#beautyoutput,#minifyoutput{font-size:1em}.clear{clear:both;display:block}.wide,.tall,#diffBase,#diffNew{border-radius:0 0 .9em .9em;margin-bottom:1em}#diffBase,#diffNew{padding:1em}#diffBase p,#diffNew p{clear:none;float:none}#diffBase.wide textarea,#diffNew.wide textarea{height:10.1em}.wide,.tall{padding:1em 1.25em 0}#diff .addsource{cursor:pointer;margin-bottom:1em;padding:0}#diff .addsource input{display:block;float:left;margin:.5em .5em -1.5em}#diff .addsource label{cursor:pointer;display:inline-block;font-size:1.2em;padding:.5em .5em .5em 2em}.wide label{float:none;margin-right:0;width:100%}.wide #beautyinput,.wide #minifyinput,.wide #beautyoutput,.wide #minifyoutput{height:14.8em;margin:0;width:99.5%}.tall .input{clear:none;float:left}.tall .output{clear:none;float:right;margin-top:-2.4em}.tall .input,.tall .output{width:49%}.tall .output label{text-align:right}.tall .input textarea{height:31.7em}.tall .output textarea{height:34em}.tall textarea{margin:0 0 -.1em;width:100%}.tall #beautyinput,.tall #minifyinput{float:left}.tall #beautyoutput,.tall #minifyoutput{float:right}.wide{width:auto}#diffBase.difftall,#diffNew.difftall{margin-bottom:1.3em;padding:1em 1% .9em;width:47.5%}#diffBase.difftall{float:left}#diffNew.difftall{float:right}.file input,.labeltext input{display:inline-block;margin:0 .7em 0 0;width:16em}.labeltext,.file{font-size:.9em;font-weight:bold;margin-bottom:1em}.difftall textarea{height:30.6em;margin-bottom:.5em}#diffBase textarea,#diffNew textarea{width:99.5%}.input,.output{margin:0}#diffBase.wide,#diffNew.wide{padding:.8em 1em}#diffBase.wide{margin-bottom:1.2em}#diffoutput{width:100%}#diffoutput p em,#diffoutput li em,.analysis .bad,.analysis .good{font-weight:bold}#diffoutput ul{font-size:1.2em;margin-top:1em}#diffoutput ul li{display:list-item;list-style-type:disc}.analysis th{text-align:left}.analysis td{text-align:right}#doc ul{margin-top:1em}#doc ul li{font-size:1.2em}body#doc ul li{font-size:1.1em}#doc ol li span{display:block;margin-left:2em}.diff,.beautify{border-style:solid;border-width:.2em;display:inline-block;font-family:'Courier New',Courier,'Lucida Console',monospace;margin:0 1em 1em 0;position:relative}.beautify .data em{display:inline-block;font-style:normal;font-weight:bold;padding-top:.5em}.diff .skip{border-style:none none solid;border-width:0 0 .1em}.diff li,.diff p,.diff h3,.beautify li{font-size:1.1em}.diff .diff-left,.diff .diff-right{display:table-cell}.diff .diff-left{border-style:none none none solid;border-width:0 0 0 .1em}.diff .diff-right{border-style:none none none solid;border-width:0 0 0 .1em;margin-left:-.1em;min-width:16.5em;right:0;top:0}.diff-right .data ol{min-width:16.5em}.diff-right .data{border-style:none solid none none;border-width:0 .1em 0 0;width:100%}.diff-right .data li{min-width:16.5em}.diff ol,.beautify ol{display:table-cell;margin:0;padding:0}.diff li,.beautify li{border-style:none none solid;border-width:0 0 .1em;display:block;line-height:1.2;list-style-type:none;margin:0;padding-bottom:0;padding-right:.5em}.diff li{padding-top:.5em}.beautify .count li{padding-top:.5em}@media screen and (-webkit-min-device-pixel-ratio:0) {.beautify .count li{padding-top:.546em}}#doc .beautify .count li.fold{color:#900;cursor:pointer;font-weight:bold;padding-left:.5em}.diff .count,.beautify .count{border-style:solid;border-width:0 .1em 0 0;font-weight:normal;padding:0;text-align:right}.diff .count li,.beautify .count li{padding-left:2em}.diff .data,.beautify .data{text-align:left;white-space:pre}.diff .data li,.beautify .data li{letter-spacing:.1em;padding-left:.5em;white-space:pre}#webtool .diff h3{border-style:none solid solid;border-width:0 .1em .2em;box-shadow:none;display:block;font-family:Verdana;margin:0 0 0 -.1em;padding:.2em 2em;text-align:left}.diff li em{font-style:normal;margin:0 -.09em;padding:.05em 0}.diff p.author{border-style:solid;border-width:.2em .1em .1em;margin:0;overflow:hidden;padding:.4em;text-align:right}#dcolorScheme{float:right;margin:-2em 0 0 0}#dcolorScheme label{display:inline-block;font-size:1em;margin-right:1em}body#doc{font-size:.8em;max-width:80em}#doc th{font-weight:bold}#doc td span{display:block}#doc table,.box .body table{border-collapse:collapse;border-style:solid;border-width:.2em;clear:both}#doc table{font-size:1.2em}body#doc table{font-size:1em}#doc td,#doc th{border-left-style:solid;border-left-width:.1em;border-top-style:solid;border-top-width:.1em;padding:.5em}#doc em,.box .body em{font-style:normal;font-weight:bold}#doc div{margin-bottom:2em}#doc div div{clear:both;margin-bottom:1em}#doc h2{font-size:1.6em;margin:.5em .5em .5em 0}#doc ol{clear:both}#doc_contents li{font-size:1.75em;margin:1em 0 0}#doc_contents ol ol li{font-size:.75em;list-style:lower-alpha;margin:.5em 0 0}#doc_contents ol{padding-bottom:1em}#doc #doc_contents ol ol{background-color:inherit;border-style:none;margin:.25em .3em 0 0;padding-bottom:0}#doc_contents a{text-decoration:none}#diffoutput #thirdparties li{display:inline-block;list-style-type:none}#thirdparties a{border-style:none;display:block;height:4em;text-decoration:none}button,fieldset,.box h3.heading,.box .body,.options,.diff .replace em,.diff .delete em,.diff .insert em,.wide,.tall,#diffBase,#diffNew,#doc div,#doc div div,#doc ol,#option_comment,#update,#thirdparties img,#diffoutput #thirdparties{border-style:solid;border-width:.1em}#apitest p{clear:both;padding-top:.75em}#apitest label,#apitest select,#apitest input,#apitest textarea{float:left}#apitest label{width:20em}#apitest select,#apitest input,#apitest textarea{width:30em}#pdsamples{list-style-position:inside;margin:-12em 0 0 0;padding:0;position:relative;z-index:10}#pdsamples li{border-radius:1em;border-style:solid;border-width:.1em;margin:0 0 3em;padding:1em}#pdsamples li div{border-radius:1em;border-style:solid;border-width:.1em;margin:0;padding:1em}#pdsamples li p{display:inline-block;font-size:1em;margin:0}#pdsamples li p a{display:block;margin:0 0 1em 2em}#pdsamples li ul{margin:0 0 0 2em}#samples #pdsamples li li{background:none transparent;border-style:none;display:list-item;list-style:disc outside;margin:0;padding:.5em}#modalSave span{background:#000;display:block;left:0;opacity:.5;position:absolute;top:0;z-index:9000}#modalSave p{background:#eee;color:#333;font-size:3em;padding:1em;position:absolute;text-align:center;top:10em;width:25em;z-index:9001}#modalSave p em{display:block;font-size:.75em;margin-top:1em}#modalSave p strong{color:#c00;font-weight:bold}@media print{p,.options,#Beautify,#Minify,#diff,ul{display:none}div{width:100%}html td{font-size:.8em;white-space:normal}}";
+                            builder.cssCore       = "body{font-family:'Arial';font-size:10px;overflow-y:scroll;}#samples #dcolorScheme{position:relative;z-index:1000}#apireturn textarea{font-size:1.2em;height:50em;width:100%}button{border-radius:.9em;display:block;font-weight:bold;width:100%}div .button{text-align:center}div button{display:inline-block;font-weight:bold;margin:1em 0;padding:1em 2em}button:hover{cursor:pointer}#introduction{clear:both;margin:0 0 0 5.6em;position:relative;top:-2.75em}#introduction ul{clear:both;height:3em;margin:0 0 0 -5.5em;overflow:hidden;width:100em}#introduction li{clear:none;display:block;float:left;font-size:1.4em;margin:0 4.95em -1em 0}#introduction li li{font-size:1em;margin-left:2em}#introduction .information,#webtool #introduction h2{left:-90em;position:absolute;top:0;width:10em}#introduction h2{float:none}#displayOps{float:right;font-size:1.5em;font-weight:bold;margin-right:1em;width:22.5em}#displayOps.default{position:static}#displayOps.maximized{margin-bottom:-2em;position:relative}#displayOps li{clear:none;display:block;float:left;list-style:none;margin:2em 0 0;text-align:right;width:9em}h1{float:left;font-size:2em;margin:0 .5em .5em 0}#hideOptions{margin-left:5em;padding:0}#title_text{border-style:solid;border-width:.05em;display:block;float:left;font-size:1em;margin-left:.55em;padding:.1em}h1 svg,h1 img{border-style:solid;border-width:.05em;float:left;height:2em;width:2em}h1 span{font-size:.5em}h2,h3{background:#fff;border-style:solid;border-width:.075em;display:inline-block;font-size:1.8em;font-weight:bold;margin:0 .5em .5em 0;padding:0 .2em}#doc h3{margin-top:.5em}h3{font-size:1.6em}h4{font-size:1.4em}fieldset{border-radius:.9em;clear:both;margin:3.5em 0 -2em;padding:0 0 0 1em}legend{border-style:solid;border-width:.1em;font-size:1.2em;font-weight:bold;margin-left:-.25em}.button{margin:1em 0;text-align:center}.button button{display:block;font-size:2em;height:1.5em;margin:0 auto;padding:0;width:50%}#diffreport{right:57.8em}#beaureport{right:38.8em}#minnreport{right:19.8em}#statreport{right:.8em}#statreport .body p,#statreport .body li,#statreport .body h3{font-size:1.2em}#statreport .body h3{margin-top:0}#statreport .body ul{margin-top:1em}#reports{height:4em}#reports h2{display:none}.box{border-style:solid;border-width:0;left:auto;margin:0;padding:0;position:absolute;z-index:10}.box button{border-radius:0;border-style:solid;border-width:.1em;display:block;float:right;font-family:'Lucida Console','Trebuchet MS','Arial';height:1.75em;padding:0;position:absolute;right:0;text-align:center;top:0;width:1.75em;z-index:7}.box button.resize{border-width:.05em;cursor:se-resize;font-size:1.667em;font-weight:normal;height:.8em;line-height:.5em;margin:-.85em 0 0;position:absolute;right:.05em;top:100%;width:.85em}.box button.minimize{margin:.35em 4em 0 0}.box button.maximize{margin:.35em 1.75em 0 0}.box button.save{margin:.35em 6.25em 0 0}.box .buttons{float:right;margin:0}.box h3.heading{cursor:pointer;float:left;font-size:1em;height:3em;margin:0 0 -3.2em;position:relative;width:17em;z-index:6}.box h3.heading span{display:block;font-size:1.8em;padding:.25em 0 0 .5em}.box .body{clear:both;height:20em;margin-top:-.1em;overflow:scroll;padding:4.25em 1em 1em;position:relative;right:0;top:0;width:75em;z-index:5}.options{border-radius:0 0 .9em .9em;clear:both;margin-bottom:1em;padding:1em 1em 3.5em;width:auto}label{display:inline;font-size:1.4em}ol li{font-size:1.4em;list-style-type:decimal}ol li li{font-size:1em}body#doc ol li{font-size:1.1em}ul{margin:-1.4em 0 2em;padding:0}ul li{list-style-type:none}li{clear:both;margin:1em 0 1em 3em}li h4{display:inline;float:left;margin:.4em 0;text-align:left;width:14em}p{clear:both;font-size:1.2em;margin:0 0 1em}#option_comment{height:2.5em;margin-bottom:-1.5em;width:100%}.difflabel{display:block;height:0}#beau-other-span,#diff-other-span{text-indent:-200em;width:0}.options p span{display:block;float:left;font-size:1.2em}#top{min-width:80em}#top em{font-weight:bold}#update{clear:left;float:right;font-weight:bold;padding:.5em;position:absolute;right:1em;top:11em}#announcement{height:2.5em;margin:0 -5em -4.75em;width:27.5em}#textreport{width:100%}#options{float:left;margin:0;width:19em}#options label{width:auto}#options p{clear:both;font-size:1em;margin:0;padding:0}#options p span{clear:both;float:none;height:2em;margin:0 0 0 2em}#csvchar{width:11.8em}#language,#csvchar,#colorScheme{margin:0 0 1em 2em}#codeInput{margin-left:22.5em}#Beautify.wide p,#Beautify.tall p.file,#Minify.wide p,#Minify.tall p.file{clear:none;float:none}#diffops p,#miniops p,#beauops p{clear:both;font-size:1em;padding-top:1em}#options p strong,#diffops p strong,#miniops p strong,#beauops p strong,#options .label,#diffops .label,#miniops .label,#beauops .label{display:block;float:left;font-size:1.2em;font-weight:bold;margin-bottom:1em;width:17.5em}input[type='radio']{margin:0 .25em}input[type='file']{box-shadow:none}select{border-style:inset;border-width:.1em;width:11.85em}.options input,.options label{border-style:none;display:block;float:left}.options span label{margin-left:.4em;white-space:nowrap;width:12em}.options p span label{font-size:1em}#webtool .options input[type=text]{margin-right:1em;width:11.6em}#webtool .options input[type=text],div input,textarea{border-style:inset;border-width:.1em}textarea{display:inline-block;height:10em;margin:0}strong label{font-size:1em;width:inherit}strong.new{background:#ff6;font-style:italic}#miniops span strong,#diffops span strong,#beauops span strong{display:inline;float:none;font-size:1em;width:auto}#Beautify .input label,#Beautify .output label,#Minify .input label,#Minify .output label{display:block;font-size:1.05em;font-weight:bold}#beautyinput,#minifyinput,#baseText,#newText,#beautyoutput,#minifyoutput{font-size:1em}.clear{clear:both;display:block}.wide,.tall,#diffBase,#diffNew{border-radius:0 0 .9em .9em;margin-bottom:1em}#diffBase,#diffNew{padding:1em}#diffBase p,#diffNew p{clear:none;float:none}#diffBase.wide textarea,#diffNew.wide textarea{height:10.1em}.wide,.tall{padding:1em 1.25em 0}#diff .addsource{cursor:pointer;margin-bottom:1em;padding:0}#diff .addsource input{display:block;float:left;margin:.5em .5em -1.5em}#diff .addsource label{cursor:pointer;display:inline-block;font-size:1.2em;padding:.5em .5em .5em 2em}.wide label{float:none;margin-right:0;width:100%}.wide #beautyinput,.wide #minifyinput,.wide #beautyoutput,.wide #minifyoutput{height:14.8em;margin:0;width:99.5%}.tall .input{clear:none;float:left}.tall .output{clear:none;float:right;margin-top:-2.4em}.tall .input,.tall .output{width:49%}.tall .output label{text-align:right}.tall .input textarea{height:31.7em}.tall .output textarea{height:34em}.tall textarea{margin:0 0 -.1em;width:100%}.tall #beautyinput,.tall #minifyinput{float:left}.tall #beautyoutput,.tall #minifyoutput{float:right}.wide{width:auto}#diffBase.difftall,#diffNew.difftall{margin-bottom:1.3em;padding:1em 1% .9em;width:47.5%}#diffBase.difftall{float:left}#diffNew.difftall{float:right}.file input,.labeltext input{display:inline-block;margin:0 .7em 0 0;width:16em}.labeltext,.file{font-size:.9em;font-weight:bold;margin-bottom:1em}.difftall textarea{height:30.6em;margin-bottom:.5em}#diffBase textarea,#diffNew textarea{width:99.5%}.input,.output{margin:0}#diffBase.wide,#diffNew.wide{padding:.8em 1em}#diffBase.wide{margin-bottom:1.2em}#diffoutput{width:100%}#diffoutput p em,#diffoutput li em,.analysis .bad,.analysis .good{font-weight:bold}#diffoutput ul{font-size:1.2em;margin-top:1em}#diffoutput ul li{display:list-item;list-style-type:disc}.analysis th{text-align:left}.analysis td{text-align:right}#doc ul{margin-top:1em}#doc ul li{font-size:1.2em}body#doc ul li{font-size:1.1em}#doc ol li span{display:block;margin-left:2em}.diff,.beautify{border-style:solid;border-width:.2em;display:inline-block;font-family:'Courier New',Courier,'Lucida Console',monospace;margin:0 1em 1em 0;position:relative}.beautify .data em{display:inline-block;font-style:normal;font-weight:bold;padding-top:.5em}.diff .skip{border-style:none none solid;border-width:0 0 .1em}.diff li,.diff p,.diff h3,.beautify li{font-size:1.1em}.diff .diff-left,.diff .diff-right{display:table-cell}.diff .diff-left{border-style:none none none solid;border-width:0 0 0 .1em}.diff .diff-right{border-style:none none none solid;border-width:0 0 0 .1em;margin-left:-.1em;min-width:16.5em;right:0;top:0}.diff-right .data ol{min-width:16.5em}.diff-right .data{border-style:none solid none none;border-width:0 .1em 0 0;width:100%}.diff-right .data li{min-width:16.5em}.diff ol,.beautify ol{display:table-cell;margin:0;padding:0}.diff li,.beautify li{border-style:none none solid;border-width:0 0 .1em;display:block;line-height:1.2;list-style-type:none;margin:0;padding-bottom:0;padding-right:.5em}.diff li{padding-top:.5em}.beautify .count li{padding-top:.5em}@media screen and (-webkit-min-device-pixel-ratio:0) {.beautify .count li{padding-top:.546em}}#doc .beautify .count li.fold{color:#900;cursor:pointer;font-weight:bold;padding-left:.5em}.diff .count,.beautify .count{border-style:solid;border-width:0 .1em 0 0;font-weight:normal;padding:0;text-align:right}.diff .count li,.beautify .count li{padding-left:2em}.diff .data,.beautify .data{text-align:left;white-space:pre}.diff .data li,.beautify .data li{letter-spacing:.1em;padding-left:.5em;white-space:pre}#webtool .diff h3{border-style:none solid solid;border-width:0 .1em .2em;box-shadow:none;display:block;font-family:Verdana;margin:0 0 0 -.1em;padding:.2em 2em;text-align:left}.diff li em{font-style:normal;margin:0 -.09em;padding:.05em 0}.diff p.author{border-style:solid;border-width:.2em .1em .1em;margin:0;overflow:hidden;padding:.4em;text-align:right}#dcolorScheme{float:right;margin:-2em 0 0 0}#dcolorScheme label{display:inline-block;font-size:1em;margin-right:1em}body#doc{font-size:.8em;max-width:80em}#doc th{font-weight:bold}#doc td span{display:block}#doc table,.box .body table{border-collapse:collapse;border-style:solid;border-width:.2em;clear:both}#doc table{font-size:1.2em}body#doc table{font-size:1em}#doc td,#doc th{border-left-style:solid;border-left-width:.1em;border-top-style:solid;border-top-width:.1em;padding:.5em}#doc em,.box .body em{font-style:normal;font-weight:bold}#doc div{margin-bottom:2em}#doc div div{clear:both;margin-bottom:1em}#doc h2{font-size:1.6em;margin:.5em .5em .5em 0}#doc ol{clear:both}#doc_contents li{font-size:1.75em;margin:1em 0 0}#doc_contents ol ol li{font-size:.75em;list-style:lower-alpha;margin:.5em 0 0}#doc_contents ol{padding-bottom:1em}#doc #doc_contents ol ol{background-color:inherit;border-style:none;margin:.25em .3em 0 0;padding-bottom:0}#doc_contents a{text-decoration:none}#diffoutput #thirdparties li{display:inline-block;list-style-type:none}#thirdparties a{border-style:none;display:block;height:4em;text-decoration:none}button,fieldset,.box h3.heading,.box .body,.options,.diff .replace em,.diff .delete em,.diff .insert em,.wide,.tall,#diffBase,#diffNew,#doc div,#doc div div,#doc ol,#option_comment,#update,#thirdparties img,#diffoutput #thirdparties{border-style:solid;border-width:.1em}#apitest p{clear:both;padding-top:.75em}#apitest label,#apitest select,#apitest input,#apitest textarea{float:left}#apitest label{width:20em}#apitest select,#apitest input,#apitest textarea{width:30em}#pdsamples{list-style-position:inside;margin:-12em 0 0 0;padding:0;position:relative;z-index:10}#pdsamples li{border-radius:1em;border-style:solid;border-width:.1em;margin:0 0 3em;padding:1em}#pdsamples li div{border-radius:1em;border-style:solid;border-width:.1em;margin:0;padding:1em}#pdsamples li p{display:inline-block;font-size:1em;margin:0}#pdsamples li p a{display:block;margin:0 0 1em 2em}#pdsamples li ul{margin:0 0 0 2em}#samples #pdsamples li li{background:none transparent;border-style:none;display:list-item;list-style:disc outside;margin:0;padding:.5em}#modalSave span{background:#000;display:block;left:0;opacity:.5;position:absolute;top:0;z-index:9000}#modalSave p{background:#eee;color:#333;font-size:3em;padding:1em;position:absolute;text-align:center;top:10em;width:25em;z-index:9001}#modalSave p em{display:block;font-size:.75em;margin-top:1em}#modalSave p strong{color:#c00;font-weight:bold}@media print{p,.options,#Beautify,#Minify,#diff,ul{display:none}div{width:100%}html td{font-size:.8em;white-space:normal}}";
                             builder.cssColor      = "html .white,body.white{color:#333}body.white button{background:#eee;border-color:#222;box-shadow:0 .1em .2em rgba(64,64,64,0.75);color:#666;text-shadow:.05em .05em .1em #ccc}.white button:hover,.white button:active{background:#999;color:#eee;text-shadow:.1em .1em .1em #333}.white a{color:#009}.white #title_text{border-color:#fff;color:#333}.white #introduction h2{border-color:#999;color:#333}.white h1 svg{background:#eee;border-color:#999;box-shadow:0 .1em .2em rgba(150,150,150,0.5)}.white h2,.white h3{background:#eee;border-color:#eee;box-shadow:none;padding-left:0;text-shadow:none}.white fieldset{background:#ddd;border-color:#999}.white legend{background:#fff;border-color:#999;color:#333;text-shadow:none}.white .box{background:#666;border-color:#999;box-shadow:0 .4em .8em rgba(64,64,64,0.75)}.white .box button{box-shadow:0 .1em .2em rgba(0,0,0,0.75);text-shadow:.1em .1em .1em rgba(0,0,0,.5)}.white .box button.resize{background:#bbf;border-color:#446;color:#446}.white .box button.resize:hover{background:#ddf;border-color:#228;color:#228}.white .box button.save{background:#d99;border-color:#300;color:#300}.white .box button.save:hover{background:#fcc;border-color:#822;color:#822}.white .box button.minimize{background:#bbf;border-color:#006;color:#006}.white .box button.minimize:hover{background:#eef;border-color:#228;color:#228}.white .box button.maximize{background:#9c9;border-color:#030;color:#030}.white .box button.maximize:hover{background:#cfc;border-color:#060;color:#060}.white .box h3.heading{background:#ddd;border-color:#888;box-shadow:.2em .2em .4em #666}.white .box h3.heading:hover{background:#333;color:#eee}.white .box .body{background:#eee;border-color:#888;box-shadow:0 0 .4em rgba(64,64,64,0.75)}.white .options{background:#eee;border-color:#999;box-shadow:0 .2em .4em rgba(64,64,64,0.5);text-shadow:.05em .05em .1em #ccc}.white .options h2,.white #Beautify h2,.white #Minify h2,.white #diffBase h2,.white #diffNew h2{background:#eee;border-color:#eee;box-shadow:none;text-shadow:none}.white #option_comment{background:#ddd;border-color:#999}.white #top em{color:#00f}.white #update{background:#eee;border-color:#999;box-shadow:0 .1em .2em rgba(64,64,64,0.5)}.white .wide,.white .tall,.white #diffBase,.white #diffNew{background:#eee;border-color:#999;box-shadow:0 .2em .4em rgba(64,64,64,0.5)}.white .file input,.white .labeltext input{border-color:#fff}#webtool.white input.unchecked{background:#ccc;color:#666}.white .options input[type=text],.white .options select{border-color:#999}.white #beautyoutput,.white #minifyoutput{background:#ddd}.white #diffoutput p em,.white #diffoutput li em{color:#c00}.white .analysis .bad{background-color:#ebb;color:#400}.white .analysis .good{background-color:#cec;color:#040}.white #doc .analysis thead th,.white #doc .analysis th[colspan]{background:#eef}.white div input{border-color:#999}.white textarea{border-color:#999}.white textarea:hover{background:#eef8ff}.white .diff,.white .beautify,.white .diff ol,.white .beautify ol,.white .diff .diff-left,.white .diff .diff-right,.white h3,.white p.author{border-color:#999}.white .diff .count li,.white .beautify .count li{background:#eed;border-color:#bbc;color:#886}.white .diff h3{background:#ddd;border-bottom-color:#bbc}.white .diff .empty{background-color:#ddd;border-color:#ccc}.white .diff .replace{background-color:#fea;border-color:#dd8}.white .diff .data .replace em{background-color:#ffd;border-color:#963;color:#630}.white .diff .delete{background-color:#fbb;border-color:#eaa}.white .diff .data .delete em{background-color:#fdd;border-color:#700;color:#600}.white .diff .equal,.white .beautify .data li{background-color:#fff;border-color:#eee}.white .beautify .data em.s1{color:#f66}.white .beautify .data em.s2{color:#12f}.white .beautify .data em.s3{color:#090}.white .beautify .data em.s4{color:#d6d}.white .beautify .data em.s5{color:#7cc}.white .beautify .data em.s6{color:#c85}.white .beautify .data em.s7{color:#737}.white .beautify .data em.s8{color:#6d0}.white .beautify .data em.s9{color:#dd0s}.white .beautify .data em.s10{color:#893}.white .beautify .data em.s11{color:#b97}.white .beautify .data em.s12{color:#bbb}.white .beautify .data em.s13{color:#cc3}.white .beautify .data em.s14{color:#333}.white .beautify .data em.s15{color:#9d9}.white .beautify .data em.s16{color:#880}.white .beautify .data .l0{background:#fff}.white .beautify .data .l1{background:#fed}.white .beautify .data .l2{background:#def}.white .beautify .data .l3{background:#efe}.white .beautify .data .l4{background:#fef}.white .beautify .data .l5{background:#eef}.white .beautify .data .l6{background:#fff8cc}.white .beautify .data .l7{background:#ede}.white .beautify .data .l8{background:#efc}.white .beautify .data .l9{background:#ffd}.white .beautify .data .l10{background:#edc}.white .beautify .data .l11{background:#fdb}.white .beautify .data .l12{background:#f8f8f8}.white .beautify .data .l13{background:#ffb}.white .beautify .data .l14{background:#eec}.white .beautify .data .l15{background:#cfc}.white .beautify .data .l16{background:#eea}.white .beautify .data .c0{background:#ddd}.white .beautify .data li{color:#777}.white .diff .skip{background-color:#efefef;border-color:#ddd}.white .diff .insert{background-color:#bfb;border-color:#aea}.white .diff .data .insert em{background-color:#efc;border-color:#070;color:#050}.white .diff p.author{background:#efefef;border-top-color:#bbc}.white #doc table,.white .box .body table{background:#fff;border-color:#999}.white #doc strong,.white .box .body strong{color:#c00}.white .box .body em,.white .box .body #doc em{color:#090}.white #thirdparties img,.white #diffoutput #thirdparties{border-color:#999}.white #thirdparties img{box-shadow:.2em .2em .4em #999}.white #diffoutput #thirdparties{background:#eee}.white #doc div,#doc.white div{background:#ddd;border-color:#999}.white #doc ol,#doc.white ol{background:#eee;border-color:#999}.white #doc div div,#doc.white div div{background:#eee;border-color:#999}.white #doc table,#doc.white table{background:#fff;border-color:#999}.white #doc th,#doc.white th{background:#ddd;border-left-color:#999;border-top-color:#999}.white #doc tr:hover,#doc.white tr:hover{background:#ddd}#doc.white em{color:#060}.white #doc div:hover,#doc.white div:hover{background:#ccc}.white #doc div div:hover,#doc.white div div:hover,#doc.white div ol:hover{background:#fff}.white #pdsamples li{background:#eee;border-color:#999}.white #pdsamples li div{background:#ddd;border-color:#999}.white #pdsamples li div a{color:#47a}.white #pdsamples li p a{color:#009}";
                             builder.cssExtra      = "body{background:#eee}#doc p em{color:#090}";
                             builder.body          = "</style></head><body id='webtool' class='";
@@ -1208,6 +1267,9 @@ var prettydiff = function prettydiff(api) {
                                                 values[cc] = values[cc].replace("url('", "url(\"");
                                             } else {
                                                 values[cc] = values[cc].replace("url(", "url(\"");
+                                                if (values[cc] === "url(\")") {
+                                                    values[cc] = "url(\"\")";
+                                                }
                                             }
                                         }
                                         if (values[cc].charAt(values[cc].length - 2) !== "\"") {
@@ -2120,7 +2182,7 @@ var prettydiff = function prettydiff(api) {
                     } else {
                         str = str.replace(/\n/g, "");
                     }
-                    lines = (diffcli === true) ? str : str.replace(/\&/g, "&amp;").replace(/\&#lt;/g, "$#l" + "t;").replace(/\&#gt;/g, "$#g" + "t;").replace(/</g, "$#l" + "t;").replace(/>/g, "$#g" + "t;");
+                    lines = (diffcli === true) ? str : str.replace(/\&/g, "&amp;").replace(/\&#lt;/g, "$#lt;").replace(/\&#gt;/g, "$#gt;").replace(/</g, "$#lt;").replace(/>/g, "$#gt;");
                     return lines.split(linebreak);
                 },
                 baseTextArray = stringAsLines(baseTextLines),
@@ -2485,8 +2547,8 @@ var prettydiff = function prettydiff(api) {
                             currentdiff   = [],
                             regStart      = (/_pdiffdiff\_/g),
                             regEnd        = (/_epdiffdiff\_/g),
-                            strStart      = "_pdiff" + "diff_",
-                            strEnd        = "_epdiff" + "diff_",
+                            strStart      = "_pdiffdiff_",
+                            strEnd        = "_epdiffdiff_",
                             tabdiff       = (function diffview__report_charcomp_tabdiff() {
                                 var tabMatchA  = "",
                                     tabMatchB  = "",
@@ -2593,7 +2655,7 @@ var prettydiff = function prettydiff(api) {
                                 ];
                             }
                             return [
-                                (tabdiff[0] + tabdiff[2]).replace(/&/g, "&amp;").replace(/</g, "&l" + "t;").replace(/>/g, "&g" + "t;").replace(regStart, "<em>").replace(regEnd, "</em>"), (tabdiff[1] + tabdiff[3]).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(regStart, "<em>").replace(regEnd, "</em>")
+                                (tabdiff[0] + tabdiff[2]).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(regStart, "<em>").replace(regEnd, "</em>"), (tabdiff[1] + tabdiff[3]).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(regStart, "<em>").replace(regEnd, "</em>")
                             ];
                         }
                         dataA         = cleanedA.split("");
@@ -2913,12 +2975,12 @@ var prettydiff = function prettydiff(api) {
                                     foldstart = data[0].length;
                                     if (a === opcodesLength - 1) {
                                         if (baseEnd > newEnd) {
-                                            data[0].push("<li class=\"fold\" title=\"folds from line " + foldcount + " to line " + (baseEnd + 3) + "\">");
+                                            data[0].push("<li class='fold' title='folds from line " + foldcount + " to line " + (baseEnd + 3) + "'>");
                                         } else {
-                                            data[0].push("<li class=\"fold\" title=\"folds from line " + foldcount + " to line " + (newEnd + 3) + "\">");
+                                            data[0].push("<li class='fold' title='folds from line " + foldcount + " to line " + (newEnd + 3) + "'>");
                                         }
                                     } else {
-                                        data[0].push("<li class=\"fold\" title=\"folds from line " + foldcount + " to line xxx\">");
+                                        data[0].push("<li class='fold' title='folds from line " + foldcount + " to line xxx'>");
                                     }
                                     data[0].push("- " + (baseStart + 1));
                                 } else {
@@ -2975,13 +3037,13 @@ var prettydiff = function prettydiff(api) {
                                         if (context < 0 && baseTextArray[baseStart] === newTextArray[newStart] && ((baseTextArray[baseStart - 1] !== newTextArray[newStart - 1]) || (a > 1 && opcodes[a - 1][0] !== "equal" && baseStart === opcodes[a - 1][2]) || (baseStart === 0 && newStart === 0)) && baseTextArray[baseStart + 1] === newTextArray[newStart + 1] && ((baseEnd - baseStart > 1) || (newEnd - newStart > 1))) {
                                             if (a === opcodesLength - 1) {
                                                 if (baseEnd > newEnd) {
-                                                    data[0].push("<li class=\"fold\" title=\"folds from line " + foldcount + " to line " + (baseEnd + 2) + "\">- " + (baseStart + 1) + "</li>");
+                                                    data[0].push("<li class='fold' title='folds from line " + foldcount + " to line " + (baseEnd + 2) + "'>- " + (baseStart + 1) + "</li>");
                                                 } else {
-                                                    data[0].push("<li class=\"fold\" title=\"folds from line " + foldcount + " to line " + (baseEnd + 1 + foldback) + "\">- " + (baseStart + 1) + "</li>");
+                                                    data[0].push("<li class='fold' title='folds from line " + foldcount + " to line " + (baseEnd + 1 + foldback) + "'>- " + (baseStart + 1) + "</li>");
                                                 }
                                             } else {
                                                 foldstart = data[0].length;
-                                                data[0].push("<li class=\"fold\" title=\"folds from line " + (baseStart + 1) + " to line xxx\">- " + (baseStart + 1) + "</li>");
+                                                data[0].push("<li class='fold' title='folds from line " + (baseStart + 1) + " to line xxx'>- " + (baseStart + 1) + "</li>");
                                             }
                                         } else {
                                             data[0].push("<li>" + (baseStart + 1) + "</li>");
@@ -3090,8 +3152,9 @@ var prettydiff = function prettydiff(api) {
 
         //Library to parse/beautify/minify JavaScript.
         jspretty      = function jspretty(args) {
-            var jbracepadding = (args.bracepadding === true || args.bracepadding === "true") ? true : false,
-                jbrace        = (args.braces === "allman") ? true : false,
+            var jbraceline    = (args.braceline === true || args.braceline === "true") ? true : false,
+                jbracepadding = (args.bracepadding === true || args.bracepadding === "true") ? true : false,
+                jbraces       = (args.braces === "allman") ? true : false,
                 jchar         = (typeof args.inchar === "string" && args.inchar.length > 0) ? args.inchar : " ",
                 jcomment      = (args.comments === "noindent") ? "noindent" : (args.comments === "nocomment") ? "nocomment" : "indent",
                 jelseline     = (args.elseline === true || args.elseline === "true") ? true : false,
@@ -3100,13 +3163,17 @@ var prettydiff = function prettydiff(api) {
                 jobfuscate    = (args.obfuscate === true || args.obfuscate === "true") ? true : false,
                 jobjsort      = (args.objsort === true || args.objsort === "true") ? true : false,
                 jpres         = (args.preserve === false || args.preserve === "false") ? false : true,
+                jquoteConvert = (args.quoteConvert === "double" || args.quoteConvert === "single") ? args.quoteConvert : "none",
                 jscorrect     = (args.correct === true || args.correct === "true") ? true : false,
                 jsize         = (isNaN(args.insize) === false && Number(args.insize) >= 0) ? Number(args.insize) : 4,
                 jsource       = (typeof args.source === "string" && args.source.length > 0) ? args.source + " " : "Error: no source code supplied to jspretty!",
                 jspace        = (args.space === false || args.space === "false") ? false : true,
                 jsscope       = (args.jsscope === true || args.jsscope === "true") ? "report" : (args.jsscope !== "html" && args.jsscope !== "report") ? "none" : args.jsscope,
+                jstyleguide   = (typeof args.styleguide === "string") ? args.styleguide.toLowerCase().replace(/\s/g, "") : "",
                 jtopcoms      = (args.topcoms === true || args.topcoms === "true") ? true : false,
+                jvarword      = (args.varword === "each" || args.varword === "list") ? args.varword : "none",
                 jvertical     = (args.vertical === false || args.vertical === "false") ? false : true,
+                jwrap         = (isNaN(Number(args.wrap)) === true) ? 0 : Number(args.wrap),
                 sourcemap     = [
                     0, ""
                 ],
@@ -3169,6 +3236,66 @@ var prettydiff = function prettydiff(api) {
             if (jsource === "Error: no source code supplied to jspretty!") {
                 return jsource;
             }
+            if (jstyleguide === "airbnb") {
+                jchar         = " ";
+                jpres         = true;
+                jquoteConvert = "single";
+                jscorrect     = true;
+                jsize         = 2;
+                jvarword      = "each";
+                jwrap         = 80;
+            } else if (jstyleguide === "crockford") {
+                jbracepadding = false;
+                jelseline     = false;
+                jchar         = " ";
+                jscorrect     = true;
+                jsize         = 4;
+                jspace        = true;
+                jvarword      = "list";
+            } else if (jstyleguide === "google") {
+                jchar         = " ";
+                jpres         = true;
+                jquoteConvert = "single";
+                jscorrect     = true;
+                jsize         = 4;
+                jvertical     = false;
+                jwrap         = -1;
+            } else if (jstyleguide === "grunt") {
+                jchar         = " ";
+                jsize         = 2;
+                jquoteConvert = "single";
+                jvarword      = "each";
+            } else if (jstyleguide === "jquery") {
+                jbracepadding = true;
+                jchar         = "\u0009";
+                jquoteConvert = "double";
+                jscorrect     = true;
+                jsize         = 1;
+                jvarword      = "each";
+                jwrap         = 80;
+            } else if (jstyleguide === "mrdoobs") {
+                jbraceline    = true;
+                jbracepadding = true;
+                jchar         = "\u0009";
+                jscorrect     = true;
+                jsize         = 1;
+                jvertical     = false;
+            } else if (jstyleguide === "mediawiki") {
+                jbracepadding = true;
+                jchar         = "\u0009";
+                jpres         = true;
+                jquoteConvert = "single";
+                jscorrect     = true;
+                jsize         = 1;
+                jspace        = false;
+                jwrap         = 80;
+            } else if (jstyleguide === "yandex") {
+                jbracepadding = false;
+                jquoteConvert = "single";
+                jscorrect     = true;
+                jvarword      = "each";
+                jvertical     = false;
+            }
 
             //this function tokenizes the source code into an array
             //of literals and syntax tokens
@@ -3180,21 +3307,31 @@ var prettydiff = function prettydiff(api) {
                     ltype          = "",
                     lengtha        = 0,
                     lengthb        = 0,
-                    dostate        = [],
                     wordTest       = -1,
                     templateString = [],
-                    obj            = {
+                    dostate        = {
                         count: [],
-                        len: -1,
+                        index: 0,
+                        len  : -1,
+                        state: []
+                    },
+                    obj            = {
+                        count : [],
+                        len   : -1,
                         status: []
                     },
                     block          = {
                         consec: [],
+                        count : [],
+                        index : [],
+                        len   : -1,
+                        semi  : [],
+                        word  : []
+                    },
+                    vart           = {
                         count: [],
                         index: [],
-                        len: -1,
-                        semi: [],
-                        word: []
+                        len  : -1
                     },
                     objSort        = function jspretty__tokenize_objSort() {
                         var cc        = 0,
@@ -3244,21 +3381,14 @@ var prettydiff = function prettydiff(api) {
                                 if (token[cc] === ",") {
                                     commaTest = true;
                                 }
-                                if (commaTest === true) {
-                                    if (token[cc] === "," && start < end) {
-                                        keys.push([
-                                            start, end + 1, false
-                                        ]);
-                                        end = start - 1;
-                                    } else if (lines[cc - 1] === 2 || types[cc] === "comment") {
-                                        keys.push([
-                                            cc, end + 1, true
-                                        ]);
-                                        end       = cc - 1;
-                                        commaTest = false;
-                                    }
+                                if (commaTest === true && token[cc] === "," && start < end) {
+                                    keys.push([
+                                        start, end + 1, false
+                                    ]);
+                                    end = start - 1;
                                 }
                             }
+
                             if (dd < 0 && cc < startlen) {
                                 if (keys.length > 0 && keys[keys.length - 1][0] > cc + 1) {
                                     keys.push([
@@ -3341,13 +3471,18 @@ var prettydiff = function prettydiff(api) {
                         block.semi.pop();
                         block.word.pop();
                     },
+                    vartpop        = function jspretty__tokenize_vartpop() {
+                        vart.count.pop();
+                        vart.index.pop();
+                        vart.len -= 1;
+                    },
                     blockinsert    = function jspretty__tokenize_blockinsert() {
-                        var index = 0,
+                        var index  = 0,
                             consec = false;
                         if (block.len < 0) {
                             return;
                         }
-                        index = block.index[block.len];
+                        index  = block.index[block.len];
                         consec = block.consec[block.len];
                         if (types[index] === "comment" || types[index] === "comment-inline") {
                             do {
@@ -3361,11 +3496,17 @@ var prettydiff = function prettydiff(api) {
                         if (block.len > -1 && block.count[block.len] === 0) {
                             token.splice(index, 0, "x{");
                             types.splice(index, 0, "start");
-                            lines.splice(index, 0, 0);
+                            if (jbraceline === true) {
+                                lines.splice(index, 0, 2);
+                                lines[lines.length - 1] = 2;
+                                lines.push(0);
+                            } else {
+                                lines.splice(index, 0, 0);
+                                lines.push(lines[lines.length - 1]);
+                                lines[lines.length - 2] = 0;
+                            }
                             token.push("x}");
                             types.push("end");
-                            lines.push(lines[lines.length - 1]);
-                            lines[lines.length - 2] = 0;
                             blockpop();
                             if (consec === true) {
                                 blockinsert();
@@ -3446,19 +3587,15 @@ var prettydiff = function prettydiff(api) {
                         }
                     },
                     asi            = function jspretty__tokenize_asi() {
-                        var len = token.length - 1,
-                            aa = len,
-                            bb = 0,
+                        var len   = token.length - 1,
+                            aa    = len,
+                            bb    = 0,
                             tokel = token[len],
                             typel = types[len],
                             colon = false,
                             early = false,
                             paren = false,
                             opers = false;
-                        if (dostate[dostate.length - 1] === false && tokel === ")") {
-                            dostate.pop();
-                            return;
-                        }
                         if (typel === "comment" || typel === "comment-inline") {
                             do {
                                 len -= 1;
@@ -3499,12 +3636,12 @@ var prettydiff = function prettydiff(api) {
                                         return;
                                     }
                                     if (tokel === ")") {
-                                        if (token[aa - 1] === "if" || token[aa - 1] === "for") {
+                                        if (token[aa - 1] === "if" || token[aa - 1] === "for" || token[aa - 1] === "with") {
                                             return;
                                         }
                                         break;
                                     }
-                                    if (token[aa - 1] === "if" || token[aa - 1] === "for" || token[aa - 1] === "else") {
+                                    if (token[aa - 1] === "if" || token[aa - 1] === "for" || token[aa - 1] === "else" || token[aa - 1] === "with") {
                                         break;
                                     }
                                     if (token[aa] === ":") {
@@ -3532,7 +3669,7 @@ var prettydiff = function prettydiff(api) {
                                             }
                                             if (bb === 0 && token[aa] === "(") {
                                                 paren = true;
-                                                if (token[aa - 1] === "if" || token[aa - 1] === "for") {
+                                                if (token[aa - 1] === "if" || token[aa - 1] === "for" || token[aa - 1] === "with") {
                                                     return;
                                                 }
                                             }
@@ -3561,9 +3698,11 @@ var prettydiff = function prettydiff(api) {
                                 }
                             }
                         }
-                        if (token[aa] === "if" || token[aa] === "for" || token[aa] === "else") {
+                        if (token[aa] === "if" || token[aa] === "for" || token[aa] === "else" || token[aa] === "with") {
                             return;
                         }
+                        ltoke = ";";
+                        ltype = "separator";
                         token.splice(len + 1, 0, "x;");
                         types.splice(len + 1, 0, "separator");
                         lines.splice(len, 0, 0);
@@ -3589,9 +3728,55 @@ var prettydiff = function prettydiff(api) {
                         token.splice(aa, 0, ltoke);
                         types.splice(aa, 0, ltype);
                     },
+                    quoteConvert   = function jspretty__tokenize_quoteConvert(item) {
+                        var dub   = (jquoteConvert === "double") ? true : false,
+                            qchar = (dub === true) ? "\"" : "'";
+                        item = item.slice(1, item.length - 1);
+                        if (dub === true) {
+                            item = item.replace(/"/g, "'");
+                        } else {
+                            item = item.replace(/'/g, "\"");
+                        }
+                        return qchar + item + qchar;
+                    },
+                    strlen         = function jspretty__tokenize_strlen(item) {
+                        var aa    = 0,
+                            bb    = 0,
+                            qchar = item.charAt(0);
+                        item = item.slice(1, item.length - 1);
+                        bb   = parseInt(item.length / jwrap, 10) * jwrap;
+                        token.push("(");
+                        types.push("start");
+                        lines.push(0);
+                        for (aa = 0; aa < bb; aa += jwrap) {
+                            token.push(qchar + item.slice(aa, aa + jwrap) + qchar);
+                            types.push("literal");
+                            lines.push(0);
+                            token.push("+");
+                            types.push("operator");
+                            lines.push(0);
+                        }
+                        token.push(qchar + item.slice(aa, aa + jwrap) + qchar);
+                        types.push("literal");
+                        lines.push(0);
+                        token.push(")");
+                        types.push("end");
+                        lines.push(0);
+                    },
+                    strmerge       = function jspretty__tokenize_strmerge(item) {
+                        var aa = 0,
+                            bb = "";
+                        item = item.slice(1, item.length - 1);
+                        token.pop();
+                        types.pop();
+                        lines.pop();
+                        aa        = token.length - 1;
+                        bb        = token[aa];
+                        token[aa] = bb.slice(0, bb.length - 1) + item + bb.charAt(0);
+                    },
                     methodTest     = function jspretty__tokenize_methodTest() {
-                        var cc = 0,
-                            dd = 0,
+                        var cc  = 0,
+                            dd  = 0,
                             end = token.length - 1;
                         if (token[end] === "," || types[end] === "comment" || types[end] === "comment-inline") {
                             do {
@@ -3708,9 +3893,13 @@ var prettydiff = function prettydiff(api) {
                             } while (g > 0 && types[g] !== "comment");
                         }
                         if (g > -1 && g < token.length && token[g].indexOf("//") === 0 && error[1].replace(/^\s+/, "").indexOf(token[g + 1]) === 0 && (token[g].split("\"").length % 2 === 1 || token[g].split("'").length % 2 === 1)) {
-                            error = [message, token[g] + error[1]];
+                            error = [
+                                message, token[g] + error[1]
+                            ];
                         } else {
-                            error = [message, error[1]];
+                            error = [
+                                message, error[1]
+                            ];
                         }
                     },
                     generic        = function jspretty__tokenize_genericBuilder(start, ending) {
@@ -4072,6 +4261,30 @@ var prettydiff = function prettydiff(api) {
                         } else {
                             g = types.length - 1;
                             f = g;
+                            if (jvarword !== "none" && output === "var") {
+                                if (types[g] === "comment" || types[g] === "comment-inline") {
+                                    do {
+                                        g -= 1;
+                                    } while (g > 0 && (types[g] === "comment" || types[g] === "comment-inline"));
+                                }
+                                if (jvarword === "list" && vart.len > -1 && vart.index[vart.len] === g) {
+                                    stats.word.token     += 1;
+                                    stats.word.chars     += output.length;
+                                    ltoke                = ",";
+                                    ltype                = "separator";
+                                    token[g]             = ltoke;
+                                    types[g]             = ltype;
+                                    vart.count[vart.len] = 0;
+                                    vart.index[vart.len] = g;
+                                    return;
+                                }
+                                vart.len += 1;
+                                vart.count.push(0);
+                                vart.index.push(g);
+                                g = f;
+                            } else if (vart.len > -1 && output !== "var" && token.length === vart.index[vart.len] + 1 && token[vart.index[vart.len]] === ";" && ltoke !== "var" && jvarword === "list") {
+                                vartpop();
+                            }
                             if (output === "else" && (types[g] === "comment" || types[g] === "comment-inline")) {
                                 do {
                                     f -= 1;
@@ -4084,7 +4297,9 @@ var prettydiff = function prettydiff(api) {
                                     f -= 1;
                                 }
                                 do {
-                                    build = [token[g], types[g], lines[g]];
+                                    build = [
+                                        token[g], types[g], lines[g]
+                                    ];
                                     token.pop();
                                     types.pop();
                                     lines.pop();
@@ -4095,22 +4310,23 @@ var prettydiff = function prettydiff(api) {
                                 } while (f < g);
                             }
                             if (output === "do") {
-                                dostate.push(true);
+                                dostate.count.push(0);
+                                dostate.state.push("do");
+                                dostate.len += 1;
                             }
                             if (output === "while") {
-                                if (dostate[dostate.length - 1] === true) {
+                                if (dostate.state[dostate.len] === "do" && dostate.count[dostate.len] === 0) {
                                     if (ltoke === "}") {
                                         asifix();
                                     }
-                                    dostate.pop();
-                                } else {
-                                    dostate.push(false);
+                                    dostate.state[dostate.len] = "while";
+                                    dostate.index              = token.length;
                                 }
                             }
                             if (output === "if" && block.len > -1 && token[block.index[block.len]] === "else") {
                                 blockpop();
                             }
-                            if (output === "if" || output === "for" || (output === "while" && dostate[dostate.length - 1] === false) || output === "else" || output === "do") {
+                            if (output === "if" || output === "for" || output === "with" || (output === "while" && dostate.index !== token.length) || output === "else" || output === "do") {
                                 if (block.len > -1 && block.index[block.len] === token.length) {
                                     block.consec.push(true);
                                 } else {
@@ -4139,8 +4355,8 @@ var prettydiff = function prettydiff(api) {
                             curlycount = 0,
                             tagcount   = 0,
                             d          = 0,
-                            syntax     = "=<>+*?|^:&.,;%(){}[]|";
-                        if (syntax.indexOf(c[a + 1]) > -1 || (/\s/).test(c[a + 1]) === true) {
+                            syntax     = "=<>+*?|^:&.,;%(){}[]|~";
+                        if (syntax.indexOf(c[a + 1]) > -1 || (/\s/).test(c[a + 1]) === true || ((/\d/).test(c[a + 1]) === true && (ltype === "operator" || ltype === "literal" || (ltype === "word" && ltoke !== "return")))) {
                             ltype = "operator";
                             return operator();
                         }
@@ -4222,7 +4438,7 @@ var prettydiff = function prettydiff(api) {
                         if (wordTest > -1) {
                             word();
                         }
-                        ltoke              = generic("<!--#", "--" + ">");
+                        ltoke              = generic("<!--#", "-->");
                         ltype              = "literal";
                         stats.server.token += 1;
                         stats.server.chars += ltoke.length;
@@ -4271,7 +4487,7 @@ var prettydiff = function prettydiff(api) {
                             sourcemap[1] = ltoke;
                         }
                         if (jcomment !== "nocomment") {
-                            if (lines[lines.length - 1] === 0 && ltype !== "comment" && ltype !== "comment-inline") {
+                            if (lines[lines.length - 1] === 0 && ltype !== "comment" && ltype !== "comment-inline" && jstyleguide !== "mrdoobs") {
                                 ltype = "comment-inline";
                             } else {
                                 ltype = "comment";
@@ -4327,16 +4543,25 @@ var prettydiff = function prettydiff(api) {
                         if (wordTest > -1) {
                             word();
                         }
-                        ltoke              = generic(c[a], c[a]);
-                        ltype              = "literal";
+                        ltoke = generic(c[a], c[a]);
+                        ltype = "literal";
+                        if ((ltoke.charAt(0) === "\"" && jquoteConvert === "single") || (ltoke.charAt(0) === "'" && jquoteConvert === "double")) {
+                            ltoke = quoteConvert(ltoke);
+                        }
                         stats.string.token += 1;
                         if (ltoke.length > 1) {
                             stats.string.chars += ltoke.length - 2;
                         }
                         stats.string.quote += 2;
-                        token.push(ltoke);
-                        types.push(ltype);
-                        lines.push(0);
+                        if (token[token.length - 1] === "+" && (token[token.length - 2].charAt(0) === "\"" || token[token.length - 2].charAt(0) === "'")) {
+                            strmerge(ltoke);
+                        } else if (jwrap > 0 && ltoke.length > jwrap) {
+                            strlen(ltoke);
+                        } else {
+                            token.push(ltoke);
+                            types.push(ltype);
+                            lines.push(0);
+                        }
                     } else if (c[a] === "-" && (a < b - 1 && c[a + 1] !== "=" && c[a + 1] !== "-") && (ltype === "literal" || ltype === "word") && ltoke !== "return" && (ltoke === ")" || ltoke === "]" || ltype === "word" || ltype === "literal")) {
                         //subtraction
                         if (wordTest > -1) {
@@ -4376,6 +4601,17 @@ var prettydiff = function prettydiff(api) {
                         stats.comma += 1;
                         if (ltype === "comment" || ltype === "comment-inline") {
                             commaComment();
+                        } else if (vart.len > -1 && vart.count[vart.len] === 0 && jvarword === "each") {
+                            asifix();
+                            ltoke = "var";
+                            ltype = "word";
+                            token.push(";");
+                            types.push("separator");
+                            lines.push(0);
+                            token.push(ltoke);
+                            types.push(ltype);
+                            lines.push(0);
+                            vart.index[vart.len] = token.length - 1;
                         } else {
                             ltoke = ",";
                             ltype = "separator";
@@ -4409,6 +4645,13 @@ var prettydiff = function prettydiff(api) {
                         if (wordTest > -1) {
                             word();
                         }
+                        if (vart.len > -1 && vart.count[vart.len] === 0) {
+                            if (jvarword === "each") {
+                                vartpop();
+                            } else {
+                                vart.index[vart.len] = token.length;
+                            }
+                        }
                         stats.semicolon += 1;
                         if ((token[lengtha - 3] === ";" || token[lengtha - 3] === "}" || types[lengtha - 3] === "start" || types[lengtha - 3] === "method" || token[lengtha - 3] === ")" || token[lengtha - 3] === "," || token[lengtha - 3] === "return") && jscorrect === true) {
                             if (ltoke === "++" || ltoke === "--") {
@@ -4419,6 +4662,9 @@ var prettydiff = function prettydiff(api) {
                         }
                         ltoke = ";";
                         ltype = "separator";
+                        if (dostate.index === token.length - 1) {
+                            asifix();
+                        }
                         if (token[token.length - 1] === "x}") {
                             asibrace();
                         } else {
@@ -4435,6 +4681,12 @@ var prettydiff = function prettydiff(api) {
                         if (block.len > -1) {
                             block.count[block.len] += 1;
                         }
+                        if (vart.len > -1) {
+                            vart.count[vart.len] += 1;
+                        }
+                        if (dostate.len > -1) {
+                            dostate.count[dostate.len] += 1;
+                        }
                         stats.container += 1;
                         if (ltoke === ")" || token[token.length - 1] === "x;") {
                             ltype = "method";
@@ -4442,7 +4694,7 @@ var prettydiff = function prettydiff(api) {
                             ltype = "start";
                         } else if (lengtha > 2 && token[lengtha - 2] === "function") {
                             ltype = "method";
-                        } else if (lengtha === 0 || ltoke === "return" || ltoke === "function" || ltoke === "for" || ltoke === "if" || ltoke === "while" || ltoke === "switch" || ltoke === "catch" || ltype === "separator" || ltype === "operator" || (a > 0 && (/\s/).test(c[a - 1]))) {
+                        } else if (lengtha === 0 || ltoke === "return" || ltoke === "function" || ltoke === "for" || ltoke === "if" || ltoke === "with" || ltoke === "while" || ltoke === "switch" || ltoke === "catch" || ltype === "separator" || ltype === "operator" || (a > 0 && (/\s/).test(c[a - 1]))) {
                             ltype = "start";
                         } else if (ltype === "end") {
                             ltype = methodTest();
@@ -4462,6 +4714,12 @@ var prettydiff = function prettydiff(api) {
                         if (block.len > -1) {
                             block.count[block.len] += 1;
                         }
+                        if (vart.len > -1) {
+                            vart.count[vart.len] += 1;
+                        }
+                        if (dostate.len > -1) {
+                            dostate.count[dostate.len] += 1;
+                        }
                         stats.container += 1;
                         ltoke           = "[";
                         ltype           = "start";
@@ -4473,6 +4731,12 @@ var prettydiff = function prettydiff(api) {
                         if (wordTest > -1) {
                             word();
                         }
+                        if (vart.len > -1) {
+                            vart.count[vart.len] += 1;
+                        }
+                        if (dostate.len > -1) {
+                            dostate.count[dostate.len] += 1;
+                        }
                         if (ltoke !== ")" && ltoke !== "else" && ltoke !== "do") {
                             obj.count.push(0);
                             obj.status.push(false);
@@ -4480,7 +4744,7 @@ var prettydiff = function prettydiff(api) {
                         } else if (obj.len > -1) {
                             obj.count[obj.len] += 1;
                         }
-                        if (ltoke === "else" || ltoke === "do" || (ltoke === ")" && block.len > -1 && block.count[block.len] === 0 && (block.word[block.len] === "if" || block.word[block.len] === "for" || block.word[block.len] === "while"))) {
+                        if (ltoke === "else" || ltoke === "do" || (ltoke === ")" && block.len > -1 && block.count[block.len] === 0 && (block.word[block.len] === "if" || block.word[block.len] === "for" || block.word[block.len] === "while" || block.word[block.len] === "with"))) {
                             blockpop();
                         }
                         if (block.len > -1) {
@@ -4501,7 +4765,11 @@ var prettydiff = function prettydiff(api) {
                         }
                         token.push(ltoke);
                         types.push(ltype);
-                        lines.push(0);
+                        if (jbraceline === true) {
+                            lines.push(2);
+                        } else {
+                            lines.push(0);
+                        }
                     } else if (c[a] === ")") {
                         //parenthesis close
                         if (wordTest > -1) {
@@ -4509,6 +4777,12 @@ var prettydiff = function prettydiff(api) {
                         }
                         if (block.len > -1) {
                             block.count[block.len] -= 1;
+                        }
+                        if (vart.len > -1) {
+                            vart.count[vart.len] -= 1;
+                            if (vart.count[vart.len] < 0) {
+                                vartpop();
+                            }
                         }
                         asifix();
                         stats.container += 1;
@@ -4528,6 +4802,16 @@ var prettydiff = function prettydiff(api) {
                             types.push(ltype);
                             lines.push(0);
                         }
+                        if (dostate.len > -1) {
+                            dostate.count[dostate.len] -= 1;
+                            if (dostate.count[dostate.len] === 0 && dostate.state[dostate.len] === "while") {
+                                asi();
+                                dostate.count.pop();
+                                dostate.state.pop();
+                                dostate.len   -= 1;
+                                dostate.index = token.length - 1;
+                            }
+                        }
                     } else if (c[a] === "]") {
                         //square close
                         if (wordTest > -1) {
@@ -4535,6 +4819,15 @@ var prettydiff = function prettydiff(api) {
                         }
                         if (block.len > -1) {
                             block.count[block.len] -= 1;
+                        }
+                        if (vart.len > -1) {
+                            vart.count[vart.len] -= 1;
+                            if (vart.count[vart.len] < 0) {
+                                vartpop();
+                            }
+                        }
+                        if (dostate.len > -1) {
+                            dostate.count[dostate.len] -= 1;
                         }
                         asifix();
                         stats.container += 1;
@@ -4560,7 +4853,19 @@ var prettydiff = function prettydiff(api) {
                             types.pop();
                             lines.pop();
                         }
+                        if (dostate.len > -1) {
+                            dostate.count[dostate.len] -= 1;
+                        }
                         asi();
+                        if (vart.len > -1) {
+                            if ((jvarword === "list" && vart.count[vart.len] === 0) || (token[token.length - 1] === "x;" && jvarword === "each")) {
+                                vartpop();
+                            }
+                            vart.count[vart.len] -= 1;
+                            if (vart.count[vart.len] < 0) {
+                                vartpop();
+                            }
+                        }
                         if (obj.len > -1) {
                             if (obj.count[obj.len] === 0) {
                                 objpop();
@@ -4574,6 +4879,9 @@ var prettydiff = function prettydiff(api) {
                             } while (lengtha > 0 && (types[lengtha] === "comment" || ltype === "comment-inline"));
                             ltoke   = token[lengtha];
                             lengtha = token.length;
+                        }
+                        if (jbraceline === true) {
+                            lines[lines.length - 1] = 2;
                         }
                         if (ltoke === ",") {
                             stats.container += 1;
@@ -4633,9 +4941,12 @@ var prettydiff = function prettydiff(api) {
                         wordTest = a;
                     }
                     if (block.len > -1) {
-                        if (block.count[block.len] === 0 && token[token.length - 1] === ")" && token[block.index[block.len]] === block.word[block.len] && (block.word[block.len] === "if" || block.word[block.len] === "for" || block.word[block.len] === "while")) {
+                        if (block.count[block.len] === 0 && token[token.length - 1] === ")" && token[block.index[block.len]] === block.word[block.len] && (block.word[block.len] === "if" || block.word[block.len] === "for" || block.word[block.len] === "while" || block.word[block.len] === "with")) {
                             block.index[block.len] = token.length;
                         }
+                    }
+                    if (vart.len > -1 && token.length === vart.index[vart.len] + 2 && token[vart.index[vart.len]] === ";" && ltoke !== "var" && jvarword === "list") {
+                        vartpop();
                     }
                 }
                 if (((token[token.length - 1] !== "}" && token[0] === "{") || token[0] !== "{") && ((token[token.length - 1] !== "]" && token[0] === "[") || token[0] !== "[")) {
@@ -4820,7 +5131,7 @@ var prettydiff = function prettydiff(api) {
                                                                 d -= 1;
                                                             }
                                                             if (d === -1 && token[c] === "(") {
-                                                                if (token[c - 1] === "function" || token[c - 2] === "function" || token[c - 1] === "if" || token[c - 1] === "for") {
+                                                                if (token[c - 1] === "function" || token[c - 2] === "function" || token[c - 1] === "if" || token[c - 1] === "for" || token[c - 1] === "with") {
                                                                     return;
                                                                 }
                                                                 break;
@@ -4956,7 +5267,7 @@ var prettydiff = function prettydiff(api) {
                                 } else {
                                     obj.push(false);
                                 }
-                                if (jbrace && ltype !== "operator" && ltoke !== "return") {
+                                if (jbraces === true && ltype !== "operator" && ltoke !== "return") {
                                     level[a - 1] = indent - 1;
                                 } else if (ltoke === ")") {
                                     level[a - 1] = "s";
@@ -5060,7 +5371,7 @@ var prettydiff = function prettydiff(api) {
                                                 if ((token[c] === ":" && ternary[ternary.length - 1] === false) || (token[c] === "," && assign === false && varline[varline.length - 1] === false)) {
                                                     return;
                                                 }
-                                                if ((c === 0 || token[c - 1] === "{" || token[c - 1] === "x{") || token[c] === "for" || token[c] === "if" || token[c] === "do" || token[c] === "function" || token[c] === "while" || token[c] === "var") {
+                                                if ((c === 0 || token[c - 1] === "{" || token[c - 1] === "x{") || token[c] === "for" || token[c] === "if" || token[c] === "do" || token[c] === "function" || token[c] === "while" || token[c] === "var" || token[c] === "with") {
                                                     if (list[listlen - 1] === false && listlen > 1 && (a === b - 1 || token[a + 1] !== ")") && obj[obj.length - 1] === false) {
                                                         indent -= 1;
                                                     }
@@ -5101,7 +5412,7 @@ var prettydiff = function prettydiff(api) {
                                                 build.push(token[c]);
                                             }
                                             if (d === 0) {
-                                                if (types[c] === "separator" || types[c] === "operator" || types[c] === "literal" || token[c] === "if" || token[c] === "else" || token[c] === "for" || token[c] === "switch" || token[c] === "do" || token[c] === "return" || token[c] === "while" || token[c] === "catch" || token[c] === "try") {
+                                                if (types[c] === "separator" || types[c] === "operator" || types[c] === "literal" || token[c] === "if" || token[c] === "else" || token[c] === "for" || token[c] === "switch" || token[c] === "do" || token[c] === "return" || token[c] === "while" || token[c] === "catch" || token[c] === "try" || token[c] === "with") {
                                                     return;
                                                 }
                                                 if (token[c] === "function") {
@@ -5296,7 +5607,7 @@ var prettydiff = function prettydiff(api) {
                                 }
                                 return;
                             }
-                            if (ctoke === "+" && (ltoke.charAt(0) === "\"" || ltoke.charAt(0) === "'") && token[a + 1] !== undefined && (token[a + 1].charAt(0) === "\"" || token[a + 1].charAt(0) === "'") && (token[a - 2] === "=" || (token[a - 2] === "+" && level[a - 2] > 0))) {
+                            if (ctoke === "+" && (ltoke.charAt(0) === "\"" || ltoke.charAt(0) === "'") && token[a + 1] !== undefined && (token[a + 1].charAt(0) === "\"" || token[a + 1].charAt(0) === "'") && (token[a - 2] === "=" || token[a - 2] === "(" || (token[a - 2] === "+" && level[a - 2] > 0))) {
                                 if (varline[varline.length - 1] === true) {
                                     level.push(indent);
                                 } else {
@@ -5782,7 +6093,7 @@ var prettydiff = function prettydiff(api) {
                                     datalen -= 3;
                                     start   -= 1;
                                 }
-                                data[datalen]     = "<li class=\"fold\" title=\"folds from line " + start + " to line xxx\">";
+                                data[datalen]     = "<li class='fold' title='folds from line " + start + " to line xxx'>";
                                 data[datalen + 1] = "- " + start;
                                 folderItem.push([
                                     datalen, index, assign
@@ -6753,7 +7064,7 @@ var prettydiff = function prettydiff(api) {
                         }
                         output.push("<div class='doc'>");
                         if (error.length > 0) {
-                            output.push("<p id=\"jserror\"><strong>Error: ");
+                            output.push("<p id='jserror'><strong>Error: ");
                             output.push(error[0].replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;"));
                             output.push("</strong> <code><span>");
                             error[1] = error[1].replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/^(\s+)/, "");
@@ -7035,6 +7346,7 @@ var prettydiff = function prettydiff(api) {
                 x             = (typeof args.source === "string") ? args.source.split("") : [
                     "E", "r", "r", "o", "r", ":", " ", "n", "o", " ", "c", "o", "n", "t", "e", "n", "t", " ", "s", "u", "p", "p", "l", "i", "e", "d", " ", "t", "o", " ", "m", "a", "r", "k", "u", "p", "."
                 ],
+                id            = [],
                 comments      = (args.comments !== "comments" && args.comments !== "beautify" && args.comments !== "nocomment") ? "" : args.comments,
                 correct       = (args.correct === true || args.correct === "true") ? true : false,
                 inchar        = (typeof args.inchar === "string" && args.inchar.length > 0) ? args.inchar : " ",
@@ -7044,8 +7356,10 @@ var prettydiff = function prettydiff(api) {
                 obfuscate     = (args.obfuscate === true || args.obfuscate === "true") ? true : false,
                 objsort       = (args.objsort === true || args.objsort === "true") ? true : false,
                 presume_html  = (args.presume_html === true || args.presume_html === "true") ? true : false,
-                conditional   = (presume_html === true || args.conditional === true || args.conditional === "true") ? true : false,
+                quoteConvert  = (args.quoteConvert === "single" || args.quoteConvert === "double") ? args.quoteConvert : "none",
+                styleguide    = (typeof args.styleguide === "string") ? args.styleguide : "none",
                 top_comments  = (args.top_comments === true || args.top_comments === "true") ? true : false,
+                conditional   = (presume_html === true || args.conditional === true || args.conditional === "true") ? true : false,
                 preserve      = function markupmin__preserve(endTag) {
                     var a     = 0,
                         end   = x.length,
@@ -7113,12 +7427,175 @@ var prettydiff = function prettydiff(api) {
                     return a;
                 },
                 markupspace   = function markupmin__markupspace() {
-                    var a       = 0,
-                        b       = -1,
-                        store   = [],
-                        end     = x.length,
-                        tag     = "",
-                        jsxtest = "";
+                    var a          = 0,
+                        b          = -1,
+                        store      = [],
+                        end        = x.length,
+                        item       = "",
+                        jsxtest    = "",
+                        attributes = function markupmin_markupspace_attribute(tag) {
+                            var aa          = 0,
+                                attribute   = [],
+                                comment     = [],
+                                tagLength   = 0,
+                                starter     = "",
+                                openchar    = "",
+                                spaceAfter  = tag.indexOf(" ") + 1,
+                                attribIndex = 0,
+                                nameSpace   = "",
+                                counter     = 0,
+                                ending      = (tag.charAt(tag.length - 2) === "/") ? "/>" : ">",
+                                space       = (tag.charAt(0) === " ") ? " " : "",
+                                qConvert    = function markupmin__markupspace_attribute_qConvert(item) {
+                                    var dub   = (quoteConvert === "double") ? true : false,
+                                        qchar = (dub === true) ? "\"" : "'",
+                                        eq    = item.indexOf("="),
+                                        name  = item.slice(0, eq + 1);
+                                    item = item.slice(eq + 2, item.length - 1);
+                                    if (name.toLowerCase() === "script=" || name.toLowerCase() === "style") {
+                                        if (dub === true) {
+                                            item = item.replace(/"/g, "'");
+                                        } else {
+                                            item = item.replace(/'/g, "\"");
+                                        }
+                                    } else if (dub === true) {
+                                        item = item.replace(/"/g, "&#x22;");
+                                    } else {
+                                        item = item.replace(/'/g, "&#x27;");
+                                    }
+                                    return name + qchar + item.split(qchar).join("\\" + qchar) + qchar;
+                                },
+                                sortfunc    = function markup_beauty__algorithm_loop_attributeOrder_sortfunc(aaa, bbb) {
+                                    if (aaa > bbb) {
+                                        return 1;
+                                    }
+                                    return 0;
+                                },
+                                pusher      = function markup_beauty__algorithm_loop_attributeOrder_pusher(attr) {
+                                    if (attr.indexOf("id=") === 0 || attr.indexOf("ID=") === 0) {
+                                        id.push(attr.slice(4, attr.length - 1));
+                                    }
+                                    if ((quoteConvert === "single" && attr.charAt(attr.length - 1) === "\"") || (quoteConvert === "double" && attr.charAt(attr.length - 1) === "'")) {
+                                        attr = qConvert(attr);
+                                    }
+                                    attribute.push(attr);
+                                    openchar    = "";
+                                    attribIndex = aa + 1;
+                                },
+                                joinchar    = (tag.indexOf("<svg") === 0) ? "\n" : " ";
+                            if (space === " ") {
+                                tag        = tag.substr(1);
+                                spaceAfter = tag.indexOf(" ") + 1;
+                            }
+                            nameSpace = tag.substring(0, spaceAfter);
+                            tagLength = tag.length;
+                            tag       = tag.substring(spaceAfter, tagLength - ending.length) + " ";
+                            for (aa = 0; aa < tagLength; aa += 1) {
+                                if (starter === "") {
+                                    if (tag.charAt(aa - 1) === "=" && openchar === "" && counter === 0) {
+                                        openchar = tag.charAt(aa);
+                                    }
+                                    if (tag.charAt(aa) === "\"") {
+                                        starter = "\"";
+                                    } else if (tag.charAt(aa) === "'") {
+                                        starter = "'";
+                                    } else if (tag.charAt(aa) === "[") {
+                                        starter = "[";
+                                        counter = 1;
+                                    } else if (tag.charAt(aa) === "{") {
+                                        starter = "{";
+                                        counter = 1;
+                                    } else if (tag.charAt(aa) === "(") {
+                                        starter = "(";
+                                        counter = 1;
+                                    } else if (tag.charAt(aa) === "<" && tag.charAt(aa + 1) === "%") {
+                                        starter     = "<%";
+                                        counter     = 1;
+                                        attribIndex = aa;
+                                    } else if ((tag.charAt(aa) === " " || (minjsx === true && tag.charAt(aa) === "\n")) && counter === 0) {
+                                        if (tag.charAt(attribIndex) === "\n") {
+                                            attribIndex += 1;
+                                        }
+                                        pusher(tag.substring(attribIndex, aa));
+                                    } else if (minjsx === true && tag.charAt(aa) === "/" && (tag.charAt(aa + 1) === "*" || tag.charAt(aa + 1) === "/")) {
+                                        if (tag.charAt(aa + 1) === "*") {
+                                            starter = "/*";
+                                        } else {
+                                            starter = "//";
+                                        }
+                                        attribIndex = aa;
+                                    }
+                                } else if (starter === "\"" && tag.charAt(aa) === "\"") {
+                                    starter = "";
+                                } else if (starter === "'" && tag.charAt(aa) === "'") {
+                                    starter = "";
+                                } else if (starter === "[") {
+                                    if (tag.charAt(aa) === "]") {
+                                        counter -= 1;
+                                        if (counter === 0) {
+                                            starter = "";
+                                        }
+                                    } else if (tag.charAt(aa) === "[") {
+                                        counter += 1;
+                                    }
+                                } else if (starter === "{") {
+                                    if (tag.charAt(aa) === "}") {
+                                        counter -= 1;
+                                        if (counter === 0) {
+                                            starter = "";
+                                        }
+                                        if (openchar === "{" && counter === 0) {
+                                            pusher(tag.substring(attribIndex, aa + 1));
+                                        }
+                                    } else if (tag.charAt(aa) === "{") {
+                                        counter += 1;
+                                    }
+                                } else if (starter === "(") {
+                                    if (tag.charAt(aa) === ")") {
+                                        counter -= 1;
+                                        if (counter === 0) {
+                                            starter = "";
+                                        }
+                                    } else if (tag.charAt(aa) === "(") {
+                                        counter += 1;
+                                    }
+                                } else if (starter === "<%") {
+                                    if (tag.charAt(aa) === ">" && tag.charAt(aa - 1) === "%") {
+                                        counter -= 1;
+                                        if (counter === 0) {
+                                            starter = "";
+                                        }
+                                    } else if (tag.charAt(aa) === "<" && tag.charAt(aa + 1) === "%") {
+                                        counter += 1;
+                                    }
+                                } else if (minjsx === true && starter === "/*" && tag.charAt(aa - 1) === "*" && tag.charAt(aa) === "/") {
+                                    starter = "";
+                                    comment.push(tag.substring(attribIndex, aa + 1));
+                                    aa          += 1;
+                                    attribIndex = aa;
+                                } else if (minjsx === true && starter === "//" && tag.charAt(aa) === "\n") {
+                                    starter = "";
+                                    comment.push(tag.substring(attribIndex, aa));
+                                    attribIndex = aa;
+                                }
+                            }
+                            tagLength = id.length;
+                            if (minjsx === true) {
+                                for (aa = attribute.length - 1; aa > -1; aa -= 1) {
+                                    if (attribute[aa] === undefined) {
+                                        break;
+                                    }
+                                    if ((/^(\s+)$/).test(attribute[aa]) === true || attribute[aa] === "") {
+                                        attribute.splice(aa, 1);
+                                    }
+                                }
+                                if (comment.length > 0) {
+                                    return space + nameSpace + "\n" + comment.join("\n") + attribute.sort(sortfunc).join(joinchar).replace(/\n \n?\//g, "\n/") + ending;
+                                }
+                                return space + nameSpace + attribute.sort(sortfunc).join(joinchar).replace(/\n \n?\//g, "\n/") + ending;
+                            }
+                            return space + nameSpace + attribute.sort(sortfunc).join(joinchar) + ending;
+                        };
                     for (a = i; a < end; a += 1) {
                         if (minjsx === true) {
                             if (x[a - 1] === "/" && jsxtest === "") {
@@ -7188,10 +7665,13 @@ var prettydiff = function prettydiff(api) {
                         b = x.length;
                     }
                     x[i] = store.join("");
+                    if (x[i].charAt(1) !== "/" && x[i].charAt(1) !== "!" && x[i].indexOf(" ") > 0 && x[i].indexOf("<%") !== 0 && x[i].indexOf("<?") !== 0 && x[i].indexOf("<!--#") && x[i].indexOf("data-prettydiff-ignore") < 0) {
+                        x[i] = attributes(x[i]);
+                    }
                     if (x[i].indexOf(" data-prettydiff-ignore") > 0 && x[i].charAt(x[i].length - 1) !== "/") {
-                        tag  = x[i].substring(1, x[i].indexOf(" "));
+                        item = x[i].substring(1, x[i].indexOf(" "));
                         x[i] = x[i].charAt(0);
-                        preserve("</" + tag + ">");
+                        preserve("</" + item + ">");
                         return;
                     }
                     for (a = i + 1; a < b; a += 1) {
@@ -7336,11 +7816,13 @@ var prettydiff = function prettydiff(api) {
                                     return;
                                 }
                                 script = cdataS + jspretty({
-                                    correct  : correct,
-                                    mode     : "minify",
-                                    obfuscate: obfuscate,
-                                    source   : script,
-                                    topcoms  : top_comments
+                                    correct     : correct,
+                                    mode        : "minify",
+                                    obfuscate   : obfuscate,
+                                    quoteConvert: quoteConvert,
+                                    source      : script,
+                                    styleguide  : styleguide,
+                                    topcoms     : top_comments
                                 }) + cdataE;
                             }
                         }
@@ -7419,10 +7901,10 @@ var prettydiff = function prettydiff(api) {
                         if (comments !== "beautify" && comments !== "nocomment") {
                             markupspace();
                         }
-                        if (part.indexOf("type=\"syntaxhighlighter\"") > -1) {
+                        if (part.indexOf("type='syntaxhighlighter'") > -1) {
                             preserve("</script>");
                         }
-                        if (part.indexOf("type=\"") < 0 || part.indexOf("type=\"text/javascript\"") > -1 || part.indexOf("type=\"application/javascript\"") > -1 || part.indexOf("type=\"application/x-javascript\"") > -1 || part.indexOf("type=\"text/ecmascript\"") > -1 || part.indexOf("type=\"application/ecmascript\"") > -1 || part.indexOf("type=\"text/cjs\"") > -1) {
+                        if (part.indexOf("type='") < 0 || part.indexOf("type='text/javascript'") > -1 || part.indexOf("type='application/javascript'") > -1 || part.indexOf("type='application/x-javascript'") > -1 || part.indexOf("type='text/ecmascript'") > -1 || part.indexOf("type='application/ecmascript'") > -1 || part.indexOf("type='text/cjs'") > -1) {
                             markupscript("script");
                         }
                     } else if ((source.slice(i, i + 6)).toLowerCase() === "<style") {
@@ -7437,7 +7919,7 @@ var prettydiff = function prettydiff(api) {
                         if (comments !== "beautify" && comments !== "nocomment") {
                             markupspace();
                         }
-                        if (part.indexOf("type=\"") < 0 || part.indexOf("type=\"text/css\"") > -1) {
+                        if (part.indexOf("type='") < 0 || part.indexOf("type='text/css'") > -1) {
                             markupscript("style");
                         }
                     } else if (minjsx === true && x[i] === "{" && typeof jspretty === "function") {
@@ -7488,6 +7970,24 @@ var prettydiff = function prettydiff(api) {
                         return output.join("pdjsxSep").replace(/(\s*)$/, "");
                     }
                     return output.join("").replace(/(\s*)$/, "");
+                }());
+            }
+            if (id.length > 0) {
+                (function markupmin_idNormalize() {
+                    var a          = 0,
+                        len        = id.length,
+                        value      = "",
+                        duplicates = [];
+                    id.sort();
+                    for (a = 0; a < len; a += 1) {
+                        if (id[a] === id[a + 1] && id[a] !== value) {
+                            duplicates.push(id[a]);
+                        }
+                        value = id[a];
+                    }
+                    if (duplicates.length > 0) {
+                        summary = duplicates.join(", ");
+                    }
                 }());
             }
             return (function markupmin__finalTouches() {
@@ -7562,8 +8062,9 @@ var prettydiff = function prettydiff(api) {
                 level         = [],
                 inner         = [],
                 sum           = [],
-                id            = [],
+                id            = "",
                 x             = (typeof args.source === "string") ? args.source : "",
+                mbraceline    = (args.braceline === true || args.braceline === "true") ? true : false,
                 mbracepadding = (args.bracepadding === true || args.bracepadding === "true") ? true : false,
                 mbraces       = (args.braces === "allman") ? "allman" : "knr",
                 mchar         = (typeof args.inchar === "string" && args.inchar.length > 0) ? args.inchar : " ",
@@ -7576,9 +8077,14 @@ var prettydiff = function prettydiff(api) {
                 mjsx          = (args.jsx === true || args.jsx === "true") ? true : false,
                 mmode         = (typeof args.mode === "string") ? args.mode : "beautify",
                 mobjsort      = (args.objsort === "true" || args.objsort === true) ? true : false,
+                mpreserve     = (args.preserve === false || args.preserve === "false") ? false : true,
+                mquoteConvert = (args.quoteConvert === "single" || args.quoteConvert === "double") ? args.quoteConvert : "none",
                 msize         = (isNaN(args.insize) === true) ? 4 : Number(args.insize),
+                mspace        = (args.space === false || args.space === "false") ? false : true,
                 mstyle        = (typeof args.style === "string" && args.style === "noindent") ? "noindent" : "indent",
+                mstyleguide   = (typeof args.styleguide === "string") ? args.styleguide : "none",
                 mwrap         = (isNaN(args.wrap) === true) ? 0 : Number(args.wrap),
+                mvarword      = (args.varword === "each" || args.varword === "list") ? args.varword : "none",
                 mvertical     = (args.vertical === "jsonly") ? "jsonly" : ((args.vertical === true || args.vertical === "true") ? true : false);
             if (mmode === "diff") {
                 mcomm = "nocomment";
@@ -7767,7 +8273,7 @@ var prettydiff = function prettydiff(api) {
                             } else if (x.charAt(a - 1) === "=" && (x.charAt(a) === "\"" || x.charAt(a) === "'")) {
                                 quotedBraceTest = false;
                                 for (c = a - 1; c > 0; c -= 1) {
-                                    if ((x.charAt(c) === "\"" && x.charAt(a) === "\"") || (x.charAt(c) === "'" && x.charAt(a) === "'") || x.charAt(c) === "<") {
+                                    if ((x.charAt(c) === "\"" && x.charAt(a) === "'") || (x.charAt(c) === "\"" && x.charAt(a) === "'") || x.charAt(c) === "<") {
                                         break;
                                     }
                                     if (x.charAt(c) === ">") {
@@ -7808,7 +8314,7 @@ var prettydiff = function prettydiff(api) {
                                             }
                                         } else if (x.charAt(b) === ">" || x.charAt(b) === "<") {
                                             braceTest = true;
-                                        } else if ((x.charAt(b - 1) !== "\\" && ((x.charAt(a) === "\"" && x.charAt(b) === "\"") || (x.charAt(a) === "'" && x.charAt(b) === "'"))) || b === end - 1) {
+                                        } else if ((x.charAt(b - 1) !== "\\" && ((x.charAt(a) === "\"" && x.charAt(b) === "'") || (x.charAt(a) === "\"" && x.charAt(b) === "'"))) || b === end - 1) {
                                             if (ltCount !== tagCount && quoteSwitch === true) {
                                                 quoteSwitch = false;
                                                 tagCount    -= 1;
@@ -7965,9 +8471,13 @@ var prettydiff = function prettydiff(api) {
                             jsscope     : mjsscope,
                             jsx         : true,
                             presume_html: false,
+                            quoteConvert: mquoteConvert,
                             source      : x
                         }).split("pdjsxSep"),
                         end = y.length;
+                    if (summary !== "" && summary !== "diff") {
+                        id = summary;
+                    }
                     for (i = 0; i < end; i += 1) {
                         build.push(y[i]);
                         if (y[i].slice(0, 4) === "<!--" || y[i].slice(0, 5) === " <!--") {
@@ -7999,6 +8509,7 @@ var prettydiff = function prettydiff(api) {
                             conditional : (mhtml === true) ? true : false,
                             jsx         : false,
                             presume_html: mhtml,
+                            quoteConvert: mquoteConvert,
                             source      : x
                         }).split(""),
                         last       = "",
@@ -8160,8 +8671,8 @@ var prettydiff = function prettydiff(api) {
                                     if (y[a] === "/" && y[a + 1] && y[a + 1] === "/") {
                                         comment = "//";
                                     } else if (y[a] === "/" && y[a + 1] && y[a + 1] === "*") {
-                                        comment = "/" + "*";
-                                    } else if (y[a] === "'" || y[a] === "\"" || (y[a] === "/" && y[a - 1] !== "<")) {
+                                        comment = "/*";
+                                    } else if (y[a] === "\"" || y[a] === "'" || (y[a] === "/" && y[a - 1] !== "<")) {
                                         if (y[a] === "/") {
                                             for (b = a - 1; b > 0; b -= 1) {
                                                 if ((/\s/).test(y[b]) === false) {
@@ -8177,7 +8688,7 @@ var prettydiff = function prettydiff(api) {
                                             comment = y[a];
                                         }
                                     }
-                                } else if ((y[a - 1] !== "\\" || slashes(a - 1) === false) && ((comment === "'" && y[a] === "'") || (comment === "\"" && y[a] === "\"") || (comment === "/" && y[a] === "/") || (comment === "//" && (y[a] === "\n" || (y[a - 4] && y[a - 4] === "/" && y[a - 3] === "/" && y[a - 2] === "-" && y[a - 1] === "-" && y[a] === ">"))) || (comment === ("/" + "*") && y[a - 1] === "*" && y[a] === "/"))) {
+                                } else if ((y[a - 1] !== "\\" || slashes(a - 1) === false) && ((comment === "\"" && y[a] === "'") || (comment === "\"" && y[a] === "'") || (comment === "/" && y[a] === "/") || (comment === "//" && (y[a] === "\n" || (y[a - 4] && y[a - 4] === "/" && y[a - 3] === "/" && y[a - 2] === "-" && y[a - 1] === "-" && y[a] === ">"))) || (comment === ("/*") && y[a - 1] === "*" && y[a] === "/"))) {
                                     comment = "";
                                 }
                                 if (a < endd - 2 && ((type === "script" && comment === "") || type === "style") && y[a] === "<" && y[a + 1] === "/" && y[a + 2].toLowerCase() === "s") {
@@ -8207,6 +8718,9 @@ var prettydiff = function prettydiff(api) {
                             return output;
                         },
                         end        = y.length;
+                    if (summary !== "" && summary !== "diff") {
+                        id = summary;
+                    }
                     for (i = 0; i < end; i += 1) {
                         if (token[token.length - 1] === "T_script" && (i > end - 8 || y.slice(i, i + 8).join("").toLowerCase() !== "</script")) {
                             build.push(cgather("script"));
@@ -8266,13 +8780,13 @@ var prettydiff = function prettydiff(api) {
                             scriptflag = i;
                             build.push(builder(">"));
                             last = build[build.length - 1];
-                            if (last.indexOf(" type=\"syntaxhighlighter\"") !== -1) {
+                            if (last.indexOf(" type='syntaxhighlighter'") !== -1) {
                                 i                       = scriptflag;
                                 build[build.length - 1] = builder("</script>");
                                 token.push("T_ignore");
                             } else if (last.charAt(last.length - 2) === "/") {
                                 token.push("T_singleton");
-                            } else if (last.indexOf(" type=\"") === -1 || last.indexOf(" type=\"text/javascript\"") > -1 || last.indexOf(" type=\"application/javascript\"") > -1 || last.indexOf(" type=\"application/x-javascript\"") > -1 || last.indexOf(" type=\"text/ecmascript\"") > -1 || last.indexOf(" type=\"application/ecmascript\"") > -1 || last.indexOf(" type=\"text/cjs\"") > -1 || last.indexOf(" type=\"text/jsx\"") > -1) {
+                            } else if (last.indexOf(" type='") === -1 || last.indexOf(" type='text/javascript'") > -1 || last.indexOf(" type='application/javascript'") > -1 || last.indexOf(" type='application/x-javascript'") > -1 || last.indexOf(" type='text/ecmascript'") > -1 || last.indexOf(" type='application/ecmascript'") > -1 || last.indexOf(" type='text/cjs'") > -1 || last.indexOf(" type='text/jsx'") > -1) {
                                 token.push("T_script");
                             } else if (build[build.length - 1].indexOf(" data-prettydiff-ignore") > 0) {
                                 token.push("T_ignore");
@@ -8282,7 +8796,7 @@ var prettydiff = function prettydiff(api) {
                         } else if (y[i] === "<" && i < end - 5 && y[i + 1].toLowerCase() === "s" && y[i + 2].toLowerCase() === "t" && y[i + 3].toLowerCase() === "y" && y[i + 4].toLowerCase() === "l" && y[i + 5].toLowerCase() === "e") {
                             build.push(builder(">"));
                             last = build[build.length - 1].toLowerCase().replace(/'/g, "\"");
-                            if (last.indexOf(" type=\"") === -1 || last.indexOf(" type=\"text/css\"") !== -1) {
+                            if (last.indexOf(" type='") === -1 || last.indexOf(" type='text/css'") !== -1) {
                                 token.push("T_style");
                             } else {
                                 token.push("T_tag_start");
@@ -8913,162 +9427,7 @@ var prettydiff = function prettydiff(api) {
                         cdataEnd    = (/((\/)*\]+>\s*)$/),
                         scriptStart = (/^(\s*<\!\-\-)/),
                         scriptEnd   = (/((\/\/)?\-\->\s*)$/),
-                        loop        = cinfo.length,
-                        attrib      = function markup_beauty__algorithm_loop_attributeOrder(tag, end) {
-                            var a           = 0,
-                                attribute   = [],
-                                comment     = [],
-                                tagLength   = 0,
-                                starter     = "",
-                                openchar    = "",
-                                spaceAfter  = tag.indexOf(" ") + 1,
-                                attribIndex = 0,
-                                nameSpace   = "",
-                                counter     = 0,
-                                space       = (tag.charAt(0) === " ") ? " " : "",
-                                sortfunc    = function markup_beauty__algorithm_loop_attributeOrder_sortfunc(a, b) {
-                                    if (a > b) {
-                                        return 1;
-                                    }
-                                    return 0;
-                                },
-                                pusher      = function markup_beauty__algorithm_loop_attributeOrder_pusher(attr) {
-                                    if (attr.indexOf("id=") === 0 || attr.indexOf("ID=") === 0) {
-                                        id.push(attr.slice(4, attr.length - 1));
-                                    }
-                                    attribute.push(attr);
-                                    openchar    = "";
-                                    attribIndex = a + 1;
-                                },
-                                joinchar    = (svg === true) ? "\n" + (function markup_beauty__algorithm_loop_attributeOrder_joinchar() {
-                                    var b       = 0,
-                                        size    = msize,
-                                        tabChar = mchar,
-                                        output  = [],
-                                        tab     = "";
-                                    for (b = 0; b < size; b += 1) {
-                                        output.push(tabChar);
-                                    }
-                                    tab    = output.join("");
-                                    size   = level[i];
-                                    output = [];
-                                    for (b = 0; b < size; b += 1) {
-                                        output.push(tab);
-                                    }
-                                    return output.join("") + tab;
-                                }()) : " ";
-                            if (space === " ") {
-                                tag        = tag.substr(1);
-                                spaceAfter = tag.indexOf(" ") + 1;
-                            }
-                            nameSpace = tag.substring(0, spaceAfter);
-                            tagLength = tag.length;
-                            tag       = tag.substring(spaceAfter, tagLength - end.length) + " ";
-                            for (a = 0; a < tagLength; a += 1) {
-                                if (starter === "") {
-                                    if (tag.charAt(a - 1) === "=" && openchar === "" && counter === 0) {
-                                        openchar = tag.charAt(a);
-                                    }
-                                    if (tag.charAt(a) === "\"") {
-                                        starter = "\"";
-                                    } else if (tag.charAt(a) === "'") {
-                                        starter = "'";
-                                    } else if (tag.charAt(a) === "[") {
-                                        starter = "[";
-                                        counter = 1;
-                                    } else if (tag.charAt(a) === "{") {
-                                        starter = "{";
-                                        counter = 1;
-                                    } else if (tag.charAt(a) === "(") {
-                                        starter = "(";
-                                        counter = 1;
-                                    } else if (tag.charAt(a) === "<" && tag.charAt(a + 1) === "%") {
-                                        starter     = "<%";
-                                        counter     = 1;
-                                        attribIndex = a;
-                                    } else if ((tag.charAt(a) === " " || (mjsx === true && tag.charAt(a) === "\n")) && counter === 0) {
-                                        if (tag.charAt(attribIndex) === "\n") {
-                                            attribIndex += 1;
-                                        }
-                                        pusher(tag.substring(attribIndex, a));
-                                    } else if (mjsx === true && tag.charAt(a) === "/" && (tag.charAt(a + 1) === "*" || tag.charAt(a + 1) === "/")) {
-                                        if (tag.charAt(a + 1) === "*") {
-                                            starter = "/*";
-                                        } else {
-                                            starter = "//";
-                                        }
-                                        attribIndex = a;
-                                    }
-                                } else if (starter === "\"" && tag.charAt(a) === "\"") {
-                                    starter = "";
-                                } else if (starter === "'" && tag.charAt(a) === "'") {
-                                    starter = "";
-                                } else if (starter === "[") {
-                                    if (tag.charAt(a) === "]") {
-                                        counter -= 1;
-                                        if (counter === 0) {
-                                            starter = "";
-                                        }
-                                    } else if (tag.charAt(a) === "[") {
-                                        counter += 1;
-                                    }
-                                } else if (starter === "{") {
-                                    if (tag.charAt(a) === "}") {
-                                        counter -= 1;
-                                        if (counter === 0) {
-                                            starter = "";
-                                        }
-                                        if (openchar === "{" && counter === 0) {
-                                            pusher(tag.substring(attribIndex, a + 1));
-                                        }
-                                    } else if (tag.charAt(a) === "{") {
-                                        counter += 1;
-                                    }
-                                } else if (starter === "(") {
-                                    if (tag.charAt(a) === ")") {
-                                        counter -= 1;
-                                        if (counter === 0) {
-                                            starter = "";
-                                        }
-                                    } else if (tag.charAt(a) === "(") {
-                                        counter += 1;
-                                    }
-                                } else if (starter === "<%") {
-                                    if (tag.charAt(a) === ">" && tag.charAt(a - 1) === "%") {
-                                        counter -= 1;
-                                        if (counter === 0) {
-                                            starter = "";
-                                        }
-                                    } else if (tag.charAt(a) === "<" && tag.charAt(a + 1) === "%") {
-                                        counter += 1;
-                                    }
-                                } else if (mjsx === true && starter === "/*" && tag.charAt(a - 1) === "*" && tag.charAt(a) === "/") {
-                                    starter = "";
-                                    comment.push(tag.substring(attribIndex, a + 1));
-                                    a           += 1;
-                                    attribIndex = a;
-                                } else if (mjsx === true && starter === "//" && tag.charAt(a) === "\n") {
-                                    starter = "";
-                                    comment.push(tag.substring(attribIndex, a));
-                                    attribIndex = a;
-                                }
-                            }
-                            if (mjsx === true) {
-                                for (a = attribute.length - 1; a > -1; a -= 1) {
-                                    if (attribute[a] === undefined) {
-                                        break;
-                                    }
-                                    if ((/^(\s+)$/).test(attribute[a]) === true || attribute[a] === "") {
-                                        attribute.splice(a, 1);
-                                    }
-                                }
-                                if (comment.length > 0) {
-                                    return space + nameSpace + "\n" + comment.join("\n") + attribute.sort(sortfunc).join(joinchar).replace(/\n \n?\//g, "\n/") + end;
-                                }
-                                return space + nameSpace + attribute.sort(sortfunc).join(joinchar).replace(/\n \n?\//g, "\n/") + end;
-                            }
-                            return space + nameSpace + attribute.sort(sortfunc).join(joinchar) + end;
-                        };
+                        loop        = cinfo.length;
                     for (i = 0; i < loop; i += 1) {
                         test   = false;
                         test1  = false;
@@ -9114,6 +9473,7 @@ var prettydiff = function prettydiff(api) {
                                 }
                                 if (typeof jspretty === "function") {
                                     build[i] = jspretty({
+                                        braceline   : mbraceline,
                                         bracepadding: mbracepadding,
                                         braces      : mbraces,
                                         comments    : mcomm,
@@ -9121,9 +9481,12 @@ var prettydiff = function prettydiff(api) {
                                         inlevel     : level[i],
                                         insize      : msize,
                                         objsort     : mobjsort,
-                                        preserve    : true,
+                                        preserve    : mpreserve,
+                                        quoteConvert: mquoteConvert,
                                         source      : build[i],
-                                        space       : true,
+                                        space       : mspace,
+                                        styleguide  : mstyleguide,
+                                        varword     : mvarword,
                                         vertical    : (mvertical === "jsonly" || mvertical === true || mvertical === "true") ? true : false
                                     });
                                 }
@@ -9244,13 +9607,6 @@ var prettydiff = function prettydiff(api) {
                                 } else {
                                     startSafety();
                                 }
-                            }
-                        }
-                        if ((cinfo[i] === "start" || cinfo[i] === "singleton") && token[i] !== "T_asp" && token[i] !== "T_php" && token[i] !== "T_ssi" && token[i] !== "T_ignore" && (mjsx === false || build[i].indexOf("data-prettydiff-ignore") < 0) && build[i].substr(1).indexOf(" ") > 0) {
-                            if (build[i].lastIndexOf("/>") === build[i].length - 2) {
-                                build[i] = attrib(build[i], "/>");
-                            } else {
-                                build[i] = attrib(build[i], ">");
                             }
                         }
                     }
@@ -9982,24 +10338,8 @@ var prettydiff = function prettydiff(api) {
                             }
                             return output.join("");
                         }()),
-                        duplicate       = (function markup_beauty__report_duplicate() {
-                            var a          = 0,
-                                b          = id.length,
-                                duplicates = [],
-                                value      = "";
-                            id.sort();
-                            for (a = 1; a < b; a += 1) {
-                                if (id[a] === id[a - 1] && id[a] !== value) {
-                                    duplicates.push(id[a]);
-                                    value = id[a];
-                                }
-                            }
-                            if (duplicates.length === 0) {
-                                return "";
-                            }
-                            return "<p><strong class='duplicate'>Duplicate id attribute values detected:</strong> " + duplicates.join(", ") + "</p>";
-                        }()),
-                        jserror = (function markup_beauty__report_jserror() {
+                        duplicate       = (id.length > 0) ? "<p><strong class='duplicate'>Duplicate id attribute values detected:</strong> " + id + "</p>" : "",
+                        jserror         = (function markup_beauty__report_jserror() {
                             if (summary.indexOf("jserror") > 0) {
                                 return summary.slice(summary.indexOf("<p "), summary.indexOf("</p>") + 4);
                             }
@@ -10020,24 +10360,24 @@ var prettydiff = function prettydiff(api) {
             cmjs : 150221
         },
         api          : {
-            dom      : 150221,
-            nodeLocal: 150221,
-            wsh      : 150221
+            dom      : 150302,
+            nodeLocal: 150302,
+            wsh      : 150302
         },
         charDecoder  : 141025,
-        css          : 150212, //diffview.css file
-        csspretty    : 150221, //csspretty library
+        css          : 150302, //diffview.css file
+        csspretty    : 150302, //csspretty library
         csvbeauty    : 140114, //csvbeauty library
         csvmin       : 131224, //csvmin library
         diffview     : 150221, //diffview library
-        documentation: 150221, //documentation.xhtml
-        jspretty     : 150228, //jspretty library
+        documentation: 150302, //documentation.xhtml
+        jspretty     : 150302, //jspretty library
         latest       : 0,
-        markup_beauty: 150221, //markup_beauty library
-        markupmin    : 150124, //markupmin library
-        prettydiff   : 150228, //this file
-        version      : "1.9.1", //version number
-        webtool      : 150208 //prettydiff.com.xhtml
+        markup_beauty: 150302, //markup_beauty library
+        markupmin    : 150302, //markupmin library
+        prettydiff   : 150302, //this file
+        version      : "1.10.0", //version number
+        webtool      : 150302 //prettydiff.com.xhtml
     };
 edition.latest = (function edition_latest() {
     "use strict";

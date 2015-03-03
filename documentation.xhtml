@@ -69,7 +69,7 @@
                 <li><a href="#pdfunction">Pretty Diff Function</a>
                     <ol>
                         <li><a href="#function_overview">Overview</a></li>
-                        <li><a href="#function_properties">Pretty Diff API</a></li>
+                        <li><a href="#function_properties">Pretty Diff API (Options)</a></li>
                         <li><a href="#function_practices">Practices of Pretty Diff</a></li>
                         <li><a href="#function_option">Option Comment</a></li>
                         <li><a href="#function_io">Input and Output</a></li>
@@ -174,6 +174,7 @@
                         Facebook's React</a></li>
                     <li><a href="guide/jshtml.xhtml">Saving colorful JavaScript code
                         samples</a></li>
+                    <li><a href="guide/styleguide.xhtml">Conforming to popular style guides with the styleguide option</a></li>
                 </ol>
             </div>
             <div id="about_unrelated">
@@ -198,7 +199,7 @@
                     <a href="https://bugs.webkit.org/show_bug.cgi?id=90739">90739</a>.</li>
                 <li>Markup beautification will output flawed data if less than
                     characters, "&lt;", are included into sections of content and not
-                    escaped. This error occurs regardless if less than characters embedded
+                    escaped or wrapped in script/style tags. This error occurs regardless if less than characters embedded
                     within content are quoted or not.</li></ol>
         </div>
         <div id="execution"><h2>Execution</h2>
@@ -338,16 +339,28 @@
                     <a href="#function_properties">Pretty Diff API</a>
                     section of this document.</p>
             </div>
-            <div id="function_properties"><h3>Pretty Diff API</h3>
+            <div id="function_properties"><h3>Pretty Diff API (Options)</h3>
                 <ol>
-                    <li><h4>api</h4>
+                    <li id="api"><h4>api</h4>
                         <ul>
                             <li><h5>Description</h5>
                                 Used internally to decide if some small JavaScript functions need to be
                                 included with report output based upon the operating environment.</li>
                         </ul>
                     </li>
-                    <li><h4>bracepadding</h4>
+                    <li id="braceline"><h4>braceline</h4>
+                        <ul>
+                            <li><h5>Description</h5>
+                                In JavaScript a new line is inserted after opening curly braces and before closing curly braces.</li>
+                            <li><h5>Type</h5>
+                                boolean</li>
+                            <li><h5>Default</h5>
+                                false</li>
+                            <li><h5>As labeled in the HTML tool</h5>
+                                Brace Lines (JavaScript Only)</li>
+                        </ul>
+                    </li>
+                    <li id="bracepadding"><h4>bracepadding</h4>
                         <ul>
                             <li><h5>Description</h5>
                                 Inserts a space after the start of a contain and before the end of the container in JavaScript if the contents of that container are not indented; such as: conditions, function arguments, and escaped sequences of template strings.</li>
@@ -359,7 +372,7 @@
                                 Brace Padding (JavaScript Only)</li>
                         </ul>
                     </li>
-                    <li><h4>braces</h4>
+                    <li id="braces"><h4>braces</h4>
                         <ul>
                             <li><h5>Description</h5>
                                 Sets the style of indentation during JavaScript beautification. The
@@ -378,7 +391,7 @@
                                 Style of Indent (JavaScript Only)</li>
                         </ul>
                     </li>
-                    <li><h4>color <strong>(node-local.js only)</strong></h4>
+                    <li id="color"><h4>color <strong>(node-local.js only)</strong></h4>
                         <ul>
                             <li><h5>Description</h5>
                                 Specifies which color scheme to apply to the output file.</li>
@@ -390,7 +403,7 @@
                                 canvas, default, shadow, white</li>
                         </ul>
                     </li>
-                    <li><h4>comments</h4>
+                    <li id="comments"><h4>comments</h4>
                         <ul>
                             <li><h5>Description</h5>Determines whether comments should be indented.
                                 This property is only used in beautification mode.</li>
@@ -404,7 +417,7 @@
                                 Indent Comments</li>
                         </ul>
                     </li>
-                    <li><h4>conditional</h4>
+                    <li id="conditional"><h4>conditional</h4>
                         <ul>
                             <li><h5>Description</h5>Retain Internet Explorer conditional HTML
                                 comments during minification of HTML.</li>
@@ -416,7 +429,7 @@
                                 IE Comments (HTML Only)</li>
                         </ul>
                     </li>
-                    <li><h4>content</h4>
+                    <li id="content"><h4>content</h4>
                         <ul>
                             <li><h5>Description</h5>Determines if string literals in JavaScript and
                                 content in markup should be normalized to a literal value of
@@ -431,7 +444,7 @@
                                 Ignore Content (Markup / JavaScript)</li>
                         </ul>
                     </li>
-                    <li><h4>context</h4>
+                    <li id="context"><h4>context</h4>
                         <ul>
                             <li><h5>Description</h5>In the diff mode a numeric value sets the number
                                 of matching (equivalent) lines to precede and follow each line
@@ -445,7 +458,7 @@
                                 Context size (optional)</li>
                         </ul>
                     </li>
-                    <li><h4>correct</h4>
+                    <li id="correct"><h4>correct</h4>
                         <ul>
                             <li><h5>Description</h5>
                                 A limited attempt to automatically correct certain stylistic code
@@ -461,7 +474,7 @@
                                 Fix Sloppy Code (JavaScript Only)</li>
                         </ul>
                     </li>
-                    <li><h4>csvchar</h4>
+                    <li id="csvchar"><h4>csvchar</h4>
                         <ul>
                             <li><h5>Description</h5>
                                 Stores the string value used as a data separator for the
@@ -478,7 +491,7 @@
                                 Character separator</li>
                         </ul>
                     </li>
-                    <li><h4>diff</h4>
+                    <li id="diff"><h4>diff</h4>
                         <ul>
                             <li><h5>Description</h5>
                                 Code sample to compare the source code sample against. This property is
@@ -491,7 +504,7 @@
                                 New Text</li>
                         </ul>
                     </li>
-                    <li><h4>diffcli</h4>
+                    <li id="diffcli"><h4>diffcli</h4>
                         <ul>
                             <li><h5>Description</h5>
                                 An option only available from the node-local.js API file for Node.js.
@@ -501,7 +514,7 @@
                                 <em>output</em>
                                 option is not specified the node-local.js will convert the diffcli option
                                     to a value of true. If the value of diffcli is true and the context
-                                    option is omitted the context option will be provided a value of 2.</li>
+                                    option is omitted the context option will be provided a value of 2. For additional information please read the <a href="guide/diffcli.xhtml">diffcli guide</a>.</li>
                             <li><h5>Type</h5>
                                 boolean</li>
                             <li><h5>Default</h5>
@@ -510,7 +523,7 @@
                                 not in the HTML tool</li>
                         </ul>
                     </li>
-                    <li><h4>diffcomments</h4>
+                    <li id="diffcomments"><h4>diffcomments</h4>
                         <ul>
                             <li><h5>Description</h5>
                                 Retain code comments so that code and comments can be compared by the
@@ -523,7 +536,7 @@
                                 Code Comments</li>
                         </ul>
                     </li>
-                    <li><h4>difflabel</h4>
+                    <li id="difflabel"><h4>difflabel</h4>
                         <ul>
                             <li><h5>Description</h5>
                                 Sets a label describing the value of diff code sample.</li>
@@ -535,7 +548,7 @@
                                 New label (optional)</li>
                         </ul>
                     </li>
-                    <li><h4>diffview</h4>
+                    <li id="diffview"><h4>diffview</h4>
                         <ul>
                             <li><h5>Description</h5>
                                 Determines if the diff report should be expressed is a side-by-side
@@ -550,7 +563,7 @@
                                 Diff View Type</li>
                         </ul>
                     </li>
-                    <li><h4>elseline</h4>
+                    <li id="elseline"><h4>elseline</h4>
                         <ul>
                             <li><h5>Description</h5>
                                 If the "else" keyword should be pushed onto a new line in JavaScript
@@ -563,7 +576,7 @@
                                 Else on New Line (JavaScript Only)</li>
                         </ul>
                     </li>
-                    <li><h4>force_indent</h4>
+                    <li id="force_indent"><h4>force_indent</h4>
                         <ul>
                             <li><h5>Description</h5>
                                 Allows every piece of code and content in a markup language to be
@@ -577,13 +590,13 @@
                                 Force Indentation (Markup Only)</li>
                         </ul>
                     </li>
-                    <li><h4>help <strong>(node-local.js only)</strong></h4>
+                    <li id="help"><h4>help <strong>(node-local.js only)</strong></h4>
                         <ul>
                             <li><h5>Description</h5>
                                 Displays documenation to the command line or console.</li>
                         </ul>
                     </li>
-                    <li><h4>html</h4>
+                    <li id="html"><h4>html</h4>
                         <ul>
                             <li><h5>Description</h5>
                                 Forces markup code to be interpreted as HTML. HTML mode identifies
@@ -601,7 +614,7 @@
                                 Presume HTML (Markup Only)</li>
                         </ul>
                     </li>
-                    <li><h4>inchar</h4>
+                    <li id="inchar"><h4>inchar</h4>
                         <ul>
                             <li><h5>Description</h5>
                                 Stores the character literal used for an indentation. A single
@@ -615,7 +628,7 @@
                                 Indentation character</li>
                         </ul>
                     </li>
-                    <li><h4>inlevel</h4>
+                    <li id="inlevel"><h4>inlevel</h4>
                         <ul><li>Pads JavaScript and markup beautification with additional
                             indentation. Useful in the case of submitting code to a markupdown
                             format that identifies code by a padding of 4 spaces for each code
@@ -628,7 +641,7 @@
                                 Code padding (Markup / JavaScript)</li>
                         </ul>
                     </li>
-                    <li><h4>insize</h4>
+                    <li id="insize"><h4>insize</h4>
                         <ul>
                             <li><h5>Description</h5>
                                 Stores the number of times the inchar value must repeat to comprise a
@@ -641,7 +654,7 @@
                                 Indentation size</li>
                         </ul>
                     </li>
-                    <li><h4>jsscope</h4>
+                    <li id="jsscope"><h4>jsscope</h4>
                         <ul>
                             <li><h5>Description</h5>
                                 Produce HTML output for JavaScript beautification that colors variables
@@ -649,7 +662,7 @@
                                 highlights inheritance, scope depth, and closure. The value "none" turns
                                 this feature off. The value "html" creates a formatted HTML code sample
                                 for displaying HTML code samples on web pages. The value "report"
-                                creates the code for a complete HTML file.</li>
+                                creates the code for a complete HTML file. For additional information please read the <a href="guide/closure_with_jsscope.xhtml">jsscope guide</a> and the <a href="guide/jshtml.xhtml">jshtml guide</a>.</li>
                             <li><h5>Type</h5>
                                 string</li>
                             <li><h5>Accepted values</h5>
@@ -660,7 +673,7 @@
                                 Scope Analysis (JavaScript Only)</li>
                         </ul>
                     </li>
-                    <li><h4>lang</h4>
+                    <li id="lang"><h4>lang</h4>
                         <ul>
                             <li><h5>Description</h5>
                                 Tells the diff program which language it is receiving. The value "auto"
@@ -678,7 +691,7 @@
                                 Code type</li>
                         </ul>
                     </li>
-                    <li><h4>langdefault</h4>
+                    <li id="langdefault"><h4>langdefault</h4>
                         <ul>
                             <li><h5>Description</h5>
                                 If the
@@ -697,7 +710,7 @@
                                 Auto detect default</li>
                         </ul>
                     </li>
-                    <li><h4>mode</h4>
+                    <li id="mode"><h4>mode</h4>
                         <ul>
                             <li><h5>Description</h5>
                                 The operation to be performed.</li>
@@ -711,7 +724,7 @@
                                 Function</li>
                         </ul>
                     </li>
-                    <li><h4>obfuscate</h4>
+                    <li id="obfuscate"><h4>obfuscate</h4>
                         <ul>
                             <li><h5>Description</h5>
                                 A converts reference names into smaller names during JavaScript
@@ -724,7 +737,7 @@
                                 Obfuscation (JavaScript)</li>
                         </ul>
                     </li>
-                    <li><h4>objsort</h4>
+                    <li id="objsort"><h4>objsort</h4>
                         <ul>
                             <li><h5>Description</h5>
                                 Sorts properties of objects in JavaScript and/or CSS. The accepted values
@@ -739,7 +752,7 @@
                                 Property Sorting (CSS / JavaScript)</li>
                         </ul>
                     </li>
-                    <li><h4>output <strong>(node-local.js only)</strong></h4>
+                    <li id="output"><h4>output <strong>(node-local.js only)</strong></h4>
                         <ul>
                             <li><h5>Description</h5>
                                 Determines the location of where files should be saved.</li>
@@ -747,7 +760,7 @@
                                 string</li>
                         </ul>
                     </li>
-                    <li><h4>preserve</h4>
+                    <li id="preserve"><h4>preserve</h4>
                         <ul>
                             <li><h5>Description</h5>
                                 Retain empty lines in either JavaScript or CSS like languages. Consecutive empty lines will be
@@ -762,11 +775,10 @@
                                 Empty Lines (CSS / JavaScript)</li>
                         </ul>
                     </li>
-                    <li><h4>quote</h4>
+                    <li id="quote"><h4>quote</h4>
                         <ul>
                             <li><h5>Description</h5>
-                                Normalize single quote characters to double quote characters prior to a
-                                diff operation.</li>
+                                Diff only language independent option to normalize single quote characters to double quote characters.</li>
                             <li><h5>Type</h5>
                                 boolean</li>
                             <li><h5>Default</h5>
@@ -775,7 +787,21 @@
                                 Diff Quotes</li>
                         </ul>
                     </li>
-                    <li><h4>readmethod <strong>(node-local.js only)</strong></h4>
+                    <li id="quoteconvert"><h4>quoteconvert</h4>
+                        <ul>
+                            <li><h5>Description</h5>
+                                Convert the quote characters delimiting strings from either double or single quotes to the other. Applies to JavaScript and CSS and to attributes in markup.</li>
+                            <li><h5>Type</h5>
+                                string</li>
+                            <li><h5>Accepted values</h5>
+                                double, single, none</li>
+                            <li><h5>Default</h5>
+                                "none"</li>
+                            <li><h5>As labeled in the HTML tool</h5>
+                                Quotes (Markup / JavaScript)</li>
+                        </ul>
+                    </li>
+                    <li id="readmethod"><h4>readmethod <strong>(node-local.js only)</strong></h4>
                         <ul>
                             <li><h5>Description</h5>
                                 Determines how input should be received. The value <em>auto</em> changes to directory, file, or screen depending on the source type. The value <em>directory</em> will read all files from a single directory. The value <em>file</em> reads the contents of a single file. The value <em>filescreen</em> reads the contents of a file but outputs the result to the console. The value <em>screen</em> will look to the console for code input and outputs to the console. The value <em>subdirectory</em> will recursively read files in subdirectories.</li>
@@ -787,7 +813,7 @@
                                 auto, directory, file, filescreen, screen, subdirectory</li>
                         </ul>
                     </li>
-                    <li><h4>report <strong>(node-local.js only)</strong></h4>
+                    <li id="report"><h4>report <strong>(node-local.js only)</strong></h4>
                         <ul>
                             <li><h5>Description</h5>
                                 Determines if a meta data report should be generated.</li>
@@ -797,7 +823,7 @@
                                 true</li>
                         </ul>
                     </li>
-                    <li><h4>semicolon</h4>
+                    <li id="semicolon"><h4>semicolon</h4>
                         <ul>
                             <li><h5>Descriptiong</h5>
                                 If semicolon characters at the end of a line should be removed prior to a
@@ -810,7 +836,7 @@
                                 Trailing Semicolons</li>
                         </ul>
                     </li>
-                    <li><h4>source</h4>
+                    <li id="source"><h4>source</h4>
                         <ul>
                             <li><h5>Description</h5>
                                 A code sample to operate upon.</li>
@@ -823,7 +849,7 @@
                                 (minify)</li>
                         </ul>
                     </li>
-                    <li><h4>sourcelabel</h4>
+                    <li id="sourcelabel"><h4>sourcelabel</h4>
                         <ul>
                             <li><h5>Descriptiong</h5>
                                 Sets a label describing the value of source property in the diff
@@ -836,7 +862,7 @@
                                 Base label (optional)</li>
                         </ul>
                     </li>
-                    <li><h4>space</h4>
+                    <li id="space"><h4>space</h4>
                         <ul>
                             <li><h5>Description</h5>
                                 Inserts a space following a function keyword for anonymous functions in
@@ -849,7 +875,7 @@
                                 Function Space (JavaScript Only)</li>
                         </ul>
                     </li>
-                    <li><h4>style</h4>
+                    <li id="style"><h4>style</h4>
                         <ul>
                             <li><h5>Description</h5>
                                 Whether CSS and JavaScript code should be indented according to the
@@ -864,7 +890,21 @@
                                 Indent Style/Script (Markup Only)</li>
                         </ul>
                     </li>
-                    <li><h4>topcoms</h4>
+                    <li id="style"><h4>styleguide</h4>
+                        <ul>
+                            <li><h5>Description</h5>
+                                Provides a packaged set of option configurations for JavaScript interpretation to more closely conform to popular style guides. In the face of a conflict between something configured to the value of a styleguide option setting and a separately specified option the styleguide overrides. For additional information please see the <a href="guide/styleguide.xhtml">styleguide guide</a>.</li>
+                            <li><h5>Type</h5>
+                                string</li>
+                            <li><h5>Accepted values</h5>
+                                airbnb, crockford, google, grunt, jquery, mediawiki, yandex, none</li>
+                            <li><h5>Default</h5>
+                                none</li>
+                            <li><h5>As labeled in the HTML tool</h5>
+                                Style Guide (JavaScript Only) </li>
+                        </ul>
+                    </li>
+                    <li id="topcoms"><h4>topcoms</h4>
                         <ul>
                             <li><h5>Description</h5>
                                 If minification should include into the output all comments at the top of
@@ -877,7 +917,21 @@
                                 Top Comments (CSS / JavaScript)</li>
                         </ul>
                     </li>
-                    <li><h4>vertical</h4>
+                    <li id="varword"><h4>varword</h4>
+                        <ul>
+                            <li><h5>Description</h5>
+                                If a single <em>var</em> should be used to declare a list of variables or if a var keyword should be used per variable. A value of <em>each</em> will convert comma separated variable lists into separate statements each starting with a var keyword. The value <em>list</em> will convert consecutive variable statements to a comma separated list. The value <em>none</em> omits this option.</li>
+                            <li><h5>Type</h5>
+                                string</li>
+                            <li><h5>Accepted values</h5>
+                                each, list, none</li>
+                            <li><h5>Default</h5>
+                                none</li>
+                            <li><h5>As labeled in the HTML tool</h5>
+                                Variable Lists (JavaScript)</li>
+                        </ul>
+                    </li>
+                    <li id="vertical"><h4>vertical</h4>
                         <ul>
                             <li><h5>Description</h5>
                                 If lists of assignments or properties should be vertically aligned for
@@ -893,17 +947,18 @@
                                 Vertically Align (CSS / JavaScript)</li>
                         </ul>
                     </li>
-                    <li><h4>wrap</h4>
+                    <li id="wrap"><h4>wrap</h4>
                         <ul>
                             <li><h5>Description</h5>
-                                How many columns wide text content may be in a markup document before
-                                wrapping onto a new line. The value 0 disables text wrapping.</li>
+                                In a markup document this option sets how many columns wide text content may be before
+                                wrapping onto a new line. In JavaScript this option determines the maximum length of a string literal before being broken in <em>+</em> separated fragments.
+                                The value 0 disables text wrapping. A negative value combines <em>+</em> separated string literals into a single string.</li>
                             <li><h5>Type</h5>
                                 number</li>
                             <li><h5>Default</h5>
-                                72</li>
+                                0</li>
                             <li><h5>As labeled in the HTML tool</h5>
-                                Wrap text (Markup Only)</li>
+                                Wrap text (JavaScript, Markup)</li>
                         </ul>
                     </li>
                 </ol>

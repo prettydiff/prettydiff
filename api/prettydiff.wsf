@@ -1,5 +1,6 @@
 ﻿<package id="prettydiff_package">
     <job id="main">
+        <!-- the minified prettydiff is required, because WSH will only accept a file up to 512kb -->
         <script type="text/javascript" src="../prettydiff-min.js">
             /*global WScript, prettydiff, Enumerator*/
             (function () {
@@ -25,6 +26,8 @@
                         if (WScript.Arguments.Count() === 0 || help === true) {
                             error.push("Arguments      - Type    - Definition");
                             error.push("-------------------------------------");
+                            error.push("* braceline    - boolean - Inserts a newline after an opening curly brace and before a closing curly brace. Default is false.");
+                            error.push("");
                             error.push("* bracepadding - boolean - Inserts a space after the start of a contain and before the end of the container in JavaScript if the contents of that container are not indented; such as: conditions, function arguments, and escaped sequences of template strings. Default is false.");
                             error.push("");
                             error.push("* braces       - string  - If lang is 'javascript' and mode is 'beautify' this determines if opening curly braces will exist on the same line as their condition or be forced onto a new line. Defaults to 'knr'.");
@@ -93,6 +96,9 @@
                             error.push("");
                             error.push("* quote        - boolean - If true and mode is 'diff' then all single quote characters will be replaced by double quote characters in both the source and diff file input so as to eliminate some differences from the diff report HTML output.");
                             error.push("");
+                            error.push("* quoteConvert - string  - If strings in JavaScript or attributes in markup should be double quoted, single quoted, or left to the author. Default is 'none'.");
+                            error.push("                 Accepted values: double, single, none");
+                            error.push("");
                             error.push("* semicolon    - boolean - If true and mode is 'diff' and lang is 'javascript' all semicolon characters that immediately preceed any white space containing a new line character will be removed so as to elimate some differences from the diff report HTML output.");
                             error.push("");
                             error.push("* source       - string  - The file source for interpretation. This is required.");
@@ -104,12 +110,18 @@
                             error.push("* style        - string  - If mode is 'beautify' and lang is 'markup' or 'html' this will determine whether the contents of script and style tags should always start at position 0 of each line or if such content should be indented starting from the opening script or style tag. Default is 'indent'.");
                             error.push("                 Accepted values: indent, noindent");
                             error.push("");
+                            error.push("* styleguide   - string  - Applies various options in a batch configuration to better conform to popular styleguides. Default is 'none'.");
+                            error.push("                 Accepted values: airbnb, crockford, google, grunt, jquery, mediawiki, yandex, none");
+                            error.push("");
                             error.push("* topcoms      - boolean - If mode is 'minify' this determines whether comments above the first line of code should be kept. Default is false.");
+                            error.push("");
+                            error.push("* varword      - string  - Can merge consecutive var statements in a single comma separated list or the oppose. The value 'list' will merge and 'each' is the opposite. Default is 'none'.");
+                            error.push("                 Accepted values: each, list, none");
                             error.push("");
                             error.push("* vertical     - string  - If lists of assignments and properties should be vertically aligned. Default is 'none'.");
                             error.push("                 Accepted values: all, css, js, none");
                             error.push("");
-                            error.push("* wrap         - string  - The number of characters text content in a markup document is allowed before wrapping onto a new line.  Default is 0 which disables text wrapping.");
+                            error.push("* wrap         - string  - The number of characters text content in a markup document or a string in JavaScript is allowed before wrapping onto a new line.  Default is 0 which disables text wrapping and a value of -1 will concatenating strings separated by a '+' operator.");
                             error.push("");
                             //error.push("* readmethod   - string  - The readmethod determines the quantity of files to read. The default value is 'file' which will operate against a single file. The value 'file' requires that you point to an actual file for the source and diff arguments. The values 'directory' and 'subdirectory' require directories for values to source and diff. The value 'directory' will include all files location in the target directory, but not any child directories.");
                             //error.push("                 Accepted values: file, directory, subdirectory");
@@ -255,6 +267,7 @@
                 }
                 if (fail === false) {
                     args.api = "wsf";
+                    args.braceline = (WScript.Arguments.Name("braceline") === "true" || WScript.Arguments.Name("braceline") === true) ? true : false;
                     args.bracepadding = (WScript.Arguments.Named("bracepadding") === "true" || WScript.Arguments.Named("bracepadding") === true) ? true : false;
                     args.braces = (WScript.Arguments.Named("indent") === "allman") ? "allman" : "knr";
                     args.comments = (WScript.Arguments.Named("comments") === "noindent") ? "noindent" : "indent";
@@ -279,12 +292,15 @@
                     args.obfuscate = WScript.Arguments.Named("obfuscate") || false;
                     args.objsort = (WScript.Arguments.Named("objsort") === "all" || WScript.Arguments.Named("objsort") === "css" || WScript.Arguments.Named("objsort") === "js") ? WScript.Arguments.Named("objsort") : "none";
                     args.quote = (WScript.Arguments.Named("quote") === "true" || WScript.Arguments.Named("quote") === true) ? true : false;
+                    args.quoteConvert = (WScript.Arguments.Named("quoteConvert") === "double" || WScript.Arguments.Named("quoteConvert") === "single") ? WScript.Arguments.Named("quoteConvert") : "none";
                     args.preserve = (WScript.Arguments.Named("preserve") === "all" || WScript.Arguments.Named("preserve") === "css" || WScript.Arguments.Named("preserve") === "js") ? WScript.Arguments.Named("preserve") : "none";
                     args.semicolon = (WScript.Arguments.Named("semicolon") === "true" || WScript.Arguments.Named("semicolon") === true) ? true : false;
                     args.sourcelabel = WScript.Arguments.Named("sourcelabel") || "base";
                     args.space = (WScript.Arguments.Named("space") === "false" || WScript.Arguments.Named("space") === false) ? false : true;
                     args.style = (WScript.Arguments.Named("style")) ? "noindent" : "indent";
+                    args.styleguide = (typeof WScript.Arguments.Named("styleguide") === "string") ? WScript.Arguments.Named("styleguide") : "none";
                     args.topcoms = (WScript.Arguments.Named("topcoms") === "false" || WScript.Arguments.Named("topcoms") === false) ? false : true;
+                    args.varword = (WScript.Arguments.Named("varword") === "each" || WScript.Arguments.Named("varword") === "list") ? WScript.Arguments.Named("varword") : "none";
                     args.vertical = (WScript.Arguments.Named("vertical") === "all" || WScript.Arguments.Named("vertical") === "css" || WScript.Arguments.Named("vertical") === "js") ? WScript.Arguments.Named("vertical") : "none";
                     args.wrap = (isNaN(WScript.Arguments.Named("force_indent"))) ? 0 : WScript.Arguments.Named("force_indent");
                     color = WScript.Arguments.Named("color") || "shadow";

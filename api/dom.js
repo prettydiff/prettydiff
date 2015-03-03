@@ -227,8 +227,11 @@ var pd = {};
             flaga    = false,
             flagb    = false,
             defaultt = (pd.o.langdefault === null) ? "javascript" : pd.o.langdefault[pd.o.langdefault.selectedIndex].value;
+        if (a === null) {
+            return;
+        }
         if (a === undefined || (/^(\s*#)/).test(a) === true || (/\n\s*(\.|@)mixin\(?\s*/).test(a) === true) {
-            pd.langproper = "bobjsort-css";
+            pd.langproper = "CSS";
             return "css";
         }
         b = a.replace(/\[[a-zA-Z][\w\-]*\=("|')?[a-zA-Z][\w\-]*("|')?\]/g, "").split("");
@@ -806,6 +809,31 @@ var pd = {};
                     chromeSave       = true;
                     button.innerHTML = "S";
                 }
+                if (pd.o.announce !== null) {
+                    if (api.lang === "markup" || presumedLanguage === "markup" || presumedLanguage === "HTML" || presumedLanguage === "XHTML" || presumedLanguage === "XML" || presumedLanguage === "JSTL") {
+                        errortext = (function () {
+                            var a      = 0,
+                                p      = output[1].split("<p><strong"),
+                                length = p.length;
+                            for (a = 0; a < length; a += 1) {
+                                if (p[a].indexOf(" more ") > -1 && p[a].indexOf("start tag") > -1 && p[a].indexOf("end tag") > -1) {
+                                    return "Notice: " + p[a].substring(1, p[a].indexOf("<"));
+                                }
+                                if (p[a].indexOf("Duplicate id") > -1) {
+                                    if (p[a].indexOf("Execution time") > -1) {
+                                        return p[a].slice(p[a].indexOf("<strong class='duplicate"), p[a].length - 4);
+                                    }
+                                    return "<strong>" + p[a].slice(p[a].indexOf(">") + 1, p[a].indexOf("</p"));
+                                }
+                            }
+                            return "";
+                        }());
+                        if (errortext.indexOf("end tag") > 0 || errortext.indexOf("Duplicate id") > 0) {
+                            pd.o.announce.style.color = "#c00";
+                            pd.o.announce.innerHTML   = errortext;
+                        }
+                    }
+                }
                 if (api.mode === "beautify") {
                     if (pd.o.codeBeauOut !== null) {
                         if (pd.test.cm === true) {
@@ -862,31 +890,6 @@ var pd = {};
                                         }
                                     }());
                                 }
-                            }
-                        }
-                    }
-                    if (pd.o.announce !== null) {
-                        if (api.lang === "markup" || presumedLanguage === "markup" || presumedLanguage === "html" || presumedLanguage === "htmlembedded" || presumedLanguage === "xhtml" || presumedLanguage === "xml" || presumedLanguage === "jstl") {
-                            errortext = (function () {
-                                var a      = 0,
-                                    p      = output[1].split("<p><strong>"),
-                                    length = p.length;
-                                for (a = 0; a < length; a += 1) {
-                                    if (p[a].indexOf(" more ") > -1 && p[a].indexOf("start tag") > -1 && p[a].indexOf("end tag") > -1) {
-                                        return "Notice: " + p[a].substring(0, p[a].indexOf("<"));
-                                    }
-                                    if (p[a].indexOf("Duplicate id") > -1) {
-                                        if (p[a].indexOf("Execution time") > -1) {
-                                            return p[a].slice(p[a].indexOf("<strong class='duplicate"), p[a].length - 4);
-                                        }
-                                        return "<strong>" + p[a].slice(0, p[a].length - 4);
-                                    }
-                                }
-                                return "";
-                            }());
-                            if (errortext.indexOf("end tag") > 0 || errortext.indexOf("Duplicate id") > 0) {
-                                pd.o.announce.style.color = "#c00";
-                                pd.o.announce.innerHTML   = errortext;
                             }
                         }
                     }
@@ -1096,7 +1099,7 @@ var pd = {};
         //determine options based upon mode of operations
         if (pd.mode === "beau") {
             if (pd.application === undefined) {
-                if (api.lang === "markup" || api.lang === "html" || api.lang === "xml" || api.lang === "jstl") {
+                if (typeof markup_beauty === "function" && (api.lang === "markup" || api.lang === "html" || api.lang === "xml" || api.lang === "jstl")) {
                     pd.application = function dom__markup_beauty() {
                         var code = markup_beauty(api),
                             sum  = (summary === undefined) ? "" : summary;
@@ -1104,13 +1107,13 @@ var pd = {};
                             code, sum
                         ];
                     };
-                } else if (api.lang === "csv") {
+                } else if (typeof csvbeauty === "function" && api.lang === "csv") {
                     pd.application = function csvbeauty() {
                         return [
                             csvbeauty(api), ""
                         ];
                     };
-                } else if (api.lang === "css" || api.lang === "scss") {
+                } else if (typeof csspretty === "function" && (api.lang === "css" || api.lang === "scss")) {
                     pd.application = function dom__csspretty_beau() {
                         var code = csspretty(api),
                             sum  = (summary === undefined) ? "" : summary;
@@ -1118,7 +1121,7 @@ var pd = {};
                             code, sum
                         ];
                     };
-                } else {
+                } else if (typeof jspretty === "function") {
                     pd.application = function dom__jspretty_beau() {
                         var code = jspretty(api),
                             sum  = (summary === undefined) ? "" : summary;
@@ -1129,29 +1132,35 @@ var pd = {};
                 }
             }
             (function dom__recycle_beautify() {
-                var comments     = pd.$$("incomment-no"),
-                    chars        = pd.$$("beau-space"),
+                var braceline    = {},
+                    bracepadding = {},
+                    braces       = {},
                     elseline     = {},
                     forceIndent  = {},
                     html         = {},
-                    braces       = {},
                     jscorrect    = {},
                     jshtml       = {},
                     jsspace      = {},
-                    bracepadding = {},
-                    objsorta     = pd.$$("bobjsort-all"),
-                    objsortc     = pd.$$("bobjsort-cssonly"),
-                    objsortj     = pd.$$("bobjsort-jsonly"),
+                    offset       = {},
+                    style        = {},
+                    styleguide   = {},
+                    wrap         = {},
+                    comments     = pd.$$("incomment-no"),
+                    chars        = pd.$$("beau-space"),
                     jslinesa     = pd.$$("bjslines-all"),
                     jslinesc     = pd.$$("bjslines-cssonly"),
                     jslinesj     = pd.$$("bjslines-jsonly"),
-                    offset       = {},
+                    objsorta     = pd.$$("bobjsort-all"),
+                    objsortc     = pd.$$("bobjsort-cssonly"),
+                    objsortj     = pd.$$("bobjsort-jsonly"),
                     quantity     = pd.$$("beau-quan"),
-                    style        = {},
+                    quotecond    = pd.$$("bquoteconvert-double"),
+                    quotecons    = pd.$$("bquoteconvert-single"),
+                    varworde     = pd.$$("bvarword-each"),
+                    varwordl     = pd.$$("bvarword-list"),
                     verticala    = pd.$$("vertical-all"),
                     verticalc    = pd.$$("vertical-cssonly"),
-                    verticalj    = pd.$$("vertical-jsonly"),
-                    wrap         = {};
+                    verticalj    = pd.$$("vertical-jsonly");
                 if (pd.o.codeBeauIn !== null) {
                     if (pd.test.cm === true) {
                         api.source = pd.cm.beauIn.getValue();
@@ -1176,6 +1185,20 @@ var pd = {};
                     api.preserve = "js";
                 } else {
                     api.preserve = "none";
+                }
+                if (quotecond !== null && quotecond.checked === true) {
+                    api.quoteConvert = "double";
+                } else if (quotecons !== null && quotecons.checked === true) {
+                    api.quoteConvert = "single";
+                } else {
+                    api.quoteConvert = "none";
+                }
+                if (varworde !== null && varworde.checked === true) {
+                    api.varword = "each";
+                } else if (varwordl !== null && varwordl.checked === true) {
+                    api.varword = "list";
+                } else {
+                    api.varword = "none";
                 }
                 if (verticala !== null && verticala.checked === true) {
                     api.vertical = "all";
@@ -1214,6 +1237,7 @@ var pd = {};
                     api.inchar = " ";
                 }
                 if (api.lang === "auto" || api.lang === "javascript") {
+                    braceline        = pd.$$("bbraceline-no");
                     elseline         = pd.$$("jselseline-yes");
                     braces           = pd.$$("jsindent-all");
                     jscorrect        = pd.$$("jscorrect-yes");
@@ -1221,6 +1245,9 @@ var pd = {};
                     jsspace          = pd.$$("jsspace-no");
                     offset           = pd.$$("inlevel");
                     bracepadding     = pd.$$("bracepadding-no");
+                    styleguide       = pd.$$("bstyleguide");
+                    api.braceline    = (braceline === null || braceline.checked === false) ? true : false;
+                    api.styleguide   = (styleguide !== null) ? styleguide[styleguide.selectedIndex].value : "";
                     api.correct      = (jscorrect === null || jscorrect.checked === false) ? false : true;
                     api.elseline     = (elseline === null || elseline.checked === false) ? false : true;
                     api.braces       = (braces === null || braces.checked === false) ? "knr" : "allman";
@@ -1250,7 +1277,7 @@ var pd = {};
         }
         if (pd.mode === "minn") {
             if (pd.application === undefined) {
-                if (api.lang === "markup" || api.lang === "html" || api.lang === "xml" || api.lang === "jstl") {
+                if (typeof markupmin === "function" && (api.lang === "markup" || api.lang === "html" || api.lang === "xml" || api.lang === "jstl")) {
                     pd.application = function dom__markupmin() {
                         var code = markupmin(api),
                             sum  = (summary === undefined) ? "" : summary;
@@ -1258,13 +1285,13 @@ var pd = {};
                             code, sum
                         ];
                     };
-                } else if (api.lang === "csv") {
+                } else if (typeof csvmin === "function" && api.lang === "csv") {
                     pd.application = function csvmin() {
                         return [
                             csvmin(api), ""
                         ];
                     };
-                } else if (api.lang === "css" || api.lang === "scss") {
+                } else if (typeof csspretty === "function" && (api.lang === "css" || api.lang === "scss")) {
                     pd.application = function dom__csspretty_min() {
                         var code = csspretty(api),
                             sum  = (summary === undefined) ? "" : summary;
@@ -1272,7 +1299,7 @@ var pd = {};
                             code, sum
                         ];
                     };
-                } else {
+                } else if (typeof jspretty === "function") {
                     pd.application = function dom__jspretty_min() {
                         var code = jspretty(api),
                             sum  = (summary === undefined) ? "" : summary;
@@ -1290,7 +1317,9 @@ var pd = {};
                     obfuscate   = pd.$$("obfuscate-yes"),
                     objsorta    = pd.$$("mobjsort-all"),
                     objsortc    = pd.$$("mobjsort-cssonly"),
-                    objsortj    = pd.$$("mobjsort-jsonly");
+                    objsortj    = pd.$$("mobjsort-jsonly"),
+                    quotecond   = pd.$$("mquoteconvert-double"),
+                    quotecons   = pd.$$("mquoteconvert-single");
                 if (pd.o.codeMinnIn !== null) {
                     pd.o.codeMinnIn = pd.$$("minifyinput");
                     if (pd.test.cm === true) {
@@ -1307,6 +1336,13 @@ var pd = {};
                     api.objsort = "js";
                 } else {
                     api.objsort = "none";
+                }
+                if (quotecond !== null && quotecond.checked === true) {
+                    api.quoteConvert = "double";
+                } else if (quotecons !== null && quotecons.checked === true) {
+                    api.quoteConvert = "single";
+                } else {
+                    api.quoteConvert = "none";
                 }
                 api.correct     = (correct === null || correct.checked === false) ? false : true;
                 api.conditional = (conditional === null || conditional.checked === false) ? false : true;
@@ -1325,17 +1361,21 @@ var pd = {};
             }
             api.jsscope = false;
             (function dom__recycle_diff() {
-                var baseLabel    = pd.$$("baselabel"),
+                var braceline    = {},
                     bracepadding = {},
                     braces       = {},
-                    comments     = pd.$$("diffcommentsy"),
-                    chars        = pd.$$("diff-space"),
                     conditional  = {},
-                    content      = pd.$$("diffcontentn"),
-                    context      = pd.$$("contextSize"),
                     elseline     = {},
                     forceIndent  = {},
                     html         = {},
+                    style        = {},
+                    space        = {},
+                    wrap         = {},
+                    baseLabel    = pd.$$("baselabel"),
+                    chars        = pd.$$("diff-space"),
+                    comments     = pd.$$("diffcommentsy"),
+                    content      = pd.$$("diffcontentn"),
+                    context      = pd.$$("contextSize"),
                     inline       = pd.$$("inline"),
                     newLabel     = pd.$$("newlabel"),
                     objsorta     = pd.$$("dobjsort-all"),
@@ -1346,10 +1386,7 @@ var pd = {};
                     jslinesj     = pd.$$("djslines-jsonly"),
                     quantity     = pd.$$("diff-quan"),
                     quote        = pd.$$("diffquoten"),
-                    style        = {},
-                    semicolon    = pd.$$("diffscolonn"),
-                    space        = {},
-                    wrap         = {};
+                    semicolon    = pd.$$("diffscolonn");
                 pd.o.codeDiffBase = pd.$$("baseText");
                 pd.o.codeDiffNew  = pd.$$("newText");
                 api.content       = (content === null || content.checked === false) ? false : true;
@@ -1407,10 +1444,12 @@ var pd = {};
                 if (api.lang === "auto" || api.lang === "javascript") {
                     elseline         = pd.$$("jselselined-yes");
                     space            = pd.$$("jsspaced-no");
+                    braceline        = pd.$$("dbraceline-no");
                     braces           = pd.$$("jsindentd-all");
                     bracepadding     = pd.$$("dbracepadding-no");
                     api.elseline     = (elseline === null || elseline.checked === false) ? false : true;
                     api.space        = (space === null || space.checked === false) ? true : false;
+                    api.braceline    = (braceline === null || braceline.checked === false) ? true : false;
                     api.bracepadding = (bracepadding === null || bracepadding.checked === false) ? true : false;
                     api.braces       = (braces === null || braces.checked === false) ? "knr" : "allman";
                 }
@@ -3414,24 +3453,14 @@ var pd = {};
                         "api.sourcelabel", "\"" + item.value + "\""
                     ];
                 }
-                if (id === "bobjsort-all" || id === "dobjsort-all" || id === "mobjsort-all") {
+                if (id === "bbraceline-no" || id === "dbraceline-no") {
                     data = [
-                        "api.objsort", "all"
+                        "api.braceline", "false"
                     ];
                 }
-                if (id === "bobjsort-css" || id === "dobjsort-css" || id === "mobjsort-css") {
+                if (id === "bbraceline-yes" || id === "dbraceline-yes") {
                     data = [
-                        "api.objsort", "css"
-                    ];
-                }
-                if (id === "bobjsort-js" || id === "dobjsort-js" || id === "mobjsort-js") {
-                    data = [
-                        "api.objsort", "js"
-                    ];
-                }
-                if (id === "bobjsort-none" || id === "dobjsort-none" || id === "mobjsort-none") {
-                    data = [
-                        "api.objsort", "none"
+                        "api.braceline", "true"
                     ];
                 }
                 if (id === "bjslines-all" || id === "djslines-all") {
@@ -3452,6 +3481,56 @@ var pd = {};
                 if (id === "bjslines-none" || id === "djslines-none") {
                     data = [
                         "api.preserve", "none"
+                    ];
+                }
+                if (id === "bobjsort-all" || id === "dobjsort-all" || id === "mobjsort-all") {
+                    data = [
+                        "api.objsort", "all"
+                    ];
+                }
+                if (id === "bobjsort-css" || id === "dobjsort-css" || id === "mobjsort-css") {
+                    data = [
+                        "api.objsort", "css"
+                    ];
+                }
+                if (id === "bobjsort-js" || id === "dobjsort-js" || id === "mobjsort-js") {
+                    data = [
+                        "api.objsort", "js"
+                    ];
+                }
+                if (id === "bobjsort-none" || id === "dobjsort-none" || id === "mobjsort-none") {
+                    data = [
+                        "api.objsort", "none"
+                    ];
+                }
+                if (id === "bquoteconvert-double" || id === "mquoteconvert-double") {
+                    data = [
+                        "api.quoteConvert", "double"
+                    ];
+                }
+                if (id === "bquoteconvert-none" || id === "mquoteconvert-none") {
+                    data = [
+                        "api.quoteConvert", "none"
+                    ];
+                }
+                if (id === "bquoteconvert-single" || id === "mquoteconvert-single") {
+                    data = [
+                        "api.quoteConvert", "single"
+                    ];
+                }
+                if (id === "bvarword-each") {
+                    data = [
+                        "api.varword", "each"
+                    ];
+                }
+                if (id === "bvarword-list") {
+                    data = [
+                        "api.varword", "list"
+                    ];
+                }
+                if (id === "bvarword-none") {
+                    data = [
+                        "api.varword", "none"
                     ];
                 }
                 if (id === "conditionald-no" || id === "conditionalm-no") {
@@ -3694,6 +3773,11 @@ var pd = {};
                         "api.diffview", "sidebyside"
                     ];
                 }
+                if (id === "styleguide") {
+                    data = [
+                        "api.styleguide", "\"" + item.value + "\""
+                    ];
+                }
                 if (id === "topcoms-yes") {
                     data = [
                         "api.topcoms", "true"
@@ -3757,166 +3841,6 @@ var pd = {};
         pd.o.comment.innerHTML = "/*prettydiff.com */";
     };
 
-    //maximize textareas and hide options
-    pd.hideOptions         = function dom__hideOptions() {
-        var node   = {},
-            text   = "",
-            height = 0,
-            button = pd.$$("hideOptions");
-        if (button === null) {
-            return;
-        }
-        text = button.innerHTML.replace(/\s+/g, " ");
-        if (text === "Default Display" || text === "Maximize Inputs") {
-            node = pd.$$("top");
-            if (node !== null) {
-                node.style.display = "none";
-            }
-            if (pd.o.report.feed.box !== null) {
-                pd.o.report.feed.box.style.top = "-1000em";
-            }
-            if (pd.o.report.code.box !== null) {
-                pd.o.report.code.box.style.top = "-1000em";
-            }
-            if (pd.o.report.stat.box !== null) {
-                pd.o.report.stat.box.style.top = "-1000em";
-            }
-            node = pd.$$("diffoutput");
-            if (node !== null) {
-                node.style.display = "none";
-            }
-            node = pd.$$("codeInput");
-            if (node !== null) {
-                node.style.marginLeft = "0em";
-            }
-            node = pd.$$("displayOps");
-            if (node !== null) {
-                height = height - node.clientHeight;
-                height = height - 9;
-            }
-            node = pd.$$("button-primary");
-            if (node !== null) {
-                height = height - node.clientHeight;
-                height = height - 24;
-            }
-            height = height - 62;
-            if (pd.mode === "diff") {
-                height = height - 10;
-            }
-            if (pd.o.codeDiffBase !== null) {
-                pd.o.codeDiffBase.style.height       = ((height / 12) - 4.55) + "em";
-                pd.o.codeDiffBase.style.marginBottom = "1em";
-            }
-            if (pd.o.codeDiffNew !== null) {
-                pd.o.codeDiffNew.style.height       = ((height / 12) - 4.55) + "em";
-                pd.o.codeDiffNew.style.marginBottom = "1em";
-            }
-            node = button.parentNode;
-            if (node.nodeName.toLowerCase() === "li") {
-                node = node.parentNode;
-            }
-            node.style.position     = "relative";
-            node.style.marginBottom = "0em";
-            pd.options(button);
-            if (pd.o.announce !== null) {
-                pd.o.announce.setAttribute("class", "big");
-                if (pd.o.announce.parentNode !== null) {
-                    pd.o.announce.parentNode.removeChild(pd.o.announce);
-                }
-                pd.o.announce.innerHTML   = "";
-                pd.o.announce.style.color = "#000";
-                if (pd.$$("codeInput") !== null) {
-                    pd.$$("codeInput").insertBefore(pd.o.announce, pd.$$("codeInput").firstChild);
-                }
-            }
-            return false;
-        }
-        if (pd.o.announce !== null) {
-            pd.o.announce.parentNode.removeChild(pd.o.announce);
-            if (pd.$$("introduction") !== null) {
-                if (pd.$$("update") === null) {
-                    pd.$$("introduction").appendChild(pd.o.announce);
-                } else if (pd.$$("update").parentNode === pd.$$("introduction")) {
-                    pd.$$("introduction").insertBefore(pd.o.announce, pd.$$("update"));
-                }
-            }
-            pd.o.announce.style.color = "#000";
-            pd.o.announce.setAttribute("class", "normal");
-            pd.o.announce.innerHTML = pd.o.announcetext;
-        }
-        node = pd.$$("top");
-        if (node !== null) {
-            node.style.display = "block";
-        }
-        if (pd.o.report.feed.box !== null && pd.o.report.feed.box.offsetTop < 0) {
-            pd.o.report.feed.box.style.top = "auto";
-        }
-        if (pd.o.report.code.box !== null && pd.o.report.code.box.offsetTop < 0) {
-            pd.o.report.code.box.style.top = "auto";
-        }
-        if (pd.o.report.stat.box !== null && pd.o.report.stat.box.offsetTop < 0) {
-            pd.o.report.stat.box.style.top = "auto";
-        }
-        node = pd.$$("diffoutput");
-        if (node !== null) {
-            node.style.display = "block";
-        }
-        node = pd.$$("codeInput");
-        if (node !== null) {
-            node.style.marginLeft = "22.5em";
-        }
-        if (pd.o.codeDiffBase !== null) {
-            pd.o.codeDiffBase.style.height       = "30.6em";
-            pd.o.codeDiffBase.style.marginBottom = "0.5em";
-        }
-        node = pd.$$("diffBase");
-        if (node !== null) {
-            node.style.marginTop = "0em";
-        }
-        if (pd.o.codeDiffNew !== null) {
-            pd.o.codeDiffNew.style.height       = "30.6em";
-            pd.o.codeDiffNew.style.marginBottom = "0.5em";
-        }
-        node = pd.$$("diffNew");
-        if (node !== null) {
-            node.style.marginTop = "0em";
-        }
-        node = pd.$$("Beautify");
-        if (node !== null) {
-            node.style.marginTop = "0em";
-        }
-        if (pd.o.codeBeauIn !== null) {
-            pd.o.codeBeauIn.style.height       = "31.7em";
-            pd.o.codeBeauIn.style.marginBottom = "-0.1em";
-        }
-        if (pd.o.codeBeauOut !== null) {
-            pd.o.codeBeauOut.style.height       = "34em";
-            pd.o.codeBeauOut.style.marginBottom = "-0.1em";
-        }
-        node = pd.$$("Minify");
-        if (node !== null) {
-            node.style.marginTop = "0em";
-        }
-        if (pd.o.codeMinnIn !== null) {
-            pd.o.codeMinnIn.style.height       = "31.7em";
-            pd.o.codeMinnIn.style.marginBottom = "-0.1em";
-        }
-        if (pd.o.codeMinnOut !== null) {
-            pd.o.codeMinnOut.style.height       = "34em";
-            pd.o.codeMinnOut.style.marginBottom = "-0.1em";
-        }
-        button.innerHTML = "Maximize Inputs";
-        node             = button.parentNode;
-        if (node.nodeName.toLowerCase() === "li") {
-            node = node.parentNode;
-        }
-        node.style.position     = "static";
-        node.style.marginBottom = "2em";
-        button.setAttribute("title", "Clicking this button will visually hide everything except for textarea elements and one 'Execute' button.");
-        pd.options(button);
-        return false;
-    };
-
     //reset tool to default configuration
     pd.reset               = function dom__reset() {
         var nametry = {},
@@ -3930,7 +3854,7 @@ var pd = {};
             if (localStorage.settings !== undefined) {
                 nametry = JSON.stringify(localStorage.settings);
             }
-            if (localStorage.settings === undefined || nametry.knownname === undefined) {
+            if (localStorage.settings === undefined || nametry.knownname === undefined || typeof nametry === "number") {
                 name = "\"" + Math.random().toString().slice(2) + Math.random().toString().slice(2) + "\"";
             }
             pd.settings.knownname = name;
@@ -3962,8 +3886,8 @@ var pd = {};
             height   = window.innerHeight || document.getElementsByTagName("body")[0].clientHeight;
         if (pd.test.cm === true) {
             if (baseText !== null && newText !== null) {
-                baseText.style.height       = ((height / 12) - 18.2) + "em";
-                newText.style.height        = ((height / 12) - 18.2) + "em";
+                baseText.style.height       = ((height / 12) - 19.35) + "em";
+                newText.style.height        = ((height / 12) - 19.35) + "em";
                 baseText.style.marginBottom = "0";
                 newText.style.marginBottom  = "0";
             }
@@ -3981,21 +3905,21 @@ var pd = {};
             }
         } else {
             if (baseText !== null && newText !== null) {
-                baseText.style.height = ((height / 12) - 18.35) + "em";
-                newText.style.height  = ((height / 12) - 18.35) + "em";
+                baseText.style.height = ((height / 12) - 19.5) + "em";
+                newText.style.height  = ((height / 12) - 19.5) + "em";
             }
         }
         if (pd.o.codeBeauIn !== null) {
-            pd.o.codeBeauIn.style.height = ((height / 12) - 16.85) + "em";
+            pd.o.codeBeauIn.style.height = ((height / 12) - 18) + "em";
         }
         if (pd.o.codeBeauOut !== null) {
-            pd.o.codeBeauOut.style.height = ((height / 12) - 14.5) + "em";
+            pd.o.codeBeauOut.style.height = ((height / 12) - 15.65) + "em";
         }
         if (pd.o.codeMinnIn !== null) {
-            pd.o.codeMinnIn.style.height = ((height / 12) - 16.85) + "em";
+            pd.o.codeMinnIn.style.height = ((height / 12) - 18) + "em";
         }
         if (pd.o.codeMinnOut !== null) {
-            pd.o.codeMinnOut.style.height = ((height / 12) - 14.5) + "em";
+            pd.o.codeMinnOut.style.height = ((height / 12) - 15.65) + "em";
         }
     };
 
@@ -4156,22 +4080,6 @@ var pd = {};
                 pd.o.announcetext = pd.o.announce.innerHTML;
             }
             node = pd.$$("hideOptions");
-            if (node !== null && node.innerHTML.replace(/\s+/, " ") === "Default Display") {
-                if (pd.test.ls === false || localStorage.settings === undefined) {
-                    pd.hideOptions();
-                    node           = document.createElement("p");
-                    id             = (location.href.indexOf("prettydiff.com/") > -1) ? "php" : "xhtml";
-                    node.innerHTML = "<strong>New to Pretty Diff?</strong> Click on the <em>Show Options</em> button in the top right corner to see more options or read the <a href='documentation." + id + "'>documentation</a>.";
-                    node.setAttribute("id", "showOptionsCallOut");
-                    node.onclick = function () {
-                        var self = document.getElementById("showOptionsCallOut");
-                        self.parentNode.removeChild(self);
-                    };
-                    pd.o.page.appendChild(node);
-                } else {
-                    node.innerHTML = "Maximize Inputs";
-                }
-            }
             if (pd.$$("option_commentClear") !== null) {
                 pd.$$("option_commentClear").onclick = pd.clearComment;
             }
@@ -4250,16 +4158,14 @@ var pd = {};
                     if (localStorage.commentString !== undefined && localStorage.commentString !== "") {
                         pd.commentString = JSON.parse(localStorage.commentString);
                     }
-                    if (localStorage.settings !== undefined) {
+                    if (localStorage.settings !== undefined && localStorage.settings !== null) {
                         if (localStorage.settings.indexOf(":undefined") > 0) {
                             localStorage.settings = localStorage.settings.replace(/:undefined/g, ":false");
                         }
                         pd.settings = JSON.parse(localStorage.settings);
-                        if (pd.settings.knownname === undefined) {
+                        if (pd.settings.knownname === undefined || typeof pd.settings.knownname === "number") {
                             pd.settings.knownname = "\"" + Math.random().toString().slice(2) + Math.random().toString().slice(2) + "\"";
                             localStorage.settings = JSON.stringify(pd.settings);
-                        } else if (typeof pd.settings.knownname === "number") {
-                            pd.settings.knownname = "\"" + pd.settings.knownname + "\"";
                         }
                         if (pd.settings.diffreport !== undefined) {
                             delete pd.settings.diffreport;
@@ -4690,8 +4596,6 @@ var pd = {};
                         inputs[a].onclick = pd.recycle;
                     } else if (id === "resetOptions") {
                         inputs[a].onclick = pd.reset;
-                    } else if (id === "hideOptions") {
-                        inputs[a].onclick = pd.hideOptions;
                     }
                 } else if (name === "minimize") {
                     inputs[a].onclick = pd.minimize;
