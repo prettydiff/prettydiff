@@ -25,7 +25,8 @@
         },
         output = prettydiff(args);
 
-************************* license start ********************************
+
+                *******   license start   *******
  @source: http://prettydiff.com/prettydiff.js
  @documentation - English: http://prettydiff.com/documentation.php
 
@@ -72,7 +73,8 @@
  and free without author permission.
 
  @licend  The above is the entire license notice for Pretty Diff.
-************************* license end **********************************
+                *******   license end   *******
+
 
  Join the Pretty Diff mailing list at:
  https://groups.google.com/d/forum/pretty-diff
@@ -3321,12 +3323,13 @@ var prettydiff = function prettydiff(api) {
                         status: []
                     },
                     block          = {
-                        consec: [],
-                        count : [],
-                        index : [],
-                        len   : -1,
-                        semi  : [],
-                        word  : []
+                        consec     : [],
+                        count      : [],
+                        index      : [],
+                        len        : -1,
+                        priorreturn: [],
+                        semi       : [],
+                        word       : []
                     },
                     vart           = {
                         count: [],
@@ -3468,6 +3471,7 @@ var prettydiff = function prettydiff(api) {
                         block.count.pop();
                         block.index.pop();
                         block.len -= 1;
+                        block.priorreturn.pop();
                         block.semi.pop();
                         block.word.pop();
                     },
@@ -3478,7 +3482,9 @@ var prettydiff = function prettydiff(api) {
                     },
                     blockinsert    = function jspretty__tokenize_blockinsert() {
                         var index  = 0,
-                            consec = false;
+                            consec = false,
+                            last   = lines.length - 1,
+                            linel  = lines[last];
                         if (block.len < 0) {
                             return;
                         }
@@ -3498,15 +3504,20 @@ var prettydiff = function prettydiff(api) {
                             types.splice(index, 0, "start");
                             if (jbraceline === true) {
                                 lines.splice(index, 0, 2);
-                                lines[lines.length - 1] = 2;
+                                lines[last] = 2;
                                 lines.push(0);
                             } else {
+                                lines[last] = 0;
                                 lines.splice(index, 0, 0);
-                                lines.push(lines[lines.length - 1]);
-                                lines[lines.length - 2] = 0;
+                                lines.push(linel);
                             }
                             token.push("x}");
                             types.push("end");
+                            if (block.priorreturn[block.len] === true) {
+                                token.push("x;");
+                                types.push("separator");
+                                lines.push(0);
+                            }
                             blockpop();
                             if (consec === true) {
                                 blockinsert();
@@ -3626,7 +3637,10 @@ var prettydiff = function prettydiff(api) {
                                     return;
                                 }
                                 if (bb === 0) {
-                                    if (token[aa] === "do") {
+                                    if (token[aa] === "(" && (token[aa - 1] === "function" || token[aa - 2] === "function" || (tokel === ")" && token[aa - 1] === block.word[block.len]))) {
+                                        return;
+                                    }
+                                    if (token[aa] === "do" || token[aa] === block.word[block.len]) {
                                         break;
                                     }
                                     if (c[a] === "}" && (types[aa] === "start" || types[aa] === "method")) {
@@ -3705,7 +3719,7 @@ var prettydiff = function prettydiff(api) {
                         ltype = "separator";
                         token.splice(len + 1, 0, "x;");
                         types.splice(len + 1, 0, "separator");
-                        lines.splice(len, 0, 0);
+                        lines.splice(len + 1, 0, 0);
                         blockinsert();
                     },
                     asifix         = function jspretty__tokenize_asifix() {
@@ -4331,6 +4345,11 @@ var prettydiff = function prettydiff(api) {
                                     block.consec.push(true);
                                 } else {
                                     block.consec.push(false);
+                                }
+                                if (ltoke === "return") {
+                                    block.priorreturn.push(true);
+                                } else {
+                                    block.priorreturn.push(false);
                                 }
                                 block.word.push(output);
                                 block.count.push(0);
@@ -5734,7 +5753,7 @@ var prettydiff = function prettydiff(api) {
                                     var c       = 0,
                                         nextish = (typeof next === "string") ? next : "",
                                         apiword = (nextish === "") ? [] : [
-                                            "ActiveXObject", "ArrayBuffer", "AudioContext", "Canvas", "CustomAnimation", "DOMParser", "DataView", "Date", "Error", "EvalError", "FadeAnimation", "FileReader", "Flash", "Float32Array", "Float64Array", "FormField", "Frame", "Generator", "HotKey", "Image", "Iterator", "Intl", "Int16Array", "Int32Array", "Int8Array", "InternalError", "Map", "MenuItem", "MoveAnimation", "Notification", "ParallelArray", "Point", "Promise", "Proxy", "RangeError", "Rectangle", "ReferenceError", "Reflect", "RegExp", "ResizeAnimation", "RotateAnimation", "SQLite", "ScrollBar", "Set", "Shadow", "StopIteration", "Symbol", "SyntaxError", "Text", "TextArea", "Timer", "TypeError", "URL", "Uint16Array", "Uint32Array", "Uint8Array", "Uint8ClampedArray", "URIError", "WeakMap", "WeakSet", "Web", "Window", "XMLHttpRequest"
+                                            "ActiveXObject", "ArrayBuffer", "AudioContext", "Canvas", "CustomAnimation", "DOMParser", "DataView", "Date", "Error", "EvalError", "FadeAnimation", "FileReader", "Flash", "Float32Array", "Float64Array", "FormField", "Frame", "Generator", "HotKey", "Image", "Iterator", "Intl", "Int16Array", "Int32Array", "Int8Array", "InternalError", "Loader", "Map", "MenuItem", "MoveAnimation", "Notification", "ParallelArray", "Point", "Promise", "Proxy", "RangeError", "Rectangle", "ReferenceError", "Reflect", "RegExp", "ResizeAnimation", "RotateAnimation", "Set", "SQLite", "ScrollBar", "Set", "Shadow", "StopIteration", "Symbol", "SyntaxError", "Text", "TextArea", "Timer", "TypeError", "URL", "Uint16Array", "Uint32Array", "Uint8Array", "Uint8ClampedArray", "URIError", "WeakMap", "WeakSet", "Web", "Window", "XMLHttpRequest"
                                         ],
                                         apilen  = apiword.length;
                                     for (c = 0; c < apilen; c += 1) {
@@ -7482,7 +7501,7 @@ var prettydiff = function prettydiff(api) {
                                     openchar    = "";
                                     attribIndex = aa + 1;
                                 },
-                                joinchar    = (tag.indexOf("<svg") === 0) ? "\n" : " ";
+                                joinchar    = (tag.indexOf("<svg") === 0 && comments === "beautify") ? "\n" : " ";
                             if (space === " ") {
                                 tag        = tag.substr(1);
                                 spaceAfter = tag.indexOf(" ") + 1;
@@ -10371,12 +10390,12 @@ var prettydiff = function prettydiff(api) {
         csvmin       : 131224, //csvmin library
         diffview     : 150221, //diffview library
         documentation: 150302, //documentation.xhtml
-        jspretty     : 150302, //jspretty library
+        jspretty     : 150303, //jspretty library
         latest       : 0,
         markup_beauty: 150302, //markup_beauty library
-        markupmin    : 150302, //markupmin library
-        prettydiff   : 150302, //this file
-        version      : "1.10.0", //version number
+        markupmin    : 150303, //markupmin library
+        prettydiff   : 150303, //this file
+        version      : "1.10.1", //version number
         webtool      : 150302 //prettydiff.com.xhtml
     };
 edition.latest = (function edition_latest() {
