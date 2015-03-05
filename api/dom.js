@@ -845,11 +845,6 @@ var pd = {};
                     if (pd.o.report.code.box !== null) {
                         if (output[1] !== "") {
                             pd.o.report.code.body.innerHTML = output[1];
-                            if (pd.o.announce !== null && pd.$$("jserror") !== null) {
-                                pd.o.announce.innerHTML                                     = "<strong>" + pd.$$("jserror").getElementsByTagName("strong")[0].innerHTML + "</strong> <span>See 'Code Report' for details</span>";
-                                pd.o.announce.style.color                                   = "inherit";
-                                pd.o.announce.getElementsByTagName("strong")[0].style.color = "#c00";
-                            }
                             if (autotest === true) {
                                 if (pd.o.report.code.body.firstChild.nodeType > 1) {
                                     pd.o.report.code.body.removeChild(pd.o.report.code.body.firstChild);
@@ -996,6 +991,11 @@ var pd = {};
                             node.innerHTML = pd.stat.minn;
                         }
                     }
+                }
+                if (pd.o.announce !== null && pd.$$("jserror") !== null) {
+                    pd.o.announce.innerHTML                                     = "<strong>" + pd.$$("jserror").getElementsByTagName("strong")[0].innerHTML + "</strong> <span>See 'Code Report' for details</span>";
+                    pd.o.announce.style.color                                   = "inherit";
+                    pd.o.announce.getElementsByTagName("strong")[0].style.color = "#c00";
                 }
                 buttons = pd.o.report.code.box.getElementsByTagName("p")[0].getElementsByTagName("button");
                 if (chromeSave === true) {

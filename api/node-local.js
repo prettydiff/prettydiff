@@ -163,6 +163,7 @@ Examples:
             if ((method !== "directory" && method !== "subdirectory") || sfiledump.length === 1) {
                 diffCount[1] = 1;
                 diffCount.push("1 file");
+                plural[1] = "";
             } else {
                 diffCount.push(sfiledump.length + " files");
             }
