@@ -1484,6 +1484,9 @@ var prettydiff = function prettydiff(api) {
                                 } else if (b[aa] === "[") {
                                     block = "]";
                                     bb    += 1;
+                                } else if (b[aa] === "#" && b[aa + 1] === "{") {
+                                    block = "}";
+                                    bb += 1;
                                 }
                             } else if ((b[aa] === "(" && block === ")") || (b[aa] === "[" && block === "]")) {
                                 bb += 1;
@@ -3499,7 +3502,7 @@ var prettydiff = function prettydiff(api) {
                             } while (index > 0 && (types[index] === "comment" || types[index] === "comment-inline"));
                             index += 1;
                         }
-                        if (token[index] === block.word[block.len]) {
+                        if (block.word[block.len] === "else" && token[index] === block.word[block.len]) {
                             index += 1;
                         }
                         if (block.len > -1 && block.count[block.len] === 0) {
@@ -3634,7 +3637,7 @@ var prettydiff = function prettydiff(api) {
                                     bb -= 1;
                                 }
                                 if (bb < 0) {
-                                    if (token[aa - 1] === "do" || (opers === true && colon === false)) {
+                                    if (token[aa - 1] === "do" || typel === "word" || typel === "literal" || (opers === true && colon === false)) {
                                         break;
                                     }
                                     return;
@@ -3649,7 +3652,7 @@ var prettydiff = function prettydiff(api) {
                                     if (c[a] === "}" && (types[aa] === "start" || types[aa] === "method")) {
                                         aa -= 1;
                                     }
-                                    if (token[aa - 1] === "else" || token[aa] === "else" || token[aa] === "try" || token[aa] === "finally" || (colon === true && token[aa] === ",") || token[aa - 1] === "catch") {
+                                    if ((token[aa - 1] === "else" && aa !== len) || token[aa] === "else" || token[aa] === "try" || token[aa] === "finally" || (colon === true && token[aa] === ",") || token[aa - 1] === "catch") {
                                         return;
                                     }
                                     if (tokel === ")") {
@@ -10408,17 +10411,17 @@ var prettydiff = function prettydiff(api) {
         },
         charDecoder  : 141025,
         css          : 150302, //diffview.css file
-        csspretty    : 150304, //csspretty library
+        csspretty    : 150306, //csspretty library
         csvbeauty    : 140114, //csvbeauty library
         csvmin       : 131224, //csvmin library
         diffview     : 150221, //diffview library
         documentation: 150304, //documentation.xhtml
-        jspretty     : 150304, //jspretty library
+        jspretty     : 150306, //jspretty library
         latest       : 0,
         markup_beauty: 150304, //markup_beauty library
         markupmin    : 150303, //markupmin library
-        prettydiff   : 150303, //this file
-        version      : "1.10.2", //version number
+        prettydiff   : 150306, //this file
+        version      : "1.10.3", //version number
         webtool      : 150304 //prettydiff.com.xhtml
     };
 edition.latest = (function edition_latest() {
