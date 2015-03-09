@@ -3843,7 +3843,7 @@ var pd = {};
 
     //reset tool to default configuration
     pd.reset               = function dom__reset() {
-        var nametry = {},
+        var nametry = "",
             name    = "";
         localStorage.codeBeautify = "";
         localStorage.codeDiffBase = "";
@@ -3851,21 +3851,21 @@ var pd = {};
         localStorage.codeMinify = "";
         localStorage.commentString = "[]";
         if (pd.settings === undefined || pd.settings.knownname === undefined) {
+            if (pd.settings === undefined) {
+                pd.settings = {
+                    feedreport: {
+                        newb: false,
+                        veteran: false
+                    }
+                };
+            }
             if (localStorage.settings !== undefined) {
                 nametry = JSON.stringify(localStorage.settings);
             }
-            if (localStorage.settings === undefined || nametry.knownname === undefined || typeof nametry === "number") {
+            if (localStorage.settings === undefined || nametry.knownname === undefined || nametry === "" || nametry.indexOf("knownname") < 0) {
                 name = "\"" + Math.random().toString().slice(2) + Math.random().toString().slice(2) + "\"";
             }
             pd.settings.knownname = name;
-        }
-        if (pd.settings === undefined) {
-            pd.settings = {
-                feedreport: {
-                    newb: false,
-                    veteran: false
-                }
-            };
         }
         if (pd.settings.feedreport === undefined) {
             pd.settings.feedreport = {
@@ -4093,6 +4093,7 @@ var pd = {};
             pd.settings.statreport         = {};
             pd.settings.feedreport.newb    = false;
             pd.settings.feedreport.veteran = false;
+            pd.settings.knownname          = "\"" + Math.random().toString().slice(2) + Math.random().toString().slice(2) + "\"";
             pd.keypress                    = {
                 date    : {},
                 keys    : [],
@@ -4176,6 +4177,9 @@ var pd = {};
                             pd.settings.feedreport.newb = false;
                             pd.settings.feedreport.veteran = false;
                         }
+                    } else if (pd.settings.knownname === undefined || typeof pd.settings.knownname === "number") {
+                        pd.settings.knownname = "\"" + Math.random().toString().slice(2) + Math.random().toString().slice(2) + "\"";
+                        localStorage.settings = JSON.stringify(pd.settings);
                     }
                     if (localStorage.stat !== undefined) {
                         if (statdump.length === 0) {
@@ -4187,8 +4191,12 @@ var pd = {};
                             if (pd.stat.fdate === 0 || pd.stat.fdate === null || isNaN(pd.stat.fdate) === true) {
                                 pd.stat.fdate = Date.now();
                             }
-                            pd.stat.avday  = Math.round(pd.stat.visit / ((Date.now() - pd.stat.fdate) / 86400000));
-                            pd.stat.useday = Math.round(pd.stat.usage / ((Date.now() - pd.stat.fdate) / 86400000));
+                            a = (Date.now() - pd.stat.fdate) / 86400000;
+                            if (a < 1) {
+                                a = 1;
+                            }
+                            pd.stat.avday  = Math.round(pd.stat.visit / a);
+                            pd.stat.useday = Math.round(pd.stat.usage / a);
                         }
                         node = pd.$$("stvisit");
                         if (node !== null) {
