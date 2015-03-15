@@ -127,21 +127,26 @@ var prettydiff = function prettydiff(api) {
                     apioutput     = "",
                     apidiffout    = "",
                     builder       = {},
-                    //determines api source as necessary to make a decision about whether to supply externally needed JS functions to reports
+                    //determines api source as necessary to make a decision about whether to supply
+                    //externally needed JS functions to reports
                     capi          = (api.api === undefined || api.api.length === 0) ? "" : api.api,
-                    //braceline - should a new line pad the interior of blocks (curly braces) in JavaScript
+                    //braceline - should a new line pad the interior of blocks (curly braces) in
+                    //JavaScript
                     cbraceline    = (api.braceline === true || api.braceline === "true") ? true : false,
                     //api.bracepadding - should curly braces be padded with a space in JavaScript?
                     cbracepadding = (api.bracepadding === true || api.bracepadding === "true") ? true : false,
-                    //api.indent - should JSPretty format JavaScript in the normal KNR style or push curly braces onto a separate line like the "allman" style
-                    cbraces       = (api.indent === "allman") ? "allman" : "knr",
+                    //api.indent - should JSPretty format JavaScript in the normal KNR style or push
+                    //curly braces onto a separate line like the "allman" style
+                    cbraces       = (api.braces === "allman") ? "allman" : "knr",
                     //api.comments - if comments should receive indentation or not
                     ccomm         = (api.comments === "noindent") ? "noindent" : ((api.comments === "nocomment") ? "nocomment" : "indent"),
-                    //api.conditional - should IE conditional comments be preserved during markup minification
+                    //api.conditional - should IE conditional comments be preserved during markup
+                    //minification
                     ccond         = (api.conditional === true || api.conditional === "true") ? true : false,
                     //api.content - should content be normalized during a diff operation
                     ccontent      = (api.content === true || api.content === "true") ? true : false,
-                    //api.context - should the diff report only include the differences, if so then buffered by how many lines of code
+                    //api.context - should the diff report only include the differences, if so then
+                    //buffered by how many lines of code
                     ccontext      = (api.context === "" || (/^(\s+)$/).test(api.context) || isNaN(api.context)) ? "" : Number(api.context),
                     //api.correct - should JSPretty make some corrections for sloppy JS
                     ccorrect      = (api.correct === true || api.correct === "true") ? true : false,
@@ -149,63 +154,91 @@ var prettydiff = function prettydiff(api) {
                     ccsvchar      = (typeof api.csvchar === "string" && api.csvchar.length > 0) ? api.csvchar : ",",
                     //api.diff - source code to compare with
                     cdiff         = (typeof api.diff === "string" && api.diff.length > 0 && (/^(\s+)$/).test(api.diff) === false) ? api.diff : "",
-                    //api.diffcli - if operating from Node.js and set to true diff output will be printed to stdout just like git diff
+                    //api.diffcli - if operating from Node.js and set to true diff output will be
+                    //printed to stdout just like git diff
                     cdiffcli      = (api.diffcli === true || api.diffcli === "true") ? true : false,
                     //api.diffcomments - should comments be included in the diff operation
                     cdiffcomments = (api.diffcomments === true || api.diffcomments === "true") ? true : false,
                     //api.difflabel - a text label to describe the diff code
                     cdifflabel    = (typeof api.difflabel === "string" && api.difflabel.length > 0) ? api.difflabel : "new",
-                    //api.diffview - should the diff report be a single column showing both sources simultaneously "inline" or showing the sources in separate columns "sidebyside"
+                    //api.diffview - should the diff report be a single column showing both sources
+                    //simultaneously "inline" or showing the sources in separate columns
+                    //"sidebyside"
                     cdiffview     = (api.diffview === "inline") ? "inline" : "sidebyside",
                     //api.elseline - for the 'else' keyword onto a new line in JavaScript
                     celseline     = (api.elseline === true || api.elseline === "true") ? true : false,
-                    //api.force_indent - should markup beautification always force indentation even if disruptive
+                    //api.force_indent - should markup beautification always force indentation even
+                    //if disruptive
                     cforce        = (api.force_indent === true || api.force_indent === "true") ? true : false,
-                    //api.html - should markup be presumed to be HTML with all the aloppiness HTML allows
+                    //api.html - should markup be presumed to be HTML with all the aloppiness HTML
+                    //allows
                     chtml         = (api.html === true || api.html === "true" || (typeof api.html === "string" && api.html === "html-yes")) ? true : false,
                     //api.inchar - what character should be used to create a single identation
                     cinchar       = (typeof api.inchar === "string" && api.inchar.length > 0) ? api.inchar : " ",
-                    //api.inlevel - should indentation in JSPretty be buffered with additional indentation?  Useful when supplying code to sites accepting markdown
+                    //api.inlevel - should indentation in JSPretty be buffered with additional
+                    //indentation?  Useful when supplying code to sites accepting markdown
                     cinlevel      = (isNaN(api.inlevel) || Number(api.inlevel) < 1) ? 0 : Number(api.inlevel),
-                    //api.insize - how many characters from api.inchar should constitute a single indentation
+                    //api.insize - how many characters from api.inchar should constitute a single
+                    //indentation
                     cinsize       = (isNaN(api.insize)) ? 4 : Number(api.insize),
-                    //api.jsscope - do you want to enable the jsscope feature of JSPretty?  This feature will output formatted HTML instead of text code showing which variables are declared at which functional depth
+                    //api.jsscope - do you want to enable the jsscope feature of JSPretty?  This
+                    //feature will output formatted HTML instead of text code showing which
+                    //variables are declared at which functional depth
                     cjsscope      = (api.jsscope === true || api.jsscope === "true") ? "report" : (api.jsscope !== "html" && api.jsscope !== "report") ? "none" : api.jsscope,
                     //api.lang - which programming language will we be analyzing
                     clang         = (typeof api.lang === "string" && (api.lang === "javascript" || api.lang === "css" || api.lang === "markup" || api.lang === "html" || api.lang === "csv" || api.lang === "text")) ? api.lang : "auto",
-                    //api.langdefault - what language should lang value "auto" resort to when it cannot determine the language
+                    //api.langdefault - what language should lang value "auto" resort to when it
+                    //cannot determine the language
                     clangdefault  = (typeof api.langdefault === "string" && (api.lang === "javascript" || api.lang === "css" || api.lang === "markup" || api.lang === "html" || api.lang === "csv")) ? api.langdefault : "text",
                     //api.mode - is this a minify, beautify, or diff operation
                     cmode         = (typeof api.mode === "string" && (api.mode === "minify" || api.mode === "beautify")) ? api.mode : "diff",
-                    //api.obfuscate - when minifying code with JSPretty should we make it sloppy and change variable names to make the code extra small?
+                    //api.obfuscate - when minifying code with JSPretty should we make it sloppy and
+                    //change variable names to make the code extra small?
                     cobfuscate    = (api.obfuscate === true || api.obfuscate === "true") ? true : false,
                     //api.objsort will alphabetize object keys in JavaScript
                     cobjsort      = (api.objsort === "all" || (api.objsort === "css" && clang !== "javascript") || (api.objsort === "js" && clang !== "css")) ? true : false,
-                    //api.preserve - should empty lines be preserved in beautify operations of JSPretty?
+                    //api.preserve - should empty lines be preserved in beautify operations of
+                    //JSPretty?
                     cpreserve     = (api.preserve === "all" || (api.preserve === "css" && clang !== "javascript") || (api.preserve === "js" && clang !== "css")) ? true : false,
-                    //api.quote - should all single quote characters be converted to double quote characters during a diff operation to reduce the number of false positive comparisons
+                    //api.quote - should all single quote characters be converted to double quote
+                    //characters during a diff operation to reduce the number of false positive
+                    //comparisons
                     cquote        = (api.quote === true || api.quote === "true") ? true : false,
-                    //api.quoteConvert - convert " to ' (or ' to ") of string literals or markup attributes
+                    //api.quoteConvert - convert " to ' (or ' to ") of string literals or markup
+                    //attributes
                     cquoteConvert = (api.quoteConvert === "single" || api.quoteConvert === "double") ? api.quoteConvert : "none",
-                    //api.semicolon - should trailing semicolons be removed during a diff operation to reduce the number of false positive comparisons
+                    //api.semicolon - should trailing semicolons be removed during a diff operation
+                    //to reduce the number of false positive comparisons
                     csemicolon    = (api.semicolon === true || api.semicolon === "true") ? true : false,
-                    //api.source - the source code in minify and beautify operations or "base" code in operations 
+                    //api.source - the source code in minify and beautify operations or "base" code
+                    //in operations 
                     csource       = (typeof api.source === "string" && api.source.length > 0 && (/^(\s+)$/).test(api.source) === false) ? api.source : ((cmode === "diff") ? "" : "Source sample is missing."),
-                    //api.sourcelabel - a text label to describe the api.source code for the diff report
+                    //api.sourcelabel - a text label to describe the api.source code for the diff
+                    //report
                     csourcelabel  = (typeof api.sourcelabel === "string" && api.sourcelabel.length > 0) ? api.sourcelabel : "base",
-                    //api.space - should JSPretty include a space between a function keyword and the next adjacent opening parenthesis character in beautification operations
+                    //api.space - should JSPretty include a space between a function keyword and the
+                    //next adjacent opening parenthesis character in beautification operations
                     cspace        = (api.space === false || api.space === "false") ? false : true,
-                    //api.style - should JavaScript and CSS code receive indentation if embedded inline in markup
+                    //api.style - should JavaScript and CSS code receive indentation if embedded
+                    //inline in markup
                     cstyle        = (api.style === "noindent") ? "noindent" : "indent",
-                    //api.styleguide - preset of beautification options to bring a JavaScript sample closer to conformance of a given style guide
+                    //api.styleguide - preset of beautification options to bring a JavaScript sample
+                    //closer to conformance of a given style guide
                     cstyleguide   = (typeof api.styleguide === "string") ? api.styleguide : "",
-                    //api.topcoms - should comments at the top of a JavaScript or CSS source be preserved during minify operations
+                    //api.titanium - TSS document support via option, because this is a uniquely
+                    //modified form of JSON
+                    ctitanium     = (api.titanium === true || api.titanium === "true") ? true : false,
+                    //api.topcoms - should comments at the top of a JavaScript or CSS source be
+                    //preserved during minify operations
                     ctopcoms      = (api.topcoms === true || api.topcoms === "true") ? true : false,
-                    //varword - should consecutive variables be merged into a comma separated list or the opposite
+                    //varword - should consecutive variables be merged into a comma separated list
+                    //or the opposite
                     cvarword      = (api.varword === "each" || api.varword === "list") ? api.varword : "none",
-                    //api.vertical - whether or not to vertically align lists of assigns in CSS and JavaScript
+                    //api.vertical - whether or not to vertically align lists of assigns in CSS and
+                    //JavaScript
                     cvertical     = (api.vertical === "all" || (api.vertical === "css" && clang !== "javascript") || (api.vertical === "js" && clang !== "css")) ? true : false,
-                    //api.wrap - in markup beautification should text content wrap after the first complete word up to a certain character length
+                    //api.wrap - in markup beautification should text content wrap after the first
+                    //complete word up to a certain character length
                     cwrap         = (isNaN(api.wrap)) ? 0 : Number(api.wrap),
                     proctime      = function core__proctime() {
                         var minuteString = "",
@@ -581,6 +614,9 @@ var prettydiff = function prettydiff(api) {
                 if (clang === "html") {
                     chtml = true;
                     clang = "markup";
+                } else if (clang === "tss") {
+                    ctitanium = true;
+                    clang     = "javscript";
                 }
                 if (clang === "auto") {
                     (function core__auto() {
@@ -593,7 +629,8 @@ var prettydiff = function prettydiff(api) {
                             flagb = false;
                         if ((/^(\s*#)/).test(a) === true || (/\n\s*(\.|@)mixin\(?(\s*)/).test(a) === true) {
                             clang = "css";
-                            auto  = "<p>Code type set to <strong>auto</strong>. Presumed language is <em>CSS</em>.</p>";
+                            auto  = (("<p>Code type set to <strong>auto</strong>. Presumed language is <em>CSS</em>.</p" +
+                                "") + ">");
                             return;
                         }
                         if ((/^([\s\w]*<)/).test(a) === false && (/(>[\s\w]*)$/).test(a) === false) {
@@ -636,15 +673,22 @@ var prettydiff = function prettydiff(api) {
                                 } else if ((/:\s*(\{|\(|\[)/).test(a) === true || ((/^(\s*return;?\s*\{)/).test(a) === true && (/(\};?\s*)$/).test(a) === true)) {
                                     clang = "javascript";
                                     auto  = "JavaScript";
+                                } else if ((/\{\{#/).test(a) === true && (/\{\{\//).test(a) === true && (/<\w/).test(a) === true) {
+                                    clang = "markup";
+                                    auto  = "markup";
                                 } else {
                                     clang = "css";
                                     auto  = "CSS";
                                 }
+                            } else if ((/"\s*:\s*\{/).test(a) === true) {
+                                auto      = "Titanium Style Sheets";
+                                ctitanium = true;
+                                clang     = "javascript";
                             } else {
                                 clang = clangdefault;
                                 auto  = "unknown";
                             }
-                        } else if (((/(>[\w\s:]*)?<(\/|\!)?[\w\s:\-\[]+/).test(a) === true && ((/^([\s\w]*<)/).test(a) === true || (/(>[\s\w]*)$/).test(a) === true)) || (/^(\s*<s((cript)|(tyle)))/i.test(a) === true && /(<\/s((cript)|(tyle))>\s*)$/i.test(a) === true)) {
+                        } else if ((((/(>[\w\s:]*)?<(\/|\!)?[\w\s:\-\[]+/).test(a) === true || (/^(\s*<\?xml)/).test(a) === true) && ((/^([\s\w]*<)/).test(a) === true || (/(>[\s\w]*)$/).test(a) === true)) || (/^(\s*<s((cript)|(tyle)))/i.test(a) === true && /(<\/s((cript)|(tyle))>\s*)$/i.test(a) === true)) {
                             clang = "markup";
                             if ((/^(\s*<\?xml)/).test(a) === true) {
                                 if ((/XHTML\s+1\.1/).test(a) === true || (/XHTML\s+1\.0\s+(S|s)((trict)|(TRICT))/).test(a) === true) {
@@ -674,7 +718,8 @@ var prettydiff = function prettydiff(api) {
                             } else {
                                 auto = clang;
                             }
-                            auto = "<p>Code type set to <strong>auto</strong>, but language could not be determined. Language defaulted to <em>" + auto + "</em>.</p>";
+                            auto = (("<p>Code type set to <strong>auto</strong>, but language could not be determined." +
+                                "") + " Language defaulted to <em>") + auto + "</em>.</p>";
                         } else {
                             auto = "<p>Code type set to <strong>auto</strong>. Presumed language is <em>" + auto + "</em>.</p>";
                         }
@@ -721,6 +766,7 @@ var prettydiff = function prettydiff(api) {
                             styleguide  : cstyleguide,
                             varword     : "list",
                             wrap        : -1,
+                            titanium    : ctitanium,
                             topcoms     : ctopcoms
                         });
                     }
@@ -750,11 +796,15 @@ var prettydiff = function prettydiff(api) {
                                 } else if (summary !== "") {
                                     output.push("<p><strong class='duplicate'>Duplicate id attribute values detected:</strong> " + summary + "</p>");
                                 }
-                                output.push("<div class='doc'><table class='analysis' summary='Minification efficiency report'><caption>Minification efficiency report</caption><thead><tr><th colspan='2'>Output Size</th><th colspan='2'>Number of Lines From Input</th></tr></thead><tbody><tr><td colspan='2'>");
+                                output.push((("<div class='doc'><table class='analysis' summary='Minification efficiency report" +
+                                    "") + ("'><caption>Minification efficiency report</caption><thead><tr><th colspan='2'>Ou" +
+                                    "") + ("tput Size</th><th colspan='2'>Number of Lines From Input</th></tr></thead><tbody" +
+                                    "") + "><tr><td colspan='2'>"));
                                 output.push(sizeNew);
                                 output.push("</td><td colspan='2'>");
                                 output.push(lines + 1);
-                                output.push("</td></tr><tr><th>Operating System</th><th>Input Size</th><th>Size Difference</th><th>Percentage of Decrease</th></tr><tr><th>Unix/Linux</th><td>");
+                                output.push((("</td></tr><tr><th>Operating System</th><th>Input Size</th><th>Size Difference</t" +
+                                    "") + "h><th>Percentage of Decrease</th></tr><tr><th>Unix/Linux</th><td>"));
                                 output.push(sizeOld);
                                 output.push("</td><td>");
                                 output.push(sizeDifference);
@@ -844,7 +894,9 @@ var prettydiff = function prettydiff(api) {
                             space       : cspace,
                             styleguide  : cstyleguide,
                             varword     : cvarword,
-                            vertical    : (api.vertical === "jsonly") ? true : cvertical
+                            vertical    : (api.vertical === "jsonly") ? true : cvertical,
+                            titanium    : ctitanium,
+                            wrap        : cwrap
                         });
                         apidiffout = summary;
                     }
@@ -855,15 +907,273 @@ var prettydiff = function prettydiff(api) {
                         auto = "<p>Code type is presumed to be <em>React JSX</em>.</p>";
                     }
                     if (capi === "" && cjsscope === true && clang === "javascript") {
-                        builder.head       = "<?xml version='1.0' encoding='UTF-8' ?><!DOCTYPE html PUBLIC '-//W3C//DTD XHTML 1.1//EN' 'http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd'><html xmlns='http://www.w3.org/1999/xhtml' xml:lang='en'><head><title>Pretty Diff - The difference tool</title><meta name='robots' content='index, follow'/> <meta name='DC.title' content='Pretty Diff - The difference tool'/> <link rel='canonical' href='http://prettydiff.com/' type='application/xhtml+xml'/><meta http-equiv='Content-Type' content='application/xhtml+xml;charset=UTF-8'/><meta http-equiv='Content-Style-Type' content='text/css'/><style type='text/css'>";
-                        builder.cssCore    = "body{font-family:'Arial';font-size:10px;overflow-y:scroll;}#samples #dcolorScheme{position:relative;z-index:1000}#apireturn textarea{font-size:1.2em;height:50em;width:100%}button{border-radius:.9em;display:block;font-weight:bold;width:100%}div .button{text-align:center}div button{display:inline-block;font-weight:bold;margin:1em 0;padding:1em 2em}button:hover{cursor:pointer}#introduction{clear:both;margin:0 0 0 5.6em;position:relative;top:-2.75em}#introduction ul{clear:both;height:3em;margin:0 0 0 -5.5em;overflow:hidden;width:100em}#introduction li{clear:none;display:block;float:left;font-size:1.4em;margin:0 4.95em -1em 0}#introduction li li{font-size:1em;margin-left:2em}#introduction .information,#webtool #introduction h2{left:-90em;position:absolute;top:0;width:10em}#introduction h2{float:none}#displayOps{float:right;font-size:1.5em;font-weight:bold;margin-right:1em;width:22.5em}#displayOps.default{position:static}#displayOps.maximized{margin-bottom:-2em;position:relative}#displayOps li{clear:none;display:block;float:left;list-style:none;margin:2em 0 0;text-align:right;width:9em}h1{float:left;font-size:2em;margin:0 .5em .5em 0}#hideOptions{margin-left:5em;padding:0}#title_text{border-style:solid;border-width:.05em;display:block;float:left;font-size:1em;margin-left:.55em;padding:.1em}h1 svg,h1 img{border-style:solid;border-width:.05em;float:left;height:2em;width:2em}h1 span{font-size:.5em}h2,h3{background:#fff;border-style:solid;border-width:.075em;display:inline-block;font-size:1.8em;font-weight:bold;margin:0 .5em .5em 0;padding:0 .2em}#doc h3{margin-top:.5em}h3{font-size:1.6em}h4{font-size:1.4em}fieldset{border-radius:.9em;clear:both;margin:3.5em 0 -2em;padding:0 0 0 1em}legend{border-style:solid;border-width:.1em;font-size:1.2em;font-weight:bold;margin-left:-.25em}.button{margin:1em 0;text-align:center}.button button{display:block;font-size:2em;height:1.5em;margin:0 auto;padding:0;width:50%}#diffreport{right:57.8em}#beaureport{right:38.8em}#minnreport{right:19.8em}#statreport{right:.8em}#statreport .body p,#statreport .body li,#statreport .body h3{font-size:1.2em}#statreport .body h3{margin-top:0}#statreport .body ul{margin-top:1em}#reports{height:4em}#reports h2{display:none}.box{border-style:solid;border-width:0;left:auto;margin:0;padding:0;position:absolute;z-index:10}.box button{border-radius:0;border-style:solid;border-width:.1em;display:block;float:right;font-family:'Lucida Console','Trebuchet MS','Arial';height:1.75em;padding:0;position:absolute;right:0;text-align:center;top:0;width:1.75em;z-index:7}.box button.resize{border-width:.05em;cursor:se-resize;font-size:1.667em;font-weight:normal;height:.8em;line-height:.5em;margin:-.85em 0 0;position:absolute;right:.05em;top:100%;width:.85em}.box button.minimize{margin:.35em 4em 0 0}.box button.maximize{margin:.35em 1.75em 0 0}.box button.save{margin:.35em 6.25em 0 0}.box .buttons{float:right;margin:0}.box h3.heading{cursor:pointer;float:left;font-size:1em;height:3em;margin:0 0 -3.2em;position:relative;width:17em;z-index:6}.box h3.heading span{display:block;font-size:1.8em;padding:.25em 0 0 .5em}.box .body{clear:both;height:20em;margin-top:-.1em;overflow:scroll;padding:4.25em 1em 1em;position:relative;right:0;top:0;width:75em;z-index:5}.options{border-radius:0 0 .9em .9em;clear:both;margin-bottom:1em;padding:1em 1em 3.5em;width:auto}label{display:inline;font-size:1.4em}ol li{font-size:1.4em;list-style-type:decimal}ol li li{font-size:1em}body#doc ol li{font-size:1.1em}ul{margin:-1.4em 0 2em;padding:0}ul li{list-style-type:none}li{clear:both;margin:1em 0 1em 3em}li h4{display:inline;float:left;margin:.4em 0;text-align:left;width:14em}p{clear:both;font-size:1.2em;margin:0 0 1em}#option_comment{height:2.5em;margin-bottom:-1.5em;width:100%}.difflabel{display:block;height:0}#beau-other-span,#diff-other-span{text-indent:-200em;width:0}.options p span{display:block;float:left;font-size:1.2em}#top{min-width:80em}#top em{font-weight:bold}#update{clear:left;float:right;font-weight:bold;padding:.5em;position:absolute;right:1em;top:11em}#announcement{height:2.5em;margin:0 -5em -4.75em;width:27.5em}#textreport{width:100%}#options{float:left;margin:0;width:19em}#options label{width:auto}#options p{clear:both;font-size:1em;margin:0;padding:0}#options p span{clear:both;float:none;height:2em;margin:0 0 0 2em}#csvchar{width:11.8em}#language,#csvchar,#colorScheme{margin:0 0 1em 2em}#codeInput{margin-left:22.5em}#Beautify.wide p,#Beautify.tall p.file,#Minify.wide p,#Minify.tall p.file{clear:none;float:none}#diffops p,#miniops p,#beauops p{clear:both;font-size:1em;padding-top:1em}#options p strong,#diffops p strong,#miniops p strong,#beauops p strong,#options .label,#diffops .label,#miniops .label,#beauops .label{display:block;float:left;font-size:1.2em;font-weight:bold;margin-bottom:1em;width:17.5em}input[type='radio']{margin:0 .25em}input[type='file']{box-shadow:none}select{border-style:inset;border-width:.1em;width:11.85em}.options input,.options label{border-style:none;display:block;float:left}.options span label{margin-left:.4em;white-space:nowrap;width:12em}.options p span label{font-size:1em}#webtool .options input[type=text]{margin-right:1em;width:11.6em}#webtool .options input[type=text],div input,textarea{border-style:inset;border-width:.1em}textarea{display:inline-block;height:10em;margin:0}strong label{font-size:1em;width:inherit}strong.new{background:#ff6;font-style:italic}#miniops span strong,#diffops span strong,#beauops span strong{display:inline;float:none;font-size:1em;width:auto}#Beautify .input label,#Beautify .output label,#Minify .input label,#Minify .output label{display:block;font-size:1.05em;font-weight:bold}#beautyinput,#minifyinput,#baseText,#newText,#beautyoutput,#minifyoutput{font-size:1em}.clear{clear:both;display:block}.wide,.tall,#diffBase,#diffNew{border-radius:0 0 .9em .9em;margin-bottom:1em}#diffBase,#diffNew{padding:1em}#diffBase p,#diffNew p{clear:none;float:none}#diffBase.wide textarea,#diffNew.wide textarea{height:10.1em}.wide,.tall{padding:1em 1.25em 0}#diff .addsource{cursor:pointer;margin-bottom:1em;padding:0}#diff .addsource input{display:block;float:left;margin:.5em .5em -1.5em}#diff .addsource label{cursor:pointer;display:inline-block;font-size:1.2em;padding:.5em .5em .5em 2em}.wide label{float:none;margin-right:0;width:100%}.wide #beautyinput,.wide #minifyinput,.wide #beautyoutput,.wide #minifyoutput{height:14.8em;margin:0;width:99.5%}.tall .input{clear:none;float:left}.tall .output{clear:none;float:right;margin-top:-2.4em}.tall .input,.tall .output{width:49%}.tall .output label{text-align:right}.tall .input textarea{height:31.7em}.tall .output textarea{height:34em}.tall textarea{margin:0 0 -.1em;width:100%}.tall #beautyinput,.tall #minifyinput{float:left}.tall #beautyoutput,.tall #minifyoutput{float:right}.wide{width:auto}#diffBase.difftall,#diffNew.difftall{margin-bottom:1.3em;padding:1em 1% .9em;width:47.5%}#diffBase.difftall{float:left}#diffNew.difftall{float:right}.file input,.labeltext input{display:inline-block;margin:0 .7em 0 0;width:16em}.labeltext,.file{font-size:.9em;font-weight:bold;margin-bottom:1em}.difftall textarea{height:30.6em;margin-bottom:.5em}#diffBase textarea,#diffNew textarea{width:99.5%}.input,.output{margin:0}#diffBase.wide,#diffNew.wide{padding:.8em 1em}#diffBase.wide{margin-bottom:1.2em}#diffoutput{width:100%}#diffoutput p em,#diffoutput li em,.analysis .bad,.analysis .good{font-weight:bold}#diffoutput ul{font-size:1.2em;margin-top:1em}#diffoutput ul li{display:list-item;list-style-type:disc}.analysis th{text-align:left}.analysis td{text-align:right}#doc ul{margin-top:1em}#doc ul li{font-size:1.2em}body#doc ul li{font-size:1.1em}#doc ol li span{display:block;margin-left:2em}.diff,.beautify{border-style:solid;border-width:.2em;display:inline-block;font-family:'Courier New',Courier,'Lucida Console',monospace;margin:0 1em 1em 0;position:relative}.beautify .data em{display:inline-block;font-style:normal;font-weight:bold;padding-top:.5em}.diff .skip{border-style:none none solid;border-width:0 0 .1em}.diff li,.diff p,.diff h3,.beautify li{font-size:1.1em}.diff .diff-left,.diff .diff-right{display:table-cell}.diff .diff-left{border-style:none none none solid;border-width:0 0 0 .1em}.diff .diff-right{border-style:none none none solid;border-width:0 0 0 .1em;margin-left:-.1em;min-width:16.5em;right:0;top:0}.diff-right .data ol{min-width:16.5em}.diff-right .data{border-style:none solid none none;border-width:0 .1em 0 0;width:100%}.diff-right .data li{min-width:16.5em}.diff ol,.beautify ol{display:table-cell;margin:0;padding:0}.diff li,.beautify li{border-style:none none solid;border-width:0 0 .1em;display:block;line-height:1.2;list-style-type:none;margin:0;padding-bottom:0;padding-right:.5em}.diff li{padding-top:.5em}.beautify .count li{padding-top:.5em}@media screen and (-webkit-min-device-pixel-ratio:0) {.beautify .count li{padding-top:.546em}}#doc .beautify .count li.fold{color:#900;cursor:pointer;font-weight:bold;padding-left:.5em}.diff .count,.beautify .count{border-style:solid;border-width:0 .1em 0 0;font-weight:normal;padding:0;text-align:right}.diff .count li,.beautify .count li{padding-left:2em}.diff .data,.beautify .data{text-align:left;white-space:pre}.diff .data li,.beautify .data li{letter-spacing:.1em;padding-left:.5em;white-space:pre}#webtool .diff h3{border-style:none solid solid;border-width:0 .1em .2em;box-shadow:none;display:block;font-family:Verdana;margin:0 0 0 -.1em;padding:.2em 2em;text-align:left}.diff li em{font-style:normal;margin:0 -.09em;padding:.05em 0}.diff p.author{border-style:solid;border-width:.2em .1em .1em;margin:0;overflow:hidden;padding:.4em;text-align:right}#dcolorScheme{float:right;margin:-2em 0 0 0}#dcolorScheme label{display:inline-block;font-size:1em;margin-right:1em}body#doc{font-size:.8em;max-width:80em}#doc th{font-weight:bold}#doc td span{display:block}#doc table,.box .body table{border-collapse:collapse;border-style:solid;border-width:.2em;clear:both}#doc table{font-size:1.2em}body#doc table{font-size:1em}#doc td,#doc th{border-left-style:solid;border-left-width:.1em;border-top-style:solid;border-top-width:.1em;padding:.5em}#doc em,.box .body em{font-style:normal;font-weight:bold}#doc div{margin-bottom:2em}#doc div div{clear:both;margin-bottom:1em}#doc h2{font-size:1.6em;margin:.5em .5em .5em 0}#doc ol{clear:both}#doc_contents li{font-size:1.75em;margin:1em 0 0}#doc_contents ol ol li{font-size:.75em;list-style:lower-alpha;margin:.5em 0 0}#doc_contents ol{padding-bottom:1em}#doc #doc_contents ol ol{background-color:inherit;border-style:none;margin:.25em .3em 0 0;padding-bottom:0}#doc_contents a{text-decoration:none}#diffoutput #thirdparties li{display:inline-block;list-style-type:none}#thirdparties a{border-style:none;display:block;height:4em;text-decoration:none}button,fieldset,.box h3.heading,.box .body,.options,.diff .replace em,.diff .delete em,.diff .insert em,.wide,.tall,#diffBase,#diffNew,#doc div,#doc div div,#doc ol,#option_comment,#update,#thirdparties img,#diffoutput #thirdparties{border-style:solid;border-width:.1em}#apitest p{clear:both;padding-top:.75em}#apitest label,#apitest select,#apitest input,#apitest textarea{float:left}#apitest label{width:20em}#apitest select,#apitest input,#apitest textarea{width:30em}#pdsamples{list-style-position:inside;margin:-12em 0 0 0;padding:0;position:relative;z-index:10}#pdsamples li{border-radius:1em;border-style:solid;border-width:.1em;margin:0 0 3em;padding:1em}#pdsamples li div{border-radius:1em;border-style:solid;border-width:.1em;margin:0;padding:1em}#pdsamples li p{display:inline-block;font-size:1em;margin:0}#pdsamples li p a{display:block;margin:0 0 1em 2em}#pdsamples li ul{margin:0 0 0 2em}#samples #pdsamples li li{background:none transparent;border-style:none;display:list-item;list-style:disc outside;margin:0;padding:.5em}#modalSave span{background:#000;display:block;left:0;opacity:.5;position:absolute;top:0;z-index:9000}#modalSave p{background:#eee;color:#333;font-size:3em;padding:1em;position:absolute;text-align:center;top:10em;width:25em;z-index:9001}#modalSave p em{display:block;font-size:.75em;margin-top:1em}#modalSave p strong{color:#c00;font-weight:bold}@media print{p,.options,#Beautify,#Minify,#diff,ul{display:none}div{width:100%}html td{font-size:.8em;white-space:normal}}";
-                        builder.cssColor   = "html .white,body.white{color:#333}body.white button{background:#eee;border-color:#222;box-shadow:0 .1em .2em rgba(64,64,64,0.75);color:#666;text-shadow:.05em .05em .1em #ccc}.white button:hover,.white button:active{background:#999;color:#eee;text-shadow:.1em .1em .1em #333}.white a{color:#009}.white #title_text{border-color:#fff;color:#333}.white #introduction h2{border-color:#999;color:#333}.white h1 svg{background:#eee;border-color:#999;box-shadow:0 .1em .2em rgba(150,150,150,0.5)}.white h2,.white h3{background:#eee;border-color:#eee;box-shadow:none;padding-left:0;text-shadow:none}.white fieldset{background:#ddd;border-color:#999}.white legend{background:#fff;border-color:#999;color:#333;text-shadow:none}.white .box{background:#666;border-color:#999;box-shadow:0 .4em .8em rgba(64,64,64,0.75)}.white .box button{box-shadow:0 .1em .2em rgba(0,0,0,0.75);text-shadow:.1em .1em .1em rgba(0,0,0,.5)}.white .box button.resize{background:#bbf;border-color:#446;color:#446}.white .box button.resize:hover{background:#ddf;border-color:#228;color:#228}.white .box button.save{background:#d99;border-color:#300;color:#300}.white .box button.save:hover{background:#fcc;border-color:#822;color:#822}.white .box button.minimize{background:#bbf;border-color:#006;color:#006}.white .box button.minimize:hover{background:#eef;border-color:#228;color:#228}.white .box button.maximize{background:#9c9;border-color:#030;color:#030}.white .box button.maximize:hover{background:#cfc;border-color:#060;color:#060}.white .box h3.heading{background:#ddd;border-color:#888;box-shadow:.2em .2em .4em #666}.white .box h3.heading:hover{background:#333;color:#eee}.white .box .body{background:#eee;border-color:#888;box-shadow:0 0 .4em rgba(64,64,64,0.75)}.white .options{background:#eee;border-color:#999;box-shadow:0 .2em .4em rgba(64,64,64,0.5);text-shadow:.05em .05em .1em #ccc}.white .options h2,.white #Beautify h2,.white #Minify h2,.white #diffBase h2,.white #diffNew h2{background:#eee;border-color:#eee;box-shadow:none;text-shadow:none}.white #option_comment{background:#ddd;border-color:#999}.white #top em{color:#00f}.white #update{background:#eee;border-color:#999;box-shadow:0 .1em .2em rgba(64,64,64,0.5)}.white .wide,.white .tall,.white #diffBase,.white #diffNew{background:#eee;border-color:#999;box-shadow:0 .2em .4em rgba(64,64,64,0.5)}.white .file input,.white .labeltext input{border-color:#fff}#webtool.white input.unchecked{background:#ccc;color:#666}.white .options input[type=text],.white .options select{border-color:#999}.white #beautyoutput,.white #minifyoutput{background:#ddd}.white #diffoutput p em,.white #diffoutput li em{color:#c00}.white .analysis .bad{background-color:#ebb;color:#400}.white .analysis .good{background-color:#cec;color:#040}.white #doc .analysis thead th,.white #doc .analysis th[colspan]{background:#eef}.white div input{border-color:#999}.white textarea{border-color:#999}.white textarea:hover{background:#eef8ff}.white .diff,.white .beautify,.white .diff ol,.white .beautify ol,.white .diff .diff-left,.white .diff .diff-right,.white h3,.white p.author{border-color:#999}.white .diff .count li,.white .beautify .count li{background:#eed;border-color:#bbc;color:#886}.white .diff h3{background:#ddd;border-bottom-color:#bbc}.white .diff .empty{background-color:#ddd;border-color:#ccc}.white .diff .replace{background-color:#fea;border-color:#dd8}.white .diff .data .replace em{background-color:#ffd;border-color:#963;color:#630}.white .diff .delete{background-color:#fbb;border-color:#eaa}.white .diff .data .delete em{background-color:#fdd;border-color:#700;color:#600}.white .diff .equal,.white .beautify .data li{background-color:#fff;border-color:#eee}.white .beautify .data em.s1{color:#f66}.white .beautify .data em.s2{color:#12f}.white .beautify .data em.s3{color:#090}.white .beautify .data em.s4{color:#d6d}.white .beautify .data em.s5{color:#7cc}.white .beautify .data em.s6{color:#c85}.white .beautify .data em.s7{color:#737}.white .beautify .data em.s8{color:#6d0}.white .beautify .data em.s9{color:#dd0s}.white .beautify .data em.s10{color:#893}.white .beautify .data em.s11{color:#b97}.white .beautify .data em.s12{color:#bbb}.white .beautify .data em.s13{color:#cc3}.white .beautify .data em.s14{color:#333}.white .beautify .data em.s15{color:#9d9}.white .beautify .data em.s16{color:#880}.white .beautify .data .l0{background:#fff}.white .beautify .data .l1{background:#fed}.white .beautify .data .l2{background:#def}.white .beautify .data .l3{background:#efe}.white .beautify .data .l4{background:#fef}.white .beautify .data .l5{background:#eef}.white .beautify .data .l6{background:#fff8cc}.white .beautify .data .l7{background:#ede}.white .beautify .data .l8{background:#efc}.white .beautify .data .l9{background:#ffd}.white .beautify .data .l10{background:#edc}.white .beautify .data .l11{background:#fdb}.white .beautify .data .l12{background:#f8f8f8}.white .beautify .data .l13{background:#ffb}.white .beautify .data .l14{background:#eec}.white .beautify .data .l15{background:#cfc}.white .beautify .data .l16{background:#eea}.white .beautify .data .c0{background:#ddd}.white .beautify .data li{color:#777}.white .diff .skip{background-color:#efefef;border-color:#ddd}.white .diff .insert{background-color:#bfb;border-color:#aea}.white .diff .data .insert em{background-color:#efc;border-color:#070;color:#050}.white .diff p.author{background:#efefef;border-top-color:#bbc}.white #doc table,.white .box .body table{background:#fff;border-color:#999}.white #doc strong,.white .box .body strong{color:#c00}.white .box .body em,.white .box .body #doc em{color:#090}.white #thirdparties img,.white #diffoutput #thirdparties{border-color:#999}.white #thirdparties img{box-shadow:.2em .2em .4em #999}.white #diffoutput #thirdparties{background:#eee}.white #doc div,#doc.white div{background:#ddd;border-color:#999}.white #doc ol,#doc.white ol{background:#eee;border-color:#999}.white #doc div div,#doc.white div div{background:#eee;border-color:#999}.white #doc table,#doc.white table{background:#fff;border-color:#999}.white #doc th,#doc.white th{background:#ddd;border-left-color:#999;border-top-color:#999}.white #doc tr:hover,#doc.white tr:hover{background:#ddd}#doc.white em{color:#060}.white #doc div:hover,#doc.white div:hover{background:#ccc}.white #doc div div:hover,#doc.white div div:hover,#doc.white div ol:hover{background:#fff}.white #pdsamples li{background:#eee;border-color:#999}.white #pdsamples li div{background:#ddd;border-color:#999}.white #pdsamples li div a{color:#47a}.white #pdsamples li p a{color:#009}";
+                        builder.head       = (("<?xml version='1.0' encoding='UTF-8' ?><!DOCTYPE html PUBLIC '-//W3C//DTD XHTML " +
+                            "") + ("1.1//EN' 'http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd'><html xmlns='http://www." +
+                            "") + ("w3.org/1999/xhtml' xml:lang='en'><head><title>Pretty Diff - The difference tool<" +
+                            "") + ("/title><meta name='robots' content='index, follow'/> <meta name='DC.title' conte" +
+                            "") + ("nt='Pretty Diff - The difference tool'/> <link rel='canonical' href='http://pret" +
+                            "") + ("tydiff.com/' type='application/xhtml+xml'/><meta http-equiv='Content-Type' conte" +
+                            "") + ("nt='application/xhtml+xml;charset=UTF-8'/><meta http-equiv='Content-Style-Type' " +
+                            "") + "content='text/css'/><style type='text/css'>");
+                        builder.cssCore    = (("body{font-family:'Arial';font-size:10px;overflow-y:scroll;}#samples #dcolorSchem" +
+                            "") + ("e{position:relative;z-index:1000}#apireturn textarea{font-size:1.2em;height:50em" +
+                            "") + (";width:100%}button{border-radius:.9em;display:block;font-weight:bold;width:100%}" +
+                            "") + ("div .button{text-align:center}div button{display:inline-block;font-weight:bold;m" +
+                            "") + ("argin:1em 0;padding:1em 2em}button:hover{cursor:pointer}#introduction{clear:both" +
+                            "") + (";margin:0 0 0 5.6em;position:relative;top:-2.75em}#introduction ul{clear:both;he" +
+                            "") + ("ight:3em;margin:0 0 0 -5.5em;overflow:hidden;width:100em}#introduction li{clear:" +
+                            "") + ("none;display:block;float:left;font-size:1.4em;margin:0 4.95em -1em 0}#introducti" +
+                            "") + ("on li li{font-size:1em;margin-left:2em}#introduction .information,#webtool #intr" +
+                            "") + ("oduction h2{left:-90em;position:absolute;top:0;width:10em}#introduction h2{float" +
+                            "") + (":none}#displayOps{float:right;font-size:1.5em;font-weight:bold;margin-right:1em;" +
+                            "") + ("width:22.5em}#displayOps.default{position:static}#displayOps.maximized{margin-bo" +
+                            "") + ("ttom:-2em;position:relative}#displayOps li{clear:none;display:block;float:left;l" +
+                            "") + ("ist-style:none;margin:2em 0 0;text-align:right;width:9em}h1{float:left;font-size" +
+                            "") + (":2em;margin:0 .5em .5em 0}#hideOptions{margin-left:5em;padding:0}#title_text{bor" +
+                            "") + ("der-style:solid;border-width:.05em;display:block;float:left;font-size:1em;margin" +
+                            "") + ("-left:.55em;padding:.1em}h1 svg,h1 img{border-style:solid;border-width:.05em;flo" +
+                            "") + ("at:left;height:2em;width:2em}h1 span{font-size:.5em}h2,h3{background:#fff;border" +
+                            "") + ("-style:solid;border-width:.075em;display:inline-block;font-size:1.8em;font-weigh" +
+                            "") + ("t:bold;margin:0 .5em .5em 0;padding:0 .2em}#doc h3{margin-top:.5em}h3{font-size:" +
+                            "") + ("1.6em}h4{font-size:1.4em}fieldset{border-radius:.9em;clear:both;margin:3.5em 0 -" +
+                            "") + ("2em;padding:0 0 0 1em}legend{border-style:solid;border-width:.1em;font-size:1.2e" +
+                            "") + ("m;font-weight:bold;margin-left:-.25em}.button{margin:1em 0;text-align:center}.bu" +
+                            "") + ("tton button{display:block;font-size:2em;height:1.5em;margin:0 auto;padding:0;wid" +
+                            "") + ("th:50%}#diffreport{right:57.8em}#beaureport{right:38.8em}#minnreport{right:19.8e" +
+                            "") + ("m}#statreport{right:.8em}#statreport .body p,#statreport .body li,#statreport .b" +
+                            "") + ("ody h3{font-size:1.2em}#statreport .body h3{margin-top:0}#statreport .body ul{ma" +
+                            "") + ("rgin-top:1em}#reports{height:4em}#reports h2{display:none}.box{border-style:soli" +
+                            "") + ("d;border-width:0;left:auto;margin:0;padding:0;position:absolute;z-index:10}.box " +
+                            "") + ("button{border-radius:0;border-style:solid;border-width:.1em;display:block;float:" +
+                            "") + ("right;font-family:'Lucida Console','Trebuchet MS','Arial';height:1.75em;padding:" +
+                            "") + ("0;position:absolute;right:0;text-align:center;top:0;width:1.75em;z-index:7}.box " +
+                            "") + ("button.resize{border-width:.05em;cursor:se-resize;font-size:1.667em;font-weight:" +
+                            "") + ("normal;height:.8em;line-height:.5em;margin:-.85em 0 0;position:absolute;right:.0" +
+                            "") + ("5em;top:100%;width:.85em}.box button.minimize{margin:.35em 4em 0 0}.box button.m" +
+                            "") + ("aximize{margin:.35em 1.75em 0 0}.box button.save{margin:.35em 6.25em 0 0}.box .b" +
+                            "") + ("uttons{float:right;margin:0}.box h3.heading{cursor:pointer;float:left;font-size:" +
+                            "") + ("1em;height:3em;margin:0 0 -3.2em;position:relative;width:17em;z-index:6}.box h3." +
+                            "") + ("heading span{display:block;font-size:1.8em;padding:.25em 0 0 .5em}.box .body{cle" +
+                            "") + ("ar:both;height:20em;margin-top:-.1em;overflow:scroll;padding:4.25em 1em 1em;posi" +
+                            "") + ("tion:relative;right:0;top:0;width:75em;z-index:5}.options{border-radius:0 0 .9em" +
+                            "") + (" .9em;clear:both;margin-bottom:1em;padding:1em 1em 3.5em;width:auto}label{displa" +
+                            "") + ("y:inline;font-size:1.4em}ol li{font-size:1.4em;list-style-type:decimal}ol li li{" +
+                            "") + ("font-size:1em}body#doc ol li{font-size:1.1em}ul{margin:-1.4em 0 2em;padding:0}ul" +
+                            "") + (" li{list-style-type:none}li{clear:both;margin:1em 0 1em 3em}li h4{display:inline" +
+                            "") + (";float:left;margin:.4em 0;text-align:left;width:14em}p{clear:both;font-size:1.2e" +
+                            "") + ("m;margin:0 0 1em}#option_comment{height:2.5em;margin-bottom:-1.5em;width:100%}.d" +
+                            "") + ("ifflabel{display:block;height:0}#beau-other-span,#diff-other-span{text-indent:-2" +
+                            "") + ("00em;width:0}.options p span{display:block;float:left;font-size:1.2em}#top{min-w" +
+                            "") + ("idth:80em}#top em{font-weight:bold}#update{clear:left;float:right;font-weight:bo" +
+                            "") + ("ld;padding:.5em;position:absolute;right:1em;top:11em}#announcement{height:2.5em;" +
+                            "") + ("margin:0 -5em -4.75em;width:27.5em}#textreport{width:100%}#options{float:left;ma" +
+                            "") + ("rgin:0;width:19em}#options label{width:auto}#options p{clear:both;font-size:1em;" +
+                            "") + ("margin:0;padding:0}#options p span{clear:both;float:none;height:2em;margin:0 0 0" +
+                            "") + (" 2em}#csvchar{width:11.8em}#language,#csvchar,#colorScheme{margin:0 0 1em 2em}#c" +
+                            "") + ("odeInput{margin-left:22.5em}#Beautify.wide p,#Beautify.tall p.file,#Minify.wide " +
+                            "") + ("p,#Minify.tall p.file{clear:none;float:none}#diffops p,#miniops p,#beauops p{cle" +
+                            "") + ("ar:both;font-size:1em;padding-top:1em}#options p strong,#diffops p strong,#minio" +
+                            "") + ("ps p strong,#beauops p strong,#options .label,#diffops .label,#miniops .label,#b" +
+                            "") + ("eauops .label{display:block;float:left;font-size:1.2em;font-weight:bold;margin-b" +
+                            "") + ("ottom:1em;width:17.5em}input[type='radio']{margin:0 .25em}input[type='file']{box" +
+                            "") + ("-shadow:none}select{border-style:inset;border-width:.1em;width:11.85em}.options " +
+                            "") + ("input,.options label{border-style:none;display:block;float:left}.options span la" +
+                            "") + ("bel{margin-left:.4em;white-space:nowrap;width:12em}.options p span label{font-si" +
+                            "") + ("ze:1em}#webtool .options input[type=text]{margin-right:1em;width:11.6em}#webtool" +
+                            "") + (" .options input[type=text],div input,textarea{border-style:inset;border-width:.1" +
+                            "") + ("em}textarea{display:inline-block;height:10em;margin:0}strong label{font-size:1em" +
+                            "") + (";width:inherit}strong.new{background:#ff6;font-style:italic}#miniops span strong" +
+                            "") + (",#diffops span strong,#beauops span strong{display:inline;float:none;font-size:1" +
+                            "") + ("em;width:auto}#Beautify .input label,#Beautify .output label,#Minify .input labe" +
+                            "") + ("l,#Minify .output label{display:block;font-size:1.05em;font-weight:bold}#beautyi" +
+                            "") + ("nput,#minifyinput,#baseText,#newText,#beautyoutput,#minifyoutput{font-size:1em}." +
+                            "") + ("clear{clear:both;display:block}.wide,.tall,#diffBase,#diffNew{border-radius:0 0 " +
+                            "") + (".9em .9em;margin-bottom:1em}#diffBase,#diffNew{padding:1em}#diffBase p,#diffNew " +
+                            "") + ("p{clear:none;float:none}#diffBase.wide textarea,#diffNew.wide textarea{height:10" +
+                            "") + (".1em}.wide,.tall{padding:1em 1.25em 0}#diff .addsource{cursor:pointer;margin-bot" +
+                            "") + ("tom:1em;padding:0}#diff .addsource input{display:block;float:left;margin:.5em .5" +
+                            "") + ("em -1.5em}#diff .addsource label{cursor:pointer;display:inline-block;font-size:1" +
+                            "") + (".2em;padding:.5em .5em .5em 2em}.wide label{float:none;margin-right:0;width:100%" +
+                            "") + ("}.wide #beautyinput,.wide #minifyinput,.wide #beautyoutput,.wide #minifyoutput{h" +
+                            "") + ("eight:14.8em;margin:0;width:99.5%}.tall .input{clear:none;float:left}.tall .outp" +
+                            "") + ("ut{clear:none;float:right;margin-top:-2.4em}.tall .input,.tall .output{width:49%" +
+                            "") + ("}.tall .output label{text-align:right}.tall .input textarea{height:31.7em}.tall " +
+                            "") + (".output textarea{height:34em}.tall textarea{margin:0 0 -.1em;width:100%}.tall #b" +
+                            "") + ("eautyinput,.tall #minifyinput{float:left}.tall #beautyoutput,.tall #minifyoutput" +
+                            "") + ("{float:right}.wide{width:auto}#diffBase.difftall,#diffNew.difftall{margin-bottom" +
+                            "") + (":1.3em;padding:1em 1% .9em;width:47.5%}#diffBase.difftall{float:left}#diffNew.di" +
+                            "") + ("fftall{float:right}.file input,.labeltext input{display:inline-block;margin:0 .7" +
+                            "") + ("em 0 0;width:16em}.labeltext,.file{font-size:.9em;font-weight:bold;margin-bottom" +
+                            "") + (":1em}.difftall textarea{height:30.6em;margin-bottom:.5em}#diffBase textarea,#dif" +
+                            "") + ("fNew textarea{width:99.5%}.input,.output{margin:0}#diffBase.wide,#diffNew.wide{p" +
+                            "") + ("adding:.8em 1em}#diffBase.wide{margin-bottom:1.2em}#diffoutput{width:100%}#diffo" +
+                            "") + ("utput p em,#diffoutput li em,.analysis .bad,.analysis .good{font-weight:bold}#di" +
+                            "") + ("ffoutput ul{font-size:1.2em;margin-top:1em}#diffoutput ul li{display:list-item;l" +
+                            "") + ("ist-style-type:disc}.analysis th{text-align:left}.analysis td{text-align:right}#" +
+                            "") + ("doc ul{margin-top:1em}#doc ul li{font-size:1.2em}body#doc ul li{font-size:1.1em}" +
+                            "") + ("#doc ol li span{display:block;margin-left:2em}.diff,.beautify{border-style:solid" +
+                            "") + (";border-width:.2em;display:inline-block;font-family:'Courier New',Courier,'Lucid" +
+                            "") + ("a Console',monospace;margin:0 1em 1em 0;position:relative}.beautify .data em{dis" +
+                            "") + ("play:inline-block;font-style:normal;font-weight:bold;padding-top:.5em}.diff .ski" +
+                            "") + ("p{border-style:none none solid;border-width:0 0 .1em}.diff li,.diff p,.diff h3,." +
+                            "") + ("beautify li{font-size:1.1em}.diff .diff-left,.diff .diff-right{display:table-cel" +
+                            "") + ("l}.diff .diff-left{border-style:none none none solid;border-width:0 0 0 .1em}.di" +
+                            "") + ("ff .diff-right{border-style:none none none solid;border-width:0 0 0 .1em;margin-" +
+                            "") + ("left:-.1em;min-width:16.5em;right:0;top:0}.diff-right .data ol{min-width:16.5em}" +
+                            "") + (".diff-right .data{border-style:none solid none none;border-width:0 .1em 0 0;widt" +
+                            "") + ("h:100%}.diff-right .data li{min-width:16.5em}.diff ol,.beautify ol{display:table" +
+                            "") + ("-cell;margin:0;padding:0}.diff li,.beautify li{border-style:none none solid;bord" +
+                            "") + ("er-width:0 0 .1em;display:block;line-height:1.2;list-style-type:none;margin:0;pa" +
+                            "") + ("dding-bottom:0;padding-right:.5em}.diff li{padding-top:.5em}.beautify .count li{" +
+                            "") + ("padding-top:.5em}@media screen and (-webkit-min-device-pixel-ratio:0) {.beautify" +
+                            "") + (" .count li{padding-top:.546em}}#doc .beautify .count li.fold{color:#900;cursor:p" +
+                            "") + ("ointer;font-weight:bold;padding-left:.5em}.diff .count,.beautify .count{border-s" +
+                            "") + ("tyle:solid;border-width:0 .1em 0 0;font-weight:normal;padding:0;text-align:right" +
+                            "") + ("}.diff .count li,.beautify .count li{padding-left:2em}.diff .data,.beautify .dat" +
+                            "") + ("a{text-align:left;white-space:pre}.diff .data li,.beautify .data li{letter-spaci" +
+                            "") + ("ng:.1em;padding-left:.5em;white-space:pre}#webtool .diff h3{border-style:none so" +
+                            "") + ("lid solid;border-width:0 .1em .2em;box-shadow:none;display:block;font-family:Ver" +
+                            "") + ("dana;margin:0 0 0 -.1em;padding:.2em 2em;text-align:left}.diff li em{font-style:" +
+                            "") + ("normal;margin:0 -.09em;padding:.05em 0}.diff p.author{border-style:solid;border-" +
+                            "") + ("width:.2em .1em .1em;margin:0;overflow:hidden;padding:.4em;text-align:right}#dco" +
+                            "") + ("lorScheme{float:right;margin:-2em 0 0 0}#dcolorScheme label{display:inline-block" +
+                            "") + (";font-size:1em;margin-right:1em}body#doc{font-size:.8em;max-width:80em}#doc th{f" +
+                            "") + ("ont-weight:bold}#doc td span{display:block}#doc table,.box .body table{border-co" +
+                            "") + ("llapse:collapse;border-style:solid;border-width:.2em;clear:both}#doc table{font-" +
+                            "") + ("size:1.2em}body#doc table{font-size:1em}#doc td,#doc th{border-left-style:solid;" +
+                            "") + ("border-left-width:.1em;border-top-style:solid;border-top-width:.1em;padding:.5em" +
+                            "") + ("}#doc em,.box .body em{font-style:normal;font-weight:bold}#doc div{margin-bottom" +
+                            "") + (":2em}#doc div div{clear:both;margin-bottom:1em}#doc h2{font-size:1.6em;margin:.5" +
+                            "") + ("em .5em .5em 0}#doc ol{clear:both}#doc_contents li{font-size:1.75em;margin:1em 0" +
+                            "") + (" 0}#doc_contents ol ol li{font-size:.75em;list-style:lower-alpha;margin:.5em 0 0" +
+                            "") + ("}#doc_contents ol{padding-bottom:1em}#doc #doc_contents ol ol{background-color:i" +
+                            "") + ("nherit;border-style:none;margin:.25em .3em 0 0;padding-bottom:0}#doc_contents a{" +
+                            "") + ("text-decoration:none}#diffoutput #thirdparties li{display:inline-block;list-styl" +
+                            "") + ("e-type:none}#thirdparties a{border-style:none;display:block;height:4em;text-deco" +
+                            "") + ("ration:none}button,fieldset,.box h3.heading,.box .body,.options,.diff .replace e" +
+                            "") + ("m,.diff .delete em,.diff .insert em,.wide,.tall,#diffBase,#diffNew,#doc div,#doc" +
+                            "") + (" div div,#doc ol,#option_comment,#update,#thirdparties img,#diffoutput #thirdpar" +
+                            "") + ("ties{border-style:solid;border-width:.1em}#apitest p{clear:both;padding-top:.75e" +
+                            "") + ("m}#apitest label,#apitest select,#apitest input,#apitest textarea{float:left}#ap" +
+                            "") + ("itest label{width:20em}#apitest select,#apitest input,#apitest textarea{width:30" +
+                            "") + ("em}#pdsamples{list-style-position:inside;margin:-12em 0 0 0;padding:0;position:r" +
+                            "") + ("elative;z-index:10}#pdsamples li{border-radius:1em;border-style:solid;border-wid" +
+                            "") + ("th:.1em;margin:0 0 3em;padding:1em}#pdsamples li div{border-radius:1em;border-st" +
+                            "") + ("yle:solid;border-width:.1em;margin:0;padding:1em}#pdsamples li p{display:inline-" +
+                            "") + ("block;font-size:1em;margin:0}#pdsamples li p a{display:block;margin:0 0 1em 2em}" +
+                            "") + ("#pdsamples li ul{margin:0 0 0 2em}#samples #pdsamples li li{background:none tran" +
+                            "") + ("sparent;border-style:none;display:list-item;list-style:disc outside;margin:0;pad" +
+                            "") + ("ding:.5em}#modalSave span{background:#000;display:block;left:0;opacity:.5;positi" +
+                            "") + ("on:absolute;top:0;z-index:9000}#modalSave p{background:#eee;color:#333;font-size" +
+                            "") + (":3em;padding:1em;position:absolute;text-align:center;top:10em;width:25em;z-index" +
+                            "") + (":9001}#modalSave p em{display:block;font-size:.75em;margin-top:1em}#modalSave p " +
+                            "") + ("strong{color:#c00;font-weight:bold}@media print{p,.options,#Beautify,#Minify,#di" +
+                            "") + "ff,ul{display:none}div{width:100%}html td{font-size:.8em;white-space:normal}}");
+                        builder.cssColor   = (("html .white,body.white{color:#333}body.white button{background:#eee;border-color" +
+                            "") + (":#222;box-shadow:0 .1em .2em rgba(64,64,64,0.75);color:#666;text-shadow:.05em .0" +
+                            "") + ("5em .1em #ccc}.white button:hover,.white button:active{background:#999;color:#ee" +
+                            "") + ("e;text-shadow:.1em .1em .1em #333}.white a{color:#009}.white #title_text{border-" +
+                            "") + ("color:#fff;color:#333}.white #introduction h2{border-color:#999;color:#333}.whit" +
+                            "") + ("e h1 svg{background:#eee;border-color:#999;box-shadow:0 .1em .2em rgba(150,150,1" +
+                            "") + ("50,0.5)}.white h2,.white h3{background:#eee;border-color:#eee;box-shadow:none;pa" +
+                            "") + ("dding-left:0;text-shadow:none}.white fieldset{background:#ddd;border-color:#999}" +
+                            "") + (".white legend{background:#fff;border-color:#999;color:#333;text-shadow:none}.whi" +
+                            "") + ("te .box{background:#666;border-color:#999;box-shadow:0 .4em .8em rgba(64,64,64,0" +
+                            "") + (".75)}.white .box button{box-shadow:0 .1em .2em rgba(0,0,0,0.75);text-shadow:.1em" +
+                            "") + (" .1em .1em rgba(0,0,0,.5)}.white .box button.resize{background:#bbf;border-color" +
+                            "") + (":#446;color:#446}.white .box button.resize:hover{background:#ddf;border-color:#2" +
+                            "") + ("28;color:#228}.white .box button.save{background:#d99;border-color:#300;color:#3" +
+                            "") + ("00}.white .box button.save:hover{background:#fcc;border-color:#822;color:#822}.w" +
+                            "") + ("hite .box button.minimize{background:#bbf;border-color:#006;color:#006}.white .b" +
+                            "") + ("ox button.minimize:hover{background:#eef;border-color:#228;color:#228}.white .bo" +
+                            "") + ("x button.maximize{background:#9c9;border-color:#030;color:#030}.white .box butto" +
+                            "") + ("n.maximize:hover{background:#cfc;border-color:#060;color:#060}.white .box h3.hea" +
+                            "") + ("ding{background:#ddd;border-color:#888;box-shadow:.2em .2em .4em #666}.white .bo" +
+                            "") + ("x h3.heading:hover{background:#333;color:#eee}.white .box .body{background:#eee;" +
+                            "") + ("border-color:#888;box-shadow:0 0 .4em rgba(64,64,64,0.75)}.white .options{backgr" +
+                            "") + ("ound:#eee;border-color:#999;box-shadow:0 .2em .4em rgba(64,64,64,0.5);text-shado" +
+                            "") + ("w:.05em .05em .1em #ccc}.white .options h2,.white #Beautify h2,.white #Minify h2" +
+                            "") + (",.white #diffBase h2,.white #diffNew h2{background:#eee;border-color:#eee;box-sh" +
+                            "") + ("adow:none;text-shadow:none}.white #option_comment{background:#ddd;border-color:#" +
+                            "") + ("999}.white #top em{color:#00f}.white #update{background:#eee;border-color:#999;b" +
+                            "") + ("ox-shadow:0 .1em .2em rgba(64,64,64,0.5)}.white .wide,.white .tall,.white #diffB" +
+                            "") + ("ase,.white #diffNew{background:#eee;border-color:#999;box-shadow:0 .2em .4em rgb" +
+                            "") + ("a(64,64,64,0.5)}.white .file input,.white .labeltext input{border-color:#fff}#we" +
+                            "") + ("btool.white input.unchecked{background:#ccc;color:#666}.white .options input[typ" +
+                            "") + ("e=text],.white .options select{border-color:#999}.white #beautyoutput,.white #mi" +
+                            "") + ("nifyoutput{background:#ddd}.white #diffoutput p em,.white #diffoutput li em{colo" +
+                            "") + ("r:#c00}.white .analysis .bad{background-color:#ebb;color:#400}.white .analysis ." +
+                            "") + ("good{background-color:#cec;color:#040}.white #doc .analysis thead th,.white #doc" +
+                            "") + (" .analysis th[colspan]{background:#eef}.white div input{border-color:#999}.white" +
+                            "") + (" textarea{border-color:#999}.white textarea:hover{background:#eef8ff}.white .dif" +
+                            "") + ("f,.white .beautify,.white .diff ol,.white .beautify ol,.white .diff .diff-left,." +
+                            "") + ("white .diff .diff-right,.white h3,.white p.author{border-color:#999}.white .diff" +
+                            "") + (" .count li,.white .beautify .count li{background:#eed;border-color:#bbc;color:#8" +
+                            "") + ("86}.white .diff h3{background:#ddd;border-bottom-color:#bbc}.white .diff .empty{" +
+                            "") + ("background-color:#ddd;border-color:#ccc}.white .diff .replace{background-color:#" +
+                            "") + ("fea;border-color:#dd8}.white .diff .data .replace em{background-color:#ffd;borde" +
+                            "") + ("r-color:#963;color:#630}.white .diff .delete{background-color:#fbb;border-color:" +
+                            "") + ("#eaa}.white .diff .data .delete em{background-color:#fdd;border-color:#700;color" +
+                            "") + (":#600}.white .diff .equal,.white .beautify .data li{background-color:#fff;border" +
+                            "") + ("-color:#eee}.white .beautify .data em.s1{color:#f66}.white .beautify .data em.s2" +
+                            "") + ("{color:#12f}.white .beautify .data em.s3{color:#090}.white .beautify .data em.s4" +
+                            "") + ("{color:#d6d}.white .beautify .data em.s5{color:#7cc}.white .beautify .data em.s6" +
+                            "") + ("{color:#c85}.white .beautify .data em.s7{color:#737}.white .beautify .data em.s8" +
+                            "") + ("{color:#6d0}.white .beautify .data em.s9{color:#dd0s}.white .beautify .data em.s" +
+                            "") + ("10{color:#893}.white .beautify .data em.s11{color:#b97}.white .beautify .data em" +
+                            "") + (".s12{color:#bbb}.white .beautify .data em.s13{color:#cc3}.white .beautify .data " +
+                            "") + ("em.s14{color:#333}.white .beautify .data em.s15{color:#9d9}.white .beautify .dat" +
+                            "") + ("a em.s16{color:#880}.white .beautify .data .l0{background:#fff}.white .beautify " +
+                            "") + (".data .l1{background:#fed}.white .beautify .data .l2{background:#def}.white .bea" +
+                            "") + ("utify .data .l3{background:#efe}.white .beautify .data .l4{background:#fef}.whit" +
+                            "") + ("e .beautify .data .l5{background:#eef}.white .beautify .data .l6{background:#fff" +
+                            "") + ("8cc}.white .beautify .data .l7{background:#ede}.white .beautify .data .l8{backgr" +
+                            "") + ("ound:#efc}.white .beautify .data .l9{background:#ffd}.white .beautify .data .l10" +
+                            "") + ("{background:#edc}.white .beautify .data .l11{background:#fdb}.white .beautify .d" +
+                            "") + ("ata .l12{background:#f8f8f8}.white .beautify .data .l13{background:#ffb}.white ." +
+                            "") + ("beautify .data .l14{background:#eec}.white .beautify .data .l15{background:#cfc}" +
+                            "") + (".white .beautify .data .l16{background:#eea}.white .beautify .data .c0{backgroun" +
+                            "") + ("d:#ddd}.white .beautify .data li{color:#777}.white .diff .skip{background-color:" +
+                            "") + ("#efefef;border-color:#ddd}.white .diff .insert{background-color:#bfb;border-colo" +
+                            "") + ("r:#aea}.white .diff .data .insert em{background-color:#efc;border-color:#070;col" +
+                            "") + ("or:#050}.white .diff p.author{background:#efefef;border-top-color:#bbc}.white #d" +
+                            "") + ("oc table,.white .box .body table{background:#fff;border-color:#999}.white #doc s" +
+                            "") + ("trong,.white .box .body strong{color:#c00}.white .box .body em,.white .box .body" +
+                            "") + (" #doc em{color:#090}.white #thirdparties img,.white #diffoutput #thirdparties{bo" +
+                            "") + ("rder-color:#999}.white #thirdparties img{box-shadow:.2em .2em .4em #999}.white #" +
+                            "") + ("diffoutput #thirdparties{background:#eee}.white #doc div,#doc.white div{backgrou" +
+                            "") + ("nd:#ddd;border-color:#999}.white #doc ol,#doc.white ol{background:#eee;border-co" +
+                            "") + ("lor:#999}.white #doc div div,#doc.white div div{background:#eee;border-color:#99" +
+                            "") + ("9}.white #doc table,#doc.white table{background:#fff;border-color:#999}.white #d" +
+                            "") + ("oc th,#doc.white th{background:#ddd;border-left-color:#999;border-top-color:#999" +
+                            "") + ("}.white #doc tr:hover,#doc.white tr:hover{background:#ddd}#doc.white em{color:#0" +
+                            "") + ("60}.white #doc div:hover,#doc.white div:hover{background:#ccc}.white #doc div di" +
+                            "") + ("v:hover,#doc.white div div:hover,#doc.white div ol:hover{background:#fff}.white " +
+                            "") + ("#pdsamples li{background:#eee;border-color:#999}.white #pdsamples li div{backgro" +
+                            "") + ("und:#ddd;border-color:#999}.white #pdsamples li div a{color:#47a}.white #pdsampl" +
+                            "") + "es li p a{color:#009}");
                         builder.cssExtra   = "body{background:#eee}#doc p em{color:#090}";
                         builder.body       = "</style></head><body id='webtool' class='";
                         builder.bodyColor  = "white";
-                        builder.title      = "'><h1><a href='http://prettydiff.com/'>Pretty Diff - The difference tool</a></h1><div class='doc'>";
+                        builder.title      = (("'><h1><a href='http://prettydiff.com/'>Pretty Diff - The difference tool</a></h1" +
+                            "") + "><div class='doc'>");
                         builder.scriptOpen = "<script type='application/javascript'><![CDATA[";
-                        builder.scriptBody = "var pd={};pd.beaufold=function dom__beaufold(){'use strict';var self=this,title=self.getAttribute('title').split('line '),min=Number(title[1].substr(0,title[1].indexOf(' '))),max=Number(title[2]),a=0,b='',list=[self.parentNode.getElementsByTagName('li'),self.parentNode.nextSibling.getElementsByTagName('li')];if(self.innerHTML.charAt(0)==='-'){for(a=min;a<max;a+=1){list[0][a].style.display='none';list[1][a].style.display='none';}self.innerHTML='+'+self.innerHTML.substr(1);}else{for(a=min;a<max;a+=1){list[0][a].style.display='block';list[1][a].style.display='block';if(list[0][a].getAttribute('class')==='fold'&&list[0][a].innerHTML.charAt(0)==='+'){b=list[0][a].getAttribute('title');b=b.substring(b.indexOf('to line ')+1);a=Number(b)-1;}}self.innerHTML='-'+self.innerHTML.substr(1);}};(function(){'use strict';var lists=document.getElementsByTagName('ol'),listslen=lists.length,list=[],listlen=0,a=0,b=0;for(a=0;a<listslen;a+=1){if(lists[a].getAttribute('class')==='count'&&lists[a].parentNode.getAttribute('class')==='beautify'){list=lists[a].getElementsByTagName('li');listlen=list.length;for(b=0;b<listlen;b+=1){if(list[b].getAttribute('class')==='fold'){list[b].onmousedown=pd.beaufold;}}}}}());";
+                        builder.scriptBody = (("var pd={};pd.beaufold=function dom__beaufold(){'use strict';var self=this,title=" +
+                            "") + ("self.getAttribute('title').split('line '),min=Number(title[1].substr(0,title[1]." +
+                            "") + ("indexOf(' '))),max=Number(title[2]),a=0,b='',list=[self.parentNode.getElementsBy" +
+                            "") + ("TagName('li'),self.parentNode.nextSibling.getElementsByTagName('li')];if(self.in" +
+                            "") + ("nerHTML.charAt(0)==='-'){for(a=min;a<max;a+=1){list[0][a].style.display='none';l" +
+                            "") + ("ist[1][a].style.display='none';}self.innerHTML='+'+self.innerHTML.substr(1);}els" +
+                            "") + ("e{for(a=min;a<max;a+=1){list[0][a].style.display='block';list[1][a].style.displa" +
+                            "") + ("y='block';if(list[0][a].getAttribute('class')==='fold'&&list[0][a].innerHTML.cha" +
+                            "") + ("rAt(0)==='+'){b=list[0][a].getAttribute('title');b=b.substring(b.indexOf('to lin" +
+                            "") + ("e ')+1);a=Number(b)-1;}}self.innerHTML='-'+self.innerHTML.substr(1);}};(function" +
+                            "") + ("(){'use strict';var lists=document.getElementsByTagName('ol'),listslen=lists.len" +
+                            "") + ("gth,list=[],listlen=0,a=0,b=0;for(a=0;a<listslen;a+=1){if(lists[a].getAttribute(" +
+                            "") + ("'class')==='count'&&lists[a].parentNode.getAttribute('class')==='beautify'){list" +
+                            "") + ("=lists[a].getElementsByTagName('li');listlen=list.length;for(b=0;b<listlen;b+=1)" +
+                            "") + ("{if(list[b].getAttribute('class')==='fold'){list[b].onmousedown=pd.beaufold;}}}}" +
+                            "") + "}());");
                         builder.scriptEnd  = "]]></script>";
                         return [
                             [
@@ -972,6 +1282,7 @@ var prettydiff = function prettydiff(api) {
                             space       : cspace,
                             styleguide  : cstyleguide,
                             vertical    : false,
+                            titanium    : ctitanium,
                             wrap        : cwrap
                         });
                         apidiffout = jspretty({
@@ -990,6 +1301,7 @@ var prettydiff = function prettydiff(api) {
                             space       : cspace,
                             styleguide  : cstyleguide,
                             vertical    : false,
+                            titanium    : ctitanium,
                             wrap        : cwrap
                         });
                     }
@@ -1030,7 +1342,9 @@ var prettydiff = function prettydiff(api) {
                         }
                         if (apioutput === "Error: This does not appear to be JavaScript." || apidiffout === "Error: This does not appear to be JavaScript.") {
                             a[1] = [
-                                "<p><strong>Error:</strong> Please try using the option labeled <em>Plain Text (diff only)</em>. <span style='display:block'>The input does not appear to be markup, CSS, or JavaScript.</span></p>", 0, 0
+                                (("<p><strong>Error:</strong> Please try using the option labeled <em>Plain Text (d" +
+                                    "") + ("iff only)</em>. <span style='display:block'>The input does not appear to be mark" +
+                                    "") + "up, CSS, or JavaScript.</span></p>"), 0, 0
                             ];
                         } else {
                             if (clang !== "text") {
@@ -1058,16 +1372,294 @@ var prettydiff = function prettydiff(api) {
                             auto = "<p>Code type is presumed to be <em>React JSX</em>.</p>";
                         }
                         if (capi === "") {
-                            builder.head          = "<?xml version='1.0' encoding='UTF-8' ?><!DOCTYPE html PUBLIC '-//W3C//DTD XHTML 1.1//EN' 'http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd'><html xmlns='http://www.w3.org/1999/xhtml' xml:lang='en'><head><title>Pretty Diff - The difference tool</title><meta name='robots' content='index, follow'/> <meta name='DC.title' content='Pretty Diff - The difference tool'/> <link rel='canonical' href='http://prettydiff.com/' type='application/xhtml+xml'/><meta http-equiv='Content-Type' content='application/xhtml+xml;charset=UTF-8'/><meta http-equiv='Content-Style-Type' content='text/css'/><style type='text/css'>";
-                            builder.cssCore       = "body{font-family:'Arial';font-size:10px;overflow-y:scroll;}#samples #dcolorScheme{position:relative;z-index:1000}#apireturn textarea{font-size:1.2em;height:50em;width:100%}button{border-radius:.9em;display:block;font-weight:bold;width:100%}div .button{text-align:center}div button{display:inline-block;font-weight:bold;margin:1em 0;padding:1em 2em}button:hover{cursor:pointer}#introduction{clear:both;margin:0 0 0 5.6em;position:relative;top:-2.75em}#introduction ul{clear:both;height:3em;margin:0 0 0 -5.5em;overflow:hidden;width:100em}#introduction li{clear:none;display:block;float:left;font-size:1.4em;margin:0 4.95em -1em 0}#introduction li li{font-size:1em;margin-left:2em}#introduction .information,#webtool #introduction h2{left:-90em;position:absolute;top:0;width:10em}#introduction h2{float:none}#displayOps{float:right;font-size:1.5em;font-weight:bold;margin-right:1em;width:22.5em}#displayOps.default{position:static}#displayOps.maximized{margin-bottom:-2em;position:relative}#displayOps li{clear:none;display:block;float:left;list-style:none;margin:2em 0 0;text-align:right;width:9em}h1{float:left;font-size:2em;margin:0 .5em .5em 0}#hideOptions{margin-left:5em;padding:0}#title_text{border-style:solid;border-width:.05em;display:block;float:left;font-size:1em;margin-left:.55em;padding:.1em}h1 svg,h1 img{border-style:solid;border-width:.05em;float:left;height:2em;width:2em}h1 span{font-size:.5em}h2,h3{background:#fff;border-style:solid;border-width:.075em;display:inline-block;font-size:1.8em;font-weight:bold;margin:0 .5em .5em 0;padding:0 .2em}#doc h3{margin-top:.5em}h3{font-size:1.6em}h4{font-size:1.4em}fieldset{border-radius:.9em;clear:both;margin:3.5em 0 -2em;padding:0 0 0 1em}legend{border-style:solid;border-width:.1em;font-size:1.2em;font-weight:bold;margin-left:-.25em}.button{margin:1em 0;text-align:center}.button button{display:block;font-size:2em;height:1.5em;margin:0 auto;padding:0;width:50%}#diffreport{right:57.8em}#beaureport{right:38.8em}#minnreport{right:19.8em}#statreport{right:.8em}#statreport .body p,#statreport .body li,#statreport .body h3{font-size:1.2em}#statreport .body h3{margin-top:0}#statreport .body ul{margin-top:1em}#reports{height:4em}#reports h2{display:none}.box{border-style:solid;border-width:0;left:auto;margin:0;padding:0;position:absolute;z-index:10}.box button{border-radius:0;border-style:solid;border-width:.1em;display:block;float:right;font-family:'Lucida Console','Trebuchet MS','Arial';height:1.75em;padding:0;position:absolute;right:0;text-align:center;top:0;width:1.75em;z-index:7}.box button.resize{border-width:.05em;cursor:se-resize;font-size:1.667em;font-weight:normal;height:.8em;line-height:.5em;margin:-.85em 0 0;position:absolute;right:.05em;top:100%;width:.85em}.box button.minimize{margin:.35em 4em 0 0}.box button.maximize{margin:.35em 1.75em 0 0}.box button.save{margin:.35em 6.25em 0 0}.box .buttons{float:right;margin:0}.box h3.heading{cursor:pointer;float:left;font-size:1em;height:3em;margin:0 0 -3.2em;position:relative;width:17em;z-index:6}.box h3.heading span{display:block;font-size:1.8em;padding:.25em 0 0 .5em}.box .body{clear:both;height:20em;margin-top:-.1em;overflow:scroll;padding:4.25em 1em 1em;position:relative;right:0;top:0;width:75em;z-index:5}.options{border-radius:0 0 .9em .9em;clear:both;margin-bottom:1em;padding:1em 1em 3.5em;width:auto}label{display:inline;font-size:1.4em}ol li{font-size:1.4em;list-style-type:decimal}ol li li{font-size:1em}body#doc ol li{font-size:1.1em}ul{margin:-1.4em 0 2em;padding:0}ul li{list-style-type:none}li{clear:both;margin:1em 0 1em 3em}li h4{display:inline;float:left;margin:.4em 0;text-align:left;width:14em}p{clear:both;font-size:1.2em;margin:0 0 1em}#option_comment{height:2.5em;margin-bottom:-1.5em;width:100%}.difflabel{display:block;height:0}#beau-other-span,#diff-other-span{text-indent:-200em;width:0}.options p span{display:block;float:left;font-size:1.2em}#top{min-width:80em}#top em{font-weight:bold}#update{clear:left;float:right;font-weight:bold;padding:.5em;position:absolute;right:1em;top:11em}#announcement{height:2.5em;margin:0 -5em -4.75em;width:27.5em}#textreport{width:100%}#options{float:left;margin:0;width:19em}#options label{width:auto}#options p{clear:both;font-size:1em;margin:0;padding:0}#options p span{clear:both;float:none;height:2em;margin:0 0 0 2em}#csvchar{width:11.8em}#language,#csvchar,#colorScheme{margin:0 0 1em 2em}#codeInput{margin-left:22.5em}#Beautify.wide p,#Beautify.tall p.file,#Minify.wide p,#Minify.tall p.file{clear:none;float:none}#diffops p,#miniops p,#beauops p{clear:both;font-size:1em;padding-top:1em}#options p strong,#diffops p strong,#miniops p strong,#beauops p strong,#options .label,#diffops .label,#miniops .label,#beauops .label{display:block;float:left;font-size:1.2em;font-weight:bold;margin-bottom:1em;width:17.5em}input[type='radio']{margin:0 .25em}input[type='file']{box-shadow:none}select{border-style:inset;border-width:.1em;width:11.85em}.options input,.options label{border-style:none;display:block;float:left}.options span label{margin-left:.4em;white-space:nowrap;width:12em}.options p span label{font-size:1em}#webtool .options input[type=text]{margin-right:1em;width:11.6em}#webtool .options input[type=text],div input,textarea{border-style:inset;border-width:.1em}textarea{display:inline-block;height:10em;margin:0}strong label{font-size:1em;width:inherit}strong.new{background:#ff6;font-style:italic}#miniops span strong,#diffops span strong,#beauops span strong{display:inline;float:none;font-size:1em;width:auto}#Beautify .input label,#Beautify .output label,#Minify .input label,#Minify .output label{display:block;font-size:1.05em;font-weight:bold}#beautyinput,#minifyinput,#baseText,#newText,#beautyoutput,#minifyoutput{font-size:1em}.clear{clear:both;display:block}.wide,.tall,#diffBase,#diffNew{border-radius:0 0 .9em .9em;margin-bottom:1em}#diffBase,#diffNew{padding:1em}#diffBase p,#diffNew p{clear:none;float:none}#diffBase.wide textarea,#diffNew.wide textarea{height:10.1em}.wide,.tall{padding:1em 1.25em 0}#diff .addsource{cursor:pointer;margin-bottom:1em;padding:0}#diff .addsource input{display:block;float:left;margin:.5em .5em -1.5em}#diff .addsource label{cursor:pointer;display:inline-block;font-size:1.2em;padding:.5em .5em .5em 2em}.wide label{float:none;margin-right:0;width:100%}.wide #beautyinput,.wide #minifyinput,.wide #beautyoutput,.wide #minifyoutput{height:14.8em;margin:0;width:99.5%}.tall .input{clear:none;float:left}.tall .output{clear:none;float:right;margin-top:-2.4em}.tall .input,.tall .output{width:49%}.tall .output label{text-align:right}.tall .input textarea{height:31.7em}.tall .output textarea{height:34em}.tall textarea{margin:0 0 -.1em;width:100%}.tall #beautyinput,.tall #minifyinput{float:left}.tall #beautyoutput,.tall #minifyoutput{float:right}.wide{width:auto}#diffBase.difftall,#diffNew.difftall{margin-bottom:1.3em;padding:1em 1% .9em;width:47.5%}#diffBase.difftall{float:left}#diffNew.difftall{float:right}.file input,.labeltext input{display:inline-block;margin:0 .7em 0 0;width:16em}.labeltext,.file{font-size:.9em;font-weight:bold;margin-bottom:1em}.difftall textarea{height:30.6em;margin-bottom:.5em}#diffBase textarea,#diffNew textarea{width:99.5%}.input,.output{margin:0}#diffBase.wide,#diffNew.wide{padding:.8em 1em}#diffBase.wide{margin-bottom:1.2em}#diffoutput{width:100%}#diffoutput p em,#diffoutput li em,.analysis .bad,.analysis .good{font-weight:bold}#diffoutput ul{font-size:1.2em;margin-top:1em}#diffoutput ul li{display:list-item;list-style-type:disc}.analysis th{text-align:left}.analysis td{text-align:right}#doc ul{margin-top:1em}#doc ul li{font-size:1.2em}body#doc ul li{font-size:1.1em}#doc ol li span{display:block;margin-left:2em}.diff,.beautify{border-style:solid;border-width:.2em;display:inline-block;font-family:'Courier New',Courier,'Lucida Console',monospace;margin:0 1em 1em 0;position:relative}.beautify .data em{display:inline-block;font-style:normal;font-weight:bold;padding-top:.5em}.diff .skip{border-style:none none solid;border-width:0 0 .1em}.diff li,.diff p,.diff h3,.beautify li{font-size:1.1em}.diff .diff-left,.diff .diff-right{display:table-cell}.diff .diff-left{border-style:none none none solid;border-width:0 0 0 .1em}.diff .diff-right{border-style:none none none solid;border-width:0 0 0 .1em;margin-left:-.1em;min-width:16.5em;right:0;top:0}.diff-right .data ol{min-width:16.5em}.diff-right .data{border-style:none solid none none;border-width:0 .1em 0 0;width:100%}.diff-right .data li{min-width:16.5em}.diff ol,.beautify ol{display:table-cell;margin:0;padding:0}.diff li,.beautify li{border-style:none none solid;border-width:0 0 .1em;display:block;line-height:1.2;list-style-type:none;margin:0;padding-bottom:0;padding-right:.5em}.diff li{padding-top:.5em}.beautify .count li{padding-top:.5em}@media screen and (-webkit-min-device-pixel-ratio:0) {.beautify .count li{padding-top:.546em}}#doc .beautify .count li.fold{color:#900;cursor:pointer;font-weight:bold;padding-left:.5em}.diff .count,.beautify .count{border-style:solid;border-width:0 .1em 0 0;font-weight:normal;padding:0;text-align:right}.diff .count li,.beautify .count li{padding-left:2em}.diff .data,.beautify .data{text-align:left;white-space:pre}.diff .data li,.beautify .data li{letter-spacing:.1em;padding-left:.5em;white-space:pre}#webtool .diff h3{border-style:none solid solid;border-width:0 .1em .2em;box-shadow:none;display:block;font-family:Verdana;margin:0 0 0 -.1em;padding:.2em 2em;text-align:left}.diff li em{font-style:normal;margin:0 -.09em;padding:.05em 0}.diff p.author{border-style:solid;border-width:.2em .1em .1em;margin:0;overflow:hidden;padding:.4em;text-align:right}#dcolorScheme{float:right;margin:-2em 0 0 0}#dcolorScheme label{display:inline-block;font-size:1em;margin-right:1em}body#doc{font-size:.8em;max-width:80em}#doc th{font-weight:bold}#doc td span{display:block}#doc table,.box .body table{border-collapse:collapse;border-style:solid;border-width:.2em;clear:both}#doc table{font-size:1.2em}body#doc table{font-size:1em}#doc td,#doc th{border-left-style:solid;border-left-width:.1em;border-top-style:solid;border-top-width:.1em;padding:.5em}#doc em,.box .body em{font-style:normal;font-weight:bold}#doc div{margin-bottom:2em}#doc div div{clear:both;margin-bottom:1em}#doc h2{font-size:1.6em;margin:.5em .5em .5em 0}#doc ol{clear:both}#doc_contents li{font-size:1.75em;margin:1em 0 0}#doc_contents ol ol li{font-size:.75em;list-style:lower-alpha;margin:.5em 0 0}#doc_contents ol{padding-bottom:1em}#doc #doc_contents ol ol{background-color:inherit;border-style:none;margin:.25em .3em 0 0;padding-bottom:0}#doc_contents a{text-decoration:none}#diffoutput #thirdparties li{display:inline-block;list-style-type:none}#thirdparties a{border-style:none;display:block;height:4em;text-decoration:none}button,fieldset,.box h3.heading,.box .body,.options,.diff .replace em,.diff .delete em,.diff .insert em,.wide,.tall,#diffBase,#diffNew,#doc div,#doc div div,#doc ol,#option_comment,#update,#thirdparties img,#diffoutput #thirdparties{border-style:solid;border-width:.1em}#apitest p{clear:both;padding-top:.75em}#apitest label,#apitest select,#apitest input,#apitest textarea{float:left}#apitest label{width:20em}#apitest select,#apitest input,#apitest textarea{width:30em}#pdsamples{list-style-position:inside;margin:-12em 0 0 0;padding:0;position:relative;z-index:10}#pdsamples li{border-radius:1em;border-style:solid;border-width:.1em;margin:0 0 3em;padding:1em}#pdsamples li div{border-radius:1em;border-style:solid;border-width:.1em;margin:0;padding:1em}#pdsamples li p{display:inline-block;font-size:1em;margin:0}#pdsamples li p a{display:block;margin:0 0 1em 2em}#pdsamples li ul{margin:0 0 0 2em}#samples #pdsamples li li{background:none transparent;border-style:none;display:list-item;list-style:disc outside;margin:0;padding:.5em}#modalSave span{background:#000;display:block;left:0;opacity:.5;position:absolute;top:0;z-index:9000}#modalSave p{background:#eee;color:#333;font-size:3em;padding:1em;position:absolute;text-align:center;top:10em;width:25em;z-index:9001}#modalSave p em{display:block;font-size:.75em;margin-top:1em}#modalSave p strong{color:#c00;font-weight:bold}@media print{p,.options,#Beautify,#Minify,#diff,ul{display:none}div{width:100%}html td{font-size:.8em;white-space:normal}}";
-                            builder.cssColor      = "html .white,body.white{color:#333}body.white button{background:#eee;border-color:#222;box-shadow:0 .1em .2em rgba(64,64,64,0.75);color:#666;text-shadow:.05em .05em .1em #ccc}.white button:hover,.white button:active{background:#999;color:#eee;text-shadow:.1em .1em .1em #333}.white a{color:#009}.white #title_text{border-color:#fff;color:#333}.white #introduction h2{border-color:#999;color:#333}.white h1 svg{background:#eee;border-color:#999;box-shadow:0 .1em .2em rgba(150,150,150,0.5)}.white h2,.white h3{background:#eee;border-color:#eee;box-shadow:none;padding-left:0;text-shadow:none}.white fieldset{background:#ddd;border-color:#999}.white legend{background:#fff;border-color:#999;color:#333;text-shadow:none}.white .box{background:#666;border-color:#999;box-shadow:0 .4em .8em rgba(64,64,64,0.75)}.white .box button{box-shadow:0 .1em .2em rgba(0,0,0,0.75);text-shadow:.1em .1em .1em rgba(0,0,0,.5)}.white .box button.resize{background:#bbf;border-color:#446;color:#446}.white .box button.resize:hover{background:#ddf;border-color:#228;color:#228}.white .box button.save{background:#d99;border-color:#300;color:#300}.white .box button.save:hover{background:#fcc;border-color:#822;color:#822}.white .box button.minimize{background:#bbf;border-color:#006;color:#006}.white .box button.minimize:hover{background:#eef;border-color:#228;color:#228}.white .box button.maximize{background:#9c9;border-color:#030;color:#030}.white .box button.maximize:hover{background:#cfc;border-color:#060;color:#060}.white .box h3.heading{background:#ddd;border-color:#888;box-shadow:.2em .2em .4em #666}.white .box h3.heading:hover{background:#333;color:#eee}.white .box .body{background:#eee;border-color:#888;box-shadow:0 0 .4em rgba(64,64,64,0.75)}.white .options{background:#eee;border-color:#999;box-shadow:0 .2em .4em rgba(64,64,64,0.5);text-shadow:.05em .05em .1em #ccc}.white .options h2,.white #Beautify h2,.white #Minify h2,.white #diffBase h2,.white #diffNew h2{background:#eee;border-color:#eee;box-shadow:none;text-shadow:none}.white #option_comment{background:#ddd;border-color:#999}.white #top em{color:#00f}.white #update{background:#eee;border-color:#999;box-shadow:0 .1em .2em rgba(64,64,64,0.5)}.white .wide,.white .tall,.white #diffBase,.white #diffNew{background:#eee;border-color:#999;box-shadow:0 .2em .4em rgba(64,64,64,0.5)}.white .file input,.white .labeltext input{border-color:#fff}#webtool.white input.unchecked{background:#ccc;color:#666}.white .options input[type=text],.white .options select{border-color:#999}.white #beautyoutput,.white #minifyoutput{background:#ddd}.white #diffoutput p em,.white #diffoutput li em{color:#c00}.white .analysis .bad{background-color:#ebb;color:#400}.white .analysis .good{background-color:#cec;color:#040}.white #doc .analysis thead th,.white #doc .analysis th[colspan]{background:#eef}.white div input{border-color:#999}.white textarea{border-color:#999}.white textarea:hover{background:#eef8ff}.white .diff,.white .beautify,.white .diff ol,.white .beautify ol,.white .diff .diff-left,.white .diff .diff-right,.white h3,.white p.author{border-color:#999}.white .diff .count li,.white .beautify .count li{background:#eed;border-color:#bbc;color:#886}.white .diff h3{background:#ddd;border-bottom-color:#bbc}.white .diff .empty{background-color:#ddd;border-color:#ccc}.white .diff .replace{background-color:#fea;border-color:#dd8}.white .diff .data .replace em{background-color:#ffd;border-color:#963;color:#630}.white .diff .delete{background-color:#fbb;border-color:#eaa}.white .diff .data .delete em{background-color:#fdd;border-color:#700;color:#600}.white .diff .equal,.white .beautify .data li{background-color:#fff;border-color:#eee}.white .beautify .data em.s1{color:#f66}.white .beautify .data em.s2{color:#12f}.white .beautify .data em.s3{color:#090}.white .beautify .data em.s4{color:#d6d}.white .beautify .data em.s5{color:#7cc}.white .beautify .data em.s6{color:#c85}.white .beautify .data em.s7{color:#737}.white .beautify .data em.s8{color:#6d0}.white .beautify .data em.s9{color:#dd0s}.white .beautify .data em.s10{color:#893}.white .beautify .data em.s11{color:#b97}.white .beautify .data em.s12{color:#bbb}.white .beautify .data em.s13{color:#cc3}.white .beautify .data em.s14{color:#333}.white .beautify .data em.s15{color:#9d9}.white .beautify .data em.s16{color:#880}.white .beautify .data .l0{background:#fff}.white .beautify .data .l1{background:#fed}.white .beautify .data .l2{background:#def}.white .beautify .data .l3{background:#efe}.white .beautify .data .l4{background:#fef}.white .beautify .data .l5{background:#eef}.white .beautify .data .l6{background:#fff8cc}.white .beautify .data .l7{background:#ede}.white .beautify .data .l8{background:#efc}.white .beautify .data .l9{background:#ffd}.white .beautify .data .l10{background:#edc}.white .beautify .data .l11{background:#fdb}.white .beautify .data .l12{background:#f8f8f8}.white .beautify .data .l13{background:#ffb}.white .beautify .data .l14{background:#eec}.white .beautify .data .l15{background:#cfc}.white .beautify .data .l16{background:#eea}.white .beautify .data .c0{background:#ddd}.white .beautify .data li{color:#777}.white .diff .skip{background-color:#efefef;border-color:#ddd}.white .diff .insert{background-color:#bfb;border-color:#aea}.white .diff .data .insert em{background-color:#efc;border-color:#070;color:#050}.white .diff p.author{background:#efefef;border-top-color:#bbc}.white #doc table,.white .box .body table{background:#fff;border-color:#999}.white #doc strong,.white .box .body strong{color:#c00}.white .box .body em,.white .box .body #doc em{color:#090}.white #thirdparties img,.white #diffoutput #thirdparties{border-color:#999}.white #thirdparties img{box-shadow:.2em .2em .4em #999}.white #diffoutput #thirdparties{background:#eee}.white #doc div,#doc.white div{background:#ddd;border-color:#999}.white #doc ol,#doc.white ol{background:#eee;border-color:#999}.white #doc div div,#doc.white div div{background:#eee;border-color:#999}.white #doc table,#doc.white table{background:#fff;border-color:#999}.white #doc th,#doc.white th{background:#ddd;border-left-color:#999;border-top-color:#999}.white #doc tr:hover,#doc.white tr:hover{background:#ddd}#doc.white em{color:#060}.white #doc div:hover,#doc.white div:hover{background:#ccc}.white #doc div div:hover,#doc.white div div:hover,#doc.white div ol:hover{background:#fff}.white #pdsamples li{background:#eee;border-color:#999}.white #pdsamples li div{background:#ddd;border-color:#999}.white #pdsamples li div a{color:#47a}.white #pdsamples li p a{color:#009}";
+                            builder.head          = (("<?xml version='1.0' encoding='UTF-8' ?><!DOCTYPE html PUBLIC '-//W3C//DTD XHTML " +
+                                "") + ("1.1//EN' 'http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd'><html xmlns='http://www." +
+                                "") + ("w3.org/1999/xhtml' xml:lang='en'><head><title>Pretty Diff - The difference tool<" +
+                                "") + ("/title><meta name='robots' content='index, follow'/> <meta name='DC.title' conte" +
+                                "") + ("nt='Pretty Diff - The difference tool'/> <link rel='canonical' href='http://pret" +
+                                "") + ("tydiff.com/' type='application/xhtml+xml'/><meta http-equiv='Content-Type' conte" +
+                                "") + ("nt='application/xhtml+xml;charset=UTF-8'/><meta http-equiv='Content-Style-Type' " +
+                                "") + "content='text/css'/><style type='text/css'>");
+                            builder.cssCore       = (("body{font-family:'Arial';font-size:10px;overflow-y:scroll;}#samples #dcolorSchem" +
+                                "") + ("e{position:relative;z-index:1000}#apireturn textarea{font-size:1.2em;height:50em" +
+                                "") + (";width:100%}button{border-radius:.9em;display:block;font-weight:bold;width:100%}" +
+                                "") + ("div .button{text-align:center}div button{display:inline-block;font-weight:bold;m" +
+                                "") + ("argin:1em 0;padding:1em 2em}button:hover{cursor:pointer}#introduction{clear:both" +
+                                "") + (";margin:0 0 0 5.6em;position:relative;top:-2.75em}#introduction ul{clear:both;he" +
+                                "") + ("ight:3em;margin:0 0 0 -5.5em;overflow:hidden;width:100em}#introduction li{clear:" +
+                                "") + ("none;display:block;float:left;font-size:1.4em;margin:0 4.95em -1em 0}#introducti" +
+                                "") + ("on li li{font-size:1em;margin-left:2em}#introduction .information,#webtool #intr" +
+                                "") + ("oduction h2{left:-90em;position:absolute;top:0;width:10em}#introduction h2{float" +
+                                "") + (":none}#displayOps{float:right;font-size:1.5em;font-weight:bold;margin-right:1em;" +
+                                "") + ("width:22.5em}#displayOps.default{position:static}#displayOps.maximized{margin-bo" +
+                                "") + ("ttom:-2em;position:relative}#displayOps li{clear:none;display:block;float:left;l" +
+                                "") + ("ist-style:none;margin:2em 0 0;text-align:right;width:9em}h1{float:left;font-size" +
+                                "") + (":2em;margin:0 .5em .5em 0}#hideOptions{margin-left:5em;padding:0}#title_text{bor" +
+                                "") + ("der-style:solid;border-width:.05em;display:block;float:left;font-size:1em;margin" +
+                                "") + ("-left:.55em;padding:.1em}h1 svg,h1 img{border-style:solid;border-width:.05em;flo" +
+                                "") + ("at:left;height:2em;width:2em}h1 span{font-size:.5em}h2,h3{background:#fff;border" +
+                                "") + ("-style:solid;border-width:.075em;display:inline-block;font-size:1.8em;font-weigh" +
+                                "") + ("t:bold;margin:0 .5em .5em 0;padding:0 .2em}#doc h3{margin-top:.5em}h3{font-size:" +
+                                "") + ("1.6em}h4{font-size:1.4em}fieldset{border-radius:.9em;clear:both;margin:3.5em 0 -" +
+                                "") + ("2em;padding:0 0 0 1em}legend{border-style:solid;border-width:.1em;font-size:1.2e" +
+                                "") + ("m;font-weight:bold;margin-left:-.25em}.button{margin:1em 0;text-align:center}.bu" +
+                                "") + ("tton button{display:block;font-size:2em;height:1.5em;margin:0 auto;padding:0;wid" +
+                                "") + ("th:50%}#diffreport{right:57.8em}#beaureport{right:38.8em}#minnreport{right:19.8e" +
+                                "") + ("m}#statreport{right:.8em}#statreport .body p,#statreport .body li,#statreport .b" +
+                                "") + ("ody h3{font-size:1.2em}#statreport .body h3{margin-top:0}#statreport .body ul{ma" +
+                                "") + ("rgin-top:1em}#reports{height:4em}#reports h2{display:none}.box{border-style:soli" +
+                                "") + ("d;border-width:0;left:auto;margin:0;padding:0;position:absolute;z-index:10}.box " +
+                                "") + ("button{border-radius:0;border-style:solid;border-width:.1em;display:block;float:" +
+                                "") + ("right;font-family:'Lucida Console','Trebuchet MS','Arial';height:1.75em;padding:" +
+                                "") + ("0;position:absolute;right:0;text-align:center;top:0;width:1.75em;z-index:7}.box " +
+                                "") + ("button.resize{border-width:.05em;cursor:se-resize;font-size:1.667em;font-weight:" +
+                                "") + ("normal;height:.8em;line-height:.5em;margin:-.85em 0 0;position:absolute;right:.0" +
+                                "") + ("5em;top:100%;width:.85em}.box button.minimize{margin:.35em 4em 0 0}.box button.m" +
+                                "") + ("aximize{margin:.35em 1.75em 0 0}.box button.save{margin:.35em 6.25em 0 0}.box .b" +
+                                "") + ("uttons{float:right;margin:0}.box h3.heading{cursor:pointer;float:left;font-size:" +
+                                "") + ("1em;height:3em;margin:0 0 -3.2em;position:relative;width:17em;z-index:6}.box h3." +
+                                "") + ("heading span{display:block;font-size:1.8em;padding:.25em 0 0 .5em}.box .body{cle" +
+                                "") + ("ar:both;height:20em;margin-top:-.1em;overflow:scroll;padding:4.25em 1em 1em;posi" +
+                                "") + ("tion:relative;right:0;top:0;width:75em;z-index:5}.options{border-radius:0 0 .9em" +
+                                "") + (" .9em;clear:both;margin-bottom:1em;padding:1em 1em 3.5em;width:auto}label{displa" +
+                                "") + ("y:inline;font-size:1.4em}ol li{font-size:1.4em;list-style-type:decimal}ol li li{" +
+                                "") + ("font-size:1em}body#doc ol li{font-size:1.1em}ul{margin:-1.4em 0 2em;padding:0}ul" +
+                                "") + (" li{list-style-type:none}li{clear:both;margin:1em 0 1em 3em}li h4{display:inline" +
+                                "") + (";float:left;margin:.4em 0;text-align:left;width:14em}p{clear:both;font-size:1.2e" +
+                                "") + ("m;margin:0 0 1em}#option_comment{height:2.5em;margin-bottom:-1.5em;width:100%}.d" +
+                                "") + ("ifflabel{display:block;height:0}#beau-other-span,#diff-other-span{text-indent:-2" +
+                                "") + ("00em;width:0}.options p span{display:block;float:left;font-size:1.2em}#top{min-w" +
+                                "") + ("idth:80em}#top em{font-weight:bold}#update{clear:left;float:right;font-weight:bo" +
+                                "") + ("ld;padding:.5em;position:absolute;right:1em;top:11em}#announcement{height:2.5em;" +
+                                "") + ("margin:0 -5em -4.75em;width:27.5em}#textreport{width:100%}#options{float:left;ma" +
+                                "") + ("rgin:0;width:19em}#options label{width:auto}#options p{clear:both;font-size:1em;" +
+                                "") + ("margin:0;padding:0}#options p span{clear:both;float:none;height:2em;margin:0 0 0" +
+                                "") + (" 2em}#csvchar{width:11.8em}#language,#csvchar,#colorScheme{margin:0 0 1em 2em}#c" +
+                                "") + ("odeInput{margin-left:22.5em}#Beautify.wide p,#Beautify.tall p.file,#Minify.wide " +
+                                "") + ("p,#Minify.tall p.file{clear:none;float:none}#diffops p,#miniops p,#beauops p{cle" +
+                                "") + ("ar:both;font-size:1em;padding-top:1em}#options p strong,#diffops p strong,#minio" +
+                                "") + ("ps p strong,#beauops p strong,#options .label,#diffops .label,#miniops .label,#b" +
+                                "") + ("eauops .label{display:block;float:left;font-size:1.2em;font-weight:bold;margin-b" +
+                                "") + ("ottom:1em;width:17.5em}input[type='radio']{margin:0 .25em}input[type='file']{box" +
+                                "") + ("-shadow:none}select{border-style:inset;border-width:.1em;width:11.85em}.options " +
+                                "") + ("input,.options label{border-style:none;display:block;float:left}.options span la" +
+                                "") + ("bel{margin-left:.4em;white-space:nowrap;width:12em}.options p span label{font-si" +
+                                "") + ("ze:1em}#webtool .options input[type=text]{margin-right:1em;width:11.6em}#webtool" +
+                                "") + (" .options input[type=text],div input,textarea{border-style:inset;border-width:.1" +
+                                "") + ("em}textarea{display:inline-block;height:10em;margin:0}strong label{font-size:1em" +
+                                "") + (";width:inherit}strong.new{background:#ff6;font-style:italic}#miniops span strong" +
+                                "") + (",#diffops span strong,#beauops span strong{display:inline;float:none;font-size:1" +
+                                "") + ("em;width:auto}#Beautify .input label,#Beautify .output label,#Minify .input labe" +
+                                "") + ("l,#Minify .output label{display:block;font-size:1.05em;font-weight:bold}#beautyi" +
+                                "") + ("nput,#minifyinput,#baseText,#newText,#beautyoutput,#minifyoutput{font-size:1em}." +
+                                "") + ("clear{clear:both;display:block}.wide,.tall,#diffBase,#diffNew{border-radius:0 0 " +
+                                "") + (".9em .9em;margin-bottom:1em}#diffBase,#diffNew{padding:1em}#diffBase p,#diffNew " +
+                                "") + ("p{clear:none;float:none}#diffBase.wide textarea,#diffNew.wide textarea{height:10" +
+                                "") + (".1em}.wide,.tall{padding:1em 1.25em 0}#diff .addsource{cursor:pointer;margin-bot" +
+                                "") + ("tom:1em;padding:0}#diff .addsource input{display:block;float:left;margin:.5em .5" +
+                                "") + ("em -1.5em}#diff .addsource label{cursor:pointer;display:inline-block;font-size:1" +
+                                "") + (".2em;padding:.5em .5em .5em 2em}.wide label{float:none;margin-right:0;width:100%" +
+                                "") + ("}.wide #beautyinput,.wide #minifyinput,.wide #beautyoutput,.wide #minifyoutput{h" +
+                                "") + ("eight:14.8em;margin:0;width:99.5%}.tall .input{clear:none;float:left}.tall .outp" +
+                                "") + ("ut{clear:none;float:right;margin-top:-2.4em}.tall .input,.tall .output{width:49%" +
+                                "") + ("}.tall .output label{text-align:right}.tall .input textarea{height:31.7em}.tall " +
+                                "") + (".output textarea{height:34em}.tall textarea{margin:0 0 -.1em;width:100%}.tall #b" +
+                                "") + ("eautyinput,.tall #minifyinput{float:left}.tall #beautyoutput,.tall #minifyoutput" +
+                                "") + ("{float:right}.wide{width:auto}#diffBase.difftall,#diffNew.difftall{margin-bottom" +
+                                "") + (":1.3em;padding:1em 1% .9em;width:47.5%}#diffBase.difftall{float:left}#diffNew.di" +
+                                "") + ("fftall{float:right}.file input,.labeltext input{display:inline-block;margin:0 .7" +
+                                "") + ("em 0 0;width:16em}.labeltext,.file{font-size:.9em;font-weight:bold;margin-bottom" +
+                                "") + (":1em}.difftall textarea{height:30.6em;margin-bottom:.5em}#diffBase textarea,#dif" +
+                                "") + ("fNew textarea{width:99.5%}.input,.output{margin:0}#diffBase.wide,#diffNew.wide{p" +
+                                "") + ("adding:.8em 1em}#diffBase.wide{margin-bottom:1.2em}#diffoutput{width:100%}#diffo" +
+                                "") + ("utput p em,#diffoutput li em,.analysis .bad,.analysis .good{font-weight:bold}#di" +
+                                "") + ("ffoutput ul{font-size:1.2em;margin-top:1em}#diffoutput ul li{display:list-item;l" +
+                                "") + ("ist-style-type:disc}.analysis th{text-align:left}.analysis td{text-align:right}#" +
+                                "") + ("doc ul{margin-top:1em}#doc ul li{font-size:1.2em}body#doc ul li{font-size:1.1em}" +
+                                "") + ("#doc ol li span{display:block;margin-left:2em}.diff,.beautify{border-style:solid" +
+                                "") + (";border-width:.2em;display:inline-block;font-family:'Courier New',Courier,'Lucid" +
+                                "") + ("a Console',monospace;margin:0 1em 1em 0;position:relative}.beautify .data em{dis" +
+                                "") + ("play:inline-block;font-style:normal;font-weight:bold;padding-top:.5em}.diff .ski" +
+                                "") + ("p{border-style:none none solid;border-width:0 0 .1em}.diff li,.diff p,.diff h3,." +
+                                "") + ("beautify li{font-size:1.1em}.diff .diff-left,.diff .diff-right{display:table-cel" +
+                                "") + ("l}.diff .diff-left{border-style:none none none solid;border-width:0 0 0 .1em}.di" +
+                                "") + ("ff .diff-right{border-style:none none none solid;border-width:0 0 0 .1em;margin-" +
+                                "") + ("left:-.1em;min-width:16.5em;right:0;top:0}.diff-right .data ol{min-width:16.5em}" +
+                                "") + (".diff-right .data{border-style:none solid none none;border-width:0 .1em 0 0;widt" +
+                                "") + ("h:100%}.diff-right .data li{min-width:16.5em}.diff ol,.beautify ol{display:table" +
+                                "") + ("-cell;margin:0;padding:0}.diff li,.beautify li{border-style:none none solid;bord" +
+                                "") + ("er-width:0 0 .1em;display:block;line-height:1.2;list-style-type:none;margin:0;pa" +
+                                "") + ("dding-bottom:0;padding-right:.5em}.diff li{padding-top:.5em}.beautify .count li{" +
+                                "") + ("padding-top:.5em}@media screen and (-webkit-min-device-pixel-ratio:0) {.beautify" +
+                                "") + (" .count li{padding-top:.546em}}#doc .beautify .count li.fold{color:#900;cursor:p" +
+                                "") + ("ointer;font-weight:bold;padding-left:.5em}.diff .count,.beautify .count{border-s" +
+                                "") + ("tyle:solid;border-width:0 .1em 0 0;font-weight:normal;padding:0;text-align:right" +
+                                "") + ("}.diff .count li,.beautify .count li{padding-left:2em}.diff .data,.beautify .dat" +
+                                "") + ("a{text-align:left;white-space:pre}.diff .data li,.beautify .data li{letter-spaci" +
+                                "") + ("ng:.1em;padding-left:.5em;white-space:pre}#webtool .diff h3{border-style:none so" +
+                                "") + ("lid solid;border-width:0 .1em .2em;box-shadow:none;display:block;font-family:Ver" +
+                                "") + ("dana;margin:0 0 0 -.1em;padding:.2em 2em;text-align:left}.diff li em{font-style:" +
+                                "") + ("normal;margin:0 -.09em;padding:.05em 0}.diff p.author{border-style:solid;border-" +
+                                "") + ("width:.2em .1em .1em;margin:0;overflow:hidden;padding:.4em;text-align:right}#dco" +
+                                "") + ("lorScheme{float:right;margin:-2em 0 0 0}#dcolorScheme label{display:inline-block" +
+                                "") + (";font-size:1em;margin-right:1em}body#doc{font-size:.8em;max-width:80em}#doc th{f" +
+                                "") + ("ont-weight:bold}#doc td span{display:block}#doc table,.box .body table{border-co" +
+                                "") + ("llapse:collapse;border-style:solid;border-width:.2em;clear:both}#doc table{font-" +
+                                "") + ("size:1.2em}body#doc table{font-size:1em}#doc td,#doc th{border-left-style:solid;" +
+                                "") + ("border-left-width:.1em;border-top-style:solid;border-top-width:.1em;padding:.5em" +
+                                "") + ("}#doc em,.box .body em{font-style:normal;font-weight:bold}#doc div{margin-bottom" +
+                                "") + (":2em}#doc div div{clear:both;margin-bottom:1em}#doc h2{font-size:1.6em;margin:.5" +
+                                "") + ("em .5em .5em 0}#doc ol{clear:both}#doc_contents li{font-size:1.75em;margin:1em 0" +
+                                "") + (" 0}#doc_contents ol ol li{font-size:.75em;list-style:lower-alpha;margin:.5em 0 0" +
+                                "") + ("}#doc_contents ol{padding-bottom:1em}#doc #doc_contents ol ol{background-color:i" +
+                                "") + ("nherit;border-style:none;margin:.25em .3em 0 0;padding-bottom:0}#doc_contents a{" +
+                                "") + ("text-decoration:none}#diffoutput #thirdparties li{display:inline-block;list-styl" +
+                                "") + ("e-type:none}#thirdparties a{border-style:none;display:block;height:4em;text-deco" +
+                                "") + ("ration:none}button,fieldset,.box h3.heading,.box .body,.options,.diff .replace e" +
+                                "") + ("m,.diff .delete em,.diff .insert em,.wide,.tall,#diffBase,#diffNew,#doc div,#doc" +
+                                "") + (" div div,#doc ol,#option_comment,#update,#thirdparties img,#diffoutput #thirdpar" +
+                                "") + ("ties{border-style:solid;border-width:.1em}#apitest p{clear:both;padding-top:.75e" +
+                                "") + ("m}#apitest label,#apitest select,#apitest input,#apitest textarea{float:left}#ap" +
+                                "") + ("itest label{width:20em}#apitest select,#apitest input,#apitest textarea{width:30" +
+                                "") + ("em}#pdsamples{list-style-position:inside;margin:-12em 0 0 0;padding:0;position:r" +
+                                "") + ("elative;z-index:10}#pdsamples li{border-radius:1em;border-style:solid;border-wid" +
+                                "") + ("th:.1em;margin:0 0 3em;padding:1em}#pdsamples li div{border-radius:1em;border-st" +
+                                "") + ("yle:solid;border-width:.1em;margin:0;padding:1em}#pdsamples li p{display:inline-" +
+                                "") + ("block;font-size:1em;margin:0}#pdsamples li p a{display:block;margin:0 0 1em 2em}" +
+                                "") + ("#pdsamples li ul{margin:0 0 0 2em}#samples #pdsamples li li{background:none tran" +
+                                "") + ("sparent;border-style:none;display:list-item;list-style:disc outside;margin:0;pad" +
+                                "") + ("ding:.5em}#modalSave span{background:#000;display:block;left:0;opacity:.5;positi" +
+                                "") + ("on:absolute;top:0;z-index:9000}#modalSave p{background:#eee;color:#333;font-size" +
+                                "") + (":3em;padding:1em;position:absolute;text-align:center;top:10em;width:25em;z-index" +
+                                "") + (":9001}#modalSave p em{display:block;font-size:.75em;margin-top:1em}#modalSave p " +
+                                "") + ("strong{color:#c00;font-weight:bold}@media print{p,.options,#Beautify,#Minify,#di" +
+                                "") + "ff,ul{display:none}div{width:100%}html td{font-size:.8em;white-space:normal}}");
+                            builder.cssColor      = (("html .white,body.white{color:#333}body.white button{background:#eee;border-color" +
+                                "") + (":#222;box-shadow:0 .1em .2em rgba(64,64,64,0.75);color:#666;text-shadow:.05em .0" +
+                                "") + ("5em .1em #ccc}.white button:hover,.white button:active{background:#999;color:#ee" +
+                                "") + ("e;text-shadow:.1em .1em .1em #333}.white a{color:#009}.white #title_text{border-" +
+                                "") + ("color:#fff;color:#333}.white #introduction h2{border-color:#999;color:#333}.whit" +
+                                "") + ("e h1 svg{background:#eee;border-color:#999;box-shadow:0 .1em .2em rgba(150,150,1" +
+                                "") + ("50,0.5)}.white h2,.white h3{background:#eee;border-color:#eee;box-shadow:none;pa" +
+                                "") + ("dding-left:0;text-shadow:none}.white fieldset{background:#ddd;border-color:#999}" +
+                                "") + (".white legend{background:#fff;border-color:#999;color:#333;text-shadow:none}.whi" +
+                                "") + ("te .box{background:#666;border-color:#999;box-shadow:0 .4em .8em rgba(64,64,64,0" +
+                                "") + (".75)}.white .box button{box-shadow:0 .1em .2em rgba(0,0,0,0.75);text-shadow:.1em" +
+                                "") + (" .1em .1em rgba(0,0,0,.5)}.white .box button.resize{background:#bbf;border-color" +
+                                "") + (":#446;color:#446}.white .box button.resize:hover{background:#ddf;border-color:#2" +
+                                "") + ("28;color:#228}.white .box button.save{background:#d99;border-color:#300;color:#3" +
+                                "") + ("00}.white .box button.save:hover{background:#fcc;border-color:#822;color:#822}.w" +
+                                "") + ("hite .box button.minimize{background:#bbf;border-color:#006;color:#006}.white .b" +
+                                "") + ("ox button.minimize:hover{background:#eef;border-color:#228;color:#228}.white .bo" +
+                                "") + ("x button.maximize{background:#9c9;border-color:#030;color:#030}.white .box butto" +
+                                "") + ("n.maximize:hover{background:#cfc;border-color:#060;color:#060}.white .box h3.hea" +
+                                "") + ("ding{background:#ddd;border-color:#888;box-shadow:.2em .2em .4em #666}.white .bo" +
+                                "") + ("x h3.heading:hover{background:#333;color:#eee}.white .box .body{background:#eee;" +
+                                "") + ("border-color:#888;box-shadow:0 0 .4em rgba(64,64,64,0.75)}.white .options{backgr" +
+                                "") + ("ound:#eee;border-color:#999;box-shadow:0 .2em .4em rgba(64,64,64,0.5);text-shado" +
+                                "") + ("w:.05em .05em .1em #ccc}.white .options h2,.white #Beautify h2,.white #Minify h2" +
+                                "") + (",.white #diffBase h2,.white #diffNew h2{background:#eee;border-color:#eee;box-sh" +
+                                "") + ("adow:none;text-shadow:none}.white #option_comment{background:#ddd;border-color:#" +
+                                "") + ("999}.white #top em{color:#00f}.white #update{background:#eee;border-color:#999;b" +
+                                "") + ("ox-shadow:0 .1em .2em rgba(64,64,64,0.5)}.white .wide,.white .tall,.white #diffB" +
+                                "") + ("ase,.white #diffNew{background:#eee;border-color:#999;box-shadow:0 .2em .4em rgb" +
+                                "") + ("a(64,64,64,0.5)}.white .file input,.white .labeltext input{border-color:#fff}#we" +
+                                "") + ("btool.white input.unchecked{background:#ccc;color:#666}.white .options input[typ" +
+                                "") + ("e=text],.white .options select{border-color:#999}.white #beautyoutput,.white #mi" +
+                                "") + ("nifyoutput{background:#ddd}.white #diffoutput p em,.white #diffoutput li em{colo" +
+                                "") + ("r:#c00}.white .analysis .bad{background-color:#ebb;color:#400}.white .analysis ." +
+                                "") + ("good{background-color:#cec;color:#040}.white #doc .analysis thead th,.white #doc" +
+                                "") + (" .analysis th[colspan]{background:#eef}.white div input{border-color:#999}.white" +
+                                "") + (" textarea{border-color:#999}.white textarea:hover{background:#eef8ff}.white .dif" +
+                                "") + ("f,.white .beautify,.white .diff ol,.white .beautify ol,.white .diff .diff-left,." +
+                                "") + ("white .diff .diff-right,.white h3,.white p.author{border-color:#999}.white .diff" +
+                                "") + (" .count li,.white .beautify .count li{background:#eed;border-color:#bbc;color:#8" +
+                                "") + ("86}.white .diff h3{background:#ddd;border-bottom-color:#bbc}.white .diff .empty{" +
+                                "") + ("background-color:#ddd;border-color:#ccc}.white .diff .replace{background-color:#" +
+                                "") + ("fea;border-color:#dd8}.white .diff .data .replace em{background-color:#ffd;borde" +
+                                "") + ("r-color:#963;color:#630}.white .diff .delete{background-color:#fbb;border-color:" +
+                                "") + ("#eaa}.white .diff .data .delete em{background-color:#fdd;border-color:#700;color" +
+                                "") + (":#600}.white .diff .equal,.white .beautify .data li{background-color:#fff;border" +
+                                "") + ("-color:#eee}.white .beautify .data em.s1{color:#f66}.white .beautify .data em.s2" +
+                                "") + ("{color:#12f}.white .beautify .data em.s3{color:#090}.white .beautify .data em.s4" +
+                                "") + ("{color:#d6d}.white .beautify .data em.s5{color:#7cc}.white .beautify .data em.s6" +
+                                "") + ("{color:#c85}.white .beautify .data em.s7{color:#737}.white .beautify .data em.s8" +
+                                "") + ("{color:#6d0}.white .beautify .data em.s9{color:#dd0s}.white .beautify .data em.s" +
+                                "") + ("10{color:#893}.white .beautify .data em.s11{color:#b97}.white .beautify .data em" +
+                                "") + (".s12{color:#bbb}.white .beautify .data em.s13{color:#cc3}.white .beautify .data " +
+                                "") + ("em.s14{color:#333}.white .beautify .data em.s15{color:#9d9}.white .beautify .dat" +
+                                "") + ("a em.s16{color:#880}.white .beautify .data .l0{background:#fff}.white .beautify " +
+                                "") + (".data .l1{background:#fed}.white .beautify .data .l2{background:#def}.white .bea" +
+                                "") + ("utify .data .l3{background:#efe}.white .beautify .data .l4{background:#fef}.whit" +
+                                "") + ("e .beautify .data .l5{background:#eef}.white .beautify .data .l6{background:#fff" +
+                                "") + ("8cc}.white .beautify .data .l7{background:#ede}.white .beautify .data .l8{backgr" +
+                                "") + ("ound:#efc}.white .beautify .data .l9{background:#ffd}.white .beautify .data .l10" +
+                                "") + ("{background:#edc}.white .beautify .data .l11{background:#fdb}.white .beautify .d" +
+                                "") + ("ata .l12{background:#f8f8f8}.white .beautify .data .l13{background:#ffb}.white ." +
+                                "") + ("beautify .data .l14{background:#eec}.white .beautify .data .l15{background:#cfc}" +
+                                "") + (".white .beautify .data .l16{background:#eea}.white .beautify .data .c0{backgroun" +
+                                "") + ("d:#ddd}.white .beautify .data li{color:#777}.white .diff .skip{background-color:" +
+                                "") + ("#efefef;border-color:#ddd}.white .diff .insert{background-color:#bfb;border-colo" +
+                                "") + ("r:#aea}.white .diff .data .insert em{background-color:#efc;border-color:#070;col" +
+                                "") + ("or:#050}.white .diff p.author{background:#efefef;border-top-color:#bbc}.white #d" +
+                                "") + ("oc table,.white .box .body table{background:#fff;border-color:#999}.white #doc s" +
+                                "") + ("trong,.white .box .body strong{color:#c00}.white .box .body em,.white .box .body" +
+                                "") + (" #doc em{color:#090}.white #thirdparties img,.white #diffoutput #thirdparties{bo" +
+                                "") + ("rder-color:#999}.white #thirdparties img{box-shadow:.2em .2em .4em #999}.white #" +
+                                "") + ("diffoutput #thirdparties{background:#eee}.white #doc div,#doc.white div{backgrou" +
+                                "") + ("nd:#ddd;border-color:#999}.white #doc ol,#doc.white ol{background:#eee;border-co" +
+                                "") + ("lor:#999}.white #doc div div,#doc.white div div{background:#eee;border-color:#99" +
+                                "") + ("9}.white #doc table,#doc.white table{background:#fff;border-color:#999}.white #d" +
+                                "") + ("oc th,#doc.white th{background:#ddd;border-left-color:#999;border-top-color:#999" +
+                                "") + ("}.white #doc tr:hover,#doc.white tr:hover{background:#ddd}#doc.white em{color:#0" +
+                                "") + ("60}.white #doc div:hover,#doc.white div:hover{background:#ccc}.white #doc div di" +
+                                "") + ("v:hover,#doc.white div div:hover,#doc.white div ol:hover{background:#fff}.white " +
+                                "") + ("#pdsamples li{background:#eee;border-color:#999}.white #pdsamples li div{backgro" +
+                                "") + ("und:#ddd;border-color:#999}.white #pdsamples li div a{color:#47a}.white #pdsampl" +
+                                "") + "es li p a{color:#009}");
                             builder.cssExtra      = "body{background:#eee}#doc p em{color:#090}";
                             builder.body          = "</style></head><body id='webtool' class='";
                             builder.bodyColor     = "white";
-                            builder.title         = "'><h1><a href='http://prettydiff.com/'>Pretty Diff - The difference tool</a></h1><div class='doc'>";
-                            builder.accessibility = "</div><p>Accessibility note. &lt;em&gt; tags in the output represent character differences per lines compared.</p>";
-                            builder.scriptOpen    = "<script type='application/javascript'><![CDATA[var pd={},d=document.getElementsByTagName('ol');";
-                            builder.scriptBody    = "(function(){var cells=d[0].getElemensByTagName('li'),len=cells.length,a=0;for(a=0;a<len;a+=1){if(cells[a].getAttribute('class')==='fold'){cells[a].onmousedown=pd.difffold;}}if(d.length>3){d[2].onmousedown=pd.colSliderGrab;d[2].ontouchstart=pd.colSliderGrab;}}());pd.difffold=function dom__difffold(){var self=this,title=self.getAttribute('title').split('line '),min=Number(title[1].substr(0,title[1].indexOf(' '))),max=Number(title[2]),a=0,b=0,inner=self.innerHTML,lists=[],parent=self.parentNode.parentNode,listnodes=(parent.getAttribute('class'==='diff'))?parent.getElementsByTagName('ol'):parent.parentNode.getElementsByTagName('ol'),listLen=listnodes.length;for(a=0;a<listLen;a+=1){lists.push(listnodes[a].getElementsByTagName('li'));}if(lists.length>3){for(a=0;a<min;a+=1){if(lists[0][a].getAttribute('class')==='empty'){min+=1;max+=1}}}max=(max>=lists[0].length)?lists[0].length:max;if(inner.charAt(0)===' - '){self.innerHTML='+'+inner.substr(1);for(a=min;a<max;a+=1){for(b=0;b<listLen;b+=1){lists[b][a].style.display='none';}}}else{self.innerHTML=' - '+inner.substr(1);for(a=min;a<max;a+=1){for(b=0;b<listLen;b+=1){lists[b][a].style.display='block';}}}};pd.colSliderProperties=[d[0].clientWidth,d[1].clientWidth,d[2].parentNode.clientWidth,d[2].parentNode.parentNode.clientWidth,d[2].parentNode.offsetLeft-d[2].parentNode.parentNode.offsetLeft,];pd.colSliderGrab=function(){'use strict';var x=this,a=x.parentNode,b=a.parentNode,c=0,counter=pd.colSliderProperties[0],data=pd.colSliderProperties[1],width=pd.colSliderProperties[2],total=pd.colSliderProperties[3],offset=(pd.colSliderProperties[4]),min=0,max=data-1,status='ew',g=min+15,h=max-15,k=false,z=a.previousSibling,drop=function(g){x.style.cursor=status+'-resize';g=null;document.onmousemove=null;document.onmouseup=null;},boxmove=function(f){f=f||window.event;c=offset-f.clientX;if(c>g&&c<h){k=true;}if(k===true&&c>h){a.style.width=((total-counter-2)/10)+'em';status='e';}else if(k===true&&c<g){a.style.width=(width/10)+'em';status='w';}else if(c<max&&c>min){a.style.width=((width+c)/10)+'em';status='ew';}document.onmouseup=drop;};if(typeof pd.o==='object'&&typeof pd.o.re==='object'){offset+=pd.o.re.offsetLeft;offset-=pd.o.rf.scrollLeft;}else{c=(document.body.parentNode.scrollLeft>document.body.scrollLeft)?document.body.parentNode.scrollLeft:document.body.scrollLeft;offset-=c;}offset+=x.clientWidth;x.style.cursor='ew-resize';b.style.width=(total/10)+'em';b.style.display='inline-block';if(z.nodeType!==1){do{z=z.previousSibling;}while(z.nodeType!==1);}z.style.display='block';a.style.width=(a.clientWidth/10)+'em';a.style.position='absolute';document.onmousemove=boxmove;document.onmousedown=null;};";
+                            builder.title         = (("'><h1><a href='http://prettydiff.com/'>Pretty Diff - The difference tool</a></h1" +
+                                "") + "><div class='doc'>");
+                            builder.accessibility = (("</div><p>Accessibility note. &lt;em&gt; tags in the output represent character d" +
+                                "") + "ifferences per lines compared.</p>");
+                            builder.scriptOpen    = (("<script type='application/javascript'><![CDATA[var pd={},d=document.getElementsB" +
+                                "") + "yTagName('ol');");
+                            builder.scriptBody    = (("(function(){var cells=d[0].getElemensByTagName('li'),len=cells.length,a=0;for(a=" +
+                                "") + ("0;a<len;a+=1){if(cells[a].getAttribute('class')==='fold'){cells[a].onmousedown=p" +
+                                "") + ("d.difffold;}}if(d.length>3){d[2].onmousedown=pd.colSliderGrab;d[2].ontouchstart=" +
+                                "") + ("pd.colSliderGrab;}}());pd.difffold=function dom__difffold(){var self=this,title=" +
+                                "") + ("self.getAttribute('title').split('line '),min=Number(title[1].substr(0,title[1]." +
+                                "") + ("indexOf(' '))),max=Number(title[2]),a=0,b=0,inner=self.innerHTML,lists=[],parent" +
+                                "") + ("=self.parentNode.parentNode,listnodes=(parent.getAttribute('class'==='diff'))?pa" +
+                                "") + ("rent.getElementsByTagName('ol'):parent.parentNode.getElementsByTagName('ol'),lis" +
+                                "") + ("tLen=listnodes.length;for(a=0;a<listLen;a+=1){lists.push(listnodes[a].getElement" +
+                                "") + ("sByTagName('li'));}if(lists.length>3){for(a=0;a<min;a+=1){if(lists[0][a].getAttr" +
+                                "") + ("ibute('class')==='empty'){min+=1;max+=1}}}max=(max>=lists[0].length)?lists[0].le" +
+                                "") + ("ngth:max;if(inner.charAt(0)===' - '){self.innerHTML='+'+inner.substr(1);for(a=mi" +
+                                "") + ("n;a<max;a+=1){for(b=0;b<listLen;b+=1){lists[b][a].style.display='none';}}}else{s" +
+                                "") + ("elf.innerHTML=' - '+inner.substr(1);for(a=min;a<max;a+=1){for(b=0;b<listLen;b+=1" +
+                                "") + ("){lists[b][a].style.display='block';}}}};pd.colSliderProperties=[d[0].clientWidt" +
+                                "") + ("h,d[1].clientWidth,d[2].parentNode.clientWidth,d[2].parentNode.parentNode.client" +
+                                "") + ("Width,d[2].parentNode.offsetLeft-d[2].parentNode.parentNode.offsetLeft,];pd.colS" +
+                                "") + ("liderGrab=function(){'use strict';var x=this,a=x.parentNode,b=a.parentNode,c=0,c" +
+                                "") + ("ounter=pd.colSliderProperties[0],data=pd.colSliderProperties[1],width=pd.colSlid" +
+                                "") + ("erProperties[2],total=pd.colSliderProperties[3],offset=(pd.colSliderProperties[4" +
+                                "") + ("]),min=0,max=data-1,status='ew',g=min+15,h=max-15,k=false,z=a.previousSibling,dr" +
+                                "") + ("op=function(g){x.style.cursor=status+'-resize';g=null;document.onmousemove=null;" +
+                                "") + ("document.onmouseup=null;},boxmove=function(f){f=f||window.event;c=offset-f.clien" +
+                                "") + ("tX;if(c>g&&c<h){k=true;}if(k===true&&c>h){a.style.width=((total-counter-2)/10)+'" +
+                                "") + ("em';status='e';}else if(k===true&&c<g){a.style.width=(width/10)+'em';status='w';" +
+                                "") + ("}else if(c<max&&c>min){a.style.width=((width+c)/10)+'em';status='ew';}document.o" +
+                                "") + ("nmouseup=drop;};if(typeof pd.o==='object'&&typeof pd.o.re==='object'){offset+=pd" +
+                                "") + (".o.re.offsetLeft;offset-=pd.o.rf.scrollLeft;}else{c=(document.body.parentNode.sc" +
+                                "") + ("rollLeft>document.body.scrollLeft)?document.body.parentNode.scrollLeft:document." +
+                                "") + ("body.scrollLeft;offset-=c;}offset+=x.clientWidth;x.style.cursor='ew-resize';b.st" +
+                                "") + ("yle.width=(total/10)+'em';b.style.display='inline-block';if(z.nodeType!==1){do{z" +
+                                "") + ("=z.previousSibling;}while(z.nodeType!==1);}z.style.display='block';a.style.width" +
+                                "") + ("=(a.clientWidth/10)+'em';a.style.position='absolute';document.onmousemove=boxmov" +
+                                "") + "e;document.onmousedown=null;};");
                             builder.scriptEnd     = "]]></script>";
                             return [
                                 [
@@ -1076,7 +1668,8 @@ var prettydiff = function prettydiff(api) {
                             ];
                         }
                         return [
-                            a[1][0], auto + proctime() + a[0] + " <p>Accessibility note. &lt;em&gt; tags in the output represent presentation for variable coloring and scope.</p>"
+                            a[1][0], auto + proctime() + a[0] + ((" <p>Accessibility note. &lt;em&gt; tags in the output represent presentation for" +
+                                "") + " variable coloring and scope.</p>")
                         ];
                     }());
                 }
@@ -1423,7 +2016,7 @@ var prettydiff = function prettydiff(api) {
                             out.push("\n");
                         }
                         if (smode === "beautify" || (smode === "diff" && sdiffcomm === true) || (smode === "minify" && stopcoms === true)) {
-                            if (token.length > 0 && token[token.length - 1].charAt(token[token.length - 1].length - 1) === ",") {
+                            if (token.length > 0 && token[token.length - 1].charAt(token[token.length - 1].length - 1) === "," && types[types.length - 1] !== "comment" && types[types.length - 1] !== "comment-inline") {
                                 spareToke.push(token[token.length - 1]);
                                 token.pop();
                                 types.pop();
@@ -1486,7 +2079,7 @@ var prettydiff = function prettydiff(api) {
                                     bb    += 1;
                                 } else if (b[aa] === "#" && b[aa + 1] === "{") {
                                     block = "}";
-                                    bb += 1;
+                                    bb    += 1;
                                 }
                             } else if ((b[aa] === "(" && block === ")") || (b[aa] === "[" && block === "]")) {
                                 bb += 1;
@@ -1502,7 +2095,7 @@ var prettydiff = function prettydiff(api) {
                         }
                         a        = aa;
                         itemsize = out.length;
-                        if (comma === true) {
+                        if (comma === true && types[types.length - 1] !== "comment" && types[types.length - 1] !== "comment-inline") {
                             token[token.length - 1] = token[token.length - 1] + out.join("").replace(/\s+/g, " ").replace(/^\s/, "").replace(/\s$/, "");
                             return;
                         }
@@ -1945,9 +2538,13 @@ var prettydiff = function prettydiff(api) {
                         uric = 0,
                         a    = 0,
                         b    = 0;
-                    summ.push("<div class='doc' id='cssreport'><p><strong>Number of HTTP requests:</strong> <em>");
+                    summ.push((("<div class='doc' id='cssreport'><p><strong>Number of HTTP requests:</strong> <em" +
+                        "") + ">"));
                     summ.push(uris);
-                    summ.push("</em></p><table class='analysis' id='css-parts' summary='Component counts and sizes'><caption>Component counts and sizes</caption><thead><tr><th>Type Name</th><th>Quantity</th><th>Character Size</th></tr></thead><tbody><tr><th>curly braces</th><td>");
+                    summ.push((("</em></p><table class='analysis' id='css-parts' summary='Component counts and si" +
+                        "") + ("zes'><caption>Component counts and sizes</caption><thead><tr><th>Type Name</th><" +
+                        "") + ("th>Quantity</th><th>Character Size</th></tr></thead><tbody><tr><th>curly braces<" +
+                        "") + "/th><td>"));
                     summ.push(stats.braces);
                     summ.push("</td><td>");
                     summ.push(stats.braces);
@@ -1983,7 +2580,9 @@ var prettydiff = function prettydiff(api) {
                     summ.push(stats.variables.count);
                     summ.push("</td><td>");
                     summ.push(stats.variables.chars);
-                    summ.push("</td></tr></tbody></table><table class='analysis' id='css-size' summary='CSS character size change'><caption>CSS character size change</caption><tbody><tr><th>Input</th><td>");
+                    summ.push((("</td></tr></tbody></table><table class='analysis' id='css-size' summary='CSS cha" +
+                        "") + ("racter size change'><caption>CSS character size change</caption><tbody><tr><th>I" +
+                        "") + "nput</th><td>"));
                     summ.push(inl);
                     summ.push("</td></tr><tr><th>Output</th><td>");
                     summ.push(out);
@@ -1999,7 +2598,9 @@ var prettydiff = function prettydiff(api) {
                         summ.push("</td></tr><tr><th>Percent Change</th><td>");
                         summ.push((((inl - out) / inl) * 100).toFixed(2));
                     }
-                    summ.push("%</td></tr></tbody></table><table class='analysis' id='css-uri' summary='A list of HTTP requests'><caption>A List of HTTP Requests</caption><thead><tr><th>Quantity</th><th>URI</th></tr></thead><tbody>");
+                    summ.push((("%</td></tr></tbody></table><table class='analysis' id='css-uri' summary='A list " +
+                        "") + ("of HTTP requests'><caption>A List of HTTP Requests</caption><thead><tr><th>Quant" +
+                        "") + "ity</th><th>URI</th></tr></thead><tbody>"));
                     for (a = 0; a < uris; a += 1) {
                         uric = 1;
                         for (b = a + 1; b < uris; b += 1) {
@@ -3151,7 +3752,8 @@ var prettydiff = function prettydiff(api) {
                 } else {
                     node.push("</ol></div>");
                 }
-                node.push("<p class='author'>Diff view written by <a href='http://prettydiff.com/'>Pretty Diff</a>.</p></div>");
+                node.push((("<p class='author'>Diff view written by <a href='http://prettydiff.com/'>Pretty D" +
+                    "") + "iff</a>.</p></div>"));
                 return [
                     node.join("").replace(/li class='equal'><\/li/g, "li class='equal'>&#10;</li").replace(/\$#gt;/g, "&gt;").replace(/\$#lt;/g, "&lt;").replace(/\%#lt;/g, "$#lt;").replace(/\%#gt;/g, "$#gt;"), errorout, diffline
                 ];
@@ -3178,6 +3780,7 @@ var prettydiff = function prettydiff(api) {
                 jspace        = (args.space === false || args.space === "false") ? false : true,
                 jsscope       = (args.jsscope === true || args.jsscope === "true") ? "report" : (args.jsscope !== "html" && args.jsscope !== "report") ? "none" : args.jsscope,
                 jstyleguide   = (typeof args.styleguide === "string") ? args.styleguide.toLowerCase().replace(/\s/g, "") : "",
+                jtitanium     = (args.titanium === true || args.titanium === "true") ? true : false,
                 jtopcoms      = (args.topcoms === true || args.topcoms === "true") ? true : false,
                 jvarword      = (args.varword === "each" || args.varword === "list") ? args.varword : "none",
                 jvertical     = (args.vertical === false || args.vertical === "false") ? false : true,
@@ -3297,12 +3900,23 @@ var prettydiff = function prettydiff(api) {
                 jsize         = 1;
                 jspace        = false;
                 jwrap         = 80;
+            } else if (jstyleguide === "meteor") {
+                jchar     = " ";
+                jscorrect = true;
+                jsize     = 2;
+                jwrap     = 80;
             } else if (jstyleguide === "yandex") {
                 jbracepadding = false;
                 jquoteConvert = "single";
                 jscorrect     = true;
                 jvarword      = "each";
                 jvertical     = false;
+            }
+            if (jtitanium === true) {
+                jscorrect = false;
+                token.push("x{");
+                types.push("start");
+                lines.push(0);
             }
 
             //this function tokenizes the source code into an array
@@ -3761,6 +4375,63 @@ var prettydiff = function prettydiff(api) {
                             item = item.replace(/'/g, "\"");
                         }
                         return qchar + item + qchar;
+                    },
+                    commentSplit   = function jspretty__tokenize_commentSplit(item) {
+                        var tokel   = token[token.length - 1],
+                            start   = jwrap,
+                            spacely = (item.indexOf(" ") > 0) ? true : false;
+                        item = item.slice(2);
+                        if (spacely === true) {
+                            if (tokel.indexOf("//") === 0 && tokel.length < start && tokel.indexOf(" ") > 0) {
+                                start = start - tokel.length - 1;
+                                if (item.charAt(start) !== " ") {
+                                    do {
+                                        start -= 1;
+                                    } while (start > 0 && item.charAt(start) !== " ");
+                                }
+                                if (start > 0) {
+                                    token[token.length - 1] = tokel + " " + item.slice(0, start);
+                                    item                    = item.slice(start + 1);
+                                }
+                            }
+                            start = jwrap - 2;
+                            do {
+                                if (item.charAt(start) !== " ") {
+                                    do {
+                                        start -= 1;
+                                    } while (start > 0 && item.charAt(start) !== " ");
+                                }
+                                token.push("//" + item.slice(0, start));
+                                types.push("comment");
+                                lines.push(0);
+                                item  = item.slice(start + 1);
+                                start = jwrap - 2;
+                            } while (item.length > start);
+                            if (item !== "") {
+                                token.push("//" + item.slice(0, start));
+                                types.push("comment");
+                                lines.push(0);
+                            }
+                        } else {
+                            if (tokel.indexOf("//") === 0 && tokel.length < start && tokel.indexOf(" ") === -1 && item.indexOf(" ") === -1) {
+                                start                   = start - tokel.length;
+                                token[token.length - 1] = tokel + item.slice(0, start);
+                                item                    = item.slice(start);
+                                start                   = jwrap;
+                            }
+                            start -= 2;
+                            do {
+                                token.push("//" + item.slice(0, start));
+                                types.push("comment");
+                                lines.push(0);
+                                item = item.slice(start);
+                            } while (item.length > start);
+                            if (item !== "") {
+                                token.push("//" + item.slice(0, start));
+                                types.push("comment");
+                                lines.push(0);
+                            }
+                        }
                     },
                     strlen         = function jspretty__tokenize_strlen(item) {
                         var aa    = 0,
@@ -4520,9 +5191,13 @@ var prettydiff = function prettydiff(api) {
                             } else {
                                 ltype = "comment";
                             }
-                            token.push(ltoke);
-                            types.push(ltype);
-                            lines.push(0);
+                            if (ltype === "comment" && jwrap > 0 && ltoke.length > jwrap) {
+                                commentSplit(ltoke);
+                            } else {
+                                token.push(ltoke);
+                                types.push(ltype);
+                                lines.push(0);
+                            }
                         }
                     } else if (c[a] === "/" && (lengtha > 0 && (types[lengtha - 1] !== "word" || ltoke === "typeof" || ltoke === "return") && ltype !== "literal" && ltype !== "end")) {
                         //regex
@@ -5871,6 +6546,9 @@ var prettydiff = function prettydiff(api) {
                             }
                             level.push("s");
                         };
+                    if (jtitanium === true) {
+                        indent -= 1;
+                    }
                     for (a = 0; a < b; a += 1) {
                         if (jsscope !== "none" || jmode === "minify") {
                             meta.push("");
@@ -5949,6 +6627,13 @@ var prettydiff = function prettydiff(api) {
                     }
                 }());
             }
+
+            if (jtitanium === true) {
+                token[0] = "";
+                types[0] = "";
+                lines[0] = 0;
+            }
+
             if (jmode === "minify") {
                 result = (function jspretty__minify() {
                     var a        = 0,
@@ -6731,7 +7416,7 @@ var prettydiff = function prettydiff(api) {
                                 nl(jlevel);
                             } else if (level[a] === "s" && token[a] !== "x}") {
                                 build.push(" ");
-                            } else if (level[a] !== "x" && (token[a] !== "x}" || (token[a] === "x}" && (token[a - 1] === "x;" || token[a - 1] === ";") && types[a + 1] !== "word") || lines[a] === 2)) {
+                            } else if (token[a] !== "" && level[a] !== "x" && (token[a] !== "x}" || (token[a] === "x}" && (token[a - 1] === "x;" || token[a - 1] === ";") && types[a + 1] !== "word") || lines[a] === 2)) {
                                 indent = level[a];
                                 nl(indent);
                             }
@@ -7052,7 +7737,7 @@ var prettydiff = function prettydiff(api) {
                                 nl(jlevel);
                             } else if (level[a] === "s" && token[a] !== "x}") {
                                 build.push(" ");
-                            } else if (level[a] !== "x" && (token[a] !== "x}" || (token[a] === "x}" && (token[a - 1] === "x;" || token[a - 1] === ";") && types[a + 1] !== "word") || lines[a] === 2)) {
+                            } else if (token[a] !== "" && level[a] !== "x" && (token[a] !== "x}" || (token[a] === "x}" && (token[a - 1] === "x;" || token[a - 1] === ";") && types[a + 1] !== "word") || lines[a] === 2)) {
                                 indent = level[a];
                                 nl(indent);
                             }
@@ -7133,7 +7818,9 @@ var prettydiff = function prettydiff(api) {
                             output.push("s");
                         }
                         output.push(" of the keyword <strong>new</strong> counted.</p>");
-                        output.push("<table class='analysis' summary='JavaScript character size comparison'><caption>JavaScript data report</caption><thead><tr><th>Data Label</th><th>Input</th><th>Output</th><th>Literal Increase</th><th>Percentage Increase</th></tr>");
+                        output.push((("<table class='analysis' summary='JavaScript character size comparison'><caption>" +
+                            "") + ("JavaScript data report</caption><thead><tr><th>Data Label</th><th>Input</th><th>" +
+                            "") + "Output</th><th>Literal Increase</th><th>Percentage Increase</th></tr>"));
                         output.push("</thead><tbody><tr><th>Total Character Size</th><td>");
                         output.push(originalSize);
                         output.push("</td><td>");
@@ -7151,13 +7838,18 @@ var prettydiff = function prettydiff(api) {
                         output.push("</td><td>");
                         output.push((((noOfLines - newlines) / newlines) * 100).toFixed(2));
                         output.push("%</td></tr></tbody></table>");
-                        output.push("<table class='analysis' summary='JavaScript component analysis'><caption>JavaScript component analysis</caption><thead><tr><th>JavaScript Component</th><th>Component Quantity</th><th>Percentage Quantity from Section</th>");
-                        output.push("<th>Percentage Qauntity from Total</th><th>Character Length</th><th>Percentage Length from Section</th><th>Percentage Length from Total</th></tr></thead><tbody>");
+                        output.push((("<table class='analysis' summary='JavaScript component analysis'><caption>JavaScr" +
+                            "") + ("ipt component analysis</caption><thead><tr><th>JavaScript Component</th><th>Comp" +
+                            "") + "onent Quantity</th><th>Percentage Quantity from Section</th>"));
+                        output.push((("<th>Percentage Qauntity from Total</th><th>Character Length</th><th>Percentage L" +
+                            "") + ("ength from Section</th><th>Percentage Length from Total</th></tr></thead><tbody>" +
+                            "") + ""));
                         output.push("<tr><th>Total Accounted</th><td>");
                         output.push(total.token);
                         output.push("</td><td>100.00%</td><td>100.00%</td><td>");
                         output.push(total.chars);
-                        output.push("</td><td>100.00%</td><td>100.00%</td></tr><tr><th colspan='7'>Comments</th></tr><tr><th>Block Comments</th><td>");
+                        output.push((("</td><td>100.00%</td><td>100.00%</td></tr><tr><th colspan='7'>Comments</th></tr>" +
+                            "") + "<tr><th>Block Comments</th><td>"));
                         output.push(stats.commentBlock.token);
                         output.push("</td><td>");
                         output.push(zero(stats.commentBlock.token, total.comment.token));
@@ -7189,7 +7881,8 @@ var prettydiff = function prettydiff(api) {
                         output.push(total.comment.chars);
                         output.push("</td><td>100.00%</td><td>");
                         output.push(zero(total.comment.chars, total.chars));
-                        output.push("</td></tr><tr><th colspan='7'>Whitespace Outside of Strings and Comments</th></tr><tr><th>New Lines</th><td>");
+                        output.push((("</td></tr><tr><th colspan='7'>Whitespace Outside of Strings and Comments</th></t" +
+                            "") + "r><tr><th>New Lines</th><td>"));
                         output.push(stats.space.newline);
                         output.push("</td><td>");
                         output.push(zero(stats.space.newline, total.space));
@@ -7289,7 +7982,8 @@ var prettydiff = function prettydiff(api) {
                         output.push(total.literal.chars);
                         output.push("</td><td>100.00%</td><td>");
                         output.push(zero(total.literal.chars, total.chars));
-                        output.push("</td></tr><tr><th colspan='7'>Syntax Characters</th></tr><tr><th>Quote Characters</th><td>");
+                        output.push((("</td></tr><tr><th colspan='7'>Syntax Characters</th></tr><tr><th>Quote Character" +
+                            "") + "s</th><td>"));
                         output.push(stats.string.quote);
                         output.push("</td><td>");
                         output.push(zero(stats.string.quote, total.syntax.token));
@@ -7403,12 +8097,11 @@ var prettydiff = function prettydiff(api) {
                 styleguide    = (typeof args.styleguide === "string") ? args.styleguide : "none",
                 top_comments  = (args.top_comments === true || args.top_comments === "true") ? true : false,
                 conditional   = (presume_html === true || args.conditional === true || args.conditional === "true") ? true : false,
-                preserve      = function markupmin__preserve(endTag) {
+                preserve      = function markupmin__preserve(start, endTag) {
                     var a     = 0,
                         end   = x.length,
                         store = [],
-                        count = 0,
-                        start = endTag.replace("</", "<").substr(0, endTag.length - 2);
+                        count = 0;
                     for (a = i; a < end; a += 1) {
                         store.push(x[a]);
                         x[a] = "";
@@ -7521,7 +8214,9 @@ var prettydiff = function prettydiff(api) {
                                     if ((quoteConvert === "single" && attr.charAt(attr.length - 1) === "\"") || (quoteConvert === "double" && attr.charAt(attr.length - 1) === "'")) {
                                         attr = qConvert(attr);
                                     }
-                                    attribute.push(attr);
+                                    if (attr !== undefined && (/^(\s+)$/).test(attr) === false && attr !== "") {
+                                        attribute.push(attr);
+                                    }
                                     openchar    = "";
                                     attribIndex = aa + 1;
                                 },
@@ -7623,21 +8318,14 @@ var prettydiff = function prettydiff(api) {
                                 }
                             }
                             tagLength = id.length;
+                            attribute.sort(sortfunc);
                             if (minjsx === true) {
-                                for (aa = attribute.length - 1; aa > -1; aa -= 1) {
-                                    if (attribute[aa] === undefined) {
-                                        break;
-                                    }
-                                    if ((/^(\s+)$/).test(attribute[aa]) === true || attribute[aa] === "") {
-                                        attribute.splice(aa, 1);
-                                    }
-                                }
                                 if (comment.length > 0) {
-                                    return space + nameSpace + "\n" + comment.join("\n") + attribute.sort(sortfunc).join(joinchar).replace(/\n \n?\//g, "\n/") + ending;
+                                    return space + nameSpace + "\n" + comment.join("\n") + attribute.join(joinchar).replace(/\n \n?\//g, "\n/") + ending;
                                 }
-                                return space + nameSpace + attribute.sort(sortfunc).join(joinchar).replace(/\n \n?\//g, "\n/") + ending;
+                                return space + nameSpace + attribute.join(joinchar).replace(/\n \n?\//g, "\n/") + ending;
                             }
-                            return space + nameSpace + attribute.sort(sortfunc).join(joinchar) + ending;
+                            return space + nameSpace + attribute.join(joinchar) + ending;
                         };
                     for (a = i; a < end; a += 1) {
                         if (minjsx === true) {
@@ -7783,6 +8471,7 @@ var prettydiff = function prettydiff(api) {
                         script      = "",
                         endTag      = "",
                         endTagBuild = "</" + type,
+                        noEnd       = false,
                         stoken      = "",
                         end         = x.length,
                         cdataStart  = (/^(\s*\/+<!\[+[A-Z]+\[+)/),
@@ -7798,6 +8487,10 @@ var prettydiff = function prettydiff(api) {
                             break;
                         }
                     }
+                    if (endIndex === 0) {
+                        endIndex = end;
+                        noEnd    = true;
+                    }
                     for (a = i; a < endIndex; a += 1) {
                         if (x[a - 1] !== ">") {
                             store.push(x[a]);
@@ -7806,10 +8499,12 @@ var prettydiff = function prettydiff(api) {
                             break;
                         }
                     }
-                    stoken = store[0];
-                    store.splice(0, 1);
-                    if ((/\s/).test(store[0])) {
+                    if (store.length > 0) {
+                        stoken = store[0];
                         store.splice(0, 1);
+                        if ((/\s/).test(store[0])) {
+                            store.splice(0, 1);
+                        }
                     }
                     for (endIndex; endIndex < end; endIndex += 1) {
                         if (x[endIndex] !== ">") {
@@ -7878,7 +8573,11 @@ var prettydiff = function prettydiff(api) {
                             break;
                         }
                     }
-                    x[i] = stoken + script + endTag;
+                    if (noEnd === true) {
+                        x[i] = stoken + script;
+                    } else {
+                        x[i] = stoken + script + endTag;
+                    }
                 },
                 content       = function markupmin__content() {
                     var a       = 0,
@@ -7940,14 +8639,14 @@ var prettydiff = function prettydiff(api) {
                             }
                             store.push(source.charAt(a));
                         }
-                        part = store.join("").toLowerCase().replace(/'/g, "\"");
+                        part = store.join("").toLowerCase().replace(/"/g, "'");
                         if (comments !== "beautify" && comments !== "nocomment") {
                             markupspace();
                         }
                         if (part.indexOf("type='syntaxhighlighter'") > -1) {
                             preserve("</script>");
                         }
-                        if (part.indexOf("type='") < 0 || part.indexOf("type='text/javascript'") > -1 || part.indexOf("type='application/javascript'") > -1 || part.indexOf("type='application/x-javascript'") > -1 || part.indexOf("type='text/ecmascript'") > -1 || part.indexOf("type='application/ecmascript'") > -1 || part.indexOf("type='text/cjs'") > -1) {
+                        if (comments === "" && (part.indexOf("type='") < 0 || part.indexOf("type='text/javascript'") > -1 || part.indexOf("type='application/javascript'") > -1 || part.indexOf("type='application/x-javascript'") > -1 || part.indexOf("type='text/ecmascript'") > -1 || part.indexOf("type='application/ecmascript'") > -1 || part.indexOf("type='text/cjs'") > -1)) {
                             markupscript("script");
                         }
                     } else if ((source.slice(i, i + 6)).toLowerCase() === "<style") {
@@ -7958,11 +8657,11 @@ var prettydiff = function prettydiff(api) {
                             }
                             store.push(source.charAt(a));
                         }
-                        part = store.join("").toLowerCase().replace(/'/g, "\"");
+                        part = store.join("").toLowerCase().replace(/"/g, "'");
                         if (comments !== "beautify" && comments !== "nocomment") {
                             markupspace();
                         }
-                        if (part.indexOf("type='") < 0 || part.indexOf("type='text/css'") > -1) {
+                        if (comments === "" && (part.indexOf("type='") < 0 || part.indexOf("type='text/css'") > -1)) {
                             markupscript("style");
                         }
                     } else if (minjsx === true && x[i] === "{" && typeof jspretty === "function") {
@@ -7974,11 +8673,15 @@ var prettydiff = function prettydiff(api) {
                     } else if (source.slice(i, i + 4) === "<%--") {
                         markupcomment("--%>");
                     } else if (source.slice(i, i + 5) === "<?php") {
-                        preserve("?>");
+                        preserve("<?php", "?>");
                     } else if (source.slice(i, i + 4).toLowerCase() === "<pre" && presume_html === true) {
-                        preserve("</pre>");
+                        preserve("<pre", "</pre>");
                     } else if (source.slice(i, i + 2) === "<%") {
-                        preserve("%>");
+                        preserve("<%", "%>");
+                    } else if (source.slice(i, i + 2) === "[%") {
+                        preserve("[%", "%]");
+                    } else if (source.slice(i, i + 2) === "{@") {
+                        preserve("{@", "@}");
                     } else if (x[i] === "<" && (source.slice(i, i + 4) !== "<!--" || source.slice(i, i + 5) === "<!--#")) {
                         markupspace();
                     } else if (x[i] === undefined) {
@@ -8089,6 +8792,9 @@ var prettydiff = function prettydiff(api) {
                     output = x.join("");
                 } else {
                     output = x.join("").replace(/-->\s+/g, "--> ").replace(/\s+<\?php/g, " <?php").replace(/\s+<%/g, " <%").replace(/<(\s*)/g, "<").replace(/\s+\/>/g, "/>").replace(/\s+>/g, ">");
+                    if (comments === "") {
+                        output = output.replace(/<%\s+/g, "<%").replace(/\s+%>/g, "%>").replace(/\[%\s+/g, "[%").replace(/\s+%\]/g, "%]").replace(/\{@\s+/g, "{@").replace(/\s+@\}/g, "@}");
+                    }
                 }
                 if ((/\s/).test(output.charAt(0)) === true) {
                     output = output.slice(1, output.length);
@@ -8249,6 +8955,22 @@ var prettydiff = function prettydiff(api) {
                                         break;
                                     }
                                 }
+                            } else if (x.charAt(a) === "[" && x.charAt(a + 1) === "%") {
+                                for (b = a + 2; b < end; b += 1) {
+                                    if (x.charAt(b - 1) === "%" && x.charAt(b) === "]") {
+                                        a        = b;
+                                        tagCount += 1;
+                                        break;
+                                    }
+                                }
+                            } else if (x.charAt(a) === "{" && x.charAt(a + 1) === "@") {
+                                for (b = a + 2; b < end; b += 1) {
+                                    if (x.charAt(b - 1) === "@" && x.charAt(b) === "}") {
+                                        a        = b;
+                                        tagCount += 1;
+                                        break;
+                                    }
+                                }
                             } else if (x.charAt(a) === "<" && x.charAt(a + 1) === "!" && x.charAt(a + 2) === "[") {
                                 for (b = a + 2; b < end; b += 1) {
                                     if (x.charAt(b - 1) === "]" && x.charAt(b) === ">") {
@@ -8352,6 +9074,20 @@ var prettydiff = function prettydiff(api) {
                                         } else if (x.charAt(b) === "<" && x.charAt(b + 1) === "%") {
                                             for (c = b + 5; c < end; c += 1) {
                                                 if (x.charAt(c - 1) === "%" && x.charAt(c) === ">") {
+                                                    b = c;
+                                                    break;
+                                                }
+                                            }
+                                        } else if (x.charAt(b) === "[" && x.charAt(b + 1) === "%") {
+                                            for (c = b + 5; c < end; c += 1) {
+                                                if (x.charAt(c - 1) === "%" && x.charAt(c) === "]") {
+                                                    b = c;
+                                                    break;
+                                                }
+                                            }
+                                        } else if (x.charAt(b) === "{" && x.charAt(b + 1) === "@") {
+                                            for (c = b + 5; c < end; c += 1) {
+                                                if (x.charAt(c - 1) === "@" && x.charAt(c) === "}") {
                                                     b = c;
                                                     break;
                                                 }
@@ -8548,6 +9284,9 @@ var prettydiff = function prettydiff(api) {
                     var i          = 0,
                         inc        = 0,
                         scriptflag = 0,
+                        scripttest = false,
+                        styletest  = false,
+                        triplet    = "",
                         y          = markupmin({
                             comments    : (mmode === "beautify" && mcomm !== "nocomment") ? "beautify" : "nocomment",
                             conditional : (mhtml === true) ? true : false,
@@ -8566,6 +9305,7 @@ var prettydiff = function prettydiff(api) {
                                 part       = [],
                                 endLen     = ending.length,
                                 endParse   = ending.split("").reverse(),
+                                start      = i + endLen + 1,
                                 space      = "",
                                 name       = "",
                                 braceCount = 0,
@@ -8678,13 +9418,15 @@ var prettydiff = function prettydiff(api) {
                                                 }
                                                 return space + part.join("");
                                             }
-                                            for (a = 0; a < endLen; a += 1) {
-                                                if (endParse[a] !== part[part.length - (a + 1)]) {
-                                                    break;
+                                            if (i > start) {
+                                                for (a = 0; a < endLen; a += 1) {
+                                                    if (endParse[a] !== part[part.length - (a + 1)]) {
+                                                        break;
+                                                    }
                                                 }
-                                            }
-                                            if (a === endLen) {
-                                                return space + part.join("");
+                                                if (a === endLen) {
+                                                    return space + part.join("");
+                                                }
                                             }
                                         }
                                     }
@@ -8697,7 +9439,7 @@ var prettydiff = function prettydiff(api) {
                         cgather    = function markup_beauty__createBuild_buildContent(type) {
                             var a       = 0,
                                 b       = 0,
-                                output  = "",
+                                output  = [],
                                 comment = "",
                                 slashes = function markup_beauty__createBuild_buildContent_slashes(index) {
                                     var slashy = index;
@@ -8742,40 +9484,54 @@ var prettydiff = function prettydiff(api) {
                                     if (type === "style" && a < endd - 6 && (y[a + 3].toLowerCase() === "t" && y[a + 4].toLowerCase() === "y" && y[a + 5].toLowerCase() === "l" && y[a + 6].toLowerCase() === "e")) {
                                         break;
                                     }
-                                } else if (type === "other" && y[a] === "<") {
+                                } else if (type === "other" && (y[a] === "<" || (y[a] === "[" && y[a + 1] === "%") || (y[a] === "{" && y[a + 1] === "@"))) {
                                     break;
                                 }
-                                output = output + y[a];
+                                output.push(y[a]);
                             }
-                            i = a - 1;
+                            i       = a - 1;
+                            comment = output.join("");
                             if (mcont === true) {
-                                if (output.charAt(0) === " " && output.charAt(output.length - 1) === " ") {
-                                    output = " text ";
-                                } else if (output.charAt(0) === " ") {
-                                    output = " text";
-                                } else if (output.charAt(output.length - 1) === " ") {
-                                    output = "text ";
+                                if (comment.charAt(0) === " " && comment.charAt(comment.length - 1) === " ") {
+                                    comment = " text ";
+                                } else if (comment.charAt(0) === " ") {
+                                    comment = " text";
+                                } else if (comment.charAt(comment.length - 1) === " ") {
+                                    comment = "text ";
                                 } else {
-                                    output = "text";
+                                    comment = "text";
                                 }
                             }
-                            return output;
+                            return comment;
                         },
                         end        = y.length;
                     if (summary !== "" && summary !== "diff") {
                         id = summary;
                     }
                     for (i = 0; i < end; i += 1) {
-                        if (token[token.length - 1] === "T_script" && (i > end - 8 || y.slice(i, i + 8).join("").toLowerCase() !== "</script")) {
+                        if (build.length > 0) {
+                            last = build[build.length - 1].toLowerCase().replace(/"/g, "'");
+                        }
+                        if (token[token.length - 1] === "T_script" && (last.indexOf(" type='") === -1 || last.indexOf(" type='text/javascript'") > -1 || last.indexOf(" type='application/javascript'") > -1 || last.indexOf(" type='application/x-javascript'") > -1 || last.indexOf(" type='text/ecmascript'") > -1 || last.indexOf(" type='application/ecmascript'") > -1 || last.indexOf(" type='text/cjs'") > -1 || last.indexOf(" type='text/jsx'") > -1)) {
+                            scripttest = true;
+                        } else {
+                            scripttest = false;
+                            if (token[token.length - 1] === "T_style" && (last.indexOf(" type='") === -1 || last.indexOf(" type='text/css'") !== -1)) {
+                                styletest = true;
+                            } else {
+                                styletest = false;
+                            }
+                        }
+                        if (scripttest === true && (i > end - 8 || y.slice(i, i + 8).join("").toLowerCase() !== "</script")) {
                             build.push(cgather("script"));
-                            if ((/^(\s+)$/).test(build[build.length - 1]) === true) {
+                            if ((/^(\s+)$/).test(last) === true) {
                                 build.pop();
                             } else {
                                 token.push("T_content");
                             }
-                        } else if (token[token.length - 1] === "T_style" && (i > end - 7 || y.slice(i, i + 7).join("").toLowerCase() !== "</style")) {
+                        } else if (styletest === true && (i > end - 7 || y.slice(i, i + 7).join("").toLowerCase() !== "</style")) {
                             build.push(cgather("style"));
-                            if ((/^(\s+)$/).test(build[build.length - 1]) === true) {
+                            if ((/^(\s+)$/).test(last) === true) {
                                 build.pop();
                             } else {
                                 token.push("T_content");
@@ -8810,6 +9566,12 @@ var prettydiff = function prettydiff(api) {
                                 build.push(builder("%>"));
                                 token.push("T_asp");
                             }
+                        } else if ((y[i] === "[" && y[i + 1] === "%") || (y[i] === " " && y[i + 1] === "[" && y[i + 2] === "%")) {
+                            build.push(builder("%]", i + 1));
+                            token.push("T_asp");
+                        } else if ((y[i] === "{" && y[i + 1] === "@") || (y[i] === " " && y[i + 1] === "{" && y[i + 2] === "@")) {
+                            build.push(builder("@}", i + 1));
+                            token.push("T_asp");
                         } else if (y[i] === "<" && y[i + 1] === "?" && i < end - 4) {
                             if (y[i + 2].toLowerCase() === "x" && y[i + 3].toLowerCase() === "m" && y[i + 4].toLowerCase() === "l") {
                                 token.push("T_xml");
@@ -8823,24 +9585,22 @@ var prettydiff = function prettydiff(api) {
                         } else if (y[i] === "<" && i < end - 6 && y[i + 1].toLowerCase() === "s" && y[i + 2].toLowerCase() === "c" && y[i + 3].toLowerCase() === "r" && y[i + 4].toLowerCase() === "i" && y[i + 5].toLowerCase() === "p" && y[i + 6].toLowerCase() === "t") {
                             scriptflag = i;
                             build.push(builder(">"));
-                            last = build[build.length - 1];
                             if (last.indexOf(" type='syntaxhighlighter'") !== -1) {
                                 i                       = scriptflag;
                                 build[build.length - 1] = builder("</script>");
                                 token.push("T_ignore");
                             } else if (last.charAt(last.length - 2) === "/") {
                                 token.push("T_singleton");
-                            } else if (last.indexOf(" type='") === -1 || last.indexOf(" type='text/javascript'") > -1 || last.indexOf(" type='application/javascript'") > -1 || last.indexOf(" type='application/x-javascript'") > -1 || last.indexOf(" type='text/ecmascript'") > -1 || last.indexOf(" type='application/ecmascript'") > -1 || last.indexOf(" type='text/cjs'") > -1 || last.indexOf(" type='text/jsx'") > -1) {
-                                token.push("T_script");
-                            } else if (build[build.length - 1].indexOf(" data-prettydiff-ignore") > 0) {
+                            } else if (last.indexOf(" data-prettydiff-ignore") > 0) {
                                 token.push("T_ignore");
+                            } else if (scripttest === true) {
+                                token.push("T_script");
                             } else {
                                 token.push("T_tag_start");
                             }
                         } else if (y[i] === "<" && i < end - 5 && y[i + 1].toLowerCase() === "s" && y[i + 2].toLowerCase() === "t" && y[i + 3].toLowerCase() === "y" && y[i + 4].toLowerCase() === "l" && y[i + 5].toLowerCase() === "e") {
                             build.push(builder(">"));
-                            last = build[build.length - 1].toLowerCase().replace(/'/g, "\"");
-                            if (last.indexOf(" type='") === -1 || last.indexOf(" type='text/css'") !== -1) {
+                            if (styletest === true) {
                                 token.push("T_style");
                             } else {
                                 token.push("T_tag_start");
@@ -8854,7 +9614,7 @@ var prettydiff = function prettydiff(api) {
                             if (last.indexOf("</li") > -1 && li.length > 0) {
                                 li[li.length - 1] = false;
                             }
-                        } else if (y[i] === "<" && token[token.length - 1] !== "T_script" && token[token.length - 1] !== "T_style" && (y[i + 1] !== "!" || y[i + 1] !== "?" || y[i + 1] !== "/" || y[i + 1] !== "%")) {
+                        } else if (y[i] === "<" && scripttest === false && styletest === false && (y[i + 1] !== "!" || y[i + 1] !== "?" || y[i + 1] !== "/" || y[i + 1] !== "%")) {
                             for (inc = i; inc < end; inc += 1) {
                                 if (y[inc] !== "?" && y[inc] !== "%") {
                                     if (y[inc] === "/" && y[inc + 1] === ">") {
@@ -8870,7 +9630,7 @@ var prettydiff = function prettydiff(api) {
                                         if (last === " <ul>" || last === "<ul>" || last === " <ul " || last === "<ul " || last === " </ol>" || last === "</ol>" || last === " </ol " || last === "</ol ") {
                                             li.push(false);
                                         }
-                                        if (build[build.length - 1].indexOf(" data-prettydiff-ignore") > 0) {
+                                        if (last.indexOf(" data-prettydiff-ignore") > 0) {
                                             token.push("T_ignore");
                                         } else {
                                             token.push("T_tag_start");
@@ -8879,28 +9639,34 @@ var prettydiff = function prettydiff(api) {
                                     }
                                 }
                             }
-                        } else if (y[i - 1] === ">" && (y[i] !== "<" || (y[i] !== " " && y[i + 1] !== "<"))) {
-                            if (token[token.length - 1] === "T_script") {
+                        } else if ((y[i - 1] === ">" || i === 0 || token[token.length - 1] === "T_asp") && (y[i] !== "<" || (y[i] !== " " && y[i + 1] !== "<"))) {
+                            triplet = y[i - 1] + y[i] + y[i + 1];
+                            if (scripttest === true) {
                                 build.push(cgather("script"));
-                                if ((/^(\s+)$/).test(build[build.length - 1]) === true) {
+                                if ((/^(\s+)$/).test(last) === true) {
                                     build.pop();
                                 } else {
                                     token.push("T_content");
                                 }
-                            } else if (token[token.length - 1] === "T_style") {
+                            } else if (styletest === true) {
                                 build.push(cgather("style"));
-                                if ((/^(\s+)$/).test(build[build.length - 1]) === true) {
+                                if ((/^(\s+)$/).test(last) === true) {
                                     build.pop();
                                 } else {
                                     token.push("T_content");
                                 }
-                            } else if (y[i - 1] + y[i] + y[i + 1] !== "> <") {
-                                build.push(cgather("other"));
-                                token.push("T_content");
+                            } else if (triplet !== "> <" && (token[token.length - 1] !== "T_asp" || (triplet !== "} <" && triplet !== "] <"))) {
+                                last = cgather("other");
+                                build.push(last);
+                                last = last.replace(" ", "");
+                                if (last.indexOf("{{#") === 0) {
+                                    token.push("T_tag_start");
+                                } else if (last.indexOf("{{/") === 0) {
+                                    token.push("T_tag_end");
+                                } else {
+                                    token.push("T_content");
+                                }
                             }
-                        }
-                        if (build.length > 0) {
-                            last = build[build.length - 1].toLowerCase().replace(/'/g, "\"");
                         }
                     }
                 }());
@@ -8911,24 +9677,32 @@ var prettydiff = function prettydiff(api) {
                 for (i = 0; i < end; i += 1) {
                     if (token[i] === "T_sgml" || token[i] === "T_xml") {
                         cinfo.push("parse");
-                    } else if (token[i] === "T_asp" || token[i] === "T_php" || token[i] === "T_ssi" || token[i] === "T_ignore") {
+                    } else if (token[i] === "T_asp") {
+                        if ((/^( ?<%\s*\})/).test(build[i]) === true || (/^( ?\[%\s*\})/).test(build[i]) === true || (/^( ?\{@\s*\})/).test(build[i]) === true) {
+                            cinfo.push("end");
+                        } else if ((/(\{\s*%>)$/).test(build[i]) === true || (/(\{\s*%\])$/).test(build[i]) === true || (/(\{\s*@\})$/).test(build[i]) === true) {
+                            cinfo.push("start");
+                        } else {
+                            cinfo.push("singleton");
+                        }
+                    } else if (token[i] === "T_php" || token[i] === "T_ssi" || token[i] === "T_ignore") {
                         cinfo.push("singleton");
                     } else if (token[i] === "T_comment") {
                         cinfo.push("comment");
                     } else if (mjsx === true && token[i] === "T_script") {
                         cinfo.push("external");
-                    } else if ((token[i] === "T_content" && build[i] !== " ") && token[i - 1] === "T_script") {
-                        cinfo.push("external");
-                    } else if (token[i] === "T_content" && token[i - 1] === "T_style") {
-                        cinfo.push("external");
-                    } else if (token[i] === "T_content" && build[i].charAt(0) === " " && build[i].charAt(build[i].length - 1) === " ") {
-                        cinfo.push("mixed_both");
-                    } else if (token[i] === "T_content" && build[i].charAt(0) === " " && build[i].charAt(build[i].length - 1) !== " ") {
-                        cinfo.push("mixed_start");
-                    } else if (token[i] === "T_content" && build[i].charAt(0) !== " " && build[i].charAt(build[i].length - 1) === " ") {
-                        cinfo.push("mixed_end");
                     } else if (token[i] === "T_content") {
-                        cinfo.push("content");
+                        if ((build[i] !== " " && token[i - 1] === "T_script") || token[i - 1] === "T_style") {
+                            cinfo.push("external");
+                        } else if (build[i].charAt(0) === " " && build[i].charAt(build[i].length - 1) === " ") {
+                            cinfo.push("mixed_both");
+                        } else if (build[i].charAt(0) === " " && build[i].charAt(build[i].length - 1) !== " ") {
+                            cinfo.push("mixed_start");
+                        } else if (build[i].charAt(0) !== " " && build[i].charAt(build[i].length - 1) === " ") {
+                            cinfo.push("mixed_end");
+                        } else {
+                            cinfo.push("content");
+                        }
                     } else if (token[i] === "T_tag_start") {
                         cinfo.push("start");
                     } else if (token[i] === "T_style") {
@@ -9642,6 +10416,9 @@ var prettydiff = function prettydiff(api) {
                                 }
                             } else if (cinfo[i] === "end") {
                                 end();
+                                if (token[i] === "T_asp" && ((/(\{\s*%>)$/).test(build[i]) === true || (/(\{\s*%\])$/).test(build[i]) === true || (/(\{\s*@\})$/).test(build[i]) === true)) {
+                                    cinfo[i] = "start";
+                                }
                             } else if (cinfo[i] === "singleton") {
                                 if (svg === true && level[i - 1] !== "x") {
                                     if (cinfo[i - 1] === "start" || (/^( ?<svg)/).test(build[i - 1]) === true) {
@@ -9949,7 +10726,7 @@ var prettydiff = function prettydiff(api) {
                                 avgTypes   = [],
                                 avgChars   = [];
                             for (a = 0; a < lengthToken; a += 1) {
-                                if (cinfo[a] === "end") {
+                                if (cinfo[a] === "end" && token[a] !== "T_asp") {
                                     types[1]      += 1;
                                     totalTypes[0] += 1;
                                     chars[1]      += sum[a].length;
@@ -10294,8 +11071,12 @@ var prettydiff = function prettydiff(api) {
                                 if (c > 10) {
                                     topTen[topTen.length - 1] = "";
                                 }
-                                zipf.push("<table class='analysis' summary='Zipf&#39;s Law'><caption>This table demonstrates <em>Zipf&#39;s Law</em> by listing the 10 most occuring words in the content and the number of times they occurred.</caption>");
-                                zipf.push("<thead><tr><th>Word Rank</th><th>Most Occurring Word by Rank</th><th>Number of Instances</th><th>Ratio Increased Over Next Most Frequence Occurance</th><th>Percentage from ");
+                                zipf.push((("<table class='analysis' summary='Zipf&#39;s Law'><caption>This table demonstrate" +
+                                    "") + ("s <em>Zipf&#39;s Law</em> by listing the 10 most occuring words in the content a" +
+                                    "") + "nd the number of times they occurred.</caption>"));
+                                zipf.push((("<thead><tr><th>Word Rank</th><th>Most Occurring Word by Rank</th><th>Number of I" +
+                                    "") + ("nstances</th><th>Ratio Increased Over Next Most Frequence Occurance</th><th>Perc" +
+                                    "") + "entage from "));
                                 zipf.push(wordCount.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ","));
                                 if (wordCount > 1) {
                                     zipf.push(" Total");
@@ -10315,11 +11096,16 @@ var prettydiff = function prettydiff(api) {
                                 zipf.push("</tbody></table>");
                                 return zipf.join("");
                             }()));
-                            report.push("<table class='analysis' summary='Analysis of markup pieces.'><caption>Analysis of markup pieces.</caption><thead><tr><th>Type</th><th>Quantity of Tags/Content</th><th>Percentage Quantity in Section</th><th>Percentage Quantity of Total</th><th>** Character Size</th><th>Percentage Size in Section</th><th>Percentage Size of Total</th></tr></thead><tbody><tr><th>Total Pieces</th><td>");
+                            report.push((("<table class='analysis' summary='Analysis of markup pieces.'><caption>Analysis o" +
+                                "") + ("f markup pieces.</caption><thead><tr><th>Type</th><th>Quantity of Tags/Content</" +
+                                "") + ("th><th>Percentage Quantity in Section</th><th>Percentage Quantity of Total</th><" +
+                                "") + ("th>** Character Size</th><th>Percentage Size in Section</th><th>Percentage Size " +
+                                "") + "of Total</th></tr></thead><tbody><tr><th>Total Pieces</th><td>"));
                             report.push(lengthToken);
                             report.push("</td><td>100.00%</td><td>100.00%</td><td>");
                             report.push(lengthChars);
-                            report.push("</td><td>100.00%</td><td>100.00%</td></tr><tr><th colspan='7'>Common Tags</th></tr>");
+                            report.push((("</td><td>100.00%</td><td>100.00%</td></tr><tr><th colspan='7'>Common Tags</th></" +
+                                "") + "tr>"));
                             report.push(resultsTable);
                             requestList = [];
                             for (a = 0; a < requestLength; a += 1) {
@@ -10335,9 +11121,16 @@ var prettydiff = function prettydiff(api) {
                             } else {
                                 requestOutput = "";
                             }
-                            report.push("</tbody></table></div><p>* The number of requests is determined from the input submitted only and does not count the additional HTTP requests supplied from dynamically executed code, frames, iframes, css, or other external entities.</p><p>**");
-                            report.push("Character size is measured from the individual pieces of tags and content specifically between minification and beautification.</p><p>*** The number of starting &lt;script&gt; and &lt;style&gt; tags is subtracted from the total number of start tags.");
-                            report.push("The combination of those three values from the table above should equal the number of end tags or the code is in error.</p>");
+                            report.push((("</tbody></table></div><p>* The number of requests is determined from the input s" +
+                                "") + ("ubmitted only and does not count the additional HTTP requests supplied from dyna" +
+                                "") + ("mically executed code, frames, iframes, css, or other external entities.</p><p>*" +
+                                "") + "*"));
+                            report.push((("Character size is measured from the individual pieces of tags and content specif" +
+                                "") + ("ically between minification and beautification.</p><p>*** The number of starting" +
+                                "") + (" &lt;script&gt; and &lt;style&gt; tags is subtracted from the total number of st" +
+                                "") + "art tags."));
+                            report.push((("The combination of those three values from the table above should equal the numb" +
+                                "") + "er of end tags or the code is in error.</p>"));
                             report.push(requestOutput);
                             return report.join("");
                         }()),
@@ -10347,7 +11140,8 @@ var prettydiff = function prettydiff(api) {
                             output.push(args.source.length.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ","));
                             output.push("</em> characters</p><p><strong>Total output size:</strong> <em>");
                             output.push(build.join("").length.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ","));
-                            output.push("</em> characters</p><p><strong>* Total number of HTTP requests in supplied HTML:</strong> <em>");
+                            output.push((("</em> characters</p><p><strong>* Total number of HTTP requests in supplied HTML:" +
+                                "") + "</strong> <em>"));
                             output.push(reqLen);
                             output.push("</em></p>");
                             return output.join("");
@@ -10380,7 +11174,9 @@ var prettydiff = function prettydiff(api) {
                                     output.push(plural);
                                     output.push("!");
                                 }
-                                output.push("</strong> The combined total number of start tags, script tags, and style tags should equal the number of end tags. For HTML this problem may be solved by selecting the '<em>Presume SGML type HTML</em>' option.</p>");
+                                output.push((("</strong> The combined total number of start tags, script tags, and style tags s" +
+                                    "") + ("hould equal the number of end tags. For HTML this problem may be solved by selec" +
+                                    "") + "ting the '<em>Presume SGML type HTML</em>' option.</p>"));
                             } else {
                                 return "";
                             }
@@ -10408,24 +11204,24 @@ var prettydiff = function prettydiff(api) {
             cmjs : 150221
         },
         api          : {
-            dom      : 150308,
-            nodeLocal: 150304,
-            wsh      : 150302
+            dom      : 150314,
+            nodeLocal: 150314,
+            wsh      : 150314
         },
         charDecoder  : 141025,
-        css          : 150302, //diffview.css file
-        csspretty    : 150306, //csspretty library
+        css          : 150314, //diffview.css file
+        csspretty    : 150314, //csspretty library
         csvbeauty    : 140114, //csvbeauty library
         csvmin       : 131224, //csvmin library
         diffview     : 150221, //diffview library
-        documentation: 150304, //documentation.xhtml
-        jspretty     : 150308, //jspretty library
+        documentation: 150314, //documentation.xhtml
+        jspretty     : 150314, //jspretty library
         latest       : 0,
-        markup_beauty: 150304, //markup_beauty library
-        markupmin    : 150303, //markupmin library
-        prettydiff   : 150308, //this file
-        version      : "1.10.4", //version number
-        webtool      : 150304 //prettydiff.com.xhtml
+        markup_beauty: 150314, //markup_beauty library
+        markupmin    : 150314, //markupmin library
+        prettydiff   : 150314, //this file
+        version      : "1.11.0", //version number
+        webtool      : 150314 //prettydiff.com.xhtml
     };
 edition.latest = (function edition_latest() {
     "use strict";

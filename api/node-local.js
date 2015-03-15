@@ -102,6 +102,7 @@ Examples:
             space       : true,
             style       : "indent",
             styleguide  : "none",
+            titanium    : false,
             topcoms     : false,
             varword     : "none",
             vertical    : "none",
@@ -479,6 +480,9 @@ Examples:
             a.push("                 Accepted values: airbnb, crockford, google, grunt, jquery,");
             a.push("                                  mediawiki, yandex, none");
             a.push("");
+            a.push("* titanium     - boolean - Forces the JavaScript parser to parse Titanium Style");
+            a.push("                           Sheets instead of JavaScript. Default is false.");
+            a.push("");
             a.push("* topcoms      - boolean - If mode is 'minify' this determines whether comments");
             a.push("                           above the first line of code should be kept. Default");
             a.push("                           is false.");
@@ -757,6 +761,9 @@ Examples:
                     if (d[b][0] === "styleguide") {
                         options.styleguide = d[b][1];
                     }
+                    if (d[b][0] === "titanium" && d[b][1] === "true") {
+                        options.titanium = true;
+                    }
                     if (d[b][0] === "topcoms" && d[b][1] === "true") {
                         options.topcoms = true;
                     }
@@ -783,6 +790,10 @@ Examples:
             }
             if (alphasort === true) {
                 options.objsort = "all";
+            }
+            if (options.lang === "tss") {
+                options.titanium = true;
+                options.lang = "javascript";
             }
             return c;
         }()),

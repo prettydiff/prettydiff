@@ -25,36 +25,12 @@
         <link href="diffview.css" media="all" rel="stylesheet" type="text/css"/>
     </head>
     <body class="white" id="webtool">
-        <div id="top">
-            <h1>
-                <svg height="2000.000000pt" preserveAspectRatio="xMidYMid meet" version="1.0" viewBox="0 0 2000.000000 2000.000000" width="2000.000000pt" xmlns="http://www.w3.org/2000/svg"><g transform="translate(0.000000,2000.000000) scale(0.100000,-0.100000)" fill="#999" stroke="none"><path d="M14871 18523 c-16 -64 -611 -2317 -946 -3588 -175 -660 -319 -1202 -320 -1204 -2 -2 -50 39 -107 91 -961 876 -2202 1358 -3498 1358 -1255 0 -2456 -451 -3409 -1279 -161 -140 -424 -408 -560 -571 -507 -607 -870 -1320 -1062 -2090 -58 -232 -386 -1479 -2309 -8759 -148 -563 -270 -1028 -270 -1033 0 -4 614 -8 1365 -8 l1364 0 10 38 c16 63 611 2316 946 3587 175 660 319 1202 320 1204 2 2 50 -39 107 -91 543 -495 1169 -862 1863 -1093 1707 -568 3581 -211 4965 946 252 210 554 524 767 796 111 143 312 445 408 613 229 406 408 854 525 1320 57 225 380 1451 2310 8759 148 563 270 1028 270 1033 0 4 -614 8 -1365 8 l-1364 0 -10 -37z m-4498 -5957 c477 -77 889 -256 1245 -542 523 -419 850 -998 954 -1689 18 -121 18 -549 0 -670 -80 -529 -279 -972 -612 -1359 -412 -480 -967 -779 -1625 -878 -121 -18 -549 -18 -670 0 -494 74 -918 255 -1283 548 -523 419 -850 998 -954 1689 -18 121 -18 549 0 670 104 691 431 1270 954 1689 365 293 828 490 1283 545 50 6 104 13 120 15 72 10 495 -3 588 -18z"/></g></svg>
-                <span id="title_text">JSPretty</span></h1>
-            <div id="introduction"><h2>Introduction</h2>
-                <p><strong>Confidential:</strong>
-                    This tool executes entirely on the client computer without leaking any
-                submitted data over the internet.</p>
-                <ul>
-                    <li><a href="documentation.xhtml">English documentation</a></li>
-                    <li><a href="http://www.webhostinghub.com/support/es/misc/diff-documentacion">Espa&#241;ol documentaci&#243;n</a></li>
-                </ul>
-                <ul>
-                    <li><a href="prettydiff.com.xhtml">Pretty Diff</a></li>
-                    <li><a href="samples.xhtml">samples</a></li>
-                    <li><a href="https://groups.google.com/d/forum/pretty-diff">mailing list</a></li>
-                    <li><a href="https://github.com/austincheney/Pretty-Diff">GitHub</a></li>
-                    <li><a href="api/node-local.js">Node.js</a></li>
-                    <li><a href="api/prettydiff.wsf">WSH</a></li>
-                    <li><a href="http://g6auc.me.uk/widgets.html">JSPretty Widget</a></li>
-                </ul>
-                <p id="announcement" style="visibility: hidden"></p>
-                <span class="clear"></span>
-            </div>
-        </div>
-        <ul id="displayOps">
-            <li><button id="resetOptions" title="Clicking this button will clear all stored data and reset all options to the default configuration. I recommend refreshing the page after clicking this button." type="button">Reset
-                Options</button></li>
-            <li><a href="documentation.xhtml" class="button">Documentation</a></li>
-            <li id="displayOps-hide"><button id="hideOptions" title="Clicking this button will visually hide everything except for textarea elements and one 'Execute' button." type="button">Show Options</button></li>
+        <p aria-live="polite" id="arialive" style="display:none"></p>
+        <ul id="infolinks">
+            <!--li><a href="news.xhtml">News</a></li-->
+            <li><a href="overview.xhtml">Overview</a></li>
+            <li><a href="samples.xhtml">Samples</a></li>
+            <li><a href="documentation.xhtml">Documentation</a></li>
         </ul>
         <p id="functionGroup" class="append"><strong>Function</strong>
             <span>
@@ -64,8 +40,7 @@
                 <input id="modeminify" name="mode" title="This option tells thetool to return white space compressed code. Force this display by default with the address parameter 'm=minify'." type="radio"/>
                 <label for="modeminify" title="This option tells thetool to return white space compressed code. Force this display by default with the address parameter 'm=minify'.">Minify</label></span>
         </p>
-                <p id="update">Updated:
-                </p>
+                <p id="update">Updated:</p>
         <div id="codeInput">
             <div id="Beautify" style="display:none;"><h2 title="The term pretty-print is synonymous with code beautification.">Beautify
                 Code</h2>
@@ -110,7 +85,7 @@
         <div class="options" id="options"><h2>Main Options</h2>
             <input id="language" type="hidden" value="javascript"/>
             <p><label class="label" for="colorScheme">Color scheme</label>
-                <select id="colorScheme"><option>Default</option><option>Canvas</option><option selected="selected">Shadow</option><option>White</option></select>
+                <select id="colorScheme"><option>Canvas</option><option selected="selected">Shadow</option><option>White</option></select>
             </p>
             <p><strong>Auto-Correct sloppiness</strong>
                 <span>

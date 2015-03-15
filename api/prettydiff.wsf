@@ -113,6 +113,8 @@
                             error.push("* styleguide   - string  - Applies various options in a batch configuration to better conform to popular styleguides. Default is 'none'.");
                             error.push("                 Accepted values: airbnb, crockford, google, grunt, jquery, mediawiki, yandex, none");
                             error.push("");
+                            error.push(* titanium      - boolean - If the JavaScript parser should expect Titanium Style Sheets instead of JavaScript. Default is false.");
+                            error.push("");
                             error.push("* topcoms      - boolean - If mode is 'minify' this determines whether comments above the first line of code should be kept. Default is false.");
                             error.push("");
                             error.push("* varword      - string  - Can merge consecutive var statements in a single comma separated list or the oppose. The value 'list' will merge and 'each' is the opposite. Default is 'none'.");
@@ -299,6 +301,7 @@
                     args.space = (WScript.Arguments.Named("space") === "false" || WScript.Arguments.Named("space") === false) ? false : true;
                     args.style = (WScript.Arguments.Named("style")) ? "noindent" : "indent";
                     args.styleguide = (typeof WScript.Arguments.Named("styleguide") === "string") ? WScript.Arguments.Named("styleguide") : "none";
+                    args.titanium = (WScript.Arguments.Named("topcoms") === "true" || WScript.Arguments.Named("topcoms") === true) ? true : false;
                     args.topcoms = (WScript.Arguments.Named("topcoms") === "false" || WScript.Arguments.Named("topcoms") === false) ? false : true;
                     args.varword = (WScript.Arguments.Named("varword") === "each" || WScript.Arguments.Named("varword") === "list") ? WScript.Arguments.Named("varword") : "none";
                     args.vertical = (WScript.Arguments.Named("vertical") === "all" || WScript.Arguments.Named("vertical") === "css" || WScript.Arguments.Named("vertical") === "js") ? WScript.Arguments.Named("vertical") : "none";
@@ -325,6 +328,10 @@
                         if (args.mode !== "beautify") {
                             args.correct = false;
                         }
+                    }
+                    if (args.lang === "tss") {
+                        args.titanium = true;
+                        args.lang = "javscript";
                     }
                     if (args.lang !== "javascript" && args.lang !== "markup" && args.lang !== "html" && args.lang !== "css" && args.lang !== "csv" && args.lang !== "text") {
                         args.lang = "javascript";
