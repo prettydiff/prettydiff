@@ -1161,7 +1161,6 @@ var pd = {};
                     offset       = {},
                     style        = {},
                     styleguide   = {},
-                    wrap         = {},
                     comments     = pd.$$("incomment-no"),
                     chars        = pd.$$("beau-space"),
                     jslinesa     = pd.$$("bjslines-all"),
@@ -1177,7 +1176,8 @@ var pd = {};
                     varwordl     = pd.$$("bvarword-list"),
                     verticala    = pd.$$("vertical-all"),
                     verticalc    = pd.$$("vertical-cssonly"),
-                    verticalj    = pd.$$("vertical-jsonly");
+                    verticalj    = pd.$$("vertical-jsonly"),
+                    wrap         = pd.$$("beau-wrap");
                 if (pd.o.codeBeauIn !== null) {
                     if (pd.test.cm === true) {
                         api.source = pd.cm.beauIn.getValue();
@@ -1257,6 +1257,7 @@ var pd = {};
                     api.lang     = "javascript";
                     api.titanium = true;
                 }
+                api.wrap = (wrap === null || isNaN(wrap.value) === true) ? 80 : Number(wrap.value);
                 if (api.lang === "auto" || api.lang === "javascript") {
                     braceline        = pd.$$("bbraceline-no");
                     elseline         = pd.$$("jselseline-yes");
@@ -1287,11 +1288,9 @@ var pd = {};
                     forceIndent      = pd.$$("bforce_indent-yes");
                     html             = pd.$$("html-yes");
                     style            = pd.$$("inscript-no");
-                    wrap             = pd.$$("beau-wrap");
                     api.force_indent = (forceIndent === null || forceIndent.checked === false) ? false : true;
                     api.html         = (html === null || html.checked === false) ? false : true;
                     api.style        = (style === null || style.checked === false) ? "indent" : "noindent";
-                    api.wrap         = (wrap === null || isNaN(wrap.value) === true) ? 72 : Number(wrap.value);
                 }
             }());
             api.mode = "beautify";

@@ -89,9 +89,9 @@ Examples:
             langdefault : "text",
             mode        : "diff",
             obfuscate   : false,
-            objsort     : "none",
+            objsort     : "js",
             output      : "",
-            preserve    : "none",
+            preserve    : "all",
             quote       : false,
             quoteConvert: "none",
             readmethod  : "screen",
@@ -105,8 +105,8 @@ Examples:
             titanium    : false,
             topcoms     : false,
             varword     : "none",
-            vertical    : "none",
-            wrap        : 0
+            vertical    : "js",
+            wrap        : 80
         },
         colors = {
             del: {
@@ -404,7 +404,7 @@ Examples:
             a.push("                           false.");
             a.push("");
             a.push("* objsort      - string  - Sorts properties by key name in JavaScript and/or");
-            a.push("                           CSS. Defaults to 'none', which turns off sorting.");
+            a.push("                           CSS. Defaults to 'js'.");
             a.push("                 Accepted values: all, css, js, none");
             a.push("");
             a.push("* output       - string  - The path of the directory, if readmethod is value");
@@ -413,9 +413,9 @@ Examples:
             a.push("                           will be over written else it will be created.");
             a.push("");
             a.push("* preserve     - string  - Should empty lines be removed during JavaScript or");
-            a.push("                           CSS beautification? Default value is true which");
+            a.push("                           CSS beautification? Default value is 'js', which");
             a.push("                           retains one empty line for any series of empty lines");
-            a.push("                           in the code input.");
+            a.push("                           in the JavaScript code input.");
             a.push("                 Accepted values: all, css, js, none");
             a.push("");
             a.push("* quote        - boolean - If true and mode is 'diff' then all single quote");
@@ -493,15 +493,16 @@ Examples:
             a.push("                 Accepted values: each, list, none");
             a.push("");
             a.push("* vertical     - string  - If lists of assignments and properties should be");
-            a.push("                           vertically aligned. Default is 'none'.");
+            a.push("                           vertically aligned. Default is 'js'.");
             a.push("                 Accepted values: all, css, js, none");
             a.push("");
             a.push("* wrap         - number  - How many characters text content in markup or strings");
             a.push("                           in JavaScript can be before wrapping. The default");
-            a.push("                           value is 0, which turns this feature off. A value of");
-            a.push("                           -1 will concatenate strings in JavaScript separated by");
-            a.push("                           a '+' operator. In markup wrapping occurs on the last");
-            a.push("                           space character prior to the given character width");
+            a.push("                           value is 80. A value of turns this feature off. A");
+            a.push("                           value of -1 will concatenate strings in JavaScript");
+            a.push("                           separated by a '+' operator. In markup wrapping");
+            a.push("                           occurs on the last space character prior to the given");
+            a.push("                           character width");
             a.push("");
             return a.join("\n");
         }()),
@@ -700,17 +701,17 @@ Examples:
                         options.obfuscation = true;
                     }
                     if (d[b][0] === "objsort") {
-                        if (d[b][1] === "all" || d[b][1] === "css" || d[b][1] === "js") {
+                        if (d[b][1] === "all" || d[b][1] === "none" || d[b][1] === "css" || d[b][1] === "js") {
                             options.objsort = d[b][1];
                         } else if (d[b][1] === "true") {
-                            options.objsort = "all";
+                            options.objsort = "js";
                         }
                     }
                     if (d[b][0] === "output" && d[b][1].length > 0) {
                         options.output = pathslash(d[b][0], d[b][1]);
                     }
                     if (d[b][0] === "preserve") {
-                        if (d[b][1] === "all" || d[b][1] === "css" || d[b][1] === "js") {
+                        if (d[b][1] === "all" || d[b][1] === "none" || d[b][1] === "css" || d[b][1] === "js") {
                             options.preserve = d[b][1];
                         } else if (d[b][1] === "true") {
                             options.preserve = "all";
@@ -771,15 +772,15 @@ Examples:
                         options.varword = d[b][1];
                     }
                     if (d[b][0] === "vertical") {
-                        if (d[b][1] === "all" || d[b][1] === "css" || d[b][1] === "js") {
+                        if (d[b][1] === "all" || d[b][1] === "none" || d[b][1] === "css" || d[b][1] === "js") {
                             options.vertical = d[b][1];
                         } else if (d[b][1] === "true") {
                             options.vertical = "all";
                         }
                     }
                     if (d[b][0] === "wrap") {
-                        if (isNaN(d[b][1])) {
-                            options.wrap = 0;
+                        if (isNaN(d[b][1]) === true) {
+                            options.wrap = 80;
                         } else {
                             options.wrap = Number(d[b][1]);
                         }

@@ -86,12 +86,12 @@
                             error.push("");
                             error.push("* obfuscate    - boolean - If JavaScript minification should result in smaller variable names and fewer simicolons. Default is false.");
                             error.push("");
-                            error.push("* objsort      - string  - Sorts properties by key name in JavaScript and/or CSS. Defaults to 'none', which turns off sorting.");
+                            error.push("* objsort      - string  - Sorts properties by key name in JavaScript and/or CSS. Defaults to 'js', which sorts JavaScript object properties.");
                             error.push("                 Accepted values: all, css, js, none");
                             error.push("");
                             error.push("* output       - string  - The location of the output file. If the file does not exist it will be created. If this argument is missing output will print to screen.");
                             error.push("");
-                            error.push("* preserve     - string  - Runs of empty lines are condensed into a single empty line of beautified JavaScript or CSS. Default is 'none'.");
+                            error.push("* preserve     - string  - Runs of empty lines are condensed into a single empty line of beautified JavaScript or CSS. Default is 'all'.");
                             error.push("                 Accepted values: all, css, js, none");
                             error.push("");
                             error.push("* quote        - boolean - If true and mode is 'diff' then all single quote characters will be replaced by double quote characters in both the source and diff file input so as to eliminate some differences from the diff report HTML output.");
@@ -120,10 +120,10 @@
                             error.push("* varword      - string  - Can merge consecutive var statements in a single comma separated list or the oppose. The value 'list' will merge and 'each' is the opposite. Default is 'none'.");
                             error.push("                 Accepted values: each, list, none");
                             error.push("");
-                            error.push("* vertical     - string  - If lists of assignments and properties should be vertically aligned. Default is 'none'.");
+                            error.push("* vertical     - string  - If lists of assignments and properties should be vertically aligned. Default is 'js'.");
                             error.push("                 Accepted values: all, css, js, none");
                             error.push("");
-                            error.push("* wrap         - string  - The number of characters text content in a markup document or a string in JavaScript is allowed before wrapping onto a new line.  Default is 0 which disables text wrapping and a value of -1 will concatenating strings separated by a '+' operator.");
+                            error.push("* wrap         - number  - The number of characters text content in a markup document or a string in JavaScript is allowed before wrapping onto a new line.  Default is 80. A value of disables text wrapping and a value of -1 will concatenating JavaScript strings separated by a '+' operator.");
                             error.push("");
                             //error.push("* readmethod   - string  - The readmethod determines the quantity of files to read. The default value is 'file' which will operate against a single file. The value 'file' requires that you point to an actual file for the source and diff arguments. The values 'directory' and 'subdirectory' require directories for values to source and diff. The value 'directory' will include all files location in the target directory, but not any child directories.");
                             //error.push("                 Accepted values: file, directory, subdirectory");
@@ -292,10 +292,10 @@
                     args.langdefault = (WScript.Arguments.Named("langdefault") === "markup" || WScript.Arguments.Named("langdefault") === "html" || WScript.Arguments.Named("langdefault") === "css" || WScript.Arguments.Named("langdefault") === "csv" || WScript.Arguments.Named("langdefault") === "javascript") ? WScript.Arguments.Named("langdefault") : "text";
                     args.mode = WScript.Arguments.Named("mode") || "diff";
                     args.obfuscate = WScript.Arguments.Named("obfuscate") || false;
-                    args.objsort = (WScript.Arguments.Named("objsort") === "all" || WScript.Arguments.Named("objsort") === "css" || WScript.Arguments.Named("objsort") === "js") ? WScript.Arguments.Named("objsort") : "none";
+                    args.objsort = (WScript.Arguments.Named("objsort") === "all" || WScript.Arguments.Named("objsort") === "css" || WScript.Arguments.Named("objsort") === "none") ? WScript.Arguments.Named("objsort") : "js";
                     args.quote = (WScript.Arguments.Named("quote") === "true" || WScript.Arguments.Named("quote") === true) ? true : false;
                     args.quoteConvert = (WScript.Arguments.Named("quoteConvert") === "double" || WScript.Arguments.Named("quoteConvert") === "single") ? WScript.Arguments.Named("quoteConvert") : "none";
-                    args.preserve = (WScript.Arguments.Named("preserve") === "all" || WScript.Arguments.Named("preserve") === "css" || WScript.Arguments.Named("preserve") === "js") ? WScript.Arguments.Named("preserve") : "none";
+                    args.preserve = (WScript.Arguments.Named("preserve") === "none" || WScript.Arguments.Named("preserve") === "css" || WScript.Arguments.Named("preserve") === "js") ? WScript.Arguments.Named("preserve") : "all";
                     args.semicolon = (WScript.Arguments.Named("semicolon") === "true" || WScript.Arguments.Named("semicolon") === true) ? true : false;
                     args.sourcelabel = WScript.Arguments.Named("sourcelabel") || "base";
                     args.space = (WScript.Arguments.Named("space") === "false" || WScript.Arguments.Named("space") === false) ? false : true;
@@ -304,8 +304,8 @@
                     args.titanium = (WScript.Arguments.Named("topcoms") === "true" || WScript.Arguments.Named("topcoms") === true) ? true : false;
                     args.topcoms = (WScript.Arguments.Named("topcoms") === "false" || WScript.Arguments.Named("topcoms") === false) ? false : true;
                     args.varword = (WScript.Arguments.Named("varword") === "each" || WScript.Arguments.Named("varword") === "list") ? WScript.Arguments.Named("varword") : "none";
-                    args.vertical = (WScript.Arguments.Named("vertical") === "all" || WScript.Arguments.Named("vertical") === "css" || WScript.Arguments.Named("vertical") === "js") ? WScript.Arguments.Named("vertical") : "none";
-                    args.wrap = (isNaN(WScript.Arguments.Named("force_indent"))) ? 0 : WScript.Arguments.Named("force_indent");
+                    args.vertical = (WScript.Arguments.Named("vertical") === "all" || WScript.Arguments.Named("vertical") === "css" || WScript.Arguments.Named("vertical") === "none") ? WScript.Arguments.Named("vertical") : "js";
+                    args.wrap = (isNaN(WScript.Arguments.Named("wrap")) === true) ? 80 : WScript.Arguments.Named("wrap");
                     color = WScript.Arguments.Named("color") || "shadow";
                     args.inchar = args.inchar.replace(/\\t/g, "\u0009").replace(/\\n/g, "\u000a").replace(/\\r/g, "\u000d").replace(/\\f/g, "\u000c").replace(/\\b/g, "\u0008");
                     if (args.inlevel < 1) {

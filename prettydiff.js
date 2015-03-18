@@ -239,7 +239,7 @@ var prettydiff = function prettydiff(api) {
                     cvertical     = (api.vertical === "all" || (api.vertical === "css" && clang !== "javascript") || (api.vertical === "js" && clang !== "css")) ? true : false,
                     //api.wrap - in markup beautification should text content wrap after the first
                     //complete word up to a certain character length
-                    cwrap         = (isNaN(api.wrap)) ? 0 : Number(api.wrap),
+                    cwrap         = (isNaN(api.wrap) === true) ? 80 : Number(api.wrap),
                     proctime      = function core__proctime() {
                         var minuteString = "",
                             hourString   = "",
@@ -559,6 +559,12 @@ var prettydiff = function prettydiff(api) {
                                     }
                                 } else if (build[c][0] === "api.styleguide") {
                                     cstyleguide = build[c][1];
+                                } else if (build[c][0] === "api.titanium") {
+                                    if (build[c][1] === "true") {
+                                        ctitanium = true;
+                                    } else if (build[c][1] === "false") {
+                                        ctitanium = false;
+                                    }
                                 } else if (build[c][0] === "api.topcoms") {
                                     if (build[c][1] === "true") {
                                         ctopcoms = true;
@@ -729,6 +735,28 @@ var prettydiff = function prettydiff(api) {
                     auto = "<p>Code type is set to <strong>" + clang + "</strong>.</p>";
                 }
                 pdcomment();
+                if (clang === "css") {
+                    if (api.objsort === "js") {
+                        cobjsort = false;
+                    }
+                    if (api.preserve === "js") {
+                        cpreserve = false;
+                    }
+                    if (api.vertical === "js") {
+                        cvertical = false;
+                    }
+                }
+                if (clang === "js") {
+                    if (api.objsort === "css") {
+                        cobjsort = false;
+                    }
+                    if (api.preserve === "css") {
+                        cpreserve = false;
+                    }
+                    if (api.vertical === "css") {
+                        cvertical = false;
+                    }
+                }
                 if (cmode === "minify") {
                     if (clang === "css") {
                         apioutput = csspretty({
@@ -7305,8 +7333,7 @@ var prettydiff = function prettydiff(api) {
                             "ipt component analysis</caption><thead><tr><th>JavaScript Component</th><th>Comp" +
                             "onent Quantity</th><th>Percentage Quantity from Section</th>");
                         output.push("<th>Percentage Qauntity from Total</th><th>Character Length</th><th>Percentage L" +
-                            "ength from Section</th><th>Percentage Length from Total</th></tr></thead><tbody>" +
-                            "");
+                            "ength from Section</th><th>Percentage Length from Total</th></tr></thead><tbody>");
                         output.push("<tr><th>Total Accounted</th><td>");
                         output.push(total.token);
                         output.push("</td><td>100.00%</td><td>100.00%</td><td>");
@@ -7673,8 +7700,7 @@ var prettydiff = function prettydiff(api) {
                                     return 0;
                                 },
                                 pusher      = function markup_beauty__algorithm_loop_attributeOrder_pusher(attr) {
-                                    if (attr.indexOf("data-prettydiff-ignore" +
-                                        "=") === 0) {
+                                    if (attr.indexOf("data-prettydiff-ignore" + "=") === 0) {
                                         ignore = true;
                                         return;
                                     }
@@ -8015,7 +8041,7 @@ var prettydiff = function prettydiff(api) {
                             cdataE = script.match(scriptEnd)[0];
                             script = script.replace(scriptEnd, "");
                         }
-                        if (store[store.length - 1] !== ">" || (type === "script" && store[store.length - 3] === "]" && store[store.length - 2] === "]" && store[store.length - 1] === ">")) {
+                        if (comments === "" && (store[store.length - 1] !== ">" || (type === "script" && store[store.length - 3] === "]" && store[store.length - 2] === "]" && store[store.length - 1] === ">"))) {
                             if (type === "style") {
                                 if (typeof csspretty !== "function") {
                                     x[i] = cdataS + script + cdataE;
@@ -8125,7 +8151,7 @@ var prettydiff = function prettydiff(api) {
                         if (part.indexOf("type='syntaxhighlighter'") > -1) {
                             preserve("", "</script>");
                         }
-                        if (comments === "" && (part.indexOf("type='") < 0 || part.indexOf("type='text/javascript'") > -1 || part.indexOf("type='application/javascript'") > -1 || part.indexOf("type='application/x-javascript'") > -1 || part.indexOf("type='text/ecmascript'") > -1 || part.indexOf("type='application/ecmascript'") > -1 || part.indexOf("type='text/cjs'") > -1)) {
+                        if (part.indexOf("type='") < 0 || part.indexOf("type='text/javascript'") > -1 || part.indexOf("type='application/javascript'") > -1 || part.indexOf("type='application/x-javascript'") > -1 || part.indexOf("type='text/ecmascript'") > -1 || part.indexOf("type='application/ecmascript'") > -1 || part.indexOf("type='text/cjs'") > -1) {
                             markupscript("script");
                         }
                     } else if ((source.slice(i, i + 6)).toLowerCase() === "<style") {
@@ -8140,7 +8166,7 @@ var prettydiff = function prettydiff(api) {
                         if (comments !== "beautify" && comments !== "nocomment") {
                             markupspace();
                         }
-                        if (comments === "" && (part.indexOf("type='") < 0 || part.indexOf("type='text/css'") > -1)) {
+                        if (part.indexOf("type='") < 0 || part.indexOf("type='text/css'") > -1) {
                             markupscript("style");
                         }
                     } else if (minjsx === true && x[i] === "{" && typeof jspretty === "function") {
@@ -8763,8 +8789,6 @@ var prettydiff = function prettydiff(api) {
                     var i          = 0,
                         inc        = 0,
                         scriptflag = 0,
-                        scripttest = false,
-                        styletest  = false,
                         triplet    = "",
                         y          = markupmin({
                             comments    : (mmode === "beautify" && mcomm !== "nocomment") ? "beautify" : "nocomment",
@@ -8983,7 +9007,25 @@ var prettydiff = function prettydiff(api) {
                             }
                             return comment;
                         },
-                        end        = y.length;
+                        end        = y.length,
+                        scripttest = function markup_beauty__createBuild_scripttest(item) {
+                            if (item === undefined) {
+                                return false;
+                            }
+                            if (item.indexOf(" type='") === -1 || item.indexOf(" type='text/javascript'") > -1 || item.indexOf(" type='application/javascript'") > -1 || item.indexOf(" type='application/x-javascript'") > -1 || item.indexOf(" type='text/ecmascript'") > -1 || item.indexOf(" type='application/ecmascript'") > -1 || item.indexOf(" type='text/cjs'") > -1 || item.indexOf(" type='text/jsx'") > -1) {
+                                return true;
+                            }
+                            return false;
+                        },
+                        styletest = function markup_beauty__createBuild_styletest(item) {
+                            if (item === undefined) {
+                                return false;
+                            }
+                            if (item.indexOf(" type='") === -1 || item.indexOf(" type='text/css'") !== -1) {
+                                return true;
+                            }
+                            return false;
+                        };
                     if (summary !== "" && summary !== "diff") {
                         id = summary;
                     }
@@ -8991,24 +9033,14 @@ var prettydiff = function prettydiff(api) {
                         if (build.length > 0) {
                             last = build[build.length - 1].toLowerCase().replace(/"/g, "'");
                         }
-                        if (token[token.length - 1] === "T_script" && (last.indexOf(" type='") === -1 || last.indexOf(" type='text/javascript'") > -1 || last.indexOf(" type='application/javascript'") > -1 || last.indexOf(" type='application/x-javascript'") > -1 || last.indexOf(" type='text/ecmascript'") > -1 || last.indexOf(" type='application/ecmascript'") > -1 || last.indexOf(" type='text/cjs'") > -1 || last.indexOf(" type='text/jsx'") > -1)) {
-                            scripttest = true;
-                        } else {
-                            scripttest = false;
-                            if (token[token.length - 1] === "T_style" && (last.indexOf(" type='") === -1 || last.indexOf(" type='text/css'") !== -1)) {
-                                styletest = true;
-                            } else {
-                                styletest = false;
-                            }
-                        }
-                        if (scripttest === true && (i > end - 8 || y.slice(i, i + 8).join("").toLowerCase() !== "</script")) {
+                        if (token[token.length - 1] === "T_script" && scripttest(last) === true && (i > end - 8 || y.slice(i, i + 8).join("").toLowerCase() !== "</script")) {
                             build.push(cgather("script"));
                             if ((/^(\s+)$/).test(last) === true) {
                                 build.pop();
                             } else {
                                 token.push("T_content");
                             }
-                        } else if (styletest === true && (i > end - 7 || y.slice(i, i + 7).join("").toLowerCase() !== "</style")) {
+                        } else if (token[token.length - 1] === "T_style" && styletest(last) === true && (i > end - 7 || y.slice(i, i + 7).join("").toLowerCase() !== "</style")) {
                             build.push(cgather("style"));
                             if ((/^(\s+)$/).test(last) === true) {
                                 build.pop();
@@ -9070,17 +9102,16 @@ var prettydiff = function prettydiff(api) {
                                 token.push("T_ignore");
                             } else if (last.charAt(last.length - 2) === "/") {
                                 token.push("T_singleton");
-                            } else if (last.indexOf(" data-prettydiff-ignore" +
-                                "=") > 0) {
+                            } else if (last.indexOf(" data-prettydiff-ignore" + "=") > 0) {
                                 token.push("T_ignore");
-                            } else if (scripttest === true) {
+                            } else if (scripttest(build[build.length - 1]) === true) {
                                 token.push("T_script");
                             } else {
                                 token.push("T_tag_start");
                             }
                         } else if (y[i] === "<" && i < end - 5 && y[i + 1].toLowerCase() === "s" && y[i + 2].toLowerCase() === "t" && y[i + 3].toLowerCase() === "y" && y[i + 4].toLowerCase() === "l" && y[i + 5].toLowerCase() === "e") {
                             build.push(builder(">"));
-                            if (styletest === true) {
+                            if (styletest(build[build.length - 1]) === true) {
                                 token.push("T_style");
                             } else {
                                 token.push("T_tag_start");
@@ -9094,7 +9125,7 @@ var prettydiff = function prettydiff(api) {
                             if (last.indexOf("</li") > -1 && li.length > 0) {
                                 li[li.length - 1] = false;
                             }
-                        } else if (y[i] === "<" && scripttest === false && styletest === false && (y[i + 1] !== "!" || y[i + 1] !== "?" || y[i + 1] !== "/" || y[i + 1] !== "%")) {
+                        } else if (y[i] === "<" && (y[i + 1] !== "!" || y[i + 1] !== "?" || y[i + 1] !== "/" || y[i + 1] !== "%")) {
                             for (inc = i; inc < end; inc += 1) {
                                 if (y[inc] !== "?" && y[inc] !== "%") {
                                     if (y[inc] === "/" && y[inc + 1] === ">") {
@@ -9110,8 +9141,7 @@ var prettydiff = function prettydiff(api) {
                                         if (last === " <ul>" || last === "<ul>" || last === " <ul " || last === "<ul " || last === " </ol>" || last === "</ol>" || last === " </ol " || last === "</ol ") {
                                             li.push(false);
                                         }
-                                        if (last.indexOf(" data-prettydiff-ignore" +
-                                            "=") > 0) {
+                                        if (last.indexOf(" data-prettydiff-ignore" + "=") > 0) {
                                             token.push("T_ignore");
                                         } else {
                                             token.push("T_tag_start");
@@ -9122,14 +9152,14 @@ var prettydiff = function prettydiff(api) {
                             }
                         } else if ((y[i - 1] === ">" || i === 0 || token[token.length - 1] === "T_asp") && (y[i] !== "<" || (y[i] !== " " && y[i + 1] !== "<"))) {
                             triplet = y[i - 1] + y[i] + y[i + 1];
-                            if (scripttest === true) {
+                            if (token[token.length - 1] === "T_script") {
                                 build.push(cgather("script"));
                                 if ((/^(\s+)$/).test(last) === true) {
                                     build.pop();
                                 } else {
                                     token.push("T_content");
                                 }
-                            } else if (styletest === true) {
+                            } else if (token[token.length - 1] === "T_style") {
                                 build.push(cgather("style"));
                                 if ((/^(\s+)$/).test(last) === true) {
                                     build.pop();
@@ -9423,7 +9453,9 @@ var prettydiff = function prettydiff(api) {
                                             if (level[i - 1] === "x" && build[i].charAt(0) !== " " && cinfo[i - 1] !== "mixed_end" && (cinfo[i - 2] !== "end" || level[i - 2] !== "x") && (cinfo[i - 3] !== "end" || level[i - 3] !== "x")) {
                                                 return level.push("x");
                                             }
-                                            return level.push(level[b] + (counter - 1));
+                                            if (cinfo[b] !== "end") {
+                                                return level.push(level[b] + (counter - 1));
+                                            }
                                         }
                                     }
                                     counter = minlevel;
@@ -10685,9 +10717,9 @@ var prettydiff = function prettydiff(api) {
             cmjs : 150221
         },
         api          : {
-            dom      : 150316,
-            nodeLocal: 150314,
-            wsh      : 150314
+            dom      : 150317,
+            nodeLocal: 150317,
+            wsh      : 150317
         },
         charDecoder  : 141025,
         css          : 150314, //diffview.css file
@@ -10695,14 +10727,14 @@ var prettydiff = function prettydiff(api) {
         csvbeauty    : 140114, //csvbeauty library
         csvmin       : 131224, //csvmin library
         diffview     : 150221, //diffview library
-        documentation: 150314, //documentation.xhtml
-        jspretty     : 150316, //jspretty library
+        documentation: 150317, //documentation.xhtml
+        jspretty     : 150317, //jspretty library
         latest       : 0,
-        markup_beauty: 150316, //markup_beauty library
-        markupmin    : 150316, //markupmin library
-        prettydiff   : 150316, //this file
-        version      : "1.11.1", //version number
-        webtool      : 150314 //prettydiff.com.xhtml
+        markup_beauty: 150317, //markup_beauty library
+        markupmin    : 150317, //markupmin library
+        prettydiff   : 150317, //this file
+        version      : "1.11.2", //version number
+        webtool      : 150317 //prettydiff.com.xhtml
     };
 edition.latest = (function edition_latest() {
     "use strict";

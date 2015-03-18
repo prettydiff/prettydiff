@@ -521,14 +521,14 @@
                             <input id="beau-wrap" title="Determines how long text and strings can be before wrapping. Use a value of 0 to eliminate wrapping." type="text" value="80"/></span></p>
                     <p><strong>Quotes (Markup / JavaScript)</strong>
                         <span>
-                            <input checked="checked" id="bquoteconvert-double" name="bquoteconvert" title="Convert double quotes to single quotes for JavaScript strings and markup attributes." type="radio"/>
+                            <input checked="checked" id="bquoteconvert-none" name="bquoteconvert" title="Do not convert quote characters." type="radio"/>
+                            <label for="bquoteconvert-none">Leave the quotes alone</label></span>
+                        <span>
+                            <input id="bquoteconvert-double" name="bquoteconvert" title="Convert double quotes to single quotes for JavaScript strings and markup attributes." type="radio"/>
                             <label for="bquoteconvert-double">Convert to double quotes</label></span>
                         <span>
                             <input id="bquoteconvert-single" name="bquoteconvert" title="Convert single quotes to double quotes for JavaScript strings and markup attributes." type="radio"/>
                             <label for="bquoteconvert-single">Convert to single quotes</label></span>
-                        <span>
-                            <input id="bquoteconvert-none" name="bquoteconvert" title="Do not convert quote characters." type="radio"/>
-                            <label for="bquoteconvert-none">Leave the quotes alone</label></span>
                     </p>
                     <p><strong>Indent Style/Script (Markup Only)</strong>
                         <span>
@@ -661,14 +661,14 @@
                     </p>
                     <p><strong>Variable Lists (JavaScript Only)</strong>
                         <span>
-                            <input checked="checked" id="bvarword-list" name="bvarword" title="In JavaScript change consecutive variable declarations into a comma separated list with a single var keyword." type="radio"/>
+                            <input checked="checked" id="bvarword-none" name="bvarword" title="Ignore this option." type="radio"/>
+                            <label for="bvardword-none">Leave the variables alone</label></span>
+                        <span>
+                            <input id="bvarword-list" name="bvarword" title="In JavaScript change consecutive variable declarations into a comma separated list with a single var keyword." type="radio"/>
                             <label for="bvardword-list">Comma separated list</label></span>
                         <span>
                             <input id="bvarword-each" name="bvarword" title="In JavaScript change a comma separated list of variables into individual statements each starting with a var keyword." type="radio"/>
                             <label for="bvardword-each">Separate variables</label></span>
-                        <span>
-                            <input id="bvarword-none" name="bvarword" title="Ignore this option." type="radio"/>
-                            <label for="bvardword-none">Leave the variables alone</label></span>
                     </p>
                     <p><label class="label" for="bstyleguide">Style Guide (JavaScript Only)</label>
                         <select id="bstyleguide">
