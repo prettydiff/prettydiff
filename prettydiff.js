@@ -633,7 +633,7 @@ var prettydiff = function prettydiff(api) {
                             join  = "",
                             flaga = false,
                             flagb = false;
-                        if ((/^(\s*#)/).test(a) === true || (/\n\s*(\.|@)mixin\(?(\s*)/).test(a) === true) {
+                        if ((/^(\s*#(?!(\!\/)))/).test(a) === true || (/\n\s*(\.|@)mixin\(?(\s*)/).test(a) === true) {
                             clang = "css";
                             auto  = ("<p>Code type set to <strong>auto</strong>. Presumed language is <em>CSS</em>.</p" +
                                 ">");
@@ -1347,7 +1347,7 @@ var prettydiff = function prettydiff(api) {
                                         if ((/\d/).test(values[cc].charAt(1)) === true) {
                                             values[cc] = values[cc].substr(1);
                                         }
-                                    } else if ((/^url\(/).test(values[cc]) === true && values[cc].charAt(values[cc].length - 1) === ")") {
+                                    } else if ((/^url\((?!\$)/).test(values[cc]) === true && (/\+/).test(values[cc]) === false && values[cc].charAt(values[cc].length - 1) === ")") {
                                         if (values[cc].charAt(4) !== "\"") {
                                             if (values[cc].charAt(4) === "'") {
                                                 values[cc] = values[cc].replace("url('", "url(\"");
@@ -3653,36 +3653,32 @@ var prettydiff = function prettydiff(api) {
                         token.splice(x, 0, ",");
                         types.splice(x, 0, "separator");
                     },
-                    plusplus       = function jspretty__tokenize_plusplus(x, y) {
+                    plusplus       = function jspretty__tokenize_plusplus() {
                         var store = [],
-                            op    = "",
                             cc    = 0,
-                            dd    = 0;
-                        if (y === "post" && c[a] === ")" && token[lengtha - 3] === ",") {
-                            for (cc = lengtha - 1; cc > -1; cc -= 1) {
-                                if (types[cc] === "end") {
-                                    dd += 1;
+                            dd    = 0,
+                            pre   = true,
+                            toke  = "+=";
+                        lengtha = token.length;
+                        if ((token[lengtha - 3] === "[" || token[lengtha - 3] === ";" || token[lengtha - 3] === "x;" || token[lengtha - 3] === "}" || token[lengtha - 3] === "(" || token[lengtha - 3] === ")" || token[lengtha - 3] === "," || token[lengtha - 3] === "return") && jscorrect === true) {
+                            if (token[lengtha - 1] === "++" || token[lengtha - 1] === "--") {
+                                if (token[lengtha - 3] === "[" || token[lengtha - 3] === "(" || token[lengtha - 3] === "," || token[lengtha - 3] === "return") {
+                                    return;
                                 }
-                                if (types[cc] === "start" || types[cc] === "method") {
-                                    dd -= 1;
+                                if (token[lengtha - 2] === "--") {
+                                    toke = "-=";
                                 }
-                                if (dd < 0) {
-                                    if (types[cc] === "method" || token[cc - 1] === "function") {
-                                        return;
-                                    }
-                                    break;
-                                }
+                                pre = false;
+                            } else if (token[lengtha - 2] === "--") {
+                                toke = "-=";
                             }
-                        }
-                        if (token[x] === "++") {
-                            op = "+=";
                         } else {
-                            op = "-=";
+                            return;
                         }
-                        if (y === "pre") {
-                            store.push(token[x + 1]);
-                            store.push(types[x + 1]);
-                            store.push(lines[x + 1]);
+                        if (pre === true) {
+                            store.push(token[lengtha - 1]);
+                            store.push(types[lengtha - 1]);
+                            store.push(lines[lengtha - 1]);
                             token.pop();
                             types.pop();
                             lines.pop();
@@ -3692,7 +3688,7 @@ var prettydiff = function prettydiff(api) {
                             token.push(store[0]);
                             types.push(store[1]);
                             lines.push(store[2]);
-                            token.push(op);
+                            token.push(toke);
                             types.push("operator");
                             token.push("1");
                             types.push("literal");
@@ -3700,7 +3696,7 @@ var prettydiff = function prettydiff(api) {
                             token.pop();
                             types.pop();
                             lines.pop();
-                            token.push(op);
+                            token.push(toke);
                             types.push("operator");
                             lines.push(0);
                             token.push("1");
@@ -3728,7 +3724,7 @@ var prettydiff = function prettydiff(api) {
                             tokel = token[len];
                             typel = types[len];
                         }
-                        if (typel === "start" || typel === "separator" || typel === "operator" || tokel === "x}" || tokel === ";" || tokel === "x;" || tokel === "var" || tokel === "else") {
+                        if (typel === "start" || typel === "separator" || typel === "operator" || tokel === "x}" || tokel === ";" || tokel === "x;" || tokel === "var" || tokel === "else" || tokel.indexOf("#!/") === 0) {
                             return;
                         }
                         if (obj.len > -1 && obj.status[obj.len] === true && obj.count[obj.len] === 0) {
@@ -4369,7 +4365,7 @@ var prettydiff = function prettydiff(api) {
                             return;
                         }
                         output = schars.join("");
-                        if (output.indexOf("\n") > -1) {
+                        if (output.indexOf("\n") > -1 && token[token.length - 1].indexOf("#!/") !== 0) {
                             if (output.indexOf("\n") !== output.lastIndexOf("\n") || token[token.length - 1].indexOf("//") === 0) {
                                 emptyline = 2;
                             }
@@ -4664,6 +4660,16 @@ var prettydiff = function prettydiff(api) {
                             types.push(ltype);
                             lines.push(0);
                         }
+                    } else if ((lines.length === 0 || lines[lines.length - 1] > 0) && c[a] === "#" && c[a + 1] === "!" && c[a + 2] === "/") {
+                        //shebang
+                        ltoke              = generic("#!/", "\r");
+                        ltoke              = ltoke.slice(0, ltoke.length - 1);
+                        ltype              = "literal";
+                        stats.server.token += 1;
+                        stats.server.chars += ltoke.length;
+                        token.push(ltoke);
+                        types.push(ltype);
+                        lines.push(2);
                     } else if (c[a] === "/" && (a === b - 1 || c[a + 1] === "/")) {
                         //comment line
                         if (wordTest > -1) {
@@ -4847,13 +4853,7 @@ var prettydiff = function prettydiff(api) {
                             }
                         }
                         stats.semicolon += 1;
-                        if ((token[lengtha - 3] === ";" || token[lengtha - 3] === "}" || types[lengtha - 3] === "start" || types[lengtha - 3] === "method" || token[lengtha - 3] === ")" || token[lengtha - 3] === "," || token[lengtha - 3] === "return") && jscorrect === true) {
-                            if (ltoke === "++" || ltoke === "--") {
-                                plusplus(lengtha - 1, "post");
-                            } else if (token[lengtha - 2] === "++" || token[lengtha - 2] === "--") {
-                                plusplus(lengtha - 2, "pre");
-                            }
-                        }
+                        plusplus();
                         ltoke = ";";
                         ltype = "separator";
                         if (dostate.index === token.length - 1) {
@@ -4980,13 +4980,7 @@ var prettydiff = function prettydiff(api) {
                         }
                         asifix();
                         stats.container += 1;
-                        if ((token[lengtha - 3] === ";" || token[lengtha - 3] === "}" || token[lengtha - 3] === "[" || token[lengtha - 3] === "(" || token[lengtha - 3] === ")" || token[lengtha - 3] === "," || token[lengtha - 3] === "return") && jscorrect === true) {
-                            if (types[lengtha - 3] !== "method" && (ltoke === "++" || ltoke === "--")) {
-                                plusplus(lengtha - 1, "post");
-                            } else if (token[lengtha - 2] === "++" || token[lengtha - 2] === "--") {
-                                plusplus(lengtha - 2, "pre");
-                            }
-                        }
+                        plusplus();
                         ltoke = ")";
                         ltype = "end";
                         if (jscorrect === true) {
@@ -5025,13 +5019,7 @@ var prettydiff = function prettydiff(api) {
                         }
                         asifix();
                         stats.container += 1;
-                        if ((token[lengtha - 3] === "[" || token[lengtha - 3] === ";" || token[lengtha - 3] === "}" || token[lengtha - 3] === "(" || token[lengtha - 3] === ")" || token[lengtha - 3] === "," || token[lengtha - 3] === "return") && jscorrect === true) {
-                            if (ltoke === "++" || ltoke === "--") {
-                                plusplus(lengtha - 1, "post");
-                            } else if (token[lengtha - 2] === "++" || token[lengtha - 2] === "--") {
-                                plusplus(lengtha - 2, "pre");
-                            }
-                        }
+                        plusplus();
                         ltoke = "]";
                         ltype = "end";
                         token.push(ltoke);
@@ -5088,19 +5076,7 @@ var prettydiff = function prettydiff(api) {
                             if (ltoke === ";" && jmode === "minify" && jobfuscate === true) {
                                 token[token.length - 1] = "x;";
                             }
-                            if ((token[lengtha - 3] === ";" || token[lengtha - 3] === "}" || token[lengtha - 3] === "[" || token[lengtha - 3] === "(" || token[lengtha - 3] === ")" || token[lengtha - 3] === "," || token[lengtha - 3] === "return") && jscorrect === true) {
-                                if (token[lengtha - 1] === "++" || token[lengtha - 1] === "--") {
-                                    plusplus(lengtha - 1, "post");
-                                    token.push(";");
-                                    types.push("separator");
-                                    lines.push(0);
-                                } else if (token[lengtha - 2] === "++" || token[lengtha - 2] === "--") {
-                                    plusplus(lengtha - 2, "pre");
-                                    token.push(";");
-                                    types.push("separator");
-                                    lines.push(0);
-                                }
-                            }
+                            plusplus();
                             stats.container += 1;
                             ltoke           = "}";
                             ltype           = "end";
@@ -6067,7 +6043,11 @@ var prettydiff = function prettydiff(api) {
                         } else if (ctype === "regex") {
                             level.push("x");
                         } else if (ctype === "literal") {
-                            level.push("s");
+                            if (ctoke.indexOf("#!/") === 0) {
+                                level.push(indent);
+                            } else {
+                                level.push("s");
+                            }
                         } else if (ctype === "separator") {
                             separator();
                         } else if (ctype === "method") {
@@ -7700,7 +7680,8 @@ var prettydiff = function prettydiff(api) {
                                     return 0;
                                 },
                                 pusher      = function markup_beauty__algorithm_loop_attributeOrder_pusher(attr) {
-                                    if (attr.indexOf("data-prettydiff-ignore" + "=") === 0) {
+                                    if (attr.indexOf("data-prettydiff-ignore" +
+                                        "=") === 0) {
                                         ignore = true;
                                         return;
                                     }
@@ -8460,6 +8441,24 @@ var prettydiff = function prettydiff(api) {
                                         break;
                                     }
                                 }
+                            } else if (x.charAt(a) === "{" && x.charAt(a + 1) === "{") {
+                                if (x.charAt(a + 2) === "{") {
+                                    for (b = a + 2; b < end; b += 1) {
+                                        if (x.charAt(b - 2) === "}" && x.charAt(b - 1) === "}" && x.charAt(b) === "}") {
+                                            a        = b;
+                                            tagCount += 1;
+                                            break;
+                                        }
+                                    }
+                                } else {
+                                    for (b = a + 2; b < end; b += 1) {
+                                        if (x.charAt(b - 1) === "}" && x.charAt(b) === "}") {
+                                            a        = b;
+                                            tagCount += 1;
+                                            break;
+                                        }
+                                    }
+                                }
                             } else if (x.charAt(a) === "[" && x.charAt(a + 1) === "%") {
                                 for (b = a + 2; b < end; b += 1) {
                                     if (x.charAt(b - 1) === "%" && x.charAt(b) === "]") {
@@ -8577,21 +8576,37 @@ var prettydiff = function prettydiff(api) {
                                                 }
                                             }
                                         } else if (x.charAt(b) === "<" && x.charAt(b + 1) === "%") {
-                                            for (c = b + 5; c < end; c += 1) {
+                                            for (c = b + 2; c < end; c += 1) {
                                                 if (x.charAt(c - 1) === "%" && x.charAt(c) === ">") {
                                                     b = c;
                                                     break;
                                                 }
                                             }
+                                        } else if (x.charAt(b) === "{" && x.charAt(b + 1) === "{") {
+                                            if (x.charAt(b + 2) === "{") {
+                                                for (c = b + 2; c < end; c += 1) {
+                                                    if (x.charAt(c - 2) === "}" && x.charAt(c - 1) === "}" && x.charAt(c) === "}") {
+                                                        b = c;
+                                                        break;
+                                                    }
+                                                }
+                                            } else {
+                                                for (c = b + 2; c < end; c += 1) {
+                                                    if (x.charAt(c - 1) === "}" && x.charAt(c) === "}") {
+                                                        b = c;
+                                                        break;
+                                                    }
+                                                }
+                                            }
                                         } else if (x.charAt(b) === "[" && x.charAt(b + 1) === "%") {
-                                            for (c = b + 5; c < end; c += 1) {
+                                            for (c = b + 2; c < end; c += 1) {
                                                 if (x.charAt(c - 1) === "%" && x.charAt(c) === "]") {
                                                     b = c;
                                                     break;
                                                 }
                                             }
                                         } else if (x.charAt(b) === "{" && x.charAt(b + 1) === "@") {
-                                            for (c = b + 5; c < end; c += 1) {
+                                            for (c = b + 2; c < end; c += 1) {
                                                 if (x.charAt(c - 1) === "@" && x.charAt(c) === "}") {
                                                     b = c;
                                                     break;
@@ -9017,7 +9032,7 @@ var prettydiff = function prettydiff(api) {
                             }
                             return false;
                         },
-                        styletest = function markup_beauty__createBuild_styletest(item) {
+                        styletest  = function markup_beauty__createBuild_styletest(item) {
                             if (item === undefined) {
                                 return false;
                             }
@@ -9077,6 +9092,12 @@ var prettydiff = function prettydiff(api) {
                                 build.push(builder("%>"));
                                 token.push("T_asp");
                             }
+                        } else if ((y[i] === "{" && y[i + 1] === "{" && y[i + 2] === "{") || (y[i] === " " && y[i + 1] === "{" && y[i + 2] === "{" && y[i + 3] === "{")) {
+                            build.push(builder("}}}", i + 1));
+                            token.push("T_asp");
+                        } else if ((y[i] === "{" && y[i + 1] === "{") || (y[i] === " " && y[i + 1] === "{" && y[i + 2] === "{")) {
+                            build.push(builder("}}", i + 1));
+                            token.push("T_asp");
                         } else if ((y[i] === "[" && y[i + 1] === "%") || (y[i] === " " && y[i + 1] === "[" && y[i + 2] === "%")) {
                             build.push(builder("%]", i + 1));
                             token.push("T_asp");
@@ -9102,7 +9123,8 @@ var prettydiff = function prettydiff(api) {
                                 token.push("T_ignore");
                             } else if (last.charAt(last.length - 2) === "/") {
                                 token.push("T_singleton");
-                            } else if (last.indexOf(" data-prettydiff-ignore" + "=") > 0) {
+                            } else if (last.indexOf(" data-prettydiff-ignore" +
+                                "=") > 0) {
                                 token.push("T_ignore");
                             } else if (scripttest(build[build.length - 1]) === true) {
                                 token.push("T_script");
@@ -9141,7 +9163,8 @@ var prettydiff = function prettydiff(api) {
                                         if (last === " <ul>" || last === "<ul>" || last === " <ul " || last === "<ul " || last === " </ol>" || last === "</ol>" || last === " </ol " || last === "</ol ") {
                                             li.push(false);
                                         }
-                                        if (last.indexOf(" data-prettydiff-ignore" + "=") > 0) {
+                                        if (last.indexOf(" data-prettydiff-ignore" +
+                                            "=") > 0) {
                                             token.push("T_ignore");
                                         } else {
                                             token.push("T_tag_start");
@@ -9189,9 +9212,9 @@ var prettydiff = function prettydiff(api) {
                     if (token[i] === "T_sgml" || token[i] === "T_xml") {
                         cinfo.push("parse");
                     } else if (token[i] === "T_asp") {
-                        if ((/^( ?<(%)\s*\})/).test(build[i]) === true || (/^( ?\[(%)\s*\})/).test(build[i]) === true || (/^( ?\{(@)\s*\})/).test(build[i]) === true) {
+                        if ((/^( ?\{\{\/)/).test(build[i]) === true || (/^( ?<(%)\s*\})/).test(build[i]) === true || (/^( ?\[(%)\s*\})/).test(build[i]) === true || (/^( ?\{(@)\s*\})/).test(build[i]) === true) {
                             cinfo.push("end");
-                        } else if ((/(\{\s*%>)$/).test(build[i]) === true || (/(\{\s*%\])$/).test(build[i]) === true || (/(\{\s*@\})$/).test(build[i]) === true) {
+                        } else if ((/^( ?\{\{#)/).test(build[i]) === true || (/(\{\s*%>)$/).test(build[i]) === true || (/(\{\s*%\])$/).test(build[i]) === true || (/(\{\s*@\})$/).test(build[i]) === true) {
                             cinfo.push("start");
                         } else {
                             cinfo.push("singleton");
@@ -10717,24 +10740,24 @@ var prettydiff = function prettydiff(api) {
             cmjs : 150221
         },
         api          : {
-            dom      : 150317,
+            dom      : 150321,
             nodeLocal: 150317,
             wsh      : 150317
         },
         charDecoder  : 141025,
         css          : 150314, //diffview.css file
-        csspretty    : 150314, //csspretty library
+        csspretty    : 150321, //csspretty library
         csvbeauty    : 140114, //csvbeauty library
         csvmin       : 131224, //csvmin library
         diffview     : 150221, //diffview library
-        documentation: 150317, //documentation.xhtml
-        jspretty     : 150317, //jspretty library
+        documentation: 150321, //documentation.xhtml
+        jspretty     : 150321, //jspretty library
         latest       : 0,
-        markup_beauty: 150317, //markup_beauty library
+        markup_beauty: 150321, //markup_beauty library
         markupmin    : 150317, //markupmin library
-        prettydiff   : 150317, //this file
-        version      : "1.11.2", //version number
-        webtool      : 150317 //prettydiff.com.xhtml
+        prettydiff   : 150321, //this file
+        version      : "1.11.3", //version number
+        webtool      : 150321 //prettydiff.com.xhtml
     };
 edition.latest = (function edition_latest() {
     "use strict";

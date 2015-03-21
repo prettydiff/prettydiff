@@ -171,6 +171,8 @@
                         styleguide option</a></li>
                     <li><a href="guide/jscorrect.xhtml">What Pretty Diff can do to auto-correct some
                         sloppiness in JavaScript.</a></li>
+                    <li><a href="guide/codeArchitecture.xhtml">Brief overview of the prettydiff.js
+                        code architecture</a></li>
                 </ol>
             </div>
             <div id="about_unrelated">
@@ -665,7 +667,9 @@
                             <li><h5>Default</h5>
                                 none</li>
                             <li><h5>Informational Guide</h5>
-                                <a href="guide/closure_with_jsscope.xhtml">jsscope features</a> and <a href="guide/jshtml.xhtml">saving colorful code as HTML</a></li>
+                                <a href="guide/closure_with_jsscope.xhtml">jsscope features</a>
+                                and 
+                                <a href="guide/jshtml.xhtml">saving colorful code as HTML</a></li>
                             <li><h5>As labeled in the HTML tool</h5>
                                 Scope Analysis (JavaScript Only)</li>
                         </ul>
@@ -926,7 +930,11 @@
                     <li id="titanium"><h4>titanium</h4>
                         <ul>
                             <li><h5>Description</h5>
-                                If the JavaScript parser should parse Titanium Style Sheets instead of JavaScript. This option may be set explicitly, but is primarily used internally from language detection or if the value of the <em>lang</em> option is "tss".</li>
+                                If the JavaScript parser should parse Titanium Style Sheets instead of
+                                JavaScript. This option may be set explicitly, but is primarily used internally
+                                from language detection or if the value of the
+                                <em>lang</em>
+                                option is "tss".</li>
                             <li><h5>Type</h5>
                                 boolean</li>
                             <li><h5>Default</h5>
@@ -1211,7 +1219,18 @@
                     <em>new</em>
                     keyword in its report summary, which is any use except immediately preceeding one
                     of these global objects:</p>
-                <blockquote>"ActiveXObject", "ArrayBuffer", "AudioContext", "Canvas", "CustomAnimation", "DOMParser", "DataView", "Date", "Error", "EvalError", "FadeAnimation", "FileReader", "Flash", "Float32Array", "Float64Array", "FormField", "Frame", "Generator", "HotKey", "Image", "Iterator", "Intl", "Int16Array", "Int32Array", "Int8Array", "InternalError", "Loader", "Map", "MenuItem", "MoveAnimation", "Notification", "ParallelArray", "Point", "Promise", "Proxy", "RangeError", "Rectangle", "ReferenceError", "Reflect", "RegExp", "ResizeAnimation", "RotateAnimation", "Set", "SQLite", "ScrollBar", "Set", "Shadow", "StopIteration", "Symbol", "SyntaxError", "Text", "TextArea", "Timer", "TypeError", "URL", "Uint16Array", "Uint32Array", "Uint8Array", "Uint8ClampedArray", "URIError", "WeakMap", "WeakSet", "Web", "Window", "XMLHttpRequest"</blockquote>
+                <blockquote>"ActiveXObject", "ArrayBuffer", "AudioContext", "Canvas",
+                    "CustomAnimation", "DOMParser", "DataView", "Date", "Error", "EvalError",
+                    "FadeAnimation", "FileReader", "Flash", "Float32Array", "Float64Array",
+                    "FormField", "Frame", "Generator", "HotKey", "Image", "Iterator", "Intl",
+                    "Int16Array", "Int32Array", "Int8Array", "InternalError", "Loader", "Map",
+                    "MenuItem", "MoveAnimation", "Notification", "ParallelArray", "Point",
+                    "Promise", "Proxy", "RangeError", "Rectangle", "ReferenceError", "Reflect",
+                    "RegExp", "ResizeAnimation", "RotateAnimation", "Set", "SQLite", "ScrollBar",
+                    "Set", "Shadow", "StopIteration", "Symbol", "SyntaxError", "Text", "TextArea",
+                    "Timer", "TypeError", "URL", "Uint16Array", "Uint32Array", "Uint8Array",
+                    "Uint8ClampedArray", "URIError", "WeakMap", "WeakSet", "Web", "Window",
+                    "XMLHttpRequest"</blockquote>
                 <h4>Summary</h4>
                 <p>An unassigned anonymous function creates the summary report and assigns its
                     output to a variable named

@@ -89,6 +89,7 @@ License:
 ---
 
  @source: http://prettydiff.com/prettydiff.js
+
  @documentation - English: http://prettydiff.com/documentation.php
 
  @licstart  The following is the entire license notice for Pretty Diff.
