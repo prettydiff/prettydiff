@@ -636,7 +636,7 @@ var prettydiff = function prettydiff(api) {
                         if ((/^(\s*#(?!(\!\/)))/).test(a) === true || (/\n\s*(\.|@)mixin\(?(\s*)/).test(a) === true) {
                             clang = "css";
                             auto  = ("<p>Code type set to <strong>auto</strong>. Presumed language is <em>CSS</em>.</p" +
-                                ">");
+                                    ">");
                             return;
                         }
                         if ((/^([\s\w]*<)/).test(a) === false && (/(>[\s\w]*)$/).test(a) === false) {
@@ -824,14 +824,14 @@ var prettydiff = function prettydiff(api) {
                                     output.push("<p><strong class='duplicate'>Duplicate id attribute values detected:</strong> " + summary + "</p>");
                                 }
                                 output.push("<div class='doc'><table class='analysis' summary='Minification efficiency report" +
-                                    "'><caption>Minification efficiency report</caption><thead><tr><th colspan='2'>Ou" +
+                                        "'><caption>Minification efficiency report</caption><thead><tr><th colspan='2'>Ou" +
                                     "tput Size</th><th colspan='2'>Number of Lines From Input</th></tr></thead><tbody" +
                                     "><tr><td colspan='2'>");
                                 output.push(sizeNew);
                                 output.push("</td><td colspan='2'>");
                                 output.push(lines + 1);
                                 output.push("</td></tr><tr><th>Operating System</th><th>Input Size</th><th>Size Difference</t" +
-                                    "h><th>Percentage of Decrease</th></tr><tr><th>Unix/Linux</th><td>");
+                                        "h><th>Percentage of Decrease</th></tr><tr><th>Unix/Linux</th><td>");
                                 output.push(sizeOld);
                                 output.push("</td><td>");
                                 output.push(sizeDifference);
@@ -2027,10 +2027,10 @@ var prettydiff = function prettydiff(api) {
                         a    = 0,
                         b    = 0;
                     summ.push("<div class='doc' id='cssreport'><p><strong>Number of HTTP requests:</strong> <em" +
-                        ">");
+                            ">");
                     summ.push(uris);
                     summ.push("</em></p><table class='analysis' id='css-parts' summary='Component counts and si" +
-                        "zes'><caption>Component counts and sizes</caption><thead><tr><th>Type Name</th><" +
+                            "zes'><caption>Component counts and sizes</caption><thead><tr><th>Type Name</th><" +
                         "th>Quantity</th><th>Character Size</th></tr></thead><tbody><tr><th>curly braces<" +
                         "/th><td>");
                     summ.push(stats.braces);
@@ -2069,7 +2069,7 @@ var prettydiff = function prettydiff(api) {
                     summ.push("</td><td>");
                     summ.push(stats.variables.chars);
                     summ.push("</td></tr></tbody></table><table class='analysis' id='css-size' summary='CSS cha" +
-                        "racter size change'><caption>CSS character size change</caption><tbody><tr><th>I" +
+                            "racter size change'><caption>CSS character size change</caption><tbody><tr><th>I" +
                         "nput</th><td>");
                     summ.push(inl);
                     summ.push("</td></tr><tr><th>Output</th><td>");
@@ -2087,7 +2087,7 @@ var prettydiff = function prettydiff(api) {
                         summ.push((((inl - out) / inl) * 100).toFixed(2));
                     }
                     summ.push("%</td></tr></tbody></table><table class='analysis' id='css-uri' summary='A list " +
-                        "of HTTP requests'><caption>A List of HTTP Requests</caption><thead><tr><th>Quant" +
+                            "of HTTP requests'><caption>A List of HTTP Requests</caption><thead><tr><th>Quant" +
                         "ity</th><th>URI</th></tr></thead><tbody>");
                     for (a = 0; a < uris; a += 1) {
                         uric = 1;
@@ -3241,7 +3241,7 @@ var prettydiff = function prettydiff(api) {
                     node.push("</ol></div>");
                 }
                 node.push("<p class='author'>Diff view written by <a href='http://prettydiff.com/'>Pretty D" +
-                    "iff</a>.</p></div>");
+                        "iff</a>.</p></div>");
                 return [
                     node.join("").replace(/li class='equal'><\/li/g, "li class='equal'>&#10;</li").replace(/\$#gt;/g, "&gt;").replace(/\$#lt;/g, "&lt;").replace(/\%#lt;/g, "$#lt;").replace(/\%#gt;/g, "$#gt;"), errorout, diffline
                 ];
@@ -3655,28 +3655,35 @@ var prettydiff = function prettydiff(api) {
                     },
                     plusplus       = function jspretty__tokenize_plusplus() {
                         var store = [],
-                            cc    = 0,
-                            dd    = 0,
                             pre   = true,
-                            toke  = "+=";
+                            toke  = "+=",
+                            tokea = "",
+                            tokeb = "",
+                            tokec = "";
                         lengtha = token.length;
-                        if ((token[lengtha - 3] === "[" || token[lengtha - 3] === ";" || token[lengtha - 3] === "x;" || token[lengtha - 3] === "}" || token[lengtha - 3] === "(" || token[lengtha - 3] === ")" || token[lengtha - 3] === "," || token[lengtha - 3] === "return") && jscorrect === true) {
-                            if (token[lengtha - 1] === "++" || token[lengtha - 1] === "--") {
-                                if (token[lengtha - 3] === "[" || token[lengtha - 3] === "(" || token[lengtha - 3] === "," || token[lengtha - 3] === "return") {
+                        tokea   = token[lengtha - 1];
+                        tokeb   = token[lengtha - 2];
+                        tokec   = token[lengtha - 3];
+                        if (jscorrect !== true || (tokea !== "++" && tokea !== "--" && tokeb !== "++" && tokeb !== "--")) {
+                            return;
+                        }
+                        if (tokec === "[" || tokec === ";" || tokec === "x;" || tokec === "}" || tokec === "{" || tokec === "(" || tokec === ")" || tokec === "," || tokec === "return") {
+                            if (tokea === "++" || tokea === "--") {
+                                if (tokec === "[" || tokec === "(" || tokec === "," || tokec === "return") {
                                     return;
                                 }
-                                if (token[lengtha - 2] === "--") {
+                                if (tokeb === "--") {
                                     toke = "-=";
                                 }
                                 pre = false;
-                            } else if (token[lengtha - 2] === "--") {
+                            } else if (tokeb === "--") {
                                 toke = "-=";
                             }
                         } else {
                             return;
                         }
                         if (pre === true) {
-                            store.push(token[lengtha - 1]);
+                            store.push(tokea);
                             store.push(types[lengtha - 1]);
                             store.push(lines[lengtha - 1]);
                             token.pop();
@@ -5778,7 +5785,12 @@ var prettydiff = function prettydiff(api) {
                                 return;
                             }
                             if (ctoke === "+" && (ltoke.charAt(0) === "\"" || ltoke.charAt(0) === "'") && token[a + 1] !== undefined && (token[a + 1].charAt(0) === "\"" || token[a + 1].charAt(0) === "'") && (token[a - 2] === "=" || token[a - 2] === "(" || (token[a - 2] === "+" && level[a - 2] > 0))) {
-                                if (varline[varline.length - 1] === true) {
+                                if (ltoke.length + 3 + token[a + 1].length < jwrap) {
+                                    return level.push("s");
+                                }
+                                if (token[a - 2] === "(") {
+                                    level.push(indent + 2);
+                                } else if (varline[varline.length - 1] === true) {
                                     level.push(indent);
                                 } else {
                                     level.push(indent + 1);
@@ -5793,7 +5805,7 @@ var prettydiff = function prettydiff(api) {
                                             d = "";
                                         for (c = a - 1; c > -1; c -= 1) {
                                             d = token[c];
-                                            if (d === ";" || d === "x;") {
+                                            if (d === ";" || d === "x;" || d === ",") {
                                                 return varlen[varlen.length - 1].push(a - 1);
                                             }
                                             if (d.indexOf("=") > -1 && d !== "==" && d !== "===" && d !== "!=" && d !== "!==" && d !== ">=" && d !== "<=") {
@@ -5863,7 +5875,7 @@ var prettydiff = function prettydiff(api) {
                                                     varlen.pop();
                                                 }
                                             }
-                                            if (f === ";" || f === "x;") {
+                                            if (f === ";" || f === "x;" || f === ",") {
                                                 e = true;
                                             }
                                         }
@@ -6686,6 +6698,9 @@ var prettydiff = function prettydiff(api) {
                                         } else {
                                             xlen += 1;
                                         }
+                                        if (token[x - 1] === "," && token[varlist[aa][cc] + 1] !== ":" && token[varlist[aa][0] - 1] !== "var") {
+                                            xlen += jsize;
+                                        }
                                         return xlen;
                                     };
                                 for (aa = varlist.length - 1; aa > -1; aa -= 1) {
@@ -7119,6 +7134,9 @@ var prettydiff = function prettydiff(api) {
                                         } else {
                                             xlen += 1;
                                         }
+                                        if (token[x - 1] === "," && token[varlist[aa][cc] + 1] !== ":" && token[varlist[aa][0] - 1] !== "var") {
+                                            xlen += jsize;
+                                        }
                                         return xlen;
                                     };
                                 for (aa = varlist.length - 1; aa > -1; aa -= 1) {
@@ -7290,7 +7308,7 @@ var prettydiff = function prettydiff(api) {
                         }
                         output.push(" of the keyword <strong>new</strong> counted.</p>");
                         output.push("<table class='analysis' summary='JavaScript character size comparison'><caption>" +
-                            "JavaScript data report</caption><thead><tr><th>Data Label</th><th>Input</th><th>" +
+                                "JavaScript data report</caption><thead><tr><th>Data Label</th><th>Input</th><th>" +
                             "Output</th><th>Literal Increase</th><th>Percentage Increase</th></tr>");
                         output.push("</thead><tbody><tr><th>Total Character Size</th><td>");
                         output.push(originalSize);
@@ -7310,16 +7328,16 @@ var prettydiff = function prettydiff(api) {
                         output.push((((noOfLines - newlines) / newlines) * 100).toFixed(2));
                         output.push("%</td></tr></tbody></table>");
                         output.push("<table class='analysis' summary='JavaScript component analysis'><caption>JavaScr" +
-                            "ipt component analysis</caption><thead><tr><th>JavaScript Component</th><th>Comp" +
+                                "ipt component analysis</caption><thead><tr><th>JavaScript Component</th><th>Comp" +
                             "onent Quantity</th><th>Percentage Quantity from Section</th>");
                         output.push("<th>Percentage Qauntity from Total</th><th>Character Length</th><th>Percentage L" +
-                            "ength from Section</th><th>Percentage Length from Total</th></tr></thead><tbody>");
+                                "ength from Section</th><th>Percentage Length from Total</th></tr></thead><tbody>");
                         output.push("<tr><th>Total Accounted</th><td>");
                         output.push(total.token);
                         output.push("</td><td>100.00%</td><td>100.00%</td><td>");
                         output.push(total.chars);
                         output.push("</td><td>100.00%</td><td>100.00%</td></tr><tr><th colspan='7'>Comments</th></tr>" +
-                            "<tr><th>Block Comments</th><td>");
+                                "<tr><th>Block Comments</th><td>");
                         output.push(stats.commentBlock.token);
                         output.push("</td><td>");
                         output.push(zero(stats.commentBlock.token, total.comment.token));
@@ -7352,7 +7370,7 @@ var prettydiff = function prettydiff(api) {
                         output.push("</td><td>100.00%</td><td>");
                         output.push(zero(total.comment.chars, total.chars));
                         output.push("</td></tr><tr><th colspan='7'>Whitespace Outside of Strings and Comments</th></t" +
-                            "r><tr><th>New Lines</th><td>");
+                                "r><tr><th>New Lines</th><td>");
                         output.push(stats.space.newline);
                         output.push("</td><td>");
                         output.push(zero(stats.space.newline, total.space));
@@ -7453,7 +7471,7 @@ var prettydiff = function prettydiff(api) {
                         output.push("</td><td>100.00%</td><td>");
                         output.push(zero(total.literal.chars, total.chars));
                         output.push("</td></tr><tr><th colspan='7'>Syntax Characters</th></tr><tr><th>Quote Character" +
-                            "s</th><td>");
+                                "s</th><td>");
                         output.push(stats.string.quote);
                         output.push("</td><td>");
                         output.push(zero(stats.string.quote, total.syntax.token));
@@ -7680,8 +7698,7 @@ var prettydiff = function prettydiff(api) {
                                     return 0;
                                 },
                                 pusher      = function markup_beauty__algorithm_loop_attributeOrder_pusher(attr) {
-                                    if (attr.indexOf("data-prettydiff-ignore" +
-                                        "=") === 0) {
+                                    if (attr.indexOf("data-prettydiff-ignore" + "=") === 0) {
                                         ignore = true;
                                         return;
                                     }
@@ -8060,9 +8077,9 @@ var prettydiff = function prettydiff(api) {
                         }
                     }
                     if (noEnd === true) {
-                        x[i] = stoken + script;
+                        x[i] = stoken + script.replace(/(>\s+)$/, ">");
                     } else {
-                        x[i] = stoken + script + endTag;
+                        x[i] = stoken + script.replace(/(>\s+)$/, ">") + endTag;
                     }
                 },
                 content       = function markupmin__content() {
@@ -8243,8 +8260,8 @@ var prettydiff = function prettydiff(api) {
                 x   = [];
                 end = build.length;
                 for (a = 0; a < end; a += 1) {
-                    test = (/^\s+$/).test(build[a]);
-                    if (test === false || (test === true && (/^\s+$/).test(build[a + 1]) === false)) {
+                    test = (/^(\s+)$/).test(build[a]);
+                    if (test === false || (test === true && (/^(\s+)$/).test(build[a + 1]) === false)) {
                         x.push(build[a]);
                     }
                 }
@@ -8823,7 +8840,7 @@ var prettydiff = function prettydiff(api) {
                                 part       = [],
                                 endLen     = ending.length,
                                 endParse   = ending.split("").reverse(),
-                                start      = i + endLen + 1,
+                                start      = (endLen === 1) ? (i + endLen + 1) : (i + endLen),
                                 space      = "",
                                 name       = "",
                                 braceCount = 0,
@@ -9123,8 +9140,7 @@ var prettydiff = function prettydiff(api) {
                                 token.push("T_ignore");
                             } else if (last.charAt(last.length - 2) === "/") {
                                 token.push("T_singleton");
-                            } else if (last.indexOf(" data-prettydiff-ignore" +
-                                "=") > 0) {
+                            } else if (last.indexOf(" data-prettydiff-ignore" + "=") > 0) {
                                 token.push("T_ignore");
                             } else if (scripttest(build[build.length - 1]) === true) {
                                 token.push("T_script");
@@ -9163,8 +9179,7 @@ var prettydiff = function prettydiff(api) {
                                         if (last === " <ul>" || last === "<ul>" || last === " <ul " || last === "<ul " || last === " </ol>" || last === "</ol>" || last === " </ol " || last === "</ol ") {
                                             li.push(false);
                                         }
-                                        if (last.indexOf(" data-prettydiff-ignore" +
-                                            "=") > 0) {
+                                        if (last.indexOf(" data-prettydiff-ignore" + "=") > 0) {
                                             token.push("T_ignore");
                                         } else {
                                             token.push("T_tag_start");
@@ -9284,13 +9299,17 @@ var prettydiff = function prettydiff(api) {
                             next = "";
                         }
                         if (next !== "</" + tag + ">") {
-                            if (tag === "area" || tag === "base" || tag === "basefont" || tag === "br" || tag === "col" || tag === "embed" || tag === "eventsource" || tag === "frame" || tag === "hr" || tag === "img" || tag === "input" || tag === "keygen" || tag === "param" || tag === "progress" || tag === "source" || tag === "wbr") {
+                            if (tag === "area" || tag === "base" || tag === "basefont" || tag === "br" || tag === "col" || tag === "embed" || tag === "eventsource" || tag === "frame" || tag === "hr" || tag === "img" || tag === "input" || tag === "link" || tag === "keygen" || tag === "meta" || tag === "param" || tag === "progress" || tag === "source" || tag === "wbr") {
                                 cinfo[i] = "singleton";
                                 token[i] = "T_singleton";
                             }
                             if (tag === "link" || tag === "meta") {
-                                cinfo[i] = "mixed_both";
-                                token[i] = "T_singleton";
+                                if (build[i].charAt(0) !== " ") {
+                                    build[i] = " " + build[i];
+                                }
+                                if (i < end - 1 && build[i + 1].charAt(0) !== " ") {
+                                    build[i + 1] = " " + build[i + 1];
+                                }
                             }
                         }
                     }
@@ -9470,7 +9489,7 @@ var prettydiff = function prettydiff(api) {
                                             counter -= 1;
                                         }
                                         if (level[b] !== "x") {
-                                            if (cinfo[b] === "end" && cinfo[b - 1] === "start" && level[b - 1] !== "x") {
+                                            if (cinfo[b] === "end" && cinfo[b - 1] === "start" && level[b - 1] !== "x" && counter > -1) {
                                                 return level.push(level[b]);
                                             }
                                             if (level[i - 1] === "x" && build[i].charAt(0) !== " " && cinfo[i - 1] !== "mixed_end" && (cinfo[i - 2] !== "end" || level[i - 2] !== "x") && (cinfo[i - 3] !== "end" || level[i - 3] !== "x")) {
@@ -10608,10 +10627,10 @@ var prettydiff = function prettydiff(api) {
                                     topTen[topTen.length - 1] = "";
                                 }
                                 zipf.push("<table class='analysis' summary='Zipf&#39;s Law'><caption>This table demonstrate" +
-                                    "s <em>Zipf&#39;s Law</em> by listing the 10 most occuring words in the content a" +
+                                        "s <em>Zipf&#39;s Law</em> by listing the 10 most occuring words in the content a" +
                                     "nd the number of times they occurred.</caption>");
                                 zipf.push("<thead><tr><th>Word Rank</th><th>Most Occurring Word by Rank</th><th>Number of I" +
-                                    "nstances</th><th>Ratio Increased Over Next Most Frequence Occurance</th><th>Perc" +
+                                        "nstances</th><th>Ratio Increased Over Next Most Frequence Occurance</th><th>Perc" +
                                     "entage from ");
                                 zipf.push(wordCount.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ","));
                                 if (wordCount > 1) {
@@ -10633,7 +10652,7 @@ var prettydiff = function prettydiff(api) {
                                 return zipf.join("");
                             }()));
                             report.push("<table class='analysis' summary='Analysis of markup pieces.'><caption>Analysis o" +
-                                "f markup pieces.</caption><thead><tr><th>Type</th><th>Quantity of Tags/Content</" +
+                                    "f markup pieces.</caption><thead><tr><th>Type</th><th>Quantity of Tags/Content</" +
                                 "th><th>Percentage Quantity in Section</th><th>Percentage Quantity of Total</th><" +
                                 "th>** Character Size</th><th>Percentage Size in Section</th><th>Percentage Size " +
                                 "of Total</th></tr></thead><tbody><tr><th>Total Pieces</th><td>");
@@ -10641,7 +10660,7 @@ var prettydiff = function prettydiff(api) {
                             report.push("</td><td>100.00%</td><td>100.00%</td><td>");
                             report.push(lengthChars);
                             report.push("</td><td>100.00%</td><td>100.00%</td></tr><tr><th colspan='7'>Common Tags</th></" +
-                                "tr>");
+                                    "tr>");
                             report.push(resultsTable);
                             requestList = [];
                             for (a = 0; a < requestLength; a += 1) {
@@ -10658,15 +10677,15 @@ var prettydiff = function prettydiff(api) {
                                 requestOutput = "";
                             }
                             report.push("</tbody></table></div><p>* The number of requests is determined from the input s" +
-                                "ubmitted only and does not count the additional HTTP requests supplied from dyna" +
+                                    "ubmitted only and does not count the additional HTTP requests supplied from dyna" +
                                 "mically executed code, frames, iframes, css, or other external entities.</p><p>*" +
                                 "*");
                             report.push("Character size is measured from the individual pieces of tags and content specif" +
-                                "ically between minification and beautification.</p><p>*** The number of starting" +
+                                    "ically between minification and beautification.</p><p>*** The number of starting" +
                                 " &lt;script&gt; and &lt;style&gt; tags is subtracted from the total number of st" +
                                 "art tags.");
                             report.push("The combination of those three values from the table above should equal the numb" +
-                                "er of end tags or the code is in error.</p>");
+                                    "er of end tags or the code is in error.</p>");
                             report.push(requestOutput);
                             return report.join("");
                         }()),
@@ -10677,7 +10696,7 @@ var prettydiff = function prettydiff(api) {
                             output.push("</em> characters</p><p><strong>Total output size:</strong> <em>");
                             output.push(build.join("").length.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ","));
                             output.push("</em> characters</p><p><strong>* Total number of HTTP requests in supplied HTML:" +
-                                "</strong> <em>");
+                                    "</strong> <em>");
                             output.push(reqLen);
                             output.push("</em></p>");
                             return output.join("");
@@ -10711,7 +10730,7 @@ var prettydiff = function prettydiff(api) {
                                     output.push("!");
                                 }
                                 output.push("</strong> The combined total number of start tags, script tags, and style tags s" +
-                                    "hould equal the number of end tags. For HTML this problem may be solved by selec" +
+                                        "hould equal the number of end tags. For HTML this problem may be solved by selec" +
                                     "ting the '<em>Presume SGML type HTML</em>' option.</p>");
                             } else {
                                 return "";
@@ -10751,12 +10770,12 @@ var prettydiff = function prettydiff(api) {
         csvmin       : 131224, //csvmin library
         diffview     : 150221, //diffview library
         documentation: 150321, //documentation.xhtml
-        jspretty     : 150321, //jspretty library
+        jspretty     : 150323, //jspretty library
         latest       : 0,
-        markup_beauty: 150321, //markup_beauty library
-        markupmin    : 150317, //markupmin library
-        prettydiff   : 150321, //this file
-        version      : "1.11.3", //version number
+        markup_beauty: 150323, //markup_beauty library
+        markupmin    : 150323, //markupmin library
+        prettydiff   : 150323, //this file
+        version      : "1.11.4", //version number
         webtool      : 150321 //prettydiff.com.xhtml
     };
 edition.latest = (function edition_latest() {

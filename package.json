@@ -5,7 +5,7 @@
     "email": "info@prettydiff.com",
     "url": "http://prettydiff.com/"
   },
-  "version": "1.11.3",
+  "version": "1.11.4",
   "description": "File comparison tool to accurately diff between file versions regardless of comments or minification to the whitespace. It can also beautify (pretty print) and minify HTML.",
   "keywords": [
     "diff",
