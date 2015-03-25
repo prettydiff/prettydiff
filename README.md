@@ -50,11 +50,13 @@ Execute in the context of a NodeJS application:
         output     = prettydiff.api(args);
 
 From the command line execute api/node-local.js similar to these
-examples:
+example (Windows):
 
-    >node c:\\prettydiff\\api\\node-local.js source:"c:\mydirectory\myfile.js" readmethod:"file" diff:"c:\myotherfile.js"
+    >node c:\prettydiff\api\node-local.js source:"c:\myDirectory" readmethod:"subdirectory" diff:"c:\myOtherDirectory"
 
-    >node c:\\prettydiff\\api\\node-local.js source:"c:\mydirectory\myfile.js" mode:"beautify" readmethod:"file" output:"c:\output\otherfile.js"
+example (everything else):
+
+    >node prettydiff/api/node-local.js source:"myDirectory" mode:"beautify" readmethod:"subdirectory" output:"path/to/outputDirectory"
 
 Run in a web browser with api/dom.js
 ---
