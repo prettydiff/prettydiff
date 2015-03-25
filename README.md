@@ -9,21 +9,28 @@ Try it online at [http://prettydiff.com/](http://prettydiff.com/).
 
 [![NPM stats](https://nodei.co/npm/prettydiff.svg?downloadRank=true&downloads=true)](https://www.npmjs.org/package/prettydiff)
 
-api/dom.js
+Summary
 ---
 
-Please feel free to use prettydiff.com.xhtml file to supplement dom.js.  Otherwise, dom.js requires supplemental assistance to map DOM nodes from an HTML source.  dom.js is fault tolerant so nodes mapped to the supplied prettydiff.com.xhtml don't need to be supported from custom HTML.
+Language aware diff tool for several web based languages. It also beautifies, minifies, and a few other things.
 
-To run Pretty Diff using dom.js include the following two script tags and bind the pd.recycle() function to the executing event.  Please refer to prettydiff.com.xhtml for an HTML example and documentation.xhtml for option and execution information.
-
-    <script type="application/javascript" src="prettydiff.js"></script>
-    <script type="application/javascript" src="api/dom.js"></script>
-
-Node.js / CommonJS / RequireJS
+Benefits - see [overview page](http://prettydiff.com/overview.xhtml) for more details
 ---
 
-Node.js support is provided by api/node-local.js.  This file can execute
-in the following modes:
+* [React JSX format support](http://prettydiff.com/guide/react_jsx.xhtml)
+* LESS, SCSS (Sass), and CSS support
+* Separate support for XML and HTML
+* [Recursive command line directory diff](http://prettydiff.com/guide/diffcli.xhtml)
+* [JavaScript scope in colors](http://prettydiff.com/guide/jshtml.xhtml)
+* [Supports presets for popular styleguides](http://prettydiff.com/guide/styleguide.xhtml)
+* [Markup beautification with optional opt out](http://prettydiff.com/guide/tag_ignore.xhtml)
+* [JavaScript auto correction](http://prettydiff.com/guide/jscorrect.xhtml)
+* [Supports a ton of options](http://prettydiff.com/documentation.php#function_properties)
+
+Run with Node.js / io.js / CommonJS / RequireJS
+---
+
+Node.js and io.js support is provided by api/node-local.js.  This file can execute in the following modes:
 
   * auto - Determine if the resource is text, a file, or a directory and process as such (except that directories are processed with the subdirectory option)
   * screen - code input is on the command line and output is to the command line
@@ -49,7 +56,17 @@ examples:
 
     >node c:\\prettydiff\\api\\node-local.js source:"c:\mydirectory\myfile.js" mode:"beautify" readmethod:"file" output:"c:\output\otherfile.js"
 
-WSH
+Run in a web browser with api/dom.js
+---
+
+Please feel free to use prettydiff.com.xhtml file to supplement dom.js.  Otherwise, dom.js requires supplemental assistance to map DOM nodes from an HTML source.  dom.js is fault tolerant so nodes mapped to the supplied prettydiff.com.xhtml don't need to be supported from custom HTML.
+
+To run Pretty Diff using dom.js include the following two script tags and bind the pd.recycle() function to the executing event.  Please refer to prettydiff.com.xhtml for an HTML example and documentation.xhtml for option and execution information.
+
+    <script type="application/javascript" src="prettydiff.js"></script>
+    <script type="application/javascript" src="api/dom.js"></script>
+
+Run on Windows command line with WSH
 ---
 
 Create a WSH script file using XML syntax and with a file extension of
@@ -72,18 +89,6 @@ Execute with vanilla JS
             lang  : "text"
         },
         output = prettydiff(args);
-
-Notes:
----
-
-  * The component files are provided for access to individual functions
-   independent of the Pretty Diff application.  The component code is
-   already included in prettydiff.js, so it is not needed in addition to
-   prettydiff.js.  The only files not included with prettydiff.js are
-   the APIs and the stylesheet - diffview.css.
-
-  * For usage documentation please visit
-   http://prettydiff.com/documentation.php
 
 License:
 ---
