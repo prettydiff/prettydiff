@@ -50,6 +50,7 @@ Execute in the context of a NodeJS application:
         output     = prettydiff.api(args);
 
 From the command line execute api/node-local.js similar to these
+
 example (Windows):
 
     >node c:\prettydiff\api\node-local.js source:"c:\myDirectory" readmethod:"subdirectory" diff:"c:\myOtherDirectory"
