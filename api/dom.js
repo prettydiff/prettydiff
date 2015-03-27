@@ -4458,6 +4458,9 @@ var pd = {};
                 title.ontouchstart                = grab;
                 title.onfocus                     = headerfocus;
                 title.onblur                      = headerblur;
+                if (pd.settings.feedreport === undefined) {
+                    pd.settings.feedreport = {};
+                }
                 if (pd.settings.feedreport.min === false) {
                     buttons               = pd.o.report.feed.box.getElementsByTagName("p")[0];
                     buttons.style.display = "block";
