@@ -67,7 +67,7 @@ Run in windows
 
 Run in Linux and OSX
 
-    node prettydiff/api/node-local.js source:"myDirectory" mode:"beautify" readmethod:"subdirectory" output:"path/to/outputDirectory"
+    prettydiff source:"myDirectory" mode:"beautify" readmethod:"subdirectory" output:"path/to/outputDirectory"
     
 To see a *man* page provide no arguments or these: help, man, manual
 
