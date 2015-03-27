@@ -203,6 +203,9 @@
             <div>
                 <ul>
                     <li><h3>Execute in a NodeJS app:</h3>
+                        <p>Install the prettydiff package locally</p>
+                        <code>npm install prettydiff</code>
+                        <p>Add this following code to your application</p>
                         <code>var prettydiff = require("prettydiff"),</code>
                         <code>&nbsp;&nbsp;&nbsp;&nbsp;args &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=
                             {</code>
@@ -216,12 +219,15 @@
                             prettydiff.api(args);</code>
                     </li>
                     <li><h3>Execute on command line with NodeJS:</h3>
-                        <code>&gt; node c:\\prettydiff\\api\\node-local.js
+                        <p>Install the prettydiff package globally</p>
+                        <code>npm install prettydiff -g</code>
+                        <p>Example of a command line instruction</p>
+                        <code>prettydiff
                             source:"c:\mydirectory\myfile.js" readmethod:"file"
                             diff:"c:\myotherfile.js"</code>
                     </li>
                     <li><h3>Execute with WSH:</h3>
-                        <code>&gt; cscript prettydiff.wsf /source:"myFile.xml" /mode:"beautify"</code>
+                        <code>cscript prettydiff.wsf /source:"myFile.xml" /mode:"beautify"</code>
                     </li>
                     <li><h3>Execute from JavaScript:</h3>
                         <code>var args &nbsp;&nbsp;= {</code>

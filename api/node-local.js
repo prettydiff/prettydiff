@@ -46,6 +46,12 @@ Examples:
         slash         = ((/^([a-zA-Z]:\\)/).test(cwd) === true) ? "\\" : "/",
         method        = "auto",
         startTime     = Date.now(),
+        versionString = (function () {
+            var dstring = prettydiff.edition.latest.toString(),
+                mstring = Number(dstring.slice(2, 4)) - 1,
+                month = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
+            return "\x1B[36mVersion\x1B[39m: " + prettydiff.edition.version + " \x1B[36mDated\x1B[39m: " + dstring.slice(4, 6) + " " + month[mstring] + " 20" + dstring.slice(0, 2);
+        }()),
         dir           = [
             0, 0, 0
         ],
@@ -105,6 +111,7 @@ Examples:
             titanium    : false,
             topcoms     : false,
             varword     : "none",
+            version     : false,
             vertical    : "js",
             wrap        : 80
         },
@@ -283,7 +290,31 @@ Examples:
 
         //instructions
         error         = (function () {
-            var a = [];
+            var a = [],
+                color = {
+                    accepted: "\x1B[31m",
+                    bool: "\x1B[35m",
+                    number: "\x1B[36m",
+                    string: "\x1B[33m",
+                    word: "\x1B[32m"
+                },
+                opname = function (x) {
+                    var value = x.match(/\w+/);
+                    return x.replace(value, color.word + value + "\x1B[39m");
+                },
+                vallist = function (x) {
+                    var value = x.split(":\x1B[39m"),
+                        items = value[1].split(","),
+                        len = items.length,
+                        b = 0;
+                    for (b = 0; b < len; b += 1) {
+                        items[b] = items[b].replace(/\s(?=\w)/, " " + color.string) + "\x1B[39m";
+                    }
+                    return value[0] + ":\x1B[39m" + items.join(",");
+                };
+            a.push("\n");
+            a.push("\x1B[1mOptions\x1B[22m");
+            a.push("");
             a.push("Arguments      - Type    - Definition");
             a.push("-------------------------------------");
             a.push("* braceline    - boolean - If true a new line character will be inserted after");
@@ -478,7 +509,7 @@ Examples:
             a.push("                           conform to popular JavaScript style guides. Default");
             a.push("                           is 'none'.");
             a.push("                 Accepted values: airbnb, crockford, google, grunt, jquery,");
-            a.push("                                  mediawiki, yandex, none");
+            a.push("                                  mediawiki, meteor, yandex, none");
             a.push("");
             a.push("* titanium     - boolean - Forces the JavaScript parser to parse Titanium Style");
             a.push("                           Sheets instead of JavaScript. Default is false.");
@@ -504,7 +535,14 @@ Examples:
             a.push("                           occurs on the last space character prior to the given");
             a.push("                           character width");
             a.push("");
-            return a.join("\n");
+            a.push("\x1B[1mUsage\x1B[22m");
+            a.push("  " + color.bool + "prettydiff\x1B[39m " + color.word + "option1:\x1B[39m" + color.string + "\"value\"\x1B[39m " + color.word + "option2:\x1B[39m" + color.string + "\"value\"\x1B[39m ...");
+            a.push("  " + color.bool + "prettydiff\x1B[39m " + color.word + "source:\x1B[39m" + color.string + "\"old_directory\"\x1B[39m " + color.word + "diff:\x1B[39m" + color.string + "\"new_directory\"\x1B[39m " + color.word + "readmethod:\x1B[39m" + color.string + "\"subdirectory\"\x1B[39m");
+            a.push("  " + color.bool + "prettydiff\x1B[39m " + color.word + "source:\x1B[39m" + color.string + "\"myApplication.js\"\x1B[39m " + color.word + "readmethod:\x1B[39m" + color.string + "\"filescreen\"\x1B[39m " + color.word + "mode:\x1B[39m" + color.string + "\"beautify\"\x1B[39m");
+            a.push("");
+            a.push(versionString);
+            a.push("");
+            return a.join("\n").replace(/\n\* \w+\s+\-/g, opname).replace(/\- boolean \-/g, "- " + color.bool + "boolean\x1B[39m -").replace(/\- string {2,}\-/g, "- " + color.string + "string\x1B[39m  -").replace(/\- number {2,}\-/g, "- " + color.number + "number\x1B[39m  -").replace(/\n {17,}Accepted values:/g, "\n                 " + color.accepted + "Accepted values:\x1B[39m").replace(/Accepted values:\x1B\[39m(\s+\w+\,?)+/g, vallist);
         }()),
 
         //defaults for the options
@@ -606,8 +644,11 @@ Examples:
             c = d.length;
             for (b = 0; b < c; b += 1) {
                 if (d[b].length === 2) {
-                    if (d[b][0] === "" && d[b][1] === "help") {
+                    if (options.version === false && d[b][0] === "" && (d[b][1] === "help" || d[b][1] === "man" || d[b][1] === "manual")) {
                         help = true;
+                    }
+                    if (help === false && d[b][0] === "" && (d[b][1] === "v" || d[b][1] === "version")) {
+                        options.version = true;
                     }
                     if (d[b][0] === "api") {
                         options.api = "node";
@@ -785,8 +826,12 @@ Examples:
                             options.wrap = Number(d[b][1]);
                         }
                     }
-                } else if (help === false && (d[b] === "help" || d[b][0] === "help")) {
-                    help = true;
+                } else if (help === false && options.version === false) {
+                    if (d[b] === "help" || d[b][0] === "help" || d[b][0] === "man" || d[b][0] === "manual") {
+                        help = true;
+                    } else if (d[b] === "v" || d[b] === "version" || d[b][0] === "v" || d[b][0] === "version") {
+                        options.version = true;
+                    }
                 }
             }
             if (alphasort === true) {
@@ -795,6 +840,9 @@ Examples:
             if (options.lang === "tss") {
                 options.titanium = true;
                 options.lang = "javascript";
+            }
+            if (options.mode !== "diff") {
+                options.diffcli = false;
             }
             return c;
         }()),
@@ -964,7 +1012,12 @@ Examples:
                 if (options.diffcli === true) {
                     cliWrite(data);
                 } else if (method === "filescreen") {
-                    screenWrite();
+                    if (data.type === "diff") {
+                        options.diff = data.file;
+                    } else  {
+                        options.source = data.file;
+                    }
+                    //screenWrite();
                 } else if (method === "file" || method === "directory" || method === "subdirectory") {
                     fileWrite(data);
                 }
@@ -985,6 +1038,9 @@ Examples:
             }, function (err, dump) {
                 if (err !== null) {
                     return readLocalFile(data);
+                }
+                if (data.file === undefined) {
+                    data.file = "";
                 }
                 data.file += dump;
                 fileComplete(data);
@@ -1194,6 +1250,8 @@ Examples:
         };
     if (args === 0 || help === true) {
         return console.log(error);
+    } else if (args === 1 && options.version === true) {
+        return console.log(versionString);
     }
     if (options.source === "") {
         return console.log("Error: 'source' argument is empty");
@@ -1265,9 +1323,13 @@ Examples:
                     state = false;
                     return console.log("source is a directory but readmethod option is not 'auto', 'directory', or 'subdirectory'");
                 }
-                if (dir[2] > 1 && (method === "directory" || method === "subdirectory")) {
-                    state = false;
-                    return console.log("source is a file but readmethod option is 'directory' or 'subdirectory'");
+                if (dir[2] > 1) {
+                    if (method === "directory" || method === "subdirectory") {
+                        state = false;
+                        return console.log("source is a file but readmethod option is 'directory' or 'subdirectory'");
+                    } else if (method === "screen") {
+                        method = "filescreen";
+                    }
                 }
                 if (options.mode === "diff") {
                     if (dir[0] === 0 || dir[2] === 0) {
@@ -1287,6 +1349,9 @@ Examples:
                     if (dir[0] > 2 && (method === "directory" || method === "subdirectory")) {
                         state = false;
                         return console.log("diff is a file but readmethod option is 'directory' or 'subdirectory'");
+                    }
+                    if (dir[0] > 1 && method === "screen") {
+                        method = "filescreen";
                     }
                     if (dir[0] > 1 && dir[2] > 1 && (method === "file" || method === "filescreen")) {
                         state = false;

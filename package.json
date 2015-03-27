@@ -5,8 +5,9 @@
     "email": "info@prettydiff.com",
     "url": "http://prettydiff.com/"
   },
-  "version": "1.11.4",
-  "description": "File comparison tool to accurately diff between file versions regardless of comments or minification to the whitespace. It can also beautify (pretty print) and minify HTML.",
+  "bin": "./bin/prettydiff",
+  "version": "1.11.5",
+  "description": "Language aware code comparison tool for several web based languages. It also beautifies, minifies, and a few other things.",
   "keywords": [
     "diff",
     "prettydiff",

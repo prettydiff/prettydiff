@@ -3721,6 +3721,9 @@ var prettydiff = function prettydiff(api) {
                             early = false,
                             paren = false,
                             opers = false;
+                        if (tokel === undefined) {
+                            return;
+                        }
                         if (typel === "comment" || typel === "comment-inline") {
                             do {
                                 len -= 1;
@@ -3731,7 +3734,7 @@ var prettydiff = function prettydiff(api) {
                             tokel = token[len];
                             typel = types[len];
                         }
-                        if (typel === "start" || typel === "separator" || typel === "operator" || tokel === "x}" || tokel === ";" || tokel === "x;" || tokel === "var" || tokel === "else" || tokel.indexOf("#!/") === 0) {
+                        if (tokel === undefined || typel === "start" || typel === "separator" || typel === "operator" || tokel === "x}" || tokel === ";" || tokel === "x;" || tokel === "var" || tokel === "else" || tokel.indexOf("#!/") === 0) {
                             return;
                         }
                         if (obj.len > -1 && obj.status[obj.len] === true && obj.count[obj.len] === 0) {
@@ -10759,23 +10762,23 @@ var prettydiff = function prettydiff(api) {
             cmjs : 150221
         },
         api          : {
-            dom      : 150321,
-            nodeLocal: 150317,
+            dom      : 150326,
+            nodeLocal: 150326,
             wsh      : 150317
         },
         charDecoder  : 141025,
-        css          : 150314, //diffview.css file
+        css          : 150326, //diffview.css file
         csspretty    : 150321, //csspretty library
         csvbeauty    : 140114, //csvbeauty library
         csvmin       : 131224, //csvmin library
         diffview     : 150221, //diffview library
-        documentation: 150321, //documentation.xhtml
-        jspretty     : 150323, //jspretty library
+        documentation: 150326, //documentation.xhtml
+        jspretty     : 150326, //jspretty library
         latest       : 0,
         markup_beauty: 150323, //markup_beauty library
         markupmin    : 150323, //markupmin library
-        prettydiff   : 150323, //this file
-        version      : "1.11.4", //version number
+        prettydiff   : 150326, //this file
+        version      : "1.11.5", //version number
         webtool      : 150321 //prettydiff.com.xhtml
     };
 edition.latest = (function edition_latest() {
@@ -10783,6 +10786,7 @@ edition.latest = (function edition_latest() {
     return Math.max(edition.charDecoder, edition.css, edition.csspretty, edition.csvbeauty, edition.csvmin, edition.diffview, edition.documentation, edition.jspretty, edition.markup_beauty, edition.markupmin, edition.prettydiff, edition.webtool, edition.api.dom, edition.api.nodeLocal, edition.api.wsh);
 }());
 if (typeof exports === "object" || typeof exports === "function") { //commonjs and nodejs support
+    exports.edition = edition;
     exports.api = function commonjs(x) {
         "use strict";
         return prettydiff(x);
@@ -10790,6 +10794,7 @@ if (typeof exports === "object" || typeof exports === "function") { //commonjs a
 } else if (typeof define === "object" || typeof define === "function") { //requirejs support
     define(function requirejs(require, exports) {
         "use strict";
+        exports.edition = edition;
         exports.api = function requirejs_export(x) {
             return prettydiff(x);
         }; //worthless if block to appease RequireJS and JSLint

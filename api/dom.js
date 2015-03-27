@@ -1947,7 +1947,7 @@ var pd = {};
             fileError = function dom__file_init2() {
                 return;
             };
-        if (input === null || input === undefined || files === undefined) {
+        if (input === null || typeof input !== "object" || input.nodeType > 1 || files === undefined || input.nodeType !== 1) {
             return;
         }
         id    = input.getAttribute("id");

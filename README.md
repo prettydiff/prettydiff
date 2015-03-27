@@ -12,7 +12,7 @@ Try it online at [http://prettydiff.com/](http://prettydiff.com/).
 Summary
 ---
 
-Language aware diff tool for several web based languages. It also beautifies, minifies, and a few other things.
+Language aware code comparison tool for several web based languages. It also beautifies, minifies, and a few other things.
 
 Benefits - see [overview page](http://prettydiff.com/overview.xhtml) for more details
 ---
@@ -32,14 +32,20 @@ Run with Node.js / io.js / CommonJS / RequireJS
 
 Node.js and io.js support is provided by api/node-local.js.  This file can execute in the following modes:
 
-  * auto - Determine if the resource is text, a file, or a directory and process as such (except that directories are processed with the subdirectory option)
-  * screen - code input is on the command line and output is to the command line
-  * filescreen - code input is in a file and the output is to the command line
-  * file - the input and the output reside in files
-  * directory - everything in a directory is processed into a specified output directory except ".", "..", and subdirectories
-  * subdirectory - process the entire directory tree
+* auto - Determine if the resource is text, a file, or a directory and process as such (except that directories are processed with the subdirectory option)
+* screen - code input is on the command line and output is to the command line
+* filescreen - code input is in a file and the output is to the command line
+* file - the input and the output reside in files
+* directory - everything in a directory is processed into a specified output directory except ".", "..", and subdirectories
+* subdirectory - process the entire directory tree
 
-Execute in the context of a NodeJS application:
+**Execute in the context of a NodeJS application**
+
+First install the prettydiff package locally
+
+    npm install prettydiff
+
+Add this code to your application
 
     var prettydiff = require("prettydiff"),
         args       = {
@@ -49,15 +55,30 @@ Execute in the context of a NodeJS application:
         },
         output     = prettydiff.api(args);
 
-From the command line execute api/node-local.js similar to these
+**Execute from the command line**
 
-example (Windows):
+First install the prettydiff package globally
 
-    >node c:\prettydiff\api\node-local.js source:"c:\myDirectory" readmethod:"subdirectory" diff:"c:\myOtherDirectory"
+    npm install prettydiff -g
 
-example (everything else):
+Run in windows
 
-    >node prettydiff/api/node-local.js source:"myDirectory" mode:"beautify" readmethod:"subdirectory" output:"path/to/outputDirectory"
+    prettydiff source:"c:\myDirectory" readmethod:"subdirectory" diff:"c:\myOtherDirectory"
+
+Run in Linux and OSX
+
+    node prettydiff/api/node-local.js source:"myDirectory" mode:"beautify" readmethod:"subdirectory" output:"path/to/outputDirectory"
+    
+To see a *man* page provide no arguments or these: help, man, manual
+
+    prettydiff
+    prettydiff help
+    prettydiff man
+
+To see only the version number supply only *v* or *version* as an argument:
+
+    prettydiff v
+    prettydiff version
 
 Run in a web browser with api/dom.js
 ---
