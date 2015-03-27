@@ -1017,7 +1017,7 @@ Examples:
                     } else  {
                         options.source = data.file;
                     }
-                    //screenWrite();
+                    screenWrite();
                 } else if (method === "file" || method === "directory" || method === "subdirectory") {
                     fileWrite(data);
                 }
@@ -1311,10 +1311,10 @@ Examples:
                     }
                 }
                 if (dir[2] < 0) {
+                    state = false;
                     if (options.readmethod === "screen" && options.mode !== "diff") {
                         return screenWrite();
                     }
-                    state = false;
                     if (options.readmethod !== "screen") {
                         return console.log("source is not a directory or file");
                     }
@@ -1336,10 +1336,10 @@ Examples:
                         return;
                     }
                     if (dir[0] < 0) {
+                        state = false;
                         if (dir[2] < 0 && options.readmethod === "screen") {
                             return screenWrite();
                         }
-                        state = false;
                         return console.log("diff is not a directory or file");
                     }
                     if (dir[0] === 1 && method !== "directory" && method !== "subdirectory") {

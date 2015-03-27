@@ -3,6 +3,9 @@
 /*
 
  Execute in a NodeJS app:
+ 
+    npm install prettydiff        (local install)
+
     var prettydiff = require("prettydiff"),
         args       = {
             source: "asdf",
@@ -12,10 +15,13 @@
         output     = prettydiff.api(args);
  
  Execute on command line with NodeJS:
-    >node c:\\prettydiff\\api\\node-local.js source:"c:\mydirectory\myfile.js" readmethod:"file" diff:"c:\myotherfile.js"
+ 
+    npm install prettydiff -g     (global install)
+
+    prettydiff source:"c:\mydirectory\myfile.js" readmethod:"file" diff:"c:\myotherfile.js"
  
  Execute with WSH:
-    >cscript prettydiff.wsf /source:"myFile.xml" /mode:"beautify"
+    cscript prettydiff.wsf /source:"myFile.xml" /mode:"beautify"
  
  Execute from JavaScript:
     var args   = {
@@ -10778,7 +10784,7 @@ var prettydiff = function prettydiff(api) {
         markup_beauty: 150323, //markup_beauty library
         markupmin    : 150323, //markupmin library
         prettydiff   : 150326, //this file
-        version      : "1.11.5", //version number
+        version      : "1.11.6", //version number
         webtool      : 150321 //prettydiff.com.xhtml
     };
 edition.latest = (function edition_latest() {
