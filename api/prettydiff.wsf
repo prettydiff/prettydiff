@@ -33,7 +33,7 @@
                             error.push("* braces       - string  - If lang is 'javascript' and mode is 'beautify' this determines if opening curly braces will exist on the same line as their condition or be forced onto a new line. Defaults to 'knr'.");
                             error.push("                 Accepted values: knr, allman");
                             error.push("* color        - string  - The color scheme of the reports. Default is shadow.");
-                            error.push("                 Accepted values: default, canvas, shadow, white");
+                            error.push("                 Accepted values: canvas, shadow, white");
                             error.push("");
                             error.push("* comments     - string  - If mode is 'beautify' this will determine whether comments should always start at position 0 of each line or if comments should be indented according to the code. Default is 'indent'.");
                             error.push("                 Accepted values: indent, noindent");
@@ -82,7 +82,7 @@
                             error.push("                 Accepted values: markup, javascript, css, html, csv, text");
                             error.push("");
                             error.push("* mode         - string  - The operation to be performed. Defaults to 'diff'.");
-                            error.push("                 Accepted values: diff, beautify, minify.");
+                            error.push("                 Accepted values: diff, beautify, minify, parse");
                             error.push("");
                             error.push("* obfuscate    - boolean - If JavaScript minification should result in smaller variable names and fewer simicolons. Default is false.");
                             error.push("");
@@ -352,6 +352,9 @@
                 }
                 if (fail === false) {
                     pd = prettydiff(args);
+                    if (args.mode === "parse" && typeof JSON === "object") {
+                        args[0] = JSON.stringify(args[0]);
+                    }
                     if (pd[0].indexOf("Error: ") === 0) {
                         report = [""];
                     } else {
@@ -366,7 +369,7 @@
                         report.push("' id='webtool'><h1><a href='http://prettydiff.com/'>Pretty Diff - The difference tool</a></h1><div id='doc'>");
                         report.push(pd[1]);
                         report.push("</div>");
-                        if (args.jsscope === true && args.mode === "beautify" && (args.lang === "javascript" || args.lang === "auto")) {
+                        if (args.jsscope !== "none" && args.mode === "beautify" && (args.lang === "javascript" || args.lang === "auto")) {
                             report.push(pd[0]);
                             report.push("<script type='application/javascript'><![CDATA[");
                             report.push("var pd={};pd.beaufold=function dom__beaufold(){'use strict';var self=this,title=self.getAttribute('title').split('line '),min=Number(title[1].substr(0,title[1].indexOf(' '))),max=Number(title[2]),a=0,b='',list=[self.parentNode.getElementsByTagName('li'),self.parentNode.nextSibling.getElementsByTagName('li')];if(self.innerHTML.charAt(0)==='-'){for(a=min;a<max;a+=1){list[0][a].style.display='none';list[1][a].style.display='none';}self.innerHTML='+'+self.innerHTML.substr(1);}else{for(a=min;a<max;a+=1){list[0][a].style.display='block';list[1][a].style.display='block';if(list[0][a].getAttribute('class')==='fold'&&list[0][a].innerHTML.charAt(0)==='+'){b=list[0][a].getAttribute('title');b=b.substring(b.indexOf('to line ')+1);a=Number(b)-1;}}self.innerHTML='-'+self.innerHTML.substr(1);}};(function(){'use strict';var lists=document.getElementsByTagName('ol'),listslen=lists.length,list=[],listlen=0,a=0,b=0;for(a=0;a<listslen;a+=1){if(lists[a].getAttribute('class')==='count'&&lists[a].parentNode.getAttribute('class')==='beautify'){list=lists[a].getElementsByTagName('li');listlen=list.length;for(b=0;b<listlen;b+=1){if(list[b].getAttribute('class')==='fold'){list[b].onmousedown=pd.beaufold;}}}}}());");
@@ -392,7 +395,7 @@
                         } else {
                             file[0] = fso.CreateTextFile(output);
                         }
-                        if (args.mode === "diff" || (args.jsscope === true && args.mode === "beautify" && (args.lang === "javascript" || args.lang === "auto"))) {
+                        if (args.mode === "diff" || (args.jsscope !== "none" && args.mode === "beautify" && (args.lang === "javascript" || args.lang === "auto"))) {
                             file[0].WriteLine(report.join(""));
                             file[0].Close();
                         } else {
@@ -404,13 +407,13 @@
                         }
                     } else {
                         if (WScript.Fullname.indexOf("cscript.exe") > -1) {
-                            if (args.mode === "diff" || (args.jsscope === true && args.mode === "beautify")) {
+                            if (args.mode === "diff" || (args.jsscope !== "none" && args.mode === "beautify")) {
                                 WScript.StdOut.WriteLine(report.join(""));
                             } else {
                                 WScript.StdOut.WriteLine(pd[0]);
                             }
                         } else {
-                            if (args.mode !== "diff" || (args.jsscope === true && args.mode === "beautify")) {
+                            if (args.mode !== "diff" || (args.jsscope !== "none" && args.mode === "beautify")) {
                                 WScript.Echo(report.join(""));
                             } else {
                                 WScript.Echo(pd[0]);

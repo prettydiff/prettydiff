@@ -197,7 +197,7 @@ var prettydiff = function prettydiff(api) {
                     //cannot determine the language
                     clangdefault  = (typeof api.langdefault === "string" && (api.lang === "javascript" || api.lang === "css" || api.lang === "markup" || api.lang === "html" || api.lang === "csv")) ? api.langdefault : "text",
                     //api.mode - is this a minify, beautify, or diff operation
-                    cmode         = (typeof api.mode === "string" && (api.mode === "minify" || api.mode === "beautify")) ? api.mode : "diff",
+                    cmode         = (typeof api.mode === "string" && (api.mode === "minify" || api.mode === "beautify" || api.mode === "parse")) ? api.mode : "diff",
                     //api.obfuscate - when minifying code with JSPretty should we make it sloppy and
                     //change variable names to make the code extra small?
                     cobfuscate    = (api.obfuscate === true || api.obfuscate === "true") ? true : false,
@@ -290,8 +290,16 @@ var prettydiff = function prettydiff(api) {
                             comma      = -1,
                             g          = 0,
                             sourceChar = [],
-                            quote      = "";
-                        if (csource.indexOf("/*prettydiff.com") === -1 && cdiff.indexOf("/*prettydiff.com") === -1) {
+                            quote      = "",
+                            sind       = csource.indexOf("/*prettydiff.com"),
+                            dind       = cdiff.indexOf("/*prettydiff.com");
+                        if (sind < 0 && dind < 0) {
+                            return;
+                        }
+                        if (sind > -1 && (/^(\s*\{\s*"token"\s*:\s*\[)/).test(csource) === true && (/\]\,\s*"types"\s*:\s*\[/).test(csource) === true) {
+                            return;
+                        }
+                        if (sind < 0 && dind > -1 && (/^(\s*\{\s*"token"\s*:\s*\[)/).test(cdiff) === true && (/\]\,\s*"types"\s*:\s*\[/).test(cdiff) === true) {
                             return;
                         }
                         if (c === 15 && typeof cdiff === "string") {
@@ -508,6 +516,8 @@ var prettydiff = function prettydiff(api) {
                                         cmode = "minify";
                                     } else if (build[c][1] === "diff") {
                                         cmode = "diff";
+                                    } else if (build[c][1] === "parse") {
+                                        cmode = "parse";
                                     }
                                 } else if (build[c][0] === "api.obfuscate") {
                                     if (build[c][1] === "true") {
@@ -797,10 +807,10 @@ var prettydiff = function prettydiff(api) {
                             quoteConvert: cquoteConvert,
                             source      : csource,
                             styleguide  : cstyleguide,
-                            varword     : "list",
-                            wrap        : -1,
                             titanium    : ctitanium,
-                            topcoms     : ctopcoms
+                            topcoms     : ctopcoms,
+                            varword     : cvarword,
+                            wrap        : -1
                         });
                     }
                     return (function core__minifyReport() {
@@ -860,6 +870,55 @@ var prettydiff = function prettydiff(api) {
                         ];
                     }());
                 }
+                if (cmode === "parse") {
+                    if (clang === "css") {
+                        apioutput = csspretty({
+                            mode        : cmode,
+                            objsort     : cobjsort,
+                            quoteConvert: cquoteConvert,
+                            source      : csource
+                        });
+                    } else if (clang === "csv") {
+                        apioutput  = "CSV not supported in parse mode";
+                        apidiffout = "";
+                    } else if (clang === "markup") {
+                        apioutput = markup_beauty({
+                            correct     : ccorrect,
+                            html        : chtml,
+                            mode        : cmode,
+                            objsort     : cobjsort,
+                            quoteConvert: cquoteConvert,
+                            source      : csource,
+                            varword     : cvarword
+                        });
+                        auto      = auto + summary;
+                    } else if (clang === "text") {
+                        apioutput  = csource;
+                        apidiffout = "";
+                    } else {
+                        apioutput = jspretty({
+                            correct     : ccorrect,
+                            mode        : cmode,
+                            objsort     : cobjsort,
+                            quoteConvert: cquoteConvert,
+                            source      : csource,
+                            titanium    : ctitanium,
+                            varword     : cvarword
+                        });
+                    }
+                    if (apidiffout === false) {
+                        apidiffout = "";
+                    }
+                    if (jsxstatus === true) {
+                        auto = "<p>Code type is presumed to be <em>React JSX</em>.</p>";
+                    }
+                    if (apioutput.token !== undefined) {
+                        auto = auto + "<p>Total tokens: <strong>" + apioutput.token.length + "</strong></p>";
+                    }
+                    return [
+                        apioutput, auto + proctime()
+                    ];
+                }
                 if (cmode === "beautify") {
                     if (clang === "css") {
                         apioutput  = csspretty({
@@ -889,7 +948,7 @@ var prettydiff = function prettydiff(api) {
                             inchar      : cinchar,
                             inlevel     : cinlevel,
                             insize      : cinsize,
-                            mode        : "beautify",
+                            mode        : cmode,
                             objsort     : cobjsort,
                             quoteConvert: cquoteConvert,
                             preserve    : cpreserve,
@@ -939,7 +998,7 @@ var prettydiff = function prettydiff(api) {
                     if (jsxstatus === true) {
                         auto = "<p>Code type is presumed to be <em>React JSX</em>.</p>";
                     }
-                    if (capi === "" && cjsscope === true && clang === "javascript") {
+                    if (capi === "" && cjsscope !== "none" && clang === "javascript") {
                         builder.head       = "<?xml version='1.0' encoding='UTF-8' ?><!DOCTYPE html PUBLIC '-//W3C//DTD XHTML 1.1//EN' 'http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd'><html xmlns='http://www.w3.org/1999/xhtml' xml:lang='en'><head><title>Pretty Diff - The difference tool</title><meta name='robots' content='index, follow'/> <meta name='DC.title' content='Pretty Diff - The difference tool'/> <link rel='canonical' href='http://prettydiff.com/' type='application/xhtml+xml'/><meta http-equiv='Content-Type' content='application/xhtml+xml;charset=UTF-8'/><meta http-equiv='Content-Style-Type' content='text/css'/><style type='text/css'>";
                         builder.cssCore    = "body{font-family:'Arial';font-size:10px;overflow-y:scroll;}#samples #dcolorScheme{position:relative;z-index:1000}#apireturn textarea{font-size:1.2em;height:50em;width:100%}button{border-radius:.9em;display:block;font-weight:bold;width:100%}div .button{text-align:center}div button{display:inline-block;font-weight:bold;margin:1em 0;padding:1em 2em}button:hover{cursor:pointer}#introduction{clear:both;margin:0 0 0 5.6em;position:relative;top:-2.75em}#introduction ul{clear:both;height:3em;margin:0 0 0 -5.5em;overflow:hidden;width:100em}#introduction li{clear:none;display:block;float:left;font-size:1.4em;margin:0 4.95em -1em 0}#introduction li li{font-size:1em;margin-left:2em}#introduction .information,#webtool #introduction h2{left:-90em;position:absolute;top:0;width:10em}#introduction h2{float:none}#displayOps{float:right;font-size:1.5em;font-weight:bold;margin-right:1em;width:22.5em}#displayOps.default{position:static}#displayOps.maximized{margin-bottom:-2em;position:relative}#displayOps li{clear:none;display:block;float:left;list-style:none;margin:2em 0 0;text-align:right;width:9em}h1{float:left;font-size:2em;margin:0 .5em .5em 0}#hideOptions{margin-left:5em;padding:0}#title_text{border-style:solid;border-width:.05em;display:block;float:left;font-size:1em;margin-left:.55em;padding:.1em}h1 svg,h1 img{border-style:solid;border-width:.05em;float:left;height:2em;width:2em}h1 span{font-size:.5em}h2,h3{background:#fff;border-style:solid;border-width:.075em;display:inline-block;font-size:1.8em;font-weight:bold;margin:0 .5em .5em 0;padding:0 .2em}#doc h3{margin-top:.5em}h3{font-size:1.6em}h4{font-size:1.4em}fieldset{border-radius:.9em;clear:both;margin:3.5em 0 -2em;padding:0 0 0 1em}legend{border-style:solid;border-width:.1em;font-size:1.2em;font-weight:bold;margin-left:-.25em}.button{margin:1em 0;text-align:center}.button button{display:block;font-size:2em;height:1.5em;margin:0 auto;padding:0;width:50%}#diffreport{right:57.8em}#beaureport{right:38.8em}#minnreport{right:19.8em}#statreport{right:.8em}#statreport .body p,#statreport .body li,#statreport .body h3{font-size:1.2em}#statreport .body h3{margin-top:0}#statreport .body ul{margin-top:1em}#reports{height:4em}#reports h2{display:none}.box{border-style:solid;border-width:0;left:auto;margin:0;padding:0;position:absolute;z-index:10}.box button{border-radius:0;border-style:solid;border-width:.1em;display:block;float:right;font-family:'Lucida Console','Trebuchet MS','Arial';height:1.75em;padding:0;position:absolute;right:0;text-align:center;top:0;width:1.75em;z-index:7}.box button.resize{border-width:.05em;cursor:se-resize;font-size:1.667em;font-weight:normal;height:.8em;line-height:.5em;margin:-.85em 0 0;position:absolute;right:.05em;top:100%;width:.85em}.box button.minimize{margin:.35em 4em 0 0}.box button.maximize{margin:.35em 1.75em 0 0}.box button.save{margin:.35em 6.25em 0 0}.box .buttons{float:right;margin:0}.box h3.heading{cursor:pointer;float:left;font-size:1em;height:3em;margin:0 0 -3.2em;position:relative;width:17em;z-index:6}.box h3.heading span{display:block;font-size:1.8em;padding:.25em 0 0 .5em}.box .body{clear:both;height:20em;margin-top:-.1em;overflow:scroll;padding:4.25em 1em 1em;position:relative;right:0;top:0;width:75em;z-index:5}.options{border-radius:0 0 .9em .9em;clear:both;margin-bottom:1em;padding:1em 1em 3.5em;width:auto}label{display:inline;font-size:1.4em}ol li{font-size:1.4em;list-style-type:decimal}ol li li{font-size:1em}body#doc ol li{font-size:1.1em}ul{margin:-1.4em 0 2em;padding:0}ul li{list-style-type:none}li{clear:both;margin:1em 0 1em 3em}li h4{display:inline;float:left;margin:.4em 0;text-align:left;width:14em}p{clear:both;font-size:1.2em;margin:0 0 1em}#option_comment{height:2.5em;margin-bottom:-1.5em;width:100%}.difflabel{display:block;height:0}#beau-other-span,#diff-other-span{text-indent:-200em;width:0}.options p span{display:block;float:left;font-size:1.2em}#top{min-width:80em}#top em{font-weight:bold}#update{clear:left;float:right;font-weight:bold;padding:.5em;position:absolute;right:1em;top:11em}#announcement{height:2.5em;margin:0 -5em -4.75em;width:27.5em}#textreport{width:100%}#options{float:left;margin:0;width:19em}#options label{width:auto}#options p{clear:both;font-size:1em;margin:0;padding:0}#options p span{clear:both;float:none;height:2em;margin:0 0 0 2em}#csvchar{width:11.8em}#language,#csvchar,#colorScheme{margin:0 0 1em 2em}#codeInput{margin-left:22.5em}#Beautify.wide p,#Beautify.tall p.file,#Minify.wide p,#Minify.tall p.file{clear:none;float:none}#diffops p,#miniops p,#beauops p{clear:both;font-size:1em;padding-top:1em}#options p strong,#diffops p strong,#miniops p strong,#beauops p strong,#options .label,#diffops .label,#miniops .label,#beauops .label{display:block;float:left;font-size:1.2em;font-weight:bold;margin-bottom:1em;width:17.5em}input[type='radio']{margin:0 .25em}input[type='file']{box-shadow:none}select{border-style:inset;border-width:.1em;width:11.85em}.options input,.options label{border-style:none;display:block;float:left}.options span label{margin-left:.4em;white-space:nowrap;width:12em}.options p span label{font-size:1em}#webtool .options input[type=text]{margin-right:1em;width:11.6em}#webtool .options input[type=text],div input,textarea{border-style:inset;border-width:.1em}textarea{display:inline-block;height:10em;margin:0}strong label{font-size:1em;width:inherit}strong.new{background:#ff6;font-style:italic}#miniops span strong,#diffops span strong,#beauops span strong{display:inline;float:none;font-size:1em;width:auto}#Beautify .input label,#Beautify .output label,#Minify .input label,#Minify .output label{display:block;font-size:1.05em;font-weight:bold}#beautyinput,#minifyinput,#baseText,#newText,#beautyoutput,#minifyoutput{font-size:1em}.clear{clear:both;display:block}.wide,.tall,#diffBase,#diffNew{border-radius:0 0 .9em .9em;margin-bottom:1em}#diffBase,#diffNew{padding:1em}#diffBase p,#diffNew p{clear:none;float:none}#diffBase.wide textarea,#diffNew.wide textarea{height:10.1em}.wide,.tall{padding:1em 1.25em 0}#diff .addsource{cursor:pointer;margin-bottom:1em;padding:0}#diff .addsource input{display:block;float:left;margin:.5em .5em -1.5em}#diff .addsource label{cursor:pointer;display:inline-block;font-size:1.2em;padding:.5em .5em .5em 2em}.wide label{float:none;margin-right:0;width:100%}.wide #beautyinput,.wide #minifyinput,.wide #beautyoutput,.wide #minifyoutput{height:14.8em;margin:0;width:99.5%}.tall .input{clear:none;float:left}.tall .output{clear:none;float:right;margin-top:-2.4em}.tall .input,.tall .output{width:49%}.tall .output label{text-align:right}.tall .input textarea{height:31.7em}.tall .output textarea{height:34em}.tall textarea{margin:0 0 -.1em;width:100%}.tall #beautyinput,.tall #minifyinput{float:left}.tall #beautyoutput,.tall #minifyoutput{float:right}.wide{width:auto}#diffBase.difftall,#diffNew.difftall{margin-bottom:1.3em;padding:1em 1% .9em;width:47.5%}#diffBase.difftall{float:left}#diffNew.difftall{float:right}.file input,.labeltext input{display:inline-block;margin:0 .7em 0 0;width:16em}.labeltext,.file{font-size:.9em;font-weight:bold;margin-bottom:1em}.difftall textarea{height:30.6em;margin-bottom:.5em}#diffBase textarea,#diffNew textarea{width:99.5%}.input,.output{margin:0}#diffBase.wide,#diffNew.wide{padding:.8em 1em}#diffBase.wide{margin-bottom:1.2em}#diffoutput{width:100%}#diffoutput p em,#diffoutput li em,.analysis .bad,.analysis .good{font-weight:bold}#diffoutput ul{font-size:1.2em;margin-top:1em}#diffoutput ul li{display:list-item;list-style-type:disc}.analysis th{text-align:left}.analysis td{text-align:right}#doc ul{margin-top:1em}#doc ul li{font-size:1.2em}body#doc ul li{font-size:1.1em}#doc ol li span{display:block;margin-left:2em}.diff,.beautify{border-style:solid;border-width:.2em;display:inline-block;font-family:'Courier New',Courier,'Lucida Console',monospace;margin:0 1em 1em 0;position:relative}.beautify .data em{display:inline-block;font-style:normal;font-weight:bold;padding-top:.5em}.diff .skip{border-style:none none solid;border-width:0 0 .1em}.diff li,.diff p,.diff h3,.beautify li{font-size:1.1em}.diff .diff-left,.diff .diff-right{display:table-cell}.diff .diff-left{border-style:none none none solid;border-width:0 0 0 .1em}.diff .diff-right{border-style:none none none solid;border-width:0 0 0 .1em;margin-left:-.1em;min-width:16.5em;right:0;top:0}.diff-right .data ol{min-width:16.5em}.diff-right .data{border-style:none solid none none;border-width:0 .1em 0 0;width:100%}.diff-right .data li{min-width:16.5em}.diff ol,.beautify ol{display:table-cell;margin:0;padding:0}.diff li,.beautify li{border-style:none none solid;border-width:0 0 .1em;display:block;line-height:1.2;list-style-type:none;margin:0;padding-bottom:0;padding-right:.5em}.diff li{padding-top:.5em}.beautify .count li{padding-top:.5em}@media screen and (-webkit-min-device-pixel-ratio:0) {.beautify .count li{padding-top:.546em}}#doc .beautify .count li.fold{color:#900;cursor:pointer;font-weight:bold;padding-left:.5em}.diff .count,.beautify .count{border-style:solid;border-width:0 .1em 0 0;font-weight:normal;padding:0;text-align:right}.diff .count li,.beautify .count li{padding-left:2em}.diff .data,.beautify .data{text-align:left;white-space:pre}.diff .data li,.beautify .data li{letter-spacing:.1em;padding-left:.5em;white-space:pre}#webtool .diff h3{border-style:none solid solid;border-width:0 .1em .2em;box-shadow:none;display:block;font-family:Verdana;margin:0 0 0 -.1em;padding:.2em 2em;text-align:left}.diff li em{font-style:normal;margin:0 -.09em;padding:.05em 0}.diff p.author{border-style:solid;border-width:.2em .1em .1em;margin:0;overflow:hidden;padding:.4em;text-align:right}#dcolorScheme{float:right;margin:-2em 0 0 0}#dcolorScheme label{display:inline-block;font-size:1em;margin-right:1em}body#doc{font-size:.8em;max-width:80em}#doc th{font-weight:bold}#doc td span{display:block}#doc table,.box .body table{border-collapse:collapse;border-style:solid;border-width:.2em;clear:both}#doc table{font-size:1.2em}body#doc table{font-size:1em}#doc td,#doc th{border-left-style:solid;border-left-width:.1em;border-top-style:solid;border-top-width:.1em;padding:.5em}#doc em,.box .body em{font-style:normal;font-weight:bold}#doc div{margin-bottom:2em}#doc div div{clear:both;margin-bottom:1em}#doc h2{font-size:1.6em;margin:.5em .5em .5em 0}#doc ol{clear:both}#doc_contents li{font-size:1.75em;margin:1em 0 0}#doc_contents ol ol li{font-size:.75em;list-style:lower-alpha;margin:.5em 0 0}#doc_contents ol{padding-bottom:1em}#doc #doc_contents ol ol{background-color:inherit;border-style:none;margin:.25em .3em 0 0;padding-bottom:0}#doc_contents a{text-decoration:none}#diffoutput #thirdparties li{display:inline-block;list-style-type:none}#thirdparties a{border-style:none;display:block;height:4em;text-decoration:none}button,fieldset,.box h3.heading,.box .body,.options,.diff .replace em,.diff .delete em,.diff .insert em,.wide,.tall,#diffBase,#diffNew,#doc div,#doc div div,#doc ol,#option_comment,#update,#thirdparties img,#diffoutput #thirdparties{border-style:solid;border-width:.1em}#apitest p{clear:both;padding-top:.75em}#apitest label,#apitest select,#apitest input,#apitest textarea{float:left}#apitest label{width:20em}#apitest select,#apitest input,#apitest textarea{width:30em}#pdsamples{list-style-position:inside;margin:-12em 0 0 0;padding:0;position:relative;z-index:10}#pdsamples li{border-radius:1em;border-style:solid;border-width:.1em;margin:0 0 3em;padding:1em}#pdsamples li div{border-radius:1em;border-style:solid;border-width:.1em;margin:0;padding:1em}#pdsamples li p{display:inline-block;font-size:1em;margin:0}#pdsamples li p a{display:block;margin:0 0 1em 2em}#pdsamples li ul{margin:0 0 0 2em}#samples #pdsamples li li{background:none transparent;border-style:none;display:list-item;list-style:disc outside;margin:0;padding:.5em}#modalSave span{background:#000;display:block;left:0;opacity:.5;position:absolute;top:0;z-index:9000}#modalSave p{background:#eee;color:#333;font-size:3em;padding:1em;position:absolute;text-align:center;top:10em;width:25em;z-index:9001}#modalSave p em{display:block;font-size:.75em;margin-top:1em}#modalSave p strong{color:#c00;font-weight:bold}@media print{p,.options,#Beautify,#Minify,#diff,ul{display:none}div{width:100%}html td{font-size:.8em;white-space:normal}}";
                         builder.cssColor   = "html .white,body.white{color:#333}body.white button{background:#eee;border-color:#222;box-shadow:0 .1em .2em rgba(64,64,64,0.75);color:#666;text-shadow:.05em .05em .1em #ccc}.white button:hover,.white button:active{background:#999;color:#eee;text-shadow:.1em .1em .1em #333}.white a{color:#009}.white #title_text{border-color:#fff;color:#333}.white #introduction h2{border-color:#999;color:#333}.white h1 svg{background:#eee;border-color:#999;box-shadow:0 .1em .2em rgba(150,150,150,0.5)}.white h2,.white h3{background:#eee;border-color:#eee;box-shadow:none;padding-left:0;text-shadow:none}.white fieldset{background:#ddd;border-color:#999}.white legend{background:#fff;border-color:#999;color:#333;text-shadow:none}.white .box{background:#666;border-color:#999;box-shadow:0 .4em .8em rgba(64,64,64,0.75)}.white .box button{box-shadow:0 .1em .2em rgba(0,0,0,0.75);text-shadow:.1em .1em .1em rgba(0,0,0,.5)}.white .box button.resize{background:#bbf;border-color:#446;color:#446}.white .box button.resize:hover{background:#ddf;border-color:#228;color:#228}.white .box button.save{background:#d99;border-color:#300;color:#300}.white .box button.save:hover{background:#fcc;border-color:#822;color:#822}.white .box button.minimize{background:#bbf;border-color:#006;color:#006}.white .box button.minimize:hover{background:#eef;border-color:#228;color:#228}.white .box button.maximize{background:#9c9;border-color:#030;color:#030}.white .box button.maximize:hover{background:#cfc;border-color:#060;color:#060}.white .box h3.heading{background:#ddd;border-color:#888;box-shadow:.2em .2em .4em #666}.white .box h3.heading:hover{background:#333;color:#eee}.white .box .body{background:#eee;border-color:#888;box-shadow:0 0 .4em rgba(64,64,64,0.75)}.white .options{background:#eee;border-color:#999;box-shadow:0 .2em .4em rgba(64,64,64,0.5);text-shadow:.05em .05em .1em #ccc}.white .options h2,.white #Beautify h2,.white #Minify h2,.white #diffBase h2,.white #diffNew h2{background:#eee;border-color:#eee;box-shadow:none;text-shadow:none}.white #option_comment{background:#ddd;border-color:#999}.white #top em{color:#00f}.white #update{background:#eee;border-color:#999;box-shadow:0 .1em .2em rgba(64,64,64,0.5)}.white .wide,.white .tall,.white #diffBase,.white #diffNew{background:#eee;border-color:#999;box-shadow:0 .2em .4em rgba(64,64,64,0.5)}.white .file input,.white .labeltext input{border-color:#fff}#webtool.white input.unchecked{background:#ccc;color:#666}.white .options input[type=text],.white .options select{border-color:#999}.white #beautyoutput,.white #minifyoutput{background:#ddd}.white #diffoutput p em,.white #diffoutput li em{color:#c00}.white .analysis .bad{background-color:#ebb;color:#400}.white .analysis .good{background-color:#cec;color:#040}.white #doc .analysis thead th,.white #doc .analysis th[colspan]{background:#eef}.white div input{border-color:#999}.white textarea{border-color:#999}.white textarea:hover{background:#eef8ff}.white .diff,.white .beautify,.white .diff ol,.white .beautify ol,.white .diff .diff-left,.white .diff .diff-right,.white h3,.white p.author{border-color:#999}.white .diff .count li,.white .beautify .count li{background:#eed;border-color:#bbc;color:#886}.white .diff h3{background:#ddd;border-bottom-color:#bbc}.white .diff .empty{background-color:#ddd;border-color:#ccc}.white .diff .replace{background-color:#fea;border-color:#dd8}.white .diff .data .replace em{background-color:#ffd;border-color:#963;color:#630}.white .diff .delete{background-color:#fbb;border-color:#eaa}.white .diff .data .delete em{background-color:#fdd;border-color:#700;color:#600}.white .diff .equal,.white .beautify .data li{background-color:#fff;border-color:#eee}.white .beautify .data em.s1{color:#f66}.white .beautify .data em.s2{color:#12f}.white .beautify .data em.s3{color:#090}.white .beautify .data em.s4{color:#d6d}.white .beautify .data em.s5{color:#7cc}.white .beautify .data em.s6{color:#c85}.white .beautify .data em.s7{color:#737}.white .beautify .data em.s8{color:#6d0}.white .beautify .data em.s9{color:#dd0s}.white .beautify .data em.s10{color:#893}.white .beautify .data em.s11{color:#b97}.white .beautify .data em.s12{color:#bbb}.white .beautify .data em.s13{color:#cc3}.white .beautify .data em.s14{color:#333}.white .beautify .data em.s15{color:#9d9}.white .beautify .data em.s16{color:#880}.white .beautify .data .l0{background:#fff}.white .beautify .data .l1{background:#fed}.white .beautify .data .l2{background:#def}.white .beautify .data .l3{background:#efe}.white .beautify .data .l4{background:#fef}.white .beautify .data .l5{background:#eef}.white .beautify .data .l6{background:#fff8cc}.white .beautify .data .l7{background:#ede}.white .beautify .data .l8{background:#efc}.white .beautify .data .l9{background:#ffd}.white .beautify .data .l10{background:#edc}.white .beautify .data .l11{background:#fdb}.white .beautify .data .l12{background:#f8f8f8}.white .beautify .data .l13{background:#ffb}.white .beautify .data .l14{background:#eec}.white .beautify .data .l15{background:#cfc}.white .beautify .data .l16{background:#eea}.white .beautify .data .c0{background:#ddd}.white .beautify .data li{color:#777}.white .diff .skip{background-color:#efefef;border-color:#ddd}.white .diff .insert{background-color:#bfb;border-color:#aea}.white .diff .data .insert em{background-color:#efc;border-color:#070;color:#050}.white .diff p.author{background:#efefef;border-top-color:#bbc}.white #doc table,.white .box .body table{background:#fff;border-color:#999}.white #doc strong,.white .box .body strong{color:#c00}.white .box .body em,.white .box .body #doc em{color:#090}.white #thirdparties img,.white #diffoutput #thirdparties{border-color:#999}.white #thirdparties img{box-shadow:.2em .2em .4em #999}.white #diffoutput #thirdparties{background:#eee}.white #doc div,#doc.white div{background:#ddd;border-color:#999}.white #doc ol,#doc.white ol{background:#eee;border-color:#999}.white #doc div div,#doc.white div div{background:#eee;border-color:#999}.white #doc table,#doc.white table{background:#fff;border-color:#999}.white #doc th,#doc.white th{background:#ddd;border-left-color:#999;border-top-color:#999}.white #doc tr:hover,#doc.white tr:hover{background:#ddd}#doc.white em{color:#060}.white #doc div:hover,#doc.white div:hover{background:#ccc}.white #doc div div:hover,#doc.white div div:hover,#doc.white div ol:hover{background:#fff}.white #pdsamples li{background:#eee;border-color:#999}.white #pdsamples li div{background:#ddd;border-color:#999}.white #pdsamples li div a{color:#47a}.white #pdsamples li p a{color:#009}";
@@ -1245,7 +1304,7 @@ var prettydiff = function prettydiff(api) {
             var sdiffcomm = (args.diffcomm === true || args.diffcomm === "true") ? true : false,
                 sinsize   = (isNaN(args.insize) === true) ? 4 : Number(args.insize),
                 sinchar   = (typeof args.inchar !== "string" || args.inchar === "") ? " " : args.inchar,
-                smode     = (args.mode !== "diff" && args.mode !== "minify") ? "beautify" : args.mode,
+                smode     = (args.mode === "minify" || args.mode === "parse" || args.mode === "diff") ? args.mode : "beautify",
                 sobjsort  = (args.objsort === true || args.objsort === "true") ? true : false,
                 spres     = (args.preserve === false || args.preserve === "false") ? false : true,
                 ssource   = (typeof args.source !== "string" || args.source === "" || (/^(\s+)$/).test(args.source) === true) ? "Error: no source supplied to csspretty." : args.source,
@@ -1887,6 +1946,12 @@ var prettydiff = function prettydiff(api) {
                     }
                 }
             }());
+            if (smode === "parse") {
+                return {
+                    token: token,
+                    types: types
+                };
+            }
             if (smode !== "minify") {
                 output = (function csspretty__beautify() {
                     var a        = 0,
@@ -3263,7 +3328,7 @@ var prettydiff = function prettydiff(api) {
                 jcomment      = (args.comments === "noindent") ? "noindent" : (args.comments === "nocomment") ? "nocomment" : "indent",
                 jelseline     = (args.elseline === true || args.elseline === "true") ? true : false,
                 jlevel        = (args.inlevel > -1) ? args.inlevel : ((Number(args.inlevel) > -1) ? Number(args.inlevel) : 0),
-                jmode         = (args.mode !== undefined && args.mode.toLowerCase() === "minify") ? "minify" : "beautify",
+                jmode         = (args.mode === "minify" || args.mode === "parse" || args.mode === "diff") ? args.mode : "beautify",
                 jobfuscate    = (args.obfuscate === true || args.obfuscate === "true") ? true : false,
                 jobjsort      = (args.objsort === true || args.objsort === "true") ? true : false,
                 jpres         = (args.preserve === false || args.preserve === "false") ? false : true,
@@ -3727,9 +3792,6 @@ var prettydiff = function prettydiff(api) {
                             early = false,
                             paren = false,
                             opers = false;
-                        if (tokel === undefined) {
-                            return;
-                        }
                         if (typel === "comment" || typel === "comment-inline") {
                             do {
                                 len -= 1;
@@ -3987,6 +4049,23 @@ var prettydiff = function prettydiff(api) {
                             if (types[cc] === "start" || types[cc] === "method") {
                                 dd -= 1;
                             }
+                            if (dd === 0 && token[cc - 1] === ")" && token[cc] === "{") {
+                                for (cc -= 1; cc > -1; cc -= 1) {
+                                    if (types[cc] === "end") {
+                                        dd += 1;
+                                    }
+                                    if (types[cc] === "start" || types[cc] === "method") {
+                                        dd -= 1;
+                                    }
+                                    if (dd === 0 && types[cc - 1] === "word") {
+                                        if (token[cc - 1] === "function" || token[cc - 2] === "function") {
+                                            return "method";
+                                        }
+                                        return "start";
+                                    }
+                                }
+                                return "start";
+                            }
                             if (dd < 0) {
                                 if (types[cc] === "start" && types[cc + 1] === "start" && token[cc + 2] !== "function") {
                                     do {
@@ -4021,6 +4100,7 @@ var prettydiff = function prettydiff(api) {
                                 return "start";
                             }
                         }
+                        return "start";
                     },
                     newarray       = function jspretty__tokenize_newarray() {
                         var aa       = token.length - 1,
@@ -5148,6 +5228,31 @@ var prettydiff = function prettydiff(api) {
                 }
             }());
 
+            if (jscorrect === true) {
+                (function jspretty__jscorrect() {
+                    var a = 0,
+                        b = token.length;
+                    for (a = 0; a < b; a += 1) {
+                        if (token[a] === "x;") {
+                            token[a] = ";";
+                        }
+                        if (token[a] === "x{") {
+                            token[a] = "{";
+                        }
+                        if (token[a] === "x}") {
+                            token[a] = "}";
+                        }
+                    }
+                }());
+            }
+
+            if (jmode === "parse") {
+                return {
+                    token: token,
+                    types: types
+                };
+            }
+
             if (jsxstatus === true && jsscope !== "none" && token[0] === "{") {
                 jsscope = "none";
                 (function jspretty__jsxScope() {
@@ -6102,24 +6207,6 @@ var prettydiff = function prettydiff(api) {
                 }());
             }
 
-            if (jscorrect === true) {
-                (function jspretty__jscorrect() {
-                    var a = 0,
-                        b = token.length;
-                    for (a = 0; a < b; a += 1) {
-                        if (token[a] === "x;") {
-                            token[a] = ";";
-                        }
-                        if (token[a] === "x{") {
-                            token[a] = "{";
-                        }
-                        if (token[a] === "x}") {
-                            token[a] = "}";
-                        }
-                    }
-                }());
-            }
-
             if (jtitanium === true) {
                 token[0] = "";
                 types[0] = "";
@@ -6979,7 +7066,7 @@ var prettydiff = function prettydiff(api) {
                             nl          = function jspretty__result_nl(x) {
                                 var dd = 0;
                                 build.push("\n");
-                                for (dd; dd < x; dd += 1) {
+                                for (dd = 0; dd < x; dd += 1) {
                                     build.push(tab);
                                 }
                             },
@@ -7593,6 +7680,7 @@ var prettydiff = function prettydiff(api) {
                 quoteConvert  = (args.quoteConvert === "single" || args.quoteConvert === "double") ? args.quoteConvert : "none",
                 styleguide    = (typeof args.styleguide === "string") ? args.styleguide : "none",
                 top_comments  = (args.top_comments === true || args.top_comments === "true") ? true : false,
+                wrap          = (isNaN(args.wrap) === false) ? Number(args.wrap) : 0,
                 conditional   = (presume_html === true || args.conditional === true || args.conditional === "true") ? true : false,
                 preserve      = function markupmin__preserve(start, endTag) {
                     var a     = 0,
@@ -7723,12 +7811,12 @@ var prettydiff = function prettydiff(api) {
                                     openchar    = "";
                                     attribIndex = aa + 1;
                                 },
-                                joinchar    = (tag.indexOf("<svg") === 0 && comments === "beautify") ? "\n" : " ";
+                                joinchar    = (tag.length > wrap && wrap > 0 && comments === "beautify" && minjsx === false) ? "\n" : " ";
                             if (space === " ") {
                                 tag        = tag.substr(1);
                                 spaceAfter = tag.indexOf(" ") + 1;
                             }
-                            nameSpace = tag.substring(0, spaceAfter);
+                            nameSpace = tag.substring(0, spaceAfter - 1);
                             tagLength = tag.length;
                             tag       = tag.substring(spaceAfter, tagLength - ending.length) + " ";
                             for (aa = 0; aa < tagLength; aa += 1) {
@@ -7830,11 +7918,11 @@ var prettydiff = function prettydiff(api) {
                             attribute.sort(sortfunc);
                             if (minjsx === true) {
                                 if (comment.length > 0) {
-                                    return space + nameSpace + "\n" + comment.join("\n") + attribute.join(joinchar).replace(/\n \n?\//g, "\n/") + ending;
+                                    return space + nameSpace + "\n" + comment.join("\n") + attribute.join(" ").replace(/\n \n?\//g, "\n/") + ending;
                                 }
-                                return space + nameSpace + attribute.join(joinchar).replace(/\n \n?\//g, "\n/") + ending;
+                                return space + nameSpace + " " + attribute.join(" ").replace(/\n \n?\//g, "\n/") + ending;
                             }
-                            return space + nameSpace + attribute.join(joinchar) + ending;
+                            return space + nameSpace + joinchar + attribute.join(joinchar) + ending;
                         };
                     for (a = i; a < end; a += 1) {
                         if (minjsx === true) {
@@ -8337,7 +8425,7 @@ var prettydiff = function prettydiff(api) {
                 minlevel      = (isNaN(args.inlevel) === true) ? 0 : Number(args.inlevel),
                 mjsscope      = (args.jsscope !== "html" && args.jsscope !== "report") ? "none" : args.jsscope,
                 mjsx          = (args.jsx === true || args.jsx === "true") ? true : false,
-                mmode         = (typeof args.mode === "string") ? args.mode : "beautify",
+                mmode         = (args.mode === "parse" || args.mode === "diff") ? args.mode : "beautify",
                 mobjsort      = (args.objsort === "true" || args.objsort === true) ? true : false,
                 mpreserve     = (args.preserve === false || args.preserve === "false") ? false : true,
                 mquoteConvert = (args.quoteConvert === "single" || args.quoteConvert === "double") ? args.quoteConvert : "none",
@@ -8837,7 +8925,8 @@ var prettydiff = function prettydiff(api) {
                             jsx         : false,
                             presume_html: mhtml,
                             quoteConvert: mquoteConvert,
-                            source      : x
+                            source      : x,
+                            wrap        : mwrap
                         }).split(""),
                         last       = "",
                         li         = [],
@@ -8947,7 +9036,11 @@ var prettydiff = function prettydiff(api) {
                                                             ename = ename.substr(1);
                                                         }
                                                         if (((name === "li " || name === "li>") && (ename === "/ul>" || ename === "/ol>" || (ename !== "/li>" && ename !== "ul>" && ename !== "ol>" && ename.indexOf("ul ") !== 0 && ename.indexOf("ol ") !== 0))) || (((name === "/ul>" && previous.indexOf("<ul") < 0) || (name === "/ol>" && previous.indexOf("<ol") < 0)) && ename !== "/li>")) {
-                                                            build.push("</prettydiffli>");
+                                                            if (mcorrect === true) {
+                                                                build.push("</li>");
+                                                            } else {
+                                                                build.push("</prettydiffli>");
+                                                            }
                                                             token.push("T_tag_end");
                                                             li[li.length - 1] = false;
                                                             buildLen          += 1;
@@ -9133,7 +9226,7 @@ var prettydiff = function prettydiff(api) {
                         } else if (y[i] === "<" && y[i + 1] === "?" && i < end - 4) {
                             if (y[i + 2].toLowerCase() === "x" && y[i + 3].toLowerCase() === "m" && y[i + 4].toLowerCase() === "l") {
                                 token.push("T_xml");
-                            } else if (y[i + 2].toLowerCase() === "p" && y[i + 3].toLowerCase() === "h" && y[i + 4].toLowerCase() === "p") {
+                            } else {
                                 token.push("T_php");
                             }
                             build.push(builder("?>"));
@@ -9182,6 +9275,7 @@ var prettydiff = function prettydiff(api) {
                                     }
                                     if (y[inc + 1] === ">") {
                                         build.push(builder(">"));
+                                        last = build[build.length - 1];
                                         if (last.indexOf("<li") > -1 && last.length > 0) {
                                             li[li.length - 1] = true;
                                         }
@@ -9349,6 +9443,74 @@ var prettydiff = function prettydiff(api) {
                     }
                 }
             }());
+
+            if (mmode === "parse") {
+                summary = (function markup_beauty__parseSummary() {
+                    var output = ["<p><strong>"],
+                        plural = "",
+                        a      = 0,
+                        len    = cinfo.length,
+                        start  = 0,
+                        end    = 0;
+                    for (a = 0; a < len; a += 1) {
+                        if (token[a] === "T_tag_start" || token[a] === "T_script" || token[a] === "T_style") {
+                            start += 1;
+                        } else if (cinfo[a] === "end" && token[a] !== "T_asp") {
+                            if (build[a] === "</prettydiffli>") {
+                                build.splice(a, 1);
+                                token.splice(a, 1);
+                                cinfo.splice(a, 1);
+                                len -= 1;
+                                a   -= 1;
+                            } else {
+                                end += 1;
+                            }
+                        }
+                    }
+                    start = start - end;
+                    if (start !== end) {
+                        if (start > 0) {
+                            if (start > 1) {
+                                plural = "s";
+                            }
+                            output.push(start);
+                            output.push(" more start tag");
+                            output.push(plural);
+                            output.push(" than end tag");
+                            output.push(plural);
+                            output.push("!");
+                        } else {
+                            start = start * -1;
+                            if (start > 1) {
+                                plural = "s";
+                            }
+                            output.push(start);
+                            output.push(" more end tag");
+                            output.push(plural);
+                            output.push(" than start tag");
+                            output.push(plural);
+                            output.push("!");
+                        }
+                        output.push("</strong></p>");
+
+                        if (summary.indexOf("jserror") > 0) {
+                            output.push(summary.slice(summary.indexOf("<p "), summary.indexOf("</p>") + 4));
+                        }
+                        if (id.length > 0) {
+                            output.push("<p><strong class='duplicate'>Duplicate id attribute values detected:</strong> " + id + "</p>");
+                        }
+                    } else {
+                        return "";
+                    }
+                    return output.join("");
+                }());
+                return {
+                    token: build,
+                    typea: token,
+                    typeb: cinfo
+                };
+            }
+
             (function markup_beauty__algorithm() {
                 var i           = 0,
                     commonStart = function markup_beauty__algorithm_commonStart(isStart) {
@@ -9802,7 +9964,6 @@ var prettydiff = function prettydiff(api) {
                 (function markup_beauty__algorithm_loop() {
                     var test        = false,
                         test1       = false,
-                        svg         = false,
                         cdata       = [],
                         cdata1      = [],
                         cdataStart  = (/^(\s*(\/)*<\!\[+[A-Z]+\[+)/),
@@ -9815,11 +9976,6 @@ var prettydiff = function prettydiff(api) {
                         test1  = false;
                         cdata  = [""];
                         cdata1 = [""];
-                        if (build[i].indexOf("<svg") === 0 || build[i].indexOf(" <svg") === 0) {
-                            svg = true;
-                        } else if (build[i] === "</svg>" || build[i] === " </svg>") {
-                            svg = false;
-                        }
                         if (i === 0) {
                             level.push(minlevel);
                         } else if (cinfo[i] === "external" && mjsx === false) {
@@ -9973,26 +10129,14 @@ var prettydiff = function prettydiff(api) {
                                 build[i] = build[i].slice(0, build[i].length - 1);
                                 level.push("x");
                             } else if (cinfo[i] === "start") {
-                                if (svg === true && level[i - 1] !== "x" && (cinfo[i - 1] === "start" || (/^( ?<svg)/).test(build[i - 1]) === true)) {
-                                    level.push(level[i - 1] + 1);
-                                } else {
-                                    startSafety();
-                                }
+                                startSafety();
                             } else if (cinfo[i] === "end") {
                                 end();
                                 if (token[i] === "T_asp" && ((/(\{\s*%>)$/).test(build[i]) === true || (/(\{\s*%\])$/).test(build[i]) === true || (/(\{\s*@\})$/).test(build[i]) === true)) {
                                     cinfo[i] = "start";
                                 }
                             } else if (cinfo[i] === "singleton") {
-                                if (svg === true && level[i - 1] !== "x") {
-                                    if (cinfo[i - 1] === "start" || (/^( ?<svg)/).test(build[i - 1]) === true) {
-                                        level.push(level[i - 1] + 1);
-                                    } else {
-                                        level.push(level[i - 1]);
-                                    }
-                                } else {
-                                    startSafety();
-                                }
+                                startSafety();
                             }
                         }
                     }
@@ -10012,6 +10156,125 @@ var prettydiff = function prettydiff(api) {
                         }
                         return output.join("");
                     }()),
+                    text_wrap  = function markup_beauty__apply_wrap(input) {
+                        var a                = 0,
+                            itemLengthNative = 0,
+                            item             = input.replace(/^(\s+)/, "").replace(/(\s+)$/, "").split(" "),
+                            itemLength       = item.length - 1,
+                            output           = [item[0]],
+                            firstLen         = item[0].length,
+                            attribute        = (item[0].indexOf("=") > 0) ? true : false,
+                            ind              = (function markup_beauty__apply_wrap_ind() {
+                                var b       = 0,
+                                    tabs    = [],
+                                    levels  = level[i],
+                                    counter = 0;
+                                if ((attribute === true && level[i] === "x") || (cinfo[i - 1] === "end" && level[i - 1] === "x")) {
+                                    for (b = i - 1; b > -1; b -= 1) {
+                                        if (cinfo[b] === "end") {
+                                            counter += 1;
+                                        }
+                                        if (cinfo[b] === "start") {
+                                            counter -= 1;
+                                        }
+                                        if (counter === -1 && cinfo[b] === "start") {
+                                            if (i > b + 2 && level[b + 2] !== "x") {
+                                                return indents;
+                                            }
+                                            return indents + tab;
+                                        }
+                                    }
+                                }
+                                for (b = i - 1; b > -1; b -= 1) {
+                                    if (token[b] === "T_content" || (cinfo[b] === "end" && level[b] !== "x")) {
+                                        if (cinfo[b] === "end" && level[i] !== "x" && level[i] !== indents.length / tab.length) {
+                                            for (b = 0; b < levels; b += 1) {
+                                                tabs.push(tab);
+                                            }
+                                            return tabs.join("");
+                                        }
+                                        return indents;
+                                    }
+                                    if (cinfo[b] !== "singleton" && cinfo[b] !== "end") {
+                                        if (cinfo[b] === "start" && cinfo[b - 1] === "end" && b === i - 1 && level[b] === "x") {
+                                            return indents;
+                                        }
+                                        return indents + tab;
+                                    }
+                                }
+                            }());
+                        if (itemLength === 0) {
+                            return input;
+                        }
+                        if (attribute === true) {
+                            ind = tab + ind;
+                        }
+                        if (level[i] === "x") {
+                            for (a = i - 1; a > -1; a -= 1) {
+                                if (level[a] !== "x") {
+                                    itemLengthNative += build[a].replace(indents, "").length;
+                                    break;
+                                }
+                                itemLengthNative += build[a].length;
+                            }
+                        }
+                        firstLen += itemLengthNative;
+                        if (itemLength > 0 && item[0] !== "") {
+                            if (firstLen + item[1].length > mwrap) {
+                                output.push("\n");
+                                output.push(ind);
+                                firstLen = 0;
+                            } else {
+                                output.push(" ");
+                            }
+                        }
+                        for (a = 1; a < itemLength; a += 1) {
+                            output.push(item[a]);
+                            if (a < itemLength - 1 && item[a].length + item[a + 1].length + 1 + firstLen > mwrap) {
+                                output.push("\n");
+                                output.push(ind);
+                                firstLen = 0;
+                            } else {
+                                output.push(" ");
+                                firstLen += 1 + item[a].length;
+                            }
+                        }
+                        if (output.length > 1) {
+                            output.pop();
+                        }
+                        if (output[output.length - 1] !== "\n" && i < end - 1 && level[i + 1] === "x") {
+                            firstLen += build[i + 1].length;
+                        }
+                        if (firstLen + item[itemLength].length > mwrap) {
+                            output.push("\n");
+                            output.push(ind);
+                        } else if (firstLen === 0) {
+                            output.push(ind);
+                        } else {
+                            output.push(" ");
+                        }
+                        output.push(item[itemLength]);
+                        return output.join("");
+                    },
+                    attr_wrap  = function markup_beauty__apply_attrwrap(item) {
+                        var parse = item.split("\n"),
+                            loopEnd = level[i],
+                            a = 0;
+                        if (loopEnd !== "x") {
+                            indents = "";
+                            for (a = 0; a < loopEnd; a += 1) {
+                                indents = tab + indents;
+                            }
+                        }
+                        loopEnd = parse.length;
+                        for (a = 1; a < loopEnd; a += 1) {
+                            if (parse[a].length > mwrap) {
+                                parse[a] = text_wrap(parse[a]);
+                            }
+                            parse[a] = "\n" + tab + indents + parse[a];
+                        }
+                        return parse.join("");
+                    },
                     comment    = function markup_beauty__apply_comment(item) {
                         var regress = {},
                             a       = i - 1;
@@ -10052,9 +10315,6 @@ var prettydiff = function prettydiff(api) {
                             item = item.slice(0, item.length - 1);
                         }
                         indents = indent.join("");
-                        if (build[i].indexOf("<svg") === 0) {
-                            item = item.replace(/\n/g, "\n" + tab + indents);
-                        }
                         if (mjsx === true && item.indexOf("\n") > 0 && (/^( ?\/\*)/).test(item) === true) {
                             (function markup_beauty__apply_indentation_jsxComment() {
                                 var mline = item.replace(/\s*\*\/(\s*)/, "").split("\n"),
@@ -10148,106 +10408,10 @@ var prettydiff = function prettydiff(api) {
                         }
                         ins = indent.join("");
                         return "\n" + ins + item.replace(/\n(?!\n)/g, "\n" + ins);
-                    },
-                    text_wrap  = function markup_beauty__apply_wrap() {
-                        var a                = 0,
-                            itemLengthNative = 0,
-                            item             = build[i].replace(/^(\s+)/, "").replace(/(\s+)$/, "").split(" "),
-                            itemLength       = item.length - 1,
-                            output           = [item[0]],
-                            firstLen         = item[0].length,
-                            ind              = (function markup_beauty__apply_wrap_ind() {
-                                var b       = 0,
-                                    tabs    = [],
-                                    levels  = level[i],
-                                    counter = 0;
-                                if (cinfo[i - 1] === "end" && level[i - 1] === "x") {
-                                    for (b = i - 1; b > -1; b -= 1) {
-                                        if (cinfo[b] === "end") {
-                                            counter += 1;
-                                        }
-                                        if (cinfo[b] === "start") {
-                                            counter -= 1;
-                                        }
-                                        if (counter === -1 && cinfo[b] === "start") {
-                                            if (i > b + 2 && level[b + 2] !== "x") {
-                                                return indents;
-                                            }
-                                            return indents + tab;
-                                        }
-                                    }
-                                }
-                                for (b = i - 1; b > -1; b -= 1) {
-                                    if (token[b] === "T_content" || (cinfo[b] === "end" && level[b] !== "x")) {
-                                        if (cinfo[b] === "end" && level[i] !== "x" && level[i] !== indents.length / tab.length) {
-                                            for (b = 0; b < levels; b += 1) {
-                                                tabs.push(tab);
-                                            }
-                                            return tabs.join("");
-                                        }
-                                        return indents;
-                                    }
-                                    if (cinfo[b] !== "singleton" && cinfo[b] !== "end") {
-                                        if (cinfo[b] === "start" && cinfo[b - 1] === "end" && b === i - 1 && level[b] === "x") {
-                                            return indents;
-                                        }
-                                        return indents + tab;
-                                    }
-                                }
-                            }());
-                        if (itemLength === 0) {
-                            return;
-                        }
-                        if (level[i] === "x") {
-                            for (a = i - 1; a > -1; a -= 1) {
-                                if (level[a] !== "x") {
-                                    itemLengthNative += build[a].replace(indents, "").length;
-                                    break;
-                                }
-                                itemLengthNative += build[a].length;
-                            }
-                        }
-                        firstLen += itemLengthNative;
-                        if (itemLength > 0 && item[0] !== "") {
-                            if (firstLen + item[1].length > mwrap) {
-                                output.push("\n");
-                                output.push(ind);
-                                firstLen = 0;
-                            } else {
-                                output.push(" ");
-                            }
-                        }
-                        for (a = 1; a < itemLength; a += 1) {
-                            output.push(item[a]);
-                            if (a < itemLength - 1 && item[a].length + item[a + 1].length + 1 + firstLen > mwrap) {
-                                output.push("\n");
-                                output.push(ind);
-                                firstLen = 0;
-                            } else {
-                                output.push(" ");
-                                firstLen += 1 + item[a].length;
-                            }
-                        }
-                        if (output.length > 1) {
-                            output.pop();
-                        }
-                        if (output[output.length - 1] !== "\n" && i < end - 1 && level[i + 1] === "x") {
-                            firstLen += build[i + 1].length;
-                        }
-                        if (firstLen + item[itemLength].length > mwrap) {
-                            output.push("\n");
-                            output.push(ind);
-                        } else if (firstLen === 0) {
-                            output.push(ind);
-                        } else {
-                            output.push(" ");
-                        }
-                        output.push(item[itemLength]);
-                        build[i] = output.join("");
                     };
                 for (i = 0; i < end; i += 1) {
                     if (mwrap > 0 && (cinfo[i] === "content" || cinfo[i] === "mixed_start" || cinfo[i] === "mixed_both" || cinfo[i] === "mixed_end")) {
-                        text_wrap(build[i]);
+                        build[i] = text_wrap(build[i]);
                     }
                     if (build[i] === "</prettydiffli>" || build[i] === " </prettydiffli>") {
                         build[i] = "";
@@ -10260,11 +10424,16 @@ var prettydiff = function prettydiff(api) {
                         }
                     } else if (cinfo[i] === "external" && mstyle === "indent" && build[i - 1].toLowerCase().indexOf("<style") > -1) {
                         build[i] = style_math(build[i]);
-                    } else if (level[i] !== "x" && (cinfo[i - 1] !== "content" && (cinfo[i - 1] !== "mixed_start" || mforce === true))) {
+                    } else if (cinfo[i - 1] !== "content" && (cinfo[i - 1] !== "mixed_start" || mforce === true)) {
                         if (build[i].charAt(0) === " ") {
                             build[i] = build[i].substr(1);
                         }
-                        build[i] = tab_math(build[i]);
+                        if (build[i].indexOf("\n") > 0 && (cinfo[i] === "start" || cinfo[i] === "singleton")) {
+                            build[i] = attr_wrap(build[i]);
+                        }
+                        if (level[i] !== "x") {
+                            build[i] = tab_math(build[i]);
+                        }
                     } else if (cinfo[i] === "comment" && build[i].indexOf("\n") > 0 && mcomm !== "noindent" && level[i] === "x") {
                         build[i] = comment(build[i]);
                     }
@@ -10738,9 +10907,7 @@ var prettydiff = function prettydiff(api) {
                                     output.push(plural);
                                     output.push("!");
                                 }
-                                output.push("</strong> The combined total number of start tags, script tags, and style tags s" +
-                                        "hould equal the number of end tags. For HTML this problem may be solved by selec" +
-                                    "ting the '<em>Presume SGML type HTML</em>' option.</p>");
+                                output.push("</strong></p>");
                             } else {
                                 return "";
                             }
@@ -10768,24 +10935,24 @@ var prettydiff = function prettydiff(api) {
             cmjs : 150221
         },
         api          : {
-            dom      : 150326,
-            nodeLocal: 150326,
-            wsh      : 150317
+            dom      : 150402,
+            nodeLocal: 150402,
+            wsh      : 150402
         },
         charDecoder  : 141025,
-        css          : 150326, //diffview.css file
-        csspretty    : 150321, //csspretty library
+        css          : 150402, //diffview.css file
+        csspretty    : 150402, //csspretty library
         csvbeauty    : 140114, //csvbeauty library
         csvmin       : 131224, //csvmin library
         diffview     : 150221, //diffview library
-        documentation: 150326, //documentation.xhtml
-        jspretty     : 150326, //jspretty library
+        documentation: 150402, //documentation.xhtml
+        jspretty     : 150402, //jspretty library
         latest       : 0,
-        markup_beauty: 150323, //markup_beauty library
-        markupmin    : 150323, //markupmin library
-        prettydiff   : 150326, //this file
-        version      : "1.11.8", //version number
-        webtool      : 150321 //prettydiff.com.xhtml
+        markup_beauty: 150402, //markup_beauty library
+        markupmin    : 150402, //markupmin library
+        prettydiff   : 150402, //this file
+        version      : "1.11.9", //version number
+        webtool      : 150402 //prettydiff.com.xhtml
     };
 edition.latest = (function edition_latest() {
     "use strict";
@@ -10793,7 +10960,7 @@ edition.latest = (function edition_latest() {
 }());
 if (typeof exports === "object" || typeof exports === "function") { //commonjs and nodejs support
     exports.edition = edition;
-    exports.api = function commonjs(x) {
+    exports.api     = function commonjs(x) {
         "use strict";
         return prettydiff(x);
     };
@@ -10801,7 +10968,7 @@ if (typeof exports === "object" || typeof exports === "function") { //commonjs a
     define(function requirejs(require, exports) {
         "use strict";
         exports.edition = edition;
-        exports.api = function requirejs_export(x) {
+        exports.api     = function requirejs_export(x) {
             return prettydiff(x);
         }; //worthless if block to appease RequireJS and JSLint
         if (typeof require === "number") {

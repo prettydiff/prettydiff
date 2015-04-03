@@ -264,7 +264,7 @@ Examples:
             a.push("'><h1><a href='http://prettydiff.com/'>Pretty Diff - The difference tool</a></h1><div id='doc'>");
             a.push(result[1]);
             a.push("</div>");
-            if (options.jsscope === true && options.mode === "beautify" && (options.lang === "javascript" || options.lang === "auto")) {
+            if (options.jsscope !== "none" && options.mode === "beautify" && (options.lang === "javascript" || options.lang === "auto")) {
                 a.push(result[0]);
                 a.push("<script type='application/javascript'><![CDATA[");
                 a.push("var pd={};pd.beaufold=function dom__beaufold(){'use strict';var self=this,title=self.getAttribute('title').split('line '),min=Number(title[1].substr(0,title[1].indexOf(' '))),max=Number(title[2]),a=0,b='',list=[self.parentNode.getElementsByTagName('li'),self.parentNode.nextSibling.getElementsByTagName('li')];if(self.innerHTML.charAt(0)==='-'){for(a=min;a<max;a+=1){list[0][a].style.display='none';list[1][a].style.display='none';}self.innerHTML='+'+self.innerHTML.substr(1);}else{for(a=min;a<max;a+=1){list[0][a].style.display='block';list[1][a].style.display='block';if(list[0][a].getAttribute('class')==='fold'&&list[0][a].innerHTML.charAt(0)==='+'){b=list[0][a].getAttribute('title');b=b.substring(b.indexOf('to line ')+1);a=Number(b)-1;}}self.innerHTML='-'+self.innerHTML.substr(1);}};(function(){'use strict';var lists=document.getElementsByTagName('ol'),listslen=lists.length,list=[],listlen=0,a=0,b=0;for(a=0;a<listslen;a+=1){if(lists[a].getAttribute('class')==='count'&&lists[a].parentNode.getAttribute('class')==='beautify'){list=lists[a].getElementsByTagName('li');listlen=list.length;for(b=0;b<listlen;b+=1){if(list[b].getAttribute('class')==='fold'){list[b].onmousedown=pd.beaufold;}}}}}());");
@@ -428,7 +428,12 @@ Examples:
             a.push("                 Accepted values: markup, javascript, css, html, csv, text");
             a.push("");
             a.push("* mode         - string  - The operation to be performed. Defaults to 'diff'.");
-            a.push("                 Accepted values: diff, beautify, minify.");
+            a.push("                           * diff     - returns either command line list of");
+            a.push("                                        differences or an HTML report");
+            a.push("                           * beautify - beautifies code and returns a string");
+            a.push("                           * minify   - minifies code and returns a string");
+            a.push("                           * parse    - returns an object with shallow arrays");
+            a.push("                 Accepted values: diff, beautify, minify, parse");
             a.push("");
             a.push("* obfuscate    - boolean - If JavaScript minification should result in smaller");
             a.push("                           variable names and fewer simicolons.  Default is");
@@ -735,7 +740,7 @@ Examples:
                     if (d[b][0] === "langdefault" && (d[b][1] === "markup" || d[b][1] === "javascript" || d[b][1] === "css" || d[b][1] === "html" || d[b][1] === "csv")) {
                         options.langdefault = d[b][1];
                     }
-                    if (d[b][0] === "mode" && (d[b][1] === "minify" || d[b][1] === "beautify")) {
+                    if (d[b][0] === "mode" && (d[b][1] === "minify" || d[b][1] === "beautify" || d[b][1] === "parse")) {
                         options.mode = d[b][1];
                     }
                     if (d[b][0] === "obfuscate" && d[b][1] === "true") {
@@ -869,7 +874,7 @@ Examples:
                     });
                 },
                 files  = function () {
-                    if (options.mode === "diff" || (options.mode === "beautify" && options.jsscope === true)) {
+                    if (options.mode === "diff" || (options.mode === "beautify" && options.jsscope !== "none")) {
                         writing(suffix);
                     } else {
                         if (options.report === true) {
@@ -900,6 +905,9 @@ Examples:
                 finalpath = (method === "file") ? filename : dirs.join(slash) + slash + filename;
             }
             report = reports();
+            if (options.mode === "parse") {
+                report[0] = JSON.stringify(report[0]);
+            }
             if (options.mode === "diff") {
                 report[0].replace(/<strong>Number of differences:<\/strong> <em>\d+<\/em> difference/, counter);
             }
@@ -916,7 +924,7 @@ Examples:
             }
         },
 
-        //write the CLI output
+        //write the CLI output for the diffcli option
         cliWrite = function (output, path) {console.log(output);
             var a = 0,
                 b = 0,
@@ -967,11 +975,14 @@ Examples:
         //executed from fileComplete
         screenWrite   = function () {
             var report = [];
-            if (options.jsscope === true && options.mode === "beautify" && (options.lang === "javascript" || options.lang === "auto")) {
+            if (options.jsscope !== "none" && options.mode === "beautify" && (options.lang === "javascript" || options.lang === "auto")) {
                 return reports();
             }
             report = prettydiff.api(options);
-            if (options.diffcli === true) {
+            if (options.mode === "parse") {
+                report[0] = JSON.stringify(report[0]);
+            }
+            if (options.mode === "diff" && options.diffcli === true) {
                 return cliWrite(report);
             }
             return console.log(report[0]);
@@ -1256,7 +1267,7 @@ Examples:
     if (options.source === "") {
         return console.log("Error: 'source' argument is empty");
     }
-    if (options.mode === "diff" || (options.jsscope === true && options.mode === "beautify")) {
+    if (options.mode === "diff" || (options.jsscope !== "none" && options.mode === "beautify")) {
         if (options.mode === "diff" && options.diff === "") {
             return console.log("Error: 'diff' argument is empty");
         }

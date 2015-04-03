@@ -73,7 +73,8 @@ var pd = {};
         render     : {
             beau: false,
             diff: false,
-            minn: false
+            minn: false,
+            pars: false
         },
 
         //supplies alternate keyboard navigation to editable text areas
@@ -157,6 +158,7 @@ var pd = {};
         markup: 0,
         minn  : 0,
         pdate : "",
+        pars  : 0,
         text  : 0,
         usage : 0,
         useday: 0,
@@ -183,6 +185,8 @@ var pd = {};
         codeDiffNew : pd.$$("newText"),
         codeMinnIn  : pd.$$("minifyinput"),
         codeMinnOut : pd.$$("minifyoutput"),
+        codeParsIn  : pd.$$("parseinput"),
+        codeParsOut : pd.$$("parseoutput"),
         comment     : pd.$$("option_comment"),
         diffBase    : pd.$$("diffBase"),
         diffNew     : pd.$$("diffNew"),
@@ -195,7 +199,8 @@ var pd = {};
             beau    : 0,
             diffBase: 0,
             diffNew : 0,
-            minn    : 0
+            minn    : 0,
+            pars    : 0
         },
         maxInputs   : pd.$$("hideOptions"),
         minn        : pd.$$("Minify"),
@@ -203,7 +208,10 @@ var pd = {};
         modeBeau    : pd.$$("modebeautify"),
         modeDiff    : pd.$$("modediff"),
         modeMinn    : pd.$$("modeminify"),
+        modePars    : pd.$$("modeparse"),
         page        : document.getElementsByTagName("body")[0],
+        pars        : pd.$$("Parse"),
+        parsOps     : pd.$$("parseops"),
         report      : {
             code: {
                 box: pd.$$("codereport")
@@ -490,6 +498,61 @@ var pd = {};
             tabSize          : 4,
             theme            : "white"
         });
+        pd.cm.parsIn   = codeMirror(function (x) {
+            var node = pd.$$("Parse");
+            if (pd.o.codeParsIn === null) {
+                if (node === null) {
+                    pd.o.page.appendChild(x);
+                } else {
+                    node.appendChild(x);
+                }
+            } else {
+                pd.o.codeParsIn.parentNode.replaceChild(x, pd.o.codeParsIn);
+            }
+            x.setAttribute("id", "parseinput");
+            pd.o.codeParsIn = x;
+        }, {
+            foldGutter       : true,
+            gutters          : [
+                "CodeMirror-linenumbers", "CodeMirror-foldgutter"
+            ],
+            indentUnit       : 4,
+            lineNumbers      : true,
+            matchBrackets    : true,
+            matchTags        : true,
+            mode             : "javascript",
+            showTrailingSpace: true,
+            tabSize          : 4,
+            theme            : "white"
+        });
+        pd.cm.parsOut  = codeMirror(function (x) {
+            var node = pd.$$("Parse");
+            if (pd.o.codeParsOut === null) {
+                if (node === null) {
+                    pd.o.page.appendChild(x);
+                } else {
+                    node.appendChild(x);
+                }
+            } else {
+                pd.o.codeParsOut.parentNode.replaceChild(x, pd.o.codeParsOut);
+            }
+            x.setAttribute("id", "parseoutput");
+            pd.o.codeParsOut = x;
+        }, {
+            foldGutter       : true,
+            gutters          : [
+                "CodeMirror-linenumbers", "CodeMirror-foldgutter"
+            ],
+            indentUnit       : 4,
+            lineNumbers      : true,
+            matchBrackets    : true,
+            matchTags        : true,
+            mode             : "javascript",
+            readOnly         : true,
+            showTrailingSpace: true,
+            tabSize          : 4,
+            theme            : "white"
+        });
         //execute pd.auto onkeyup for codeBeauIn and codeMinnIn
         pd.langkey     = function dom__langkey(x) {
             var value = x.getValue(),
@@ -546,6 +609,14 @@ var pd = {};
                 }
                 if (pd.o.codeMinnOut !== null) {
                     pd.cm.minnOut.setOption("indentUnit", value);
+                }
+            }
+            if (that === pd.$$("pars-quan")) {
+                if (pd.o.codeParsIn !== null) {
+                    pd.cm.parsIn.setOption("indentUnit", value);
+                }
+                if (pd.o.codeParsOut !== null) {
+                    pd.cm.parsOut.setOption("indentUnit", value);
                 }
             }
         };
@@ -744,6 +815,10 @@ var pd = {};
                     autotest = true;
                     lang     = pd.auto(api.source);
                     api.lang = lang;
+                } else if (api.lang === "markup") {
+                    autotest = false;
+                    lang     = pd.auto(api.source);
+                    api.lang = lang;
                 }
                 if (lang === "html") {
                     lang = "htmlembedded";
@@ -776,6 +851,10 @@ var pd = {};
                     if (pd.mode === "minn" && pd.cm.minnIn.options.mode !== lang) {
                         pd.cm.minnIn.setOption("mode", lang);
                         pd.cm.minnOut.setOption("mode", lang);
+                    }
+                    if (pd.mode === "pars" && pd.cm.parsIn.options.mode !== lang) {
+                        pd.cm.parsIn.setOption("mode", lang);
+                        pd.cm.parsOut.setOption("mode", lang);
                     }
                 }
                 if (lang === "text/x-scss") {
@@ -826,7 +905,7 @@ var pd = {};
                     button.innerHTML = "S";
                 }
                 if (pd.o.announce !== null) {
-                    if (api.lang === "markup" || presumedLanguage === "markup" || presumedLanguage === "HTML" || presumedLanguage === "XHTML" || presumedLanguage === "XML" || presumedLanguage === "JSTL") {
+                    if (api.lang === "markup" || api.lang === "html" || presumedLanguage === "markup" || presumedLanguage === "HTML" || presumedLanguage === "XHTML" || presumedLanguage === "XML" || presumedLanguage === "JSTL") {
                         errortext = (function () {
                             var a      = 0,
                                 p      = output[1].split("<p><strong"),
@@ -1008,6 +1087,74 @@ var pd = {};
                         }
                     }
                 }
+                if (api.mode === "parse") {
+                    if (output[0].length > 125000) {
+                        pd.test.filled.code = true;
+                    } else {
+                        pd.test.filled.code = false;
+                    }
+                    if (pd.o.codeMinnOut !== null) {
+                        if (pd.test.cm === true) {
+                            pd.cm.parsOut.setValue(JSON.stringify(output[0]));
+                        } else {
+                            pd.o.codeParsOut.value = JSON.stringify(output[0]);
+                        }
+                    }
+                    if (pd.o.report.code.box !== null) {
+                        (function dom__recycle_execOutput_parseTable() {
+                            var table = [],
+                                token = output[0].token,
+                                types = output[0].types,
+                                typeb = output[0].typeb,
+                                a = 0,
+                                len = token.length;
+                            if (types !== undefined) {
+                                table.push("<div class='doc'><table class='analysis' summary='Parsed Arrays'><thead><tr><th>Index</th><th>types</th><th>token</th></tr></thead><tbody class='parseData'>");
+                                for (a = 0; a < len; a += 1) {
+                                    table.push("<tr><td>");
+                                    table.push(a);
+                                    table.push("</td><td>");
+                                    table.push(types[a]);
+                                    table.push("</td><td>");
+                                    table.push(token[a].replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;"));
+                                    table.push("</td></tr>");
+                                }
+                                table.push("</tbody></table></div>");
+                            } else if (typeb !== undefined) {
+                                types = output[0].typea;
+                                table.push("<div class='doc'><table class='analysis' summary='Parsed Arrays'><thead><tr><th>Index</th><th>typea</th><th>typeb</th><th>token</th></tr></thead><tbody class='parseData'>");
+                                for (a = 0; a < len; a += 1) {
+                                    table.push("<tr><td>");
+                                    table.push(a);
+                                    table.push("</td><td>");
+                                    table.push(types[a]);
+                                    table.push("</td><td>");
+                                    table.push(typeb[a]);
+                                    table.push("</td><td>");
+                                    table.push(token[a].replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;"));
+                                    table.push("</td></tr>");
+                                }
+                                table.push("</tbody></table></div>");
+                            }
+                            pd.o.report.code.body.innerHTML = output[1] + table.join("");
+                            if (autotest === true && pd.o.report.code.body.firstChild !== null) {
+                                if (pd.o.report.code.body.firstChild.nodeType > 1) {
+                                    pd.o.report.code.body.removeChild(pd.o.report.code.body.firstChild);
+                                }
+                                pd.o.report.code.body.firstChild.innerHTML = "Code type is set to <strong>auto</strong>. <span>Presumed language is <em>" + pd.langproper + "</em>.</span>";
+                            }
+                        }());
+                        pd.o.report.code.box.style.zIndex  = pd.zIndex;
+                        pd.o.report.code.box.style.display = "block";
+                    }
+                    if (pd.test.ls === true) {
+                        pd.stat.pars += 1;
+                        node         = pd.$$("stpars");
+                        if (node !== null) {
+                            node.innerHTML = pd.stat.pars;
+                        }
+                    }
+                }
                 if (pd.o.announce !== null && pd.$$("jserror") !== null) {
                     pd.o.announce.innerHTML                                     = "<strong>" + pd.$$("jserror").getElementsByTagName("strong")[0].innerHTML + "</strong> <span>See 'Code Report' for details</span>";
                     pd.o.announce.style.color                                   = "inherit";
@@ -1088,7 +1235,7 @@ var pd = {};
             //jsscope does not get the convenience of keypress execution, because its
             //overhead is costly
             //do not execute keypress from alt, home, end, or arrow keys
-            if ((pd.o.jsscope !== null && pd.o.jsscope.checked === true && pd.mode === "beau") || event.altKey === true || event.keyCode === 16 || event.keyCode === 18 || event.keyCode === 35 || event.keyCode === 36 || event.keyCode === 37 || event.keyCode === 38 || event.keyCode === 39 || event.keyCode === 40) {
+            if ((pd.o.jsscope !== null && (pd.o.jsscope.checked === true || pd.$$("jsscope-html").checked === true) && pd.mode === "beau") || event.altKey === true || event.keyCode === 16 || event.keyCode === 18 || event.keyCode === 35 || event.keyCode === 36 || event.keyCode === 37 || event.keyCode === 38 || event.keyCode === 39 || event.keyCode === 40) {
                 return false;
             }
             if (pd.test.keypress === true) {
@@ -1535,7 +1682,7 @@ var pd = {};
                                     if (xhr.status === 200 || xhr.status === 0) {
                                         api.diff = xhr.responseText.replace(/\r\n/g, "\n");
                                         if (completes === true) {
-                                            if (api.lang === "auto") {
+                                            if (api.lang === "auto" || api.lang === "markup") {
                                                 cmlang();
                                             }
                                             pd.source = api.source;
@@ -1565,6 +1712,91 @@ var pd = {};
                 }
             }());
         }
+        if (pd.mode === "pars") {
+            if (api.lang === "csv" && pd.o.codeParsIn !== null) {
+                if (pd.test.cm === true) {
+                    pd.cm.beauIn.setValue("CSV is not supported in 'Parse Only' mode.");
+                } else {
+                    pd.o.codeParsIn.value = "CSV is not supported in 'Parse Only' mode.";
+                }
+                return;
+            }
+            if (pd.application === undefined) {
+                if (typeof markup_beauty === "function" && (api.lang === "markup" || api.lang === "html" || api.lang === "xml" || api.lang === "jstl")) {
+                    pd.application = function dom__markup_beauty() {
+                        var code = markup_beauty(api),
+                            sum  = (summary === undefined) ? "" : summary;
+                        return [
+                            code, sum
+                        ];
+                    };
+                } else if (typeof csspretty === "function" && (api.lang === "css" || api.lang === "scss")) {
+                    pd.application = function dom__csspretty_beau() {
+                        var code = csspretty(api),
+                            sum  = (summary === undefined) ? "" : summary;
+                        return [
+                            code, sum
+                        ];
+                    };
+                } else if (typeof jspretty === "function") {
+                    pd.application = function dom__jspretty_beau() {
+                        var code = jspretty(api),
+                            sum  = (summary === undefined) ? "" : summary;
+                        return [
+                            code, sum
+                        ];
+                    };
+                }
+            }
+            (function dom__recycle_beautify() {
+                var html         = pd.$$("phtml-yes"),
+                    jscorrect    = pd.$$("pjscorrect-yes"),
+                    objsorta     = pd.$$("pobjsort-all"),
+                    objsortc     = pd.$$("pobjsort-cssonly"),
+                    objsortj     = pd.$$("pobjsort-jsonly"),
+                    quotecond    = pd.$$("pquoteconvert-double"),
+                    quotecons    = pd.$$("pquoteconvert-single"),
+                    varworde     = pd.$$("pvarword-each"),
+                    varwordl     = pd.$$("pvarword-list");
+                if (pd.o.codeParsIn !== null) {
+                    if (pd.test.cm === true) {
+                        api.source = pd.cm.parsIn.getValue();
+                    } else {
+                        api.source = pd.o.codeParsIn.value;
+                    }
+                }
+                api.correct = (jscorrect === null || jscorrect.checked === false) ? false : true;
+                api.html    = (html === null || html.checked === false) ? false : true;
+                if (objsorta !== null && objsorta.checked === true) {
+                    api.objsort = "all";
+                } else if (objsortc !== null && objsortc.checked === true) {
+                    api.objsort = "css";
+                } else if (objsortj !== null && objsortj.checked === true) {
+                    api.objsort = "js";
+                } else {
+                    api.objsort = "none";
+                }
+                if (quotecond !== null && quotecond.checked === true) {
+                    api.quoteConvert = "double";
+                } else if (quotecons !== null && quotecons.checked === true) {
+                    api.quoteConvert = "single";
+                } else {
+                    api.quoteConvert = "none";
+                }
+                if (varworde !== null && varworde.checked === true) {
+                    api.varword = "each";
+                } else if (varwordl !== null && varwordl.checked === true) {
+                    api.varword = "list";
+                } else {
+                    api.varword = "none";
+                }
+                if (api.lang === "tss") {
+                    api.lang     = "javascript";
+                    api.titanium = true;
+                }
+            }());
+            api.mode = "parse";
+        }
         if (pd.test.ls === true) {
             if (pd.o.report.stat.box !== null) {
                 pd.stat.usage  += 1;
@@ -1583,7 +1815,7 @@ var pd = {};
                 //this logic attempts to prevent writes to localStorage if they are likely to
                 //exceed 5mb of storage
                 if (api.mode === "beautify") {
-                    codesize = api.source.length + pd.o.length.diffBase + pd.o.length.diffNew + pd.o.length.minn;
+                    codesize = api.source.length + pd.o.length.diffBase + pd.o.length.diffNew + pd.o.length.minn + pd.o.length.pars;
                     if (api.source.length < 2096000 && codesize < 4800000) {
                         localStorage.codeBeautify = api.source;
                         pd.o.length.beau          = api.source.length;
@@ -1592,13 +1824,22 @@ var pd = {};
                         pd.o.length.beau          = 0;
                     }
                 } else if (api.mode === "minify") {
-                    codesize = api.source.length + pd.o.length.beau + pd.o.length.diffBase + pd.o.length.diffNew;
+                    codesize = api.source.length + pd.o.length.beau + pd.o.length.diffBase + pd.o.length.diffNew + pd.o.length.pars;
                     if (api.source.length < 2096000 && codesize < 4800000) {
                         localStorage.codeMinify = api.source;
                         pd.o.length.minn        = api.source.length;
                     } else {
                         localStorage.codeMinify = "";
                         pd.o.length.minn        = 0;
+                    }
+                } else if (api.mode === "parse") {
+                    codesize = api.source.length + pd.o.length.beau + pd.o.length.diffBase + pd.o.length.diffNew + pd.o.length.minn;
+                    if (api.source.length < 2096000 && codesize < 4800000) {
+                        localStorage.codeParse = api.source;
+                        pd.o.length.pars       = api.source.length;
+                    } else {
+                        localStorage.codeParse = "";
+                        pd.o.length.pars       = 0;
                     }
                 } else if (api.mode === "diff") {
                     codesize = pd.o.length.beau + pd.o.length.minn + api.source.length + api.diff.length;
@@ -1632,7 +1873,7 @@ var pd = {};
                             if (xhr.status === 200 || xhr.status === 0) {
                                 api.source = xhr.responseText.replace(/\r\n/g, "\n");
                                 if (pd.mode !== "diff" || (requestd === true && completed === true)) {
-                                    if (api.lang === "auto") {
+                                    if (api.lang === "auto" || api.lang === "markup") {
                                         cmlang();
                                     }
                                     pd.source = api.source;
@@ -1668,7 +1909,7 @@ var pd = {};
                 if (api.mode === "beautify") {
                     setTimeout(function () {
                         api.source = pd.cm.beauIn.getValue();
-                        if (api.lang === "auto") {
+                        if (api.lang === "auto" || api.lang === "markup") {
                             cmlang();
                         }
                         pd.source = api.source;
@@ -1680,7 +1921,19 @@ var pd = {};
                 if (api.mode === "minify") {
                     setTimeout(function () {
                         api.source = pd.cm.minnIn.getValue();
-                        if (api.lang === "auto") {
+                        if (api.lang === "auto" || api.lang === "markup") {
+                            cmlang();
+                        }
+                        pd.source = api.source;
+                        pd.diff   = "";
+                        output    = pd.application(api);
+                        execOutput();
+                    }, 50);
+                }
+                if (api.mode === "parse") {
+                    setTimeout(function () {
+                        api.source = pd.cm.parsIn.getValue();
+                        if (api.lang === "auto" || api.lang === "markup") {
                             cmlang();
                         }
                         pd.source = api.source;
@@ -1690,7 +1943,7 @@ var pd = {};
                     }, 50);
                 }
             } else {
-                if (api.lang === "auto") {
+                if (api.lang === "auto" || api.lang === "markup") {
                     cmlang();
                 }
                 pd.source = api.source;
@@ -1845,11 +2098,11 @@ var pd = {};
         if (node.nodeName.toLowerCase() === "textarea") {
             if (pd.test.cm === true) {
                 node = node.parentNode.parentNode;
-                if (node === pd.o.codeBeauOut || node === pd.o.codeMinnOut) {
+                if (node === pd.o.codeBeauOut || node === pd.o.codeMinnOut || node === pd.o.codeParsOut) {
                     esc = true;
                 }
             }
-            if (node === pd.o.codeDiffBase || node === pd.o.codeDiffNew || node === pd.o.codeBeauIn || node === pd.o.codeMinnIn) {
+            if (node === pd.o.codeDiffBase || node === pd.o.codeDiffNew || node === pd.o.codeBeauIn || node === pd.o.codeMinnIn || node === pd.o.codeParsIn) {
                 esc = true;
             }
         }
@@ -1889,6 +2142,10 @@ var pd = {};
                         pd.$$("minifyfile").focus();
                     } else if (node === pd.o.codeMinnOut) {
                         pd.o.codeMinnIn.getElementsByTagName("textarea")[0].focus();
+                    } else if (node === pd.o.codeParsIn) {
+                        pd.$$("parsefile").focus();
+                    } else if (node === pd.o.codeParsOut) {
+                        pd.o.codeParsIn.getElementsByTagName("textarea")[0].focus();
                     }
                 } else {
                     //forward tab
@@ -1907,6 +2164,12 @@ var pd = {};
                             pd.o.codeMinnOut.getElementsByTagName("textarea")[0].focus();
                         } else {
                             pd.o.codeMinnOut.focus();
+                        }
+                    } else if (node === pd.o.codeParsIn) {
+                        if (pd.test.cm === true) {
+                            pd.o.codeParsOut.getElementsByTagName("textarea")[0].focus();
+                        } else {
+                            pd.o.codeParsOut.focus();
                         }
                     }
                 }
@@ -2753,8 +3016,7 @@ var pd = {};
         sendit();
     };
 
-    //toggle between tool modes and vertical/horizontal orientation of
-    //textareas
+    //toggle between tool modes
     pd.prettyvis           = function dom__prettyvis(x) {
         var a           = {},
             b           = 0,
@@ -2809,6 +3071,9 @@ var pd = {};
             if (pd.o.minn !== null) {
                 pd.o.minn.style.display = "none";
             }
+            if (pd.o.pars !== null) {
+                pd.o.pars.style.display = "none";
+            }
             if (pd.o.diffBase !== null) {
                 pd.o.diffBase.style.display = "none";
             }
@@ -2820,6 +3085,9 @@ var pd = {};
             }
             if (pd.o.minnOps !== null) {
                 pd.o.minnOps.style.display = "none";
+            }
+            if (pd.o.parsOps !== null) {
+                pd.o.parsOps.style.display = "none";
             }
             if (lang === "csv" && pd.o.beauOps !== null) {
                 pd.o.beauOps.style.display = "none";
@@ -2903,6 +3171,9 @@ var pd = {};
             if (pd.o.beau !== null) {
                 pd.o.beau.style.display = "none";
             }
+            if (pd.o.pars !== null) {
+                pd.o.pars.style.display = "none";
+            }
             if (pd.o.diffBase !== null) {
                 pd.o.diffBase.style.display = "none";
             }
@@ -2914,6 +3185,9 @@ var pd = {};
             }
             if (pd.o.beauOps !== null) {
                 pd.o.beauOps.style.display = "none";
+            }
+            if (pd.o.parsOps !== null) {
+                pd.o.parsOps.style.display = "none";
             }
             if (pd.test.render.minn === false) {
                 lang = "";
@@ -2991,6 +3265,9 @@ var pd = {};
             if (pd.o.minn !== null) {
                 pd.o.minn.style.display = "none";
             }
+            if (pd.o.pars !== null) {
+                pd.o.pars.style.display = "none";
+            }
             if (pd.o.diffOps !== null) {
                 pd.o.diffOps.style.display = "block";
             }
@@ -2999,6 +3276,9 @@ var pd = {};
             }
             if (pd.o.minnOps !== null) {
                 pd.o.minnOps.style.display = "none";
+            }
+            if (pd.o.parsOps !== null) {
+                pd.o.parsOps.style.display = "none";
             }
             if (lang === "csv" || lang === "text") {
                 node = pd.$$("diffquanp");
@@ -3083,6 +3363,98 @@ var pd = {};
                 pd.test.render.diff = true;
             }
         }
+        if (a === pd.o.modePars) {
+            pd.mode = "pars";
+            if (langtest === true) {
+                optioncheck();
+            }
+            if (pd.o.codeParsIn !== null) {
+                if (pd.o.codeParsIn.value === "" && pd.o.codeBeauIn !== null && pd.o.codeBeauIn.value !== "") {
+                    pd.o.codeParsIn.value = pd.o.codeBeauIn.value;
+                } else if (pd.o.codeParsIn.value === "" && pd.o.codeBeauOut !== null && pd.o.codeBeauOut.value !== "") {
+                    pd.o.codeParsIn.value = pd.o.codeBeauOut.value;
+                }
+            }
+            if (pd.o.parsOps !== null) {
+                if (lang === "text" || lang === "csv") {
+                    pd.o.parsOps.style.display = "none";
+                } else {
+                    pd.o.parsOps.style.display = "block";
+                }
+            }
+            if (pd.o.minn !== null) {
+                pd.o.minn.style.display = "none";
+            }
+            if (pd.o.beau !== null) {
+                pd.o.beau.style.display = "none";
+            }
+            if (pd.o.pars !== null) {
+                pd.o.pars.style.display = "block";
+            }
+            if (pd.o.diffBase !== null) {
+                pd.o.diffBase.style.display = "none";
+            }
+            if (pd.o.diffNew !== null) {
+                pd.o.diffNew.style.display = "none";
+            }
+            if (pd.o.diffOps !== null) {
+                pd.o.diffOps.style.display = "none";
+            }
+            if (pd.o.beauOps !== null) {
+                pd.o.beauOps.style.display = "none";
+            }
+            if (pd.o.minnOps !== null) {
+                pd.o.minnOps.style.display = "none";
+            }
+            if (pd.test.render.pars === false) {
+                lang = "";
+                if (pd.o.codeParsIn !== null) {
+                    if (pd.test.ls === true && localStorage.codeMinify !== undefined) {
+                        storage = localStorage.codeParse;
+                        if ((/^(\s+)$/).test(storage) === true) {
+                            storage = "";
+                        }
+                        if (pd.test.cm === true) {
+                            if (langtest === true && lang === "auto") {
+                                lang = pd.auto(storage);
+                                if (lang === "html") {
+                                    lang = "htmlembedded";
+                                } else if (lang === "css") {
+                                    lang = "text/x-scss";
+                                } else if (lang === "markup") {
+                                    lang = "xml";
+                                }
+                                pd.cm.parsIn.setOption("mode", lang);
+                            }
+                            pd.cm.parsIn.setValue(storage);
+                        } else {
+                            pd.o.codeParsIn.value = storage;
+                        }
+                    } else if (pd.test.cm === true) {
+                        pd.cm.parsIn.setValue(" ");
+                    }
+                }
+                if (pd.test.cm === true && pd.o.codeParsOut !== null) {
+                    if (langtest === true && lang === "auto") {
+                        if (lang === "" && pd.test.ls === true && localStorage.codeParse !== undefined) {
+                            lang = pd.auto(localStorage.codeParse);
+                            if (lang === "html") {
+                                lang = "htmlembedded";
+                            } else if (lang === "css") {
+                                lang = "text/x-scss";
+                            } else if (lang === "markup") {
+                                lang = "xml";
+                            }
+                        }
+                        if (lang !== "") {
+                            pd.cm.parsOut.setOption("mode", lang);
+                        }
+                    }
+                    pd.cm.parsOut.setValue(" ");
+                }
+            }
+            pd.test.render.pars = true;
+        }
         if (pd.o.announce !== null && (a === pd.o.modeBeau || a === pd.o.modeMinn || a === pd.o.modeDiff)) {
             pd.o.announce.innerHTML = "";
         }
@@ -3127,6 +3499,9 @@ var pd = {};
             if (pd.o.beauOps !== null) {
                 pd.o.beauOps.style.display = "none";
             }
+            if (pd.o.parsOps !== null) {
+                pd.o.parsOps.style.display = "none";
+            }
             if (lang === "text" || lang === "csv") {
                 if (dqp !== null) {
                     dqp.style.display = "none";
@@ -3149,6 +3524,9 @@ var pd = {};
             if (pd.o.diffOps !== null) {
                 pd.o.diffOps.style.display = "none";
             }
+            if (pd.o.parsOps !== null) {
+                pd.o.parsOps.style.display = "none";
+            }
             if (pd.o.beauOps !== null) {
                 if (lang === "csv") {
                     pd.o.beauOps.style.display = "none";
@@ -3163,11 +3541,31 @@ var pd = {};
             if (pd.o.diffOps !== null) {
                 pd.o.diffOps.style.display = "none";
             }
+            if (pd.o.parsOps !== null) {
+                pd.o.parsOps.style.display = "none";
+            }
             if (pd.o.minnOps !== null) {
                 if (lang === "csv") {
                     pd.o.minnOps.style.display = "none";
                 } else {
                     pd.o.minnOps.style.display = "block";
+                }
+            }
+        } else if (pd.o.modePars !== null && pd.o.modePars.checked === true) {
+            if (pd.o.beauOps !== null) {
+                pd.o.beauOps.style.display = "none";
+            }
+            if (pd.o.diffOps !== null) {
+                pd.o.diffOps.style.display = "none";
+            }
+            if (pd.o.minnOps !== null) {
+                pd.o.minnOps.style.display = "none";
+            }
+            if (pd.o.minnOps !== null) {
+                if (lang === "csv") {
+                    pd.o.parsOps.style.display = "none";
+                } else {
+                    pd.o.parsOps.style.display = "block";
                 }
             }
         }
@@ -3245,6 +3643,9 @@ var pd = {};
                     if (pd.mode === "minn") {
                         lang = pd.auto(pd.cm.minnIn.getValue());
                     }
+                    if (pd.mode === "pars") {
+                        lang = pd.auto(pd.cm.parsIn.getValue());
+                    }
                 }
                 if (lang === "javascript") {
                     pd.cm.diffBase.setOption("mode", "javascript");
@@ -3253,6 +3654,8 @@ var pd = {};
                     pd.cm.beauOut.setOption("mode", "javascript");
                     pd.cm.minnIn.setOption("mode", "javascript");
                     pd.cm.minnOut.setOption("mode", "javascript");
+                    pd.cm.parsIn.setOption("mode", "javascript");
+                    pd.cm.parsOut.setOption("mode", "javascript");
                 } else if (lang === "html") {
                     pd.cm.diffBase.setOption("mode", "htmlembedded");
                     pd.cm.diffNew.setOption("mode", "htmlembedded");
@@ -3260,6 +3663,8 @@ var pd = {};
                     pd.cm.beauOut.setOption("mode", "htmlembedded");
                     pd.cm.minnIn.setOption("mode", "htmlembedded");
                     pd.cm.minnOut.setOption("mode", "htmlembedded");
+                    pd.cm.parsIn.setOption("mode", "htmlembedded");
+                    pd.cm.parsOut.setOption("mode", "htmlembedded");
                 } else if (lang === "css") {
                     pd.cm.diffBase.setOption("mode", "text/x-scss");
                     pd.cm.diffNew.setOption("mode", "text/x-scss");
@@ -3267,6 +3672,8 @@ var pd = {};
                     pd.cm.beauOut.setOption("mode", "text/x-scss");
                     pd.cm.minnIn.setOption("mode", "text/x-scss");
                     pd.cm.minnOut.setOption("mode", "text/x-scss");
+                    pd.cm.parsIn.setOption("mode", "text/x-scss");
+                    pd.cm.parsOut.setOption("mode", "text/x-scss");
                 } else if (lang === "markup") {
                     pd.cm.diffBase.setOption("mode", "xml");
                     pd.cm.diffNew.setOption("mode", "xml");
@@ -3274,6 +3681,8 @@ var pd = {};
                     pd.cm.beauOut.setOption("mode", "xml");
                     pd.cm.minnIn.setOption("mode", "xml");
                     pd.cm.minnOut.setOption("mode", "xml");
+                    pd.cm.parsIn.setOption("mode", "xml");
+                    pd.cm.parsOut.setOption("mode", "xml");
                 } else if (lang === "text") {
                     pd.cm.diffBase.setOption("mode", null);
                     pd.cm.diffNew.setOption("mode", null);
@@ -3281,6 +3690,8 @@ var pd = {};
                     pd.cm.beauOut.setOption("mode", null);
                     pd.cm.minnIn.setOption("mode", null);
                     pd.cm.minnOut.setOption("mode", null);
+                    pd.cm.parsIn.setOption("mode", null);
+                    pd.cm.parsOut.setOption("mode", null);
                 } else {
                     pd.cm.diffBase.setOption("mode", lang);
                     pd.cm.diffNew.setOption("mode", lang);
@@ -3288,6 +3699,8 @@ var pd = {};
                     pd.cm.beauOut.setOption("mode", lang);
                     pd.cm.minnIn.setOption("mode", lang);
                     pd.cm.minnOut.setOption("mode", lang);
+                    pd.cm.parsIn.setOption("mode", lang);
+                    pd.cm.parsOut.setOption("mode", lang);
                 }
             }
             if (pd.test.load === false) {
@@ -3416,11 +3829,20 @@ var pd = {};
             }
             if (pd.mode === "minn") {
                 if (node === pd.$$("minn-tab")) {
-                    pd.cm.beauIn.setOption("indentWithTabs", true);
-                    pd.cm.beauOut.setOption("indentWithTabs", true);
+                    pd.cm.minnIn.setOption("indentWithTabs", true);
+                    pd.cm.minnOut.setOption("indentWithTabs", true);
                 } else {
-                    pd.cm.beauIn.setOption("indentWithTabs", false);
-                    pd.cm.beauOut.setOption("indentWithTabs", false);
+                    pd.cm.minnIn.setOption("indentWithTabs", false);
+                    pd.cm.minnOut.setOption("indentWithTabs", false);
+                }
+            }
+            if (pd.mode === "pars") {
+                if (node === pd.$$("pars-tab")) {
+                    pd.cm.parsIn.setOption("indentWithTabs", true);
+                    pd.cm.parsOut.setOption("indentWithTabs", true);
+                } else {
+                    pd.cm.parsIn.setOption("indentWithTabs", false);
+                    pd.cm.parsOut.setOption("indentWithTabs", false);
                 }
             }
         }
@@ -3927,6 +4349,7 @@ var pd = {};
         localStorage.codeDiffBase  = "";
         localStorage.codeDiffNew   = "";
         localStorage.codeMinify    = "";
+        localStorage.codeParse     = "";
         localStorage.commentString = "[]";
         if (pd.settings === undefined || pd.settings.knownname === undefined) {
             if (pd.settings === undefined) {
@@ -3961,13 +4384,18 @@ var pd = {};
     };
 
     pd.fixHeight           = function dom__fixHeight() {
-        var baseText = pd.$$("baseText"),
-            newText  = pd.$$("newText"),
-            height   = window.innerHeight || document.getElementsByTagName("body")[0].clientHeight;
+        var baseText     = pd.$$("baseText"),
+            newText      = pd.$$("newText"),
+            height       = window.innerHeight || document.getElementsByTagName("body")[0].clientHeight,
+            headlineNode = pd.$$("headline"),
+            headline     = 0;
+        if (headlineNode !== null && headlineNode.style.display === "block") {
+            headline = 3.8;
+        }
         if (pd.test.cm === true) {
             if (baseText !== null && newText !== null) {
-                baseText.style.height       = ((height / 12) - 19.35) + "em";
-                newText.style.height        = ((height / 12) - 19.35) + "em";
+                baseText.style.height       = ((height / 12) - (19.9 + headline)) + "em";
+                newText.style.height        = ((height / 12) - (19.9 + headline)) + "em";
                 baseText.style.marginBottom = "0";
                 newText.style.marginBottom  = "0";
             }
@@ -3983,23 +4411,35 @@ var pd = {};
             if (pd.o.codeMinnOut !== null) {
                 pd.o.codeMinnOut.style.marginBottom = "1em";
             }
+            if (pd.o.codeParsIn !== null) {
+                pd.o.codeParsIn.style.marginBottom = "1em";
+            }
+            if (pd.o.codeParsOut !== null) {
+                pd.o.codeParsOut.style.marginBottom = "1em";
+            }
         } else {
             if (baseText !== null && newText !== null) {
-                baseText.style.height = ((height / 12) - 19.5) + "em";
-                newText.style.height  = ((height / 12) - 19.5) + "em";
+                baseText.style.height = ((height / 12) - (20 + headline)) + "em";
+                newText.style.height  = ((height / 12) - (20 + headline)) + "em";
             }
         }
         if (pd.o.codeBeauIn !== null) {
-            pd.o.codeBeauIn.style.height = ((height / 12) - 18) + "em";
+            pd.o.codeBeauIn.style.height = ((height / 12) - (18.65 + headline)) + "em";
         }
         if (pd.o.codeBeauOut !== null) {
-            pd.o.codeBeauOut.style.height = ((height / 12) - 15.65) + "em";
+            pd.o.codeBeauOut.style.height = ((height / 12) - (16.3 + headline)) + "em";
         }
         if (pd.o.codeMinnIn !== null) {
-            pd.o.codeMinnIn.style.height = ((height / 12) - 18) + "em";
+            pd.o.codeMinnIn.style.height = ((height / 12) - (18.65 + headline)) + "em";
         }
         if (pd.o.codeMinnOut !== null) {
-            pd.o.codeMinnOut.style.height = ((height / 12) - 15.65) + "em";
+            pd.o.codeMinnOut.style.height = ((height / 12) - (16.3 + headline)) + "em";
+        }
+        if (pd.o.codeParsIn !== null) {
+            pd.o.codeParsIn.style.height = ((height / 12) - (18.65 + headline)) + "em";
+        }
+        if (pd.o.codeParsOut !== null) {
+            pd.o.codeParsOut.style.height = ((height / 12) - (16.3 + headline)) + "em";
         }
     };
 
@@ -4316,6 +4756,10 @@ var pd = {};
                         if (node !== null) {
                             node.innerHTML = pd.stat.minn;
                         }
+                        node = pd.$$("stpars");
+                        if (node !== null) {
+                            node.innerHTML = pd.stat.pars;
+                        }
                         node = pd.$$("stmarkup");
                         if (node !== null) {
                             node.innerHTML = pd.stat.markup;
@@ -4407,6 +4851,35 @@ var pd = {};
                 pd.o.codeMinnOut.getElementsByTagName("textarea")[0].onfocus   = textareafocus;
                 pd.o.codeMinnOut.getElementsByTagName("textarea")[0].onblur    = textareablur;
                 pd.o.codeMinnOut.getElementsByTagName("textarea")[0].onkeydown = pd.areaTabOut;
+            }
+            if (pd.o.codeParsIn !== null) {
+                pd.o.codeParsIn.onkeyup = function dom__load_bindParsInUp(e) {
+                    var event = e || window.event;
+                    pd.recycle(event);
+                };
+                if (pd.test.cm === true) {
+                    pd.o.codeParsIn.getElementsByTagName("textarea")[0].onfocus   = textareafocus;
+                    pd.o.codeParsIn.getElementsByTagName("textarea")[0].onblur    = textareablur;
+                    pd.o.codeParsIn.getElementsByTagName("textarea")[0].onkeydown = function dom__load_bindBeauInDownCM(e) {
+                        var event = e || window.event;
+                        pd.areaTabOut(event, this);
+                        pd.keydown(event);
+                    };
+                } else {
+                    pd.o.codeParsIn.onfocus   = textareafocus;
+                    pd.o.codeParsIn.onblur    = textareablur;
+                    pd.o.codeParsIn.onkeydown = function dom__load_bindParsInDown(e) {
+                        var event = e || window.event;
+                        pd.fixtabs(event, pd.o.codeParsIn);
+                        pd.areaTabOut(event, this);
+                        pd.keydown(event);
+                    };
+                }
+            }
+            if (pd.o.codeParsOut !== null && pd.test.cm === true) {
+                pd.o.codeParsOut.getElementsByTagName("textarea")[0].onfocus   = textareafocus;
+                pd.o.codeParsOut.getElementsByTagName("textarea")[0].onblur    = textareablur;
+                pd.o.codeParsOut.getElementsByTagName("textarea")[0].onkeydown = pd.areaTabOut;
             }
             if (pd.o.codeDiffBase !== null) {
                 if (pd.test.cm === true) {
@@ -4665,6 +5138,13 @@ var pd = {};
                                 if (pd.o.codeMinnOut !== null) {
                                     pd.cm.minnOut.setOption("indentUnit", Number(pd.settings[id]));
                                 }
+                            } else if (id === "pars-quan") {
+                                if (pd.o.codeParsIn !== null) {
+                                    pd.cm.parsIn.setOption("indentUnit", Number(pd.settings[id]));
+                                }
+                                if (pd.o.codeParsOut !== null) {
+                                    pd.cm.parsOut.setOption("indentUnit", Number(pd.settings[id]));
+                                }
                             }
                         }
                     } else {
@@ -4868,6 +5348,8 @@ var pd = {};
                                     pd.cm.beauOut.setOption("mode", "javascript");
                                     pd.cm.minnIn.setOption("mode", "javascript");
                                     pd.cm.minnOut.setOption("mode", "javascript");
+                                    pd.cm.parsIn.setOption("mode", "javascript");
+                                    pd.cm.parsOut.setOption("mode", "javascript");
                                 } else if (value === "html") {
                                     pd.cm.diffBase.setOption("mode", "htmlembedded");
                                     pd.cm.diffNew.setOption("mode", "htmlembedded");
@@ -4875,6 +5357,8 @@ var pd = {};
                                     pd.cm.beauOut.setOption("mode", "htmlembedded");
                                     pd.cm.minnIn.setOption("mode", "htmlembedded");
                                     pd.cm.minnOut.setOption("mode", "htmlembedded");
+                                    pd.cm.parsIn.setOption("mode", "htmlembedded");
+                                    pd.cm.parsOut.setOption("mode", "htmlembedded");
                                 } else if (id === "css") {
                                     pd.cm.diffBase.setOption("mode", "text/x-scss");
                                     pd.cm.diffNew.setOption("mode", "text/x-scss");
@@ -4882,6 +5366,8 @@ var pd = {};
                                     pd.cm.beauOut.setOption("mode", "text/x-scss");
                                     pd.cm.minnIn.setOption("mode", "text/x-scss");
                                     pd.cm.minnOut.setOption("mode", "text/x-scss");
+                                    pd.cm.parsIn.setOption("mode", "text/x-scss");
+                                    pd.cm.parsOut.setOption("mode", "text/x-scss");
                                 } else if (id === "markup") {
                                     pd.cm.diffBase.setOption("mode", "xml");
                                     pd.cm.diffNew.setOption("mode", "xml");
@@ -4889,6 +5375,8 @@ var pd = {};
                                     pd.cm.beauOut.setOption("mode", "xml");
                                     pd.cm.minnIn.setOption("mode", "xml");
                                     pd.cm.minnOut.setOption("mode", "xml");
+                                    pd.cm.parsIn.setOption("mode", "xml");
+                                    pd.cm.parsOut.setOption("mode", "xml");
                                 } else if (id === "text") {
                                     pd.cm.diffBase.setOption("mode", null);
                                     pd.cm.diffNew.setOption("mode", null);
@@ -4896,6 +5384,8 @@ var pd = {};
                                     pd.cm.beauOut.setOption("mode", null);
                                     pd.cm.minnIn.setOption("mode", null);
                                     pd.cm.minnOut.setOption("mode", null);
+                                    pd.cm.parsIn.setOption("mode", null);
+                                    pd.cm.parsOut.setOption("mode", null);
                                 } else {
                                     pd.cm.diffBase.setOption("mode", value);
                                     pd.cm.diffNew.setOption("mode", value);
@@ -4903,6 +5393,8 @@ var pd = {};
                                     pd.cm.beauOut.setOption("mode", value);
                                     pd.cm.minnIn.setOption("mode", value);
                                     pd.cm.minnOut.setOption("mode", value);
+                                    pd.cm.parsIn.setOption("mode", value);
+                                    pd.cm.parsOut.setOption("mode", value);
                                 }
                             }
                         } else if (params[b].indexOf("jsscope") === 0) {
@@ -4939,6 +5431,8 @@ var pd = {};
                                 pd.cm.beauOut.setOption("mode", "htmlembedded");
                                 pd.cm.minnIn.setOption("mode", "htmlembedded");
                                 pd.cm.minnOut.setOption("mode", "htmlembedded");
+                                pd.cm.parsIn.setOption("mode", "htmlembedded");
+                                pd.cm.parsOut.setOption("mode", "htmlembedded");
                             }
                         }
                     }
@@ -4955,6 +5449,13 @@ var pd = {};
                                 pd.cm.minnIn.setValue(source);
                             } else {
                                 pd.o.codeMinnIn.value = source;
+                            }
+                            pd.recycle();
+                        } else if (pd.o.codeParsIn !== null && pd.mode === "pars") {
+                            if (pd.test.cm === true) {
+                                pd.cm.parsIn.setValue(source);
+                            } else {
+                                pd.o.codeParsIn.value = source;
                             }
                             pd.recycle();
                         } else if (pd.o.codeDiffBase !== null && pd.mode === "diff") {
