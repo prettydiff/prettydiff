@@ -191,6 +191,7 @@ var pd = {};
         diffBase    : pd.$$("diffBase"),
         diffNew     : pd.$$("diffNew"),
         diffOps     : pd.$$("diffops"),
+        headline    : pd.$$("headline"),
         jsscope     : pd.$$("jsscope-yes"),
         lang        : pd.$$("language"),
         langdefault : pd.$$("lang-default"),
@@ -4387,9 +4388,8 @@ var pd = {};
         var baseText     = pd.$$("baseText"),
             newText      = pd.$$("newText"),
             height       = window.innerHeight || document.getElementsByTagName("body")[0].clientHeight,
-            headlineNode = pd.$$("headline"),
             headline     = 0;
-        if (headlineNode !== null && headlineNode.style.display === "block") {
+        if (pd.o.headline !== null && pd.o.headline.style.display === "block") {
             headline = 3.8;
         }
         if (pd.test.cm === true) {
