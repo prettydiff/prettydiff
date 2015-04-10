@@ -271,7 +271,7 @@ var pd = {};
             }
             join = b.join("");
             if ((/^(\s*(\{|\[))/).test(a) === true && (/((\]|\})\s*)$/).test(a) && a.indexOf(",") !== -1) {
-                pd.langproper = "JavaScript";
+                pd.langproper = "JSON";
                 return "javascript";
             }
             if ((/((\}?(\(\))?\)*;?\s*)|([a-z0-9]("|')?\)*);?(\s*\})*)$/i).test(a) === true && ((/(var\s+[a-z]+[a-zA-Z0-9]*)/).test(a) === true || (/((\=|(\$\())\s*function)|(\s*function\s+(\w*\s+)?\()/).test(a) === true || a.indexOf("{") === -1 || (/^(\s*if\s+\()/).test(a) === true)) {
@@ -1089,16 +1089,17 @@ var pd = {};
                     }
                 }
                 if (api.mode === "parse") {
-                    if (output[0].length > 125000) {
+                    presumedLanguage = JSON.stringify(output[0]);
+                    if (presumedLanguage.length > 125000) {
                         pd.test.filled.code = true;
                     } else {
                         pd.test.filled.code = false;
                     }
                     if (pd.o.codeMinnOut !== null) {
                         if (pd.test.cm === true) {
-                            pd.cm.parsOut.setValue(JSON.stringify(output[0]));
+                            pd.cm.parsOut.setValue(presumedLanguage);
                         } else {
-                            pd.o.codeParsOut.value = JSON.stringify(output[0]);
+                            pd.o.codeParsOut.value = presumedLanguage;
                         }
                     }
                     if (pd.o.report.code.box !== null) {
@@ -3947,362 +3948,362 @@ var pd = {};
                     data = [];
                 if (id === "baselabel") {
                     data = [
-                        "api.sourcelabel", "\"" + item.value + "\""
+                        "sourcelabel", "\"" + item.value + "\""
                     ];
                 }
                 if (id === "bbraceline-no" || id === "dbraceline-no") {
                     data = [
-                        "api.braceline", "false"
+                        "braceline", "false"
                     ];
                 }
                 if (id === "bbraceline-yes" || id === "dbraceline-yes") {
                     data = [
-                        "api.braceline", "true"
+                        "braceline", "true"
                     ];
                 }
                 if (id === "bjslines-all" || id === "djslines-all") {
                     data = [
-                        "api.preserve", "all"
+                        "preserve", "all"
                     ];
                 }
                 if (id === "bjslines-css" || id === "djslines-css") {
                     data = [
-                        "api.preserve", "css"
+                        "preserve", "css"
                     ];
                 }
                 if (id === "bjslines-js" || id === "djslines-js") {
                     data = [
-                        "api.preserve", "js"
+                        "preserve", "js"
                     ];
                 }
                 if (id === "bjslines-none" || id === "djslines-none") {
                     data = [
-                        "api.preserve", "none"
+                        "preserve", "none"
                     ];
                 }
                 if (id === "bobjsort-all" || id === "dobjsort-all" || id === "mobjsort-all") {
                     data = [
-                        "api.objsort", "all"
+                        "objsort", "all"
                     ];
                 }
                 if (id === "bobjsort-css" || id === "dobjsort-css" || id === "mobjsort-css") {
                     data = [
-                        "api.objsort", "css"
+                        "objsort", "css"
                     ];
                 }
                 if (id === "bobjsort-js" || id === "dobjsort-js" || id === "mobjsort-js") {
                     data = [
-                        "api.objsort", "js"
+                        "objsort", "js"
                     ];
                 }
                 if (id === "bobjsort-none" || id === "dobjsort-none" || id === "mobjsort-none") {
                     data = [
-                        "api.objsort", "none"
+                        "objsort", "none"
                     ];
                 }
                 if (id === "bquoteconvert-double" || id === "mquoteconvert-double") {
                     data = [
-                        "api.quoteConvert", "double"
+                        "quoteConvert", "double"
                     ];
                 }
                 if (id === "bquoteconvert-none" || id === "mquoteconvert-none") {
                     data = [
-                        "api.quoteConvert", "none"
+                        "quoteConvert", "none"
                     ];
                 }
                 if (id === "bquoteconvert-single" || id === "mquoteconvert-single") {
                     data = [
-                        "api.quoteConvert", "single"
+                        "quoteConvert", "single"
                     ];
                 }
                 if (id === "bvarword-each") {
                     data = [
-                        "api.varword", "each"
+                        "varword", "each"
                     ];
                 }
                 if (id === "bvarword-list") {
                     data = [
-                        "api.varword", "list"
+                        "varword", "list"
                     ];
                 }
                 if (id === "bvarword-none") {
                     data = [
-                        "api.varword", "none"
+                        "varword", "none"
                     ];
                 }
                 if (id === "conditionald-no" || id === "conditionalm-no") {
                     data = [
-                        "api.conditional", "false"
+                        "conditional", "false"
                     ];
                 }
                 if (id === "conditionald-yes" || id === "conditionalm-yes") {
                     data = [
-                        "api.conditional", "true"
+                        "conditional", "true"
                     ];
                 }
                 if (id === "contextSize") {
                     data = [
-                        "api.context", "\"" + item.value + "\""
+                        "context", "\"" + item.value + "\""
                     ];
                 }
                 if (id === "csvchar") {
                     data = [
-                        "api.csvchar", "\"" + item.value + "\""
+                        "csvchar", "\"" + item.value + "\""
                     ];
                 }
                 if (id === "diff-char" || id === "beau-char") {
                     data = [
-                        "api.inchar", "\"" + item.value + "\""
+                        "inchar", "\"" + item.value + "\""
                     ];
                 }
                 if (id === "diff-line" || id === "beau-line") {
                     data = [
-                        "api.inchar", "\"\\n\""
+                        "inchar", "\"\\n\""
                     ];
                 }
                 if (id === "diff-quan" || id === "beau-quan" || id === "minn-quan") {
                     data = [
-                        "api.insize", "\"" + item.value + "\""
+                        "insize", "\"" + item.value + "\""
                     ];
                 }
                 if (id === "diff-space" || id === "beau-space") {
                     data = [
-                        "api.inchar", "\" \""
+                        "inchar", "\" \""
                     ];
                 }
                 if (id === "diff-tab" || id === "beau-tab") {
                     data = [
-                        "api.inchar", "\"\\t\""
+                        "inchar", "\"\\t\""
                     ];
                 }
                 if (id === "diff-wrap" || id === "beau-wrap") {
                     data = [
-                        "api.wrap", "\"" + item.value + "\""
+                        "wrap", "\"" + item.value + "\""
                     ];
                 }
                 if (id === "diffcontent") {
                     data = [
-                        "api.content", "true"
+                        "content", "true"
                     ];
                 }
                 if (id === "diffcontenty") {
                     data = [
-                        "api.content", "false"
+                        "content", "false"
                     ];
                 }
                 if (id === "dforce_indent" || id === "bforce_indent") {
                     data = [
-                        "api.force_indent", "true"
+                        "force_indent", "true"
                     ];
                 }
                 if (id === "dforce_indent-no" || id === "bforce_indent-no") {
                     data = [
-                        "api.force_indent", "false"
+                        "force_indent", "false"
                     ];
                 }
                 if (id === "diffcommentsn") {
                     data = [
-                        "api.diffcomments", "false"
+                        "diffcomments", "false"
                     ];
                 }
                 if (id === "diffcommentsy") {
                     data = [
-                        "api.diffcomments", "true"
+                        "diffcomments", "true"
                     ];
                 }
                 if (id === "difflabel") {
                     data = [
-                        "api.difflabel", "\"" + item.value + "\""
+                        "difflabel", "\"" + item.value + "\""
                     ];
                 }
                 if (id === "diffquote") {
                     data = [
-                        "api.quote", "true"
+                        "quote", "true"
                     ];
                 }
                 if (id === "diffquotey") {
                     data = [
-                        "api.quote", "false"
+                        "quote", "false"
                     ];
                 }
                 if (id === "diffscolon") {
                     data = [
-                        "api.semicolon", "true"
+                        "semicolon", "true"
                     ];
                 }
                 if (id === "diffscolony") {
                     data = [
-                        "api.semicolon", "false"
+                        "semicolon", "false"
                     ];
                 }
                 if (id === "htmld-no" || id === "html-no" || id === "htmlm-no") {
                     data = [
-                        "api.html", "false"
+                        "html", "false"
                     ];
                 }
                 if (id === "htmld-yes" || id === "html-yes" || id === "htmlm-yes") {
                     data = [
-                        "api.html", "true"
+                        "html", "true"
                     ];
                 }
                 if (id === "incomment-no") {
                     data = [
-                        "api.comments", "noindent"
+                        "comments", "noindent"
                     ];
                 }
                 if (id === "incomment-yes") {
                     data = [
-                        "api.comments", "indent"
+                        "comments", "indent"
                     ];
                 }
                 if (id === "inline") {
                     data = [
-                        "api.diffview", "inline"
+                        "diffview", "inline"
                     ];
                 }
                 if (id === "inlevel") {
                     data = [
-                        "api.inlevel", "\"" + item.value + "\""
+                        "inlevel", "\"" + item.value + "\""
                     ];
                 }
                 if (id === "inscriptd-no" || id === "inscript-no") {
                     data = [
-                        "api.style", "noindent"
+                        "style", "noindent"
                     ];
                 }
                 if (id === "inscriptd-yes" || id === "inscript-yes") {
                     data = [
-                        "api.style", "indent"
+                        "style", "indent"
                     ];
                 }
                 if (id === "jscorrect-no" || id === "mjscorrect-no") {
                     data = [
-                        "api.correct", "false"
+                        "correct", "false"
                     ];
                 }
                 if (id === "jscorrect-yes" || id === "mjscorrect-yes") {
                     data = [
-                        "api.correct", "true"
+                        "correct", "true"
                     ];
                 }
                 if (id === "jselseline-no") {
                     data = [
-                        "api.elseline", "false"
+                        "elseline", "false"
                     ];
                 }
                 if (id === "jselseline-yes") {
                     data = [
-                        "api.elseline", "true"
+                        "elseline", "true"
                     ];
                 }
                 if (id === "jsindentd-all" || id === "jsindent-all") {
                     data = [
-                        "api.indent", "allman"
+                        "indent", "allman"
                     ];
                 }
                 if (id === "jsindentd-knr" || id === "jsindent-knr") {
                     data = [
-                        "api.indent", "knr"
+                        "indent", "knr"
                     ];
                 }
                 if (id === "jsscope-html") {
                     data = [
-                        "api.jsscope", "true"
+                        "jsscope", "true"
                     ];
                 }
                 if (id === "jsscope-no") {
                     data = [
-                        "api.jsscope", "false"
+                        "jsscope", "false"
                     ];
                 }
                 if (id === "jsscope-yes") {
                     data = [
-                        "api.jsscope", "true"
+                        "jsscope", "true"
                     ];
                 }
                 if (id === "jsspaced-no" || id === "jsspace-no") {
                     data = [
-                        "api.jsspace", "false"
+                        "jsspace", "false"
                     ];
                 }
                 if (id === "jsspaced-yes" || id === "jsspace-yes") {
                     data = [
-                        "api.jsspace", "true"
+                        "jsspace", "true"
                     ];
                 }
                 if (id === "lang-default") {
                     data = [
-                        "api.langdefault", item[item.selectedIndex].value
+                        "langdefault", item[item.selectedIndex].value
                     ];
                 }
                 if (id === "langauge") {
                     data = [
-                        "api.lang", "\"" + item.value + "\""
+                        "lang", "\"" + item.value + "\""
                     ];
                 }
                 if (id === "modebeautify") {
                     data = [
-                        "api.mode", "beautify"
+                        "mode", "beautify"
                     ];
                 }
                 if (id === "modediff") {
                     data = [
-                        "api.mode", "diff"
+                        "mode", "diff"
                     ];
                 }
                 if (id === "modeminify") {
                     data = [
-                        "api.mode", "minify"
+                        "mode", "minify"
                     ];
                 }
                 if (id === "obfuscate-no") {
                     data = [
-                        "api.obfuscate", "false"
+                        "obfuscate", "false"
                     ];
                 }
                 if (id === "obfuscate-yes") {
                     data = [
-                        "api.obfuscate", "true"
+                        "obfuscate", "true"
                     ];
                 }
                 if (id === "sidebyside") {
                     data = [
-                        "api.diffview", "sidebyside"
+                        "diffview", "sidebyside"
                     ];
                 }
                 if (id === "styleguide") {
                     data = [
-                        "api.styleguide", "\"" + item.value + "\""
+                        "styleguide", "\"" + item.value + "\""
                     ];
                 }
                 if (id === "topcoms-yes") {
                     data = [
-                        "api.topcoms", "true"
+                        "topcoms", "true"
                     ];
                 }
                 if (id === "topcoms-no") {
                     data = [
-                        "api.topcoms", "false"
+                        "topcoms", "false"
                     ];
                 }
                 if (id === "vertical-all") {
                     data = [
-                        "api.vertical", "all"
+                        "vertical", "all"
                     ];
                 }
                 if (id === "vertical-cssonly") {
                     data = [
-                        "api.vertical", "css"
+                        "vertical", "css"
                     ];
                 }
                 if (id === "vertical-jsonly") {
                     data = [
-                        "api.vertical", "js"
+                        "vertical", "js"
                     ];
                 }
                 if (id === "vertical-none") {
                     data = [
-                        "api.vertical", "none"
+                        "vertical", "none"
                     ];
                 }
                 if (data.length === 0) {
@@ -4322,13 +4323,13 @@ var pd = {};
                     if (pd.commentString.length === 0) {
                         pd.o.comment.innerHTML = "/*prettydiff.com */";
                     } else if (pd.commentString.length === 1) {
-                        pd.o.comment.innerHTML = "/*prettydiff.com " + pd.commentString[0].replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;") + " */";
+                        pd.o.comment.innerHTML = "/*prettydiff.com " + pd.commentString[0].replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/api\./g, "") + " */";
                     } else {
-                        pd.o.comment.innerHTML = "/*prettydiff.com " + pd.commentString.join(", ").replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;") + " */";
+                        pd.o.comment.innerHTML = "/*prettydiff.com " + pd.commentString.join(", ").replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/api\./g, "") + " */";
                     }
                 }
                 if (pd.test.ls === true && pd.test.json === true) {
-                    localStorage.commentString = JSON.stringify(pd.commentString);
+                    localStorage.commentString = JSON.stringify(pd.commentString).replace(/api\./g, "");
                 }
             }());
         }
@@ -4681,7 +4682,7 @@ var pd = {};
                 }
                 if (pd.test.json === true) {
                     if (localStorage.commentString !== undefined && localStorage.commentString !== "") {
-                        pd.commentString = JSON.parse(localStorage.commentString);
+                        pd.commentString = JSON.parse(localStorage.commentString.replace(/api\./g, ""));
                     }
                     if (localStorage.settings !== undefined && localStorage.settings !== null) {
                         if (localStorage.settings.indexOf(":undefined") > 0) {
@@ -5262,9 +5263,9 @@ var pd = {};
                 if (pd.commentString.length === 0) {
                     pd.o.comment.innerHTML = "/*prettydiff.com */";
                 } else if (pd.commentString.length === 1) {
-                    pd.o.comment.innerHTML = "/*prettydiff.com " + pd.commentString[0] + " */";
+                    pd.o.comment.innerHTML = "/*prettydiff.com " + pd.commentString[0].replace("api.", "") + " */";
                 } else {
-                    pd.o.comment.innerHTML = "/*prettydiff.com " + pd.commentString.join(", ") + " */";
+                    pd.o.comment.innerHTML = "/*prettydiff.com " + pd.commentString.join(", ").replace(/api\./g, "") + " */";
                 }
             }
             node = pd.$$("button-primary");
@@ -5299,6 +5300,9 @@ var pd = {};
                             } else if (value === "diff" && pd.o.modeDiff !== null) {
                                 pd.prettyvis(pd.o.modeDiff);
                                 pd.o.modeDiff.checked = true;
+                            } else if (value === "parse" && pd.o.modePars !== null) {
+                                pd.prettyvis(pd.o.modePars);
+                                pd.o.modePars.checked = true;
                             }
                         } else if (params[b].indexOf("s=") === 0) {
                             source = params[b].substr(2);

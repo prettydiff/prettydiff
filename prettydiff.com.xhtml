@@ -116,7 +116,7 @@
                     Only</label></span>
         </p>
         <div class="metainfo">
-            <p class="big" id="announcement" role="alert"></p>
+            <p id="announcement" role="alert"></p>
             <p id="update">Updated:
             </p>
         </div>
@@ -313,6 +313,7 @@
             </div>
         </div>
         <div class="options" id="options" role="toolbar"><h2>Main Options</h2>
+            <p class="apiname">(API name in parenthesis)</p>
             <p class="resetbutton"><button
                 id="resetOptions"
                 title="Clicking this button will clear all stored data
@@ -345,7 +346,7 @@
                 for="colorScheme"
                 title="Pick a color theme with this list of options. Force a theme by default
                     with the address parameter 'c', for example 'c=shadow'.">Color
-                Scheme</label>
+                Scheme <span class="apiname">(color)</span></label>
                 <select
                     id="colorScheme"
                     title="Pick a color theme with this list of options. Force a theme by default
@@ -361,7 +362,7 @@
                 title="Choose a specific language with this list or force a language
                     selection using the 'l' (as in letter) address parameter, for example
                     'l=html'.">Code
-                type</label>
+                type <span class="apiname">(lang)</span></label>
                 <select
                     id="language"
                     title="Choose a specific language with this list or force a language selection
@@ -392,7 +393,7 @@
                 class="label"
                 for="lang-default"
                 title="Force a language choice when auto-detect cannot make a decision">Auto
-                detect default</label>
+                detect default <span class="apiname">(langdefault)</span></label>
                 <select
                     id="lang-default"
                     title="Force a language choice when auto-detect cannot make a decision">
@@ -417,7 +418,7 @@
                 </select>
             </p>
             <p id="csvcharp" style="display:none;"><label class="label" for="csvchar">Character
-                separator</label>
+                separator <span class="apiname">(csvchar)</span></label>
                 <input
                     id="csvchar"
                     title="If the language type is set to CSV this field will allow definition of the
@@ -439,6 +440,7 @@
         </div>
         <div id="addOptions" role="toolbar">
             <div class="options" id="diffops"><h2>Diff Options</h2>
+                <p class="apiname">(API name in parenthesis)</p>
                 <fieldset><legend>Diff Report Options</legend>
                     <p><strong>Print or Save Output</strong>
                         <span>
@@ -452,7 +454,7 @@
                             <label for="diff-save">&mdash; Generates HTML report as raw text inside a text
                                 area.</label></span>
                     </p>
-                    <p><label class="label" for="contextSize">Context size</label>
+                    <p><label class="label" for="contextSize">Context size <span class="apiname">(context)</span></label>
                         <span>
                             <input
                                 id="contextSize"
@@ -466,7 +468,7 @@
                             <label for="contextSize">&mdash; This sets number of matching lines of code to
                                 pad the differences.</label></span>
                     </p>
-                    <p><strong>Diff View Type</strong>
+                    <p><strong>Diff View Type <span class="apiname">(diffview)</span></strong>
                         <span>
                             <input
                                 checked="checked"
@@ -487,7 +489,7 @@
                     </p>
                 </fieldset>
                 <fieldset><legend>Difference Reduction Options</legend>
-                    <p><strong>Diff Quotes</strong>
+                    <p><strong>Diff Quotes <span class="apiname">(quote)</span></strong>
                         <span>
                             <input
                                 checked="checked"
@@ -507,7 +509,7 @@
                                 type="radio"/><label for="diffquoten">Normalize
                                 single quote characters to double quote characters</label></span>
                     </p>
-                    <p><strong>Trailing Semicolons</strong>
+                    <p><strong>Trailing Semicolons <span class="apiname">(semicolon)</span></strong>
                         <span>
                             <input
                                 checked="checked"
@@ -527,7 +529,7 @@
                                 type="radio"/><label for="diffscolonn">Remove
                                 trailing semicolons</label></span>
                     </p>
-                    <p><strong>Code Comments</strong>
+                    <p><strong>Code Comments <span class="apiname">(diffcomments)</span></strong>
                         <span>
                             <input
                                 checked="checked"
@@ -546,24 +548,7 @@
                                 type="radio"/><label for="diffcommentsy">Compare
                                 code and comments</label></span>
                     </p>
-                    <p><strong>Sort Objects (JavaScript Only)</strong>
-                        <span>
-                            <input
-                                checked="checked"
-                                id="dobjectsortn"
-                                name="dobjectsort"
-                                title="This option does not alphabetize JavaScript object properties."
-                                type="radio"/>
-                            <label for="dobjectsortn">Maintain object order</label></span>
-                        <span>
-                            <input
-                                id="dobjectsorty"
-                                name="dobjectsort"
-                                title="This option will sort object properties alphabetically."
-                                type="radio"/>
-                            <label for="dobjectsorty">Alphabetize object properties</label></span>
-                    </p>
-                    <p><strong>Ignore Content (Markup / JavaScript)</strong>
+                    <p><strong>Ignore Content, Markup / JavaScript <span class="apiname">(content)</span></strong>
                         <span>
                             <input
                                 checked="checked"
@@ -584,7 +569,7 @@
                     </p>
                 </fieldset>
                 <fieldset id="diffbeautify"><legend>Beautification Options</legend>
-                    <p id="diffquanp"><label class="label" for="diff-quan">Indentation size</label>
+                    <p id="diffquanp"><label class="label" for="diff-quan">Indentation size <span class="apiname">(insize)</span></label>
                         <span>
                             <input
                                 id="diff-quan"
@@ -596,7 +581,7 @@
                         </span>
                     </p>
                     <p id="difftypep"><label class="label" for="diff-char">Indentation
-                        character</label>
+                        character <span class="apiname">(inchar)</span></label>
                         <span>
                             <input
                                 class="unchecked"
@@ -640,7 +625,7 @@
                                 type="radio"/>
                             <label for="diff-line">Indent new line</label></span>
                     </p>
-                    <p><label class="label" for="diff-wrap">Wrap text (Markup / JavaScript)</label>
+                    <p><label class="label" for="diff-wrap">Wrap text, Markup / JavaScript <span class="apiname">(wrap)</span></label>
                         <span>
                             <input
                                 id="diff-wrap"
@@ -648,7 +633,7 @@
                                     of 0 to eliminate wrapping."
                                 type="text"
                                 value="80"/></span></p>
-                    <p><strong>Indent Style/Script (Markup Only)</strong>
+                    <p><strong>Indent Style/Script, Markup Only <span class="apiname">(style)</span></strong>
                         <span>
                             <input
                                 checked="checked"
@@ -667,7 +652,7 @@
                                 type="radio"/>
                             <label for="inscriptd-no">Indent style/script independently</label></span>
                     </p>
-                    <p><strong>Presume HTML (Markup Only)</strong>
+                    <p><strong>Presume HTML, Markup Only <span class="apiname">(html)</span></strong>
                         <span>
                             <input
                                 checked="checked"
@@ -686,7 +671,7 @@
                                 type="radio"/>
                             <label for="htmld-no">Strict XML syntax</label></span>
                     </p>
-                    <p><strong>Force Indentation (Markup Only)</strong>
+                    <p><strong>Force Indentation, Markup Only <span class="apiname">(force_indent)</span></strong>
                         <span>
                             <input
                                 checked="checked"
@@ -707,7 +692,7 @@
                                 type="radio"/><label for="dforce_indent-yes">Always
                                 force indentation</label></span>
                     </p>
-                    <p><strong>IE Comments (HTML Only)</strong>
+                    <p><strong>IE Comments, HTML Only <span class="apiname">(conditional)</span></strong>
                         <span>
                             <input
                                 checked="checked"
@@ -726,7 +711,7 @@
                                 type="radio"/>
                             <label for="conditionald-yes">Preserve HTML conditional comments</label></span>
                     </p>
-                    <p><strong>Empty Lines (CSS / JavaScript)</strong>
+                    <p><strong>Empty Lines, CSS / JavaScript <span class="apiname">(preserve)</span></strong>
                         <span>
                             <input
                                 checked="checked"
@@ -762,7 +747,7 @@
                                 type="radio"/>
                             <label for="djslines-none">Remove empty lines</label></span>
                     </p>
-                    <p><strong>Property Sorting (CSS / JavaScript)</strong>
+                    <p><strong>Property Sorting, CSS / JavaScript <span class="apiname">(objsort)</span></strong>
                         <span>
                             <input
                                 checked="checked"
@@ -794,7 +779,7 @@
                                 type="radio"/>
                             <label for="dobjsort-none">Do not sort</label></span>
                     </p>
-                    <p><strong>Brace Padding (JavaScript Only)</strong>
+                    <p><strong>Brace Padding, JavaScript Only <span class="apiname">(bracepadding)</span></strong>
                         <span>
                             <input
                                 checked="checked"
@@ -814,7 +799,7 @@
                             <label for="dbracepadding-yes">Pads container characters from their
                                 contents.</label></span>
                     </p>
-                    <p><strong>Style of Indent (JavaScript Only)</strong>
+                    <p><strong>Style of Indent, JavaScript Only <span class="apiname">(braces)</span></strong>
                         <span>
                             <input
                                 checked="checked"
@@ -834,7 +819,7 @@
                             <label for="jsindentd-all">Allman (ANSI) style &mdash; sets opening curly braces
                                 on a new line.</label></span>
                     </p>
-                    <p><strong>Function Space (JavaScript Only)</strong>
+                    <p><strong>Function Space, JavaScript Only <span class="apiname">(space)</span></strong>
                         <span>
                             <input
                                 checked="checked"
@@ -853,7 +838,7 @@
                                 type="radio"/>
                             <label for="jsspaced-no">Remove space following function</label></span>
                     </p>
-                    <p><strong>Else on New Line (JavaScript Only)</strong>
+                    <p><strong>Else on New Line, JavaScript Only <span class="apiname">(elseline)</span></strong>
                         <span>
                             <input
                                 checked="checked"
@@ -871,7 +856,7 @@
                                 type="radio"/>
                             <label for="jselselined-yes">Force 'else' keyword onto a new line</label></span>
                     </p>
-                    <p><strong>Brace Lines (JavaScript Only)</strong>
+                    <p><strong>Brace Lines, JavaScript Only <span class="apiname">(braceline)</span></strong>
                         <span>
                             <input
                                 checked="checked"
@@ -892,8 +877,9 @@
             </div>
             <div class="options" id="beauops" style="display:none;"><h2 title="The term pretty-print is synonymous with code beautification.">Beautify
                 Options</h2>
+                <p class="apiname">(API name in parenthesis)</p>
                 <fieldset><legend>Basic Options</legend>
-                    <p><label class="label" for="beau-quan">Indentation size</label>
+                    <p><label class="label" for="beau-quan">Indentation size <span class="apiname">(insize)</span></label>
                         <span>
                             <input
                                 id="beau-quan"
@@ -904,7 +890,7 @@
                                 value="4"/>
                         </span>
                     </p>
-                    <p><label class="label" for="inlevel">Code padding (Markup / JavaScript)</label>
+                    <p><label class="label" for="inlevel">Code padding, Markup / JavaScript <span class="apiname">(inlevel)</span></label>
                         <span>
                             <input
                                 id="inlevel"
@@ -914,7 +900,7 @@
                                 value="0"/>
                         </span>
                     </p>
-                    <p><label class="label" for="beau-char">Indentation character</label>
+                    <p><label class="label" for="beau-char">Indentation character <span class="apiname">(inchar)</span></label>
                         <span>
                             <input
                                 class="unchecked"
@@ -960,7 +946,7 @@
                     </p>
                 </fieldset>
                 <fieldset><legend>Advanced Options</legend>
-                    <p><strong>Indent Comments</strong>
+                    <p><strong>Indent Comments <span class="apiname">(comments)</span></strong>
                         <span>
                             <input
                                 checked="checked"
@@ -978,7 +964,7 @@
                                 type="radio"/>
                             <label for="incomment-no">No comment indentation</label></span>
                     </p>
-                    <p><label class="label" for="beau-wrap">Wrap text (Markup / JavaScript)</label>
+                    <p><label class="label" for="beau-wrap">Wrap text, Markup / JavaScript <span class="apiname">(wrap)</span></label>
                         <span>
                             <input
                                 id="beau-wrap"
@@ -986,7 +972,7 @@
                                     of 0 to eliminate wrapping."
                                 type="text"
                                 value="80"/></span></p>
-                    <p><strong>Quotes (Markup / JavaScript)</strong>
+                    <p><strong>Quotes, Markup / JavaScript <span class="apiname">(quoteconvert)</span></strong>
                         <span>
                             <input
                                 checked="checked"
@@ -1012,7 +998,7 @@
                                 type="radio"/>
                             <label for="bquoteconvert-single">Convert to single quotes</label></span>
                     </p>
-                    <p><strong>Indent Style/Script (Markup Only)</strong>
+                    <p><strong>Indent Style/Script, Markup Only <span class="apiname">(style)</span></strong>
                         <span>
                             <input
                                 checked="checked"
@@ -1031,7 +1017,7 @@
                                 type="radio"/>
                             <label for="inscript-no">Indent script/style independently</label></span>
                     </p>
-                    <p><strong>Presume HTML (Markup Only)</strong>
+                    <p><strong>Presume HTML, Markup Only <span class="apiname">(html)</span></strong>
                         <span>
                             <input
                                 checked="checked"
@@ -1050,7 +1036,7 @@
                                 type="radio"/>
                             <label for="html-no">Strict XML syntax</label></span>
                     </p>
-                    <p><strong>Force Indentation (Markup Only)</strong>
+                    <p><strong>Force Indentation, Markup Only <span class="apiname">(force_indent)</span></strong>
                         <span>
                             <input
                                 checked="checked"
@@ -1071,7 +1057,7 @@
                                 type="radio"/><label for="bforce_indent-yes">Always
                                 force indentation</label></span>
                     </p>
-                    <p><strong>Empty Lines (CSS / JavaScript)</strong>
+                    <p><strong>Empty Lines, CSS / JavaScript <span class="apiname">(preserve)</span></strong>
                         <span>
                             <input
                                 checked="checked"
@@ -1107,7 +1093,7 @@
                                 type="radio"/>
                             <label for="bjslines-none">Remove empty lines</label></span>
                     </p>
-                    <p><strong>Property Sorting (CSS / JavaScript)</strong>
+                    <p><strong>Property Sorting, CSS / JavaScript <span class="apiname">(objsort)</span></strong>
                         <span>
                             <input
                                 checked="checked"
@@ -1139,7 +1125,7 @@
                                 type="radio"/>
                             <label for="bobjsort-none">Do not sort</label></span>
                     </p>
-                    <p><strong>Vertically Align (CSS / JavaScript)</strong>
+                    <p><strong>Vertically Align, CSS / JavaScript <span class="apiname">(vertical)</span></strong>
                         <span>
                             <input
                                 checked="checked"
@@ -1174,7 +1160,7 @@
                                 type="radio"/>
                             <label for="vertical-none">Do not vertical align</label></span>
                     </p>
-                    <p><strong>Brace Padding (JavaScript Only)</strong>
+                    <p><strong>Brace Padding, JavaScript Only <span class="apiname">(bracepadding)</span></strong>
                         <span>
                             <input
                                 checked="checked"
@@ -1194,7 +1180,7 @@
                             <label for="bracepadding-yes">Pads container characters from their
                                 contents.</label></span>
                     </p>
-                    <p><strong>Scope Analysis (JavaScript Only)</strong>
+                    <p><strong>Scope Analysis, JavaScript Only <span class="apiname">(jsscope)</span></strong>
                         <span>
                             <input
                                 checked="checked"
@@ -1226,7 +1212,7 @@
                             <a href="guide/closure_with_jsscope.xhtml">scope</a>
                             with this feature</span>
                     </p>
-                    <p><strong>Style of Indent (JavaScript Only)</strong>
+                    <p><strong>Style of Indent, JavaScript Only <span class="apiname">(braces)</span></strong>
                         <span>
                             <input
                                 checked="checked"
@@ -1246,7 +1232,7 @@
                             <label for="jsindent-all">Allman (ANSI) style &mdash; sets opening curly braces
                                 on a new line.</label></span>
                     </p>
-                    <p><strong>Function Space (JavaScript Only)</strong>
+                    <p><strong>Function Space, JavaScript Only <span class="apiname">(space)</span></strong>
                         <span>
                             <input
                                 checked="checked"
@@ -1265,7 +1251,7 @@
                                 type="radio"/>
                             <label for="jsspace-no">Remove space following function</label></span>
                     </p>
-                    <p><strong>Fix Sloppy Code (JavaScript Only)</strong>
+                    <p><strong>Fix Sloppy Code, JavaScript Only <span class="apiname">(correct)</span></strong>
                         <span>
                             <input
                                 checked="checked"
@@ -1285,7 +1271,7 @@
                         <span>Read the
                             <a href="guide/jscorrect.xhtml">guide</a>.</span>
                     </p>
-                    <p><strong>Else on New Line (JavaScript Only)</strong>
+                    <p><strong>Else on New Line, JavaScript Only <span class="apiname">(elseline)</span></strong>
                         <span>
                             <input
                                 checked="checked"
@@ -1303,7 +1289,7 @@
                                 type="radio"/>
                             <label for="jselseline-yes">Force 'else' keyword onto a new line</label></span>
                     </p>
-                    <p><strong>Brace Lines (JavaScript Only)</strong>
+                    <p><strong>Brace Lines, JavaScript Only <span class="apiname">(braceline)</span></strong>
                         <span>
                             <input
                                 checked="checked"
@@ -1320,7 +1306,7 @@
                                 type="radio"/>
                             <label for="braceline-yes">Pad JavaScript blocks with empty lines</label></span>
                     </p>
-                    <p><strong>Variable Lists (JavaScript Only)</strong>
+                    <p><strong>Variable Lists, JavaScript Only <span class="apiname">(varword)</span></strong>
                         <span>
                             <input
                                 checked="checked"
@@ -1346,7 +1332,7 @@
                                 type="radio"/>
                             <label for="bvardword-each">Separate variables</label></span>
                     </p>
-                    <p><label class="label" for="bstyleguide">Style Guide (JavaScript Only)</label>
+                    <p><label class="label" for="bstyleguide">Style Guide, JavaScript Only <span class="apiname">(styleguide)</span></label>
                         <select id="bstyleguide">
                             <option selected="selected" value="">None</option>
                             <option value="airbnb">AirBnB</option>
@@ -1365,7 +1351,8 @@
                 </fieldset>
             </div>
             <div class="options" id="miniops" style="display:none;"><h2>Minify Options</h2>
-                <p><strong>Quotes (Markup / JavaScript)</strong>
+                <p class="apiname">(API name in parenthesis)</p>
+                <p><strong>Quotes, Markup / JavaScript <span class="apiname">(quoteconvert)</span></strong>
                     <span>
                         <input
                             checked="checked"
@@ -1391,7 +1378,7 @@
                             type="radio"/>
                         <label for="mquoteconvert-none">Leave the quotes alone</label></span>
                 </p>
-                <p><strong>Presume HTML (Markup Only)</strong>
+                <p><strong>Presume HTML, Markup Only <span class="apiname">(html)</span></strong>
                     <span>
                         <input
                             checked="checked"
@@ -1410,7 +1397,7 @@
                             type="radio"/>
                         <label for="htmlm-no">Strict XML syntax</label></span>
                 </p>
-                <p><strong>IE Comments (HTML Only)</strong>
+                <p><strong>IE Comments, HTML Only <span class="apiname">(conditional)</span></strong>
                     <span>
                         <input
                             checked="checked"
@@ -1429,7 +1416,7 @@
                             type="radio"/>
                         <label for="conditionalm-yes">Preserve HTML conditional comments</label></span>
                 </p>
-                <p><strong>Property Sorting (CSS / JavaScript)</strong>
+                <p><strong>Property Sorting, CSS / JavaScript <span class="apiname">(objsort)</span></strong>
                     <span>
                         <input
                             checked="checked"
@@ -1461,7 +1448,7 @@
                             type="radio"/>
                         <label for="mobjsort-none">Do not sort</label></span>
                 </p>
-                <p><strong>Top Comments (CSS / JavaScript)</strong>
+                <p><strong>Top Comments, CSS / JavaScript <span class="apiname">(topcoms)</span></strong>
                     <span>
                         <input
                             checked="checked"
@@ -1480,7 +1467,7 @@
                             type="radio"/>
                         <label for="topcoms-yes">Preserve comments before any code</label></span>
                 </p>
-                <p><strong>Obfuscation (JavaScript)</strong>
+                <p><strong>Obfuscation, JavaScript <span class="apiname">(obfuscate)</span></strong>
                     <span>
                         <input
                             checked="checked"
@@ -1500,7 +1487,8 @@
                 </p>
             </div>
             <div class="options" id="parseops" style="display:none;"><h2>Parse Options</h2>
-                <p><strong>Quotes (Markup / JavaScript)</strong>
+                <p class="apiname">(API name in parenthesis)</p>
+                <p><strong>Quotes, Markup / JavaScript <span class="apiname">(quoteconvert)</span></strong>
                     <span>
                         <input
                             checked="checked"
@@ -1526,7 +1514,7 @@
                             type="radio"/>
                         <label for="pquoteconvert-single">Convert to single quotes</label></span>
                 </p>
-                <p><strong>Presume HTML (Markup Only)</strong>
+                <p><strong>Presume HTML, Markup Only <span class="apiname">(html)</span></strong>
                     <span>
                         <input
                             checked="checked"
@@ -1545,7 +1533,7 @@
                             type="radio"/>
                         <label for="phtml-no">Strict XML syntax</label></span>
                 </p>
-                <p><strong>Property Sorting (CSS / JavaScript)</strong>
+                <p><strong>Property Sorting, CSS / JavaScript <span class="apiname">(objsort)</span></strong>
                     <span>
                         <input
                             checked="checked"
@@ -1577,7 +1565,7 @@
                             type="radio"/>
                         <label for="pobjsort-none">Do not sort</label></span>
                 </p>
-                <p><strong>Fix Sloppy Code (JavaScript Only)</strong>
+                <p><strong>Fix Sloppy Code, JavaScript Only <span class="apiname">(correct)</span></strong>
                     <span>
                         <input
                             checked="checked"
@@ -1597,7 +1585,7 @@
                     <span>Read the
                         <a href="guide/jscorrect.xhtml">guide</a>.</span>
                 </p>
-                <p><strong>Variable Lists (JavaScript Only)</strong>
+                <p><strong>Variable Lists, JavaScript Only <span class="apiname">(varword)</span></strong>
                     <span>
                         <input
                             checked="checked"

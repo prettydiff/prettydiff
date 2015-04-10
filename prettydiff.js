@@ -3,7 +3,7 @@
 /*
 
  Execute in a NodeJS app:
- 
+
     npm install prettydiff        (local install)
 
     var prettydiff = require("prettydiff"),
@@ -13,16 +13,16 @@
             lang  : "text"
         },
         output     = prettydiff.api(args);
- 
+
  Execute on command line with NodeJS:
- 
+
     npm install prettydiff -g     (global install)
 
     prettydiff source:"c:\mydirectory\myfile.js" readmethod:"file" diff:"c:\myotherfile.js"
- 
+
  Execute with WSH:
     cscript prettydiff.wsf /source:"myFile.xml" /mode:"beautify"
- 
+
  Execute from JavaScript:
     var args   = {
             source: "asdf",
@@ -37,7 +37,7 @@
  @documentation - English: http://prettydiff.com/documentation.php
 
  @licstart  The following is the entire license notice for Pretty Diff.
- 
+
  This code may not be used or redistributed unless the following
  conditions are met:
 
@@ -60,7 +60,7 @@
  permission.
      - used as diffview function
      http://prettydiff.com/lib/diffview.js
- 
+
  * CodeMirror
  Copyright (C) 2013 by Marijn Haverbeke marijnh@gmail.com and others
  http://codemirror.com - MIT License
@@ -217,7 +217,7 @@ var prettydiff = function prettydiff(api) {
                     //to reduce the number of false positive comparisons
                     csemicolon    = (api.semicolon === true || api.semicolon === "true") ? true : false,
                     //api.source - the source code in minify and beautify operations or "base" code
-                    //in operations 
+                    //in operations
                     csource       = (typeof api.source === "string" && api.source.length > 0 && (/^(\s+)$/).test(api.source) === false) ? api.source : ((cmode === "diff") ? "" : "Source sample is missing."),
                     //api.sourcelabel - a text label to describe the api.source code for the diff
                     //report
@@ -375,6 +375,7 @@ var prettydiff = function prettydiff(api) {
                         }
                         for (c = 0; c < b; c += 1) {
                             if (typeof build[c][1] === "string") {
+                                build[c][0] = build[c][0].replace("api.", "");
                                 if (build[c][0] === "braceline") {
                                     if (build[c][1] === "true") {
                                         cbraceline = true;
@@ -387,103 +388,103 @@ var prettydiff = function prettydiff(api) {
                                     } else if (build[c][1] === "false") {
                                         cbracepadding = false;
                                     }
-                                } else if (build[c][0] === "api.braces" || build[c][0] === "api.indent") {
+                                } else if (build[c][0] === "braces" || build[c][0] === "indent") {
                                     if (build[c][1] === "knr") {
                                         cbraces = "knr";
                                     } else if (build[c][1] === "allman") {
                                         cbraces = "allman";
                                     }
-                                } else if (build[c][0] === "api.comments") {
+                                } else if (build[c][0] === "comments") {
                                     if (build[c][1] === "indent") {
                                         ccomm = "indent";
                                     } else if (build[c][1] === "noindent") {
                                         ccomm = "noindent";
                                     }
-                                } else if (build[c][0] === "api.conditional") {
+                                } else if (build[c][0] === "conditional") {
                                     if (build[c][1] === "true") {
                                         ccond = true;
                                     } else if (build[c][1] === "false") {
                                         ccond = false;
                                     }
-                                } else if (build[c][0] === "api.content") {
+                                } else if (build[c][0] === "content") {
                                     if (build[c][1] === "true") {
                                         ccontent = true;
                                     } else if (build[c][1] === "false") {
                                         ccontent = false;
                                     }
-                                } else if (build[c][0] === "api.context" && ((/\D/).test(build[c][1]) === false || build[c][1] === "")) {
+                                } else if (build[c][0] === "context" && ((/\D/).test(build[c][1]) === false || build[c][1] === "")) {
                                     ccontext = build[c][1];
-                                } else if (build[c][0] === "api.correct") {
+                                } else if (build[c][0] === "correct") {
                                     if (build[c][1] === "true") {
                                         ccorrect = true;
                                     } else if (build[c][1] === "false") {
                                         ccorrect = false;
                                     }
-                                } else if (build[c][0] === "api.csvchar") {
+                                } else if (build[c][0] === "csvchar") {
                                     ccsvchar = build[c][1];
-                                } else if (build[c][0] === "api.diffcli") {
+                                } else if (build[c][0] === "diffcli") {
                                     if (build[c][1] === "true") {
                                         cdiffcli = true;
                                     } else if (build[c][1] === "false") {
                                         cdiffcli = false;
                                     }
-                                } else if (build[c][0] === "api.diffcomments") {
+                                } else if (build[c][0] === "diffcomments") {
                                     if (build[c][1] === "true") {
                                         cdiffcomments = true;
                                     } else if (build[c][1] === "false") {
                                         cdiffcomments = false;
                                     }
-                                } else if (build[c][0] === "api.difflabel") {
+                                } else if (build[c][0] === "difflabel") {
                                     cdifflabel = build[c][1];
-                                } else if (build[c][0] === "api.diffview") {
+                                } else if (build[c][0] === "diffview") {
                                     if (build[c][1] === "sidebyside") {
                                         cdiffview = "sidebyside";
                                     } else if (build[c][1] === "inline") {
                                         cdiffview = "inline";
                                     }
-                                } else if (build[c][0] === "api.elseline" && build[c][1] === "true") {
+                                } else if (build[c][0] === "elseline" && build[c][1] === "true") {
                                     celseline = true;
-                                } else if (build[c][0] === "api.force_indent") {
+                                } else if (build[c][0] === "force_indent") {
                                     if (build[c][1] === "true") {
                                         cforce = true;
                                     } else if (build[c][1] === "false") {
                                         cforce = false;
                                     }
-                                } else if (build[c][0] === "api.html") {
+                                } else if (build[c][0] === "html") {
                                     if (build[c][1] === "html-no") {
                                         chtml = "html-no";
                                     } else if (build[c][1] === "html-yes") {
                                         chtml = "html-yes";
                                     }
-                                } else if (build[c][0] === "api.inchar") {
+                                } else if (build[c][0] === "inchar") {
                                     cinchar = build[c][1];
-                                } else if (build[c][0] === "api.inlevel") {
+                                } else if (build[c][0] === "inlevel") {
                                     if (build[c][1] === "true") {
                                         cinlevel = true;
                                     } else if (build[c][1] === "false") {
                                         cinlevel = false;
                                     }
-                                } else if (build[c][0] === "api.insize" && (/\D/).test(build[c][1]) === false) {
+                                } else if (build[c][0] === "insize" && (/\D/).test(build[c][1]) === false) {
                                     cinsize = build[c][1];
-                                } else if (build[c][0] === "api.jslines") {
+                                } else if (build[c][0] === "jslines") {
                                     if (build[c][1] === "true") {
                                         cpreserve = true;
                                     } else if (build[c][1] === "false") {
                                         cpreserve = false;
                                     }
-                                } else if (build[c][0] === "api.jsscope") {
+                                } else if (build[c][0] === "jsscope") {
                                     if (build[c][1] === "true") {
                                         cjsscope = true;
                                     } else if (build[c][1] === "false") {
                                         cjsscope = false;
                                     }
-                                } else if (build[c][0] === "api.jsspace") {
+                                } else if (build[c][0] === "jsspace") {
                                     if (build[c][1] === "true") {
                                         cspace = true;
                                     } else if (build[c][1] === "false") {
                                         cspace = false;
                                     }
-                                } else if (build[c][0] === "api.lang") {
+                                } else if (build[c][0] === "lang") {
                                     if (build[c][1] === "auto") {
                                         clang = "auto";
                                     } else if (build[c][1] === "javascript") {
@@ -497,7 +498,7 @@ var prettydiff = function prettydiff(api) {
                                     } else if (build[c][1] === "text") {
                                         clang = "text";
                                     }
-                                } else if (build[c][0] === "api.langdefault") {
+                                } else if (build[c][0] === "langdefault") {
                                     if (build[c][1] === "javascript") {
                                         clang = "javascript";
                                     } else if (build[c][1] === "css") {
@@ -509,7 +510,7 @@ var prettydiff = function prettydiff(api) {
                                     } else if (build[c][1] === "text") {
                                         clang = "text";
                                     }
-                                } else if (build[c][0] === "api.mode") {
+                                } else if (build[c][0] === "mode") {
                                     if (build[c][1] === "beautify") {
                                         cmode = "beautify";
                                     } else if (build[c][1] === "minify") {
@@ -519,13 +520,13 @@ var prettydiff = function prettydiff(api) {
                                     } else if (build[c][1] === "parse") {
                                         cmode = "parse";
                                     }
-                                } else if (build[c][0] === "api.obfuscate") {
+                                } else if (build[c][0] === "obfuscate") {
                                     if (build[c][1] === "true") {
                                         cobfuscate = true;
                                     } else if (build[c][1] === "false") {
                                         cobfuscate = false;
                                     }
-                                } else if (build[c][0] === "api.objsort") {
+                                } else if (build[c][0] === "objsort") {
                                     if (build[c][1] === "all" || build[c][1] === "true") {
                                         cobjsort = true;
                                     } else if (build[c][1] === "css" && clang !== "javascript") {
@@ -535,7 +536,7 @@ var prettydiff = function prettydiff(api) {
                                     } else if (build[c][1] === "none" || build[c][1] === "false") {
                                         cobjsort = false;
                                     }
-                                } else if (build[c][0] === "api.preserve") {
+                                } else if (build[c][0] === "preserve") {
                                     if (build[c][1] === "all" || build[c][1] === "true") {
                                         cpreserve = true;
                                     } else if (build[c][1] === "css" && clang !== "javascript") {
@@ -545,13 +546,13 @@ var prettydiff = function prettydiff(api) {
                                     } else if (build[c][1] === "none" || build[c][1] === "false") {
                                         cpreserve = false;
                                     }
-                                } else if (build[c][0] === "api.quote") {
+                                } else if (build[c][0] === "quote") {
                                     if (build[c][1] === "true") {
                                         cquote = true;
                                     } else if (build[c][1] === "false") {
                                         cquote = false;
                                     }
-                                } else if (build[c][0] === "api.quoteConvert") {
+                                } else if (build[c][0] === "quoteConvert") {
                                     if (build[c][1] === "single") {
                                         cquoteConvert = "single";
                                     } else if (build[c][1] === "double") {
@@ -559,35 +560,35 @@ var prettydiff = function prettydiff(api) {
                                     } else if (build[c][1] === "none") {
                                         cquoteConvert = "none";
                                     }
-                                } else if (build[c][0] === "api.semicolon") {
+                                } else if (build[c][0] === "semicolon") {
                                     if (build[c][1] === "true") {
                                         csemicolon = true;
                                     } else if (build[c][1] === "false") {
                                         csemicolon = false;
                                     }
-                                } else if (build[c][0] === "api.sourcelabel") {
+                                } else if (build[c][0] === "sourcelabel") {
                                     csourcelabel = build[c][1];
-                                } else if (build[c][0] === "api.style") {
+                                } else if (build[c][0] === "style") {
                                     if (build[c][1] === "indent") {
                                         cstyle = "indent";
                                     } else if (build[c][1] === "noindent") {
                                         cstyle = "noindent";
                                     }
-                                } else if (build[c][0] === "api.styleguide") {
+                                } else if (build[c][0] === "styleguide") {
                                     cstyleguide = build[c][1];
-                                } else if (build[c][0] === "api.titanium") {
+                                } else if (build[c][0] === "titanium") {
                                     if (build[c][1] === "true") {
                                         ctitanium = true;
                                     } else if (build[c][1] === "false") {
                                         ctitanium = false;
                                     }
-                                } else if (build[c][0] === "api.topcoms") {
+                                } else if (build[c][0] === "topcoms") {
                                     if (build[c][1] === "true") {
                                         ctopcoms = true;
                                     } else if (build[c][1] === "false") {
                                         ctopcoms = false;
                                     }
-                                } else if (build[c][0] === "api.varword") {
+                                } else if (build[c][0] === "varword") {
                                     if (build[c][1] === "each") {
                                         cvarword = "each";
                                     } else if (build[c][1] === "list") {
@@ -595,7 +596,7 @@ var prettydiff = function prettydiff(api) {
                                     } else if (build[c][1] === "none") {
                                         cvarword = "none";
                                     }
-                                } else if (build[c][0] === "api.vertical") {
+                                } else if (build[c][0] === "vertical") {
                                     if (build[c][1] === "all" || build[c][1] === "true") {
                                         cvertical = true;
                                     } else if (build[c][1] === "css" && clang !== "javascript") {
@@ -605,7 +606,7 @@ var prettydiff = function prettydiff(api) {
                                     } else if (build[c][1] === "none" || build[c][1] === "false") {
                                         cvertical = false;
                                     }
-                                } else if (build[c][0] === "api.wrap" && isNaN(build[c][1]) === false) {
+                                } else if (build[c][0] === "wrap" && isNaN(build[c][1]) === false) {
                                     cwrap = Number(build[c][1]);
                                 }
                             }
@@ -3565,6 +3566,7 @@ var prettydiff = function prettydiff(api) {
                             if (dd === 0) {
                                 if (token[cc] === ",") {
                                     commaTest = true;
+                                    start = cc + 1;
                                 }
                                 if (commaTest === true && token[cc] === "," && start < end) {
                                     keys.push([
@@ -3822,6 +3824,9 @@ var prettydiff = function prettydiff(api) {
                                     return;
                                 }
                                 if (bb === 0) {
+                                    if (aa === 0 && ((token[0] === "{" && tokel === "}") || (token[0] === "[" && tokel === "]"))) {
+                                        return;
+                                    }
                                     if (token[aa] === "(" && (token[aa - 1] === "function" || token[aa - 2] === "function" || (tokel === ")" && token[aa - 1] === block.word[block.len]))) {
                                         return;
                                     }
@@ -4225,7 +4230,7 @@ var prettydiff = function prettydiff(api) {
                                     break;
                                 }
                                 g += 1;
-                            } else {
+                            } else if (c[ee + 1] !== end[g]) {
                                 g = 0;
                             }
                         }
@@ -5485,7 +5490,7 @@ var prettydiff = function prettydiff(api) {
                                     }
                                     return level.push(indent);
                                 }
-                                return level.push(indent + 1);
+                                return level.push(indent);
                             }
                             if (ctoke === ";" || ctoke === "x;") {
                                 if (ternary.length > 0) {
@@ -10244,10 +10249,7 @@ var prettydiff = function prettydiff(api) {
                                 }
                             }());
                         if (itemLength === 0) {
-                            return input;
-                        }
-                        if (attribute === true) {
-                            ind = tab + ind;
+                            return [input, 0];
                         }
                         if (level[i] === "x") {
                             for (a = i - 1; a > -1; a -= 1) {
@@ -10294,12 +10296,14 @@ var prettydiff = function prettydiff(api) {
                             output.push(" ");
                         }
                         output.push(item[itemLength]);
-                        return output.join("");
+                        return [output.join(""), item[itemLength].length];
                     },
                     attr_wrap  = function markup_beauty__apply_attrwrap(item) {
                         var parse = item.split("\n"),
                             loopEnd = level[i],
-                            a = 0;
+                            a = 0,
+                            b = parse[0].length,
+                            c = [];
                         if (loopEnd !== "x") {
                             indents = "";
                             for (a = 0; a < loopEnd; a += 1) {
@@ -10308,10 +10312,14 @@ var prettydiff = function prettydiff(api) {
                         }
                         loopEnd = parse.length;
                         for (a = 1; a < loopEnd; a += 1) {
-                            if (parse[a].length > mwrap) {
-                                parse[a] = text_wrap(parse[a]);
+                            b += parse[a].length;
+                            if (b > mwrap) {
+                                c = text_wrap(parse[a]);
+                                parse[a] = "\n" + tab + indents + c[0];
+                                b = c[1];
+                            } else {
+                                parse[a] = " " + parse[a];
                             }
-                            parse[a] = "\n" + tab + indents + parse[a];
                         }
                         return parse.join("");
                     },
@@ -10451,7 +10459,7 @@ var prettydiff = function prettydiff(api) {
                     };
                 for (i = 0; i < end; i += 1) {
                     if (mwrap > 0 && (cinfo[i] === "content" || cinfo[i] === "mixed_start" || cinfo[i] === "mixed_both" || cinfo[i] === "mixed_end")) {
-                        build[i] = text_wrap(build[i]);
+                        build[i] = text_wrap(build[i])[0];
                     }
                     if (build[i] === "</prettydiffli>" || build[i] === " </prettydiffli>") {
                         build[i] = "";
@@ -10975,24 +10983,24 @@ var prettydiff = function prettydiff(api) {
             cmjs : 150221
         },
         api          : {
-            dom      : 150403,
+            dom      : 150409,
             nodeLocal: 150402,
             wsh      : 150402
         },
         charDecoder  : 141025,
-        css          : 150403, //diffview.css file
+        css          : 150409, //diffview.css file
         csspretty    : 150402, //csspretty library
         csvbeauty    : 140114, //csvbeauty library
         csvmin       : 131224, //csvmin library
         diffview     : 150221, //diffview library
         documentation: 150402, //documentation.xhtml
-        jspretty     : 150403, //jspretty library
+        jspretty     : 150409, //jspretty library
         latest       : 0,
-        markup_beauty: 150402, //markup_beauty library
+        markup_beauty: 150409, //markup_beauty library
         markupmin    : 150402, //markupmin library
-        prettydiff   : 150403, //this file
-        version      : "1.11.10", //version number
-        webtool      : 150402 //prettydiff.com.xhtml
+        prettydiff   : 150409, //this file
+        version      : "1.11.11", //version number
+        webtool      : 150409 //prettydiff.com.xhtml
     };
 edition.latest = (function edition_latest() {
     "use strict";
