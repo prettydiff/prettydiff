@@ -3707,10 +3707,12 @@
         return gutterEvent(cm, e, "gutterContextMenu", false, signal);
     }
     var changeEnd = codeMirror.changeEnd = function (change) {
+        var first = (lst(change.text) === undefined) ? 0 : lst(change.text).length,
+            clen  = (change.text === undefined) ? 0 : change.text.length;
         if (!change.text) {
             return change.to;
         }
-        return Pos(change.from.line + change.text.length - 1, lst(change.text).length + (change.text.length == 1 ? change.from.ch : 0));
+        return Pos(change.from.line + clen - 1, first + (clen == 1 ? change.from.ch : 0));
     };
     function adjustForChange(pos, change) {
         if (cmp(pos, change.from) < 0) {

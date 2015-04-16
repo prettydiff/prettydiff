@@ -9585,7 +9585,7 @@ var prettydiff = function prettydiff(api) {
 
             if (mmode === "parse") {
                 summary = (function markup_beauty__parseSummary() {
-                    var output = ["<p><strong>"],
+                    var output = [],
                         plural = "",
                         a      = 0,
                         len    = cinfo.length,
@@ -9607,7 +9607,8 @@ var prettydiff = function prettydiff(api) {
                         }
                     }
                     start = start - end;
-                    if (start !== end) {
+                    if (start !== end && start !== 0) {
+                        output.push("<p><strong>");
                         if (start > 0) {
                             if (start > 1) {
                                 plural = "s";
@@ -9631,15 +9632,12 @@ var prettydiff = function prettydiff(api) {
                             output.push("!");
                         }
                         output.push("</strong></p>");
-
-                        if (summary.indexOf("jserror") > 0) {
-                            output.push(summary.slice(summary.indexOf("<p "), summary.indexOf("</p>") + 4));
-                        }
-                        if (id.length > 0) {
-                            output.push("<p><strong class='duplicate'>Duplicate id attribute values detected:</strong> " + id + "</p>");
-                        }
-                    } else {
-                        return "";
+                    }
+                    if (summary.indexOf("jserror") > 0) {
+                        output.push(summary.slice(summary.indexOf("<p "), summary.indexOf("</p>") + 4));
+                    }
+                    if (id.length > 0) {
+                        output.push("<p><strong class='duplicate'>Duplicate id attribute values detected:</strong> " + id + "</p>");
                     }
                     return output.join("");
                 }());
@@ -11082,7 +11080,7 @@ var prettydiff = function prettydiff(api) {
             cmjs : 150415
         },
         api          : {
-            dom      : 150415,
+            dom      : 150416,
             nodeLocal: 150415,
             wsh      : 150415
         },
@@ -11095,10 +11093,10 @@ var prettydiff = function prettydiff(api) {
         documentation: 150415, //documentation.xhtml
         jspretty     : 150415, //jspretty library
         latest       : 0,
-        markup_beauty: 150415, //markup_beauty library
+        markup_beauty: 150416, //markup_beauty library
         markupmin    : 150415, //markupmin library
-        prettydiff   : 150415, //this file
-        version      : "1.11.12", //version number
+        prettydiff   : 150416, //this file
+        version      : "1.11.13", //version number
         webtool      : 150415
     };
 edition.latest = (function edition_latest() {

@@ -1095,26 +1095,27 @@ var pd = {};
                                 types = output[0].types,
                                 typeb = output[0].typeb,
                                 a     = 0,
-                                len   = token.length;
+                                len   = token.length,
+                                build = "";
                             if (types !== undefined) {
-                                table.push("<div class='doc'><table class='analysis' summary='Parsed Arrays'><thead><tr><th>" +
-                                    "Index</th><th>types</th><th>token</th></tr></thead><tbody class='parseData'>");
+                                table.push("<div class='doc'><table class='analysis' summary='Parsed Arrays'><thead><tr> <th>" +
+                                    "Index</th><th>types</th><th>token</th> </tr></thead><tbody class='parseData'>");
                                 for (a = 0; a < len; a += 1) {
-                                    table.push("<tr><td>");
+                                    table.push("<tr> <td>");
                                     table.push(a);
                                     table.push("</td><td>");
                                     table.push(types[a]);
                                     table.push("</td><td>");
                                     table.push(token[a].replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;"));
-                                    table.push("</td></tr>");
+                                    table.push("</td> </tr>");
                                 }
                                 table.push("</tbody></table></div>");
                             } else if (typeb !== undefined) {
                                 types = output[0].typea;
-                                table.push("<div class='doc'><table class='analysis' summary='Parsed Arrays'><thead><tr><th>" +
-                                    "Index</th><th>typea</th><th>typeb</th><th>token</th></tr></thead><tbody class='p");
+                                table.push("<div class='doc'><table class='analysis' summary='Parsed Arrays'><thead><tr> <th>" +
+                                    "Index</th><th>typea</th><th>typeb</th><th>token</th> </tr></thead><tbody class='parseData'>");
                                 for (a = 0; a < len; a += 1) {
-                                    table.push("<tr><td>");
+                                    table.push("<tr> <td>");
                                     table.push(a);
                                     table.push("</td><td>");
                                     table.push(types[a]);
@@ -1122,11 +1123,17 @@ var pd = {};
                                     table.push(typeb[a]);
                                     table.push("</td><td>");
                                     table.push(token[a].replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;"));
-                                    table.push("</td></tr>");
+                                    table.push("</td> </tr>");
                                 }
                                 table.push("</tbody></table></div>");
                             }
-                            pd.o.report.code.body.innerHTML = output[1] + table.join("");
+                            build = table.join("");
+                            if (output[1].length + build.length > 75000) {
+                                pd.test.filled.code = true;
+                            } else {
+                                pd.test.filled.code = false;
+                            }
+                            pd.o.report.code.body.innerHTML = output[1] + build;
                             if (autotest === true && pd.o.report.code.body.firstChild !== null) {
                                 if (pd.o.report.code.body.firstChild.nodeType > 1) {
                                     pd.o.report.code.body.removeChild(pd.o.report.code.body.firstChild);
