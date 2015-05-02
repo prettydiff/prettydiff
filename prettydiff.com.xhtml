@@ -9,20 +9,19 @@
         <link href="http://prettydiff.com/labels.rdf" rel="meta" title="ICRA labels"
             type="application/rdf+xml"/>
         <link href="humans.txt" rel="author" type="text/plain"/>
-        <link href="cm/codemirror.css" media="all" rel="stylesheet" type="text/css"/>
         <link href="diffview.css" media="all" rel="stylesheet" type="text/css"/>
         <meta content="width=device-width, initial-scale=1" name="viewport"/>
         <meta content="index, follow" name="robots"/>
         <meta content="Pretty Diff - The difference tool" name="DC.title"/>
         <meta
             content="(pics-1.1 'http://www.icra.org/pics/vocabularyv03/' l gen true for
-        'http://prettydiff.com' r (n 0 s 0 v 0 l 0 oa 0 ob 0 oc 0 od 0 oe 0 of 0 og 0 oh
-        0 c 1) gen true for 'http://www.prettydiff.com' r (n 0 s 0 v 0 l 0 oa 0 ob 0 oc
-        0 od 0 oe 0 of 0 og 0 oh 0 c 1))" http-equiv="pics-Label"/>
+            'http://prettydiff.com' r (n 0 s 0 v 0 l 0 oa 0 ob 0 oc 0 od 0 oe 0 of 0 og 0 oh
+            0 c 1) gen true for 'http://www.prettydiff.com' r (n 0 s 0 v 0 l 0 oa 0 ob 0 oc
+            0 od 0 oe 0 of 0 og 0 oh 0 c 1))" http-equiv="pics-Label"/>
         <meta content="Austin Cheney" name="author"/>
         <meta
             content="Pretty Diff tool can minify, beautify (pretty-print), or diff between
-        minified and beautified code. This tool can even beautify and minify HTML." name="description"/>
+            minified and beautified code. This tool can even beautify and minify HTML." name="description"/>
         <meta content="Global" name="distribution"/>
         <meta content="en" http-equiv="Content-Language"/>
         <meta content="application/xhtml+xml;charset=UTF-8" http-equiv="Content-Type"/>
@@ -272,17 +271,17 @@
                 and reset all options to the default configuration. I recommend refreshing the
                 page after clicking this button." type="button">Reset
                 Options</button></p>
-            <p><strong>CodeMirror Editor</strong>
+            <p><strong>Ace Code Editor</strong>
                 <span>
-                    <input checked="checked" id="codemirror-yes" name="codemirror-radio"
-                        title="This radio button will restore the CodeMirror functionality and refresh
+                    <input checked="checked" id="ace-yes" name="ace-radio"
+                        title="This radio button will restore the Ace Code Editor functionality and refresh
                         the page." type="radio"/>
-                    <label for="codemirror-yes">Enable CodeMirror</label></span>
+                    <label for="ace-yes">Enable Ace Code Editor</label></span>
                 <span>
-                    <input id="codemirror-no" name="codemirror-radio"
-                        title="This radio button will remove the CodeMirror functionality and refresh the
+                    <input id="ace-no" name="ace-radio"
+                        title="This radio button will remove the Ace Code Editor functionality and refresh the
                         page." type="radio"/>
-                    <label for="codemirror-no">Disable CodeMirror (Faster and more
+                    <label for="ace-no">Disable Ace Code Editor (Faster and more
                         accessible)</label></span>
             </p>
             <p><label class="label" for="colorScheme"
@@ -801,11 +800,15 @@
                                 content." type="radio"/><label for="bforce_indent-yes">Always
                                 force indentation</label></span>
                     </p>
-                    <p><strong>Insert Extra Lines, CSS <a class="apiname" href="documentation.xhtml#cssinsertlines">(cssinsertlines)</a></strong>
-                        <span><input checked="checked" id="cssinsertlines-no" name="cssinsertlines" title="Do not insert new lines between CSS blocks." type="radio"/>
+                    <p><strong>Insert Extra Lines, CSS
+                            <a class="apiname" href="documentation.xhtml#cssinsertlines">(cssinsertlines)</a></strong>
+                        <span><input checked="checked" id="cssinsertlines-no" name="cssinsertlines"
+                            title="Do not insert new lines between CSS blocks." type="radio"/>
                             <label for="cssinsertlines-no">Do not create empty lines.</label></span>
-                                <span><input id="cssinsertlines-yes" name="cssinsertlines" title="Insert empty lines between CSS blocks." type="radio"/>
-                                    <label for="cssinsertlines-yes">Insert a new line character between each CSS block.</label></span>
+                        <span><input id="cssinsertlines-yes" name="cssinsertlines"
+                            title="Insert empty lines between CSS blocks." type="radio"/>
+                            <label for="cssinsertlines-yes">Insert a new line character between each CSS
+                                block.</label></span>
                     </p>
                     <p><strong>Empty Lines, CSS / JavaScript
                             <a class="apiname" href="documentation.xhtml#preserve">(preserve)</a></strong>
@@ -1193,7 +1196,7 @@
                 or at
                 <a href="https://github.com/austincheney/prettydiff">Github</a>.</p>
         </div>
-        <script src="cm/codemirror.js" type="application/javascript"></script>
+        <script src="ace/ace.js" type="application/javascript"></script>
         <script src="prettydiff.js" type="application/javascript"></script>
         <script src="api/dom.js" type="application/javascript"></script>
     </body>

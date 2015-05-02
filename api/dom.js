@@ -1,5 +1,5 @@
 /*prettydiff.com api.topcoms: true, api.inchar: " ", api.insize: 4, api.vertical: true */
-/*global console, edition, document, localStorage, window, prettydiff, summary, markup_beauty, csspretty, csvbeauty, csvmin, markupmin, jspretty, diffview, XMLHttpRequest, location, ActiveXObject, FileReader, navigator, setTimeout, codeMirror, AudioContext, ArrayBuffer, Uint8Array*/
+/*global console, edition, document, localStorage, window, prettydiff, summary, markup_beauty, csspretty, csvbeauty, csvmin, markupmin, jspretty, diffview, XMLHttpRequest, location, ActiveXObject, FileReader, navigator, setTimeout, ace, AudioContext, ArrayBuffer, Uint8Array*/
 /***********************************************************************
  This is written by Austin Cheney on 3 Mar 2009. Anybody may use this;
  code without permission so long as this comment exists verbatim in each;
@@ -9,9 +9,6 @@
  http: //mailmarkup.org/
  http: //prettydiff.com/
 
- CodeMirror
- Copyright (C) 2013 by Marijn Haverbeke <marijnh@gmail.com> and others
- http://codemirror.com/   - MIT License
  ***********************************************************************/
 var pd = {};
 
@@ -27,12 +24,12 @@ var pd = {};
 
     //test for web browser features for progressive enhancement
     pd.test   = {
+        //delect if Ace Code Editor is supported
+        ace        : (location.href.toLowerCase().indexOf("ace=false") < 0 && location.href.toLowerCase().indexOf("codemirror=false") < 0 && typeof ace === "object") ? true : false,
         //get the lowercase useragent string
         agent      : (typeof navigator === "object") ? navigator.userAgent.toLowerCase() : "",
         //test for standard web audio support
         audio      : ((typeof AudioContext === "function" || typeof AudioContext === "object") && AudioContext !== null) ? new AudioContext() : null,
-        //delect if CodeMirror is supported
-        cm         : (location.href.toLowerCase().indexOf("codemirror=false") < 0 && (typeof codeMirror === "object" || typeof codeMirror === "function")) ? true : false,
         //am I served from the Pretty Diff domain
         domain     : (location.href.indexOf("prettydiff.com") < 15) ? true : false,
         //If the output is too large the report must open and minimize in a single step
@@ -56,7 +53,7 @@ var pd = {};
         load       : true,
         //test for localStorage and assign the result of the test
         ls         : (typeof localStorage === "object" && localStorage !== null && typeof localStorage.getItem === "function" && typeof localStorage.hasOwnProperty === "function") ? true : false,
-        //CodeMirror will only render correctly if the parent container is visible, this
+        //Ace will only render correctly if the parent container is visible, this
         //test solves for this problem
         render     : {
             beau: false,
@@ -98,13 +95,20 @@ var pd = {};
                 },
                 words      = message.toLowerCase(),
                 exceptions = [
-                    "quota exceeded", "script error", "unexpected number", "quotaexceedederror"
+                    "quota exceeded", "unexpected number", "quotaexceedederror"
                 ],
                 a          = 0;
+            /*if (errorObj !== undefined && errorObj !== null) {
+                datapack.message = message + "\n" + errorObj.stack;
+            }*/
+
             //this for loop prevents sending errors I have no intention of fixing
             for (a = exceptions.length - 1; a > -1; a -= 1) {
                 if (words.indexOf(exceptions[a]) > -1) {
-                    console.error("Line " + line + " at column " + column + " of " + url + "\n\n" + message + "\nHelp a guy out and open a bug: https://github.com/prettydiff/prettydiff/issues");
+                    console.error("Line " + line + " at column " + column + " of " + url);
+                    console.log(message);
+                    console.log("Help a guy out and open a bug: https://github.com/prettydiff/prettydiff/issues\n" +
+                        "\n" + message);
                     return true;
                 }
             }
@@ -118,7 +122,9 @@ var pd = {};
             xhr.open("POST", "http://prettydiff.com:8000/error/", true);
             xhr.setRequestHeader("Content-type", "application/json; charset=utf-8");
             xhr.send(JSON.stringify(datapack));
-            console.error("Line " + line + " at column " + column + " of " + url + "\n\n" + message + "\nHelp a guy out and open a bug: https://github.com/prettydiff/prettydiff/issues");
+            console.error("Line " + line + " at column " + column + " of " + url);
+            console.log("Help a guy out and open a bug: https://github.com/prettydiff/prettydiff/issues\n" +
+                "\n" + message);
             return true;
         };
         window.onerror = pd.error;
@@ -228,7 +234,7 @@ var pd = {};
         if (a === null) {
             return;
         }
-        if (a === undefined || (/^(\s*#(?!(\!\/)))/).test(a) === true || (/\n\s*(\.|@)mixin\(?\s*/).test(a) === true) {
+        if (a === undefined || (/^(\s*#(?!(\!\/)))/).test(a) === true || (/\n\s*(\.|@)mixin\(?(\s*)/).test(a) === true) {
             pd.langproper = "CSS";
             return "css";
         }
@@ -319,291 +325,112 @@ var pd = {};
         swhite : "#webtool.white input.unchecked{background:#ccc;color:#666}.white *:focus,.white .filefocus,.white #feedreportbody .focus,.white #feedreportbody .active-focus{outline:0.1em dashed #00f}.white #beautyoutput,.white #minifyoutput{background:#ddd}.white #Beautify,.white #Minify,.white #diffBase,.white #diffNew{background:#eee;border-color:#ccc;box-shadow:0 0.2em 0.4em rgba(64,64,64,0.15)}.white #diffoutput #thirdparties{background:#eee}.white #diffoutput p em,.white #diffoutput li em{color:#c00}.white #doc .analysis thead th,.white #doc .analysis th[colspan],.white .doc .analysis thead th,.white .doc .analysis th[colspan]{background:#eef}.white #doc div,.white .doc div,#doc.white div{background:#ddd;border-color:#999}.white #doc div:hover,.white .doc div:hover,#doc.white div:hover{background:#ccc}.white #doc div div,.white .doc div div,#doc.white div div{background:#eee;border-color:#999}.white #doc div div:hover,.white .doc div div:hover,#doc.white div div:hover,#doc.white div ol:hover{background:#fff}.white #doc em,.white .doc em,#doc.white em{color:#060}.white #doc ol,.white .doc ol,#doc.white ol{background:#f8f8f8;border-color:#999}.white #doc strong,.white .doc strong,.white .box .body strong{color:#c00}#doc.white table,.white #doc table,.white .doc table,.white .box .body table{background:#fff;border-color:#999}.white #doc th,.white .doc th,#doc.white th{background:#ddd;border-left-color:#999;border-top-color:#999}.white #doc tr:hover,.white .doc tr:hover,#doc.white tr:hover{background:#ddd}.white #feedreportbody .radiogroup label{background:#f8f8f8}.white #feedreportbody .feedradio1:hover,.white #feedreportbody .active .feedradio1,.white #feedreportbody .active-focus .feedradio1{background:#f66}.white #feedreportbody .feedradio2:hover,.white #feedreportbody .active .feedradio2,.white #feedreportbody .active-focus .feedradio2{background:#f96}.white #feedreportbody .feedradio3:hover,.white #feedreportbody .active .feedradio3,.white #feedreportbody .active-focus .feedradio3{background:#fc9}.white #feedreportbody .feedradio4:hover,.white #feedreportbody .active .feedradio4,.white #feedreportbody .active-focus .feedradio4{background:#ff9}.white #feedreportbody .feedradio5:hover,.white #feedreportbody .active .feedradio5,.white #feedreportbody .active-focus .feedradio5{background:#eea}.white #feedreportbody .feedradio6:hover,.white #feedreportbody .active .feedradio6,.white #feedreportbody .active-focus .feedradio6{background:#cd9}.white #feedreportbody .feedradio7:hover,.white #feedreportbody .active .feedradio7,.white #feedreportbody .active-focus .feedradio7{background:#8d8}.white #functionGroup.append{background:#eee;border-color:#ccc;box-shadow:0 0.1em 0.2em rgba(64,64,64,0.15)}.white #introduction h2{border-color:#999;color:#333}.white #option_comment{background:#ddd;border-color:#999}.white #pdsamples li{background:#eee;border-color:#999}.white #pdsamples li div{background:#ddd;border-color:#999}.white #pdsamples li div a{color:#47a}.white #pdsamples li p a{color:#009}.white #thirdparties img,.white #diffoutput #thirdparties{border-color:#999}.white #textareaTabKey{background:#fff;border-color:#ccf}.white #thirdparties img{box-shadow:0.2em 0.2em 0.4em #999}.white #title_text{border-color:#fff;color:#333}.white #top em{color:#00f}.white #update{background:#ddd;border-color:#999;box-shadow:0 0.1em 0.2em rgba(64,64,64,0.15)}.white .analysis .bad{background-color:#ebb;color:#400}.white .analysis .good{background-color:#cec;color:#040}.white .beautify .data .l0{background:#fff}.white .beautify .data .l1{background:#fed}.white .beautify .data .l2{background:#def}.white .beautify .data .l3{background:#efe}.white .beautify .data .l4{background:#fef}.white .beautify .data .l5{background:#eef}.white .beautify .data .l6{background:#fff8cc}.white .beautify .data .l7{background:#ede}.white .beautify .data .l8{background:#efc}.white .beautify .data .l9{background:#ffd}.white .beautify .data .l10{background:#edc}.white .beautify .data .l11{background:#fdb}.white .beautify .data .l12{background:#f8f8f8}.white .beautify .data .l13{background:#ffb}.white .beautify .data .l14{background:#eec}.white .beautify .data .l15{background:#cfc}.white .beautify .data .l16{background:#eea}.white .beautify .data .c0{background:#ddd}.white .beautify .data em.s0,#doc.white .beautify .data em.s0{color:#000}.white .beautify .data em.s1,#doc.white .beautify .data em.s1{color:#f66}.white .beautify .data em.s2,#doc.white .beautify .data em.s2{color:#12f}.white .beautify .data em.s3,#doc.white .beautify .data em.s3{color:#090}.white .beautify .data em.s4,#doc.white .beautify .data em.s4{color:#d6d}.white .beautify .data em.s5,#doc.white .beautify .data em.s5{color:#7cc}.white .beautify .data em.s6,#doc.white .beautify .data em.s6{color:#c85}.white .beautify .data em.s7,#doc.white .beautify .data em.s7{color:#737}.white .beautify .data em.s8,#doc.white .beautify .data em.s8{color:#6d0}.white .beautify .data em.s9,#doc.white .beautify .data em.s9{color:#dd0}.white .beautify .data em.s10,#doc.white .beautify .data em.s10{color:#893}.white .beautify .data em.s11,#doc.white .beautify .data em.s11{color:#b97}.white .beautify .data em.s12,#doc.white .beautify .data em.s12{color:#bbb}.white .beautify .data em.s13,#doc.white .beautify .data em.s13{color:#cc3}.white .beautify .data em.s14,#doc.white .beautify .data em.s14{color:#333}.white .beautify .data em.s15,#doc.white .beautify .data em.s15{color:#9d9}.white .beautify .data em.s16,#doc.white .beautify .data em.s16{color:#880}.white .beautify .data li{color:#777}.white .box{background:#666;border-color:#999;box-shadow:0 0.4em 0.8em rgba(64,64,64,0.25)}.white .box .body{background:#eee;border-color:#888;box-shadow:0 0 0.4em rgba(64,64,64,0.75)}.white .box .body em,.white .box .body .doc em{color:#090}.white .box button{box-shadow:0 0.1em 0.2em rgba(0,0,0,0.25);text-shadow:0.1em 0.1em 0.1em rgba(0,0,0,.25)}.white .box button.maximize{background:#9c9;border-color:#030;color:#030}.white .box button.maximize:hover{background:#cfc;border-color:#060;color:#060}.white .box button.minimize{background:#bbf;border-color:#006;color:#006}.white .box button.minimize:hover{background:#eef;border-color:#228;color:#228}.white .box button.resize{background:#bbf;border-color:#446;color:#446}.white .box button.resize:hover{background:#ddf;border-color:#228;color:#228}.white .box button.save{background:#d99;border-color:#300;color:#300}.white .box button.save:hover{background:#fcc;border-color:#822;color:#822}.white .box h3.heading{background:#ddd;border-color:#888;box-shadow:0.2em 0.2em 0.4em #ccc}.white .box h3.heading:hover{background:#333;color:#eee}.white .diff,.white .beautify,.white .diff ol,.white .beautify ol,.white .diff .diff-left,.white .diff .diff-right,.white h3,.white p.author{border-color:#999}.white .diff .count li,.white .beautify .count li{background:#eed;border-color:#bbc;color:#886}.white .diff .data .delete em{background-color:#fdd;border-color:#700;color:#600}.white .diff .data .insert em{background-color:#efc;border-color:#070;color:#050}.white .diff .data .replace em{background-color:#ffd;border-color:#963;color:#630}.white .diff .delete{background-color:#fbb;border-color:#eaa}.white .diff .equal,.white .beautify .data li{background-color:#fff;border-color:#eee}.white .diff .empty{background-color:#ddd;border-color:#ccc}.white .diff .insert{background-color:#bfb;border-color:#aea}.white .diff .replace{background-color:#fea;border-color:#dd8}.white .diff .skip{background-color:#efefef;border-color:#ddd}.white .diff h3{background:#ddd;border-bottom-color:#bbc}.white .diff p.author{background:#efefef;border-top-color:#bbc}.white .file input,.white .labeltext input{border-color:#fff}.white .options{background:#eee;border-color:#ccc;box-shadow:0 0.2em 0.4em rgba(64,64,64,0.15);text-shadow:0.05em 0.05em 0.1em #ddd}.white .options input[type=text],.white .options select{border-color:#999}.white .options h2,.white #Beautify h2,.white #Minify h2,.white #diffBase h2,.white #diffNew h2{background:#eee;border-color:#eee;box-shadow:none;text-shadow:none}.white a{color:#009}.white a.button:hover,.white a.button:active,.white button:hover,.white button:active{background:#fee;border-color:#cbb;color:#966;text-shadow:0.05em 0.05em 0.1em #f8e8e8}.white fieldset{background:#ddd;border-color:#999}.white h1 svg{background:#eee;border-color:#999;box-shadow:0 0.1em 0.2em rgba(150,150,150,0.5)}.white h2,.white h3{background:#fefefe;border-color:#999;box-shadow:none;text-shadow:none}.white legend{background:#fff;border-color:#999;color:#333;text-shadow:none}.white div input{border-color:#999}.white textarea{border-color:#ccc;border-style:solid}.white textarea:hover{background:#eef8ff}body.white button,body.white a.button{background:#f8f8f8;border-color:#bbb;box-shadow:0 0.1em 0.2em rgba(64,64,64,0.15);color:#666;text-shadow:0.05em 0.05em 0.1em #e0e0e0}html .white,body.white{color:#333}#about_license a{display:block}"
     };
 
-    if (pd.test.cm === true) {
-        pd.cm          = {};
-        pd.cm.diffBase = codeMirror(function dom__cm_diffBase(x) {
-            var node = pd.$$("diffBase");
-            if (pd.o.codeDiffBase === null) {
-                if (node === null) {
-                    pd.o.page.appendChild(x);
-                } else {
-                    node.appendChild(x);
+    if (pd.test.ace === true) {
+        pd.aceApply = function (nodeName) {
+            var div        = document.createElement("div"),
+                node       = pd.o[nodeName],
+                parent     = node.parentNode,
+                attributes = node.attributes,
+                len        = attributes.length,
+                a          = 0,
+                edit       = {};
+            for (a = 0; a < len; a += 1) {
+                if (attributes[a].name !== "rows" && attributes[a].name !== "cols" && attributes[a].name !== "wrap") {
+                    div.setAttribute(attributes[a].name, attributes[a].value);
                 }
-            } else {
-                pd.o.codeDiffBase.parentNode.replaceChild(x, pd.o.codeDiffBase);
             }
-            x.setAttribute("id", "baseText");
-            pd.o.codeDiffBase = x;
-        }, {
-            foldGutter       : true,
-            gutters          : [
-                "CodeMirror-linenumbers", "CodeMirror-foldgutter"
-            ],
-            indentUnit       : 4,
-            lineNumbers      : true,
-            matchBrackets    : true,
-            matchTags        : true,
-            mode             : "javascript",
-            showTrailingSpace: true,
-            tabSize          : 4,
-            theme            : "white"
-        });
-        pd.cm.diffNew  = codeMirror(function dom__cm_diffNew(x) {
-            var node = pd.$$("diffNew");
-            if (pd.o.codeDiffNew === null) {
-                if (node === null) {
-                    pd.o.page.appendChild(x);
-                } else {
-                    node.appendChild(x);
-                }
-            } else {
-                pd.o.codeDiffNew.parentNode.replaceChild(x, pd.o.codeDiffNew);
-            }
-            x.setAttribute("id", "newText");
-            pd.o.codeDiffNew = x;
-        }, {
-            foldGutter       : true,
-            gutters          : [
-                "CodeMirror-linenumbers", "CodeMirror-foldgutter"
-            ],
-            indentUnit       : 4,
-            lineNumbers      : true,
-            matchBrackets    : true,
-            matchTags        : true,
-            mode             : "javascript",
-            showTrailingSpace: true,
-            tabSize          : 4,
-            theme            : "white"
-        });
-        pd.cm.beauIn   = codeMirror(function dom__cm_beauIn(x) {
-            var node = pd.$$("Beautify");
-            if (pd.o.codeBeauIn === null) {
-                if (node === null) {
-                    pd.o.page.appendChild(x);
-                } else {
-                    node.appendChild(x);
-                }
-            } else {
-                pd.o.codeBeauIn.parentNode.replaceChild(x, pd.o.codeBeauIn);
-            }
-            x.setAttribute("id", "beautyinput");
-            pd.o.codeBeauIn = x;
-        }, {
-            foldGutter       : true,
-            gutters          : [
-                "CodeMirror-linenumbers", "CodeMirror-foldgutter"
-            ],
-            indentUnit       : 4,
-            lineNumbers      : true,
-            matchBrackets    : true,
-            matchTags        : true,
-            mode             : "javascript",
-            showTrailingSpace: true,
-            tabSize          : 4,
-            theme            : "white"
-        });
-        pd.cm.beauOut  = codeMirror(function dom__cm_beauOut(x) {
-            var node = pd.$$("Beautify");
-            if (pd.o.codeBeauOut === null) {
-                if (node === null) {
-                    pd.o.page.appendChild(x);
-                } else {
-                    node.appendChild(x);
-                }
-            } else {
-                pd.o.codeBeauOut.parentNode.replaceChild(x, pd.o.codeBeauOut);
-            }
-            x.setAttribute("id", "beautyoutput");
-            pd.o.codeBeauOut = x;
-        }, {
-            foldGutter       : true,
-            gutters          : [
-                "CodeMirror-linenumbers", "CodeMirror-foldgutter"
-            ],
-            indentUnit       : 4,
-            lineNumbers      : true,
-            matchBrackets    : true,
-            matchTags        : true,
-            mode             : "javascript",
-            readOnly         : true,
-            showTrailingSpace: true,
-            tabSize          : 4,
-            theme            : "white"
-        });
-        pd.cm.minnIn   = codeMirror(function dom__cm_minnIn(x) {
-            var node = pd.$$("Minify");
-            if (pd.o.codeMinnIn === null) {
-                if (node === null) {
-                    pd.o.page.appendChild(x);
-                } else {
-                    node.appendChild(x);
-                }
-            } else {
-                pd.o.codeMinnIn.parentNode.replaceChild(x, pd.o.codeMinnIn);
-            }
-            x.setAttribute("id", "minifyinput");
-            pd.o.codeMinnIn = x;
-        }, {
-            foldGutter       : true,
-            gutters          : [
-                "CodeMirror-linenumbers", "CodeMirror-foldgutter"
-            ],
-            indentUnit       : 4,
-            lineNumbers      : true,
-            matchBrackets    : true,
-            matchTags        : true,
-            mode             : "javascript",
-            showTrailingSpace: true,
-            tabSize          : 4,
-            theme            : "white"
-        });
-        pd.cm.minnOut  = codeMirror(function dom__cm_minnOut(x) {
-            var node = pd.$$("Minify");
-            if (pd.o.codeMinnOut === null) {
-                if (node === null) {
-                    pd.o.page.appendChild(x);
-                } else {
-                    node.appendChild(x);
-                }
-            } else {
-                pd.o.codeMinnOut.parentNode.replaceChild(x, pd.o.codeMinnOut);
-            }
-            x.setAttribute("id", "minifyoutput");
-            pd.o.codeMinnOut = x;
-        }, {
-            foldGutter       : true,
-            gutters          : [
-                "CodeMirror-linenumbers", "CodeMirror-foldgutter"
-            ],
-            indentUnit       : 4,
-            lineNumbers      : true,
-            matchBrackets    : true,
-            matchTags        : true,
-            mode             : "javascript",
-            readOnly         : true,
-            showTrailingSpace: true,
-            tabSize          : 4,
-            theme            : "white"
-        });
-        pd.cm.parsIn   = codeMirror(function dom__cm_parsIn(x) {
-            var node = pd.$$("Parse");
-            if (pd.o.codeParsIn === null) {
-                if (node === null) {
-                    pd.o.page.appendChild(x);
-                } else {
-                    node.appendChild(x);
-                }
-            } else {
-                pd.o.codeParsIn.parentNode.replaceChild(x, pd.o.codeParsIn);
-            }
-            x.setAttribute("id", "parseinput");
-            pd.o.codeParsIn = x;
-        }, {
-            foldGutter       : true,
-            gutters          : [
-                "CodeMirror-linenumbers", "CodeMirror-foldgutter"
-            ],
-            indentUnit       : 4,
-            lineNumbers      : true,
-            matchBrackets    : true,
-            matchTags        : true,
-            mode             : "javascript",
-            showTrailingSpace: true,
-            tabSize          : 4,
-            theme            : "white"
-        });
-        pd.cm.parsOut  = codeMirror(function dom__cm_parsOut(x) {
-            var node = pd.$$("Parse");
-            if (pd.o.codeParsOut === null) {
-                if (node === null) {
-                    pd.o.page.appendChild(x);
-                } else {
-                    node.appendChild(x);
-                }
-            } else {
-                pd.o.codeParsOut.parentNode.replaceChild(x, pd.o.codeParsOut);
-            }
-            x.setAttribute("id", "parseoutput");
-            pd.o.codeParsOut = x;
-        }, {
-            foldGutter       : true,
-            gutters          : [
-                "CodeMirror-linenumbers", "CodeMirror-foldgutter"
-            ],
-            indentUnit       : 4,
-            lineNumbers      : true,
-            matchBrackets    : true,
-            matchTags        : true,
-            mode             : "javascript",
-            readOnly         : true,
-            showTrailingSpace: true,
-            tabSize          : 4,
-            theme            : "white"
-        });
-        //execute pd.auto onkeyup for codeBeauIn and codeMinnIn
-        pd.langkey     = function dom__langkey(x) {
+            parent.appendChild(div);
+            parent.removeChild(node);
+            edit           = ace.edit(div);
+            pd.o[nodeName] = div.getElementsByTagName("textarea")[0];
+            return edit;
+        };
+        pd.ace      = {};
+        if (pd.o.codeDiffBase !== null) {
+            pd.ace.diffBase = pd.aceApply("codeDiffBase");
+        }
+        if (pd.o.codeDiffNew !== null) {
+            pd.ace.diffNew = pd.aceApply("codeDiffNew");
+        }
+        if (pd.o.codeBeauIn !== null) {
+            pd.ace.beauIn = pd.aceApply("codeBeauIn");
+        }
+        if (pd.o.codeBeauOut !== null) {
+            pd.ace.beauOut = pd.aceApply("codeBeauOut");
+        }
+        if (pd.o.codeMinnIn !== null) {
+            pd.ace.minnIn = pd.aceApply("codeMinnIn");
+        }
+        if (pd.o.codeMinnOut !== null) {
+            pd.ace.minnOut = pd.aceApply("codeMinnOut");
+        }
+        if (pd.o.codeParsIn !== null) {
+            pd.ace.parsIn = pd.aceApply("codeParsIn");
+        }
+        if (pd.o.codeParsOut !== null) {
+            pd.ace.parsOut = pd.aceApply("codeParsOut");
+        }
+        //execute pd.auto onkeyup
+        pd.langkey = function dom__langkey(x) {
             var value = x.getValue(),
-                lang  = (pd.o.lang === null || pd.o.lang[pd.o.lang.selectedIndex].value === "auto") ? "auto" : pd.o.lang[pd.o.lang.selectedIndex].value;
+                lang  = (pd.o.lang === null || pd.o.lang[pd.o.lang.selectedIndex].value === "auto") ? "auto" : pd.o.lang[pd.o.lang.selectedIndex].value,
+                mode  = "";
             if (lang === "auto") {
                 lang = pd.auto(value);
             }
-            if (x.options.mode !== lang) {
-                if (lang === "javascript") {
-                    x.setOption("mode", "javascript");
-                    x.setOption("mode", "javascript");
-                }
+            if (x.getSession().getMode().$id === undefined || x.getSession().getMode().$id.replace("ace/mode/", "") !== lang) {
                 if (lang === "text") {
-                    x.setOption("mode", null);
-                    x.setOption("mode", null);
+                    mode = "ace/mode/text";
+                } else if (lang === "markup") {
+                    mode = "ace/mode/xml";
+                } else if (lang === "html") {
+                    mode = "ace/mode/html";
+                } else if (lang === "css") {
+                    mode = "ace/mode/scss";
+                } else {
+                    mode = "ace/mode/javascript";
                 }
-                if (lang === "markup") {
-                    x.setOption("mode", "xml");
-                    x.setOption("mode", "xml");
-                }
-                if (lang === "html") {
-                    x.setOption("mode", "htmlembedded");
-                    x.setOption("mode", "htmlembedded");
-                }
-                if (lang === "css") {
-                    x.setOption("mode", "text/x-scss");
-                    x.setOption("mode", "text/x-scss");
+                if (pd.mode === "beau") {
+                    pd.ace.beauIn.getSession().setMode(mode);
+                    pd.ace.beauOut.getSession().setMode(mode);
+                } else if (pd.mode === "minn") {
+                    pd.ace.minnIn.getSession().setMode(mode);
+                    pd.ace.minnOut.getSession().setMode(mode);
+                } else if (pd.mode === "pars") {
+                    pd.ace.parsIn.getSession().setMode(mode);
+                    pd.ace.parsOut.getSession().setMode(mode);
+                } else {
+                    pd.ace.diffBase.getSession().setMode(mode);
+                    pd.ace.diffNew.getSession().setMode(mode);
                 }
             }
         };
-        //set indentation size in CodeMirror
-        pd.insize      = function dom__insize() {
+        //set indentation size in Ace Code Editor
+        pd.insize  = function dom__insize() {
             var that  = this,
                 value = Number(that.value);
             if (that === pd.$$("diff-quan")) {
                 if (pd.o.codeDiffBase !== null) {
-                    pd.cm.diffBase.setOption("indentUnit", value);
+                    pd.ace.diffBase.getSession().setTabSize(value);
                 }
                 if (pd.o.codeDiffNew !== null) {
-                    pd.cm.diffNew.setOption("indentUnit", value);
+                    pd.ace.diffNew.getSession().setTabSize(value);
                 }
             }
             if (that === pd.$$("beau-quan")) {
                 if (pd.o.codeBeauIn !== null) {
-                    pd.cm.beauIn.setOption("indentUnit", value);
+                    pd.ace.beauIn.getSession().setTabSize(value);
                 }
                 if (pd.o.codeBeauOut !== null) {
-                    pd.cm.beauOut.setOption("indentUnit", value);
+                    pd.ace.beauOut.getSession().setTabSize(value);
                 }
             }
             if (that === pd.$$("minn-quan")) {
                 if (pd.o.codeMinnIn !== null) {
-                    pd.cm.minnIn.setOption("indentUnit", value);
+                    pd.ace.minnIn.getSession().setTabSize(value);
                 }
                 if (pd.o.codeMinnOut !== null) {
-                    pd.cm.minnOut.setOption("indentUnit", value);
-                }
-            }
-            if (that === pd.$$("pars-quan")) {
-                if (pd.o.codeParsIn !== null) {
-                    pd.cm.parsIn.setOption("indentUnit", value);
-                }
-                if (pd.o.codeParsOut !== null) {
-                    pd.cm.parsOut.setOption("indentUnit", value);
+                    pd.ace.minnOut.getSession().setTabSize(value);
                 }
             }
         };
@@ -791,12 +618,13 @@ var pd = {};
             event      = e || window.event,
             lang       = "",
             errortext  = "",
-            node       = {},
+            node       = pd.$$("jsscope-html"),
             requests   = false,
             requestd   = false,
             completes  = false,
             completed  = false,
             autotest   = false,
+            textout    = ((pd.o.jsscope === null || pd.o.jsscope.checked === false) && (node === null || node.checked === false)) ? true : false,
             cmlang     = function dom__recycle_cmlang() {
                 if (api.lang === "auto") {
                     autotest = true;
@@ -806,48 +634,43 @@ var pd = {};
                     autotest = false;
                     lang     = pd.auto(api.source);
                     api.lang = lang;
+                } else {
+                    lang = pd.o.lang[pd.o.lang.selectedIndex].value;
                 }
-                if (lang === "html") {
-                    lang = "htmlembedded";
-                } else if (lang === "css") {
-                    lang = "text/x-scss";
+                if (lang === "css") {
+                    lang = "scss";
                 } else if (lang === "markup") {
                     lang = "xml";
                 }
-                if (pd.test.cm === true) {
+                if (pd.test.ace === true) {
                     if (pd.mode === "diff") {
-                        if (pd.cm.diffBase.options.mode !== lang) {
+                        if (pd.ace.diffBase.getSession().getMode().$id.replace("ace/mode/", "") !== lang) {
                             if (lang === "text") {
-                                pd.cm.diffBase.setOption("mode", null);
+                                pd.ace.diffBase.getSession().setMode("ace/mode/" + lang);
                             } else {
-                                pd.cm.diffBase.setOption("mode", lang);
+                                pd.ace.diffBase.getSession().setMode("ace/mode/" + lang);
                             }
                         }
-                        if (pd.cm.diffNew.options.mode !== lang) {
+                        if (pd.ace.diffNew.getSession().getMode().$id.replace("ace/mode/", "") !== lang) {
                             if (lang === "text") {
-                                pd.cm.diffNew.setOption("mode", null);
+                                pd.ace.diffNew.getSession().setMode("ace/mode/" + lang);
                             } else {
-                                pd.cm.diffNew.setOption("mode", lang);
+                                pd.ace.diffNew.getSession().setMode("ace/mode/" + lang);
                             }
                         }
                     }
-                    if (pd.mode === "beau" && pd.cm.beauIn.options.mode !== lang) {
-                        pd.cm.beauIn.setOption("mode", lang);
-                        pd.cm.beauOut.setOption("mode", lang);
+                    if (pd.mode === "beau" && pd.ace.beauIn.getSession().getMode().$id.replace("ace/mode/", "") !== lang) {
+                        pd.ace.beauIn.getSession().setMode("ace/mode/" + lang);
+                        pd.ace.beauOut.getSession().setMode("ace/mode/" + lang);
                     }
-                    if (pd.mode === "minn" && pd.cm.minnIn.options.mode !== lang) {
-                        pd.cm.minnIn.setOption("mode", lang);
-                        pd.cm.minnOut.setOption("mode", lang);
+                    if (pd.mode === "minn" && pd.ace.minnIn.getSession().getMode().$id.replace("ace/mode/", "") !== lang) {
+                        pd.ace.minnIn.getSession().setMode("ace/mode/" + lang);
+                        pd.ace.minnOut.getSession().setMode("ace/mode/" + lang);
                     }
-                    if (pd.mode === "pars" && pd.cm.parsIn.options.mode !== lang) {
-                        pd.cm.parsIn.setOption("mode", lang);
-                        pd.cm.parsOut.setOption("mode", lang);
+                    if (pd.mode === "pars" && pd.ace.parsIn.getSession().getMode().$id.replace("ace/mode/", "") !== lang) {
+                        pd.ace.parsIn.getSession().setMode("ace/mode/" + lang);
+                        pd.ace.parsOut.getSession().setMode("ace/mode/" + lang);
                     }
-                }
-                if (lang === "text/x-scss") {
-                    lang = "css";
-                } else if (lang === "htmlembedded") {
-                    lang = "html";
                 }
                 if (pd.langproper === "Titanium Style Sheets") {
                     api.titanium = true;
@@ -918,8 +741,9 @@ var pd = {};
                 }
                 if (api.mode === "beautify") {
                     if (pd.o.codeBeauOut !== null) {
-                        if (pd.test.cm === true) {
-                            pd.cm.beauOut.setValue(output[0]);
+                        if (pd.test.ace === true) {
+                            pd.ace.beauOut.setValue(output[0]);
+                            pd.ace.beauOut.clearSelection();
                         } else {
                             pd.o.codeBeauOut.value = output[0];
                         }
@@ -1045,8 +869,9 @@ var pd = {};
                         pd.test.filled.code = false;
                     }
                     if (pd.o.codeMinnOut !== null) {
-                        if (pd.test.cm === true) {
-                            pd.cm.minnOut.setValue(output[0]);
+                        if (pd.test.ace === true) {
+                            pd.ace.minnOut.setValue(output[0]);
+                            pd.ace.minnOut.clearSelection();
                         } else {
                             pd.o.codeMinnOut.value = output[0];
                         }
@@ -1082,8 +907,9 @@ var pd = {};
                         pd.test.filled.code = false;
                     }
                     if (pd.o.codeMinnOut !== null) {
-                        if (pd.test.cm === true) {
-                            pd.cm.parsOut.setValue(presumedLanguage);
+                        if (pd.test.ace === true) {
+                            pd.ace.parsOut.setValue(presumedLanguage);
+                            pd.ace.parsOut.clearSelection();
                         } else {
                             pd.o.codeParsOut.value = presumedLanguage;
                         }
@@ -1095,10 +921,16 @@ var pd = {};
                                 types = output[0].types,
                                 typeb = output[0].typeb,
                                 a     = 0,
-                                len   = token.length,
+                                len   = 0,
                                 build = "";
+                            if (token === undefined) {
+                                pd.o.report.code.body.innerHTML = output[1];
+                                return;
+                            }
+                            len = token.length;
                             if (types !== undefined) {
-                                table.push("<div class='doc'><table class='analysis' summary='Parsed Arrays'><thead><tr> <th>" +
+                                table.push("<div class='doc'><table class='analysis' summary='Parsed Arrays'><thead><tr> <th" +
+                                    ">" +
                                     "Index</th><th>types</th><th>token</th> </tr></thead><tbody class='parseData'>");
                                 for (a = 0; a < len; a += 1) {
                                     table.push("<tr> <td>");
@@ -1112,7 +944,8 @@ var pd = {};
                                 table.push("</tbody></table></div>");
                             } else if (typeb !== undefined) {
                                 types = output[0].typea;
-                                table.push("<div class='doc'><table class='analysis' summary='Parsed Arrays'><thead><tr> <th>" +
+                                table.push("<div class='doc'><table class='analysis' summary='Parsed Arrays'><thead><tr> <th" +
+                                    ">" +
                                     "Index</th><th>typea</th><th>typeb</th><th>token</th> </tr></thead><tbody class='parseData'>");
                                 for (a = 0; a < len; a += 1) {
                                     table.push("<tr> <td>");
@@ -1232,7 +1065,7 @@ var pd = {};
             //jsscope does not get the convenience of keypress execution, because its
             //overhead is costly
             //do not execute keypress from alt, home, end, or arrow keys
-            if ((pd.o.jsscope !== null && (pd.o.jsscope.checked === true || pd.$$("jsscope-html").checked === true) && pd.mode === "beau") || event.altKey === true || event.keyCode === 16 || event.keyCode === 18 || event.keyCode === 35 || event.keyCode === 36 || event.keyCode === 37 || event.keyCode === 38 || event.keyCode === 39 || event.keyCode === 40) {
+            if ((textout === false && pd.mode === "beau") || event.altKey === true || event.keyCode === 16 || event.keyCode === 18 || event.keyCode === 35 || event.keyCode === 36 || event.keyCode === 37 || event.keyCode === 38 || event.keyCode === 39 || event.keyCode === 40) {
                 return false;
             }
             if (pd.test.keypress === true) {
@@ -1324,8 +1157,8 @@ var pd = {};
                     verticalj    = pd.$$("vertical-jsonly"),
                     wrap         = pd.$$("beau-wrap");
                 if (pd.o.codeBeauIn !== null) {
-                    if (pd.test.cm === true) {
-                        api.source = pd.cm.beauIn.getValue();
+                    if (pd.test.ace === true) {
+                        api.source = pd.ace.beauIn.getValue();
                     } else {
                         api.source = pd.o.codeBeauIn.value;
                     }
@@ -1490,8 +1323,8 @@ var pd = {};
                     quotecons   = pd.$$("mquoteconvert-single");
                 if (pd.o.codeMinnIn !== null) {
                     pd.o.codeMinnIn = pd.$$("minifyinput");
-                    if (pd.test.cm === true) {
-                        api.source = pd.cm.minnIn.getValue();
+                    if (pd.test.ace === true) {
+                        api.source = pd.ace.minnIn.getValue();
                     } else {
                         api.source = pd.o.codeMinnIn.value;
                     }
@@ -1653,15 +1486,15 @@ var pd = {};
                     return;
                 }
                 if (pd.o.codeDiffBase !== null) {
-                    if (pd.test.cm === true) {
-                        api.source = pd.cm.diffBase.getValue();
+                    if (pd.test.ace === true) {
+                        api.source = pd.ace.diffBase.getValue();
                     } else {
                         api.source = pd.o.codeDiffBase.value;
                     }
                 }
                 if (pd.o.codeDiffNew !== null) {
-                    if (pd.test.cm === true) {
-                        api.diff = pd.cm.diffNew.getValue();
+                    if (pd.test.ace === true) {
+                        api.diff = pd.ace.diffNew.getValue();
                     } else {
                         api.diff = pd.o.codeDiffNew.value;
                     }
@@ -1715,8 +1548,8 @@ var pd = {};
         }
         if (pd.mode === "pars") {
             if (api.lang === "csv" && pd.o.codeParsIn !== null) {
-                if (pd.test.cm === true) {
-                    pd.cm.beauIn.setValue("CSV is not supported in 'Parse Only' mode.");
+                if (pd.test.ace === true) {
+                    pd.ace.parsIn.setValue("CSV is not supported in 'Parse Only' mode.");
                 } else {
                     pd.o.codeParsIn.value = "CSV is not supported in 'Parse Only' mode.";
                 }
@@ -1760,8 +1593,8 @@ var pd = {};
                     varworde  = pd.$$("pvarword-each"),
                     varwordl  = pd.$$("pvarword-list");
                 if (pd.o.codeParsIn !== null) {
-                    if (pd.test.cm === true) {
-                        api.source = pd.cm.parsIn.getValue();
+                    if (pd.test.ace === true) {
+                        api.source = pd.ace.parsIn.getValue();
                     } else {
                         api.source = pd.o.codeParsIn.value;
                     }
@@ -1903,13 +1736,13 @@ var pd = {};
             }());
         }
         if (requests === false && requestd === false) {
-            //sometimes the CodeMirror getValue method fires too early
+            //sometimes the Ace getValue method fires too early
             //on copy/paste.  I put in a 50ms delay in this case to
             //prevent operations from old input
-            if (pd.test.cm === true && api.mode !== "diff") {
+            if (pd.test.ace === true && api.mode !== "diff") {
                 if (api.mode === "beautify") {
                     setTimeout(function dom__recycle_beautifyPromise() {
-                        api.source = pd.cm.beauIn.getValue();
+                        api.source = pd.ace.beauIn.getValue();
                         if (api.lang === "auto" || api.lang === "markup") {
                             cmlang();
                         }
@@ -1921,7 +1754,7 @@ var pd = {};
                 }
                 if (api.mode === "minify") {
                     setTimeout(function dom__recycle_minifyPromise() {
-                        api.source = pd.cm.minnIn.getValue();
+                        api.source = pd.ace.minnIn.getValue();
                         if (api.lang === "auto" || api.lang === "markup") {
                             cmlang();
                         }
@@ -1933,7 +1766,7 @@ var pd = {};
                 }
                 if (api.mode === "parse") {
                     setTimeout(function dom__recycle_parsePromise() {
-                        api.source = pd.cm.parsIn.getValue();
+                        api.source = pd.ace.parsIn.getValue();
                         if (api.lang === "auto" || api.lang === "markup") {
                             cmlang();
                         }
@@ -2097,8 +1930,7 @@ var pd = {};
             pd.tabtrue = false;
         }
         if (node.nodeName.toLowerCase() === "textarea") {
-            if (pd.test.cm === true) {
-                node = node.parentNode.parentNode;
+            if (pd.test.ace === true) {
                 if (node === pd.o.codeBeauOut || node === pd.o.codeMinnOut || node === pd.o.codeParsOut) {
                     esc = true;
                 }
@@ -2138,15 +1970,15 @@ var pd = {};
                     } else if (node === pd.o.codeBeauIn) {
                         pd.$$("beautyfile").focus();
                     } else if (node === pd.o.codeBeauOut) {
-                        pd.o.codeBeauIn.getElementsByTagName("textarea")[0].focus();
+                        pd.o.codeBeauIn.focus();
                     } else if (node === pd.o.codeMinnIn) {
                         pd.$$("minifyfile").focus();
                     } else if (node === pd.o.codeMinnOut) {
-                        pd.o.codeMinnIn.getElementsByTagName("textarea")[0].focus();
+                        pd.o.codeMinnIn.focus();
                     } else if (node === pd.o.codeParsIn) {
                         pd.$$("parsefile").focus();
                     } else if (node === pd.o.codeParsOut) {
-                        pd.o.codeParsIn.getElementsByTagName("textarea")[0].focus();
+                        pd.o.codeParsIn.focus();
                     }
                 } else {
                     //forward tab
@@ -2155,26 +1987,18 @@ var pd = {};
                     } else if (node === pd.o.codeDiffNew || node === pd.o.codeBeauOut || node === pd.o.codeMinnOut) {
                         pd.$$("button-primary").getElementsByTagName("button")[0].focus();
                     } else if (node === pd.o.codeBeauIn) {
-                        if (pd.test.cm === true) {
-                            pd.o.codeBeauOut.getElementsByTagName("textarea")[0].focus();
-                        } else {
-                            pd.o.codeBeauOut.focus();
-                        }
+                        pd.o.codeBeauOut.focus();
                     } else if (node === pd.o.codeMinnIn) {
-                        if (pd.test.cm === true) {
-                            pd.o.codeMinnOut.getElementsByTagName("textarea")[0].focus();
-                        } else {
-                            pd.o.codeMinnOut.focus();
-                        }
+                        pd.o.codeMinnOut.focus();
                     } else if (node === pd.o.codeParsIn) {
-                        if (pd.test.cm === true) {
-                            pd.o.codeParsOut.getElementsByTagName("textarea")[0].focus();
-                        } else {
-                            pd.o.codeParsOut.focus();
-                        }
+                        pd.o.codeParsOut.focus();
                     }
                 }
-                pd.test.tabesc = [];
+                if (pd.test.tabesc[0] === 16) {
+                    pd.test.tabesc = [16];
+                } else {
+                    pd.test.tabesc = [];
+                }
             }
         }
         pd.sequence(event);
@@ -2224,15 +2048,19 @@ var pd = {};
                 var event = e || window.event;
                 fileStore.push(event.target.result);
                 if (a === fileCount) {
-                    if (pd.test.cm === true) {
+                    if (pd.test.ace === true) {
                         if (id === "beautyfile") {
-                            pd.cm.beauIn.setValue(fileStore.join("\n\n"));
+                            pd.ace.beauIn.setValue(fileStore.join("\n\n"));
+                            pd.ace.beauIn.clearSelection();
                         } else if (id === "minifyfile") {
-                            pd.cm.minnIn.setValue(fileStore.join("\n\n"));
+                            pd.ace.minnIn.setValue(fileStore.join("\n\n"));
+                            pd.ace.minnIn.clearSelection();
                         } else if (id === "diffbasefile") {
-                            pd.cm.diffBase.setValue(fileStore.join("\n\n"));
+                            pd.ace.diffBase.setValue(fileStore.join("\n\n"));
+                            pd.ace.diffBase.clearSelection();
                         } else if (id === "diffnewfile") {
-                            pd.cm.diffNew.setValue(fileStore.join("\n\n"));
+                            pd.ace.diffNew.setValue(fileStore.join("\n\n"));
+                            pd.ace.diffNew.clearSelection();
                         }
                     } else {
                         if (id === "beautyfile") {
@@ -2296,16 +2124,26 @@ var pd = {};
                 return x.selectedIndex;
             }()),
             color     = option[index].innerHTML.toLowerCase().replace(/\s+/g, ""),
+            theme     = "",
             logoColor = "",
             logo      = pd.$$("pdlogo");
         pd.o.page.setAttribute("class", color);
-        if (pd.test.cm === true) {
-            pd.cm.diffBase.setOption("theme", color);
-            pd.cm.diffNew.setOption("theme", color);
-            pd.cm.beauIn.setOption("theme", color);
-            pd.cm.beauOut.setOption("theme", color);
-            pd.cm.minnIn.setOption("theme", color);
-            pd.cm.minnOut.setOption("theme", color);
+        if (pd.test.ace === true) {
+            if (color === "white") {
+                theme = "ace/theme/textmate";
+            }
+            if (color === "shadow") {
+                theme = "ace/theme/idle_fingers";
+            }
+            if (color === "canvas") {
+                theme = "ace/theme/canvas";
+            }
+            pd.ace.diffBase.setTheme(theme);
+            pd.ace.diffNew.setTheme(theme);
+            pd.ace.beauIn.setTheme(theme);
+            pd.ace.beauOut.setTheme(theme);
+            pd.ace.minnIn.setTheme(theme);
+            pd.ace.minnOut.setTheme(theme);
         }
         pd.color = color;
         if (logo !== null) {
@@ -3106,43 +2944,41 @@ var pd = {};
                         if ((/^(\s+)$/).test(storage) === true) {
                             storage = "";
                         }
-                        if (pd.test.cm === true) {
+                        if (pd.test.ace === true) {
                             if (langtest === true && lang === "auto") {
                                 lang = pd.auto(storage);
-                                if (lang === "html") {
-                                    lang = "htmlembedded";
-                                } else if (lang === "css") {
-                                    lang = "text/x-scss";
+                                if (lang === "css") {
+                                    lang = "scss";
                                 } else if (lang === "markup") {
                                     lang = "xml";
                                 }
-                                pd.cm.beauIn.setOption("mode", lang);
+                                pd.ace.beauIn.getSession().setMode("ace/mode/" + lang);
                             }
-                            pd.cm.beauIn.setValue(storage);
+                            pd.ace.beauIn.setValue(storage);
+                            pd.ace.beauIn.clearSelection();
+                            pd.langkey(pd.ace.beauIn);
                         } else {
                             pd.o.codeBeauIn.value = storage;
                         }
-                    } else if (pd.test.cm === true) {
-                        pd.cm.beauIn.setValue(" ");
+                    } else if (pd.test.ace === true) {
+                        pd.ace.beauIn.setValue(" ");
                     }
                 }
-                if (pd.test.cm === true && pd.o.codeBeauOut !== null) {
+                if (pd.test.ace === true && pd.o.codeBeauOut !== null) {
                     if (langtest === true && lang === "auto") {
                         if (lang === "" && pd.test.ls === true && localStorage.codeBeautify !== undefined) {
                             lang = pd.auto(localStorage.codeBeautify);
-                            if (lang === "html") {
-                                lang = "htmlembedded";
-                            } else if (lang === "css") {
-                                lang = "text/x-scss";
+                            if (lang === "css") {
+                                lang = "scss";
                             } else if (lang === "markup") {
                                 lang = "xml";
                             }
                         }
                         if (lang !== "") {
-                            pd.cm.beauOut.setOption("mode", lang);
+                            pd.ace.beauOut.getSession().setMode("ace/mode/" + lang);
                         }
                     }
-                    pd.cm.beauOut.setValue(" ");
+                    pd.ace.beauOut.setValue(" ");
                 }
             }
             if (pd.test.load === false && pd.o.jsscope.checked === true) {
@@ -3201,43 +3037,41 @@ var pd = {};
                         if ((/^(\s+)$/).test(storage) === true) {
                             storage = "";
                         }
-                        if (pd.test.cm === true) {
+                        if (pd.test.ace === true) {
                             if (langtest === true && lang === "auto") {
                                 lang = pd.auto(storage);
-                                if (lang === "html") {
-                                    lang = "htmlembedded";
-                                } else if (lang === "css") {
-                                    lang = "text/x-scss";
+                                if (lang === "css") {
+                                    lang = "scss";
                                 } else if (lang === "markup") {
                                     lang = "xml";
                                 }
-                                pd.cm.minnIn.setOption("mode", lang);
+                                pd.ace.minnIn.getSession().setMode("ace/mode/" + lang);
                             }
-                            pd.cm.minnIn.setValue(storage);
+                            pd.ace.minnIn.setValue(storage);
+                            pd.ace.minnIn.clearSelection();
+                            pd.langkey(pd.ace.minnIn);
                         } else {
                             pd.o.codeMinnIn.value = storage;
                         }
-                    } else if (pd.test.cm === true) {
-                        pd.cm.minnIn.setValue(" ");
+                    } else if (pd.test.ace === true) {
+                        pd.ace.minnIn.getSession().setMode("ace/mode/" + lang);
                     }
                 }
-                if (pd.test.cm === true && pd.o.codeMinnOut !== null) {
+                if (pd.test.ace === true && pd.o.codeMinnOut !== null) {
                     if (langtest === true && lang === "auto") {
                         if (lang === "" && pd.test.ls === true && localStorage.codeMinify !== undefined) {
                             lang = pd.auto(localStorage.codeMinify);
-                            if (lang === "html") {
-                                lang = "htmlembedded";
-                            } else if (lang === "css") {
-                                lang = "text/x-scss";
+                            if (lang === "css") {
+                                lang = "scss";
                             } else if (lang === "markup") {
                                 lang = "xml";
                             }
                         }
                         if (lang !== "") {
-                            pd.cm.minnOut.setOption("mode", lang);
+                            pd.ace.minnOut.getSession().setMode("ace/mode/" + lang);
                         }
                     }
-                    pd.cm.minnOut.setValue(" ");
+                    pd.ace.minnOut.setValue(" ");
                 }
             }
             pd.test.render.minn = true;
@@ -3311,31 +3145,31 @@ var pd = {};
                     node.style.display = "block";
                 }
             }
-            if (pd.test.render.diff === false && pd.mode === "diff") {
+            if (pd.test.render.diff === false) {
                 if (pd.o.codeDiffBase !== null) {
                     if (pd.test.ls === true && localStorage.codeDiffBase !== undefined) {
                         storage = localStorage.codeDiffBase;
                         if ((/^(\s+)$/).test(storage) === true) {
                             storage = "";
                         }
-                        if (pd.test.cm === true) {
+                        if (pd.test.ace === true) {
                             if (langtest === true && lang === "auto") {
                                 lang = pd.auto(storage);
-                                if (lang === "htmlembedded") {
-                                    lang = "htmlembedded";
-                                } else if (lang === "css") {
-                                    lang = "text/x-scss";
+                                if (lang === "css") {
+                                    lang = "scss";
                                 } else if (lang === "markup") {
                                     lang = "xml";
                                 }
-                                pd.cm.diffBase.setOption("mode", lang);
+                                pd.ace.diffBase.getSession().setMode("ace/mode/" + lang);
                             }
-                            pd.cm.diffBase.setValue(storage);
+                            pd.ace.diffBase.setValue(storage);
+                            pd.ace.diffBase.clearSelection();
+                            pd.langkey(pd.ace.diffBase);
                         } else {
                             pd.o.codeDiffBase.value = storage;
                         }
-                    } else if (pd.test.cm === true) {
-                        pd.cm.diffBase.setValue(" ");
+                    } else if (pd.test.ace === true) {
+                        pd.ace.diffBase.setValue(" ");
                     }
                 }
                 if (pd.o.codeDiffNew !== null) {
@@ -3344,24 +3178,24 @@ var pd = {};
                         if ((/^(\s+)$/).test(storage) === true) {
                             storage = "";
                         }
-                        if (pd.test.cm === true) {
+                        if (pd.test.ace === true) {
                             if (langtest === true && lang === "auto") {
                                 lang = pd.auto(storage);
-                                if (lang === "html") {
-                                    lang = "htmlembedded";
-                                } else if (lang === "css") {
-                                    lang = "text/x-scss";
+                                if (lang === "css") {
+                                    lang = "scss";
                                 } else if (lang === "markup") {
                                     lang = "xml";
                                 }
-                                pd.cm.diffNew.setOption("mode", lang);
+                                pd.ace.diffNew.getSession().setMode("ace/mode/" + lang);
                             }
-                            pd.cm.diffNew.setValue(storage);
+                            pd.ace.diffNew.setValue(storage);
+                            pd.ace.diffNew.clearSelection();
+                            pd.langkey(pd.ace.diffNew);
                         } else {
                             pd.o.codeDiffNew.value = storage;
                         }
-                    } else if (pd.test.cm === true) {
-                        pd.cm.diffNew.setValue(" ");
+                    } else if (pd.test.ace === true) {
+                        pd.ace.diffNew.setValue(" ");
                     }
                 }
                 pd.test.render.diff = true;
@@ -3418,43 +3252,41 @@ var pd = {};
                         if ((/^(\s+)$/).test(storage) === true) {
                             storage = "";
                         }
-                        if (pd.test.cm === true) {
+                        if (pd.test.ace === true) {
                             if (langtest === true && lang === "auto") {
                                 lang = pd.auto(storage);
-                                if (lang === "html") {
-                                    lang = "htmlembedded";
-                                } else if (lang === "css") {
-                                    lang = "text/x-scss";
+                                if (lang === "css") {
+                                    lang = "scss";
                                 } else if (lang === "markup") {
                                     lang = "xml";
                                 }
-                                pd.cm.parsIn.setOption("mode", lang);
+                                pd.ace.parsIn.getSession().setMode("ace/mode/" + lang);
                             }
-                            pd.cm.parsIn.setValue(storage);
+                            pd.ace.parsIn.setValue(storage);
+                            pd.ace.parsIn.clearSelection();
+                            pd.langkey(pd.ace.beauIn);
                         } else {
                             pd.o.codeParsIn.value = storage;
                         }
-                    } else if (pd.test.cm === true) {
-                        pd.cm.parsIn.setValue(" ");
+                    } else if (pd.test.ace === true) {
+                        pd.ace.parsIn.setValue(" ");
                     }
                 }
-                if (pd.test.cm === true && pd.o.codeParsOut !== null) {
+                if (pd.test.ace === true && pd.o.codeParsOut !== null) {
                     if (langtest === true && lang === "auto") {
                         if (lang === "" && pd.test.ls === true && localStorage.codeParse !== undefined) {
                             lang = pd.auto(localStorage.codeParse);
-                            if (lang === "html") {
-                                lang = "htmlembedded";
-                            } else if (lang === "css") {
-                                lang = "text/x-scss";
+                            if (lang === "css") {
+                                lang = "scss";
                             } else if (lang === "markup") {
                                 lang = "xml";
                             }
                         }
                         if (lang !== "") {
-                            pd.cm.parsOut.setOption("mode", lang);
+                            pd.ace.parsOut.getSession().setMode("ace/mode/" + lang);
                         }
                     }
-                    pd.cm.parsOut.setValue(" ");
+                    pd.ace.parsOut.setValue(" ");
                 }
             }
             pd.test.render.pars = true;
@@ -3636,75 +3468,47 @@ var pd = {};
                     pd.o.langdefault.parentNode.style.display = "none";
                 }
             }
-            if (pd.test.cm === true) {
+            if (pd.test.ace === true) {
                 if (lang === "auto") {
                     if (pd.mode === "diff") {
-                        lang = pd.auto(pd.cm.diffBase.getValue());
+                        lang = pd.auto(pd.ace.diffBase.getValue());
                     }
                     if (pd.mode === "beau") {
-                        lang = pd.auto(pd.cm.beauIn.getValue());
+                        lang = pd.auto(pd.ace.beauIn.getValue());
                     }
                     if (pd.mode === "minn") {
-                        lang = pd.auto(pd.cm.minnIn.getValue());
+                        lang = pd.auto(pd.ace.minnIn.getValue());
                     }
                     if (pd.mode === "pars") {
-                        lang = pd.auto(pd.cm.parsIn.getValue());
+                        lang = pd.auto(pd.ace.parsIn.getValue());
                     }
                 }
                 if (lang === "javascript") {
-                    pd.cm.diffBase.setOption("mode", "javascript");
-                    pd.cm.diffNew.setOption("mode", "javascript");
-                    pd.cm.beauIn.setOption("mode", "javascript");
-                    pd.cm.beauOut.setOption("mode", "javascript");
-                    pd.cm.minnIn.setOption("mode", "javascript");
-                    pd.cm.minnOut.setOption("mode", "javascript");
-                    pd.cm.parsIn.setOption("mode", "javascript");
-                    pd.cm.parsOut.setOption("mode", "javascript");
+                    lang = "ace/mode/javascript";
                 } else if (lang === "html") {
-                    pd.cm.diffBase.setOption("mode", "htmlembedded");
-                    pd.cm.diffNew.setOption("mode", "htmlembedded");
-                    pd.cm.beauIn.setOption("mode", "htmlembedded");
-                    pd.cm.beauOut.setOption("mode", "htmlembedded");
-                    pd.cm.minnIn.setOption("mode", "htmlembedded");
-                    pd.cm.minnOut.setOption("mode", "htmlembedded");
-                    pd.cm.parsIn.setOption("mode", "htmlembedded");
-                    pd.cm.parsOut.setOption("mode", "htmlembedded");
+                    lang = "ace/mode/html";
                 } else if (lang === "css") {
-                    pd.cm.diffBase.setOption("mode", "text/x-scss");
-                    pd.cm.diffNew.setOption("mode", "text/x-scss");
-                    pd.cm.beauIn.setOption("mode", "text/x-scss");
-                    pd.cm.beauOut.setOption("mode", "text/x-scss");
-                    pd.cm.minnIn.setOption("mode", "text/x-scss");
-                    pd.cm.minnOut.setOption("mode", "text/x-scss");
-                    pd.cm.parsIn.setOption("mode", "text/x-scss");
-                    pd.cm.parsOut.setOption("mode", "text/x-scss");
+                    lang = "ace/mode/scss";
                 } else if (lang === "markup") {
-                    pd.cm.diffBase.setOption("mode", "xml");
-                    pd.cm.diffNew.setOption("mode", "xml");
-                    pd.cm.beauIn.setOption("mode", "xml");
-                    pd.cm.beauOut.setOption("mode", "xml");
-                    pd.cm.minnIn.setOption("mode", "xml");
-                    pd.cm.minnOut.setOption("mode", "xml");
-                    pd.cm.parsIn.setOption("mode", "xml");
-                    pd.cm.parsOut.setOption("mode", "xml");
-                } else if (lang === "text") {
-                    pd.cm.diffBase.setOption("mode", null);
-                    pd.cm.diffNew.setOption("mode", null);
-                    pd.cm.beauIn.setOption("mode", null);
-                    pd.cm.beauOut.setOption("mode", null);
-                    pd.cm.minnIn.setOption("mode", null);
-                    pd.cm.minnOut.setOption("mode", null);
-                    pd.cm.parsIn.setOption("mode", null);
-                    pd.cm.parsOut.setOption("mode", null);
+                    lang = "ace/mode/xml";
                 } else {
-                    pd.cm.diffBase.setOption("mode", lang);
-                    pd.cm.diffNew.setOption("mode", lang);
-                    pd.cm.beauIn.setOption("mode", lang);
-                    pd.cm.beauOut.setOption("mode", lang);
-                    pd.cm.minnIn.setOption("mode", lang);
-                    pd.cm.minnOut.setOption("mode", lang);
-                    pd.cm.parsIn.setOption("mode", lang);
-                    pd.cm.parsOut.setOption("mode", lang);
+                    lang = "ace/mode/text";
+                }
+                if (pd.mode === "diff") {
+                    pd.ace.diffBase.getSession().setMode("ace/mode/javascript");
+                    pd.ace.diffNew.getSession().setMode("ace/mode/javascript");
+                }
+                if (pd.mode === "beau") {
+                    pd.ace.beauIn.getSession().setMode("ace/mode/javascript");
+                    pd.ace.beauOut.getSession().setMode("ace/mode/javascript");
+                }
+                if (pd.mode === "minn") {
+                    pd.ace.minnIn.getSession().setMode("ace/mode/javascript");
+                    pd.ace.minnOut.getSession().setMode("ace/mode/javascript");
+                }
+                if (pd.mode === "pars") {
+                    pd.ace.parsIn.getSession().setMode("ace/mode/javascript");
+                    pd.ace.parsOut.getSession().setMode("ace/mode/javascript");
                 }
             }
             if (pd.test.load === false) {
@@ -3725,7 +3529,7 @@ var pd = {};
                     pd.o.codeBeauIn.parentNode.style.width = "49%";
                     pd.o.codeBeauIn.onkeydown              = function dom_hideBeauOut_bindBeauInDown(e) {
                         var event = e || window.event;
-                        if (pd.test.cm === false) {
+                        if (pd.test.ave === false) {
                             pd.fixtabs(event, pd.o.codeBeauIn);
                         }
                         pd.keydown(event);
@@ -3749,9 +3553,9 @@ var pd = {};
                 if (pd.o.codeBeauIn !== null) {
                     node             = pd.o.codeBeauIn.parentNode;
                     node.style.width = "100%";
-                    if (pd.test.cm === true) {
+                    if (pd.test.ace === true) {
                         pd.o.codeBeauIn.onkeyup = function dom__hideBeauOut_langkey() {
-                            pd.langkey(pd.cm.beauIn);
+                            pd.langkey(pd.ace.beauIn);
                         };
                     }
                 }
@@ -3812,41 +3616,57 @@ var pd = {};
                 }
             }
         }
-        if (pd.test.cm === true) {
+        if (pd.test.ace === true) {
             if (pd.mode === "diff") {
-                if (node === pd.$$("diff-tab")) {
-                    pd.cm.diffBase.setOption("indentWithTabs", true);
-                    pd.cm.diffNew.setOption("indentWithTabs", true);
+                if (node === pd.$$("diff-space")) {
+                    pd.ace.diffBase.getSession().setUseSoftTabs(true);
+                    pd.ace.diffNew.getSession().setUseSoftTabs(true);
+                    pd.ace.minnIn.getSession().setUseSoftTabs(true);
+                    pd.ace.minnOut.getSession().setUseSoftTabs(true);
+                    pd.ace.parsIn.getSession().setUseSoftTabs(true);
+                    pd.ace.parsOut.getSession().setUseSoftTabs(true);
+                    node = pd.$$("diff-quan");
+                    if (node !== null && isNaN(Number(node.value)) === false) {
+                        pd.ace.diffBase.getSession().setTabSize(Number(node.value));
+                        pd.ace.diffNew.getSession().setTabSize(Number(node.value));
+                        pd.ace.minnIn.getSession().setTabSize(Number(node.value));
+                        pd.ace.minnOut.getSession().setTabSize(Number(node.value));
+                        pd.ace.parsIn.getSession().setTabSize(Number(node.value));
+                        pd.ace.parsOut.getSession().setTabSize(Number(node.value));
+                    }
                 } else {
-                    pd.cm.diffBase.setOption("indentWithTabs", false);
-                    pd.cm.diffNew.setOption("indentWithTabs", false);
+                    pd.ace.diffBase.getSession().setUseSoftTabs(false);
+                    pd.ace.diffNew.getSession().setUseSoftTabs(false);
+                    pd.ace.minnIn.getSession().setUseSoftTabs(false);
+                    pd.ace.minnOut.getSession().setUseSoftTabs(false);
+                    pd.ace.parsIn.getSession().setUseSoftTabs(false);
+                    pd.ace.parsOut.getSession().setUseSoftTabs(false);
                 }
             }
             if (pd.mode === "beau") {
-                if (node === pd.$$("beau-tab")) {
-                    pd.cm.beauIn.setOption("indentWithTabs", true);
-                    pd.cm.beauOut.setOption("indentWithTabs", true);
+                if (node === pd.$$("beau-space")) {
+                    pd.ace.beauIn.getSession().setUseSoftTabs(true);
+                    pd.ace.beauOut.getSession().setUseSoftTabs(true);
+                    pd.ace.minnIn.getSession().setUseSoftTabs(true);
+                    pd.ace.minnOut.getSession().setUseSoftTabs(true);
+                    pd.ace.parsIn.getSession().setUseSoftTabs(true);
+                    pd.ace.parsOut.getSession().setUseSoftTabs(true);
+                    node = pd.$$("beau-quan");
+                    if (node !== null && isNaN(Number(node.value)) === false) {
+                        pd.ace.beauIn.getSession().setTabSize(Number(node.value));
+                        pd.ace.beauOut.getSession().setTabSize(Number(node.value));
+                        pd.ace.minnIn.getSession().setTabSize(Number(node.value));
+                        pd.ace.minnOut.getSession().setTabSize(Number(node.value));
+                        pd.ace.parsIn.getSession().setTabSize(Number(node.value));
+                        pd.ace.parsOut.getSession().setTabSize(Number(node.value));
+                    }
                 } else {
-                    pd.cm.beauIn.setOption("indentWithTabs", false);
-                    pd.cm.beauOut.setOption("indentWithTabs", false);
-                }
-            }
-            if (pd.mode === "minn") {
-                if (node === pd.$$("minn-tab")) {
-                    pd.cm.minnIn.setOption("indentWithTabs", true);
-                    pd.cm.minnOut.setOption("indentWithTabs", true);
-                } else {
-                    pd.cm.minnIn.setOption("indentWithTabs", false);
-                    pd.cm.minnOut.setOption("indentWithTabs", false);
-                }
-            }
-            if (pd.mode === "pars") {
-                if (node === pd.$$("pars-tab")) {
-                    pd.cm.parsIn.setOption("indentWithTabs", true);
-                    pd.cm.parsOut.setOption("indentWithTabs", true);
-                } else {
-                    pd.cm.parsIn.setOption("indentWithTabs", false);
-                    pd.cm.parsOut.setOption("indentWithTabs", false);
+                    pd.ace.beauIn.getSession().setUseSoftTabs(false);
+                    pd.ace.beauOut.getSession().setUseSoftTabs(false);
+                    pd.ace.minnIn.getSession().setUseSoftTabs(false);
+                    pd.ace.minnOut.getSession().setUseSoftTabs(false);
+                    pd.ace.parsIn.getSession().setUseSoftTabs(false);
+                    pd.ace.parsOut.getSession().setUseSoftTabs(false);
                 }
             }
         }
@@ -4263,6 +4083,11 @@ var pd = {};
                         "mode", "minify"
                     ];
                 }
+                if (id === "modeparse") {
+                    data = [
+                        "mode", "parse"
+                    ];
+                }
                 if (id === "obfuscate-no") {
                     data = [
                         "obfuscate", "false"
@@ -4395,59 +4220,86 @@ var pd = {};
     pd.fixHeight           = function dom__fixHeight() {
         var baseText = pd.$$("baseText"),
             newText  = pd.$$("newText"),
+            beauIn   = pd.$$("beautyinput"),
+            beauOut  = pd.$$("beautyoutput"),
+            minnIn   = pd.$$("minifyinput"),
+            minnOut  = pd.$$("minifyoutput"),
+            parsIn   = pd.$$("parseinput"),
+            parsOut  = pd.$$("parseoutput"),
+            math     = 0,
             height   = window.innerHeight || document.getElementsByTagName("body")[0].clientHeight,
             headline = 0;
         if (pd.o.headline !== null && pd.o.headline.style.display === "block") {
             headline = 3.8;
         }
-        if (pd.test.cm === true) {
+        if (pd.test.ace === true) {
             if (baseText !== null && newText !== null) {
-                baseText.style.height       = ((height / 12) - (19.9 + headline)) + "em";
-                newText.style.height        = ((height / 12) - (19.9 + headline)) + "em";
-                baseText.style.marginBottom = "0";
-                newText.style.marginBottom  = "0";
+                math                  = (height / 12) - (19.5 + headline);
+                baseText.style.height = math + "em";
+                newText.style.height  = math + "em";
+                pd.ace.diffBase.setStyle("height:" + math + "em");
+                pd.ace.diffNew.setStyle("height:" + math + "em");
+                pd.ace.diffBase.resize();
+                pd.ace.diffNew.resize();
             }
+            math = (height / 12) - (18.12 + headline);
             if (pd.o.codeBeauIn !== null) {
-                pd.o.codeBeauIn.style.marginBottom = "1em";
-            }
-            if (pd.o.codeBeauOut !== null) {
-                pd.o.codeBeauOut.style.marginBottom = "1em";
+                beauIn.style.height = math + "em";
+                pd.ace.beauIn.setStyle("height:" + math + "em");
+                pd.ace.beauIn.resize();
             }
             if (pd.o.codeMinnIn !== null) {
-                pd.o.codeMinnIn.style.marginBottom = "1em";
-            }
-            if (pd.o.codeMinnOut !== null) {
-                pd.o.codeMinnOut.style.marginBottom = "1em";
+                minnIn.style.height = math + "em";
+                pd.ace.minnIn.setStyle("height:" + math + "em");
+                pd.ace.minnIn.resize();
             }
             if (pd.o.codeParsIn !== null) {
-                pd.o.codeParsIn.style.marginBottom = "1em";
+                parsIn.style.height = math + "em";
+                pd.ace.parsIn.setStyle("height:" + math + "em");
+                pd.ace.parsIn.resize();
+            }
+            math = (height / 12) - (15.725 + headline);
+            if (pd.o.codeBeauOut !== null) {
+                beauOut.style.height = math + "em";
+                pd.ace.beauOut.setStyle("height:" + math + "em");
+                pd.ace.beauOut.resize();
+            }
+            if (pd.o.codeMinnOut !== null) {
+                minnOut.style.height = math + "em";
+                pd.ace.minnOut.setStyle("height:" + math + "em");
+                pd.ace.minnOut.resize();
             }
             if (pd.o.codeParsOut !== null) {
-                pd.o.codeParsOut.style.marginBottom = "1em";
+                parsOut.style.height = math + "em";
+                pd.ace.parsOut.setStyle("height:" + math + "em");
+                pd.ace.parsOut.resize();
             }
         } else {
             if (baseText !== null && newText !== null) {
-                baseText.style.height = ((height / 12) - (20 + headline)) + "em";
-                newText.style.height  = ((height / 12) - (20 + headline)) + "em";
+                math                  = (height / 12) - (20 + headline);
+                baseText.style.height = math + "em";
+                newText.style.height  = math + "em";
             }
-        }
-        if (pd.o.codeBeauIn !== null) {
-            pd.o.codeBeauIn.style.height = ((height / 12) - (18.65 + headline)) + "em";
-        }
-        if (pd.o.codeBeauOut !== null) {
-            pd.o.codeBeauOut.style.height = ((height / 12) - (16.3 + headline)) + "em";
-        }
-        if (pd.o.codeMinnIn !== null) {
-            pd.o.codeMinnIn.style.height = ((height / 12) - (18.65 + headline)) + "em";
-        }
-        if (pd.o.codeMinnOut !== null) {
-            pd.o.codeMinnOut.style.height = ((height / 12) - (16.3 + headline)) + "em";
-        }
-        if (pd.o.codeParsIn !== null) {
-            pd.o.codeParsIn.style.height = ((height / 12) - (18.65 + headline)) + "em";
-        }
-        if (pd.o.codeParsOut !== null) {
-            pd.o.codeParsOut.style.height = ((height / 12) - (16.3 + headline)) + "em";
+            math = (height / 12) - (18.65 + headline);
+            if (pd.o.codeBeauIn !== null) {
+                pd.o.codeBeauIn.style.height = math + "em";
+            }
+            if (pd.o.codeMinnIn !== null) {
+                pd.o.codeMinnIn.style.height = math + "em";
+            }
+            if (pd.o.codeParsIn !== null) {
+                pd.o.codeParsIn.style.height = math + "em";
+            }
+            math = (height / 12) - (16.3 + headline);
+            if (pd.o.codeBeauOut !== null) {
+                pd.o.codeBeauOut.style.height = math + "em";
+            }
+            if (pd.o.codeMinnOut !== null) {
+                pd.o.codeMinnOut.style.height = math + "em";
+            }
+            if (pd.o.codeParsOut !== null) {
+                pd.o.codeParsOut.style.height = math + "em";
+            }
         }
     };
 
@@ -4501,15 +4353,15 @@ var pd = {};
                     pd.sequence(aa);
                 }
             },
-            cmdisable     = function dom__load_cmdisable(x) {
+            acedisable    = function dom__load_acedisable(x) {
                 var el     = (typeof x === "object" && x.nodeType === 1) ? x : this,
                     elId   = el.getAttribute("id"),
-                    loc    = location.href.indexOf("codemirror=false"),
+                    loc    = location.href.indexOf("ace=false"),
                     place  = [],
                     symbol = "?";
                 pd.options(el);
                 if (elId.indexOf("-yes") > 0 && loc > 0) {
-                    place = location.href.split("codemirror=false");
+                    place = location.href.split("ace=false");
                     if (place[1].indexOf("&") < 0 && place[1].indexOf("%26") < 0) {
                         place[0]      = place[0].slice(0, place[0].length - 1);
                         location.href = place.join("");
@@ -4518,7 +4370,7 @@ var pd = {};
                     if (location.href.indexOf("?") < location.href.length - 1 && location.href.indexOf("?") > 0) {
                         symbol = "&";
                     }
-                    location.href = location.href + symbol + "codemirror=false";
+                    location.href = location.href + symbol + "ace=false";
                 }
             },
             hideBeauOut   = function dom__load_hideBeauOut() {
@@ -4562,7 +4414,7 @@ var pd = {};
                     tabkey.style.right = "auto";
                 }
                 tabkey.style.display = "block";
-                if (pd.test.cm === true) {
+                if (pd.test.ace === true) {
                     this.parentNode.parentNode.setAttribute("class", this.parentNode.parentNode.getAttribute("class") + " filefocus");
                 }
             },
@@ -4572,7 +4424,7 @@ var pd = {};
                     return;
                 }
                 tabkey.style.display = "none";
-                if (pd.test.cm === true) {
+                if (pd.test.ace === true) {
                     this.parentNode.parentNode.setAttribute("class", this.parentNode.parentNode.getAttribute("class").replace(" filefocus", ""));
                 }
             },
@@ -4807,10 +4659,10 @@ var pd = {};
                     var event = e || window.event;
                     pd.recycle(event);
                 };
-                if (pd.test.cm === true) {
-                    pd.o.codeBeauIn.getElementsByTagName("textarea")[0].onfocus   = textareafocus;
-                    pd.o.codeBeauIn.getElementsByTagName("textarea")[0].onblur    = textareablur;
-                    pd.o.codeBeauIn.getElementsByTagName("textarea")[0].onkeydown = function dom__load_bindBeauInDownCM(e) {
+                if (pd.test.ace === true) {
+                    pd.o.codeBeauIn.onfocus   = textareafocus;
+                    pd.o.codeBeauIn.onblur    = textareablur;
+                    pd.o.codeBeauIn.onkeydown = function dom__load_bindBeauInDownCM(e) {
                         var event = e || window.event;
                         pd.areaTabOut(event, this);
                         pd.keydown(event);
@@ -4826,20 +4678,20 @@ var pd = {};
                     };
                 }
             }
-            if (pd.o.codeBeauOut !== null && pd.test.cm === true) {
-                pd.o.codeBeauOut.getElementsByTagName("textarea")[0].onfocus   = textareafocus;
-                pd.o.codeBeauOut.getElementsByTagName("textarea")[0].onblur    = textareablur;
-                pd.o.codeBeauOut.getElementsByTagName("textarea")[0].onkeydown = pd.areaTabOut;
+            if (pd.o.codeBeauOut !== null && pd.test.ace === true) {
+                pd.o.codeBeauOut.onfocus   = textareafocus;
+                pd.o.codeBeauOut.onblur    = textareablur;
+                pd.o.codeBeauOut.onkeydown = pd.areaTabOut;
             }
             if (pd.o.codeMinnIn !== null) {
                 pd.o.codeMinnIn.onkeyup = function dom__load_bindMinnInUp(e) {
                     var event = e || window.event;
                     pd.recycle(event);
                 };
-                if (pd.test.cm === true) {
-                    pd.o.codeMinnIn.getElementsByTagName("textarea")[0].onfocus   = textareafocus;
-                    pd.o.codeMinnIn.getElementsByTagName("textarea")[0].onblur    = textareablur;
-                    pd.o.codeMinnIn.getElementsByTagName("textarea")[0].onkeydown = function dom__load_bindMinnInDownCM(e) {
+                if (pd.test.ace === true) {
+                    pd.o.codeMinnIn.onfocus   = textareafocus;
+                    pd.o.codeMinnIn.onblur    = textareablur;
+                    pd.o.codeMinnIn.onkeydown = function dom__load_bindMinnInDownCM(e) {
                         var event = e || window.event;
                         pd.areaTabOut(event, this);
                         pd.keydown(event);
@@ -4855,20 +4707,20 @@ var pd = {};
                     };
                 }
             }
-            if (pd.o.codeMinnOut !== null && pd.test.cm === true) {
-                pd.o.codeMinnOut.getElementsByTagName("textarea")[0].onfocus   = textareafocus;
-                pd.o.codeMinnOut.getElementsByTagName("textarea")[0].onblur    = textareablur;
-                pd.o.codeMinnOut.getElementsByTagName("textarea")[0].onkeydown = pd.areaTabOut;
+            if (pd.o.codeMinnOut !== null && pd.test.ace === true) {
+                pd.o.codeMinnOut.onfocus   = textareafocus;
+                pd.o.codeMinnOut.onblur    = textareablur;
+                pd.o.codeMinnOut.onkeydown = pd.areaTabOut;
             }
             if (pd.o.codeParsIn !== null) {
                 pd.o.codeParsIn.onkeyup = function dom__load_bindParsInUp(e) {
                     var event = e || window.event;
                     pd.recycle(event);
                 };
-                if (pd.test.cm === true) {
-                    pd.o.codeParsIn.getElementsByTagName("textarea")[0].onfocus   = textareafocus;
-                    pd.o.codeParsIn.getElementsByTagName("textarea")[0].onblur    = textareablur;
-                    pd.o.codeParsIn.getElementsByTagName("textarea")[0].onkeydown = function dom__load_bindBeauInDownCM(e) {
+                if (pd.test.ace === true) {
+                    pd.o.codeParsIn.onfocus   = textareafocus;
+                    pd.o.codeParsIn.onblur    = textareablur;
+                    pd.o.codeParsIn.onkeydown = function dom__load_bindBeauInDownCM(e) {
                         var event = e || window.event;
                         pd.areaTabOut(event, this);
                         pd.keydown(event);
@@ -4884,19 +4736,19 @@ var pd = {};
                     };
                 }
             }
-            if (pd.o.codeParsOut !== null && pd.test.cm === true) {
-                pd.o.codeParsOut.getElementsByTagName("textarea")[0].onfocus   = textareafocus;
-                pd.o.codeParsOut.getElementsByTagName("textarea")[0].onblur    = textareablur;
-                pd.o.codeParsOut.getElementsByTagName("textarea")[0].onkeydown = pd.areaTabOut;
+            if (pd.o.codeParsOut !== null && pd.test.ace === true) {
+                pd.o.codeParsOut.onfocus   = textareafocus;
+                pd.o.codeParsOut.onblur    = textareablur;
+                pd.o.codeParsOut.onkeydown = pd.areaTabOut;
             }
             if (pd.o.codeDiffBase !== null) {
-                if (pd.test.cm === true) {
-                    pd.o.codeDiffBase.onkeyup                                       = function dom__load_bindAutoDiffBase() {
-                        pd.langkey(pd.cm.diffBase);
+                if (pd.test.ace === true) {
+                    pd.o.codeDiffBase.onkeyup   = function dom__load_bindAutoDiffBase() {
+                        pd.langkey(pd.ace.diffBase);
                     };
-                    pd.o.codeDiffBase.getElementsByTagName("textarea")[0].onfocus   = textareafocus;
-                    pd.o.codeDiffBase.getElementsByTagName("textarea")[0].onblur    = textareablur;
-                    pd.o.codeDiffBase.getElementsByTagName("textarea")[0].onkeydown = pd.areaTabOut;
+                    pd.o.codeDiffBase.onfocus   = textareafocus;
+                    pd.o.codeDiffBase.onblur    = textareablur;
+                    pd.o.codeDiffBase.onkeydown = pd.areaTabOut;
                 } else {
                     pd.o.codeDiffBase.onfocus   = textareafocus;
                     pd.o.codeDiffBase.onblur    = textareablur;
@@ -4908,13 +4760,13 @@ var pd = {};
                 }
             }
             if (pd.o.codeDiffNew !== null) {
-                if (pd.test.cm === true) {
-                    pd.o.codeDiffNew.onkeyup                                       = function dom__load_bindAutoDiffNew() {
-                        pd.langkey(pd.cm.diffNew);
+                if (pd.test.ace === true) {
+                    pd.o.codeDiffNew.onkeyup   = function dom__load_bindAutoDiffNew() {
+                        pd.langkey(pd.ace.diffNew);
                     };
-                    pd.o.codeDiffNew.getElementsByTagName("textarea")[0].onfocus   = textareafocus;
-                    pd.o.codeDiffNew.getElementsByTagName("textarea")[0].onblur    = textareablur;
-                    pd.o.codeDiffNew.getElementsByTagName("textarea")[0].onkeydown = pd.areaTabOut;
+                    pd.o.codeDiffNew.onfocus   = textareafocus;
+                    pd.o.codeDiffNew.onblur    = textareablur;
+                    pd.o.codeDiffNew.onkeydown = pd.areaTabOut;
                 } else {
                     pd.o.codeDiffNew.onfocus   = textareafocus;
                     pd.o.codeDiffNew.onblur    = textareablur;
@@ -5094,7 +4946,7 @@ var pd = {};
                     }
                     if (name === "mode") {
                         inputs[a].onclick = pd.prettyvis;
-                        if (pd.settings[name] === id || inputs[a].checked === true) {
+                        if (pd.settings[name] === id) {
                             pd.prettyvis(inputs[a]);
                         }
                     } else if (name === "diffchar") {
@@ -5134,48 +4986,48 @@ var pd = {};
                         if (id === "jsscope-yes" && inputs[a].checked === true) {
                             pd.hideBeauOut(inputs[a]);
                         }
-                    } else if (name === "codemirror-radio") {
-                        if (id === "codemirror-no" && inputs[a].checked === true && pd.test.cm === true) {
-                            cmdisable(inputs[a]);
+                    } else if (name === "ace-radio") {
+                        if (id === "ace-no" && inputs[a].checked === true && pd.test.ace === true) {
+                            acedisable(inputs[a]);
                         }
-                        if (id === "codemirror-yes" && inputs[a].checked === true && pd.test.cm === false) {
-                            pd.$$("codemirror-no").checked = true;
+                        if (id === "ace-yes" && inputs[a].checked === true && pd.test.ace === false) {
+                            pd.$$("ace-no").checked = true;
                         }
-                        inputs[a].onclick = cmdisable;
+                        inputs[a].onclick = acedisable;
                     } else {
                         inputs[a].onclick = pd.options;
                     }
                 } else if (type === "text") {
-                    if (pd.test.cm === true && (id === "diff-quan" || id === "beau-quan" || id === "minn-quan")) {
+                    if (pd.test.ace === true && (id === "diff-quan" || id === "beau-quan" || id === "minn-quan")) {
                         inputs[a].onkeyup = pd.insize;
                         if (pd.settings[id] !== undefined && pd.settings[id] !== "4" && isNaN(pd.settings[id]) === false) {
                             if (id === "diff-quan") {
                                 if (pd.o.codeDiffBase !== null) {
-                                    pd.cm.diffBase.setOption("indentUnit", Number(pd.settings[id]));
+                                    pd.ace.diffBase.getSession().setTabSize(Number(pd.settings[id]));
                                 }
                                 if (pd.o.codeDiffNew !== null) {
-                                    pd.cm.diffNew.setOption("indentUnit", Number(pd.settings[id]));
+                                    pd.ace.diffNew.getSession().setTabSize(Number(pd.settings[id]));
                                 }
                             } else if (id === "beau-quan") {
                                 if (pd.o.codeBeauIn !== null) {
-                                    pd.cm.beauIn.setOption("indentUnit", Number(pd.settings[id]));
+                                    pd.ace.beauIn.getSession().setTabSize(Number(pd.settings[id]));
                                 }
                                 if (pd.o.codeBeauOut !== null) {
-                                    pd.cm.beauOut.setOption("indentUnit", Number(pd.settings[id]));
+                                    pd.ace.beauOut.getSession().setTabSize(Number(pd.settings[id]));
                                 }
                             } else if (id === "minn-quan") {
                                 if (pd.o.codeMinnIn !== null) {
-                                    pd.cm.minnIn.setOption("indentUnit", Number(pd.settings[id]));
+                                    pd.ace.minnIn.getSession().setTabSize(Number(pd.settings[id]));
                                 }
                                 if (pd.o.codeMinnOut !== null) {
-                                    pd.cm.minnOut.setOption("indentUnit", Number(pd.settings[id]));
+                                    pd.ace.minnOut.getSession().setTabSize(Number(pd.settings[id]));
                                 }
                             } else if (id === "pars-quan") {
                                 if (pd.o.codeParsIn !== null) {
-                                    pd.cm.parsIn.setOption("indentUnit", Number(pd.settings[id]));
+                                    pd.ace.parsIn.getSession().setTabSize(Number(pd.settings[id]));
                                 }
                                 if (pd.o.codeParsOut !== null) {
-                                    pd.cm.parsOut.setOption("indentUnit", Number(pd.settings[id]));
+                                    pd.ace.parsOut.getSession().setTabSize(Number(pd.settings[id]));
                                 }
                             }
                         }
@@ -5194,8 +5046,8 @@ var pd = {};
                     inputs[a].onblur   = fileblur;
                 }
             }
-            node = pd.$$("codemirror-no");
-            if (pd.test.cm === false && node !== null && node.checked === false) {
+            node = pd.$$("ace-no");
+            if (pd.test.ace === false && node !== null && node.checked === false) {
                 node.checked = true;
             }
             inputs    = document.getElementsByTagName("select");
@@ -5340,18 +5192,11 @@ var pd = {};
                         } else if (params[b].indexOf("d=") === 0 && pd.o.codeDiffNew !== null) {
                             diff = params[b].substr(2);
                             if (pd.o.codeDiffNew !== null) {
-                                if (pd.test.cm === true) {
-                                    pd.cm.diffNew.setValue(diff);
+                                if (pd.test.ace === true) {
+                                    pd.ace.diffNew.setValue(diff);
+                                    pd.ace.diffNew.clearSelection();
                                 } else {
                                     pd.o.codeDiffNew.value = diff;
-                                }
-                            }
-                        } else if (params[b].toLowerCase() === "html" && pd.o.lang !== null) {
-                            for (c = options.length - 1; c > -1; c -= 1) {
-                                if (options[c].value === "html") {
-                                    pd.o.lang.selectedIndex = c;
-                                    pd.codeOps(pd.o.lang);
-                                    break;
                                 }
                             }
                         } else if (params[b].indexOf("l=") === 0 && pd.o.lang !== null) {
@@ -5366,6 +5211,63 @@ var pd = {};
                                     break;
                                 }
                             }
+                            if (pd.test.ace === true) {
+                                if (value === "javascript") {
+                                    pd.ace.diffBase.getSession().setMode("ace/mode/javascript");
+                                    pd.ace.diffNew.getSession().setMode("ace/mode/javascript");
+                                    pd.ace.beauIn.getSession().setMode("ace/mode/javascript");
+                                    pd.ace.beauOut.getSession().setMode("ace/mode/javascript");
+                                    pd.ace.minnIn.getSession().setMode("ace/mode/javascript");
+                                    pd.ace.minnOut.getSession().setMode("ace/mode/javascript");
+                                    pd.ace.parsIn.getSession().setMode("ace/mode/javascript");
+                                    pd.ace.parsOut.getSession().setMode("ace/mode/javascript");
+                                } else if (value === "html") {
+                                    pd.ace.diffBase.getSession().setMode("ace/mode/html");
+                                    pd.ace.diffNew.getSession().setMode("ace/mode/html");
+                                    pd.ace.beauIn.getSession().setMode("ace/mode/html");
+                                    pd.ace.beauOut.getSession().setMode("ace/mode/html");
+                                    pd.ace.minnIn.getSession().setMode("ace/mode/html");
+                                    pd.ace.minnOut.getSession().setMode("ace/mode/html");
+                                    pd.ace.parsIn.getSession().setMode("ace/mode/html");
+                                    pd.ace.parsOut.getSession().setMode("ace/mode/html");
+                                } else if (id === "css") {
+                                    pd.ace.diffBase.getSession().setMode("ace/mode/scss");
+                                    pd.ace.diffNew.getSession().setMode("ace/mode/scss");
+                                    pd.ace.beauIn.getSession().setMode("ace/mode/scss");
+                                    pd.ace.beauOut.getSession().setMode("ace/mode/scss");
+                                    pd.ace.minnIn.getSession().setMode("ace/mode/scss");
+                                    pd.ace.minnOut.getSession().setMode("ace/mode/scss");
+                                    pd.ace.parsIn.getSession().setMode("ace/mode/scss");
+                                    pd.ace.parsOut.getSession().setMode("ace/mode/scss");
+                                } else if (id === "markup") {
+                                    pd.ace.diffBase.getSession().setMode("ace/mode/xml");
+                                    pd.ace.diffNew.getSession().setMode("ace/mode/xml");
+                                    pd.ace.beauIn.getSession().setMode("ace/mode/xml");
+                                    pd.ace.beauOut.getSession().setMode("ace/mode/xml");
+                                    pd.ace.minnIn.getSession().setMode("ace/mode/xml");
+                                    pd.ace.minnOut.getSession().setMode("ace/mode/xml");
+                                    pd.ace.parsIn.getSession().setMode("ace/mode/xml");
+                                    pd.ace.parsOut.getSession().setMode("ace/mode/xml");
+                                } else if (id === "text") {
+                                    pd.ace.diffBase.getSession().setMode("ace/mode/text");
+                                    pd.ace.diffNew.getSession().setMode("ace/mode/text");
+                                    pd.ace.beauIn.getSession().setMode("ace/mode/text");
+                                    pd.ace.beauOut.getSession().setMode("ace/mode/text");
+                                    pd.ace.minnIn.getSession().setMode("ace/mode/text");
+                                    pd.ace.minnOut.getSession().setMode("ace/mode/text");
+                                    pd.ace.parsIn.getSession().setMode("ace/mode/text");
+                                    pd.ace.parsOut.getSession().setMode("ace/mode/text");
+                                } else {
+                                    pd.ace.diffBase.getSession().setMode("ace/mode/" + value);
+                                    pd.ace.diffNew.getSession().setMode("ace/mode/" + value);
+                                    pd.ace.beauIn.getSession().setMode("ace/mode/" + value);
+                                    pd.ace.beauOut.getSession().setMode("ace/mode/" + value);
+                                    pd.ace.minnIn.getSession().setMode("ace/mode/" + value);
+                                    pd.ace.minnOut.getSession().setMode("ace/mode/" + value);
+                                    pd.ace.parsIn.getSession().setMode("ace/mode/" + value);
+                                    pd.ace.parsOut.getSession().setMode("ace/mode/" + value);
+                                }
+                            }
                         } else if (params[b].indexOf("c=") === 0) {
                             value = params[b].toLowerCase().substr(2);
                             for (c = colors.length - 1; c > -1; c -= 1) {
@@ -5373,63 +5275,6 @@ var pd = {};
                                     color.selectedIndex = c;
                                     pd.colorScheme(color);
                                     break;
-                                }
-                            }
-                            if (pd.test.cm === true) {
-                                if (value === "javascript") {
-                                    pd.cm.diffBase.setOption("mode", "javascript");
-                                    pd.cm.diffNew.setOption("mode", "javascript");
-                                    pd.cm.beauIn.setOption("mode", "javascript");
-                                    pd.cm.beauOut.setOption("mode", "javascript");
-                                    pd.cm.minnIn.setOption("mode", "javascript");
-                                    pd.cm.minnOut.setOption("mode", "javascript");
-                                    pd.cm.parsIn.setOption("mode", "javascript");
-                                    pd.cm.parsOut.setOption("mode", "javascript");
-                                } else if (value === "html") {
-                                    pd.cm.diffBase.setOption("mode", "htmlembedded");
-                                    pd.cm.diffNew.setOption("mode", "htmlembedded");
-                                    pd.cm.beauIn.setOption("mode", "htmlembedded");
-                                    pd.cm.beauOut.setOption("mode", "htmlembedded");
-                                    pd.cm.minnIn.setOption("mode", "htmlembedded");
-                                    pd.cm.minnOut.setOption("mode", "htmlembedded");
-                                    pd.cm.parsIn.setOption("mode", "htmlembedded");
-                                    pd.cm.parsOut.setOption("mode", "htmlembedded");
-                                } else if (id === "css") {
-                                    pd.cm.diffBase.setOption("mode", "text/x-scss");
-                                    pd.cm.diffNew.setOption("mode", "text/x-scss");
-                                    pd.cm.beauIn.setOption("mode", "text/x-scss");
-                                    pd.cm.beauOut.setOption("mode", "text/x-scss");
-                                    pd.cm.minnIn.setOption("mode", "text/x-scss");
-                                    pd.cm.minnOut.setOption("mode", "text/x-scss");
-                                    pd.cm.parsIn.setOption("mode", "text/x-scss");
-                                    pd.cm.parsOut.setOption("mode", "text/x-scss");
-                                } else if (id === "markup") {
-                                    pd.cm.diffBase.setOption("mode", "xml");
-                                    pd.cm.diffNew.setOption("mode", "xml");
-                                    pd.cm.beauIn.setOption("mode", "xml");
-                                    pd.cm.beauOut.setOption("mode", "xml");
-                                    pd.cm.minnIn.setOption("mode", "xml");
-                                    pd.cm.minnOut.setOption("mode", "xml");
-                                    pd.cm.parsIn.setOption("mode", "xml");
-                                    pd.cm.parsOut.setOption("mode", "xml");
-                                } else if (id === "text") {
-                                    pd.cm.diffBase.setOption("mode", null);
-                                    pd.cm.diffNew.setOption("mode", null);
-                                    pd.cm.beauIn.setOption("mode", null);
-                                    pd.cm.beauOut.setOption("mode", null);
-                                    pd.cm.minnIn.setOption("mode", null);
-                                    pd.cm.minnOut.setOption("mode", null);
-                                    pd.cm.parsIn.setOption("mode", null);
-                                    pd.cm.parsOut.setOption("mode", null);
-                                } else {
-                                    pd.cm.diffBase.setOption("mode", value);
-                                    pd.cm.diffNew.setOption("mode", value);
-                                    pd.cm.beauIn.setOption("mode", value);
-                                    pd.cm.beauOut.setOption("mode", value);
-                                    pd.cm.minnIn.setOption("mode", value);
-                                    pd.cm.minnOut.setOption("mode", value);
-                                    pd.cm.parsIn.setOption("mode", value);
-                                    pd.cm.parsOut.setOption("mode", value);
                                 }
                             }
                         } else if (params[b].indexOf("jsscope") === 0) {
@@ -5459,43 +5304,47 @@ var pd = {};
                                     break;
                                 }
                             }
-                            if (pd.test.cm === true) {
-                                pd.cm.diffBase.setOption("mode", "htmlembedded");
-                                pd.cm.diffNew.setOption("mode", "htmlembedded");
-                                pd.cm.beauIn.setOption("mode", "htmlembedded");
-                                pd.cm.beauOut.setOption("mode", "htmlembedded");
-                                pd.cm.minnIn.setOption("mode", "htmlembedded");
-                                pd.cm.minnOut.setOption("mode", "htmlembedded");
-                                pd.cm.parsIn.setOption("mode", "htmlembedded");
-                                pd.cm.parsOut.setOption("mode", "htmlembedded");
+                            if (pd.test.ace === true) {
+                                pd.ace.diffBase.getSession().setMode("ace/mode/html");
+                                pd.ace.diffNew.getSession().setMode("ace/mode/html");
+                                pd.ace.beauIn.getSession().setMode("ace/mode/html");
+                                pd.ace.beauOut.getSession().setMode("ace/mode/html");
+                                pd.ace.minnIn.getSession().setMode("ace/mode/html");
+                                pd.ace.minnOut.getSession().setMode("ace/mode/html");
+                                pd.ace.parsIn.getSession().setMode("ace/mode/html");
+                                pd.ace.parsOut.getSession().setMode("ace/mode/html");
                             }
                         }
                     }
                     if (source !== "") {
                         if (pd.o.codeBeauIn !== null && pd.mode === "beau") {
-                            if (pd.test.cm === true) {
-                                pd.cm.beauIn.setValue(source);
+                            if (pd.test.ace === true) {
+                                pd.ace.beauIn.setValue(source);
+                                pd.ace.beauInclearSelection();
                             } else {
                                 pd.o.codeBeauIn.value = source;
                             }
                             pd.recycle();
                         } else if (pd.o.codeMinnIn !== null && pd.mode === "minn") {
-                            if (pd.test.cm === true) {
-                                pd.cm.minnIn.setValue(source);
+                            if (pd.test.ace === true) {
+                                pd.ace.minnIn.setValue(source);
+                                pd.ace.minnIn.clearSelection();
                             } else {
                                 pd.o.codeMinnIn.value = source;
                             }
                             pd.recycle();
                         } else if (pd.o.codeParsIn !== null && pd.mode === "pars") {
-                            if (pd.test.cm === true) {
-                                pd.cm.parsIn.setValue(source);
+                            if (pd.test.ace === true) {
+                                pd.ace.parsIn.setValue(source);
+                                pd.ace.parsIn.clearSelection();
                             } else {
                                 pd.o.codeParsIn.value = source;
                             }
                             pd.recycle();
                         } else if (pd.o.codeDiffBase !== null && pd.mode === "diff") {
-                            if (pd.test.cm === true) {
-                                pd.cm.diffBase.setValue(source);
+                            if (pd.test.ace === true) {
+                                pd.ace.diffBase.setValue(source);
+                                pd.ace.diffBase.clearSelection();
                             } else {
                                 pd.o.codeDiffBase.value = source;
                             }
@@ -5508,9 +5357,9 @@ var pd = {};
             }
             if (pd.mode === "diff") {
                 if (pd.o.codeDiffBase !== null) {
-                    if (pd.test.cm === true) {
+                    if (pd.test.ace === true) {
                         pd.o.codeDiffBase.onkeyup = function dom__load_langkeyBase() {
-                            pd.langkey(pd.cm.diffBase);
+                            pd.langkey(pd.ace.diffBase);
                         };
                     }
                     if (pd.test.ls === true && localStorage.codeDiffBase !== undefined) {
@@ -5518,34 +5367,33 @@ var pd = {};
                         if ((/^(\s+)$/).test(name) === true) {
                             name = "";
                         }
-                        if (pd.test.cm === true) {
+                        if (pd.test.ace === true) {
                             if (langtest === true && lang === "auto") {
                                 id = pd.auto(name);
-                                if (id === "html") {
-                                    id = "htmlembedded";
-                                } else if (id === "css") {
-                                    id = "text/x-scss";
+                                if (id === "css") {
+                                    id = "scss";
                                 } else if (id === "markup") {
                                     id = "xml";
                                 }
                                 if (id === "text") {
-                                    pd.cm.diffBase.setOption("mode", null);
+                                    pd.ace.diffBase.getSession().setMode("ace/mode/text");
                                 } else {
-                                    pd.cm.diffBase.setOption("mode", id);
+                                    pd.ace.diffBase.getSession().setMode("ace/mode/" + id);
                                 }
                             }
-                            pd.cm.diffBase.setValue(name);
+                            pd.ace.diffBase.setValue(name);
+                            pd.ace.diffBase.clearSelection();
                         } else {
                             pd.o.codeDiffBase.value = name;
                         }
-                    } else if (pd.test.cm === true) {
-                        pd.cm.diffBase.setValue(" ");
+                    } else if (pd.test.ace === true) {
+                        pd.ace.diffBase.setValue(" ");
                     }
                 }
                 if (pd.o.codeDiffNew !== null) {
-                    if (pd.test.cm === true) {
+                    if (pd.test.ace === true) {
                         pd.o.codeDiffNew.onkeyup = function dom__load_langkeyBase() {
-                            pd.langkey(pd.cm.diffNew);
+                            pd.langkey(pd.ace.diffNew);
                         };
                     }
                     if (pd.test.ls === true && localStorage.codeDiffNew !== undefined) {
@@ -5553,33 +5401,32 @@ var pd = {};
                         if ((/^(\s+)$/).test(name) === true) {
                             name = "";
                         }
-                        if (pd.test.cm === true) {
+                        if (pd.test.ace === true) {
                             if (langtest === true && lang === "auto") {
                                 id = pd.auto(name);
-                                if (id === "html") {
-                                    id = "htmlembedded";
-                                } else if (id === "css") {
-                                    id = "text/x-scss";
+                                if (id === "css") {
+                                    id = "scss";
                                 } else if (id === "markup") {
                                     id = "xml";
                                 }
                                 if (id === "text") {
-                                    pd.cm.diffNew.setOption("mode", null);
+                                    pd.ace.diffNew.getSession().setMode("ace/mode/text");
                                 } else {
-                                    pd.cm.diffNew.setOption("mode", id);
+                                    pd.ace.diffNew.getSession().setMode("ace/mode/" + id);
                                 }
                             }
-                            pd.cm.diffNew.setValue(name);
+                            pd.ace.diffNew.setValue(name);
+                            pd.ace.diffNew.clearSelection();
                         } else {
                             pd.o.codeDiffNew.value = name;
                         }
-                    } else if (pd.test.cm === true) {
-                        pd.cm.diffNew.setValue(" ");
+                    } else if (pd.test.ace === true) {
+                        pd.ace.diffNew.setValue(" ");
                     }
                 }
                 pd.test.render.diff = true;
             }
-            if (pd.test.cm === true) {
+            if (pd.test.ace === true) {
                 node = pd.$$("minn-quan");
                 if (node !== null) {
                     node.parentNode.parentNode.style.display = "block";
@@ -6668,14 +6515,8 @@ var pd = {};
                             dateList.push([
                                 date, row[b].innerHTML
                             ]);
-                        } else if (lib === "codemirror.css") {
-                            date               = edition.addon.cmcss;
-                            dateCell.innerHTML = conversion(date);
-                            dateList.push([
-                                date, row[b].innerHTML
-                            ]);
-                        } else if (lib === "codemirror.js") {
-                            date               = edition.addon.cmjs;
+                        } else if (lib === "ace") {
+                            date               = edition.addon.ace;
                             dateCell.innerHTML = conversion(date);
                             dateList.push([
                                 date, row[b].innerHTML
