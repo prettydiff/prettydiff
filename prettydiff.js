@@ -4785,6 +4785,7 @@ var prettydiff = function prettydiff(api) {
                         if (wordTest > -1) {
                             word();
                         }
+                        asi();
                         ltoke                   = generic("//", "\r");
                         stats.commentLine.token += 1;
                         stats.commentLine.chars += ltoke.length;
@@ -6362,6 +6363,23 @@ var prettydiff = function prettydiff(api) {
                                 inc();
                             }
                             minmeta.push(array);
+                        },
+                        lastsemi = function jspretty__minify_lastsemi() {
+                            var aa = 0,
+                                bb = 0;
+                            for (aa = a; aa > -1; aa -= 1) {
+                                if (types[aa] === "end") {
+                                    bb += 1;
+                                } else if (types[aa] === "start" || types[aa] === "method") {
+                                    bb -= 1;
+                                }
+                                if (bb < 0) {
+                                    if (token[aa - 1] === "for") {
+                                        build.push(";");
+                                    }
+                                    return;
+                                }
+                            }
                         };
                     if (jobfuscate === true) {
                         for (a = 0; a < token.length; a += 1) {
@@ -6397,6 +6415,8 @@ var prettydiff = function prettydiff(api) {
                             build.push("\n");
                         } else if (token[a] === "x;" && token[a + 1] !== "}") {
                             build.push(";");
+                        } else if (token[a] === ";" && token[a + 1] === "}") {
+                            lastsemi();
                         } else if (token[a] !== "x;" && token[a] !== "x{" && token[a] !== "x}" && types[a] !== "comment" && types[a] !== "comment-inline") {
                             build.push(token[a]);
                         }
@@ -11122,7 +11142,7 @@ var prettydiff = function prettydiff(api) {
             ace: 150501
         },
         api          : {
-            dom      : 150501,
+            dom      : 150502,
             nodeLocal: 150415,
             wsh      : 150415
         },
@@ -11133,12 +11153,12 @@ var prettydiff = function prettydiff(api) {
         csvmin       : 131224, //csvmin library
         diffview     : 150501, //diffview library
         documentation: 150501, //documentation.xhtml
-        jspretty     : 150415, //jspretty library
+        jspretty     : 150502, //jspretty library
         latest       : 0,
         markup_beauty: 150501, //markup_beauty library
         markupmin    : 150415, //markupmin library
-        prettydiff   : 150501, //this file
-        version      : "1.11.14", //version number
+        prettydiff   : 150502, //this file
+        version      : "1.11.15", //version number
         webtool      : 150415
     };
 edition.latest = (function edition_latest() {

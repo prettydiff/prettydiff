@@ -343,6 +343,7 @@ var pd = {};
             parent.removeChild(node);
             edit           = ace.edit(div);
             pd.o[nodeName] = div.getElementsByTagName("textarea")[0];
+            edit.$blockScrolling = Infinity;
             return edit;
         };
         pd.ace      = {};
@@ -3300,6 +3301,76 @@ var pd = {};
         pd.options(a);
     };
 
+    pd.hideBeauOut         = function dom__hideBeauOut(x) {
+        var node    = {},
+            state   = false,
+            restore = function dom__hideBeauOut_restore() {
+                if (pd.test.ace === true) {
+                    pd.o.codeBeauOut.parentNode.parentNode.style.display = "block";
+                } else {
+                    pd.o.codeBeauOut.parentNode.style.display = "block";
+                }
+                if (pd.o.codeBeauIn !== null) {
+                    if (pd.test.ace === true) {
+                        node             = pd.o.codeBeauIn.parentNode.parentNode;
+                        node.style.width = "49%";
+                        pd.ace.beauIn.resize();
+                    } else {
+                        node             = pd.o.codeBeauIn.parentNode;
+                        node.style.width = "49%";
+                    }
+                    pd.o.codeBeauIn.onkeyup                = pd.recycle;
+                    pd.o.codeBeauIn.onkeydown              = function dom_hideBeauOut_bindBeauInDown(e) {
+                        var event = e || window.event;
+                        if (pd.test.ave === false) {
+                            pd.fixtabs(event, pd.o.codeBeauIn);
+                        }
+                        pd.keydown(event);
+                    };
+                }
+                if (x === undefined) {
+                    return;
+                }
+                pd.options(x);
+            };
+        if (x.nodeType === 1 && x.nodeName.toLowerCase() !== "input") {
+            x = x.getElementsByTagName("input")[0];
+        }
+        state = (x === pd.o.jsscope) ? true : false;
+        if (pd.o.codeBeauOut === null) {
+            return;
+        }
+        if (pd.o.lang === null || pd.o.lang.value === "auto" || pd.o.lang.value === "javascript") {
+            if (state === true) {
+                if (pd.test.ace === true) {
+                    pd.o.codeBeauOut.parentNode.parentNode.style.display = "none";
+                } else {
+                    pd.o.codeBeauOut.parentNode.style.display = "none";
+                }
+                if (pd.o.codeBeauIn !== null) {
+                    if (pd.test.ace === true) {
+                        node             = pd.o.codeBeauIn.parentNode.parentNode;
+                        node.style.width = "100%";
+                        pd.ace.beauIn.resize();
+                    } else {
+                        node             = pd.o.codeBeauIn.parentNode;
+                        node.style.width = "100%";
+                    }
+                    if (pd.test.ace === true) {
+                        pd.o.codeBeauIn.onkeyup = function dom__hideBeauOut_langkey() {
+                            pd.langkey(pd.ace.beauIn);
+                        };
+                    }
+                }
+                pd.options(x);
+            } else {
+                restore();
+            }
+        } else {
+            restore();
+        }
+    };
+
     //alters available options depending upon language selection
     pd.codeOps             = function dom__codeOps(node) {
         var x    = {},
@@ -3516,56 +3587,6 @@ var pd = {};
             }
         }
         pd.options(x);
-    };
-
-    pd.hideBeauOut         = function dom__hideBeauOut(x) {
-        var node    = {},
-            state   = false,
-            restore = function dom__hideBeauOut_restore() {
-                pd.o.codeBeauOut.parentNode.style.display = "block";
-                if (pd.o.codeBeauIn !== null) {
-                    node                                   = pd.o.codeBeauIn.parentNode;
-                    pd.o.codeBeauIn.onkeyup                = pd.recycle;
-                    pd.o.codeBeauIn.parentNode.style.width = "49%";
-                    pd.o.codeBeauIn.onkeydown              = function dom_hideBeauOut_bindBeauInDown(e) {
-                        var event = e || window.event;
-                        if (pd.test.ave === false) {
-                            pd.fixtabs(event, pd.o.codeBeauIn);
-                        }
-                        pd.keydown(event);
-                    };
-                }
-                if (x === undefined) {
-                    return;
-                }
-                pd.options(x);
-            };
-        if (x.nodeType === 1 && x.nodeName.toLowerCase() !== "input") {
-            x = x.getElementsByTagName("input")[0];
-        }
-        state = (x === pd.o.jsscope) ? true : false;
-        if (pd.o.codeBeauOut === null) {
-            return;
-        }
-        if (pd.o.lang === null || pd.o.lang.value === "auto" || pd.o.lang.value === "javascript") {
-            if (state === true) {
-                pd.o.codeBeauOut.parentNode.style.display = "none";
-                if (pd.o.codeBeauIn !== null) {
-                    node             = pd.o.codeBeauIn.parentNode;
-                    node.style.width = "100%";
-                    if (pd.test.ace === true) {
-                        pd.o.codeBeauIn.onkeyup = function dom__hideBeauOut_langkey() {
-                            pd.langkey(pd.ace.beauIn);
-                        };
-                    }
-                }
-                pd.options(x);
-            } else {
-                restore();
-            }
-        } else {
-            restore();
-        }
     };
 
     //provides interaction to simulate a text input into a radio button
