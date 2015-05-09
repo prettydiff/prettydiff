@@ -1946,6 +1946,7 @@ var prettydiff = function prettydiff(api) {
                         buildtoken();
                     }
                 }
+                spacer();
             }());
             if (smode === "parse") {
                 return {
@@ -2086,6 +2087,9 @@ var prettydiff = function prettydiff(api) {
                             }
                             build.push(token[a]);
                         }
+                    }
+                    if (spres === true && lines[lines.length - 1] > 0) {
+                        return build.join("").replace(/(\s+)$/, "\n");
                     }
                     return build.join("").replace(/(\s+)$/, "");
                 }());
@@ -3953,6 +3957,9 @@ var prettydiff = function prettydiff(api) {
                         var tokel   = token[token.length - 1],
                             start   = jwrap,
                             spacely = (item.indexOf(" ") > 0) ? true : false;
+                        if (token.length === 0) {
+                            return;
+                        }
                         item = item.slice(2);
                         if (spacely === true) {
                             if (tokel.indexOf("//") === 0 && tokel.length < start && tokel.indexOf(" ") > 0) {
@@ -7485,6 +7492,9 @@ var prettydiff = function prettydiff(api) {
                                 break;
                             }
                         }
+                        if (jpres === true && lines[lines.length - 1] > 0) {
+                            return build.join("").replace(/(\s+)$/, "\n");
+                        }
                         return build.join("").replace(/(\s+)$/, "");
                     }());
                 }
@@ -9384,6 +9394,9 @@ var prettydiff = function prettydiff(api) {
                         } else if ((y[i] === "{" && y[i + 1] === "{") || (y[i] === " " && y[i + 1] === "{" && y[i + 2] === "{")) {
                             build.push(builder("}}", i + 1));
                             token.push("T_asp");
+                        } else if ((y[i] === "{" && y[i + 1] === "%") || (y[i] === " " && y[i + 1] === "{" && y[i + 2] === "%")) {
+                            build.push(builder("%}", i + 1));
+                            token.push("T_asp");
                         } else if ((y[i] === "[" && y[i + 1] === "%") || (y[i] === " " && y[i + 1] === "[" && y[i + 2] === "%")) {
                             build.push(builder("%]", i + 1));
                             token.push("T_asp");
@@ -10626,7 +10639,7 @@ var prettydiff = function prettydiff(api) {
                         if (build[i].charAt(0) === " ") {
                             build[i] = build[i].slice(1);
                         }
-                        if (build[i].indexOf("\n") > 0 && (cinfo[i] === "start" || cinfo[i] === "singleton")) {
+                        if (build[i].indexOf("\n") > 0 && token[i] !== "T_ignore" && (cinfo[i] === "start" || cinfo[i] === "singleton")) {
                             build[i] = attr_wrap(build[i]);
                         }
                         if (level[i] !== "x") {
@@ -10639,7 +10652,7 @@ var prettydiff = function prettydiff(api) {
                         if (build[i].indexOf("\n") > 0 && mcomm !== "noindent" && level[i] === "x") {
                             build[i] = comment(build[i]);
                         }
-                    } else if (build[i].indexOf("\n") > 0 && (cinfo[i] === "start" || cinfo[i] === "singleton")) {
+                    } else if (build[i].indexOf("\n") > 0 && token[i] !== "T_ignore" && (cinfo[i] === "start" || cinfo[i] === "singleton")) {
                         build[i] = attr_wrap(build[i]);
                     }
                     if (token[i] === "T_xml") {
@@ -11142,24 +11155,24 @@ var prettydiff = function prettydiff(api) {
             ace: 150501
         },
         api          : {
-            dom      : 150502,
+            dom      : 150509,
             nodeLocal: 150415,
             wsh      : 150415
         },
         charDecoder  : 141025,
         css          : 150501, //diffview.css file
-        csspretty    : 150415, //csspretty library
+        csspretty    : 150509, //csspretty library
         csvbeauty    : 140114, //csvbeauty library
         csvmin       : 131224, //csvmin library
         diffview     : 150501, //diffview library
-        documentation: 150501, //documentation.xhtml
-        jspretty     : 150502, //jspretty library
+        documentation: 150509, //documentation.xhtml
+        jspretty     : 150509, //jspretty library
         latest       : 0,
-        markup_beauty: 150501, //markup_beauty library
+        markup_beauty: 150509, //markup_beauty library
         markupmin    : 150415, //markupmin library
-        prettydiff   : 150502, //this file
-        version      : "1.11.15", //version number
-        webtool      : 150415
+        prettydiff   : 150509, //this file
+        version      : "1.11.16", //version number
+        webtool      : 150509
     };
 edition.latest = (function edition_latest() {
     "use strict";
