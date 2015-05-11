@@ -23,14 +23,14 @@ argument values should always be quoted.
 Examples:
 
 > node node-local.js source:"c:\mydirectory\myfile.js" readmethod:"file"
- diff:"c:\myotherfile.js" 
+ diff:"c:\myotherfile.js"
 > node node-local.js source:"c:\mydirectory\myfile.js" mode:"beautify"
  readmethod:"file" output:"c:\output\otherfile.js"
 > node node-local.js source:"../package.json" mode:"beautify"
  readmethod:"filescreen"
 */
 
-(function () {
+(function node() {
     "use strict";
     var prettydiff    = require('../prettydiff.js'),
         fs            = require("fs"),
@@ -46,7 +46,7 @@ Examples:
         slash         = ((/^([a-zA-Z]:\\)/).test(cwd) === true) ? "\\" : "/",
         method        = "auto",
         startTime     = Date.now(),
-        versionString = (function () {
+        versionString = (function node_versionString() {
             var dstring = prettydiff.edition.latest.toString(),
                 mstring = Number(dstring.slice(2, 4)) - 1,
                 month   = [
@@ -138,8 +138,8 @@ Examples:
         },
 
         //ending messaging with stats
-        ender         = function () {
-            var plural = (function () {
+        ender         = function node_ender() {
+            var plural = (function node_ender_plural() {
                     var a   = 0,
                         len = diffCount.length,
                         arr = [];
@@ -236,7 +236,7 @@ Examples:
 
         //extract errorcount from diff
         //report files for ender stats
-        counter       = function (x) {
+        counter       = function node_counter(x) {
             var num = Number(x.substring(14, x.indexOf("</em>")));
             if (num > 0) {
                 diffCount[0] += num;
@@ -246,7 +246,7 @@ Examples:
         },
 
         //html report template
-        reports       = function () {
+        reports       = function node_reports() {
             var result = prettydiff.api(options),
                 css    = {
                     core   : "body{font-family:'Arial';font-size:10px;overflow-y:scroll}#announcement.big{color:#00c;font-weight:bold;height:auto;left:14em;margin:0;overflow:hidden;position:absolute;text-overflow:ellipsis;top:4.5em;white-space:nowrap;width:50%;z-index:5}#announcement.big strong.duplicate{display:block}#announcement.big span{display:block}#announcement.normal{color:#000;font-weight:normal;height:2.5em;margin:0 -5em -4.75em;position:static;width:27.5em}#apireturn textarea{font-size:1.2em;height:50em;width:100%}#apitest input,#apitest label,#apitest select,#apitest textarea{float:left}#apitest input,#apitest select,#apitest textarea{width:30em}#apitest label{width:20em}#apitest p{clear:both;padding-top:0.75em}#beau-other-span,#diff-other-span{left:-20em;position:absolute;width:0}#beauops p strong,#options p strong,#diffops p strong,#miniops p strong,#options .label,#diffops .label,#miniops .label,#beauops .label{display:block;float:left;font-size:1.2em;font-weight:bold;margin-bottom:1em;width:17.5em}#beauops span strong,#miniops span strong,#diffops span strong{display:inline;float:none;font-size:1em;width:auto}#feedreport{right:38.8em}#beautyinput,#minifyinput,#baseText,#newText,#beautyoutput,#minifyoutput{font-size:1em}#Beautify,#Minify,#diffBase,#diffNew{border-radius:0.4em;padding:1em 1.25em 0}#Beautify .input,#Minify .input,#Beautify .output,#Minify .output{width:49%}#Beautify .input label,#Beautify .output label,#Minify .input label,#Minify .output label{display:block;font-size:1.05em;font-weight:bold}#Beautify p.file,#Minify p.file{clear:none;float:none}#Beautify textarea,#Minify textarea{margin-bottom:0.75em}#checklist_option li{font-weight:bold}#checklist_option li li{font-weight:normal}#codeInput{margin-bottom:1em;margin-top:-3.5em}#codeInput #diffBase p,#codeInput #diffNew p{clear:both;float:none}#codeInput .input{clear:none;float:left}#codeInput .output{clear:none;float:right;margin-top:-2.4em}#cssreport.doc table{position:absolute}#css-size{left:24em}#css-uri{left:40em}#css-uri td{text-align:left}#csvchar{width:11.8em}#dcolorScheme{float:right;margin:-2em 0 0}#dcolorScheme label{display:inline-block;font-size:1em}#diff .addsource{cursor:pointer;margin-bottom:1em;padding:0}#diff .addsource input{display:block;float:left;margin:0.5em 0.5em -1.5em}#diff .addsource label{cursor:pointer;display:inline-block;font-size:1.2em;padding:0.5em 0.5em 0.5em 2em}#diffBase,#diffNew,#Beautify,#Minify,#doc div,#doc div div,#doc ol,#option_comment,#update,#thirdparties img,#diffoutput #thirdparties,.box h3.heading,.box .body,.options,.diff .replace em,.diff .delete em,.diff .insert em,button,fieldset{border-style:solid;border-width:0.1em}#diffBase,#diffNew{padding:1.25em 1%;width:47%}#diffBase textarea,#diffNew textarea{width:99.5%}#diffBase{float:left;margin-right:1%}#diffNew{float:right}#diffoutput{width:100%}#diffoutput #thirdparties li{display:inline-block;list-style-type:none}#diffoutput li em,#diffoutput p em,.analysis .bad,.analysis .good{font-weight:bold}#diffoutput ul{font-size:1.2em;margin-top:1em}#diffoutput ul li{display:list-item;list-style-type:disc}#displayOps{float:right;font-size:1.5em;font-weight:bold;margin:0 1em 0 0;position:relative;width:22.5em;z-index:10}#displayOps #displayOps-hide{clear:both;float:none;position:absolute;top:-20em}#displayOps.default{position:static}#displayOps.maximized{margin-bottom:-2em;position:relative}#displayOps a{border-style:solid;border-width:0.1em;height:1.2em;line-height:1.4;margin:0.1em 0 0 5em;padding:0.05em 0 0.3em;text-align:center;text-decoration:none}#displayOps button,#displayOps a{font-size:1em}#displayOps li{clear:none;display:block;float:left;list-style:none;margin:0;text-align:right;width:9em}#doc_contents a{text-decoration:none}#doc_contents ol{padding-bottom:1em}#doc_contents ol ol li{font-size:0.75em;list-style:lower-alpha;margin:0.5em 0 1em 3em}#doc #doc_contents ol ol{background-color:inherit;border-style:none;margin:0.25em 0.3em 0 0;padding-bottom:0}#doc div.beautify{border-style:none}#doc #execution h3{background:transparent;border-style:none;font-size:1em;font-weight:bold}#doc code,.doc code{display:block;font-family:'Courier New',Courier,'Lucida Console',monospace;font-size:1.1em}#doc div,.doc div{margin-bottom:2em;padding:0 0.5em 0.5em}#doc div div,.doc div div{clear:both;margin-bottom:1em}#doc em,.doc em,.box .body em{font-style:normal;font-weight:bold}#doc h2,.doc h2{font-size:1.6em;margin:0.5em 0.5em 0.5em 0}#doc h3,.doc h3{margin-top:0.5em}#doc ol,.doc ol{clear:both;padding:0}#doc ol li span,.doc ol li span{display:block;margin-left:2em}#doc ol ol,#doc ul ol,.doc ol ol,.doc ul ol{margin-right:0.5em}#doc td span,.doc td span{display:block}#doc table,.doc table,.box .body table{border-collapse:collapse;border-style:solid;border-width:0.2em;clear:both}#doc table,.doc table{font-size:1.2em}#doc td,#doc th,.doc td,.doc th{border-left-style:solid;border-left-width:0.1em;border-top-style:solid;border-top-width:0.1em;padding:0.5em}#doc th,.doc th{font-weight:bold}#doc ul,.doc ul{margin-top:1em}#doc ul li,.doc ul li{font-size:1.2em}#feedemail{display:block;width:100%}#feedreportbody{text-align:center}#feedreportbody .radiogroup .feedlabel{display:block;margin:0 0 1em;width:auto;font-size:1.4em}#feedreportbody .radiogroup span{margin:0 0 2em;display:inline-block;width:5em}#feedreportbody .radiogroup input{position:absolute;top:-2000em}#feedreportbody .radiogroup label{display:inline-block;border-style:solid;border-width:0.1em;line-height:1.5;text-align:center;height:1.5em;width:1.5em;border-radius:50%;cursor:pointer}#feedreportbody .radiogroup span span{font-size:0.8em;display:block;margin:0;width:auto}#feedsubmit{position:static;width:50%;float:none;text-shadow:none;height:3em;margin:2.5em auto 0;font-family:inherit}#function_properties h4{font-size:1.2em;float:none}#function_properties h4 strong{color:#c00}#function_properties h5{margin:0 0 0 -2.5em;font-size:1em}#function_properties ol{padding-right:1em}#functionGroup.append{border-radius:0.2em;border-style:solid;border-width:0.1em;padding:0.7em 1.2em;position:relative;top:-2.625em}#functionGroup.append input{cursor:pointer}#functionGroup.append label{cursor:pointer;font-size:1em}#functionGroup.append span{display:inline-block;margin-left:2em}#hideOptions{margin-left:5em}#introduction{clear:both;margin:0 0 0 5.6em;position:relative;top:-2.75em}#introduction .information,#webtool #introduction h2{left:-90em;position:absolute;top:0;width:10em}#introduction h2{float:none}#introduction li{clear:none;display:block;float:left;font-size:1.4em;margin:0 4.95em -1em 0}#introduction li li{font-size:1em;margin-left:2em}#introduction ul{clear:both;height:3em;margin:0 0 0 -5.5em;overflow:hidden;width:100em}#modalSave p{background:#eee;color:#333;font-size:3em;padding:1em;position:absolute;text-align:center;top:10em;width:25em;z-index:9001}#modalSave p em{display:block;font-size:0.75em;margin-top:1em}#modalSave p strong{color:#c00;font-weight:bold}#modalSave span{background:#000;display:block;left:0;opacity:0.5;position:absolute;top:0;z-index:9000}#codereport{right:19.8em}#option_comment{font-size:1.2em;height:2.5em;margin-bottom:-1.5em;width:100%}#option_commentClear{float:right;height:2em;margin:-0.5em -0.25em 0 0;padding:0;width:15em}#options{margin:0 0 1em}#options label{width:auto}#options p,#addOptions p{clear:both;font-size:1em;margin:0;padding:1em 0 0}#options p span{height:2em;margin:0 0 0 1em}#pdsamples{list-style-position:inside;margin:0;padding:0;position:relative;z-index:10}#pdsamples li{border-radius:1em;border-style:solid;border-width:0.1em;margin:0 0 3em;padding:1em}#pdsamples li div{border-radius:1em;border-style:solid;border-width:0.1em;margin:0;padding:1em}#pdsamples li p{display:inline-block;font-size:1em;margin:0}#pdsamples li p a{display:block;margin:0 0 1em 2em}#pdsamples li ul{margin:0 0 0 2em}#reports{height:4em}#reports h2{display:none}#samples #dcolorScheme{position:relative;z-index:1000}#samples #pdsamples li li{background:none transparent;border-style:none;display:list-item;list-style:disc outside;margin:0;padding:0.5em}#samples h1{float:none}#samples h2{float:none;font-size:1.5em;border-style:none;margin:1em 0}#showOptionsCallOut{background:#fff;border:0.1em solid #000;box-shadow:0.2em 0.2em 0.4em rgba(0,0,0,.15);left:28.6%;padding:0.5em;position:absolute;top:4.6em;width:20%;z-index:1000}#showOptionsCallOut a{color:#66f;font-weight:bold}#showOptionsCallOut em{color:#c00}#showOptionsCallOut strong{color:#090}#statreport{right:0.8em}#statreport .body p,#statreport .body li,#statreport .body h3{font-size:1.2em}#statreport .body h3{margin-top:0}#statreport .body ul{margin-top:1em}#textareaTabKey{position:absolute;border-width:0.1em;border-style:solid;padding:0.5em;width:24em;right:51%}#textareaTabKey strong{text-decoration:underline}#textreport{width:100%}#thirdparties a{border-style:none;display:block;height:4em;text-decoration:none}#title_text{border-style:solid;border-width:0.05em;display:block;float:left;font-size:1em;margin-left:0.55em;padding:0.1em}#top{left:0;overflow:scroll;position:absolute;top:-200em;width:1em}#top em{font-weight:bold}#update{clear:left;float:right;font-weight:bold;padding:0.5em;position:absolute;right:1.25em;top:4.75em}#webtool .diff h3{border-style:none solid solid;border-width:0 0.1em 0.2em;box-shadow:none;display:block;font-family:Verdana;margin:0 0 0 -.1em;padding:0.2em 2em;text-align:left}#webtool .options input[type=text]{margin-right:1em;width:11.6em}#webtool .options input[type=text],div input,textarea{border-style:inset;border-width:0.1em}.analysis th{text-align:left}.analysis td{text-align:right}.beautify,.diff{border-style:solid;border-width:0.2em;display:inline-block;font-family:'Courier New',Courier,'Lucida Console',monospace;margin:0 1em 1em 0;position:relative}.beautify .count,.diff .count{border-style:solid;border-width:0 0.1em 0 0;font-weight:normal;padding:0;text-align:right}.beautify .count li,.diff .count li{padding-left:2em}.beautify .count li{padding-top:0.5em}.beautify .count li.fold,.diff .count li.fold{color:#900;cursor:pointer;font-weight:bold;padding-left:0.5em}.beautify .data,.diff .data{text-align:left;white-space:pre}.beautify .data em{display:inline-block;font-style:normal;font-weight:bold;padding-top:0.5em}.beautify .data li,.diff .data li{padding-left:0.5em;white-space:pre}.beautify li,.diff li{border-style:none none solid;border-width:0 0 0.1em;display:block;line-height:1.2;list-style-type:none;margin:0;padding-bottom:0;padding-right:0.5em}.beautify ol,.diff ol{display:table-cell;margin:0;padding:0}.box{border-style:solid;border-width:0;left:auto;margin:0;padding:0;position:absolute;z-index:10}.box button{border-radius:0;border-style:solid;border-width:0.1em;display:block;float:right;font-family:'Lucida Console','Trebuchet MS','Arial';height:1.75em;padding:0;position:absolute;right:0;text-align:center;top:0;width:1.75em;z-index:7}.box button.resize{border-width:0.05em;cursor:se-resize;font-size:1.667em;font-weight:normal;height:0.8em;line-height:0.5em;margin:-.85em 0 0;position:absolute;right:0.05em;top:100%;width:0.85em}.box button.minimize{margin:0.35em 4em 0 0}.box button.maximize{margin:0.35em 1.75em 0 0}.box button.save{margin:0.35em 6.25em 0 0}.box .buttons{float:right;margin:0}.box h3.heading{cursor:pointer;float:left;font-size:1em;height:3em;margin:0 0 -3.2em;position:relative;width:17em;z-index:6}.box h3.heading span{display:block;font-size:1.8em;padding:0.25em 0 0 0.5em}.box .body{clear:both;height:20em;margin-top:-.1em;overflow:scroll;padding:4.25em 1em 1em;position:relative;right:0;top:0;width:75em;z-index:5}.button{margin:1em 0;text-align:center}.button button{display:block;font-size:2em;height:1.5em;margin:0 auto;padding:0;width:50%}.clear{clear:both;display:block}.diff .skip{border-style:none none solid;border-width:0 0 0.1em}.diff .diff-left,.diff .diff-right{display:table-cell}.diff .diff-left{border-style:none none none solid;border-width:0 0 0 0.1em}.diff .diff-right{border-style:none none none solid;border-width:0 0 0 0.1em;margin-left:-.1em;min-width:16.5em;right:0;top:0}.diff-right .data ol{min-width:16.5em}.diff-right .data{border-style:none solid none none;border-width:0 0.1em 0 0;width:100%}.diff-right .data li{min-width:16.5em}.diff li,.diff p,.diff h3,.beautify li{font-size:1.1em}.diff li{padding-top:0.5em}.diff li em{font-style:normal;margin:0 -.09em;padding:0.05em 0}.diff p.author{border-style:solid;border-width:0.2em 0.1em 0.1em;margin:0;overflow:hidden;padding:0.4em;text-align:right}.difflabel{display:block;height:0}.file,.labeltext{font-size:0.9em;font-weight:bold;margin-bottom:1em}.file input,.labeltext input{display:inline-block;margin:0 0.7em 0 0;width:16em}.input,.output{margin:0}.options{border-radius:0.4em;clear:both;margin-bottom:1em;padding:1em 1em 3.5em;width:auto}.options input,.options label{border-style:none;display:block;float:left}.output label{text-align:right}.options p span label{font-size:1em}.options p span{display:block;float:left;font-size:1.2em;min-width:14em;padding-bottom:0.5em}.options select,#csvchar{margin:0 0 0 1em}.options span label{margin-left:0.4em}body#doc{font-size:0.8em;margin:0 auto;max-width:80em}body#doc #function_properties ul{margin:0}body#doc #function_properties ul li{font-size:0.9em;margin:0.5em 0 0 4em}body#doc ul li,body#doc ol li{font-size:1.1em}body#doc table{font-size:1em}button,a.button{border-radius:0.15em;display:block;font-weight:bold;padding:0.2em 0;width:100%}div .button{text-align:center}div button,div a.button{display:inline-block;font-weight:bold;margin:1em 0;padding:1em 2em}button:hover,a.button:hover{cursor:pointer}fieldset{border-radius:0.9em;clear:both;margin:3.5em 0 -2em;padding:0 0 0 1em}h1{float:left;font-size:2em;margin:0 0.5em 0.5em 0}h1 svg,h1 img{border-style:solid;border-width:0.05em;float:left;height:1.5em;margin-right:0.5em;width:1.5em}h1 span{font-size:0.5em}h2,h3{background:#fff;border-style:solid;border-width:0.075em;display:inline-block;font-size:1.8em;font-weight:bold;margin:0 0.5em 0.5em 0;padding:0 0.2em}h3{font-size:1.6em}h4{font-size:1.4em}input[type='radio']{margin:0 0.25em}input[type='file']{box-shadow:none}label{display:inline;font-size:1.4em}legend{border-style:solid;border-width:0.1em;font-size:1.2em;font-weight:bold;margin-left:-.25em}li{clear:both;margin:1em 0 1em 3em}li h4{display:inline;float:left;margin:0.4em 0;text-align:left;width:14em}ol li{font-size:1.4em;list-style-type:decimal}ol li li{font-size:1em}p{clear:both;font-size:1.2em;margin:0 0 1em}select{border-style:inset;border-width:0.1em;width:11.85em}strong.new{background:#ff6;font-style:italic}strong label{font-size:1em;width:inherit}textarea{display:inline-block;font-family:'Courier New',Courier,'Lucida Console',monospace;height:10em;margin:0 0 -.1em;width:100%}ul{margin:-1.4em 0 2em;padding:0}ul li{list-style-type:none}@media print{div{width:100%}html td{font-size:0.8em;white-space:normal}p,.options,#Beautify,#Minify,#diff,ul{display:none}}@media screen and (-webkit-min-device-pixel-ratio:0){.beautify .count li{padding-top:0.546em}.beautify .data li{line-height:1.3}}@media (max-width: 640px){#functionGroup{height:4em}#functionGroup.append span{margin-left:0.5em;position:relative;z-index:10}#displayOps{margin-bottom:-2em;padding-right:0.75em;width:auto}#displayOps li{padding-top:2em}#displayOps a{margin-left:1em}#diffBase,#diffNew{width:46%}#reports{display:none}.labeltext input,.file input{width:12em}#update{margin-top:2.75em}#codeInput label{display:none}#doc #dcolorScheme{margin:0 0 1em}}",
@@ -353,7 +353,7 @@ Examples:
         },
 
         //instructions
-        error         = (function () {
+        error         = (function node_error() {
             var a       = [],
                 color   = {
                     accepted: "\x1B[31m",
@@ -362,11 +362,11 @@ Examples:
                     string  : "\x1B[33m",
                     word    : "\x1B[32m"
                 },
-                opname  = function (x) {
+                opname  = function node_error_opname(x) {
                     var value = x.match(/\w+/);
                     return x.replace(value, color.word + value + "\x1B[39m");
                 },
-                vallist = function (x) {
+                vallist = function node_error_vallist(x) {
                     var value = x.split(":\x1B[39m"),
                         items = value[1].split(","),
                         len   = items.length,
@@ -618,7 +618,7 @@ Examples:
         }()),
 
         //defaults for the options
-        args          = (function () {
+        args          = (function node_args() {
             var a         = process.argv.slice(2),
                 b         = 0,
                 c         = a.length,
@@ -626,12 +626,12 @@ Examples:
                 e         = [],
                 f         = 0,
                 alphasort = false,
-                pathslash = function (name, x) {
+                pathslash = function node_pathslash(name, x) {
                     var y        = x.indexOf("://"),
                         z        = "",
                         itempath = "",
                         ind      = "",
-                        abspath  = function () {
+                        abspath  = function node_pathslash_abspath() {
                             var tree  = cwd.split(slash),
                                 ups   = [],
                                 uplen = 0;
@@ -676,7 +676,7 @@ Examples:
                         }
                         itempath = z + "://" + x.replace(/\//g, "\\");
                     }
-                    fs.stat(itempath, function (err, stat) {
+                    fs.stat(itempath, function node_pathslash_statCallback(err, stat) {
                         if (err !== null) {
                             dir[ind] = -1;
                             return "";
@@ -696,7 +696,7 @@ Examples:
                     if (name === "output") {
                         address.oabspath = abspath();
                         address.oorgpath = itempath;
-                        fs.mkdir(address.oabspath, function () {
+                        fs.mkdir(address.oabspath, function node_pathslash_mkdirCallback() {
                             return;
                         });
                     }
@@ -924,7 +924,7 @@ Examples:
 
         //write output to a file
         //executed from fileComplete
-        fileWrite     = function (data) {
+        fileWrite     = function node_fileWrite(data) {
             var dirs      = data.localpath.split(slash),
                 suffix    = (options.mode === "diff") ? "-diff.html" : "-report.html",
                 filename  = dirs[dirs.length - 1],
@@ -933,8 +933,8 @@ Examples:
                 report    = [
                     "", ""
                 ],
-                writing   = function (ending) {
-                    fs.writeFile(address.oabspath + slash + finalpath + ending, report[0], function (err) {
+                writing   = function node_writing(ending) {
+                    fs.writeFile(address.oabspath + slash + finalpath + ending, report[0], function node_writing_writeFileCallback(err) {
                         if (err !== null) {
                             console.log("\nError writing report output.\n");
                             console.log(err);
@@ -943,7 +943,7 @@ Examples:
                         }
                     });
                 },
-                files     = function () {
+                files     = function node_files() {
                     if (options.mode === "diff" || (options.mode === "beautify" && options.jsscope !== "none")) {
                         writing(suffix);
                     } else {
@@ -956,8 +956,8 @@ Examples:
                         ender();
                     }
                 },
-                newdir    = function () {
-                    fs.mkdir(address.oabspath + slash + dirs.slice(0, count).join(slash), function () {
+                newdir    = function node_newdir() {
+                    fs.mkdir(address.oabspath + slash + dirs.slice(0, count).join(slash), function node_newdir_mkdirCallback() {
                         count += 1;
                         if (count < dirs.length + 1) {
                             newdir();
@@ -995,8 +995,7 @@ Examples:
         },
 
         //write the CLI output for the diffcli option
-        cliWrite      = function (output, path) {
-            console.log(output);
+        cliWrite      = function node_cliWrite(output, path) {
             var a      = 0,
                 b      = 0,
                 plural = "",
@@ -1044,7 +1043,7 @@ Examples:
 
         //write output to screen
         //executed from fileComplete
-        screenWrite   = function () {
+        screenWrite   = function node_screenWrite() {
             var report = [];
             if (options.jsscope !== "none" && options.mode === "beautify" && (options.lang === "javascript" || options.lang === "auto")) {
                 return reports();
@@ -1061,7 +1060,7 @@ Examples:
 
         //generate the diff output
         //for CLI from files
-        cliFile       = function (data) {
+        cliFile       = function node_cliFile(data) {
             options.source = sfiledump[data.index];
             options.diff   = dfiledump[data.index];
             if (options.source.indexOf("undefined") === 0) {
@@ -1079,7 +1078,7 @@ Examples:
         //is a file read operation complete?
         //executed from readLocalFile
         //executed from readHttpFile
-        fileComplete  = function (data) {
+        fileComplete  = function node_fileComplete(data) {
             if (data.type === "diff") {
                 dfiledump[data.index] = data.file;
                 dState[data.index]    = true;
@@ -1092,7 +1091,12 @@ Examples:
             }
             if ((options.mode === "diff" && sState[data.index] === true && dState[data.index] === true && sfiledump[data.index] !== dfiledump[data.index]) || (options.mode !== "diff" && sState[data.index] === true)) {
                 if (options.diffcli === true) {
-                    cliWrite(data);
+                    if (data.type === "diff") {
+                        options.diff = data.file;
+                    } else {
+                        options.source = data.file;
+                    }
+                    cliWrite(prettydiff.api(options), data.localpath);
                 } else if (method === "filescreen") {
                     if (data.type === "diff") {
                         options.diff = data.file;
@@ -1101,7 +1105,7 @@ Examples:
                     }
                     screenWrite();
                 } else if (method === "file" || method === "directory" || method === "subdirectory") {
-                    fileWrite(data);
+                    fileWrite(data.file);
                 }
                 sState[data.index] = false;
                 if (options.mode === "diff") {
@@ -1114,10 +1118,10 @@ Examples:
 
         //read from a file
         //executed from init
-        readLocalFile = function (data) {
+        readLocalFile = function node_readLocalFile(data) {
             fs.readFile(data.absolutepath, {
                 encoding: "utf8"
-            }, function (err, dump) {
+            }, function node_readLocalFile_readFileCallback(err, dump) {
                 if (err !== null) {
                     return readLocalFile(data);
                 }
@@ -1131,14 +1135,14 @@ Examples:
 
         //resolve file contents from a web address
         //executed from init
-        readHttpFile  = function (data) {
+        readHttpFile  = function node_readHttpFile(data) {
             var file = [
                 "", 0
             ];
-            http.get(data.absolutepath, function (res) {
+            http.get(data.absolutepath, function node_readHttpFile_getCallback(res) {
                 file[1] = Number(res.headers["content-length"]);
                 res.setEncoding("utf8");
-                res.on("data", function (chunk) {
+                res.on("data", function node_readHttpFile_getCallback_onCallback(chunk) {
                     file[0] += chunk;
                     if (file[0].length === file[1]) {
                         data.file      = file[0];
@@ -1151,7 +1155,7 @@ Examples:
 
         //gather files in directory and sub directories
         //executed from init
-        directory     = function () {
+        directory     = function node_directory() {
             //the following four are necessary because you can
             //walk a directory tree from a relative path but you
             //cannot read file contents with a relative path in
@@ -1168,11 +1172,11 @@ Examples:
                     path       : [],
                     total      : 0
                 },
-                readDir = function (start, listtype) {
-                    fs.stat(start, function (erra, stat) {
+                readDir = function node_directory_readDir(start, listtype) {
+                    fs.stat(start, function node_directory_readDir_statCallback(erra, stat) {
                         var item    = {},
-                            dirtest = function (itempath, lastitem) {
-                                var pusher = function (itempath) {
+                            dirtest = function node_directory_readDir_statCallback_dirtest(itempath, lastitem) {
+                                var pusher = function node_directory_readDir_statCallback_dirtest_pusher(itempath) {
                                     if (slash === "\\") {
                                         itempath = itempath.replace(/\//g, slash);
                                     } else {
@@ -1185,8 +1189,8 @@ Examples:
                                     }
                                     item.count += 1;
                                 };
-                                fs.stat(itempath, function (errb, stat) {
-                                    var preprocess = function () {
+                                fs.stat(itempath, function node_directory_readDir_statCallback_dirtest_statCallback(errb, stat) {
+                                    var preprocess = function node_directory_readDir_statCallback_dirtest_statCallback_preprocess() {
                                         var b      = 0,
                                             length = (options.mode === "diff") ? Math.min(sfiles.path.length, dfiles.path.length) : sfiles.path.length,
                                             end    = false;
@@ -1293,7 +1297,7 @@ Examples:
                             return console.log(erra);
                         }
                         if (stat.isDirectory() === true) {
-                            fs.readdir(start, function (errd, files) {
+                            fs.readdir(start, function node_directory_readDir_statCallback_readdirCallback(errd, files) {
                                 var x     = 0,
                                     total = files.length;
                                 if (errd !== null) {
@@ -1357,9 +1361,9 @@ Examples:
     }
 
     //determine file types and then execute
-    (function init() {
+    (function node_init() {
         var state  = true,
-            status = function () {
+            status = function node_init_status() {
                 //status codes
                 //-1 is not file or directory
                 //0 is status pending
@@ -1509,10 +1513,10 @@ Examples:
                     }
                 }
             },
-            delay  = function () {
+            delay  = function node_init_delay() {
                 if (state === true) {
                     status();
-                    setTimeout(function () {
+                    setTimeout(function node_init_delay_setTimeout() {
                         delay();
                     }, 50);
                 }
