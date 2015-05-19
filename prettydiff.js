@@ -11152,10 +11152,10 @@ var prettydiff = function prettydiff(api) {
     //the edition values use the format YYMMDD for dates.
     edition    = {
         addon        : {
-            ace: 150511
+            ace: 150519
         },
         api          : {
-            dom      : 150511,
+            dom      : 150519,
             nodeLocal: 150415,
             wsh      : 150415
         },
@@ -11171,7 +11171,7 @@ var prettydiff = function prettydiff(api) {
         markup_beauty: 150509, //markup_beauty library
         markupmin    : 150415, //markupmin library
         prettydiff   : 150509, //this file
-        version      : "1.11.17", //version number
+        version      : "1.11.18", //version number
         webtool      : 150509
     };
 edition.latest = (function edition_latest() {
