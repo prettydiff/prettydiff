@@ -15,10 +15,6 @@ var pd = {};
 (function dom__init() {
     "use strict";
 
-    if (typeof prettydiff === "function") {
-        pd.application = prettydiff;
-    }
-
     pd.source = "";
     pd.diff   = "";
 
@@ -123,7 +119,7 @@ var pd = {};
                 },
                 words      = message.toLowerCase(),
                 exceptions = [
-                    "quota exceeded", "unexpected number", "quotaexceedederror", "script error", "uncaught rangeerror:"
+                    "quota exceeded", "unexpected number", "quotaexceedederror", "script error", "uncaught rangeerror:", "uncaught error: [$rootscope:infdig"
                 ],
                 a          = 0;
             /*if (errorObj !== undefined && errorObj !== null) {
@@ -350,10 +346,10 @@ var pd = {};
                 if (input === "css" || input === "less" || input === "scss") {
                     return "css";
                 }
-                if (input === "html" || input === "ejs" || input === "html_ruby" || input === "handlebars" || input === "twig") {
+                if (input.indexOf("html") > -1 || input === "html" || input === "ejs" || input === "html_ruby" || input === "handlebars" || input === "twig" || input === "php") {
                     return "html";
                 }
-                if (input === "markup" || input === "jsp" || input === "xml") {
+                if (input === "markup" || input === "jsp" || input === "xml" || input === "xhtml") {
                     return "markup";
                 }
                 if (input === "javascript" || input === "json" || input === "jsx" || input === "tss") {
@@ -367,8 +363,43 @@ var pd = {};
                 }
                 return "javascript";
             },
+            nameproper = function dom__langkey_nameproper(input) {
+                if (input === "javascript") {
+                    return "JavaScript";
+                }
+                if (input === "text") {
+                    return "Plain Text";
+                }
+                if (input === "jsx") {
+                    return "React JSX";
+                }
+                if (input === "scss") {
+                    return "SCSS (Sass)";
+                }
+                if (input === "ejs") {
+                    return "EJS Template";
+                }
+                if (input === "handlebars") {
+                    return "Handlebars Template";
+                }
+                if (input === "html_ruby") {
+                    return "ERB (Ruby) Template";
+                }
+                if (input === "typescript") {
+                    return "TypeScript (not supported yet)";
+                }
+                if (input === "twig") {
+                    return "HTML TWIG Template";
+                }
+                if (input === "jsp") {
+                    return "JSTL (JSP)";
+                }
+                if (input === "java") {
+                    return "Java (not supported yet)";
+                }
+                return input.toUpperCase();
+            },
             //defaultt      = actual default lang value from the select list
-            //defaultv      = prettydiff language category from defaultt
             //[0]           = language value for ace mode
             //[1]           = prettydiff language category from [0]
             //[2]           = pretty formatting for text output to user
@@ -379,26 +410,28 @@ var pd = {};
                     join     = "",
                     flaga    = false,
                     flagb    = false,
-                    defaultt = (pd.o.langdefault === null) ? "javascript" : pd.o.langdefault[pd.o.langdefault.selectedIndex].value,
-                    defaultv = "javascript";
-                defaultv = setlangmode(defaultt);
+                    defaultt = (pd.o.langdefault === null) ? "javascript" : setlangmode(pd.o.langdefault[pd.o.langdefault.selectedIndex].value),
+                    output   = function dom__langkey_auto_output(langname) {
+                        if (langname === "unknown") {
+                            return [
+                                defaultt, setlangmode(defaultt), "unknown"
+                            ];
+                        }
+                        return [
+                            langname, setlangmode(langname), nameproper(langname)
+                        ];
+                    };
                 if (a === null) {
                     return;
                 }
                 if (a === undefined || (/^(\s*#(?!(\!\/)))/).test(a) === true || (/\n\s*(\.|@)mixin\(?(\s*)/).test(a) === true) {
                     if ((/\$[a-zA-Z]/).test(a) === true || (/\{\s*(\w|\.|\$|#)+\s*\{/).test(a) === true) {
-                        return [
-                            "scss", "css", "SCSS"
-                        ];
+                        return output("scss");
                     }
                     if ((/@[a-zA-Z]/).test(a) === true || (/\{\s*(\w|\.|@|#)+\s*\{/).test(a) === true) {
-                        return [
-                            "less", "css", "LESS"
-                        ];
+                        return output("less");
                     }
-                    return [
-                        "css", "css", "CSS"
-                    ];
+                    return output("css");
                 }
                 b = a.replace(/\[[a-zA-Z][\w\-]*\=("|')?[a-zA-Z][\w\-]*("|')?\]/g, "").split("");
                 c = b.length;
@@ -425,189 +458,125 @@ var pd = {};
                     }
                     join = b.join("");
                     if ((/^(\s*(\{|\[))/).test(a) === true && (/((\]|\})\s*)$/).test(a) && a.indexOf(",") !== -1) {
-                        return [
-                            "json", "javascript", "JSON"
-                        ];
+                        return output("json");
                     }
                     if ((/((\}?(\(\))?\)*;?\s*)|([a-z0-9]("|')?\)*);?(\s*\})*)$/i).test(a) === true && ((/(var\s+[a-z]+[a-zA-Z0-9]*)/).test(a) === true || (/((\=|(\$\())\s*function)|(\s*function\s+(\w*\s+)?\()/).test(a) === true || a.indexOf("{") === -1 || (/^(\s*if\s+\()/).test(a) === true)) {
                         if (a.indexOf("(") > -1 || a.indexOf("=") > -1 || (a.indexOf(";") > -1 && a.indexOf("{") > -1)) {
                             if ((/:\s*((number)|(string))/).test(a) === true && (/((public)|(private))\s+/).test(a) === true) {
-                                return [
-                                    "typescript", defaultv, "Typescript (not supported yet)"
-                                ];
+                                return output("typescript");
                             }
-                            return [
-                                "javascript", "javascript", "JavaScript"
-                            ];
+                            return output("javascript");
                         }
-                        return [
-                            defaultt, defaultv, "unknown"
-                        ];
+                        return output("unknown");
                     }
-                    if ((/^(\s*[\$\.#@a-z0-9])|^(\s*\/\*)|^(\s*\*\s*\{)/i).test(a) === true && (/^(\s*if\s*\()/).test(a) === false && a.indexOf("{") !== -1 && (/\=\s*(\{|\[|\()/).test(join) === false && ((/(\+|\-|\=|\*|\?)\=/).test(join) === false || ((/\=+('|")?\)/).test(a) === true && (/;\s*base64/).test(a) === true)) && (/function(\s+\w+)*\s*\(/).test(join) === false) {
+                    if (a.indexOf("{") !== -1 && (/^(\s*[\{\$\.#@a-z0-9])|^(\s*\/(\*|\/))|^(\s*\*\s*\{)/i).test(a) === true && (/^(\s*if\s*\()/).test(a) === false && (/\=\s*(\{|\[|\()/).test(join) === false && (((/(\+|\-|\=|\*|\?)\=/).test(join) === false || (/\/\/\s*\=+/).test(join) === true) || ((/\=+('|")?\)/).test(a) === true && (/;\s*base64/).test(a) === true)) && (/function(\s+\w+)*\s*\(/).test(join) === false) {
                         if ((/:\s*((number)|(string))/).test(a) === true && (/((public)|(private))\s+/).test(a) === true) {
-                            return [
-                                "typescript", defaultv, "Typescript (not supported yet)"
-                            ];
+                            return output("typescript");
                         }
                         if ((/((public)|(private))\s+(((static)?\s+(v|V)oid)|(class)|(final))/).test(a) === true) {
-                            return [
-                                "java", defaultv, "Java (not supported yet)"
-                            ];
+                            return output("java");
+                        }
+                        if ((/<[a-zA-Z]/).test(a) === true && (/<\/[a-zA-Z]/).test(a) === true && ((/\s?\{%/).test(a) === true || (/\{(\{|#)(?!(\{|#|\=))/).test(a) === true)) {
+                            return output("twig");
                         }
                         if ((/^\s*($|@)/).test(a) === false && ((/:\s*(\{|\(|\[)/).test(a) === true || (/^(\s*return;?\s*\{)/).test(a) === true) && (/(\};?\s*)$/).test(a) === true) {
-                            return [
-                                "javascript", "javascript", "JavaScript"
-                            ];
+                            return output("javascript");
                         }
                         if ((/\{\{#/).test(a) === true && (/\{\{\//).test(a) === true && (/<\w/).test(a) === true) {
-                            return [
-                                "handlebars", "html", "Handlebars"
-                            ];
+                            return output("handlebars");
                         }
                         if ((/\{\s*(\w|\.|@|#)+\s*\{/).test(a) === true) {
-                            return [
-                                "less", "css", "LESS"
-                            ];
+                            return output("less");
                         }
                         if ((/\$(\w|\-)/).test(a) === true) {
-                            return [
-                                "scss", "css", "SCSS"
-                            ];
+                            return output("scss");
                         }
                         if ((/(:|;|\{)\s*@\w/).test(a) === true) {
-                            return [
-                                "less", "css", "LESS"
-                            ];
+                            return output("less");
                         }
-                        return [
-                            "css", "css", "CSS"
-                        ];
+                        return output("css");
                     }
                     if ((/"\s*:\s*\{/).test(a) === true) {
-                        return [
-                            "javascript", "tss", "Titanium Style Sheets"
-                        ];
+                        return output("tss");
                     }
-                    return [
-                        defaultt, defaultv, "unknown"
-                    ];
+                    return output("unknown");
                 }
                 if ((((/(>[\w\s:]*)?<(\/|\!)?[\w\s:\-\[]+/).test(a) === true || (/^(\s*<\?xml)/).test(a) === true) && ((/^([\s\w]*<)/).test(a) === true || (/(>[\s\w]*)$/).test(a) === true)) || ((/^(\s*<s((cript)|(tyle)))/i).test(a) === true && (/(<\/s((cript)|(tyle))>\s*)$/i).test(a) === true)) {
-                    if ((/^(\s*<\!doctype html>)/i).test(a) === true || (/^(\s*<html)/i).test(a) === true || ((/^(\s*<\!DOCTYPE\s+((html)|(HTML))\s+PUBLIC\s+)/).test(a) === true && (/XHTML\s+1\.1/).test(a) === false && (/XHTML\s+1\.0\s+(S|s)((trict)|(TRICT))/).test(a) === false)) {
+                    if (((/\s*<\!doctype html>/i).test(a) === true && (/\s*<html/i).test(a) === true) || ((/^(\s*<\!DOCTYPE\s+((html)|(HTML))\s+PUBLIC\s+)/).test(a) === true && (/XHTML\s+1\.1/).test(a) === false && (/XHTML\s+1\.0\s+(S|s)((trict)|(TRICT))/).test(a) === false)) {
                         if ((/<%\s*\}/).test(a) === true) {
-                            return [
-                                "ejs", "html", "EJS"
-                            ];
+                            return output("ejs");
                         }
                         if ((/<%\s*end/).test(a) === true) {
-                            return [
-                                "html_ruby", "html", "ERB"
-                            ];
+                            return output("html_ruby");
                         }
                         if ((/\{\{(#|\/|\{)/).test(a) === true) {
-                            return [
-                                "handlebars", "html", "Handlebars template"
-                            ];
+                            return output("handlebars");
                         }
                         if ((/\{\{end\}\}/).test(a) === true) {
                             //place holder for Go lang templates
-                            return [
-                                "html", "html", "HTML"
-                            ];
+                            return output("html");
                         }
-                        if ((/\s?\{%/).test(a) === true && (/\{\{(?!(\{|#|\=))/).test(a) === true) {
-                            return [
-                                "twig", "html", "HTML TWIG template"
-                            ];
+                        if ((/\s?\{%/).test(a) === true && (/\{(\{|#)(?!(\{|#|\=))/).test(a) === true) {
+                            return output("twig");
                         }
                         if ((/<\?/).test(a) === true) {
-                            return [
-                                "php", "html", "PHP"
-                            ];
+                            return output("php");
                         }
                         if ((/<jsp:include\s/).test(a) === true || (/<c:((set)|(if))\s/).test(a) === true) {
-                            return [
-                                "jsp", "xml", "JSTL"
-                            ];
+                            return output("jsp");
                         }
-                        return [
-                            "html", "html", "HTML"
-                        ];
+                        return output("html");
                     }
                     if ((/^(\s*<\?xml)/).test(a) === true) {
                         if ((/<%\s*\}/).test(a) === true) {
-                            return [
-                                "ejs", "markup", "EJS"
-                            ];
+                            return output("ejs");
                         }
                         if ((/<%\s*end/).test(a) === true) {
-                            return [
-                                "html_ruby", "markup", "ERB"
-                            ];
+                            return output("html_ruby");
                         }
                         if ((/\{\{(#|\/|\{)/).test(a) === true) {
-                            return [
-                                "handlebars", "markup", "Handlebars template"
-                            ];
+                            return output("handlebars");
                         }
                         if ((/\{\{end\}\}/).test(a) === true) {
                             //place holder for Go lang templates
-                            return [
-                                "xml", "markup", "HTML"
-                            ];
+                            return ("xml");
                         }
                         if ((/\s?\{%/).test(a) === true && (/\{\{(?!(\{|#|\=))/).test(a) === true) {
-                            return [
-                                "twig", "markup", "HTML TWIG template"
-                            ];
+                            return output("twig");
                         }
                         if ((/<\?(?!(xml))/).test(a) === true) {
-                            return [
-                                "php", "markup", "PHP"
-                            ];
+                            return output("php");
                         }
                         if ((/<jsp:include\s/).test(a) === true || (/<c:((set)|(if))\s/).test(a) === true) {
-                            return [
-                                "jsp", "markup", "JSTL"
-                            ];
+                            return output("jsp");
                         }
                         if ((/XHTML\s+1\.1/).test(a) === true || (/XHTML\s+1\.0\s+(S|s)((trict)|(TRICT))/).test(a) === true) {
-                            return [
-                                "xml", "markup", "XHTML"
-                            ];
+                            return output("xhtml");
                         }
-                        return [
-                            "xml", "markup", "XML"
-                        ];
+                        return output("xml");
                     }
                     if ((/<jsp:include\s/).test(a) === true || (/<c:((set)|(if))\s/).test(a) === true) {
-                        return [
-                            "jsp", "markup", "JSTL"
-                        ];
+                        return output("jsp");
                     }
-                    return [
-                        "xml", "markup", "XML"
-                    ];
+                    return output("xml");
                 }
-                return [
-                    defaultt, defaultv, "unknown"
-                ];
+                return output("unknown");
             };
         if (pd.o.lang !== null && pd.o.lang.selectedIndex > 0) {
             all  = true;
             lang = pd.o.lang[pd.o.lang.selectedIndex].value;
         }
-        if (all === true && lang !== "") {
-            value = lang;
-        } else if (value !== "" && lang === "") {
-            pd.o.langvalue = auto(value);
-            value          = pd.o.langvalue[0];
-        } else if (lang === "text") {
+        if (lang === "text") {
             pd.o.langvalue = [
                 "text", "text", "Plain Text"
             ];
             value          = "text";
+        } else if (lang !== "") {
+            value = lang;
+            pd.o.langvalue = [value, setlangmode(value), nameproper(value)];
+        } else if (value !== "") {
+            pd.o.langvalue = auto(value);
+            value          = pd.o.langvalue[0];
         }
         if (pd.test.ace === true) {
             if (all === true || pd.mode === "beau") {
@@ -877,6 +846,73 @@ var pd = {};
             completed  = false,
             autotest   = false,
             textout    = ((pd.o.jsscope === null || pd.o.jsscope.checked === false) && (node === null || node.checked === false)) ? true : false,
+            app = function dom__recycle_appInit() {
+                return;
+            },
+            application = function dom__recycle_application(lang) {
+                if (typeof prettydiff === "function") {
+                    return prettydiff;
+                }
+                if (pd.mode === "diff" && typeof diffview === "function") {
+                    api.lang = "text";
+                    return diffview;
+                }
+                if (typeof markup_beauty === "function" && (lang === "markup" || lang === "html")) {
+                    if (pd.mode === "beau" || pd.mode === "pars") {
+                        return function dom__recycle_application_markupbeauty() {
+                            var code = markup_beauty(api),
+                                sum  = (summary === undefined) ? "" : summary;
+                            return [
+                                code, sum
+                            ];
+                        };
+                    }
+                    if (pd.mode === "minn") {
+                        return function dom__recycle_application_markupmin() {
+                            var code = markupmin(api),
+                                sum  = (summary === undefined) ? "" : summary;
+                            return [
+                                code, sum
+                            ];
+                        };
+                    }
+                } else if (typeof csvbeauty === "function" && lang === "csv") {
+                    if (pd.mode === "beau") {
+                        return function dom__recycle_application_csvbeauty() {
+                            return [
+                                csvbeauty(api), ""
+                            ];
+                        };
+                    }
+                    if (pd.mode === "minn") {
+                        return function dom__recycle_application_csvmin() {
+                            var code = csspretty(api),
+                                sum  = (summary === undefined) ? "" : summary;
+                            return [
+                                code, sum
+                            ];
+                        };
+                    }
+                }
+                if (typeof csspretty === "function" && lang === "css") {
+                    return function dom__recycle_application_csspretty() {
+                        var code = csspretty(api),
+                            sum  = (summary === undefined) ? "" : summary;
+                        return [
+                            code, sum
+                        ];
+                    };
+                }
+                if (typeof jspretty === "function") {
+                    return function ddom__recycle_application_jspretty() {
+                        var code = jspretty(api),
+                            sum  = (summary === undefined) ? "" : summary;
+                        return [
+                            code, sum
+                        ];
+                    };
+                }
+            },
             execOutput = function dom__recycle_execOutput() {
                 var diffList         = [],
                     button           = {},
@@ -889,16 +925,24 @@ var pd = {};
                     presumedLanguage = pd.o.langvalue;
                     if (pd.o.langvalue[1] === "javascript") {
                         if (output[1] !== undefined && output[1].indexOf("React JSX") > 0 && ((api.jsscope === "report" && (/Code type is presumed to be React JSX/).test(output[1]) === false && (/Presumed language is &lt;em&gt;React JSX/).test(output[1]) === false) || api.jsscope !== "report")) {
-                            pd.o.langvalue = "React JSX";
+                            if (pd.test.ace === true) {
+                                if (pd.mode === "beau") {
+                                    pd.langkey(false, pd.ace.beauIn, "jsx");
+                                    pd.langkey(false, pd.ace.beauOut, "jsx");
+                                } else if (pd.mode === "minn") {
+                                    pd.langkey(false, pd.ace.minnIn, "jsx");
+                                    pd.langkey(false, pd.ace.minnOut, "jsx");
+                                } else if (pd.mode === "pars") {
+                                    pd.langkey(false, pd.ace.parsIn, "jsx");
+                                    pd.langkey(false, pd.ace.parsOut, "jsx");
+                                } else if (pd.mode === "minn") {
+                                    pd.langkey(false, pd.ace.diffBase, "jsx");
+                                    pd.langkey(false, pd.ace.diffNew, "jsx");
+                                }
+                            } else {
+                                pd.o.langvalue = ["jsx", "javascript", "React JSX"];
+                            }
                         }
-                    }
-                }
-                if (pd.o.announce !== null) {
-                    if (autotest === true) {
-                        pd.o.announce.style.color = "#00c";
-                        pd.o.announce.innerHTML   = "Code type is set to <strong>auto</strong>. <span>Presumed language is <em>" + pd.o.langvalue[2] + "</em>.</span>";
-                    } else {
-                        pd.o.announce.innerHTML = "";
                     }
                 }
                 if (autotest === true) {
@@ -908,31 +952,6 @@ var pd = {};
                 if (button.getAttribute("class") === "save" && button.innerHTML === "H") {
                     chromeSave       = true;
                     button.innerHTML = "S";
-                }
-                if (pd.o.announce !== null) {
-                    if (api.lang === "markup" || api.lang === "html" || presumedLanguage === "markup" || presumedLanguage === "HTML" || presumedLanguage === "XHTML" || presumedLanguage === "XML" || presumedLanguage === "JSTL") {
-                        errortext = (function dom__recycle_execOutput_errortext() {
-                            var a      = 0,
-                                p      = output[1].split("<p><strong"),
-                                length = p.length;
-                            for (a = 0; a < length; a += 1) {
-                                if (p[a].indexOf(" more ") > -1 && p[a].indexOf("start tag") > -1 && p[a].indexOf("end tag") > -1) {
-                                    return "Notice: " + p[a].substring(1, p[a].indexOf("<"));
-                                }
-                                if (p[a].indexOf("Duplicate id") > -1) {
-                                    if (p[a].indexOf("Execution time") > -1) {
-                                        return p[a].slice(p[a].indexOf("<strong class='duplicate"), p[a].length - 4);
-                                    }
-                                    return "<strong>" + p[a].slice(p[a].indexOf(">") + 1, p[a].indexOf("</p"));
-                                }
-                            }
-                            return "";
-                        }());
-                        if (errortext.indexOf("end tag") > 0 || errortext.indexOf("Duplicate id") > 0) {
-                            pd.o.announce.style.color = "#c00";
-                            pd.o.announce.innerHTML   = errortext;
-                        }
-                    }
                 }
                 if (api.mode === "beautify") {
                     if (pd.o.codeBeauOut !== null) {
@@ -998,9 +1017,6 @@ var pd = {};
                     }
                 }
                 if (api.mode === "diff" && pd.o.report.code.box !== null) {
-                    if (pd.o.announce !== null && pd.o.announce.innerHTML !== pd.o.announcetext && autotest === false) {
-                        pd.o.announce.innerHTML = "";
-                    }
                     buttons = pd.o.report.code.box.getElementsByTagName("p")[0].getElementsByTagName("button");
                     if (output[0].length > 125000) {
                         pd.test.filled.code = true;
@@ -1055,9 +1071,6 @@ var pd = {};
                     }
                 }
                 if (api.mode === "minify") {
-                    if (pd.o.announce !== null && pd.o.announce.innerHTML !== pd.o.announcetext && autotest === false) {
-                        pd.o.announce.innerHTML = "";
-                    }
                     if (output[0].length > 125000) {
                         pd.test.filled.code = true;
                     } else {
@@ -1180,10 +1193,40 @@ var pd = {};
                         }
                     }
                 }
-                if (pd.o.announce !== null && pd.$$("jserror") !== null) {
-                    pd.o.announce.innerHTML                                     = "<strong>" + pd.$$("jserror").getElementsByTagName("strong")[0].innerHTML + "</strong> <span>See 'Code Report' for details</span>";
-                    pd.o.announce.style.color                                   = "inherit";
-                    pd.o.announce.getElementsByTagName("strong")[0].style.color = "#c00";
+                if (pd.o.announce !== null) {
+                    if (pd.o.langvalue[1] === "markup" || pd.o.langvalue[1] === "html") {
+                        errortext = (function dom__recycle_execOutput_errortext() {
+                            var a      = 0,
+                                p      = output[1].split("<p><strong"),
+                                length = p.length;
+                            for (a = 0; a < length; a += 1) {
+                                if (p[a].indexOf(" more ") > -1 && p[a].indexOf("start tag") > -1 && p[a].indexOf("end tag") > -1) {
+                                    return "Notice: " + p[a].substring(1, p[a].indexOf("<"));
+                                }
+                                if (p[a].indexOf("Duplicate id") > -1) {
+                                    if (p[a].indexOf("Execution time") > -1) {
+                                        return p[a].slice(p[a].indexOf("<strong class='duplicate"), p[a].length - 4);
+                                    }
+                                    return "<strong>" + p[a].slice(p[a].indexOf(">") + 1, p[a].indexOf("</p"));
+                                }
+                            }
+                            return "";
+                        }());
+                    }
+                    if (errortext.indexOf("end tag") > 0 || errortext.indexOf("Duplicate id") > 0) {
+                        pd.o.announce.setAttribute("class", "error");
+                        pd.o.announce.innerHTML   = errortext;
+                    } else if (pd.$$("jserror") !== null) {
+                        pd.o.announce.removeAttribute("class");
+                        pd.o.announce.innerHTML = "<strong>" + pd.$$("jserror").getElementsByTagName("strong")[0].innerHTML + "</strong> <span>See 'Code Report' for details</span>";
+                    } else {
+                        if (autotest === true) {
+                            pd.o.announce.setAttribute("class", "alert");
+                            pd.o.announce.innerHTML = "Code type is set to <strong>auto</strong>. <span>Presumed language is <em>" + pd.o.langvalue[2] + "</em>.</span>";
+                        } else {
+                            pd.o.announce.innerHTML = "Language set to <em>" + pd.o.langvalue[2] + "</em>.";
+                        }
+                    }
                 }
                 buttons = pd.o.report.code.box.getElementsByTagName("p")[0].getElementsByTagName("button");
                 if (chromeSave === true) {
@@ -1293,39 +1336,6 @@ var pd = {};
 
         //determine options based upon mode of operations
         if (pd.mode === "beau") {
-            if (pd.application === undefined) {
-                if (typeof markup_beauty === "function" && (api.lang === "markup" || api.lang === "html" || api.lang === "xml" || api.lang === "jstl")) {
-                    pd.application = function dom__markup_beauty() {
-                        var code = markup_beauty(api),
-                            sum  = (summary === undefined) ? "" : summary;
-                        return [
-                            code, sum
-                        ];
-                    };
-                } else if (typeof csvbeauty === "function" && api.lang === "csv") {
-                    pd.application = function csvbeauty() {
-                        return [
-                            csvbeauty(api), ""
-                        ];
-                    };
-                } else if (typeof csspretty === "function" && (api.lang === "css" || api.lang === "scss")) {
-                    pd.application = function dom__csspretty_beau() {
-                        var code = csspretty(api),
-                            sum  = (summary === undefined) ? "" : summary;
-                        return [
-                            code, sum
-                        ];
-                    };
-                } else if (typeof jspretty === "function") {
-                    pd.application = function dom__jspretty_beau() {
-                        var code = jspretty(api),
-                            sum  = (summary === undefined) ? "" : summary;
-                        return [
-                            code, sum
-                        ];
-                    };
-                }
-            }
             (function dom__recycle_beautify() {
                 var braceline    = {},
                     bracepadding = {},
@@ -1474,39 +1484,6 @@ var pd = {};
             api.mode = "beautify";
         }
         if (pd.mode === "minn") {
-            if (pd.application === undefined) {
-                if (typeof markupmin === "function" && (api.lang === "markup" || api.lang === "html" || api.lang === "xml" || api.lang === "jstl")) {
-                    pd.application = function dom__markupmin() {
-                        var code = markupmin(api),
-                            sum  = (summary === undefined) ? "" : summary;
-                        return [
-                            code, sum
-                        ];
-                    };
-                } else if (typeof csvmin === "function" && api.lang === "csv") {
-                    pd.application = function csvmin() {
-                        return [
-                            csvmin(api), ""
-                        ];
-                    };
-                } else if (typeof csspretty === "function" && (api.lang === "css" || api.lang === "scss")) {
-                    pd.application = function dom__csspretty_min() {
-                        var code = csspretty(api),
-                            sum  = (summary === undefined) ? "" : summary;
-                        return [
-                            code, sum
-                        ];
-                    };
-                } else if (typeof jspretty === "function") {
-                    pd.application = function dom__jspretty_min() {
-                        var code = jspretty(api),
-                            sum  = (summary === undefined) ? "" : summary;
-                        return [
-                            code, sum
-                        ];
-                    };
-                }
-            }
             (function dom__recycle_minify() {
                 var conditional = pd.$$("conditionalm-yes"),
                     html        = pd.$$("htmlm-yes"),
@@ -1551,12 +1528,6 @@ var pd = {};
             api.mode = "minify";
         }
         if (pd.mode === "diff") {
-            if (typeof prettydiff !== "function" && typeof diffview === "function") {
-                pd.application = diffview;
-            }
-            if (typeof pd.application !== "function") {
-                return;
-            }
             api.jsscope = false;
             (function dom__recycle_diff() {
                 var braceline    = {},
@@ -1720,7 +1691,10 @@ var pd = {};
                                             } else {
                                                 pd.diff = "";
                                             }
-                                            output = pd.application(api);
+                                            app = application(api.lang);
+                                            if (app !== undefined) {
+                                                output = app(api);
+                                            }
                                             execOutput();
                                             return;
                                         }
@@ -1749,33 +1723,6 @@ var pd = {};
                     pd.o.codeParsIn.value = "CSV is not supported in 'Parse Only' mode.";
                 }
                 return;
-            }
-            if (pd.application === undefined) {
-                if (typeof markup_beauty === "function" && (api.lang === "markup" || api.lang === "html" || api.lang === "xml" || api.lang === "jstl")) {
-                    pd.application = function dom__markup_beauty() {
-                        var code = markup_beauty(api),
-                            sum  = (summary === undefined) ? "" : summary;
-                        return [
-                            code, sum
-                        ];
-                    };
-                } else if (typeof csspretty === "function" && (api.lang === "css" || api.lang === "scss")) {
-                    pd.application = function dom__csspretty_beau() {
-                        var code = csspretty(api),
-                            sum  = (summary === undefined) ? "" : summary;
-                        return [
-                            code, sum
-                        ];
-                    };
-                } else if (typeof jspretty === "function") {
-                    pd.application = function dom__jspretty_beau() {
-                        var code = jspretty(api),
-                            sum  = (summary === undefined) ? "" : summary;
-                        return [
-                            code, sum
-                        ];
-                    };
-                }
             }
             (function dom__recycle_parse() {
                 var html      = pd.$$("phtml-yes"),
@@ -1921,7 +1868,10 @@ var pd = {};
                                     } else {
                                         pd.diff = "";
                                     }
-                                    output = pd.application(api);
+                                    app = application(api.lang);
+                                    if (app !== undefined) {
+                                        output = app(api);
+                                    }
                                     execOutput();
                                     return;
                                 }
@@ -1955,7 +1905,10 @@ var pd = {};
                         }
                         pd.source = api.source;
                         pd.diff   = "";
-                        output    = pd.application(api);
+                        app = application(api.lang);
+                        if (app !== undefined) {
+                            output = app(api);
+                        }
                         execOutput();
                     }, 50);
                 }
@@ -1969,7 +1922,10 @@ var pd = {};
                         }
                         pd.source = api.source;
                         pd.diff   = "";
-                        output    = pd.application(api);
+                        app = application(api.lang);
+                        if (app !== undefined) {
+                            output = app(api);
+                        }
                         execOutput();
                     }, 50);
                 }
@@ -1983,7 +1939,10 @@ var pd = {};
                         }
                         pd.source = api.source;
                         pd.diff   = "";
-                        output    = pd.application(api);
+                        app = application(api.lang);
+                        if (app !== undefined) {
+                            output = app(api);
+                        }
                         execOutput();
                     }, 50);
                 }
@@ -2005,7 +1964,10 @@ var pd = {};
                 } else {
                     pd.diff = "";
                 }
-                output = pd.application(api);
+                app = application(api.lang);
+                if (app !== undefined) {
+                    output = app(api);
+                }
                 execOutput();
             }
         }
@@ -3099,6 +3061,9 @@ var pd = {};
                     }
                 }
             };
+        if (x === null) {
+            return;
+        }
         if (x.nodeType === 1) {
             if (x.nodeName.toLowerCase() === "input") {
                 a = x;
@@ -3713,6 +3678,7 @@ var pd = {};
     //set with appropriate accessibility response
     pd.indentchar          = function dom__indentchar(x) {
         var node      = {},
+            quan      = {},
             beauChar  = pd.$$("beau-char"),
             diffChar  = pd.$$("diff-char"),
             beauOther = pd.$$("beau-other"),
@@ -3743,7 +3709,7 @@ var pd = {};
                 }
             }
         } else if (pd.mode === "diff" && diffOther !== null && diffChar !== null) {
-            if (node === diffOther) {
+            if (node === diffOther || node === diffChar) {
                 diffOther.checked = true;
                 diffChar.setAttribute("class", "checked");
                 if (diffChar.value === "Click me for custom input") {
@@ -3766,8 +3732,8 @@ var pd = {};
                     pd.ace.minnOut.getSession().setUseSoftTabs(true);
                     pd.ace.parsIn.getSession().setUseSoftTabs(true);
                     pd.ace.parsOut.getSession().setUseSoftTabs(true);
-                    node = pd.$$("diff-quan");
-                    if (node !== null && isNaN(Number(node.value)) === false) {
+                    quan = pd.$$("diff-quan");
+                    if (quan !== null && isNaN(Number(quan.value)) === false) {
                         pd.ace.diffBase.getSession().setTabSize(Number(node.value));
                         pd.ace.diffNew.getSession().setTabSize(Number(node.value));
                         pd.ace.minnIn.getSession().setTabSize(Number(node.value));
@@ -3792,8 +3758,8 @@ var pd = {};
                     pd.ace.minnOut.getSession().setUseSoftTabs(true);
                     pd.ace.parsIn.getSession().setUseSoftTabs(true);
                     pd.ace.parsOut.getSession().setUseSoftTabs(true);
-                    node = pd.$$("beau-quan");
-                    if (node !== null && isNaN(Number(node.value)) === false) {
+                    quan = pd.$$("beau-quan");
+                    if (quan !== null && isNaN(Number(quan.value)) === false) {
                         pd.ace.beauIn.getSession().setTabSize(Number(node.value));
                         pd.ace.beauOut.getSession().setTabSize(Number(node.value));
                         pd.ace.minnIn.getSession().setTabSize(Number(node.value));
@@ -4679,7 +4645,7 @@ var pd = {};
                     pd.stat.fdate = Date.now();
                 }
                 if (pd.test.json === true) {
-                    if (localStorage.commentString !== undefined && localStorage.commentString !== "") {
+                    if (localStorage.commentString !== undefined && localStorage.commentString !== null && localStorage.commentString !== "") {
                         pd.commentString = JSON.parse(localStorage.commentString.replace(/api\./g, ""));
                     }
                     if (localStorage.settings !== undefined && localStorage.settings !== null) {

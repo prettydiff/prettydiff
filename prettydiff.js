@@ -128,6 +128,63 @@ var prettydiff = function prettydiff(api) {
                     apioutput       = "",
                     apidiffout      = "",
                     builder         = {},
+                    setlangmode = function dom__langkey_setlangmode(input) {
+                        if (input === "css" || input === "less" || input === "scss") {
+                            return "css";
+                        }
+                        if (input.indexOf("html") > -1 || input === "html" || input === "ejs" || input === "html_ruby" || input === "handlebars" || input === "twig" || input === "php") {
+                            return "html";
+                        }
+                        if (input === "markup" || input === "jsp" || input === "xml" || input === "xhtml") {
+                            return "markup";
+                        }
+                        if (input === "javascript" || input === "json" || input === "jsx" || input === "tss") {
+                            return "javascript";
+                        }
+                        if (input === "text") {
+                            return "text";
+                        }
+                        if (input === "csv") {
+                            return "csv";
+                        }
+                        return "javascript";
+                    },
+                    nameproper = function dom__langkey_nameproper(input) {
+                        if (input === "javascript") {
+                            return "JavaScript";
+                        }
+                        if (input === "text") {
+                            return "Plain Text";
+                        }
+                        if (input === "jsx") {
+                            return "React JSX";
+                        }
+                        if (input === "scss") {
+                            return "SCSS (Sass)";
+                        }
+                        if (input === "ejs") {
+                            return "EJS Template";
+                        }
+                        if (input === "handlebars") {
+                            return "Handlebars Template";
+                        }
+                        if (input === "html_ruby") {
+                            return "ERB (Ruby) Template";
+                        }
+                        if (input === "typescript") {
+                            return "TypeScript (not supported yet)";
+                        }
+                        if (input === "twig") {
+                            return "HTML TWIG Template";
+                        }
+                        if (input === "jsp") {
+                            return "JSTL (JSP)";
+                        }
+                        if (input === "java") {
+                            return "Java (not supported yet)";
+                        }
+                        return input.toUpperCase();
+                    },
                     //determines api source as necessary to make a decision about whether to supply
                     //externally needed JS functions to reports
                     capi            = (api.api === undefined || api.api.length === 0) ? "" : api.api,
@@ -189,10 +246,10 @@ var prettydiff = function prettydiff(api) {
                     //variables are declared at which functional depth
                     cjsscope        = (api.jsscope === true || api.jsscope === "true") ? "report" : (api.jsscope !== "html" && api.jsscope !== "report") ? "none" : api.jsscope,
                     //api.lang - which programming language will we be analyzing
-                    clang           = (typeof api.lang === "string" && (api.lang === "javascript" || api.lang === "css" || api.lang === "markup" || api.lang === "html" || api.lang === "csv" || api.lang === "text")) ? api.lang : "auto",
+                    clang           = (typeof api.lang === "string") ? setlangmode(api.lang.toLowerCase()) : "auto",
                     //api.langdefault - what language should lang value "auto" resort to when it
                     //cannot determine the language
-                    clangdefault    = (typeof api.langdefault === "string" && (api.lang === "javascript" || api.lang === "css" || api.lang === "markup" || api.lang === "html" || api.lang === "csv")) ? api.langdefault : "text",
+                    clangdefault    = (typeof api.langdefault === "string") ? setlangmode(api.langdefault.toLowerCase()) : "text",
                     //api.mode - is this a minify, beautify, or diff operation
                     cmode           = (typeof api.mode === "string" && (api.mode === "minify" || api.mode === "beautify" || api.mode === "parse")) ? api.mode : "diff",
                     //api.obfuscate - when minifying code with JSPretty should we make it sloppy and
@@ -245,7 +302,7 @@ var prettydiff = function prettydiff(api) {
                     cwrap           = (isNaN(api.wrap) === true) ? 80 : Number(api.wrap),
                     autoval         = [],
                     autostring      = "",
-                    auto            = function core__auto(a) {
+                    auto        = function core__auto(a) {
                         var b        = [],
                             c        = 0,
                             d        = 0,
@@ -253,40 +310,27 @@ var prettydiff = function prettydiff(api) {
                             flaga    = false,
                             flagb    = false,
                             defaultt = clangdefault,
-                            defaultv = "javascript",
-                            setlangmode = function core__auto_setlangmode(input) {
-                                if (input === "css" || input === "less" || input === "scss") {
-                                    return "css";
+                            output   = function core__auto_output(langname) {
+                                if (langname === "unknown") {
+                                    return [
+                                        defaultt, setlangmode(defaultt), "unknown"
+                                    ];
                                 }
-                                if (input === "html" || input === "ejs" || input === "html_ruby" || input === "handlebars" || input === "twig") {
-                                    return "html";
-                                }
-                                if (input === "markup" || input === "jsp" || input === "xml") {
-                                    return "markup";
-                                }
-                                if (input === "javascript" || input === "json" || input === "jsx" || input === "tss") {
-                                    return "javascript";
-                                }
-                                if (input === "text") {
-                                    return "text";
-                                }
-                                if (input === "csv") {
-                                    return "csv";
-                                }
-                                return "javascript";
+                                return [
+                                    langname, setlangmode(langname), nameproper(langname)
+                                ];
                             };
-                        defaultv = setlangmode(defaultt);
                         if (a === null) {
                             return;
                         }
                         if (a === undefined || (/^(\s*#(?!(\!\/)))/).test(a) === true || (/\n\s*(\.|@)mixin\(?(\s*)/).test(a) === true) {
                             if ((/\$[a-zA-Z]/).test(a) === true || (/\{\s*(\w|\.|\$|#)+\s*\{/).test(a) === true) {
-                                return ["scss", "css", "SCSS"];
+                                return output("scss");
                             }
                             if ((/@[a-zA-Z]/).test(a) === true || (/\{\s*(\w|\.|@|#)+\s*\{/).test(a) === true) {
-                                return ["less", "css", "LESS"];
+                                return output("less");
                             }
-                            return ["css", "css", "CSS"];
+                            return output("css");
                         }
                         b = a.replace(/\[[a-zA-Z][\w\-]*\=("|')?[a-zA-Z][\w\-]*("|')?\]/g, "").split("");
                         c = b.length;
@@ -313,106 +357,109 @@ var prettydiff = function prettydiff(api) {
                             }
                             join = b.join("");
                             if ((/^(\s*(\{|\[))/).test(a) === true && (/((\]|\})\s*)$/).test(a) && a.indexOf(",") !== -1) {
-                                return ["json", "javascript", "JSON"];
+                                return output("json");
                             }
                             if ((/((\}?(\(\))?\)*;?\s*)|([a-z0-9]("|')?\)*);?(\s*\})*)$/i).test(a) === true && ((/(var\s+[a-z]+[a-zA-Z0-9]*)/).test(a) === true || (/((\=|(\$\())\s*function)|(\s*function\s+(\w*\s+)?\()/).test(a) === true || a.indexOf("{") === -1 || (/^(\s*if\s+\()/).test(a) === true)) {
                                 if (a.indexOf("(") > -1 || a.indexOf("=") > -1 || (a.indexOf(";") > -1 && a.indexOf("{") > -1)) {
                                     if ((/:\s*((number)|(string))/).test(a) === true && (/((public)|(private))\s+/).test(a) === true) {
-                                        return ["typescript", defaultv, "Typescript (not supported yet)"];
+                                        return output("typescript");
                                     }
-                                    return ["javascript", "javascript", "JavaScript"];
+                                    return output("javascript");
                                 }
-                                return [defaultt, defaultv, "unknown"];
+                                return output("unknown");
                             }
-                            if ((/^(\s*[\$\.#@a-z0-9])|^(\s*\/\*)|^(\s*\*\s*\{)/i).test(a) === true && (/^(\s*if\s*\()/).test(a) === false && a.indexOf("{") !== -1 && (/\=\s*(\{|\[|\()/).test(join) === false && ((/(\+|\-|\=|\*|\?)\=/).test(join) === false || ((/\=+('|")?\)/).test(a) === true && (/;\s*base64/).test(a) === true)) && (/function(\s+\w+)*\s*\(/).test(join) === false) {
+                            if (a.indexOf("{") !== -1 && (/^(\s*[\{\$\.#@a-z0-9])|^(\s*\/(\*|\/))|^(\s*\*\s*\{)/i).test(a) === true && (/^(\s*if\s*\()/).test(a) === false && (/\=\s*(\{|\[|\()/).test(join) === false && (((/(\+|\-|\=|\*|\?)\=/).test(join) === false || (/\/\/\s*\=+/).test(join) === true) || ((/\=+('|")?\)/).test(a) === true && (/;\s*base64/).test(a) === true)) && (/function(\s+\w+)*\s*\(/).test(join) === false) {
                                 if ((/:\s*((number)|(string))/).test(a) === true && (/((public)|(private))\s+/).test(a) === true) {
-                                    return ["typescript", defaultv, "Typescript (not supported yet)"];
+                                    return output("typescript");
                                 }
                                 if ((/((public)|(private))\s+(((static)?\s+(v|V)oid)|(class)|(final))/).test(a) === true) {
-                                    return ["java", defaultv, "Java (not supported yet)"];
+                                    return output("java");
+                                }
+                                if ((/<[a-zA-Z]/).test(a) === true && (/<\/[a-zA-Z]/).test(a) === true && ((/\s?\{%/).test(a) === true || (/\{(\{|#)(?!(\{|#|\=))/).test(a) === true)) {
+                                    return output("twig");
                                 }
                                 if ((/^\s*($|@)/).test(a) === false && ((/:\s*(\{|\(|\[)/).test(a) === true || (/^(\s*return;?\s*\{)/).test(a) === true) && (/(\};?\s*)$/).test(a) === true) {
-                                    return ["javascript", "javascript", "JavaScript"];
+                                    return output("javascript");
                                 }
                                 if ((/\{\{#/).test(a) === true && (/\{\{\//).test(a) === true && (/<\w/).test(a) === true) {
-                                    return ["handlebars", "html", "Handlebars"];
+                                    return output("handlebars");
                                 }
                                 if ((/\{\s*(\w|\.|@|#)+\s*\{/).test(a) === true) {
-                                    return ["less", "css", "LESS"];
+                                    return output("less");
                                 }
                                 if ((/\$(\w|\-)/).test(a) === true) {
-                                    return ["scss", "css", "SCSS"];
+                                    return output("scss");
                                 }
                                 if ((/(:|;|\{)\s*@\w/).test(a) === true) {
-                                    return ["less", "css", "LESS"];
+                                    return output("less");
                                 }
-                                return ["css", "css", "CSS"];
+                                return output("css");
                             }
                             if ((/"\s*:\s*\{/).test(a) === true) {
-                                return ["javascript", "tss", "Titanium Style Sheets"];
+                                return output("tss");
                             }
-                            return [defaultt, defaultv, "unknown"];
+                            return output("unknown");
                         }
                         if ((((/(>[\w\s:]*)?<(\/|\!)?[\w\s:\-\[]+/).test(a) === true || (/^(\s*<\?xml)/).test(a) === true) && ((/^([\s\w]*<)/).test(a) === true || (/(>[\s\w]*)$/).test(a) === true)) || ((/^(\s*<s((cript)|(tyle)))/i).test(a) === true && (/(<\/s((cript)|(tyle))>\s*)$/i).test(a) === true)) {
-                            if ((/^(\s*<\!doctype html>)/i).test(a) === true || (/^(\s*<html)/i).test(a) === true || ((/^(\s*<\!DOCTYPE\s+((html)|(HTML))\s+PUBLIC\s+)/).test(a) === true && (/XHTML\s+1\.1/).test(a) === false && (/XHTML\s+1\.0\s+(S|s)((trict)|(TRICT))/).test(a) === false)) {
+                            if (((/\s*<\!doctype html>/i).test(a) === true && (/\s*<html/i).test(a) === true) || ((/^(\s*<\!DOCTYPE\s+((html)|(HTML))\s+PUBLIC\s+)/).test(a) === true && (/XHTML\s+1\.1/).test(a) === false && (/XHTML\s+1\.0\s+(S|s)((trict)|(TRICT))/).test(a) === false)) {
                                 if ((/<%\s*\}/).test(a) === true) {
-                                    return ["ejs", "html", "EJS"];
+                                    return output("ejs");
                                 }
                                 if ((/<%\s*end/).test(a) === true) {
-                                    return ["html_ruby", "html", "ERB"];
+                                    return output("html_ruby");
                                 }
                                 if ((/\{\{(#|\/|\{)/).test(a) === true) {
-                                    return ["handlebars", "html", "Handlebars template"];
+                                    return output("handlebars");
                                 }
                                 if ((/\{\{end\}\}/).test(a) === true) {
                                     //place holder for Go lang templates
-                                    return ["html", "html", "HTML"];
+                                    return output("html");
                                 }
-                                if ((/\s?\{%/).test(a) === true && (/\{\{(?!(\{|#|\=))/).test(a) === true) {
-                                    return ["twig", "html", "HTML TWIG template"];
+                                if ((/\s?\{%/).test(a) === true && (/\{(\{|#)(?!(\{|#|\=))/).test(a) === true) {
+                                    return output("twig");
                                 }
                                 if ((/<\?/).test(a) === true) {
-                                    return ["php", "html", "PHP"];
+                                    return output("php");
                                 }
                                 if ((/<jsp:include\s/).test(a) === true || (/<c:((set)|(if))\s/).test(a) === true) {
-                                    return ["jsp", "xml", "JSTL"];
+                                    return output("jsp");
                                 }
-                                return ["html", "html", "HTML"];
+                                return output("html");
                             }
                             if ((/^(\s*<\?xml)/).test(a) === true) {
                                 if ((/<%\s*\}/).test(a) === true) {
-                                    return ["ejs", "markup", "EJS"];
+                                    return output("ejs");
                                 }
                                 if ((/<%\s*end/).test(a) === true) {
-                                    return ["html_ruby", "markup", "ERB"];
+                                    return output("html_ruby");
                                 }
                                 if ((/\{\{(#|\/|\{)/).test(a) === true) {
-                                    return ["handlebars", "markup", "Handlebars template"];
+                                    return output("handlebars");
                                 }
                                 if ((/\{\{end\}\}/).test(a) === true) {
                                     //place holder for Go lang templates
-                                    return ["xml", "markup", "HTML"];
+                                    return ("xml");
                                 }
                                 if ((/\s?\{%/).test(a) === true && (/\{\{(?!(\{|#|\=))/).test(a) === true) {
-                                    return ["twig", "markup", "HTML TWIG template"];
+                                    return output("twig");
                                 }
                                 if ((/<\?(?!(xml))/).test(a) === true) {
-                                    return ["php", "markup", "PHP"];
+                                    return output("php");
                                 }
                                 if ((/<jsp:include\s/).test(a) === true || (/<c:((set)|(if))\s/).test(a) === true) {
-                                    return ["jsp", "markup", "JSTL"];
+                                    return output("jsp");
                                 }
                                 if ((/XHTML\s+1\.1/).test(a) === true || (/XHTML\s+1\.0\s+(S|s)((trict)|(TRICT))/).test(a) === true) {
-                                    return ["xml", "markup", "XHTML"];
+                                    return output("xhtml");
                                 }
-                                return ["xml", "markup", "XML"];
+                                return output("xml");
                             }
                             if ((/<jsp:include\s/).test(a) === true || (/<c:((set)|(if))\s/).test(a) === true) {
-                                return ["jsp", "markup", "JSTL"];
+                                return output("jsp");
                             }
-                            return ["xml", "markup", "XML"];
+                            return output("xml");
                         }
-                        return [defaultt, defaultv, "unknown"];
+                        return output("unknown");
                     },
                     proctime        = function core__proctime() {
                         var minuteString = "",
@@ -817,8 +864,11 @@ var prettydiff = function prettydiff(api) {
                     } else {
                         autostring = "<p>Code type set to <strong>auto</strong>. Presumed language is <em>" + autoval[2] + "</em>.</p>";
                     }
-                } else {
+                } else if (capi === "dom") {
                     autoval = [clang, clang, clang];
+                    autostring = "<p>Code type is set to <strong>" + clang + "</strong>.</p>";
+                } else {
+                    clang = setlangmode(clang);
                     autostring = "<p>Code type is set to <strong>" + clang + "</strong>.</p>";
                 }
                 pdcomment();
@@ -1427,10 +1477,140 @@ var prettydiff = function prettydiff(api) {
                     space      = "",
                     spacer     = function csspretty__tokenize_space() {
                         var slen = space.split("\n").length;
-                        if (slen > 2) {
+                        if (types[types.length - 1] !== "comment" && types[types.length - 1] !== "comment-inline" && (slen > 2 || (slen > 1 && b[a] + b[a + 1] === "//"))) {
                             lines[lines.length - 1] = 1;
                         }
                         space = "";
+                    },
+                    objSort    = function csspretty__tokenize_objSort() {
+                        var cc        = 0,
+                            dd        = 0,
+                            ee        = 0,
+                            startlen  = token.length - 1,
+                            end       = startlen,
+                            keys      = [],
+                            keylen    = 0,
+                            keyend    = 0,
+                            start     = 0,
+                            sort = function jspretty__tokenize_objSort_sort(x, y) {
+                                var xx = x[0],
+                                    yy = y[0];
+                                if (types[xx] === "comment" || types[xx] === "comment-inline") {
+                                    do {
+                                        xx += 1;
+                                    } while (xx < startlen || types[xx] === "comment" || types[xx] === "comment-inline");
+                                }
+                                if (types[yy] === "comment" || types[yy] === "comment-inline") {
+                                    do {
+                                        yy += 1;
+                                    } while (yy < startlen || types[yy] === "comment" || types[yy] === "comment-inline");
+                                }
+                                if (token[xx].toLowerCase() < token[yy].toLowerCase()) {
+                                    return -1;
+                                }
+                                return 1;
+                            },
+                            semiTest = true,
+                            pairToken = [],
+                            pairTypes = [],
+                            pairLines = [];
+                        if (types[end] === "comment" || types[end] === "comment-inline") {
+                            do {
+                                end -= 1;
+                            } while (end > 0 && (types[end] === "comment" || types[end] === "comment-inline"));
+                        }
+                        for (cc = startlen; cc > -1; cc -= 1) {
+                            if (types[cc] === "end") {
+                                dd += 1;
+                            }
+                            if (types[cc] === "start") {
+                                dd -= 1;
+                            }
+                            if (dd === 0) {
+                                if (token[cc] === ";" || token[cc] === "}") {
+                                    semiTest = true;
+                                    start     = cc + 1;
+                                    if (types[start] === "comment-inline") {
+                                        start += 1;
+                                    }
+                                }
+                                if (semiTest === true && (token[cc] === ";" || token[cc] === "}") && start < end && (keys.length === 0 || start !== keys[keys.length - 1][0])) {
+                                    if (lines[start - 1] > 0 && (types[start] === "comment" || types[start] === "selector")) {
+                                        lines[start - 1] = 0;
+                                        lines[start] = 1;
+                                    }
+                                    if (types[end + 1] === "comment-inline") {
+                                        end += 1;
+                                    }
+                                    keys.push([
+                                        start, end + 1, false
+                                    ]);
+                                    end = start - 1;
+                                }
+                            }
+
+                            if (dd < 0 && cc < startlen) {
+                                if (keys.length > 0 && keys[keys.length - 1][0] > cc + 1) {
+                                    keys.push([
+                                        cc + 1, keys[keys.length - 1][0] - 1, keys[keys.length - 1][2]
+                                    ]);
+                                }
+                                if (keys.length > 1 && (types[cc - 1] === "selector" || token[cc - 1] === "=" || token[cc - 1] === ":" || token[cc - 1] === "[" || token[cc - 1] === "{" || token[cc - 1] === "," || cc === 0)) {
+                                    keys.sort(sort);
+                                    keylen    = keys.length;
+                                    semiTest = false;
+                                    for (dd = 0; dd < keylen; dd += 1) {
+                                        keyend = keys[dd][1];
+                                        for (ee = keys[dd][0]; ee < keyend; ee += 1) {
+                                            pairToken.push(token[ee]);
+                                            pairTypes.push(types[ee]);
+                                            if ((types[ee] === "comment" || types[ee] === "selector") && lines[ee] > 0) {
+                                                pairLines[pairLines.length - 1] = 1;
+                                                pairLines.push(0);
+                                            } else {
+                                                pairLines.push(lines[ee]);
+                                            }
+                                            if (token[ee] === ";" || token[ee] === "}") {
+                                                semiTest = true;
+                                            } else if (token[ee] !== ";" && token[ee] !== "}" && types[ee] !== "comment" && types[ee] !== "comment-inline") {
+                                                semiTest = false;
+                                            }
+                                        }
+                                        if (semiTest === false) {
+                                            ee = pairTypes.length - 1;
+                                            if (pairTypes[ee] === "comment" || pairTypes[ee] === "comment-inline") {
+                                                do {
+                                                    ee -= 1;
+                                                } while (ee > 0 && (pairTypes[ee] === "comment" || pairTypes[ee] === "comment-inline"));
+                                            }
+                                            ee += 1;
+                                            pairToken.splice(ee, 0, ";");
+                                            pairTypes.splice(ee, 0, "semi");
+                                            if (pairLines[ee - 1] > 0) {
+                                                pairLines[ee - 1] = 0;
+                                                pairLines.splice(ee, 0, 1);
+                                            } else {
+                                                pairLines.splice(ee, 0, 0);
+                                            }
+                                        }
+                                    }
+                                    ee = pairTypes.length - 1;
+                                    if (pairTypes[ee] === "comment" || pairTypes[ee] === "comment-inline") {
+                                        do {
+                                            ee -= 1;
+                                        } while (ee > 0 && (pairTypes[ee] === "comment" || pairTypes[ee] === "comment-inline"));
+                                    }
+                                    keylen = token.length - (cc + 1);
+                                    token.splice(cc + 1, keylen);
+                                    types.splice(cc + 1, keylen);
+                                    lines.splice(cc + 1, keylen);
+                                    token = token.concat(pairToken);
+                                    types = types.concat(pairTypes);
+                                    lines = lines.concat(pairLines);
+                                }
+                                return;
+                            }
+                        }
                     },
                     item       = function csspretty__tokenize_item(type) {
                         var aa    = token.length,
@@ -1581,12 +1761,12 @@ var prettydiff = function prettydiff(api) {
                                             bb = coms.length - 1;
                                             do {
                                                 token.push(coms[aa]);
-                                                lines.push(0);
-                                                if (coms[aa].indexOf("//") === 0) {
+                                                if (coms[aa].indexOf("//") === 0 && lines[lines.length - 1] === 0) {
                                                     types.push("comment-inline");
                                                 } else {
                                                     types.push("comment");
                                                 }
+                                                lines.push(0);
                                                 aa += 1;
                                             } while (aa < bb);
                                         } else {
@@ -1625,11 +1805,12 @@ var prettydiff = function prettydiff(api) {
                     comment    = function csspretty__tokenize_comment(inline) {
                         var aa        = 0,
                             out       = [b[a]],
-                            type      = (inline === true) ? "comment-inline" : "comment",
+                            type      = "",
                             spareType = [],
                             spareToke = [],
                             spareLine = [];
                         spacer();
+                        type = (inline === true && lines[lines.length - 1] === 0 && token[token.length - 1] !== "comment" && token[token.length - 1] !== "comment-inline") ? "comment-inline" : "comment";
                         for (aa = a + 1; aa < len; aa += 1) {
                             out.push(b[aa]);
                             if ((inline === false && b[aa - 1] === "*" && b[aa] === "/") || (inline === true && (b[aa + 1] === "\n"))) {
@@ -1791,25 +1972,6 @@ var prettydiff = function prettydiff(api) {
                                     } while (cc > 0);
                                 }
                             }
-                        }
-                        if (sobjsort === true) {
-                            //sort by type
-                            set = set.sort(function csspretty__tokenize_properties_sortbytype(a, b) {
-                                if (types[a[0]] > types[b[0]]) {
-                                    return 1;
-                                }
-                                return -1;
-                            });
-                            //sort by name of same type
-                            set = set.sort(function csspretty__tokenize_properties_sortbyname(a, b) {
-                                if (types[a[0]] === "comment" || types[b[0]] === "comment" || types[a[0]] === "comment-inline" || types[b[0]] === "comment-inline") {
-                                    return 0;
-                                }
-                                if (token[a[0]] > token[b[0]] && types[a[0]] === types[b[0]]) {
-                                    return 1;
-                                }
-                                return -1;
-                            });
                         }
                         (function csspretty__tokenize_properties_propcheck() {
                             var leng      = set.length,
@@ -1987,16 +2149,30 @@ var prettydiff = function prettydiff(api) {
                         stats.braces += 1;
                         space        = "";
                     } else if (b[a] === "}") {
-                        item("end");
-                        if (smode !== "diff") {
-                            properties();
+                        if (types[types.length - 1] === "item" && token[token.length - 2] === "{" && token[token.length - 3] !== undefined && token[token.length - 3].charAt(token[token.length - 3].length - 1) === "@") {
+                            //less variable selector
+                            token[token.length - 3] = token[token.length - 3] + "{" + token[token.length - 1] + "}";
+                            token.pop();
+                            token.pop();
+                            types.pop();
+                            types.pop();
+                            lines.pop();
+                            lines.pop();
+                        } else {
+                            item("end");
+                            if (smode !== "diff") {
+                                properties();
+                            }
+                            ltype = "end";
+                            if (sobjsort === true) {
+                                objSort();
+                            }
+                            types.push("end");
+                            token.push("}");
+                            lines.push(0);
+                            stats.braces += 1;
+                            space        = "";
                         }
-                        ltype = "end";
-                        types.push("end");
-                        token.push("}");
-                        lines.push(0);
-                        stats.braces += 1;
-                        space        = "";
                     } else if (b[a] === ";") {
                         item("semi");
                         if (types[types.length - 1] !== "semi") {
@@ -2119,7 +2295,7 @@ var prettydiff = function prettydiff(api) {
                                 indent -= 1;
                                 nl(indent);
                                 build.push(token[a]);
-                                if (types[a + 1] !== "end") {
+                                if (types[a + 1] !== "end" && types[a + 1] !== "semi") {
                                     nl(indent);
                                 }
                             }
@@ -2130,7 +2306,9 @@ var prettydiff = function prettydiff(api) {
                             if (token[a] !== "x;") {
                                 build.push(token[a]);
                             }
-                            if (types[a + 1] !== "end") {
+                            if (types[a + 1] === "comment-inline") {
+                                build.push(" ");
+                            } else if (types[a + 1] !== "end") {
                                 nl(indent);
                             }
                         } else if (types[a] === "selector") {
@@ -2150,6 +2328,9 @@ var prettydiff = function prettydiff(api) {
                                 build.push(" ");
                             }
                         } else if ((types[a] === "comment" || types[a] === "comment-inline") && types[a - 1] !== "colon" && types[a - 1] !== "property") {
+                            if (lines[a - 1] > 0) {
+                                nl(indent);
+                            }
                             build.push(token[a]);
                             if (types[a + 1] !== "end") {
                                 nl(indent);
@@ -3615,12 +3796,12 @@ var prettydiff = function prettydiff(api) {
                                 if (types[xx] === "comment" || types[xx] === "comment-inline") {
                                     do {
                                         xx += 1;
-                                    } while (types[xx] === "comment" || types[xx] === "comment-inline");
+                                    } while (xx < startlen || types[xx] === "comment" || types[xx] === "comment-inline");
                                 }
                                 if (types[yy] === "comment" || types[yy] === "comment-inline") {
                                     do {
                                         yy += 1;
-                                    } while (types[yy] === "comment" || types[yy] === "comment-inline");
+                                    } while (yy < startlen || types[yy] === "comment" || types[yy] === "comment-inline");
                                 }
                                 if (token[xx].toLowerCase() > token[yy].toLowerCase()) {
                                     return 1;
@@ -7949,7 +8130,7 @@ var prettydiff = function prettydiff(api) {
                                 tabby.push("\\");
                                 tabby.push(inchar);
                             }
-                            return new RegExp("^(\\s*\\{\\s*" + tabby.join("") + "+)");
+                            return new RegExp("^(\\s*\\{+\\s*" + tabby.join("") + "+)");
                         }());
                     if (space === undefined) {
                         space = "";
@@ -7967,6 +8148,10 @@ var prettydiff = function prettydiff(api) {
                             }
                         }
                         x[a] = "";
+                    }
+                    if (store[0] + store[1] === "{{" && store[store.length - 2] + store[store.length - 1] === "}}") {
+                        x[a] = store.join("");
+                        return a;
                     }
                     x[a] = space + jspretty({
                         inchar : inchar,
@@ -8186,10 +8371,12 @@ var prettydiff = function prettydiff(api) {
                                 }
                             }
                             if (jsxtest === "" && x[a] === "{" && typeof jspretty === "function") {
+                                jsxtest = x[a - 1];
                                 a = jsxItem(a, "");
-                                if (x[a + 1] !== ">") {
+                                if (x[a + 1] !== ">" && x[a + 1] !== jsxtest) {
                                     x[a] = x[a] + " ";
                                 }
+                                jsxtest = "";
                             }
                         }
                         if ((jsxtest === "*\/" && x[a - 2] + x[a - 1] === "*\/") || (jsxtest === "\n" && x[a - 1] === "\n")) {
@@ -9476,6 +9663,9 @@ var prettydiff = function prettydiff(api) {
                         } else if ((y[i] === "{" && y[i + 1] === "@") || (y[i] === " " && y[i + 1] === "{" && y[i + 2] === "@")) {
                             build.push(builder("@}", i + 1));
                             token.push("T_asp");
+                        } else if ((y[i] === "{" && y[i + 1] === "#") || (y[i] === " " && y[i + 1] === "{" && y[i + 2] === "#")) {
+                            build.push(builder("#}", i + 1));
+                            token.push("T_asp");
                         } else if (y[i] === "<" && y[i + 1] === "?" && i < end - 4) {
                             if (y[i + 2].toLowerCase() === "x" && y[i + 3].toLowerCase() === "m" && y[i + 4].toLowerCase() === "l") {
                                 token.push("T_xml");
@@ -10694,7 +10884,7 @@ var prettydiff = function prettydiff(api) {
                         return "\n" + ins + item.replace(/\n(?!\n)/g, "\n" + ins);
                     };
                 for (i = 0; i < end; i += 1) {
-                    if (mwrap > 0 && (cinfo[i] === "content" || cinfo[i] === "mixed_start" || cinfo[i] === "mixed_both" || cinfo[i] === "mixed_end")) {
+                    if (mwrap > 0 && mjsx === false && (cinfo[i] === "content" || cinfo[i] === "mixed_start" || cinfo[i] === "mixed_both" || cinfo[i] === "mixed_end")) {
                         build[i] = text_wrap(build[i])[0];
                     }
                     if (build[i] === "</prettydiffli>" || build[i] === " </prettydiffli>") {
@@ -10712,7 +10902,7 @@ var prettydiff = function prettydiff(api) {
                         if (build[i].charAt(0) === " ") {
                             build[i] = build[i].slice(1);
                         }
-                        if (build[i].indexOf("\n") > 0 && token[i] !== "T_ignore" && (cinfo[i] === "start" || cinfo[i] === "singleton")) {
+                        if (build[i].indexOf("\n") > 0 && mjsx === false && token[i] !== "T_ignore" && (cinfo[i] === "start" || cinfo[i] === "singleton")) {
                             build[i] = attr_wrap(build[i]);
                         }
                         if (level[i] !== "x") {
@@ -10725,10 +10915,10 @@ var prettydiff = function prettydiff(api) {
                         if (build[i].indexOf("\n") > 0 && mcomm !== "noindent" && level[i] === "x") {
                             build[i] = comment(build[i]);
                         }
-                    } else if (build[i].indexOf("\n") > 0 && token[i] !== "T_ignore" && (cinfo[i] === "start" || cinfo[i] === "singleton")) {
+                    } else if (build[i].indexOf("\n") > 0 && token[i] !== "T_ignore" && mjsx === false && (cinfo[i] === "start" || cinfo[i] === "singleton")) {
                         build[i] = attr_wrap(build[i]);
                     }
-                    if (token[i] === "T_xml") {
+                    if (token[i] === "T_xml" && mjsx === false) {
                         build[i] = text_wrap(build[i])[0];
                     }
                 }
@@ -11228,23 +11418,23 @@ var prettydiff = function prettydiff(api) {
             ace: 150519
         },
         api          : {
-            dom      : 150519,
+            dom      : 150525,
             nodeLocal: 150415,
             wsh      : 150415
         },
         charDecoder  : 141025,
-        css          : 150501, //diffview.css file
-        csspretty    : 150509, //csspretty library
+        css          : 150525, //diffview.css file
+        csspretty    : 150525, //csspretty library
         csvbeauty    : 140114, //csvbeauty library
         csvmin       : 131224, //csvmin library
         diffview     : 150501, //diffview library
         documentation: 150509, //documentation.xhtml
         jspretty     : 150509, //jspretty library
         latest       : 0,
-        markup_beauty: 150509, //markup_beauty library
-        markupmin    : 150415, //markupmin library
-        prettydiff   : 150519, //this file
-        version      : "1.11.19", //version number
+        markup_beauty: 150525, //markup_beauty library
+        markupmin    : 150525, //markupmin library
+        prettydiff   : 150525, //this file
+        version      : "1.11.20", //version number
         webtool      : 150509
     };
 edition.latest = (function edition_latest() {
