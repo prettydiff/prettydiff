@@ -1498,12 +1498,12 @@ var prettydiff = function prettydiff(api) {
                                 if (types[xx] === "comment" || types[xx] === "comment-inline") {
                                     do {
                                         xx += 1;
-                                    } while (xx < startlen || types[xx] === "comment" || types[xx] === "comment-inline");
+                                    } while (xx < startlen && (types[xx] === "comment" || types[xx] === "comment-inline"));
                                 }
                                 if (types[yy] === "comment" || types[yy] === "comment-inline") {
                                     do {
                                         yy += 1;
-                                    } while (yy < startlen || types[yy] === "comment" || types[yy] === "comment-inline");
+                                    } while (yy < startlen && (types[yy] === "comment" || types[yy] === "comment-inline"));
                                 }
                                 if (token[xx].toLowerCase() < token[yy].toLowerCase()) {
                                     return -1;
@@ -3796,12 +3796,12 @@ var prettydiff = function prettydiff(api) {
                                 if (types[xx] === "comment" || types[xx] === "comment-inline") {
                                     do {
                                         xx += 1;
-                                    } while (xx < startlen || types[xx] === "comment" || types[xx] === "comment-inline");
+                                    } while (xx < startlen && (types[xx] === "comment" || types[xx] === "comment-inline"));
                                 }
                                 if (types[yy] === "comment" || types[yy] === "comment-inline") {
                                     do {
                                         yy += 1;
-                                    } while (yy < startlen || types[yy] === "comment" || types[yy] === "comment-inline");
+                                    } while (yy < startlen && (types[yy] === "comment" || types[yy] === "comment-inline"));
                                 }
                                 if (token[xx].toLowerCase() > token[yy].toLowerCase()) {
                                     return 1;
@@ -11418,23 +11418,23 @@ var prettydiff = function prettydiff(api) {
             ace: 150519
         },
         api          : {
-            dom      : 150525,
+            dom      : 150526,
             nodeLocal: 150415,
             wsh      : 150415
         },
         charDecoder  : 141025,
         css          : 150525, //diffview.css file
-        csspretty    : 150525, //csspretty library
+        csspretty    : 150526, //csspretty library
         csvbeauty    : 140114, //csvbeauty library
         csvmin       : 131224, //csvmin library
         diffview     : 150501, //diffview library
         documentation: 150509, //documentation.xhtml
-        jspretty     : 150509, //jspretty library
+        jspretty     : 150526, //jspretty library
         latest       : 0,
         markup_beauty: 150525, //markup_beauty library
         markupmin    : 150525, //markupmin library
         prettydiff   : 150525, //this file
-        version      : "1.11.20", //version number
+        version      : "1.11.21", //version number
         webtool      : 150509
     };
 edition.latest = (function edition_latest() {

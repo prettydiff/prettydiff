@@ -917,12 +917,11 @@ var pd = {};
                 var diffList         = [],
                     button           = {},
                     buttons          = {},
-                    presumedLanguage = "",
+                    pdlang           = "",
                     chromeSave       = false;
                 node      = pd.$$("showOptionsCallOut");
                 pd.zIndex += 1;
                 if (autotest === true) {
-                    presumedLanguage = pd.o.langvalue;
                     if (pd.o.langvalue[1] === "javascript") {
                         if (output[1] !== undefined && output[1].indexOf("React JSX") > 0 && ((api.jsscope === "report" && (/Code type is presumed to be React JSX/).test(output[1]) === false && (/Presumed language is &lt;em&gt;React JSX/).test(output[1]) === false) || api.jsscope !== "report")) {
                             if (pd.test.ace === true) {
@@ -980,11 +979,11 @@ var pd = {};
                             pd.test.filled.code = false;
                         }
                         if (pd.o.jsscope.checked === true && (api.lang === "auto" || api.lang === "javascript") && output[0].indexOf("Error:") !== 0) {
-                            if (api.lang === "auto" && presumedLanguage === "") {
-                                presumedLanguage = output[1].split("Presumed language is <em>")[1];
-                                presumedLanguage = presumedLanguage.substring(0, presumedLanguage.indexOf("</em>"));
+                            if (api.lang === "auto" && pdlang === "") {
+                                pdlang = output[1].split("Presumed language is <em>")[1];
+                                pdlang = pdlang.substring(0, pdlang.indexOf("</em>"));
                             }
-                            if (presumedLanguage.toLowerCase() === "javascript" || api.lang === "javascript") {
+                            if (pdlang.toLowerCase() === "javascript" || api.lang === "javascript") {
                                 if (pd.o.report.code.body.style.display === "none") {
                                     pd.grab({
                                         type: "onmousedown"
@@ -1108,18 +1107,18 @@ var pd = {};
                     }
                 }
                 if (api.mode === "parse") {
-                    presumedLanguage = JSON.stringify(output[0]);
-                    if (presumedLanguage.length > 125000) {
+                    pdlang = JSON.stringify(output[0]);
+                    if (pdlang.length > 125000) {
                         pd.test.filled.code = true;
                     } else {
                         pd.test.filled.code = false;
                     }
                     if (pd.o.codeMinnOut !== null) {
                         if (pd.test.ace === true) {
-                            pd.ace.parsOut.setValue(presumedLanguage);
+                            pd.ace.parsOut.setValue(pdlang);
                             pd.ace.parsOut.clearSelection();
                         } else {
-                            pd.o.codeParsOut.value = presumedLanguage;
+                            pd.o.codeParsOut.value = pdlang;
                         }
                     }
                     if (pd.o.report.code.box !== null) {

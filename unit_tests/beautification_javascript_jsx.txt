@@ -170,3 +170,15 @@ var MarkdownEditor = React.createClass({
   }
 });
 React.render(<MarkdownEditor />, mountNode);
+
+import React from 'react';
+class MyComponent extends React.Component {
+  render() {
+    var a = 1;
+    return (
+      <h1 style={{margin: 0}}>
+        Test
+      </h1>
+    );
+  }
+}
