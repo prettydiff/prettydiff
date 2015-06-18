@@ -8301,6 +8301,7 @@ var prettydiff = function prettydiff(api) {
                 level           = [],
                 lines           = [],
                 attrs           = [],
+                linen           = [],
                 reqs            = [],
                 ids             = [],
                 jscom           = [],
@@ -8308,15 +8309,26 @@ var prettydiff = function prettydiff(api) {
                 line            = 1,
 
                 //What is the lowercase tag name of the provided token?
-                tagName         = function markuppretty__tokenize_tagName(el) {
+                tagName         = function markuppretty__tagName(el) {
                     var space = el.indexOf(" "),
                         name  = (space < 0) ? el.slice(1, el.length - 1) : el.slice(1, space).toLowerCase();
                     return name;
+                },
+                attrName  = function markuppretty__attrName(atty) {
+                    var index = atty.indexOf("="),
+                        name = "";
+                    if (index < 0) {
+                        return [atty, ""];
+                    }
+                    name = atty.slice(0, index);
+                    if (mhtml === true) {
+                        return [name.toLowerCase(), atty.slice(index + 1)];
+                    }
+                    return [name, atty.slice(index + 1)];
                 };
             //type definitions:
             //start      end     type
             //<[CDATA[   ]]>     cdata
-            //<!--[if    ]-->    comment
             //<!--       -->     comment
             //<%--       --%>    comment
             //text       text    content
@@ -8397,21 +8409,11 @@ var prettydiff = function prettydiff(api) {
                             ignore    = false,
                             quotetest = false,
                             parseFail = false,
-                            attribute = [],
-                            attrname  = function markuppretty__tokenize_tag_attrname(atty) {
-                                var index = atty.indexOf("=");
-                                if (index < 0) {
-                                    return "";
-                                }
-                                atty = atty.slice(0, index);
-                                if (mhtml === true) {
-                                    return atty.toLowerCase();
-                                }
-                                return atty;
-                            };
+                            attribute = [];
                         spacer();
                         jscom.push(false);
                         attrs.push([]);
+                        linen.push(line);
                         ext = false;
 
                         //this complex series of conditions determines an elements delimiters
@@ -8426,12 +8428,6 @@ var prettydiff = function prettydiff(api) {
                                     if (b[a + 4] === "#") {
                                         end = "-->";
                                         types.push("template");
-                                    } else if (b[a + 4] === "[" && b[a + 5] === "i" && b[a + 6] === "f") {
-                                        end = "]-->";
-                                        if (mmode !== "minify" || mconditional === true) {
-                                            preserve = true;
-                                        }
-                                        types.push("comment");
                                     } else {
                                         end = "-->";
                                         if (mmode === "minify" || mcomm === "nocomment") {
@@ -8517,7 +8513,7 @@ var prettydiff = function prettydiff(api) {
                             }
                             output.push(b[a]);
                             if (quote === "") {
-                                if (b[a] === "<" && output.length > 1 && end !== ">>" && end !== ">>>") {
+                                if (b[a] === "<" && preserve === false && output.length > 1 && end !== ">>" && end !== ">>>") {
                                     parseError.push("Parse error on line " + line + " on element: ");
                                     parseFail = true;
                                 }
@@ -8535,7 +8531,7 @@ var prettydiff = function prettydiff(api) {
                                             if (b[a + 1] === lastchar) {
                                                 //if at end of tag
                                                 element = attribute.join("").replace(/\s+/g, " ");
-                                                name    = attrname(element);
+                                                name    = attrName(element)[0];
                                                 if (name === "data-prettydiff-ignore") {
                                                     ignore = true;
                                                 } else if (name === "id") {
@@ -8569,7 +8565,7 @@ var prettydiff = function prettydiff(api) {
                                                 } else {
                                                     //if there is an unquoted space attribute is complete
                                                     element = attribute.join("").replace(/\s+/g, " ");
-                                                    name    = attrname(element);
+                                                    name    = attrName(element)[0];
                                                     if (name === "data-prettydiff-ignore") {
                                                         ignore = true;
                                                     } else if (name === "id") {
@@ -8658,7 +8654,7 @@ var prettydiff = function prettydiff(api) {
                                                 } else {
                                                     quote = attribute.join("");
                                                 }
-                                                name = attrname(quote);
+                                                name = attrName(quote)[0];
                                                 if (name === "data-prettydiff-ignore") {
                                                     ignore = true;
                                                 } else if (name === "id") {
@@ -8741,7 +8737,7 @@ var prettydiff = function prettydiff(api) {
                         }
 
                         //fix singleton tags and sort attributes
-                        if (attrs[attrs.length - 1].length > 1) {
+                        if (attrs[attrs.length - 1].length > 0) {
                             e = attrs.length - 1;
                             if (attrs[e][attrs[e].length - 1] === "/") {
                                 attrs[attrs.length - 1].pop();
@@ -8771,7 +8767,7 @@ var prettydiff = function prettydiff(api) {
                         cheat   = (function markuppretty__tokenize_tag_cheat() {
                             var tname = tagName(element),
                                 atts  = attrs[attrs.length - 1],
-                                atty  = "",
+                                atty  = [],
                                 value = "",
                                 type  = "",
                                 d     = 0;
@@ -8781,20 +8777,20 @@ var prettydiff = function prettydiff(api) {
                                 types[types.length - 2] = "start";
                             }
                             for (d = atts.length - 1; d > -1; d -= 1) {
-                                atty = attrname(atts[d]);
-                                if (atty === "type") {
-                                    type = atts[d].split("=")[1];
+                                atty = attrName(atts[d]);
+                                if (atty[0] === "type") {
+                                    type = atty[1];
                                     if (type.charAt(0) === "\"" || type.charAt(0) === "'") {
                                         type = type.slice(1, type.length - 1);
                                     }
-                                } else if (atty === "src" && (tname === "embed" || tname === "img" || tname === "script" || tname === "iframe")) {
-                                    value = atts[d].split("=")[1];
+                                } else if (atty[0] === "src" && (tname === "embed" || tname === "img" || tname === "script" || tname === "iframe")) {
+                                    value = atty[1];
                                     if (value.charAt(0) === "\"" || value.charAt(0) === "'") {
                                         value = value.slice(1, value.length - 1);
                                     }
                                     reqs.push(value);
                                 } else if (tname === "link" && atty === "href") {
-                                    value = atts[d].split("=")[1];
+                                    value = atty[1];
                                     if (value.charAt(0) === "\"" || value.charAt(0) === "'") {
                                         value = value.slice(1, value.length - 1);
                                     }
@@ -8926,6 +8922,7 @@ var prettydiff = function prettydiff(api) {
                         if (liend === true && (mmode === "beautify" || mmode === "diff")) {
                             token.push("</prettydiffli>");
                             lines.push(lines[lines.length - 1]);
+                            linen.push(line);
                             lines[lines.length - 2] = 0;
                             attrs.splice(attrs.length - 1, 0, []);
                             types.splice(types.length - 1, 0, "end");
@@ -8933,7 +8930,7 @@ var prettydiff = function prettydiff(api) {
                         if (preserve === true) {
                             token.push(element);
                         } else {
-                            token.push(element.replace(/\s+/g, " "));
+                            token.push(element.replace(/\s+/g, " ").replace(/( \/>)/, "/>"));
                         }
                     },
                     content  = function markuppretty__tokenize_content() {
@@ -8947,6 +8944,7 @@ var prettydiff = function prettydiff(api) {
                         spacer();
                         attrs.push([]);
                         jscom.push(false);
+                        linen.push(line);
                         if (ext === true) {
                             name = tagName(token[token.length - 1]);
                         }
@@ -9532,6 +9530,7 @@ var prettydiff = function prettydiff(api) {
                         var len        = token.length,
                             sum        = [],
                             startend   = stats.start[0] - stats.end[0],
+                            violations = 0,
                             numformat  = function markuppretty__apply_summary_numformat(x) {
                                 var y    = String(x).split(""),
                                     z    = 0,
@@ -9582,6 +9581,9 @@ var prettydiff = function prettydiff(api) {
                                     }
                                     content.push("<ul>");
                                     for (y = 0; y < x; y += 1) {
+                                        if (idtest === true && data[y][0] > 1) {
+                                            violations += (data[y][0] - 1);
+                                        }
                                         content.push("<li>");
                                         content.push(data[y][0]);
                                         content.push("x - ");
@@ -9594,23 +9596,208 @@ var prettydiff = function prettydiff(api) {
                                 return "";
                             },
                             accessibility = (function markuppretty__apply_summary_accessibility() {
+                                var findings = [],
+                                    tagsbyname = function markuppretty__apply_summary_accessibility_tagsbyname() {
+                                    var b = 0,
+                                        x = 0,
+                                        y = 0,
+                                        z = 0,
+                                        tagname = "",
+                                        alttest = false,
+                                        attr = [],
+                                        noalt = [],
+                                        emptyalt = [],
+                                        headings = [],
+                                        headtest = (/^(h\d)$/),
+                                        presentationEl = [],
+                                        presentationAt = [];
+                                    for (b = 0; b < c; b += 1) {
+                                        tagname = tagName(token[b]);
+                                        if ((types[b] === "start" || types[b] === "singleton") && (tagname === "font" || tagname === "center" || tagname === "basefont" || tagname === "b" || tagname === "i" || tagname === "u" || tagname === "small" || tagname === "big" || tagname === "blink" || tagname === "plaintext" || tagname === "spacer" || tagname === "strike" || tagname === "tt" || tagname === "xmp")) {
+                                            presentationEl.push(b);
+                                        } else if (types[b] === "singleton" && tagname === "img") {
+                                            y = attrs[b].length;
+                                            for (x = 0; x < y; x += 1) {
+                                                attr = attrName(attrs[b][x]);
+                                                if (attr[0] === "alt") {
+                                                    alttest = true;
+                                                    if (attr[1] === "" || attr[1] === "\"\"" || attr[1] === "''") {
+                                                        emptyalt.push(b);
+                                                    }
+                                                } else if (presentationEl[presentationEl.length - 1] !== b && (attr[0] === "alink" || attr[0] === "align" || attr[0] === "background" || attr[0] === "border" || attr[0] === "color" || attr[0] === "compact" || attr[0] === "face" || attr[0] === "height" || attr[0] === "language" || attr[0] === "link" || (attr[0] === "name" && tagname !== "select" && tagname !== "input" && tagname !== "textarea") || attr[0] === "nowrap" || attr[0] === "size" || attr[0] === "start" || attr[0] === "text" || (attr[0] === "type" && tagname !== "script" && tagname !== "style") || attr[0] === "value" || attr[0] === "version" || attr[0] === "vlink" || attr[0] === "width")) {
+                                                    presentationAt.push([b, x]);
+                                                }
+                                            }
+                                            if (alttest === true) {
+                                                alttest = false;
+                                            } else {
+                                                noalt.push(b);
+                                            }
+                                        } else if (types[b] === "start" && headtest.test(tagname) === true) {
+                                            z = Number(tagname.charAt(1));
+                                            if (headings.length > 0 && z - headings[headings.length - 1][1] > 1) {
+                                                violations += 1;
+                                                headings.push([b, z, true]);
+                                            } else {
+                                                headings.push([b, z, false]);
+                                            }
+                                        }
+                                    }
+                                    attr = [];
+
+                                    //obsolete tags
+                                    b = presentationEl.length;
+                                    violations += b;
+                                    if (b > 0) {
+                                        attr.push("<h4><strong>");
+                                        attr.push(b);
+                                        attr.push("</strong> obsolete HTML tag");
+                                        if (b > 1) {
+                                            attr.push("s");
+                                        }
+                                        attr.push("</h4> <p>Obsolete elements do not appropriately describe content.</p> <ol>");
+                                        for (x = 0; x < b; x += 1) {
+                                            attr.push("<li><code>");
+                                            attr.push(token[presentationEl[x]].replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;"));
+                                            attr.push("</code> on input line number ");
+                                            attr.push(linen[presentationEl[x]]);
+                                            attr.push("</li>");
+                                        }
+                                        attr.push("</ol>");
+                                    } else {
+                                        attr.push("<h4><strong>0</strong> obsolete HTML tags</h4>");
+                                    }
+
+                                    //obsolete attributes
+                                    b = presentationAt.length;
+                                    if (b > 0) {
+                                        z = 0;
+                                        attr.push("<h4><strong>");
+                                        y = attr.length;
+                                        attr.push("</strong> HTML tags containing obsolete attribute");
+                                        if (b > 1) {
+                                            attr.push("s");
+                                        }
+                                        attr.push("</h4> <p>Obsolete elements do not appropriately describe content.</p> <ol>");
+                                        for (x = 0; x < b; x += 1) {
+                                            tagname = token[presentationAt[x][0]].replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(attrs[presentationAt[x][0]][presentationAt[x][1]], "<strong>" + attrs[presentationAt[x][0]][presentationAt[x][1]] + "</strong>");
+                                            if (x < b - 1 && presentationAt[x][0] === presentationAt[x + 1][0]) {
+                                                do {
+                                                    tagname = tagname.replace(attrs[presentationAt[x][0]][presentationAt[x + 1][1]], "<strong>" + attrs[presentationAt[x][0]][presentationAt[x + 1][1]] + "</strong>");
+                                                    x += 1;
+                                                } while (x < b - 1 && presentationAt[x][0] === presentationAt[x + 1][0]);
+                                            }
+                                            z += 1;
+                                            attr.push("<li><code>");
+                                            attr.push(tagname);
+                                            attr.push("</code> on input line number ");
+                                            attr.push(linen[presentationAt[x][0]]);
+                                            attr.push("</li>");
+                                        }
+                                        attr.splice(y, 0, z);
+                                        violations += z;
+                                        attr.push("</ol>");
+                                    } else {
+                                        attr.push("<h4><strong>0</strong> obsolete HTML tags</h4>");
+                                    }
+
+                                    //headings
+                                    b = headings.length;
+                                    if (b > 0) {
+                                        attr.push("<h4><strong>");
+                                        attr.push(b);
+                                        attr.push("</strong> HTML heading tag");
+                                        if (b > 1) {
+                                            attr.push("s");
+                                        }
+                                        attr.push(" and their order</h4> <p>Poorly ordered tags are described with a <strong>strong</strong> tag (color red).</p> <ol>");
+                                        for (x = 0; x < b; x += 1) {
+                                            attr.push("<li><code>");
+                                            if (headings[x][2] === true) {
+                                                attr.push("<strong>");
+                                            }
+                                            attr.push(token[headings[x][0]].replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;"));
+                                            if (headings[x][2] === true) {
+                                                attr.push("</strong>");
+                                            }
+                                            attr.push("</code> on input line number ");
+                                            attr.push(linen[headings[x][0]]);
+                                            attr.push("</li>");
+                                        }
+                                        attr.push("</ol>");
+                                    } else {
+                                        attr.push("<h4><strong>0</strong> HTML heading elements</h4>");
+                                    }
+
+                                    //missing alt attributes on images
+                                    b = noalt.length;
+                                    violations += b;
+                                    if (b > 0) {
+                                        attr.push("<h4><strong>");
+                                        attr.push(b);
+                                        attr.push("</strong> image");
+                                        if (b > 1) {
+                                            attr.push("s");
+                                        }
+                                        attr.push(" missing a required <em>alt</em> attribute</h4> <p>The alt attribute is required even if it contains no value.</p> <ol>");
+                                        for (x = 0; x < b; x += 1) {
+                                            attr.push("<li><code>");
+                                            attr.push(token[noalt[x]].replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;"));
+                                            attr.push("</code> on input line number ");
+                                            attr.push(linen[noalt[x]]);
+                                            attr.push("</li>");
+                                        }
+                                        attr.push("</ol>");
+                                    } else {
+                                        attr.push("<h4><strong>0</strong> images missing a required <em>alt</em> attribute</h4> <p>The alt attribute is required even if it contains no value.</p>");
+                                    }
+
+                                    //alt attributes with empty values
+                                    b = emptyalt.length;
+                                    violations += b;
+                                    if (b > 0) {
+                                        attr.push("<h4><strong>");
+                                        attr.push(b);
+                                        attr.push("</strong> image");
+                                        if (b > 1) {
+                                            attr.push("s");
+                                        }
+                                        attr.push(" have an empty <em>alt</em> attribute value</h4> <p>Empty alt text is not necessarily a violation, such as the case of tracking pixels. If an image has embedded text then missing alt text <strong>is a violation</strong>.</p> <ol>");
+                                        for (x = 0; x < b; x += 1) {
+                                            attr.push("<li><code>");
+                                            attr.push(token[emptyalt[x]].replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;"));
+                                            attr.push("</code> on input line number ");
+                                            attr.push(linen[emptyalt[x]]);
+                                            attr.push("</li>");
+                                        }
+                                        attr.push("</ol>");
+                                    } else {
+                                        attr.push("<h4><strong>0</strong> images have an empty <em>alt</em> attribute value</h4>");
+                                    }
+
+                                    return attr.join("");
+                                };
                                 if (maccessibility === false) {
                                     return "";
                                 }
-
+                                findings.push(tagsbyname());
+                                return findings.join("");
                             }()),
                             parseErrors = (function markuppretty__apply_summary_parseErrors() {
                                 var x = parseError.length,
                                     y = 0,
                                     fails = [];
+                                violations += x;
                                 if (x === 0) {
                                     return "";
                                 }
-                                fails.push("<h4>Errors interpreting markup</h4> <ol>");
+                                fails.push("<h4><strong>");
+                                fails.push(x);
+                                fails.push("</strong> errors interpreting markup</h4> <ol>");
                                 for (y = 0; y < x; y += 1) {
                                     fails.push("<li>");
-                                    fails.push(parseError[y].replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;"));
-                                    fails.push("</li>");
+                                    fails.push(parseError[y].replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace("element: ", "element: <code>"));
+                                    fails.push("</code></li>");
                                 }
                                 fails.push("</ol>");
                                 return fails.join("");
@@ -9649,7 +9836,11 @@ var prettydiff = function prettydiff(api) {
                                     rowBuilder = function markuppretty__apply_summary_stats_rowBuilder(type) {
                                         var itema = (type === "Total") ? totalItems : stats[type][0],
                                             itemb = (type === "Total") ? totalSizes : stats[type][1];
-                                        stat.push("<tr><th>");
+                                        stat.push("<tr");
+                                        if (itema > 0 && (type === "script" || type === "style")) {
+                                            stat.push(" class='bad'");
+                                        }
+                                        stat.push("><th>");
                                         stat.push(type);
                                         stat.push("</th><td>");
                                         stat.push(itema);
@@ -9667,7 +9858,7 @@ var prettydiff = function prettydiff(api) {
                                     };
                                 stat.push("<h4>Statistics and analysis of parsed code</h4>");
                                 stat.push("<table class='analysis' summary='Statistics'><caption>This table provides basic " +
-                                    "statistics about the parsed components of the given code sample..</caption>");
+                                    "statistics about the parsed components of the given code sample after beautification.</caption>");
                                 stat.push("<thead><tr><th>Item type</th><th>Number of instances</th><th>Percentage of total" +
                                     " items</th><th>Character size</th><th>Percentage of total size</th></tr></thead>");
                                 stat.push("<tbody>");
@@ -9813,13 +10004,16 @@ var prettydiff = function prettydiff(api) {
                         sum.push("</em></p>");
                         sum.push("<div class='doc'>");
                         sum.push(analysis(ids));
+                        sum.push(sizes);
                         sum.push(parseErrors);
                         sum.push(accessibility);
-                        sum.push(sizes);
-                        sum.push(zipf);
                         sum.push(statistics);
                         sum.push(analysis(reqs));
+                        sum.push(zipf);
                         sum.push("</div>");
+                        if (maccessibility === true) {
+                            return sum.join("").replace("<div class='doc'>", "<p><strong>Total potential accessibility violations:</strong> <em>" + violations + "</em></p> <div class='doc'>");
+                        }
                         return sum.join("");
                     }());
                 }
