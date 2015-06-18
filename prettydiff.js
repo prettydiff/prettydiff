@@ -7697,7 +7697,6 @@ var prettydiff = function prettydiff(api) {
                                     longTest    = 0,
                                     tokenInList = "",
                                     longList    = [],
-                                    square      = false,
                                     joins       = function jspretty__result_varSpaces_joins(x) {
                                         var xlen    = token[x].length,
                                             mixTest = false,
@@ -8219,7 +8218,8 @@ var prettydiff = function prettydiff(api) {
 
         //Library to parse XML/HTML/markup
         markuppretty = function markuppretty(args) {
-            var mbraceline      = (args.braceline === true || args.braceline === "true") ? true : false,
+            var maccessibility  = true,
+                mbraceline      = (args.braceline === true || args.braceline === "true") ? true : false,
                 mbracepadding   = (args.bracepadding === true || args.bracepadding === "true") ? true : false,
                 mbraces         = (args.braces === "allman") ? "allman" : "knr",
                 mchar           = (typeof args.inchar === "string" && args.inchar.length > 0) ? args.inchar : " ",
@@ -8304,8 +8304,10 @@ var prettydiff = function prettydiff(api) {
                 reqs            = [],
                 ids             = [],
                 jscom           = [],
+                parseError      = [],
+                line            = 1,
 
-                //What is the lowercase element name of the current start or singleton tag
+                //What is the lowercase tag name of the provided token?
                 tagName         = function markuppretty__tokenize_tagName(el) {
                     var space = el.indexOf(" "),
                         name  = (space < 0) ? el.slice(1, el.length - 1) : el.slice(1, space).toLowerCase();
@@ -8317,14 +8319,14 @@ var prettydiff = function prettydiff(api) {
             //<!--[if    ]-->    comment
             //<!--       -->     comment
             //<%--       --%>    comment
-            //                   content
+            //text       text    content
             //</         >       end
             //<pre       </pre>  ignore (html only)
-            //                   script
+            //text       text    script
             //<!         >       sgml
             //<          />      singleton
             //<          >       start
-            //                   style
+            //text       text    style
             //<!--#      -->     template
             //<%         %>      template
             //{{{        }}}     template
@@ -8355,7 +8357,6 @@ var prettydiff = function prettydiff(api) {
                     list     = 0,
                     litag    = 0,
                     ext      = false,
-                    line     = 1,
                     //determine if spaces between nodes are absent, multiline, or merely there
                     //2 - multiline
                     //1 - space present
@@ -8378,7 +8379,6 @@ var prettydiff = function prettydiff(api) {
                     tag      = function markuppretty__tokenize_tag(end) {
                         var output    = [],
                             bcount    = 0,
-                            count     = 0,
                             e         = 0,
                             f         = 0,
                             igcount   = 0,
@@ -8396,6 +8396,7 @@ var prettydiff = function prettydiff(api) {
                             liend     = false,
                             ignore    = false,
                             quotetest = false,
+                            parseFail = false,
                             attribute = [],
                             attrname  = function markuppretty__tokenize_tag_attrname(atty) {
                                 var index = atty.indexOf("=");
@@ -8469,6 +8470,13 @@ var prettydiff = function prettydiff(api) {
                                 end      = "</pre>";
                                 preserve = true;
                                 types.push("ignore");
+                            } else if (b[a + 1] === "<") {
+                                if (b[a + 2] === "<") {
+                                    end = ">>>";
+                                } else {
+                                    end = ">>";
+                                }
+                                types.push("template");
                             } else {
                                 if (b[a + 1] === "/") {
                                     types.push("end");
@@ -8509,6 +8517,10 @@ var prettydiff = function prettydiff(api) {
                             }
                             output.push(b[a]);
                             if (quote === "") {
+                                if (b[a] === "<" && output.length > 1 && end !== ">>" && end !== ">>>") {
+                                    parseError.push("Parse error on line " + line + " on element: ");
+                                    parseFail = true;
+                                }
                                 if (stest === true && (/\s/).test(b[a]) === false && b[a] !== lastchar) {
                                     //attribute start
                                     stest = false;
@@ -8680,7 +8692,7 @@ var prettydiff = function prettydiff(api) {
                                     if (quote === end) {
                                         quote = "";
                                     }
-                                } else if (simple === true && (/\s/).test(b[a]) === true) {
+                                } else if (simple === true && (/\s/).test(b[a]) === true && b[a - 1] !== "<") {
                                     //identify a space in a regular start or singleton tag
                                     stest = true;
                                 } else if (simple === true && mjsx === true && b[a] === "/" && (b[a + 1] === "*" || b[a + 1] === "/")) {
@@ -8693,25 +8705,17 @@ var prettydiff = function prettydiff(api) {
                                     } else {
                                         jsxquote = "\n";
                                     }
-                                } else if (b[a] === "<" && simple === true) {
-                                    //counting unquoted angle braces contained in regular start and singleton tags
-                                    count += 1;
                                 } else if (b[a] === lastchar) {
                                     //if current character matches the last character of the tag ending sequence
-                                    if (simple === true) {
-                                        count -= 1;
-                                    }
-                                    if (count === 0) {
-                                        f = output.length;
-                                        for (e = end.length - 1; e > -1; e -= 1) {
-                                            f -= 1;
-                                            if (output[f] !== end.charAt(e)) {
-                                                break;
-                                            }
-                                        }
-                                        if (e < 0) {
+                                    f = output.length;
+                                    for (e = end.length - 1; e > -1; e -= 1) {
+                                        f -= 1;
+                                        if (output[f] !== end.charAt(e)) {
                                             break;
                                         }
+                                    }
+                                    if (e < 0) {
+                                        break;
                                     }
                                 }
                             } else if (b[a] === quote.charAt(quote.length - 1)) {
@@ -8748,10 +8752,22 @@ var prettydiff = function prettydiff(api) {
                             }
                         }
 
-                        //cheat identifies HTML singleton elements as singletons even if formatted as
-                        //start tags
                         element = output.join("");
 
+                        if (parseFail === true) {
+                            if (element.indexOf("<!--<![") === 0) {
+                                parseError.pop();
+                            } else {
+                                parseError[parseError.length - 1] = parseError[parseError.length - 1] + element;
+                                if (element.indexOf("</") > 0) {
+                                    token.push(element);
+                                    return types.push("end");
+                                }
+                            }
+                        }
+
+                        //cheat identifies HTML singleton elements as singletons even if formatted as
+                        //start tags
                         cheat   = (function markuppretty__tokenize_tag_cheat() {
                             var tname = tagName(element),
                                 atts  = attrs[attrs.length - 1],
@@ -8860,19 +8876,13 @@ var prettydiff = function prettydiff(api) {
                                                 quote = b[a + 1] + "}";
                                             }
                                         } else if (b[a] === "<" && simple === true) {
-                                            if (count === 0) {
-                                                if (b[a + 1] === "/") {
-                                                    endtag = true;
-                                                } else {
-                                                    endtag = false;
-                                                }
+                                            if (b[a + 1] === "/") {
+                                                endtag = true;
+                                            } else {
+                                                endtag = false;
                                             }
-                                            count += 1;
                                         } else if (b[a] === lastchar) {
-                                            if (simple === true) {
-                                                count -= 1;
-                                            }
-                                            if (count === 0 && b[a - 1] !== "/") {
+                                            if (b[a - 1] !== "/") {
                                                 if (b[a - 1] !== "/") {
                                                     if (endtag === true) {
                                                         igcount -= 1;
@@ -9522,52 +9532,6 @@ var prettydiff = function prettydiff(api) {
                         var len        = token.length,
                             sum        = [],
                             startend   = stats.start[0] - stats.end[0],
-                            statistics = (function markuppretty__apply_summary_statistics() {
-                                var stat       = [],
-                                    totalItems = stats.cdata[0] + stats.comment[0] + stats.content[0] + stats.end[0] + stats.ignore[0] + stats.script[0] + stats.sgml[0] + stats.singleton[0] + stats.start[0] + stats.style[0] + stats.template[0] + stats.text[0] + stats.xml[0],
-                                    totalSizes = stats.cdata[1] + stats.comment[1] + stats.content[1] + stats.end[1] + stats.ignore[1] + stats.script[1] + stats.sgml[1] + stats.singleton[1] + stats.start[1] + stats.style[1] + stats.template[1] + stats.text[1] + stats.xml[1],
-                                    rowBuilder = function markuppretty__apply_summary_stats_rowBuilder(type) {
-                                        var itema = (type === "Total") ? totalItems : stats[type][0],
-                                            itemb = (type === "Total") ? totalSizes : stats[type][1];
-                                        stat.push("<tr><th>");
-                                        stat.push(type);
-                                        stat.push("</th><td>");
-                                        stat.push(itema);
-                                        stat.push("</td><td");
-                                        if (startend !== 0 && (type === "start" || type === "end")) {
-                                            stat.push(" class=\"bad\"");
-                                        }
-                                        stat.push(">");
-                                        stat.push(((itema / totalItems) * 100).toFixed(2));
-                                        stat.push("%</td><td>");
-                                        stat.push(itemb);
-                                        stat.push("</td><td>");
-                                        stat.push(((itemb / totalSizes) * 100).toFixed(2));
-                                        stat.push("%</td></tr>");
-                                    };
-                                stat.push("<h4>Statistics and analysis of parsed code</h4>");
-                                stat.push("<table class='analysis' summary='Statistics'><caption>This table provides basic " +
-                                    "statistics about the parsed components of the given code sample..</caption>");
-                                stat.push("<thead><tr><th>Item type</th><th>Number of instances</th><th>Percentage of total" +
-                                    " items</th><th>Character size</th><th>Percentage of total size</th></tr></thead>");
-                                stat.push("<tbody>");
-                                rowBuilder("Total");
-                                rowBuilder("cdata");
-                                rowBuilder("comment");
-                                rowBuilder("content");
-                                rowBuilder("end");
-                                rowBuilder("ignore");
-                                rowBuilder("script");
-                                rowBuilder("sgml");
-                                rowBuilder("singleton");
-                                rowBuilder("start");
-                                rowBuilder("style");
-                                rowBuilder("template");
-                                rowBuilder("text");
-                                rowBuilder("xml");
-                                stat.push("</tbody></table>");
-                                return stat.join("");
-                            }()),
                             numformat  = function markuppretty__apply_summary_numformat(x) {
                                 var y    = String(x).split(""),
                                     z    = 0,
@@ -9629,6 +9593,101 @@ var prettydiff = function prettydiff(api) {
                                 }
                                 return "";
                             },
+                            accessibility = (function markuppretty__apply_summary_accessibility() {
+                                if (maccessibility === false) {
+                                    return "";
+                                }
+
+                            }()),
+                            parseErrors = (function markuppretty__apply_summary_parseErrors() {
+                                var x = parseError.length,
+                                    y = 0,
+                                    fails = [];
+                                if (x === 0) {
+                                    return "";
+                                }
+                                fails.push("<h4>Errors interpreting markup</h4> <ol>");
+                                for (y = 0; y < x; y += 1) {
+                                    fails.push("<li>");
+                                    fails.push(parseError[y].replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;"));
+                                    fails.push("</li>");
+                                }
+                                fails.push("</ol>");
+                                return fails.join("");
+                            }()),
+                            sizes      = (function markuppretty__apply_summary_sizes() {
+                                var table = [],
+                                    insize = msource.length,
+                                    outlines = output.split("\n").length,
+                                    outsize = output.length,
+                                    linechange = (outlines / line),
+                                    charchange = (outsize / insize);
+                                table.push("<h4>Data sizes</h4>");
+                                table.push("<table class='analysis' summary='Data sizes'><caption>This table shows changes in sizes of the data due to beautification.</caption>");
+                                table.push("<thead><tr><th>Data figure</th><th>Input</th><th>Output</th><th>Percent change</th></tr></thead><tbody>");
+                                table.push("<tr><th>Lines of code</th><td>");
+                                table.push(numformat(line));
+                                table.push("</td><td>");
+                                table.push(numformat(outlines));
+                                table.push("</td><td>");
+                                table.push(linechange.toFixed(2));
+                                table.push("%</td></tr>");
+                                table.push("<tr><th>Character size</th><td>");
+                                table.push(numformat(insize));
+                                table.push("</td><td>");
+                                table.push(numformat(outsize));
+                                table.push("</td><td>");
+                                table.push(charchange.toFixed(2));
+                                table.push("%</td></tr>");
+                                table.push("</tbody></table>");
+                                return table.join("");
+                            }()),
+                            statistics = (function markuppretty__apply_summary_statistics() {
+                                var stat       = [],
+                                    totalItems = stats.cdata[0] + stats.comment[0] + stats.content[0] + stats.end[0] + stats.ignore[0] + stats.script[0] + stats.sgml[0] + stats.singleton[0] + stats.start[0] + stats.style[0] + stats.template[0] + stats.text[0] + stats.xml[0],
+                                    totalSizes = stats.cdata[1] + stats.comment[1] + stats.content[1] + stats.end[1] + stats.ignore[1] + stats.script[1] + stats.sgml[1] + stats.singleton[1] + stats.start[1] + stats.style[1] + stats.template[1] + stats.text[1] + stats.xml[1],
+                                    rowBuilder = function markuppretty__apply_summary_stats_rowBuilder(type) {
+                                        var itema = (type === "Total") ? totalItems : stats[type][0],
+                                            itemb = (type === "Total") ? totalSizes : stats[type][1];
+                                        stat.push("<tr><th>");
+                                        stat.push(type);
+                                        stat.push("</th><td>");
+                                        stat.push(itema);
+                                        stat.push("</td><td");
+                                        if (startend !== 0 && (type === "start" || type === "end")) {
+                                            stat.push(" class=\"bad\"");
+                                        }
+                                        stat.push(">");
+                                        stat.push(((itema / totalItems) * 100).toFixed(2));
+                                        stat.push("%</td><td>");
+                                        stat.push(itemb);
+                                        stat.push("</td><td>");
+                                        stat.push(((itemb / totalSizes) * 100).toFixed(2));
+                                        stat.push("%</td></tr>");
+                                    };
+                                stat.push("<h4>Statistics and analysis of parsed code</h4>");
+                                stat.push("<table class='analysis' summary='Statistics'><caption>This table provides basic " +
+                                    "statistics about the parsed components of the given code sample..</caption>");
+                                stat.push("<thead><tr><th>Item type</th><th>Number of instances</th><th>Percentage of total" +
+                                    " items</th><th>Character size</th><th>Percentage of total size</th></tr></thead>");
+                                stat.push("<tbody>");
+                                rowBuilder("Total");
+                                rowBuilder("cdata");
+                                rowBuilder("comment");
+                                rowBuilder("content");
+                                rowBuilder("end");
+                                rowBuilder("ignore");
+                                rowBuilder("script");
+                                rowBuilder("sgml");
+                                rowBuilder("singleton");
+                                rowBuilder("start");
+                                rowBuilder("style");
+                                rowBuilder("template");
+                                rowBuilder("text");
+                                rowBuilder("xml");
+                                stat.push("</tbody></table>");
+                                return stat.join("");
+                            }()),
                             zipf       = (function markuppretty__apply_summary_zipf() {
                                 var x          = 0,
                                     wordlen    = 0,
@@ -9748,18 +9807,15 @@ var prettydiff = function prettydiff(api) {
                             }
                             sum.push(" than start tags!</strong></p>");
                         }
-                        sum.push("<p><strong>Total input size:</strong> <em>");
-                        sum.push(numformat(msource.length));
-                        sum.push("</em> characters</p>");
-                        sum.push("<p><strong>Total output size:</strong> <em>");
-                        sum.push(numformat(output.length));
-                        sum.push("</em> characters</p>");
                         sum.push("<p><strong>Total number of HTTP requests (presuming HTML or XML Schema):</strong" +
                             "> <em>");
                         sum.push(reqs.length);
                         sum.push("</em></p>");
                         sum.push("<div class='doc'>");
                         sum.push(analysis(ids));
+                        sum.push(parseErrors);
+                        sum.push(accessibility);
+                        sum.push(sizes);
                         sum.push(zipf);
                         sum.push(statistics);
                         sum.push(analysis(reqs));
