@@ -92,43 +92,202 @@
  */
 var prettydiff = function prettydiff(api) {
         "use strict";
-        var startTime     = Date.now(),
-            jsxstatus     = false,
-            summary       = "",
-            charDecoder   = function init_charDecoder() {
+        var startTime    = Date.now(),
+            jsxstatus    = false,
+            summary      = "",
+            charDecoder  = function init_charDecoder() {
                 return;
             },
-            csspretty     = function init_csspretty() {
+            csspretty    = function init_csspretty() {
                 return;
             },
-            csvbeauty     = function init_csvbeauty() {
+            csvbeauty    = function init_csvbeauty() {
                 return;
             },
-            csvmin        = function init_csvmin() {
+            csvmin       = function init_csvmin() {
                 return;
             },
-            diffview      = function init_diffview() {
+            diffview     = function init_diffview() {
                 return;
             },
-            jspretty      = function init_jspretty() {
+            jspretty     = function init_jspretty() {
                 return;
             },
-            markupmin     = function init_markupmin() {
+            markuppretty = function init_markuppretty() {
                 return;
             },
-            markup_beauty = function init_markup_beauty() {
-                return;
+            //the native sort method Array.prototype.sort is not stable and
+            //should not be trusted cross-browser. So I wrote something that
+            //performs a more intelligent sort and is always stable.
+            safeSort     = function (array, operation, recursive) {
+                var arTest  = function (item) {
+                        if (typeof item !== "object" || item.length === undefined || item.length < 2) {
+                            return false;
+                        }
+                        return true;
+                    },
+                    normal  = function (item) {
+                        var done    = [item[0]],
+                            storeb  = item,
+                            child   = function () {
+                                var a   = 0,
+                                    len = storeb.length;
+                                for (a = 0; a < len; a += 1) {
+                                    if (arTest(storeb[a]) === true) {
+                                        storeb[a] = normal(storeb[a]);
+                                    }
+                                }
+                            },
+                            recurse = function (x) {
+                                var a      = 0,
+                                    storea = [],
+                                    len    = storeb.length;
+                                for (a = 0; a < len; a += 1) {
+                                    if (storeb[a] !== x) {
+                                        storea.push(storeb[a]);
+                                    }
+                                }
+                                storeb = storea;
+                                if (storea.length > 0) {
+                                    done.push(storea[0]);
+                                    recurse(storea[0]);
+                                } else {
+                                    if (recursive === true) {
+                                        child();
+                                    }
+                                    item = storeb;
+                                }
+                            };
+                        recurse(array[0]);
+                    },
+                    descend = function (item) {
+                        var c       = 0,
+                            storeb  = item,
+                            len     = item.length,
+                            child   = function () {
+                                var a    = 0,
+                                    lenc = storeb.length;
+                                for (a = 0; a < lenc; a += 1) {
+                                    if (arTest(storeb[a]) === true) {
+                                        storeb[a] = descend(storeb[a]);
+                                    }
+                                }
+                            },
+                            recurse = function () {
+                                var a      = 0,
+                                    b      = 0,
+                                    d      = 0,
+                                    e      = 0,
+                                    ind    = [],
+                                    key    = storeb[c],
+                                    tstore = "",
+                                    tkey   = typeof key;
+                                for (a = c; a < len; a += 1) {
+                                    tstore = typeof storeb[a];
+                                    if (storeb[a] > key || (tstore > tkey)) {
+                                        key = storeb[a];
+                                        ind = [a];
+                                    } else if (storeb[a] === key) {
+                                        ind.push(a);
+                                    }
+                                }
+                                d = ind.length;
+                                b = d + c;
+                                for (a = c; a < b; a += 1) {
+                                    storeb[ind[e]] = storeb[a];
+                                    storeb[a]      = key;
+                                    e              += 1;
+                                }
+                                c += d;
+                                if (c < len) {
+                                    recurse();
+                                } else {
+                                    if (recursive === true) {
+                                        child();
+                                    }
+                                    item = storeb;
+                                }
+                            };
+                        recurse();
+                        return item;
+                    },
+                    ascend  = function (item) {
+                        var c       = 0,
+                            storeb  = item,
+                            len     = item.length,
+                            child   = function () {
+                                var a    = 0,
+                                    lenc = storeb.length;
+                                for (a = 0; a < lenc; a += 1) {
+                                    if (arTest(storeb[a]) === true) {
+                                        storeb[a] = ascend(storeb[a]);
+                                    }
+                                }
+                            },
+                            recurse = function () {
+                                var a      = 0,
+                                    b      = 0,
+                                    d      = 0,
+                                    e      = 0,
+                                    ind    = [],
+                                    key    = storeb[c],
+                                    tstore = "",
+                                    tkey   = typeof key;
+                                for (a = c; a < len; a += 1) {
+                                    tstore = typeof storeb[a];
+                                    if (storeb[a] < key || tstore < tkey) {
+                                        key = storeb[a];
+                                        ind = [a];
+                                    } else if (storeb[a] === key) {
+                                        ind.push(a);
+                                    }
+                                }
+                                d = ind.length;
+                                b = d + c;
+                                for (a = c; a < b; a += 1) {
+                                    storeb[ind[e]] = storeb[a];
+                                    storeb[a]      = key;
+                                    e              += 1;
+                                }
+                                c += d;
+                                if (c < len) {
+                                    recurse();
+                                } else {
+                                    if (recursive === true) {
+                                        child();
+                                    }
+                                    item = storeb;
+                                }
+                            };
+                        recurse();
+                        return item;
+                    };
+                if (arTest(array) === false) {
+                    return array;
+                }
+                if (recursive === "true") {
+                    recursive = true;
+                } else if (recursive !== true) {
+                    recursive = false;
+                }
+                if (operation === "normal") {
+                    return normal(array);
+                }
+                if (operation === "descend") {
+                    return descend(array);
+                }
+                return ascend(array);
             },
 
             //everything above, except "startTime", "jsxstatus", and
             //"summary" is a library.  Here is the logic that puts it
             //all together into a combined application
-            core          = function core(api) {
+            core         = function core(api) {
                 var spacetest       = (/^\s+$/g),
                     apioutput       = "",
                     apidiffout      = "",
                     builder         = {},
-                    setlangmode = function dom__langkey_setlangmode(input) {
+                    setlangmode     = function dom__langkey_setlangmode(input) {
                         if (input === "css" || input === "less" || input === "scss") {
                             return "css";
                         }
@@ -149,7 +308,7 @@ var prettydiff = function prettydiff(api) {
                         }
                         return "javascript";
                     },
-                    nameproper = function dom__langkey_nameproper(input) {
+                    nameproper      = function dom__langkey_nameproper(input) {
                         if (input === "javascript") {
                             return "JavaScript";
                         }
@@ -302,7 +461,7 @@ var prettydiff = function prettydiff(api) {
                     cwrap           = (isNaN(api.wrap) === true) ? 80 : Number(api.wrap),
                     autoval         = [],
                     autostring      = "",
-                    auto        = function core__auto(a) {
+                    auto            = function core__auto(a) {
                         var b        = [],
                             c        = 0,
                             d        = 0,
@@ -314,6 +473,16 @@ var prettydiff = function prettydiff(api) {
                                 if (langname === "unknown") {
                                     return [
                                         defaultt, setlangmode(defaultt), "unknown"
+                                    ];
+                                }
+                                if (langname === "xhtml") {
+                                    return [
+                                        "xml", "html", "XHTML"
+                                    ];
+                                }
+                                if (langname === "tss") {
+                                    return [
+                                        "javascript", "javascript", "Titanium Stylesheets"
                                     ];
                                 }
                                 return [
@@ -368,7 +537,7 @@ var prettydiff = function prettydiff(api) {
                                 }
                                 return output("unknown");
                             }
-                            if (a.indexOf("{") !== -1 && (/^(\s*[\{\$\.#@a-z0-9])|^(\s*\/(\*|\/))|^(\s*\*\s*\{)/i).test(a) === true && (/^(\s*if\s*\()/).test(a) === false && (/\=\s*(\{|\[|\()/).test(join) === false && (((/(\+|\-|\=|\*|\?)\=/).test(join) === false || (/\/\/\s*\=+/).test(join) === true) || ((/\=+('|")?\)/).test(a) === true && (/;\s*base64/).test(a) === true)) && (/function(\s+\w+)*\s*\(/).test(join) === false) {
+                            if (a.indexOf("{") !== -1 && (/^(\s*[\{\$\.#@a-z0-9])|^(\s*\/(\*|\/))|^(\s*\*\s*\{)/i).test(a) === true && (/^(\s*if\s*\()/).test(a) === false && (/\=\s*(\{|\[|\()/).test(join) === false && (((/(\+|\-|\=|\?)\=/).test(join) === false || (/\/\/\s*\=+/).test(join) === true) || ((/\=+('|")?\)/).test(a) === true && (/;\s*base64/).test(a) === true)) && (/function(\s+\w+)*\s*\(/).test(join) === false) {
                                 if ((/:\s*((number)|(string))/).test(a) === true && (/((public)|(private))\s+/).test(a) === true) {
                                     return output("typescript");
                                 }
@@ -858,17 +1027,19 @@ var prettydiff = function prettydiff(api) {
                 }
                 if (clang === "auto") {
                     autoval = auto(csource);
-                    clang = autoval[1];
+                    clang   = autoval[1];
                     if (autoval[2] === "unknown") {
                         autostring = "<p>Code type set to <strong>auto</strong>, but language could not be determined. Language defaulted to <em>" + autoval[0] + "</em>.</p>";
                     } else {
                         autostring = "<p>Code type set to <strong>auto</strong>. Presumed language is <em>" + autoval[2] + "</em>.</p>";
                     }
                 } else if (capi === "dom") {
-                    autoval = [clang, clang, clang];
+                    autoval    = [
+                        clang, clang, clang
+                    ];
                     autostring = "<p>Code type is set to <strong>" + clang + "</strong>.</p>";
                 } else {
-                    clang = setlangmode(clang);
+                    clang      = setlangmode(clang);
                     autostring = "<p>Code type is set to <strong>" + clang + "</strong>.</p>";
                 }
                 pdcomment();
@@ -906,9 +1077,9 @@ var prettydiff = function prettydiff(api) {
                     } else if (clang === "csv") {
                         apioutput = csvmin(csource, ccsvchar);
                     } else if (clang === "markup") {
-                        apioutput = markupmin({
-                            comments    : "",
+                        apioutput = markuppretty({
                             conditional : ccond,
+                            mode        : cmode,
                             objsort     : cobjsort,
                             presume_html: chtml,
                             quoteConvert: cquoteConvert,
@@ -984,7 +1155,9 @@ var prettydiff = function prettydiff(api) {
                             return output.join("");
                         };
                         if (jsxstatus === true) {
-                            autoval = ["jsx", "javascript", "React JSX"];
+                            autoval    = [
+                                "jsx", "javascript", "React JSX"
+                            ];
                             autostring = "<p>Code type set to <strong>auto</strong>. Presumed language is <em>React JSX</em>.</p>";
                         }
                         return [
@@ -1004,7 +1177,7 @@ var prettydiff = function prettydiff(api) {
                         apioutput  = "CSV not supported in parse mode";
                         apidiffout = "";
                     } else if (clang === "markup") {
-                        apioutput = markup_beauty({
+                        apioutput  = markuppretty({
                             correct     : ccorrect,
                             html        : chtml,
                             mode        : cmode,
@@ -1060,7 +1233,7 @@ var prettydiff = function prettydiff(api) {
                         apioutput  = csvbeauty(csource, ccsvchar);
                         apidiffout = "";
                     } else if (clang === "markup") {
-                        apioutput  = markup_beauty({
+                        apioutput  = markuppretty({
                             braceline   : cbraceline,
                             bracepadding: cbracepadding,
                             braces      : cbraces,
@@ -1181,7 +1354,7 @@ var prettydiff = function prettydiff(api) {
                         apioutput  = csvbeauty(csource, ccsvchar);
                         apidiffout = csvbeauty(cdiff, ccsvchar);
                     } else if (clang === "markup") {
-                        apioutput  = markup_beauty({
+                        apioutput  = markuppretty({
                             bracepadding: cbracepadding,
                             braces      : cbraces,
                             comments    : ccomm,
@@ -1192,7 +1365,7 @@ var prettydiff = function prettydiff(api) {
                             html        : chtml,
                             inchar      : cinchar,
                             insize      : cinsize,
-                            mode        : (cdiffcomments === true) ? "beautify" : "diff",
+                            mode        : cmode,
                             objsort     : cobjsort,
                             source      : csource,
                             style       : cstyle,
@@ -1200,7 +1373,7 @@ var prettydiff = function prettydiff(api) {
                             vertical    : false,
                             wrap        : cwrap
                         }).replace(/\n[\t]* \/>/g, "");
-                        apidiffout = markup_beauty({
+                        apidiffout = markuppretty({
                             bracepadding: cbracepadding,
                             braces      : cbraces,
                             comments    : ccomm,
@@ -1211,7 +1384,7 @@ var prettydiff = function prettydiff(api) {
                             html        : chtml,
                             inchar      : cinchar,
                             insize      : cinsize,
-                            mode        : (cdiffcomments === true) ? "beautify" : "diff",
+                            mode        : cmode,
                             objsort     : cobjsort,
                             source      : cdiff,
                             style       : cstyle,
@@ -1355,7 +1528,7 @@ var prettydiff = function prettydiff(api) {
         //UTF8/16.  Requires a browser to access the actual characters.
         //This library is ignored in other environments.  Only used in
         //csvmin and csvbeauty libraries.
-        charDecoder   = function charDecoder(input) {
+        charDecoder  = function charDecoder(input) {
             var a         = 0,
                 b         = 0,
                 index     = 0,
@@ -1423,11 +1596,12 @@ var prettydiff = function prettydiff(api) {
         };
 
         //Library to parse/beautify/minify CSS (and similar languages).
-        csspretty     = function csspretty(args) {
+        csspretty    = function csspretty(args) {
             var scssinsertlines = (args.cssinsertlines === true || args.cssinsertlines === "true") ? true : false,
                 sdiffcomm       = (args.diffcomm === true || args.diffcomm === "true") ? true : false,
-                sinsize         = (isNaN(args.insize) === true) ? 4 : Number(args.insize),
                 sinchar         = (typeof args.inchar !== "string" || args.inchar === "") ? " " : args.inchar,
+                sinlevel        = (isNaN(args.inlevel) === true) ? 0 : Number(args.inlevel),
+                sinsize         = (isNaN(args.insize) === true) ? 4 : Number(args.insize),
                 smode           = (args.mode === "minify" || args.mode === "parse" || args.mode === "diff") ? args.mode : "beautify",
                 sobjsort        = (args.objsort === true || args.objsort === "true") ? true : false,
                 spres           = (args.preserve === false || args.preserve === "false") ? false : true,
@@ -1492,7 +1666,7 @@ var prettydiff = function prettydiff(api) {
                             keylen    = 0,
                             keyend    = 0,
                             start     = 0,
-                            sort = function jspretty__tokenize_objSort_sort(x, y) {
+                            sort      = function jspretty__tokenize_objSort_sort(x, y) {
                                 var xx = x[0],
                                     yy = y[0];
                                 if (types[xx] === "comment" || types[xx] === "comment-inline") {
@@ -1510,7 +1684,7 @@ var prettydiff = function prettydiff(api) {
                                 }
                                 return 1;
                             },
-                            semiTest = true,
+                            semiTest  = true,
                             pairToken = [],
                             pairTypes = [],
                             pairLines = [];
@@ -1529,7 +1703,7 @@ var prettydiff = function prettydiff(api) {
                             if (dd === 0) {
                                 if (token[cc] === ";" || token[cc] === "}") {
                                     semiTest = true;
-                                    start     = cc + 1;
+                                    start    = cc + 1;
                                     if (types[start] === "comment-inline") {
                                         start += 1;
                                     }
@@ -1537,7 +1711,7 @@ var prettydiff = function prettydiff(api) {
                                 if (semiTest === true && (token[cc] === ";" || token[cc] === "}") && start < end && (keys.length === 0 || start !== keys[keys.length - 1][0])) {
                                     if (lines[start - 1] > 0 && (types[start] === "comment" || types[start] === "selector")) {
                                         lines[start - 1] = 0;
-                                        lines[start] = 1;
+                                        lines[start]     = 1;
                                     }
                                     if (types[end + 1] === "comment-inline") {
                                         end += 1;
@@ -1557,7 +1731,7 @@ var prettydiff = function prettydiff(api) {
                                 }
                                 if (keys.length > 1 && (types[cc - 1] === "selector" || token[cc - 1] === "=" || token[cc - 1] === ":" || token[cc - 1] === "[" || token[cc - 1] === "{" || token[cc - 1] === "," || cc === 0)) {
                                     keys.sort(sort);
-                                    keylen    = keys.length;
+                                    keylen   = keys.length;
                                     semiTest = false;
                                     for (dd = 0; dd < keylen; dd += 1) {
                                         keyend = keys[dd][1];
@@ -2208,7 +2382,7 @@ var prettydiff = function prettydiff(api) {
                     var a        = 0,
                         len      = token.length,
                         build    = [],
-                        indent   = 0,
+                        indent   = sinlevel,
                         mixin    = false,
                         tab      = (function csspretty__beautify_tab() {
                             var aa = 0,
@@ -2274,6 +2448,13 @@ var prettydiff = function prettydiff(api) {
                             }
                             build.push(" ");
                         };
+                    if (sinlevel > 0) {
+                        a = sinlevel;
+                        do {
+                            a -= 1;
+                            build.push(tab);
+                        } while (a > 0);
+                    }
                     for (a = 0; a < len; a += 1) {
                         if (types[a] === "start") {
                             if (a > 0 && token[a - 1].charAt(token[a - 1].length - 1) === "#") {
@@ -2446,7 +2627,7 @@ var prettydiff = function prettydiff(api) {
 
         //Library to change CSV (and similar formats) to something
         //human readable.
-        csvbeauty     = function csvbeauty(source, ch) {
+        csvbeauty    = function csvbeauty(source, ch) {
             var errorLocation  = "",
                 a              = 0,
                 b              = 0,
@@ -2511,7 +2692,7 @@ var prettydiff = function prettydiff(api) {
 
         //Library to regress changes made by csvbeauty back to
         //the standard format.
-        csvmin        = function csvmin(source, ch) {
+        csvmin       = function csvmin(source, ch) {
             if (ch === "") {
                 ch = ",";
             } else {
@@ -2579,7 +2760,7 @@ var prettydiff = function prettydiff(api) {
         };
 
         //Library to compare text input
-        diffview      = function diffview(args) {
+        diffview     = function diffview(args) {
             var errorout      = 0,
                 diffline      = 0,
                 baseTextLines = (typeof args.baseTextLines === "string") ? args.baseTextLines.replace(/\u0000|\u0001|\u0002|\u0003|\u0004|\u0005|\u0006|\u0007|\u0008|\u000b|\u000c|\u000e|\u000f|\u0010|\u0011|\u0012|\u0013|\u0014|\u0015|\u0016|\u0017|\u0018|\u0019|\u001a|\u001b|\u001c|\u001d|\u001e|\u001f|\u007f|\u0080|\u0081|\u0082|\u0083|\u0084|\u0085|\u0086|\u0087|\u0088|\u0089|\u008a|\u008b|\u008c|\u008d|\u008e|\u008f|\u0090|\u0091|\u0092|\u0093|\u0094|\u0095|\u0096|\u0097|\u0098|\u0099|\u009a|\u009b|\u009c|\u009d|\u009e|\u009f/g, "") : "",
@@ -3582,7 +3763,7 @@ var prettydiff = function prettydiff(api) {
         };
 
         //Library to parse/beautify/minify JavaScript.
-        jspretty      = function jspretty(args) {
+        jspretty     = function jspretty(args) {
             var jbraceline    = (args.braceline === true || args.braceline === "true") ? true : false,
                 jbracepadding = (args.bracepadding === true || args.bracepadding === "true") ? true : false,
                 jbraces       = (args.braces === "allman") ? true : false,
@@ -4901,6 +5082,7 @@ var prettydiff = function prettydiff(api) {
                             ltype            = "word";
                             stats.word.token += 1;
                             stats.word.chars += output.length;
+                            lengtha = token.length;
                         }
                         lines.push(0);
                     },
@@ -5260,7 +5442,7 @@ var prettydiff = function prettydiff(api) {
                             ltype = "start";
                         } else if (lengtha > 2 && token[lengtha - 2] === "function") {
                             ltype = "method";
-                        } else if (lengtha === 0 || ltoke === "return" || ltoke === "function" || ltoke === "for" || ltoke === "if" || ltoke === "with" || ltoke === "while" || ltoke === "switch" || ltoke === "catch" || ltype === "separator" || ltype === "operator" || (a > 0 && (/\s/).test(c[a - 1]))) {
+                        } else if (lengtha === 0 || ltoke === "return" || ltoke === "function" || ltoke === "for" || ltoke === "if" || ltoke === "with" || ltoke === "while" || ltoke === "switch" || ltoke === "catch" || ltype === "separator" || ltype === "operator" || (a > 0 && (/\s/).test(c[a - 1]) === true)) {
                             ltype = "start";
                         } else if (ltype === "end") {
                             ltype = methodTest();
@@ -5553,6 +5735,7 @@ var prettydiff = function prettydiff(api) {
                         list       = [],
                         listtest   = [],
                         lastlist   = false,
+                        operand    = false,
                         ternary    = [],
                         varline    = [],
                         casetest   = [],
@@ -5722,6 +5905,10 @@ var prettydiff = function prettydiff(api) {
                                 if (obj[obj.length - 1] === true) {
                                     return level.push(indent);
                                 }
+                                if (operand === true) {
+                                    operand = false;
+                                    return level.push(indent);
+                                }
                                 if (list[list.length - 1] === true) {
                                     return (function jspretty__algorithm_separator_inList() {
                                         var c = 0,
@@ -5766,6 +5953,7 @@ var prettydiff = function prettydiff(api) {
                                 return level.push(indent);
                             }
                             if (ctoke === ";" || ctoke === "x;") {
+                                operand = false;
                                 if (ternary.length > 0) {
                                     ternary[ternary.length - 1] = false;
                                 }
@@ -5932,6 +6120,7 @@ var prettydiff = function prettydiff(api) {
                             return level.push("x");
                         },
                         end        = function jspretty__algorithm_end() {
+                            operand = false;
                             if (fortest === 1 && ctoke === ")" && varline[varline.length - 1] === true) {
                                 varline[varline.length - 1] = false;
                             }
@@ -6125,6 +6314,7 @@ var prettydiff = function prettydiff(api) {
                             obj.pop();
                         },
                         operator   = function jspretty__algorithm_operator() {
+                            operand = true;
                             if (ctoke === "!" || ctoke === "...") {
                                 if (ltoke === "(") {
                                     level[a - 1] = "x";
@@ -6228,7 +6418,7 @@ var prettydiff = function prettydiff(api) {
                                 return;
                             }
                             level[a - 1] = "s";
-                            if (ctoke.indexOf("=") > -1 && ctoke !== "==" && ctoke !== "===" && ctoke !== "!=" && ctoke !== "!==" && ctoke !== ">=" && ctoke !== "<=" && varline[varline.length - 1] === false && methodtest[methodtest.length - 1] === false && obj[obj.length - 1] === false) {
+                            if (ctoke.indexOf("=") > -1 && ctoke !== "==" && ctoke !== "===" && ctoke !== "!=" && ctoke !== "!==" && ctoke !== ">=" && ctoke !== "<=" && varlen.length > 0 && varline[varline.length - 1] === false && methodtest[methodtest.length - 1] === false && obj[obj.length - 1] === false) {
                                 if (assignlist[assignlist.length - 1] === true) {
                                     (function jspretty__algorithm_operator_assignTest() {
                                         var c = 0,
@@ -6663,9 +6853,10 @@ var prettydiff = function prettydiff(api) {
                         if (types[a - 1] === "operator" && types[a] === "operator") {
                             build.push(" ");
                         }
-                        if (types[a] === "markup" && typeof markupmin === "function") {
-                            build.push(markupmin({
+                        if (types[a] === "markup" && typeof markuppretty === "function") {
+                            build.push(markuppretty({
                                 jsx   : true,
+                                mode  : "minify",
                                 source: token[a]
                             }));
                         } else if (types[a] === "word" && (types[a + 1] === "word" || types[a + 1] === "literal" || token[a + 1] === "x{" || types[a + 1] === "comment" || types[a + 1] === "comment-inline")) {
@@ -7013,12 +7204,13 @@ var prettydiff = function prettydiff(api) {
                                         return 0;
                                     }()),
                                     markup   = (function jspretty__resultScope_markupBuild_varscope() {
-                                        var item    = markup_beauty({
+                                        var item    = markuppretty({
                                                 inchar : jchar,
                                                 inlevel: mindent,
                                                 insize : jsize,
                                                 jsscope: true,
                                                 jsx    : true,
+                                                mode   : "beautify",
                                                 source : token[a]
                                             }).replace(/return\s+</g, "return <"),
                                             emscope = function jsscope__resultScope_markupBuild_varscope_emscope(x) {
@@ -7193,7 +7385,7 @@ var prettydiff = function prettydiff(api) {
                                         } else {
                                             xlen += 1;
                                         }
-                                        if (token[x - 1] === "," && token[varlist[aa][cc] + 1] !== ":" && token[varlist[aa][0] - 1] !== "var" && token[varlist[aa][0] - 1] !== "let") {
+                                        if (token[x - 1] === "," && token[varlist[aa][cc] + 1] !== ":" && token[varlist[aa][0] - 1] !== "var" && token[varlist[aa][0] - 1] !== "let" && token[varlist[aa][0] - 1] !== "const") {
                                             xlen += jsize;
                                         }
                                         return xlen;
@@ -7334,7 +7526,7 @@ var prettydiff = function prettydiff(api) {
                                                 nl(indent + 1);
                                             }
                                         }
-                                        if (typeof markup_beauty === "function") {
+                                        if (typeof markuppretty === "function") {
                                             markupBuild();
                                         } else {
                                             build.push(token[a].replace(/\n(\s*)/g, " "));
@@ -7462,11 +7654,11 @@ var prettydiff = function prettydiff(api) {
                     }()).replace(/(\s+)$/, "").replace(/\u0000|\u0001|\u0002|\u0003|\u0004|\u0005|\u0006|\u0007|\u0008|\u000b|\u000c|\u000e|\u000f|\u0010|\u0011|\u0012|\u0013|\u0014|\u0015|\u0016|\u0017|\u0018|\u0019|\u001a|\u001b|\u001c|\u001d|\u001e|\u001f|\u007f|\u0080|\u0081|\u0082|\u0083|\u0084|\u0085|\u0086|\u0087|\u0088|\u0089|\u008a|\u008b|\u008c|\u008d|\u008e|\u008f|\u0090|\u0091|\u0092|\u0093|\u0094|\u0095|\u0096|\u0097|\u0098|\u0099|\u009a|\u009b|\u009c|\u009d|\u009e|\u009f/g, "");
                 } else {
                     result = (function jspretty__result() {
-                        var a           = 0,
-                            b           = token.length,
-                            build       = [],
-                            indent      = jlevel,
-                            tab         = (function jspretty__result_tab() {
+                        var a      = 0,
+                            b      = token.length,
+                            build  = [],
+                            indent = jlevel,
+                            tab    = (function jspretty__result_tab() {
                                 var aa = jchar,
                                     bb = jsize,
                                     cc = [];
@@ -7475,14 +7667,14 @@ var prettydiff = function prettydiff(api) {
                                 }
                                 return cc.join("");
                             }()),
-                            nl          = function jspretty__result_nl(x) {
+                            nl     = function jspretty__result_nl(x) {
                                 var dd = 0;
                                 build.push("\n");
                                 for (dd = 0; dd < x; dd += 1) {
                                     build.push(tab);
                                 }
                             },
-                            rl          = function jspretty__result_rl(x) {
+                            rl     = function jspretty__result_rl(x) {
                                 var bb = token.length,
                                     cc = 2,
                                     dd = 0;
@@ -7495,66 +7687,6 @@ var prettydiff = function prettydiff(api) {
                                 }
                                 nl(x - cc);
                                 a += 1;
-                            },
-                            markupBuild = function jspretty__result_markupBuild() {
-                                var mindent  = (function jspretty__result_markupBuild_offset() {
-                                        var d = 0;
-                                        if (a === markupvar[0]) {
-                                            markupvar.splice(0, 1);
-                                            return 1;
-                                        }
-                                        if (token[d] === "return" || token[0] === "{") {
-                                            return 1;
-                                        }
-                                        if (level[a] === "x" || level[a] === "s") {
-                                            return 0;
-                                        }
-                                        for (d = a - 1; d > -1; d -= 1) {
-                                            if (token[d] !== "(") {
-                                                if (token[d] === "=") {
-                                                    return 1;
-                                                }
-                                                return 0;
-                                            }
-                                        }
-                                        return 0;
-                                    }()),
-                                    markup   = markup_beauty({
-                                        inchar : jchar,
-                                        inlevel: mindent,
-                                        insize : jsize,
-                                        jsscope: args.jsscope,
-                                        jsx    : true,
-                                        source : token[a]
-                                    }).replace(/return\s+</g, "return <").split("\n"),
-                                    len      = 0,
-                                    c        = 0,
-                                    spaces   = 0,
-                                    synthtab = "\\" + tab.charAt(0),
-                                    tabreg   = {};
-                                len = tab.length;
-                                for (c = 1; c < len; c += 1) {
-                                    synthtab = synthtab + "\\" + tab.charAt(c);
-                                }
-                                tabreg  = new RegExp("^(" + synthtab + "+)");
-                                mindent = indent + 2;
-                                if (level[a] === "x" || level[a] === "s") {
-                                    markup[0] = markup[0].replace(tabreg, "");
-                                    mindent   -= 1;
-                                }
-                                len = markup.length;
-                                for (c = 0; c < len - 1; c += 1) {
-                                    if (markup[c].indexOf(tab) !== 0 && c > 0) {
-                                        spaces = markup[c - 1].split(tab).length - 1;
-                                        do {
-                                            spaces    -= 1;
-                                            markup[c] = tab + markup[c];
-                                        } while (spaces > 0);
-                                    }
-                                    build.push(markup[c]);
-                                    nl(mindent - 1);
-                                }
-                                build.push(markup[markup.length - 1]);
                             };
                         if (jvertical === true) {
                             (function jspretty__result_varSpaces() {
@@ -7565,6 +7697,7 @@ var prettydiff = function prettydiff(api) {
                                     longTest    = 0,
                                     tokenInList = "",
                                     longList    = [],
+                                    square      = false,
                                     joins       = function jspretty__result_varSpaces_joins(x) {
                                         var xlen    = token[x].length,
                                             mixTest = false,
@@ -7642,7 +7775,7 @@ var prettydiff = function prettydiff(api) {
                                         } else {
                                             xlen += 1;
                                         }
-                                        if (token[x - 1] === "," && token[varlist[aa][cc] + 1] !== ":" && token[varlist[aa][0] - 1] !== "var" && token[varlist[aa][0] - 1] !== "let") {
+                                        if (token[x - 1] === "," && token[varlist[aa][0] - 1] !== "[" && token[varlist[aa][cc] + 1] !== ":" && token[varlist[aa][0] - 1] !== "var" && token[varlist[aa][0] - 1] !== "let" && token[varlist[aa][0] - 1] !== "const") {
                                             xlen += jsize;
                                         }
                                         return xlen;
@@ -7686,8 +7819,16 @@ var prettydiff = function prettydiff(api) {
                                             nl(indent + 1);
                                         }
                                     }
-                                    if (typeof markup_beauty === "function") {
-                                        markupBuild();
+                                    if (typeof markuppretty === "function") {
+                                        build.push(markuppretty({
+                                            inchar : jchar,
+                                            inlevel: indent + 1,
+                                            insize : jsize,
+                                            jsscope: args.jsscope,
+                                            jsx    : true,
+                                            mode   : "beautify",
+                                            source : token[a]
+                                        }));
                                     } else {
                                         build.push(token[a].replace(/\n(\s*)/g, " "));
                                     }
@@ -8076,3338 +8217,1559 @@ var prettydiff = function prettydiff(api) {
             return result;
         };
 
-        //Library to minify markup (HTML/XML)
-        markupmin     = function markupmin(args) {
-            var i             = 0,
-                x             = (typeof args.source === "string") ? args.source.split("") : [
-                    "E", "r", "r", "o", "r", ":", " ", "n", "o", " ", "c", "o", "n", "t", "e", "n", "t", " ", "s", "u", "p", "p", "l", "i", "e", "d", " ", "t", "o", " ", "m", "a", "r", "k", "u", "p", "."
-                ],
-                id            = [],
-                comments      = (args.comments !== "comments" && args.comments !== "beautify" && args.comments !== "nocomment") ? "" : args.comments,
-                correct       = (args.correct === true || args.correct === "true") ? true : false,
-                inchar        = (typeof args.inchar === "string" && args.inchar.length > 0) ? args.inchar : " ",
-                insize        = (isNaN(args.insize) === false && Number(args.insize) >= 0) ? Number(args.insize) : 4,
-                minjsscope    = (args.jsscope !== "html" && args.jsscope !== "report") ? "none" : args.jsscope,
-                minjsx        = (args.jsx === true || args.jsx === "true") ? true : false,
-                obfuscate     = (args.obfuscate === true || args.obfuscate === "true") ? true : false,
-                objsort       = (args.objsort === true || args.objsort === "true") ? true : false,
-                presume_html  = (args.presume_html === true || args.presume_html === "true") ? true : false,
-                quoteConvert  = (args.quoteConvert === "single" || args.quoteConvert === "double") ? args.quoteConvert : "none",
-                styleguide    = (typeof args.styleguide === "string") ? args.styleguide : "none",
-                top_comments  = (args.top_comments === true || args.top_comments === "true") ? true : false,
-                wrap          = (isNaN(args.wrap) === false) ? Number(args.wrap) : 0,
-                conditional   = (presume_html === true || args.conditional === true || args.conditional === "true") ? true : false,
-                preserve      = function markupmin__preserve(start, endTag) {
-                    var a     = 0,
-                        end   = x.length,
-                        store = [],
-                        count = 0;
-                    for (a = i; a < end; a += 1) {
-                        store.push(x[a]);
-                        x[a] = "";
-                        if (start !== "" && store.slice(store.length - start.length).join("") === start) {
-                            count += 1;
-                        }
-                        if (store.slice(store.length - endTag.length).join("") === endTag) {
-                            count -= 1;
-                            if (count < 1) {
-                                break;
-                            }
-                        }
-                    }
-                    x[i] = store.join("");
-                    i    = a;
-                },
-                jsxItem       = function markupmin__jsxItem(index, space) {
-                    var a      = 0,
-                        end    = x.length,
-                        count  = 0,
-                        store  = [],
-                        tabReg = (function markupmin__jsxItem_tabReg() {
-                            var b     = 0,
-                                tabby = [];
-                            for (b = 0; b < insize; b += 1) {
-                                tabby.push("\\");
-                                tabby.push(inchar);
-                            }
-                            return new RegExp("^(\\s*\\{+\\s*" + tabby.join("") + "+)");
-                        }());
-                    if (space === undefined) {
-                        space = "";
-                    }
-                    for (a = index; a < end; a += 1) {
-                        store.push(x[a]);
-                        if (x[a] === "{") {
-                            count += 1;
-                        }
-                        if (x[a] === "}") {
-                            count -= 1;
-                            if (count === 0) {
-                                x[a] = "";
-                                break;
-                            }
-                        }
-                        x[a] = "";
-                    }
-                    if (store[0] + store[1] === "{{" && store[store.length - 2] + store[store.length - 1] === "}}") {
-                        x[a] = store.join("");
-                        return a;
-                    }
-                    x[a] = space + jspretty({
-                        inchar : inchar,
-                        insize : insize,
-                        jsscope: minjsscope,
-                        jsx    : true,
-                        mode   : (comments === "beautify") ? "beautify" : "minify",
-                        source : store.join("")
-                    }).replace(tabReg, "{").replace(/(\s*\}\s*)$/, "}");
-                    if (x[a] === "{};" || x[a] === "{}") {
-                        x[a] = "";
-                    }
-                    return a;
-                },
-                markupspace   = function markupmin__markupspace() {
-                    var a          = 0,
-                        b          = -1,
-                        store      = [],
-                        end        = x.length,
-                        item       = "",
-                        jsxtest    = "",
-                        attrs      = "",
-                        ignore     = false,
-                        attributes = function markupmin_markupspace_attribute(tag) {
-                            var aa          = 0,
-                                attribute   = [],
-                                comment     = [],
-                                tagLength   = 0,
-                                starter     = "",
-                                openchar    = "",
-                                spaceAfter  = tag.indexOf(" ") + 1,
-                                attribIndex = 0,
-                                nameSpace   = "",
-                                counter     = 0,
-                                ending      = (tag.charAt(tag.length - 2) === "/") ? "/>" : ">",
-                                space       = (tag.charAt(0) === " ") ? " " : "",
-                                qConvert    = function markupmin__markupspace_attribute_qConvert(item) {
-                                    var dub   = (quoteConvert === "double") ? true : false,
-                                        qchar = (dub === true) ? "\"" : "'",
-                                        eq    = item.indexOf("="),
-                                        name  = item.slice(0, eq + 1);
-                                    item = item.slice(eq + 2, item.length - 1);
-                                    if (name.toLowerCase() === "script=" || name.toLowerCase() === "style") {
-                                        if (dub === true) {
-                                            item = item.replace(/"/g, "'");
-                                        } else {
-                                            item = item.replace(/'/g, "\"");
-                                        }
-                                    } else if (dub === true) {
-                                        item = item.replace(/"/g, "&#x22;");
-                                    } else {
-                                        item = item.replace(/'/g, "&#x27;");
-                                    }
-                                    return name + qchar + item.split(qchar).join("\\" + qchar) + qchar;
-                                },
-                                sortfunc    = function markup_beauty__algorithm_loop_attributeOrder_sortfunc(aaa, bbb) {
-                                    if (aaa > bbb) {
-                                        return 1;
-                                    }
-                                    return 0;
-                                },
-                                pusher      = function markup_beauty__algorithm_loop_attributeOrder_pusher(attr) {
-                                    var last = (attribute.length > 0) ? attribute[attribute.length - 1] : "";
-                                    if (attr.indexOf("data-prettydiff-ignore" + "=") === 0) {
-                                        ignore = true;
-                                        return;
-                                    }
-                                    if (attr.indexOf("id=") === 0 || attr.indexOf("ID=") === 0) {
-                                        id.push(attr.slice(4, attr.length - 1));
-                                    }
-                                    if ((quoteConvert === "single" && attr.charAt(attr.length - 1) === "\"") || (quoteConvert === "double" && attr.charAt(attr.length - 1) === "'")) {
-                                        attr = qConvert(attr);
-                                    }
-                                    if ((attr.charAt(0) === "=" && last.indexOf("=") < 0) || (last.charAt(last.length - 1) === "=" && (attr.charAt(0) === "\"" || attr.charAt(0) === "'" || attr.indexOf("=") < 0))) {
-                                        attribute[attribute.length - 1] = last + attr;
-                                    } else if (attr !== undefined && (/^(\s+)$/).test(attr) === false && attr !== "") {
-                                        attribute.push(attr);
-                                    }
-                                    openchar    = "";
-                                    attribIndex = aa + 1;
-                                },
-                                joinchar    = (tag.length > wrap && wrap > 0 && comments === "beautify" && minjsx === false) ? "\n" : " ";
-                            if (space === " ") {
-                                tag        = tag.substr(1);
-                                spaceAfter = tag.indexOf(" ") + 1;
-                            }
-                            nameSpace = tag.substring(0, spaceAfter - 1);
-                            tagLength = tag.length;
-                            tag       = tag.substring(spaceAfter, tagLength - ending.length) + " ";
-                            for (aa = 0; aa < tagLength; aa += 1) {
-                                if (starter === "") {
-                                    if (tag.charAt(aa - 1) === "=" && openchar === "" && counter === 0) {
-                                        openchar = tag.charAt(aa);
-                                    }
-                                    if (tag.charAt(aa) === "\"") {
-                                        starter = "\"";
-                                    } else if (tag.charAt(aa) === "'") {
-                                        starter = "'";
-                                    } else if (tag.charAt(aa) === "[") {
-                                        starter = "[";
-                                        counter = 1;
-                                    } else if (tag.charAt(aa) === "{") {
-                                        starter = "{";
-                                        counter = 1;
-                                    } else if (tag.charAt(aa) === "(") {
-                                        starter = "(";
-                                        counter = 1;
-                                    } else if (tag.charAt(aa) === "<" && tag.charAt(aa + 1) === "%") {
-                                        starter     = "<%";
-                                        counter     = 1;
-                                        attribIndex = aa;
-                                    } else if ((tag.charAt(aa) === " " || (minjsx === true && tag.charAt(aa) === "\n")) && counter === 0) {
-                                        if (tag.charAt(attribIndex) === "\n") {
-                                            attribIndex += 1;
-                                        }
-                                        pusher(tag.substring(attribIndex, aa));
-                                        if (ignore === true) {
-                                            return;
-                                        }
-                                    } else if (minjsx === true && tag.charAt(aa) === "/" && (tag.charAt(aa + 1) === "*" || tag.charAt(aa + 1) === "/")) {
-                                        if (tag.charAt(aa + 1) === "*") {
-                                            starter = "/*";
-                                        } else {
-                                            starter = "//";
-                                        }
-                                        attribIndex = aa;
-                                    }
-                                } else if (starter === "\"" && tag.charAt(aa) === "\"") {
-                                    starter = "";
-                                } else if (starter === "'" && tag.charAt(aa) === "'") {
-                                    starter = "";
-                                } else if (starter === "[") {
-                                    if (tag.charAt(aa) === "]") {
-                                        counter -= 1;
-                                        if (counter === 0) {
-                                            starter = "";
-                                        }
-                                    } else if (tag.charAt(aa) === "[") {
-                                        counter += 1;
-                                    }
-                                } else if (starter === "{") {
-                                    if (tag.charAt(aa) === "}") {
-                                        counter -= 1;
-                                        if (counter === 0) {
-                                            starter = "";
-                                        }
-                                        if (openchar === "{" && counter === 0) {
-                                            pusher(tag.substring(attribIndex, aa + 1));
-                                            if (ignore === true) {
-                                                return;
-                                            }
-                                        }
-                                    } else if (tag.charAt(aa) === "{") {
-                                        counter += 1;
-                                    }
-                                } else if (starter === "(") {
-                                    if (tag.charAt(aa) === ")") {
-                                        counter -= 1;
-                                        if (counter === 0) {
-                                            starter = "";
-                                        }
-                                    } else if (tag.charAt(aa) === "(") {
-                                        counter += 1;
-                                    }
-                                } else if (starter === "<%") {
-                                    if (tag.charAt(aa) === ">" && tag.charAt(aa - 1) === "%") {
-                                        counter -= 1;
-                                        if (counter === 0) {
-                                            starter = "";
-                                        }
-                                    } else if (tag.charAt(aa) === "<" && tag.charAt(aa + 1) === "%") {
-                                        counter += 1;
-                                    }
-                                } else if (minjsx === true && starter === "/*" && tag.charAt(aa - 1) === "*" && tag.charAt(aa) === "/") {
-                                    starter = "";
-                                    comment.push(tag.substring(attribIndex, aa + 1));
-                                    aa          += 1;
-                                    attribIndex = aa;
-                                } else if (minjsx === true && starter === "//" && tag.charAt(aa) === "\n") {
-                                    starter = "";
-                                    comment.push(tag.substring(attribIndex, aa));
-                                    attribIndex = aa;
-                                }
-                            }
-                            tagLength = id.length;
-                            attribute.sort(sortfunc);
-                            if (minjsx === true) {
-                                if (comment.length > 0) {
-                                    return space + nameSpace + "\n" + comment.join("\n") + attribute.join(" ").replace(/\n \n?\//g, "\n/") + ending;
-                                }
-                                return space + nameSpace + " " + attribute.join(" ").replace(/\n \n?\//g, "\n/") + ending;
-                            }
-                            return space + nameSpace + joinchar + attribute.join(joinchar) + ending;
-                        };
-                    for (a = i; a < end; a += 1) {
-                        if (minjsx === true) {
-                            if (x[a - 1] === "/" && jsxtest === "") {
-                                if (x[a] === "*") {
-                                    if (comments === "beautify") {
-                                        if (store[store.length - 3].indexOf("\n") < 0 && store[store.length - 2].indexOf("\n") < 0) {
-                                            store[store.length - 1] = "\n/";
-                                        } else if (store[store.length - 2] === " ") {
-                                            store[store.length - 2] = "";
-                                        }
-                                    }
-                                    jsxtest = "*\/";
-                                }
-                                if (x[a] === "/") {
-                                    if (comments === "beautify") {
-                                        if (store[store.length - 3].indexOf("\n") < 0 && store[store.length - 2].indexOf("\n") < 0) {
-                                            store[store.length - 1] = "\n/";
-                                        } else if (store[store.length - 2] === " ") {
-                                            store[store.length - 2] = "";
-                                        }
-                                    }
-                                    jsxtest = "\n";
-                                }
-                            }
-                            if (jsxtest === "" && x[a] === "{" && typeof jspretty === "function") {
-                                jsxtest = x[a - 1];
-                                a = jsxItem(a, "");
-                                if (x[a + 1] !== ">" && x[a + 1] !== jsxtest) {
-                                    x[a] = x[a] + " ";
-                                }
-                                jsxtest = "";
-                            }
-                        }
-                        if ((jsxtest === "*\/" && x[a - 2] + x[a - 1] === "*\/") || (jsxtest === "\n" && x[a - 1] === "\n")) {
-                            if (x[a - 2] === "*" && comments === "beautify") {
-                                store[store.length - 1] = "/\n";
-                            }
-                            if (comments !== "beautify") {
-                                store.pop();
-                                if (store[store.length - 1] === " " && x[a] === " ") {
-                                    store.pop();
-                                }
-                            }
-                            jsxtest = "";
-                        }
-                        if (jsxtest === "") {
-                            if ((/\s/).test(x[a]) === true && x[a].length === 1) {
-                                if ((/\s/).test(x[a - 1]) === true) {
-                                    do {
-                                        a        += 1;
-                                        x[a - 1] = "";
-                                    } while ((/\s/).test(x[a]) === true && x[a].length === 1 && a < end);
-                                } else {
-                                    x[a] = " ";
-                                }
-                            }
-                            if ((x[a] === " " && store.length > 0 && store[store.length - 1].indexOf("\n") < 0) || x[a] !== " ") {
-                                store.push(x[a]);
-                            }
-                            if (x[a] === ">") {
-                                b = a + 1;
-                                break;
-                            }
-                        } else if (comments === "beautify") {
-                            store.push(x[a]);
-                        }
-                    }
-                    if (b < 0) {
-                        b = x.length;
-                    }
-                    x[i] = store.join("");
-                    if (x[i].charAt(1) !== "/" && x[i].charAt(1) !== "!" && x[i].indexOf(" ") > 0 && x[i].indexOf("<%") !== 0 && x[i].indexOf("<?") !== 0 && x[i].indexOf("<!--#")) {
-                        attrs = attributes(x[i]);
-                        if (ignore === false) {
-                            x[i] = attrs;
-                        }
-                    }
-                    if (ignore === true) {
-                        item = x[i].substring(1, x[i].indexOf(" "));
-                        x[i] = x[i].charAt(0);
-                        preserve("", "</" + item + ">");
-                        return;
-                    }
-                    for (a = i + 1; a < b; a += 1) {
-                        x[a] = "";
-                    }
-                    i = b - 1;
-                    if (minjsx === true && x[i + 1] === "{") {
-                        i = jsxItem(i, "");
-                    }
-                },
-                markupcomment = function markupmin__markupcomment(ending) {
-                    var a     = 0,
-                        store = [],
-                        end   = x.length;
-                    for (a = i; a < end; a += 1) {
-                        if ((a < end - 8 && x[a] + x[a + 1] + x[a + 2] + x[a + 3] + x[a + 4] + x[a + 5] + x[a + 6] + x[a + 7] + x[a + 8] + x[a + 9] + x[a + 10] + x[a + 11] === ending) || (a < end - 4 && x[a] + x[a + 1] + x[a + 2] + x[a + 3] === ending) || (a < end - 3 && x[a] + x[a + 1] + x[a + 2] === ending)) {
-                            x[a]     = "";
-                            x[a + 1] = "";
-                            x[a + 2] = "";
-                            if (ending.length > 3) {
-                                x[a + 3] = "";
-                                if (ending.length === 12) {
-                                    x[a + 4]  = "";
-                                    x[a + 5]  = "";
-                                    x[a + 6]  = "";
-                                    x[a + 7]  = "";
-                                    x[a + 8]  = "";
-                                    x[a + 9]  = "";
-                                    x[a + 10] = "";
-                                    x[a + 11] = "";
-                                    i         = a + 11;
-                                } else {
-                                    i = a + 3;
-                                }
-                            } else {
-                                i = a + 2;
-                            }
-                            break;
-                        }
-                        if ((conditional === true && ending.length === 12) || comments === "beautify" || comments === "comments") {
-                            store.push(x[a]);
-                        }
-                        x[a] = "";
-                    }
-                    if ((conditional === true && ending.length === 12) || comments === "comments" || comments === "beautify") {
-                        x[i] = store.join("");
-                        if (x[i].indexOf(ending) !== x[i].length - ending.length) {
-                            x[i] = x[i] + ending;
-                        }
-                    }
-                    i += 1;
-                    if ((/\s/).test(x[i]) === true) {
-                        x[i] = " ";
-                    }
-                    if (i < end - 1 && (/\s/).test(x[i + 1]) === true) {
-                        do {
-                            i    += 1;
-                            x[i] = "";
-                        } while ((/\s/).test(x[i]) === true && i < end);
-                    }
-                },
-                markupscript  = function markupmin__markupscript(type) {
-                    var a           = 0,
-                        store       = [],
-                        endIndex    = 0,
-                        script      = "",
-                        endTag      = "",
-                        endTagBuild = "</" + type,
-                        noEnd       = false,
-                        stoken      = "",
-                        end         = x.length,
-                        cdataStart  = (/^(\s*\/+<!\[+[A-Z]+\[+)/),
-                        cdataEnd    = (/(\/+\]+>\s*)$/),
-                        scriptStart = (/^(\s*<\!\-\-)/),
-                        scriptEnd   = (/(\/+\-\->\s*)$/),
-                        cdataS      = "",
-                        cdataE      = "",
-                        source      = args.source;
-                    for (a = i; a < end; a += 1) {
-                        if ((source.slice(a, a + endTagBuild.length)).toLowerCase() === endTagBuild) {
-                            endIndex = a;
-                            break;
-                        }
-                    }
-                    if (endIndex === 0) {
-                        endIndex = end;
-                        noEnd    = true;
-                    }
-                    for (a = i; a < endIndex; a += 1) {
-                        if (x[a - 1] !== ">") {
-                            store.push(x[a]);
-                            x[a] = "";
-                        } else {
-                            break;
-                        }
-                    }
-                    if (store.length > 0) {
-                        stoken = store[0];
-                        store.splice(0, 1);
-                        if ((/\s/).test(store[0])) {
-                            store.splice(0, 1);
-                        }
-                    }
-                    for (endIndex; endIndex < end; endIndex += 1) {
-                        if (x[endIndex] !== ">") {
-                            endTag      = endTag + x[endIndex];
-                            x[endIndex] = "";
-                        } else {
-                            break;
-                        }
-                    }
-                    endTag = endTag + ">";
-                    i      = endIndex;
-                    if (store.join("") === "") {
-                        x[i] = stoken + endTag;
-                        return;
-                    }
-                    script = store.join("");
-                    if (comments !== "beautify") {
-                        if (cdataStart.test(script) === true) {
-                            cdataS = script.match(cdataStart)[0];
-                            script = script.replace(cdataStart, "");
-                        } else if (scriptStart.test(script)) {
-                            cdataS = script.match(scriptStart)[0];
-                            script = script.replace(scriptStart, "");
-                        }
-                        if (cdataEnd.test(script) === true) {
-                            cdataE = script.match(cdataEnd)[0];
-                            script = script.replace(cdataEnd, "");
-                        } else if (scriptEnd.test(script)) {
-                            cdataE = script.match(scriptEnd)[0];
-                            script = script.replace(scriptEnd, "");
-                        }
-                        if (comments === "" && (store[store.length - 1] !== ">" || (type === "script" && store[store.length - 3] === "]" && store[store.length - 2] === "]" && store[store.length - 1] === ">"))) {
-                            if (type === "style") {
-                                if (typeof csspretty !== "function") {
-                                    x[i] = cdataS + script + cdataE;
-                                    return;
-                                }
-                                script = cdataS + csspretty({
-                                    mode   : "minify",
-                                    objsort: objsort,
-                                    source : script,
-                                    topcoms: top_comments
-                                }) + cdataE;
-                            } else {
-                                if (typeof jspretty !== "function") {
-                                    x[i] = cdataS + script + cdataE;
-                                    return;
-                                }
-                                script = cdataS + jspretty({
-                                    correct     : correct,
-                                    mode        : "minify",
-                                    obfuscate   : obfuscate,
-                                    quoteConvert: quoteConvert,
-                                    source      : script,
-                                    styleguide  : styleguide,
-                                    topcoms     : top_comments
-                                }) + cdataE;
-                            }
-                        }
-                    }
-                    end = script.length;
-                    for (a = 0; a < end; a += 1) {
-                        if ((/\s/).test(script.charAt(a)) === true) {
-                            script = script.substr(a + 1);
-                        } else {
-                            break;
-                        }
-                    }
-                    if (noEnd === true) {
-                        x[i] = stoken + script.replace(/(>\s+)$/, ">");
-                    } else {
-                        x[i] = stoken + script.replace(/(>\s+)$/, ">") + endTag;
-                    }
-                },
-                content       = function markupmin__content() {
-                    var a       = 0,
-                        end     = x.length,
-                        store   = [],
-                        comment = "",
-                        jsxtest = (minjsx === true) ? true : false;
-                    if (x[i] === "\n") {
-                        x[i] = " ";
-                        if (minjsx === true && x[i + 1] === "/") {
-                            if (x[i + 2] === "/") {
-                                comment = "//";
-                            } else if (x[i + 2] === "*") {
-                                comment = "/*";
-                            }
-                        }
-                    } else if (minjsx === true && x[i] === "/") {
-                        if (x[i + 1] === "/") {
-                            comment = "//";
-                        } else if (x[i + 1] === "*") {
-                            comment = "/*";
-                        }
-                    }
-                    for (a = i; a < end; a += 1) {
-                        if (x[a] === "<") {
-                            break;
-                        }
-                        if (jsxtest === true && (/\s/).test(x[a]) === false) {
-                            if (x[a] === "{" && typeof jspretty === "function") {
-                                i = jsxItem(a, " ");
-                                return;
-                            }
-                            jsxtest = false;
-                        }
-                        store.push(x[a]);
-                        x[a] = "";
-                        if (comment !== "" && ((store[store.length - 2] === "*" && store[store.length - 1] === "/" && comment === "/*") || (store[store.length - 1] === "\n" && comment === "//"))) {
-                            break;
-                        }
-                    }
-                    i    = a - 1;
-                    x[i] = store.join("");
-                    if (comment === "") {
-                        x[i] = x[i].replace(/\s+/g, " ");
-                    }
-                };
-            (function markupmin__algorithm() {
-                var a      = 0,
-                    store  = [],
-                    end    = x.length,
-                    part   = "",
-                    source = args.source;
-                for (i = 0; i < end; i += 1) {
-                    if ((source.slice(i, i + 7)).toLowerCase() === "<script") {
-                        store = [];
-                        for (a = i + 8; a < end; a += 1) {
-                            if (source.charAt(a) === ">") {
-                                break;
-                            }
-                            store.push(source.charAt(a));
-                        }
-                        part = store.join("").toLowerCase().replace(/"/g, "'");
-                        if (comments !== "beautify" && comments !== "nocomment") {
-                            markupspace();
-                        }
-                        if (part.indexOf("type='syntaxhighlighter'") > -1) {
-                            preserve("", "</script>");
-                        }
-                        if (part.indexOf("type='") < 0 || part.indexOf("type='text/javascript'") > -1 || part.indexOf("type='application/javascript'") > -1 || part.indexOf("type='application/x-javascript'") > -1 || part.indexOf("type='text/ecmascript'") > -1 || part.indexOf("type='application/ecmascript'") > -1 || part.indexOf("type='text/cjs'") > -1) {
-                            markupscript("script");
-                        }
-                    } else if ((source.slice(i, i + 6)).toLowerCase() === "<style") {
-                        store = [];
-                        for (a = i + 7; a < end; a += 1) {
-                            if (source.charAt(a) === ">") {
-                                break;
-                            }
-                            store.push(source.charAt(a));
-                        }
-                        part = store.join("").toLowerCase().replace(/"/g, "'");
-                        if (comments !== "beautify" && comments !== "nocomment") {
-                            markupspace();
-                        }
-                        if (part.indexOf("type='") < 0 || part.indexOf("type='text/css'") > -1) {
-                            markupscript("style");
-                        }
-                    } else if (minjsx === true && x[i] === "{" && typeof jspretty === "function") {
-                        i = jsxItem(i, " ");
-                    } else if ((conditional === true || (presume_html === true && comments === "beautify")) && source.slice(i, i + 8) === "<!--[if " && source.slice(i, i + 10) !== "<!--[if !") {
-                        markupcomment("<![endif]-->");
-                    } else if (source.slice(i, i + 4) === "<!--" && x[i + 4] !== "#") {
-                        markupcomment("-->");
-                    } else if (source.slice(i, i + 4) === "<%--") {
-                        markupcomment("--%>");
-                    } else if (source.slice(i, i + 5) === "<?php") {
-                        preserve("<?php", "?>");
-                    } else if (source.slice(i, i + 4).toLowerCase() === "<pre" && presume_html === true) {
-                        preserve("<pre", "</pre>");
-                    } else if (source.slice(i, i + 2) === "<%") {
-                        preserve("<%", "%>");
-                    } else if (source.slice(i, i + 2) === "[%") {
-                        preserve("[%", "%]");
-                    } else if (source.slice(i, i + 2) === "{@") {
-                        preserve("{@", "@}");
-                    } else if (x[i] === "<" && (source.slice(i, i + 4) !== "<!--" || source.slice(i, i + 5) === "<!--#")) {
-                        markupspace();
-                    } else if (x[i] === undefined) {
-                        x[i] = "";
-                    } else if (x[i - 1] !== undefined) {
-                        content();
-                    }
-                }
-            }());
-            if (minjsx === true) {
-                return (function markupmin__jsxOutput() {
-                    var a       = 0,
-                        b       = x.length,
-                        output  = [],
-                        newline = false;
-                    for (a = 0; a < b; a += 1) {
-                        if (x[a] !== "") {
-                            if (x[a] === "\n") {
-                                newline = true;
-                            } else if (output[output.length - 1] === " " && x[a] !== " ") {
-                                output[output.length - 1] = " " + x[a];
-                            } else if (x[a] !== " " || (x[a] === " " && output[output.length - 1] !== " ")) {
-                                if (newline === true && x[a].charAt(0) !== " ") {
-                                    x[a] = " " + x[a];
-                                }
-                                newline = false;
-                                output.push(x[a]);
-                            }
-                        }
-                    }
-                    if (comments === "beautify") {
-                        return output.join("pdjsxSep").replace(/(\s*)$/, "");
-                    }
-                    return output.join("").replace(/(\s*)$/, "");
-                }());
-            }
-            if (id.length > 0) {
-                (function markupmin_idNormalize() {
-                    var a          = 0,
-                        len        = id.length,
-                        value      = "",
-                        duplicates = [];
-                    id.sort();
-                    for (a = 0; a < len; a += 1) {
-                        if (id[a] === id[a + 1] && id[a] !== value) {
-                            duplicates.push(id[a]);
-                        }
-                        value = id[a];
-                    }
-                    if (duplicates.length > 0) {
-                        summary = duplicates.join(", ");
-                    }
-                }());
-            }
-            return (function markupmin__finalTouches() {
-                var a         = 0,
-                    b         = 0,
-                    htmlStore = [],
-                    htmlEnd   = 0,
-                    test      = false,
-                    output    = "",
-                    build     = [],
-                    end       = x.length,
-                    html      = [
-                        "area", "base", "basefont", "br", "col", "embed", "eventsource", "frame", "hr", "img", "input", "keygen", "link", "meta", "param", "progress", "source", "wbr"
-                    ],
-                    htmlLen   = html.length;
-                for (a = 0; a < end; a += 1) {
-                    if (x[a] !== "") {
-                        build.push(x[a]);
-                    }
-                }
-                x   = [];
-                end = build.length;
-                for (a = 0; a < end; a += 1) {
-                    test = (/^(\s+)$/).test(build[a]);
-                    if (test === false || (test === true && (/^(\s+)$/).test(build[a + 1]) === false)) {
-                        x.push(build[a]);
-                    }
-                }
-                end = x.length;
-                for (a = 2; a < end; a += 1) {
-                    test = false;
-                    if (presume_html === true) {
-                        htmlStore = [];
-                        htmlEnd   = x[a].length;
-                        for (b = 1; b < htmlEnd; b += 1) {
-                            if (/[a-z]/i.test(x[a].charAt(b))) {
-                                htmlStore.push(x[a].charAt(b));
-                            } else {
-                                break;
-                            }
-                        }
-                        for (b = 0; b < htmlLen; b += 1) {
-                            if (htmlStore.join("") === html[b] && x[a].charAt(0) === "<") {
-                                test = true;
-                                break;
-                            }
-                        }
-                    }
-                    if ((/^\s+$/).test(x[a - 1]) === true) {
-                        if (test === false && (x[a].charAt(0) === "<" && x[a].charAt(1) === "/" && x[a - 1] !== " " && x[a - 2].charAt(0) === "<" && x[a - 2].charAt(1) === "/" && x[a - 3].charAt(0) !== "<") && (x[a].charAt(0) === "<" && x[a].charAt(x[a].length - 2) !== "/") && (x[a].charAt(0) === "<" && x[a].charAt(x[a].length - 2) !== "/" && x[a - 2].charAt(0) === "<" && x[a - 2].charAt(1) === "/")) {
-                            x[a - 1] = "";
-                        }
-                    }
-                }
-                if (minjsx === true && comments === "beautify") {
-                    output = x.join("");
-                } else {
-                    output = x.join("").replace(/-->\s+/g, "--> ").replace(/\s+<\?php/g, " <?php").replace(/\s+<%/g, " <%").replace(/<(\s*)/g, "<").replace(/\s+\/>/g, "/>").replace(/\s+>/g, ">");
-                    if (comments === "") {
-                        output = output.replace(/<%\s+/g, "<%").replace(/\s+%>/g, "%>").replace(/\[%\s+/g, "[%").replace(/\s+%\]/g, "%]").replace(/\{@\s+/g, "{@").replace(/\s+@\}/g, "@}");
-                    }
-                }
-                if ((/\s/).test(output.charAt(0)) === true) {
-                    output = output.slice(1, output.length);
-                }
-                return output;
-            }());
-        };
-
-        //Library to parse/beautify markup (HTML/XML)
-        markup_beauty = function markup_beauty(args) {
-            var token           = [],
-                build           = [],
-                cinfo           = [],
-                level           = [],
-                inner           = [],
-                sum             = [],
-                id              = "",
-                x               = (typeof args.source === "string") ? args.source : "",
-                mbraceline      = (args.braceline === true || args.braceline === "true") ? true : false,
+        //Library to parse XML/HTML/markup
+        markuppretty = function markuppretty(args) {
+            var mbraceline      = (args.braceline === true || args.braceline === "true") ? true : false,
                 mbracepadding   = (args.bracepadding === true || args.bracepadding === "true") ? true : false,
                 mbraces         = (args.braces === "allman") ? "allman" : "knr",
                 mchar           = (typeof args.inchar === "string" && args.inchar.length > 0) ? args.inchar : " ",
                 mcomm           = (typeof args.comments === "string" && args.comments === "noindent") ? "noindent" : ((args.comments === "nocomment") ? "nocomment" : "indent"),
+                mconditional    = (args.html === true || args.conditional === true || args.conditional === "true") ? true : false,
                 mcont           = (args.content === "true" || args.content === true) ? true : false,
                 mcorrect        = (args.correct === true || args.correct === "true") ? true : false,
                 mcssinsertlines = (args.cssinsertlines === true || args.cssinsertlines === "true") ? true : false,
                 mforce          = (args.force_indent === "true" || args.force_indent === true) ? true : false,
                 mhtml           = (args.html === "true" || args.html === true) ? true : false,
                 minlevel        = (isNaN(args.inlevel) === true) ? 0 : Number(args.inlevel),
-                mjsscope        = (args.jsscope !== "html" && args.jsscope !== "report") ? "none" : args.jsscope,
                 mjsx            = (args.jsx === true || args.jsx === "true") ? true : false,
-                mmode           = (args.mode === "parse" || args.mode === "diff") ? args.mode : "beautify",
+                mmode           = (args.mode === "parse" || args.mode === "diff" || args.mode === "minify") ? args.mode : "beautify",
+                mobfuscate      = (args.obfuscate === true || args.obfuscate === "true") ? true : false,
                 mobjsort        = (args.objsort === "true" || args.objsort === true) ? true : false,
                 mpreserve       = (args.preserve === false || args.preserve === "false") ? false : true,
                 mquoteConvert   = (args.quoteConvert === "single" || args.quoteConvert === "double") ? args.quoteConvert : "none",
                 msize           = (isNaN(args.insize) === true) ? 4 : Number(args.insize),
+                msource         = (typeof args.source === "string" && args.source.length > 0) ? args.source : "Error: no source code supplied to markuppretty!",
                 mspace          = (args.space === false || args.space === "false") ? false : true,
                 mstyle          = (typeof args.style === "string" && args.style === "noindent") ? "noindent" : "indent",
                 mstyleguide     = (typeof args.styleguide === "string") ? args.styleguide : "none",
-                mwrap           = (isNaN(args.wrap) === true) ? 0 : Number(args.wrap),
+                mtopcomments    = (args.top_comments === true || args.top_comments === "true") ? true : false,
+                mwrap           = (isNaN(args.wrap) === true || mjsx === true) ? 0 : Number(args.wrap),
                 mvarword        = (args.varword === "each" || args.varword === "list") ? args.varword : "none",
-                mvertical       = (args.vertical === "jsonly") ? "jsonly" : ((args.vertical === true || args.vertical === "true") ? true : false);
-            if (mmode === "diff") {
-                mcomm = "nocomment";
+                mvertical       = (args.vertical === "jsonly") ? "jsonly" : ((args.vertical === true || args.vertical === "true") ? true : false),
+                stats           = {
+                    cdata    : [
+                        0, 0
+                    ],
+                    comment  : [
+                        0, 0
+                    ],
+                    content  : [
+                        0, 0
+                    ],
+                    end      : [
+                        0, 0
+                    ],
+                    ignore   : [
+                        0, 0
+                    ],
+                    script   : [
+                        0, 0
+                    ],
+                    sgml     : [
+                        0, 0
+                    ],
+                    singleton: [
+                        0, 0
+                    ],
+                    space    : 0,
+                    start    : [
+                        0, 0
+                    ],
+                    style    : [
+                        0, 0
+                    ],
+                    template : [
+                        0, 0
+                    ],
+                    text     : [
+                        0, 0
+                    ],
+                    xml      : [
+                        0, 0
+                    ]
+                },
+                //parallel arrays
+                //* token stores parsed tokens
+                //* types segments tokens into named groups
+                //* lines describes the preceeding space using: 2, 1, or 0
+                //    lines is populated in markuppretty__tokenize_spacer
+                //* level describes the indentation of a given token
+                //    level is only used in beautify and diff modes
+                //* attrs is a list of arrays, each of which contains (if any) parsed attributes
+                token           = [],
+                types           = [],
+                level           = [],
+                lines           = [],
+                attrs           = [],
+                reqs            = [],
+                ids             = [],
+                jscom           = [],
+
+                //What is the lowercase element name of the current start or singleton tag
+                tagName         = function markuppretty__tokenize_tagName(el) {
+                    var space = el.indexOf(" "),
+                        name  = (space < 0) ? el.slice(1, el.length - 1) : el.slice(1, space).toLowerCase();
+                    return name;
+                };
+            //type definitions:
+            //start      end     type
+            //<[CDATA[   ]]>     cdata
+            //<!--[if    ]-->    comment
+            //<!--       -->     comment
+            //<%--       --%>    comment
+            //                   content
+            //</         >       end
+            //<pre       </pre>  ignore (html only)
+            //                   script
+            //<!         >       sgml
+            //<          />      singleton
+            //<          >       start
+            //                   style
+            //<!--#      -->     template
+            //<%         %>      template
+            //{{{        }}}     template
+            //{{         }}      template
+            //{%         %}      template
+            //[%         %]      template
+            //{@         @}      template
+            //{#         #}      template
+            //<?         ?>      template
+            //{{/        }}      template_end
+            //<%\s*}     %>      template_end
+            //[%\s*}     %]      template_end
+            //{@\s*}     @}      template_end
+            //{{#        }}      template_start
+            //<%         {\s*%>  template_start
+            //[%         {\s*%]  template_start
+            //{@         {\s*@}  template_start
+            //<?xml      ?>      xml
+            if (mmode !== "diff") {
+                mcont = false;
             }
-            if (mhtml === true) {
-                x = x.replace(/<\!\[if /g, "<!--[if ").replace(/<\!\[endif\]>/g, "<![endif]-->");
-            }
-            (function markup_beauty__findNestedTags() {
-                var data = (function markup_beauty__findNestedTags_angleBraces() {
-                    var a               = 0,
-                        b               = 0,
-                        c               = 0,
-                        end             = x.length,
-                        tagEnd          = 0,
-                        tagCount        = -1,
-                        ltIndex         = 0,
-                        quoteEnd        = 0,
-                        ltCount         = -1,
-                        quoteSwitch     = false,
-                        braceTest       = false,
-                        quotedBraceTest = false,
-                        quoteless       = false,
-                        quoteBuild      = [">"],
-                        output          = [],
-                        tagname         = "",
-                        nestcount       = 0;
-                    for (a = 0; a < end; a += 1) {
-                        if (mhtml === true && x.substr(a, 4).toLowerCase() === "<pre") {
-                            for (b = a + 4; b < end; b += 1) {
-                                if (tagEnd === 0 && x.charAt(b) === ">") {
-                                    tagEnd = b;
-                                }
-                                if (x.slice(b, b + 6).toLowerCase() === "</pre>") {
-                                    if (b - tagEnd === 1 || (/^(>\s*<)$/).test(x.substr(tagEnd, b - 6)) === true) {
-                                        tagCount += 2;
-                                    } else {
-                                        tagCount += 3;
-                                    }
-                                    a      = b + 5;
-                                    tagEnd = 0;
-                                    break;
-                                }
-                            }
-                        } else if (x.substr(a, a + 24) === " data-prettydiff-ignore" + "=") {
-                            for (b = a; b > -1; b -= 1) {
-                                if (x.charAt(b) === "<") {
-                                    for (c = b + 1; c < a + 1; c += 1) {
-                                        if ((/\s/).test(x.charAt(c)) === true) {
-                                            tagname = x.slice(b + 1, c);
-                                            break;
-                                        }
-                                    }
-                                    break;
-                                }
-                            }
-                            for (b = a + 1; b < end; b += 1) {
-                                if (x.substr(b, tagname.length + 1) === "<" + tagname) {
-                                    nestcount += 1;
-                                }
-                                if (x.substr(b, tagname.length + 3) === "</" + tagname + ">") {
-                                    nestcount -= 1;
-                                    if (nestcount < 0) {
-                                        if (b - tagEnd === 1 || (/^(>\s*<)$/).test(x.substr(tagEnd, b - 6)) === true) {
-                                            tagCount += 2;
-                                        } else {
-                                            tagCount += 3;
-                                        }
-                                        a = b + tagname.length + 3;
-                                        break;
-                                    }
-                                }
-                            }
-                        } else if (x.substr(a, 7).toLowerCase() === "<script") {
-                            for (b = a + 7; b < end; b += 1) {
-                                if (tagEnd === 0 && x.charAt(b) === ">") {
-                                    tagEnd = b;
-                                }
-                                if (x.slice(b, b + 9).toLowerCase() === "</script>") {
-                                    if (b - tagEnd === 1 || (/^(>\s*<)$/).test(x.substr(tagEnd, b - 9)) === true) {
-                                        tagCount += 2;
-                                    } else {
-                                        tagCount += 3;
-                                    }
-                                    a      = b + 8;
-                                    tagEnd = 0;
-                                    break;
-                                }
-                            }
-                        } else if (x.substr(a, 6).toLowerCase() === "<style") {
-                            for (b = a + 6; b < end; b += 1) {
-                                if (tagEnd === 0 && x.charAt(b) === ">") {
-                                    tagEnd = b;
-                                }
-                                if (x.slice(b, b + 8).toLowerCase() === "</style>") {
-                                    if (b - tagEnd === 1 || (/^(>\s*<)$/).test(x.substr(tagEnd, b - 8)) === true) {
-                                        tagCount += 2;
-                                    } else {
-                                        tagCount += 3;
-                                    }
-                                    a      = b + 7;
-                                    tagEnd = 0;
-                                    break;
-                                }
-                            }
-                        } else if (x.substr(a, 5) === "<?php") {
-                            for (b = a + 5; b < end; b += 1) {
-                                if (x.charAt(b - 1) === "?" && x.charAt(b) === ">") {
-                                    a        = b;
-                                    tagCount += 1;
-                                    break;
-                                }
-                            }
-                        } else if (x.charAt(a) === "<" && x.charAt(a + 1) === "%") {
-                            for (b = a + 2; b < end; b += 1) {
-                                if (x.charAt(b - 1) === "%" && x.charAt(b) === ">") {
-                                    a        = b;
-                                    tagCount += 1;
-                                    break;
-                                }
-                            }
-                        } else if (x.charAt(a) === "{" && x.charAt(a + 1) === "{") {
-                            if (x.charAt(a + 2) === "{") {
-                                for (b = a + 2; b < end; b += 1) {
-                                    if (x.charAt(b - 2) === "}" && x.charAt(b - 1) === "}" && x.charAt(b) === "}") {
-                                        a        = b;
-                                        tagCount += 1;
-                                        break;
-                                    }
-                                }
+            (function markuppretty__tokenize() {
+                var a        = 0,
+                    b        = msource.split(""),
+                    c        = b.length,
+                    minspace = "",
+                    space    = "",
+                    list     = 0,
+                    litag    = 0,
+                    ext      = false,
+                    line     = 1,
+                    //determine if spaces between nodes are absent, multiline, or merely there
+                    //2 - multiline
+                    //1 - space present
+                    //0 - no space present
+                    spacer   = function markuppretty__tokenize_spacer() {
+                        if (space.length > 0) {
+                            stats.space += space.length;
+                            if (mpreserve === true && space.split("\n").length > 2) {
+                                lines.push(2);
                             } else {
-                                for (b = a + 2; b < end; b += 1) {
-                                    if (x.charAt(b - 1) === "}" && x.charAt(b) === "}") {
-                                        a        = b;
-                                        tagCount += 1;
-                                        break;
-                                    }
-                                }
+                                lines.push(1);
                             }
-                        } else if (x.charAt(a) === "[" && x.charAt(a + 1) === "%") {
-                            for (b = a + 2; b < end; b += 1) {
-                                if (x.charAt(b - 1) === "%" && x.charAt(b) === "]") {
-                                    a        = b;
-                                    tagCount += 1;
-                                    break;
-                                }
-                            }
-                        } else if (x.charAt(a) === "{" && x.charAt(a + 1) === "@") {
-                            for (b = a + 2; b < end; b += 1) {
-                                if (x.charAt(b - 1) === "@" && x.charAt(b) === "}") {
-                                    a        = b;
-                                    tagCount += 1;
-                                    break;
-                                }
-                            }
-                        } else if (x.charAt(a) === "<" && x.charAt(a + 1) === "!" && x.charAt(a + 2) === "[") {
-                            for (b = a + 2; b < end; b += 1) {
-                                if (x.charAt(b - 1) === "]" && x.charAt(b) === ">") {
-                                    a        = b;
-                                    tagCount += 1;
-                                    break;
-                                }
-                            }
-                        } else if (x.charAt(a) === "<" && x.charAt(a + 1) === "!" && (/[A-Za-z]|\[/).test(x.charAt(a + 2)) === true) {
-                            for (b = a + 3; b < end; b += 1) {
-                                if (x.slice(b, b + 4) === "<!--") {
-                                    for (c = b + 4; c < end; c += 1) {
-                                        if (x.slice(c - 2, c + 1) === "-->") {
-                                            b = c + 1;
-                                            break;
-                                        }
-                                    }
-                                } else if (x.charAt(b) === ">" && quoteBuild.length === 1 && quoteBuild[0] === ">") {
-                                    tagCount += 1;
-                                    if (quoteless === true) {
-                                        output.push([
-                                            a, b, tagCount, a
-                                        ]);
-                                    }
-                                    quoteless  = false;
-                                    a          = b;
-                                    quoteBuild = [">"];
-                                    break;
-                                }
-                                if (x.charAt(b) === "<") {
-                                    quoteBuild.push(">");
-                                    quoteless = true;
-                                } else if (x.charAt(b) === ">" && quoteBuild.length > 1) {
-                                    quoteBuild.pop();
-                                    if (quoteBuild.length === 1 && quoteless === true) {
-                                        tagCount += 1;
-                                        output.push([
-                                            a, b, tagCount, a
-                                        ]);
-                                        quoteless  = false;
-                                        a          = b;
-                                        quoteBuild = [">"];
-                                        break;
-                                    }
-                                    quoteless = true;
-                                } else if (x.charAt(b) === "[") {
-                                    quoteBuild.push("]");
-                                } else if (x.charAt(b) === "]") {
-                                    quoteBuild.pop();
-                                } else if (x.charAt(b) === "\"") {
-                                    if (quoteBuild[quoteBuild.length - 1] === "\"") {
-                                        quoteBuild.pop();
-                                    } else {
-                                        quoteBuild.push("\"");
-                                    }
-                                } else if (x.charAt(b) === "'") {
-                                    if (quoteBuild[quoteBuild.length - 1] === "'") {
-                                        quoteBuild.pop();
-                                    } else {
-                                        quoteBuild.push("'");
-                                    }
-                                }
-                            }
-                        } else if (x.charAt(a) === x.charAt(a + 1) && (x.charAt(a) === "\"" || x.charAt(a) === "'")) {
-                            a += 1;
-                        } else if (x.charAt(a - 1) === "=" && (x.charAt(a) === "\"" || x.charAt(a) === "'")) {
-                            quotedBraceTest = false;
-                            for (c = a - 1; c > 0; c -= 1) {
-                                if ((x.charAt(c) === "\"" && x.charAt(a) === "\"") || (x.charAt(c) === "'" && x.charAt(a) === "'") || x.charAt(c) === "<") {
-                                    break;
-                                }
-                                if (x.charAt(c) === ">") {
-                                    quotedBraceTest = true;
-                                    break;
-                                }
-                            }
-                            if (quotedBraceTest === false) {
-                                braceTest = false;
-                                for (b = a + 1; b < end; b += 1) {
-                                    if (x.substr(b, 7).toLowerCase() === "<script") {
-                                        for (c = b + 7; c < end; c += 1) {
-                                            if (x.slice(c, c + 9).toLowerCase() === "</script>") {
-                                                b = c + 9;
-                                                break;
-                                            }
-                                        }
-                                    } else if (x.substr(b, 6).toLowerCase() === "<style") {
-                                        for (c = b + 6; c < end; c += 1) {
-                                            if (x.slice(c, c + 8).toLowerCase() === "</style>") {
-                                                b = c + 8;
-                                                break;
-                                            }
-                                        }
-                                    } else if (x.substr(b, 5) === "<?php") {
-                                        for (c = b + 5; c < end; c += 1) {
-                                            if (x.charAt(c - 1) === "?" && x.charAt(c) === ">") {
-                                                b = c;
-                                                break;
-                                            }
-                                        }
-                                    } else if (x.charAt(b) === "<" && x.charAt(b + 1) === "%") {
-                                        for (c = b + 2; c < end; c += 1) {
-                                            if (x.charAt(c - 1) === "%" && x.charAt(c) === ">") {
-                                                b = c;
-                                                break;
-                                            }
-                                        }
-                                    } else if (x.charAt(b) === "{" && x.charAt(b + 1) === "{") {
-                                        if (x.charAt(b + 2) === "{") {
-                                            for (c = b + 2; c < end; c += 1) {
-                                                if (x.charAt(c - 2) === "}" && x.charAt(c - 1) === "}" && x.charAt(c) === "}") {
-                                                    b = c;
-                                                    break;
-                                                }
-                                            }
-                                        } else {
-                                            for (c = b + 2; c < end; c += 1) {
-                                                if (x.charAt(c - 1) === "}" && x.charAt(c) === "}") {
-                                                    b = c;
-                                                    break;
-                                                }
-                                            }
-                                        }
-                                    } else if (x.charAt(b) === "[" && x.charAt(b + 1) === "%") {
-                                        for (c = b + 2; c < end; c += 1) {
-                                            if (x.charAt(c - 1) === "%" && x.charAt(c) === "]") {
-                                                b = c;
-                                                break;
-                                            }
-                                        }
-                                    } else if (x.charAt(b) === "{" && x.charAt(b + 1) === "@") {
-                                        for (c = b + 2; c < end; c += 1) {
-                                            if (x.charAt(c - 1) === "@" && x.charAt(c) === "}") {
-                                                b = c;
-                                                break;
-                                            }
-                                        }
-                                    } else if (x.charAt(b) === ">" || x.charAt(b) === "<") {
-                                        braceTest = true;
-                                    } else if ((x.charAt(b - 1) !== "\\" && ((x.charAt(a) === "\"" && x.charAt(b) === "\"") || (x.charAt(a) === "'" && x.charAt(b) === "'"))) || b === end - 1) {
-                                        if (ltCount !== tagCount && quoteSwitch === true) {
-                                            quoteSwitch = false;
-                                            tagCount    -= 1;
-                                            ltCount     -= 1;
-                                        } else if (ltCount === tagCount) {
-                                            for (c = ltIndex + 1; c > a; c += 1) {
-                                                if ((/\s/).test(x.charAt(c)) === false) {
-                                                    break;
-                                                }
-                                            }
-                                            quoteEnd = c;
-                                            if (ltIndex < a && quoteSwitch === false) {
-                                                quoteSwitch = true;
-                                                tagCount    += 1;
-                                                ltCount     += 1;
-                                            }
-                                        }
-                                        if (braceTest === true) {
-                                            output.push([
-                                                a, b, tagCount, quoteEnd
-                                            ]);
-                                        }
-                                        a = b;
-                                        break;
-                                    }
-                                }
-                            }
-                        } else if (x.charAt(a) === "<") {
-                            if (x.charAt(a + 1) === "!" && x.charAt(a + 2) === "-" && x.charAt(a + 3) === "-") {
-                                if (mhtml === true && x.charAt(a + 4) === "[" && x.charAt(a + 5).toLowerCase() === "i" && x.charAt(a + 6).toLowerCase() === "f") {
-                                    for (b = a + 7; b < end; b += 1) {
-                                        if (x.charAt(b) === "]" && x.charAt(b + 1) === "-" && x.charAt(b + 2) === "-" && x.charAt(b + 3) === ">") {
-                                            break;
-                                        }
-                                    }
-                                    a = b + 3;
-                                } else {
-                                    for (b = a + 4; b < end; b += 1) {
-                                        if (x.charAt(b) === "-" && x.charAt(b + 1) === "-" && x.charAt(b + 2) === ">") {
-                                            break;
-                                        }
-                                    }
-                                    a = b + 2;
-                                }
-                                tagCount += 1;
-                            } else {
-                                tagCount += 1;
-                                quoteEnd = a;
-                            }
-                        } else if (x.charAt(a + 1) === "<" && x.charAt(a) !== ">") {
-                            for (b = a; b > 0; b -= 1) {
-                                if ((/\s/).test(x.charAt(b)) === false && x.charAt(b) !== ">") {
-                                    tagCount += 1;
-                                    ltCount  += 1;
-                                    quoteEnd = a;
-                                    break;
-                                }
-                                if (x.charAt(b) === ">") {
-                                    if (tagCount !== ltCount) {
-                                        ltCount += 1;
-                                        ltIndex = a;
-                                    }
-                                    break;
-                                }
-                            }
-                        } else if (x.charAt(a) === ">") {
-                            ltCount += 1;
-                            ltIndex = a;
-                        }
-                    }
-                    return output;
-                }());
-                (function markup_beauty__findNestedTags_replaceBraces() {
-                    var a          = 0,
-                        b          = 0,
-                        c          = 0,
-                        d          = 0,
-                        dataEnd    = data.length,
-                        tagEnd     = 0,
-                        tagCount   = 0,
-                        braceIndex = 0,
-                        tagStart   = 0,
-                        quoteEnd   = 0,
-                        source     = x.split("");
-                    for (a = 0; a < dataEnd; a += 1) {
-                        tagStart = data[a][0] + 1;
-                        tagEnd   = data[a][1];
-                        tagCount = data[a][2];
-                        quoteEnd = data[a][3];
-                        for (b = tagStart; b < tagEnd; b += 1) {
-                            braceIndex = 0;
-                            if (source[b] === "<") {
-                                source[b] = "[";
-                                for (c = b; c > quoteEnd; c -= 1) {
-                                    braceIndex += 1;
-                                    if ((/\s/).test(source[c]) === true) {
-                                        for (d = c - 1; d > quoteEnd; d -= 1) {
-                                            if ((/\s/).test(source[d]) === false) {
-                                                if (source[d] !== "=") {
-                                                    braceIndex += 1;
-                                                } else if ((/\s/).test(source[d - 1]) === true) {
-                                                    braceIndex -= 1;
-                                                }
-                                                c = d;
-                                                break;
-                                            }
-                                        }
-                                    }
-                                }
-                                if ((/\s/).test(source[tagStart]) === true && source[tagStart - 1] !== "\"" && source[tagStart - 1] !== "'") {
-                                    braceIndex -= 1;
-                                }
-                                inner.push([
-                                    "<", braceIndex, tagCount
-                                ]);
-                            } else if (source[b] === ">") {
-                                source[b] = "]";
-                                for (c = b; c > quoteEnd; c -= 1) {
-                                    braceIndex += 1;
-                                    if ((/\s/).test(source[c]) === true) {
-                                        for (d = c - 1; d > quoteEnd; d -= 1) {
-                                            if ((/\s/).test(source[d]) === false) {
-                                                if (source[d] !== "=") {
-                                                    braceIndex += 1;
-                                                } else if ((/\s/).test(source[d - 1]) === true) {
-                                                    braceIndex -= 1;
-                                                }
-                                                c = d;
-                                                break;
-                                            }
-                                        }
-                                    }
-                                }
-                                if ((/\s/).test(source[tagStart]) === true && source[tagStart - 1] !== "\"" && source[tagStart - 1] !== "'") {
-                                    braceIndex -= 1;
-                                }
-                                inner.push([
-                                    ">", braceIndex, tagCount
-                                ]);
-                            }
-                        }
-                    }
-                    x = source.join("");
-                }());
-            }());
-            if (mjsx === true) {
-                (function markup_beauty__createJSXBuild() {
-                    var i   = 0,
-                        y   = markupmin({
-                            comments    : (mmode === "beautify" && mcomm !== "nocomment") ? "beautify" : "nocomment",
-                            conditional : (mhtml === true) ? true : false,
-                            inchar      : mchar,
-                            insize      : msize,
-                            jsscope     : mjsscope,
-                            jsx         : true,
-                            presume_html: false,
-                            quoteConvert: mquoteConvert,
-                            source      : x
-                        }).split("pdjsxSep"),
-                        end = y.length;
-                    if (summary !== "" && summary !== "diff") {
-                        id = summary;
-                    }
-                    for (i = 0; i < end; i += 1) {
-                        build.push(y[i]);
-                        if (y[i].slice(0, 4) === "<!--" || y[i].slice(0, 5) === " <!--") {
-                            token.push("T_comment");
-                        } else if (y[i].charAt(0) === "<" || (y[i].charAt(0) === " " && y[i].charAt(1) === "<")) {
-                            if (y[i].charAt(y[i].length - 2) === "/") {
-                                token.push("T_singleton");
-                            } else if ((y[i].charAt(0) === " " && y[i].charAt(2) === "/") || (y[i].charAt(0) === "<" && y[i].charAt(1) === "/")) {
-                                token.push("T_tag_end");
-                            } else {
-                                token.push("T_tag_start");
-                            }
-                        } else if (y[i].charAt(0) === "{" || (y[i].charAt(0) === " " && y[i].charAt(1) === "{")) {
-                            token.push("T_script");
-                        } else if (y[i].charAt(0) === "/" || (y[i].charAt(0) === " " && y[i].charAt(1) === "/")) {
-                            token.push("T_script");
                         } else {
-                            token.push("T_content");
+                            lines.push(0);
                         }
-                    }
-                }());
-            } else {
-                (function markup_beauty__createBuild() {
-                    var i          = 0,
-                        inc        = 0,
-                        scriptflag = 0,
-                        triplet    = "",
-                        space      = false,
-                        y          = markupmin({
-                            comments    : (mmode === "beautify" && mcomm !== "nocomment") ? "beautify" : "nocomment",
-                            conditional : (mhtml === true) ? true : false,
-                            jsx         : false,
-                            presume_html: mhtml,
-                            quoteConvert: mquoteConvert,
-                            source      : x,
-                            wrap        : mwrap
-                        }).split(""),
-                        last       = "",
-                        li         = [],
-                        builder    = function markup_beauty__createBuild_endFinder(ending) {
-                            var a          = 0,
-                                b          = 0,
-                                c          = 0,
-                                buildLen   = 0,
-                                part       = [],
-                                endLen     = ending.length,
-                                endParse   = ending.split("").reverse(),
-                                start      = (endLen === 1) ? (i + endLen + 1) : (i + endLen),
-                                spacestart = "",
-                                name       = "",
-                                braceCount = 0,
-                                ename      = "",
-                                previous   = "",
-                                loop       = y.length,
-                                quote      = "",
-                                ignore     = function markup_beauty__createBuild_endFinder_ignore() {
-                                    var tag      = "",
-                                        d        = i + 1,
-                                        tagcount = 0,
-                                        tagname  = (function markup_beauty__createBuild_endFinder_ignore_tagname() {
-                                            var tempname = [],
-                                                f        = 0,
-                                                partlen  = part.length;
-                                            for (f = 1; f < partlen; f += 1) {
-                                                if (part[f] === " ") {
-                                                    return tempname.join("");
-                                                }
-                                                tempname.push(part[f]);
-                                            }
-                                        }());
-                                    for (i += 1; i < loop; i += 1) {
-                                        part.push(y[i]);
-                                        if (y[i] === ">" && y[i - 1] === "/") {
-                                            tagcount -= 1;
-                                        }
-                                        if (y[i - tagname.length - 2] === "<") {
-                                            tag = y.slice(i - tagname.length - 2, i + 1).join("");
-                                            if (tag === "</" + tagname + ">") {
-                                                tagcount -= 1;
-                                            }
-                                        }
-                                        if (y[i - tagname.length - 1] === "<") {
-                                            tag = y.slice(i - tagname.length - 1, i + 1).join("");
-                                            if (i > d && (tag === "<" + tagname + ">" || tag === "<" + tagname + " ")) {
-                                                tagcount += 1;
-                                            }
-                                        }
-                                        if (tagcount < 0) {
-                                            return part.join("");
-                                        }
-                                    }
-                                    return part.join("");
-                                };
-                            if (i > 0 && y[i - 1] === " ") {
-                                spacestart = " ";
-                            }
-                            for (i; i < loop; i += 1) {
-                                part.push(y[i]);
-                                if (y[i] === " " && y[i + 22] === "e" && y.slice(i, i + 24).join("") === " data-prettydiff-ignore" + "=") {
-                                    return ignore();
+                        minspace = space;
+                        space    = "";
+                    },
+                    //parses tags, attributes, and template elements
+                    tag      = function markuppretty__tokenize_tag(end) {
+                        var output    = [],
+                            bcount    = 0,
+                            count     = 0,
+                            e         = 0,
+                            f         = 0,
+                            igcount   = 0,
+                            quote     = "",
+                            element   = "",
+                            lastchar  = "",
+                            name      = "",
+                            jsxquote  = "",
+                            cheat     = false,
+                            endtag    = false,
+                            nopush    = false,
+                            simple    = false,
+                            preserve  = false,
+                            stest     = false,
+                            liend     = false,
+                            ignore    = false,
+                            quotetest = false,
+                            attribute = [],
+                            attrname  = function markuppretty__tokenize_tag_attrname(atty) {
+                                var index = atty.indexOf("=");
+                                if (index < 0) {
+                                    return "";
                                 }
-                                if (ending === ">" && y[i] === "%") {
-                                    if (y[i - 1] === "<") {
-                                        braceCount += 1;
-                                    }
-                                    if (y[i + 1] === ">") {
-                                        braceCount -= 1;
-                                        i          += 1;
-                                        part.pop();
-                                        part.push("%>");
-                                    }
+                                atty = atty.slice(0, index);
+                                if (mhtml === true) {
+                                    return atty.toLowerCase();
                                 }
-                                if (quote === "") {
-                                    if (y[i] === "\"" && ending !== "-->" && ending !== "]]>") {
-                                        quote = "\"";
-                                    } else if (y[i] === "'" && ending !== "-->" && ending !== "]]>") {
-                                        quote = "'";
-                                    } else if (y[i] === "[" && part[0] === "<" && part[1] === "!" && part[2] !== "-") {
-                                        ending   = "]>";
-                                        endLen   = 2;
-                                        endParse = [
-                                            ">", "]"
-                                        ];
+                                return atty;
+                            };
+                        spacer();
+                        jscom.push(false);
+                        attrs.push([]);
+                        ext = false;
+
+                        //this complex series of conditions determines an elements delimiters
+                        //look to the types being pushed to quickly reason about the logic
+                        //no type is pushed for start tags or singleton tags just yet some types set the
+                        //`preserve` flag, which means to preserve internal white
+                        //space
+                        //The `nopush` flag is set when parsed tags are to be ignored and forgotten
+                        if (b[a] === "<") {
+                            if (b[a + 1] === "!") {
+                                if (b[a + 2] === "-" && b[a + 3] === "-") {
+                                    if (b[a + 4] === "#") {
+                                        end = "-->";
+                                        types.push("template");
+                                    } else if (b[a + 4] === "[" && b[a + 5] === "i" && b[a + 6] === "f") {
+                                        end = "]-->";
+                                        if (mmode !== "minify" || mconditional === true) {
+                                            preserve = true;
+                                        }
+                                        types.push("comment");
                                     } else {
-                                        if (part[part.length - 1] === endParse[0] && braceCount === 0) {
-                                            if (endLen === 1) {
-                                                if (mhtml === true && li[li.length - 1] === true && (part[3] === ">" || part[3] === " " || part[3] === "l" || part[3] === "L")) {
-                                                    name = part.slice(1, 5).join("").toLowerCase();
-                                                    if (name.slice(0, 2) === "li") {
-                                                        name = name.slice(0, 4);
-                                                    }
-                                                    buildLen = build.length - 1;
-                                                    b        = buildLen;
-                                                    if (b > -1) {
-                                                        if (token[b] === "T_asp" || token[b] === "T_php" || token[b] === "T_ssi" || token[b] === "T_sgml" || token[b] === "T_xml" || token[b] === "T_comment" || token[b] === "T_ignore") {
-                                                            do {
-                                                                b -= 1;
-                                                            } while (b > 0 && (token[b] === "T_asp" || token[b] === "T_php" || token[b] === "T_ssi" || token[b] === "T_sgml" || token[b] === "T_xml" || token[b] === "T_comment" || token[b] === "T_ignore"));
-                                                        }
-                                                        previous = build[b].toLowerCase();
-                                                        ename    = previous.substr(1);
-                                                        if (ename.charAt(0) === "<") {
-                                                            ename = ename.substr(1);
-                                                        }
-                                                        if (((name === "li " || name === "li>") && (ename === "/ul>" || ename === "/ol>" || (ename !== "/li>" && ename !== "ul>" && ename !== "ol>" && ename.indexOf("ul ") !== 0 && ename.indexOf("ol ") !== 0))) || (((name === "/ul>" && previous.indexOf("<ul") < 0) || (name === "/ol>" && previous.indexOf("<ol") < 0)) && ename !== "/li>")) {
-                                                            if (mcorrect === true) {
-                                                                build.push("</li>");
-                                                            } else {
-                                                                build.push("</prettydiffli>");
+                                        end = "-->";
+                                        if (mmode === "minify" || mcomm === "nocomment") {
+                                            nopush = true;
+                                        } else {
+                                            preserve = true;
+                                            types.push("comment");
+                                        }
+                                    }
+                                } else if (b[a + 2] === "[" && b[a + 3] === "C" && b[a + 4] === "D" && b[a + 5] === "A" && b[a + 6] === "T" && b[a + 7] === "A" && b[a + 8] === "[") {
+                                    end      = "]]>";
+                                    preserve = true;
+                                    types.push("cdata");
+                                } else {
+                                    end = ">";
+                                    types.push("sgml");
+                                }
+                            } else if (b[a + 1] === "?") {
+                                end = "?>";
+                                if (b[a + 2] === "x" && b[a + 3] === "m" && b[a + 4] === "l") {
+                                    types.push("xml");
+                                } else {
+                                    preserve = true;
+                                    types.push("template");
+                                }
+                            } else if (b[a + 1] === "%") {
+                                preserve = true;
+                                if (b[a + 2] === "-" && b[a + 3] === "-") {
+                                    end = "--%>";
+                                    types.push("comment");
+                                } else {
+                                    end = "%>";
+                                    types.push("template");
+                                }
+                            } else if (b[a + 4] !== undefined && b[a + 1].toLowerCase() === "p" && b[a + 2].toLowerCase() === "r" && b[a + 3].toLowerCase() === "e" && (b[a + 4] === ">" || (/\s/).test(b[a + 4]) === true)) {
+                                end      = "</pre>";
+                                preserve = true;
+                                types.push("ignore");
+                            } else {
+                                if (b[a + 1] === "/") {
+                                    types.push("end");
+                                } else {
+                                    simple = true;
+                                }
+                                end = ">";
+                            }
+                        } else if (b[a] === "{") {
+                            preserve = true;
+                            if (b[a + 1] === "{") {
+                                if (b[a + 2] === "{") {
+                                    end = "}}}";
+                                    types.push("template");
+                                } else if (b[a + 2] === "#") {
+                                    end = "}}";
+                                    types.push("template_start");
+                                } else if (b[a + 2] === "/") {
+                                    end = "}}";
+                                    types.push("template_end");
+                                } else {
+                                    end = "}}";
+                                    types.push("template");
+                                }
+                            } else {
+                                end = b[a + 1] + "}";
+                                types.push("template");
+                            }
+                        }
+
+                        //This loop is the logic that parses tags and attributes
+                        //If the attribute data-prettydiff-ignore is present the `ignore` flag is set
+                        //The ignore flag is identical to the preserve flag
+                        lastchar = end.charAt(end.length - 1);
+                        for (a; a < c; a += 1) {
+                            if (b[a] === "\n") {
+                                line += 1;
+                            }
+                            output.push(b[a]);
+                            if (quote === "") {
+                                if (stest === true && (/\s/).test(b[a]) === false && b[a] !== lastchar) {
+                                    //attribute start
+                                    stest = false;
+                                    quote = jsxquote;
+                                    output.pop();
+                                    for (a; a < c; a += 1) {
+                                        if (b[a] === "\n") {
+                                            line += 1;
+                                        }
+                                        attribute.push(b[a]);
+                                        if (quote === "") {
+                                            if (b[a + 1] === lastchar) {
+                                                //if at end of tag
+                                                element = attribute.join("").replace(/\s+/g, " ");
+                                                name    = attrname(element);
+                                                if (name === "data-prettydiff-ignore") {
+                                                    ignore = true;
+                                                } else if (name === "id") {
+                                                    ids.push(element.slice(name.length + 1, element.length));
+                                                }
+                                                if (element !== " ") {
+                                                    attrs[attrs.length - 1].push(element);
+                                                }
+                                                attribute = [];
+                                                break;
+                                            }
+                                            if ((/\s/).test(b[a]) === true) {
+
+                                                //testing for a run of spaces between an attribute's =
+                                                //and a quoted value. Unquoted values separated by space
+                                                //are separate attributes
+                                                if (attribute[attribute.length - 2] === "=") {
+                                                    for (e = a + 1; e < c; e += 1) {
+                                                        if ((/\s/).test(b[e]) === false) {
+                                                            if (b[e] === "\"" || b[e] === "'") {
+                                                                a = e - 1;
+                                                                quotetest = true;
+                                                                attribute.pop();
                                                             }
-                                                            token.push("T_tag_end");
-                                                            li[li.length - 1] = false;
-                                                            buildLen          += 1;
-                                                            for (c = inner.length - 1; c > -1; c -= 1) {
-                                                                if (inner[c][2] < buildLen) {
-                                                                    break;
-                                                                }
-                                                                inner[c][2] += 1;
-                                                            }
+                                                            break;
                                                         }
                                                     }
                                                 }
-                                                return spacestart + part.join("");
+                                                if (quotetest === true) {
+                                                    quotetest = false;
+                                                } else {
+                                                    //if there is an unquoted space attribute is complete
+                                                    element = attribute.join("").replace(/\s+/g, " ");
+                                                    name    = attrname(element);
+                                                    if (name === "data-prettydiff-ignore") {
+                                                        ignore = true;
+                                                    } else if (name === "id") {
+                                                        ids.push(element.slice(name.length + 1, element.length));
+                                                    }
+                                                    if (element !== " ") {
+                                                        attrs[attrs.length - 1].push(element);
+                                                    }
+                                                    stest     = true;
+                                                    attribute = [];
+                                                    break;
+                                                }
                                             }
-                                            if (i > start) {
-                                                for (a = 0; a < endLen; a += 1) {
-                                                    if (endParse[a] !== part[part.length - (a + 1)]) {
+                                            if (b[a] === "\"" || b[a] === "'") {
+                                                quote = b[a];
+                                            } else if (mjsx === true) {
+                                                //jsx variable attribute
+                                                if (b[a - 1] === "=" && b[a] === "{") {
+                                                    quote  = "}";
+                                                    bcount = 1;
+                                                } else if (b[a] === "/") {
+                                                    //jsx comments
+                                                    if (b[a + 1] === "*") {
+                                                        quote = "*/";
+                                                    } else if (b[a + 1] === "/") {
+                                                        quote = "\n";
+                                                    }
+                                                }
+                                            } else if (b[a] === "{" && (b[a + 1] === "{" || b[a + 1] === "%" || b[a + 1] === "@" || b[a + 1] === "#")) {
+                                                //opening embedded template expression
+                                                if (b[a + 1] === "{") {
+                                                    if (b[a + 2] === "{") {
+                                                        quote = "}}}";
+                                                    } else {
+                                                        quote = "}}";
+                                                    }
+                                                } else {
+                                                    quote = b[a + 1] + "}";
+                                                }
+                                            }
+                                        } else if (mjsx === true && (quote === "}" || (quote === "\n" && b[a] === "\n") || (quote === "*/" && b[a - 1] === "*" && b[a] === "/"))) {
+                                            //jsx attributes
+                                            if (quote === "}") {
+                                                if (b[a] === "{") {
+                                                    bcount += 1;
+                                                } else if (b[a] === quote) {
+                                                    bcount -= 1;
+                                                    if (bcount === 0) {
+                                                        quote     = "";
+                                                        element   = attribute.join("").replace(/\s+/g, " ");
+                                                        attribute = [];
+                                                        if (element !== " ") {
+                                                            attrs[attrs.length - 1].push(element);
+                                                        }
                                                         break;
                                                     }
                                                 }
-                                                if (a === endLen) {
-                                                    return spacestart + part.join("");
+                                            } else {
+                                                quote                   = "";
+                                                jsxquote                = "";
+                                                jscom[jscom.length - 1] = true;
+                                                element                 = attribute.join("");
+                                                if (element.charAt(1) === "*") {
+                                                    element = element + "\n";
+                                                }
+                                                attribute = [];
+                                                if (element !== " ") {
+                                                    attrs[attrs.length - 1].push(element);
+                                                }
+                                                break;
+                                            }
+                                        } else {
+                                            //terminate attribute at the conclusion of a quote pair
+                                            f = 0;
+                                            for (e = quote.length - 1; e > -1; e -= 1) {
+                                                if (b[a - f] !== quote.charAt(e)) {
+                                                    break;
+                                                }
+                                                f += 1;
+                                            }
+                                            if (e < 0) {
+                                                if (quote === "\"" && mquoteConvert === "single") {
+                                                    quote = attribute.slice(0, attribute.length - 1).join("").replace(/'/g, "\"").replace(/"/, "'") + "'";
+                                                } else if (quote === "'" && mquoteConvert === "double") {
+                                                    quote = attribute.slice(0, attribute.length - 1).join("").replace(/"/g, "'").replace(/'/, "\"") + "\"";
+                                                } else {
+                                                    quote = attribute.join("");
+                                                }
+                                                name = attrname(quote);
+                                                if (name === "data-prettydiff-ignore") {
+                                                    ignore = true;
+                                                } else if (name === "id") {
+                                                    ids.push(quote.slice(name.length + 2, quote.length - 1));
+                                                } else if (name === "schemaLocation") {
+                                                    reqs.push(quote.slice(name.length + 2, quote.length - 1));
+                                                }
+                                                attrs[attrs.length - 1].push(quote.replace(/\s+/g, " "));
+                                                quote     = "";
+                                                attribute = [];
+                                                if (b[a + 1] === lastchar) {
+                                                    break;
                                                 }
                                             }
                                         }
                                     }
-                                } else if (y[i] === quote) {
+                                } else if (b[a] === "\"" || b[a] === "'") {
+                                    //opening quote
+                                    quote = b[a];
+                                } else if (b[a] === "{" && (b[a + 1] === "{" || b[a + 1] === "%" || b[a + 1] === "@" || b[a + 1] === "#")) {
+                                    //opening embedded template expression
+                                    if (b[a + 1] === "{") {
+                                        if (b[a + 2] === "{") {
+                                            quote = "}}}";
+                                        } else {
+                                            quote = "}}";
+                                        }
+                                    } else {
+                                        quote = b[a + 1] + "}";
+                                    }
+                                    if (quote === end) {
+                                        quote = "";
+                                    }
+                                } else if (simple === true && (/\s/).test(b[a]) === true) {
+                                    //identify a space in a regular start or singleton tag
+                                    stest = true;
+                                } else if (simple === true && mjsx === true && b[a] === "/" && (b[a + 1] === "*" || b[a + 1] === "/")) {
+                                    //jsx comment immediately following tag name
+                                    stest                     = true;
+                                    output[output.length - 1] = " ";
+                                    attribute.push(b[a]);
+                                    if (b[a + 1] === "*") {
+                                        jsxquote = "*/";
+                                    } else {
+                                        jsxquote = "\n";
+                                    }
+                                } else if (b[a] === "<" && simple === true) {
+                                    //counting unquoted angle braces contained in regular start and singleton tags
+                                    count += 1;
+                                } else if (b[a] === lastchar) {
+                                    //if current character matches the last character of the tag ending sequence
+                                    if (simple === true) {
+                                        count -= 1;
+                                    }
+                                    if (count === 0) {
+                                        f = output.length;
+                                        for (e = end.length - 1; e > -1; e -= 1) {
+                                            f -= 1;
+                                            if (output[f] !== end.charAt(e)) {
+                                                break;
+                                            }
+                                        }
+                                        if (e < 0) {
+                                            break;
+                                        }
+                                    }
+                                }
+                            } else if (b[a] === quote.charAt(quote.length - 1)) {
+                                //find the closing quote or embedded template expression
+                                f = 0;
+                                for (e = quote.length - 1; e > -1; e -= 1) {
+                                    if (b[a - f] !== quote.charAt(e)) {
+                                        break;
+                                    }
+                                    f += 1;
+                                }
+                                if (e < 0) {
                                     quote = "";
                                 }
                             }
-                            return spacestart + part.join("");
-                        },
-                        cgather    = function markup_beauty__createBuild_buildContent(type) {
-                            var a       = 0,
-                                b       = 0,
-                                output  = [],
-                                comment = "",
-                                slashes = function markup_beauty__createBuild_buildContent_slashes(index) {
-                                    var slashy = index;
-                                    do {
-                                        slashy -= 1;
-                                    } while (y[slashy] === "\\" && slashy > 0);
-                                    if ((index - slashy) % 2 === 1) {
-                                        return true;
+                        }
+
+                        //nopush flags mean an early exit
+                        if (nopush === true) {
+                            lines.pop();
+                            space = minspace;
+                            return;
+                        }
+
+                        //fix singleton tags and sort attributes
+                        if (attrs[attrs.length - 1].length > 1) {
+                            e = attrs.length - 1;
+                            if (attrs[e][attrs[e].length - 1] === "/") {
+                                attrs[attrs.length - 1].pop();
+                                output.splice(output.length - 1, 0, "/");
+                            }
+                            if (jscom[jscom.length - 1] === false) {
+                                attrs[attrs.length - 1] = safeSort(attrs[attrs.length - 1]);
+                            }
+                        }
+
+                        //cheat identifies HTML singleton elements as singletons even if formatted as
+                        //start tags
+                        element = output.join("");
+
+                        cheat   = (function markuppretty__tokenize_tag_cheat() {
+                            var tname = tagName(element),
+                                atts  = attrs[attrs.length - 1],
+                                atty  = "",
+                                value = "",
+                                type  = "",
+                                d     = 0;
+
+                            atty = token[token.length - 1];
+                            if (types[types.length - 1] === "end" && types[types.length - 2] === "singleton" && atty.charAt(atty.length - 2) !== "/" && "/" + tagName(atty) === tname) {
+                                types[types.length - 2] = "start";
+                            }
+                            for (d = atts.length - 1; d > -1; d -= 1) {
+                                atty = attrname(atts[d]);
+                                if (atty === "type") {
+                                    type = atts[d].split("=")[1];
+                                    if (type.charAt(0) === "\"" || type.charAt(0) === "'") {
+                                        type = type.slice(1, type.length - 1);
                                     }
-                                    return false;
-                                },
-                                endd    = y.length;
-                            for (a = i; a < endd; a += 1) {
-                                if (comment === "" && (y[a - 1] !== "\\" || (a > 2 && y[a - 2] === "\\"))) {
-                                    if (y[a] === "/" && y[a + 1] && y[a + 1] === "/") {
-                                        comment = "//";
-                                    } else if (y[a] === "/" && y[a + 1] && y[a + 1] === "*") {
-                                        comment = "/*";
-                                    } else if (y[a] === "\"" || y[a] === "'" || (y[a] === "/" && y[a - 1] !== "<")) {
-                                        if (y[a] === "/") {
-                                            for (b = a - 1; b > 0; b -= 1) {
-                                                if ((/\s/).test(y[b]) === false) {
-                                                    break;
+                                } else if (atty === "src" && (tname === "embed" || tname === "img" || tname === "script" || tname === "iframe")) {
+                                    value = atts[d].split("=")[1];
+                                    if (value.charAt(0) === "\"" || value.charAt(0) === "'") {
+                                        value = value.slice(1, value.length - 1);
+                                    }
+                                    reqs.push(value);
+                                } else if (tname === "link" && atty === "href") {
+                                    value = atts[d].split("=")[1];
+                                    if (value.charAt(0) === "\"" || value.charAt(0) === "'") {
+                                        value = value.slice(1, value.length - 1);
+                                    }
+                                    reqs.push(value);
+                                }
+                            }
+
+                            if (tname === "script" || tname === "style") {
+
+                                //identify if there is embedded code requiring an external parser
+                                if (tname === "script" && (type === "" || type === "text/javascript" || type === "application/javascript" || type === "application/x-javascript" || type === "text/ecmascript" || type === "application/ecmascript" || type === "text/jsx" || type === "application/jsx" || type === "text/cjs")) {
+                                    ext = true;
+                                } else if (tname === "style" && (quote === "" || quote === "text/css")) {
+                                    ext = true;
+                                }
+                            }
+                            if (mhtml === true) {
+
+                                //simple means of looking for missing li end tags
+                                if (tname === "li") {
+                                    if (litag === list) {
+                                        liend = true;
+                                    } else {
+                                        litag += 1;
+                                    }
+                                } else if (tname === "/li" && litag === list) {
+                                    litag -= 1;
+                                } else if (tname === "ul" || tname === "ol") {
+                                    list += 1;
+                                } else if (tname === "/ul" || tname === "/ol") {
+                                    if (litag === list) {
+                                        liend = true;
+                                        litag -= 1;
+                                    }
+                                    list -= 1;
+                                } else if (tname === "area" || tname === "base" || tname === "basefont" || tname === "br" || tname === "col" || tname === "embed" || tname === "eventsource" || tname === "frame" || tname === "hr" || tname === "img" || tname === "input" || tname === "keygen" || tname === "link" || tname === "meta" || tname === "param" || tname === "progress" || tname === "source" || tname === "wbr") {
+                                    return true;
+                                }
+                            }
+                            return false;
+                        }());
+
+                        //am I a singleton or a start type?
+                        if (simple === true && ignore === false) {
+                            if (cheat === true || (output[output.length - 2] === "/" && output[output.length - 1] === ">")) {
+                                types.push("singleton");
+                            } else {
+                                types.push("start");
+                            }
+                        }
+
+                        //additional logic is required to find the end of a tag with the attribute
+                        //data-prettydiff-ignore
+                        if (simple === true && preserve === false && ignore === true && end === ">" && element.slice(element.length - 2) !== "/>") {
+                            if (cheat === true) {
+                                types.push("singleton");
+                            } else {
+                                preserve = true;
+                                types.push("ignore");
+                                a += 1;
+                                for (a; a < c; a += 1) {
+                                    if (b[a] === "\n") {
+                                        line += 1;
+                                    }
+                                    output.push(b[a]);
+                                    if (quote === "") {
+                                        if (b[a] === "\"") {
+                                            quote = "\"";
+                                        } else if (b[a] === "'") {
+                                            quote = "'";
+                                        } else if (b[a] === "{" && (b[a + 1] === "{" || b[a + 1] === "%" || b[a + 1] === "@" || b[a + 1] === "#")) {
+                                            if (b[a + 1] === "{") {
+                                                if (b[a + 2] === "{") {
+                                                    quote = "}}}";
+                                                } else {
+                                                    quote = "}}";
+                                                }
+                                            } else {
+                                                quote = b[a + 1] + "}";
+                                            }
+                                        } else if (b[a] === "<" && simple === true) {
+                                            if (count === 0) {
+                                                if (b[a + 1] === "/") {
+                                                    endtag = true;
+                                                } else {
+                                                    endtag = false;
                                                 }
                                             }
-                                            if (y[b] === ")" || y[b] === "]" || y[b] === "}" || (/\w/).test(y[b]) === true) {
-                                                comment = "";
-                                            } else {
-                                                comment = "/";
+                                            count += 1;
+                                        } else if (b[a] === lastchar) {
+                                            if (simple === true) {
+                                                count -= 1;
                                             }
-                                        } else {
-                                            comment = y[a];
+                                            if (count === 0 && b[a - 1] !== "/") {
+                                                if (b[a - 1] !== "/") {
+                                                    if (endtag === true) {
+                                                        igcount -= 1;
+                                                        if (igcount < 0) {
+                                                            break;
+                                                        }
+                                                    } else {
+                                                        igcount += 1;
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    } else if (b[a] === quote.charAt(quote.length - 1)) {
+                                        f = 0;
+                                        for (e = quote.length - 1; e > -1; e -= 1) {
+                                            if (b[a - f] !== quote.charAt(e)) {
+                                                break;
+                                            }
+                                            f += 1;
+                                        }
+                                        if (e < 0) {
+                                            quote = "";
                                         }
                                     }
-                                } else if ((y[a - 1] !== "\\" || slashes(a - 1) === false) && ((comment === "\"" && y[a] === "\"") || (comment === "'" && y[a] === "'") || (comment === "/" && y[a] === "/") || (comment === "//" && (y[a] === "\n" || (y[a - 4] && y[a - 4] === "/" && y[a - 3] === "/" && y[a - 2] === "-" && y[a - 1] === "-" && y[a] === ">"))) || (comment === ("/*") && y[a - 1] === "*" && y[a] === "/"))) {
-                                    comment = "";
-                                }
-                                if (a < endd - 2 && ((type === "script" && comment === "") || type === "style") && y[a] === "<" && y[a + 1] === "/" && y[a + 2].toLowerCase() === "s") {
-                                    if (type === "script" && a < endd - 7 && (y[a + 3].toLowerCase() === "c" && y[a + 4].toLowerCase() === "r" && y[a + 5].toLowerCase() === "i" && y[a + 6].toLowerCase() === "p" && y[a + 7].toLowerCase() === "t")) {
-                                        break;
-                                    }
-                                    if (type === "style" && a < endd - 6 && (y[a + 3].toLowerCase() === "t" && y[a + 4].toLowerCase() === "y" && y[a + 5].toLowerCase() === "l" && y[a + 6].toLowerCase() === "e")) {
-                                        break;
-                                    }
-                                } else if (type === "other" && (y[a] === "<" || (y[a] === "[" && y[a + 1] === "%") || (y[a] === "{" && y[a + 1] === "@"))) {
-                                    break;
-                                }
-                                output.push(y[a]);
-                            }
-                            i       = a - 1;
-                            comment = output.join("");
-                            if (mcont === true) {
-                                if (comment.charAt(0) === " " && comment.charAt(comment.length - 1) === " ") {
-                                    comment = " text ";
-                                } else if (comment.charAt(0) === " ") {
-                                    comment = " text";
-                                } else if (comment.charAt(comment.length - 1) === " ") {
-                                    comment = "text ";
-                                } else {
-                                    comment = "text";
                                 }
                             }
-                            return comment;
-                        },
-                        end        = y.length,
-                        scripttest = function markup_beauty__createBuild_scripttest(item) {
-                            if (item === undefined) {
-                                return false;
-                            }
-                            if (item.indexOf(" type='") === -1 || item.indexOf(" type='text/javascript'") > -1 || item.indexOf(" type='application/javascript'") > -1 || item.indexOf(" type='application/x-javascript'") > -1 || item.indexOf(" type='text/ecmascript'") > -1 || item.indexOf(" type='application/ecmascript'") > -1 || item.indexOf(" type='text/cjs'") > -1 || item.indexOf(" type='text/jsx'") > -1) {
-                                return true;
-                            }
-                            return false;
-                        },
-                        styletest  = function markup_beauty__createBuild_styletest(item) {
-                            if (item === undefined) {
-                                return false;
-                            }
-                            if (item.indexOf(" type='") === -1 || item.indexOf(" type='text/css'") !== -1) {
-                                return true;
-                            }
-                            return false;
-                        };
-                    if (summary !== "" && summary !== "diff") {
-                        id = summary;
-                    }
-                    for (i = 0; i < end; i += 1) {
-                        if (build.length > 0) {
-                            last = build[build.length - 1].toLowerCase().replace(/"/g, "'");
                         }
-                        if (token[token.length - 1] === "T_script" && scripttest(last) === true && (i > end - 8 || y.slice(i, i + 8).join("").toLowerCase() !== "</script")) {
-                            build.push(cgather("script"));
-                            if ((/^(\s+)$/).test(last) === true) {
-                                build.pop();
-                            } else {
-                                token.push("T_content");
+                        element = output.join("");
+
+                        //some template tags can be evaluated as a block start/end based on syntax alone
+                        if (types[types.length - 1] === "template") {
+                            if ((/^(<%\s*\})/).test(element) === true || (/^(\[%\s*\})/).test(element) === true || (/^(\{@\s*\})/).test(element) === true) {
+                                types[types.length - 1] = "template_end";
+                            } else if ((/(\{\s*%>)$/).test(element) === true || (/(\{\s*%\])$/).test(element) === true || (/(\{\s*@\})$/).test(element) === true) {
+                                types[types.length - 1] = "template_start";
                             }
-                        } else if (token[token.length - 1] === "T_style" && styletest(last) === true && (i > end - 7 || y.slice(i, i + 7).join("").toLowerCase() !== "</style")) {
-                            build.push(cgather("style"));
-                            if ((/^(\s+)$/).test(last) === true) {
-                                build.pop();
-                            } else {
-                                token.push("T_content");
+                        }
+
+                        //HTML5 does not require an end tag for an opening list item <li>
+                        //this logic temprorarily creates a pseudo end tag
+                        if (liend === true && (mmode === "beautify" || mmode === "diff")) {
+                            token.push("</prettydiffli>");
+                            lines.push(lines[lines.length - 1]);
+                            lines[lines.length - 2] = 0;
+                            attrs.splice(attrs.length - 1, 0, []);
+                            types.splice(types.length - 1, 0, "end");
+                        }
+                        if (preserve === true) {
+                            token.push(element);
+                        } else {
+                            token.push(element.replace(/\s+/g, " "));
+                        }
+                    },
+                    content  = function markuppretty__tokenize_content() {
+                        var output    = [],
+                            quote     = "",
+                            tailSpace = function markuppretty__tokenize_content_tailSpace(spacey) {
+                                space = spacey;
+                                return "";
+                            },
+                            name      = "";
+                        spacer();
+                        attrs.push([]);
+                        jscom.push(false);
+                        if (ext === true) {
+                            name = tagName(token[token.length - 1]);
+                        }
+                        for (a; a < c; a += 1) {
+                            if (b[a] === "\n") {
+                                line += 1;
                             }
-                        } else if (y[i] === "<" && y[i + 1] === "!") {
-                            if (y[i + 2] === "-" && y[i + 3] === "-") {
-                                if (mhtml === true && y[i + 4] === "[" && y[i + 5] === "i" && y[i + 6] === "f" && y[i + 7] === " " && y[i + 8] !== "!") {
-                                    if (y[i - 1] === " ") {
-                                        space = true;
-                                    }
-                                    build.push(builder("]-->"));
-                                    if (space === false) {
-                                        build[build.length - 1] = " " + build[build.length - 1];
-                                    } else {
-                                        space = false;
-                                    }
-                                    token.push("T_comment");
-                                } else if (y[i + 4] !== "#" && token[token.length - 1] !== "T_style") {
-                                    build.push(builder("-->"));
-                                    token.push("T_comment");
-                                } else if (y[i + 4] === "#") {
-                                    build.push(builder("-->"));
-                                    token.push("T_ssi");
-                                } else {
-                                    build.push(builder(">"));
-                                    token.push("T_tag_start");
-                                }
-                            } else if (y[i + 2] === "[" && y[i + 3] === "C" && y[i + 4] === "D" && y[i + 5] === "A" && y[i + 6] === "T" && y[i + 7] === "A" && y[i + 8] === "[") {
-                                build.push(builder("]]>"));
-                                token.push("T_xml");
-                            } else if (y[i + 2] !== "-") {
-                                build.push(builder(">"));
-                                token.push("T_sgml");
-                            } else {
-                                build.push(builder(">"));
-                                token.push("T_tag_start");
-                            }
-                        } else if (y[i] === "<" && y[i + 1] === "%") {
-                            if (y[i + 2] === "-" && y[i + 3] === "-") {
-                                build.push(builder("--%>"));
-                                token.push("T_comment");
-                            } else {
-                                build.push(builder("%>"));
-                                token.push("T_asp");
-                            }
-                        } else if ((y[i] === "{" && y[i + 1] === "{" && y[i + 2] === "{") || (y[i] === " " && y[i + 1] === "{" && y[i + 2] === "{" && y[i + 3] === "{")) {
-                            build.push(builder("}}}", i + 1));
-                            token.push("T_asp");
-                        } else if ((y[i] === "{" && y[i + 1] === "{") || (y[i] === " " && y[i + 1] === "{" && y[i + 2] === "{")) {
-                            build.push(builder("}}", i + 1));
-                            token.push("T_asp");
-                        } else if ((y[i] === "{" && y[i + 1] === "%") || (y[i] === " " && y[i + 1] === "{" && y[i + 2] === "%")) {
-                            build.push(builder("%}", i + 1));
-                            token.push("T_asp");
-                        } else if ((y[i] === "[" && y[i + 1] === "%") || (y[i] === " " && y[i + 1] === "[" && y[i + 2] === "%")) {
-                            build.push(builder("%]", i + 1));
-                            token.push("T_asp");
-                        } else if ((y[i] === "{" && y[i + 1] === "@") || (y[i] === " " && y[i + 1] === "{" && y[i + 2] === "@")) {
-                            build.push(builder("@}", i + 1));
-                            token.push("T_asp");
-                        } else if ((y[i] === "{" && y[i + 1] === "#") || (y[i] === " " && y[i + 1] === "{" && y[i + 2] === "#")) {
-                            build.push(builder("#}", i + 1));
-                            token.push("T_asp");
-                        } else if (y[i] === "<" && y[i + 1] === "?" && i < end - 4) {
-                            if (y[i + 2].toLowerCase() === "x" && y[i + 3].toLowerCase() === "m" && y[i + 4].toLowerCase() === "l") {
-                                token.push("T_xml");
-                            } else {
-                                token.push("T_php");
-                            }
-                            build.push(builder("?>"));
-                        } else if (mhtml === true && y[i] === "<" && i < end - 3 && y[i + 1].toLowerCase() === "p" && y[i + 2].toLowerCase() === "r" && y[i + 3].toLowerCase() === "e") {
-                            build.push(builder("</pre>"));
-                            token.push("T_ignore");
-                        } else if (y[i] === "<" && i < end - 6 && y[i + 1].toLowerCase() === "s" && y[i + 2].toLowerCase() === "c" && y[i + 3].toLowerCase() === "r" && y[i + 4].toLowerCase() === "i" && y[i + 5].toLowerCase() === "p" && y[i + 6].toLowerCase() === "t") {
-                            scriptflag = i;
-                            build.push(builder(">"));
-                            if (last.indexOf(" type='syntaxhighlighter'") !== -1) {
-                                i                       = scriptflag;
-                                build[build.length - 1] = builder("</script>");
-                                token.push("T_ignore");
-                            } else if (last.charAt(last.length - 2) === "/") {
-                                token.push("T_singleton");
-                            } else if (last.indexOf(" data-prettydiff-ignore" + "=") > 0) {
-                                token.push("T_ignore");
-                            } else if (scripttest(build[build.length - 1]) === true) {
-                                token.push("T_script");
-                            } else {
-                                token.push("T_tag_start");
-                            }
-                        } else if (y[i] === "<" && i < end - 5 && y[i + 1].toLowerCase() === "s" && y[i + 2].toLowerCase() === "t" && y[i + 3].toLowerCase() === "y" && y[i + 4].toLowerCase() === "l" && y[i + 5].toLowerCase() === "e") {
-                            build.push(builder(">"));
-                            if (styletest(build[build.length - 1]) === true) {
-                                token.push("T_style");
-                            } else {
-                                token.push("T_tag_start");
-                            }
-                        } else if (y[i] === "<" && y[i + 1] === "/") {
-                            build.push(builder(">"));
-                            token.push("T_tag_end");
-                            if (last === " </ul>" || last === "</ul>" || last === " </ol>" || last === "</ol>") {
-                                li.pop();
-                            }
-                            if (last.indexOf("</li") > -1 && li.length > 0) {
-                                li[li.length - 1] = false;
-                            }
-                        } else if (y[i] === "<" && (y[i + 1] !== "!" || y[i + 1] !== "?" || y[i + 1] !== "/" || y[i + 1] !== "%")) {
-                            for (inc = i; inc < end; inc += 1) {
-                                if (y[inc] !== "?" && y[inc] !== "%") {
-                                    if (y[inc] === "/" && y[inc + 1] === ">") {
-                                        build.push(builder("/>"));
-                                        token.push("T_singleton");
-                                        break;
-                                    }
-                                    if (y[inc + 1] === ">") {
-                                        build.push(builder(">"));
-                                        last = build[build.length - 1];
-                                        if (last.indexOf("<li") > -1 && last.length > 0) {
-                                            li[li.length - 1] = true;
+
+                            //external code requires additional parsing to look for the appropriate
+                            //end tag, but that end tag cannot be quoted or commented
+                            if (ext === true) {
+                                if (quote === "") {
+                                    if (b[a] === "\"") {
+                                        quote = "\"";
+                                    } else if (b[a] === "'") {
+                                        quote = "'";
+                                    } else if (b[a] === "/") {
+                                        if (b[a + 1] === "*") {
+                                            quote = "*";
+                                        } else if (b[a + 1] === "/") {
+                                            quote = "/";
                                         }
-                                        if (last === " <ul>" || last === "<ul>" || last === " <ul " || last === "<ul " || last === " </ol>" || last === "</ol>" || last === " </ol " || last === "</ol ") {
-                                            li.push(false);
-                                        }
-                                        if (last.indexOf(" data-prettydiff-ignore" + "=") > 0) {
-                                            token.push("T_ignore");
-                                        } else {
-                                            token.push("T_tag_start");
-                                        }
-                                        break;
                                     }
+                                    if (name === "script" && b[a] === "<" && b[a + 1] === "/" && b[a + 2] === "s" && b[a + 3] === "c" && b[a + 4] === "r" && b[a + 5] === "i" && b[a + 6] === "p" && b[a + 7] === "t") {
+                                        a   -= 1;
+                                        ext = false;
+                                        if (output.length < 2) {
+                                            attrs.pop();
+                                            jscom.pop();
+                                            return lines.pop();
+                                        }
+                                        token.push(output.join("").replace(/^(\s+)/, "").replace(/(\s+)$/, ""));
+                                        if (typeof jspretty === "function") {
+                                            return types.push(name);
+                                        }
+                                        return types.push("content");
+                                    }
+                                    if (name === "style" && b[a] === "<" && b[a + 1] === "/" && b[a + 2] === "s" && b[a + 3] === "t" && b[a + 4] === "y" && b[a + 5] === "l" && b[a + 6] === "e") {
+                                        a   -= 1;
+                                        ext = false;
+                                        if (output.length < 2) {
+                                            attrs.pop();
+                                            jscom.pop();
+                                            return lines.pop();
+                                        }
+                                        token.push(output.join("").replace(/^(\s+)/, "").replace(/(\s+)$/, ""));
+                                        if (typeof csspretty === "function") {
+                                            return types.push(name);
+                                        }
+                                        return types.push("content");
+                                    }
+                                } else if (quote === b[a] && (quote === "\"" || quote === "'" || (quote === "*" && b[a + 1] === "/"))) {
+                                    quote = "";
+                                } else if (quote === "/" && b[a] === "\n") {
+                                    quote = "";
                                 }
-                            }
-                        } else if ((y[i - 1] === ">" || i === 0 || token[token.length - 1] === "T_asp") && (y[i] !== "<" || (y[i] !== " " && y[i + 1] !== "<"))) {
-                            triplet = y[i - 1] + y[i] + y[i + 1];
-                            if (token[token.length - 1] === "T_script") {
-                                build.push(cgather("script"));
-                                if ((/^(\s+)$/).test(last) === true) {
-                                    build.pop();
+                            } else if (b[a] === "<" || (b[a] === "[" && b[a + 1] === "%") || (b[a] === "{" && (b[a + 1] === "{" || b[a + 1] === "%" || b[a + 1] === "@" || b[a + 1] === "#"))) {
+                                a -= 1;
+                                if (mcont === true) {
+                                    token.push("text");
                                 } else {
-                                    token.push("T_content");
+                                    token.push(output.join("").replace(/(\s+)$/, tailSpace).replace(/\s+/g, " "));
                                 }
-                            } else if (token[token.length - 1] === "T_style") {
-                                build.push(cgather("style"));
-                                if ((/^(\s+)$/).test(last) === true) {
-                                    build.pop();
-                                } else {
-                                    token.push("T_content");
-                                }
-                            } else if (triplet !== "> <" && (token[token.length - 1] !== "T_asp" || (triplet !== "} <" && triplet !== "] <"))) {
-                                last = cgather("other");
-                                build.push(last);
-                                last = last.replace(" ", "");
-                                if (last.indexOf("{{#") === 0) {
-                                    token.push("T_tag_start");
-                                } else if (last.indexOf("{{/") === 0) {
-                                    token.push("T_tag_end");
-                                } else {
-                                    token.push("T_content");
-                                }
+                                return types.push("content");
                             }
+                            output.push(b[a]);
                         }
-                    }
-                }());
-            }
-            (function markup_beauty__createCinfo() {
-                var i   = 0,
-                    end = token.length;
-                for (i = 0; i < end; i += 1) {
-                    if (token[i] === "T_sgml" || token[i] === "T_xml") {
-                        cinfo.push("parse");
-                    } else if (token[i] === "T_asp") {
-                        if ((/^( ?\{\{\/)/).test(build[i]) === true || (/^( ?<(%)\s*\})/).test(build[i]) === true || (/^( ?\[(%)\s*\})/).test(build[i]) === true || (/^( ?\{(@)\s*\})/).test(build[i]) === true) {
-                            cinfo.push("end");
-                        } else if ((/^( ?\{\{#)/).test(build[i]) === true || (/(\{\s*%>)$/).test(build[i]) === true || (/(\{\s*%\])$/).test(build[i]) === true || (/(\{\s*@\})$/).test(build[i]) === true) {
-                            cinfo.push("start");
-                        } else {
-                            cinfo.push("singleton");
+                    };
+
+                for (a = 0; a < c; a += 1) {
+                    if (ext === true) {
+                        content();
+                    } else if ((/\s/).test(b[a]) === true) {
+                        space = space + b[a];
+                        if (b[a] === "\n") {
+                            line += 1;
                         }
-                    } else if (token[i] === "T_php" || token[i] === "T_ssi" || token[i] === "T_ignore") {
-                        cinfo.push("singleton");
-                    } else if (token[i] === "T_comment") {
-                        cinfo.push("comment");
-                    } else if (mjsx === true && token[i] === "T_script") {
-                        cinfo.push("external");
-                    } else if (token[i] === "T_content") {
-                        if ((build[i] !== " " && token[i - 1] === "T_script") || token[i - 1] === "T_style") {
-                            cinfo.push("external");
-                        } else if (build[i].charAt(0) === " " && build[i].charAt(build[i].length - 1) === " ") {
-                            cinfo.push("mixed_both");
-                        } else if (build[i].charAt(0) === " " && build[i].charAt(build[i].length - 1) !== " ") {
-                            cinfo.push("mixed_start");
-                        } else if (build[i].charAt(0) !== " " && build[i].charAt(build[i].length - 1) === " ") {
-                            cinfo.push("mixed_end");
-                        } else {
-                            cinfo.push("content");
-                        }
-                    } else if (token[i] === "T_tag_start") {
-                        cinfo.push("start");
-                    } else if (token[i] === "T_style") {
-                        build[i] = build[i].replace(/\s+/g, " ");
-                        cinfo.push("start");
-                    } else if (token[i] === "T_script") {
-                        build[i] = build[i].replace(/\s+/g, " ");
-                        cinfo.push("start");
-                    } else if (token[i] === "T_singleton") {
-                        cinfo.push("singleton");
-                    } else if (token[i] === "T_tag_end") {
-                        cinfo.push("end");
-                    }
-                    if (build[i] !== "</prettydiffli>") {
-                        sum.push(build[i]);
+                    } else if (b[a] === "<") {
+                        tag("");
+                    } else if (b[a] === "[" && b[a + 1] === "%") {
+                        tag("%]");
+                    } else if (b[a] === "{" && (b[a + 1] === "{" || b[a + 1] === "%" || b[a + 1] === "@" || b[a + 1] === "#")) {
+                        tag("");
+                    } else {
+                        content();
                     }
                 }
-            }());
-            (function markup_beauty__htmlCheat() {
-                var i          = 0,
-                    firstSpace = 1,
-                    indexSpace = 0,
-                    tag        = "",
-                    end        = cinfo.length,
-                    next       = "";
-                if (mhtml === false) {
-                    return;
-                }
-                for (i = 0; i < end; i += 1) {
-                    if (cinfo[i] === "start") {
-                        firstSpace = 1;
-                        if (build[i].charAt(0) === " ") {
-                            firstSpace = 2;
-                        }
-                        if (build[i].indexOf("\n") > 0) {
-                            indexSpace = build[i].indexOf("\n");
-                        } else if (build[i].slice(1).indexOf(" ") > 0) {
-                            indexSpace = build[i].slice(1).indexOf(" ") + 1;
-                        } else {
-                            indexSpace = -1;
-                        }
-                        if (build[i].length === 3) {
-                            tag = build[i].charAt(1).toLowerCase();
-                        } else if (indexSpace === -1) {
-                            tag = build[i].slice(1, build[i].length - 1).toLowerCase();
-                        } else {
-                            tag = build[i].slice(firstSpace, indexSpace).toLowerCase();
-                        }
-                        if (cinfo[i + 1] === "end") {
-                            next = (build[i + 1].charAt(0) === " ") ? build[i + 1].toLowerCase().substr(1) : build[i + 1].toLowerCase();
-                        } else {
-                            next = "";
-                        }
-                        if (next !== "</" + tag + ">") {
-                            if (tag === "area" || tag === "base" || tag === "basefont" || tag === "br" || tag === "col" || tag === "embed" || tag === "eventsource" || tag === "frame" || tag === "hr" || tag === "img" || tag === "input" || tag === "keygen" || tag === "link" || tag === "meta" || tag === "param" || tag === "progress" || tag === "source" || tag === "wbr") {
-                                cinfo[i] = "singleton";
-                                token[i] = "T_singleton";
-                            }
-                            if (tag === "link" || tag === "meta") {
-                                if (build[i].charAt(0) !== " ") {
-                                    build[i] = " " + build[i];
-                                }
-                                if (i < end - 1 && build[i + 1].charAt(0) !== " ") {
-                                    build[i + 1] = " " + build[i + 1];
-                                }
-                            }
-                        }
-                    }
-                }
-            }());
-            (function markup_beauty__innerFix() {
-                var a          = 0,
-                    braceType  = "",
-                    braceIndex = 0,
-                    tagCount   = 0,
-                    endInner   = inner.length,
-                    tag        = [];
-                for (a = 0; a < endInner; a += 1) {
-                    braceType  = inner[a][0];
-                    braceIndex = inner[a][1];
-                    tagCount   = inner[a][2];
-                    if (typeof build[tagCount] === "string") {
-                        if (build[tagCount].charAt(0) === " ") {
-                            braceIndex += 1;
-                        }
-                        tag = build[tagCount].split("");
-                        if (braceType === "<" && tag[braceIndex] === "[") {
-                            tag[braceIndex] = "<";
-                        } else if (braceType === ">" && tag[braceIndex] === "]") {
-                            tag[braceIndex] = ">";
-                        }
-                        build[tagCount] = tag.join("");
-                    }
-                }
+                lines[0] = 0;
             }());
 
             if (mmode === "parse") {
-                summary = (function markup_beauty__parseSummary() {
-                    var output = [],
-                        plural = "",
-                        a      = 0,
-                        len    = cinfo.length,
-                        start  = 0,
-                        end    = 0;
-                    for (a = 0; a < len; a += 1) {
-                        if (token[a] === "T_tag_start" || token[a] === "T_script" || token[a] === "T_style") {
-                            start += 1;
-                        } else if (cinfo[a] === "end" && token[a] !== "T_asp") {
-                            if (build[a] === "</prettydiffli>") {
-                                build.splice(a, 1);
-                                token.splice(a, 1);
-                                cinfo.splice(a, 1);
-                                len -= 1;
-                                a   -= 1;
-                            } else {
-                                end += 1;
+                (function markuppretty__parse() {
+                    var a      = 0,
+                        c      = token.length,
+                        //white space token to insertion logic
+                        insert = function markuppretty__parse_insert(string) {
+                            if (types[a] === "content") {
+                                token[a] = string + token[a];
+                                return;
+                            }
+                            if (types[a - 1] === "content" && token[a] !== "content") {
+                                token[a - 1] = token[a - 1] + string;
+                                return;
+                            }
+                            token.splice(a, 0, string);
+                            types.splice(a, 0, "content");
+                            lines.splice(a, 0, 1);
+                            attrs.splice(a, 0, []);
+                            c += 1;
+                            a += 1;
+                        };
+                    for (a = 0; a < c; a += 1) {
+                        if (attrs[a].length > 0) {
+                            token[a] = token[a].replace(" ", " " + attrs[a].join(" "));
+                        }
+                        if (lines[a] === 2) {
+                            if (mpreserve === true) {
+                                insert("\n\n");
+                            } else if (types[a] === "singleton" || types[a] === "content" || types[a] === "template") {
+                                insert(" ");
+                            }
+                        } else if (lines[a] === 1) {
+                            if (types[a] === "singleton" || types[a] === "content" || types[a] === "template") {
+                                insert(" ");
+                            } else if (types[a] !== types[a - 1] && (types[a - 1] === "singleton" || types[a - 1] === "content" || types[a - 1] === "template")) {
+                                insert(" ");
                             }
                         }
                     }
-                    start = start - end;
-                    if (start !== end && start !== 0) {
-                        output.push("<p><strong>");
-                        if (start > 0) {
-                            if (start > 1) {
-                                plural = "s";
-                            }
-                            output.push(start);
-                            output.push(" more start tag");
-                            output.push(plural);
-                            output.push(" than end tag");
-                            output.push(plural);
-                            output.push("!");
-                        } else {
-                            start = start * -1;
-                            if (start > 1) {
-                                plural = "s";
-                            }
-                            output.push(start);
-                            output.push(" more end tag");
-                            output.push(plural);
-                            output.push(" than start tag");
-                            output.push(plural);
-                            output.push("!");
-                        }
-                        output.push("</strong></p>");
-                    }
-                    if (summary.indexOf("jserror") > 0) {
-                        output.push(summary.slice(summary.indexOf("<p "), summary.indexOf("</p>") + 4));
-                    }
-                    if (id.length > 0) {
-                        output.push("<p><strong class='duplicate'>Duplicate id attribute values detected:</strong> " + id + "</p>");
-                    }
-                    return output.join("");
                 }());
                 return {
-                    token: build,
-                    typea: token,
-                    typeb: cinfo
+                    token: token,
+                    types: types
                 };
             }
 
-            (function markup_beauty__algorithm() {
-                var i           = 0,
-                    commonStart = function markup_beauty__algorithm_commonStart(isStart) {
-                        var a       = 0,
-                            counter = 0;
-                        if (isStart === "start") {
-                            counter += 1;
-                        }
-                        for (a = i - 1; a > -1; a -= 1) {
-                            if (cinfo[a] === "start" && level[a] === "x") {
-                                counter += 1;
-                            } else if (cinfo[a] === "end") {
-                                counter -= 1;
-                            } else if (cinfo[a] === "start" && level[a] !== "x") {
-                                return level.push(level[a] + counter);
-                            }
-                            if (a === 0) {
-                                if (cinfo[a] !== "start") {
-                                    return level.push(minlevel);
-                                }
-                                if (cinfo[i] === "mixed_start" || cinfo[i] === "content" || (cinfo[i] === "singleton" && build[i].charAt(0) !== " ")) {
-                                    return level.push("x");
-                                }
-                                return level.push(minlevel + 1);
-                            }
-                        }
-                    },
-                    end         = function markup_beauty__algorithm_end() {
-                        var xTester     = function markup_beauty__algorithm_end_xTester(a) {
-                                for (a; a > 0; a -= 1) {
-                                    if (level[a] !== "x") {
-                                        return level.push(level[a] + 1);
-                                    }
-                                }
-                            },
-                            computation = function markup_beauty__algorithm_end_computation() {
-                                var a            = 0,
-                                    mixendTest   = false,
-                                    primary      = function markup_beauty__algorithm_end_computation_primary() {
-                                        var b           = 0,
-                                            mixAnalysis = function markup_beauty__algorithm_end_computation_primary_vooDoo() {
-                                                var c       = 0,
-                                                    d       = 0,
-                                                    counter = 0;
-                                                for (c = i - 1; c > 0; c -= 1) {
-                                                    if ((cinfo[c] === "start" && cinfo[c + 1] === "start" && level[c] === level[c + 1] - 1) || (cinfo[c] === "start" && cinfo[c - 1] !== "start" && level[c] === level[c - 1])) {
-                                                        break;
-                                                    }
-                                                }
-                                                for (d = c + 1; d < i; d += 1) {
-                                                    if (cinfo[d] === "mixed_start" && cinfo[d + 1] === "end") {
-                                                        counter += 1;
-                                                    }
-                                                }
-                                                if (cinfo[c - 1] === "end" && level[c - 1] !== "x" && counter === 0) {
-                                                    counter += 1;
-                                                }
-                                                if (counter !== 0) {
-                                                    if (level[i - 1] === "x") {
-                                                        return counter - 1;
-                                                    }
-                                                    return counter;
-                                                }
-                                                for (c; c < i; c += 1) {
-                                                    if (cinfo[c] === "start") {
-                                                        counter += 1;
-                                                    } else if (cinfo[c] === "end") {
-                                                        counter -= 1;
-                                                    }
-                                                }
-                                                return counter;
-                                            };
-                                        for (b = i - 1; b > 0; b -= 1) {
-                                            if (cinfo[b] !== "mixed_end" || (cinfo[b] === "start" && level[b] !== "x")) {
-                                                if (cinfo[b - 1] === "end") {
-                                                    mixendTest = true;
-                                                    if (cinfo[i - 1] === "mixed_both" && level[i - 1] === level[b] - mixAnalysis()) {
-                                                        return level.push(level[b] - (mixAnalysis() + 1));
-                                                    }
-                                                    if (cinfo[i - 2] === "start" && (cinfo[i - 1] === "mixed_end" || cinfo[i - 1] === "mixed_both")) {
-                                                        return level.push(level[b]);
-                                                    }
-                                                    if (level[b] !== "x") {
-                                                        if (cinfo[b] === "mixed_both" && b !== i - mixAnalysis()) {
-                                                            if (b === i - 1) {
-                                                                return level.push(level[b] - 1);
-                                                            }
-                                                            return level.push(level[b] + mixAnalysis());
-                                                        }
-                                                        if (cinfo[i - 1] === "mixed_end" && mixAnalysis() === 0) {
-                                                            return level.push(level[b] - 1);
-                                                        }
-                                                        if (level[i - 1] === "x" && (cinfo[i - 2] !== "end" || (cinfo[i - 2] === "end" && level[i - 2] !== "x"))) {
-                                                            return level.push(level[b] + mixAnalysis());
-                                                        }
-                                                        return level.push(level[b] - mixAnalysis());
-                                                    }
-                                                } else {
-                                                    mixendTest = false;
-                                                    return;
-                                                }
-                                            }
-                                        }
-                                    },
-                                    neutralStart = function markup_beauty__algorithm_end_computation_resultant() {
-                                        var b       = 0,
-                                            counter = 0;
-                                        for (b = i; b > 0; b -= 1) {
-                                            if (cinfo[b] === "end") {
-                                                counter += 1;
-                                            } else if (cinfo[b] === "start") {
-                                                counter -= 1;
-                                            }
-                                            if (counter === 0) {
-                                                return b;
-                                            }
-                                        }
-                                    };
-                                if (cinfo[i - 1] === "end" && level[i - 1] !== "x") {
-                                    if (cinfo[i - 2] === "start" && level[i - 2] === "x") {
-                                        for (a = i - 2; a > 0; a -= 1) {
-                                            if (level[a] !== "x") {
-                                                break;
-                                            }
-                                        }
-                                        if (cinfo[a] === "start") {
-                                            return commonStart("end");
-                                        }
-                                        return level.push(level[a] - 1);
-                                    }
-                                    if (cinfo[i - 2] === "start" && level[i - 2] !== "x") {
-                                        return level.push(level[i - 2] - 1);
-                                    }
-                                    return level.push(level[i - 1] - 1);
-                                }
-                                primary();
-                                if (mixendTest === true) {
-                                    return;
-                                }
-                                return (function markup_beauty__algorithm_end_computation_whenAllElseFails() {
-                                    var b       = 0,
-                                        counter = 0;
-                                    for (b = neutralStart(); b > 0; b -= 1) {
-                                        if (cinfo[b] === "start") {
-                                            counter += 1;
-                                        } else if (cinfo[b] === "end") {
-                                            counter -= 1;
-                                        }
-                                        if (level[b] !== "x") {
-                                            if (cinfo[b] === "end" && cinfo[b - 1] === "start" && level[b - 1] !== "x" && counter > -1) {
-                                                return level.push(level[b]);
-                                            }
-                                            if (level[i - 1] === "x" && build[i].charAt(0) !== " " && cinfo[i - 1] !== "mixed_end" && (cinfo[i - 2] !== "end" || level[i - 2] !== "x") && (cinfo[i - 3] !== "end" || level[i - 3] !== "x")) {
-                                                return level.push("x");
-                                            }
-                                            if (cinfo[b] !== "end") {
-                                                return level.push(level[b] + (counter - 1));
-                                            }
-                                        }
-                                    }
-                                    counter = minlevel;
-                                    for (b = i; b > -1; b -= 1) {
-                                        if (cinfo[b] === "start") {
-                                            counter += 1;
-                                        } else if (cinfo[b] === "end") {
-                                            counter -= 1;
-                                        }
-                                    }
-                                    return level.push(counter);
-                                }());
-                            };
-                        if (cinfo[i - 1] === "end" || cinfo[i - 1] === "mixed_both" || cinfo[i - 1] === "mixed_end") {
-                            return computation();
-                        }
-                        if (build[i].charAt(0) !== " " && (cinfo[i - 1] === "mixed_start" || cinfo[i - 1] === "content" || (cinfo[i - 1] === "comment" && (cinfo[i - 2] === "start" || (level[i - 1] === "x" && level[i - 2] === "x"))) || (cinfo[i - 1] === "external" && mjsx === true))) {
-                            return level.push("x");
-                        }
-                        if (cinfo[i - 1] === "external") {
-                            return (function markup_beauty__algorithm_end_external() {
-                                var a       = 0,
-                                    counter = -1;
-                                if (i < 3) {
-                                    return level.push(level[0]);
-                                }
-                                for (a = i - 2; a > 0; a -= 1) {
-                                    if (cinfo[a] === "start") {
-                                        counter += 1;
-                                    } else if (cinfo[a] === "end") {
-                                        counter -= 1;
-                                    }
-                                    if (level[a] !== "x") {
-                                        break;
-                                    }
-                                }
-                                if (cinfo[a] === "end") {
-                                    counter += 1;
-                                }
-                                return level.push(level[a] + counter);
-                            }());
-                        }
-                        if (build[i].charAt(0) !== " ") {
-                            if (cinfo[i - 1] === "singleton" || cinfo[i - 1] === "content" || cinfo[i - 1] === "parse") {
-                                return level.push("x");
-                            }
-                            return (function markup_beauty__algorithm_end_singletonContent() {
-                                var a       = 0,
-                                    counter = 0;
-                                for (a = i - 1; a > 0; a -= 1) {
-                                    if (cinfo[a] === "singleton" && level[a] === "x" && ((cinfo[a - 1] === "singleton" && level[a - 1] !== "x") || cinfo[a - 1] !== "singleton")) {
-                                        counter += 1;
-                                    }
-                                    if (level[a] !== 0 && level[a] !== "x" && cinfo[i - 1] !== "start") {
-                                        if (cinfo[a] === "mixed_both" || cinfo[a] === "mixed_start") {
-                                            return level.push(level[a] - counter);
-                                        }
-                                        if (level[a] === counter || (cinfo[a] === "singleton" && (cinfo[a - 1] === "content" || cinfo[a - 1] === "mixed_start"))) {
-                                            return level.push(level[a]);
-                                        }
-                                        return level.push(level[a] - 1);
-                                    }
-                                    if (cinfo[a] === "start" && level[a] === "x") {
-                                        return xTester(a);
-                                    }
-                                    if (cinfo[i - 1] === "start") {
-                                        return level.push(level[a]);
-                                    }
-                                }
-                                return level.push(minlevel);
-                            }());
-                        }
-                        return commonStart("end");
-                    },
-                    startSafety = function markup_beauty__algorithm_startSafety() {
-                        var e     = 0,
-                            start = function markup_beauty__algorithm_startSafety_start(noComIndex) {
-                                var refA    = 0,
-                                    refB    = 0,
-                                    refC    = 0,
-                                    xTester = function markup_beauty__algorithm_start_complexity() {
-                                        var a       = 0,
-                                            xCount  = 1,
-                                            counter = -1;
-                                        for (a = refA; a > 0; a -= 1) {
-                                            if (cinfo[a] === "start") {
-                                                counter -= 1;
-                                                if (level[a] === "x") {
-                                                    xCount += 1;
-                                                }
-                                            } else if (cinfo[a] === "end") {
-                                                counter += 1;
-                                                xCount  -= 1;
-                                            }
-                                            if (level[a] === 0) {
-                                                refA = 0;
-                                                for (refB = i - 1; refB > a; refB -= 1) {
-                                                    if (cinfo[refB] === "start") {
-                                                        refA += 1;
-                                                    } else if (cinfo[refB] === "end") {
-                                                        refA -= 1;
-                                                    }
-                                                }
-                                                if (refA > 0) {
-                                                    if (level[a + 1] === "x") {
-                                                        return level.push((counter * -1) - 1);
-                                                    }
-                                                    if (cinfo[a] !== "external" && (mcomm !== "noindent" || (mcomm === "noindent" && cinfo[a] !== "comment"))) {
-                                                        return level.push((counter + 1) * -1);
-                                                    }
-                                                } else {
-                                                    for (refA = i - 1; refA > 0; refA -= 1) {
-                                                        if (level[refA] !== "x") {
-                                                            return level.push(level[refA]);
-                                                        }
-                                                    }
-                                                }
-                                            }
-                                            if (level[a] !== "x" && level[i - 1] !== "x") {
-                                                if (cinfo[a] === "start" || cinfo[a] === "end") {
-                                                    return level.push(level[a] + xCount);
-                                                }
-                                                return level.push(level[a] + xCount - 1);
-                                            }
-                                            if (counter === -1 && level[a] === "x") {
-                                                break;
-                                            }
-                                            if (counter === 1 && level[a] !== "x" && cinfo[a] !== "mixed_start" && cinfo[a] !== "content") {
-                                                if (cinfo[a - 1] === "mixed_end" || (level[i - 1] === "x" && cinfo[i - 1] === "end" && cinfo[a] !== "end")) {
-                                                    return level.push(level[a] - counter - 1);
-                                                }
-                                                return level.push(level[a] - counter);
-                                            }
-                                            if (counter === 0 && level[a] !== "x") {
-                                                return commonStart("start");
-                                            }
-                                        }
-                                        return commonStart("start");
-                                    };
-                                (function markup_beauty__algorithm_start_referrenceFinder() {
-                                    var a = 0;
-                                    if (noComIndex === 1) {
-                                        refA = 0;
-                                        refB = 0;
-                                        refC = 0;
-                                    } else {
-                                        for (a = noComIndex - 1; a > 0; a -= 1) {
-                                            if (cinfo[a] !== "comment") {
-                                                refA = a;
-                                                break;
-                                            }
-                                        }
-                                        if (refA === 1) {
-                                            refB = 0;
-                                            refC = 0;
-                                        } else {
-                                            for (a = refA - 1; a > 0; a -= 1) {
-                                                if (cinfo[a] !== "comment") {
-                                                    refB = a;
-                                                    break;
-                                                }
-                                            }
-                                            if (refB === 1) {
-                                                refC = 0;
-                                            } else {
-                                                for (a = refB - 1; a > 0; a -= 1) {
-                                                    if (cinfo[a] !== "comment") {
-                                                        refC = a;
-                                                        break;
-                                                    }
-                                                }
-                                            }
-                                        }
-                                    }
-                                }());
-                                if (i - 1 === 0 && cinfo[0] === "start" && (build[i].charAt(0) === " " || (cinfo[i] !== "singleton" && cinfo[i] !== "parse"))) {
-                                    return level.push(minlevel + 1);
-                                }
-                                if (cinfo[refA] === "mixed_start" || cinfo[refA] === "content" || cinfo[i - 1] === "mixed_start" || cinfo[i - 1] === "content" || ((cinfo[i] === "singleton" || cinfo[i] === "parse") && (cinfo[i - 1] === "start" || cinfo[i - 1] === "singleton" || cinfo[i - 1] === "end") && build[i].charAt(0) !== " ")) {
-                                    return level.push("x");
-                                }
-                                if ((cinfo[i - 1] === "comment" && level[i - 1] === 0) || ((cinfo[refC] === "mixed_start" || cinfo[refC] === "content") && cinfo[refB] === "end" && (cinfo[refA] === "mixed_end" || cinfo[refA] === "mixed_both"))) {
-                                    return commonStart("start");
-                                }
-                                if (cinfo[i - 1] === "comment" && level[i - 1] !== "x") {
-                                    return level.push(level[i - 1]);
-                                }
-                                if (refA < i - 1 && ((cinfo[refA] === "start" && level[refA] === "x") || (cinfo[refA] !== "mixed_end" && cinfo[refA] !== "mixed_both" && level[refA] === "x"))) {
-                                    if (level[i - 1] === "x" && build[i].charAt(0) !== " " && cinfo[i - 1] !== "start" && build[i - 1].charAt(build[i - 1].length - 1) !== " ") {
-                                        if ((cinfo[i - 1] === "end" && cinfo[i - 2] === "end") || (cinfo[i - 1] === "end" && cinfo[i] !== "end" && cinfo[i + 1] !== "mixed_start" && cinfo[i + 1] !== "content")) {
-                                            return commonStart("start");
-                                        }
-                                        return level.push("x");
-                                    }
-                                    return xTester();
-                                }
-                                if (cinfo[refA] === "end" && level[refA] !== "x" && (cinfo[refA - 1] !== "start" || (cinfo[refA - 1] === "start" && level[refA - 1] !== "x"))) {
-                                    if (level[refA] < 0) {
-                                        return commonStart("start");
-                                    }
-                                    return level.push(level[refA]);
-                                }
-                                if (cinfo[refC] !== "mixed_start" && cinfo[refC] !== "content" && (cinfo[refA] === "mixed_end" || cinfo[refA] === "mixed_both")) {
-                                    return (function markup_beauty__algorithm_start_notContentNotMixedstart() {
-                                        var a          = 0,
-                                            countEnd   = 0,
-                                            countStart = 0,
-                                            indexZero  = 0;
-                                        for (a = refA; a > 0; a -= 1) {
-                                            if (cinfo[a] === "end") {
-                                                countEnd += 1;
-                                            }
-                                            if (cinfo[a] === "start") {
-                                                countStart += 1;
-                                            }
-                                            if (level[a] === 0 && a !== 0) {
-                                                indexZero = a;
-                                            }
-                                            if (cinfo[refA] === "mixed_both" && level[a] !== "x") {
-                                                return level.push(level[a]);
-                                            }
-                                            if (cinfo[a] !== "comment" && cinfo[a] !== "content" && cinfo[a] !== "external" && cinfo[a] !== "mixed_end" && level[a] !== "x") {
-                                                if (cinfo[a] === "start" && level[a] !== "x") {
-                                                    if (cinfo[i - 1] !== "end") {
-                                                        return level.push(level[a] + (countStart - countEnd));
-                                                    }
-                                                    if ((level[a] === level[a - 1] && cinfo[a - 1] !== "end" && level[a + 1] !== "x") || (cinfo[i - 2] === "start" && level[i - 2] !== "x" && level[i - 1] === "x")) {
-                                                        return level.push(level[a] + 1);
-                                                    }
-                                                    if (countStart <= 1) {
-                                                        return level.push(level[a]);
-                                                    }
-                                                } else if (countEnd > 0) {
-                                                    if (countStart > 1) {
-                                                        if (indexZero !== 0) {
-                                                            return commonStart("start");
-                                                        }
-                                                        return level.push(level[a] + 1);
-                                                    }
-                                                    return level.push(level[a] - countEnd + 1);
-                                                }
-                                                return level.push(level[a] + countStart);
-                                            }
-                                        }
-                                        return commonStart("start");
-                                    }());
-                                }
-                                if (cinfo[refA] === "start" && level[refA] !== "x") {
-                                    return (function markup_beauty__algorithm_start_referenceKStartNotX() {
-                                        var a = 0;
-                                        for (a = i - 1; a > -1; a -= 1) {
-                                            if (cinfo[a] !== "comment" && cinfo[a] !== "content" && cinfo[a] !== "external" && cinfo[a] !== "mixed_end") {
-                                                if (cinfo[i + 1] && build[i].charAt(0) !== " " && (cinfo[i + 1] === "mixed_end" || cinfo[i + 1] === "content" || (build[i + 1].charAt(0) !== " " && cinfo[i + 1] === "singleton"))) {
-                                                    return level.push("x");
-                                                }
-                                                return level.push(level[a] + 1);
-                                            }
-                                        }
-                                        return level.push(minlevel);
-                                    }());
-                                }
-                                if (build[i].charAt(0) !== " " && (cinfo[i - 1] === "singleton" || cinfo[i - 1] === "content" || cinfo[i - 1] === "mixed_start")) {
-                                    return level.push("x");
-                                }
-                                return commonStart("start");
-                            };
-                        if (cinfo[i] !== "start" && level[i - 1] === "x" && cinfo[i - 1] !== "content" && build[i].charAt(0) !== " " && cinfo[i - 1] !== "mixed_start" && cinfo[i - 1] !== "mixed_end") {
-                            return level.push("x");
-                        }
-                        if (cinfo[i] !== "start" && build[i] === " ") {
-                            build[i] = "";
-                            return level.push("x");
-                        }
-                        if (token[i] === "T_script" && mjsx === true) {
-                            if (build[i].charAt(0) === " ") {
-                                level.push(level[level.length - 1] + 1);
-                            } else {
-                                level.push("x");
-                            }
-                            return;
-                        }
-                        if (cinfo[i - 1] !== "comment") {
-                            start(i);
-                        } else {
-                            for (e = i - 1; e > 0; e -= 1) {
-                                if (cinfo[e] !== "comment") {
-                                    break;
-                                }
-                            }
-                            start(e + 1);
-                        }
-                    };
-                (function markup_beauty__algorithm_loop() {
-                    var test        = false,
-                        test1       = false,
-                        cdata       = [],
-                        cdata1      = [],
-                        cdataStart  = (/^(\s*(\/)*<\!\[+[A-Z]+\[+)/),
-                        cdataEnd    = (/((\/)*\]+>\s*)$/),
-                        scriptStart = (/^(\s*<\!\-\-)/),
-                        scriptEnd   = (/((\/\/)?\-\->\s*)$/),
-                        loop        = cinfo.length;
-                    for (i = 0; i < loop; i += 1) {
-                        test   = false;
-                        test1  = false;
-                        cdata  = [""];
-                        cdata1 = [""];
-                        if (i === 0) {
-                            level.push(minlevel);
-                        } else if (cinfo[i] === "external" && mjsx === false) {
-                            if ((/^(\s*<\!\-\-\s*\-\->(\s*))$/).test(build[i]) === true) {
-                                if (build[i].charAt(0) === " ") {
-                                    build[i] = build[i].substr(1);
-                                }
-                                if (build[i].charAt(build[i].length - 1) === " ") {
-                                    build[i] = build[i].substr(0, build[i].length - 1);
-                                }
-                                cinfo[i] = "comment";
-                                token[i] = "T_comment";
-                                if (mcomm !== "noindent") {
-                                    startSafety();
-                                } else {
-                                    level.push(minlevel);
-                                }
-                            } else if (token[i - 1] === "T_script") {
-                                startSafety();
-                                if (scriptStart.test(build[i]) === true) {
-                                    test     = true;
-                                    build[i] = build[i].replace(scriptStart, "");
-                                } else if (cdataStart.test(build[i]) === true) {
-                                    cdata    = cdataStart.exec(build[i]);
-                                    build[i] = build[i].replace(cdataStart, "");
-                                }
-                                if (scriptEnd.test(build[i]) === true && (/(\/\/\-\->\s*)$/).test(build[i]) === false) {
-                                    test1    = true;
-                                    build[i] = build[i].replace(scriptEnd, "");
-                                } else if (cdataEnd.test(build[i]) === true) {
-                                    cdata1   = cdataEnd.exec(build[i]);
-                                    build[i] = build[i].replace(cdataEnd, "");
-                                }
-                                if (typeof jspretty === "function") {
-                                    build[i] = jspretty({
-                                        braceline   : mbraceline,
-                                        bracepadding: mbracepadding,
-                                        braces      : mbraces,
-                                        comments    : mcomm,
-                                        correct     : mcorrect,
-                                        inchar      : mchar,
-                                        inlevel     : level[i],
-                                        insize      : msize,
-                                        objsort     : mobjsort,
-                                        preserve    : mpreserve,
-                                        quoteConvert: mquoteConvert,
-                                        source      : build[i],
-                                        space       : mspace,
-                                        styleguide  : mstyleguide,
-                                        varword     : mvarword,
-                                        vertical    : (mvertical === "jsonly" || mvertical === true || mvertical === "true") ? true : false
-                                    });
-                                }
-                                if (test === true) {
-                                    build[i] = "<!--\n" + build[i];
-                                } else if (cdata[0] !== "") {
-                                    build[i] = cdata[0] + "\n" + build[i];
-                                }
-                                if (test1 === true) {
-                                    level.push(level[i]);
-                                    build.splice(i + 1, 0, "-->");
-                                    sum.splice(i + 1, 0, "-->");
-                                    cinfo.splice(i + 1, 0, "external");
-                                    token.splice(i + 1, 0, "T_content");
-                                    loop += 1;
-                                } else if (cdata1[0] !== "") {
-                                    level.push(level[i]);
-                                    build.splice(i + 1, 0, cdata1[0]);
-                                    sum.splice(i + 1, 0, cdata1[0]);
-                                    cinfo.splice(i + 1, 0, "external");
-                                    token.splice(i + 1, 0, "T_content");
-                                    loop += 1;
-                                }
-                                build[i] = build[i].replace(/(\/\/(\s)+\-\->(\s)*)$/, "//-->").replace(/^(\s*)/, "").replace(/(\s*)$/, "");
-                            } else if (token[i - 1] === "T_style") {
-                                level.push(minlevel);
-                                if (scriptStart.test(build[i]) === true) {
-                                    test     = true;
-                                    build[i] = build[i].replace(scriptStart, "");
-                                } else if (cdataStart.test(build[i]) === true) {
-                                    cdata    = cdataStart.exec(build[i]);
-                                    build[i] = build[i].replace(cdataStart, "");
-                                }
-                                if (scriptEnd.test(build[i]) === true && scriptEnd.test(build[i]) === false) {
-                                    test1 = true;
-                                    build[i].replace(scriptEnd, "");
-                                } else if (cdataEnd.test(build[i]) === true) {
-                                    cdata1   = cdataEnd.exec(build[i]);
-                                    build[i] = build[i].replace(cdataEnd, "");
-                                }
-                                if (typeof csspretty === "function") {
-                                    build[i] = csspretty({
-                                        comm          : mcomm,
-                                        cssinsertlines: mcssinsertlines,
-                                        inchar        : mchar,
-                                        insize        : msize,
-                                        mode          : "beautify",
-                                        objsort       : mobjsort,
-                                        source        : build[i],
-                                        vertical      : (mvertical === true || mvertical === "true") ? true : false
-                                    });
-                                }
-                                if (test === true) {
-                                    build[i] = "<!--\n" + build[i];
-                                } else if (cdata[0] !== "") {
-                                    build[i] = cdata[0] + "\n" + build[i];
-                                }
-                                if (test1 === true) {
-                                    build[i] = build[i] + "\n-->";
-                                } else if (cdata1[0] !== "") {
-                                    build[i] = build[i] + "\n" + cdata1[0];
-                                }
-                                build[i] = build[i].replace(/^(\s*)/, "").replace(/(\s*)$/, "");
-                            }
-                        } else if (mforce === true) {
-                            if (cinfo[i] === "end") {
-                                if (cinfo[i - 1] === "start") {
-                                    level.push(level[i - 1]);
-                                } else {
-                                    level.push(level[i - 1] - 1);
-                                }
-                            } else {
-                                if (cinfo[i - 1] === "start") {
-                                    level.push(level[i - 1] + 1);
-                                } else {
-                                    level.push(level[i - 1]);
-                                }
-                                if (cinfo[i] === "mixed_end") {
-                                    build[i] = build[i].slice(0, build[i].length - 1);
-                                }
-                            }
-                        } else {
-                            if (cinfo[i] === "comment" && mcomm !== "noindent") {
-                                if (build[i].charAt(0) === " ") {
-                                    startSafety();
-                                } else {
-                                    level.push("x");
-                                }
-                            } else if (cinfo[i] === "comment" && mcomm === "noindent") {
-                                level.push(minlevel);
-                            } else if (cinfo[i] === "content") {
-                                level.push("x");
-                            } else if (cinfo[i] === "parse") {
-                                startSafety();
-                            } else if (cinfo[i] === "mixed_both") {
-                                startSafety();
-                            } else if (cinfo[i] === "mixed_start") {
-                                startSafety();
-                            } else if (token[i] === "T_script" && mjsx === true) {
-                                startSafety();
-                            } else if (cinfo[i] === "mixed_end") {
-                                build[i] = build[i].slice(0, build[i].length - 1);
-                                level.push("x");
-                            } else if (cinfo[i] === "start") {
-                                startSafety();
-                            } else if (cinfo[i] === "end") {
-                                end();
-                                if (token[i] === "T_asp" && ((/(\{\s*%>)$/).test(build[i]) === true || (/(\{\s*%\])$/).test(build[i]) === true || (/(\{\s*@\})$/).test(build[i]) === true)) {
-                                    cinfo[i] = "start";
-                                }
-                            } else if (cinfo[i] === "singleton") {
-                                startSafety();
-                            }
-                        }
-                    }
-                }());
-            }());
-            (function markup_beauty__apply() {
-                var i          = 0,
-                    end        = build.length,
-                    indents    = "",
-                    tab        = (function markup_beauty__apply_tab() {
-                        var a       = 0,
-                            size    = msize,
-                            tabChar = mchar,
-                            output  = [];
-                        for (a = 0; a < size; a += 1) {
-                            output.push(tabChar);
-                        }
-                        return output.join("");
-                    }()),
-                    text_wrap  = function markup_beauty__apply_wrap(input) {
-                        var a                = 0,
-                            itemLengthNative = 0,
-                            start            = "",
-                            smatch           = [],
-                            item             = input.replace(/^(\s+)/, "").replace(/(\s+)$/, "").split(" "),
-                            itemLength       = item.length - 1,
-                            output           = [item[0]],
-                            firstLen         = item[0].length,
-                            attribute        = (item[0].indexOf("=") > 0) ? true : false,
-                            xml              = (token[i] === "T_xml") ? true : false,
-                            ind              = (function markup_beauty__apply_wrap_ind() {
-                                var b       = 0,
-                                    tabs    = [],
-                                    levels  = level[i],
-                                    counter = 0;
-                                if ((attribute === true && level[i] !== "x") || xml === true) {
-                                    if (xml === true) {
-                                        smatch = input.match(/^(\s+)/);
-                                        if (smatch !== null) {
-                                            start = smatch[0];
-                                        }
-                                    }
-                                    return indents + tab;
-                                }
-                                if ((attribute === true && level[i] === "x") || (cinfo[i - 1] === "end" && level[i - 1] === "x")) {
-                                    for (b = i - 1; b > -1; b -= 1) {
-                                        if (cinfo[b] === "end") {
-                                            counter += 1;
-                                        }
-                                        if (cinfo[b] === "start") {
-                                            counter -= 1;
-                                        }
-                                        if (counter === -1 && cinfo[b] === "start") {
-                                            if (i > b + 2 && level[b + 2] !== "x") {
-                                                return indents;
-                                            }
-                                            return indents + tab;
-                                        }
-                                    }
-                                }
-                                for (b = i - 1; b > -1; b -= 1) {
-                                    if (token[b] === "T_content" || (cinfo[b] === "end" && level[b] !== "x")) {
-                                        if (cinfo[b] === "end" && level[i] !== "x" && level[i] !== indents.length / tab.length) {
-                                            for (b = 0; b < levels; b += 1) {
-                                                tabs.push(tab);
-                                            }
-                                            return tabs.join("");
-                                        }
-                                        return indents;
-                                    }
-                                    if (cinfo[b] !== "singleton" && cinfo[b] !== "end") {
-                                        if (cinfo[b] === "start" && cinfo[b - 1] === "end" && b === i - 1 && level[b] === "x") {
-                                            return indents;
-                                        }
-                                        return indents + tab;
-                                    }
-                                }
-                            }());
-                        if (itemLength === 0) {
-                            return [
-                                input, 0
-                            ];
-                        }
-                        if (level[i] === "x") {
-                            for (a = i - 1; a > -1; a -= 1) {
-                                if (level[a] !== "x") {
-                                    itemLengthNative += build[a].replace(indents, "").length;
-                                    break;
-                                }
-                                itemLengthNative += build[a].length;
-                            }
-                        }
-                        firstLen += itemLengthNative;
-                        if (itemLength > 0 && item[0] !== "") {
-                            if (firstLen + item[1].length > mwrap) {
-                                output.push("\n");
-                                output.push(ind);
-                                firstLen = 0;
-                            } else {
-                                output.push(" ");
-                            }
-                        }
-                        for (a = 1; a < itemLength; a += 1) {
-                            output.push(item[a]);
-                            if (a < itemLength - 1 && item[a].length + item[a + 1].length + 1 + firstLen > mwrap) {
-                                if (xml === true) {
-                                    output.push(" ");
-                                }
-                                output.push("\n");
-                                output.push(ind);
-                                firstLen = 0;
-                            } else {
-                                output.push(" ");
-                                firstLen += 1 + item[a].length;
-                            }
-                        }
-                        if (output.length > 1) {
-                            output.pop();
-                        }
-                        if (output[output.length - 1] !== "\n" && i < end - 1 && level[i + 1] === "x") {
-                            firstLen += build[i + 1].length;
-                        }
-                        if (firstLen + item[itemLength].length > mwrap) {
-                            if (xml === true) {
-                                output.push(" ");
-                            }
-                            output.push("\n");
-                            output.push(ind);
-                        } else if (firstLen === 0) {
-                            output.push(ind);
-                        } else {
-                            output.push(" ");
-                        }
-                        output.push(item[itemLength]);
-                        return [
-                            start + output.join(""), item[itemLength].length
-                        ];
-                    },
-                    attr_wrap  = function markup_beauty__apply_attrwrap(item) {
-                        var parse   = item.split("\n"),
-                            loopEnd = level[i],
-                            a       = 0,
-                            b       = parse[0].length,
-                            c       = [];
-                        if (loopEnd !== "x") {
-                            indents = "";
-                            for (a = 0; a < loopEnd; a += 1) {
-                                indents = tab + indents;
-                            }
-                        }
-                        loopEnd = parse.length;
-                        for (a = 1; a < loopEnd; a += 1) {
-                            b += parse[a].length;
-                            if (b > mwrap) {
-                                c        = text_wrap(parse[a]);
-                                parse[a] = "\n" + tab + indents + c[0];
-                                b        = c[1];
-                            } else {
-                                parse[a] = " " + parse[a];
-                            }
-                        }
-                        return parse.join("");
-                    },
-                    comment    = function markup_beauty__apply_comment(item) {
-                        var regress = {},
-                            a       = i - 1;
-                        if (level[a] === "x") {
-                            do {
-                                a -= 1;
-                            } while (typeof level[a] !== "number" && a > -1);
-                        }
-                        regress = new RegExp("\n(" + tab + "){" + level[a] + "}", "g");
-                        if (cinfo[i - 1] === "start" || (level[i - 1] === "x" && level[i] !== "x")) {
-                            item = item.replace(tab, "");
-                        }
-                        return item.replace(regress, "\n").split("\n").join("\n" + indents);
-                    },
-                    tab_math   = function markup_beauty__apply_indentation(item) {
-                        var a       = 0,
-                            b       = 0,
-                            loopEnd = (typeof level[i] === "number") ? level[i] : 0,
-                            square  = 0,
-                            indent  = [],
-                            parse   = [],
-                            pad     = function markup_beauty__apply_indentation_pad() {
-                                var ins     = indents,
-                                    squares = square;
-                                if (squares === 0) {
-                                    return ins;
-                                }
-                                do {
-                                    ins     += tab;
-                                    squares -= 1;
-                                } while (squares > 0);
-                                return ins;
-                            };
-                        for (a = 0; a < loopEnd; a += 1) {
-                            indent.push(tab);
-                        }
-                        if (cinfo[i] === "mixed_both" && mwrap === 0) {
-                            item = item.slice(0, item.length - 1);
-                        }
-                        indents = indent.join("");
-                        if (mjsx === true && item.indexOf("\n") > 0 && (/^( ?\/\*)/).test(item) === true) {
-                            (function markup_beauty__apply_indentation_jsxComment() {
-                                var mline = item.replace(/\s*\*\/(\s*)/, "").split("\n"),
-                                    len   = mline.length,
-                                    aa    = 0;
-                                for (aa = 1; aa < len; aa += 1) {
-                                    mline[aa] = tab + tab + mline[aa];
-                                }
-                                item = mline.join("\n") + "\n" + tab + "*\/";
-                            }());
-                        }
-                        if (i > 0) {
-                            item = "\n" + indents + item;
-                        } else {
-                            item = indents + item;
-                        }
-                        if (cinfo[i] === "parse" && (/\[\s*</).test(build[i])) {
-                            build[i] = build[i].replace(/\[\s+</g, "[<");
-                            parse    = build[i].split("");
-                            loopEnd  = parse.length;
-                            for (a = 0; a < loopEnd; a += 1) {
-                                if (parse[a] === "[") {
-                                    square   += 1;
-                                    parse[a] = "[\n" + pad();
-                                } else if (parse[a] === "]") {
-                                    square   -= 1;
-                                    parse[a] = "\n" + pad() + "]";
-                                } else if (parse[a] === "<" && loopEnd > a + 3 && parse[a + 1] === "!" && parse[a + 2] === "-" && parse[a + 3] === "-") {
-                                    if (a === 0 || parse[a - 1].charAt(0) !== "[") {
-                                        parse[a] = "\n" + pad() + "<";
-                                    }
-                                    for (b = a + 4; b < loopEnd; b += 1) {
-                                        if (parse[b - 2] === "-" && parse[b - 1] === "-" && parse[b] === ">") {
-                                            a = b;
-                                            break;
-                                        }
-                                    }
-                                } else if (parse[a] === "<" && (a === 0 || parse[a - 1].charAt(0) !== "[")) {
-                                    parse[a] = "\n" + pad() + "<";
-                                }
-                            }
-                            item = parse.join("").replace(/\s>/g, ">");
-                        }
-                        if (cinfo[i] === "comment" && build[i].indexOf("\n") > 0 && mcomm !== "noindent") {
-                            item = comment(item);
-                        }
-                        return item;
-                    },
-                    end_math   = function markup_beauty__apply_end(item) {
-                        var a      = 0,
-                            b      = 0,
-                            indent = [];
-                        for (b = i; b > 0; b -= 1) {
-                            if (level[b] !== "x") {
-                                break;
-                            }
-                        }
-                        for (a = 0; a < level[b]; a += 1) {
-                            indent.push(tab);
-                        }
-                        item = "\n" + indent.join("") + item;
-                        return item;
-                    },
-                    style_math = function markup_beauty__apply_style(item) {
-                        var a       = 0,
-                            b       = 0,
-                            counter = 0,
-                            ins     = "",
-                            indent  = [];
-                        if (level[i - 1] === "x") {
-                            for (a = i - 1; a > 0; a -= 1) {
-                                if (cinfo[a] === "start") {
-                                    counter += 1;
-                                } else if (cinfo[a] === "end") {
-                                    counter -= 1;
-                                }
-                                if (level[a] !== "x") {
-                                    break;
-                                }
-                            }
-                            if (cinfo[a] === "end") {
-                                counter += 1;
-                            }
-                            for (b = 0; b < level[a] + counter; b += 1) {
-                                indent.push(tab);
-                            }
-                        } else {
-                            for (b = 0; b < level[i - 1] + 1; b += 1) {
-                                indent.push(tab);
-                            }
-                        }
-                        ins = indent.join("");
-                        return "\n" + ins + item.replace(/\n(?!\n)/g, "\n" + ins);
-                    };
-                for (i = 0; i < end; i += 1) {
-                    if (mwrap > 0 && mjsx === false && (cinfo[i] === "content" || cinfo[i] === "mixed_start" || cinfo[i] === "mixed_both" || cinfo[i] === "mixed_end")) {
-                        build[i] = text_wrap(build[i])[0];
-                    }
-                    if (build[i] === "</prettydiffli>" || build[i] === " </prettydiffli>") {
-                        build[i] = "";
-                    } else if (cinfo[i] === "end" && (mforce === true || (cinfo[i - 1] !== "content" && cinfo[i - 1] !== "mixed_start"))) {
-                        if (build[i].charAt(0) === " ") {
-                            build[i] = build[i].slice(1);
-                        }
-                        if (level[i] !== "x" && cinfo[i - 1] !== "start") {
-                            build[i] = end_math(build[i]);
-                        }
-                    } else if (cinfo[i] === "external" && mstyle === "indent" && build[i - 1].toLowerCase().indexOf("<style") > -1) {
-                        build[i] = style_math(build[i]);
-                    } else if (cinfo[i - 1] !== "content" && (cinfo[i - 1] !== "mixed_start" || mforce === true)) {
-                        if (build[i].charAt(0) === " ") {
-                            build[i] = build[i].slice(1);
-                        }
-                        if (build[i].indexOf("\n") > 0 && mjsx === false && token[i] !== "T_ignore" && (cinfo[i] === "start" || cinfo[i] === "singleton")) {
-                            build[i] = attr_wrap(build[i]);
-                        }
-                        if (level[i] !== "x") {
-                            build[i] = tab_math(build[i]);
-                        }
-                    } else if (cinfo[i] === "comment") {
-                        if (build[i].charAt(0) === " ") {
-                            build[i] = build[i].slice(1);
-                        }
-                        if (build[i].indexOf("\n") > 0 && mcomm !== "noindent" && level[i] === "x") {
-                            build[i] = comment(build[i]);
-                        }
-                    } else if (build[i].indexOf("\n") > 0 && token[i] !== "T_ignore" && mjsx === false && (cinfo[i] === "start" || cinfo[i] === "singleton")) {
-                        build[i] = attr_wrap(build[i]);
-                    }
-                    if (token[i] === "T_xml" && mjsx === false) {
-                        build[i] = text_wrap(build[i])[0];
-                    }
-                }
-            }());
-            if (summary !== "diff") {
-                (function markup_beauty__report() {
-                    var requests        = [],
-                        lengthToken     = sum.length,
-                        lengthChars     = sum.join("").length,
-                        stats           = (function markup_beauty__report_tagTypesCount() {
-                            var a          = 0,
-                                types      = [
-                                    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
-                                ],
-                                chars      = [
-                                    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
-                                ],
-                                totalTypes = [
-                                    0, 0, 0, 0
-                                ],
-                                totalChars = [],
-                                avgTypes   = [],
-                                avgChars   = [];
-                            for (a = 0; a < lengthToken; a += 1) {
-                                if (cinfo[a] === "end" && token[a] !== "T_asp") {
-                                    types[1]      += 1;
-                                    totalTypes[0] += 1;
-                                    chars[1]      += sum[a].length;
-                                    if (sum[a].charAt(0) === " " && cinfo[a - 1] === "singleton") {
-                                        chars[1] -= 1;
-                                        chars[2] += 1;
-                                    }
-                                } else if (cinfo[a] === "singleton") {
-                                    types[2]      += 1;
-                                    totalTypes[0] += 1;
-                                    chars[2]      += sum[a].length;
-                                    if (((build[a].indexOf("<embed ") !== -1 || build[a].indexOf("<img ") !== -1 || build[a].indexOf("<iframe ") !== -1) && (build[a].indexOf("src") !== -1 && build[a].indexOf("src=\"\"") === -1 && build[a].indexOf("src=''") === -1)) || (build[a].indexOf("<link ") !== -1 && build[a].indexOf("rel") !== -1 && build[a].indexOf("canonical") === -1)) {
-                                        requests.push(build[a]);
-                                    }
-                                } else if (cinfo[a] === "comment") {
-                                    types[3]      += 1;
-                                    totalTypes[0] += 1;
-                                    chars[3]      += sum[a].length;
-                                } else if (cinfo[a] === "content") {
-                                    types[4]      += 1;
-                                    totalTypes[1] += 1;
-                                    chars[4]      += sum[a].length;
-                                } else if (cinfo[a] === "mixed_start") {
-                                    types[5]      += 1;
-                                    totalTypes[1] += 1;
-                                    chars[5]      += (sum[a].length - 1);
-                                } else if (cinfo[a] === "mixed_end") {
-                                    types[6]      += 1;
-                                    totalTypes[1] += 1;
-                                    chars[6]      += (sum[a].length - 1);
-                                } else if (cinfo[a] === "mixed_both") {
-                                    types[7]      += 1;
-                                    totalTypes[1] += 1;
-                                    chars[7]      += (sum[a].length - 2);
-                                } else if (cinfo[a] === "parse") {
-                                    types[10] += 1;
-                                    chars[10] += sum[a].length;
-                                } else if (cinfo[a] === "external") {
-                                    types[17]     += 1;
-                                    totalTypes[2] += 1;
-                                    chars[17]     += sum[a].length;
-                                    if (((build[a].indexOf("<script") !== -1 || build[a].indexOf("<embed ") !== -1 || build[a].indexOf("<img ") !== -1 || build[a].indexOf("<iframe ") !== -1) && (build[a].indexOf("src") !== -1 && build[a].indexOf("src=\"\"") === -1 && build[a].indexOf("src=''") === -1)) || (build[a].indexOf("<link ") !== -1 && build[a].indexOf("rel") !== -1 && build[a].indexOf("canonical") === -1)) {
-                                        requests.push(build[a]);
-                                    }
-                                } else {
-                                    if (token[a] === "T_tag_start") {
-                                        types[0]      += 1;
-                                        totalTypes[0] += 1;
-                                        chars[0]      += sum[a].length;
-                                        if (((build[a].indexOf("<embed ") !== -1 || build[a].indexOf("<img ") !== -1 || build[a].indexOf("<iframe ") !== -1) && (build[a].indexOf("src") !== -1 && build[a].indexOf("src=\"\"") === -1 && build[a].indexOf("src=''") === -1)) || (build[a].indexOf("<link ") !== -1 && build[a].indexOf("rel") !== -1 && build[a].indexOf("canonical") === -1)) {
-                                            requests.push(build[a]);
-                                        }
-                                    } else if (token[a] === "T_sgml") {
-                                        types[8] += 1;
-                                        chars[8] += sum[a].length;
-                                    } else if (token[a] === "T_xml") {
-                                        types[9] += 1;
-                                        chars[9] += sum[a].length;
-                                    } else if (token[a] === "T_ssi") {
-                                        types[11]     += 1;
-                                        totalTypes[3] += 1;
-                                        chars[11]     += sum[a].length;
-                                    } else if (token[a] === "T_asp") {
-                                        types[12]     += 1;
-                                        totalTypes[3] += 1;
-                                        chars[12]     += sum[a].length;
-                                    } else if (token[a] === "T_php") {
-                                        types[13]     += 1;
-                                        totalTypes[3] += 1;
-                                        chars[13]     += sum[a].length;
-                                    } else if (token[a] === "T_script") {
-                                        types[15]     += 1;
-                                        totalTypes[2] += 1;
-                                        chars[15]     += sum[a].length;
-                                        if (build[a].indexOf(" src") !== -1) {
-                                            requests.push(build[a]);
-                                        }
-                                    } else if (token[a] === "T_style") {
-                                        types[16]     += 1;
-                                        totalTypes[2] += 1;
-                                        chars[16]     += sum[a].length;
-                                    }
-                                }
-                            }
-                            totalChars.push(chars[0] + chars[1] + chars[2] + chars[3]);
-                            totalChars.push(chars[4] + chars[5] + chars[6] + chars[7]);
-                            totalChars.push(chars[15] + chars[16] + chars[17]);
-                            totalChars.push(chars[11] + chars[12] + chars[13]);
-                            avgTypes = [
-                                totalTypes[0], totalTypes[0], totalTypes[0], totalTypes[0], totalTypes[1], totalTypes[1], totalTypes[1], totalTypes[1], types[10], types[10], types[10], totalTypes[3], totalTypes[3], totalTypes[3], totalTypes[3], totalTypes[2], totalTypes[2], totalTypes[2]
-                            ];
-                            avgChars = [
-                                totalChars[0], totalChars[0], totalChars[0], totalChars[0], totalChars[1], totalChars[1], totalChars[1], totalChars[1], chars[10], chars[10], chars[10], totalChars[3], totalChars[3], totalChars[3], totalChars[3], totalChars[2], totalChars[2], totalChars[2]
-                            ];
-                            types[2] = types[2] - totalTypes[3];
-                            chars[2] = chars[2] - totalChars[3];
-                            return [
-                                types, chars, totalTypes, totalChars, avgTypes, avgChars
-                            ];
-                        }()),
-                        goodOrBad       = function markup_beauty__report_goodOrBad(x) {
-                            var extreme1 = function markup_beauty__report_goodOrBad_extreme1(x) {
-                                    if (stats[3][x] === 0) {
-                                        return "0.00%";
-                                    }
-                                    return "100.00%";
-                                },
-                                extreme2 = function markup_beauty__report_goodOrBad_extreme2(x) {
-                                    if (stats[2][x] === 0) {
-                                        return "0.00%";
-                                    }
-                                    return "100.00%";
-                                },
-                                output   = [],
-                                types    = "",
-                                chars    = "";
-                            if (x === 0) {
-                                if ((stats[2][x] / lengthToken) < 0.7) {
-                                    types = "bad";
-                                } else {
-                                    types = "good";
-                                }
-                                if ((stats[3][x] / lengthChars) > 0.4) {
-                                    chars = "bad";
-                                } else {
-                                    chars = "good";
-                                }
-                            } else if (x === 1) {
-                                if ((stats[2][x] / lengthToken) < 0.25) {
-                                    types = "bad";
-                                } else {
-                                    types = "good";
-                                }
-                                if ((stats[3][x] / lengthChars) < 0.6) {
-                                    chars = "bad";
-                                } else {
-                                    chars = "good";
-                                }
-                            } else if (x === 2) {
-                                if ((stats[2][x] / lengthToken) > 0.05) {
-                                    types = "bad";
-                                } else {
-                                    types = "good";
-                                }
-                                if ((stats[3][x] / lengthChars) > 0.05) {
-                                    chars = "bad";
-                                } else {
-                                    chars = "good";
-                                }
-                            }
-                            output = ["</th><td>"];
-                            output.push(stats[2][x]);
-                            output.push("</td><td>");
-                            output.push(extreme2(x));
-                            output.push("</td><td class='");
-                            output.push(types);
-                            output.push("'>");
-                            output.push(((stats[2][x] / lengthToken) * 100).toFixed(2));
-                            output.push("%</td><td>");
-                            output.push(stats[3][x]);
-                            output.push("</td><td>");
-                            output.push(extreme1(x));
-                            output.push("</td><td class='");
-                            output.push(chars);
-                            output.push("'>");
-                            output.push(((stats[3][x] / lengthChars) * 100).toFixed(2));
-                            output.push("%</td></tr>");
-                            return output.join("");
+            if (mmode === "minify") {
+                (function markuppretty__minify() {
+                    var a      = 0,
+                        c      = token.length,
+                        script = function markuppretty__beautify_script() {
+                            token[a] = jspretty({
+                                correct     : mcorrect,
+                                mode        : "minify",
+                                obfuscate   : mobfuscate,
+                                quoteConvert: mquoteConvert,
+                                source      : token[a],
+                                styleguide  : mstyleguide,
+                                topcoms     : mtopcomments
+                            });
+                            level.push("x");
                         },
-                        tables          = (function markup_beauty__report_buildOutput() {
-                            var a             = 0,
-                                requestOutput = "",
-                                requestList   = [],
-                                requestItem   = [],
-                                requestLength = requests.length,
-                                resultsTable  = (function markup_beauty__report_buildOutput_resultTable() {
-                                    var b            = 0,
-                                        output       = [
-                                            "*** Start Tags", "End Tags", "Singleton Tags", "Comments", "Flat String", "String with Space at Start", "String with Space at End", "String with Space at Start and End", "SGML", "XML", "Total Parsing Declarations", "SSI", "ASP", "PHP", "Total Server Side Tags", "*** Script Tags", "*** Style Tags", "JavaScript/CSS Code"
-                                        ],
-                                        section      = [],
-                                        percentTypes = "",
-                                        percentChars = "",
-                                        length       = stats[0].length;
-                                    for (b = 0; b < length; b += 1) {
-                                        if (stats[4][b] === 0) {
-                                            percentTypes = "0.00%";
-                                        } else if (stats[0][b] === stats[4][b]) {
-                                            percentTypes = "100.00%";
-                                        } else {
-                                            percentTypes = ((stats[0][b] / stats[4][b]) * 100).toFixed(2) + "%";
-                                        }
-                                        if (stats[5][b] === 0) {
-                                            percentChars = "0.00%";
-                                        } else if (stats[1][b] === stats[5][b]) {
-                                            percentChars = "100.00%";
-                                        } else {
-                                            percentChars = ((stats[1][b] / stats[5][b]) * 100).toFixed(2) + "%";
-                                        }
-                                        section = ["<tr><th>" + output[b]];
-                                        section.push("</th><td>");
-                                        section.push(stats[0][b]);
-                                        section.push("</td><td>");
-                                        section.push(percentTypes);
-                                        section.push("</td><td>");
-                                        section.push(((stats[0][b] / lengthToken) * 100).toFixed(2));
-                                        section.push("%</td><td>");
-                                        section.push(stats[1][b]);
-                                        section.push("</td><td>");
-                                        section.push(percentChars);
-                                        section.push("</td><td>");
-                                        section.push(((stats[1][b] / lengthChars) * 100).toFixed(2));
-                                        section.push("%</td></tr>");
-                                        if (b === 3) {
-                                            section.push("<tr><th>Total Common Tags");
-                                            section.push(goodOrBad(0));
-                                            section.push("<tr><th colspan='7'>Content</th></tr>");
-                                        } else if (b === 7) {
-                                            section.push("<tr><th>Total Content");
-                                            section.push(goodOrBad(1));
-                                            section.push("<tr><th colspan='7'>Parsing Declarations</th></tr>");
-                                        } else if (b === 10) {
-                                            section.push("<tr><th colspan='7'>Server Side Tags</th></tr>");
-                                        } else if (b === 14) {
-                                            section.push("<tr><th colspan='7'>Style and Script Code/Tags</th></tr>");
-                                        } else if (b === 17) {
-                                            section.push("<tr><th>Total Script and Style Tags/Code");
-                                            section.push(goodOrBad(2));
-                                        }
-                                        output[b] = section.join("");
-                                    }
-                                    return output.join("");
-                                }()),
-                                report        = ["<div class='doc'>"];
-                            report.push((function markup_beauty__report_buildOutput_content() {
-                                var b            = 0,
-                                    c            = 0,
-                                    d            = 0,
-                                    length       = lengthToken,
-                                    words        = [],
-                                    word         = "",
-                                    zipf         = [],
-                                    wordCount    = 0,
-                                    spacer       = [],
-                                    wordAnalyzer = [],
-                                    topTen       = [],
-                                    ratio        = [],
-                                    wordList     = [],
-                                    wordString   = "",
-                                    punctuation  = function markup_beauty__report_buildOutput_punctuation(y) {
-                                        return y.replace(/(\,|\.|\?|\!|\:) /, " ");
-                                    };
-                                for (b = 0; b < length; b += 1) {
-                                    if (cinfo[b] === "content") {
-                                        spacer.push(" ");
-                                        spacer.push(build[b]);
-                                    } else if (cinfo[b] === "mixed_start") {
-                                        spacer.push(build[b]);
-                                    } else if (cinfo[b] === "mixed_both") {
-                                        spacer.push(build[b].substr(0, build[b].length));
-                                    } else if (cinfo[b] === "mixed_end") {
-                                        spacer.push(" ");
-                                        spacer.push(build[b].substr(0, build[b].length));
-                                    }
-                                }
-                                wordString = spacer.join("");
-                                if (wordString.length === 0) {
-                                    return "";
-                                }
-                                wordString = wordString.substr(1, wordString.length).toLowerCase();
-                                wordList   = wordString.replace(/\&nbsp;?/gi, " ").replace(/[a-z](\,|\.|\?|\!|\:) /gi, punctuation).replace(/(\(|\)|"|\{|\}|\[|\])/g, "").replace(/\s+/g, " ").split(" ");
-                                length     = wordList.length;
-                                for (b = 0; b < length; b += 1) {
-                                    if (wordList[b] !== "") {
-                                        words.push([
-                                            1, wordList[b].replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;")
-                                        ]);
-                                        wordCount += 1;
-                                        for (c = b + 1; c < length; c += 1) {
-                                            if (wordList[c] === wordList[b]) {
-                                                words[words.length - 1][0] += 1;
-                                                wordList[c]                = "";
-                                                wordCount                  += 1;
-                                            }
-                                        }
-                                    }
-                                }
-                                length = words.length;
-                                for (b = 0; b < length; b += 1) {
-                                    d = b;
-                                    for (c = b + 1; c < length; c += 1) {
-                                        if (words[c][0] > words[d][0] && words[c][1] !== "") {
-                                            d = c;
-                                        }
-                                    }
-                                    word = words[d][1];
-                                    if (word.length < 3 || word.length > 30 || (/&\#?\w+;/).test(word) === true || word === "the" || word === "and" || word === "for" || word === "are" || word === "this" || word === "from" || word === "with" || word === "that" || word === "to") {
-                                        wordAnalyzer.push(words[d]);
-                                    } else {
-                                        wordAnalyzer.push(words[d]);
-                                        topTen.push(words[d]);
-                                    }
-                                    if (words[d] !== words[b]) {
-                                        words[d] = words[b];
-                                    } else {
-                                        words[d] = [
-                                            0, ""
-                                        ];
-                                    }
-                                    if (topTen.length === 11) {
-                                        break;
-                                    }
-                                }
-                                if (wordAnalyzer.length < 2) {
-                                    return "";
-                                }
-                                c = wordAnalyzer.length;
-                                for (b = 0; b < c; b += 1) {
-                                    if (b > 9) {
-                                        wordAnalyzer[b] = "";
-                                    } else {
-                                        ratio[b]        = (wordAnalyzer[b + 1]) ? (wordAnalyzer[b][0] / wordAnalyzer[b + 1][0]).toFixed(2) : "1.00";
-                                        wordAnalyzer[b] = "<tr><th>" + (b + 1) + "</th><td>" + wordAnalyzer[b][1] + "</td><td>" + wordAnalyzer[b][0] + "</td><td>" + ratio[b] + "</td><td>" + ((wordAnalyzer[b][0] / wordCount) * 100).toFixed(2) + "%</td></tr>";
-                                    }
-                                }
-                                if (wordAnalyzer[10]) {
-                                    wordAnalyzer[10] = "";
-                                }
-                                if (topTen.length > 10) {
-                                    c = 10;
-                                } else {
-                                    c = topTen.length;
-                                }
-                                ratio = [];
-                                for (b = 0; b < c; b += 1) {
-                                    ratio[b]  = (topTen[b + 1]) ? (topTen[b][0] / topTen[b + 1][0]).toFixed(2) : "1.00";
-                                    topTen[b] = "<tr><th>" + (b + 1) + "</th><td>" + topTen[b][1] + "</td><td>" + topTen[b][0] + "</td><td>" + ratio[b] + "</td><td>" + ((topTen[b][0] / wordCount) * 100).toFixed(2) + "%</td></tr>";
-                                }
-                                if (topTen[10]) {
-                                    topTen[10] = "";
-                                }
-                                if (c > 10) {
-                                    topTen[topTen.length - 1] = "";
-                                }
-                                zipf.push("<table class='analysis' summary='Zipf&#39;s Law'><caption>This table demonstrate" +
-                                    "s <em>Zipf&#39;s Law</em> by listing the 10 most occuring words in the content a" +
-                                    "nd the number of times they occurred.</caption>");
-                                zipf.push("<thead><tr><th>Word Rank</th><th>Most Occurring Word by Rank</th><th>Number of I" +
-                                    "nstances</th><th>Ratio Increased Over Next Most Frequence Occurance</th><th>Perc" +
-                                    "entage from ");
-                                zipf.push(wordCount.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ","));
-                                if (wordCount > 1) {
-                                    zipf.push(" Total");
-                                }
-                                zipf.push(" Word");
-                                if (wordCount > 1) {
-                                    zipf.push("s");
-                                }
-                                word       = wordAnalyzer.join("");
-                                wordString = topTen.join("");
-                                zipf.push("</th></tr></thead><tbody><tr><th colspan='5'>Unfiltered Word Set</th></tr>");
-                                zipf.push(word);
-                                if (word !== wordString && topTen.length > 2) {
-                                    zipf.push("<tr><th colspan='5'>Filtered Word Set</th></tr>");
-                                    zipf.push(wordString);
-                                }
-                                zipf.push("</tbody></table>");
-                                return zipf.join("");
-                            }()));
-                            report.push("<table class='analysis' summary='Analysis of markup pieces.'><caption>Analysis o" +
-                                "f markup pieces.</caption><thead><tr><th>Type</th><th>Quantity of Tags/Content</" +
-                                "th><th>Percentage Quantity in Section</th><th>Percentage Quantity of Total</th><" +
-                                "th>** Character Size</th><th>Percentage Size in Section</th><th>Percentage Size " +
-                                "of Total</th></tr></thead><tbody><tr><th>Total Pieces</th><td>");
-                            report.push(lengthToken);
-                            report.push("</td><td>100.00%</td><td>100.00%</td><td>");
-                            report.push(lengthChars);
-                            report.push("</td><td>100.00%</td><td>100.00%</td></tr><tr><th colspan='7'>Common Tags</th></" +
-                                "tr>");
-                            report.push(resultsTable);
-                            requestList = [];
-                            for (a = 0; a < requestLength; a += 1) {
-                                if (requests[a] !== undefined) {
-                                    requestItem = ["<li>"];
-                                    requestItem.push(requests[a].replace(/\&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&#34;"));
-                                    requestItem.push("</li>");
-                                    requestList[a] = requestItem.join("");
-                                }
-                            }
-                            if (requestList.length > 0) {
-                                requestOutput = "<h4>HTML elements making HTTP requests:</h4><ul>" + requestList.join("") + "</ul>";
+                        style  = function markuppretty__beautify_style() {
+                            token[a] = csspretty({
+                                mode   : "minify",
+                                objsort: mobjsort,
+                                source : token[a],
+                                topcoms: mtopcomments
+                            });
+                            level.push("x");
+                        };
+                    for (a = 0; a < c; a += 1) {
+                        if (attrs[a].length > 0) {
+                            token[a] = token[a].replace(" ", attrs[a].join(" "));
+                        }
+                        if (types[a] === "script") {
+                            script();
+                        } else if (token[a] === "style") {
+                            style();
+                        } else if (lines[a] > 0) {
+                            if (types[a] === "singleton" || types[a] === "content" || types[a] === "template") {
+                                level.push(0);
+                            } else if (types[a - 1] === "singleton" || types[a - 1] === "content" || types[a] === "template") {
+                                level.push(0);
                             } else {
-                                requestOutput = "";
+                                level.push("x");
                             }
-                            report.push("</tbody></table></div><p>* The number of requests is determined from the input s" +
-                                "ubmitted only and does not count the additional HTTP requests supplied from dyna" +
-                                "mically executed code, frames, iframes, css, or other external entities.</p><p>*" +
-                                "*");
-                            report.push("Character size is measured from the individual pieces of tags and content specif" +
-                                "ically between minification and beautification.</p><p>*** The number of starting" +
-                                " &lt;script&gt; and &lt;style&gt; tags is subtracted from the total number of st" +
-                                "art tags.");
-                            report.push("The combination of those three values from the table above should equal the numb" +
-                                "er of end tags or the code is in error.</p>");
-                            report.push(requestOutput);
-                            return report.join("");
-                        }()),
-                        score           = (function markup_beauty__report_efficiencyScore() {
-                            var reqLen = requests.length,
-                                output = ["<p><strong>Total input size:</strong> <em>"];
-                            output.push(args.source.length.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ","));
-                            output.push("</em> characters</p><p><strong>Total output size:</strong> <em>");
-                            output.push(build.join("").length.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ","));
-                            output.push("</em> characters</p><p><strong>* Total number of HTTP requests in supplied HTML:" +
-                                "</strong> <em>");
-                            output.push(reqLen);
-                            output.push("</em></p>");
-                            return output.join("");
-                        }()),
-                        summaryLanguage = (function markup_beauty__report_summary() {
-                            var startTags = 0,
-                                output    = ["<p><strong>"],
-                                plural    = "";
-                            if (stats[0][0] + stats[0][15] + stats[0][16] !== stats[0][1]) {
-                                plural    = "s";
-                                startTags = (stats[0][0] + stats[0][15] + stats[0][16]) - stats[0][1];
-                                if (startTags > 0) {
-                                    if (startTags === 1) {
-                                        plural = "";
-                                    }
-                                    output.push(startTags);
-                                    output.push(" more start tag");
-                                    output.push(plural);
-                                    output.push(" than end tag");
-                                    output.push(plural);
-                                    output.push("!");
-                                } else {
-                                    if (startTags === -1) {
-                                        plural = "";
-                                    }
-                                    output.push(startTags * -1);
-                                    output.push(" more end tag");
-                                    output.push(plural);
-                                    output.push(" than start tag");
-                                    output.push(plural);
-                                    output.push("!");
-                                }
-                                output.push("</strong></p>");
-                            } else {
-                                return "";
-                            }
-                            return output.join("");
-                        }()),
-                        duplicate       = (id.length > 0) ? "<p><strong class='duplicate'>Duplicate id attribute values detected:</strong> " + id + "</p>" : "",
-                        jserror         = (function markup_beauty__report_jserror() {
-                            if (summary.indexOf("jserror") > 0) {
-                                return summary.slice(summary.indexOf("<p "), summary.indexOf("</p>") + 4);
-                            }
-                            return "";
-                        }());
-                    summary = jserror + summaryLanguage + duplicate + score + tables;
+                        } else {
+                            level.push("x");
+                        }
+                    }
                 }());
             }
-            return build.join("");
+
+            if (mmode === "beautify" || mmode === "diff") {
+                (function markuppretty__beautify() {
+                    var a            = 0,
+                        c            = token.length,
+                        ltype        = "",
+                        lline        = 0,
+                        indent       = minlevel,
+                        cdataS       = "",
+                        cdataE       = "",
+                        commentS     = "",
+                        commentE     = "",
+                        cdataStart   = (/^(\s*(\/)*<\!?\[+[A-Z]+\[+)/),
+                        cdataEnd     = (/((\/)*\]+>\s*)$/),
+                        commentStart = (/^(\s*<\!\-\-)/),
+                        commentEnd   = (/((\/\/)?\-\->\s*)$/),
+                        tab          = (function markuppretty__beautify_tab() {
+                            var b      = msize,
+                                output = [];
+                            for (b; b > -1; b -= 1) {
+                                output.push(mchar);
+                            }
+                            return new RegExp("^(" + output.join("") + "+)");
+                        }()),
+                        tabs         = "",
+                        end          = function markuppretty__beautify_end() {
+                            var b = 0;
+                            indent -= 1;
+                            if (ltype === "start") {
+                                return level.push("x");
+                            }
+                            if (mforce === false) {
+                                if (lines[a] === 0 && (ltype === "singleton" || ltype === "content" || ltype === "template")) {
+                                    return level.push("x");
+                                }
+                                if (ltype === "comment") {
+                                    for (b = a - 1; b > -1; b -= 1) {
+                                        if (types[b] !== "comment") {
+                                            if (lines[b + 1] === 0 && (types[b] === "singleton" || types[b] === "content" || ltype === "template")) {
+                                                for (b += 1; b < a; b += 1) {
+                                                    level[b] = "x";
+                                                }
+                                                return level.push("x");
+                                            }
+                                            return level.push(indent);
+                                        }
+                                    }
+                                }
+                                return level.push(indent);
+                            }
+                            level.push(indent);
+                        },
+                        content      = function markuppretty__beautify_content() {
+                            var b = 0;
+                            if (lines[a] === 0 && mforce === false) {
+                                if (ltype === "comment" && lline === 0) {
+                                    for (b = a - 1; b > -1; b -= 1) {
+                                        if (types[b - 1] !== "comment" && types[b] === "comment") {
+                                            if (lines[b] === 0) {
+                                                for (b; b < a; b += 1) {
+                                                    level[b] = "x";
+                                                }
+                                                return level.push("x");
+                                            }
+                                            return level.push(indent);
+                                        }
+                                        if (lines[b] > 0) {
+                                            return level.push(indent);
+                                        }
+                                    }
+                                    return level.push(indent);
+                                }
+                                level.push("x");
+                            } else {
+                                level.push(indent);
+                            }
+                        },
+                        script       = function markuppretty__beautify_script() {
+                            var list = [];
+                            stats.script[0] += 1;
+                            stats.script[1] += token[a].length - 1;
+                            if (cdataStart.test(token[a]) === true) {
+                                cdataS   = cdataStart.exec(token[a])[0].replace(/^\s+/, "") + "\n";
+                                token[a] = token[a].replace(cdataStart, "");
+                            } else if (commentStart.test(token[a]) === true) {
+                                commentS = commentStart.exec(token[a])[0].replace(/^\s+/, "") + "\n";
+                                token[a] = token[a].replace(commentStart, "");
+                            }
+                            if (cdataEnd.test(token[a]) === true) {
+                                cdataE   = cdataEnd.exec(token[a])[0];
+                                token[a] = token[a].replace(cdataEnd, "");
+                            } else if (commentEnd.test(token[a]) === true) {
+                                commentE = commentEnd.exec(token[a])[0];
+                                token[a] = token[a].replace(commentEnd, "");
+                            }
+                            token[a] = jspretty({
+                                braceline   : mbraceline,
+                                bracepadding: mbracepadding,
+                                braces      : mbraces,
+                                comments    : mcomm,
+                                correct     : mcorrect,
+                                inchar      : mchar,
+                                inlevel     : (mstyle === "noindent") ? 0 : indent,
+                                insize      : msize,
+                                mode        : "beautify",
+                                objsort     : mobjsort,
+                                preserve    : mpreserve,
+                                quoteConvert: mquoteConvert,
+                                source      : token[a],
+                                space       : mspace,
+                                styleguide  : mstyleguide,
+                                varword     : mvarword,
+                                vertical    : (mvertical === "jsonly" || mvertical === true || mvertical === "true") ? true : false
+                            });
+                            list     = tab.exec(token[a]);
+                            if (list !== null) {
+                                tabs = list[0];
+                            }
+                            if (cdataS !== "") {
+                                token[a] = tabs + cdataS + token[a];
+                                cdataS   = "";
+                            } else if (commentS !== "") {
+                                token[a] = tabs + commentS + token[a];
+                                commentS = "";
+                            }
+                            if (cdataE !== "") {
+                                token[a] = token[a] + tabs + cdataE;
+                                cdataE   = "";
+                            } else if (commentE !== "") {
+                                token[a] = token[a] + tabs + commentE;
+                                commentE = "";
+                            }
+                            level.push(0);
+                        },
+                        style        = function markuppretty__beautify_style() {
+                            var list = [];
+                            stats.style[0] += 1;
+                            stats.style[1] += token[a].length;
+                            if (cdataStart.test(token[a]) === true) {
+                                cdataS   = cdataStart.exec(token[a])[0].replace(/^\s+/, "") + "\n";
+                                token[a] = token[a].replace(cdataStart, "");
+                            } else if (commentStart.test(token[a]) === true) {
+                                commentS = commentStart.exec(token[a])[0].replace(/^\s+/, "") + "\n";
+                                token[a] = token[a].replace(commentStart, "");
+                            }
+                            if (cdataEnd.test(token[a]) === true) {
+                                cdataE   = cdataEnd.exec(token[a])[0];
+                                token[a] = token[a].replace(cdataEnd, "");
+                            } else if (commentEnd.test(token[a]) === true) {
+                                commentE = commentEnd.exec(token[a])[0];
+                                token[a] = token[a].replace(commentEnd, "");
+                            }
+                            token[a] = csspretty({
+                                comm          : mcomm,
+                                cssinsertlines: mcssinsertlines,
+                                inchar        : mchar,
+                                inlevel       : (mstyle === "noindent") ? 0 : indent,
+                                insize        : msize,
+                                mode          : "beautify",
+                                objsort       : mobjsort,
+                                source        : token[a],
+                                vertical      : (mvertical === true || mvertical === "true") ? true : false
+                            });
+                            list     = tab.exec(token[a]);
+                            if (list !== null) {
+                                tabs = list[0];
+                            }
+                            if (cdataS !== "") {
+                                token[a] = tabs + cdataS + token[a];
+                                cdataS   = "";
+                            } else if (commentS !== "") {
+                                token[a] = tabs + commentS + token[a];
+                                commentS = "";
+                            }
+                            if (cdataE !== "") {
+                                token[a] = token[a] + tabs + cdataE;
+                                cdataE   = "";
+                            } else if (commentE !== "") {
+                                token[a] = token[a] + tabs + commentE;
+                                commentE = "";
+                            }
+                            level.push(0);
+                        };
+                    for (a = 0; a < c; a += 1) {
+                        if (types[a] === "start") {
+                            level.push(indent);
+                            indent         += 1;
+                            stats.start[0] += 1;
+                            stats.start[1] += token[a].length;
+                        } else if (types[a] === "template_start") {
+                            level.push(indent);
+                            indent            += 1;
+                            stats.template[0] += 1;
+                            stats.template[1] += token[a].length;
+                        } else if (types[a] === "end") {
+                            end();
+                            stats.end[0] += 1;
+                            stats.end[1] += token[a].length;
+                        } else if (types[a] === "template_end") {
+                            end();
+                            stats.template[0] += 1;
+                            stats.template[1] += token[a].length;
+                        } else if (lines[a] === 0 && (types[a] === "singleton" || types[a] === "content" || types[a] === "template")) {
+                            content();
+                            stats[types[a]][0] += 1;
+                            stats[types[a]][1] += token[a].length;
+                        } else if (types[a] === "script") {
+                            stats.script[0] += 1;
+                            stats.script[1] += token[a].length;
+                            script();
+                        } else if (types[a] === "style") {
+                            stats.style[0] += 1;
+                            stats.style[1] += 1;
+                            style();
+                        } else if (types[a] === "comment" && mcomm === "noindent") {
+                            level.push(0);
+                            stats.comment[0] += 1;
+                            stats.comment[1] += token[a].length;
+                        } else {
+                            level.push(indent);
+                            stats[types[a]][0] += 1;
+                            stats[types[a]][1] += token[a].length;
+                        }
+                        ltype = types[a];
+                        lline = lines[a];
+                    }
+                    level[0] = 0;
+                }());
+            }
+
+            return (function markuppretty__apply() {
+                var a       = 0,
+                    c       = level.length,
+                    build   = [],
+                    output  = "",
+                    //tab builds out the character sequence for one step of indentation
+                    tab     = (function markuppretty__apply_tab() {
+                        var aa  = 0,
+                            ind = [mchar];
+                        msize -= 1;
+                        for (aa = 0; aa < msize; aa += 1) {
+                            ind.push(mchar);
+                        }
+                        return ind.join("");
+                    }()),
+                    //a new line character plus the correct amount
+                    //of identation for the given line of code
+                    nl      = function markuppretty__apply_nl(ind, item) {
+                        var aa          = 0,
+                            indentation = ["\n"];
+                        if (mmode === "minify") {
+                            return build.push("\n");
+                        }
+                        if (lines[a] === 2 && item === build) {
+                            indentation.push("\n");
+                        }
+                        for (aa = 0; aa < ind; aa += 1) {
+                            indentation.push(tab);
+                        }
+                        item.push(indentation.join(""));
+                    },
+                    //populates attributes onto start and singleton tags
+                    //it also checks to see if a tag should or content should wrap
+                    wrap    = function markuppretty__apply_wrap() {
+                        var b        = 0,
+                            len      = 0,
+                            list     = attrs[a],
+                            lev      = level[a],
+                            atty     = "",
+                            string   = "",
+                            content  = [],
+                            wordslen = 0;
+                        if (lev === "x") {
+                            b = a;
+                            do {
+                                b   -= 1;
+                                lev = level[b];
+                            } while (lev === "x" && b > -1);
+                            if (lev === "x") {
+                                lev = 1;
+                            }
+                        }
+                        if (list.length > 0) {
+                            atty   = list.join(" ");
+                            string = tagName(token[a]);
+                            len    = string.length + 3 + atty.length;
+                            if (token[a].charAt(token[a].length - 2) === "/") {
+                                len += 1;
+                            }
+                            if (mwrap === 0 || len <= mwrap) {
+                                token[a] = token[a].replace(" ", " " + atty);
+                                return;
+                            }
+                            content.push(token[a].slice(0, token[a].indexOf(" ")));
+                            wordslen = content[0].length;
+                            len      = list.length;
+                            for (b = 0; b < len; b += 1) {
+                                if (list[b].length + wordslen + 1 > mwrap) {
+                                    nl(lev + 1, content);
+                                    wordslen = 0;
+                                } else {
+                                    content.push(" ");
+                                    wordslen += 1;
+                                }
+                                content.push(list[b]);
+                                wordslen += list[b].length;
+                            }
+                            content.push(token[a].slice(token[a].indexOf(" ") + 1));
+                            token[a] = content.join("");
+                        } else {
+                            list = token[a].split(" ");
+                            len  = list.length;
+                            for (b = 0; b < len; b += 1) {
+                                string = string + list[b];
+                                if (list[b + 1] !== undefined && string.length + list[b + 1].length + 1 > mwrap) {
+                                    content.push(string);
+                                    nl(lev, content);
+                                    string = "";
+                                } else {
+                                    string = string + " ";
+                                }
+                            }
+                            if (content.length > 0 && content[content.length - 1].charAt(0) === "\n") {
+                                content.pop();
+                            }
+                            token[a] = content.join("");
+                        }
+                    },
+                    //JSX tags may contain comments, which are captured as
+                    //attributes in this parser.  These attributes demand
+                    //unique care to be correctly applied.
+                    attrcom = function markuppretty__apply_attrcom() {
+                        var toke  = token[a].split(" "),
+                            attr  = attrs[a],
+                            len   = attr.length,
+                            ilen  = 0,
+                            item  = [toke[0]],
+                            temp  = [],
+                            tempx = [],
+                            index = 0,
+                            b     = 0,
+                            x     = 0,
+                            y     = 0;
+                        nl(level[a], build);
+                        for (b = 0; b < len; b += 1) {
+                            index = attr[b].indexOf("\n");
+                            if (index > 0 && index !== attr[b].length - 1 && attr[b].indexOf("/*") === 0) {
+                                temp = attr[b].split("\n");
+                                tempx.push(temp[0]);
+                                y = temp.length;
+                                for (x = 0; x < y; x += 1) {
+                                    if (temp[x] === "") {
+                                        temp[x] = "\n";
+                                    } else {
+                                        nl(level[a] + 1, tempx);
+                                        tempx.push(temp[x].replace(/^(\s+)/, ""));
+                                    }
+                                }
+                                tempx.push("\n");
+                                attr[b] = tempx.join("");
+                            }
+                            if (b > 0 && attr[b - 1].charAt(attr[b - 1].length - 1) === "\n") {
+                                nl(level[a] + 1, item);
+                                ilen       = item.length - 1;
+                                item[ilen] = item[ilen].slice(1);
+                            } else {
+                                item.push(" ");
+                            }
+                            item.push(attr[b]);
+                        }
+                        if (attr[len - 1].charAt(attr[len - 1].length - 1) === "\n") {
+                            nl(level[a], item);
+                            ilen       = item.length - 1;
+                            item[ilen] = item[ilen].slice(1);
+                        }
+                        item.push(toke[1]);
+                        build.push(item.join(""));
+                    };
+                for (a = 0; a < c; a += 1) {
+                    if (jscom[a] === true) {
+                        attrcom();
+                    } else if ((types[a] === "content" && mwrap > 0 && token[a].length > mwrap) || attrs[a].length > 0) {
+                        wrap();
+                    }
+                    if (token[a] !== "</prettydiffli>") {
+                        if (isNaN(level[a]) === false) {
+                            nl(level[a], build);
+                        } else if (level[a] === "s") {
+                            build.push(" ");
+                        }
+                        build.push(token[a]);
+                    }
+                }
+                if (build[0] === "\n") {
+                    build[0] = "";
+                }
+                output = build.join("");
+                if (mmode === "beautify") {
+                    summary = (function markuppretty__apply_summary() {
+                        var len        = token.length,
+                            sum        = [],
+                            startend   = stats.start[0] - stats.end[0],
+                            statistics = (function markuppretty__apply_summary_statistics() {
+                                var stat       = [],
+                                    totalItems = stats.cdata[0] + stats.comment[0] + stats.content[0] + stats.end[0] + stats.ignore[0] + stats.script[0] + stats.sgml[0] + stats.singleton[0] + stats.start[0] + stats.style[0] + stats.template[0] + stats.text[0] + stats.xml[0],
+                                    totalSizes = stats.cdata[1] + stats.comment[1] + stats.content[1] + stats.end[1] + stats.ignore[1] + stats.script[1] + stats.sgml[1] + stats.singleton[1] + stats.start[1] + stats.style[1] + stats.template[1] + stats.text[1] + stats.xml[1],
+                                    rowBuilder = function markuppretty__apply_summary_stats_rowBuilder(type) {
+                                        var itema = (type === "Total") ? totalItems : stats[type][0],
+                                            itemb = (type === "Total") ? totalSizes : stats[type][1];
+                                        stat.push("<tr><th>");
+                                        stat.push(type);
+                                        stat.push("</th><td>");
+                                        stat.push(itema);
+                                        stat.push("</td><td");
+                                        if (startend !== 0 && (type === "start" || type === "end")) {
+                                            stat.push(" class=\"bad\"");
+                                        }
+                                        stat.push(">");
+                                        stat.push(((itema / totalItems) * 100).toFixed(2));
+                                        stat.push("%</td><td>");
+                                        stat.push(itemb);
+                                        stat.push("</td><td>");
+                                        stat.push(((itemb / totalSizes) * 100).toFixed(2));
+                                        stat.push("%</td></tr>");
+                                    };
+                                stat.push("<h4>Statistics and analysis of parsed code</h4>");
+                                stat.push("<table class='analysis' summary='Statistics'><caption>This table provides basic " +
+                                    "statistics about the parsed components of the given code sample..</caption>");
+                                stat.push("<thead><tr><th>Item type</th><th>Number of instances</th><th>Percentage of total" +
+                                    " items</th><th>Character size</th><th>Percentage of total size</th></tr></thead>");
+                                stat.push("<tbody>");
+                                rowBuilder("Total");
+                                rowBuilder("cdata");
+                                rowBuilder("comment");
+                                rowBuilder("content");
+                                rowBuilder("end");
+                                rowBuilder("ignore");
+                                rowBuilder("script");
+                                rowBuilder("sgml");
+                                rowBuilder("singleton");
+                                rowBuilder("start");
+                                rowBuilder("style");
+                                rowBuilder("template");
+                                rowBuilder("text");
+                                rowBuilder("xml");
+                                stat.push("</tbody></table>");
+                                return stat.join("");
+                            }()),
+                            numformat  = function markuppretty__apply_summary_numformat(x) {
+                                var y    = String(x).split(""),
+                                    z    = 0,
+                                    xlen = y.length,
+                                    dif  = 0;
+                                if (xlen % 3 === 2) {
+                                    dif = 2;
+                                } else if (xlen % 3 === 1) {
+                                    dif = 1;
+                                }
+                                for (z = xlen - 1; z > 0; z -= 1) {
+                                    if ((z % 3) - dif === 0) {
+                                        y[z] = "," + y[z];
+                                    }
+                                }
+                                return y.join("");
+                            },
+                            analysis   = function markuppretty__apply_summary_analysis(arr) {
+                                var x       = arr.length,
+                                    idtest  = (arr === ids) ? true : false,
+                                    y       = 0,
+                                    data    = [],
+                                    content = [];
+                                if (x > 0) {
+                                    arr = safeSort(arr);
+                                    for (y = 0; y < x; y += 1) {
+                                        if (arr[y] === arr[y + 1]) {
+                                            if (idtest === true && (data.length === 0 || data[data.length - 1][1] !== arr[y])) {
+                                                data.push([
+                                                    2, arr[y]
+                                                ]);
+                                            }
+                                            data[data.length - 1][0] += 1;
+                                        } else if (idtest === false) {
+                                            data.push([
+                                                1, arr[y]
+                                            ]);
+                                        }
+                                    }
+                                    x = data.length;
+                                    if (idtest === true) {
+                                        if (x === 0) {
+                                            return "";
+                                        }
+                                        content.push("<h4>Duplicate id attribute values</h4>");
+                                    } else {
+                                        content.push("<h4>HTTP requests:</h4>");
+                                    }
+                                    content.push("<ul>");
+                                    for (y = 0; y < x; y += 1) {
+                                        content.push("<li>");
+                                        content.push(data[y][0]);
+                                        content.push("x - ");
+                                        content.push(data[y][1]);
+                                        content.push("</li>");
+                                    }
+                                    content.push("</ul>");
+                                    return content.join("");
+                                }
+                                return "";
+                            },
+                            zipf       = (function markuppretty__apply_summary_zipf() {
+                                var x          = 0,
+                                    wordlen    = 0,
+                                    wordcount  = 0,
+                                    word       = "",
+                                    ratio      = "",
+                                    wordlist   = [],
+                                    wordtotal  = [],
+                                    wordproper = [],
+                                    zipfout    = [],
+                                    identical  = true,
+                                    sortchild  = function markuppretty__apply_summary_zipf_sortchild(y, z) {
+                                        return z[0] - y[0];
+                                    };
+                                for (x; x < len; x += 1) {
+                                    if (types[x] === "content") {
+                                        wordlist.push(token[x]);
+                                    }
+                                }
+                                wordlist = safeSort(wordlist.join(" ").toLowerCase().replace(/\&nbsp;?/gi, " ").replace(/(\,|\.|\?|\!|\:|\(|\)|"|\{|\}|\[|\])/g, "").replace(/\s+/g, " ").replace(/&/g, "&amp;").replace(/>/g, "&gt;").replace(/</g, "&lt;").split(" "));
+                                wordlen  = wordlist.length;
+                                for (x = 0; x < wordlen; x += 1) {
+                                    word = wordlist[x];
+                                    if (word.length > 2 && word.length < 30 && (/&\#?\w+;/).test(word) === false && word !== "the" && word !== "and" && word !== "for" && word !== "are" && word !== "this" && word !== "from" && word !== "with" && word !== "that" && word !== "to") {
+                                        if (wordproper.length === 0 || word !== wordproper[wordproper.length - 1][1]) {
+                                            wordproper.push([
+                                                1, word
+                                            ]);
+                                        } else {
+                                            wordproper[wordproper.length - 1][0] += 1;
+                                        }
+                                    }
+                                    if (word !== wordlist[x - 1]) {
+                                        wordtotal.push([
+                                            1, word
+                                        ]);
+                                    } else {
+                                        wordtotal[wordtotal.length - 1][0] += 1;
+                                    }
+                                }
+                                wordtotal  = wordtotal.sort(sortchild).slice(0, 11);
+                                wordproper = wordproper.sort(sortchild).slice(0, 11);
+                                wordlen    = (wordproper.length > 10) ? 11 : wordproper.length;
+                                for (x = 0; x < wordlen; x += 1) {
+                                    if (wordtotal[x][1] !== wordproper[x][1]) {
+                                        identical = false;
+                                        break;
+                                    }
+                                }
+                                wordlen = (wordtotal.length > 10) ? 10 : wordtotal.length;
+                                if (wordlen > 1) {
+                                    wordcount = wordlist.length;
+                                    zipfout.push("<h4>Zipf's Law analysis of content</h4>");
+                                    zipfout.push("<table class='analysis' summary='Zipf&#39;s Law'><caption>This table demonstrate" +
+                                        "s <em>Zipf&#39;s Law</em> by listing the 10 most occuring words in the content a" +
+                                        "nd the number of times they occurred.</caption>");
+                                    zipfout.push("<thead><tr><th>Word Rank</th><th>Most Occurring Word by Rank</th><th>Number of I" +
+                                        "nstances</th><th>Ratio Increased Over Next Most Frequence Occurance</th><th>Perc" +
+                                        "entage from ");
+                                    zipfout.push(wordcount);
+                                    zipfout.push(" total words</th></tr></thead><tbody>");
+                                    if (identical === false) {
+                                        zipfout.push("<tr><th colspan='5'>Unfiltered Word Set</th></tr>");
+                                    }
+                                    for (x = 0; x < wordlen; x += 1) {
+                                        ratio = (wordtotal[x + 1] !== undefined) ? (wordtotal[x][0] / wordtotal[x + 1][0]).toFixed(2) : "1.00";
+                                        zipfout.push("<tr><td>");
+                                        zipfout.push(x + 1);
+                                        zipfout.push("</td><td>");
+                                        zipfout.push(wordtotal[x][1]);
+                                        zipfout.push("</td><td>");
+                                        zipfout.push(wordtotal[x][0]);
+                                        zipfout.push("</td><td>");
+                                        zipfout.push(ratio);
+                                        zipfout.push("</td><td>");
+                                        zipfout.push(((wordtotal[x][0] / wordcount) * 100).toFixed(2));
+                                        zipfout.push("%</td></tr>");
+                                    }
+                                    wordlen = (wordproper.length > 10) ? 10 : wordproper.length;
+                                    if (wordlen > 1 && identical === false) {
+                                        zipfout.push("<tr><th colspan='5'>Filtered Word Set</th></tr>");
+                                        for (x = 0; x < wordlen; x += 1) {
+                                            ratio = (wordproper[x + 1] !== undefined) ? (wordproper[x][0] / wordproper[x + 1][0]).toFixed(2) : "1.00";
+                                            zipfout.push("<tr><td>");
+                                            zipfout.push(x + 1);
+                                            zipfout.push("</td><td>");
+                                            zipfout.push(wordproper[x][1]);
+                                            zipfout.push("</td><td>");
+                                            zipfout.push(wordproper[x][0]);
+                                            zipfout.push("</td><td>");
+                                            zipfout.push(ratio);
+                                            zipfout.push("</td><td>");
+                                            zipfout.push(((wordproper[x][0] / wordcount) * 100).toFixed(2));
+                                            zipfout.push("%</td></tr>");
+                                        }
+                                    }
+                                    zipfout.push("</tbody></table>");
+                                }
+                                return zipfout.join("");
+                            }());
+
+                        if (startend > 0) {
+                            sum.push("<p><strong>");
+                            sum.push(startend);
+                            sum.push(" more start tag");
+                            if (startend > 1) {
+                                sum.push("s");
+                            }
+                            sum.push(" than end tags!</strong></p>");
+                        } else if (startend < 0) {
+                            startend = startend * -1;
+                            sum.push("<p><strong>");
+                            sum.push(startend);
+                            sum.push(" more end tag");
+                            if (startend > 1) {
+                                sum.push("s");
+                            }
+                            sum.push(" than start tags!</strong></p>");
+                        }
+                        sum.push("<p><strong>Total input size:</strong> <em>");
+                        sum.push(numformat(msource.length));
+                        sum.push("</em> characters</p>");
+                        sum.push("<p><strong>Total output size:</strong> <em>");
+                        sum.push(numformat(output.length));
+                        sum.push("</em> characters</p>");
+                        sum.push("<p><strong>Total number of HTTP requests (presuming HTML or XML Schema):</strong" +
+                            "> <em>");
+                        sum.push(reqs.length);
+                        sum.push("</em></p>");
+                        sum.push("<div class='doc'>");
+                        sum.push(analysis(ids));
+                        sum.push(zipf);
+                        sum.push(statistics);
+                        sum.push(analysis(reqs));
+                        sum.push("</div>");
+                        return sum.join("");
+                    }());
+                }
+                return output;
+            }());
+
         };
         return core(api);
     },
@@ -11418,28 +9780,27 @@ var prettydiff = function prettydiff(api) {
             ace: 150519
         },
         api          : {
-            dom      : 150526,
+            dom      : 150616,
             nodeLocal: 150415,
             wsh      : 150415
         },
         charDecoder  : 141025,
         css          : 150525, //diffview.css file
-        csspretty    : 150526, //csspretty library
+        csspretty    : 150616, //csspretty library
         csvbeauty    : 140114, //csvbeauty library
         csvmin       : 131224, //csvmin library
         diffview     : 150501, //diffview library
-        documentation: 150509, //documentation.xhtml
-        jspretty     : 150526, //jspretty library
+        documentation: 150616, //documentation.xhtml
+        jspretty     : 150616, //jspretty library
         latest       : 0,
-        markup_beauty: 150525, //markup_beauty library
-        markupmin    : 150525, //markupmin library
-        prettydiff   : 150525, //this file
-        version      : "1.11.21", //version number
+        markuppretty : 150616, //markuppretty library
+        prettydiff   : 150616, //this file
+        version      : "1.12.a", //version number
         webtool      : 150509
     };
 edition.latest = (function edition_latest() {
     "use strict";
-    return Math.max(edition.charDecoder, edition.css, edition.csspretty, edition.csvbeauty, edition.csvmin, edition.diffview, edition.documentation, edition.jspretty, edition.markup_beauty, edition.markupmin, edition.prettydiff, edition.webtool, edition.api.dom, edition.api.nodeLocal, edition.api.wsh);
+    return Math.max(edition.charDecoder, edition.css, edition.csspretty, edition.csvbeauty, edition.csvmin, edition.diffview, edition.documentation, edition.jspretty, edition.markuppretty, edition.prettydiff, edition.webtool, edition.api.dom, edition.api.nodeLocal, edition.api.wsh);
 }());
 if (typeof exports === "object" || typeof exports === "function") { //commonjs and nodejs support
     exports.edition = edition;
