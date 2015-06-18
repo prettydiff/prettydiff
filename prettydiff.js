@@ -8930,7 +8930,7 @@ var prettydiff = function prettydiff(api) {
                         if (preserve === true) {
                             token.push(element);
                         } else {
-                            token.push(element.replace(/\s+/g, " ").replace(/( \/>)/, "/>"));
+                            token.push(element.replace(/\s+/g, " "));
                         }
                     },
                     content  = function markuppretty__tokenize_content() {
@@ -9058,7 +9058,7 @@ var prettydiff = function prettydiff(api) {
                         };
                     for (a = 0; a < c; a += 1) {
                         if (attrs[a].length > 0) {
-                            token[a] = token[a].replace(" ", " " + attrs[a].join(" "));
+                            token[a] = token[a].replace(" ", " " + attrs[a].join(" ")).replace(/( \/>)$/, "/>");
                         }
                         if (lines[a] === 2) {
                             if (mpreserve === true) {
@@ -9108,7 +9108,7 @@ var prettydiff = function prettydiff(api) {
                         };
                     for (a = 0; a < c; a += 1) {
                         if (attrs[a].length > 0) {
-                            token[a] = token[a].replace(" ", attrs[a].join(" "));
+                            token[a] = token[a].replace(" ", attrs[a].join(" ")).replace(/( \/>)$/, "/>");
                         }
                         if (types[a] === "script") {
                             script();
@@ -9418,7 +9418,7 @@ var prettydiff = function prettydiff(api) {
                                 len += 1;
                             }
                             if (mwrap === 0 || len <= mwrap) {
-                                token[a] = token[a].replace(" ", " " + atty);
+                                token[a] = token[a].replace(" ", " " + atty).replace(/( \/>)$/, "/>");
                                 return;
                             }
                             content.push(token[a].slice(0, token[a].indexOf(" ")));
@@ -9436,7 +9436,7 @@ var prettydiff = function prettydiff(api) {
                                 wordslen += list[b].length;
                             }
                             content.push(token[a].slice(token[a].indexOf(" ") + 1));
-                            token[a] = content.join("");
+                            token[a] = content.join("").replace(/( \/>)$/, "/>");
                         } else {
                             list = token[a].split(" ");
                             len  = list.length;
@@ -9453,7 +9453,7 @@ var prettydiff = function prettydiff(api) {
                             if (content.length > 0 && content[content.length - 1].charAt(0) === "\n") {
                                 content.pop();
                             }
-                            token[a] = content.join("");
+                            token[a] = content.join("").replace(/( \/>)$/, "/>");
                         }
                     },
                     //JSX tags may contain comments, which are captured as
@@ -9615,31 +9615,32 @@ var prettydiff = function prettydiff(api) {
                                         tagname = tagName(token[b]);
                                         if ((types[b] === "start" || types[b] === "singleton") && (tagname === "font" || tagname === "center" || tagname === "basefont" || tagname === "b" || tagname === "i" || tagname === "u" || tagname === "small" || tagname === "big" || tagname === "blink" || tagname === "plaintext" || tagname === "spacer" || tagname === "strike" || tagname === "tt" || tagname === "xmp")) {
                                             presentationEl.push(b);
-                                        } else if (types[b] === "singleton" && tagname === "img") {
+                                        } else {
+                                            if (types[b] === "start" && headtest.test(tagname) === true) {
+                                                z = Number(tagname.charAt(1));
+                                                if (headings.length > 0 && z - headings[headings.length - 1][1] > 1) {
+                                                    violations += 1;
+                                                    headings.push([b, z, true]);
+                                                } else {
+                                                    headings.push([b, z, false]);
+                                                }
+                                            }
                                             y = attrs[b].length;
                                             for (x = 0; x < y; x += 1) {
                                                 attr = attrName(attrs[b][x]);
-                                                if (attr[0] === "alt") {
+                                                if (attr[0] === "alt" && tagname === "img") {
                                                     alttest = true;
                                                     if (attr[1] === "" || attr[1] === "\"\"" || attr[1] === "''") {
                                                         emptyalt.push(b);
                                                     }
-                                                } else if (presentationEl[presentationEl.length - 1] !== b && (attr[0] === "alink" || attr[0] === "align" || attr[0] === "background" || attr[0] === "border" || attr[0] === "color" || attr[0] === "compact" || attr[0] === "face" || attr[0] === "height" || attr[0] === "language" || attr[0] === "link" || (attr[0] === "name" && tagname !== "select" && tagname !== "input" && tagname !== "textarea") || attr[0] === "nowrap" || attr[0] === "size" || attr[0] === "start" || attr[0] === "text" || (attr[0] === "type" && tagname !== "script" && tagname !== "style") || attr[0] === "value" || attr[0] === "version" || attr[0] === "vlink" || attr[0] === "width")) {
-                                                    presentationAt.push([b, x]);
+                                                } else if (presentationEl[presentationEl.length - 1] !== b && (attr[0] === "alink" || attr[0] === "align" || attr[0] === "background" || attr[0] === "border" || attr[0] === "color" || attr[0] === "compact" || attr[0] === "face" || attr[0] === "height" || attr[0] === "language" || attr[0] === "link" || (attr[0] === "name" && tagname !== "meta" && tagname !== "select" && tagname !== "input" && tagname !== "textarea") || attr[0] === "nowrap" || attr[0] === "size" || attr[0] === "start" || attr[0] === "text" || (attr[0] === "type" && tagname !== "script" && tagname !== "style" && tagname !== "input") || (attr[0] === "value" && tagname !== "input" && tagname !== "option" && tagname !== "textarea") || attr[0] === "version" || attr[0] === "vlink" || attr[0] === "width")) {
+                                                    presentationAt.push([b, x]);console.log(tagname+" "+attr[0])
                                                 }
                                             }
                                             if (alttest === true) {
                                                 alttest = false;
-                                            } else {
+                                            } else if (tagname === "img") {
                                                 noalt.push(b);
-                                            }
-                                        } else if (types[b] === "start" && headtest.test(tagname) === true) {
-                                            z = Number(tagname.charAt(1));
-                                            if (headings.length > 0 && z - headings[headings.length - 1][1] > 1) {
-                                                violations += 1;
-                                                headings.push([b, z, true]);
-                                            } else {
-                                                headings.push([b, z, false]);
                                             }
                                         }
                                     }
