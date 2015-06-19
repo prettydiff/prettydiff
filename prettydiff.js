@@ -5440,7 +5440,7 @@ var prettydiff = function prettydiff(api) {
                             ltype = "method";
                         } else if (ltype === "comment" || ltype === "comment-inline" || ltype === "start") {
                             ltype = "start";
-                        } else if (lengtha > 2 && token[lengtha - 2] === "function") {
+                        } else if ((token[lengtha - 1] === "function" && jspace === false) || token[token.length - 2] === "function") {
                             ltype = "method";
                         } else if (lengtha === 0 || ltoke === "return" || ltoke === "function" || ltoke === "for" || ltoke === "if" || ltoke === "with" || ltoke === "while" || ltoke === "switch" || ltoke === "catch" || ltype === "separator" || ltype === "operator" || (a > 0 && (/\s/).test(c[a - 1]) === true)) {
                             ltype = "start";
@@ -5735,7 +5735,6 @@ var prettydiff = function prettydiff(api) {
                         list       = [],
                         listtest   = [],
                         lastlist   = false,
-                        operand    = false,
                         ternary    = [],
                         varline    = [],
                         casetest   = [],
@@ -5905,10 +5904,6 @@ var prettydiff = function prettydiff(api) {
                                 if (obj[obj.length - 1] === true) {
                                     return level.push(indent);
                                 }
-                                if (operand === true) {
-                                    operand = false;
-                                    return level.push(indent);
-                                }
                                 if (list[list.length - 1] === true) {
                                     return (function jspretty__algorithm_separator_inList() {
                                         var c = 0,
@@ -5953,7 +5948,6 @@ var prettydiff = function prettydiff(api) {
                                 return level.push(indent);
                             }
                             if (ctoke === ";" || ctoke === "x;") {
-                                operand = false;
                                 if (ternary.length > 0) {
                                     ternary[ternary.length - 1] = false;
                                 }
@@ -6120,7 +6114,6 @@ var prettydiff = function prettydiff(api) {
                             return level.push("x");
                         },
                         end        = function jspretty__algorithm_end() {
-                            operand = false;
                             if (fortest === 1 && ctoke === ")" && varline[varline.length - 1] === true) {
                                 varline[varline.length - 1] = false;
                             }
@@ -6314,7 +6307,6 @@ var prettydiff = function prettydiff(api) {
                             obj.pop();
                         },
                         operator   = function jspretty__algorithm_operator() {
-                            operand = true;
                             if (ctoke === "!" || ctoke === "...") {
                                 if (ltoke === "(") {
                                     level[a - 1] = "x";
@@ -6556,8 +6548,10 @@ var prettydiff = function prettydiff(api) {
                             if (ctoke === "this" && jsscope !== "none") {
                                 token[a] = "<strong class='new'>this</strong>";
                             }
-                            if (ctoke === "function" && jspace === false && a < b - 1 && token[a + 1] === "(") {
-                                return level.push("x");
+                            if (ctoke === "function") {
+                                if (jspace === false && a < b - 1 && token[a + 1] === "(") {
+                                    return level.push("x");
+                                }
                             }
                             if (ctoke === "return") {
                                 listtest[listtest.length - 1] = false;
@@ -8318,15 +8312,20 @@ var prettydiff = function prettydiff(api) {
                 },
                 attrName  = function markuppretty__attrName(atty) {
                     var index = atty.indexOf("="),
-                        name = "";
+                        name = "",
+                        value = "";
                     if (index < 0) {
                         return [atty, ""];
                     }
                     name = atty.slice(0, index);
-                    if (mhtml === true) {
-                        return [name.toLowerCase(), atty.slice(index + 1)];
+                    value = atty.slice(index + 1);
+                    if ((value.charAt(0) === "\"" && value.charAt(value.length - 1) === "\"") || (value.charAt(0) === "'" && value.charAt(value.length - 1) === "'")) {
+                        value = value.slice(1, value.length - 1);
                     }
-                    return [name, atty.slice(index + 1)];
+                    if (mhtml === true) {
+                        return [name.toLowerCase(), value.toLowerCase()];
+                    }
+                    return [name, value];
                 };
             //type definitions:
             //start      end     type
@@ -9606,6 +9605,8 @@ var prettydiff = function prettydiff(api) {
                                         z = 0,
                                         tagname = "",
                                         alttest = false,
+                                        id      = false,
+                                        fortest = false,
                                         attr = [],
                                         noalt = [],
                                         emptyalt = [],
@@ -9613,7 +9614,11 @@ var prettydiff = function prettydiff(api) {
                                         headtest = (/^(h\d)$/),
                                         presentationEl = [],
                                         presentationAt = [],
-                                        tabindex = [];
+                                        tabindex = [],
+                                        formnoID = [],
+                                        formID = [],
+                                        labelFor = [],
+                                        nofor = [];
                                     for (b = 0; b < c; b += 1) {
                                         tagname = tagName(token[b]);
                                         if ((types[b] === "start" || types[b] === "singleton") && (tagname === "font" || tagname === "center" || tagname === "basefont" || tagname === "b" || tagname === "i" || tagname === "u" || tagname === "small" || tagname === "big" || tagname === "blink" || tagname === "plaintext" || tagname === "spacer" || tagname === "strike" || tagname === "tt" || tagname === "xmp")) {
@@ -9633,8 +9638,19 @@ var prettydiff = function prettydiff(api) {
                                                 attr = attrName(attrs[b][x]);
                                                 if (attr[0] === "alt" && tagname === "img") {
                                                     alttest = true;
-                                                    if (attr[1] === "" || attr[1] === "\"\"" || attr[1] === "''") {
+                                                    if (attr[1] === "") {
                                                         emptyalt.push(b);
+                                                    }
+                                                }
+                                                if (tagname === "label" && attr[0] === "for") {
+                                                    labelFor.push(attr[1]);
+                                                    fortest = true;
+                                                } else if (tagname === "select" || tagname === "input" || tagname === "textarea") {
+                                                    if (attr[0] === "id" || (attr[0] === "type" && (attr[1].toLowerCase() === "hidden" || attr[1].toLowerCase() === "submit"))) {
+                                                        id = true;
+                                                        if (attr[0] === "id") {
+                                                            formID.push([b, x]);
+                                                        }
                                                     }
                                                 }
                                                 if (presentationEl[presentationEl.length - 1] !== b && (attr[0] === "alink" || attr[0] === "align" || attr[0] === "background" || attr[0] === "border" || attr[0] === "color" || attr[0] === "compact" || attr[0] === "face" || attr[0] === "height" || attr[0] === "language" || attr[0] === "link" || (attr[0] === "name" && tagname !== "meta" && tagname !== "iframe" && tagname !== "select" && tagname !== "input" && tagname !== "textarea") || attr[0] === "nowrap" || attr[0] === "size" || attr[0] === "start" || attr[0] === "text" || (attr[0] === "type" && tagname !== "script" && tagname !== "style" && tagname !== "input") || (attr[0] === "value" && tagname !== "input" && tagname !== "option" && tagname !== "textarea") || attr[0] === "version" || attr[0] === "vlink" || attr[0] === "width")) {
@@ -9647,6 +9663,16 @@ var prettydiff = function prettydiff(api) {
                                                         tabindex.push([b, false]);
                                                     }
                                                 }
+                                            }
+                                            if (fortest === true) {
+                                                fortest = false;
+                                            } else if (tagname === "label") {
+                                                nofor.push(b);
+                                            }
+                                            if (id === true) {
+                                                id = false;
+                                            } else if (tagname === "select" || tagname === "input" || tagname === "textarea") {
+                                                formnoID.push(b);
                                             }
                                             if (alttest === true) {
                                                 alttest = false;
@@ -9684,13 +9710,13 @@ var prettydiff = function prettydiff(api) {
                                     b = presentationAt.length;
                                     if (b > 0) {
                                         z = 0;
-                                        attr.push("<h4><strong>");
                                         y = attr.length;
-                                        attr.push("</strong> HTML tags containing obsolete attribute");
+                                        attr.push("<h4><strong>");
+                                        attr.push("</strong> HTML tag");
                                         if (b > 1) {
                                             attr.push("s");
                                         }
-                                        attr.push("</h4> <p>Obsolete elements do not appropriately describe content.</p> <ol>");
+                                        attr.push(" containing obsolete or inappropriate attributes</h4> <p>Obsolete elements do not appropriately describe content.</p> <ol>");
                                         for (x = 0; x < b; x += 1) {
                                             tagname = token[presentationAt[x][0]].replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(attrs[presentationAt[x][0]][presentationAt[x][1]], "<strong>" + attrs[presentationAt[x][0]][presentationAt[x][1]] + "</strong>");
                                             if (x < b - 1 && presentationAt[x][0] === presentationAt[x + 1][0]) {
@@ -9710,7 +9736,65 @@ var prettydiff = function prettydiff(api) {
                                         violations += z;
                                         attr.push("</ol>");
                                     } else {
-                                        attr.push("<h4><strong>0</strong> obsolete HTML tags</h4>");
+                                        attr.push("<h4><strong>0</strong> HTML tags containing obsolete or inappropriate attributes</h4>");
+                                    }
+
+                                    //form controls missing a required 'id' attribute
+                                    b = formnoID.length;
+                                    violations += b;
+                                    if (b > 0) {
+                                        attr.push("<h4><strong>");
+                                        attr.push(b);
+                                        attr.push("</strong> form control element");
+                                        if (b > 1) {
+                                            attr.push("s");
+                                        }
+                                        attr.push(" missing a required <em>id</em> attribute</h4> <p>The id attribute is required to bind a point of interaction to an HTML label.</p> <ol>");
+                                        for (x = 0; x < b; x += 1) {
+                                            attr.push("<li><code>");
+                                            attr.push(token[formnoID[x]].replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;"));
+                                            attr.push("</code> on input line number ");
+                                            attr.push(linen[formnoID[x]]);
+                                            attr.push("</li>");
+                                        }
+                                        attr.push("</ol>");
+                                    } else {
+                                        attr.push("<h4><strong>0</strong> form control elements missing a required <em>id</em> attribute</h4> <p>The id attribute is required to bind a point of interaction to an HTML label.</p>");
+                                    }
+
+                                    //form controls missing a binding to a label
+                                    b = formID.length;
+                                    formnoID = [];
+                                    for (x = 0; x < b; x += 1) {
+                                        for (y = labelFor.length - 1; y > -1; y -= 1) {
+                                            if (attrName(attrs[formID[x][0]][formID[x][1]])[1] === labelFor[y]) {
+                                                break;
+                                            }
+                                        }
+                                        if (y < 0) {
+                                            formnoID.push(formID[x]);
+                                        }
+                                    }
+                                    b = formnoID.length;
+                                    violations += b;
+                                    if (b > 0) {
+                                        attr.push("<h4><strong>");
+                                        attr.push(b);
+                                        attr.push("</strong> form control element");
+                                        if (b > 1) {
+                                            attr.push("s");
+                                        }
+                                        attr.push(" not bound to a label</h4> <p>The <em>id</em> of a form control must match the <em>for</em> of a label.</p><ol>");
+                                        for (x = 0; x < b; x += 1) {
+                                            attr.push("<li><code>");
+                                            attr.push(token[formnoID[x][0]].replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;"));
+                                            attr.push("</code> on input line number ");
+                                            attr.push(linen[formnoID[x][0]]);
+                                            attr.push("</li>");
+                                        }
+                                        attr.push("</ol>");
+                                    } else {
+                                        attr.push("<h4><strong>0</strong> form control elements not bound to a label</h4> <p>The <em>id</em> of a form control must match the <em>for</em> of a label.</p>");
                                     }
 
                                     //elements with tabindex
@@ -9877,26 +9961,26 @@ var prettydiff = function prettydiff(api) {
                                     rowBuilder = function markuppretty__apply_summary_stats_rowBuilder(type) {
                                         var itema = (type === "Total*") ? totalItems : stats[type][0],
                                             itemb = (type === "Total*") ? totalSizes : stats[type][1];
-                                        stat.push("<tr");
-                                        if (itema > 0 && (type === "script" || type === "style")) {
-                                            stat.push(" class='bad'");
-                                        }
-                                        stat.push("><th>");
+                                        stat.push("<tr><th>");
                                         stat.push(type);
                                         if (itema > 0 && (type === "script" || type === "style")) {
                                             stat.push("**");
                                         }
-                                        stat.push("</th><td>");
-                                        stat.push(itema);
-                                        stat.push("</td><td");
+                                        stat.push("</th><td");
                                         if (startend !== 0 && (type === "start" || type === "end")) {
                                             stat.push(" class=\"bad\"");
                                         }
                                         stat.push(">");
+                                        stat.push(itema);
+                                        stat.push("</td><td>");
                                         stat.push(((itema / totalItems) * 100).toFixed(2));
                                         stat.push("%</td><td>");
                                         stat.push(itemb);
-                                        stat.push("</td><td>");
+                                        stat.push("</td><td");
+                                        if (itema > 0 && (type === "script" || type === "style")) {
+                                            stat.push(" class='bad'");
+                                        }
+                                        stat.push(">");
                                         stat.push(((itemb / totalSizes) * 100).toFixed(2));
                                         stat.push("%</td></tr>");
                                     };
