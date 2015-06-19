@@ -8311,7 +8311,9 @@ var prettydiff = function prettydiff(api) {
                 //What is the lowercase tag name of the provided token?
                 tagName         = function markuppretty__tagName(el) {
                     var space = el.indexOf(" "),
-                        name  = (space < 0) ? el.slice(1, el.length - 1) : el.slice(1, space).toLowerCase();
+                        nl    = el.indexOf("\n"),
+                        index = (nl < space && nl > -1) ? nl : space,
+                        name  = (index < 0) ? el.slice(1, el.length - 1) : el.slice(1, index).toLowerCase();
                     return name;
                 },
                 attrName  = function markuppretty__attrName(atty) {
@@ -9208,7 +9210,7 @@ var prettydiff = function prettydiff(api) {
                         script       = function markuppretty__beautify_script() {
                             var list = [];
                             stats.script[0] += 1;
-                            stats.script[1] += token[a].length - 1;
+                            stats.script[1] += token[a].replace(/\s+/g, " ").length;
                             if (cdataStart.test(token[a]) === true) {
                                 cdataS   = cdataStart.exec(token[a])[0].replace(/^\s+/, "") + "\n";
                                 token[a] = token[a].replace(cdataStart, "");
@@ -9265,7 +9267,7 @@ var prettydiff = function prettydiff(api) {
                         style        = function markuppretty__beautify_style() {
                             var list = [];
                             stats.style[0] += 1;
-                            stats.style[1] += token[a].length;
+                            stats.style[1] += token[a].replace(/\s+/g, " ").length;
                             if (cdataStart.test(token[a]) === true) {
                                 cdataS   = cdataStart.exec(token[a])[0].replace(/^\s+/, "") + "\n";
                                 token[a] = token[a].replace(cdataStart, "");
@@ -9610,7 +9612,8 @@ var prettydiff = function prettydiff(api) {
                                         headings = [],
                                         headtest = (/^(h\d)$/),
                                         presentationEl = [],
-                                        presentationAt = [];
+                                        presentationAt = [],
+                                        tabindex = [];
                                     for (b = 0; b < c; b += 1) {
                                         tagname = tagName(token[b]);
                                         if ((types[b] === "start" || types[b] === "singleton") && (tagname === "font" || tagname === "center" || tagname === "basefont" || tagname === "b" || tagname === "i" || tagname === "u" || tagname === "small" || tagname === "big" || tagname === "blink" || tagname === "plaintext" || tagname === "spacer" || tagname === "strike" || tagname === "tt" || tagname === "xmp")) {
@@ -9633,8 +9636,16 @@ var prettydiff = function prettydiff(api) {
                                                     if (attr[1] === "" || attr[1] === "\"\"" || attr[1] === "''") {
                                                         emptyalt.push(b);
                                                     }
-                                                } else if (presentationEl[presentationEl.length - 1] !== b && (attr[0] === "alink" || attr[0] === "align" || attr[0] === "background" || attr[0] === "border" || attr[0] === "color" || attr[0] === "compact" || attr[0] === "face" || attr[0] === "height" || attr[0] === "language" || attr[0] === "link" || (attr[0] === "name" && tagname !== "meta" && tagname !== "select" && tagname !== "input" && tagname !== "textarea") || attr[0] === "nowrap" || attr[0] === "size" || attr[0] === "start" || attr[0] === "text" || (attr[0] === "type" && tagname !== "script" && tagname !== "style" && tagname !== "input") || (attr[0] === "value" && tagname !== "input" && tagname !== "option" && tagname !== "textarea") || attr[0] === "version" || attr[0] === "vlink" || attr[0] === "width")) {
-                                                    presentationAt.push([b, x]);console.log(tagname+" "+attr[0])
+                                                }
+                                                if (presentationEl[presentationEl.length - 1] !== b && (attr[0] === "alink" || attr[0] === "align" || attr[0] === "background" || attr[0] === "border" || attr[0] === "color" || attr[0] === "compact" || attr[0] === "face" || attr[0] === "height" || attr[0] === "language" || attr[0] === "link" || (attr[0] === "name" && tagname !== "meta" && tagname !== "iframe" && tagname !== "select" && tagname !== "input" && tagname !== "textarea") || attr[0] === "nowrap" || attr[0] === "size" || attr[0] === "start" || attr[0] === "text" || (attr[0] === "type" && tagname !== "script" && tagname !== "style" && tagname !== "input") || (attr[0] === "value" && tagname !== "input" && tagname !== "option" && tagname !== "textarea") || attr[0] === "version" || attr[0] === "vlink" || attr[0] === "width")) {
+                                                    presentationAt.push([b, x]);
+                                                }
+                                                if (attr[0] === "tabindex") {
+                                                    if (isNaN(Number(attr[1])) === true || Number(attr[1]) > 0) {
+                                                        tabindex.push([b, true]);
+                                                    } else {
+                                                        tabindex.push([b, false]);
+                                                    }
                                                 }
                                             }
                                             if (alttest === true) {
@@ -9700,6 +9711,35 @@ var prettydiff = function prettydiff(api) {
                                         attr.push("</ol>");
                                     } else {
                                         attr.push("<h4><strong>0</strong> obsolete HTML tags</h4>");
+                                    }
+
+                                    //elements with tabindex
+                                    b = tabindex.length;
+                                    violations += b;
+                                    if (b > 0) {
+                                        attr.push("<h4><strong>");
+                                        attr.push(b);
+                                        attr.push("</strong> elemente");
+                                        if (b > 1) {
+                                            attr.push("s");
+                                        }
+                                        attr.push(" with a <em>tabindex</em> attribute</h4> <p>The tabindex attribute should have a or not negative value and should not be over used. Violators are indicated by use of a <strong>strong</strong> tag.</p> <ol>");
+                                        for (x = 0; x < b; x += 1) {
+                                            attr.push("<li><code>");
+                                            if (tabindex[x][1] === true) {
+                                                attr.push("<strong>");
+                                            }
+                                            attr.push(token[tabindex[x][0]].replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;"));
+                                            if (tabindex[x][1] === true) {
+                                                attr.push("</strong>");
+                                            }
+                                            attr.push("</code> on input line number ");
+                                            attr.push(linen[tabindex[x][0]]);
+                                            attr.push("</li>");
+                                        }
+                                        attr.push("</ol>");
+                                    } else {
+                                        attr.push("<h4><strong>0</strong> elements with a <em>tabindex</em> attribute</h4> <p>The tabindex attribute should have a or not negative value and should not be over used.</p>");
                                     }
 
                                     //headings
@@ -9835,14 +9875,17 @@ var prettydiff = function prettydiff(api) {
                                     totalItems = stats.cdata[0] + stats.comment[0] + stats.content[0] + stats.end[0] + stats.ignore[0] + stats.script[0] + stats.sgml[0] + stats.singleton[0] + stats.start[0] + stats.style[0] + stats.template[0] + stats.text[0] + stats.xml[0],
                                     totalSizes = stats.cdata[1] + stats.comment[1] + stats.content[1] + stats.end[1] + stats.ignore[1] + stats.script[1] + stats.sgml[1] + stats.singleton[1] + stats.start[1] + stats.style[1] + stats.template[1] + stats.text[1] + stats.xml[1],
                                     rowBuilder = function markuppretty__apply_summary_stats_rowBuilder(type) {
-                                        var itema = (type === "Total") ? totalItems : stats[type][0],
-                                            itemb = (type === "Total") ? totalSizes : stats[type][1];
+                                        var itema = (type === "Total*") ? totalItems : stats[type][0],
+                                            itemb = (type === "Total*") ? totalSizes : stats[type][1];
                                         stat.push("<tr");
                                         if (itema > 0 && (type === "script" || type === "style")) {
                                             stat.push(" class='bad'");
                                         }
                                         stat.push("><th>");
                                         stat.push(type);
+                                        if (itema > 0 && (type === "script" || type === "style")) {
+                                            stat.push("**");
+                                        }
                                         stat.push("</th><td>");
                                         stat.push(itema);
                                         stat.push("</td><td");
@@ -9863,7 +9906,7 @@ var prettydiff = function prettydiff(api) {
                                 stat.push("<thead><tr><th>Item type</th><th>Number of instances</th><th>Percentage of total" +
                                     " items</th><th>Character size</th><th>Percentage of total size</th></tr></thead>");
                                 stat.push("<tbody>");
-                                rowBuilder("Total");
+                                rowBuilder("Total*");
                                 rowBuilder("cdata");
                                 rowBuilder("comment");
                                 rowBuilder("content");
@@ -9877,7 +9920,13 @@ var prettydiff = function prettydiff(api) {
                                 rowBuilder("template");
                                 rowBuilder("text");
                                 rowBuilder("xml");
-                                stat.push("</tbody></table>");
+                                stat.push("<tr><th>space between tags***</th><td colspan='4'>");
+                                stat.push(stats.space);
+                                stat.push("</td></tr>");
+                                stat.push("</tbody></table> ");
+                                stat.push("<p>* Totals are accounted for parsed code/content tokens only and not extraneous space for beautification.</p> ");
+                                stat.push("<p>** Script and Style code is measured with minimal white space.</p>");
+                                stat.push("<p>*** This is space that is not associated with text, tags, script, or css.</p> ");
                                 return stat.join("");
                             }()),
                             zipf       = (function markuppretty__apply_summary_zipf() {
