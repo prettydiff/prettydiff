@@ -8212,7 +8212,7 @@ var prettydiff = function prettydiff(api) {
 
         //Library to parse XML/HTML/markup
         markuppretty = function markuppretty(args) {
-            var maccessibility  = true,
+            var maccessibility  = (args.accessibility === true || args.accessibility === "true") ? true : false,
                 mbraceline      = (args.braceline === true || args.braceline === "true") ? true : false,
                 mbracepadding   = (args.bracepadding === true || args.bracepadding === "true") ? true : false,
                 mbraces         = (args.braces === "allman") ? "allman" : "knr",
@@ -9109,7 +9109,7 @@ var prettydiff = function prettydiff(api) {
                         };
                     for (a = 0; a < c; a += 1) {
                         if (attrs[a].length > 0) {
-                            token[a] = token[a].replace(" ", attrs[a].join(" ")).replace(/( \/>)$/, "/>");
+                            token[a] = token[a].replace(" ", " " + attrs[a].join(" ")).replace(/( \/>)$/, "/>");
                         }
                         if (types[a] === "script") {
                             script();
@@ -9512,6 +9512,8 @@ var prettydiff = function prettydiff(api) {
                         attrcom();
                     } else if ((types[a] === "content" && mwrap > 0 && token[a].length > mwrap) || attrs[a].length > 0) {
                         wrap();
+                    } else if (types[a] === "singleton") {
+                        token[a] = token[a].replace(/( \/>)$/, "/>");
                     }
                     if (token[a] !== "</prettydiffli>") {
                         if (isNaN(level[a]) === false) {
