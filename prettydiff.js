@@ -9651,7 +9651,7 @@ var prettydiff = function prettydiff(api) {
                                             violations += (data[y][0] - 1);
                                         }
                                         content.push("<li>");
-                                        content.push(data[y][0].replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;"));
+                                        content.push(data[y][0]);
                                         content.push("x - ");
                                         content.push(data[y][1].replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;"));
                                         content.push("</li>");
