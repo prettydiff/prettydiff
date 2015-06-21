@@ -508,6 +508,18 @@
                                 title="This option makes a new line character the character of indentation." type="radio"/>
                             <label for="diff-line">Indent new line</label></span>
                     </p>
+                    <p><strong>Empty Lines
+                            <a class="apiname" href="documentation.xhtml#preserve">(preserve)</a></strong>
+                        <span>
+                            <input checked="checked" id="djslines-all" name="djslines"
+                                title="This option retains a single empty line for each series of empty lines of
+                                code input." type="radio"/>
+                            <label for="djslines-all">Preserve empty lines</label></span>
+                        <span>
+                            <input id="djslines-none" name="djslines"
+                                title="This option removes all empty lines." type="radio"/>
+                            <label for="djslines-none">Remove empty lines</label></span>
+                    </p>
                     <p><label class="label" for="diff-wrap">Wrap text, Markup / JavaScript
                             <a class="apiname" href="documentation.xhtml#wrap">(wrap)</a></label>
                         <span>
@@ -567,28 +579,6 @@
                                 title="Use this option to keep HTML contitional comments used by Internet
                                 Explorer." type="radio"/>
                             <label for="conditionald-yes">Preserve HTML conditional comments</label></span>
-                    </p>
-                    <p><strong>Empty Lines, CSS / JavaScript
-                            <a class="apiname" href="documentation.xhtml#preserve">(preserve)</a></strong>
-                        <span>
-                            <input checked="checked" id="djslines-jsonly" name="djslines"
-                                title="This option retains a single empty line for each series of empty lines of
-                                code input in JavaScript." type="radio"/>
-                            <label for="djslines-jsonly">JavaScript empty lines</label></span>
-                        <span>
-                            <input checked="checked" id="djslines-cssonly" name="djslines"
-                                title="This option retains a single empty line for each series of empty lines of
-                                code input in CSS like languages." type="radio"/>
-                            <label for="djslines-cssonly">CSS empty lines</label></span>
-                        <span>
-                            <input checked="checked" id="djslines-all" name="djslines"
-                                title="This option retains a single empty line for each series of empty lines of
-                                code input." type="radio"/>
-                            <label for="djslines-all">Preserve empty lines</label></span>
-                        <span>
-                            <input id="djslines-none" name="djslines"
-                                title="This option removes all empty lines." type="radio"/>
-                            <label for="djslines-none">Remove empty lines</label></span>
                     </p>
                     <p><strong>Property Sorting, CSS / JavaScript
                             <a class="apiname" href="documentation.xhtml#objsort">(objsort)</a></strong>
@@ -739,6 +729,18 @@
                                 benefit of indentation." type="radio"/>
                             <label for="incomment-no">No comment indentation</label></span>
                     </p>
+                    <p><strong>Empty Lines
+                            <a class="apiname" href="documentation.xhtml#preserve">(preserve)</a></strong>
+                        <span>
+                            <input checked="checked" id="bjslines-all" name="bjslines"
+                                title="This option retains a single empty line for each series of empty lines of
+                                code input." type="radio"/>
+                            <label for="bjslines-all">Preserve empty lines</label></span>
+                        <span>
+                            <input id="bjslines-none" name="bjslines"
+                                title="This option removes all empty lines." type="radio"/>
+                            <label for="bjslines-none">Remove empty lines</label></span>
+                    </p>
                     <p><label class="label" for="beau-wrap">Wrap text, Markup / JavaScript
                             <a class="apiname" href="documentation.xhtml#wrap">(wrap)</a></label>
                         <span>
@@ -761,6 +763,20 @@
                                 title="Convert single quotes to double quotes for JavaScript strings and markup
                                 attributes." type="radio"/>
                             <label for="bquoteconvert-single">Convert to single quotes</label></span>
+                    </p>
+                    <p><strong>Fix Sloppy Code, Markup / JavaScript
+                            <a class="apiname" href="documentation.xhtml#correct">(correct)</a></strong>
+                        <span>
+                            <input checked="checked" id="jscorrect-no" name="jscorrect"
+                                title="Do not alter or remove sloppy JavaScript code or correct for missing end list item tags in HTML." type="radio"/>
+                            <label for="jscorrect-no">Ignore code correction</label></span>
+                        <span>
+                            <input id="jscorrect-yes" name="jscorrect"
+                                title="This JavaScript only option automatically converts some sloppy behaviors
+                                into known best practices." type="radio"/>
+                            <label for="jscorrect-yes">Correct for sloppiness</label></span>
+                        <span>Read the
+                            <a href="guide/jscorrect.xhtml">guide</a>.</span>
                     </p>
                     <p><strong>Indent Style/Script, Markup Only
                             <a class="apiname" href="documentation.xhtml#style">(style)</a></strong>
@@ -812,28 +828,6 @@
                             title="Insert empty lines between CSS blocks." type="radio"/>
                             <label for="cssinsertlines-yes">Insert a new line character between each CSS
                                 block.</label></span>
-                    </p>
-                    <p><strong>Empty Lines, CSS / JavaScript
-                            <a class="apiname" href="documentation.xhtml#preserve">(preserve)</a></strong>
-                        <span>
-                            <input checked="checked" id="bjslines-jsonly" name="bjslines"
-                                title="This option retains a single empty line for each series of empty lines of
-                                code input in JavaScript." type="radio"/>
-                            <label for="bjslines-jsonly">JavaScript empty lines</label></span>
-                        <span>
-                            <input checked="checked" id="bjslines-cssonly" name="bjslines"
-                                title="This option retains a single empty line for each series of empty lines of
-                                code input in CSS like languages." type="radio"/>
-                            <label for="bjslines-cssonly">CSS empty lines</label></span>
-                        <span>
-                            <input checked="checked" id="bjslines-all" name="bjslines"
-                                title="This option retains a single empty line for each series of empty lines of
-                                code input." type="radio"/>
-                            <label for="bjslines-all">Preserve empty lines</label></span>
-                        <span>
-                            <input id="bjslines-none" name="bjslines"
-                                title="This option removes all empty lines." type="radio"/>
-                            <label for="bjslines-none">Remove empty lines</label></span>
                     </p>
                     <p><strong>Property Sorting, CSS / JavaScript
                             <a class="apiname" href="documentation.xhtml#objsort">(objsort)</a></strong>
@@ -941,20 +935,6 @@
                                 title="This JavaScript only option removes a single space between the 'function'
                                 keyword and the opening parenthesis character of anonymous functions." type="radio"/>
                             <label for="jsspace-no">Remove space following function</label></span>
-                    </p>
-                    <p><strong>Fix Sloppy Code, JavaScript Only
-                            <a class="apiname" href="documentation.xhtml#correct">(correct)</a></strong>
-                        <span>
-                            <input checked="checked" id="jscorrect-no" name="jscorrect"
-                                title="Do not alter or remove sloppy JavaScript code." type="radio"/>
-                            <label for="jscorrect-no">Ignore code correction</label></span>
-                        <span>
-                            <input id="jscorrect-yes" name="jscorrect"
-                                title="This JavaScript only option automatically converts some sloppy behaviors
-                                into known best practices." type="radio"/>
-                            <label for="jscorrect-yes">Correct for sloppiness</label></span>
-                        <span>Read the
-                            <a href="guide/jscorrect.xhtml">guide</a>.</span>
                     </p>
                     <p><strong>Else on New Line, JavaScript Only
                             <a class="apiname" href="documentation.xhtml#elseline">(elseline)</a></strong>

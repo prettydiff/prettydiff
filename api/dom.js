@@ -341,7 +341,8 @@ var pd = {};
     //obj - the ace obj passed in. {} empty object if `all` is true
     //lang - a language passed in. "" empty string means auto detect
     pd.langkey             = function dom__langkey(all, obj, lang) {
-        var value       = (obj !== undefined && obj.getValue !== undefined) ? obj.getValue() : "",
+        var value       = [],
+            sample      = (obj !== undefined && obj.getValue !== undefined) ? obj.getValue() : "",
             setlangmode = function dom__langkey_setlangmode(input) {
                 if (input === "css" || input === "less" || input === "scss") {
                     return "css";
@@ -352,7 +353,7 @@ var pd = {};
                 if (input === "markup" || input === "jsp" || input === "xml" || input === "xhtml") {
                     return "markup";
                 }
-                if (input === "javascript" || input === "json" || input === "jsx" || input === "tss") {
+                if (input === "javascript" || input === "json" || input === "jsx") {
                     return "javascript";
                 }
                 if (input === "text") {
@@ -363,7 +364,7 @@ var pd = {};
                 }
                 return "javascript";
             },
-            nameproper = function dom__langkey_nameproper(input) {
+            nameproper  = function dom__langkey_nameproper(input) {
                 if (input === "javascript") {
                     return "JavaScript";
                 }
@@ -385,6 +386,9 @@ var pd = {};
                 if (input === "html_ruby") {
                     return "ERB (Ruby) Template";
                 }
+                if (input === "tss" || input === "titanium") {
+                    return "Titanium Stylesheets";
+                }
                 if (input === "typescript") {
                     return "TypeScript (not supported yet)";
                 }
@@ -399,22 +403,32 @@ var pd = {};
                 }
                 return input.toUpperCase();
             },
+            defaultt    = (pd.o.langdefault === null || pd.o.langdefault.nodeName.toLowerCase() !== "select") ? "javascript" : setlangmode(pd.o.langdefault[pd.o.langdefault.selectedIndex].value),
             //defaultt      = actual default lang value from the select list
             //[0]           = language value for ace mode
             //[1]           = prettydiff language category from [0]
             //[2]           = pretty formatting for text output to user
             auto        = function dom__langkey_auto(a) {
-                var b        = [],
-                    c        = 0,
-                    d        = 0,
-                    join     = "",
-                    flaga    = false,
-                    flagb    = false,
-                    defaultt = (pd.o.langdefault === null) ? "javascript" : setlangmode(pd.o.langdefault[pd.o.langdefault.selectedIndex].value),
-                    output   = function dom__langkey_auto_output(langname) {
+                var b      = [],
+                    c      = 0,
+                    d      = 0,
+                    join   = "",
+                    flaga  = false,
+                    flagb  = false,
+                    output = function dom__langkey_auto_output(langname) {
                         if (langname === "unknown") {
                             return [
                                 defaultt, setlangmode(defaultt), "unknown"
+                            ];
+                        }
+                        if (langname === "xhtml") {
+                            return [
+                                "xml", "html", "XHTML"
+                            ];
+                        }
+                        if (langname === "tss") {
+                            return [
+                                "tss", "tss", "Titanium Stylesheets"
                             ];
                         }
                         return [
@@ -469,7 +483,7 @@ var pd = {};
                         }
                         return output("unknown");
                     }
-                    if (a.indexOf("{") !== -1 && (/^(\s*[\{\$\.#@a-z0-9])|^(\s*\/(\*|\/))|^(\s*\*\s*\{)/i).test(a) === true && (/^(\s*if\s*\()/).test(a) === false && (/\=\s*(\{|\[|\()/).test(join) === false && (((/(\+|\-|\=|\*|\?)\=/).test(join) === false || (/\/\/\s*\=+/).test(join) === true) || ((/\=+('|")?\)/).test(a) === true && (/;\s*base64/).test(a) === true)) && (/function(\s+\w+)*\s*\(/).test(join) === false) {
+                    if (a.indexOf("{") !== -1 && (/^(\s*[\{\$\.#@a-z0-9])|^(\s*\/(\*|\/))|^(\s*\*\s*\{)/i).test(a) === true && (/^(\s*if\s*\()/).test(a) === false && (/\=\s*(\{|\[|\()/).test(join) === false && (((/(\+|\-|\=|\?)\=/).test(join) === false || (/\/\/\s*\=+/).test(join) === true) || ((/\=+('|")?\)/).test(a) === true && (/;\s*base64/).test(a) === true)) && (/function(\s+\w+)*\s*\(/).test(join) === false) {
                         if ((/:\s*((number)|(string))/).test(a) === true && (/((public)|(private))\s+/).test(a) === true) {
                             return output("typescript");
                         }
@@ -539,7 +553,7 @@ var pd = {};
                         }
                         if ((/\{\{end\}\}/).test(a) === true) {
                             //place holder for Go lang templates
-                            return ("xml");
+                            return output("xml");
                         }
                         if ((/\s?\{%/).test(a) === true && (/\{\{(?!(\{|#|\=))/).test(a) === true) {
                             return output("twig");
@@ -570,83 +584,86 @@ var pd = {};
             pd.o.langvalue = [
                 "text", "text", "Plain Text"
             ];
-            value          = "text";
+            value          = pd.o.langvalue;
         } else if (lang !== "") {
-            value = lang;
-            pd.o.langvalue = [value, setlangmode(value), nameproper(value)];
-        } else if (value !== "") {
-            pd.o.langvalue = auto(value);
-            value          = pd.o.langvalue[0];
+            pd.o.langvalue = [
+                lang, setlangmode(lang), nameproper(lang)
+            ];
+            value          = pd.o.langvalue;
+        } else if (sample !== "") {
+            pd.o.langvalue = auto(sample);
+            value          = pd.o.langvalue;
+        } else {
+            pd.o.langvalue = [
+                defaultt, setlangmode(defaultt), nameproper(defaultt)
+            ];
+            value          = pd.o.langvalue;
         }
         if (pd.test.ace === true) {
             if (all === true || pd.mode === "beau") {
                 if (all === true && lang === "") {
-                    value          = pd.ace.beauIn.getValue();
-                    pd.o.langvalue = auto(value);
-                    value          = pd.o.langvalue[0];
+                    value          = auto(pd.ace.beauIn.getValue());
+                    pd.o.langvalue = value;
                 }
-                pd.ace.beauIn.getSession().setMode("ace/mode/" + value);
+                pd.ace.beauIn.getSession().setMode("ace/mode/" + value[0]);
                 if (pd.o.codeBeauOut !== null) {
-                    pd.ace.beauOut.getSession().setMode("ace/mode/" + value);
+                    pd.ace.beauOut.getSession().setMode("ace/mode/" + value[0]);
                 }
             }
             if (all === true || pd.mode === "minn") {
                 if (all === true && lang === "") {
-                    value          = pd.ace.minnIn.getValue();
-                    pd.o.langvalue = auto(value);
-                    value          = pd.o.langvalue[0];
+                    value          = auto(pd.ace.minnIn.getValue());
+                    pd.o.langvalue = value;
                 }
-                pd.ace.minnIn.getSession().setMode("ace/mode/" + value);
+                pd.ace.minnIn.getSession().setMode("ace/mode/" + value[0]);
                 if (pd.o.codeMinnOut !== null) {
-                    pd.ace.minnOut.getSession().setMode("ace/mode/" + value);
+                    pd.ace.minnOut.getSession().setMode("ace/mode/" + value[0]);
                 }
             }
             if (all === true || pd.mode === "pars") {
                 if (all === true && lang === "") {
-                    value          = pd.ace.parsIn.getValue();
-                    pd.o.langvalue = auto(value);
-                    value          = pd.o.langvalue[0];
+                    value          = auto(pd.ace.parsIn.getValue());
+                    pd.o.langvalue = value;
                 }
-                pd.ace.parsIn.getSession().setMode("ace/mode/" + value);
+                pd.ace.parsIn.getSession().setMode("ace/mode/" + value[0]);
                 if (pd.o.codeParsOut !== null) {
-                    pd.ace.parsOut.getSession().setMode("ace/mode/" + value);
+                    pd.ace.parsOut.getSession().setMode("ace/mode/" + value[0]);
                 }
             }
             if (all === true || pd.mode === "diff") {
                 if (all === true && lang === "") {
-                    value          = pd.ace.diffBase.getValue();
-                    pd.o.langvalue = auto(value);
-                    value          = pd.o.langvalue[0];
+                    value          = auto(pd.ace.diffBase.getValue());
+                    pd.o.langvalue = value;
                 }
                 if (pd.o.codeDiffBase !== null) {
-                    pd.ace.diffBase.getSession().setMode("ace/mode/" + value);
+                    pd.ace.diffBase.getSession().setMode("ace/mode/" + value[0]);
                 }
                 if (pd.o.codeDiffNew !== null) {
-                    pd.ace.diffNew.getSession().setMode("ace/mode/" + value);
+                    pd.ace.diffNew.getSession().setMode("ace/mode/" + value[0]);
                 }
             }
         }
         if (all === true && lang !== "") {
             return lang;
         }
-        if (value === "" && lang === "") {
+        if (value.length < 1 && lang === "") {
             if (pd.mode === "beau" && pd.o.codeBeauIn !== null) {
-                value = pd.o.codeBeauIn.value;
+                value = auto(pd.o.codeBeauIn.value);
             } else if (pd.mode === "minn" && pd.o.codeMinnIn !== null) {
-                value = pd.o.codeMinnIn.value;
+                value = auto(pd.o.codeMinnIn.value);
             } else if (pd.mode === "pars" && pd.o.codeParsIn !== null) {
-                value = pd.o.codeParsIn.value;
+                value = auto(pd.o.codeParsIn.value);
             } else {
                 if (pd.o.codeDiffBase !== null) {
-                    value = pd.o.codeDiffBase.value;
+                    value = auto(pd.o.codeDiffBase.value);
                 } else if (pd.o.codeDiffNew !== null) {
-                    value = pd.o.codeDiffNew.value;
+                    value = auto(pd.o.codeDiffNew.value);
                 }
             }
-            if (value === "") {
+            if (value.length < 1) {
                 return "javascript";
             }
-            pd.o.langvalue = auto(value);
+            pd.o.langvalue = value;
         }
         if (lang === "text") {
             return "text";
@@ -833,20 +850,20 @@ var pd = {};
 
     //recycle bundles arguments in preparation for executing prettydiff
     pd.recycle             = function dom__recycle(e) {
-        var api        = {},
-            output     = [],
-            domain     = (/^((https?:\/\/)|(file:\/\/\/))/),
-            event      = e || window.event,
-            lang       = "",
-            errortext  = "",
-            node       = pd.$$("jsscope-html"),
-            requests   = false,
-            requestd   = false,
-            completes  = false,
-            completed  = false,
-            autotest   = false,
-            textout    = ((pd.o.jsscope === null || pd.o.jsscope.checked === false) && (node === null || node.checked === false)) ? true : false,
-            app = function dom__recycle_appInit() {
+        var api         = {},
+            output      = [],
+            domain      = (/^((https?:\/\/)|(file:\/\/\/))/),
+            event       = e || window.event,
+            lang        = "",
+            errortext   = "",
+            node        = pd.$$("jsscope-html"),
+            requests    = false,
+            requestd    = false,
+            completes   = false,
+            completed   = false,
+            autotest    = false,
+            textout     = ((pd.o.jsscope === null || pd.o.jsscope.checked === false) && (node === null || node.checked === false)) ? true : false,
+            app         = function dom__recycle_appInit() {
                 return;
             },
             application = function dom__recycle_application(lang) {
@@ -913,12 +930,12 @@ var pd = {};
                     };
                 }
             },
-            execOutput = function dom__recycle_execOutput() {
-                var diffList         = [],
-                    button           = {},
-                    buttons          = {},
-                    pdlang           = "",
-                    chromeSave       = false;
+            execOutput  = function dom__recycle_execOutput() {
+                var diffList   = [],
+                    button     = {},
+                    buttons    = {},
+                    pdlang     = "",
+                    chromeSave = false;
                 node      = pd.$$("showOptionsCallOut");
                 pd.zIndex += 1;
                 if (autotest === true) {
@@ -939,7 +956,9 @@ var pd = {};
                                     pd.langkey(false, pd.ace.diffNew, "jsx");
                                 }
                             } else {
-                                pd.o.langvalue = ["jsx", "javascript", "React JSX"];
+                                pd.o.langvalue = [
+                                    "jsx", "javascript", "React JSX"
+                                ];
                             }
                         }
                     }
@@ -973,13 +992,13 @@ var pd = {};
                             pd.o.report.code.box.style.zIndex  = pd.zIndex;
                             pd.o.report.code.box.style.display = "block";
                         }
-                        if (output[1].length > 125000) {
+                        if (output[1] !== undefined && output[1].length > 125000) {
                             pd.test.filled.code = true;
                         } else {
                             pd.test.filled.code = false;
                         }
                         if (pd.o.jsscope.checked === true && (api.lang === "auto" || api.lang === "javascript") && output[0].indexOf("Error:") !== 0) {
-                            if (api.lang === "auto" && pdlang === "") {
+                            if (api.lang === "auto" && pdlang === "" && output[1].indexOf("Presumed language is <em>") > 0) {
                                 pdlang = output[1].split("Presumed language is <em>")[1];
                                 pdlang = pdlang.substring(0, pdlang.indexOf("</em>"));
                             }
@@ -1214,7 +1233,7 @@ var pd = {};
                     }
                     if (errortext.indexOf("end tag") > 0 || errortext.indexOf("Duplicate id") > 0) {
                         pd.o.announce.setAttribute("class", "error");
-                        pd.o.announce.innerHTML   = errortext;
+                        pd.o.announce.innerHTML = errortext;
                     } else if (pd.$$("jserror") !== null) {
                         pd.o.announce.removeAttribute("class");
                         pd.o.announce.innerHTML = "<strong>" + pd.$$("jserror").getElementsByTagName("strong")[0].innerHTML + "</strong> <span>See 'Code Report' for details</span>";
@@ -1328,9 +1347,6 @@ var pd = {};
         api.api         = "dom";
         if (api.lang === "auto") {
             autotest = true;
-        } else if (api.lang === "tss") {
-            api.lang      = "javascript";
-            api.titantium = true;
         }
 
         //determine options based upon mode of operations
@@ -1352,8 +1368,6 @@ var pd = {};
                     chars        = pd.$$("beau-space"),
                     csslines     = pd.$$("cssinsertlines-yes"),
                     jslinesa     = pd.$$("bjslines-all"),
-                    jslinesc     = pd.$$("bjslines-cssonly"),
-                    jslinesj     = pd.$$("bjslines-jsonly"),
                     objsorta     = pd.$$("bobjsort-all"),
                     objsortc     = pd.$$("bobjsort-cssonly"),
                     objsortj     = pd.$$("bobjsort-jsonly"),
@@ -1384,10 +1398,6 @@ var pd = {};
                 }
                 if (jslinesa !== null && jslinesa.checked === true) {
                     api.preserve = "all";
-                } else if (jslinesc !== null && jslinesc.checked === true) {
-                    api.preserve = "css";
-                } else if (jslinesj !== null && jslinesj.checked === true) {
-                    api.preserve = "js";
                 } else {
                     api.preserve = "none";
                 }
@@ -1550,8 +1560,6 @@ var pd = {};
                     objsortc     = pd.$$("dobjsort-cssonly"),
                     objsortj     = pd.$$("dobjsort-jsonly"),
                     jslinesa     = pd.$$("djslines-all"),
-                    jslinesc     = pd.$$("djslines-cssonly"),
-                    jslinesj     = pd.$$("djslines-jsonly"),
                     quantity     = pd.$$("diff-quan"),
                     quote        = pd.$$("diffquoten"),
                     semicolon    = pd.$$("diffscolonn");
@@ -1577,10 +1585,6 @@ var pd = {};
                 }
                 if (jslinesa !== null && jslinesa.checked === true) {
                     api.preserve = "all";
-                } else if (jslinesc !== null && jslinesc.checked === true) {
-                    api.preserve = "css";
-                } else if (jslinesj !== null && jslinesj.checked === true) {
-                    api.preserve = "js";
                 } else {
                     api.preserve = "none";
                 }
@@ -1650,6 +1654,8 @@ var pd = {};
                     } else {
                         api.source = pd.o.codeDiffBase.value;
                     }
+                } else {
+                    api.source = "";
                 }
                 if (pd.o.codeDiffNew !== null) {
                     if (pd.test.ace === true) {
@@ -1657,6 +1663,8 @@ var pd = {};
                     } else {
                         api.diff = pd.o.codeDiffNew.value;
                     }
+                } else {
+                    api.diff = "";
                 }
                 api.mode = "diff";
                 if (domain.test(api.diff) === true && pd.test.xhr === true) {
@@ -1768,6 +1776,63 @@ var pd = {};
             }());
             api.mode = "parse";
         }
+        if (domain.test(api.source) === true && pd.test.xhr === true) {
+            (function dom__recycle_xhrSource() {
+                var filetest       = (api.source.indexOf("file:///") === 0) ? true : false,
+                    protocolRemove = (filetest === true) ? api.source.split(":///")[1] : api.source.split("://")[1],
+                    slashIndex     = (protocolRemove !== undefined) ? protocolRemove.indexOf("/") : 0,
+                    xhr            = (typeof XMLHttpRequest === "function" || typeof XMLHttpRequest === "object") ? new XMLHttpRequest() : new ActiveXObject("Microsoft.XMLHTTP");
+                if (typeof protocolRemove !== "string" || protocolRemove.length === 0) {
+                    return;
+                }
+                requests = true;
+                if (slashIndex > 0 || api.source.indexOf("http") === 0) {
+                    xhr.onreadystatechange = function dom__recycle_xhrSource_statechange() {
+                        if (xhr.readyState === 4) {
+                            if (xhr.status === 200 || xhr.status === 0) {
+                                api.source = xhr.responseText.replace(/\r\n/g, "\n");
+                                if (pd.mode !== "diff" || (requestd === true && completed === true)) {
+                                    if (pd.test.ace === true) {
+                                        if (pd.mode !== "diff") {
+                                            api.lang = pd.langkey(false, pd.ace[pd.mode + "In"], "");
+                                        } else if (pd.o.langvalue[1] === "text") {
+                                            api.lang = "text";
+                                        } else {
+                                            api.lang = pd.langkey(false, pd.ace.diffBase, "");
+                                        }
+                                    } else if (pd.mode === "diff" && pd.o.langvalue[1] === "text") {
+                                        api.lang = "text";
+                                    } else {
+                                        api.lang = pd.langkey(false, {}, "");
+                                    }
+                                    pd.source = api.source;
+                                    if (pd.mode === "diff") {
+                                        pd.diff = api.diff;
+                                    } else {
+                                        pd.diff = "";
+                                    }
+                                    app = application(api.lang);
+                                    if (app !== undefined) {
+                                        output = app(api);
+                                    }
+                                    execOutput();
+                                    return;
+                                }
+                                completes = true;
+                            } else {
+                                api.source = "Error: transmission failure receiving source code from address.";
+                            }
+                        }
+                    };
+                    if (filetest === true) {
+                        xhr.open("GET", api.source.replace(/(\s*)$/, "").replace(/%26/g, "&").replace(/%3F/, "?"), true);
+                    } else {
+                        xhr.open("GET", "proxy.php?x=" + api.source.replace(/(\s*)$/, "").replace(/%26/g, "&").replace(/%3F/, "?"), true);
+                    }
+                    xhr.send();
+                }
+            }());
+        }
         if (pd.test.ls === true) {
             if (pd.o.report.stat.box !== null) {
                 pd.stat.usage  += 1;
@@ -1783,6 +1848,9 @@ var pd = {};
             }
             (function dom__recycle_storage() {
                 var codesize = 0;
+                if (api.source === undefined || (pd.mode === "diff" && api.diff === undefined)) {
+                    return;
+                }
                 //this logic attempts to prevent writes to localStorage if they are likely to
                 //exceed 5mb of storage
                 if (api.mode === "beautify") {
@@ -1828,67 +1896,6 @@ var pd = {};
                 }
             }());
         }
-        if (domain.test(api.source) === true && pd.test.xhr === true) {
-            (function dom__recycle_xhrSource() {
-                var filetest       = (api.source.indexOf("file:///") === 0) ? true : false,
-                    protocolRemove = (filetest === true) ? api.source.split(":///")[1] : api.source.split("://")[1],
-                    slashIndex     = (protocolRemove !== undefined) ? protocolRemove.indexOf("/") : 0,
-                    xhr            = (typeof XMLHttpRequest === "function" || typeof XMLHttpRequest === "object") ? new XMLHttpRequest() : new ActiveXObject("Microsoft.XMLHTTP");
-                if (typeof protocolRemove !== "string" || protocolRemove.length === 0) {
-                    return;
-                }
-                requests = true;
-                if (slashIndex > 0 || api.source.indexOf("http") === 0) {
-                    xhr.onreadystatechange = function dom__recycle_xhrSource_statechange() {
-                        if (xhr.readyState === 4) {
-                            if (xhr.status === 200 || xhr.status === 0) {
-                                api.source = xhr.responseText.replace(/\r\n/g, "\n");
-                                if (pd.mode !== "diff" || (requestd === true && completed === true)) {
-                                    if (pd.test.ace === true) {
-                                        if (pd.mode !== "diff") {
-                                            api.lang = pd.langkey(false, pd.ace[pd.mode + "In"], "");
-                                        } else if (pd.o.langvalue[1] === "text") {
-                                            api.lang = "text";
-                                        } else {
-                                            api.lang = pd.langkey(false, pd.ace.diffBase, "");
-                                        }
-                                    } else if (pd.mode === "diff" && pd.o.langvalue[1] === "text") {
-                                        api.lang = "text";
-                                    } else {
-                                        api.lang = pd.langkey(false, {}, "");
-                                    }
-                                    if (api.lang === "tss") {
-                                        api.lang      = "javascript";
-                                        api.titantium = true;
-                                    }
-                                    pd.source = api.source;
-                                    if (pd.mode === "diff") {
-                                        pd.diff = api.diff;
-                                    } else {
-                                        pd.diff = "";
-                                    }
-                                    app = application(api.lang);
-                                    if (app !== undefined) {
-                                        output = app(api);
-                                    }
-                                    execOutput();
-                                    return;
-                                }
-                                completes = true;
-                            } else {
-                                api.source = "Error: transmission failure receiving source code from address.";
-                            }
-                        }
-                    };
-                    if (filetest === true) {
-                        xhr.open("GET", api.source.replace(/(\s*)$/, "").replace(/%26/g, "&").replace(/%3F/, "?"), true);
-                    } else {
-                        xhr.open("GET", "proxy.php?x=" + api.source.replace(/(\s*)$/, "").replace(/%26/g, "&").replace(/%3F/, "?"), true);
-                    }
-                    xhr.send();
-                }
-            }());
-        }
         if (requests === false && requestd === false) {
             //sometimes the Ace getValue method fires too early
             //on copy/paste.  I put in a 50ms delay in this case to
@@ -1898,13 +1905,9 @@ var pd = {};
                     setTimeout(function dom__recycle_beautifyPromise() {
                         api.source = pd.ace.beauIn.getValue();
                         api.lang   = pd.langkey(false, pd.ace.beauIn, "");
-                        if (api.lang === "tss") {
-                            api.lang      = "javascript";
-                            api.titantium = true;
-                        }
-                        pd.source = api.source;
-                        pd.diff   = "";
-                        app = application(api.lang);
+                        pd.source  = api.source;
+                        pd.diff    = "";
+                        app        = application(api.lang);
                         if (app !== undefined) {
                             output = app(api);
                         }
@@ -1915,13 +1918,9 @@ var pd = {};
                     setTimeout(function dom__recycle_minifyPromise() {
                         api.source = pd.ace.minnIn.getValue();
                         api.lang   = pd.langkey(false, pd.ace.minnIn, "");
-                        if (api.lang === "tss") {
-                            api.lang      = "javascript";
-                            api.titantium = true;
-                        }
-                        pd.source = api.source;
-                        pd.diff   = "";
-                        app = application(api.lang);
+                        pd.source  = api.source;
+                        pd.diff    = "";
+                        app        = application(api.lang);
                         if (app !== undefined) {
                             output = app(api);
                         }
@@ -1932,13 +1931,9 @@ var pd = {};
                     setTimeout(function dom__recycle_parsePromise() {
                         api.source = pd.ace.parsIn.getValue();
                         api.lang   = pd.langkey(false, pd.ace.parsIn, "");
-                        if (api.lang === "tss") {
-                            api.lang      = "javascript";
-                            api.titantium = true;
-                        }
-                        pd.source = api.source;
-                        pd.diff   = "";
-                        app = application(api.lang);
+                        pd.source  = api.source;
+                        pd.diff    = "";
+                        app        = application(api.lang);
                         if (app !== undefined) {
                             output = app(api);
                         }
@@ -1952,10 +1947,6 @@ var pd = {};
                     api.lang = pd.langkey(false, pd.ace.diffBase, "");
                 } else {
                     api.lang = pd.langkey(false, {}, "");
-                }
-                if (api.lang === "tss") {
-                    api.lang      = "javascript";
-                    api.titantium = true;
                 }
                 pd.source = api.source;
                 if (pd.mode === "diff") {
@@ -2389,6 +2380,8 @@ var pd = {};
                         if (width + incW < widthTarget || height + incH < heightTarget) {
                             setTimeout(grow, 1);
                         } else {
+                            boxLocal.style.left      = leftTarget + "em";
+                            boxLocal.style.top       = topTarget + "em";
                             bodyLocal.style.width    = widthTarget + "em";
                             bodyLocal.style.height   = heightTarget + "em";
                             headingLocal.style.width = (widthTarget - saveSpace) + "em";
@@ -2396,6 +2389,9 @@ var pd = {};
                             return false;
                         }
                     };
+                if (pd.test.agent.indexOf("macintosh") > 0) {
+                    saveSpace = (save === true) ? 8 : 5;
+                }
                 if (typeof pd.settings[id].left === "number") {
                     leftTarget   = (pd.settings[id].left / 10);
                     topTarget    = (pd.settings[id].top / 10);
@@ -2459,10 +2455,17 @@ var pd = {};
                         if (width - incW > 16.8) {
                             setTimeout(shrink, 1);
                         } else {
-                            bodyLocal.style.display = "none";
-                            boxLocal.style.left     = "auto";
-                            boxLocal.style.right    = finalLocal + "em";
-                            boxLocal.style.top      = "auto";
+                            boxLocal.style.left                                         = "auto";
+                            boxLocal.style.top                                          = "auto";
+                            boxLocal.style.right                                        = finalLocal + "em";
+                            pd.settings[id].max                                         = false;
+                            boxLocal.style.borderWidth                                  = "0em";
+                            bodyLocal.style.display                                     = "none";
+                            headingLocal.style.borderLeftStyle                          = "solid";
+                            headingLocal.style.borderTopStyle                           = "solid";
+                            headingLocal.getElementsByTagName("button")[0].style.cursor = "pointer";
+                            headingLocal.style.margin                                   = "0em 0em -3.2em 0.1em";
+                            box.style.zIndex                                            = "2";
                             pd.options(boxLocal);
                             return false;
                         }
@@ -2514,10 +2517,17 @@ var pd = {};
         //shrink
         if (buttonMin.innerHTML === "\u035f") {
             if (buttonMax.innerHTML === "\u2191") {
-                pd.settings[id].top    = box.offsetTop;
-                pd.settings[id].left   = box.offsetLeft;
-                pd.settings[id].height = body.clientHeight;
-                pd.settings[id].width  = body.clientWidth;
+                if (pd.test.agent.indexOf("macintosh") > 0) {
+                    pd.settings[id].top    = box.offsetTop;
+                    pd.settings[id].left   = box.offsetLeft;
+                    pd.settings[id].height = body.clientHeight - 17;
+                    pd.settings[id].width  = body.clientWidth - 17;
+                } else {
+                    pd.settings[id].top    = box.offsetTop;
+                    pd.settings[id].left   = box.offsetLeft;
+                    pd.settings[id].height = body.clientHeight;
+                    pd.settings[id].width  = body.clientWidth;
+                }
                 if (pd.zIndex > 2) {
                     pd.zIndex           -= 3;
                     parent.style.zIndex = pd.zIndex;
@@ -2529,15 +2539,7 @@ var pd = {};
                 pd.settings[id].height += 35.5;
                 pd.settings[id].width  += 3;
             }
-            pd.settings[id].max                                    = false;
-            box.style.borderWidth                                  = "0em";
-            box.style.top                                          = "auto";
-            box.style.zIndex                                       = "2";
-            parent.style.display                                   = "none";
-            heading.style.borderLeftStyle                          = "solid";
-            heading.style.borderTopStyle                           = "solid";
-            heading.getElementsByTagName("button")[0].style.cursor = "pointer";
-            heading.style.margin                                   = "0em 0em -3.2em 0.1em";
+            parent.style.display = "none";
             shrinkage();
             buttonMin.innerHTML = "\u2191";
 
@@ -3211,9 +3213,6 @@ var pd = {};
                     pd.ace.minnOut.setValue(" ");
                 }
             }
-            if (pd.test.load === false && pd.o.jsscope !== null && pd.o.jsscope.checked === true) {
-                pd.hideMinnOut(pd.o.jsscope);
-            }
             pd.test.render.minn = true;
         }
         if (a === pd.o.modeDiff) {
@@ -3391,9 +3390,6 @@ var pd = {};
                 if (pd.test.ace === true && pd.o.codeParsOut !== null) {
                     pd.ace.parsOut.setValue(" ");
                 }
-            }
-            if (pd.test.load === false && pd.o.jsscope !== null && pd.o.jsscope.checked === true) {
-                pd.hideParsOut(pd.o.jsscope);
             }
             pd.test.render.pars = true;
         }
@@ -3863,8 +3859,8 @@ var pd = {};
                     pd.settings[id].width  = (body.clientWidth - 20);
                     pd.settings[id].height = (body.clientHeight - 53);
                 } else {
-                    pd.settings[id].width  = (body.clientWidth - 3);
-                    pd.settings[id].height = (body.clientHeight - 35.5);
+                    pd.settings[id].width  = (body.clientWidth - 4);
+                    pd.settings[id].height = (body.clientHeight - 36);
                 }
             }
         } else if (node === "button" && id !== null) {
@@ -4898,7 +4894,7 @@ var pd = {};
                 if (pd.settings.feedreport === undefined) {
                     pd.settings.feedreport = {};
                 }
-                if (pd.settings.feedreport.min === false) {
+                if (pd.settings.feedreport !== undefined && pd.settings.feedreport.min === false) {
                     buttons               = pd.o.report.feed.box.getElementsByTagName("p")[0];
                     buttons.style.display = "block";
                     title.style.cursor    = "move";
@@ -4958,7 +4954,7 @@ var pd = {};
                         buttons.insertBefore(node, buttons.firstChild);
                     }
                 }
-                if (pd.settings.codereport.min === false) {
+                if (pd.settings.codereport !== undefined && pd.settings.codereport.min === false) {
                     buttons.style.display = "block";
                     title.style.cursor    = "move";
                     if (buttons.innerHTML.indexOf("save") > 0) {
@@ -4999,7 +4995,7 @@ var pd = {};
                 title.ontouchstart                = grab;
                 title.onfocus                     = headerfocus;
                 title.onblur                      = headerblur;
-                if (pd.settings.statreport.min === false) {
+                if (pd.settings.statreport !== undefined && pd.settings.statreport.min === false) {
                     buttons               = pd.o.report.stat.box.getElementsByTagName("p")[0];
                     buttons.style.display = "block";
                     title.style.cursor    = "move";
@@ -5173,7 +5169,6 @@ var pd = {};
                         if (pd.o.lang[pd.o.lang.selectedIndex].value === "text" && pd.mode !== "diff") {
                             inputs[a].selectedIndex = 0;
                         }
-                        pd.codeOps(inputs[a]);
                     }
                 } else {
                     inputs[a].onchange = pd.options;
@@ -5310,7 +5305,7 @@ var pd = {};
                             if (value === "text" || value === "plain" || value === "plaintext") {
                                 value = "text";
                                 pd.prettyvis(pd.o.modeDiff);
-                            } else if (value === "js") {
+                            } else if (value === "js" || value === "") {
                                 value = "javascript";
                             } else if (value === "markup") {
                                 value = "xml";
@@ -5318,7 +5313,7 @@ var pd = {};
                                 value = "jsp";
                             } else if (value === "erb" || value === "ejs") {
                                 value = "html_ruby";
-                            } else if (value === "titanium") {
+                            } else if (value === "tss" || value === "titanium") {
                                 value = "tss";
                             }
                             for (c = options.length - 1; c > -1; c -= 1) {
