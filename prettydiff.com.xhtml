@@ -762,6 +762,20 @@
                                 attributes." type="radio"/>
                             <label for="bquoteconvert-single">Convert to single quotes</label></span>
                     </p>
+                    <p><strong>Fix Sloppy Code, Markup / JavaScript
+                            <a class="apiname" href="documentation.xhtml#correct">(correct)</a></strong>
+                        <span>
+                            <input checked="checked" id="jscorrect-no" name="jscorrect"
+                                title="Do not alter or remove sloppy JavaScript code." type="radio"/>
+                            <label for="jscorrect-no">Ignore code correction</label></span>
+                        <span>
+                            <input id="jscorrect-yes" name="jscorrect"
+                                title="This JavaScript only option automatically converts some sloppy behaviors
+                                into known best practices." type="radio"/>
+                            <label for="jscorrect-yes">Correct for sloppiness</label></span>
+                        <span>Read the
+                            <a href="guide/jscorrect.xhtml">guide</a>.</span>
+                    </p>
                     <p><strong>Indent Style/Script, Markup Only
                             <a class="apiname" href="documentation.xhtml#style">(style)</a></strong>
                         <span>
@@ -941,20 +955,6 @@
                                 title="This JavaScript only option removes a single space between the 'function'
                                 keyword and the opening parenthesis character of anonymous functions." type="radio"/>
                             <label for="jsspace-no">Remove space following function</label></span>
-                    </p>
-                    <p><strong>Fix Sloppy Code, JavaScript Only
-                            <a class="apiname" href="documentation.xhtml#correct">(correct)</a></strong>
-                        <span>
-                            <input checked="checked" id="jscorrect-no" name="jscorrect"
-                                title="Do not alter or remove sloppy JavaScript code." type="radio"/>
-                            <label for="jscorrect-no">Ignore code correction</label></span>
-                        <span>
-                            <input id="jscorrect-yes" name="jscorrect"
-                                title="This JavaScript only option automatically converts some sloppy behaviors
-                                into known best practices." type="radio"/>
-                            <label for="jscorrect-yes">Correct for sloppiness</label></span>
-                        <span>Read the
-                            <a href="guide/jscorrect.xhtml">guide</a>.</span>
                     </p>
                     <p><strong>Else on New Line, JavaScript Only
                             <a class="apiname" href="documentation.xhtml#elseline">(elseline)</a></strong>

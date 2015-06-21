@@ -4932,7 +4932,8 @@ var prettydiff = function prettydiff(api) {
                         var f      = wordTest,
                             g      = 1,
                             build  = [],
-                            output = "";
+                            output = "",
+                            dotest = false;
                         do {
                             build.push(c[f]);
                             if (c[f] === "\\") {
@@ -5042,24 +5043,33 @@ var prettydiff = function prettydiff(api) {
                                     f += 1;
                                 } while (f < g);
                             }
+                            if (output === "try" && block.len > -1) {
+                                block.count[block.len] += 1;
+                            } else if (output === "catch" && block.len > -1) {
+                                block.count[block.len] -= 1;
+                            }
                             if (output === "do") {
                                 dostate.count.push(0);
-                                dostate.state.push("do");
+                                dostate.state.push(output);
                                 dostate.len += 1;
                             }
-                            if (output === "while") {
-                                if (dostate.state[dostate.len] === "do" && dostate.count[dostate.len] === 0) {
-                                    if (ltoke === "}") {
-                                        asifix();
-                                    }
-                                    dostate.state[dostate.len] = "while";
-                                    dostate.index              = token.length;
+                            if (output === "while" && dostate.state[dostate.len] === "do" && dostate.count[dostate.len] === 0) {
+                                if (output === "while") {
+                                    dotest = true;
                                 }
+                                if (ltoke === "}") {
+                                    asifix();
+                                }
+                                dostate.count.pop();
+                                dostate.state.pop();
+                                dostate.len   -= 1;
+                                dostate.index = token.length - 1;
+                                blockinsert();
                             }
                             if (output === "if" && block.len > -1 && token[block.index[block.len]] === "else") {
                                 blockpop();
                             }
-                            if (output === "if" || output === "for" || output === "with" || (output === "while" && dostate.index !== token.length) || output === "else" || output === "do") {
+                            if (output === "if" || output === "for" || output === "with" || (output === "while" && dotest === false) || output === "else" || output === "do") {
                                 if (block.len > -1 && block.index[block.len] === token.length) {
                                     block.consec.push(true);
                                 } else {
@@ -5072,7 +5082,11 @@ var prettydiff = function prettydiff(api) {
                                 }
                                 block.word.push(output);
                                 block.count.push(0);
-                                block.index.push(token.length);
+                                if (output === "do") {
+                                    block.index.push(token.length + 1);
+                                } else {
+                                    block.index.push(token.length);
+                                }
                                 block.semi.push(false);
                                 block.len += 1;
                             }
@@ -5082,7 +5096,7 @@ var prettydiff = function prettydiff(api) {
                             ltype            = "word";
                             stats.word.token += 1;
                             stats.word.chars += output.length;
-                            lengtha = token.length;
+                            lengtha          = token.length;
                         }
                         lines.push(0);
                     },
@@ -5492,7 +5506,7 @@ var prettydiff = function prettydiff(api) {
                         } else if (obj.len > -1) {
                             obj.count[obj.len] += 1;
                         }
-                        if (ltoke === "else" || ltoke === "do" || (ltoke === ")" && block.len > -1 && block.count[block.len] === 0 && (block.word[block.len] === "if" || block.word[block.len] === "for" || block.word[block.len] === "while" || block.word[block.len] === "with"))) {
+                        if (ltoke === "else" || ltoke === "do" || (ltoke === ")" && block.len > -1 && block.count[block.len] === 0 && token[token.length - 4] !== "catch" && (block.word[block.len] === "if" || block.word[block.len] === "for" || block.word[block.len] === "while" || block.word[block.len] === "with"))) {
                             blockpop();
                         }
                         if (block.len > -1) {
@@ -5976,7 +5990,7 @@ var prettydiff = function prettydiff(api) {
                                                     return;
                                                 }
                                                 if (d === 0) {
-                                                    if (token[c] === "var" || token[c] === "let") {
+                                                    if (token[c] === "var" || token[c] === "let" || token[c] === "const") {
                                                         return;
                                                     }
                                                     if (token[c] === ",") {
@@ -6148,7 +6162,7 @@ var prettydiff = function prettydiff(api) {
                                                 if ((token[c] === ":" && ternary[ternary.length - 1] === false) || (token[c] === "," && assign === false && varline[varline.length - 1] === false)) {
                                                     return;
                                                 }
-                                                if ((c === 0 || token[c - 1] === "{" || token[c - 1] === "x{") || token[c] === "for" || token[c] === "if" || token[c] === "do" || token[c] === "function" || token[c] === "while" || token[c] === "var" || token[c] === "let" || token[c] === "with") {
+                                                if ((c === 0 || token[c - 1] === "{" || token[c - 1] === "x{") || token[c] === "for" || token[c] === "if" || token[c] === "do" || token[c] === "function" || token[c] === "while" || token[c] === "var" || token[c] === "let" || token[c] === "const" || token[c] === "with") {
                                                     if (list[listlen - 1] === false && listlen > 1 && (a === b - 1 || token[a + 1] !== ")") && obj[obj.length - 1] === false) {
                                                         indent -= 1;
                                                     }
@@ -6461,14 +6475,14 @@ var prettydiff = function prettydiff(api) {
                                         if (d === 0) {
                                             f = token[c];
                                             if (e === true) {
-                                                if (types[c] === "operator" || token[c] === ";" || token[c] === "x;" || token[c] === "var" || token[c] === "let") {
+                                                if (types[c] === "operator" || token[c] === ";" || token[c] === "x;" || token[c] === "var" || token[c] === "let" || token[c] === "const") {
                                                     if (f !== undefined && f.indexOf("=") > -1 && f !== "==" && f !== "===" && f !== "!=" && f !== "!==" && f !== ">=" && f !== "<=") {
                                                         if (assignlist[assignlist.length - 1] === false) {
                                                             varlen.push([a - 1]);
                                                             assignlist[assignlist.length - 1] = true;
                                                         }
                                                     }
-                                                    if ((f === ";" || f === "x;" || f === "var" || f === "let") && assignlist[assignlist.length - 1] === true) {
+                                                    if ((f === ";" || f === "x;" || f === "var" || f === "let" || f === "const") && assignlist[assignlist.length - 1] === true) {
                                                         assignlist[assignlist.length - 1] = false;
                                                         if (varlen.length > 0) {
                                                             if (varlen[varlen.length - 1].length > 1) {
@@ -6502,7 +6516,7 @@ var prettydiff = function prettydiff(api) {
                         word       = function jspretty__algorithm_word() {
                             var next    = token[a + 1],
                                 compare = (next === undefined || next === "==" || next === "===" || next === "!=" || next === "!==" || next === ">=" || next === "<=" || next.indexOf("=") < 0) ? false : true;
-                            if (varline[varline.length - 1] === true && (ltoke === "," || ltoke === "var" || ltoke === "let")) {
+                            if (varline[varline.length - 1] === true && (ltoke === "," || ltoke === "var" || ltoke === "let" || ltoke === "const")) {
                                 if (fortest === 0 && (methodtest[methodtest.length - 1] === false || methodtest.length === 0)) {
                                     if (types[a + 1] === "operator" && compare === true && varlen.length > 0 && token[varlen[varlen.length - 1][varlen[varlen.length - 1].length - 1] + 1] !== ":") {
                                         varlen[varlen.length - 1].push(a);
@@ -6520,10 +6534,10 @@ var prettydiff = function prettydiff(api) {
                             if (ctoke === "else" && ltoke === "}" && token[a - 2] === "x}") {
                                 level[a - 3] -= 1;
                             }
-                            if (varline.length === 1 && varline[0] === true && (ltoke === "var" || ltoke === "let" || ltoke === "," || (ltoke === "function" && types[a + 1] === "method"))) {
+                            if (varline.length === 1 && varline[0] === true && (ltoke === "var" || ltoke === "let" || ltoke === "const" || ltoke === "," || (ltoke === "function" && types[a + 1] === "method"))) {
                                 globals.push(ctoke);
                             }
-                            if (ctoke === "let" && lettest < 0) {
+                            if ((ctoke === "let" || ctoke === "const") && lettest < 0) {
                                 lettest = a;
                             }
                             if (ctoke === "new") {
@@ -6545,13 +6559,14 @@ var prettydiff = function prettydiff(api) {
                                     }
                                 }());
                             }
+                            if (ctoke === "from" && ltoke === "}") {
+                                level[a - 1] = "s";
+                            }
                             if (ctoke === "this" && jsscope !== "none") {
                                 token[a] = "<strong class='new'>this</strong>";
                             }
-                            if (ctoke === "function") {
-                                if (jspace === false && a < b - 1 && token[a + 1] === "(") {
-                                    return level.push("x");
-                                }
+                            if (ctoke === "function" && jspace === false && a < b - 1 && token[a + 1] === "(") {
+                                return level.push("x");
                             }
                             if (ctoke === "return") {
                                 listtest[listtest.length - 1] = false;
@@ -6588,7 +6603,7 @@ var prettydiff = function prettydiff(api) {
                                 }());
                             } else if (ctoke === "in" || (((ctoke === "else" && jelseline === false) || ctoke === "catch") && (ltoke === "}" || ltoke === "x}"))) {
                                 level[a - 1] = "s";
-                            } else if (ctoke === "var" || ctoke === "let") {
+                            } else if (ctoke === "var" || ctoke === "let" || ctoke === "const") {
                                 if (methodtest.length === 0 || methodtest[methodtest.length - 1] === false) {
                                     varlen.push([]);
                                 }
@@ -7017,7 +7032,7 @@ var prettydiff = function prettydiff(api) {
                                                 if (token[aa] === "var" || token[aa] === ";" || token[aa] === "x;") {
                                                     return;
                                                 }
-                                                if (token[aa] === "let") {
+                                                if (token[aa] === "let" || token[aa] === "const") {
                                                     metameta.splice(ff, 1);
                                                     token[ee] = "<em class='s" + scope + "'>" + varbuild[0] + "</em>";
                                                 }
@@ -7056,7 +7071,7 @@ var prettydiff = function prettydiff(api) {
                                                         }
                                                     } else if (token[ee - 1] === "case" || token[ee + 1] !== ":" || (token[ee + 1] === ":" && level[ee] !== "x")) {
                                                         if (lettest === true) {
-                                                            if (token[ee - 1] === "let") {
+                                                            if (token[ee - 1] === "let" || token[ee - 1] === "const") {
                                                                 metameta.splice(ff, 1);
                                                                 token[ee] = "<em class='s" + scope + "'>" + varbuild[0] + "</em>";
                                                             } else if (token[ee - 1] === ",") {
@@ -7490,7 +7505,7 @@ var prettydiff = function prettydiff(api) {
                                         scope = 16;
                                     }
                                     build.push(token[a]);
-                                    if (token[a] === "let") {
+                                    if (token[a] === "let" || token[a] === "const") {
                                         buildlen = build.length - 1;
                                         do {
                                             buildlen -= 1;
@@ -8283,22 +8298,24 @@ var prettydiff = function prettydiff(api) {
                     ]
                 },
                 //parallel arrays
-                //* token stores parsed tokens
-                //* types segments tokens into named groups
-                //* lines describes the preceeding space using: 2, 1, or 0
-                //    lines is populated in markuppretty__tokenize_spacer
+                //* attrs is a list of arrays, each of which contains (if any) parsed attributes
+                //* jscom stores true/false if the current token is a JS comment from JSX format
                 //* level describes the indentation of a given token
                 //    level is only used in beautify and diff modes
-                //* attrs is a list of arrays, each of which contains (if any) parsed attributes
+                //* linen stores the input line number on which the token occurs
+                //* lines describes the preceeding space using: 2, 1, or 0
+                //    lines is populated in markuppretty__tokenize_spacer
+                //* token stores parsed tokens
+                //* types segments tokens into named groups
+                attrs           = [],
+                jscom           = [],
+                level           = [],
+                linen           = [],
+                lines           = [],
                 token           = [],
                 types           = [],
-                level           = [],
-                lines           = [],
-                attrs           = [],
-                linen           = [],
                 reqs            = [],
                 ids             = [],
-                jscom           = [],
                 parseError      = [],
                 line            = 1,
 
@@ -8310,28 +8327,35 @@ var prettydiff = function prettydiff(api) {
                         name  = (index < 0) ? el.slice(1, el.length - 1) : el.slice(1, index).toLowerCase();
                     return name;
                 },
-                attrName  = function markuppretty__attrName(atty) {
+                attrName        = function markuppretty__attrName(atty) {
                     var index = atty.indexOf("="),
-                        name = "",
+                        name  = "",
                         value = "";
                     if (index < 0) {
-                        return [atty, ""];
+                        return [
+                            atty, ""
+                        ];
                     }
-                    name = atty.slice(0, index);
+                    name  = atty.slice(0, index);
                     value = atty.slice(index + 1);
                     if ((value.charAt(0) === "\"" && value.charAt(value.length - 1) === "\"") || (value.charAt(0) === "'" && value.charAt(value.length - 1) === "'")) {
                         value = value.slice(1, value.length - 1);
                     }
                     if (mhtml === true) {
-                        return [name.toLowerCase(), value.toLowerCase()];
+                        return [
+                            name.toLowerCase(), value.toLowerCase()
+                        ];
                     }
-                    return [name, value];
+                    return [
+                        name, value
+                    ];
                 };
             //type definitions:
             //start      end     type
             //<[CDATA[   ]]>     cdata
             //<!--       -->     comment
             //<%--       --%>    comment
+            //<!--[if    -->     conditional
             //text       text    content
             //</         >       end
             //<pre       </pre>  ignore (html only)
@@ -8358,7 +8382,9 @@ var prettydiff = function prettydiff(api) {
             //[%         {\s*%]  template_start
             //{@         {\s*@}  template_start
             //<?xml      ?>      xml
-            if (mmode !== "diff") {
+            if (mmode === "diff") {
+                mwrap = 0;
+            } else {
                 mcont = false;
             }
             (function markuppretty__tokenize() {
@@ -8429,6 +8455,9 @@ var prettydiff = function prettydiff(api) {
                                     if (b[a + 4] === "#") {
                                         end = "-->";
                                         types.push("template");
+                                    } else if (b[a + 4] === "[" && b[a + 5] === "i" && b[a + 6] === "f" && mconditional === true) {
+                                        end = "-->";
+                                        types.push("conditional");
                                     } else {
                                         end = "-->";
                                         if (mmode === "minify" || mcomm === "nocomment") {
@@ -8502,6 +8531,9 @@ var prettydiff = function prettydiff(api) {
                                 end = b[a + 1] + "}";
                                 types.push("template");
                             }
+                        } else if (b[a] === "[" && b[a + 1] === "%") {
+                            end = "%]";
+                            types.push("template");
                         }
 
                         //This loop is the logic that parses tags and attributes
@@ -8553,7 +8585,7 @@ var prettydiff = function prettydiff(api) {
                                                     for (e = a + 1; e < c; e += 1) {
                                                         if ((/\s/).test(b[e]) === false) {
                                                             if (b[e] === "\"" || b[e] === "'") {
-                                                                a = e - 1;
+                                                                a         = e - 1;
                                                                 quotetest = true;
                                                                 attribute.pop();
                                                             }
@@ -8732,6 +8764,9 @@ var prettydiff = function prettydiff(api) {
 
                         //nopush flags mean an early exit
                         if (nopush === true) {
+                            attrs.pop();
+                            jscom.pop();
+                            linen.pop();
                             lines.pop();
                             space = minspace;
                             return;
@@ -8765,7 +8800,7 @@ var prettydiff = function prettydiff(api) {
 
                         //cheat identifies HTML singleton elements as singletons even if formatted as
                         //start tags
-                        cheat   = (function markuppretty__tokenize_tag_cheat() {
+                        cheat = (function markuppretty__tokenize_tag_cheat() {
                             var tname = tagName(element),
                                 atts  = attrs[attrs.length - 1],
                                 atty  = [],
@@ -8975,6 +9010,7 @@ var prettydiff = function prettydiff(api) {
                                         if (output.length < 2) {
                                             attrs.pop();
                                             jscom.pop();
+                                            linen.pop();
                                             return lines.pop();
                                         }
                                         token.push(output.join("").replace(/^(\s+)/, "").replace(/(\s+)$/, ""));
@@ -8989,6 +9025,7 @@ var prettydiff = function prettydiff(api) {
                                         if (output.length < 2) {
                                             attrs.pop();
                                             jscom.pop();
+                                            linen.pop();
                                             return lines.pop();
                                         }
                                         token.push(output.join("").replace(/^(\s+)/, "").replace(/(\s+)$/, ""));
@@ -9061,6 +9098,14 @@ var prettydiff = function prettydiff(api) {
                         if (attrs[a].length > 0) {
                             token[a] = token[a].replace(" ", " " + attrs[a].join(" ")).replace(/( \/>)$/, "/>");
                         }
+                        if (token[a] === "</prettydiffli>") {
+                            if (mcorrect === true) {
+                                token[a] = "</li>";
+                            } else {
+                                token[a] = "";
+                                types[a] = "";
+                            }
+                        }
                         if (lines[a] === 2) {
                             if (mpreserve === true) {
                                 insert("\n\n");
@@ -9108,12 +9153,9 @@ var prettydiff = function prettydiff(api) {
                             level.push("x");
                         };
                     for (a = 0; a < c; a += 1) {
-                        if (attrs[a].length > 0) {
-                            token[a] = token[a].replace(" ", " " + attrs[a].join(" ")).replace(/( \/>)$/, "/>");
-                        }
                         if (types[a] === "script") {
                             script();
-                        } else if (token[a] === "style") {
+                        } else if (types[a] === "style") {
                             style();
                         } else if (lines[a] > 0) {
                             if (types[a] === "singleton" || types[a] === "content" || types[a] === "template") {
@@ -9510,14 +9552,23 @@ var prettydiff = function prettydiff(api) {
                 for (a = 0; a < c; a += 1) {
                     if (jscom[a] === true) {
                         attrcom();
-                    } else if ((types[a] === "content" && mwrap > 0 && token[a].length > mwrap) || attrs[a].length > 0) {
+                    } else if (((types[a] === "content" && mwrap > 0 && token[a].length > mwrap) || attrs[a].length > 0) && mmode === "beautify") {
                         wrap();
+                    } else if (attrs[a].length > 0) {
+                        token[a] = token[a].replace(" ", " " + attrs[a].join(" ")).replace(/( \/>)$/, "/>");
                     } else if (types[a] === "singleton") {
                         token[a] = token[a].replace(/( \/>)$/, "/>");
                     }
+                    if (token[a] === "</prettydiffli>" && mcorrect === true) {
+                        token[a] = "</li>";
+                    }
                     if (token[a] !== "</prettydiffli>") {
                         if (isNaN(level[a]) === false) {
-                            nl(level[a], build);
+                            if (mmode === "minify") {
+                                build.push(" ");
+                            } else {
+                                nl(level[a], build);
+                            }
                         } else if (level[a] === "s") {
                             build.push(" ");
                         }
@@ -9530,11 +9581,11 @@ var prettydiff = function prettydiff(api) {
                 output = build.join("");
                 if (mmode === "beautify") {
                     summary = (function markuppretty__apply_summary() {
-                        var len        = token.length,
-                            sum        = [],
-                            startend   = stats.start[0] - stats.end[0],
-                            violations = 0,
-                            numformat  = function markuppretty__apply_summary_numformat(x) {
+                        var len           = token.length,
+                            sum           = [],
+                            startend      = stats.start[0] - stats.end[0],
+                            violations    = 0,
+                            numformat     = function markuppretty__apply_summary_numformat(x) {
                                 var y    = String(x).split(""),
                                     z    = 0,
                                     xlen = y.length,
@@ -9551,7 +9602,7 @@ var prettydiff = function prettydiff(api) {
                                 }
                                 return y.join("");
                             },
-                            analysis   = function markuppretty__apply_summary_analysis(arr) {
+                            analysis      = function markuppretty__apply_summary_analysis(arr) {
                                 var x       = arr.length,
                                     idtest  = (arr === ids) ? true : false,
                                     y       = 0,
@@ -9599,320 +9650,344 @@ var prettydiff = function prettydiff(api) {
                                 return "";
                             },
                             accessibility = (function markuppretty__apply_summary_accessibility() {
-                                var findings = [],
+                                var findings   = [],
                                     tagsbyname = function markuppretty__apply_summary_accessibility_tagsbyname() {
-                                    var b = 0,
-                                        x = 0,
-                                        y = 0,
-                                        z = 0,
-                                        tagname = "",
-                                        alttest = false,
-                                        id      = false,
-                                        fortest = false,
-                                        attr = [],
-                                        noalt = [],
-                                        emptyalt = [],
-                                        headings = [],
-                                        headtest = (/^(h\d)$/),
-                                        presentationEl = [],
-                                        presentationAt = [],
-                                        tabindex = [],
-                                        formnoID = [],
-                                        formID = [],
-                                        labelFor = [],
-                                        nofor = [];
-                                    for (b = 0; b < c; b += 1) {
-                                        tagname = tagName(token[b]);
-                                        if ((types[b] === "start" || types[b] === "singleton") && (tagname === "font" || tagname === "center" || tagname === "basefont" || tagname === "b" || tagname === "i" || tagname === "u" || tagname === "small" || tagname === "big" || tagname === "blink" || tagname === "plaintext" || tagname === "spacer" || tagname === "strike" || tagname === "tt" || tagname === "xmp")) {
-                                            presentationEl.push(b);
-                                        } else {
-                                            if (types[b] === "start" && headtest.test(tagname) === true) {
-                                                z = Number(tagname.charAt(1));
-                                                if (headings.length > 0 && z - headings[headings.length - 1][1] > 1) {
-                                                    violations += 1;
-                                                    headings.push([b, z, true]);
-                                                } else {
-                                                    headings.push([b, z, false]);
-                                                }
-                                            }
-                                            y = attrs[b].length;
-                                            for (x = 0; x < y; x += 1) {
-                                                attr = attrName(attrs[b][x]);
-                                                if (attr[0] === "alt" && tagname === "img") {
-                                                    alttest = true;
-                                                    if (attr[1] === "") {
-                                                        emptyalt.push(b);
+                                        var b              = 0,
+                                            x              = 0,
+                                            y              = 0,
+                                            z              = 0,
+                                            tagname        = "",
+                                            alttest        = false,
+                                            id             = false,
+                                            fortest        = false,
+                                            attr           = [],
+                                            noalt          = [],
+                                            emptyalt       = [],
+                                            headings       = [],
+                                            headtest       = (/^(h\d)$/),
+                                            presentationEl = [],
+                                            presentationAt = [],
+                                            tabindex       = [],
+                                            formnoID       = [],
+                                            formID         = [],
+                                            labelFor       = [],
+                                            nofor          = [];
+                                        for (b = 0; b < c; b += 1) {
+                                            tagname = tagName(token[b]);
+                                            if ((types[b] === "start" || types[b] === "singleton") && (tagname === "font" || tagname === "center" || tagname === "basefont" || tagname === "b" || tagname === "i" || tagname === "u" || tagname === "small" || tagname === "big" || tagname === "blink" || tagname === "plaintext" || tagname === "spacer" || tagname === "strike" || tagname === "tt" || tagname === "xmp")) {
+                                                presentationEl.push(b);
+                                            } else {
+                                                if (types[b] === "start" && headtest.test(tagname) === true) {
+                                                    z = Number(tagname.charAt(1));
+                                                    if (headings.length > 0 && z - headings[headings.length - 1][1] > 1) {
+                                                        violations += 1;
+                                                        headings.push([
+                                                            b, z, true
+                                                        ]);
+                                                    } else {
+                                                        headings.push([
+                                                            b, z, false
+                                                        ]);
                                                     }
                                                 }
-                                                if (tagname === "label" && attr[0] === "for") {
-                                                    labelFor.push(attr[1]);
-                                                    fortest = true;
-                                                } else if (tagname === "select" || tagname === "input" || tagname === "textarea") {
-                                                    if (attr[0] === "id" || (attr[0] === "type" && (attr[1].toLowerCase() === "hidden" || attr[1].toLowerCase() === "submit"))) {
-                                                        id = true;
-                                                        if (attr[0] === "id") {
-                                                            formID.push([b, x]);
+                                                y = attrs[b].length;
+                                                for (x = 0; x < y; x += 1) {
+                                                    attr = attrName(attrs[b][x]);
+                                                    if (attr[0] === "alt" && tagname === "img") {
+                                                        alttest = true;
+                                                        if (attr[1] === "") {
+                                                            emptyalt.push(b);
+                                                        }
+                                                    }
+                                                    if (tagname === "label" && attr[0] === "for") {
+                                                        labelFor.push(attr[1]);
+                                                        fortest = true;
+                                                    } else if (tagname === "select" || tagname === "input" || tagname === "textarea") {
+                                                        if (attr[0] === "id" || (attr[0] === "type" && (attr[1].toLowerCase() === "hidden" || attr[1].toLowerCase() === "submit"))) {
+                                                            id = true;
+                                                            if (attr[0] === "id") {
+                                                                formID.push([
+                                                                    b, x
+                                                                ]);
+                                                            }
+                                                        }
+                                                    }
+                                                    if (presentationEl[presentationEl.length - 1] !== b && (attr[0] === "alink" || attr[0] === "align" || attr[0] === "background" || attr[0] === "border" || attr[0] === "color" || attr[0] === "compact" || attr[0] === "face" || attr[0] === "height" || attr[0] === "language" || attr[0] === "link" || (attr[0] === "name" && tagname !== "meta" && tagname !== "iframe" && tagname !== "select" && tagname !== "input" && tagname !== "textarea") || attr[0] === "nowrap" || attr[0] === "size" || attr[0] === "start" || attr[0] === "text" || (attr[0] === "type" && tagname !== "script" && tagname !== "style" && tagname !== "input") || (attr[0] === "value" && tagname !== "input" && tagname !== "option" && tagname !== "textarea") || attr[0] === "version" || attr[0] === "vlink" || attr[0] === "width")) {
+                                                        presentationAt.push([
+                                                            b, x
+                                                        ]);
+                                                    }
+                                                    if (attr[0] === "tabindex") {
+                                                        if (isNaN(Number(attr[1])) === true || Number(attr[1]) > 0) {
+                                                            tabindex.push([
+                                                                b, true
+                                                            ]);
+                                                        } else {
+                                                            tabindex.push([
+                                                                b, false
+                                                            ]);
                                                         }
                                                     }
                                                 }
-                                                if (presentationEl[presentationEl.length - 1] !== b && (attr[0] === "alink" || attr[0] === "align" || attr[0] === "background" || attr[0] === "border" || attr[0] === "color" || attr[0] === "compact" || attr[0] === "face" || attr[0] === "height" || attr[0] === "language" || attr[0] === "link" || (attr[0] === "name" && tagname !== "meta" && tagname !== "iframe" && tagname !== "select" && tagname !== "input" && tagname !== "textarea") || attr[0] === "nowrap" || attr[0] === "size" || attr[0] === "start" || attr[0] === "text" || (attr[0] === "type" && tagname !== "script" && tagname !== "style" && tagname !== "input") || (attr[0] === "value" && tagname !== "input" && tagname !== "option" && tagname !== "textarea") || attr[0] === "version" || attr[0] === "vlink" || attr[0] === "width")) {
-                                                    presentationAt.push([b, x]);
+                                                if (fortest === true) {
+                                                    fortest = false;
+                                                } else if (tagname === "label") {
+                                                    nofor.push(b);
                                                 }
-                                                if (attr[0] === "tabindex") {
-                                                    if (isNaN(Number(attr[1])) === true || Number(attr[1]) > 0) {
-                                                        tabindex.push([b, true]);
-                                                    } else {
-                                                        tabindex.push([b, false]);
-                                                    }
+                                                if (id === true) {
+                                                    id = false;
+                                                } else if (tagname === "select" || tagname === "input" || tagname === "textarea") {
+                                                    formnoID.push(b);
+                                                }
+                                                if (alttest === true) {
+                                                    alttest = false;
+                                                } else if (tagname === "img") {
+                                                    noalt.push(b);
                                                 }
                                             }
-                                            if (fortest === true) {
-                                                fortest = false;
-                                            } else if (tagname === "label") {
-                                                nofor.push(b);
-                                            }
-                                            if (id === true) {
-                                                id = false;
-                                            } else if (tagname === "select" || tagname === "input" || tagname === "textarea") {
-                                                formnoID.push(b);
-                                            }
-                                            if (alttest === true) {
-                                                alttest = false;
-                                            } else if (tagname === "img") {
-                                                noalt.push(b);
-                                            }
                                         }
-                                    }
-                                    attr = [];
+                                        attr       = [];
 
-                                    //obsolete tags
-                                    b = presentationEl.length;
-                                    violations += b;
-                                    if (b > 0) {
-                                        attr.push("<h4><strong>");
-                                        attr.push(b);
-                                        attr.push("</strong> obsolete HTML tag");
-                                        if (b > 1) {
-                                            attr.push("s");
+                                        //obsolete tags
+                                        b          = presentationEl.length;
+                                        violations += b;
+                                        if (b > 0) {
+                                            attr.push("<h4><strong>");
+                                            attr.push(b);
+                                            attr.push("</strong> obsolete HTML tag");
+                                            if (b > 1) {
+                                                attr.push("s");
+                                            }
+                                            attr.push("</h4> <p>Obsolete elements do not appropriately describe content.</p> <ol>");
+                                            for (x = 0; x < b; x += 1) {
+                                                attr.push("<li><code>");
+                                                attr.push(token[presentationEl[x]].replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;"));
+                                                attr.push("</code> on input line number ");
+                                                attr.push(linen[presentationEl[x]]);
+                                                attr.push("</li>");
+                                            }
+                                            attr.push("</ol>");
+                                        } else {
+                                            attr.push("<h4><strong>0</strong> obsolete HTML tags</h4>");
                                         }
-                                        attr.push("</h4> <p>Obsolete elements do not appropriately describe content.</p> <ol>");
+
+                                        //obsolete attributes
+                                        b = presentationAt.length;
+                                        if (b > 0) {
+                                            z = 0;
+                                            y = attr.length;
+                                            attr.push("<h4><strong>");
+                                            attr.push("</strong> HTML tag");
+                                            if (b > 1) {
+                                                attr.push("s");
+                                            }
+                                            attr.push(" containing obsolete or inappropriate attributes</h4> <p>Obsolete elements do no" +
+                                                "t appropriately describe content.</p> <ol>");
+                                            for (x = 0; x < b; x += 1) {
+                                                tagname = token[presentationAt[x][0]].replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(attrs[presentationAt[x][0]][presentationAt[x][1]], "<strong>" + attrs[presentationAt[x][0]][presentationAt[x][1]] + "</strong>");
+                                                if (x < b - 1 && presentationAt[x][0] === presentationAt[x + 1][0]) {
+                                                    do {
+                                                        tagname = tagname.replace(attrs[presentationAt[x][0]][presentationAt[x + 1][1]], "<strong>" + attrs[presentationAt[x][0]][presentationAt[x + 1][1]] + "</strong>");
+                                                        x       += 1;
+                                                    } while (x < b - 1 && presentationAt[x][0] === presentationAt[x + 1][0]);
+                                                }
+                                                z += 1;
+                                                attr.push("<li><code>");
+                                                attr.push(tagname);
+                                                attr.push("</code> on input line number ");
+                                                attr.push(linen[presentationAt[x][0]]);
+                                                attr.push("</li>");
+                                            }
+                                            attr.splice(y, 0, z);
+                                            violations += z;
+                                            attr.push("</ol>");
+                                        } else {
+                                            attr.push("<h4><strong>0</strong> HTML tags containing obsolete or inappropriate attributes" +
+                                                "</h4>");
+                                        }
+
+                                        //form controls missing a required 'id' attribute
+                                        b          = formnoID.length;
+                                        violations += b;
+                                        if (b > 0) {
+                                            attr.push("<h4><strong>");
+                                            attr.push(b);
+                                            attr.push("</strong> form control element");
+                                            if (b > 1) {
+                                                attr.push("s");
+                                            }
+                                            attr.push(" missing a required <em>id</em> attribute</h4> <p>The id attribute is required t" +
+                                                "o bind a point of interaction to an HTML label.</p> <ol>");
+                                            for (x = 0; x < b; x += 1) {
+                                                attr.push("<li><code>");
+                                                attr.push(token[formnoID[x]].replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;"));
+                                                attr.push("</code> on input line number ");
+                                                attr.push(linen[formnoID[x]]);
+                                                attr.push("</li>");
+                                            }
+                                            attr.push("</ol>");
+                                        } else {
+                                            attr.push("<h4><strong>0</strong> form control elements missing a required <em>id</em> attr" +
+                                                "ibute</h4> <p>The id attribute is required to bind a point of interaction to an ");
+                                        }
+
+                                        //form controls missing a binding to a label
+                                        b        = formID.length;
+                                        formnoID = [];
                                         for (x = 0; x < b; x += 1) {
-                                            attr.push("<li><code>");
-                                            attr.push(token[presentationEl[x]].replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;"));
-                                            attr.push("</code> on input line number ");
-                                            attr.push(linen[presentationEl[x]]);
-                                            attr.push("</li>");
-                                        }
-                                        attr.push("</ol>");
-                                    } else {
-                                        attr.push("<h4><strong>0</strong> obsolete HTML tags</h4>");
-                                    }
-
-                                    //obsolete attributes
-                                    b = presentationAt.length;
-                                    if (b > 0) {
-                                        z = 0;
-                                        y = attr.length;
-                                        attr.push("<h4><strong>");
-                                        attr.push("</strong> HTML tag");
-                                        if (b > 1) {
-                                            attr.push("s");
-                                        }
-                                        attr.push(" containing obsolete or inappropriate attributes</h4> <p>Obsolete elements do not appropriately describe content.</p> <ol>");
-                                        for (x = 0; x < b; x += 1) {
-                                            tagname = token[presentationAt[x][0]].replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(attrs[presentationAt[x][0]][presentationAt[x][1]], "<strong>" + attrs[presentationAt[x][0]][presentationAt[x][1]] + "</strong>");
-                                            if (x < b - 1 && presentationAt[x][0] === presentationAt[x + 1][0]) {
-                                                do {
-                                                    tagname = tagname.replace(attrs[presentationAt[x][0]][presentationAt[x + 1][1]], "<strong>" + attrs[presentationAt[x][0]][presentationAt[x + 1][1]] + "</strong>");
-                                                    x += 1;
-                                                } while (x < b - 1 && presentationAt[x][0] === presentationAt[x + 1][0]);
+                                            for (y = labelFor.length - 1; y > -1; y -= 1) {
+                                                if (attrName(attrs[formID[x][0]][formID[x][1]])[1] === labelFor[y]) {
+                                                    break;
+                                                }
                                             }
-                                            z += 1;
-                                            attr.push("<li><code>");
-                                            attr.push(tagname);
-                                            attr.push("</code> on input line number ");
-                                            attr.push(linen[presentationAt[x][0]]);
-                                            attr.push("</li>");
-                                        }
-                                        attr.splice(y, 0, z);
-                                        violations += z;
-                                        attr.push("</ol>");
-                                    } else {
-                                        attr.push("<h4><strong>0</strong> HTML tags containing obsolete or inappropriate attributes</h4>");
-                                    }
-
-                                    //form controls missing a required 'id' attribute
-                                    b = formnoID.length;
-                                    violations += b;
-                                    if (b > 0) {
-                                        attr.push("<h4><strong>");
-                                        attr.push(b);
-                                        attr.push("</strong> form control element");
-                                        if (b > 1) {
-                                            attr.push("s");
-                                        }
-                                        attr.push(" missing a required <em>id</em> attribute</h4> <p>The id attribute is required to bind a point of interaction to an HTML label.</p> <ol>");
-                                        for (x = 0; x < b; x += 1) {
-                                            attr.push("<li><code>");
-                                            attr.push(token[formnoID[x]].replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;"));
-                                            attr.push("</code> on input line number ");
-                                            attr.push(linen[formnoID[x]]);
-                                            attr.push("</li>");
-                                        }
-                                        attr.push("</ol>");
-                                    } else {
-                                        attr.push("<h4><strong>0</strong> form control elements missing a required <em>id</em> attribute</h4> <p>The id attribute is required to bind a point of interaction to an HTML label.</p>");
-                                    }
-
-                                    //form controls missing a binding to a label
-                                    b = formID.length;
-                                    formnoID = [];
-                                    for (x = 0; x < b; x += 1) {
-                                        for (y = labelFor.length - 1; y > -1; y -= 1) {
-                                            if (attrName(attrs[formID[x][0]][formID[x][1]])[1] === labelFor[y]) {
-                                                break;
+                                            if (y < 0) {
+                                                formnoID.push(formID[x]);
                                             }
                                         }
-                                        if (y < 0) {
-                                            formnoID.push(formID[x]);
-                                        }
-                                    }
-                                    b = formnoID.length;
-                                    violations += b;
-                                    if (b > 0) {
-                                        attr.push("<h4><strong>");
-                                        attr.push(b);
-                                        attr.push("</strong> form control element");
-                                        if (b > 1) {
-                                            attr.push("s");
-                                        }
-                                        attr.push(" not bound to a label</h4> <p>The <em>id</em> of a form control must match the <em>for</em> of a label.</p><ol>");
-                                        for (x = 0; x < b; x += 1) {
-                                            attr.push("<li><code>");
-                                            attr.push(token[formnoID[x][0]].replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;"));
-                                            attr.push("</code> on input line number ");
-                                            attr.push(linen[formnoID[x][0]]);
-                                            attr.push("</li>");
-                                        }
-                                        attr.push("</ol>");
-                                    } else {
-                                        attr.push("<h4><strong>0</strong> form control elements not bound to a label</h4> <p>The <em>id</em> of a form control must match the <em>for</em> of a label.</p>");
-                                    }
-
-                                    //elements with tabindex
-                                    b = tabindex.length;
-                                    violations += b;
-                                    if (b > 0) {
-                                        attr.push("<h4><strong>");
-                                        attr.push(b);
-                                        attr.push("</strong> elemente");
-                                        if (b > 1) {
-                                            attr.push("s");
-                                        }
-                                        attr.push(" with a <em>tabindex</em> attribute</h4> <p>The tabindex attribute should have a or not negative value and should not be over used. Violators are indicated by use of a <strong>strong</strong> tag.</p> <ol>");
-                                        for (x = 0; x < b; x += 1) {
-                                            attr.push("<li><code>");
-                                            if (tabindex[x][1] === true) {
-                                                attr.push("<strong>");
+                                        b          = formnoID.length;
+                                        violations += b;
+                                        if (b > 0) {
+                                            attr.push("<h4><strong>");
+                                            attr.push(b);
+                                            attr.push("</strong> form control element");
+                                            if (b > 1) {
+                                                attr.push("s");
                                             }
-                                            attr.push(token[tabindex[x][0]].replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;"));
-                                            if (tabindex[x][1] === true) {
-                                                attr.push("</strong>");
+                                            attr.push(" not bound to a label</h4> <p>The <em>id</em> of a form control must match the <" +
+                                                "em>for</em> of a label.</p><ol>");
+                                            for (x = 0; x < b; x += 1) {
+                                                attr.push("<li><code>");
+                                                attr.push(token[formnoID[x][0]].replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;"));
+                                                attr.push("</code> on input line number ");
+                                                attr.push(linen[formnoID[x][0]]);
+                                                attr.push("</li>");
                                             }
-                                            attr.push("</code> on input line number ");
-                                            attr.push(linen[tabindex[x][0]]);
-                                            attr.push("</li>");
+                                            attr.push("</ol>");
+                                        } else {
+                                            attr.push("<h4><strong>0</strong> form control elements not bound to a label</h4> <p>The <e" +
+                                                "m>id</em> of a form control must match the <em>for</em> of a label.</p>");
                                         }
-                                        attr.push("</ol>");
-                                    } else {
-                                        attr.push("<h4><strong>0</strong> elements with a <em>tabindex</em> attribute</h4> <p>The tabindex attribute should have a or not negative value and should not be over used.</p>");
-                                    }
 
-                                    //headings
-                                    b = headings.length;
-                                    if (b > 0) {
-                                        attr.push("<h4><strong>");
-                                        attr.push(b);
-                                        attr.push("</strong> HTML heading tag");
-                                        if (b > 1) {
-                                            attr.push("s");
-                                        }
-                                        attr.push(" and their order</h4> <p>Poorly ordered tags are described with a <strong>strong</strong> tag (color red).</p> <ol>");
-                                        for (x = 0; x < b; x += 1) {
-                                            attr.push("<li><code>");
-                                            if (headings[x][2] === true) {
-                                                attr.push("<strong>");
+                                        //elements with tabindex
+                                        b          = tabindex.length;
+                                        violations += b;
+                                        if (b > 0) {
+                                            attr.push("<h4><strong>");
+                                            attr.push(b);
+                                            attr.push("</strong> elemente");
+                                            if (b > 1) {
+                                                attr.push("s");
                                             }
-                                            attr.push(token[headings[x][0]].replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;"));
-                                            if (headings[x][2] === true) {
-                                                attr.push("</strong>");
+                                            attr.push(" with a <em>tabindex</em> attribute</h4> <p>The tabindex attribute should have a" +
+                                                " or not negative value and should not be over used. Violators are indicated by u");
+                                            for (x = 0; x < b; x += 1) {
+                                                attr.push("<li><code>");
+                                                if (tabindex[x][1] === true) {
+                                                    attr.push("<strong>");
+                                                }
+                                                attr.push(token[tabindex[x][0]].replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;"));
+                                                if (tabindex[x][1] === true) {
+                                                    attr.push("</strong>");
+                                                }
+                                                attr.push("</code> on input line number ");
+                                                attr.push(linen[tabindex[x][0]]);
+                                                attr.push("</li>");
                                             }
-                                            attr.push("</code> on input line number ");
-                                            attr.push(linen[headings[x][0]]);
-                                            attr.push("</li>");
+                                            attr.push("</ol>");
+                                        } else {
+                                            attr.push("<h4><strong>0</strong> elements with a <em>tabindex</em> attribute</h4> <p>The t" +
+                                                "abindex attribute should have a or not negative value and should not be over use");
                                         }
-                                        attr.push("</ol>");
-                                    } else {
-                                        attr.push("<h4><strong>0</strong> HTML heading elements</h4>");
-                                    }
 
-                                    //missing alt attributes on images
-                                    b = noalt.length;
-                                    violations += b;
-                                    if (b > 0) {
-                                        attr.push("<h4><strong>");
-                                        attr.push(b);
-                                        attr.push("</strong> image");
-                                        if (b > 1) {
-                                            attr.push("s");
+                                        //headings
+                                        b = headings.length;
+                                        if (b > 0) {
+                                            attr.push("<h4><strong>");
+                                            attr.push(b);
+                                            attr.push("</strong> HTML heading tag");
+                                            if (b > 1) {
+                                                attr.push("s");
+                                            }
+                                            attr.push(" and their order</h4> <p>Poorly ordered tags are described with a <strong>strong" +
+                                                "</strong> tag (color red).</p> <ol>");
+                                            for (x = 0; x < b; x += 1) {
+                                                attr.push("<li><code>");
+                                                if (headings[x][2] === true) {
+                                                    attr.push("<strong>");
+                                                }
+                                                attr.push(token[headings[x][0]].replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;"));
+                                                if (headings[x][2] === true) {
+                                                    attr.push("</strong>");
+                                                }
+                                                attr.push("</code> on input line number ");
+                                                attr.push(linen[headings[x][0]]);
+                                                attr.push("</li>");
+                                            }
+                                            attr.push("</ol>");
+                                        } else {
+                                            attr.push("<h4><strong>0</strong> HTML heading elements</h4>");
                                         }
-                                        attr.push(" missing a required <em>alt</em> attribute</h4> <p>The alt attribute is required even if it contains no value.</p> <ol>");
-                                        for (x = 0; x < b; x += 1) {
-                                            attr.push("<li><code>");
-                                            attr.push(token[noalt[x]].replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;"));
-                                            attr.push("</code> on input line number ");
-                                            attr.push(linen[noalt[x]]);
-                                            attr.push("</li>");
-                                        }
-                                        attr.push("</ol>");
-                                    } else {
-                                        attr.push("<h4><strong>0</strong> images missing a required <em>alt</em> attribute</h4> <p>The alt attribute is required even if it contains no value.</p>");
-                                    }
 
-                                    //alt attributes with empty values
-                                    b = emptyalt.length;
-                                    violations += b;
-                                    if (b > 0) {
-                                        attr.push("<h4><strong>");
-                                        attr.push(b);
-                                        attr.push("</strong> image");
-                                        if (b > 1) {
-                                            attr.push("s");
+                                        //missing alt attributes on images
+                                        b          = noalt.length;
+                                        violations += b;
+                                        if (b > 0) {
+                                            attr.push("<h4><strong>");
+                                            attr.push(b);
+                                            attr.push("</strong> image");
+                                            if (b > 1) {
+                                                attr.push("s");
+                                            }
+                                            attr.push(" missing a required <em>alt</em> attribute</h4> <p>The alt attribute is required" +
+                                                " even if it contains no value.</p> <ol>");
+                                            for (x = 0; x < b; x += 1) {
+                                                attr.push("<li><code>");
+                                                attr.push(token[noalt[x]].replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;"));
+                                                attr.push("</code> on input line number ");
+                                                attr.push(linen[noalt[x]]);
+                                                attr.push("</li>");
+                                            }
+                                            attr.push("</ol>");
+                                        } else {
+                                            attr.push("<h4><strong>0</strong> images missing a required <em>alt</em> attribute</h4> <p>" +
+                                                "The alt attribute is required even if it contains no value.</p>");
                                         }
-                                        attr.push(" have an empty <em>alt</em> attribute value</h4> <p>Empty alt text is not necessarily a violation, such as the case of tracking pixels. If an image has embedded text then missing alt text <strong>is a violation</strong>.</p> <ol>");
-                                        for (x = 0; x < b; x += 1) {
-                                            attr.push("<li><code>");
-                                            attr.push(token[emptyalt[x]].replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;"));
-                                            attr.push("</code> on input line number ");
-                                            attr.push(linen[emptyalt[x]]);
-                                            attr.push("</li>");
-                                        }
-                                        attr.push("</ol>");
-                                    } else {
-                                        attr.push("<h4><strong>0</strong> images have an empty <em>alt</em> attribute value</h4>");
-                                    }
 
-                                    return attr.join("");
-                                };
+                                        //alt attributes with empty values
+                                        b          = emptyalt.length;
+                                        violations += b;
+                                        if (b > 0) {
+                                            attr.push("<h4><strong>");
+                                            attr.push(b);
+                                            attr.push("</strong> image");
+                                            if (b > 1) {
+                                                attr.push("s");
+                                            }
+                                            attr.push(" have an empty <em>alt</em> attribute value</h4> <p>Empty alt text is not necess" +
+                                                "arily a violation, such as the case of tracking pixels. If an image has embedded");
+                                            for (x = 0; x < b; x += 1) {
+                                                attr.push("<li><code>");
+                                                attr.push(token[emptyalt[x]].replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;"));
+                                                attr.push("</code> on input line number ");
+                                                attr.push(linen[emptyalt[x]]);
+                                                attr.push("</li>");
+                                            }
+                                            attr.push("</ol>");
+                                        } else {
+                                            attr.push("<h4><strong>0</strong> images have an empty <em>alt</em> attribute value</h4>");
+                                        }
+
+                                        return attr.join("");
+                                    };
                                 if (maccessibility === false) {
                                     return "";
                                 }
                                 findings.push(tagsbyname());
                                 return findings.join("");
                             }()),
-                            parseErrors = (function markuppretty__apply_summary_parseErrors() {
-                                var x = parseError.length,
-                                    y = 0,
+                            parseErrors   = (function markuppretty__apply_summary_parseErrors() {
+                                var x     = parseError.length,
+                                    y     = 0,
                                     fails = [];
                                 violations += x;
                                 if (x === 0) {
@@ -9929,16 +10004,18 @@ var prettydiff = function prettydiff(api) {
                                 fails.push("</ol>");
                                 return fails.join("");
                             }()),
-                            sizes      = (function markuppretty__apply_summary_sizes() {
-                                var table = [],
-                                    insize = msource.length,
-                                    outlines = output.split("\n").length,
-                                    outsize = output.length,
+                            sizes         = (function markuppretty__apply_summary_sizes() {
+                                var table      = [],
+                                    insize     = msource.length,
+                                    outlines   = output.split("\n").length,
+                                    outsize    = output.length,
                                     linechange = (outlines / line),
                                     charchange = (outsize / insize);
                                 table.push("<h4>Data sizes</h4>");
-                                table.push("<table class='analysis' summary='Data sizes'><caption>This table shows changes in sizes of the data due to beautification.</caption>");
-                                table.push("<thead><tr><th>Data figure</th><th>Input</th><th>Output</th><th>Percent change</th></tr></thead><tbody>");
+                                table.push("<table class='analysis' summary='Data sizes'><caption>This table shows changes i" +
+                                    "n sizes of the data due to beautification.</caption>");
+                                table.push("<thead><tr><th>Data figure</th><th>Input</th><th>Output</th><th>Percent change</" +
+                                    "th></tr></thead><tbody>");
                                 table.push("<tr><th>Lines of code</th><td>");
                                 table.push(numformat(line));
                                 table.push("</td><td>");
@@ -9956,7 +10033,7 @@ var prettydiff = function prettydiff(api) {
                                 table.push("</tbody></table>");
                                 return table.join("");
                             }()),
-                            statistics = (function markuppretty__apply_summary_statistics() {
+                            statistics    = (function markuppretty__apply_summary_statistics() {
                                 var stat       = [],
                                     totalItems = stats.cdata[0] + stats.comment[0] + stats.content[0] + stats.end[0] + stats.ignore[0] + stats.script[0] + stats.sgml[0] + stats.singleton[0] + stats.start[0] + stats.style[0] + stats.template[0] + stats.text[0] + stats.xml[0],
                                     totalSizes = stats.cdata[1] + stats.comment[1] + stats.content[1] + stats.end[1] + stats.ignore[1] + stats.script[1] + stats.sgml[1] + stats.singleton[1] + stats.start[1] + stats.style[1] + stats.template[1] + stats.text[1] + stats.xml[1],
@@ -10010,12 +10087,14 @@ var prettydiff = function prettydiff(api) {
                                 stat.push(stats.space);
                                 stat.push("</td></tr>");
                                 stat.push("</tbody></table> ");
-                                stat.push("<p>* Totals are accounted for parsed code/content tokens only and not extraneous space for beautification.</p> ");
+                                stat.push("<p>* Totals are accounted for parsed code/content tokens only and not extraneous" +
+                                    " space for beautification.</p> ");
                                 stat.push("<p>** Script and Style code is measured with minimal white space.</p>");
-                                stat.push("<p>*** This is space that is not associated with text, tags, script, or css.</p> ");
+                                stat.push("<p>*** This is space that is not associated with text, tags, script, or css.</p>" +
+                                    " ");
                                 return stat.join("");
                             }()),
-                            zipf       = (function markuppretty__apply_summary_zipf() {
+                            zipf          = (function markuppretty__apply_summary_zipf() {
                                 var x          = 0,
                                     wordlen    = 0,
                                     wordcount  = 0,
@@ -10155,7 +10234,6 @@ var prettydiff = function prettydiff(api) {
                 }
                 return output;
             }());
-
         };
         return core(api);
     },
@@ -10166,22 +10244,22 @@ var prettydiff = function prettydiff(api) {
             ace: 150519
         },
         api          : {
-            dom      : 150616,
+            dom      : 150620,
             nodeLocal: 150415,
             wsh      : 150415
         },
         charDecoder  : 141025,
         css          : 150525, //diffview.css file
-        csspretty    : 150616, //csspretty library
+        csspretty    : 150620, //csspretty library
         csvbeauty    : 140114, //csvbeauty library
         csvmin       : 131224, //csvmin library
         diffview     : 150501, //diffview library
-        documentation: 150616, //documentation.xhtml
-        jspretty     : 150616, //jspretty library
+        documentation: 150620, //documentation.xhtml
+        jspretty     : 150620, //jspretty library
         latest       : 0,
-        markuppretty : 150616, //markuppretty library
-        prettydiff   : 150616, //this file
-        version      : "1.12.a", //version number
+        markuppretty : 150620, //markuppretty library
+        prettydiff   : 150620, //this file
+        version      : "1.12.0", //version number
         webtool      : 150509
     };
 edition.latest = (function edition_latest() {
