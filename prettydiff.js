@@ -8335,10 +8335,8 @@ var prettydiff = function prettydiff(api) {
 
                 //What is the lowercase tag name of the provided token?
                 tagName         = function markuppretty__tagName(el) {
-                    var space = el.indexOf(" "),
-                        nl    = el.indexOf("\n"),
-                        index = (nl < space && nl > -1) ? nl : space,
-                        name  = (index < 0) ? el.slice(1, el.length - 1) : el.slice(1, index).toLowerCase();
+                    var space = el.replace(/\s+/, " ").indexOf(" "),
+                        name  = (space < 0) ? el.slice(1, el.length - 1) : el.slice(1, space).toLowerCase();
                     return name;
                 },
                 attrName        = function markuppretty__attrName(atty) {
@@ -8560,7 +8558,7 @@ var prettydiff = function prettydiff(api) {
                             }
                             output.push(b[a]);
                             if (quote === "") {
-                                if (b[a] === "<" && preserve === false && output.length > 1 && end !== ">>" && end !== ">>>") {
+                                if (b[a] === "<" && preserve === false && output.length > 1 && end !== ">>" && end !== ">>>" && simple === true) {
                                     parseError.push("Parse error on line " + line + " on element: ");
                                     parseFail = true;
                                 }
@@ -9653,9 +9651,9 @@ var prettydiff = function prettydiff(api) {
                                             violations += (data[y][0] - 1);
                                         }
                                         content.push("<li>");
-                                        content.push(data[y][0]);
+                                        content.push(data[y][0].replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;"));
                                         content.push("x - ");
-                                        content.push(data[y][1]);
+                                        content.push(data[y][1].replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;"));
                                         content.push("</li>");
                                     }
                                     content.push("</ul>");
@@ -10249,6 +10247,7 @@ var prettydiff = function prettydiff(api) {
                 return output;
             }());
         };
+
         return core(api);
     },
 
@@ -10273,7 +10272,7 @@ var prettydiff = function prettydiff(api) {
         latest       : 0,
         markuppretty : 150621, //markuppretty library
         prettydiff   : 150621, //this file
-        version      : "1.12.2", //version number
+        version      : "1.12.3", //version number
         webtool      : 150509
     };
 edition.latest = (function edition_latest() {
