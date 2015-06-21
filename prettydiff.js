@@ -8267,44 +8267,47 @@ var prettydiff = function prettydiff(api) {
                 mvarword        = (args.varword === "each" || args.varword === "list") ? args.varword : "none",
                 mvertical       = (args.vertical === "jsonly") ? "jsonly" : ((args.vertical === true || args.vertical === "true") ? true : false),
                 stats           = {
-                    cdata    : [
+                    cdata      : [
                         0, 0
                     ],
-                    comment  : [
+                    comment    : [
                         0, 0
                     ],
-                    content  : [
+                    conditional: [
                         0, 0
                     ],
-                    end      : [
+                    content    : [
                         0, 0
                     ],
-                    ignore   : [
+                    end        : [
                         0, 0
                     ],
-                    script   : [
+                    ignore     : [
                         0, 0
                     ],
-                    sgml     : [
+                    script     : [
                         0, 0
                     ],
-                    singleton: [
+                    sgml       : [
                         0, 0
                     ],
-                    space    : 0,
-                    start    : [
+                    singleton  : [
                         0, 0
                     ],
-                    style    : [
+                    space      : 0,
+                    start      : [
                         0, 0
                     ],
-                    template : [
+                    style      : [
                         0, 0
                     ],
-                    text     : [
+                    template   : [
                         0, 0
                     ],
-                    xml      : [
+                    text       : [
+                        0, 0
+                    ],
+                    xml        : [
                         0, 0
                     ]
                 },
@@ -10268,9 +10271,9 @@ var prettydiff = function prettydiff(api) {
         documentation: 150621, //documentation.xhtml
         jspretty     : 150620, //jspretty library
         latest       : 0,
-        markuppretty : 150620, //markuppretty library
+        markuppretty : 150621, //markuppretty library
         prettydiff   : 150621, //this file
-        version      : "1.12.1", //version number
+        version      : "1.12.2", //version number
         webtool      : 150509
     };
 edition.latest = (function edition_latest() {
