@@ -352,6 +352,7 @@ var prettydiff = function prettydiff(api) {
                     },
                     //determines api source as necessary to make a decision about whether to supply
                     //externally needed JS functions to reports
+                    caccessibility  = (api.accessibility === true || api.accessibility === "true") ? true : false,
                     capi            = (api.api === undefined || api.api.length === 0) ? "" : api.api,
                     //braceline - should a new line pad the interior of blocks (curly braces) in
                     //JavaScript
@@ -1240,27 +1241,28 @@ var prettydiff = function prettydiff(api) {
                         apidiffout = "";
                     } else if (clang === "markup") {
                         apioutput  = markuppretty({
-                            braceline   : cbraceline,
-                            bracepadding: cbracepadding,
-                            braces      : cbraces,
-                            comments    : ccomm,
-                            correct     : ccorrect,
-                            force_indent: cforce,
-                            html        : chtml,
-                            inchar      : cinchar,
-                            inlevel     : cinlevel,
-                            insize      : cinsize,
-                            mode        : cmode,
-                            objsort     : cobjsort,
-                            preserve    : cpreserve,
-                            quoteConvert: cquoteConvert,
-                            source      : csource,
-                            space       : cspace,
-                            style       : cstyle,
-                            styleguide  : cstyleguide,
-                            varword     : cvarword,
-                            vertical    : (api.vertical === "jsonly") ? "jsonly" : cvertical,
-                            wrap        : cwrap
+                            accessibility: caccessibility,
+                            braceline    : cbraceline,
+                            bracepadding : cbracepadding,
+                            braces       : cbraces,
+                            comments     : ccomm,
+                            correct      : ccorrect,
+                            force_indent : cforce,
+                            html         : chtml,
+                            inchar       : cinchar,
+                            inlevel      : cinlevel,
+                            insize       : cinsize,
+                            mode         : cmode,
+                            objsort      : cobjsort,
+                            preserve     : cpreserve,
+                            quoteConvert : cquoteConvert,
+                            source       : csource,
+                            space        : cspace,
+                            style        : cstyle,
+                            styleguide   : cstyleguide,
+                            varword      : cvarword,
+                            vertical     : (api.vertical === "jsonly") ? "jsonly" : cvertical,
+                            wrap         : cwrap
                         });
                         apidiffout = summary;
                         if (cinchar !== "\t") {
@@ -8399,6 +8401,7 @@ var prettydiff = function prettydiff(api) {
             } else {
                 mcont = false;
             }
+
             (function markuppretty__tokenize() {
                 var a        = 0,
                     b        = msource.split(""),
@@ -8609,6 +8612,7 @@ var prettydiff = function prettydiff(api) {
                                                     quotetest = false;
                                                 } else {
                                                     //if there is an unquoted space attribute is complete
+                                                    attribute.pop();
                                                     element = attribute.join("").replace(/\s+/g, " ");
                                                     name    = attrName(element)[0];
                                                     if (name === "data-prettydiff-ignore") {
@@ -9597,6 +9601,7 @@ var prettydiff = function prettydiff(api) {
                             sum           = [],
                             startend      = stats.start[0] - stats.end[0],
                             violations    = 0,
+                            binfix        = (/\u0000|\u0001|\u0002|\u0003|\u0004|\u0005|\u0006|\u0007|\u0008|\u000b|\u000c|\u000e|\u000f|\u0010|\u0011|\u0012|\u0013|\u0014|\u0015|\u0016|\u0017|\u0018|\u0019|\u001a|\u001b|\u001c|\u001d|\u001e|\u001f|\u007f|\u0080|\u0081|\u0082|\u0083|\u0084|\u0085|\u0086|\u0087|\u0088|\u0089|\u008a|\u008b|\u008c|\u008d|\u008e|\u008f|\u0090|\u0091|\u0092|\u0093|\u0094|\u0095|\u0096|\u0097|\u0098|\u0099|\u009a|\u009b|\u009c|\u009d|\u009e|\u009f|\ufffd/g),
                             numformat     = function markuppretty__apply_summary_numformat(x) {
                                 var y    = String(x).split(""),
                                     z    = 0,
@@ -9789,8 +9794,8 @@ var prettydiff = function prettydiff(api) {
                                         b = presentationAt.length;
                                         if (b > 0) {
                                             z = 0;
-                                            y = attr.length;
                                             attr.push("<h4><strong>");
+                                            y = attr.length;
                                             attr.push("</strong> HTML tag");
                                             if (b > 1) {
                                                 attr.push("s");
@@ -9842,7 +9847,7 @@ var prettydiff = function prettydiff(api) {
                                             attr.push("</ol>");
                                         } else {
                                             attr.push("<h4><strong>0</strong> form control elements missing a required <em>id</em> attr" +
-                                                "ibute</h4> <p>The id attribute is required to bind a point of interaction to an ");
+                                                "ibute</h4> <p>The id attribute is required to bind a point of interaction to an HTML label.</p>");
                                         }
 
                                         //form controls missing a binding to a label
@@ -9888,12 +9893,12 @@ var prettydiff = function prettydiff(api) {
                                         if (b > 0) {
                                             attr.push("<h4><strong>");
                                             attr.push(b);
-                                            attr.push("</strong> elemente");
+                                            attr.push("</strong> element");
                                             if (b > 1) {
                                                 attr.push("s");
                                             }
                                             attr.push(" with a <em>tabindex</em> attribute</h4> <p>The tabindex attribute should have a" +
-                                                " or not negative value and should not be over used. Violators are indicated by u");
+                                                "0 or -1 value and should not be over used.</p>");
                                             for (x = 0; x < b; x += 1) {
                                                 attr.push("<li><code>");
                                                 if (tabindex[x][1] === true) {
@@ -9910,7 +9915,7 @@ var prettydiff = function prettydiff(api) {
                                             attr.push("</ol>");
                                         } else {
                                             attr.push("<h4><strong>0</strong> elements with a <em>tabindex</em> attribute</h4> <p>The t" +
-                                                "abindex attribute should have a or not negative value and should not be over use");
+                                                "abindex attribute should have a 0 or -1 value and should not be over used.</p>");
                                         }
 
                                         //headings
@@ -10012,7 +10017,7 @@ var prettydiff = function prettydiff(api) {
                                 fails.push("</strong> errors interpreting markup</h4> <ol>");
                                 for (y = 0; y < x; y += 1) {
                                     fails.push("<li>");
-                                    fails.push(parseError[y].replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace("element: ", "element: <code>"));
+                                    fails.push(parseError[y].replace(binfix, "").replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace("element: ", "element: <code>"));
                                     fails.push("</code></li>");
                                 }
                                 fails.push("</ol>");
@@ -10127,7 +10132,7 @@ var prettydiff = function prettydiff(api) {
                                         wordlist.push(token[x]);
                                     }
                                 }
-                                wordlist = safeSort(wordlist.join(" ").toLowerCase().replace(/\&nbsp;?/gi, " ").replace(/(\,|\.|\?|\!|\:|\(|\)|"|\{|\}|\[|\])/g, "").replace(/\s+/g, " ").replace(/&/g, "&amp;").replace(/>/g, "&gt;").replace(/</g, "&lt;").split(" "));
+                                wordlist = safeSort(wordlist.join(" ").replace(binfix, "").toLowerCase().replace(/\&nbsp;?/gi, " ").replace(/(\,|\.|\?|\!|\:|\(|\)|"|\{|\}|\[|\])/g, "").replace(/\s+/g, " ").replace(/&/g, "&amp;").replace(/>/g, "&gt;").replace(/</g, "&lt;").split(" "));
                                 wordlen  = wordlist.length;
                                 for (x = 0; x < wordlen; x += 1) {
                                     word = wordlist[x];
@@ -10272,9 +10277,9 @@ var prettydiff = function prettydiff(api) {
         documentation: 150621, //documentation.xhtml
         jspretty     : 150620, //jspretty library
         latest       : 0,
-        markuppretty : 150621, //markuppretty library
-        prettydiff   : 150621, //this file
-        version      : "1.12.3", //version number
+        markuppretty : 150623, //markuppretty library
+        prettydiff   : 150623, //this file
+        version      : "1.12.6", //version number
         webtool      : 150509
     };
 edition.latest = (function edition_latest() {

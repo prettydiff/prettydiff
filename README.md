@@ -119,7 +119,7 @@ License:
 
  @source: http://prettydiff.com/prettydiff.js
 
- @documentation - English: http://prettydiff.com/documentation.php
+ @documentation - English: http://prettydiff.com/documentation.xhtml
 
  @licstart  The following is the entire license notice for Pretty Diff.
  
@@ -144,13 +144,10 @@ License:
  permission.
   - used as diffview function
   http://prettydiff.com/lib/diffview.js
- * CodeMirror
- Copyright (C) 2013 by Marijn Haverbeke marijnh@gmail.com and others
- http://codemirror.com - MIT License
- * The code mentioned above has significantly expanded documentation in
+* The code mentioned above has significantly expanded documentation in
  each of the respective function's external JS file as linked from the
  documentation page:
- http://prettydiff.com/documentation.php
+ http://prettydiff.com/documentation.xhtml
  * In addition to the previously stated requirements any use of any
  component, aside from directly using the full files in their entirety,
  must restate the license mentioned at the top of each concerned file.
