@@ -8620,7 +8620,7 @@ var prettydiff = function prettydiff(api) {
                                                     } else if (name === "id") {
                                                         ids.push(element.slice(name.length + 1, element.length));
                                                     }
-                                                    if (element !== " ") {
+                                                    if (element !== "") {
                                                         attrs[attrs.length - 1].push(element);
                                                     }
                                                     stest     = true;
@@ -9898,7 +9898,7 @@ var prettydiff = function prettydiff(api) {
                                                 attr.push("s");
                                             }
                                             attr.push(" with a <em>tabindex</em> attribute</h4> <p>The tabindex attribute should have a" +
-                                                "0 or -1 value and should not be over used.</p>");
+                                                " 0 or -1 value and should not be over used.</p> <ol>");
                                             for (x = 0; x < b; x += 1) {
                                                 attr.push("<li><code>");
                                                 if (tabindex[x][1] === true) {
@@ -10264,7 +10264,7 @@ var prettydiff = function prettydiff(api) {
             ace: 150519
         },
         api          : {
-            dom      : 150621,
+            dom      : 150623,
             nodeLocal: 150415,
             wsh      : 150415
         },
@@ -10279,7 +10279,7 @@ var prettydiff = function prettydiff(api) {
         latest       : 0,
         markuppretty : 150623, //markuppretty library
         prettydiff   : 150623, //this file
-        version      : "1.12.6", //version number
+        version      : "1.12.7", //version number
         webtool      : 150509
     };
 edition.latest = (function edition_latest() {

@@ -342,7 +342,7 @@ var pd = {};
     //lang - a language passed in. "" empty string means auto detect
     pd.langkey             = function dom__langkey(all, obj, lang) {
         var value       = [],
-            sample      = (obj !== undefined && obj.getValue !== undefined) ? obj.getValue() : "",
+            sample      = "",
             setlangmode = function dom__langkey_setlangmode(input) {
                 if (input === "css" || input === "less" || input === "scss") {
                     return "css";
@@ -576,6 +576,13 @@ var pd = {};
                 }
                 return output("unknown");
             };
+        if (obj !== undefined) {
+            if (pd.test.ace === true && obj.getValue !== undefined) {
+                sample = obj.getValue();
+            } else if (typeof obj.value === "string") {
+                sample = obj.value;
+            }
+        }
         if (pd.o.lang !== null && pd.o.lang.selectedIndex > 0) {
             all  = true;
             lang = pd.o.lang[pd.o.lang.selectedIndex].value;
@@ -590,7 +597,7 @@ var pd = {};
                 lang, setlangmode(lang), nameproper(lang)
             ];
             value          = pd.o.langvalue;
-        } else if (sample !== "") {
+        } else if (sample !== "" || pd.test.ace === false) {
             pd.o.langvalue = auto(sample);
             value          = pd.o.langvalue;
         } else {
@@ -1683,16 +1690,16 @@ var pd = {};
                                     if (xhr.status === 200 || xhr.status === 0) {
                                         api.diff = xhr.responseText.replace(/\r\n/g, "\n");
                                         if (completes === true) {
+                                            pd.source = api.source;
                                             if (pd.o.langvalue[1] === "text") {
                                                 api.lang = "text";
                                             } else {
                                                 if (pd.test.ace === true) {
                                                     api.lang = pd.langkey(false, pd.ace.diffBase, "");
                                                 } else {
-                                                    api.lang = pd.langkey(false, {}, "");
+                                                    api.lang = pd.langkey(false, {value: pd.source}, "");
                                                 }
                                             }
-                                            pd.source = api.source;
                                             if (pd.mode === "diff") {
                                                 pd.diff = api.diff;
                                             } else {
@@ -1792,6 +1799,7 @@ var pd = {};
                             if (xhr.status === 200 || xhr.status === 0) {
                                 api.source = xhr.responseText.replace(/\r\n/g, "\n");
                                 if (pd.mode !== "diff" || (requestd === true && completed === true)) {
+                                    pd.source = api.source;
                                     if (pd.test.ace === true) {
                                         if (pd.mode !== "diff") {
                                             api.lang = pd.langkey(false, pd.ace[pd.mode + "In"], "");
@@ -1803,9 +1811,8 @@ var pd = {};
                                     } else if (pd.mode === "diff" && pd.o.langvalue[1] === "text") {
                                         api.lang = "text";
                                     } else {
-                                        api.lang = pd.langkey(false, {}, "");
+                                        api.lang = pd.langkey(false, {value: pd.source}, "");
                                     }
-                                    pd.source = api.source;
                                     if (pd.mode === "diff") {
                                         pd.diff = api.diff;
                                     } else {
@@ -1941,14 +1948,14 @@ var pd = {};
                     }, 50);
                 }
             } else {
+                pd.source = api.source;
                 if (pd.o.langvalue[1] === "text") {
                     api.lang = "text";
                 } else if (pd.test.ace === true) {
                     api.lang = pd.langkey(false, pd.ace.diffBase, "");
                 } else {
-                    api.lang = pd.langkey(false, {}, "");
+                    api.lang = pd.langkey(false, {value: api.source}, "");
                 }
-                pd.source = api.source;
                 if (pd.mode === "diff") {
                     pd.diff = api.diff;
                 } else {
@@ -3458,8 +3465,15 @@ var pd = {};
                         node.style.width = "100%";
                     }
                     if (pd.test.ace === true) {
-                        pd.o.codeBeauIn.onkeyup = function dom__hideBeauOut_langkey() {
+                        pd.o.codeBeauIn.onkeyup = function dom__hideBeauOut_langkeyEditor(e) {
+                            var event = e || window.event;
                             pd.langkey(false, pd.ace.beauIn, "");
+                            pd.recycle(event);
+                        };
+                    } else {
+                        pd.o.codeBeauIn.onkeyup = function dom__hideBeauOut_langkeyTextarea(e) {
+                            var event = e || window.event;
+                            pd.recycle(event);
                         };
                     }
                 }
