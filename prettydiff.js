@@ -8451,6 +8451,7 @@ var prettydiff = function prettydiff(api) {
                             ignore    = false,
                             quotetest = false,
                             parseFail = false,
+                            singleton = false,
                             attribute = [];
                         spacer();
                         jscom.push(false);
@@ -8825,8 +8826,19 @@ var prettydiff = function prettydiff(api) {
                                 d     = 0;
 
                             atty = token[token.length - 1];
-                            if (types[types.length - 1] === "end" && types[types.length - 2] === "singleton" && atty.charAt(atty.length - 2) !== "/" && "/" + tagName(atty) === tname) {
-                                types[types.length - 2] = "start";
+                            if (types[types.length - 1] === "end") {
+                                if (types[types.length - 2] === "singleton" && atty.charAt(atty.length - 2) !== "/" && "/" + tagName(atty) === tname) {
+                                    types[types.length - 2] = "start";
+                                } else if (types[types.length - 2] === "start" && tname !== "span" && tname !== "div" && tname === "/" + tagName(token[token.length - 1])) {
+                                    types.pop();
+                                    attrs.pop();
+                                    jscom.pop();
+                                    linen.pop();
+                                    types[types.length - 1] = "singleton";
+                                    token[token.length - 1] = token[token.length - 1].replace(/>$/, "/>");
+                                    singleton = true;
+                                    return;
+                                }
                             }
                             for (d = atts.length - 1; d > -1; d -= 1) {
                                 atty = attrName(atts[d]);
@@ -8884,6 +8896,10 @@ var prettydiff = function prettydiff(api) {
                             }
                             return false;
                         }());
+
+                        if (singleton === true) {
+                            return;
+                        }
 
                         //am I a singleton or a start type?
                         if (simple === true && ignore === false) {
@@ -9503,12 +9519,13 @@ var prettydiff = function prettydiff(api) {
                                 string = string + list[b];
                                 if (list[b + 1] !== undefined && string.length + list[b + 1].length + 1 > mwrap) {
                                     content.push(string);
-                                    nl(lev, content);
+                                    nl(lev + 1, content);
                                     string = "";
                                 } else {
                                     string = string + " ";
                                 }
                             }
+                            content.push(string.replace(/\s$/, ""));
                             if (content.length > 0 && content[content.length - 1].charAt(0) === "\n") {
                                 content.pop();
                             }
@@ -10277,9 +10294,9 @@ var prettydiff = function prettydiff(api) {
         documentation: 150621, //documentation.xhtml
         jspretty     : 150620, //jspretty library
         latest       : 0,
-        markuppretty : 150623, //markuppretty library
-        prettydiff   : 150623, //this file
-        version      : "1.12.7", //version number
+        markuppretty : 150624, //markuppretty library
+        prettydiff   : 150624, //this file
+        version      : "1.12.8", //version number
         webtool      : 150509
     };
 edition.latest = (function edition_latest() {
