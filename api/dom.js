@@ -48,6 +48,8 @@ var pd = {};
 
     //test for web browser features for progressive enhancement
     pd.test = {
+        //accessibility analysis is locked behind a flag, this param will bypass the flag
+        accessibility: (location.href.toLowerCase().indexOf("accessibility=true") > 0) ? true : false,
         //delect if Ace Code Editor is supported
         ace        : (location.href.toLowerCase().indexOf("ace=false") < 0 && typeof ace === "object") ? true : false,
         //get the lowercase useragent string
@@ -1323,6 +1325,9 @@ var pd = {};
         node = pd.$$("showOptionsCallOut");
         if (node !== null) {
             node.parentNode.removeChild(node);
+        }
+        if (pd.test.accessibility === true) {
+            api.accessibility = true;
         }
         if (typeof event === "object" && event !== null && event.type === "keyup") {
             //jsscope does not get the convenience of keypress execution, because its

@@ -412,7 +412,7 @@ var prettydiff = function prettydiff(api) {
                     //variables are declared at which functional depth
                     cjsscope        = (api.jsscope === true || api.jsscope === "true") ? "report" : (api.jsscope !== "html" && api.jsscope !== "report") ? "none" : api.jsscope,
                     //api.lang - which programming language will we be analyzing
-                    clang           = (typeof api.lang === "string") ? setlangmode(api.lang.toLowerCase()) : "auto",
+                    clang           = (typeof api.lang === "string" && api.lang !== "auto") ? setlangmode(api.lang.toLowerCase()) : "auto",
                     //api.langdefault - what language should lang value "auto" resort to when it
                     //cannot determine the language
                     clangdefault    = (typeof api.langdefault === "string") ? setlangmode(api.langdefault.toLowerCase()) : "text",
@@ -1005,7 +1005,7 @@ var prettydiff = function prettydiff(api) {
                     };
                 if (api.preserve === true || api.preserve === "true") {
                     cpreserve = true;
-                }
+                }console.log(caccessibility);
                 if (api.alphasort === true || api.alphasort === "true" || api.objsort === true || api.objsort === "true") {
                     cobjsort = true;
                 }
@@ -2493,7 +2493,7 @@ var prettydiff = function prettydiff(api) {
                                     nl(indent);
                                 }
                             }
-                            if (scssinsertlines === true) {
+                            if (scssinsertlines === true && types[a + 1] !== "end") {
                                 build.push("\n");
                             }
                         } else if (types[a] === "semi") {
@@ -8829,7 +8829,7 @@ var prettydiff = function prettydiff(api) {
                             if (types[types.length - 1] === "end") {
                                 if (types[types.length - 2] === "singleton" && atty.charAt(atty.length - 2) !== "/" && "/" + tagName(atty) === tname) {
                                     types[types.length - 2] = "start";
-                                } else if (types[types.length - 2] === "start" && tname !== "span" && tname !== "div" && tname === "/" + tagName(token[token.length - 1])) {
+                                } else if (types[types.length - 2] === "start" && tname !== "span" && tname !== "div" && tname !== "script" && tname === "/" + tagName(token[token.length - 1])) {
                                     types.pop();
                                     attrs.pop();
                                     jscom.pop();
@@ -10045,8 +10045,8 @@ var prettydiff = function prettydiff(api) {
                                     insize     = msource.length,
                                     outlines   = output.split("\n").length,
                                     outsize    = output.length,
-                                    linechange = (outlines / line),
-                                    charchange = (outsize / insize);
+                                    linechange = (outlines / line) * 100,
+                                    charchange = (outsize / insize) * 100;
                                 table.push("<h4>Data sizes</h4>");
                                 table.push("<table class='analysis' summary='Data sizes'><caption>This table shows changes i" +
                                     "n sizes of the data due to beautification.</caption>");
@@ -10281,22 +10281,22 @@ var prettydiff = function prettydiff(api) {
             ace: 150519
         },
         api          : {
-            dom      : 150623,
-            nodeLocal: 150415,
-            wsh      : 150415
+            dom      : 150627,   //dom.js
+            nodeLocal: 150415,   //node-local.js
+            wsh      : 150415    //prettydiff.wsf
         },
         charDecoder  : 141025,
-        css          : 150525, //diffview.css file
-        csspretty    : 150621, //csspretty library
-        csvbeauty    : 140114, //csvbeauty library
-        csvmin       : 131224, //csvmin library
-        diffview     : 150501, //diffview library
-        documentation: 150621, //documentation.xhtml
-        jspretty     : 150620, //jspretty library
+        css          : 150525,   //diffview.css file
+        csspretty    : 150627,   //csspretty library
+        csvbeauty    : 140114,   //csvbeauty library
+        csvmin       : 131224,   //csvmin library
+        diffview     : 150501,   //diffview library
+        documentation: 150621,   //documentation.xhtml
+        jspretty     : 150620,   //jspretty library
         latest       : 0,
-        markuppretty : 150624, //markuppretty library
-        prettydiff   : 150624, //this file
-        version      : "1.12.8", //version number
+        markuppretty : 150627,   //markuppretty library
+        prettydiff   : 150627,   //this file
+        version      : "1.12.9", //version number
         webtool      : 150509
     };
 edition.latest = (function edition_latest() {
