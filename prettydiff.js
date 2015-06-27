@@ -1005,7 +1005,7 @@ var prettydiff = function prettydiff(api) {
                     };
                 if (api.preserve === true || api.preserve === "true") {
                     cpreserve = true;
-                }console.log(caccessibility);
+                }
                 if (api.alphasort === true || api.alphasort === "true" || api.objsort === true || api.objsort === "true") {
                     cobjsort = true;
                 }
