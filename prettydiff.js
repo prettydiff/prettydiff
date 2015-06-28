@@ -684,7 +684,7 @@ var prettydiff = function prettydiff(api) {
                             quote      = "",
                             sind       = csource.indexOf("/*prettydiff.com"),
                             dind       = cdiff.indexOf("/*prettydiff.com");
-                        if (sind < 0 && dind < 0) {
+                        if ((csource.charAt(c - 17) === "\"" && (/var\s+prettydiff\s*\=\s*function/).test(csource) === false) || (sind < 0 && dind < 0)) {
                             return;
                         }
                         if (sind > -1 && (/^(\s*\{\s*"token"\s*:\s*\[)/).test(csource) === true && (/\]\,\s*"types"\s*:\s*\[/).test(csource) === true) {
@@ -8829,7 +8829,7 @@ var prettydiff = function prettydiff(api) {
                             if (types[types.length - 1] === "end") {
                                 if (types[types.length - 2] === "singleton" && atty.charAt(atty.length - 2) !== "/" && "/" + tagName(atty) === tname) {
                                     types[types.length - 2] = "start";
-                                } else if (types[types.length - 2] === "start" && tname !== "span" && tname !== "div" && tname !== "script" && tname === "/" + tagName(token[token.length - 1])) {
+                                } else if (types[types.length - 2] === "start" && tname !== "/span" && tname !== "/div" && tname !== "/script" && tname === "/" + tagName(token[token.length - 1])) {
                                     types.pop();
                                     attrs.pop();
                                     jscom.pop();
@@ -10296,7 +10296,7 @@ var prettydiff = function prettydiff(api) {
         latest       : 0,
         markuppretty : 150627,   //markuppretty library
         prettydiff   : 150627,   //this file
-        version      : "1.12.9", //version number
+        version      : "1.12.10", //version number
         webtool      : 150509
     };
 edition.latest = (function edition_latest() {
