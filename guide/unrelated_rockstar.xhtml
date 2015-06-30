@@ -2,8 +2,7 @@
 <!DOCTYPE html PUBLIC '-//W3C//DTD XHTML 1.1//EN' 'http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd'>
 <html xml:lang='en' xmlns='http://www.w3.org/1999/xhtml'>
     <head>
-        <title>Pretty Diff - Guide, Becoming a JavaScript Rock Star (In the Real
-            World)</title>
+        <title>Pretty Diff - Guide, Becoming a JavaScript Rock Star (In the Real World)</title>
         <link href="../diffview.css" media="all" rel="stylesheet" type="text/css"/>
         <link href="guide.css" media="all" rel="stylesheet" type="text/css"/>
         <link href='http://prettydiff.com/guide/unrelated_dom.xhtml' rel='canonical'
@@ -15,17 +14,15 @@
         <meta content="width=device-width, initial-scale=1" name="viewport"/>
         <meta content="index, follow" name="robots"/>
         <meta
-            content="Pretty Diff - Guide, Becoming a JavaScript Rock Star (In the Real
-            World)" name="DC.title"/>
+            content="Pretty Diff - Guide, Becoming a JavaScript Rock Star (In the Real World)"
+            name="DC.title"/>
         <meta
-            content='(pics-1.1 "http://www.icra.org/pics/vocabularyv03/" l gen true for
-            "http://prettydiff.com" r (n 0 s 0 v 0 l 0 oa 0 ob 0 oc 0 od 0 oe 0 of 0 og 0 oh
-            0 c 1) gen true for "http://www.prettydiff.com" r (n 0 s 0 v 0 l 0 oa 0 ob 0 oc
-            0 od 0 oe 0 of 0 og 0 oh 0 c 1))' http-equiv="pics-Label"/>
+            content='(pics-1.1 "http://www.icra.org/pics/vocabularyv03/" l gen true for "http://prettydiff.com" r (n 0 s 0 v 0 l 0 oa 0 ob 0 oc 0 od 0 oe 0 of 0 og 0 oh 0 c 1) gen true for "http://www.prettydiff.com" r (n 0 s 0 v 0 l 0 oa 0 ob 0 oc 0 od 0 oe 0 of 0 og 0 oh 0 c 1))'
+            http-equiv="pics-Label"/>
         <meta content="Austin Cheney" name="author"/>
         <meta
-            content="Pretty Diff tool can minify, beautify (pretty-print), or diff between
-            minified and beautified code. This tool can even beautify and minify HTML." name="description"/>
+            content="Pretty Diff tool can minify, beautify (pretty-print), or diff between minified and beautified code. This tool can even beautify and minify HTML."
+            name="description"/>
         <meta content="Global" name="distribution"/>
         <meta content="en" http-equiv="Content-Language"/>
         <meta content="application/xhtml+xml;charset=UTF-8" http-equiv="Content-Type"/>
@@ -39,42 +36,54 @@
     <body class="white" id="doc">
         <h1>
             <svg height="2000.000000pt" preserveAspectRatio="xMidYMid meet" version="1.0"
-                viewBox="0 0 2000.000000 2000.000000" width="2000.000000pt" xmlns="http://www.w3.org/2000/svg">
+                viewBox="0 0 2000.000000 2000.000000" width="2000.000000pt"
+                xmlns="http://www.w3.org/2000/svg">
                 <g fill="#999" stroke="none"
                     transform="translate(0.000000,2000.000000) scale(0.100000,-0.100000)">
                     <path
-                        d="M14871 18523 c-16 -64 -611 -2317 -946 -3588 -175 -660 -319 -1202 -320 -1204 -2
-                        -2 -50 39 -107 91 -961 876 -2202 1358 -3498 1358 -1255 0 -2456 -451 -3409 -1279
-                        -161 -140 -424 -408 -560 -571 -507 -607 -870 -1320 -1062 -2090 -58 -232 -386
-                        -1479 -2309 -8759 -148 -563 -270 -1028 -270 -1033 0 -4 614 -8 1365 -8 l1364 0 10
-                        38 c16 63 611 2316 946 3587 175 660 319 1202 320 1204 2 2 50 -39 107 -91 543
-                        -495 1169 -862 1863 -1093 1707 -568 3581 -211 4965 946 252 210 554 524 767 796
-                        111 143 312 445 408 613 229 406 408 854 525 1320 57 225 380 1451 2310 8759 148
-                        563 270 1028 270 1033 0 4 -614 8 -1365 8 l-1364 0 -10 -37z m-4498 -5957 c477 -77
-                        889 -256 1245 -542 523 -419 850 -998 954 -1689 18 -121 18 -549 0 -670 -80 -529
-                        -279 -972 -612 -1359 -412 -480 -967 -779 -1625 -878 -121 -18 -549 -18 -670 0
-                        -494 74 -918 255 -1283 548 -523 419 -850 998 -954 1689 -18 121 -18 549 0 670 104
-                        691 431 1270 954 1689 365 293 828 490 1283 545 50 6 104 13 120 15 72 10 495 -3
-                        588 -18z"/></g>
+                        d="M14871 18523 c-16 -64 -611 -2317 -946 -3588 -175 -660 -319 -1202 -320 -1204 -2 -2 -50 39 -107 91 -961 876 -2202 1358 -3498 1358 -1255 0 -2456 -451 -3409 -1279 -161 -140 -424 -408 -560 -571 -507 -607 -870 -1320 -1062 -2090 -58 -232 -386 -1479 -2309 -8759 -148 -563 -270 -1028 -270 -1033 0 -4 614 -8 1365 -8 l1364 0 10 38 c16 63 611 2316 946 3587 175 660 319 1202 320 1204 2 2 50 -39 107 -91 543 -495 1169 -862 1863 -1093 1707 -568 3581 -211 4965 946 252 210 554 524 767 796 111 143 312 445 408 613 229 406 408 854 525 1320 57 225 380 1451 2310 8759 148 563 270 1028 270 1033 0 4 -614 8 -1365 8 l-1364 0 -10 -37z m-4498 -5957 c477 -77 889 -256 1245 -542 523 -419 850 -998 954 -1689 18 -121 18 -549 0 -670 -80 -529 -279 -972 -612 -1359 -412 -480 -967 -779 -1625 -878 -121 -18 -549 -18 -670 0 -494 74 -918 255 -1283 548 -523 419 -850 998 -954 1689 -18 121 -18 549 0 670 104 691 431 1270 954 1689 365 293 828 490 1283 545 50 6 104 13 120 15 72 10 495 -3 588 -18z"/></g>
             </svg>
             <a href="http://prettydiff.com/">Pretty Diff</a>
             - Guide</h1>
-        <p id="dcolorScheme"><label class="label" for="colorScheme">Color Scheme</label>
-            <select id="colorScheme"><option>Canvas</option>
+        <p id="dcolorScheme">
+            <label class="label" for="colorScheme">Color Scheme</label>
+            <select id="colorScheme">
+                <option>Canvas</option>
                 <option>Shadow</option>
-                <option selected="selected">White</option></select>
+                <option selected="selected">White</option>
+            </select>
         </p>
         <h2>Becoming a JavaScript Rock Star (In the Real World)</h2>
         <div id="doc_contents">
             <h3>Table of Contents</h3>
             <ol>
-                <li><a href="#realworld">In the real world</a></li>
-                <li><a href="#personality">Personality</a></li>
-                <li><a href="#honesty">Honesty</a></li>
-                <li><a href="#confidence">Confidence</a></li>
-                <li><a href="#popularity">Disregard for popularity</a></li>
-                <li><a href="#expectations">Set higher expectations</a></li>
-                <li><a href="#whoIam">Who I am</a></li>
+                <li>
+                    <a href="#realworld">In the real world</a>
+                </li>
+                <li>
+                    <a href="#personality">Personality</a>
+                </li>
+                <li>
+                    <a href="#honesty">Honesty</a>
+                </li>
+                <li>
+                    <a href="#confidence">Confidence</a>
+                </li>
+                <li>
+                    <a href="#popularity">Disregard for popularity</a>
+                </li>
+                <li>
+                    <a href="#criticality">Criticality in all things</a>
+                </li>
+                <li>
+                    <a href="#expectations">Set higher expectations</a>
+                </li>
+                <li>
+                    <a href="#directness">Technical directness</a>
+                </li>
+                <li>
+                    <a href="#whoIam">Who I am</a>
+                </li>
             </ol>
         </div>
         <div id="realworld">
@@ -96,7 +105,7 @@
                     factors are nice to have, but are largely insignificant compared to the 3 prior
                     mentioned primary qualities. When self-promotion becomes an individual's most
                     enduring quality the individual will generally be labeled as political,
-                    unfocused, or insensitive. Nobody in real world wants to work with people like
+                    unfocused, or insensitive. Nobody in real world want's to work with people like
                     this, even other people sharing this same quality.</p>
             </div>
         </div>
@@ -215,6 +224,59 @@
                     this tool or would be willing to rise to the challenge.</p>
             </div>
         </div>
+        <div id="criticality">
+            <h3>Criticality in all things</h3>
+            <div>
+                <p>Perhaps the most obvious trait that comprises a rock star is the ability to
+                    solve problems that few other people are capable of solving, but doing so
+                    quickly with a simple and elegant approach. How to arrive to that potential is
+                    certainly less than obvious. A significant factor is the ability to quickly form
+                    independent and original conclusions. That means answering the
+                    <em>why</em>
+                    questions with confidence and with profound individuality. This is referred to
+                    as
+                    <em>critical decision making</em>. Being critical absolutely reinforces decision
+                    making that has no regard for popularity.</p>
+                <p>For an extreme minority of any given social population this sort of critical
+                    reasoning comes naturally. The
+                    <a href="https://en.wikipedia.org/wiki/Myers%E2%80%93Briggs_Type_Indicator">Meyers-Briggs Type Indicator</a>
+                    personality describes these sort of natural engineers as INTP and INTJ
+                    personality types who combined comprise 5-9% of any larger group. Other
+                    personality segments must tirelessly work to achieve a critical focus and often
+                    in defiance of their most inclusive social reference group.</p>
+                <p>A continuous critical focus allows a person a greater ability to perceive any
+                    problem according to its technical merits without distraction from popular
+                    conclusions. For many people this is extremely challenging because most
+                    personality types strive to achieve peace and tranquility through arriving at a
+                    perceived social mean. A critical focus allows a person to separate the social
+                    merits of a proposed solution from technical merits, which is frequently seen as
+                    challenging and disruptive. As a developer an extreme critical nature is often
+                    met with frustration from less critical personalities operating in a technical
+                    capacity and often applauded by non-technical decision makers. This is perhaps
+                    the most striking difference between a real world rockstar and an online rock
+                    star.</p>
+                <p>The ability to separate the technical merits from the social merits of a
+                    proposed solution and challenge opinions directly is not always welcome in many
+                    online communities. In the professional world this is often an extremely well
+                    valued trait frequently referred to as
+                    <em>positive confrontations</em>. The ability to focus on the given problem
+                    directly and put politics aside is absolutely required to achieve rock star
+                    status.</p>
+                <p>In regard for political versus technical merit it is generally easy to weed
+                    out weaker engineers from the actual and potential rock stars. When a technical
+                    conversation ever shifts focus to a developer in the conversation instead of the
+                    technology the conversation has immediately failed, and can safely be referred
+                    to an
+                    <a href="https://en.wikipedia.org/wiki/Ad_hominem">ad hominem</a>. Often when a
+                    technical conversation becomes stuck in political muck it is often because one
+                    or more developers in the conversation lacks confidence to continue approaching
+                    the conversation independently. From a critical perspective a technical opinion,
+                    even if wrong, is more valuable than competing opinions if it continues to stand
+                    its ground with original argumentation and is never distracted by less technical
+                    considerations.</p>
+                <p>Critical personalities strongly avoid absolute language. Absolute language suggests that a provided opinion is formally complete without need for challenge and frequently makes use of words like: <em>always</em>, <em>never</em>, <em>will</em>, <em>must</em>, <em>right</em>, and <em>wrong</em>. Critical thinking requires that every decision point is open to challenge and independent consideration. I recently had a conversation that suggested looping through arrays is always inferior to using a <em>foreach</em> method. A rock star developer would consider each option uniquely against a currently problem and make an independent decision. Rock stars generally perceive absolute opinions as less mature or an inferior reasoning.</p>
+            </div>
+        </div>
         <div id="expectations">
             <h3>Set higher expectations</h3>
             <div>
@@ -230,8 +292,7 @@
                     risk analysis, performance, profiling, searchability, and understandability
                     using research and quantitative data. The high standards set by an OCD type are
                     generally motivated by stylistic concerns (code vanity), irrational ordering
-                    conventions, and other emotionally motivated factors that are hard to
-                    quantify.</p>
+                    conventions, and other emotionally motivated factors that are hard to quantify.</p>
                 <p>I like to use the tool
                     <em>JSHint</em>
                     as an example. It is far more popular than the older JSLint and it is also less
@@ -239,16 +300,48 @@
                     popular, but any code that passes JSLint will always pass JSHint. The common
                     argument for favoring JSHint against JSLint is something along the lines of
                     "It's too opinionated.", which is completely misleading because JSLint is
-                    extremely opinionated about its options and settings and so is JSHint.</p>
+                    extremely opinionated about its options and settings and so is JSHint. For many
+                    years JSLint's motto was, "it will hurt your feelings."</p>
             </div>
         </div>
-        <div id="whoIam">
-            <h3>Who I am</h3>
+        <div id="directness">
+            <h3>Technical directness</h3>
             <div>
-                <p>I am a Sergeant First Class (SFC) in the US Army with 18 years of military
-                    experience and 3 overseas deployments. I have been writing JavaScript fulltime
+                <p>Rock star developers are able to approach problems directly and reason about
+                    related technologies with a rare and excessive depth. For instance, HTML is
+                    often regarded as s simplistic technology demanding of trivial care. A rock star
+                    client-side web developer would separate themselves from average developers by
+                    learning more about HTML by studying how markup languages are formed and solving
+                    for various language design problems and identifying constraints. A greater
+                    depth of expertise allows a superior understanding of advanced concerns like
+                    accessibility and semantics that average developers would likely miss
+                    completely. It provides a deep understanding of why the Document Object Model
+                    (DOM) was designed the way it is how it actually works. I remember a recent
+                    conversation I had with somebody representing a major standards body who
+                    represented the DOM standards specification and did not have this history. Their
+                    understanding of the technology they represented was shallow and less complete
+                    causing major missteps in their reasoning about this technology.</p>
+                <p>Learning JavaScript directly means the ability to write in that language
+                    without assistance from additional technologies and understanding why certain
+                    code design decisions work better than alternative decisions. It also means
+                    learning about how the language works and what makes it different from other
+                    languages. It requires studying the language's history and learning why the
+                    language was designed as it is and the ability to independently consider the
+                    pros and cons of those decisions.</p>
+                <p>A rock star JavaScript developer is completely comfortable writing JavaScript without frameworks and reasoning about the DOM directly. They fully understand the language's scope model and separately understand the model of inheritance and why certain features of other languages compete with this scope model. They understand the actual value and weaknesses of popular JavaScript frameworks before ever recommending their use.</p></div>
+        </div>
+        <div id="whoIam">
+            <h3>
+                Who I am
+            </h3>
+            <div>
+                <p>
+                    I am a Sergeant First Class (SFC) in the US Army with 18 years of military
+                    experience and 3 overseas deployments. I have been writing JavaScript full-time
                     for seven years and work for
-                    <a href="http://www.orbitz.com/">Orbitz</a>.</p>
+                    <a href="http://www.orbitz.com/">
+                        Orbitz
+                    </a>.</p>
             </div>
         </div>
         <script src="../api/dom.js" type="application/javascript"></script>

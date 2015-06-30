@@ -451,6 +451,10 @@ var prettydiff = function prettydiff(api) {
                     //api.styleguide - preset of beautification options to bring a JavaScript sample
                     //closer to conformance of a given style guide
                     cstyleguide     = (typeof api.styleguide === "string") ? api.styleguide : "",
+                    //api.tagmerge - Allows combining immediately adjacent start and end tags of the
+                    //same name into a single self-closing tag:  <a href="home"></a> into <a
+                    //href="home"/>
+                    ctagmerge       = (api.tagmerge === true || api.tagmerge === "true") ? true : false,
                     //api.titanium - TSS document support via option, because this is a uniquely
                     //modified form of JSON
                     ctitanium       = (api.titanium === true || api.titanium === "true") ? true : false,
@@ -1036,7 +1040,8 @@ var prettydiff = function prettydiff(api) {
                     autoval = auto(csource);
                     clang   = autoval[1];
                     if (autoval[2] === "unknown") {
-                        autostring = "<p>Code type set to <strong>auto</strong>, but language could not be determined. Language defaulted to <em>" + autoval[0] + "</em>.</p>";
+                        autostring = "<p>Code type set to <strong>auto</strong>, but language could not be determined." +
+                            " Language defaulted to <em>" + autoval[0] + "</em>.</p>";
                     } else {
                         autostring = "<p>Code type set to <strong>auto</strong>. Presumed language is <em>" + autoval[2] + "</em>.</p>";
                     }
@@ -1092,6 +1097,7 @@ var prettydiff = function prettydiff(api) {
                             quoteConvert: cquoteConvert,
                             source      : csource,
                             styleguide  : cstyleguide,
+                            tagmerge    : ctagmerge,
                             top_comments: ctopcoms
                         });
                     } else if (clang === "text") {
@@ -1165,7 +1171,8 @@ var prettydiff = function prettydiff(api) {
                             autoval    = [
                                 "jsx", "javascript", "React JSX"
                             ];
-                            autostring = "<p>Code type set to <strong>auto</strong>. Presumed language is <em>React JSX</em>.</p>";
+                            autostring = "<p>Code type set to <strong>auto</strong>. Presumed language is <em>React JSX</e" +
+                                         "m>.</p>";
                         }
                         return [
                             apioutput, autostring + proctime() + sizediff()
@@ -1191,6 +1198,7 @@ var prettydiff = function prettydiff(api) {
                             objsort     : cobjsort,
                             quoteConvert: cquoteConvert,
                             source      : csource,
+                            tagmerge    : ctagmerge,
                             varword     : cvarword
                         });
                         autostring = autostring + summary;
@@ -1260,6 +1268,7 @@ var prettydiff = function prettydiff(api) {
                             space        : cspace,
                             style        : cstyle,
                             styleguide   : cstyleguide,
+                            tagmerge     : ctagmerge,
                             varword      : cvarword,
                             vertical     : (api.vertical === "jsonly") ? "jsonly" : cvertical,
                             wrap         : cwrap
@@ -1303,15 +1312,273 @@ var prettydiff = function prettydiff(api) {
                         autostring = "<p>Code type is presumed to be <em>React JSX</em>.</p>";
                     }
                     if (capi === "" && cjsscope !== "none" && clang === "javascript") {
-                        builder.head       = "<?xml version='1.0' encoding='UTF-8' ?><!DOCTYPE html PUBLIC '-//W3C//DTD XHTML 1.1//EN' 'http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd'><html xmlns='http://www.w3.org/1999/xhtml' xml:lang='en'><head><title>Pretty Diff - The difference tool</title><meta name='robots' content='index, follow'/> <meta name='DC.title' content='Pretty Diff - The difference tool'/> <link rel='canonical' href='http://prettydiff.com/' type='application/xhtml+xml'/><meta http-equiv='Content-Type' content='application/xhtml+xml;charset=UTF-8'/><meta http-equiv='Content-Style-Type' content='text/css'/><style type='text/css'>";
-                        builder.cssCore    = "body{font-family:'Arial';font-size:10px;overflow-y:scroll;}#samples #dcolorScheme{position:relative;z-index:1000}#apireturn textarea{font-size:1.2em;height:50em;width:100%}button{border-radius:.9em;display:block;font-weight:bold;width:100%}div .button{text-align:center}div button{display:inline-block;font-weight:bold;margin:1em 0;padding:1em 2em}button:hover{cursor:pointer}#introduction{clear:both;margin:0 0 0 5.6em;position:relative;top:-2.75em}#introduction ul{clear:both;height:3em;margin:0 0 0 -5.5em;overflow:hidden;width:100em}#introduction li{clear:none;display:block;float:left;font-size:1.4em;margin:0 4.95em -1em 0}#introduction li li{font-size:1em;margin-left:2em}#introduction .information,#webtool #introduction h2{left:-90em;position:absolute;top:0;width:10em}#introduction h2{float:none}#displayOps{float:right;font-size:1.5em;font-weight:bold;margin-right:1em;width:22.5em}#displayOps.default{position:static}#displayOps.maximized{margin-bottom:-2em;position:relative}#displayOps li{clear:none;display:block;float:left;list-style:none;margin:2em 0 0;text-align:right;width:9em}h1{float:left;font-size:2em;margin:0 .5em .5em 0}#hideOptions{margin-left:5em;padding:0}#title_text{border-style:solid;border-width:.05em;display:block;float:left;font-size:1em;margin-left:.55em;padding:.1em}h1 svg,h1 img{border-style:solid;border-width:.05em;float:left;height:2em;width:2em}h1 span{font-size:.5em}h2,h3{background:#fff;border-style:solid;border-width:.075em;display:inline-block;font-size:1.8em;font-weight:bold;margin:0 .5em .5em 0;padding:0 .2em}#doc h3{margin-top:.5em}h3{font-size:1.6em}h4{font-size:1.4em}fieldset{border-radius:.9em;clear:both;margin:3.5em 0 -2em;padding:0 0 0 1em}legend{border-style:solid;border-width:.1em;font-size:1.2em;font-weight:bold;margin-left:-.25em}.button{margin:1em 0;text-align:center}.button button{display:block;font-size:2em;height:1.5em;margin:0 auto;padding:0;width:50%}#diffreport{right:57.8em}#beaureport{right:38.8em}#minnreport{right:19.8em}#statreport{right:.8em}#statreport .body p,#statreport .body li,#statreport .body h3{font-size:1.2em}#statreport .body h3{margin-top:0}#statreport .body ul{margin-top:1em}#reports{height:4em}#reports h2{display:none}.box{border-style:solid;border-width:0;left:auto;margin:0;padding:0;position:absolute;z-index:10}.box button{border-radius:0;border-style:solid;border-width:.1em;display:block;float:right;font-family:'Lucida Console','Trebuchet MS','Arial';height:1.75em;padding:0;position:absolute;right:0;text-align:center;top:0;width:1.75em;z-index:7}.box button.resize{border-width:.05em;cursor:se-resize;font-size:1.667em;font-weight:normal;height:.8em;line-height:.5em;margin:-.85em 0 0;position:absolute;right:.05em;top:100%;width:.85em}.box button.minimize{margin:.35em 4em 0 0}.box button.maximize{margin:.35em 1.75em 0 0}.box button.save{margin:.35em 6.25em 0 0}.box .buttons{float:right;margin:0}.box h3.heading{cursor:pointer;float:left;font-size:1em;height:3em;margin:0 0 -3.2em;position:relative;width:17em;z-index:6}.box h3.heading span{display:block;font-size:1.8em;padding:.25em 0 0 .5em}.box .body{clear:both;height:20em;margin-top:-.1em;overflow:scroll;padding:4.25em 1em 1em;position:relative;right:0;top:0;width:75em;z-index:5}.options{border-radius:0 0 .9em .9em;clear:both;margin-bottom:1em;padding:1em 1em 3.5em;width:auto}label{display:inline;font-size:1.4em}ol li{font-size:1.4em;list-style-type:decimal}ol li li{font-size:1em}body#doc ol li{font-size:1.1em}ul{margin:-1.4em 0 2em;padding:0}ul li{list-style-type:none}li{clear:both;margin:1em 0 1em 3em}li h4{display:inline;float:left;margin:.4em 0;text-align:left;width:14em}p{clear:both;font-size:1.2em;margin:0 0 1em}#option_comment{height:2.5em;margin-bottom:-1.5em;width:100%}.difflabel{display:block;height:0}#beau-other-span,#diff-other-span{text-indent:-200em;width:0}.options p span{display:block;float:left;font-size:1.2em}#top{min-width:80em}#top em{font-weight:bold}#update{clear:left;float:right;font-weight:bold;padding:.5em;position:absolute;right:1em;top:11em}#announcement{height:2.5em;margin:0 -5em -4.75em;width:27.5em}#textreport{width:100%}#options{float:left;margin:0;width:19em}#options label{width:auto}#options p{clear:both;font-size:1em;margin:0;padding:0}#options p span{clear:both;float:none;height:2em;margin:0 0 0 2em}#csvchar{width:11.8em}#language,#csvchar,#colorScheme{margin:0 0 1em 2em}#codeInput{margin-left:22.5em}#Beautify.wide p,#Beautify.tall p.file,#Minify.wide p,#Minify.tall p.file{clear:none;float:none}#diffops p,#miniops p,#beauops p{clear:both;font-size:1em;padding-top:1em}#options p strong,#diffops p strong,#miniops p strong,#beauops p strong,#options .label,#diffops .label,#miniops .label,#beauops .label{display:block;float:left;font-size:1.2em;font-weight:bold;margin-bottom:1em;width:17.5em}input[type='radio']{margin:0 .25em}input[type='file']{box-shadow:none}select{border-style:inset;border-width:.1em;width:11.85em}.options input,.options label{border-style:none;display:block;float:left}.options span label{margin-left:.4em;white-space:nowrap;width:12em}.options p span label{font-size:1em}#webtool .options input[type=text]{margin-right:1em;width:11.6em}#webtool .options input[type=text],div input,textarea{border-style:inset;border-width:.1em}textarea{display:inline-block;height:10em;margin:0}strong label{font-size:1em;width:inherit}strong.new{background:#ff6;font-style:italic}#miniops span strong,#diffops span strong,#beauops span strong{display:inline;float:none;font-size:1em;width:auto}#Beautify .input label,#Beautify .output label,#Minify .input label,#Minify .output label{display:block;font-size:1.05em;font-weight:bold}#beautyinput,#minifyinput,#baseText,#newText,#beautyoutput,#minifyoutput{font-size:1em}.clear{clear:both;display:block}.wide,.tall,#diffBase,#diffNew{border-radius:0 0 .9em .9em;margin-bottom:1em}#diffBase,#diffNew{padding:1em}#diffBase p,#diffNew p{clear:none;float:none}#diffBase.wide textarea,#diffNew.wide textarea{height:10.1em}.wide,.tall{padding:1em 1.25em 0}#diff .addsource{cursor:pointer;margin-bottom:1em;padding:0}#diff .addsource input{display:block;float:left;margin:.5em .5em -1.5em}#diff .addsource label{cursor:pointer;display:inline-block;font-size:1.2em;padding:.5em .5em .5em 2em}.wide label{float:none;margin-right:0;width:100%}.wide #beautyinput,.wide #minifyinput,.wide #beautyoutput,.wide #minifyoutput{height:14.8em;margin:0;width:99.5%}.tall .input{clear:none;float:left}.tall .output{clear:none;float:right;margin-top:-2.4em}.tall .input,.tall .output{width:49%}.tall .output label{text-align:right}.tall .input textarea{height:31.7em}.tall .output textarea{height:34em}.tall textarea{margin:0 0 -.1em;width:100%}.tall #beautyinput,.tall #minifyinput{float:left}.tall #beautyoutput,.tall #minifyoutput{float:right}.wide{width:auto}#diffBase.difftall,#diffNew.difftall{margin-bottom:1.3em;padding:1em 1% .9em;width:47.5%}#diffBase.difftall{float:left}#diffNew.difftall{float:right}.file input,.labeltext input{display:inline-block;margin:0 .7em 0 0;width:16em}.labeltext,.file{font-size:.9em;font-weight:bold;margin-bottom:1em}.difftall textarea{height:30.6em;margin-bottom:.5em}#diffBase textarea,#diffNew textarea{width:99.5%}.input,.output{margin:0}#diffBase.wide,#diffNew.wide{padding:.8em 1em}#diffBase.wide{margin-bottom:1.2em}#diffoutput{width:100%}#diffoutput p em,#diffoutput li em,.analysis .bad,.analysis .good{font-weight:bold}#diffoutput ul{font-size:1.2em;margin-top:1em}#diffoutput ul li{display:list-item;list-style-type:disc}.analysis th{text-align:left}.analysis td{text-align:right}#doc ul{margin-top:1em}#doc ul li{font-size:1.2em}body#doc ul li{font-size:1.1em}#doc ol li span{display:block;margin-left:2em}.diff,.beautify{border-style:solid;border-width:.2em;display:inline-block;font-family:'Courier New',Courier,'Lucida Console',monospace;margin:0 1em 1em 0;position:relative}.beautify .data em{display:inline-block;font-style:normal;font-weight:bold;padding-top:.5em}.diff .skip{border-style:none none solid;border-width:0 0 .1em}.diff li,.diff p,.diff h3,.beautify li{font-size:1.1em}.diff .diff-left,.diff .diff-right{display:table-cell}.diff .diff-left{border-style:none none none solid;border-width:0 0 0 .1em}.diff .diff-right{border-style:none none none solid;border-width:0 0 0 .1em;margin-left:-.1em;min-width:16.5em;right:0;top:0}.diff-right .data ol{min-width:16.5em}.diff-right .data{border-style:none solid none none;border-width:0 .1em 0 0;width:100%}.diff-right .data li{min-width:16.5em}.diff ol,.beautify ol{display:table-cell;margin:0;padding:0}.diff li,.beautify li{border-style:none none solid;border-width:0 0 .1em;display:block;line-height:1.2;list-style-type:none;margin:0;padding-bottom:0;padding-right:.5em}.diff li{padding-top:.5em}.beautify .count li{padding-top:.5em}@media screen and (-webkit-min-device-pixel-ratio:0) {.beautify .count li{padding-top:.546em}}#doc .beautify .count li.fold{color:#900;cursor:pointer;font-weight:bold;padding-left:.5em}.diff .count,.beautify .count{border-style:solid;border-width:0 .1em 0 0;font-weight:normal;padding:0;text-align:right}.diff .count li,.beautify .count li{padding-left:2em}.diff .data,.beautify .data{text-align:left;white-space:pre}.diff .data li,.beautify .data li{letter-spacing:.1em;padding-left:.5em;white-space:pre}#webtool .diff h3{border-style:none solid solid;border-width:0 .1em .2em;box-shadow:none;display:block;font-family:Verdana;margin:0 0 0 -.1em;padding:.2em 2em;text-align:left}.diff li em{font-style:normal;margin:0 -.09em;padding:.05em 0}.diff p.author{border-style:solid;border-width:.2em .1em .1em;margin:0;overflow:hidden;padding:.4em;text-align:right}#dcolorScheme{float:right;margin:-2em 0 0 0}#dcolorScheme label{display:inline-block;font-size:1em;margin-right:1em}body#doc{font-size:.8em;max-width:80em}#doc th{font-weight:bold}#doc td span{display:block}#doc table,.box .body table{border-collapse:collapse;border-style:solid;border-width:.2em;clear:both}#doc table{font-size:1.2em}body#doc table{font-size:1em}#doc td,#doc th{border-left-style:solid;border-left-width:.1em;border-top-style:solid;border-top-width:.1em;padding:.5em}#doc em,.box .body em{font-style:normal;font-weight:bold}#doc div{margin-bottom:2em}#doc div div{clear:both;margin-bottom:1em}#doc h2{font-size:1.6em;margin:.5em .5em .5em 0}#doc ol{clear:both}#doc_contents li{font-size:1.75em;margin:1em 0 0}#doc_contents ol ol li{font-size:.75em;list-style:lower-alpha;margin:.5em 0 0}#doc_contents ol{padding-bottom:1em}#doc #doc_contents ol ol{background-color:inherit;border-style:none;margin:.25em .3em 0 0;padding-bottom:0}#doc_contents a{text-decoration:none}#diffoutput #thirdparties li{display:inline-block;list-style-type:none}#thirdparties a{border-style:none;display:block;height:4em;text-decoration:none}button,fieldset,.box h3.heading,.box .body,.options,.diff .replace em,.diff .delete em,.diff .insert em,.wide,.tall,#diffBase,#diffNew,#doc div,#doc div div,#doc ol,#option_comment,#update,#thirdparties img,#diffoutput #thirdparties{border-style:solid;border-width:.1em}#apitest p{clear:both;padding-top:.75em}#apitest label,#apitest select,#apitest input,#apitest textarea{float:left}#apitest label{width:20em}#apitest select,#apitest input,#apitest textarea{width:30em}#pdsamples{list-style-position:inside;margin:-12em 0 0 0;padding:0;position:relative;z-index:10}#pdsamples li{border-radius:1em;border-style:solid;border-width:.1em;margin:0 0 3em;padding:1em}#pdsamples li div{border-radius:1em;border-style:solid;border-width:.1em;margin:0;padding:1em}#pdsamples li p{display:inline-block;font-size:1em;margin:0}#pdsamples li p a{display:block;margin:0 0 1em 2em}#pdsamples li ul{margin:0 0 0 2em}#samples #pdsamples li li{background:none transparent;border-style:none;display:list-item;list-style:disc outside;margin:0;padding:.5em}#modalSave span{background:#000;display:block;left:0;opacity:.5;position:absolute;top:0;z-index:9000}#modalSave p{background:#eee;color:#333;font-size:3em;padding:1em;position:absolute;text-align:center;top:10em;width:25em;z-index:9001}#modalSave p em{display:block;font-size:.75em;margin-top:1em}#modalSave p strong{color:#c00;font-weight:bold}@media print{p,.options,#Beautify,#Minify,#diff,ul{display:none}div{width:100%}html td{font-size:.8em;white-space:normal}}";
-                        builder.cssColor   = "html .white,body.white{color:#333}body.white button{background:#eee;border-color:#222;box-shadow:0 .1em .2em rgba(64,64,64,0.75);color:#666;text-shadow:.05em .05em .1em #ccc}.white button:hover,.white button:active{background:#999;color:#eee;text-shadow:.1em .1em .1em #333}.white a{color:#009}.white #title_text{border-color:#fff;color:#333}.white #introduction h2{border-color:#999;color:#333}.white h1 svg{background:#eee;border-color:#999;box-shadow:0 .1em .2em rgba(150,150,150,0.5)}.white h2,.white h3{background:#eee;border-color:#eee;box-shadow:none;padding-left:0;text-shadow:none}.white fieldset{background:#ddd;border-color:#999}.white legend{background:#fff;border-color:#999;color:#333;text-shadow:none}.white .box{background:#666;border-color:#999;box-shadow:0 .4em .8em rgba(64,64,64,0.75)}.white .box button{box-shadow:0 .1em .2em rgba(0,0,0,0.75);text-shadow:.1em .1em .1em rgba(0,0,0,.5)}.white .box button.resize{background:#bbf;border-color:#446;color:#446}.white .box button.resize:hover{background:#ddf;border-color:#228;color:#228}.white .box button.save{background:#d99;border-color:#300;color:#300}.white .box button.save:hover{background:#fcc;border-color:#822;color:#822}.white .box button.minimize{background:#bbf;border-color:#006;color:#006}.white .box button.minimize:hover{background:#eef;border-color:#228;color:#228}.white .box button.maximize{background:#9c9;border-color:#030;color:#030}.white .box button.maximize:hover{background:#cfc;border-color:#060;color:#060}.white .box h3.heading{background:#ddd;border-color:#888;box-shadow:.2em .2em .4em #666}.white .box h3.heading:hover{background:#333;color:#eee}.white .box .body{background:#eee;border-color:#888;box-shadow:0 0 .4em rgba(64,64,64,0.75)}.white .options{background:#eee;border-color:#999;box-shadow:0 .2em .4em rgba(64,64,64,0.5);text-shadow:.05em .05em .1em #ccc}.white .options h2,.white #Beautify h2,.white #Minify h2,.white #diffBase h2,.white #diffNew h2{background:#eee;border-color:#eee;box-shadow:none;text-shadow:none}.white #option_comment{background:#ddd;border-color:#999}.white #top em{color:#00f}.white #update{background:#eee;border-color:#999;box-shadow:0 .1em .2em rgba(64,64,64,0.5)}.white .wide,.white .tall,.white #diffBase,.white #diffNew{background:#eee;border-color:#999;box-shadow:0 .2em .4em rgba(64,64,64,0.5)}.white .file input,.white .labeltext input{border-color:#fff}#webtool.white input.unchecked{background:#ccc;color:#666}.white .options input[type=text],.white .options select{border-color:#999}.white #beautyoutput,.white #minifyoutput{background:#ddd}.white #diffoutput p em,.white #diffoutput li em{color:#c00}.white .analysis .bad{background-color:#ebb;color:#400}.white .analysis .good{background-color:#cec;color:#040}.white #doc .analysis thead th,.white #doc .analysis th[colspan]{background:#eef}.white div input{border-color:#999}.white textarea{border-color:#999}.white textarea:hover{background:#eef8ff}.white .diff,.white .beautify,.white .diff ol,.white .beautify ol,.white .diff .diff-left,.white .diff .diff-right,.white h3,.white p.author{border-color:#999}.white .diff .count li,.white .beautify .count li{background:#eed;border-color:#bbc;color:#886}.white .diff h3{background:#ddd;border-bottom-color:#bbc}.white .diff .empty{background-color:#ddd;border-color:#ccc}.white .diff .replace{background-color:#fea;border-color:#dd8}.white .diff .data .replace em{background-color:#ffd;border-color:#963;color:#630}.white .diff .delete{background-color:#fbb;border-color:#eaa}.white .diff .data .delete em{background-color:#fdd;border-color:#700;color:#600}.white .diff .equal,.white .beautify .data li{background-color:#fff;border-color:#eee}.white .beautify .data em.s1{color:#f66}.white .beautify .data em.s2{color:#12f}.white .beautify .data em.s3{color:#090}.white .beautify .data em.s4{color:#d6d}.white .beautify .data em.s5{color:#7cc}.white .beautify .data em.s6{color:#c85}.white .beautify .data em.s7{color:#737}.white .beautify .data em.s8{color:#6d0}.white .beautify .data em.s9{color:#dd0s}.white .beautify .data em.s10{color:#893}.white .beautify .data em.s11{color:#b97}.white .beautify .data em.s12{color:#bbb}.white .beautify .data em.s13{color:#cc3}.white .beautify .data em.s14{color:#333}.white .beautify .data em.s15{color:#9d9}.white .beautify .data em.s16{color:#880}.white .beautify .data .l0{background:#fff}.white .beautify .data .l1{background:#fed}.white .beautify .data .l2{background:#def}.white .beautify .data .l3{background:#efe}.white .beautify .data .l4{background:#fef}.white .beautify .data .l5{background:#eef}.white .beautify .data .l6{background:#fff8cc}.white .beautify .data .l7{background:#ede}.white .beautify .data .l8{background:#efc}.white .beautify .data .l9{background:#ffd}.white .beautify .data .l10{background:#edc}.white .beautify .data .l11{background:#fdb}.white .beautify .data .l12{background:#f8f8f8}.white .beautify .data .l13{background:#ffb}.white .beautify .data .l14{background:#eec}.white .beautify .data .l15{background:#cfc}.white .beautify .data .l16{background:#eea}.white .beautify .data .c0{background:#ddd}.white .beautify .data li{color:#777}.white .diff .skip{background-color:#efefef;border-color:#ddd}.white .diff .insert{background-color:#bfb;border-color:#aea}.white .diff .data .insert em{background-color:#efc;border-color:#070;color:#050}.white .diff p.author{background:#efefef;border-top-color:#bbc}.white #doc table,.white .box .body table{background:#fff;border-color:#999}.white #doc strong,.white .box .body strong{color:#c00}.white .box .body em,.white .box .body #doc em{color:#090}.white #thirdparties img,.white #diffoutput #thirdparties{border-color:#999}.white #thirdparties img{box-shadow:.2em .2em .4em #999}.white #diffoutput #thirdparties{background:#eee}.white #doc div,#doc.white div{background:#ddd;border-color:#999}.white #doc ol,#doc.white ol{background:#eee;border-color:#999}.white #doc div div,#doc.white div div{background:#eee;border-color:#999}.white #doc table,#doc.white table{background:#fff;border-color:#999}.white #doc th,#doc.white th{background:#ddd;border-left-color:#999;border-top-color:#999}.white #doc tr:hover,#doc.white tr:hover{background:#ddd}#doc.white em{color:#060}.white #doc div:hover,#doc.white div:hover{background:#ccc}.white #doc div div:hover,#doc.white div div:hover,#doc.white div ol:hover{background:#fff}.white #pdsamples li{background:#eee;border-color:#999}.white #pdsamples li div{background:#ddd;border-color:#999}.white #pdsamples li div a{color:#47a}.white #pdsamples li p a{color:#009}";
+                        builder.head       = "<?xml version='1.0' encoding='UTF-8' ?><!DOCTYPE html PUBLIC '-//W3C//DTD XHTML " +
+                                             "1.1//EN' 'http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd'><html xmlns='http://www." +
+                                             "w3.org/1999/xhtml' xml:lang='en'><head><title>Pretty Diff - The difference tool<" +
+                                             "/title><meta name='robots' content='index, follow'/> <meta name='DC.title' conte" +
+                                             "nt='Pretty Diff - The difference tool'/> <link rel='canonical' href='http://pret" +
+                                             "tydiff.com/' type='application/xhtml+xml'/><meta http-equiv='Content-Type' conte" +
+                                             "nt='application/xhtml+xml;charset=UTF-8'/><meta http-equiv='Content-Style-Type' " +
+                                             "content='text/css'/><style type='text/css'>";
+                        builder.cssCore    = "body{font-family:'Arial';font-size:10px;overflow-y:scroll;}#samples #dcolorSchem" +
+                                             "e{position:relative;z-index:1000}#apireturn textarea{font-size:1.2em;height:50em" +
+                                             ";width:100%}button{border-radius:.9em;display:block;font-weight:bold;width:100%}" +
+                                             "div .button{text-align:center}div button{display:inline-block;font-weight:bold;m" +
+                                             "argin:1em 0;padding:1em 2em}button:hover{cursor:pointer}#introduction{clear:both" +
+                                             ";margin:0 0 0 5.6em;position:relative;top:-2.75em}#introduction ul{clear:both;he" +
+                                             "ight:3em;margin:0 0 0 -5.5em;overflow:hidden;width:100em}#introduction li{clear:" +
+                                             "none;display:block;float:left;font-size:1.4em;margin:0 4.95em -1em 0}#introducti" +
+                                             "on li li{font-size:1em;margin-left:2em}#introduction .information,#webtool #intr" +
+                                             "oduction h2{left:-90em;position:absolute;top:0;width:10em}#introduction h2{float" +
+                                             ":none}#displayOps{float:right;font-size:1.5em;font-weight:bold;margin-right:1em;" +
+                                             "width:22.5em}#displayOps.default{position:static}#displayOps.maximized{margin-bo" +
+                                             "ttom:-2em;position:relative}#displayOps li{clear:none;display:block;float:left;l" +
+                                             "ist-style:none;margin:2em 0 0;text-align:right;width:9em}h1{float:left;font-size" +
+                                             ":2em;margin:0 .5em .5em 0}#hideOptions{margin-left:5em;padding:0}#title_text{bor" +
+                                             "der-style:solid;border-width:.05em;display:block;float:left;font-size:1em;margin" +
+                                             "-left:.55em;padding:.1em}h1 svg,h1 img{border-style:solid;border-width:.05em;flo" +
+                                             "at:left;height:2em;width:2em}h1 span{font-size:.5em}h2,h3{background:#fff;border" +
+                                             "-style:solid;border-width:.075em;display:inline-block;font-size:1.8em;font-weigh" +
+                                             "t:bold;margin:0 .5em .5em 0;padding:0 .2em}#doc h3{margin-top:.5em}h3{font-size:" +
+                                             "1.6em}h4{font-size:1.4em}fieldset{border-radius:.9em;clear:both;margin:3.5em 0 -" +
+                                             "2em;padding:0 0 0 1em}legend{border-style:solid;border-width:.1em;font-size:1.2e" +
+                                             "m;font-weight:bold;margin-left:-.25em}.button{margin:1em 0;text-align:center}.bu" +
+                                             "tton button{display:block;font-size:2em;height:1.5em;margin:0 auto;padding:0;wid" +
+                                             "th:50%}#diffreport{right:57.8em}#beaureport{right:38.8em}#minnreport{right:19.8e" +
+                                             "m}#statreport{right:.8em}#statreport .body p,#statreport .body li,#statreport .b" +
+                                             "ody h3{font-size:1.2em}#statreport .body h3{margin-top:0}#statreport .body ul{ma" +
+                                             "rgin-top:1em}#reports{height:4em}#reports h2{display:none}.box{border-style:soli" +
+                                             "d;border-width:0;left:auto;margin:0;padding:0;position:absolute;z-index:10}.box " +
+                                             "button{border-radius:0;border-style:solid;border-width:.1em;display:block;float:" +
+                                             "right;font-family:'Lucida Console','Trebuchet MS','Arial';height:1.75em;padding:" +
+                                             "0;position:absolute;right:0;text-align:center;top:0;width:1.75em;z-index:7}.box " +
+                                             "button.resize{border-width:.05em;cursor:se-resize;font-size:1.667em;font-weight:" +
+                                             "normal;height:.8em;line-height:.5em;margin:-.85em 0 0;position:absolute;right:.0" +
+                                             "5em;top:100%;width:.85em}.box button.minimize{margin:.35em 4em 0 0}.box button.m" +
+                                             "aximize{margin:.35em 1.75em 0 0}.box button.save{margin:.35em 6.25em 0 0}.box .b" +
+                                             "uttons{float:right;margin:0}.box h3.heading{cursor:pointer;float:left;font-size:" +
+                                             "1em;height:3em;margin:0 0 -3.2em;position:relative;width:17em;z-index:6}.box h3." +
+                                             "heading span{display:block;font-size:1.8em;padding:.25em 0 0 .5em}.box .body{cle" +
+                                             "ar:both;height:20em;margin-top:-.1em;overflow:scroll;padding:4.25em 1em 1em;posi" +
+                                             "tion:relative;right:0;top:0;width:75em;z-index:5}.options{border-radius:0 0 .9em" +
+                                             " .9em;clear:both;margin-bottom:1em;padding:1em 1em 3.5em;width:auto}label{displa" +
+                                             "y:inline;font-size:1.4em}ol li{font-size:1.4em;list-style-type:decimal}ol li li{" +
+                                             "font-size:1em}body#doc ol li{font-size:1.1em}ul{margin:-1.4em 0 2em;padding:0}ul" +
+                                             " li{list-style-type:none}li{clear:both;margin:1em 0 1em 3em}li h4{display:inline" +
+                                             ";float:left;margin:.4em 0;text-align:left;width:14em}p{clear:both;font-size:1.2e" +
+                                             "m;margin:0 0 1em}#option_comment{height:2.5em;margin-bottom:-1.5em;width:100%}.d" +
+                                             "ifflabel{display:block;height:0}#beau-other-span,#diff-other-span{text-indent:-2" +
+                                             "00em;width:0}.options p span{display:block;float:left;font-size:1.2em}#top{min-w" +
+                                             "idth:80em}#top em{font-weight:bold}#update{clear:left;float:right;font-weight:bo" +
+                                             "ld;padding:.5em;position:absolute;right:1em;top:11em}#announcement{height:2.5em;" +
+                                             "margin:0 -5em -4.75em;width:27.5em}#textreport{width:100%}#options{float:left;ma" +
+                                             "rgin:0;width:19em}#options label{width:auto}#options p{clear:both;font-size:1em;" +
+                                             "margin:0;padding:0}#options p span{clear:both;float:none;height:2em;margin:0 0 0" +
+                                             " 2em}#csvchar{width:11.8em}#language,#csvchar,#colorScheme{margin:0 0 1em 2em}#c" +
+                                             "odeInput{margin-left:22.5em}#Beautify.wide p,#Beautify.tall p.file,#Minify.wide " +
+                                             "p,#Minify.tall p.file{clear:none;float:none}#diffops p,#miniops p,#beauops p{cle" +
+                                             "ar:both;font-size:1em;padding-top:1em}#options p strong,#diffops p strong,#minio" +
+                                             "ps p strong,#beauops p strong,#options .label,#diffops .label,#miniops .label,#b" +
+                                             "eauops .label{display:block;float:left;font-size:1.2em;font-weight:bold;margin-b" +
+                                             "ottom:1em;width:17.5em}input[type='radio']{margin:0 .25em}input[type='file']{box" +
+                                             "-shadow:none}select{border-style:inset;border-width:.1em;width:11.85em}.options " +
+                                             "input,.options label{border-style:none;display:block;float:left}.options span la" +
+                                             "bel{margin-left:.4em;white-space:nowrap;width:12em}.options p span label{font-si" +
+                                             "ze:1em}#webtool .options input[type=text]{margin-right:1em;width:11.6em}#webtool" +
+                                             " .options input[type=text],div input,textarea{border-style:inset;border-width:.1" +
+                                             "em}textarea{display:inline-block;height:10em;margin:0}strong label{font-size:1em" +
+                                             ";width:inherit}strong.new{background:#ff6;font-style:italic}#miniops span strong" +
+                                             ",#diffops span strong,#beauops span strong{display:inline;float:none;font-size:1" +
+                                             "em;width:auto}#Beautify .input label,#Beautify .output label,#Minify .input labe" +
+                                             "l,#Minify .output label{display:block;font-size:1.05em;font-weight:bold}#beautyi" +
+                                             "nput,#minifyinput,#baseText,#newText,#beautyoutput,#minifyoutput{font-size:1em}." +
+                                             "clear{clear:both;display:block}.wide,.tall,#diffBase,#diffNew{border-radius:0 0 " +
+                                             ".9em .9em;margin-bottom:1em}#diffBase,#diffNew{padding:1em}#diffBase p,#diffNew " +
+                                             "p{clear:none;float:none}#diffBase.wide textarea,#diffNew.wide textarea{height:10" +
+                                             ".1em}.wide,.tall{padding:1em 1.25em 0}#diff .addsource{cursor:pointer;margin-bot" +
+                                             "tom:1em;padding:0}#diff .addsource input{display:block;float:left;margin:.5em .5" +
+                                             "em -1.5em}#diff .addsource label{cursor:pointer;display:inline-block;font-size:1" +
+                                             ".2em;padding:.5em .5em .5em 2em}.wide label{float:none;margin-right:0;width:100%" +
+                                             "}.wide #beautyinput,.wide #minifyinput,.wide #beautyoutput,.wide #minifyoutput{h" +
+                                             "eight:14.8em;margin:0;width:99.5%}.tall .input{clear:none;float:left}.tall .outp" +
+                                             "ut{clear:none;float:right;margin-top:-2.4em}.tall .input,.tall .output{width:49%" +
+                                             "}.tall .output label{text-align:right}.tall .input textarea{height:31.7em}.tall " +
+                                             ".output textarea{height:34em}.tall textarea{margin:0 0 -.1em;width:100%}.tall #b" +
+                                             "eautyinput,.tall #minifyinput{float:left}.tall #beautyoutput,.tall #minifyoutput" +
+                                             "{float:right}.wide{width:auto}#diffBase.difftall,#diffNew.difftall{margin-bottom" +
+                                             ":1.3em;padding:1em 1% .9em;width:47.5%}#diffBase.difftall{float:left}#diffNew.di" +
+                                             "fftall{float:right}.file input,.labeltext input{display:inline-block;margin:0 .7" +
+                                             "em 0 0;width:16em}.labeltext,.file{font-size:.9em;font-weight:bold;margin-bottom" +
+                                             ":1em}.difftall textarea{height:30.6em;margin-bottom:.5em}#diffBase textarea,#dif" +
+                                             "fNew textarea{width:99.5%}.input,.output{margin:0}#diffBase.wide,#diffNew.wide{p" +
+                                             "adding:.8em 1em}#diffBase.wide{margin-bottom:1.2em}#diffoutput{width:100%}#diffo" +
+                                             "utput p em,#diffoutput li em,.analysis .bad,.analysis .good{font-weight:bold}#di" +
+                                             "ffoutput ul{font-size:1.2em;margin-top:1em}#diffoutput ul li{display:list-item;l" +
+                                             "ist-style-type:disc}.analysis th{text-align:left}.analysis td{text-align:right}#" +
+                                             "doc ul{margin-top:1em}#doc ul li{font-size:1.2em}body#doc ul li{font-size:1.1em}" +
+                                             "#doc ol li span{display:block;margin-left:2em}.diff,.beautify{border-style:solid" +
+                                             ";border-width:.2em;display:inline-block;font-family:'Courier New',Courier,'Lucid" +
+                                             "a Console',monospace;margin:0 1em 1em 0;position:relative}.beautify .data em{dis" +
+                                             "play:inline-block;font-style:normal;font-weight:bold;padding-top:.5em}.diff .ski" +
+                                             "p{border-style:none none solid;border-width:0 0 .1em}.diff li,.diff p,.diff h3,." +
+                                             "beautify li{font-size:1.1em}.diff .diff-left,.diff .diff-right{display:table-cel" +
+                                             "l}.diff .diff-left{border-style:none none none solid;border-width:0 0 0 .1em}.di" +
+                                             "ff .diff-right{border-style:none none none solid;border-width:0 0 0 .1em;margin-" +
+                                             "left:-.1em;min-width:16.5em;right:0;top:0}.diff-right .data ol{min-width:16.5em}" +
+                                             ".diff-right .data{border-style:none solid none none;border-width:0 .1em 0 0;widt" +
+                                             "h:100%}.diff-right .data li{min-width:16.5em}.diff ol,.beautify ol{display:table" +
+                                             "-cell;margin:0;padding:0}.diff li,.beautify li{border-style:none none solid;bord" +
+                                             "er-width:0 0 .1em;display:block;line-height:1.2;list-style-type:none;margin:0;pa" +
+                                             "dding-bottom:0;padding-right:.5em}.diff li{padding-top:.5em}.beautify .count li{" +
+                                             "padding-top:.5em}@media screen and (-webkit-min-device-pixel-ratio:0) {.beautify" +
+                                             " .count li{padding-top:.546em}}#doc .beautify .count li.fold{color:#900;cursor:p" +
+                                             "ointer;font-weight:bold;padding-left:.5em}.diff .count,.beautify .count{border-s" +
+                                             "tyle:solid;border-width:0 .1em 0 0;font-weight:normal;padding:0;text-align:right" +
+                                             "}.diff .count li,.beautify .count li{padding-left:2em}.diff .data,.beautify .dat" +
+                                             "a{text-align:left;white-space:pre}.diff .data li,.beautify .data li{letter-spaci" +
+                                             "ng:.1em;padding-left:.5em;white-space:pre}#webtool .diff h3{border-style:none so" +
+                                             "lid solid;border-width:0 .1em .2em;box-shadow:none;display:block;font-family:Ver" +
+                                             "dana;margin:0 0 0 -.1em;padding:.2em 2em;text-align:left}.diff li em{font-style:" +
+                                             "normal;margin:0 -.09em;padding:.05em 0}.diff p.author{border-style:solid;border-" +
+                                             "width:.2em .1em .1em;margin:0;overflow:hidden;padding:.4em;text-align:right}#dco" +
+                                             "lorScheme{float:right;margin:-2em 0 0 0}#dcolorScheme label{display:inline-block" +
+                                             ";font-size:1em;margin-right:1em}body#doc{font-size:.8em;max-width:80em}#doc th{f" +
+                                             "ont-weight:bold}#doc td span{display:block}#doc table,.box .body table{border-co" +
+                                             "llapse:collapse;border-style:solid;border-width:.2em;clear:both}#doc table{font-" +
+                                             "size:1.2em}body#doc table{font-size:1em}#doc td,#doc th{border-left-style:solid;" +
+                                             "border-left-width:.1em;border-top-style:solid;border-top-width:.1em;padding:.5em" +
+                                             "}#doc em,.box .body em{font-style:normal;font-weight:bold}#doc div{margin-bottom" +
+                                             ":2em}#doc div div{clear:both;margin-bottom:1em}#doc h2{font-size:1.6em;margin:.5" +
+                                             "em .5em .5em 0}#doc ol{clear:both}#doc_contents li{font-size:1.75em;margin:1em 0" +
+                                             " 0}#doc_contents ol ol li{font-size:.75em;list-style:lower-alpha;margin:.5em 0 0" +
+                                             "}#doc_contents ol{padding-bottom:1em}#doc #doc_contents ol ol{background-color:i" +
+                                             "nherit;border-style:none;margin:.25em .3em 0 0;padding-bottom:0}#doc_contents a{" +
+                                             "text-decoration:none}#diffoutput #thirdparties li{display:inline-block;list-styl" +
+                                             "e-type:none}#thirdparties a{border-style:none;display:block;height:4em;text-deco" +
+                                             "ration:none}button,fieldset,.box h3.heading,.box .body,.options,.diff .replace e" +
+                                             "m,.diff .delete em,.diff .insert em,.wide,.tall,#diffBase,#diffNew,#doc div,#doc" +
+                                             " div div,#doc ol,#option_comment,#update,#thirdparties img,#diffoutput #thirdpar" +
+                                             "ties{border-style:solid;border-width:.1em}#apitest p{clear:both;padding-top:.75e" +
+                                             "m}#apitest label,#apitest select,#apitest input,#apitest textarea{float:left}#ap" +
+                                             "itest label{width:20em}#apitest select,#apitest input,#apitest textarea{width:30" +
+                                             "em}#pdsamples{list-style-position:inside;margin:-12em 0 0 0;padding:0;position:r" +
+                                             "elative;z-index:10}#pdsamples li{border-radius:1em;border-style:solid;border-wid" +
+                                             "th:.1em;margin:0 0 3em;padding:1em}#pdsamples li div{border-radius:1em;border-st" +
+                                             "yle:solid;border-width:.1em;margin:0;padding:1em}#pdsamples li p{display:inline-" +
+                                             "block;font-size:1em;margin:0}#pdsamples li p a{display:block;margin:0 0 1em 2em}" +
+                                             "#pdsamples li ul{margin:0 0 0 2em}#samples #pdsamples li li{background:none tran" +
+                                             "sparent;border-style:none;display:list-item;list-style:disc outside;margin:0;pad" +
+                                             "ding:.5em}#modalSave span{background:#000;display:block;left:0;opacity:.5;positi" +
+                                             "on:absolute;top:0;z-index:9000}#modalSave p{background:#eee;color:#333;font-size" +
+                                             ":3em;padding:1em;position:absolute;text-align:center;top:10em;width:25em;z-index" +
+                                             ":9001}#modalSave p em{display:block;font-size:.75em;margin-top:1em}#modalSave p " +
+                                             "strong{color:#c00;font-weight:bold}@media print{p,.options,#Beautify,#Minify,#di" +
+                                             "ff,ul{display:none}div{width:100%}html td{font-size:.8em;white-space:normal}}";
+                        builder.cssColor   = "html .white,body.white{color:#333}body.white button{background:#eee;border-color" +
+                                             ":#222;box-shadow:0 .1em .2em rgba(64,64,64,0.75);color:#666;text-shadow:.05em .0" +
+                                             "5em .1em #ccc}.white button:hover,.white button:active{background:#999;color:#ee" +
+                                             "e;text-shadow:.1em .1em .1em #333}.white a{color:#009}.white #title_text{border-" +
+                                             "color:#fff;color:#333}.white #introduction h2{border-color:#999;color:#333}.whit" +
+                                             "e h1 svg{background:#eee;border-color:#999;box-shadow:0 .1em .2em rgba(150,150,1" +
+                                             "50,0.5)}.white h2,.white h3{background:#eee;border-color:#eee;box-shadow:none;pa" +
+                                             "dding-left:0;text-shadow:none}.white fieldset{background:#ddd;border-color:#999}" +
+                                             ".white legend{background:#fff;border-color:#999;color:#333;text-shadow:none}.whi" +
+                                             "te .box{background:#666;border-color:#999;box-shadow:0 .4em .8em rgba(64,64,64,0" +
+                                             ".75)}.white .box button{box-shadow:0 .1em .2em rgba(0,0,0,0.75);text-shadow:.1em" +
+                                             " .1em .1em rgba(0,0,0,.5)}.white .box button.resize{background:#bbf;border-color" +
+                                             ":#446;color:#446}.white .box button.resize:hover{background:#ddf;border-color:#2" +
+                                             "28;color:#228}.white .box button.save{background:#d99;border-color:#300;color:#3" +
+                                             "00}.white .box button.save:hover{background:#fcc;border-color:#822;color:#822}.w" +
+                                             "hite .box button.minimize{background:#bbf;border-color:#006;color:#006}.white .b" +
+                                             "ox button.minimize:hover{background:#eef;border-color:#228;color:#228}.white .bo" +
+                                             "x button.maximize{background:#9c9;border-color:#030;color:#030}.white .box butto" +
+                                             "n.maximize:hover{background:#cfc;border-color:#060;color:#060}.white .box h3.hea" +
+                                             "ding{background:#ddd;border-color:#888;box-shadow:.2em .2em .4em #666}.white .bo" +
+                                             "x h3.heading:hover{background:#333;color:#eee}.white .box .body{background:#eee;" +
+                                             "border-color:#888;box-shadow:0 0 .4em rgba(64,64,64,0.75)}.white .options{backgr" +
+                                             "ound:#eee;border-color:#999;box-shadow:0 .2em .4em rgba(64,64,64,0.5);text-shado" +
+                                             "w:.05em .05em .1em #ccc}.white .options h2,.white #Beautify h2,.white #Minify h2" +
+                                             ",.white #diffBase h2,.white #diffNew h2{background:#eee;border-color:#eee;box-sh" +
+                                             "adow:none;text-shadow:none}.white #option_comment{background:#ddd;border-color:#" +
+                                             "999}.white #top em{color:#00f}.white #update{background:#eee;border-color:#999;b" +
+                                             "ox-shadow:0 .1em .2em rgba(64,64,64,0.5)}.white .wide,.white .tall,.white #diffB" +
+                                             "ase,.white #diffNew{background:#eee;border-color:#999;box-shadow:0 .2em .4em rgb" +
+                                             "a(64,64,64,0.5)}.white .file input,.white .labeltext input{border-color:#fff}#we" +
+                                             "btool.white input.unchecked{background:#ccc;color:#666}.white .options input[typ" +
+                                             "e=text],.white .options select{border-color:#999}.white #beautyoutput,.white #mi" +
+                                             "nifyoutput{background:#ddd}.white #diffoutput p em,.white #diffoutput li em{colo" +
+                                             "r:#c00}.white .analysis .bad{background-color:#ebb;color:#400}.white .analysis ." +
+                                             "good{background-color:#cec;color:#040}.white #doc .analysis thead th,.white #doc" +
+                                             " .analysis th[colspan]{background:#eef}.white div input{border-color:#999}.white" +
+                                             " textarea{border-color:#999}.white textarea:hover{background:#eef8ff}.white .dif" +
+                                             "f,.white .beautify,.white .diff ol,.white .beautify ol,.white .diff .diff-left,." +
+                                             "white .diff .diff-right,.white h3,.white p.author{border-color:#999}.white .diff" +
+                                             " .count li,.white .beautify .count li{background:#eed;border-color:#bbc;color:#8" +
+                                             "86}.white .diff h3{background:#ddd;border-bottom-color:#bbc}.white .diff .empty{" +
+                                             "background-color:#ddd;border-color:#ccc}.white .diff .replace{background-color:#" +
+                                             "fea;border-color:#dd8}.white .diff .data .replace em{background-color:#ffd;borde" +
+                                             "r-color:#963;color:#630}.white .diff .delete{background-color:#fbb;border-color:" +
+                                             "#eaa}.white .diff .data .delete em{background-color:#fdd;border-color:#700;color" +
+                                             ":#600}.white .diff .equal,.white .beautify .data li{background-color:#fff;border" +
+                                             "-color:#eee}.white .beautify .data em.s1{color:#f66}.white .beautify .data em.s2" +
+                                             "{color:#12f}.white .beautify .data em.s3{color:#090}.white .beautify .data em.s4" +
+                                             "{color:#d6d}.white .beautify .data em.s5{color:#7cc}.white .beautify .data em.s6" +
+                                             "{color:#c85}.white .beautify .data em.s7{color:#737}.white .beautify .data em.s8" +
+                                             "{color:#6d0}.white .beautify .data em.s9{color:#dd0s}.white .beautify .data em.s" +
+                                             "10{color:#893}.white .beautify .data em.s11{color:#b97}.white .beautify .data em" +
+                                             ".s12{color:#bbb}.white .beautify .data em.s13{color:#cc3}.white .beautify .data " +
+                                             "em.s14{color:#333}.white .beautify .data em.s15{color:#9d9}.white .beautify .dat" +
+                                             "a em.s16{color:#880}.white .beautify .data .l0{background:#fff}.white .beautify " +
+                                             ".data .l1{background:#fed}.white .beautify .data .l2{background:#def}.white .bea" +
+                                             "utify .data .l3{background:#efe}.white .beautify .data .l4{background:#fef}.whit" +
+                                             "e .beautify .data .l5{background:#eef}.white .beautify .data .l6{background:#fff" +
+                                             "8cc}.white .beautify .data .l7{background:#ede}.white .beautify .data .l8{backgr" +
+                                             "ound:#efc}.white .beautify .data .l9{background:#ffd}.white .beautify .data .l10" +
+                                             "{background:#edc}.white .beautify .data .l11{background:#fdb}.white .beautify .d" +
+                                             "ata .l12{background:#f8f8f8}.white .beautify .data .l13{background:#ffb}.white ." +
+                                             "beautify .data .l14{background:#eec}.white .beautify .data .l15{background:#cfc}" +
+                                             ".white .beautify .data .l16{background:#eea}.white .beautify .data .c0{backgroun" +
+                                             "d:#ddd}.white .beautify .data li{color:#777}.white .diff .skip{background-color:" +
+                                             "#efefef;border-color:#ddd}.white .diff .insert{background-color:#bfb;border-colo" +
+                                             "r:#aea}.white .diff .data .insert em{background-color:#efc;border-color:#070;col" +
+                                             "or:#050}.white .diff p.author{background:#efefef;border-top-color:#bbc}.white #d" +
+                                             "oc table,.white .box .body table{background:#fff;border-color:#999}.white #doc s" +
+                                             "trong,.white .box .body strong{color:#c00}.white .box .body em,.white .box .body" +
+                                             " #doc em{color:#090}.white #thirdparties img,.white #diffoutput #thirdparties{bo" +
+                                             "rder-color:#999}.white #thirdparties img{box-shadow:.2em .2em .4em #999}.white #" +
+                                             "diffoutput #thirdparties{background:#eee}.white #doc div,#doc.white div{backgrou" +
+                                             "nd:#ddd;border-color:#999}.white #doc ol,#doc.white ol{background:#eee;border-co" +
+                                             "lor:#999}.white #doc div div,#doc.white div div{background:#eee;border-color:#99" +
+                                             "9}.white #doc table,#doc.white table{background:#fff;border-color:#999}.white #d" +
+                                             "oc th,#doc.white th{background:#ddd;border-left-color:#999;border-top-color:#999" +
+                                             "}.white #doc tr:hover,#doc.white tr:hover{background:#ddd}#doc.white em{color:#0" +
+                                             "60}.white #doc div:hover,#doc.white div:hover{background:#ccc}.white #doc div di" +
+                                             "v:hover,#doc.white div div:hover,#doc.white div ol:hover{background:#fff}.white " +
+                                             "#pdsamples li{background:#eee;border-color:#999}.white #pdsamples li div{backgro" +
+                                             "und:#ddd;border-color:#999}.white #pdsamples li div a{color:#47a}.white #pdsampl" +
+                                             "es li p a{color:#009}";
                         builder.cssExtra   = "body{background:#eee}#doc p em{color:#090}";
                         builder.body       = "</style></head><body id='webtool' class='";
                         builder.bodyColor  = "white";
-                        builder.title      = "'><h1><a href='http://prettydiff.com/'>Pretty Diff - The difference tool</a></h1><div class='doc'>";
+                        builder.title      = "'><h1><a href='http://prettydiff.com/'>Pretty Diff - The difference tool</a></h1" +
+                                             "><div class='doc'>";
                         builder.scriptOpen = "<script type='application/javascript'><![CDATA[";
-                        builder.scriptBody = "var pd={};pd.beaufold=function dom__beaufold(){'use strict';var self=this,title=self.getAttribute('title').split('line '),min=Number(title[1].substr(0,title[1].indexOf(' '))),max=Number(title[2]),a=0,b='',list=[self.parentNode.getElementsByTagName('li'),self.parentNode.nextSibling.getElementsByTagName('li')];if(self.innerHTML.charAt(0)==='-'){for(a=min;a<max;a+=1){list[0][a].style.display='none';list[1][a].style.display='none';}self.innerHTML='+'+self.innerHTML.substr(1);}else{for(a=min;a<max;a+=1){list[0][a].style.display='block';list[1][a].style.display='block';if(list[0][a].getAttribute('class')==='fold'&&list[0][a].innerHTML.charAt(0)==='+'){b=list[0][a].getAttribute('title');b=b.substring(b.indexOf('to line ')+1);a=Number(b)-1;}}self.innerHTML='-'+self.innerHTML.substr(1);}};(function(){'use strict';var lists=document.getElementsByTagName('ol'),listslen=lists.length,list=[],listlen=0,a=0,b=0;for(a=0;a<listslen;a+=1){if(lists[a].getAttribute('class')==='count'&&lists[a].parentNode.getAttribute('class')==='beautify'){list=lists[a].getElementsByTagName('li');listlen=list.length;for(b=0;b<listlen;b+=1){if(list[b].getAttribute('class')==='fold'){list[b].onmousedown=pd.beaufold;}}}}}());";
+                        builder.scriptBody = "var pd={};pd.beaufold=function dom__beaufold(){'use strict';var self=this,title=" +
+                                             "self.getAttribute('title').split('line '),min=Number(title[1].substr(0,title[1]." +
+                                             "indexOf(' '))),max=Number(title[2]),a=0,b='',list=[self.parentNode.getElementsBy" +
+                                             "TagName('li'),self.parentNode.nextSibling.getElementsByTagName('li')];if(self.in" +
+                                             "nerHTML.charAt(0)==='-'){for(a=min;a<max;a+=1){list[0][a].style.display='none';l" +
+                                             "ist[1][a].style.display='none';}self.innerHTML='+'+self.innerHTML.substr(1);}els" +
+                                             "e{for(a=min;a<max;a+=1){list[0][a].style.display='block';list[1][a].style.displa" +
+                                             "y='block';if(list[0][a].getAttribute('class')==='fold'&&list[0][a].innerHTML.cha" +
+                                             "rAt(0)==='+'){b=list[0][a].getAttribute('title');b=b.substring(b.indexOf('to lin" +
+                                             "e ')+1);a=Number(b)-1;}}self.innerHTML='-'+self.innerHTML.substr(1);}};(function" +
+                                             "(){'use strict';var lists=document.getElementsByTagName('ol'),listslen=lists.len" +
+                                             "gth,list=[],listlen=0,a=0,b=0;for(a=0;a<listslen;a+=1){if(lists[a].getAttribute(" +
+                                             "'class')==='count'&&lists[a].parentNode.getAttribute('class')==='beautify'){list" +
+                                             "=lists[a].getElementsByTagName('li');listlen=list.length;for(b=0;b<listlen;b+=1)" +
+                                             "{if(list[b].getAttribute('class')==='fold'){list[b].onmousedown=pd.beaufold;}}}}" +
+                                             "}());";
                         builder.scriptEnd  = "]]></script>";
                         return [
                             [
@@ -1378,6 +1645,7 @@ var prettydiff = function prettydiff(api) {
                             source      : csource,
                             style       : cstyle,
                             styleguide  : cstyleguide,
+                            tagmerge    : ctagmerge,
                             vertical    : false,
                             wrap        : cwrap
                         }).replace(/\n[\t]* \/>/g, "");
@@ -1387,6 +1655,7 @@ var prettydiff = function prettydiff(api) {
                             comments    : ccomm,
                             conditional : ccond,
                             content     : ccontent,
+                            ctagmerge   : ctagmerge,
                             diffcomments: cdiffcomments,
                             force_indent: cforce,
                             html        : chtml,
@@ -1480,7 +1749,9 @@ var prettydiff = function prettydiff(api) {
                         }
                         if (apioutput === "Error: This does not appear to be JavaScript." || apidiffout === "Error: This does not appear to be JavaScript.") {
                             a[1] = [
-                                "<p><strong>Error:</strong> Please try using the option labeled <em>Plain Text (d" + "iff only)</em>. <span style='display:block'>The input does not appear to be mark" + "up, CSS, or JavaScript.</span></p>", 0, 0
+                                "<p><strong>Error:</strong> Please try using the option labeled <em>Plain Text (d" +
+                                    "iff only)</em>. <span style='display:block'>The input does not appear to be mark" +
+                                    "up, CSS, or JavaScript.</span></p>", 0, 0
                             ];
                         } else {
                             if (clang !== "text") {
@@ -1508,16 +1779,294 @@ var prettydiff = function prettydiff(api) {
                             autostring = "<p>Code type is presumed to be <em>React JSX</em>.</p>";
                         }
                         if (capi === "") {
-                            builder.head          = "<?xml version='1.0' encoding='UTF-8' ?><!DOCTYPE html PUBLIC '-//W3C//DTD XHTML 1.1//EN' 'http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd'><html xmlns='http://www.w3.org/1999/xhtml' xml:lang='en'><head><title>Pretty Diff - The difference tool</title><meta name='robots' content='index, follow'/> <meta name='DC.title' content='Pretty Diff - The difference tool'/> <link rel='canonical' href='http://prettydiff.com/' type='application/xhtml+xml'/><meta http-equiv='Content-Type' content='application/xhtml+xml;charset=UTF-8'/><meta http-equiv='Content-Style-Type' content='text/css'/><style type='text/css'>";
-                            builder.cssCore       = "body{font-family:'Arial';font-size:10px;overflow-y:scroll;}#samples #dcolorScheme{position:relative;z-index:1000}#apireturn textarea{font-size:1.2em;height:50em;width:100%}button{border-radius:.9em;display:block;font-weight:bold;width:100%}div .button{text-align:center}div button{display:inline-block;font-weight:bold;margin:1em 0;padding:1em 2em}button:hover{cursor:pointer}#introduction{clear:both;margin:0 0 0 5.6em;position:relative;top:-2.75em}#introduction ul{clear:both;height:3em;margin:0 0 0 -5.5em;overflow:hidden;width:100em}#introduction li{clear:none;display:block;float:left;font-size:1.4em;margin:0 4.95em -1em 0}#introduction li li{font-size:1em;margin-left:2em}#introduction .information,#webtool #introduction h2{left:-90em;position:absolute;top:0;width:10em}#introduction h2{float:none}#displayOps{float:right;font-size:1.5em;font-weight:bold;margin-right:1em;width:22.5em}#displayOps.default{position:static}#displayOps.maximized{margin-bottom:-2em;position:relative}#displayOps li{clear:none;display:block;float:left;list-style:none;margin:2em 0 0;text-align:right;width:9em}h1{float:left;font-size:2em;margin:0 .5em .5em 0}#hideOptions{margin-left:5em;padding:0}#title_text{border-style:solid;border-width:.05em;display:block;float:left;font-size:1em;margin-left:.55em;padding:.1em}h1 svg,h1 img{border-style:solid;border-width:.05em;float:left;height:2em;width:2em}h1 span{font-size:.5em}h2,h3{background:#fff;border-style:solid;border-width:.075em;display:inline-block;font-size:1.8em;font-weight:bold;margin:0 .5em .5em 0;padding:0 .2em}#doc h3{margin-top:.5em}h3{font-size:1.6em}h4{font-size:1.4em}fieldset{border-radius:.9em;clear:both;margin:3.5em 0 -2em;padding:0 0 0 1em}legend{border-style:solid;border-width:.1em;font-size:1.2em;font-weight:bold;margin-left:-.25em}.button{margin:1em 0;text-align:center}.button button{display:block;font-size:2em;height:1.5em;margin:0 auto;padding:0;width:50%}#diffreport{right:57.8em}#beaureport{right:38.8em}#minnreport{right:19.8em}#statreport{right:.8em}#statreport .body p,#statreport .body li,#statreport .body h3{font-size:1.2em}#statreport .body h3{margin-top:0}#statreport .body ul{margin-top:1em}#reports{height:4em}#reports h2{display:none}.box{border-style:solid;border-width:0;left:auto;margin:0;padding:0;position:absolute;z-index:10}.box button{border-radius:0;border-style:solid;border-width:.1em;display:block;float:right;font-family:'Lucida Console','Trebuchet MS','Arial';height:1.75em;padding:0;position:absolute;right:0;text-align:center;top:0;width:1.75em;z-index:7}.box button.resize{border-width:.05em;cursor:se-resize;font-size:1.667em;font-weight:normal;height:.8em;line-height:.5em;margin:-.85em 0 0;position:absolute;right:.05em;top:100%;width:.85em}.box button.minimize{margin:.35em 4em 0 0}.box button.maximize{margin:.35em 1.75em 0 0}.box button.save{margin:.35em 6.25em 0 0}.box .buttons{float:right;margin:0}.box h3.heading{cursor:pointer;float:left;font-size:1em;height:3em;margin:0 0 -3.2em;position:relative;width:17em;z-index:6}.box h3.heading span{display:block;font-size:1.8em;padding:.25em 0 0 .5em}.box .body{clear:both;height:20em;margin-top:-.1em;overflow:scroll;padding:4.25em 1em 1em;position:relative;right:0;top:0;width:75em;z-index:5}.options{border-radius:0 0 .9em .9em;clear:both;margin-bottom:1em;padding:1em 1em 3.5em;width:auto}label{display:inline;font-size:1.4em}ol li{font-size:1.4em;list-style-type:decimal}ol li li{font-size:1em}body#doc ol li{font-size:1.1em}ul{margin:-1.4em 0 2em;padding:0}ul li{list-style-type:none}li{clear:both;margin:1em 0 1em 3em}li h4{display:inline;float:left;margin:.4em 0;text-align:left;width:14em}p{clear:both;font-size:1.2em;margin:0 0 1em}#option_comment{height:2.5em;margin-bottom:-1.5em;width:100%}.difflabel{display:block;height:0}#beau-other-span,#diff-other-span{text-indent:-200em;width:0}.options p span{display:block;float:left;font-size:1.2em}#top{min-width:80em}#top em{font-weight:bold}#update{clear:left;float:right;font-weight:bold;padding:.5em;position:absolute;right:1em;top:11em}#announcement{height:2.5em;margin:0 -5em -4.75em;width:27.5em}#textreport{width:100%}#options{float:left;margin:0;width:19em}#options label{width:auto}#options p{clear:both;font-size:1em;margin:0;padding:0}#options p span{clear:both;float:none;height:2em;margin:0 0 0 2em}#csvchar{width:11.8em}#language,#csvchar,#colorScheme{margin:0 0 1em 2em}#codeInput{margin-left:22.5em}#Beautify.wide p,#Beautify.tall p.file,#Minify.wide p,#Minify.tall p.file{clear:none;float:none}#diffops p,#miniops p,#beauops p{clear:both;font-size:1em;padding-top:1em}#options p strong,#diffops p strong,#miniops p strong,#beauops p strong,#options .label,#diffops .label,#miniops .label,#beauops .label{display:block;float:left;font-size:1.2em;font-weight:bold;margin-bottom:1em;width:17.5em}input[type='radio']{margin:0 .25em}input[type='file']{box-shadow:none}select{border-style:inset;border-width:.1em;width:11.85em}.options input,.options label{border-style:none;display:block;float:left}.options span label{margin-left:.4em;white-space:nowrap;width:12em}.options p span label{font-size:1em}#webtool .options input[type=text]{margin-right:1em;width:11.6em}#webtool .options input[type=text],div input,textarea{border-style:inset;border-width:.1em}textarea{display:inline-block;height:10em;margin:0}strong label{font-size:1em;width:inherit}strong.new{background:#ff6;font-style:italic}#miniops span strong,#diffops span strong,#beauops span strong{display:inline;float:none;font-size:1em;width:auto}#Beautify .input label,#Beautify .output label,#Minify .input label,#Minify .output label{display:block;font-size:1.05em;font-weight:bold}#beautyinput,#minifyinput,#baseText,#newText,#beautyoutput,#minifyoutput{font-size:1em}.clear{clear:both;display:block}.wide,.tall,#diffBase,#diffNew{border-radius:0 0 .9em .9em;margin-bottom:1em}#diffBase,#diffNew{padding:1em}#diffBase p,#diffNew p{clear:none;float:none}#diffBase.wide textarea,#diffNew.wide textarea{height:10.1em}.wide,.tall{padding:1em 1.25em 0}#diff .addsource{cursor:pointer;margin-bottom:1em;padding:0}#diff .addsource input{display:block;float:left;margin:.5em .5em -1.5em}#diff .addsource label{cursor:pointer;display:inline-block;font-size:1.2em;padding:.5em .5em .5em 2em}.wide label{float:none;margin-right:0;width:100%}.wide #beautyinput,.wide #minifyinput,.wide #beautyoutput,.wide #minifyoutput{height:14.8em;margin:0;width:99.5%}.tall .input{clear:none;float:left}.tall .output{clear:none;float:right;margin-top:-2.4em}.tall .input,.tall .output{width:49%}.tall .output label{text-align:right}.tall .input textarea{height:31.7em}.tall .output textarea{height:34em}.tall textarea{margin:0 0 -.1em;width:100%}.tall #beautyinput,.tall #minifyinput{float:left}.tall #beautyoutput,.tall #minifyoutput{float:right}.wide{width:auto}#diffBase.difftall,#diffNew.difftall{margin-bottom:1.3em;padding:1em 1% .9em;width:47.5%}#diffBase.difftall{float:left}#diffNew.difftall{float:right}.file input,.labeltext input{display:inline-block;margin:0 .7em 0 0;width:16em}.labeltext,.file{font-size:.9em;font-weight:bold;margin-bottom:1em}.difftall textarea{height:30.6em;margin-bottom:.5em}#diffBase textarea,#diffNew textarea{width:99.5%}.input,.output{margin:0}#diffBase.wide,#diffNew.wide{padding:.8em 1em}#diffBase.wide{margin-bottom:1.2em}#diffoutput{width:100%}#diffoutput p em,#diffoutput li em,.analysis .bad,.analysis .good{font-weight:bold}#diffoutput ul{font-size:1.2em;margin-top:1em}#diffoutput ul li{display:list-item;list-style-type:disc}.analysis th{text-align:left}.analysis td{text-align:right}#doc ul{margin-top:1em}#doc ul li{font-size:1.2em}body#doc ul li{font-size:1.1em}#doc ol li span{display:block;margin-left:2em}.diff,.beautify{border-style:solid;border-width:.2em;display:inline-block;font-family:'Courier New',Courier,'Lucida Console',monospace;margin:0 1em 1em 0;position:relative}.beautify .data em{display:inline-block;font-style:normal;font-weight:bold;padding-top:.5em}.diff .skip{border-style:none none solid;border-width:0 0 .1em}.diff li,.diff p,.diff h3,.beautify li{font-size:1.1em}.diff .diff-left,.diff .diff-right{display:table-cell}.diff .diff-left{border-style:none none none solid;border-width:0 0 0 .1em}.diff .diff-right{border-style:none none none solid;border-width:0 0 0 .1em;margin-left:-.1em;min-width:16.5em;right:0;top:0}.diff-right .data ol{min-width:16.5em}.diff-right .data{border-style:none solid none none;border-width:0 .1em 0 0;width:100%}.diff-right .data li{min-width:16.5em}.diff ol,.beautify ol{display:table-cell;margin:0;padding:0}.diff li,.beautify li{border-style:none none solid;border-width:0 0 .1em;display:block;line-height:1.2;list-style-type:none;margin:0;padding-bottom:0;padding-right:.5em}.diff li{padding-top:.5em}.beautify .count li{padding-top:.5em}@media screen and (-webkit-min-device-pixel-ratio:0) {.beautify .count li{padding-top:.546em}}#doc .beautify .count li.fold{color:#900;cursor:pointer;font-weight:bold;padding-left:.5em}.diff .count,.beautify .count{border-style:solid;border-width:0 .1em 0 0;font-weight:normal;padding:0;text-align:right}.diff .count li,.beautify .count li{padding-left:2em}.diff .data,.beautify .data{text-align:left;white-space:pre}.diff .data li,.beautify .data li{letter-spacing:.1em;padding-left:.5em;white-space:pre}#webtool .diff h3{border-style:none solid solid;border-width:0 .1em .2em;box-shadow:none;display:block;font-family:Verdana;margin:0 0 0 -.1em;padding:.2em 2em;text-align:left}.diff li em{font-style:normal;margin:0 -.09em;padding:.05em 0}.diff p.author{border-style:solid;border-width:.2em .1em .1em;margin:0;overflow:hidden;padding:.4em;text-align:right}#dcolorScheme{float:right;margin:-2em 0 0 0}#dcolorScheme label{display:inline-block;font-size:1em;margin-right:1em}body#doc{font-size:.8em;max-width:80em}#doc th{font-weight:bold}#doc td span{display:block}#doc table,.box .body table{border-collapse:collapse;border-style:solid;border-width:.2em;clear:both}#doc table{font-size:1.2em}body#doc table{font-size:1em}#doc td,#doc th{border-left-style:solid;border-left-width:.1em;border-top-style:solid;border-top-width:.1em;padding:.5em}#doc em,.box .body em{font-style:normal;font-weight:bold}#doc div{margin-bottom:2em}#doc div div{clear:both;margin-bottom:1em}#doc h2{font-size:1.6em;margin:.5em .5em .5em 0}#doc ol{clear:both}#doc_contents li{font-size:1.75em;margin:1em 0 0}#doc_contents ol ol li{font-size:.75em;list-style:lower-alpha;margin:.5em 0 0}#doc_contents ol{padding-bottom:1em}#doc #doc_contents ol ol{background-color:inherit;border-style:none;margin:.25em .3em 0 0;padding-bottom:0}#doc_contents a{text-decoration:none}#diffoutput #thirdparties li{display:inline-block;list-style-type:none}#thirdparties a{border-style:none;display:block;height:4em;text-decoration:none}button,fieldset,.box h3.heading,.box .body,.options,.diff .replace em,.diff .delete em,.diff .insert em,.wide,.tall,#diffBase,#diffNew,#doc div,#doc div div,#doc ol,#option_comment,#update,#thirdparties img,#diffoutput #thirdparties{border-style:solid;border-width:.1em}#apitest p{clear:both;padding-top:.75em}#apitest label,#apitest select,#apitest input,#apitest textarea{float:left}#apitest label{width:20em}#apitest select,#apitest input,#apitest textarea{width:30em}#pdsamples{list-style-position:inside;margin:-12em 0 0 0;padding:0;position:relative;z-index:10}#pdsamples li{border-radius:1em;border-style:solid;border-width:.1em;margin:0 0 3em;padding:1em}#pdsamples li div{border-radius:1em;border-style:solid;border-width:.1em;margin:0;padding:1em}#pdsamples li p{display:inline-block;font-size:1em;margin:0}#pdsamples li p a{display:block;margin:0 0 1em 2em}#pdsamples li ul{margin:0 0 0 2em}#samples #pdsamples li li{background:none transparent;border-style:none;display:list-item;list-style:disc outside;margin:0;padding:.5em}#modalSave span{background:#000;display:block;left:0;opacity:.5;position:absolute;top:0;z-index:9000}#modalSave p{background:#eee;color:#333;font-size:3em;padding:1em;position:absolute;text-align:center;top:10em;width:25em;z-index:9001}#modalSave p em{display:block;font-size:.75em;margin-top:1em}#modalSave p strong{color:#c00;font-weight:bold}@media print{p,.options,#Beautify,#Minify,#diff,ul{display:none}div{width:100%}html td{font-size:.8em;white-space:normal}}";
-                            builder.cssColor      = "html .white,body.white{color:#333}body.white button{background:#eee;border-color:#222;box-shadow:0 .1em .2em rgba(64,64,64,0.75);color:#666;text-shadow:.05em .05em .1em #ccc}.white button:hover,.white button:active{background:#999;color:#eee;text-shadow:.1em .1em .1em #333}.white a{color:#009}.white #title_text{border-color:#fff;color:#333}.white #introduction h2{border-color:#999;color:#333}.white h1 svg{background:#eee;border-color:#999;box-shadow:0 .1em .2em rgba(150,150,150,0.5)}.white h2,.white h3{background:#eee;border-color:#eee;box-shadow:none;padding-left:0;text-shadow:none}.white fieldset{background:#ddd;border-color:#999}.white legend{background:#fff;border-color:#999;color:#333;text-shadow:none}.white .box{background:#666;border-color:#999;box-shadow:0 .4em .8em rgba(64,64,64,0.75)}.white .box button{box-shadow:0 .1em .2em rgba(0,0,0,0.75);text-shadow:.1em .1em .1em rgba(0,0,0,.5)}.white .box button.resize{background:#bbf;border-color:#446;color:#446}.white .box button.resize:hover{background:#ddf;border-color:#228;color:#228}.white .box button.save{background:#d99;border-color:#300;color:#300}.white .box button.save:hover{background:#fcc;border-color:#822;color:#822}.white .box button.minimize{background:#bbf;border-color:#006;color:#006}.white .box button.minimize:hover{background:#eef;border-color:#228;color:#228}.white .box button.maximize{background:#9c9;border-color:#030;color:#030}.white .box button.maximize:hover{background:#cfc;border-color:#060;color:#060}.white .box h3.heading{background:#ddd;border-color:#888;box-shadow:.2em .2em .4em #666}.white .box h3.heading:hover{background:#333;color:#eee}.white .box .body{background:#eee;border-color:#888;box-shadow:0 0 .4em rgba(64,64,64,0.75)}.white .options{background:#eee;border-color:#999;box-shadow:0 .2em .4em rgba(64,64,64,0.5);text-shadow:.05em .05em .1em #ccc}.white .options h2,.white #Beautify h2,.white #Minify h2,.white #diffBase h2,.white #diffNew h2{background:#eee;border-color:#eee;box-shadow:none;text-shadow:none}.white #option_comment{background:#ddd;border-color:#999}.white #top em{color:#00f}.white #update{background:#eee;border-color:#999;box-shadow:0 .1em .2em rgba(64,64,64,0.5)}.white .wide,.white .tall,.white #diffBase,.white #diffNew{background:#eee;border-color:#999;box-shadow:0 .2em .4em rgba(64,64,64,0.5)}.white .file input,.white .labeltext input{border-color:#fff}#webtool.white input.unchecked{background:#ccc;color:#666}.white .options input[type=text],.white .options select{border-color:#999}.white #beautyoutput,.white #minifyoutput{background:#ddd}.white #diffoutput p em,.white #diffoutput li em{color:#c00}.white .analysis .bad{background-color:#ebb;color:#400}.white .analysis .good{background-color:#cec;color:#040}.white #doc .analysis thead th,.white #doc .analysis th[colspan]{background:#eef}.white div input{border-color:#999}.white textarea{border-color:#999}.white textarea:hover{background:#eef8ff}.white .diff,.white .beautify,.white .diff ol,.white .beautify ol,.white .diff .diff-left,.white .diff .diff-right,.white h3,.white p.author{border-color:#999}.white .diff .count li,.white .beautify .count li{background:#eed;border-color:#bbc;color:#886}.white .diff h3{background:#ddd;border-bottom-color:#bbc}.white .diff .empty{background-color:#ddd;border-color:#ccc}.white .diff .replace{background-color:#fea;border-color:#dd8}.white .diff .data .replace em{background-color:#ffd;border-color:#963;color:#630}.white .diff .delete{background-color:#fbb;border-color:#eaa}.white .diff .data .delete em{background-color:#fdd;border-color:#700;color:#600}.white .diff .equal,.white .beautify .data li{background-color:#fff;border-color:#eee}.white .beautify .data em.s1{color:#f66}.white .beautify .data em.s2{color:#12f}.white .beautify .data em.s3{color:#090}.white .beautify .data em.s4{color:#d6d}.white .beautify .data em.s5{color:#7cc}.white .beautify .data em.s6{color:#c85}.white .beautify .data em.s7{color:#737}.white .beautify .data em.s8{color:#6d0}.white .beautify .data em.s9{color:#dd0s}.white .beautify .data em.s10{color:#893}.white .beautify .data em.s11{color:#b97}.white .beautify .data em.s12{color:#bbb}.white .beautify .data em.s13{color:#cc3}.white .beautify .data em.s14{color:#333}.white .beautify .data em.s15{color:#9d9}.white .beautify .data em.s16{color:#880}.white .beautify .data .l0{background:#fff}.white .beautify .data .l1{background:#fed}.white .beautify .data .l2{background:#def}.white .beautify .data .l3{background:#efe}.white .beautify .data .l4{background:#fef}.white .beautify .data .l5{background:#eef}.white .beautify .data .l6{background:#fff8cc}.white .beautify .data .l7{background:#ede}.white .beautify .data .l8{background:#efc}.white .beautify .data .l9{background:#ffd}.white .beautify .data .l10{background:#edc}.white .beautify .data .l11{background:#fdb}.white .beautify .data .l12{background:#f8f8f8}.white .beautify .data .l13{background:#ffb}.white .beautify .data .l14{background:#eec}.white .beautify .data .l15{background:#cfc}.white .beautify .data .l16{background:#eea}.white .beautify .data .c0{background:#ddd}.white .beautify .data li{color:#777}.white .diff .skip{background-color:#efefef;border-color:#ddd}.white .diff .insert{background-color:#bfb;border-color:#aea}.white .diff .data .insert em{background-color:#efc;border-color:#070;color:#050}.white .diff p.author{background:#efefef;border-top-color:#bbc}.white #doc table,.white .box .body table{background:#fff;border-color:#999}.white #doc strong,.white .box .body strong{color:#c00}.white .box .body em,.white .box .body #doc em{color:#090}.white #thirdparties img,.white #diffoutput #thirdparties{border-color:#999}.white #thirdparties img{box-shadow:.2em .2em .4em #999}.white #diffoutput #thirdparties{background:#eee}.white #doc div,#doc.white div{background:#ddd;border-color:#999}.white #doc ol,#doc.white ol{background:#eee;border-color:#999}.white #doc div div,#doc.white div div{background:#eee;border-color:#999}.white #doc table,#doc.white table{background:#fff;border-color:#999}.white #doc th,#doc.white th{background:#ddd;border-left-color:#999;border-top-color:#999}.white #doc tr:hover,#doc.white tr:hover{background:#ddd}#doc.white em{color:#060}.white #doc div:hover,#doc.white div:hover{background:#ccc}.white #doc div div:hover,#doc.white div div:hover,#doc.white div ol:hover{background:#fff}.white #pdsamples li{background:#eee;border-color:#999}.white #pdsamples li div{background:#ddd;border-color:#999}.white #pdsamples li div a{color:#47a}.white #pdsamples li p a{color:#009}";
+                            builder.head          = "<?xml version='1.0' encoding='UTF-8' ?><!DOCTYPE html PUBLIC '-//W3C//DTD XHTML " +
+                                                    "1.1//EN' 'http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd'><html xmlns='http://www." +
+                                                    "w3.org/1999/xhtml' xml:lang='en'><head><title>Pretty Diff - The difference tool<" +
+                                                    "/title><meta name='robots' content='index, follow'/> <meta name='DC.title' conte" +
+                                                    "nt='Pretty Diff - The difference tool'/> <link rel='canonical' href='http://pret" +
+                                                    "tydiff.com/' type='application/xhtml+xml'/><meta http-equiv='Content-Type' conte" +
+                                                    "nt='application/xhtml+xml;charset=UTF-8'/><meta http-equiv='Content-Style-Type' " +
+                                                    "content='text/css'/><style type='text/css'>";
+                            builder.cssCore       = "body{font-family:'Arial';font-size:10px;overflow-y:scroll;}#samples #dcolorSchem" +
+                                                    "e{position:relative;z-index:1000}#apireturn textarea{font-size:1.2em;height:50em" +
+                                                    ";width:100%}button{border-radius:.9em;display:block;font-weight:bold;width:100%}" +
+                                                    "div .button{text-align:center}div button{display:inline-block;font-weight:bold;m" +
+                                                    "argin:1em 0;padding:1em 2em}button:hover{cursor:pointer}#introduction{clear:both" +
+                                                    ";margin:0 0 0 5.6em;position:relative;top:-2.75em}#introduction ul{clear:both;he" +
+                                                    "ight:3em;margin:0 0 0 -5.5em;overflow:hidden;width:100em}#introduction li{clear:" +
+                                                    "none;display:block;float:left;font-size:1.4em;margin:0 4.95em -1em 0}#introducti" +
+                                                    "on li li{font-size:1em;margin-left:2em}#introduction .information,#webtool #intr" +
+                                                    "oduction h2{left:-90em;position:absolute;top:0;width:10em}#introduction h2{float" +
+                                                    ":none}#displayOps{float:right;font-size:1.5em;font-weight:bold;margin-right:1em;" +
+                                                    "width:22.5em}#displayOps.default{position:static}#displayOps.maximized{margin-bo" +
+                                                    "ttom:-2em;position:relative}#displayOps li{clear:none;display:block;float:left;l" +
+                                                    "ist-style:none;margin:2em 0 0;text-align:right;width:9em}h1{float:left;font-size" +
+                                                    ":2em;margin:0 .5em .5em 0}#hideOptions{margin-left:5em;padding:0}#title_text{bor" +
+                                                    "der-style:solid;border-width:.05em;display:block;float:left;font-size:1em;margin" +
+                                                    "-left:.55em;padding:.1em}h1 svg,h1 img{border-style:solid;border-width:.05em;flo" +
+                                                    "at:left;height:2em;width:2em}h1 span{font-size:.5em}h2,h3{background:#fff;border" +
+                                                    "-style:solid;border-width:.075em;display:inline-block;font-size:1.8em;font-weigh" +
+                                                    "t:bold;margin:0 .5em .5em 0;padding:0 .2em}#doc h3{margin-top:.5em}h3{font-size:" +
+                                                    "1.6em}h4{font-size:1.4em}fieldset{border-radius:.9em;clear:both;margin:3.5em 0 -" +
+                                                    "2em;padding:0 0 0 1em}legend{border-style:solid;border-width:.1em;font-size:1.2e" +
+                                                    "m;font-weight:bold;margin-left:-.25em}.button{margin:1em 0;text-align:center}.bu" +
+                                                    "tton button{display:block;font-size:2em;height:1.5em;margin:0 auto;padding:0;wid" +
+                                                    "th:50%}#diffreport{right:57.8em}#beaureport{right:38.8em}#minnreport{right:19.8e" +
+                                                    "m}#statreport{right:.8em}#statreport .body p,#statreport .body li,#statreport .b" +
+                                                    "ody h3{font-size:1.2em}#statreport .body h3{margin-top:0}#statreport .body ul{ma" +
+                                                    "rgin-top:1em}#reports{height:4em}#reports h2{display:none}.box{border-style:soli" +
+                                                    "d;border-width:0;left:auto;margin:0;padding:0;position:absolute;z-index:10}.box " +
+                                                    "button{border-radius:0;border-style:solid;border-width:.1em;display:block;float:" +
+                                                    "right;font-family:'Lucida Console','Trebuchet MS','Arial';height:1.75em;padding:" +
+                                                    "0;position:absolute;right:0;text-align:center;top:0;width:1.75em;z-index:7}.box " +
+                                                    "button.resize{border-width:.05em;cursor:se-resize;font-size:1.667em;font-weight:" +
+                                                    "normal;height:.8em;line-height:.5em;margin:-.85em 0 0;position:absolute;right:.0" +
+                                                    "5em;top:100%;width:.85em}.box button.minimize{margin:.35em 4em 0 0}.box button.m" +
+                                                    "aximize{margin:.35em 1.75em 0 0}.box button.save{margin:.35em 6.25em 0 0}.box .b" +
+                                                    "uttons{float:right;margin:0}.box h3.heading{cursor:pointer;float:left;font-size:" +
+                                                    "1em;height:3em;margin:0 0 -3.2em;position:relative;width:17em;z-index:6}.box h3." +
+                                                    "heading span{display:block;font-size:1.8em;padding:.25em 0 0 .5em}.box .body{cle" +
+                                                    "ar:both;height:20em;margin-top:-.1em;overflow:scroll;padding:4.25em 1em 1em;posi" +
+                                                    "tion:relative;right:0;top:0;width:75em;z-index:5}.options{border-radius:0 0 .9em" +
+                                                    " .9em;clear:both;margin-bottom:1em;padding:1em 1em 3.5em;width:auto}label{displa" +
+                                                    "y:inline;font-size:1.4em}ol li{font-size:1.4em;list-style-type:decimal}ol li li{" +
+                                                    "font-size:1em}body#doc ol li{font-size:1.1em}ul{margin:-1.4em 0 2em;padding:0}ul" +
+                                                    " li{list-style-type:none}li{clear:both;margin:1em 0 1em 3em}li h4{display:inline" +
+                                                    ";float:left;margin:.4em 0;text-align:left;width:14em}p{clear:both;font-size:1.2e" +
+                                                    "m;margin:0 0 1em}#option_comment{height:2.5em;margin-bottom:-1.5em;width:100%}.d" +
+                                                    "ifflabel{display:block;height:0}#beau-other-span,#diff-other-span{text-indent:-2" +
+                                                    "00em;width:0}.options p span{display:block;float:left;font-size:1.2em}#top{min-w" +
+                                                    "idth:80em}#top em{font-weight:bold}#update{clear:left;float:right;font-weight:bo" +
+                                                    "ld;padding:.5em;position:absolute;right:1em;top:11em}#announcement{height:2.5em;" +
+                                                    "margin:0 -5em -4.75em;width:27.5em}#textreport{width:100%}#options{float:left;ma" +
+                                                    "rgin:0;width:19em}#options label{width:auto}#options p{clear:both;font-size:1em;" +
+                                                    "margin:0;padding:0}#options p span{clear:both;float:none;height:2em;margin:0 0 0" +
+                                                    " 2em}#csvchar{width:11.8em}#language,#csvchar,#colorScheme{margin:0 0 1em 2em}#c" +
+                                                    "odeInput{margin-left:22.5em}#Beautify.wide p,#Beautify.tall p.file,#Minify.wide " +
+                                                    "p,#Minify.tall p.file{clear:none;float:none}#diffops p,#miniops p,#beauops p{cle" +
+                                                    "ar:both;font-size:1em;padding-top:1em}#options p strong,#diffops p strong,#minio" +
+                                                    "ps p strong,#beauops p strong,#options .label,#diffops .label,#miniops .label,#b" +
+                                                    "eauops .label{display:block;float:left;font-size:1.2em;font-weight:bold;margin-b" +
+                                                    "ottom:1em;width:17.5em}input[type='radio']{margin:0 .25em}input[type='file']{box" +
+                                                    "-shadow:none}select{border-style:inset;border-width:.1em;width:11.85em}.options " +
+                                                    "input,.options label{border-style:none;display:block;float:left}.options span la" +
+                                                    "bel{margin-left:.4em;white-space:nowrap;width:12em}.options p span label{font-si" +
+                                                    "ze:1em}#webtool .options input[type=text]{margin-right:1em;width:11.6em}#webtool" +
+                                                    " .options input[type=text],div input,textarea{border-style:inset;border-width:.1" +
+                                                    "em}textarea{display:inline-block;height:10em;margin:0}strong label{font-size:1em" +
+                                                    ";width:inherit}strong.new{background:#ff6;font-style:italic}#miniops span strong" +
+                                                    ",#diffops span strong,#beauops span strong{display:inline;float:none;font-size:1" +
+                                                    "em;width:auto}#Beautify .input label,#Beautify .output label,#Minify .input labe" +
+                                                    "l,#Minify .output label{display:block;font-size:1.05em;font-weight:bold}#beautyi" +
+                                                    "nput,#minifyinput,#baseText,#newText,#beautyoutput,#minifyoutput{font-size:1em}." +
+                                                    "clear{clear:both;display:block}.wide,.tall,#diffBase,#diffNew{border-radius:0 0 " +
+                                                    ".9em .9em;margin-bottom:1em}#diffBase,#diffNew{padding:1em}#diffBase p,#diffNew " +
+                                                    "p{clear:none;float:none}#diffBase.wide textarea,#diffNew.wide textarea{height:10" +
+                                                    ".1em}.wide,.tall{padding:1em 1.25em 0}#diff .addsource{cursor:pointer;margin-bot" +
+                                                    "tom:1em;padding:0}#diff .addsource input{display:block;float:left;margin:.5em .5" +
+                                                    "em -1.5em}#diff .addsource label{cursor:pointer;display:inline-block;font-size:1" +
+                                                    ".2em;padding:.5em .5em .5em 2em}.wide label{float:none;margin-right:0;width:100%" +
+                                                    "}.wide #beautyinput,.wide #minifyinput,.wide #beautyoutput,.wide #minifyoutput{h" +
+                                                    "eight:14.8em;margin:0;width:99.5%}.tall .input{clear:none;float:left}.tall .outp" +
+                                                    "ut{clear:none;float:right;margin-top:-2.4em}.tall .input,.tall .output{width:49%" +
+                                                    "}.tall .output label{text-align:right}.tall .input textarea{height:31.7em}.tall " +
+                                                    ".output textarea{height:34em}.tall textarea{margin:0 0 -.1em;width:100%}.tall #b" +
+                                                    "eautyinput,.tall #minifyinput{float:left}.tall #beautyoutput,.tall #minifyoutput" +
+                                                    "{float:right}.wide{width:auto}#diffBase.difftall,#diffNew.difftall{margin-bottom" +
+                                                    ":1.3em;padding:1em 1% .9em;width:47.5%}#diffBase.difftall{float:left}#diffNew.di" +
+                                                    "fftall{float:right}.file input,.labeltext input{display:inline-block;margin:0 .7" +
+                                                    "em 0 0;width:16em}.labeltext,.file{font-size:.9em;font-weight:bold;margin-bottom" +
+                                                    ":1em}.difftall textarea{height:30.6em;margin-bottom:.5em}#diffBase textarea,#dif" +
+                                                    "fNew textarea{width:99.5%}.input,.output{margin:0}#diffBase.wide,#diffNew.wide{p" +
+                                                    "adding:.8em 1em}#diffBase.wide{margin-bottom:1.2em}#diffoutput{width:100%}#diffo" +
+                                                    "utput p em,#diffoutput li em,.analysis .bad,.analysis .good{font-weight:bold}#di" +
+                                                    "ffoutput ul{font-size:1.2em;margin-top:1em}#diffoutput ul li{display:list-item;l" +
+                                                    "ist-style-type:disc}.analysis th{text-align:left}.analysis td{text-align:right}#" +
+                                                    "doc ul{margin-top:1em}#doc ul li{font-size:1.2em}body#doc ul li{font-size:1.1em}" +
+                                                    "#doc ol li span{display:block;margin-left:2em}.diff,.beautify{border-style:solid" +
+                                                    ";border-width:.2em;display:inline-block;font-family:'Courier New',Courier,'Lucid" +
+                                                    "a Console',monospace;margin:0 1em 1em 0;position:relative}.beautify .data em{dis" +
+                                                    "play:inline-block;font-style:normal;font-weight:bold;padding-top:.5em}.diff .ski" +
+                                                    "p{border-style:none none solid;border-width:0 0 .1em}.diff li,.diff p,.diff h3,." +
+                                                    "beautify li{font-size:1.1em}.diff .diff-left,.diff .diff-right{display:table-cel" +
+                                                    "l}.diff .diff-left{border-style:none none none solid;border-width:0 0 0 .1em}.di" +
+                                                    "ff .diff-right{border-style:none none none solid;border-width:0 0 0 .1em;margin-" +
+                                                    "left:-.1em;min-width:16.5em;right:0;top:0}.diff-right .data ol{min-width:16.5em}" +
+                                                    ".diff-right .data{border-style:none solid none none;border-width:0 .1em 0 0;widt" +
+                                                    "h:100%}.diff-right .data li{min-width:16.5em}.diff ol,.beautify ol{display:table" +
+                                                    "-cell;margin:0;padding:0}.diff li,.beautify li{border-style:none none solid;bord" +
+                                                    "er-width:0 0 .1em;display:block;line-height:1.2;list-style-type:none;margin:0;pa" +
+                                                    "dding-bottom:0;padding-right:.5em}.diff li{padding-top:.5em}.beautify .count li{" +
+                                                    "padding-top:.5em}@media screen and (-webkit-min-device-pixel-ratio:0) {.beautify" +
+                                                    " .count li{padding-top:.546em}}#doc .beautify .count li.fold{color:#900;cursor:p" +
+                                                    "ointer;font-weight:bold;padding-left:.5em}.diff .count,.beautify .count{border-s" +
+                                                    "tyle:solid;border-width:0 .1em 0 0;font-weight:normal;padding:0;text-align:right" +
+                                                    "}.diff .count li,.beautify .count li{padding-left:2em}.diff .data,.beautify .dat" +
+                                                    "a{text-align:left;white-space:pre}.diff .data li,.beautify .data li{letter-spaci" +
+                                                    "ng:.1em;padding-left:.5em;white-space:pre}#webtool .diff h3{border-style:none so" +
+                                                    "lid solid;border-width:0 .1em .2em;box-shadow:none;display:block;font-family:Ver" +
+                                                    "dana;margin:0 0 0 -.1em;padding:.2em 2em;text-align:left}.diff li em{font-style:" +
+                                                    "normal;margin:0 -.09em;padding:.05em 0}.diff p.author{border-style:solid;border-" +
+                                                    "width:.2em .1em .1em;margin:0;overflow:hidden;padding:.4em;text-align:right}#dco" +
+                                                    "lorScheme{float:right;margin:-2em 0 0 0}#dcolorScheme label{display:inline-block" +
+                                                    ";font-size:1em;margin-right:1em}body#doc{font-size:.8em;max-width:80em}#doc th{f" +
+                                                    "ont-weight:bold}#doc td span{display:block}#doc table,.box .body table{border-co" +
+                                                    "llapse:collapse;border-style:solid;border-width:.2em;clear:both}#doc table{font-" +
+                                                    "size:1.2em}body#doc table{font-size:1em}#doc td,#doc th{border-left-style:solid;" +
+                                                    "border-left-width:.1em;border-top-style:solid;border-top-width:.1em;padding:.5em" +
+                                                    "}#doc em,.box .body em{font-style:normal;font-weight:bold}#doc div{margin-bottom" +
+                                                    ":2em}#doc div div{clear:both;margin-bottom:1em}#doc h2{font-size:1.6em;margin:.5" +
+                                                    "em .5em .5em 0}#doc ol{clear:both}#doc_contents li{font-size:1.75em;margin:1em 0" +
+                                                    " 0}#doc_contents ol ol li{font-size:.75em;list-style:lower-alpha;margin:.5em 0 0" +
+                                                    "}#doc_contents ol{padding-bottom:1em}#doc #doc_contents ol ol{background-color:i" +
+                                                    "nherit;border-style:none;margin:.25em .3em 0 0;padding-bottom:0}#doc_contents a{" +
+                                                    "text-decoration:none}#diffoutput #thirdparties li{display:inline-block;list-styl" +
+                                                    "e-type:none}#thirdparties a{border-style:none;display:block;height:4em;text-deco" +
+                                                    "ration:none}button,fieldset,.box h3.heading,.box .body,.options,.diff .replace e" +
+                                                    "m,.diff .delete em,.diff .insert em,.wide,.tall,#diffBase,#diffNew,#doc div,#doc" +
+                                                    " div div,#doc ol,#option_comment,#update,#thirdparties img,#diffoutput #thirdpar" +
+                                                    "ties{border-style:solid;border-width:.1em}#apitest p{clear:both;padding-top:.75e" +
+                                                    "m}#apitest label,#apitest select,#apitest input,#apitest textarea{float:left}#ap" +
+                                                    "itest label{width:20em}#apitest select,#apitest input,#apitest textarea{width:30" +
+                                                    "em}#pdsamples{list-style-position:inside;margin:-12em 0 0 0;padding:0;position:r" +
+                                                    "elative;z-index:10}#pdsamples li{border-radius:1em;border-style:solid;border-wid" +
+                                                    "th:.1em;margin:0 0 3em;padding:1em}#pdsamples li div{border-radius:1em;border-st" +
+                                                    "yle:solid;border-width:.1em;margin:0;padding:1em}#pdsamples li p{display:inline-" +
+                                                    "block;font-size:1em;margin:0}#pdsamples li p a{display:block;margin:0 0 1em 2em}" +
+                                                    "#pdsamples li ul{margin:0 0 0 2em}#samples #pdsamples li li{background:none tran" +
+                                                    "sparent;border-style:none;display:list-item;list-style:disc outside;margin:0;pad" +
+                                                    "ding:.5em}#modalSave span{background:#000;display:block;left:0;opacity:.5;positi" +
+                                                    "on:absolute;top:0;z-index:9000}#modalSave p{background:#eee;color:#333;font-size" +
+                                                    ":3em;padding:1em;position:absolute;text-align:center;top:10em;width:25em;z-index" +
+                                                    ":9001}#modalSave p em{display:block;font-size:.75em;margin-top:1em}#modalSave p " +
+                                                    "strong{color:#c00;font-weight:bold}@media print{p,.options,#Beautify,#Minify,#di" +
+                                                    "ff,ul{display:none}div{width:100%}html td{font-size:.8em;white-space:normal}}";
+                            builder.cssColor      = "html .white,body.white{color:#333}body.white button{background:#eee;border-color" +
+                                                    ":#222;box-shadow:0 .1em .2em rgba(64,64,64,0.75);color:#666;text-shadow:.05em .0" +
+                                                    "5em .1em #ccc}.white button:hover,.white button:active{background:#999;color:#ee" +
+                                                    "e;text-shadow:.1em .1em .1em #333}.white a{color:#009}.white #title_text{border-" +
+                                                    "color:#fff;color:#333}.white #introduction h2{border-color:#999;color:#333}.whit" +
+                                                    "e h1 svg{background:#eee;border-color:#999;box-shadow:0 .1em .2em rgba(150,150,1" +
+                                                    "50,0.5)}.white h2,.white h3{background:#eee;border-color:#eee;box-shadow:none;pa" +
+                                                    "dding-left:0;text-shadow:none}.white fieldset{background:#ddd;border-color:#999}" +
+                                                    ".white legend{background:#fff;border-color:#999;color:#333;text-shadow:none}.whi" +
+                                                    "te .box{background:#666;border-color:#999;box-shadow:0 .4em .8em rgba(64,64,64,0" +
+                                                    ".75)}.white .box button{box-shadow:0 .1em .2em rgba(0,0,0,0.75);text-shadow:.1em" +
+                                                    " .1em .1em rgba(0,0,0,.5)}.white .box button.resize{background:#bbf;border-color" +
+                                                    ":#446;color:#446}.white .box button.resize:hover{background:#ddf;border-color:#2" +
+                                                    "28;color:#228}.white .box button.save{background:#d99;border-color:#300;color:#3" +
+                                                    "00}.white .box button.save:hover{background:#fcc;border-color:#822;color:#822}.w" +
+                                                    "hite .box button.minimize{background:#bbf;border-color:#006;color:#006}.white .b" +
+                                                    "ox button.minimize:hover{background:#eef;border-color:#228;color:#228}.white .bo" +
+                                                    "x button.maximize{background:#9c9;border-color:#030;color:#030}.white .box butto" +
+                                                    "n.maximize:hover{background:#cfc;border-color:#060;color:#060}.white .box h3.hea" +
+                                                    "ding{background:#ddd;border-color:#888;box-shadow:.2em .2em .4em #666}.white .bo" +
+                                                    "x h3.heading:hover{background:#333;color:#eee}.white .box .body{background:#eee;" +
+                                                    "border-color:#888;box-shadow:0 0 .4em rgba(64,64,64,0.75)}.white .options{backgr" +
+                                                    "ound:#eee;border-color:#999;box-shadow:0 .2em .4em rgba(64,64,64,0.5);text-shado" +
+                                                    "w:.05em .05em .1em #ccc}.white .options h2,.white #Beautify h2,.white #Minify h2" +
+                                                    ",.white #diffBase h2,.white #diffNew h2{background:#eee;border-color:#eee;box-sh" +
+                                                    "adow:none;text-shadow:none}.white #option_comment{background:#ddd;border-color:#" +
+                                                    "999}.white #top em{color:#00f}.white #update{background:#eee;border-color:#999;b" +
+                                                    "ox-shadow:0 .1em .2em rgba(64,64,64,0.5)}.white .wide,.white .tall,.white #diffB" +
+                                                    "ase,.white #diffNew{background:#eee;border-color:#999;box-shadow:0 .2em .4em rgb" +
+                                                    "a(64,64,64,0.5)}.white .file input,.white .labeltext input{border-color:#fff}#we" +
+                                                    "btool.white input.unchecked{background:#ccc;color:#666}.white .options input[typ" +
+                                                    "e=text],.white .options select{border-color:#999}.white #beautyoutput,.white #mi" +
+                                                    "nifyoutput{background:#ddd}.white #diffoutput p em,.white #diffoutput li em{colo" +
+                                                    "r:#c00}.white .analysis .bad{background-color:#ebb;color:#400}.white .analysis ." +
+                                                    "good{background-color:#cec;color:#040}.white #doc .analysis thead th,.white #doc" +
+                                                    " .analysis th[colspan]{background:#eef}.white div input{border-color:#999}.white" +
+                                                    " textarea{border-color:#999}.white textarea:hover{background:#eef8ff}.white .dif" +
+                                                    "f,.white .beautify,.white .diff ol,.white .beautify ol,.white .diff .diff-left,." +
+                                                    "white .diff .diff-right,.white h3,.white p.author{border-color:#999}.white .diff" +
+                                                    " .count li,.white .beautify .count li{background:#eed;border-color:#bbc;color:#8" +
+                                                    "86}.white .diff h3{background:#ddd;border-bottom-color:#bbc}.white .diff .empty{" +
+                                                    "background-color:#ddd;border-color:#ccc}.white .diff .replace{background-color:#" +
+                                                    "fea;border-color:#dd8}.white .diff .data .replace em{background-color:#ffd;borde" +
+                                                    "r-color:#963;color:#630}.white .diff .delete{background-color:#fbb;border-color:" +
+                                                    "#eaa}.white .diff .data .delete em{background-color:#fdd;border-color:#700;color" +
+                                                    ":#600}.white .diff .equal,.white .beautify .data li{background-color:#fff;border" +
+                                                    "-color:#eee}.white .beautify .data em.s1{color:#f66}.white .beautify .data em.s2" +
+                                                    "{color:#12f}.white .beautify .data em.s3{color:#090}.white .beautify .data em.s4" +
+                                                    "{color:#d6d}.white .beautify .data em.s5{color:#7cc}.white .beautify .data em.s6" +
+                                                    "{color:#c85}.white .beautify .data em.s7{color:#737}.white .beautify .data em.s8" +
+                                                    "{color:#6d0}.white .beautify .data em.s9{color:#dd0s}.white .beautify .data em.s" +
+                                                    "10{color:#893}.white .beautify .data em.s11{color:#b97}.white .beautify .data em" +
+                                                    ".s12{color:#bbb}.white .beautify .data em.s13{color:#cc3}.white .beautify .data " +
+                                                    "em.s14{color:#333}.white .beautify .data em.s15{color:#9d9}.white .beautify .dat" +
+                                                    "a em.s16{color:#880}.white .beautify .data .l0{background:#fff}.white .beautify " +
+                                                    ".data .l1{background:#fed}.white .beautify .data .l2{background:#def}.white .bea" +
+                                                    "utify .data .l3{background:#efe}.white .beautify .data .l4{background:#fef}.whit" +
+                                                    "e .beautify .data .l5{background:#eef}.white .beautify .data .l6{background:#fff" +
+                                                    "8cc}.white .beautify .data .l7{background:#ede}.white .beautify .data .l8{backgr" +
+                                                    "ound:#efc}.white .beautify .data .l9{background:#ffd}.white .beautify .data .l10" +
+                                                    "{background:#edc}.white .beautify .data .l11{background:#fdb}.white .beautify .d" +
+                                                    "ata .l12{background:#f8f8f8}.white .beautify .data .l13{background:#ffb}.white ." +
+                                                    "beautify .data .l14{background:#eec}.white .beautify .data .l15{background:#cfc}" +
+                                                    ".white .beautify .data .l16{background:#eea}.white .beautify .data .c0{backgroun" +
+                                                    "d:#ddd}.white .beautify .data li{color:#777}.white .diff .skip{background-color:" +
+                                                    "#efefef;border-color:#ddd}.white .diff .insert{background-color:#bfb;border-colo" +
+                                                    "r:#aea}.white .diff .data .insert em{background-color:#efc;border-color:#070;col" +
+                                                    "or:#050}.white .diff p.author{background:#efefef;border-top-color:#bbc}.white #d" +
+                                                    "oc table,.white .box .body table{background:#fff;border-color:#999}.white #doc s" +
+                                                    "trong,.white .box .body strong{color:#c00}.white .box .body em,.white .box .body" +
+                                                    " #doc em{color:#090}.white #thirdparties img,.white #diffoutput #thirdparties{bo" +
+                                                    "rder-color:#999}.white #thirdparties img{box-shadow:.2em .2em .4em #999}.white #" +
+                                                    "diffoutput #thirdparties{background:#eee}.white #doc div,#doc.white div{backgrou" +
+                                                    "nd:#ddd;border-color:#999}.white #doc ol,#doc.white ol{background:#eee;border-co" +
+                                                    "lor:#999}.white #doc div div,#doc.white div div{background:#eee;border-color:#99" +
+                                                    "9}.white #doc table,#doc.white table{background:#fff;border-color:#999}.white #d" +
+                                                    "oc th,#doc.white th{background:#ddd;border-left-color:#999;border-top-color:#999" +
+                                                    "}.white #doc tr:hover,#doc.white tr:hover{background:#ddd}#doc.white em{color:#0" +
+                                                    "60}.white #doc div:hover,#doc.white div:hover{background:#ccc}.white #doc div di" +
+                                                    "v:hover,#doc.white div div:hover,#doc.white div ol:hover{background:#fff}.white " +
+                                                    "#pdsamples li{background:#eee;border-color:#999}.white #pdsamples li div{backgro" +
+                                                    "und:#ddd;border-color:#999}.white #pdsamples li div a{color:#47a}.white #pdsampl" +
+                                                    "es li p a{color:#009}";
                             builder.cssExtra      = "body{background:#eee}#doc p em{color:#090}";
                             builder.body          = "</style></head><body id='webtool' class='";
                             builder.bodyColor     = "white";
-                            builder.title         = "'><h1><a href='http://prettydiff.com/'>Pretty Diff - The difference tool</a></h1><div class='doc'>";
-                            builder.accessibility = "</div><p>Accessibility note. &lt;em&gt; tags in the output represent character differences per lines compared.</p>";
-                            builder.scriptOpen    = "<script type='application/javascript'><![CDATA[var pd={},d=document.getElementsByTagName('ol');";
-                            builder.scriptBody    = "(function(){var cells=d[0].getElemensByTagName('li'),len=cells.length,a=0;for(a=0;a<len;a+=1){if(cells[a].getAttribute('class')==='fold'){cells[a].onmousedown=pd.difffold;}}if(d.length>3){d[2].onmousedown=pd.colSliderGrab;d[2].ontouchstart=pd.colSliderGrab;}}());pd.difffold=function dom__difffold(){var self=this,title=self.getAttribute('title').split('line '),min=Number(title[1].substr(0,title[1].indexOf(' '))),max=Number(title[2]),a=0,b=0,inner=self.innerHTML,lists=[],parent=self.parentNode.parentNode,listnodes=(parent.getAttribute('class'==='diff'))?parent.getElementsByTagName('ol'):parent.parentNode.getElementsByTagName('ol'),listLen=listnodes.length;for(a=0;a<listLen;a+=1){lists.push(listnodes[a].getElementsByTagName('li'));}if(lists.length>3){for(a=0;a<min;a+=1){if(lists[0][a].getAttribute('class')==='empty'){min+=1;max+=1}}}max=(max>=lists[0].length)?lists[0].length:max;if(inner.charAt(0)===' - '){self.innerHTML='+'+inner.substr(1);for(a=min;a<max;a+=1){for(b=0;b<listLen;b+=1){lists[b][a].style.display='none';}}}else{self.innerHTML=' - '+inner.substr(1);for(a=min;a<max;a+=1){for(b=0;b<listLen;b+=1){lists[b][a].style.display='block';}}}};pd.colSliderProperties=[d[0].clientWidth,d[1].clientWidth,d[2].parentNode.clientWidth,d[2].parentNode.parentNode.clientWidth,d[2].parentNode.offsetLeft-d[2].parentNode.parentNode.offsetLeft,];pd.colSliderGrab=function(){'use strict';var x=this,a=x.parentNode,b=a.parentNode,c=0,counter=pd.colSliderProperties[0],data=pd.colSliderProperties[1],width=pd.colSliderProperties[2],total=pd.colSliderProperties[3],offset=(pd.colSliderProperties[4]),min=0,max=data-1,status='ew',g=min+15,h=max-15,k=false,z=a.previousSibling,drop=function(g){x.style.cursor=status+'-resize';g=null;document.onmousemove=null;document.onmouseup=null;},boxmove=function(f){f=f||window.event;c=offset-f.clientX;if(c>g&&c<h){k=true;}if(k===true&&c>h){a.style.width=((total-counter-2)/10)+'em';status='e';}else if(k===true&&c<g){a.style.width=(width/10)+'em';status='w';}else if(c<max&&c>min){a.style.width=((width+c)/10)+'em';status='ew';}document.onmouseup=drop;};if(typeof pd.o==='object'&&typeof pd.o.re==='object'){offset+=pd.o.re.offsetLeft;offset-=pd.o.rf.scrollLeft;}else{c=(document.body.parentNode.scrollLeft>document.body.scrollLeft)?document.body.parentNode.scrollLeft:document.body.scrollLeft;offset-=c;}offset+=x.clientWidth;x.style.cursor='ew-resize';b.style.width=(total/10)+'em';b.style.display='inline-block';if(z.nodeType!==1){do{z=z.previousSibling;}while(z.nodeType!==1);}z.style.display='block';a.style.width=(a.clientWidth/10)+'em';a.style.position='absolute';document.onmousemove=boxmove;document.onmousedown=null;};";
+                            builder.title         = "'><h1><a href='http://prettydiff.com/'>Pretty Diff - The difference tool</a></h1" +
+                                                    "><div class='doc'>";
+                            builder.accessibility = "</div><p>Accessibility note. &lt;em&gt; tags in the output represent character d" +
+                                                    "ifferences per lines compared.</p>";
+                            builder.scriptOpen    = "<script type='application/javascript'><![CDATA[var pd={},d=document.getElementsB" +
+                                                    "yTagName('ol');";
+                            builder.scriptBody    = "(function(){var cells=d[0].getElemensByTagName('li'),len=cells.length,a=0;for(a=" +
+                                                    "0;a<len;a+=1){if(cells[a].getAttribute('class')==='fold'){cells[a].onmousedown=p" +
+                                                    "d.difffold;}}if(d.length>3){d[2].onmousedown=pd.colSliderGrab;d[2].ontouchstart=" +
+                                                    "pd.colSliderGrab;}}());pd.difffold=function dom__difffold(){var self=this,title=" +
+                                                    "self.getAttribute('title').split('line '),min=Number(title[1].substr(0,title[1]." +
+                                                    "indexOf(' '))),max=Number(title[2]),a=0,b=0,inner=self.innerHTML,lists=[],parent" +
+                                                    "=self.parentNode.parentNode,listnodes=(parent.getAttribute('class'==='diff'))?pa" +
+                                                    "rent.getElementsByTagName('ol'):parent.parentNode.getElementsByTagName('ol'),lis" +
+                                                    "tLen=listnodes.length;for(a=0;a<listLen;a+=1){lists.push(listnodes[a].getElement" +
+                                                    "sByTagName('li'));}if(lists.length>3){for(a=0;a<min;a+=1){if(lists[0][a].getAttr" +
+                                                    "ibute('class')==='empty'){min+=1;max+=1}}}max=(max>=lists[0].length)?lists[0].le" +
+                                                    "ngth:max;if(inner.charAt(0)===' - '){self.innerHTML='+'+inner.substr(1);for(a=mi" +
+                                                    "n;a<max;a+=1){for(b=0;b<listLen;b+=1){lists[b][a].style.display='none';}}}else{s" +
+                                                    "elf.innerHTML=' - '+inner.substr(1);for(a=min;a<max;a+=1){for(b=0;b<listLen;b+=1" +
+                                                    "){lists[b][a].style.display='block';}}}};pd.colSliderProperties=[d[0].clientWidt" +
+                                                    "h,d[1].clientWidth,d[2].parentNode.clientWidth,d[2].parentNode.parentNode.client" +
+                                                    "Width,d[2].parentNode.offsetLeft-d[2].parentNode.parentNode.offsetLeft,];pd.colS" +
+                                                    "liderGrab=function(){'use strict';var x=this,a=x.parentNode,b=a.parentNode,c=0,c" +
+                                                    "ounter=pd.colSliderProperties[0],data=pd.colSliderProperties[1],width=pd.colSlid" +
+                                                    "erProperties[2],total=pd.colSliderProperties[3],offset=(pd.colSliderProperties[4" +
+                                                    "]),min=0,max=data-1,status='ew',g=min+15,h=max-15,k=false,z=a.previousSibling,dr" +
+                                                    "op=function(g){x.style.cursor=status+'-resize';g=null;document.onmousemove=null;" +
+                                                    "document.onmouseup=null;},boxmove=function(f){f=f||window.event;c=offset-f.clien" +
+                                                    "tX;if(c>g&&c<h){k=true;}if(k===true&&c>h){a.style.width=((total-counter-2)/10)+'" +
+                                                    "em';status='e';}else if(k===true&&c<g){a.style.width=(width/10)+'em';status='w';" +
+                                                    "}else if(c<max&&c>min){a.style.width=((width+c)/10)+'em';status='ew';}document.o" +
+                                                    "nmouseup=drop;};if(typeof pd.o==='object'&&typeof pd.o.re==='object'){offset+=pd" +
+                                                    ".o.re.offsetLeft;offset-=pd.o.rf.scrollLeft;}else{c=(document.body.parentNode.sc" +
+                                                    "rollLeft>document.body.scrollLeft)?document.body.parentNode.scrollLeft:document." +
+                                                    "body.scrollLeft;offset-=c;}offset+=x.clientWidth;x.style.cursor='ew-resize';b.st" +
+                                                    "yle.width=(total/10)+'em';b.style.display='inline-block';if(z.nodeType!==1){do{z" +
+                                                    "=z.previousSibling;}while(z.nodeType!==1);}z.style.display='block';a.style.width" +
+                                                    "=(a.clientWidth/10)+'em';a.style.position='absolute';document.onmousemove=boxmov" +
+                                                    "e;document.onmousedown=null;};";
                             builder.scriptEnd     = "]]></script>";
                             return [
                                 [
@@ -5336,7 +5885,7 @@ var prettydiff = function prettydiff(api) {
                         stats.string.quote += 2;
                         if (token[token.length - 1] === "+" && jwrap < 0 && (token[token.length - 2].charAt(0) === "\"" || token[token.length - 2].charAt(0) === "'")) {
                             strmerge(ltoke);
-                        } else if (jwrap > 0 && ltoke.length > jwrap && (types[types.length - 1] !== "operator" || (token[token.length - 1] === "+" && types[types.length - 1] === "literal"))) {
+                        } else if (jwrap > 0 && ltoke.length > jwrap && (types[types.length - 1] !== "operator" || token[token.length - 1] === "=" || token[token.length - 1] === ":" || (token[token.length - 1] === "+" && types[types.length - 1] === "literal"))) {
                             strlen(ltoke);
                         } else {
                             token.push(ltoke);
@@ -6425,16 +6974,21 @@ var prettydiff = function prettydiff(api) {
                                 }
                                 return;
                             }
-                            if (ctoke === "+" && (ltoke.charAt(0) === "\"" || ltoke.charAt(0) === "'") && token[a + 1] !== undefined && (token[a + 1].charAt(0) === "\"" || token[a + 1].charAt(0) === "'") && (token[a - 2] === "=" || token[a - 2] === "(" || (token[a - 2] === "+" && level[a - 2] > 0))) {
-                                if (ltoke.length + 3 + token[a + 1].length < jwrap) {
-                                    return level.push("s");
+                            if (ctoke === "+") {
+                                if (ltoke.length === jwrap + 2 && (token[a + 1].charAt(0) === "\"" || token[a + 1].charAt(0) === "'")) {
+                                    return level.push(indent + 1);
                                 }
-                                if (varline[varline.length - 1] === true) {
-                                    level.push(indent);
-                                } else {
-                                    level.push(indent + 1);
+                                if ((ltoke.charAt(0) === "\"" || ltoke.charAt(0) === "'") && token[a + 1] !== undefined && (token[a + 1].charAt(0) === "\"" || token[a + 1].charAt(0) === "'") && (token[a - 2] === "=" || token[a - 2] === "(" || (token[a - 2] === "+" && level[a - 2] > 0))) {
+                                    if (ltoke.length + 3 + token[a + 1].length < jwrap) {
+                                        return level.push("s");
+                                    }
+                                    if (varline[varline.length - 1] === true) {
+                                        level.push(indent);
+                                    } else {
+                                        level.push(indent + 1);
+                                    }
+                                    return;
                                 }
-                                return;
                             }
                             level[a - 1] = "s";
                             if (ctoke.indexOf("=") > -1 && ctoke !== "==" && ctoke !== "===" && ctoke !== "!=" && ctoke !== "!==" && ctoke !== ">=" && ctoke !== "<=" && varlen.length > 0 && varline[varline.length - 1] === false && methodtest[methodtest.length - 1] === false && obj[obj.length - 1] === false) {
@@ -7326,8 +7880,11 @@ var prettydiff = function prettydiff(api) {
                                 var aa          = 0,
                                     lastListLen = 0,
                                     cc          = 0,
+                                    dd          = 0,
                                     longest     = 0,
                                     longTest    = 0,
+                                    strlongest  = 0,
+                                    strspace    = "",
                                     tokenInList = "",
                                     longList    = [],
                                     joins       = function jspretty__resultScope_varSpaces_joins(x) {
@@ -7424,6 +7981,23 @@ var prettydiff = function prettydiff(api) {
                                             }
                                             longList.push(longTest);
                                         }
+                                        strspace = "";
+                                        if (longest > jsize) {
+                                            strlongest = longest - jsize;
+                                        } else if (longest < jsize) {
+                                            strlongest = jsize - longest;
+                                        }
+                                        if (token[varlist[aa][0] - 1] === "var") {
+                                            strlongest = strlongest - jsize;
+                                        } else if (token[varlist[aa][0] + 1] === "=") {
+                                            strlongest += 1;
+                                        }
+                                        if (longest !== jsize && strlongest > 0) {
+                                            do {
+                                                strspace   += " ";
+                                                strlongest -= 1;
+                                            } while (strlongest > -1);
+                                        }
                                         for (cc = 0; cc < lastListLen; cc += 1) {
                                             tokenInList = token[varlist[aa][cc]];
                                             if (longList[cc] < longest) {
@@ -7433,6 +8007,13 @@ var prettydiff = function prettydiff(api) {
                                                 } while (longList[cc] < longest);
                                             }
                                             token[varlist[aa][cc]] = tokenInList;
+                                            if (token[varlist[aa][cc] + 2] !== undefined && token[varlist[aa][cc] + 2].length === jwrap + 2 && token[varlist[aa][cc] + 3] === "+" && token[varlist[aa][cc] + 4] !== undefined && (token[varlist[aa][cc] + 4].charAt(0) === "\"" || token[varlist[aa][cc] + 4].charAt(0) === "'")) {
+                                                dd = varlist[aa][cc] + 4;
+                                                do {
+                                                    token[dd] = strspace + token[dd];
+                                                    dd        += 2;
+                                                } while (types[dd] === "literal" && types[dd - 1] !== "separator");
+                                            }
                                         }
                                     }
                                 }
@@ -7715,8 +8296,11 @@ var prettydiff = function prettydiff(api) {
                                 var aa          = 0,
                                     varListLen  = 0,
                                     cc          = 0,
+                                    dd          = 0,
                                     longest     = 0,
                                     longTest    = 0,
+                                    strlongest  = 0,
+                                    strspace    = "",
                                     tokenInList = "",
                                     longList    = [],
                                     joins       = function jspretty__result_varSpaces_joins(x) {
@@ -7813,6 +8397,23 @@ var prettydiff = function prettydiff(api) {
                                             }
                                             longList.push(longTest);
                                         }
+                                        strspace = "";
+                                        if (longest > jsize) {
+                                            strlongest = longest - jsize;
+                                        } else if (longest < jsize) {
+                                            strlongest = jsize - longest;
+                                        }
+                                        if (token[varlist[aa][0] - 1] === "var") {
+                                            strlongest = strlongest - jsize;
+                                        } else if (token[varlist[aa][0] + 1] === "=") {
+                                            strlongest += 1;
+                                        }
+                                        if (longest !== jsize && strlongest > 0) {
+                                            do {
+                                                strspace   += " ";
+                                                strlongest -= 1;
+                                            } while (strlongest > -1);
+                                        }
                                         for (cc = 0; cc < varListLen; cc += 1) {
                                             tokenInList = token[varlist[aa][cc]];
                                             if (longList[cc] < longest) {
@@ -7822,6 +8423,13 @@ var prettydiff = function prettydiff(api) {
                                                 } while (longList[cc] < longest);
                                             }
                                             token[varlist[aa][cc]] = tokenInList;
+                                            if (token[varlist[aa][cc] + 2] !== undefined && token[varlist[aa][cc] + 2].length === jwrap + 2 && token[varlist[aa][cc] + 3] === "+" && token[varlist[aa][cc] + 4] !== undefined && (token[varlist[aa][cc] + 4].charAt(0) === "\"" || token[varlist[aa][cc] + 4].charAt(0) === "'")) {
+                                                dd = varlist[aa][cc] + 4;
+                                                do {
+                                                    token[dd] = strspace + token[dd];
+                                                    dd        += 2;
+                                                } while (types[dd] === "literal" && types[dd - 1] !== "separator");
+                                            }
                                         }
                                     }
                                 }
@@ -8264,6 +8872,7 @@ var prettydiff = function prettydiff(api) {
                 mspace          = (args.space === false || args.space === "false") ? false : true,
                 mstyle          = (typeof args.style === "string" && args.style === "noindent") ? "noindent" : "indent",
                 mstyleguide     = (typeof args.styleguide === "string") ? args.styleguide : "none",
+                mtagmerge       = (args.tagmerge === true || args.tagmerge === "true") ? true : false,
                 mtopcomments    = (args.top_comments === true || args.top_comments === "true") ? true : false,
                 mwrap           = (isNaN(args.wrap) === true || mjsx === true) ? 0 : Number(args.wrap),
                 mvarword        = (args.varword === "each" || args.varword === "list") ? args.varword : "none",
@@ -8829,14 +9438,15 @@ var prettydiff = function prettydiff(api) {
                             if (types[types.length - 1] === "end") {
                                 if (types[types.length - 2] === "singleton" && atty.charAt(atty.length - 2) !== "/" && "/" + tagName(atty) === tname) {
                                     types[types.length - 2] = "start";
-                                } else if (types[types.length - 2] === "start" && tname !== "/span" && tname !== "/div" && tname !== "/script" && tname === "/" + tagName(token[token.length - 1])) {
+                                } else if (types[types.length - 2] === "start" && tname !== "/span" && tname !== "/div" && tname !== "/script" && (mhtml === false || (mhtml === true && tname !== "/li")) && tname === "/" + tagName(token[token.length - 1]) && mtagmerge === true) {
                                     types.pop();
                                     attrs.pop();
                                     jscom.pop();
                                     linen.pop();
+                                    lines.pop();
                                     types[types.length - 1] = "singleton";
                                     token[token.length - 1] = token[token.length - 1].replace(/>$/, "/>");
-                                    singleton = true;
+                                    singleton               = true;
                                     return;
                                 }
                             }
@@ -9469,6 +10079,7 @@ var prettydiff = function prettydiff(api) {
                     wrap    = function markuppretty__apply_wrap() {
                         var b        = 0,
                             len      = 0,
+                            xlen     = 0,
                             list     = attrs[a],
                             lev      = level[a],
                             atty     = "",
@@ -9478,8 +10089,9 @@ var prettydiff = function prettydiff(api) {
                         if (lev === "x") {
                             b = a;
                             do {
-                                b   -= 1;
-                                lev = level[b];
+                                b    -= 1;
+                                lev  = level[b];
+                                xlen += token[b].length;
                             } while (lev === "x" && b > -1);
                             if (lev === "x") {
                                 lev = 1;
@@ -9515,11 +10127,29 @@ var prettydiff = function prettydiff(api) {
                         } else {
                             list = token[a].split(" ");
                             len  = list.length;
+                            if (level[a] === "x" && types[a - 1] === "end") {
+                                b   = a - 1;
+                                lev = 1;
+                                do {
+                                    b -= 1;
+                                    if (types[b] === "start") {
+                                        lev -= 1;
+                                    } else if (types[b] === "end") {
+                                        lev += 1;
+                                    }
+                                } while (lev > 0 && b > 0);
+                                lev = level[b];
+                            }
                             for (b = 0; b < len; b += 1) {
                                 string = string + list[b];
-                                if (list[b + 1] !== undefined && string.length + list[b + 1].length + 1 > mwrap) {
+                                if (list[b + 1] !== undefined && string.length + list[b + 1].length + 1 > mwrap - xlen) {
                                     content.push(string);
-                                    nl(lev + 1, content);
+                                    xlen = 0;
+                                    if (level[a] === "x" && types[a - 1] !== "end") {
+                                        nl(lev + 1, content);
+                                    } else {
+                                        nl(lev, content);
+                                    }
                                     string = "";
                                 } else {
                                     string = string + " ";
@@ -10281,22 +10911,22 @@ var prettydiff = function prettydiff(api) {
             ace: 150519
         },
         api          : {
-            dom      : 150627,   //dom.js
-            nodeLocal: 150415,   //node-local.js
-            wsh      : 150415    //prettydiff.wsf
+            dom      : 150629, //dom.js
+            nodeLocal: 150629, //node-local.js
+            wsh      : 150629
         },
         charDecoder  : 141025,
-        css          : 150525,   //diffview.css file
-        csspretty    : 150627,   //csspretty library
-        csvbeauty    : 140114,   //csvbeauty library
-        csvmin       : 131224,   //csvmin library
-        diffview     : 150501,   //diffview library
-        documentation: 150621,   //documentation.xhtml
-        jspretty     : 150620,   //jspretty library
+        css          : 150525, //diffview.css file
+        csspretty    : 150627, //csspretty library
+        csvbeauty    : 140114, //csvbeauty library
+        csvmin       : 131224, //csvmin library
+        diffview     : 150501, //diffview library
+        documentation: 150629, //documentation.xhtml
+        jspretty     : 150629, //jspretty library
         latest       : 0,
-        markuppretty : 150627,   //markuppretty library
-        prettydiff   : 150627,   //this file
-        version      : "1.12.10", //version number
+        markuppretty : 150629, //markuppretty library
+        prettydiff   : 150629, //this file
+        version      : "1.12.11", //version number
         webtool      : 150509
     };
 edition.latest = (function edition_latest() {
