@@ -1,5 +1,6 @@
 /*prettydiff.com api.topcoms: true, api.insize: 4, api.inchar: " ", api.vertical: true */
 /*global pd, exports, define */
+/*jslint for: true*/
 /*
 
  Execute in a NodeJS app:
@@ -278,16 +279,15 @@ var prettydiff = function prettydiff(api) {
                 }
                 return ascend(array);
             },
-
             //everything above, except "startTime", "jsxstatus", and
             //"summary" is a library.  Here is the logic that puts it
             //all together into a combined application
             core         = function core(api) {
-                var spacetest       = (/^\s+$/g),
-                    apioutput       = "",
-                    apidiffout      = "",
-                    builder         = {},
-                    setlangmode     = function dom__langkey_setlangmode(input) {
+                var spacetest      = (/^\s+$/g),
+                    apioutput      = "",
+                    apidiffout     = "",
+                    builder        = {},
+                    setlangmode    = function dom__langkey_setlangmode(input) {
                         if (input === "css" || input === "less" || input === "scss") {
                             return "css";
                         }
@@ -311,7 +311,7 @@ var prettydiff = function prettydiff(api) {
                         }
                         return "javascript";
                     },
-                    nameproper      = function dom__langkey_nameproper(input) {
+                    nameproper     = function dom__langkey_nameproper(input) {
                         if (input === "javascript") {
                             return "JavaScript";
                         }
@@ -352,127 +352,177 @@ var prettydiff = function prettydiff(api) {
                     },
                     //determines api source as necessary to make a decision about whether to supply
                     //externally needed JS functions to reports
-                    caccessibility  = (api.accessibility === true || api.accessibility === "true") ? true : false,
-                    capi            = (api.api === undefined || api.api.length === 0) ? "" : api.api,
+                    caccessibility = (api.accessibility === true || api.accessibility === "true"),
+                    capi           = (api.api === undefined || api.api.length === 0)
+                        ? ""
+                        : api.api,
                     //braceline - should a new line pad the interior of blocks (curly braces) in
                     //JavaScript
-                    cbraceline      = (api.braceline === true || api.braceline === "true") ? true : false,
+                    cbraceline     = (api.braceline === true || api.braceline === "true"),
                     //api.bracepadding - should curly braces be padded with a space in JavaScript?
-                    cbracepadding   = (api.bracepadding === true || api.bracepadding === "true") ? true : false,
+                    cbracepadding  = (api.bracepadding === true || api.bracepadding === "true"),
                     //api.indent - should JSPretty format JavaScript in the normal KNR style or push
                     //curly braces onto a separate line like the "allman" style
-                    cbraces         = (api.braces === "allman") ? "allman" : "knr",
+                    cbraces        = (api.braces === "allman")
+                        ? "allman"
+                        : "knr",
                     //api.comments - if comments should receive indentation or not
-                    ccomm           = (api.comments === "noindent") ? "noindent" : ((api.comments === "nocomment") ? "nocomment" : "indent"),
+                    ccomm          = (api.comments === "noindent")
+                        ? "noindent"
+                        : ((api.comments === "nocomment")
+                            ? "nocomment"
+                            : "indent"),
                     //api.conditional - should IE conditional comments be preserved during markup
                     //minification
-                    ccond           = (api.conditional === true || api.conditional === "true") ? true : false,
+                    ccond          = (api.conditional === true || api.conditional === "true"),
                     //api.content - should content be normalized during a diff operation
-                    ccontent        = (api.content === true || api.content === "true") ? true : false,
+                    ccontent       = (api.content === true || api.content === "true"),
                     //api.context - should the diff report only include the differences, if so then
                     //buffered by how many lines of code
-                    ccontext        = (api.context === "" || (/^(\s+)$/).test(api.context) || isNaN(api.context)) ? "" : Number(api.context),
+                    ccontext       = (api.context === "" || (/^(\s+)$/).test(api.context) || isNaN(api.context))
+                        ? ""
+                        : Number(api.context),
                     //api.correct - should JSPretty make some corrections for sloppy JS
-                    ccorrect        = (api.correct === true || api.correct === "true") ? true : false,
+                    ccorrect       = (api.correct === true || api.correct === "true"),
                     //api.cssinsertlines = if a new line should be forced between each css block
-                    ccssinsertlines = (api.cssinsertlines === true || api.cssinsertlines === "true") ? true : false,
+                    ccssinsertlines = (api.cssinsertlines === true || api.cssinsertlines === "true"),
                     //api.csvchar - what character should be used as a separator
-                    ccsvchar        = (typeof api.csvchar === "string" && api.csvchar.length > 0) ? api.csvchar : ",",
+                    ccsvchar       = (typeof api.csvchar === "string" && api.csvchar.length > 0)
+                        ? api.csvchar
+                        : ",",
                     //api.diff - source code to compare with
-                    cdiff           = (typeof api.diff === "string" && api.diff.length > 0 && (/^(\s+)$/).test(api.diff) === false) ? api.diff : "",
+                    cdiff          = (typeof api.diff === "string" && api.diff.length > 0 && (/^(\s+)$/).test(api.diff) === false)
+                        ? api.diff
+                        : "",
                     //api.diffcli - if operating from Node.js and set to true diff output will be
                     //printed to stdout just like git diff
-                    cdiffcli        = (api.diffcli === true || api.diffcli === "true") ? true : false,
+                    cdiffcli       = (api.diffcli === true || api.diffcli === "true"),
                     //api.diffcomments - should comments be included in the diff operation
-                    cdiffcomments   = (api.diffcomments === true || api.diffcomments === "true") ? true : false,
+                    cdiffcomments  = (api.diffcomments === true || api.diffcomments === "true"),
                     //api.difflabel - a text label to describe the diff code
-                    cdifflabel      = (typeof api.difflabel === "string" && api.difflabel.length > 0) ? api.difflabel : "new",
+                    cdifflabel     = (typeof api.difflabel === "string" && api.difflabel.length > 0)
+                        ? api.difflabel
+                        : "new",
                     //api.diffview - should the diff report be a single column showing both sources
                     //simultaneously "inline" or showing the sources in separate columns
                     //"sidebyside"
-                    cdiffview       = (api.diffview === "inline") ? "inline" : "sidebyside",
+                    cdiffview      = (api.diffview === "inline")
+                        ? "inline"
+                        : "sidebyside",
                     //api.elseline - for the 'else' keyword onto a new line in JavaScript
-                    celseline       = (api.elseline === true || api.elseline === "true") ? true : false,
+                    celseline      = (api.elseline === true || api.elseline === "true"),
                     //api.force_indent - should markup beautification always force indentation even
                     //if disruptive
-                    cforce          = (api.force_indent === true || api.force_indent === "true") ? true : false,
+                    cforce         = (api.force_indent === true || api.force_indent === "true"),
                     //api.html - should markup be presumed to be HTML with all the aloppiness HTML
                     //allows
-                    chtml           = (api.html === true || api.html === "true" || (typeof api.html === "string" && api.html === "html-yes")) ? true : false,
+                    chtml          = (api.html === true || api.html === "true" || (typeof api.html === "string" && api.html === "html-yes")),
                     //api.inchar - what character should be used to create a single identation
-                    cinchar         = (typeof api.inchar === "string" && api.inchar.length > 0) ? api.inchar : " ",
+                    cinchar        = (typeof api.inchar === "string" && api.inchar.length > 0)
+                        ? api.inchar
+                        : " ",
                     //api.inlevel - should indentation in JSPretty be buffered with additional
                     //indentation?  Useful when supplying code to sites accepting markdown
-                    cinlevel        = (isNaN(api.inlevel) || Number(api.inlevel) < 1) ? 0 : Number(api.inlevel),
+                    cinlevel       = (isNaN(api.inlevel) || Number(api.inlevel) < 1)
+                        ? 0
+                        : Number(api.inlevel),
                     //api.insize - how many characters from api.inchar should constitute a single
                     //indentation
-                    cinsize         = (isNaN(api.insize)) ? 4 : Number(api.insize),
+                    cinsize        = (isNaN(api.insize))
+                        ? 4
+                        : Number(api.insize),
                     //api.jsscope - do you want to enable the jsscope feature of JSPretty?  This
                     //feature will output formatted HTML instead of text code showing which
                     //variables are declared at which functional depth
-                    cjsscope        = (api.jsscope === true || api.jsscope === "true") ? "report" : (api.jsscope !== "html" && api.jsscope !== "report") ? "none" : api.jsscope,
+                    cjsscope       = (api.jsscope === true || api.jsscope === "true")
+                        ? "report"
+                        : (api.jsscope !== "html" && api.jsscope !== "report")
+                            ? "none"
+                            : api.jsscope,
                     //api.lang - which programming language will we be analyzing
-                    clang           = (typeof api.lang === "string" && api.lang !== "auto") ? setlangmode(api.lang.toLowerCase()) : "auto",
+                    clang          = (typeof api.lang === "string" && api.lang !== "auto")
+                        ? setlangmode(api.lang.toLowerCase())
+                        : "auto",
                     //api.langdefault - what language should lang value "auto" resort to when it
                     //cannot determine the language
-                    clangdefault    = (typeof api.langdefault === "string") ? setlangmode(api.langdefault.toLowerCase()) : "text",
+                    clangdefault   = (typeof api.langdefault === "string")
+                        ? setlangmode(api.langdefault.toLowerCase())
+                        : "text",
                     //api.mode - is this a minify, beautify, or diff operation
-                    cmode           = (typeof api.mode === "string" && (api.mode === "minify" || api.mode === "beautify" || api.mode === "parse")) ? api.mode : "diff",
+                    cmode          = (typeof api.mode === "string" && (api.mode === "minify" || api.mode === "beautify" || api.mode === "parse"))
+                        ? api.mode
+                        : "diff",
                     //api.obfuscate - when minifying code with JSPretty should we make it sloppy and
                     //change variable names to make the code extra small?
-                    cobfuscate      = (api.obfuscate === true || api.obfuscate === "true") ? true : false,
+                    cobfuscate     = (api.obfuscate === true || api.obfuscate === "true"),
                     //api.objsort will alphabetize object keys in JavaScript
-                    cobjsort        = (api.objsort === "all" || (api.objsort === "css" && clang !== "javascript") || (api.objsort === "js" && clang !== "css")) ? true : false,
+                    cobjsort       = (api.objsort === "all" || (api.objsort === "css" && clang !== "javascript") || (api.objsort === "js" && clang !== "css")),
                     //api.preserve - should empty lines be preserved in beautify operations of
                     //JSPretty?
-                    cpreserve       = (api.preserve === "all" || (api.preserve === "css" && clang !== "javascript") || (api.preserve === "js" && clang !== "css")) ? true : false,
+                    cpreserve      = (api.preserve === "all" || (api.preserve === "css" && clang !== "javascript") || (api.preserve === "js" && clang !== "css")),
                     //api.quote - should all single quote characters be converted to double quote
                     //characters during a diff operation to reduce the number of false positive
                     //comparisons
-                    cquote          = (api.quote === true || api.quote === "true") ? true : false,
+                    cquote         = (api.quote === true || api.quote === "true"),
                     //api.quoteConvert - convert " to ' (or ' to ") of string literals or markup
                     //attributes
-                    cquoteConvert   = (api.quoteConvert === "single" || api.quoteConvert === "double") ? api.quoteConvert : "none",
+                    cquoteConvert  = (api.quoteConvert === "single" || api.quoteConvert === "double")
+                        ? api.quoteConvert
+                        : "none",
                     //api.semicolon - should trailing semicolons be removed during a diff operation
                     //to reduce the number of false positive comparisons
-                    csemicolon      = (api.semicolon === true || api.semicolon === "true") ? true : false,
+                    csemicolon     = (api.semicolon === true || api.semicolon === "true"),
                     //api.source - the source code in minify and beautify operations or "base" code
                     //in operations
-                    csource         = (typeof api.source === "string" && api.source.length > 0 && (/^(\s+)$/).test(api.source) === false) ? api.source : ((cmode === "diff") ? "" : "Source sample is missing."),
+                    csource        = (typeof api.source === "string" && api.source.length > 0 && (/^(\s+)$/).test(api.source) === false)
+                        ? api.source
+                        : ((cmode === "diff")
+                            ? ""
+                            : "Source sample is missing."),
                     //api.sourcelabel - a text label to describe the api.source code for the diff
                     //report
-                    csourcelabel    = (typeof api.sourcelabel === "string" && api.sourcelabel.length > 0) ? api.sourcelabel : "base",
+                    csourcelabel   = (typeof api.sourcelabel === "string" && api.sourcelabel.length > 0)
+                        ? api.sourcelabel
+                        : "base",
                     //api.space - should JSPretty include a space between a function keyword and the
                     //next adjacent opening parenthesis character in beautification operations
-                    cspace          = (api.space === false || api.space === "false") ? false : true,
+                    cspace         = (api.space !== false && api.space !== "false"),
                     //api.style - should JavaScript and CSS code receive indentation if embedded
                     //inline in markup
-                    cstyle          = (api.style === "noindent") ? "noindent" : "indent",
+                    cstyle         = (api.style === "noindent")
+                        ? "noindent"
+                        : "indent",
                     //api.styleguide - preset of beautification options to bring a JavaScript sample
                     //closer to conformance of a given style guide
-                    cstyleguide     = (typeof api.styleguide === "string") ? api.styleguide : "",
+                    cstyleguide    = (typeof api.styleguide === "string")
+                        ? api.styleguide
+                        : "",
                     //api.tagmerge - Allows combining immediately adjacent start and end tags of the
                     //same name into a single self-closing tag:  <a href="home"></a> into <a
                     //href="home"/>
-                    ctagmerge       = (api.tagmerge === true || api.tagmerge === "true") ? true : false,
+                    ctagmerge = (api.tagmerge === true || api.tagmerge === "true"),
                     //api.titanium - TSS document support via option, because this is a uniquely
                     //modified form of JSON
-                    ctitanium       = (api.titanium === true || api.titanium === "true") ? true : false,
+                    ctitanium      = (api.titanium === true || api.titanium === "true"),
                     //api.topcoms - should comments at the top of a JavaScript or CSS source be
                     //preserved during minify operations
-                    ctopcoms        = (api.topcoms === true || api.topcoms === "true") ? true : false,
+                    ctopcoms       = (api.topcoms === true || api.topcoms === "true"),
                     //varword - should consecutive variables be merged into a comma separated list
                     //or the opposite
-                    cvarword        = (api.varword === "each" || api.varword === "list") ? api.varword : "none",
+                    cvarword       = (api.varword === "each" || api.varword === "list")
+                        ? api.varword
+                        : "none",
                     //api.vertical - whether or not to vertically align lists of assigns in CSS and
                     //JavaScript
-                    cvertical       = (api.vertical === "all" || (api.vertical === "css" && clang !== "javascript") || (api.vertical === "js" && clang !== "css")) ? true : false,
+                    cvertical      = (api.vertical === "all" || (api.vertical === "css" && clang !== "javascript") || (api.vertical === "js" && clang !== "css")),
                     //api.wrap - in markup beautification should text content wrap after the first
                     //complete word up to a certain character length
-                    cwrap           = (isNaN(api.wrap) === true) ? 80 : Number(api.wrap),
-                    autoval         = [],
-                    autostring      = "",
-                    auto            = function core__auto(a) {
+                    cwrap          = (isNaN(api.wrap) === true)
+                        ? 80
+                        : Number(api.wrap),
+                    autoval        = [],
+                    autostring     = "",
+                    auto           = function core__auto(a) {
                         var b        = [],
                             c        = 0,
                             d        = 0,
@@ -503,7 +553,7 @@ var prettydiff = function prettydiff(api) {
                         if (a === null) {
                             return;
                         }
-                        if (a === undefined || (/^(\s*#(?!(\!\/)))/).test(a) === true || (/\n\s*(\.|@)mixin\(?(\s*)/).test(a) === true) {
+                        if (a === undefined || (/^(\s*#(?!(!\/)))/).test(a) === true || (/\n\s*(\.|@)mixin\(?(\s*)/).test(a) === true) {
                             if ((/\$[a-zA-Z]/).test(a) === true || (/\{\s*(\w|\.|\$|#)+\s*\{/).test(a) === true) {
                                 return output("scss");
                             }
@@ -548,7 +598,7 @@ var prettydiff = function prettydiff(api) {
                                 }
                                 return output("unknown");
                             }
-                            if (a.indexOf("{") !== -1 && (/^(\s*[\{\$\.#@a-z0-9])|^(\s*\/(\*|\/))|^(\s*\*\s*\{)/i).test(a) === true && (/^(\s*if\s*\()/).test(a) === false && (/\=\s*(\{|\[|\()/).test(join) === false && (((/(\+|\-|\=|\?)\=/).test(join) === false || (/\/\/\s*\=+/).test(join) === true) || ((/\=+('|")?\)/).test(a) === true && (/;\s*base64/).test(a) === true)) && (/function(\s+\w+)*\s*\(/).test(join) === false) {
+                            if (a.indexOf("{") !== -1 && (/^(\s*[\{\$\.#@a-z0-9])|^(\s*\/(\*|\/))|^(\s*\*\s*\{)/i).test(a) === true && (/^(\s*if\s*\()/).test(a) === false && (/\=\s*(\{|\[|\()/).test(join) === false && (((/(\+|-|\=|\?)\=/).test(join) === false || (/\/\/\s*\=+/).test(join) === true) || ((/\=+('|")?\)/).test(a) === true && (/;\s*base64/).test(a) === true)) && (/function(\s+\w+)*\s*\(/).test(join) === false) {
                                 if ((/:\s*((number)|(string))/).test(a) === true && (/((public)|(private))\s+/).test(a) === true) {
                                     return output("typescript");
                                 }
@@ -567,10 +617,10 @@ var prettydiff = function prettydiff(api) {
                                 if ((/\{\s*(\w|\.|@|#)+\s*\{/).test(a) === true) {
                                     return output("less");
                                 }
-                                if ((/\$(\w|\-)/).test(a) === true) {
+                                if ((/\$(\w|-)/).test(a) === true) {
                                     return output("scss");
                                 }
-                                if ((/(:|;|\{)\s*@\w/).test(a) === true) {
+                                if ((/(;|\{|:)\s*@\w/).test(a) === true) {
                                     return output("less");
                                 }
                                 return output("css");
@@ -580,8 +630,8 @@ var prettydiff = function prettydiff(api) {
                             }
                             return output("unknown");
                         }
-                        if ((((/(>[\w\s:]*)?<(\/|\!)?[\w\s:\-\[]+/).test(a) === true || (/^(\s*<\?xml)/).test(a) === true) && ((/^([\s\w]*<)/).test(a) === true || (/(>[\s\w]*)$/).test(a) === true)) || ((/^(\s*<s((cript)|(tyle)))/i).test(a) === true && (/(<\/s((cript)|(tyle))>\s*)$/i).test(a) === true)) {
-                            if (((/\s*<\!doctype html>/i).test(a) === true && (/\s*<html/i).test(a) === true) || ((/^(\s*<\!DOCTYPE\s+((html)|(HTML))\s+PUBLIC\s+)/).test(a) === true && (/XHTML\s+1\.1/).test(a) === false && (/XHTML\s+1\.0\s+(S|s)((trict)|(TRICT))/).test(a) === false)) {
+                        if ((((/(>[\w\s:]*)?<(\/|!)?[\w\s:-\[]+/).test(a) === true || (/^(\s*<\?xml)/).test(a) === true) && ((/^([\s\w]*<)/).test(a) === true || (/(>[\s\w]*)$/).test(a) === true)) || ((/^(\s*<s((cript)|(tyle)))/i).test(a) === true && (/(<\/s((cript)|(tyle))>\s*)$/i).test(a) === true)) {
+                            if (((/\s*<!doctype\ html>/i).test(a) === true && (/\s*<html/i).test(a) === true) || ((/^(\s*<!DOCTYPE\s+((html)|(HTML))\s+PUBLIC\s+)/).test(a) === true && (/XHTML\s+1\.1/).test(a) === false && (/XHTML\s+1\.0\s+(S|s)((trict)|(TRICT))/).test(a) === false)) {
                                 if ((/<%\s*\}/).test(a) === true) {
                                     return output("ejs");
                                 }
@@ -641,7 +691,7 @@ var prettydiff = function prettydiff(api) {
                         }
                         return output("unknown");
                     },
-                    proctime        = function core__proctime() {
+                    proctime       = function core__proctime() {
                         var minuteString = "",
                             hourString   = "",
                             minutes      = 0,
@@ -659,8 +709,11 @@ var prettydiff = function prettydiff(api) {
                             },
                             minute       = function core__proctime_minute() {
                                 minutes      = parseInt((elapsed / 60), 10);
-                                secondString = plural(Number((elapsed - (minutes * 60)).toFixed(3)), " second");
                                 minuteString = plural(minutes, " minute");
+                                minutes      = elapsed - (minutes * 60);
+                                secondString = (minutes === 1)
+                                    ? "1 second"
+                                    : minutes.toFixed(3) + " seconds";
                             };
                         if (elapsed >= 60 && elapsed < 3600) {
                             minute();
@@ -675,7 +728,7 @@ var prettydiff = function prettydiff(api) {
                         }
                         return "<p><strong>Execution time:</strong> <em>" + hourString + minuteString + secondString + "</em></p>";
                     },
-                    pdcomment       = function core__pdcomment() {
+                    pdcomment      = function core__pdcomment() {
                         var comment    = "",
                             a          = 0,
                             b          = csource.length,
@@ -691,10 +744,10 @@ var prettydiff = function prettydiff(api) {
                         if ((csource.charAt(c - 17) === "\"" && (/var\s+prettydiff\s*\=\s*function/).test(csource) === false) || (sind < 0 && dind < 0)) {
                             return;
                         }
-                        if (sind > -1 && (/^(\s*\{\s*"token"\s*:\s*\[)/).test(csource) === true && (/\]\,\s*"types"\s*:\s*\[/).test(csource) === true) {
+                        if (sind > -1 && (/^(\s*\{\s*"token"\s*:\s*\[)/).test(csource) === true && (/\],\s*"types"\s*:\s*\[/).test(csource) === true) {
                             return;
                         }
-                        if (sind < 0 && dind > -1 && (/^(\s*\{\s*"token"\s*:\s*\[)/).test(cdiff) === true && (/\]\,\s*"types"\s*:\s*\[/).test(cdiff) === true) {
+                        if (sind < 0 && dind > -1 && (/^(\s*\{\s*"token"\s*:\s*\[)/).test(cdiff) === true && (/\],\s*"types"\s*:\s*\[/).test(cdiff) === true) {
                             return;
                         }
                         if (c === 15 && typeof cdiff === "string") {
@@ -703,7 +756,7 @@ var prettydiff = function prettydiff(api) {
                         } else if (c === 15) {
                             return;
                         }
-                        for (c; c < b; c += 1) {
+                        for (c = c; c < b; c += 1) {
                             if (difftest === false) {
                                 if (csource.charAt(c) === "*" && csource.charAt(c + 1) === "/") {
                                     break;
@@ -1041,7 +1094,7 @@ var prettydiff = function prettydiff(api) {
                     clang   = autoval[1];
                     if (autoval[2] === "unknown") {
                         autostring = "<p>Code type set to <strong>auto</strong>, but language could not be determined." +
-                            " Language defaulted to <em>" + autoval[0] + "</em>.</p>";
+                                " Language defaulted to <em>" + autoval[0] + "</em>.</p>";
                     } else {
                         autostring = "<p>Code type set to <strong>auto</strong>. Presumed language is <em>" + autoval[2] + "</em>.</p>";
                     }
@@ -1128,7 +1181,8 @@ var prettydiff = function prettydiff(api) {
                                 sizeNew           = apioutput.length,
                                 sizeDifference    = sizeOld - sizeNew,
                                 windowsDifference = 0,
-                                percentUnix       = ((sizeDifference / sizeOld) * 100).toFixed(2) + "%",
+                                percent           = ((sizeDifference / sizeOld) * 100),
+                                percentUnix       = percent.toFixed(2) + "%",
                                 percentWindows    = "",
                                 output            = [];
                             for (a = 0; a < sizeOld; a += 1) {
@@ -1138,21 +1192,22 @@ var prettydiff = function prettydiff(api) {
                             }
                             windowsSize       = sizeOld + lines;
                             windowsDifference = windowsSize - sizeNew;
-                            percentWindows    = ((windowsDifference / windowsSize) * 100).toFixed(2) + "%";
+                            percent           = ((windowsDifference / windowsSize) * 100);
+                            percentWindows    = percent.toFixed(2) + "%";
                             if (summary.indexOf("<p id='jserror'>") === 0) {
                                 output.push(summary);
                             } else if (summary !== "") {
                                 output.push("<p><strong class='duplicate'>Duplicate id attribute values detected:</strong> " + summary + "</p>");
                             }
                             output.push("<div class='doc'><table class='analysis' summary='Minification efficiency report" +
-                                "'><caption>Minification efficiency report</caption><thead><tr><th colspan='2'>Ou" +
-                                "tput Size</th><th colspan='2'>Number of Lines From Input</th></tr></thead><tbody" +
-                                "><tr><td colspan='2'>");
+                                    "'><caption>Minification efficiency report</caption><thead><tr><th colspan='2'>Ou" +
+                                    "tput Size</th><th colspan='2'>Number of Lines From Input</th></tr></thead><tbody" +
+                                    "><tr><td colspan='2'>");
                             output.push(sizeNew);
                             output.push("</td><td colspan='2'>");
                             output.push(lines + 1);
                             output.push("</td></tr><tr><th>Operating System</th><th>Input Size</th><th>Size Difference</t" +
-                                "h><th>Percentage of Decrease</th></tr><tr><th>Unix/Linux</th><td>");
+                                    "h><th>Percentage of Decrease</th></tr><tr><th>Unix/Linux</th><td>");
                             output.push(sizeOld);
                             output.push("</td><td>");
                             output.push(sizeDifference);
@@ -1172,7 +1227,7 @@ var prettydiff = function prettydiff(api) {
                                 "jsx", "javascript", "React JSX"
                             ];
                             autostring = "<p>Code type set to <strong>auto</strong>. Presumed language is <em>React JSX</e" +
-                                         "m>.</p>";
+                                             "m>.</p>";
                         }
                         return [
                             apioutput, autostring + proctime() + sizediff()
@@ -1241,7 +1296,9 @@ var prettydiff = function prettydiff(api) {
                             preserve      : cpreserve,
                             quoteConvert  : cquoteConvert,
                             source        : csource,
-                            vertical      : (api.vertical === "jsonly") ? false : cvertical
+                            vertical      : (api.vertical === "jsonly")
+                                ? false
+                                : cvertical
                         });
                         apidiffout = summary;
                     } else if (clang === "csv") {
@@ -1270,7 +1327,9 @@ var prettydiff = function prettydiff(api) {
                             styleguide   : cstyleguide,
                             tagmerge     : ctagmerge,
                             varword      : cvarword,
-                            vertical     : (api.vertical === "jsonly") ? "jsonly" : cvertical,
+                            vertical     : (api.vertical === "jsonly")
+                                ? "jsonly"
+                                : cvertical,
                             wrap         : cwrap
                         });
                         apidiffout = summary;
@@ -1300,7 +1359,9 @@ var prettydiff = function prettydiff(api) {
                             styleguide  : cstyleguide,
                             titanium    : ctitanium,
                             varword     : cvarword,
-                            vertical    : (api.vertical === "jsonly") ? true : cvertical,
+                            vertical    : (api.vertical === "jsonly")
+                                ? true
+                                : cvertical,
                             wrap        : cwrap
                         });
                         apidiffout = summary;
@@ -1313,277 +1374,275 @@ var prettydiff = function prettydiff(api) {
                     }
                     if (capi === "" && cjsscope !== "none" && clang === "javascript") {
                         builder.head       = "<?xml version='1.0' encoding='UTF-8' ?><!DOCTYPE html PUBLIC '-//W3C//DTD XHTML " +
-                                             "1.1//EN' 'http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd'><html xmlns='http://www." +
-                                             "w3.org/1999/xhtml' xml:lang='en'><head><title>Pretty Diff - The difference tool<" +
-                                             "/title><meta name='robots' content='index, follow'/> <meta name='DC.title' conte" +
-                                             "nt='Pretty Diff - The difference tool'/> <link rel='canonical' href='http://pret" +
-                                             "tydiff.com/' type='application/xhtml+xml'/><meta http-equiv='Content-Type' conte" +
-                                             "nt='application/xhtml+xml;charset=UTF-8'/><meta http-equiv='Content-Style-Type' " +
-                                             "content='text/css'/><style type='text/css'>";
+                                                 "1.1//EN' 'http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd'><html xmlns='http://www." +
+                                                 "w3.org/1999/xhtml' xml:lang='en'><head><title>Pretty Diff - The difference tool<" +
+                                                 "/title><meta name='robots' content='index, follow'/> <meta name='DC.title' conte" +
+                                                 "nt='Pretty Diff - The difference tool'/> <link rel='canonical' href='http://pret" +
+                                                 "tydiff.com/' type='application/xhtml+xml'/><meta http-equiv='Content-Type' conte" +
+                                                 "nt='application/xhtml+xml;charset=UTF-8'/><meta http-equiv='Content-Style-Type' " +
+                                                 "content='text/css'/><style type='text/css'>";
                         builder.cssCore    = "body{font-family:'Arial';font-size:10px;overflow-y:scroll;}#samples #dcolorSchem" +
-                                             "e{position:relative;z-index:1000}#apireturn textarea{font-size:1.2em;height:50em" +
-                                             ";width:100%}button{border-radius:.9em;display:block;font-weight:bold;width:100%}" +
-                                             "div .button{text-align:center}div button{display:inline-block;font-weight:bold;m" +
-                                             "argin:1em 0;padding:1em 2em}button:hover{cursor:pointer}#introduction{clear:both" +
-                                             ";margin:0 0 0 5.6em;position:relative;top:-2.75em}#introduction ul{clear:both;he" +
-                                             "ight:3em;margin:0 0 0 -5.5em;overflow:hidden;width:100em}#introduction li{clear:" +
-                                             "none;display:block;float:left;font-size:1.4em;margin:0 4.95em -1em 0}#introducti" +
-                                             "on li li{font-size:1em;margin-left:2em}#introduction .information,#webtool #intr" +
-                                             "oduction h2{left:-90em;position:absolute;top:0;width:10em}#introduction h2{float" +
-                                             ":none}#displayOps{float:right;font-size:1.5em;font-weight:bold;margin-right:1em;" +
-                                             "width:22.5em}#displayOps.default{position:static}#displayOps.maximized{margin-bo" +
-                                             "ttom:-2em;position:relative}#displayOps li{clear:none;display:block;float:left;l" +
-                                             "ist-style:none;margin:2em 0 0;text-align:right;width:9em}h1{float:left;font-size" +
-                                             ":2em;margin:0 .5em .5em 0}#hideOptions{margin-left:5em;padding:0}#title_text{bor" +
-                                             "der-style:solid;border-width:.05em;display:block;float:left;font-size:1em;margin" +
-                                             "-left:.55em;padding:.1em}h1 svg,h1 img{border-style:solid;border-width:.05em;flo" +
-                                             "at:left;height:2em;width:2em}h1 span{font-size:.5em}h2,h3{background:#fff;border" +
-                                             "-style:solid;border-width:.075em;display:inline-block;font-size:1.8em;font-weigh" +
-                                             "t:bold;margin:0 .5em .5em 0;padding:0 .2em}#doc h3{margin-top:.5em}h3{font-size:" +
-                                             "1.6em}h4{font-size:1.4em}fieldset{border-radius:.9em;clear:both;margin:3.5em 0 -" +
-                                             "2em;padding:0 0 0 1em}legend{border-style:solid;border-width:.1em;font-size:1.2e" +
-                                             "m;font-weight:bold;margin-left:-.25em}.button{margin:1em 0;text-align:center}.bu" +
-                                             "tton button{display:block;font-size:2em;height:1.5em;margin:0 auto;padding:0;wid" +
-                                             "th:50%}#diffreport{right:57.8em}#beaureport{right:38.8em}#minnreport{right:19.8e" +
-                                             "m}#statreport{right:.8em}#statreport .body p,#statreport .body li,#statreport .b" +
-                                             "ody h3{font-size:1.2em}#statreport .body h3{margin-top:0}#statreport .body ul{ma" +
-                                             "rgin-top:1em}#reports{height:4em}#reports h2{display:none}.box{border-style:soli" +
-                                             "d;border-width:0;left:auto;margin:0;padding:0;position:absolute;z-index:10}.box " +
-                                             "button{border-radius:0;border-style:solid;border-width:.1em;display:block;float:" +
-                                             "right;font-family:'Lucida Console','Trebuchet MS','Arial';height:1.75em;padding:" +
-                                             "0;position:absolute;right:0;text-align:center;top:0;width:1.75em;z-index:7}.box " +
-                                             "button.resize{border-width:.05em;cursor:se-resize;font-size:1.667em;font-weight:" +
-                                             "normal;height:.8em;line-height:.5em;margin:-.85em 0 0;position:absolute;right:.0" +
-                                             "5em;top:100%;width:.85em}.box button.minimize{margin:.35em 4em 0 0}.box button.m" +
-                                             "aximize{margin:.35em 1.75em 0 0}.box button.save{margin:.35em 6.25em 0 0}.box .b" +
-                                             "uttons{float:right;margin:0}.box h3.heading{cursor:pointer;float:left;font-size:" +
-                                             "1em;height:3em;margin:0 0 -3.2em;position:relative;width:17em;z-index:6}.box h3." +
-                                             "heading span{display:block;font-size:1.8em;padding:.25em 0 0 .5em}.box .body{cle" +
-                                             "ar:both;height:20em;margin-top:-.1em;overflow:scroll;padding:4.25em 1em 1em;posi" +
-                                             "tion:relative;right:0;top:0;width:75em;z-index:5}.options{border-radius:0 0 .9em" +
-                                             " .9em;clear:both;margin-bottom:1em;padding:1em 1em 3.5em;width:auto}label{displa" +
-                                             "y:inline;font-size:1.4em}ol li{font-size:1.4em;list-style-type:decimal}ol li li{" +
-                                             "font-size:1em}body#doc ol li{font-size:1.1em}ul{margin:-1.4em 0 2em;padding:0}ul" +
-                                             " li{list-style-type:none}li{clear:both;margin:1em 0 1em 3em}li h4{display:inline" +
-                                             ";float:left;margin:.4em 0;text-align:left;width:14em}p{clear:both;font-size:1.2e" +
-                                             "m;margin:0 0 1em}#option_comment{height:2.5em;margin-bottom:-1.5em;width:100%}.d" +
-                                             "ifflabel{display:block;height:0}#beau-other-span,#diff-other-span{text-indent:-2" +
-                                             "00em;width:0}.options p span{display:block;float:left;font-size:1.2em}#top{min-w" +
-                                             "idth:80em}#top em{font-weight:bold}#update{clear:left;float:right;font-weight:bo" +
-                                             "ld;padding:.5em;position:absolute;right:1em;top:11em}#announcement{height:2.5em;" +
-                                             "margin:0 -5em -4.75em;width:27.5em}#textreport{width:100%}#options{float:left;ma" +
-                                             "rgin:0;width:19em}#options label{width:auto}#options p{clear:both;font-size:1em;" +
-                                             "margin:0;padding:0}#options p span{clear:both;float:none;height:2em;margin:0 0 0" +
-                                             " 2em}#csvchar{width:11.8em}#language,#csvchar,#colorScheme{margin:0 0 1em 2em}#c" +
-                                             "odeInput{margin-left:22.5em}#Beautify.wide p,#Beautify.tall p.file,#Minify.wide " +
-                                             "p,#Minify.tall p.file{clear:none;float:none}#diffops p,#miniops p,#beauops p{cle" +
-                                             "ar:both;font-size:1em;padding-top:1em}#options p strong,#diffops p strong,#minio" +
-                                             "ps p strong,#beauops p strong,#options .label,#diffops .label,#miniops .label,#b" +
-                                             "eauops .label{display:block;float:left;font-size:1.2em;font-weight:bold;margin-b" +
-                                             "ottom:1em;width:17.5em}input[type='radio']{margin:0 .25em}input[type='file']{box" +
-                                             "-shadow:none}select{border-style:inset;border-width:.1em;width:11.85em}.options " +
-                                             "input,.options label{border-style:none;display:block;float:left}.options span la" +
-                                             "bel{margin-left:.4em;white-space:nowrap;width:12em}.options p span label{font-si" +
-                                             "ze:1em}#webtool .options input[type=text]{margin-right:1em;width:11.6em}#webtool" +
-                                             " .options input[type=text],div input,textarea{border-style:inset;border-width:.1" +
-                                             "em}textarea{display:inline-block;height:10em;margin:0}strong label{font-size:1em" +
-                                             ";width:inherit}strong.new{background:#ff6;font-style:italic}#miniops span strong" +
-                                             ",#diffops span strong,#beauops span strong{display:inline;float:none;font-size:1" +
-                                             "em;width:auto}#Beautify .input label,#Beautify .output label,#Minify .input labe" +
-                                             "l,#Minify .output label{display:block;font-size:1.05em;font-weight:bold}#beautyi" +
-                                             "nput,#minifyinput,#baseText,#newText,#beautyoutput,#minifyoutput{font-size:1em}." +
-                                             "clear{clear:both;display:block}.wide,.tall,#diffBase,#diffNew{border-radius:0 0 " +
-                                             ".9em .9em;margin-bottom:1em}#diffBase,#diffNew{padding:1em}#diffBase p,#diffNew " +
-                                             "p{clear:none;float:none}#diffBase.wide textarea,#diffNew.wide textarea{height:10" +
-                                             ".1em}.wide,.tall{padding:1em 1.25em 0}#diff .addsource{cursor:pointer;margin-bot" +
-                                             "tom:1em;padding:0}#diff .addsource input{display:block;float:left;margin:.5em .5" +
-                                             "em -1.5em}#diff .addsource label{cursor:pointer;display:inline-block;font-size:1" +
-                                             ".2em;padding:.5em .5em .5em 2em}.wide label{float:none;margin-right:0;width:100%" +
-                                             "}.wide #beautyinput,.wide #minifyinput,.wide #beautyoutput,.wide #minifyoutput{h" +
-                                             "eight:14.8em;margin:0;width:99.5%}.tall .input{clear:none;float:left}.tall .outp" +
-                                             "ut{clear:none;float:right;margin-top:-2.4em}.tall .input,.tall .output{width:49%" +
-                                             "}.tall .output label{text-align:right}.tall .input textarea{height:31.7em}.tall " +
-                                             ".output textarea{height:34em}.tall textarea{margin:0 0 -.1em;width:100%}.tall #b" +
-                                             "eautyinput,.tall #minifyinput{float:left}.tall #beautyoutput,.tall #minifyoutput" +
-                                             "{float:right}.wide{width:auto}#diffBase.difftall,#diffNew.difftall{margin-bottom" +
-                                             ":1.3em;padding:1em 1% .9em;width:47.5%}#diffBase.difftall{float:left}#diffNew.di" +
-                                             "fftall{float:right}.file input,.labeltext input{display:inline-block;margin:0 .7" +
-                                             "em 0 0;width:16em}.labeltext,.file{font-size:.9em;font-weight:bold;margin-bottom" +
-                                             ":1em}.difftall textarea{height:30.6em;margin-bottom:.5em}#diffBase textarea,#dif" +
-                                             "fNew textarea{width:99.5%}.input,.output{margin:0}#diffBase.wide,#diffNew.wide{p" +
-                                             "adding:.8em 1em}#diffBase.wide{margin-bottom:1.2em}#diffoutput{width:100%}#diffo" +
-                                             "utput p em,#diffoutput li em,.analysis .bad,.analysis .good{font-weight:bold}#di" +
-                                             "ffoutput ul{font-size:1.2em;margin-top:1em}#diffoutput ul li{display:list-item;l" +
-                                             "ist-style-type:disc}.analysis th{text-align:left}.analysis td{text-align:right}#" +
-                                             "doc ul{margin-top:1em}#doc ul li{font-size:1.2em}body#doc ul li{font-size:1.1em}" +
-                                             "#doc ol li span{display:block;margin-left:2em}.diff,.beautify{border-style:solid" +
-                                             ";border-width:.2em;display:inline-block;font-family:'Courier New',Courier,'Lucid" +
-                                             "a Console',monospace;margin:0 1em 1em 0;position:relative}.beautify .data em{dis" +
-                                             "play:inline-block;font-style:normal;font-weight:bold;padding-top:.5em}.diff .ski" +
-                                             "p{border-style:none none solid;border-width:0 0 .1em}.diff li,.diff p,.diff h3,." +
-                                             "beautify li{font-size:1.1em}.diff .diff-left,.diff .diff-right{display:table-cel" +
-                                             "l}.diff .diff-left{border-style:none none none solid;border-width:0 0 0 .1em}.di" +
-                                             "ff .diff-right{border-style:none none none solid;border-width:0 0 0 .1em;margin-" +
-                                             "left:-.1em;min-width:16.5em;right:0;top:0}.diff-right .data ol{min-width:16.5em}" +
-                                             ".diff-right .data{border-style:none solid none none;border-width:0 .1em 0 0;widt" +
-                                             "h:100%}.diff-right .data li{min-width:16.5em}.diff ol,.beautify ol{display:table" +
-                                             "-cell;margin:0;padding:0}.diff li,.beautify li{border-style:none none solid;bord" +
-                                             "er-width:0 0 .1em;display:block;line-height:1.2;list-style-type:none;margin:0;pa" +
-                                             "dding-bottom:0;padding-right:.5em}.diff li{padding-top:.5em}.beautify .count li{" +
-                                             "padding-top:.5em}@media screen and (-webkit-min-device-pixel-ratio:0) {.beautify" +
-                                             " .count li{padding-top:.546em}}#doc .beautify .count li.fold{color:#900;cursor:p" +
-                                             "ointer;font-weight:bold;padding-left:.5em}.diff .count,.beautify .count{border-s" +
-                                             "tyle:solid;border-width:0 .1em 0 0;font-weight:normal;padding:0;text-align:right" +
-                                             "}.diff .count li,.beautify .count li{padding-left:2em}.diff .data,.beautify .dat" +
-                                             "a{text-align:left;white-space:pre}.diff .data li,.beautify .data li{letter-spaci" +
-                                             "ng:.1em;padding-left:.5em;white-space:pre}#webtool .diff h3{border-style:none so" +
-                                             "lid solid;border-width:0 .1em .2em;box-shadow:none;display:block;font-family:Ver" +
-                                             "dana;margin:0 0 0 -.1em;padding:.2em 2em;text-align:left}.diff li em{font-style:" +
-                                             "normal;margin:0 -.09em;padding:.05em 0}.diff p.author{border-style:solid;border-" +
-                                             "width:.2em .1em .1em;margin:0;overflow:hidden;padding:.4em;text-align:right}#dco" +
-                                             "lorScheme{float:right;margin:-2em 0 0 0}#dcolorScheme label{display:inline-block" +
-                                             ";font-size:1em;margin-right:1em}body#doc{font-size:.8em;max-width:80em}#doc th{f" +
-                                             "ont-weight:bold}#doc td span{display:block}#doc table,.box .body table{border-co" +
-                                             "llapse:collapse;border-style:solid;border-width:.2em;clear:both}#doc table{font-" +
-                                             "size:1.2em}body#doc table{font-size:1em}#doc td,#doc th{border-left-style:solid;" +
-                                             "border-left-width:.1em;border-top-style:solid;border-top-width:.1em;padding:.5em" +
-                                             "}#doc em,.box .body em{font-style:normal;font-weight:bold}#doc div{margin-bottom" +
-                                             ":2em}#doc div div{clear:both;margin-bottom:1em}#doc h2{font-size:1.6em;margin:.5" +
-                                             "em .5em .5em 0}#doc ol{clear:both}#doc_contents li{font-size:1.75em;margin:1em 0" +
-                                             " 0}#doc_contents ol ol li{font-size:.75em;list-style:lower-alpha;margin:.5em 0 0" +
-                                             "}#doc_contents ol{padding-bottom:1em}#doc #doc_contents ol ol{background-color:i" +
-                                             "nherit;border-style:none;margin:.25em .3em 0 0;padding-bottom:0}#doc_contents a{" +
-                                             "text-decoration:none}#diffoutput #thirdparties li{display:inline-block;list-styl" +
-                                             "e-type:none}#thirdparties a{border-style:none;display:block;height:4em;text-deco" +
-                                             "ration:none}button,fieldset,.box h3.heading,.box .body,.options,.diff .replace e" +
-                                             "m,.diff .delete em,.diff .insert em,.wide,.tall,#diffBase,#diffNew,#doc div,#doc" +
-                                             " div div,#doc ol,#option_comment,#update,#thirdparties img,#diffoutput #thirdpar" +
-                                             "ties{border-style:solid;border-width:.1em}#apitest p{clear:both;padding-top:.75e" +
-                                             "m}#apitest label,#apitest select,#apitest input,#apitest textarea{float:left}#ap" +
-                                             "itest label{width:20em}#apitest select,#apitest input,#apitest textarea{width:30" +
-                                             "em}#pdsamples{list-style-position:inside;margin:-12em 0 0 0;padding:0;position:r" +
-                                             "elative;z-index:10}#pdsamples li{border-radius:1em;border-style:solid;border-wid" +
-                                             "th:.1em;margin:0 0 3em;padding:1em}#pdsamples li div{border-radius:1em;border-st" +
-                                             "yle:solid;border-width:.1em;margin:0;padding:1em}#pdsamples li p{display:inline-" +
-                                             "block;font-size:1em;margin:0}#pdsamples li p a{display:block;margin:0 0 1em 2em}" +
-                                             "#pdsamples li ul{margin:0 0 0 2em}#samples #pdsamples li li{background:none tran" +
-                                             "sparent;border-style:none;display:list-item;list-style:disc outside;margin:0;pad" +
-                                             "ding:.5em}#modalSave span{background:#000;display:block;left:0;opacity:.5;positi" +
-                                             "on:absolute;top:0;z-index:9000}#modalSave p{background:#eee;color:#333;font-size" +
-                                             ":3em;padding:1em;position:absolute;text-align:center;top:10em;width:25em;z-index" +
-                                             ":9001}#modalSave p em{display:block;font-size:.75em;margin-top:1em}#modalSave p " +
-                                             "strong{color:#c00;font-weight:bold}@media print{p,.options,#Beautify,#Minify,#di" +
-                                             "ff,ul{display:none}div{width:100%}html td{font-size:.8em;white-space:normal}}";
+                                                 "e{position:relative;z-index:1000}#apireturn textarea{font-size:1.2em;height:50em" +
+                                                 ";width:100%}button{border-radius:.9em;display:block;font-weight:bold;width:100%}" +
+                                                 "div .button{text-align:center}div button{display:inline-block;font-weight:bold;m" +
+                                                 "argin:1em 0;padding:1em 2em}button:hover{cursor:pointer}#introduction{clear:both" +
+                                                 ";margin:0 0 0 5.6em;position:relative;top:-2.75em}#introduction ul{clear:both;he" +
+                                                 "ight:3em;margin:0 0 0 -5.5em;overflow:hidden;width:100em}#introduction li{clear:" +
+                                                 "none;display:block;float:left;font-size:1.4em;margin:0 4.95em -1em 0}#introducti" +
+                                                 "on li li{font-size:1em;margin-left:2em}#introduction .information,#webtool #intr" +
+                                                 "oduction h2{left:-90em;position:absolute;top:0;width:10em}#introduction h2{float" +
+                                                 ":none}#displayOps{float:right;font-size:1.5em;font-weight:bold;margin-right:1em;" +
+                                                 "width:22.5em}#displayOps.default{position:static}#displayOps.maximized{margin-bo" +
+                                                 "ttom:-2em;position:relative}#displayOps li{clear:none;display:block;float:left;l" +
+                                                 "ist-style:none;margin:2em 0 0;text-align:right;width:9em}h1{float:left;font-size" +
+                                                 ":2em;margin:0 .5em .5em 0}#hideOptions{margin-left:5em;padding:0}#title_text{bor" +
+                                                 "der-style:solid;border-width:.05em;display:block;float:left;font-size:1em;margin" +
+                                                 "-left:.55em;padding:.1em}h1 svg,h1 img{border-style:solid;border-width:.05em;flo" +
+                                                 "at:left;height:2em;width:2em}h1 span{font-size:.5em}h2,h3{background:#fff;border" +
+                                                 "-style:solid;border-width:.075em;display:inline-block;font-size:1.8em;font-weigh" +
+                                                 "t:bold;margin:0 .5em .5em 0;padding:0 .2em}#doc h3{margin-top:.5em}h3{font-size:" +
+                                                 "1.6em}h4{font-size:1.4em}fieldset{border-radius:.9em;clear:both;margin:3.5em 0 -" +
+                                                 "2em;padding:0 0 0 1em}legend{border-style:solid;border-width:.1em;font-size:1.2e" +
+                                                 "m;font-weight:bold;margin-left:-.25em}.button{margin:1em 0;text-align:center}.bu" +
+                                                 "tton button{display:block;font-size:2em;height:1.5em;margin:0 auto;padding:0;wid" +
+                                                 "th:50%}#diffreport{right:57.8em}#beaureport{right:38.8em}#minnreport{right:19.8e" +
+                                                 "m}#statreport{right:.8em}#statreport .body p,#statreport .body li,#statreport .b" +
+                                                 "ody h3{font-size:1.2em}#statreport .body h3{margin-top:0}#statreport .body ul{ma" +
+                                                 "rgin-top:1em}#reports{height:4em}#reports h2{display:none}.box{border-style:soli" +
+                                                 "d;border-width:0;left:auto;margin:0;padding:0;position:absolute;z-index:10}.box " +
+                                                 "button{border-radius:0;border-style:solid;border-width:.1em;display:block;float:" +
+                                                 "right;font-family:'Lucida Console','Trebuchet MS','Arial';height:1.75em;padding:" +
+                                                 "0;position:absolute;right:0;text-align:center;top:0;width:1.75em;z-index:7}.box " +
+                                                 "button.resize{border-width:.05em;cursor:se-resize;font-size:1.667em;font-weight:" +
+                                                 "normal;height:.8em;line-height:.5em;margin:-.85em 0 0;position:absolute;right:.0" +
+                                                 "5em;top:100%;width:.85em}.box button.minimize{margin:.35em 4em 0 0}.box button.m" +
+                                                 "aximize{margin:.35em 1.75em 0 0}.box button.save{margin:.35em 6.25em 0 0}.box .b" +
+                                                 "uttons{float:right;margin:0}.box h3.heading{cursor:pointer;float:left;font-size:" +
+                                                 "1em;height:3em;margin:0 0 -3.2em;position:relative;width:17em;z-index:6}.box h3." +
+                                                 "heading span{display:block;font-size:1.8em;padding:.25em 0 0 .5em}.box .body{cle" +
+                                                 "ar:both;height:20em;margin-top:-.1em;overflow:scroll;padding:4.25em 1em 1em;posi" +
+                                                 "tion:relative;right:0;top:0;width:75em;z-index:5}.options{border-radius:0 0 .9em" +
+                                                 " .9em;clear:both;margin-bottom:1em;padding:1em 1em 3.5em;width:auto}label{displa" +
+                                                 "y:inline;font-size:1.4em}ol li{font-size:1.4em;list-style-type:decimal}ol li li{" +
+                                                 "font-size:1em}body#doc ol li{font-size:1.1em}ul{margin:-1.4em 0 2em;padding:0}ul" +
+                                                 " li{list-style-type:none}li{clear:both;margin:1em 0 1em 3em}li h4{display:inline" +
+                                                 ";float:left;margin:.4em 0;text-align:left;width:14em}p{clear:both;font-size:1.2e" +
+                                                 "m;margin:0 0 1em}#option_comment{height:2.5em;margin-bottom:-1.5em;width:100%}.d" +
+                                                 "ifflabel{display:block;height:0}#beau-other-span,#diff-other-span{text-indent:-2" +
+                                                 "00em;width:0}.options p span{display:block;float:left;font-size:1.2em}#top{min-w" +
+                                                 "idth:80em}#top em{font-weight:bold}#update{clear:left;float:right;font-weight:bo" +
+                                                 "ld;padding:.5em;position:absolute;right:1em;top:11em}#announcement{height:2.5em;" +
+                                                 "margin:0 -5em -4.75em;width:27.5em}#textreport{width:100%}#options{float:left;ma" +
+                                                 "rgin:0;width:19em}#options label{width:auto}#options p{clear:both;font-size:1em;" +
+                                                 "margin:0;padding:0}#options p span{clear:both;float:none;height:2em;margin:0 0 0" +
+                                                 " 2em}#csvchar{width:11.8em}#language,#csvchar,#colorScheme{margin:0 0 1em 2em}#c" +
+                                                 "odeInput{margin-left:22.5em}#Beautify.wide p,#Beautify.tall p.file,#Minify.wide " +
+                                                 "p,#Minify.tall p.file{clear:none;float:none}#diffops p,#miniops p,#beauops p{cle" +
+                                                 "ar:both;font-size:1em;padding-top:1em}#options p strong,#diffops p strong,#minio" +
+                                                 "ps p strong,#beauops p strong,#options .label,#diffops .label,#miniops .label,#b" +
+                                                 "eauops .label{display:block;float:left;font-size:1.2em;font-weight:bold;margin-b" +
+                                                 "ottom:1em;width:17.5em}input[type='radio']{margin:0 .25em}input[type='file']{box" +
+                                                 "-shadow:none}select{border-style:inset;border-width:.1em;width:11.85em}.options " +
+                                                 "input,.options label{border-style:none;display:block;float:left}.options span la" +
+                                                 "bel{margin-left:.4em;white-space:nowrap;width:12em}.options p span label{font-si" +
+                                                 "ze:1em}#webtool .options input[type=text]{margin-right:1em;width:11.6em}#webtool" +
+                                                 " .options input[type=text],div input,textarea{border-style:inset;border-width:.1" +
+                                                 "em}textarea{display:inline-block;height:10em;margin:0}strong label{font-size:1em" +
+                                                 ";width:inherit}strong.new{background:#ff6;font-style:italic}#miniops span strong" +
+                                                 ",#diffops span strong,#beauops span strong{display:inline;float:none;font-size:1" +
+                                                 "em;width:auto}#Beautify .input label,#Beautify .output label,#Minify .input labe" +
+                                                 "l,#Minify .output label{display:block;font-size:1.05em;font-weight:bold}#beautyi" +
+                                                 "nput,#minifyinput,#baseText,#newText,#beautyoutput,#minifyoutput{font-size:1em}." +
+                                                 "clear{clear:both;display:block}.wide,.tall,#diffBase,#diffNew{border-radius:0 0 " +
+                                                 ".9em .9em;margin-bottom:1em}#diffBase,#diffNew{padding:1em}#diffBase p,#diffNew " +
+                                                 "p{clear:none;float:none}#diffBase.wide textarea,#diffNew.wide textarea{height:10" +
+                                                 ".1em}.wide,.tall{padding:1em 1.25em 0}#diff .addsource{cursor:pointer;margin-bot" +
+                                                 "tom:1em;padding:0}#diff .addsource input{display:block;float:left;margin:.5em .5" +
+                                                 "em -1.5em}#diff .addsource label{cursor:pointer;display:inline-block;font-size:1" +
+                                                 ".2em;padding:.5em .5em .5em 2em}.wide label{float:none;margin-right:0;width:100%" +
+                                                 "}.wide #beautyinput,.wide #minifyinput,.wide #beautyoutput,.wide #minifyoutput{h" +
+                                                 "eight:14.8em;margin:0;width:99.5%}.tall .input{clear:none;float:left}.tall .outp" +
+                                                 "ut{clear:none;float:right;margin-top:-2.4em}.tall .input,.tall .output{width:49%" +
+                                                 "}.tall .output label{text-align:right}.tall .input textarea{height:31.7em}.tall " +
+                                                 ".output textarea{height:34em}.tall textarea{margin:0 0 -.1em;width:100%}.tall #b" +
+                                                 "eautyinput,.tall #minifyinput{float:left}.tall #beautyoutput,.tall #minifyoutput" +
+                                                 "{float:right}.wide{width:auto}#diffBase.difftall,#diffNew.difftall{margin-bottom" +
+                                                 ":1.3em;padding:1em 1% .9em;width:47.5%}#diffBase.difftall{float:left}#diffNew.di" +
+                                                 "fftall{float:right}.file input,.labeltext input{display:inline-block;margin:0 .7" +
+                                                 "em 0 0;width:16em}.labeltext,.file{font-size:.9em;font-weight:bold;margin-bottom" +
+                                                 ":1em}.difftall textarea{height:30.6em;margin-bottom:.5em}#diffBase textarea,#dif" +
+                                                 "fNew textarea{width:99.5%}.input,.output{margin:0}#diffBase.wide,#diffNew.wide{p" +
+                                                 "adding:.8em 1em}#diffBase.wide{margin-bottom:1.2em}#diffoutput{width:100%}#diffo" +
+                                                 "utput p em,#diffoutput li em,.analysis .bad,.analysis .good{font-weight:bold}#di" +
+                                                 "ffoutput ul{font-size:1.2em;margin-top:1em}#diffoutput ul li{display:list-item;l" +
+                                                 "ist-style-type:disc}.analysis th{text-align:left}.analysis td{text-align:right}#" +
+                                                 "doc ul{margin-top:1em}#doc ul li{font-size:1.2em}body#doc ul li{font-size:1.1em}" +
+                                                 "#doc ol li span{display:block;margin-left:2em}.diff,.beautify{border-style:solid" +
+                                                 ";border-width:.2em;display:inline-block;font-family:'Courier New',Courier,'Lucid" +
+                                                 "a Console',monospace;margin:0 1em 1em 0;position:relative}.beautify .data em{dis" +
+                                                 "play:inline-block;font-style:normal;font-weight:bold;padding-top:.5em}.diff .ski" +
+                                                 "p{border-style:none none solid;border-width:0 0 .1em}.diff li,.diff p,.diff h3,." +
+                                                 "beautify li{font-size:1.1em}.diff .diff-left,.diff .diff-right{display:table-cel" +
+                                                 "l}.diff .diff-left{border-style:none none none solid;border-width:0 0 0 .1em}.di" +
+                                                 "ff .diff-right{border-style:none none none solid;border-width:0 0 0 .1em;margin-" +
+                                                 "left:-.1em;min-width:16.5em;right:0;top:0}.diff-right .data ol{min-width:16.5em}" +
+                                                 ".diff-right .data{border-style:none solid none none;border-width:0 .1em 0 0;widt" +
+                                                 "h:100%}.diff-right .data li{min-width:16.5em}.diff ol,.beautify ol{display:table" +
+                                                 "-cell;margin:0;padding:0}.diff li,.beautify li{border-style:none none solid;bord" +
+                                                 "er-width:0 0 .1em;display:block;line-height:1.2;list-style-type:none;margin:0;pa" +
+                                                 "dding-bottom:0;padding-right:.5em}.diff li{padding-top:.5em}.beautify .count li{" +
+                                                 "padding-top:.5em}@media screen and (-webkit-min-device-pixel-ratio:0) {.beautify" +
+                                                 " .count li{padding-top:.546em}}#doc .beautify .count li.fold{color:#900;cursor:p" +
+                                                 "ointer;font-weight:bold;padding-left:.5em}.diff .count,.beautify .count{border-s" +
+                                                 "tyle:solid;border-width:0 .1em 0 0;font-weight:normal;padding:0;text-align:right" +
+                                                 "}.diff .count li,.beautify .count li{padding-left:2em}.diff .data,.beautify .dat" +
+                                                 "a{text-align:left;white-space:pre}.diff .data li,.beautify .data li{letter-spaci" +
+                                                 "ng:.1em;padding-left:.5em;white-space:pre}#webtool .diff h3{border-style:none so" +
+                                                 "lid solid;border-width:0 .1em .2em;box-shadow:none;display:block;font-family:Ver" +
+                                                 "dana;margin:0 0 0 -.1em;padding:.2em 2em;text-align:left}.diff li em{font-style:" +
+                                                 "normal;margin:0 -.09em;padding:.05em 0}.diff p.author{border-style:solid;border-" +
+                                                 "width:.2em .1em .1em;margin:0;overflow:hidden;padding:.4em;text-align:right}#dco" +
+                                                 "lorScheme{float:right;margin:-2em 0 0 0}#dcolorScheme label{display:inline-block" +
+                                                 ";font-size:1em;margin-right:1em}body#doc{font-size:.8em;max-width:80em}#doc th{f" +
+                                                 "ont-weight:bold}#doc td span{display:block}#doc table,.box .body table{border-co" +
+                                                 "llapse:collapse;border-style:solid;border-width:.2em;clear:both}#doc table{font-" +
+                                                 "size:1.2em}body#doc table{font-size:1em}#doc td,#doc th{border-left-style:solid;" +
+                                                 "border-left-width:.1em;border-top-style:solid;border-top-width:.1em;padding:.5em" +
+                                                 "}#doc em,.box .body em{font-style:normal;font-weight:bold}#doc div{margin-bottom" +
+                                                 ":2em}#doc div div{clear:both;margin-bottom:1em}#doc h2{font-size:1.6em;margin:.5" +
+                                                 "em .5em .5em 0}#doc ol{clear:both}#doc_contents li{font-size:1.75em;margin:1em 0" +
+                                                 " 0}#doc_contents ol ol li{font-size:.75em;list-style:lower-alpha;margin:.5em 0 0" +
+                                                 "}#doc_contents ol{padding-bottom:1em}#doc #doc_contents ol ol{background-color:i" +
+                                                 "nherit;border-style:none;margin:.25em .3em 0 0;padding-bottom:0}#doc_contents a{" +
+                                                 "text-decoration:none}#diffoutput #thirdparties li{display:inline-block;list-styl" +
+                                                 "e-type:none}#thirdparties a{border-style:none;display:block;height:4em;text-deco" +
+                                                 "ration:none}button,fieldset,.box h3.heading,.box .body,.options,.diff .replace e" +
+                                                 "m,.diff .delete em,.diff .insert em,.wide,.tall,#diffBase,#diffNew,#doc div,#doc" +
+                                                 " div div,#doc ol,#option_comment,#update,#thirdparties img,#diffoutput #thirdpar" +
+                                                 "ties{border-style:solid;border-width:.1em}#apitest p{clear:both;padding-top:.75e" +
+                                                 "m}#apitest label,#apitest select,#apitest input,#apitest textarea{float:left}#ap" +
+                                                 "itest label{width:20em}#apitest select,#apitest input,#apitest textarea{width:30" +
+                                                 "em}#pdsamples{list-style-position:inside;margin:-12em 0 0 0;padding:0;position:r" +
+                                                 "elative;z-index:10}#pdsamples li{border-radius:1em;border-style:solid;border-wid" +
+                                                 "th:.1em;margin:0 0 3em;padding:1em}#pdsamples li div{border-radius:1em;border-st" +
+                                                 "yle:solid;border-width:.1em;margin:0;padding:1em}#pdsamples li p{display:inline-" +
+                                                 "block;font-size:1em;margin:0}#pdsamples li p a{display:block;margin:0 0 1em 2em}" +
+                                                 "#pdsamples li ul{margin:0 0 0 2em}#samples #pdsamples li li{background:none tran" +
+                                                 "sparent;border-style:none;display:list-item;list-style:disc outside;margin:0;pad" +
+                                                 "ding:.5em}#modalSave span{background:#000;display:block;left:0;opacity:.5;positi" +
+                                                 "on:absolute;top:0;z-index:9000}#modalSave p{background:#eee;color:#333;font-size" +
+                                                 ":3em;padding:1em;position:absolute;text-align:center;top:10em;width:25em;z-index" +
+                                                 ":9001}#modalSave p em{display:block;font-size:.75em;margin-top:1em}#modalSave p " +
+                                                 "strong{color:#c00;font-weight:bold}@media print{p,.options,#Beautify,#Minify,#di" +
+                                                 "ff,ul{display:none}div{width:100%}html td{font-size:.8em;white-space:normal}}";
                         builder.cssColor   = "html .white,body.white{color:#333}body.white button{background:#eee;border-color" +
-                                             ":#222;box-shadow:0 .1em .2em rgba(64,64,64,0.75);color:#666;text-shadow:.05em .0" +
-                                             "5em .1em #ccc}.white button:hover,.white button:active{background:#999;color:#ee" +
-                                             "e;text-shadow:.1em .1em .1em #333}.white a{color:#009}.white #title_text{border-" +
-                                             "color:#fff;color:#333}.white #introduction h2{border-color:#999;color:#333}.whit" +
-                                             "e h1 svg{background:#eee;border-color:#999;box-shadow:0 .1em .2em rgba(150,150,1" +
-                                             "50,0.5)}.white h2,.white h3{background:#eee;border-color:#eee;box-shadow:none;pa" +
-                                             "dding-left:0;text-shadow:none}.white fieldset{background:#ddd;border-color:#999}" +
-                                             ".white legend{background:#fff;border-color:#999;color:#333;text-shadow:none}.whi" +
-                                             "te .box{background:#666;border-color:#999;box-shadow:0 .4em .8em rgba(64,64,64,0" +
-                                             ".75)}.white .box button{box-shadow:0 .1em .2em rgba(0,0,0,0.75);text-shadow:.1em" +
-                                             " .1em .1em rgba(0,0,0,.5)}.white .box button.resize{background:#bbf;border-color" +
-                                             ":#446;color:#446}.white .box button.resize:hover{background:#ddf;border-color:#2" +
-                                             "28;color:#228}.white .box button.save{background:#d99;border-color:#300;color:#3" +
-                                             "00}.white .box button.save:hover{background:#fcc;border-color:#822;color:#822}.w" +
-                                             "hite .box button.minimize{background:#bbf;border-color:#006;color:#006}.white .b" +
-                                             "ox button.minimize:hover{background:#eef;border-color:#228;color:#228}.white .bo" +
-                                             "x button.maximize{background:#9c9;border-color:#030;color:#030}.white .box butto" +
-                                             "n.maximize:hover{background:#cfc;border-color:#060;color:#060}.white .box h3.hea" +
-                                             "ding{background:#ddd;border-color:#888;box-shadow:.2em .2em .4em #666}.white .bo" +
-                                             "x h3.heading:hover{background:#333;color:#eee}.white .box .body{background:#eee;" +
-                                             "border-color:#888;box-shadow:0 0 .4em rgba(64,64,64,0.75)}.white .options{backgr" +
-                                             "ound:#eee;border-color:#999;box-shadow:0 .2em .4em rgba(64,64,64,0.5);text-shado" +
-                                             "w:.05em .05em .1em #ccc}.white .options h2,.white #Beautify h2,.white #Minify h2" +
-                                             ",.white #diffBase h2,.white #diffNew h2{background:#eee;border-color:#eee;box-sh" +
-                                             "adow:none;text-shadow:none}.white #option_comment{background:#ddd;border-color:#" +
-                                             "999}.white #top em{color:#00f}.white #update{background:#eee;border-color:#999;b" +
-                                             "ox-shadow:0 .1em .2em rgba(64,64,64,0.5)}.white .wide,.white .tall,.white #diffB" +
-                                             "ase,.white #diffNew{background:#eee;border-color:#999;box-shadow:0 .2em .4em rgb" +
-                                             "a(64,64,64,0.5)}.white .file input,.white .labeltext input{border-color:#fff}#we" +
-                                             "btool.white input.unchecked{background:#ccc;color:#666}.white .options input[typ" +
-                                             "e=text],.white .options select{border-color:#999}.white #beautyoutput,.white #mi" +
-                                             "nifyoutput{background:#ddd}.white #diffoutput p em,.white #diffoutput li em{colo" +
-                                             "r:#c00}.white .analysis .bad{background-color:#ebb;color:#400}.white .analysis ." +
-                                             "good{background-color:#cec;color:#040}.white #doc .analysis thead th,.white #doc" +
-                                             " .analysis th[colspan]{background:#eef}.white div input{border-color:#999}.white" +
-                                             " textarea{border-color:#999}.white textarea:hover{background:#eef8ff}.white .dif" +
-                                             "f,.white .beautify,.white .diff ol,.white .beautify ol,.white .diff .diff-left,." +
-                                             "white .diff .diff-right,.white h3,.white p.author{border-color:#999}.white .diff" +
-                                             " .count li,.white .beautify .count li{background:#eed;border-color:#bbc;color:#8" +
-                                             "86}.white .diff h3{background:#ddd;border-bottom-color:#bbc}.white .diff .empty{" +
-                                             "background-color:#ddd;border-color:#ccc}.white .diff .replace{background-color:#" +
-                                             "fea;border-color:#dd8}.white .diff .data .replace em{background-color:#ffd;borde" +
-                                             "r-color:#963;color:#630}.white .diff .delete{background-color:#fbb;border-color:" +
-                                             "#eaa}.white .diff .data .delete em{background-color:#fdd;border-color:#700;color" +
-                                             ":#600}.white .diff .equal,.white .beautify .data li{background-color:#fff;border" +
-                                             "-color:#eee}.white .beautify .data em.s1{color:#f66}.white .beautify .data em.s2" +
-                                             "{color:#12f}.white .beautify .data em.s3{color:#090}.white .beautify .data em.s4" +
-                                             "{color:#d6d}.white .beautify .data em.s5{color:#7cc}.white .beautify .data em.s6" +
-                                             "{color:#c85}.white .beautify .data em.s7{color:#737}.white .beautify .data em.s8" +
-                                             "{color:#6d0}.white .beautify .data em.s9{color:#dd0s}.white .beautify .data em.s" +
-                                             "10{color:#893}.white .beautify .data em.s11{color:#b97}.white .beautify .data em" +
-                                             ".s12{color:#bbb}.white .beautify .data em.s13{color:#cc3}.white .beautify .data " +
-                                             "em.s14{color:#333}.white .beautify .data em.s15{color:#9d9}.white .beautify .dat" +
-                                             "a em.s16{color:#880}.white .beautify .data .l0{background:#fff}.white .beautify " +
-                                             ".data .l1{background:#fed}.white .beautify .data .l2{background:#def}.white .bea" +
-                                             "utify .data .l3{background:#efe}.white .beautify .data .l4{background:#fef}.whit" +
-                                             "e .beautify .data .l5{background:#eef}.white .beautify .data .l6{background:#fff" +
-                                             "8cc}.white .beautify .data .l7{background:#ede}.white .beautify .data .l8{backgr" +
-                                             "ound:#efc}.white .beautify .data .l9{background:#ffd}.white .beautify .data .l10" +
-                                             "{background:#edc}.white .beautify .data .l11{background:#fdb}.white .beautify .d" +
-                                             "ata .l12{background:#f8f8f8}.white .beautify .data .l13{background:#ffb}.white ." +
-                                             "beautify .data .l14{background:#eec}.white .beautify .data .l15{background:#cfc}" +
-                                             ".white .beautify .data .l16{background:#eea}.white .beautify .data .c0{backgroun" +
-                                             "d:#ddd}.white .beautify .data li{color:#777}.white .diff .skip{background-color:" +
-                                             "#efefef;border-color:#ddd}.white .diff .insert{background-color:#bfb;border-colo" +
-                                             "r:#aea}.white .diff .data .insert em{background-color:#efc;border-color:#070;col" +
-                                             "or:#050}.white .diff p.author{background:#efefef;border-top-color:#bbc}.white #d" +
-                                             "oc table,.white .box .body table{background:#fff;border-color:#999}.white #doc s" +
-                                             "trong,.white .box .body strong{color:#c00}.white .box .body em,.white .box .body" +
-                                             " #doc em{color:#090}.white #thirdparties img,.white #diffoutput #thirdparties{bo" +
-                                             "rder-color:#999}.white #thirdparties img{box-shadow:.2em .2em .4em #999}.white #" +
-                                             "diffoutput #thirdparties{background:#eee}.white #doc div,#doc.white div{backgrou" +
-                                             "nd:#ddd;border-color:#999}.white #doc ol,#doc.white ol{background:#eee;border-co" +
-                                             "lor:#999}.white #doc div div,#doc.white div div{background:#eee;border-color:#99" +
-                                             "9}.white #doc table,#doc.white table{background:#fff;border-color:#999}.white #d" +
-                                             "oc th,#doc.white th{background:#ddd;border-left-color:#999;border-top-color:#999" +
-                                             "}.white #doc tr:hover,#doc.white tr:hover{background:#ddd}#doc.white em{color:#0" +
-                                             "60}.white #doc div:hover,#doc.white div:hover{background:#ccc}.white #doc div di" +
-                                             "v:hover,#doc.white div div:hover,#doc.white div ol:hover{background:#fff}.white " +
-                                             "#pdsamples li{background:#eee;border-color:#999}.white #pdsamples li div{backgro" +
-                                             "und:#ddd;border-color:#999}.white #pdsamples li div a{color:#47a}.white #pdsampl" +
-                                             "es li p a{color:#009}";
+                                                 ":#222;box-shadow:0 .1em .2em rgba(64,64,64,0.75);color:#666;text-shadow:.05em .0" +
+                                                 "5em .1em #ccc}.white button:hover,.white button:active{background:#999;color:#ee" +
+                                                 "e;text-shadow:.1em .1em .1em #333}.white a{color:#009}.white #title_text{border-" +
+                                                 "color:#fff;color:#333}.white #introduction h2{border-color:#999;color:#333}.whit" +
+                                                 "e h1 svg{background:#eee;border-color:#999;box-shadow:0 .1em .2em rgba(150,150,1" +
+                                                 "50,0.5)}.white h2,.white h3{background:#eee;border-color:#eee;box-shadow:none;pa" +
+                                                 "dding-left:0;text-shadow:none}.white fieldset{background:#ddd;border-color:#999}" +
+                                                 ".white legend{background:#fff;border-color:#999;color:#333;text-shadow:none}.whi" +
+                                                 "te .box{background:#666;border-color:#999;box-shadow:0 .4em .8em rgba(64,64,64,0" +
+                                                 ".75)}.white .box button{box-shadow:0 .1em .2em rgba(0,0,0,0.75);text-shadow:.1em" +
+                                                 " .1em .1em rgba(0,0,0,.5)}.white .box button.resize{background:#bbf;border-color" +
+                                                 ":#446;color:#446}.white .box button.resize:hover{background:#ddf;border-color:#2" +
+                                                 "28;color:#228}.white .box button.save{background:#d99;border-color:#300;color:#3" +
+                                                 "00}.white .box button.save:hover{background:#fcc;border-color:#822;color:#822}.w" +
+                                                 "hite .box button.minimize{background:#bbf;border-color:#006;color:#006}.white .b" +
+                                                 "ox button.minimize:hover{background:#eef;border-color:#228;color:#228}.white .bo" +
+                                                 "x button.maximize{background:#9c9;border-color:#030;color:#030}.white .box butto" +
+                                                 "n.maximize:hover{background:#cfc;border-color:#060;color:#060}.white .box h3.hea" +
+                                                 "ding{background:#ddd;border-color:#888;box-shadow:.2em .2em .4em #666}.white .bo" +
+                                                 "x h3.heading:hover{background:#333;color:#eee}.white .box .body{background:#eee;" +
+                                                 "border-color:#888;box-shadow:0 0 .4em rgba(64,64,64,0.75)}.white .options{backgr" +
+                                                 "ound:#eee;border-color:#999;box-shadow:0 .2em .4em rgba(64,64,64,0.5);text-shado" +
+                                                 "w:.05em .05em .1em #ccc}.white .options h2,.white #Beautify h2,.white #Minify h2" +
+                                                 ",.white #diffBase h2,.white #diffNew h2{background:#eee;border-color:#eee;box-sh" +
+                                                 "adow:none;text-shadow:none}.white #option_comment{background:#ddd;border-color:#" +
+                                                 "999}.white #top em{color:#00f}.white #update{background:#eee;border-color:#999;b" +
+                                                 "ox-shadow:0 .1em .2em rgba(64,64,64,0.5)}.white .wide,.white .tall,.white #diffB" +
+                                                 "ase,.white #diffNew{background:#eee;border-color:#999;box-shadow:0 .2em .4em rgb" +
+                                                 "a(64,64,64,0.5)}.white .file input,.white .labeltext input{border-color:#fff}#we" +
+                                                 "btool.white input.unchecked{background:#ccc;color:#666}.white .options input[typ" +
+                                                 "e=text],.white .options select{border-color:#999}.white #beautyoutput,.white #mi" +
+                                                 "nifyoutput{background:#ddd}.white #diffoutput p em,.white #diffoutput li em{colo" +
+                                                 "r:#c00}.white .analysis .bad{background-color:#ebb;color:#400}.white .analysis ." +
+                                                 "good{background-color:#cec;color:#040}.white #doc .analysis thead th,.white #doc" +
+                                                 " .analysis th[colspan]{background:#eef}.white div input{border-color:#999}.white" +
+                                                 " textarea{border-color:#999}.white textarea:hover{background:#eef8ff}.white .dif" +
+                                                 "f,.white .beautify,.white .diff ol,.white .beautify ol,.white .diff .diff-left,." +
+                                                 "white .diff .diff-right,.white h3,.white p.author{border-color:#999}.white .diff" +
+                                                 " .count li,.white .beautify .count li{background:#eed;border-color:#bbc;color:#8" +
+                                                 "86}.white .diff h3{background:#ddd;border-bottom-color:#bbc}.white .diff .empty{" +
+                                                 "background-color:#ddd;border-color:#ccc}.white .diff .replace{background-color:#" +
+                                                 "fea;border-color:#dd8}.white .diff .data .replace em{background-color:#ffd;borde" +
+                                                 "r-color:#963;color:#630}.white .diff .delete{background-color:#fbb;border-color:" +
+                                                 "#eaa}.white .diff .data .delete em{background-color:#fdd;border-color:#700;color" +
+                                                 ":#600}.white .diff .equal,.white .beautify .data li{background-color:#fff;border" +
+                                                 "-color:#eee}.white .beautify .data em.s1{color:#f66}.white .beautify .data em.s2" +
+                                                 "{color:#12f}.white .beautify .data em.s3{color:#090}.white .beautify .data em.s4" +
+                                                 "{color:#d6d}.white .beautify .data em.s5{color:#7cc}.white .beautify .data em.s6" +
+                                                 "{color:#c85}.white .beautify .data em.s7{color:#737}.white .beautify .data em.s8" +
+                                                 "{color:#6d0}.white .beautify .data em.s9{color:#dd0s}.white .beautify .data em.s" +
+                                                 "10{color:#893}.white .beautify .data em.s11{color:#b97}.white .beautify .data em" +
+                                                 ".s12{color:#bbb}.white .beautify .data em.s13{color:#cc3}.white .beautify .data " +
+                                                 "em.s14{color:#333}.white .beautify .data em.s15{color:#9d9}.white .beautify .dat" +
+                                                 "a em.s16{color:#880}.white .beautify .data .l0{background:#fff}.white .beautify " +
+                                                 ".data .l1{background:#fed}.white .beautify .data .l2{background:#def}.white .bea" +
+                                                 "utify .data .l3{background:#efe}.white .beautify .data .l4{background:#fef}.whit" +
+                                                 "e .beautify .data .l5{background:#eef}.white .beautify .data .l6{background:#fff" +
+                                                 "8cc}.white .beautify .data .l7{background:#ede}.white .beautify .data .l8{backgr" +
+                                                 "ound:#efc}.white .beautify .data .l9{background:#ffd}.white .beautify .data .l10" +
+                                                 "{background:#edc}.white .beautify .data .l11{background:#fdb}.white .beautify .d" +
+                                                 "ata .l12{background:#f8f8f8}.white .beautify .data .l13{background:#ffb}.white ." +
+                                                 "beautify .data .l14{background:#eec}.white .beautify .data .l15{background:#cfc}" +
+                                                 ".white .beautify .data .l16{background:#eea}.white .beautify .data .c0{backgroun" +
+                                                 "d:#ddd}.white .beautify .data li{color:#777}.white .diff .skip{background-color:" +
+                                                 "#efefef;border-color:#ddd}.white .diff .insert{background-color:#bfb;border-colo" +
+                                                 "r:#aea}.white .diff .data .insert em{background-color:#efc;border-color:#070;col" +
+                                                 "or:#050}.white .diff p.author{background:#efefef;border-top-color:#bbc}.white #d" +
+                                                 "oc table,.white .box .body table{background:#fff;border-color:#999}.white #doc s" +
+                                                 "trong,.white .box .body strong{color:#c00}.white .box .body em,.white .box .body" +
+                                                 " #doc em{color:#090}.white #thirdparties img,.white #diffoutput #thirdparties{bo" +
+                                                 "rder-color:#999}.white #thirdparties img{box-shadow:.2em .2em .4em #999}.white #" +
+                                                 "diffoutput #thirdparties{background:#eee}.white #doc div,#doc.white div{backgrou" +
+                                                 "nd:#ddd;border-color:#999}.white #doc ol,#doc.white ol{background:#eee;border-co" +
+                                                 "lor:#999}.white #doc div div,#doc.white div div{background:#eee;border-color:#99" +
+                                                 "9}.white #doc table,#doc.white table{background:#fff;border-color:#999}.white #d" +
+                                                 "oc th,#doc.white th{background:#ddd;border-left-color:#999;border-top-color:#999" +
+                                                 "}.white #doc tr:hover,#doc.white tr:hover{background:#ddd}#doc.white em{color:#0" +
+                                                 "60}.white #doc div:hover,#doc.white div:hover{background:#ccc}.white #doc div di" +
+                                                 "v:hover,#doc.white div div:hover,#doc.white div ol:hover{background:#fff}.white " +
+                                                 "#pdsamples li{background:#eee;border-color:#999}.white #pdsamples li div{backgro" +
+                                                 "und:#ddd;border-color:#999}.white #pdsamples li div a{color:#47a}.white #pdsampl" +
+                                                 "es li p a{color:#009}";
                         builder.cssExtra   = "body{background:#eee}#doc p em{color:#090}";
                         builder.body       = "</style></head><body id='webtool' class='";
                         builder.bodyColor  = "white";
                         builder.title      = "'><h1><a href='http://prettydiff.com/'>Pretty Diff - The difference tool</a></h1" +
-                                             "><div class='doc'>";
+                                                 "><div class='doc'>";
                         builder.scriptOpen = "<script type='application/javascript'><![CDATA[";
                         builder.scriptBody = "var pd={};pd.beaufold=function dom__beaufold(){'use strict';var self=this,title=" +
-                                             "self.getAttribute('title').split('line '),min=Number(title[1].substr(0,title[1]." +
-                                             "indexOf(' '))),max=Number(title[2]),a=0,b='',list=[self.parentNode.getElementsBy" +
-                                             "TagName('li'),self.parentNode.nextSibling.getElementsByTagName('li')];if(self.in" +
-                                             "nerHTML.charAt(0)==='-'){for(a=min;a<max;a+=1){list[0][a].style.display='none';l" +
-                                             "ist[1][a].style.display='none';}self.innerHTML='+'+self.innerHTML.substr(1);}els" +
-                                             "e{for(a=min;a<max;a+=1){list[0][a].style.display='block';list[1][a].style.displa" +
-                                             "y='block';if(list[0][a].getAttribute('class')==='fold'&&list[0][a].innerHTML.cha" +
-                                             "rAt(0)==='+'){b=list[0][a].getAttribute('title');b=b.substring(b.indexOf('to lin" +
-                                             "e ')+1);a=Number(b)-1;}}self.innerHTML='-'+self.innerHTML.substr(1);}};(function" +
-                                             "(){'use strict';var lists=document.getElementsByTagName('ol'),listslen=lists.len" +
-                                             "gth,list=[],listlen=0,a=0,b=0;for(a=0;a<listslen;a+=1){if(lists[a].getAttribute(" +
-                                             "'class')==='count'&&lists[a].parentNode.getAttribute('class')==='beautify'){list" +
-                                             "=lists[a].getElementsByTagName('li');listlen=list.length;for(b=0;b<listlen;b+=1)" +
-                                             "{if(list[b].getAttribute('class')==='fold'){list[b].onmousedown=pd.beaufold;}}}}" +
-                                             "}());";
+                                                 "self.getAttribute('title').split('line '),min=Number(title[1].substr(0,title[1]." +
+                                                 "indexOf(' '))),max=Number(title[2]),a=0,b='',list=[self.parentNode.getElementsBy" +
+                                                 "TagName('li'),self.parentNode.nextSibling.getElementsByTagName('li')];if(self.in" +
+                                                 "nerHTML.charAt(0)==='-'){for(a=min;a<max;a+=1){list[0][a].style.display='none';l" +
+                                                 "ist[1][a].style.display='none';}self.innerHTML='+'+self.innerHTML.substr(1);}els" +
+                                                 "e{for(a=min;a<max;a+=1){list[0][a].style.display='block';list[1][a].style.displa" +
+                                                 "y='block';if(list[0][a].getAttribute('class')==='fold'&&list[0][a].innerHTML.cha" +
+                                                 "rAt(0)==='+'){b=list[0][a].getAttribute('title');b=b.substring(b.indexOf('to lin" +
+                                                 "e ')+1);a=Number(b)-1;}}self.innerHTML='-'+self.innerHTML.substr(1);}};(function" +
+                                                 "(){'use strict';var lists=document.getElementsByTagName('ol'),listslen=lists.len" +
+                                                 "gth,list=[],listlen=0,a=0,b=0;for(a=0;a<listslen;a+=1){if(lists[a].getAttribute(" +
+                                                 "'class')==='count'&&lists[a].parentNode.getAttribute('class')==='beautify'){list" +
+                                                 "=lists[a].getElementsByTagName('li');listlen=list.length;for(b=0;b<listlen;b+=1)" +
+                                                 "{if(list[b].getAttribute('class')==='fold'){list[b].onmousedown=pd.beaufold;}}}}" +
+                                                 "}());";
                         builder.scriptEnd  = "]]></script>";
                         return [
-                            [
-                                builder.head, builder.cssCore, builder.cssColor, builder.cssExtra, builder.body, builder.bodyColor, builder.title, auto, proctime(), "</div>", apidiffout, builder.scriptOpen, builder.scriptBody, builder.scriptEnd, "</body></html>"
-                            ].join(""), ""
+                            builder.head + builder.cssCore + builder.cssColor + builder.cssExtra + builder.body + builder.bodyColor + builder.title + auto + proctime() + "</div>" + apidiffout + builder.scriptOpen + builder.scriptBody + builder.scriptEnd + "</body></html>", ""
                         ];
                     }
                     return [
@@ -1648,7 +1707,7 @@ var prettydiff = function prettydiff(api) {
                             tagmerge    : ctagmerge,
                             vertical    : false,
                             wrap        : cwrap
-                        }).replace(/\n[\t]* \/>/g, "");
+                        }).replace(/\n[\t]*\ \/>/g, "");
                         apidiffout = markuppretty({
                             bracepadding: cbracepadding,
                             braces      : cbraces,
@@ -1668,7 +1727,7 @@ var prettydiff = function prettydiff(api) {
                             styleguide  : cstyleguide,
                             vertical    : false,
                             wrap        : cwrap
-                        }).replace(/\n[\t]* \/>/g, "");
+                        }).replace(/\n[\t]*\ \/>/g, "");
                     } else if (clang === "text") {
                         apioutput  = csource;
                         apidiffout = cdiff;
@@ -1750,8 +1809,9 @@ var prettydiff = function prettydiff(api) {
                         if (apioutput === "Error: This does not appear to be JavaScript." || apidiffout === "Error: This does not appear to be JavaScript.") {
                             a[1] = [
                                 "<p><strong>Error:</strong> Please try using the option labeled <em>Plain Text (d" +
-                                    "iff only)</em>. <span style='display:block'>The input does not appear to be mark" +
-                                    "up, CSS, or JavaScript.</span></p>", 0, 0
+                                        "iff only)</em>. <span style='display:block'>The input does not appear to be mark" +
+                                        "up, CSS, or JavaScript.</span></p>",
+                                0, 0
                             ];
                         } else {
                             if (clang !== "text") {
@@ -1780,302 +1840,301 @@ var prettydiff = function prettydiff(api) {
                         }
                         if (capi === "") {
                             builder.head          = "<?xml version='1.0' encoding='UTF-8' ?><!DOCTYPE html PUBLIC '-//W3C//DTD XHTML " +
-                                                    "1.1//EN' 'http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd'><html xmlns='http://www." +
-                                                    "w3.org/1999/xhtml' xml:lang='en'><head><title>Pretty Diff - The difference tool<" +
-                                                    "/title><meta name='robots' content='index, follow'/> <meta name='DC.title' conte" +
-                                                    "nt='Pretty Diff - The difference tool'/> <link rel='canonical' href='http://pret" +
-                                                    "tydiff.com/' type='application/xhtml+xml'/><meta http-equiv='Content-Type' conte" +
-                                                    "nt='application/xhtml+xml;charset=UTF-8'/><meta http-equiv='Content-Style-Type' " +
-                                                    "content='text/css'/><style type='text/css'>";
+                                                        "1.1//EN' 'http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd'><html xmlns='http://www." +
+                                                        "w3.org/1999/xhtml' xml:lang='en'><head><title>Pretty Diff - The difference tool<" +
+                                                        "/title><meta name='robots' content='index, follow'/> <meta name='DC.title' conte" +
+                                                        "nt='Pretty Diff - The difference tool'/> <link rel='canonical' href='http://pret" +
+                                                        "tydiff.com/' type='application/xhtml+xml'/><meta http-equiv='Content-Type' conte" +
+                                                        "nt='application/xhtml+xml;charset=UTF-8'/><meta http-equiv='Content-Style-Type' " +
+                                                        "content='text/css'/><style type='text/css'>";
                             builder.cssCore       = "body{font-family:'Arial';font-size:10px;overflow-y:scroll;}#samples #dcolorSchem" +
-                                                    "e{position:relative;z-index:1000}#apireturn textarea{font-size:1.2em;height:50em" +
-                                                    ";width:100%}button{border-radius:.9em;display:block;font-weight:bold;width:100%}" +
-                                                    "div .button{text-align:center}div button{display:inline-block;font-weight:bold;m" +
-                                                    "argin:1em 0;padding:1em 2em}button:hover{cursor:pointer}#introduction{clear:both" +
-                                                    ";margin:0 0 0 5.6em;position:relative;top:-2.75em}#introduction ul{clear:both;he" +
-                                                    "ight:3em;margin:0 0 0 -5.5em;overflow:hidden;width:100em}#introduction li{clear:" +
-                                                    "none;display:block;float:left;font-size:1.4em;margin:0 4.95em -1em 0}#introducti" +
-                                                    "on li li{font-size:1em;margin-left:2em}#introduction .information,#webtool #intr" +
-                                                    "oduction h2{left:-90em;position:absolute;top:0;width:10em}#introduction h2{float" +
-                                                    ":none}#displayOps{float:right;font-size:1.5em;font-weight:bold;margin-right:1em;" +
-                                                    "width:22.5em}#displayOps.default{position:static}#displayOps.maximized{margin-bo" +
-                                                    "ttom:-2em;position:relative}#displayOps li{clear:none;display:block;float:left;l" +
-                                                    "ist-style:none;margin:2em 0 0;text-align:right;width:9em}h1{float:left;font-size" +
-                                                    ":2em;margin:0 .5em .5em 0}#hideOptions{margin-left:5em;padding:0}#title_text{bor" +
-                                                    "der-style:solid;border-width:.05em;display:block;float:left;font-size:1em;margin" +
-                                                    "-left:.55em;padding:.1em}h1 svg,h1 img{border-style:solid;border-width:.05em;flo" +
-                                                    "at:left;height:2em;width:2em}h1 span{font-size:.5em}h2,h3{background:#fff;border" +
-                                                    "-style:solid;border-width:.075em;display:inline-block;font-size:1.8em;font-weigh" +
-                                                    "t:bold;margin:0 .5em .5em 0;padding:0 .2em}#doc h3{margin-top:.5em}h3{font-size:" +
-                                                    "1.6em}h4{font-size:1.4em}fieldset{border-radius:.9em;clear:both;margin:3.5em 0 -" +
-                                                    "2em;padding:0 0 0 1em}legend{border-style:solid;border-width:.1em;font-size:1.2e" +
-                                                    "m;font-weight:bold;margin-left:-.25em}.button{margin:1em 0;text-align:center}.bu" +
-                                                    "tton button{display:block;font-size:2em;height:1.5em;margin:0 auto;padding:0;wid" +
-                                                    "th:50%}#diffreport{right:57.8em}#beaureport{right:38.8em}#minnreport{right:19.8e" +
-                                                    "m}#statreport{right:.8em}#statreport .body p,#statreport .body li,#statreport .b" +
-                                                    "ody h3{font-size:1.2em}#statreport .body h3{margin-top:0}#statreport .body ul{ma" +
-                                                    "rgin-top:1em}#reports{height:4em}#reports h2{display:none}.box{border-style:soli" +
-                                                    "d;border-width:0;left:auto;margin:0;padding:0;position:absolute;z-index:10}.box " +
-                                                    "button{border-radius:0;border-style:solid;border-width:.1em;display:block;float:" +
-                                                    "right;font-family:'Lucida Console','Trebuchet MS','Arial';height:1.75em;padding:" +
-                                                    "0;position:absolute;right:0;text-align:center;top:0;width:1.75em;z-index:7}.box " +
-                                                    "button.resize{border-width:.05em;cursor:se-resize;font-size:1.667em;font-weight:" +
-                                                    "normal;height:.8em;line-height:.5em;margin:-.85em 0 0;position:absolute;right:.0" +
-                                                    "5em;top:100%;width:.85em}.box button.minimize{margin:.35em 4em 0 0}.box button.m" +
-                                                    "aximize{margin:.35em 1.75em 0 0}.box button.save{margin:.35em 6.25em 0 0}.box .b" +
-                                                    "uttons{float:right;margin:0}.box h3.heading{cursor:pointer;float:left;font-size:" +
-                                                    "1em;height:3em;margin:0 0 -3.2em;position:relative;width:17em;z-index:6}.box h3." +
-                                                    "heading span{display:block;font-size:1.8em;padding:.25em 0 0 .5em}.box .body{cle" +
-                                                    "ar:both;height:20em;margin-top:-.1em;overflow:scroll;padding:4.25em 1em 1em;posi" +
-                                                    "tion:relative;right:0;top:0;width:75em;z-index:5}.options{border-radius:0 0 .9em" +
-                                                    " .9em;clear:both;margin-bottom:1em;padding:1em 1em 3.5em;width:auto}label{displa" +
-                                                    "y:inline;font-size:1.4em}ol li{font-size:1.4em;list-style-type:decimal}ol li li{" +
-                                                    "font-size:1em}body#doc ol li{font-size:1.1em}ul{margin:-1.4em 0 2em;padding:0}ul" +
-                                                    " li{list-style-type:none}li{clear:both;margin:1em 0 1em 3em}li h4{display:inline" +
-                                                    ";float:left;margin:.4em 0;text-align:left;width:14em}p{clear:both;font-size:1.2e" +
-                                                    "m;margin:0 0 1em}#option_comment{height:2.5em;margin-bottom:-1.5em;width:100%}.d" +
-                                                    "ifflabel{display:block;height:0}#beau-other-span,#diff-other-span{text-indent:-2" +
-                                                    "00em;width:0}.options p span{display:block;float:left;font-size:1.2em}#top{min-w" +
-                                                    "idth:80em}#top em{font-weight:bold}#update{clear:left;float:right;font-weight:bo" +
-                                                    "ld;padding:.5em;position:absolute;right:1em;top:11em}#announcement{height:2.5em;" +
-                                                    "margin:0 -5em -4.75em;width:27.5em}#textreport{width:100%}#options{float:left;ma" +
-                                                    "rgin:0;width:19em}#options label{width:auto}#options p{clear:both;font-size:1em;" +
-                                                    "margin:0;padding:0}#options p span{clear:both;float:none;height:2em;margin:0 0 0" +
-                                                    " 2em}#csvchar{width:11.8em}#language,#csvchar,#colorScheme{margin:0 0 1em 2em}#c" +
-                                                    "odeInput{margin-left:22.5em}#Beautify.wide p,#Beautify.tall p.file,#Minify.wide " +
-                                                    "p,#Minify.tall p.file{clear:none;float:none}#diffops p,#miniops p,#beauops p{cle" +
-                                                    "ar:both;font-size:1em;padding-top:1em}#options p strong,#diffops p strong,#minio" +
-                                                    "ps p strong,#beauops p strong,#options .label,#diffops .label,#miniops .label,#b" +
-                                                    "eauops .label{display:block;float:left;font-size:1.2em;font-weight:bold;margin-b" +
-                                                    "ottom:1em;width:17.5em}input[type='radio']{margin:0 .25em}input[type='file']{box" +
-                                                    "-shadow:none}select{border-style:inset;border-width:.1em;width:11.85em}.options " +
-                                                    "input,.options label{border-style:none;display:block;float:left}.options span la" +
-                                                    "bel{margin-left:.4em;white-space:nowrap;width:12em}.options p span label{font-si" +
-                                                    "ze:1em}#webtool .options input[type=text]{margin-right:1em;width:11.6em}#webtool" +
-                                                    " .options input[type=text],div input,textarea{border-style:inset;border-width:.1" +
-                                                    "em}textarea{display:inline-block;height:10em;margin:0}strong label{font-size:1em" +
-                                                    ";width:inherit}strong.new{background:#ff6;font-style:italic}#miniops span strong" +
-                                                    ",#diffops span strong,#beauops span strong{display:inline;float:none;font-size:1" +
-                                                    "em;width:auto}#Beautify .input label,#Beautify .output label,#Minify .input labe" +
-                                                    "l,#Minify .output label{display:block;font-size:1.05em;font-weight:bold}#beautyi" +
-                                                    "nput,#minifyinput,#baseText,#newText,#beautyoutput,#minifyoutput{font-size:1em}." +
-                                                    "clear{clear:both;display:block}.wide,.tall,#diffBase,#diffNew{border-radius:0 0 " +
-                                                    ".9em .9em;margin-bottom:1em}#diffBase,#diffNew{padding:1em}#diffBase p,#diffNew " +
-                                                    "p{clear:none;float:none}#diffBase.wide textarea,#diffNew.wide textarea{height:10" +
-                                                    ".1em}.wide,.tall{padding:1em 1.25em 0}#diff .addsource{cursor:pointer;margin-bot" +
-                                                    "tom:1em;padding:0}#diff .addsource input{display:block;float:left;margin:.5em .5" +
-                                                    "em -1.5em}#diff .addsource label{cursor:pointer;display:inline-block;font-size:1" +
-                                                    ".2em;padding:.5em .5em .5em 2em}.wide label{float:none;margin-right:0;width:100%" +
-                                                    "}.wide #beautyinput,.wide #minifyinput,.wide #beautyoutput,.wide #minifyoutput{h" +
-                                                    "eight:14.8em;margin:0;width:99.5%}.tall .input{clear:none;float:left}.tall .outp" +
-                                                    "ut{clear:none;float:right;margin-top:-2.4em}.tall .input,.tall .output{width:49%" +
-                                                    "}.tall .output label{text-align:right}.tall .input textarea{height:31.7em}.tall " +
-                                                    ".output textarea{height:34em}.tall textarea{margin:0 0 -.1em;width:100%}.tall #b" +
-                                                    "eautyinput,.tall #minifyinput{float:left}.tall #beautyoutput,.tall #minifyoutput" +
-                                                    "{float:right}.wide{width:auto}#diffBase.difftall,#diffNew.difftall{margin-bottom" +
-                                                    ":1.3em;padding:1em 1% .9em;width:47.5%}#diffBase.difftall{float:left}#diffNew.di" +
-                                                    "fftall{float:right}.file input,.labeltext input{display:inline-block;margin:0 .7" +
-                                                    "em 0 0;width:16em}.labeltext,.file{font-size:.9em;font-weight:bold;margin-bottom" +
-                                                    ":1em}.difftall textarea{height:30.6em;margin-bottom:.5em}#diffBase textarea,#dif" +
-                                                    "fNew textarea{width:99.5%}.input,.output{margin:0}#diffBase.wide,#diffNew.wide{p" +
-                                                    "adding:.8em 1em}#diffBase.wide{margin-bottom:1.2em}#diffoutput{width:100%}#diffo" +
-                                                    "utput p em,#diffoutput li em,.analysis .bad,.analysis .good{font-weight:bold}#di" +
-                                                    "ffoutput ul{font-size:1.2em;margin-top:1em}#diffoutput ul li{display:list-item;l" +
-                                                    "ist-style-type:disc}.analysis th{text-align:left}.analysis td{text-align:right}#" +
-                                                    "doc ul{margin-top:1em}#doc ul li{font-size:1.2em}body#doc ul li{font-size:1.1em}" +
-                                                    "#doc ol li span{display:block;margin-left:2em}.diff,.beautify{border-style:solid" +
-                                                    ";border-width:.2em;display:inline-block;font-family:'Courier New',Courier,'Lucid" +
-                                                    "a Console',monospace;margin:0 1em 1em 0;position:relative}.beautify .data em{dis" +
-                                                    "play:inline-block;font-style:normal;font-weight:bold;padding-top:.5em}.diff .ski" +
-                                                    "p{border-style:none none solid;border-width:0 0 .1em}.diff li,.diff p,.diff h3,." +
-                                                    "beautify li{font-size:1.1em}.diff .diff-left,.diff .diff-right{display:table-cel" +
-                                                    "l}.diff .diff-left{border-style:none none none solid;border-width:0 0 0 .1em}.di" +
-                                                    "ff .diff-right{border-style:none none none solid;border-width:0 0 0 .1em;margin-" +
-                                                    "left:-.1em;min-width:16.5em;right:0;top:0}.diff-right .data ol{min-width:16.5em}" +
-                                                    ".diff-right .data{border-style:none solid none none;border-width:0 .1em 0 0;widt" +
-                                                    "h:100%}.diff-right .data li{min-width:16.5em}.diff ol,.beautify ol{display:table" +
-                                                    "-cell;margin:0;padding:0}.diff li,.beautify li{border-style:none none solid;bord" +
-                                                    "er-width:0 0 .1em;display:block;line-height:1.2;list-style-type:none;margin:0;pa" +
-                                                    "dding-bottom:0;padding-right:.5em}.diff li{padding-top:.5em}.beautify .count li{" +
-                                                    "padding-top:.5em}@media screen and (-webkit-min-device-pixel-ratio:0) {.beautify" +
-                                                    " .count li{padding-top:.546em}}#doc .beautify .count li.fold{color:#900;cursor:p" +
-                                                    "ointer;font-weight:bold;padding-left:.5em}.diff .count,.beautify .count{border-s" +
-                                                    "tyle:solid;border-width:0 .1em 0 0;font-weight:normal;padding:0;text-align:right" +
-                                                    "}.diff .count li,.beautify .count li{padding-left:2em}.diff .data,.beautify .dat" +
-                                                    "a{text-align:left;white-space:pre}.diff .data li,.beautify .data li{letter-spaci" +
-                                                    "ng:.1em;padding-left:.5em;white-space:pre}#webtool .diff h3{border-style:none so" +
-                                                    "lid solid;border-width:0 .1em .2em;box-shadow:none;display:block;font-family:Ver" +
-                                                    "dana;margin:0 0 0 -.1em;padding:.2em 2em;text-align:left}.diff li em{font-style:" +
-                                                    "normal;margin:0 -.09em;padding:.05em 0}.diff p.author{border-style:solid;border-" +
-                                                    "width:.2em .1em .1em;margin:0;overflow:hidden;padding:.4em;text-align:right}#dco" +
-                                                    "lorScheme{float:right;margin:-2em 0 0 0}#dcolorScheme label{display:inline-block" +
-                                                    ";font-size:1em;margin-right:1em}body#doc{font-size:.8em;max-width:80em}#doc th{f" +
-                                                    "ont-weight:bold}#doc td span{display:block}#doc table,.box .body table{border-co" +
-                                                    "llapse:collapse;border-style:solid;border-width:.2em;clear:both}#doc table{font-" +
-                                                    "size:1.2em}body#doc table{font-size:1em}#doc td,#doc th{border-left-style:solid;" +
-                                                    "border-left-width:.1em;border-top-style:solid;border-top-width:.1em;padding:.5em" +
-                                                    "}#doc em,.box .body em{font-style:normal;font-weight:bold}#doc div{margin-bottom" +
-                                                    ":2em}#doc div div{clear:both;margin-bottom:1em}#doc h2{font-size:1.6em;margin:.5" +
-                                                    "em .5em .5em 0}#doc ol{clear:both}#doc_contents li{font-size:1.75em;margin:1em 0" +
-                                                    " 0}#doc_contents ol ol li{font-size:.75em;list-style:lower-alpha;margin:.5em 0 0" +
-                                                    "}#doc_contents ol{padding-bottom:1em}#doc #doc_contents ol ol{background-color:i" +
-                                                    "nherit;border-style:none;margin:.25em .3em 0 0;padding-bottom:0}#doc_contents a{" +
-                                                    "text-decoration:none}#diffoutput #thirdparties li{display:inline-block;list-styl" +
-                                                    "e-type:none}#thirdparties a{border-style:none;display:block;height:4em;text-deco" +
-                                                    "ration:none}button,fieldset,.box h3.heading,.box .body,.options,.diff .replace e" +
-                                                    "m,.diff .delete em,.diff .insert em,.wide,.tall,#diffBase,#diffNew,#doc div,#doc" +
-                                                    " div div,#doc ol,#option_comment,#update,#thirdparties img,#diffoutput #thirdpar" +
-                                                    "ties{border-style:solid;border-width:.1em}#apitest p{clear:both;padding-top:.75e" +
-                                                    "m}#apitest label,#apitest select,#apitest input,#apitest textarea{float:left}#ap" +
-                                                    "itest label{width:20em}#apitest select,#apitest input,#apitest textarea{width:30" +
-                                                    "em}#pdsamples{list-style-position:inside;margin:-12em 0 0 0;padding:0;position:r" +
-                                                    "elative;z-index:10}#pdsamples li{border-radius:1em;border-style:solid;border-wid" +
-                                                    "th:.1em;margin:0 0 3em;padding:1em}#pdsamples li div{border-radius:1em;border-st" +
-                                                    "yle:solid;border-width:.1em;margin:0;padding:1em}#pdsamples li p{display:inline-" +
-                                                    "block;font-size:1em;margin:0}#pdsamples li p a{display:block;margin:0 0 1em 2em}" +
-                                                    "#pdsamples li ul{margin:0 0 0 2em}#samples #pdsamples li li{background:none tran" +
-                                                    "sparent;border-style:none;display:list-item;list-style:disc outside;margin:0;pad" +
-                                                    "ding:.5em}#modalSave span{background:#000;display:block;left:0;opacity:.5;positi" +
-                                                    "on:absolute;top:0;z-index:9000}#modalSave p{background:#eee;color:#333;font-size" +
-                                                    ":3em;padding:1em;position:absolute;text-align:center;top:10em;width:25em;z-index" +
-                                                    ":9001}#modalSave p em{display:block;font-size:.75em;margin-top:1em}#modalSave p " +
-                                                    "strong{color:#c00;font-weight:bold}@media print{p,.options,#Beautify,#Minify,#di" +
-                                                    "ff,ul{display:none}div{width:100%}html td{font-size:.8em;white-space:normal}}";
+                                                        "e{position:relative;z-index:1000}#apireturn textarea{font-size:1.2em;height:50em" +
+                                                        ";width:100%}button{border-radius:.9em;display:block;font-weight:bold;width:100%}" +
+                                                        "div .button{text-align:center}div button{display:inline-block;font-weight:bold;m" +
+                                                        "argin:1em 0;padding:1em 2em}button:hover{cursor:pointer}#introduction{clear:both" +
+                                                        ";margin:0 0 0 5.6em;position:relative;top:-2.75em}#introduction ul{clear:both;he" +
+                                                        "ight:3em;margin:0 0 0 -5.5em;overflow:hidden;width:100em}#introduction li{clear:" +
+                                                        "none;display:block;float:left;font-size:1.4em;margin:0 4.95em -1em 0}#introducti" +
+                                                        "on li li{font-size:1em;margin-left:2em}#introduction .information,#webtool #intr" +
+                                                        "oduction h2{left:-90em;position:absolute;top:0;width:10em}#introduction h2{float" +
+                                                        ":none}#displayOps{float:right;font-size:1.5em;font-weight:bold;margin-right:1em;" +
+                                                        "width:22.5em}#displayOps.default{position:static}#displayOps.maximized{margin-bo" +
+                                                        "ttom:-2em;position:relative}#displayOps li{clear:none;display:block;float:left;l" +
+                                                        "ist-style:none;margin:2em 0 0;text-align:right;width:9em}h1{float:left;font-size" +
+                                                        ":2em;margin:0 .5em .5em 0}#hideOptions{margin-left:5em;padding:0}#title_text{bor" +
+                                                        "der-style:solid;border-width:.05em;display:block;float:left;font-size:1em;margin" +
+                                                        "-left:.55em;padding:.1em}h1 svg,h1 img{border-style:solid;border-width:.05em;flo" +
+                                                        "at:left;height:2em;width:2em}h1 span{font-size:.5em}h2,h3{background:#fff;border" +
+                                                        "-style:solid;border-width:.075em;display:inline-block;font-size:1.8em;font-weigh" +
+                                                        "t:bold;margin:0 .5em .5em 0;padding:0 .2em}#doc h3{margin-top:.5em}h3{font-size:" +
+                                                        "1.6em}h4{font-size:1.4em}fieldset{border-radius:.9em;clear:both;margin:3.5em 0 -" +
+                                                        "2em;padding:0 0 0 1em}legend{border-style:solid;border-width:.1em;font-size:1.2e" +
+                                                        "m;font-weight:bold;margin-left:-.25em}.button{margin:1em 0;text-align:center}.bu" +
+                                                        "tton button{display:block;font-size:2em;height:1.5em;margin:0 auto;padding:0;wid" +
+                                                        "th:50%}#diffreport{right:57.8em}#beaureport{right:38.8em}#minnreport{right:19.8e" +
+                                                        "m}#statreport{right:.8em}#statreport .body p,#statreport .body li,#statreport .b" +
+                                                        "ody h3{font-size:1.2em}#statreport .body h3{margin-top:0}#statreport .body ul{ma" +
+                                                        "rgin-top:1em}#reports{height:4em}#reports h2{display:none}.box{border-style:soli" +
+                                                        "d;border-width:0;left:auto;margin:0;padding:0;position:absolute;z-index:10}.box " +
+                                                        "button{border-radius:0;border-style:solid;border-width:.1em;display:block;float:" +
+                                                        "right;font-family:'Lucida Console','Trebuchet MS','Arial';height:1.75em;padding:" +
+                                                        "0;position:absolute;right:0;text-align:center;top:0;width:1.75em;z-index:7}.box " +
+                                                        "button.resize{border-width:.05em;cursor:se-resize;font-size:1.667em;font-weight:" +
+                                                        "normal;height:.8em;line-height:.5em;margin:-.85em 0 0;position:absolute;right:.0" +
+                                                        "5em;top:100%;width:.85em}.box button.minimize{margin:.35em 4em 0 0}.box button.m" +
+                                                        "aximize{margin:.35em 1.75em 0 0}.box button.save{margin:.35em 6.25em 0 0}.box .b" +
+                                                        "uttons{float:right;margin:0}.box h3.heading{cursor:pointer;float:left;font-size:" +
+                                                        "1em;height:3em;margin:0 0 -3.2em;position:relative;width:17em;z-index:6}.box h3." +
+                                                        "heading span{display:block;font-size:1.8em;padding:.25em 0 0 .5em}.box .body{cle" +
+                                                        "ar:both;height:20em;margin-top:-.1em;overflow:scroll;padding:4.25em 1em 1em;posi" +
+                                                        "tion:relative;right:0;top:0;width:75em;z-index:5}.options{border-radius:0 0 .9em" +
+                                                        " .9em;clear:both;margin-bottom:1em;padding:1em 1em 3.5em;width:auto}label{displa" +
+                                                        "y:inline;font-size:1.4em}ol li{font-size:1.4em;list-style-type:decimal}ol li li{" +
+                                                        "font-size:1em}body#doc ol li{font-size:1.1em}ul{margin:-1.4em 0 2em;padding:0}ul" +
+                                                        " li{list-style-type:none}li{clear:both;margin:1em 0 1em 3em}li h4{display:inline" +
+                                                        ";float:left;margin:.4em 0;text-align:left;width:14em}p{clear:both;font-size:1.2e" +
+                                                        "m;margin:0 0 1em}#option_comment{height:2.5em;margin-bottom:-1.5em;width:100%}.d" +
+                                                        "ifflabel{display:block;height:0}#beau-other-span,#diff-other-span{text-indent:-2" +
+                                                        "00em;width:0}.options p span{display:block;float:left;font-size:1.2em}#top{min-w" +
+                                                        "idth:80em}#top em{font-weight:bold}#update{clear:left;float:right;font-weight:bo" +
+                                                        "ld;padding:.5em;position:absolute;right:1em;top:11em}#announcement{height:2.5em;" +
+                                                        "margin:0 -5em -4.75em;width:27.5em}#textreport{width:100%}#options{float:left;ma" +
+                                                        "rgin:0;width:19em}#options label{width:auto}#options p{clear:both;font-size:1em;" +
+                                                        "margin:0;padding:0}#options p span{clear:both;float:none;height:2em;margin:0 0 0" +
+                                                        " 2em}#csvchar{width:11.8em}#language,#csvchar,#colorScheme{margin:0 0 1em 2em}#c" +
+                                                        "odeInput{margin-left:22.5em}#Beautify.wide p,#Beautify.tall p.file,#Minify.wide " +
+                                                        "p,#Minify.tall p.file{clear:none;float:none}#diffops p,#miniops p,#beauops p{cle" +
+                                                        "ar:both;font-size:1em;padding-top:1em}#options p strong,#diffops p strong,#minio" +
+                                                        "ps p strong,#beauops p strong,#options .label,#diffops .label,#miniops .label,#b" +
+                                                        "eauops .label{display:block;float:left;font-size:1.2em;font-weight:bold;margin-b" +
+                                                        "ottom:1em;width:17.5em}input[type='radio']{margin:0 .25em}input[type='file']{box" +
+                                                        "-shadow:none}select{border-style:inset;border-width:.1em;width:11.85em}.options " +
+                                                        "input,.options label{border-style:none;display:block;float:left}.options span la" +
+                                                        "bel{margin-left:.4em;white-space:nowrap;width:12em}.options p span label{font-si" +
+                                                        "ze:1em}#webtool .options input[type=text]{margin-right:1em;width:11.6em}#webtool" +
+                                                        " .options input[type=text],div input,textarea{border-style:inset;border-width:.1" +
+                                                        "em}textarea{display:inline-block;height:10em;margin:0}strong label{font-size:1em" +
+                                                        ";width:inherit}strong.new{background:#ff6;font-style:italic}#miniops span strong" +
+                                                        ",#diffops span strong,#beauops span strong{display:inline;float:none;font-size:1" +
+                                                        "em;width:auto}#Beautify .input label,#Beautify .output label,#Minify .input labe" +
+                                                        "l,#Minify .output label{display:block;font-size:1.05em;font-weight:bold}#beautyi" +
+                                                        "nput,#minifyinput,#baseText,#newText,#beautyoutput,#minifyoutput{font-size:1em}." +
+                                                        "clear{clear:both;display:block}.wide,.tall,#diffBase,#diffNew{border-radius:0 0 " +
+                                                        ".9em .9em;margin-bottom:1em}#diffBase,#diffNew{padding:1em}#diffBase p,#diffNew " +
+                                                        "p{clear:none;float:none}#diffBase.wide textarea,#diffNew.wide textarea{height:10" +
+                                                        ".1em}.wide,.tall{padding:1em 1.25em 0}#diff .addsource{cursor:pointer;margin-bot" +
+                                                        "tom:1em;padding:0}#diff .addsource input{display:block;float:left;margin:.5em .5" +
+                                                        "em -1.5em}#diff .addsource label{cursor:pointer;display:inline-block;font-size:1" +
+                                                        ".2em;padding:.5em .5em .5em 2em}.wide label{float:none;margin-right:0;width:100%" +
+                                                        "}.wide #beautyinput,.wide #minifyinput,.wide #beautyoutput,.wide #minifyoutput{h" +
+                                                        "eight:14.8em;margin:0;width:99.5%}.tall .input{clear:none;float:left}.tall .outp" +
+                                                        "ut{clear:none;float:right;margin-top:-2.4em}.tall .input,.tall .output{width:49%" +
+                                                        "}.tall .output label{text-align:right}.tall .input textarea{height:31.7em}.tall " +
+                                                        ".output textarea{height:34em}.tall textarea{margin:0 0 -.1em;width:100%}.tall #b" +
+                                                        "eautyinput,.tall #minifyinput{float:left}.tall #beautyoutput,.tall #minifyoutput" +
+                                                        "{float:right}.wide{width:auto}#diffBase.difftall,#diffNew.difftall{margin-bottom" +
+                                                        ":1.3em;padding:1em 1% .9em;width:47.5%}#diffBase.difftall{float:left}#diffNew.di" +
+                                                        "fftall{float:right}.file input,.labeltext input{display:inline-block;margin:0 .7" +
+                                                        "em 0 0;width:16em}.labeltext,.file{font-size:.9em;font-weight:bold;margin-bottom" +
+                                                        ":1em}.difftall textarea{height:30.6em;margin-bottom:.5em}#diffBase textarea,#dif" +
+                                                        "fNew textarea{width:99.5%}.input,.output{margin:0}#diffBase.wide,#diffNew.wide{p" +
+                                                        "adding:.8em 1em}#diffBase.wide{margin-bottom:1.2em}#diffoutput{width:100%}#diffo" +
+                                                        "utput p em,#diffoutput li em,.analysis .bad,.analysis .good{font-weight:bold}#di" +
+                                                        "ffoutput ul{font-size:1.2em;margin-top:1em}#diffoutput ul li{display:list-item;l" +
+                                                        "ist-style-type:disc}.analysis th{text-align:left}.analysis td{text-align:right}#" +
+                                                        "doc ul{margin-top:1em}#doc ul li{font-size:1.2em}body#doc ul li{font-size:1.1em}" +
+                                                        "#doc ol li span{display:block;margin-left:2em}.diff,.beautify{border-style:solid" +
+                                                        ";border-width:.2em;display:inline-block;font-family:'Courier New',Courier,'Lucid" +
+                                                        "a Console',monospace;margin:0 1em 1em 0;position:relative}.beautify .data em{dis" +
+                                                        "play:inline-block;font-style:normal;font-weight:bold;padding-top:.5em}.diff .ski" +
+                                                        "p{border-style:none none solid;border-width:0 0 .1em}.diff li,.diff p,.diff h3,." +
+                                                        "beautify li{font-size:1.1em}.diff .diff-left,.diff .diff-right{display:table-cel" +
+                                                        "l}.diff .diff-left{border-style:none none none solid;border-width:0 0 0 .1em}.di" +
+                                                        "ff .diff-right{border-style:none none none solid;border-width:0 0 0 .1em;margin-" +
+                                                        "left:-.1em;min-width:16.5em;right:0;top:0}.diff-right .data ol{min-width:16.5em}" +
+                                                        ".diff-right .data{border-style:none solid none none;border-width:0 .1em 0 0;widt" +
+                                                        "h:100%}.diff-right .data li{min-width:16.5em}.diff ol,.beautify ol{display:table" +
+                                                        "-cell;margin:0;padding:0}.diff li,.beautify li{border-style:none none solid;bord" +
+                                                        "er-width:0 0 .1em;display:block;line-height:1.2;list-style-type:none;margin:0;pa" +
+                                                        "dding-bottom:0;padding-right:.5em}.diff li{padding-top:.5em}.beautify .count li{" +
+                                                        "padding-top:.5em}@media screen and (-webkit-min-device-pixel-ratio:0) {.beautify" +
+                                                        " .count li{padding-top:.546em}}#doc .beautify .count li.fold{color:#900;cursor:p" +
+                                                        "ointer;font-weight:bold;padding-left:.5em}.diff .count,.beautify .count{border-s" +
+                                                        "tyle:solid;border-width:0 .1em 0 0;font-weight:normal;padding:0;text-align:right" +
+                                                        "}.diff .count li,.beautify .count li{padding-left:2em}.diff .data,.beautify .dat" +
+                                                        "a{text-align:left;white-space:pre}.diff .data li,.beautify .data li{letter-spaci" +
+                                                        "ng:.1em;padding-left:.5em;white-space:pre}#webtool .diff h3{border-style:none so" +
+                                                        "lid solid;border-width:0 .1em .2em;box-shadow:none;display:block;font-family:Ver" +
+                                                        "dana;margin:0 0 0 -.1em;padding:.2em 2em;text-align:left}.diff li em{font-style:" +
+                                                        "normal;margin:0 -.09em;padding:.05em 0}.diff p.author{border-style:solid;border-" +
+                                                        "width:.2em .1em .1em;margin:0;overflow:hidden;padding:.4em;text-align:right}#dco" +
+                                                        "lorScheme{float:right;margin:-2em 0 0 0}#dcolorScheme label{display:inline-block" +
+                                                        ";font-size:1em;margin-right:1em}body#doc{font-size:.8em;max-width:80em}#doc th{f" +
+                                                        "ont-weight:bold}#doc td span{display:block}#doc table,.box .body table{border-co" +
+                                                        "llapse:collapse;border-style:solid;border-width:.2em;clear:both}#doc table{font-" +
+                                                        "size:1.2em}body#doc table{font-size:1em}#doc td,#doc th{border-left-style:solid;" +
+                                                        "border-left-width:.1em;border-top-style:solid;border-top-width:.1em;padding:.5em" +
+                                                        "}#doc em,.box .body em{font-style:normal;font-weight:bold}#doc div{margin-bottom" +
+                                                        ":2em}#doc div div{clear:both;margin-bottom:1em}#doc h2{font-size:1.6em;margin:.5" +
+                                                        "em .5em .5em 0}#doc ol{clear:both}#doc_contents li{font-size:1.75em;margin:1em 0" +
+                                                        " 0}#doc_contents ol ol li{font-size:.75em;list-style:lower-alpha;margin:.5em 0 0" +
+                                                        "}#doc_contents ol{padding-bottom:1em}#doc #doc_contents ol ol{background-color:i" +
+                                                        "nherit;border-style:none;margin:.25em .3em 0 0;padding-bottom:0}#doc_contents a{" +
+                                                        "text-decoration:none}#diffoutput #thirdparties li{display:inline-block;list-styl" +
+                                                        "e-type:none}#thirdparties a{border-style:none;display:block;height:4em;text-deco" +
+                                                        "ration:none}button,fieldset,.box h3.heading,.box .body,.options,.diff .replace e" +
+                                                        "m,.diff .delete em,.diff .insert em,.wide,.tall,#diffBase,#diffNew,#doc div,#doc" +
+                                                        " div div,#doc ol,#option_comment,#update,#thirdparties img,#diffoutput #thirdpar" +
+                                                        "ties{border-style:solid;border-width:.1em}#apitest p{clear:both;padding-top:.75e" +
+                                                        "m}#apitest label,#apitest select,#apitest input,#apitest textarea{float:left}#ap" +
+                                                        "itest label{width:20em}#apitest select,#apitest input,#apitest textarea{width:30" +
+                                                        "em}#pdsamples{list-style-position:inside;margin:-12em 0 0 0;padding:0;position:r" +
+                                                        "elative;z-index:10}#pdsamples li{border-radius:1em;border-style:solid;border-wid" +
+                                                        "th:.1em;margin:0 0 3em;padding:1em}#pdsamples li div{border-radius:1em;border-st" +
+                                                        "yle:solid;border-width:.1em;margin:0;padding:1em}#pdsamples li p{display:inline-" +
+                                                        "block;font-size:1em;margin:0}#pdsamples li p a{display:block;margin:0 0 1em 2em}" +
+                                                        "#pdsamples li ul{margin:0 0 0 2em}#samples #pdsamples li li{background:none tran" +
+                                                        "sparent;border-style:none;display:list-item;list-style:disc outside;margin:0;pad" +
+                                                        "ding:.5em}#modalSave span{background:#000;display:block;left:0;opacity:.5;positi" +
+                                                        "on:absolute;top:0;z-index:9000}#modalSave p{background:#eee;color:#333;font-size" +
+                                                        ":3em;padding:1em;position:absolute;text-align:center;top:10em;width:25em;z-index" +
+                                                        ":9001}#modalSave p em{display:block;font-size:.75em;margin-top:1em}#modalSave p " +
+                                                        "strong{color:#c00;font-weight:bold}@media print{p,.options,#Beautify,#Minify,#di" +
+                                                        "ff,ul{display:none}div{width:100%}html td{font-size:.8em;white-space:normal}}";
                             builder.cssColor      = "html .white,body.white{color:#333}body.white button{background:#eee;border-color" +
-                                                    ":#222;box-shadow:0 .1em .2em rgba(64,64,64,0.75);color:#666;text-shadow:.05em .0" +
-                                                    "5em .1em #ccc}.white button:hover,.white button:active{background:#999;color:#ee" +
-                                                    "e;text-shadow:.1em .1em .1em #333}.white a{color:#009}.white #title_text{border-" +
-                                                    "color:#fff;color:#333}.white #introduction h2{border-color:#999;color:#333}.whit" +
-                                                    "e h1 svg{background:#eee;border-color:#999;box-shadow:0 .1em .2em rgba(150,150,1" +
-                                                    "50,0.5)}.white h2,.white h3{background:#eee;border-color:#eee;box-shadow:none;pa" +
-                                                    "dding-left:0;text-shadow:none}.white fieldset{background:#ddd;border-color:#999}" +
-                                                    ".white legend{background:#fff;border-color:#999;color:#333;text-shadow:none}.whi" +
-                                                    "te .box{background:#666;border-color:#999;box-shadow:0 .4em .8em rgba(64,64,64,0" +
-                                                    ".75)}.white .box button{box-shadow:0 .1em .2em rgba(0,0,0,0.75);text-shadow:.1em" +
-                                                    " .1em .1em rgba(0,0,0,.5)}.white .box button.resize{background:#bbf;border-color" +
-                                                    ":#446;color:#446}.white .box button.resize:hover{background:#ddf;border-color:#2" +
-                                                    "28;color:#228}.white .box button.save{background:#d99;border-color:#300;color:#3" +
-                                                    "00}.white .box button.save:hover{background:#fcc;border-color:#822;color:#822}.w" +
-                                                    "hite .box button.minimize{background:#bbf;border-color:#006;color:#006}.white .b" +
-                                                    "ox button.minimize:hover{background:#eef;border-color:#228;color:#228}.white .bo" +
-                                                    "x button.maximize{background:#9c9;border-color:#030;color:#030}.white .box butto" +
-                                                    "n.maximize:hover{background:#cfc;border-color:#060;color:#060}.white .box h3.hea" +
-                                                    "ding{background:#ddd;border-color:#888;box-shadow:.2em .2em .4em #666}.white .bo" +
-                                                    "x h3.heading:hover{background:#333;color:#eee}.white .box .body{background:#eee;" +
-                                                    "border-color:#888;box-shadow:0 0 .4em rgba(64,64,64,0.75)}.white .options{backgr" +
-                                                    "ound:#eee;border-color:#999;box-shadow:0 .2em .4em rgba(64,64,64,0.5);text-shado" +
-                                                    "w:.05em .05em .1em #ccc}.white .options h2,.white #Beautify h2,.white #Minify h2" +
-                                                    ",.white #diffBase h2,.white #diffNew h2{background:#eee;border-color:#eee;box-sh" +
-                                                    "adow:none;text-shadow:none}.white #option_comment{background:#ddd;border-color:#" +
-                                                    "999}.white #top em{color:#00f}.white #update{background:#eee;border-color:#999;b" +
-                                                    "ox-shadow:0 .1em .2em rgba(64,64,64,0.5)}.white .wide,.white .tall,.white #diffB" +
-                                                    "ase,.white #diffNew{background:#eee;border-color:#999;box-shadow:0 .2em .4em rgb" +
-                                                    "a(64,64,64,0.5)}.white .file input,.white .labeltext input{border-color:#fff}#we" +
-                                                    "btool.white input.unchecked{background:#ccc;color:#666}.white .options input[typ" +
-                                                    "e=text],.white .options select{border-color:#999}.white #beautyoutput,.white #mi" +
-                                                    "nifyoutput{background:#ddd}.white #diffoutput p em,.white #diffoutput li em{colo" +
-                                                    "r:#c00}.white .analysis .bad{background-color:#ebb;color:#400}.white .analysis ." +
-                                                    "good{background-color:#cec;color:#040}.white #doc .analysis thead th,.white #doc" +
-                                                    " .analysis th[colspan]{background:#eef}.white div input{border-color:#999}.white" +
-                                                    " textarea{border-color:#999}.white textarea:hover{background:#eef8ff}.white .dif" +
-                                                    "f,.white .beautify,.white .diff ol,.white .beautify ol,.white .diff .diff-left,." +
-                                                    "white .diff .diff-right,.white h3,.white p.author{border-color:#999}.white .diff" +
-                                                    " .count li,.white .beautify .count li{background:#eed;border-color:#bbc;color:#8" +
-                                                    "86}.white .diff h3{background:#ddd;border-bottom-color:#bbc}.white .diff .empty{" +
-                                                    "background-color:#ddd;border-color:#ccc}.white .diff .replace{background-color:#" +
-                                                    "fea;border-color:#dd8}.white .diff .data .replace em{background-color:#ffd;borde" +
-                                                    "r-color:#963;color:#630}.white .diff .delete{background-color:#fbb;border-color:" +
-                                                    "#eaa}.white .diff .data .delete em{background-color:#fdd;border-color:#700;color" +
-                                                    ":#600}.white .diff .equal,.white .beautify .data li{background-color:#fff;border" +
-                                                    "-color:#eee}.white .beautify .data em.s1{color:#f66}.white .beautify .data em.s2" +
-                                                    "{color:#12f}.white .beautify .data em.s3{color:#090}.white .beautify .data em.s4" +
-                                                    "{color:#d6d}.white .beautify .data em.s5{color:#7cc}.white .beautify .data em.s6" +
-                                                    "{color:#c85}.white .beautify .data em.s7{color:#737}.white .beautify .data em.s8" +
-                                                    "{color:#6d0}.white .beautify .data em.s9{color:#dd0s}.white .beautify .data em.s" +
-                                                    "10{color:#893}.white .beautify .data em.s11{color:#b97}.white .beautify .data em" +
-                                                    ".s12{color:#bbb}.white .beautify .data em.s13{color:#cc3}.white .beautify .data " +
-                                                    "em.s14{color:#333}.white .beautify .data em.s15{color:#9d9}.white .beautify .dat" +
-                                                    "a em.s16{color:#880}.white .beautify .data .l0{background:#fff}.white .beautify " +
-                                                    ".data .l1{background:#fed}.white .beautify .data .l2{background:#def}.white .bea" +
-                                                    "utify .data .l3{background:#efe}.white .beautify .data .l4{background:#fef}.whit" +
-                                                    "e .beautify .data .l5{background:#eef}.white .beautify .data .l6{background:#fff" +
-                                                    "8cc}.white .beautify .data .l7{background:#ede}.white .beautify .data .l8{backgr" +
-                                                    "ound:#efc}.white .beautify .data .l9{background:#ffd}.white .beautify .data .l10" +
-                                                    "{background:#edc}.white .beautify .data .l11{background:#fdb}.white .beautify .d" +
-                                                    "ata .l12{background:#f8f8f8}.white .beautify .data .l13{background:#ffb}.white ." +
-                                                    "beautify .data .l14{background:#eec}.white .beautify .data .l15{background:#cfc}" +
-                                                    ".white .beautify .data .l16{background:#eea}.white .beautify .data .c0{backgroun" +
-                                                    "d:#ddd}.white .beautify .data li{color:#777}.white .diff .skip{background-color:" +
-                                                    "#efefef;border-color:#ddd}.white .diff .insert{background-color:#bfb;border-colo" +
-                                                    "r:#aea}.white .diff .data .insert em{background-color:#efc;border-color:#070;col" +
-                                                    "or:#050}.white .diff p.author{background:#efefef;border-top-color:#bbc}.white #d" +
-                                                    "oc table,.white .box .body table{background:#fff;border-color:#999}.white #doc s" +
-                                                    "trong,.white .box .body strong{color:#c00}.white .box .body em,.white .box .body" +
-                                                    " #doc em{color:#090}.white #thirdparties img,.white #diffoutput #thirdparties{bo" +
-                                                    "rder-color:#999}.white #thirdparties img{box-shadow:.2em .2em .4em #999}.white #" +
-                                                    "diffoutput #thirdparties{background:#eee}.white #doc div,#doc.white div{backgrou" +
-                                                    "nd:#ddd;border-color:#999}.white #doc ol,#doc.white ol{background:#eee;border-co" +
-                                                    "lor:#999}.white #doc div div,#doc.white div div{background:#eee;border-color:#99" +
-                                                    "9}.white #doc table,#doc.white table{background:#fff;border-color:#999}.white #d" +
-                                                    "oc th,#doc.white th{background:#ddd;border-left-color:#999;border-top-color:#999" +
-                                                    "}.white #doc tr:hover,#doc.white tr:hover{background:#ddd}#doc.white em{color:#0" +
-                                                    "60}.white #doc div:hover,#doc.white div:hover{background:#ccc}.white #doc div di" +
-                                                    "v:hover,#doc.white div div:hover,#doc.white div ol:hover{background:#fff}.white " +
-                                                    "#pdsamples li{background:#eee;border-color:#999}.white #pdsamples li div{backgro" +
-                                                    "und:#ddd;border-color:#999}.white #pdsamples li div a{color:#47a}.white #pdsampl" +
-                                                    "es li p a{color:#009}";
+                                                        ":#222;box-shadow:0 .1em .2em rgba(64,64,64,0.75);color:#666;text-shadow:.05em .0" +
+                                                        "5em .1em #ccc}.white button:hover,.white button:active{background:#999;color:#ee" +
+                                                        "e;text-shadow:.1em .1em .1em #333}.white a{color:#009}.white #title_text{border-" +
+                                                        "color:#fff;color:#333}.white #introduction h2{border-color:#999;color:#333}.whit" +
+                                                        "e h1 svg{background:#eee;border-color:#999;box-shadow:0 .1em .2em rgba(150,150,1" +
+                                                        "50,0.5)}.white h2,.white h3{background:#eee;border-color:#eee;box-shadow:none;pa" +
+                                                        "dding-left:0;text-shadow:none}.white fieldset{background:#ddd;border-color:#999}" +
+                                                        ".white legend{background:#fff;border-color:#999;color:#333;text-shadow:none}.whi" +
+                                                        "te .box{background:#666;border-color:#999;box-shadow:0 .4em .8em rgba(64,64,64,0" +
+                                                        ".75)}.white .box button{box-shadow:0 .1em .2em rgba(0,0,0,0.75);text-shadow:.1em" +
+                                                        " .1em .1em rgba(0,0,0,.5)}.white .box button.resize{background:#bbf;border-color" +
+                                                        ":#446;color:#446}.white .box button.resize:hover{background:#ddf;border-color:#2" +
+                                                        "28;color:#228}.white .box button.save{background:#d99;border-color:#300;color:#3" +
+                                                        "00}.white .box button.save:hover{background:#fcc;border-color:#822;color:#822}.w" +
+                                                        "hite .box button.minimize{background:#bbf;border-color:#006;color:#006}.white .b" +
+                                                        "ox button.minimize:hover{background:#eef;border-color:#228;color:#228}.white .bo" +
+                                                        "x button.maximize{background:#9c9;border-color:#030;color:#030}.white .box butto" +
+                                                        "n.maximize:hover{background:#cfc;border-color:#060;color:#060}.white .box h3.hea" +
+                                                        "ding{background:#ddd;border-color:#888;box-shadow:.2em .2em .4em #666}.white .bo" +
+                                                        "x h3.heading:hover{background:#333;color:#eee}.white .box .body{background:#eee;" +
+                                                        "border-color:#888;box-shadow:0 0 .4em rgba(64,64,64,0.75)}.white .options{backgr" +
+                                                        "ound:#eee;border-color:#999;box-shadow:0 .2em .4em rgba(64,64,64,0.5);text-shado" +
+                                                        "w:.05em .05em .1em #ccc}.white .options h2,.white #Beautify h2,.white #Minify h2" +
+                                                        ",.white #diffBase h2,.white #diffNew h2{background:#eee;border-color:#eee;box-sh" +
+                                                        "adow:none;text-shadow:none}.white #option_comment{background:#ddd;border-color:#" +
+                                                        "999}.white #top em{color:#00f}.white #update{background:#eee;border-color:#999;b" +
+                                                        "ox-shadow:0 .1em .2em rgba(64,64,64,0.5)}.white .wide,.white .tall,.white #diffB" +
+                                                        "ase,.white #diffNew{background:#eee;border-color:#999;box-shadow:0 .2em .4em rgb" +
+                                                        "a(64,64,64,0.5)}.white .file input,.white .labeltext input{border-color:#fff}#we" +
+                                                        "btool.white input.unchecked{background:#ccc;color:#666}.white .options input[typ" +
+                                                        "e=text],.white .options select{border-color:#999}.white #beautyoutput,.white #mi" +
+                                                        "nifyoutput{background:#ddd}.white #diffoutput p em,.white #diffoutput li em{colo" +
+                                                        "r:#c00}.white .analysis .bad{background-color:#ebb;color:#400}.white .analysis ." +
+                                                        "good{background-color:#cec;color:#040}.white #doc .analysis thead th,.white #doc" +
+                                                        " .analysis th[colspan]{background:#eef}.white div input{border-color:#999}.white" +
+                                                        " textarea{border-color:#999}.white textarea:hover{background:#eef8ff}.white .dif" +
+                                                        "f,.white .beautify,.white .diff ol,.white .beautify ol,.white .diff .diff-left,." +
+                                                        "white .diff .diff-right,.white h3,.white p.author{border-color:#999}.white .diff" +
+                                                        " .count li,.white .beautify .count li{background:#eed;border-color:#bbc;color:#8" +
+                                                        "86}.white .diff h3{background:#ddd;border-bottom-color:#bbc}.white .diff .empty{" +
+                                                        "background-color:#ddd;border-color:#ccc}.white .diff .replace{background-color:#" +
+                                                        "fea;border-color:#dd8}.white .diff .data .replace em{background-color:#ffd;borde" +
+                                                        "r-color:#963;color:#630}.white .diff .delete{background-color:#fbb;border-color:" +
+                                                        "#eaa}.white .diff .data .delete em{background-color:#fdd;border-color:#700;color" +
+                                                        ":#600}.white .diff .equal,.white .beautify .data li{background-color:#fff;border" +
+                                                        "-color:#eee}.white .beautify .data em.s1{color:#f66}.white .beautify .data em.s2" +
+                                                        "{color:#12f}.white .beautify .data em.s3{color:#090}.white .beautify .data em.s4" +
+                                                        "{color:#d6d}.white .beautify .data em.s5{color:#7cc}.white .beautify .data em.s6" +
+                                                        "{color:#c85}.white .beautify .data em.s7{color:#737}.white .beautify .data em.s8" +
+                                                        "{color:#6d0}.white .beautify .data em.s9{color:#dd0s}.white .beautify .data em.s" +
+                                                        "10{color:#893}.white .beautify .data em.s11{color:#b97}.white .beautify .data em" +
+                                                        ".s12{color:#bbb}.white .beautify .data em.s13{color:#cc3}.white .beautify .data " +
+                                                        "em.s14{color:#333}.white .beautify .data em.s15{color:#9d9}.white .beautify .dat" +
+                                                        "a em.s16{color:#880}.white .beautify .data .l0{background:#fff}.white .beautify " +
+                                                        ".data .l1{background:#fed}.white .beautify .data .l2{background:#def}.white .bea" +
+                                                        "utify .data .l3{background:#efe}.white .beautify .data .l4{background:#fef}.whit" +
+                                                        "e .beautify .data .l5{background:#eef}.white .beautify .data .l6{background:#fff" +
+                                                        "8cc}.white .beautify .data .l7{background:#ede}.white .beautify .data .l8{backgr" +
+                                                        "ound:#efc}.white .beautify .data .l9{background:#ffd}.white .beautify .data .l10" +
+                                                        "{background:#edc}.white .beautify .data .l11{background:#fdb}.white .beautify .d" +
+                                                        "ata .l12{background:#f8f8f8}.white .beautify .data .l13{background:#ffb}.white ." +
+                                                        "beautify .data .l14{background:#eec}.white .beautify .data .l15{background:#cfc}" +
+                                                        ".white .beautify .data .l16{background:#eea}.white .beautify .data .c0{backgroun" +
+                                                        "d:#ddd}.white .beautify .data li{color:#777}.white .diff .skip{background-color:" +
+                                                        "#efefef;border-color:#ddd}.white .diff .insert{background-color:#bfb;border-colo" +
+                                                        "r:#aea}.white .diff .data .insert em{background-color:#efc;border-color:#070;col" +
+                                                        "or:#050}.white .diff p.author{background:#efefef;border-top-color:#bbc}.white #d" +
+                                                        "oc table,.white .box .body table{background:#fff;border-color:#999}.white #doc s" +
+                                                        "trong,.white .box .body strong{color:#c00}.white .box .body em,.white .box .body" +
+                                                        " #doc em{color:#090}.white #thirdparties img,.white #diffoutput #thirdparties{bo" +
+                                                        "rder-color:#999}.white #thirdparties img{box-shadow:.2em .2em .4em #999}.white #" +
+                                                        "diffoutput #thirdparties{background:#eee}.white #doc div,#doc.white div{backgrou" +
+                                                        "nd:#ddd;border-color:#999}.white #doc ol,#doc.white ol{background:#eee;border-co" +
+                                                        "lor:#999}.white #doc div div,#doc.white div div{background:#eee;border-color:#99" +
+                                                        "9}.white #doc table,#doc.white table{background:#fff;border-color:#999}.white #d" +
+                                                        "oc th,#doc.white th{background:#ddd;border-left-color:#999;border-top-color:#999" +
+                                                        "}.white #doc tr:hover,#doc.white tr:hover{background:#ddd}#doc.white em{color:#0" +
+                                                        "60}.white #doc div:hover,#doc.white div:hover{background:#ccc}.white #doc div di" +
+                                                        "v:hover,#doc.white div div:hover,#doc.white div ol:hover{background:#fff}.white " +
+                                                        "#pdsamples li{background:#eee;border-color:#999}.white #pdsamples li div{backgro" +
+                                                        "und:#ddd;border-color:#999}.white #pdsamples li div a{color:#47a}.white #pdsampl" +
+                                                        "es li p a{color:#009}";
                             builder.cssExtra      = "body{background:#eee}#doc p em{color:#090}";
                             builder.body          = "</style></head><body id='webtool' class='";
                             builder.bodyColor     = "white";
                             builder.title         = "'><h1><a href='http://prettydiff.com/'>Pretty Diff - The difference tool</a></h1" +
-                                                    "><div class='doc'>";
+                                                        "><div class='doc'>";
                             builder.accessibility = "</div><p>Accessibility note. &lt;em&gt; tags in the output represent character d" +
-                                                    "ifferences per lines compared.</p>";
+                                                        "ifferences per lines compared.</p>";
                             builder.scriptOpen    = "<script type='application/javascript'><![CDATA[var pd={},d=document.getElementsB" +
-                                                    "yTagName('ol');";
+                                                        "yTagName('ol');";
                             builder.scriptBody    = "(function(){var cells=d[0].getElemensByTagName('li'),len=cells.length,a=0;for(a=" +
-                                                    "0;a<len;a+=1){if(cells[a].getAttribute('class')==='fold'){cells[a].onmousedown=p" +
-                                                    "d.difffold;}}if(d.length>3){d[2].onmousedown=pd.colSliderGrab;d[2].ontouchstart=" +
-                                                    "pd.colSliderGrab;}}());pd.difffold=function dom__difffold(){var self=this,title=" +
-                                                    "self.getAttribute('title').split('line '),min=Number(title[1].substr(0,title[1]." +
-                                                    "indexOf(' '))),max=Number(title[2]),a=0,b=0,inner=self.innerHTML,lists=[],parent" +
-                                                    "=self.parentNode.parentNode,listnodes=(parent.getAttribute('class'==='diff'))?pa" +
-                                                    "rent.getElementsByTagName('ol'):parent.parentNode.getElementsByTagName('ol'),lis" +
-                                                    "tLen=listnodes.length;for(a=0;a<listLen;a+=1){lists.push(listnodes[a].getElement" +
-                                                    "sByTagName('li'));}if(lists.length>3){for(a=0;a<min;a+=1){if(lists[0][a].getAttr" +
-                                                    "ibute('class')==='empty'){min+=1;max+=1}}}max=(max>=lists[0].length)?lists[0].le" +
-                                                    "ngth:max;if(inner.charAt(0)===' - '){self.innerHTML='+'+inner.substr(1);for(a=mi" +
-                                                    "n;a<max;a+=1){for(b=0;b<listLen;b+=1){lists[b][a].style.display='none';}}}else{s" +
-                                                    "elf.innerHTML=' - '+inner.substr(1);for(a=min;a<max;a+=1){for(b=0;b<listLen;b+=1" +
-                                                    "){lists[b][a].style.display='block';}}}};pd.colSliderProperties=[d[0].clientWidt" +
-                                                    "h,d[1].clientWidth,d[2].parentNode.clientWidth,d[2].parentNode.parentNode.client" +
-                                                    "Width,d[2].parentNode.offsetLeft-d[2].parentNode.parentNode.offsetLeft,];pd.colS" +
-                                                    "liderGrab=function(){'use strict';var x=this,a=x.parentNode,b=a.parentNode,c=0,c" +
-                                                    "ounter=pd.colSliderProperties[0],data=pd.colSliderProperties[1],width=pd.colSlid" +
-                                                    "erProperties[2],total=pd.colSliderProperties[3],offset=(pd.colSliderProperties[4" +
-                                                    "]),min=0,max=data-1,status='ew',g=min+15,h=max-15,k=false,z=a.previousSibling,dr" +
-                                                    "op=function(g){x.style.cursor=status+'-resize';g=null;document.onmousemove=null;" +
-                                                    "document.onmouseup=null;},boxmove=function(f){f=f||window.event;c=offset-f.clien" +
-                                                    "tX;if(c>g&&c<h){k=true;}if(k===true&&c>h){a.style.width=((total-counter-2)/10)+'" +
-                                                    "em';status='e';}else if(k===true&&c<g){a.style.width=(width/10)+'em';status='w';" +
-                                                    "}else if(c<max&&c>min){a.style.width=((width+c)/10)+'em';status='ew';}document.o" +
-                                                    "nmouseup=drop;};if(typeof pd.o==='object'&&typeof pd.o.re==='object'){offset+=pd" +
-                                                    ".o.re.offsetLeft;offset-=pd.o.rf.scrollLeft;}else{c=(document.body.parentNode.sc" +
-                                                    "rollLeft>document.body.scrollLeft)?document.body.parentNode.scrollLeft:document." +
-                                                    "body.scrollLeft;offset-=c;}offset+=x.clientWidth;x.style.cursor='ew-resize';b.st" +
-                                                    "yle.width=(total/10)+'em';b.style.display='inline-block';if(z.nodeType!==1){do{z" +
-                                                    "=z.previousSibling;}while(z.nodeType!==1);}z.style.display='block';a.style.width" +
-                                                    "=(a.clientWidth/10)+'em';a.style.position='absolute';document.onmousemove=boxmov" +
-                                                    "e;document.onmousedown=null;};";
+                                                        "0;a<len;a+=1){if(cells[a].getAttribute('class')==='fold'){cells[a].onmousedown=p" +
+                                                        "d.difffold;}}if(d.length>3){d[2].onmousedown=pd.colSliderGrab;d[2].ontouchstart=" +
+                                                        "pd.colSliderGrab;}}());pd.difffold=function dom__difffold(){var self=this,title=" +
+                                                        "self.getAttribute('title').split('line '),min=Number(title[1].substr(0,title[1]." +
+                                                        "indexOf(' '))),max=Number(title[2]),a=0,b=0,inner=self.innerHTML,lists=[],parent" +
+                                                        "=self.parentNode.parentNode,listnodes=(parent.getAttribute('class'==='diff'))?pa" +
+                                                        "rent.getElementsByTagName('ol'):parent.parentNode.getElementsByTagName('ol'),lis" +
+                                                        "tLen=listnodes.length;for(a=0;a<listLen;a+=1){lists.push(listnodes[a].getElement" +
+                                                        "sByTagName('li'));}if(lists.length>3){for(a=0;a<min;a+=1){if(lists[0][a].getAttr" +
+                                                        "ibute('class')==='empty'){min+=1;max+=1}}}max=(max>=lists[0].length)?lists[0].le" +
+                                                        "ngth:max;if(inner.charAt(0)===' - '){self.innerHTML='+'+inner.substr(1);for(a=mi" +
+                                                        "n;a<max;a+=1){for(b=0;b<listLen;b+=1){lists[b][a].style.display='none';}}}else{s" +
+                                                        "elf.innerHTML=' - '+inner.substr(1);for(a=min;a<max;a+=1){for(b=0;b<listLen;b+=1" +
+                                                        "){lists[b][a].style.display='block';}}}};pd.colSliderProperties=[d[0].clientWidt" +
+                                                        "h,d[1].clientWidth,d[2].parentNode.clientWidth,d[2].parentNode.parentNode.client" +
+                                                        "Width,d[2].parentNode.offsetLeft-d[2].parentNode.parentNode.offsetLeft,];pd.colS" +
+                                                        "liderGrab=function(){'use strict';var x=this,a=x.parentNode,b=a.parentNode,c=0,c" +
+                                                        "ounter=pd.colSliderProperties[0],data=pd.colSliderProperties[1],width=pd.colSlid" +
+                                                        "erProperties[2],total=pd.colSliderProperties[3],offset=(pd.colSliderProperties[4" +
+                                                        "]),min=0,max=data-1,status='ew',g=min+15,h=max-15,k=false,z=a.previousSibling,dr" +
+                                                        "op=function(g){x.style.cursor=status+'-resize';g=null;document.onmousemove=null;" +
+                                                        "document.onmouseup=null;},boxmove=function(f){f=f||window.event;c=offset-f.clien" +
+                                                        "tX;if(c>g&&c<h){k=true;}if(k===true&&c>h){a.style.width=((total-counter-2)/10)+'" +
+                                                        "em';status='e';}else if(k===true&&c<g){a.style.width=(width/10)+'em';status='w';" +
+                                                        "}else if(c<max&&c>min){a.style.width=((width+c)/10)+'em';status='ew';}document.o" +
+                                                        "nmouseup=drop;};if(typeof pd.o==='object'&&typeof pd.o.re==='object'){offset+=pd" +
+                                                        ".o.re.offsetLeft;offset-=pd.o.rf.scrollLeft;}else{c=(document.body.parentNode.sc" +
+                                                        "rollLeft>document.body.scrollLeft)?document.body.parentNode.scrollLeft:document." +
+                                                        "body.scrollLeft;offset-=c;}offset+=x.clientWidth;x.style.cursor='ew-resize';b.st" +
+                                                        "yle.width=(total/10)+'em';b.style.display='inline-block';if(z.nodeType!==1){do{z" +
+                                                        "=z.previousSibling;}while(z.nodeType!==1);}z.style.display='block';a.style.width" +
+                                                        "=(a.clientWidth/10)+'em';a.style.position='absolute';document.onmousemove=boxmov" +
+                                                        "e;document.onmousedown=null;};";
                             builder.scriptEnd     = "]]></script>";
                             return [
-                                [
-                                    builder.head, builder.cssCore, builder.cssColor, builder.cssExtra, builder.body, builder.bodyColor, builder.title, auto, proctime(), a[0], builder.accessibility, a[1][0], builder.scriptOpen, builder.scriptBody, builder.scriptEnd, "</body></html>"
-                                ].join(""), ""
+                                builder.head + builder.cssCore + builder.cssColor + builder.cssExtra + builder.body + builder.bodyColor + builder.title + auto + proctime() + a[0] + builder.accessibility + a[1][0] + builder.scriptOpen + builder.scriptBody + builder.scriptEnd + "</body></html>", ""
                             ];
                         }
                         return [
-                            a[1][0], autostring + proctime() + a[0] + " <p>Accessibility note. &lt;em&gt; tags in the output represent presentation for variable coloring and scope.</p>"
+                            a[1][0], autostring + proctime() + a[0] + " <p>Accessibility note. &lt;em&gt; tags in the output represent presentation for" +
+                                    " variable coloring and scope.</p>"
                         ];
                     }());
                 }
@@ -2095,9 +2154,9 @@ var prettydiff = function prettydiff(api) {
                 entity    = [],
                 type      = [],
                 uni       = (/u\+[0-9a-f]{4,5}\+/),
-                unit      = (/u\![0-9a-f]{4,5}\+/),
-                htmln     = (/\&\#[0-9]{1,6}\;/),
-                htmlt     = (/\&\![0-9]{1,6}\;/);
+                unit      = (/u![0-9a-f]{4,5}\+/),
+                htmln     = (/&#[0-9]{1,6};/),
+                htmlt     = (/&![0-9]{1,6};/);
             if ((pd === undefined || pd.o.report.beau === null || pd.o.report.beau === undefined || typeof pd.o.report.beau.innerHTML !== "string") || (input.search(unit) === -1 && input.search(uni) === -1 && input.search(htmlt) === -1 && input.search(htmln) === -1)) {
                 return input;
             }
@@ -2138,7 +2197,7 @@ var prettydiff = function prettydiff(api) {
                     break;
                 }
             }
-            input = input.replace(/u\![0-9a-f]{4,5}\+/g, "").replace(/\&\![0-9]{1,6}\;/g, "").split("");
+            input = input.replace(/u![0-9a-f]{4,5}\+/g, "").replace(/&![0-9]{1,6};/g, "").split("");
             index = entity.length;
             for (b = 0; b < index; b += 1) {
                 type[b] = type[b].split("|");
@@ -2154,17 +2213,27 @@ var prettydiff = function prettydiff(api) {
 
         //Library to parse/beautify/minify CSS (and similar languages).
         csspretty    = function csspretty(args) {
-            var scssinsertlines = (args.cssinsertlines === true || args.cssinsertlines === "true") ? true : false,
-                sdiffcomm       = (args.diffcomm === true || args.diffcomm === "true") ? true : false,
-                sinchar         = (typeof args.inchar !== "string" || args.inchar === "") ? " " : args.inchar,
-                sinlevel        = (isNaN(args.inlevel) === true) ? 0 : Number(args.inlevel),
-                sinsize         = (isNaN(args.insize) === true) ? 4 : Number(args.insize),
-                smode           = (args.mode === "minify" || args.mode === "parse" || args.mode === "diff") ? args.mode : "beautify",
-                sobjsort        = (args.objsort === true || args.objsort === "true") ? true : false,
-                spres           = (args.preserve === false || args.preserve === "false") ? false : true,
-                ssource         = (typeof args.source !== "string" || args.source === "" || (/^(\s+)$/).test(args.source) === true) ? "Error: no source supplied to csspretty." : args.source,
-                stopcoms        = (args.topcoms === true || args.topcoms === "true") ? true : false,
-                svertical       = (args.vertical === true || args.vertical === "true") ? true : false,
+            var scssinsertlines = (args.cssinsertlines === true || args.cssinsertlines === "true"),
+                sdiffcomm       = (args.diffcomm === true || args.diffcomm === "true"),
+                sinchar         = (typeof args.inchar !== "string" || args.inchar === "")
+                    ? " "
+                    : args.inchar,
+                sinlevel        = (isNaN(args.inlevel) === true)
+                    ? 0
+                    : Number(args.inlevel),
+                sinsize         = (isNaN(args.insize) === true)
+                    ? 4
+                    : Number(args.insize),
+                smode           = (args.mode === "minify" || args.mode === "parse" || args.mode === "diff")
+                    ? args.mode
+                    : "beautify",
+                sobjsort        = (args.objsort === true || args.objsort === "true"),
+                spres           = (args.preserve !== false && args.preserve !== "false"),
+                ssource         = (typeof args.source !== "string" || args.source === "" || (/^(\s+)$/).test(args.source) === true)
+                    ? "Error: no source supplied to csspretty."
+                    : args.source,
+                stopcoms        = (args.topcoms === true || args.topcoms === "true"),
+                svertical       = (args.vertical === true || args.vertical === "true"),
                 token           = [],
                 types           = [],
                 lines           = [],
@@ -2284,7 +2353,6 @@ var prettydiff = function prettydiff(api) {
                                     end = start - 1;
                                 }
                             }
-
                             if (dd < 0 && cc < startlen) {
                                 if (keys.length > 0 && keys[keys.length - 1][0] > cc + 1) {
                                     keys.push([
@@ -2460,10 +2528,10 @@ var prettydiff = function prettydiff(api) {
                                         types.splice(cc, dd);
                                         lines.splice(cc, dd);
                                         aa        -= dd;
-                                        token[aa] = parts.join("").replace(/\s*\,(\s*)/g, ",");
+                                        token[aa] = parts.join("").replace(/\s*,(\s*)/g, ",");
                                     }());
                                 } else {
-                                    token[aa] = token[aa].replace(/\s*\,(\s*)/g, ",");
+                                    token[aa] = token[aa].replace(/\s*,(\s*)/g, ",");
                                 }
                                 types[aa] = "selector";
                             } else if (type === "end") {
@@ -2546,7 +2614,9 @@ var prettydiff = function prettydiff(api) {
                             spareToke = [],
                             spareLine = [];
                         spacer(false);
-                        type = (inline === true && lines[lines.length - 1] === 0 && token[token.length - 1] !== "comment" && token[token.length - 1] !== "comment-inline") ? "comment-inline" : "comment";
+                        type = (inline === true && lines[lines.length - 1] === 0 && token[token.length - 1] !== "comment" && token[token.length - 1] !== "comment-inline")
+                            ? "comment-inline"
+                            : "comment";
                         for (aa = a + 1; aa < len; aa += 1) {
                             out.push(b[aa]);
                             if ((inline === false && b[aa - 1] === "*" && b[aa] === "/") || (inline === true && (b[aa + 1] === "\n"))) {
@@ -2604,7 +2674,7 @@ var prettydiff = function prettydiff(api) {
                             bb    = 0,
                             out   = [],
                             block = "",
-                            comma = (token.length > 0 && token[token.length - 1].charAt(token[token.length - 1].length - 1) === ",") ? true : false;
+                            comma = (token.length > 0 && token[token.length - 1].charAt(token[token.length - 1].length - 1) === ",");
                         spacer(false);
                         for (aa = a; aa < len; aa += 1) {
                             out.push(b[aa]);
@@ -2689,7 +2759,6 @@ var prettydiff = function prettydiff(api) {
                                 set.push([]);
                             }
                         }
-
                         //this reverse fixes the order of consecutive comments
                         set.reverse();
                         bb = 0;
@@ -3003,10 +3072,10 @@ var prettydiff = function prettydiff(api) {
                             if (leng === 0) {
                                 items.push(item);
                             }
-                            build.push(items[0].replace(/\,(\s*)/g, ", ").replace(/(\, )$/, ","));
+                            build.push(items[0].replace(/,(\s*)/g, ", ").replace(/(,\ )$/, ","));
                             for (aa = 1; aa < leng; aa += 1) {
                                 nl(indent);
-                                build.push(items[aa].replace(/\,(\s*)/g, ", ").replace(/(\, )$/, ","));
+                                build.push(items[aa].replace(/,(\s*)/g, ", ").replace(/(,\ )$/, ","));
                             }
                             build.push(" ");
                         };
@@ -3103,12 +3172,12 @@ var prettydiff = function prettydiff(api) {
                         a    = 0,
                         b    = 0;
                     summ.push("<div class='doc' id='cssreport'><p><strong>Number of HTTP requests:</strong> <em" +
-                        ">");
+                            ">");
                     summ.push(uris);
                     summ.push("</em></p><table class='analysis' id='css-parts' summary='Component counts and si" +
-                        "zes'><caption>Component counts and sizes</caption><thead><tr><th>Type Name</th><" +
-                        "th>Quantity</th><th>Character Size</th></tr></thead><tbody><tr><th>curly braces<" +
-                        "/th><td>");
+                            "zes'><caption>Component counts and sizes</caption><thead><tr><th>Type Name</th><" +
+                            "th>Quantity</th><th>Character Size</th></tr></thead><tbody><tr><th>curly braces<" +
+                            "/th><td>");
                     summ.push(stats.braces);
                     summ.push("</td><td>");
                     summ.push(stats.braces);
@@ -3145,8 +3214,8 @@ var prettydiff = function prettydiff(api) {
                     summ.push("</td><td>");
                     summ.push(stats.variables.chars);
                     summ.push("</td></tr></tbody></table><table class='analysis' id='css-size' summary='CSS cha" +
-                        "racter size change'><caption>CSS character size change</caption><tbody><tr><th>I" +
-                        "nput</th><td>");
+                            "racter size change'><caption>CSS character size change</caption><tbody><tr><th>I" +
+                            "nput</th><td>");
                     summ.push(inl);
                     summ.push("</td></tr><tr><th>Output</th><td>");
                     summ.push(out);
@@ -3155,16 +3224,18 @@ var prettydiff = function prettydiff(api) {
                         summ.push("Increase</th><td>");
                         summ.push(out - inl);
                         summ.push("</td></tr><tr><th>Percent Change</th><td>");
-                        summ.push((((out - inl) / out) * 100).toFixed(2));
+                        a = (((out - inl) / out) * 100);
+                        summ.push(a.toFixed(2));
                     } else {
                         summ.push("Decrease</th><td>");
                         summ.push(inl - out);
                         summ.push("</td></tr><tr><th>Percent Change</th><td>");
-                        summ.push((((inl - out) / inl) * 100).toFixed(2));
+                        a = (((inl - out) / inl) * 100);
+                        summ.push(a.toFixed(2));
                     }
                     summ.push("%</td></tr></tbody></table><table class='analysis' id='css-uri' summary='A list " +
-                        "of HTTP requests'><caption>A List of HTTP Requests</caption><thead><tr><th>Quant" +
-                        "ity</th><th>URI</th></tr></thead><tbody>");
+                            "of HTTP requests'><caption>A List of HTTP Requests</caption><thead><tr><th>Quant" +
+                            "ity</th><th>URI</th></tr></thead><tbody>");
                     for (a = 0; a < uris; a += 1) {
                         uric = 1;
                         for (b = a + 1; b < uris; b += 1) {
@@ -3252,8 +3323,7 @@ var prettydiff = function prettydiff(api) {
             return source.replace(/\{csvquote\}/g, "\"").replace(/\{prettydiffcsv/g, "{csv");
         };
 
-        //Library to regress changes made by csvbeauty back to
-        //the standard format.
+        //Library to regress changes made by csvbeauty back to the standard format.
         csvmin       = function csvmin(source, ch) {
             if (ch === "") {
                 ch = ",";
@@ -3278,7 +3348,7 @@ var prettydiff = function prettydiff(api) {
                     segment       = [],
                     partLen       = 0,
                     part          = [],
-                    srcLines      = source.replace(/\n\n\{\-\}\n\n/g, "{-}").replace(/\n{2,}/g, multiline).split("\n"),
+                    srcLines      = source.replace(/\n\n\{-\}\n\n/g, "{-}").replace(/\n{2,}/g, multiline).split("\n"),
                     srcLen        = srcLines.length,
                     errorLocation = "",
                     error         = "Error: Unterminated String begging at character number ";
@@ -3318,22 +3388,36 @@ var prettydiff = function prettydiff(api) {
             if (source.indexOf("{|}") === source.length - 3) {
                 source = source.slice(0, source.length - 3) + ch;
             }
-            return source.replace(/\{\-\}/g, "\n");
+            return source.replace(/\{-\}/g, "\n");
         };
 
         //Library to compare text input
         diffview     = function diffview(args) {
             var errorout      = 0,
                 diffline      = 0,
-                baseTextLines = (typeof args.baseTextLines === "string") ? args.baseTextLines.replace(/\u0000|\u0001|\u0002|\u0003|\u0004|\u0005|\u0006|\u0007|\u0008|\u000b|\u000c|\u000e|\u000f|\u0010|\u0011|\u0012|\u0013|\u0014|\u0015|\u0016|\u0017|\u0018|\u0019|\u001a|\u001b|\u001c|\u001d|\u001e|\u001f|\u007f|\u0080|\u0081|\u0082|\u0083|\u0084|\u0085|\u0086|\u0087|\u0088|\u0089|\u008a|\u008b|\u008c|\u008d|\u008e|\u008f|\u0090|\u0091|\u0092|\u0093|\u0094|\u0095|\u0096|\u0097|\u0098|\u0099|\u009a|\u009b|\u009c|\u009d|\u009e|\u009f/g, "") : "",
-                newTextLines  = (typeof args.newTextLines === "string") ? args.newTextLines.replace(/\u0000|\u0001|\u0002|\u0003|\u0004|\u0005|\u0006|\u0007|\u0008|\u000b|\u000c|\u000e|\u000f|\u0010|\u0011|\u0012|\u0013|\u0014|\u0015|\u0016|\u0017|\u0018|\u0019|\u001a|\u001b|\u001c|\u001d|\u001e|\u001f|\u007f|\u0080|\u0081|\u0082|\u0083|\u0084|\u0085|\u0086|\u0087|\u0088|\u0089|\u008a|\u008b|\u008c|\u008d|\u008e|\u008f|\u0090|\u0091|\u0092|\u0093|\u0094|\u0095|\u0096|\u0097|\u0098|\u0099|\u009a|\u009b|\u009c|\u009d|\u009e|\u009f/g, "") : "",
-                baseTextName  = (typeof args.baseTextName === "string") ? args.baseTextName.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;") : "Base Source",
-                newTextName   = (typeof args.newTextName === "string") ? args.newTextName.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;") : "New Source",
-                diffcli       = (args.diffcli === true || args.diffcli === "true") ? true : false,
-                context       = ((/^([0-9]+)$/).test(args.contextSize)) ? Number(args.contextSize) : -1,
-                tsize         = ((/^([0-9]+)$/).test(args.tsize)) ? Number(args.tsize) : 4,
-                tchar         = (typeof args.tchar === "string") ? args.tchar : " ",
-                inline        = (args.inline === true || args.inline === "true") ? true : false,
+                baseTextLines = (typeof args.baseTextLines === "string")
+                    ? args.baseTextLines.replace(/\u0000|\u0001|\u0002|\u0003|\u0004|\u0005|\u0006|\u0007|\u0008|\u000b|\u000c|\u000e|\u000f|\u0010|\u0011|\u0012|\u0013|\u0014|\u0015|\u0016|\u0017|\u0018|\u0019|\u001a|\u001b|\u001c|\u001d|\u001e|\u001f|\u007f|\u0080|\u0081|\u0082|\u0083|\u0084|\u0085|\u0086|\u0087|\u0088|\u0089|\u008a|\u008b|\u008c|\u008d|\u008e|\u008f|\u0090|\u0091|\u0092|\u0093|\u0094|\u0095|\u0096|\u0097|\u0098|\u0099|\u009a|\u009b|\u009c|\u009d|\u009e|\u009f/g, "")
+                    : "",
+                newTextLines  = (typeof args.newTextLines === "string")
+                    ? args.newTextLines.replace(/\u0000|\u0001|\u0002|\u0003|\u0004|\u0005|\u0006|\u0007|\u0008|\u000b|\u000c|\u000e|\u000f|\u0010|\u0011|\u0012|\u0013|\u0014|\u0015|\u0016|\u0017|\u0018|\u0019|\u001a|\u001b|\u001c|\u001d|\u001e|\u001f|\u007f|\u0080|\u0081|\u0082|\u0083|\u0084|\u0085|\u0086|\u0087|\u0088|\u0089|\u008a|\u008b|\u008c|\u008d|\u008e|\u008f|\u0090|\u0091|\u0092|\u0093|\u0094|\u0095|\u0096|\u0097|\u0098|\u0099|\u009a|\u009b|\u009c|\u009d|\u009e|\u009f/g, "")
+                    : "",
+                baseTextName  = (typeof args.baseTextName === "string")
+                    ? args.baseTextName.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;")
+                    : "Base Source",
+                newTextName   = (typeof args.newTextName === "string")
+                    ? args.newTextName.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;")
+                    : "New Source",
+                diffcli       = (args.diffcli === true || args.diffcli === "true"),
+                context       = ((/^([0-9]+)$/).test(args.contextSize))
+                    ? Number(args.contextSize)
+                    : -1,
+                tsize         = ((/^([0-9]+)$/).test(args.tsize))
+                    ? Number(args.tsize)
+                    : 4,
+                tchar         = (typeof args.tchar === "string")
+                    ? args.tchar
+                    : " ",
+                inline        = (args.inline === true || args.inline === "true"),
                 tab           = (function diffview__tab() {
                     var a      = 0,
                         output = [];
@@ -3348,14 +3432,18 @@ var prettydiff = function prettydiff(api) {
                 stringAsLines = function diffview__stringAsLines(str) {
                     var lfpos     = str.indexOf("\n"),
                         crpos     = str.indexOf("\r"),
-                        linebreak = ((lfpos > -1 && crpos > -1) || crpos < 0) ? "\n" : "\r",
+                        linebreak = ((lfpos > -1 && crpos > -1) || crpos < 0)
+                            ? "\n"
+                            : "\r",
                         lines     = "";
                     if (linebreak === "\n") {
                         str = str.replace(/\r/g, "");
                     } else {
                         str = str.replace(/\n/g, "");
                     }
-                    lines = (diffcli === true) ? str : str.replace(/\&/g, "&amp;").replace(/\&#lt;/g, "$#l" + "t;").replace(/\&#gt;/g, "$#g" + "t;").replace(/</g, "$#l" + "t;").replace(/>/g, "$#g" + "t;");
+                    lines = (diffcli === true)
+                        ? str
+                        : str.replace(/&/g, "&amp;").replace(/&#lt;/g, "$#lt;").replace(/&#gt;/g, "$#gt;").replace(/</g, "$#lt;").replace(/>/g, "$#gt;");
                     return lines.split(linebreak);
                 },
                 baseTextArray = stringAsLines(baseTextLines),
@@ -3410,7 +3498,11 @@ var prettydiff = function prettydiff(api) {
                                             return 1;
                                         }
                                     }
-                                    return (x.length === y.length) ? 0 : ((x.length < y.length) ? -1 : 1);
+                                    return (x.length === y.length)
+                                        ? 0
+                                        : ((x.length < y.length)
+                                            ? -1
+                                            : 1);
                                 },
                                 find_longest_match = function diffview__opcodes_getMatchingBlocks_findLongestMatch(lowFirst, highFirst, lowSecond, highSecond) {
                                     var b                   = 0,
@@ -3676,11 +3768,13 @@ var prettydiff = function prettydiff(api) {
                 var a              = 0,
                     i              = 0,
                     node           = ["<div class='diff'>"],
-                    data           = (diffcli === true) ? [
-                        [], [], [], [], [], []
-                    ] : [
-                        [], [], [], []
-                    ],
+                    data           = (diffcli === true)
+                        ? [
+                            [], [], [], [], [], []
+                        ]
+                        : [
+                            [], [], [], []
+                        ],
                     baseStart      = 0,
                     baseEnd        = 0,
                     newStart       = 0,
@@ -3690,7 +3784,10 @@ var prettydiff = function prettydiff(api) {
                     foldback       = 0,
                     foldstart      = 0,
                     jump           = 0,
-                    tabFix         = (tab === "") ? "" : new RegExp("^((" + tab.replace(/\\/g, "\\") + ")+)"),
+                    finaldoc       = "",
+                    tabFix         = (tab === "")
+                        ? ""
+                        : new RegExp("^((" + tab.replace(/\\/g, "\\") + ")+)"),
                     noTab          = function diffview__report_noTab(str) {
                         var b      = 0,
                             strLen = str.length,
@@ -3700,8 +3797,12 @@ var prettydiff = function prettydiff(api) {
                         }
                         return output;
                     },
-                    baseTab        = (tab === "") ? [] : noTab(baseTextArray),
-                    newTab         = (tab === "") ? [] : noTab(newTextArray),
+                    baseTab        = (tab === "")
+                        ? []
+                        : noTab(baseTextArray),
+                    newTab         = (tab === "")
+                        ? []
+                        : noTab(newTextArray),
                     opcodesLength  = opcodes.length,
                     change         = "",
                     btest          = false,
@@ -3714,14 +3815,18 @@ var prettydiff = function prettydiff(api) {
                         var b             = 0,
                             dataA         = [],
                             dataB         = [],
-                            cleanedA      = (diffcli === true) ? lineA : lineA.replace(/\&#160;/g, " ").replace(/\&nbsp;/g, " ").replace(/&lt\;/g, "<").replace(/&gt\;/g, ">").replace(/\$#lt\;/g, "<").replace(/\$#gt\;/g, ">").replace(/&amp;/g, "&"),
-                            cleanedB      = (diffcli === true) ? lineB : lineB.replace(/\&#160;/g, " ").replace(/\&nbsp;/g, " ").replace(/&lt\;/g, "<").replace(/&gt\;/g, ">").replace(/\$#lt\;/g, "<").replace(/\$#gt\;/g, ">").replace(/&amp;/g, "&"),
+                            cleanedA      = (diffcli === true)
+                                ? lineA
+                                : lineA.replace(/&#160;/g, " ").replace(/&nbsp;/g, " ").replace(/&lt;/g, "<").replace(/&gt;/g, ">").replace(/\$#lt;/g, "<").replace(/\$#gt;/g, ">").replace(/&amp;/g, "&"),
+                            cleanedB      = (diffcli === true)
+                                ? lineB
+                                : lineB.replace(/&#160;/g, " ").replace(/&nbsp;/g, " ").replace(/&lt;/g, "<").replace(/&gt;/g, ">").replace(/\$#lt;/g, "<").replace(/\$#gt;/g, ">").replace(/&amp;/g, "&"),
                             dataMinLength = 0,
                             currentdiff   = [],
-                            regStart      = (/_pdiffdiff\_/g),
-                            regEnd        = (/_epdiffdiff\_/g),
-                            strStart      = "_pdiff" + "diff_",
-                            strEnd        = "_epdiff" + "diff_",
+                            regStart      = (/_pdiffdiff\u005f/g),
+                            regEnd        = (/_epdiffdiff\u005f/g),
+                            strStart      = "_pdiffdiff_",
+                            strEnd        = "_epdiffdiff_",
                             tabdiff       = (function diffview__report_charcomp_tabdiff() {
                                 var tabMatchA  = "",
                                     tabMatchB  = "",
@@ -3823,12 +3928,21 @@ var prettydiff = function prettydiff(api) {
                         if (tabFix !== "" && cleanedA.length !== cleanedB.length && cleanedA.replace(tabFix, "") === cleanedB.replace(tabFix, "")) {
                             errorout += 1;
                             if (diffcli === true) {
+                                tabdiff[0] = tabdiff[0] + tabdiff[2];
+                                tabdiff[0] = tabdiff[0].replace(regStart, "<pd>").replace(regEnd, "</pd>");
+                                tabdiff[1] = tabdiff[1] + tabdiff[3];
+                                tabdiff[1] = tabdiff[1].replace(regStart, "<pd>").replace(regEnd, "</pd>");
                                 return [
-                                    (tabdiff[0] + tabdiff[2]).replace(regStart, "<pd>").replace(regEnd, "</pd>"), (tabdiff[1] + tabdiff[3]).replace(regStart, "<pd>").replace(regEnd, "</pd>")
+                                    tabdiff[0], tabdiff[1]
                                 ];
                             }
+                            tabdiff[0] = tabdiff[0] + tabdiff[2];
+                            tabdiff[0] = tabdiff[0].replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(regStart, "<em>").replace(regEnd, "</em>");
+                            tabdiff[1] = tabdiff[1] + tabdiff[3];
+                            tabdiff[1] = tabdiff[1].replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(regStart, "<em>").replace(regEnd, "</em>");
+
                             return [
-                                (tabdiff[0] + tabdiff[2]).replace(/&/g, "&amp;").replace(/</g, "&l" + "t;").replace(/>/g, "&g" + "t;").replace(regStart, "<em>").replace(regEnd, "</em>"), (tabdiff[1] + tabdiff[3]).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(regStart, "<em>").replace(regEnd, "</em>")
+                                tabdiff[0], tabdiff[1]
                             ];
                         }
                         dataA         = cleanedA.split("");
@@ -3848,7 +3962,6 @@ var prettydiff = function prettydiff(api) {
                                     dataA[b] = strStart + dataA[b];
                                     dataB[b] = strStart + dataB[b];
                                 }
-
                                 if (currentdiff[2] === 1) {
                                     if (currentdiff[0] === 0) {
                                         dataA[0] = dataA[0].replace(regStart, strStart + strEnd);
@@ -3958,7 +4071,9 @@ var prettydiff = function prettydiff(api) {
                     for (i = 0; i < rowcnt; i += 1) {
                         if (context > -1 && opcodes.length > 1 && ((a > 0 && i === context) || (a === 0 && i === 0)) && change === "equal") {
                             ctest = false;
-                            jump  = rowcnt - ((a === 0 ? 1 : 2) * context);
+                            jump  = rowcnt - ((a === 0
+                                ? 1
+                                : 2) * context);
                             if (jump > 1) {
                                 foldcount += 1;
                                 baseStart += jump;
@@ -4317,38 +4432,67 @@ var prettydiff = function prettydiff(api) {
                     node.push("</ol></div>");
                 }
                 node.push("<p class='author'>Diff view written by <a href='http://prettydiff.com/'>Pretty D" +
-                    "iff</a>.</p></div>");
+                        "iff</a>.</p></div>");
+                finaldoc = node.join("");
                 return [
-                    node.join("").replace(/li class='equal'><\/li/g, "li class='equal'>&#10;</li").replace(/\$#gt;/g, "&gt;").replace(/\$#lt;/g, "&lt;").replace(/\%#lt;/g, "$#lt;").replace(/\%#gt;/g, "$#gt;"), errorout, diffline
+                    finaldoc.replace(/li\ class='equal'><\/li/g, "li class='equal'>&#10;</li").replace(/\$#gt;/g, "&gt;").replace(/\$#lt;/g, "&lt;").replace(/%#lt;/g, "$#lt;").replace(/%#gt;/g, "$#gt;"), errorout, diffline
                 ];
             }());
         };
 
         //Library to parse/beautify/minify JavaScript.
         jspretty     = function jspretty(args) {
-            var jbraceline    = (args.braceline === true || args.braceline === "true") ? true : false,
-                jbracepadding = (args.bracepadding === true || args.bracepadding === "true") ? true : false,
-                jbraces       = (args.braces === "allman") ? true : false,
-                jchar         = (typeof args.inchar === "string" && args.inchar.length > 0) ? args.inchar : " ",
-                jcomment      = (args.comments === "noindent") ? "noindent" : (args.comments === "nocomment") ? "nocomment" : "indent",
-                jelseline     = (args.elseline === true || args.elseline === "true") ? true : false,
-                jlevel        = (args.inlevel > -1) ? args.inlevel : ((Number(args.inlevel) > -1) ? Number(args.inlevel) : 0),
-                jmode         = (args.mode === "minify" || args.mode === "parse" || args.mode === "diff") ? args.mode : "beautify",
-                jobfuscate    = (args.obfuscate === true || args.obfuscate === "true") ? true : false,
-                jobjsort      = (args.objsort === true || args.objsort === "true") ? true : false,
-                jpres         = (args.preserve === false || args.preserve === "false") ? false : true,
-                jquoteConvert = (args.quoteConvert === "double" || args.quoteConvert === "single") ? args.quoteConvert : "none",
-                jscorrect     = (args.correct === true || args.correct === "true") ? true : false,
-                jsize         = (isNaN(args.insize) === false && Number(args.insize) >= 0) ? Number(args.insize) : 4,
-                jsource       = (typeof args.source === "string" && args.source.length > 0) ? args.source + " " : "Error: no source code supplied to jspretty!",
-                jspace        = (args.space === false || args.space === "false") ? false : true,
-                jsscope       = (args.jsscope === true || args.jsscope === "true") ? "report" : (args.jsscope !== "html" && args.jsscope !== "report") ? "none" : args.jsscope,
-                jstyleguide   = (typeof args.styleguide === "string") ? args.styleguide.toLowerCase().replace(/\s/g, "") : "",
-                jtitanium     = (args.titanium === true || args.titanium === "true") ? true : false,
-                jtopcoms      = (args.topcoms === true || args.topcoms === "true") ? true : false,
-                jvarword      = (args.varword === "each" || args.varword === "list") ? args.varword : "none",
-                jvertical     = (args.vertical === false || args.vertical === "false") ? false : true,
-                jwrap         = (isNaN(Number(args.wrap)) === true) ? 0 : Number(args.wrap),
+            var jbraceline    = (args.braceline === true || args.braceline === "true"),
+                jbracepadding = (args.bracepadding === true || args.bracepadding === "true"),
+                jbraces       = (args.braces === "allman"),
+                jchar         = (typeof args.inchar === "string" && args.inchar.length > 0)
+                    ? args.inchar
+                    : " ",
+                jcomment      = (args.comments === "noindent")
+                    ? "noindent"
+                    : (args.comments === "nocomment")
+                        ? "nocomment"
+                        : "indent",
+                jelseline     = (args.elseline === true || args.elseline === "true"),
+                jlevel        = (args.inlevel > -1)
+                    ? args.inlevel
+                    : ((Number(args.inlevel) > -1)
+                        ? Number(args.inlevel)
+                        : 0),
+                jmode         = (args.mode === "minify" || args.mode === "parse" || args.mode === "diff")
+                    ? args.mode
+                    : "beautify",
+                jobfuscate    = (args.obfuscate === true || args.obfuscate === "true"),
+                jobjsort      = (args.objsort === true || args.objsort === "true"),
+                jpres         = (args.preserve !== false && args.preserve !== "false"),
+                jquoteConvert = (args.quoteConvert === "double" || args.quoteConvert === "single")
+                    ? args.quoteConvert
+                    : "none",
+                jscorrect     = (args.correct === true || args.correct === "true"),
+                jsize         = (isNaN(args.insize) === false && Number(args.insize) >= 0)
+                    ? Number(args.insize)
+                    : 4,
+                jsource       = (typeof args.source === "string" && args.source.length > 0)
+                    ? args.source + " "
+                    : "Error: no source code supplied to jspretty!",
+                jspace        = (args.space !== false && args.space !== "false"),
+                jsscope       = (args.jsscope === true || args.jsscope === "true")
+                    ? "report"
+                    : (args.jsscope !== "html" && args.jsscope !== "report")
+                        ? "none"
+                        : args.jsscope,
+                jstyleguide   = (typeof args.styleguide === "string")
+                    ? args.styleguide.toLowerCase().replace(/\s/g, "")
+                    : "",
+                jtitanium     = (args.titanium === true || args.titanium === "true"),
+                jtopcoms      = (args.topcoms === true || args.topcoms === "true"),
+                jvarword      = (args.varword === "each" || args.varword === "list")
+                    ? args.varword
+                    : "none",
+                jvertical     = (args.vertical !== false && args.vertical !== "false"),
+                jwrap         = (isNaN(Number(args.wrap)) === true)
+                    ? 0
+                    : Number(args.wrap),
                 sourcemap     = [
                     0, ""
                 ],
@@ -4422,7 +4566,7 @@ var prettydiff = function prettydiff(api) {
                 jsize         = 2;
                 jvarword      = "each";
                 jwrap         = 80;
-            } else if (jstyleguide === "crockford") {
+            } else if (jstyleguide === "crockford" || jstyleguide === "jslint") {
                 jbracepadding = false;
                 jelseline     = false;
                 jchar         = " ";
@@ -4430,6 +4574,7 @@ var prettydiff = function prettydiff(api) {
                 jsize         = 4;
                 jspace        = true;
                 jvarword      = "list";
+                jvertical     = false;
             } else if (jstyleguide === "google") {
                 jchar         = " ";
                 jpres         = true;
@@ -4485,7 +4630,6 @@ var prettydiff = function prettydiff(api) {
                 types.push("start");
                 lines.push(0);
             }
-
             //this function tokenizes the source code into an array
             //of literals and syntax tokens
             (function jspretty__tokenize() {
@@ -4579,7 +4723,6 @@ var prettydiff = function prettydiff(api) {
                                     end = start - 1;
                                 }
                             }
-
                             if (dd < 0 && cc < startlen) {
                                 if (keys.length > 0 && keys[keys.length - 1][0] > cc + 1) {
                                     keys.push([
@@ -4815,7 +4958,7 @@ var prettydiff = function prettydiff(api) {
                             return;
                         }
                         if ((typel === "literal" && types[len - 1] !== "start") || typel !== "literal") {
-                            for (aa; aa > -1; aa -= 1) {
+                            for (aa = aa; aa > -1; aa -= 1) {
                                 if (types[aa] === "end") {
                                     bb += 1;
                                 } else if (types[aa] === "start" || types[aa] === "method") {
@@ -4940,8 +5083,10 @@ var prettydiff = function prettydiff(api) {
                         types.splice(aa, 0, ltype);
                     },
                     quoteConvert   = function jspretty__tokenize_quoteConvert(item) {
-                        var dub   = (jquoteConvert === "double") ? true : false,
-                            qchar = (dub === true) ? "\"" : "'";
+                        var dub   = (jquoteConvert === "double"),
+                            qchar = (dub === true)
+                                ? "\""
+                                : "'";
                         item = item.slice(1, item.length - 1);
                         if (dub === true) {
                             item = item.replace(/"/g, "'");
@@ -4953,7 +5098,7 @@ var prettydiff = function prettydiff(api) {
                     commentSplit   = function jspretty__tokenize_commentSplit(item) {
                         var tokel   = token[token.length - 1],
                             start   = jwrap,
-                            spacely = (item.indexOf(" ") > 0) ? true : false;
+                            spacely = (item.indexOf(" ") > 0);
                         if (token.length === 0) {
                             return;
                         }
@@ -5039,17 +5184,26 @@ var prettydiff = function prettydiff(api) {
                             types.push("literal");
                             lines.push(0);
                         }
+                        lengtha = token.length;
                     },
-                    strmerge       = function jspretty__tokenize_strmerge(item) {
+                    strmerge       = function jspretty__tokenize_strmerge(item, wrap) {
                         var aa = 0,
                             bb = "";
                         item = item.slice(1, item.length - 1);
                         token.pop();
                         types.pop();
                         lines.pop();
-                        aa        = token.length - 1;
-                        bb        = token[aa];
-                        token[aa] = bb.slice(0, bb.length - 1) + item + bb.charAt(0);
+                        aa = token.length - 1;
+                        bb = token[aa];
+                        if (wrap === true) {
+                            bb = bb.slice(0, bb.length - 1) + item + bb.charAt(0);
+                            token.pop();
+                            types.pop();
+                            lines.pop();
+                            strlen(bb);
+                        } else {
+                            token[aa] = bb.slice(0, bb.length - 1) + item + bb.charAt(0);
+                        }
                     },
                     methodTest     = function jspretty__tokenize_methodTest() {
                         var cc  = 0,
@@ -5125,7 +5279,7 @@ var prettydiff = function prettydiff(api) {
                             bb       = 0,
                             cc       = aa,
                             arraylen = 0;
-                        for (aa; aa > -1; aa -= 1) {
+                        for (aa = aa; aa > -1; aa -= 1) {
                             if (types[aa] === "end") {
                                 bb += 1;
                             }
@@ -5258,10 +5412,9 @@ var prettydiff = function prettydiff(api) {
                             stats.space.newline += 1;
                             build.pop();
                         }
+                        output = build.join("");
                         if (jsscope !== "none") {
-                            output = build.join("").replace(/\&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
-                        } else {
-                            output = build.join("");
+                            output = output.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
                         }
                         return output;
                     },
@@ -5315,7 +5468,7 @@ var prettydiff = function prettydiff(api) {
                         }
                         a = a + (output.length - 1);
                         if (jsscope !== "none") {
-                            output = output.replace(/\&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+                            output = output.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
                         }
                         if (output === "?" && obj.len > -1 && obj.count[obj.len] === 0 && obj.status[obj.len] === false) {
                             obj.count[obj.len] += 1;
@@ -5379,10 +5532,9 @@ var prettydiff = function prettydiff(api) {
                         } else {
                             a = ee;
                         }
+                        output = build.join("");
                         if (jsscope !== "none") {
-                            output = build.join("").replace(/\&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
-                        } else {
-                            output = build.join("");
+                            output = output.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
                         }
                         return output;
                     },
@@ -5405,7 +5557,7 @@ var prettydiff = function prettydiff(api) {
                         var ee    = 0,
                             f     = b,
                             build = [c[a]],
-                            dot   = (build[0] === ".") ? true : false;
+                            dot   = (build[0] === ".");
                         if (a < b - 2 && c[a + 1] === "x" && (/[0-9A-Fa-f]/).test(c[a + 2])) {
                             build.push("x");
                             for (ee = a + 2; ee < f; ee += 1) {
@@ -5686,7 +5838,7 @@ var prettydiff = function prettydiff(api) {
                                 return operator();
                             }
                         }
-                        for (a; a < b; a += 1) {
+                        for (a = a; a < b; a += 1) {
                             output.push(c[a]);
                             if (c[a] === "{") {
                                 curlycount += 1;
@@ -5883,10 +6035,14 @@ var prettydiff = function prettydiff(api) {
                             stats.string.chars += ltoke.length - 2;
                         }
                         stats.string.quote += 2;
-                        if (token[token.length - 1] === "+" && jwrap < 0 && (token[token.length - 2].charAt(0) === "\"" || token[token.length - 2].charAt(0) === "'")) {
-                            strmerge(ltoke);
-                        } else if (jwrap > 0 && ltoke.length > jwrap && (types[types.length - 1] !== "operator" || token[token.length - 1] === "=" || token[token.length - 1] === ":" || (token[token.length - 1] === "+" && types[types.length - 1] === "literal"))) {
-                            strlen(ltoke);
+                        if (token[lengtha] === "+" && jwrap < 0 && (token[lengtha - 1].charAt(0) === "\"" || token[lengtha - 1].charAt(0) === "'")) {
+                            strmerge(ltoke, false);
+                        } else if (jwrap > 0 && (types[lengtha] !== "operator" || token[lengtha] === "=" || token[lengtha] === ":" || (token[lengtha] === "+" && types[lengtha - 1] === "literal"))) {
+                            if (types[lengtha - 2] === "literal" && token[lengtha - 1] === "+" && (token[lengtha - 2].charAt(0) === "\"" || token[lengtha - 2].charAt(0) === "'") && token[lengtha - 2].length < jwrap + 2) {
+                                strmerge(ltoke, true);
+                            } else {
+                                strlen(ltoke);
+                            }
                         } else {
                             token.push(ltoke);
                             types.push(ltype);
@@ -6323,10 +6479,31 @@ var prettydiff = function prettydiff(api) {
                         varlen     = [],
                         methodtest = [],
                         assignlist = [false],
+                        tern       = function jspretty__algorithm_tern() {
+                            var c = 0,
+                                d = 0;
+                            for (c = a - 1; c > -1; c -= 1) {
+                                if (types[c] === "end") {
+                                    d += 1;
+                                } else if (types[c] === "start" || types[c] === "method") {
+                                    d -= 1;
+                                    if (d < 0) {
+                                        return;
+                                    }
+                                }
+                                if (d === 0 && token[c] === "?") {
+                                    indent -= 1;
+                                    ternary.pop();
+                                    if (ternary.length === 0) {
+                                        return;
+                                    }
+                                }
+                            }
+                        },
                         functest   = function jspretty__algorithm_functest() {
                             var aa   = 0,
                                 bb   = 1,
-                                curl = (token[a - 1] === "}") ? true : false;
+                                curl = (token[a - 1] === "}");
                             for (aa = a - 2; aa > -1; aa -= 1) {
                                 if (curl === true) {
                                     if (token[aa] === "}") {
@@ -6375,6 +6552,9 @@ var prettydiff = function prettydiff(api) {
                             return false;
                         },
                         separator  = function jspretty__algorithm_separator() {
+                            if (ternary.length > 0 && ctoke !== ".") {
+                                tern();
+                            }
                             if (types[a - 1] === "comment-inline" && a > 1) {
                                 return (function jspretty__algorithm_commentfix() {
                                     var c    = 0,
@@ -6403,9 +6583,6 @@ var prettydiff = function prettydiff(api) {
                             }
                             if (ctoke === ",") {
                                 level[a - 1] = "x";
-                                if (ternary.length > 0) {
-                                    ternary[ternary.length - 1] = false;
-                                }
                                 if (listtest[listtest.length - 1] === false) {
                                     listtest[listtest.length - 1] = true;
                                     (function jspretty__algorithm_separator_listTest() {
@@ -6477,8 +6654,11 @@ var prettydiff = function prettydiff(api) {
                                         }
                                     }());
                                 }
-                                if (obj[obj.length - 1] === true) {
-                                    return level.push(indent);
+                                if (obj[obj.length - 1] === true || (token[a - 2] === "+" && ltype === "literal" && level[a - 2] > 0 && (ltoke.charAt(0) === "\"" || ltoke.charAt(0) === "'"))) {
+                                    level.push(indent);
+                                    if (obj[obj.length - 1] === true) {
+                                        return;
+                                    }
                                 }
                                 if (list[list.length - 1] === true) {
                                     return (function jspretty__algorithm_separator_inList() {
@@ -6491,9 +6671,21 @@ var prettydiff = function prettydiff(api) {
                                             if (types[c] === "start" || types[c] === "method") {
                                                 d -= 1;
                                             }
+
                                             if (d === -1) {
                                                 if (token[c] === "[" && token[c + 1] !== "]" && token[c + 2] !== "]") {
                                                     level[c] = indent;
+                                                    if (token[a - 2] === "+" && ltype === "literal" && level[a - 2] > 0 && (ltoke.charAt(0) === "\"" || ltoke.charAt(0) === "'")) {
+                                                        for (d = a - 2; d > c; d -= 2) {
+                                                            if (token[d] !== "+") {
+                                                                return;
+                                                            }
+                                                            if (token[d - 1].charAt(0) !== "\"" && token[d - 1].charAt(0) !== "'") {
+                                                                level[d] = "s";
+                                                            }
+                                                        }
+                                                        return;
+                                                    }
                                                 }
                                                 return level.push("s");
                                             }
@@ -6524,9 +6716,6 @@ var prettydiff = function prettydiff(api) {
                                 return level.push(indent);
                             }
                             if (ctoke === ";" || ctoke === "x;") {
-                                if (ternary.length > 0) {
-                                    ternary[ternary.length - 1] = false;
-                                }
                                 if (ctoke === "x;") {
                                     scolon += 1;
                                 }
@@ -6591,7 +6780,6 @@ var prettydiff = function prettydiff(api) {
                             listtest.push(false);
                             methodtest.push(true);
                             obj.push(false);
-                            ternary.push(false);
                             assignlist.push(false);
                             if (fortest > 0) {
                                 fortest += 1;
@@ -6601,7 +6789,6 @@ var prettydiff = function prettydiff(api) {
                             list.push(false);
                             listtest.push(false);
                             methodtest.push(false);
-                            ternary.push(false);
                             assignlist.push(false);
                             if (ctoke !== "(") {
                                 indent += 1;
@@ -6690,6 +6877,9 @@ var prettydiff = function prettydiff(api) {
                             return level.push("x");
                         },
                         end        = function jspretty__algorithm_end() {
+                            if (ternary.length > 0 && token[a + 1] !== "?" && token[a + 1] !== ":") {
+                                tern();
+                            }
                             if (fortest === 1 && ctoke === ")" && varline[varline.length - 1] === true) {
                                 varline[varline.length - 1] = false;
                             }
@@ -6721,7 +6911,7 @@ var prettydiff = function prettydiff(api) {
                                                     level[a - 1] = indent;
                                                     return;
                                                 }
-                                                if ((token[c] === ":" && ternary[ternary.length - 1] === false) || (token[c] === "," && assign === false && varline[varline.length - 1] === false)) {
+                                                if ((token[c] === ":" && ternary.length === 0) || (token[c] === "," && assign === false && varline[varline.length - 1] === false)) {
                                                     return;
                                                 }
                                                 if ((c === 0 || token[c - 1] === "{" || token[c - 1] === "x{") || token[c] === "for" || token[c] === "if" || token[c] === "do" || token[c] === "function" || token[c] === "while" || token[c] === "var" || token[c] === "let" || token[c] === "const" || token[c] === "with") {
@@ -6761,12 +6951,14 @@ var prettydiff = function prettydiff(api) {
                                                     build.push(token[c]);
                                                 }
                                                 if (c === lettest) {
-                                                    meta[c]               = a;
-                                                    meta[meta.length - 1] = [
-                                                        build, true
-                                                    ];
-                                                    lettest               = -1;
-                                                    return;
+                                                    meta[c] = a - 1;
+                                                    if (token[c] === "let" || token[c] === "const") {
+                                                        meta[meta.length - 2] = [
+                                                            build, true
+                                                        ];
+                                                    }
+                                                    build   = [];
+                                                    lettest = -1;
                                                 }
                                             }
                                             if (c > 0 && token[c - 1] === "function" && types[c] === "word" && token[c] !== build[build.length - 1]) {
@@ -6837,6 +7029,9 @@ var prettydiff = function prettydiff(api) {
                                                     return;
                                                 }
                                             }
+                                            if (d === 1 && token[c] === "+" && level[c] > 0) {
+                                                level[c] -= 1;
+                                            }
                                         }
                                     }());
                                 }
@@ -6867,7 +7062,6 @@ var prettydiff = function prettydiff(api) {
                             list.pop();
                             listtest.pop();
                             methodtest.pop();
-                            ternary.pop();
                             if (ctoke === "}") {
                                 if (varline[varline.length - 1] === true || (obj[obj.length - 1] === true && ltoke !== "{")) {
                                     if (varlen.length > 0 && assignlist[assignlist.length - 1] === false) {
@@ -6899,24 +7093,47 @@ var prettydiff = function prettydiff(api) {
                                 return level.push("x");
                             }
                             if (ctoke === "?") {
-                                if (ternary.length === 0) {
-                                    ternary.push(true);
-                                } else {
-                                    ternary[ternary.length - 1] = true;
-                                }
+                                ternary.push(a);
+                                indent       += 1;
+                                level[a - 1] = indent;
                             }
                             if (ctoke === ":") {
-                                if (ternary[ternary.length - 1] === false) {
-                                    level[a - 1] = "x";
+                                if (obj[obj.length - 1] === true) {
+                                    if (ternary.length > 0) {
+                                        (function jspretty__algorithm_operator_ternObj() {
+                                            var c = 0,
+                                                d = 0,
+                                                e = ternary[ternary.length - 1];
+                                            for (c = a - 1; c > e; c -= 1) {
+                                                if (types[c] === "end") {
+                                                    d += 1;
+                                                } else if (types[c] === "start" || types[c] === "method") {
+                                                    d -= 1;
+                                                }
+                                                if (d < 0) {
+                                                    return;
+                                                }
+                                            }
+                                            if (d === 0) {
+                                                level[a - 1] = indent;
+                                            }
+                                        }());
+                                    } else {
+                                        level[a - 1] = "x";
+                                    }
+                                } else if (ternary.length > 0) {
+                                    level[a - 1] = indent;
                                 } else {
                                     level[a - 1] = "s";
                                 }
                                 return (function jspretty__algorithm_operator_colon() {
                                     var c      = 0,
                                         d      = 0,
-                                        listin = (varlen.length > 0) ? varlen[varlen.length - 1][varlen[varlen.length - 1].length - 1] + 1 : 0,
+                                        listin = (varlen.length > 0)
+                                            ? varlen[varlen.length - 1][varlen[varlen.length - 1].length - 1] + 1
+                                            : 0,
                                         listop = token[listin],
-                                        assign = (listop === undefined || listop.indexOf("=") > -1) ? false : true;
+                                        assign = (listop !== undefined && listop.indexOf("=") < 0);
                                     if (listin === 0) {
                                         return;
                                     }
@@ -6927,7 +7144,7 @@ var prettydiff = function prettydiff(api) {
                                                 c -= 1;
                                             } while (c > 0 && (types[c] === "comment" || types[c] === "comment-inline"));
                                         }
-                                        if (ternary[ternary.length - 1] === false) {
+                                        if (ternary.length === 0) {
                                             varlen[varlen.length - 1].push(c);
                                         }
                                     }
@@ -6942,19 +7159,19 @@ var prettydiff = function prettydiff(api) {
                                             break;
                                         }
                                         if (d > 0) {
-                                            if (d === 1 && token[c] === "{" && ternary[ternary.length - 1] === false) {
+                                            if (d === 1 && token[c] === "{" && ternary.length === 0) {
                                                 obj[obj.length - 1] = true;
                                             }
                                             break;
                                         }
                                         if (d === 0) {
-                                            if (ternary[ternary.length - 1] === false && (token[c] === "case" || token[c] === "default")) {
+                                            if (ternary.length === 0 && (token[c] === "case" || token[c] === "default")) {
                                                 if (token[a + 1] !== "case") {
                                                     indent += 1;
                                                 }
                                                 return level.push(indent);
                                             }
-                                            if (token[c] === "," && ternary[ternary.length - 1] === false) {
+                                            if (token[c] === "," && ternary.length === 0) {
                                                 obj[obj.length - 1] = true;
                                                 break;
                                             }
@@ -6976,6 +7193,9 @@ var prettydiff = function prettydiff(api) {
                             }
                             if (ctoke === "+") {
                                 if (ltoke.length === jwrap + 2 && (token[a + 1].charAt(0) === "\"" || token[a + 1].charAt(0) === "'")) {
+                                    if (list[list.length - 1] === true || obj[obj.length - 1] === true || methodtest[methodtest.length - 1] === true || ((token[a - 1].charAt(0) === "\"" || token[a - 1].charAt(0) === "'") && (token[a - 2] === "+" || token[a - 2].indexOf("=") > -1 || types[a - 2] === "start"))) {
+                                        return level.push(indent + 2);
+                                    }
                                     return level.push(indent + 1);
                                 }
                                 if ((ltoke.charAt(0) === "\"" || ltoke.charAt(0) === "'") && token[a + 1] !== undefined && (token[a + 1].charAt(0) === "\"" || token[a + 1].charAt(0) === "'") && (token[a - 2] === "=" || token[a - 2] === "(" || (token[a - 2] === "+" && level[a - 2] > 0))) {
@@ -6990,8 +7210,10 @@ var prettydiff = function prettydiff(api) {
                                     return;
                                 }
                             }
-                            level[a - 1] = "s";
-                            if (ctoke.indexOf("=") > -1 && ctoke !== "==" && ctoke !== "===" && ctoke !== "!=" && ctoke !== "!==" && ctoke !== ">=" && ctoke !== "<=" && varlen.length > 0 && varline[varline.length - 1] === false && methodtest[methodtest.length - 1] === false && obj[obj.length - 1] === false) {
+                            if (ctoke !== "?" || ternary.length === 0) {
+                                level[a - 1] = "s";
+                            }
+                            if (ctoke.indexOf("=") > -1 && ctoke !== "==" && ctoke !== "===" && ctoke !== "!=" && ctoke !== "!==" && ctoke !== ">=" && ctoke !== "<=" && varlen.length > 0 && methodtest[methodtest.length - 1] === false && obj[obj.length - 1] === false) {
                                 if (assignlist[assignlist.length - 1] === true) {
                                     (function jspretty__algorithm_operator_assignTest() {
                                         var c = 0,
@@ -7082,7 +7304,7 @@ var prettydiff = function prettydiff(api) {
                         },
                         word       = function jspretty__algorithm_word() {
                             var next    = token[a + 1],
-                                compare = (next === undefined || next === "==" || next === "===" || next === "!=" || next === "!==" || next === ">=" || next === "<=" || next.indexOf("=") < 0) ? false : true;
+                                compare = (next !== undefined && next !== "==" && next !== "===" && next !== "!=" && next !== "!==" && next === ">=" && next !== "<=" && next.indexOf("=") > -1);
                             if (varline[varline.length - 1] === true && (ltoke === "," || ltoke === "var" || ltoke === "let" || ltoke === "const")) {
                                 if (fortest === 0 && (methodtest[methodtest.length - 1] === false || methodtest.length === 0)) {
                                     if (types[a + 1] === "operator" && compare === true && varlen.length > 0 && token[varlen[varlen.length - 1][varlen[varlen.length - 1].length - 1] + 1] !== ":") {
@@ -7110,10 +7332,14 @@ var prettydiff = function prettydiff(api) {
                             if (ctoke === "new") {
                                 (function jspretty__algorithm_word_new() {
                                     var c       = 0,
-                                        nextish = (typeof next === "string") ? next : "",
-                                        apiword = (nextish === "") ? [] : [
-                                            "ActiveXObject", "ArrayBuffer", "AudioContext", "Canvas", "CustomAnimation", "DOMParser", "DataView", "Date", "Error", "EvalError", "FadeAnimation", "FileReader", "Flash", "Float32Array", "Float64Array", "FormField", "Frame", "Generator", "HotKey", "Image", "Iterator", "Intl", "Int16Array", "Int32Array", "Int8Array", "InternalError", "Loader", "Map", "MenuItem", "MoveAnimation", "Notification", "ParallelArray", "Point", "Promise", "Proxy", "RangeError", "Rectangle", "ReferenceError", "Reflect", "RegExp", "ResizeAnimation", "RotateAnimation", "Set", "SQLite", "ScrollBar", "Set", "Shadow", "StopIteration", "Symbol", "SyntaxError", "Text", "TextArea", "Timer", "TypeError", "URL", "Uint16Array", "Uint32Array", "Uint8Array", "Uint8ClampedArray", "URIError", "WeakMap", "WeakSet", "Web", "Window", "XMLHttpRequest"
-                                        ],
+                                        nextish = (typeof next === "string")
+                                            ? next
+                                            : "",
+                                        apiword = (nextish === "")
+                                            ? []
+                                            : [
+                                                "ActiveXObject", "ArrayBuffer", "AudioContext", "Canvas", "CustomAnimation", "DOMParser", "DataView", "Date", "Error", "EvalError", "FadeAnimation", "FileReader", "Flash", "Float32Array", "Float64Array", "FormField", "Frame", "Generator", "HotKey", "Image", "Iterator", "Intl", "Int16Array", "Int32Array", "Int8Array", "InternalError", "Loader", "Map", "MenuItem", "MoveAnimation", "Notification", "ParallelArray", "Point", "Promise", "Proxy", "RangeError", "Rectangle", "ReferenceError", "Reflect", "RegExp", "ResizeAnimation", "RotateAnimation", "Set", "SQLite", "ScrollBar", "Set", "Shadow", "StopIteration", "Symbol", "SyntaxError", "Text", "TextArea", "Timer", "TypeError", "URL", "Uint16Array", "Uint32Array", "Uint8Array", "Uint8ClampedArray", "URIError", "WeakMap", "WeakSet", "Web", "Window", "XMLHttpRequest"
+                                            ],
                                         apilen  = apiword.length;
                                     for (c = 0; c < apilen; c += 1) {
                                         if (nextish === apiword[c]) {
@@ -7308,18 +7534,16 @@ var prettydiff = function prettydiff(api) {
                     }
                 }());
             }
-
             if (jtitanium === true) {
                 token[0] = "";
                 types[0] = "";
                 lines[0] = 0;
             }
-
             if (jmode === "minify") {
                 result = (function jspretty__minify() {
                     var a        = 0,
                         length   = token.length,
-                        comtest  = (jtopcoms === false) ? true : false,
+                        comtest  = (jtopcoms === false),
                         build    = [],
                         letter   = [65],
                         gg       = 0,
@@ -7380,7 +7604,7 @@ var prettydiff = function prettydiff(api) {
                                 toLetter = function jspretty__minify_rename_toLetter() {
                                     var ii  = letter.length - 1,
                                         out = [];
-                                    for (ii; ii > -1; ii -= 1) {
+                                    for (ii = ii; ii > -1; ii -= 1) {
                                         out.push(String.fromCharCode(letter[ii]));
                                     }
                                     return "a" + out.join("");
@@ -7493,10 +7717,12 @@ var prettydiff = function prettydiff(api) {
                             folderItem  = [],
                             comfold     = -1,
                             data        = [
-                                "<div class='beautify' data-prettydiff-ignore" + "='true'><ol class='count'>", "<li>", 1, "</li>"
+                                "<div class='beautify' data-prettydiff-ignore='true'><ol class='count'>", "<li>", 1, "</li>"
                             ],
                             folder      = function jspretty__resultScope_folder() {
-                                var datalen = (data.length - (commentfix * 3) > 0) ? data.length - (commentfix * 3) : 1,
+                                var datalen = (data.length - (commentfix * 3) > 0)
+                                        ? data.length - (commentfix * 3)
+                                        : 1,
                                     index   = a,
                                     start   = data[datalen + 1] || 1,
                                     assign  = true,
@@ -7504,7 +7730,7 @@ var prettydiff = function prettydiff(api) {
                                 if (types[a] === "comment" && comfold === -1) {
                                     comfold = a;
                                 } else if (types[a] !== "comment") {
-                                    index = meta[a][0];
+                                    index = meta[a];
                                     do {
                                         kk -= 1;
                                     } while (token[kk] !== "function" && kk > -1);
@@ -7529,13 +7755,32 @@ var prettydiff = function prettydiff(api) {
                                 ]);
                             },
                             foldclose   = function jspretty__resultScope_foldclose() {
-                                var end = (function jspretty__resultScope_foldclose_end() {
+                                var end  = (function jspretty__resultScope_foldclose_end() {
                                         if (comfold > -1 || folderItem[folderItem.length - 1][2] === true) {
                                             return linecount - commentfix - 1;
                                         }
                                         return linecount - commentfix;
                                     }()),
-                                    gg  = 0;
+                                    semi = (/(>;<\/em>)$/).test(token[a]),
+                                    gg   = 0,
+                                    lets = false;
+                                if (semi === true) {
+                                    end -= 1;
+                                    for (gg = build.length - 1; gg > 0; gg -= 1) {
+                                        if (build[gg] === "let" || build[gg] === "const") {
+                                            lets = true;
+                                        }
+                                        if (build[gg].indexOf("><li") > 0) {
+                                            build[gg] = build[gg].replace(/class\='l\d+'/, "class='l" + (scope + 1) + "'");
+                                            if (lets === true) {
+                                                break;
+                                            }
+                                        }
+                                        if (build[gg].indexOf("<em class='l" + scope + "'>" + tab) > -1) {
+                                            build[gg] = build[gg].replace("<em class='l" + scope + "'>" + tab, "<em class='l" + (scope + 1) + "'>" + tab);
+                                        }
+                                    }
+                                }
                                 if (a > 1 && token[a].indexOf("}</em>") === token[a].length - 6 && token[a - 1].indexOf("{</em>") === token[a - 1].length - 6) {
                                     for (gg = data.length - 1; gg > 0; gg -= 1) {
                                         if (typeof data[gg] === "string" && data[gg].charAt(0) === "-") {
@@ -7600,7 +7845,6 @@ var prettydiff = function prettydiff(api) {
                                                     return;
                                                 }
                                                 if (token[aa] === "let" || token[aa] === "const") {
-                                                    metameta.splice(ff, 1);
                                                     token[ee] = "<em class='s" + scope + "'>" + varbuild[0] + "</em>";
                                                 }
                                             }
@@ -7622,7 +7866,7 @@ var prettydiff = function prettydiff(api) {
                                     if (lettest === true) {
                                         ee -= 1;
                                     }
-                                    for (ee; ee > a; ee -= 1) {
+                                    for (ee = ee; ee > a; ee -= 1) {
                                         if (types[ee] === "word") {
                                             varbuild = token[ee].split(" ");
                                             for (ff = 0; ff < hh; ff += 1) {
@@ -7639,7 +7883,6 @@ var prettydiff = function prettydiff(api) {
                                                     } else if (token[ee - 1] === "case" || token[ee + 1] !== ":" || (token[ee + 1] === ":" && level[ee] !== "x")) {
                                                         if (lettest === true) {
                                                             if (token[ee - 1] === "let" || token[ee - 1] === "const") {
-                                                                metameta.splice(ff, 1);
                                                                 token[ee] = "<em class='s" + scope + "'>" + varbuild[0] + "</em>";
                                                             } else if (token[ee - 1] === ",") {
                                                                 letcomma();
@@ -7678,7 +7921,7 @@ var prettydiff = function prettydiff(api) {
                                     if (lettest === true) {
                                         ee -= 1;
                                     }
-                                    for (ee; ee < metax; ee += 1) {
+                                    for (ee = ee; ee < metax; ee += 1) {
                                         if (types[ee] === "end") {
                                             adjustment -= 1;
                                         } else if (types[ee] === "start" || types[ee] === "method") {
@@ -7696,7 +7939,7 @@ var prettydiff = function prettydiff(api) {
                                 var aa = jchar,
                                     bb = jsize,
                                     cc = [];
-                                for (bb; bb > 0; bb -= 1) {
+                                for (bb = bb; bb > 0; bb -= 1) {
                                     cc.push(aa);
                                 }
                                 return cc.join("");
@@ -7738,7 +7981,7 @@ var prettydiff = function prettydiff(api) {
                                         }
                                     }
                                 }
-                                for (dd; dd < x; dd += 1) {
+                                for (dd = dd; dd < x; dd += 1) {
                                     build.push(tab);
                                 }
                             },
@@ -8099,19 +8342,6 @@ var prettydiff = function prettydiff(api) {
                                         scope = 16;
                                     }
                                     build.push(token[a]);
-                                    if (token[a] === "let" || token[a] === "const") {
-                                        buildlen = build.length - 1;
-                                        do {
-                                            buildlen -= 1;
-                                        } while (buildlen > 0 && build[buildlen].indexOf("</li><li") < 0);
-                                        if (scope > 1) {
-                                            build[buildlen]     = build[buildlen].replace(/class\='l\d+'/, "class='l" + scope + "'");
-                                            build[buildlen + 1] = build[buildlen + 1] + "<em class='l" + (scope - 1) + "'>" + tab + "</em>";
-                                            if (build[buildlen + 2] === tab) {
-                                                build.splice(buildlen + 2, 1);
-                                            }
-                                        }
-                                    }
                                 } else if (typeof meta[a] !== "string" && typeof meta[a] !== "number") {
                                     build.push(token[a]);
                                     scope    -= 1;
@@ -8141,14 +8371,14 @@ var prettydiff = function prettydiff(api) {
                                             buildlen = build.length - 1;
                                             if (build[buildlen].indexOf("<li") < 0) {
                                                 do {
-                                                    build[buildlen] = build[buildlen].replace(/<em class\='[a-z]\d+'>/g, "").replace(/<\/em>/g, "");
+                                                    build[buildlen] = build[buildlen].replace(/<em\ class\='[a-z]\d+'>/g, "").replace(/<\/em>/g, "");
                                                     buildlen        -= 1;
                                                     if (buildlen > 0 && build[buildlen] === undefined) {
                                                         buildlen -= 1;
                                                     }
                                                 } while (buildlen > 0 && build[buildlen - 1] !== undefined && build[buildlen].indexOf("<li") < 0);
                                             }
-                                            if ((/^(<em>&#xA;<\/em><\/li><li class='l\d+'>)$/).test(build[buildlen - 1]) === true) {
+                                            if ((/^(<em>&#xA;<\/em><\/li><li\ class='l\d+'>)$/).test(build[buildlen - 1]) === true) {
                                                 build[buildlen - 1] = build[buildlen - 1].replace(/class\='l\d+'/, "class='c0'");
                                             }
                                             build[buildlen] = build[buildlen].replace(/class\='l\d+'/, "class='c0'");
@@ -8197,7 +8427,7 @@ var prettydiff = function prettydiff(api) {
                                     }
                                 }
                             }
-                            if ((token[a] === ";" || token[a] === "x;") && token[a + 1] === "x}" && ((/<em class='s\d+'>\}<\/em>/).test(token[a + 2]) === true || token[a + 2] === "x}")) {
+                            if ((token[a] === ";" || token[a] === "x;") && token[a + 1] === "x}" && ((/<em\ class='s\d+'>\}<\/em>/).test(token[a + 2]) === true || token[a + 2] === "x}")) {
                                 rl(indent);
                             } else if (token[a] === "x{" && level[a] === "s" && level[a - 1] === "s") {
                                 build.push("");
@@ -8265,7 +8495,7 @@ var prettydiff = function prettydiff(api) {
                                 var aa = jchar,
                                     bb = jsize,
                                     cc = [];
-                                for (bb; bb > 0; bb -= 1) {
+                                for (bb = bb; bb > 0; bb -= 1) {
                                     cc.push(aa);
                                 }
                                 return cc.join("");
@@ -8529,6 +8759,7 @@ var prettydiff = function prettydiff(api) {
                         var originalSize = jsource.length - 1,
                             noOfLines    = result.split("\n").length,
                             newlines     = stats.space.newline,
+                            percent      = 0,
                             total        = {
                                 chars  : 0,
                                 comment: {
@@ -8548,10 +8779,12 @@ var prettydiff = function prettydiff(api) {
                             },
                             output       = [],
                             zero         = function jspretty__report_zero(x, y) {
+                                var ratio = 0;
                                 if (y === 0) {
                                     return "0.00%";
                                 }
-                                return ((x / y) * 100).toFixed(2) + "%";
+                                ratio = ((x / y) * 100);
+                                return ratio.toFixed(2) + "%";
                             };
                         total.syntax.chars = total.syntax.token + stats.operator.chars;
                         total.syntax.token += stats.operator.token;
@@ -8589,8 +8822,8 @@ var prettydiff = function prettydiff(api) {
                         }
                         output.push(" of the keyword <strong>new</strong> counted.</p>");
                         output.push("<table class='analysis' summary='JavaScript character size comparison'><caption>" +
-                            "JavaScript data report</caption><thead><tr><th>Data Label</th><th>Input</th><th>" +
-                            "Output</th><th>Literal Increase</th><th>Percentage Increase</th></tr>");
+                                "JavaScript data report</caption><thead><tr><th>Data Label</th><th>Input</th><th>" +
+                                "Output</th><th>Literal Increase</th><th>Percentage Increase</th></tr>");
                         output.push("</thead><tbody><tr><th>Total Character Size</th><td>");
                         output.push(originalSize);
                         output.push("</td><td>");
@@ -8598,7 +8831,8 @@ var prettydiff = function prettydiff(api) {
                         output.push("</td><td>");
                         output.push(result.length - originalSize);
                         output.push("</td><td>");
-                        output.push((((result.length - originalSize) / originalSize) * 100).toFixed(2));
+                        percent = (((result.length - originalSize) / originalSize) * 100);
+                        output.push(percent.toFixed(2));
                         output.push("%</td></tr><tr><th>Total Lines of Code</th><td>");
                         output.push(newlines);
                         output.push("</td><td>");
@@ -8606,19 +8840,20 @@ var prettydiff = function prettydiff(api) {
                         output.push("</td><td>");
                         output.push(noOfLines - newlines);
                         output.push("</td><td>");
-                        output.push((((noOfLines - newlines) / newlines) * 100).toFixed(2));
+                        percent = (((noOfLines - newlines) / newlines) * 100);
+                        output.push(percent.toFixed(2));
                         output.push("%</td></tr></tbody></table>");
                         output.push("<table class='analysis' summary='JavaScript component analysis'><caption>JavaScr" +
-                            "ipt component analysis</caption><thead><tr><th>JavaScript Component</th><th>Comp" +
-                            "onent Quantity</th><th>Percentage Quantity from Section</th>");
+                                "ipt component analysis</caption><thead><tr><th>JavaScript Component</th><th>Comp" +
+                                "onent Quantity</th><th>Percentage Quantity from Section</th>");
                         output.push("<th>Percentage Qauntity from Total</th><th>Character Length</th><th>Percentage L" +
-                            "ength from Section</th><th>Percentage Length from Total</th></tr></thead><tbody>");
+                                "ength from Section</th><th>Percentage Length from Total</th></tr></thead><tbody>");
                         output.push("<tr><th>Total Accounted</th><td>");
                         output.push(total.token);
                         output.push("</td><td>100.00%</td><td>100.00%</td><td>");
                         output.push(total.chars);
                         output.push("</td><td>100.00%</td><td>100.00%</td></tr><tr><th colspan='7'>Comments</th></tr>" +
-                            "<tr><th>Block Comments</th><td>");
+                                "<tr><th>Block Comments</th><td>");
                         output.push(stats.commentBlock.token);
                         output.push("</td><td>");
                         output.push(zero(stats.commentBlock.token, total.comment.token));
@@ -8651,7 +8886,7 @@ var prettydiff = function prettydiff(api) {
                         output.push("</td><td>100.00%</td><td>");
                         output.push(zero(total.comment.chars, total.chars));
                         output.push("</td></tr><tr><th colspan='7'>Whitespace Outside of Strings and Comments</th></t" +
-                            "r><tr><th>New Lines</th><td>");
+                                "r><tr><th>New Lines</th><td>");
                         output.push(stats.space.newline);
                         output.push("</td><td>");
                         output.push(zero(stats.space.newline, total.space));
@@ -8752,7 +8987,7 @@ var prettydiff = function prettydiff(api) {
                         output.push("</td><td>100.00%</td><td>");
                         output.push(zero(total.literal.chars, total.chars));
                         output.push("</td></tr><tr><th colspan='7'>Syntax Characters</th></tr><tr><th>Quote Character" +
-                            "s</th><td>");
+                                "s</th><td>");
                         output.push(stats.string.quote);
                         output.push("</td><td>");
                         output.push(zero(stats.string.quote, total.syntax.token));
@@ -8848,35 +9083,63 @@ var prettydiff = function prettydiff(api) {
 
         //Library to parse XML/HTML/markup
         markuppretty = function markuppretty(args) {
-            var maccessibility  = (args.accessibility === true || args.accessibility === "true") ? true : false,
-                mbraceline      = (args.braceline === true || args.braceline === "true") ? true : false,
-                mbracepadding   = (args.bracepadding === true || args.bracepadding === "true") ? true : false,
-                mbraces         = (args.braces === "allman") ? "allman" : "knr",
-                mchar           = (typeof args.inchar === "string" && args.inchar.length > 0) ? args.inchar : " ",
-                mcomm           = (typeof args.comments === "string" && args.comments === "noindent") ? "noindent" : ((args.comments === "nocomment") ? "nocomment" : "indent"),
-                mconditional    = (args.html === true || args.conditional === true || args.conditional === "true") ? true : false,
-                mcont           = (args.content === "true" || args.content === true) ? true : false,
-                mcorrect        = (args.correct === true || args.correct === "true") ? true : false,
-                mcssinsertlines = (args.cssinsertlines === true || args.cssinsertlines === "true") ? true : false,
-                mforce          = (args.force_indent === "true" || args.force_indent === true) ? true : false,
-                mhtml           = (args.html === "true" || args.html === true) ? true : false,
-                minlevel        = (isNaN(args.inlevel) === true) ? 0 : Number(args.inlevel),
-                mjsx            = (args.jsx === true || args.jsx === "true") ? true : false,
-                mmode           = (args.mode === "parse" || args.mode === "diff" || args.mode === "minify") ? args.mode : "beautify",
-                mobfuscate      = (args.obfuscate === true || args.obfuscate === "true") ? true : false,
-                mobjsort        = (args.objsort === "true" || args.objsort === true) ? true : false,
-                mpreserve       = (args.preserve === false || args.preserve === "false") ? false : true,
-                mquoteConvert   = (args.quoteConvert === "single" || args.quoteConvert === "double") ? args.quoteConvert : "none",
-                msize           = (isNaN(args.insize) === true) ? 4 : Number(args.insize),
-                msource         = (typeof args.source === "string" && args.source.length > 0) ? args.source : "Error: no source code supplied to markuppretty!",
-                mspace          = (args.space === false || args.space === "false") ? false : true,
-                mstyle          = (typeof args.style === "string" && args.style === "noindent") ? "noindent" : "indent",
-                mstyleguide     = (typeof args.styleguide === "string") ? args.styleguide : "none",
-                mtagmerge       = (args.tagmerge === true || args.tagmerge === "true") ? true : false,
-                mtopcomments    = (args.top_comments === true || args.top_comments === "true") ? true : false,
-                mwrap           = (isNaN(args.wrap) === true || mjsx === true) ? 0 : Number(args.wrap),
-                mvarword        = (args.varword === "each" || args.varword === "list") ? args.varword : "none",
-                mvertical       = (args.vertical === "jsonly") ? "jsonly" : ((args.vertical === true || args.vertical === "true") ? true : false),
+            var maccessibility  = (args.accessibility === true || args.accessibility === "true"),
+                mbraceline      = (args.braceline === true || args.braceline === "true"),
+                mbracepadding   = (args.bracepadding === true || args.bracepadding === "true"),
+                mbraces         = (args.braces === "allman")
+                    ? "allman"
+                    : "knr",
+                mchar           = (typeof args.inchar === "string" && args.inchar.length > 0)
+                    ? args.inchar
+                    : " ",
+                mcomm           = (typeof args.comments === "string" && args.comments === "noindent")
+                    ? "noindent"
+                    : ((args.comments === "nocomment")
+                        ? "nocomment"
+                        : "indent"),
+                mconditional    = (args.html === true || args.conditional === true || args.conditional === "true"),
+                mcont           = (args.content === "true" || args.content === true),
+                mcorrect        = (args.correct === true || args.correct === "true"),
+                mcssinsertlines = (args.cssinsertlines === true || args.cssinsertlines === "true"),
+                mforce          = (args.force_indent === "true" || args.force_indent === true),
+                mhtml           = (args.html === "true" || args.html === true),
+                minlevel        = (isNaN(args.inlevel) === true)
+                    ? 0
+                    : Number(args.inlevel),
+                mjsx            = (args.jsx === true || args.jsx === "true"),
+                mmode           = (args.mode === "parse" || args.mode === "diff" || args.mode === "minify")
+                    ? args.mode
+                    : "beautify",
+                mobfuscate      = (args.obfuscate === true || args.obfuscate === "true"),
+                mobjsort        = (args.objsort === "true" || args.objsort === true),
+                mpreserve       = (args.preserve !== false && args.preserve !== "false"),
+                mquoteConvert   = (args.quoteConvert === "single" || args.quoteConvert === "double")
+                    ? args.quoteConvert
+                    : "none",
+                msize           = (isNaN(args.insize) === true)
+                    ? 4
+                    : Number(args.insize),
+                msource         = (typeof args.source === "string" && args.source.length > 0)
+                    ? args.source
+                    : "Error: no source code supplied to markuppretty!",
+                mspace          = (args.space !== false && args.space !== "false"),
+                mstyle          = (typeof args.style === "string" && args.style === "noindent")
+                    ? "noindent"
+                    : "indent",
+                mstyleguide     = (typeof args.styleguide === "string")
+                    ? args.styleguide
+                    : "none",
+                mtagmerge       = (args.tagmerge === true || args.tagmerge === "true"),
+                mtopcomments    = (args.top_comments === true || args.top_comments === "true"),
+                mwrap           = (isNaN(args.wrap) === true || mjsx === true)
+                    ? 0
+                    : Number(args.wrap),
+                mvarword        = (args.varword === "each" || args.varword === "list")
+                    ? args.varword
+                    : "none",
+                mvertical       = (args.vertical === "jsonly")
+                    ? "jsonly"
+                    : (args.vertical === true || args.vertical === "true"),
                 stats           = {
                     cdata      : [
                         0, 0
@@ -8943,11 +9206,12 @@ var prettydiff = function prettydiff(api) {
                 ids             = [],
                 parseError      = [],
                 line            = 1,
-
                 //What is the lowercase tag name of the provided token?
                 tagName         = function markuppretty__tagName(el) {
                     var space = el.replace(/\s+/, " ").indexOf(" "),
-                        name  = (space < 0) ? el.slice(1, el.length - 1) : el.slice(1, space).toLowerCase();
+                        name  = (space < 0)
+                            ? el.slice(1, el.length - 1)
+                            : el.slice(1, space).toLowerCase();
                     return name;
                 },
                 attrName        = function markuppretty__attrName(atty) {
@@ -9010,7 +9274,6 @@ var prettydiff = function prettydiff(api) {
             } else {
                 mcont = false;
             }
-
             (function markuppretty__tokenize() {
                 var a        = 0,
                     b        = msource.split(""),
@@ -9057,7 +9320,7 @@ var prettydiff = function prettydiff(api) {
                             preserve  = false,
                             stest     = false,
                             liend     = false,
-                            ignore    = false,
+                            ignoreme  = false,
                             quotetest = false,
                             parseFail = false,
                             singleton = false,
@@ -9067,7 +9330,6 @@ var prettydiff = function prettydiff(api) {
                         attrs.push([]);
                         linen.push(line);
                         ext = false;
-
                         //this complex series of conditions determines an elements delimiters
                         //look to the types being pushed to quickly reason about the logic
                         //no type is pushed for start tags or singleton tags just yet some types set the
@@ -9160,12 +9422,11 @@ var prettydiff = function prettydiff(api) {
                             end = "%]";
                             types.push("template");
                         }
-
                         //This loop is the logic that parses tags and attributes
                         //If the attribute data-prettydiff-ignore is present the `ignore` flag is set
                         //The ignore flag is identical to the preserve flag
                         lastchar = end.charAt(end.length - 1);
-                        for (a; a < c; a += 1) {
+                        for (a = a; a < c; a += 1) {
                             if (b[a] === "\n") {
                                 line += 1;
                             }
@@ -9180,7 +9441,7 @@ var prettydiff = function prettydiff(api) {
                                     stest = false;
                                     quote = jsxquote;
                                     output.pop();
-                                    for (a; a < c; a += 1) {
+                                    for (a = a; a < c; a += 1) {
                                         if (b[a] === "\n") {
                                             line += 1;
                                         }
@@ -9191,7 +9452,7 @@ var prettydiff = function prettydiff(api) {
                                                 element = attribute.join("").replace(/\s+/g, " ");
                                                 name    = attrName(element)[0];
                                                 if (name === "data-prettydiff-ignore") {
-                                                    ignore = true;
+                                                    ignoreme = true;
                                                 } else if (name === "id") {
                                                     ids.push(element.slice(name.length + 1, element.length));
                                                 }
@@ -9202,7 +9463,6 @@ var prettydiff = function prettydiff(api) {
                                                 break;
                                             }
                                             if ((/\s/).test(b[a]) === true) {
-
                                                 //testing for a run of spaces between an attribute's =
                                                 //and a quoted value. Unquoted values separated by space
                                                 //are separate attributes
@@ -9226,7 +9486,7 @@ var prettydiff = function prettydiff(api) {
                                                     element = attribute.join("").replace(/\s+/g, " ");
                                                     name    = attrName(element)[0];
                                                     if (name === "data-prettydiff-ignore") {
-                                                        ignore = true;
+                                                        ignoreme = true;
                                                     } else if (name === "id") {
                                                         ids.push(element.slice(name.length + 1, element.length));
                                                     }
@@ -9315,7 +9575,7 @@ var prettydiff = function prettydiff(api) {
                                                 }
                                                 name = attrName(quote)[0];
                                                 if (name === "data-prettydiff-ignore") {
-                                                    ignore = true;
+                                                    ignoreme = true;
                                                 } else if (name === "id") {
                                                     ids.push(quote.slice(name.length + 2, quote.length - 1));
                                                 } else if (name === "schemaLocation") {
@@ -9387,7 +9647,6 @@ var prettydiff = function prettydiff(api) {
                                 }
                             }
                         }
-
                         //nopush flags mean an early exit
                         if (nopush === true) {
                             attrs.pop();
@@ -9397,7 +9656,6 @@ var prettydiff = function prettydiff(api) {
                             space = minspace;
                             return;
                         }
-
                         //fix singleton tags and sort attributes
                         if (attrs[attrs.length - 1].length > 0) {
                             e = attrs.length - 1;
@@ -9409,9 +9667,7 @@ var prettydiff = function prettydiff(api) {
                                 attrs[attrs.length - 1] = safeSort(attrs[attrs.length - 1]);
                             }
                         }
-
                         element = output.join("");
-
                         if (parseFail === true) {
                             if (element.indexOf("<!--<![") === 0) {
                                 parseError.pop();
@@ -9423,7 +9679,6 @@ var prettydiff = function prettydiff(api) {
                                 }
                             }
                         }
-
                         //cheat identifies HTML singleton elements as singletons even if formatted as
                         //start tags
                         cheat = (function markuppretty__tokenize_tag_cheat() {
@@ -9433,7 +9688,6 @@ var prettydiff = function prettydiff(api) {
                                 value = "",
                                 type  = "",
                                 d     = 0;
-
                             atty = token[token.length - 1];
                             if (types[types.length - 1] === "end") {
                                 if (types[types.length - 2] === "singleton" && atty.charAt(atty.length - 2) !== "/" && "/" + tagName(atty) === tname) {
@@ -9471,9 +9725,7 @@ var prettydiff = function prettydiff(api) {
                                     reqs.push(value);
                                 }
                             }
-
                             if (tname === "script" || tname === "style") {
-
                                 //identify if there is embedded code requiring an external parser
                                 if (tname === "script" && (type === "" || type === "text/javascript" || type === "application/javascript" || type === "application/x-javascript" || type === "text/ecmascript" || type === "application/ecmascript" || type === "text/jsx" || type === "application/jsx" || type === "text/cjs")) {
                                     ext = true;
@@ -9482,7 +9734,6 @@ var prettydiff = function prettydiff(api) {
                                 }
                             }
                             if (mhtml === true) {
-
                                 //simple means of looking for missing li end tags
                                 if (tname === "li") {
                                     if (litag === list) {
@@ -9506,30 +9757,27 @@ var prettydiff = function prettydiff(api) {
                             }
                             return false;
                         }());
-
                         if (singleton === true) {
                             return;
                         }
-
                         //am I a singleton or a start type?
-                        if (simple === true && ignore === false) {
+                        if (simple === true && ignoreme === false) {
                             if (cheat === true || (output[output.length - 2] === "/" && output[output.length - 1] === ">")) {
                                 types.push("singleton");
                             } else {
                                 types.push("start");
                             }
                         }
-
                         //additional logic is required to find the end of a tag with the attribute
                         //data-prettydiff-ignore
-                        if (simple === true && preserve === false && ignore === true && end === ">" && element.slice(element.length - 2) !== "/>") {
+                        if (simple === true && preserve === false && ignoreme === true && end === ">" && element.slice(element.length - 2) !== "/>") {
                             if (cheat === true) {
                                 types.push("singleton");
                             } else {
                                 preserve = true;
                                 types.push("ignore");
                                 a += 1;
-                                for (a; a < c; a += 1) {
+                                for (a = a; a < c; a += 1) {
                                     if (b[a] === "\n") {
                                         line += 1;
                                     }
@@ -9585,7 +9833,6 @@ var prettydiff = function prettydiff(api) {
                             }
                         }
                         element = output.join("");
-
                         //some template tags can be evaluated as a block start/end based on syntax alone
                         if (types[types.length - 1] === "template") {
                             if ((/^(<%\s*\})/).test(element) === true || (/^(\[%\s*\})/).test(element) === true || (/^(\{@\s*\})/).test(element) === true) {
@@ -9594,7 +9841,6 @@ var prettydiff = function prettydiff(api) {
                                 types[types.length - 1] = "template_start";
                             }
                         }
-
                         //HTML5 does not require an end tag for an opening list item <li>
                         //this logic temprorarily creates a pseudo end tag
                         if (liend === true && (mmode === "beautify" || mmode === "diff")) {
@@ -9626,11 +9872,10 @@ var prettydiff = function prettydiff(api) {
                         if (ext === true) {
                             name = tagName(token[token.length - 1]);
                         }
-                        for (a; a < c; a += 1) {
+                        for (a = a; a < c; a += 1) {
                             if (b[a] === "\n") {
                                 line += 1;
                             }
-
                             //external code requires additional parsing to look for the appropriate
                             //end tag, but that end tag cannot be quoted or commented
                             if (ext === true) {
@@ -9693,7 +9938,6 @@ var prettydiff = function prettydiff(api) {
                             output.push(b[a]);
                         }
                     };
-
                 for (a = 0; a < c; a += 1) {
                     if (ext === true) {
                         content();
@@ -9714,7 +9958,6 @@ var prettydiff = function prettydiff(api) {
                 }
                 lines[0] = 0;
             }());
-
             if (mmode === "parse") {
                 (function markuppretty__parse() {
                     var a      = 0,
@@ -9738,7 +9981,7 @@ var prettydiff = function prettydiff(api) {
                         };
                     for (a = 0; a < c; a += 1) {
                         if (attrs[a].length > 0) {
-                            token[a] = token[a].replace(" ", " " + attrs[a].join(" ")).replace(/( \/>)$/, "/>");
+                            token[a] = token[a].replace(" ", " " + attrs[a].join(" ")).replace(/(\ \/>)$/, "/>");
                         }
                         if (token[a] === "</prettydiffli>") {
                             if (mcorrect === true) {
@@ -9768,7 +10011,6 @@ var prettydiff = function prettydiff(api) {
                     types: types
                 };
             }
-
             if (mmode === "minify") {
                 (function markuppretty__minify() {
                     var a      = 0,
@@ -9813,7 +10055,6 @@ var prettydiff = function prettydiff(api) {
                     }
                 }());
             }
-
             if (mmode === "beautify" || mmode === "diff") {
                 (function markuppretty__beautify() {
                     var a            = 0,
@@ -9825,14 +10066,14 @@ var prettydiff = function prettydiff(api) {
                         cdataE       = "",
                         commentS     = "",
                         commentE     = "",
-                        cdataStart   = (/^(\s*(\/)*<\!?\[+[A-Z]+\[+)/),
+                        cdataStart   = (/^(\s*(\/)*<!?\[+[A-Z]+\[+)/),
                         cdataEnd     = (/((\/)*\]+>\s*)$/),
-                        commentStart = (/^(\s*<\!\-\-)/),
-                        commentEnd   = (/((\/\/)?\-\->\s*)$/),
+                        commentStart = (/^(\s*<!--)/),
+                        commentEnd   = (/((\/\/)?-->\s*)$/),
                         tab          = (function markuppretty__beautify_tab() {
                             var b      = msize,
                                 output = [];
-                            for (b; b > -1; b -= 1) {
+                            for (b = b; b > -1; b -= 1) {
                                 output.push(mchar);
                             }
                             return new RegExp("^(" + output.join("") + "+)");
@@ -9872,7 +10113,7 @@ var prettydiff = function prettydiff(api) {
                                     for (b = a - 1; b > -1; b -= 1) {
                                         if (types[b - 1] !== "comment" && types[b] === "comment") {
                                             if (lines[b] === 0) {
-                                                for (b; b < a; b += 1) {
+                                                for (b = b; b < a; b += 1) {
                                                     level[b] = "x";
                                                 }
                                                 return level.push("x");
@@ -9915,7 +10156,9 @@ var prettydiff = function prettydiff(api) {
                                 comments    : mcomm,
                                 correct     : mcorrect,
                                 inchar      : mchar,
-                                inlevel     : (mstyle === "noindent") ? 0 : indent,
+                                inlevel     : (mstyle === "noindent")
+                                    ? 0
+                                    : indent,
                                 insize      : msize,
                                 mode        : "beautify",
                                 objsort     : mobjsort,
@@ -9925,7 +10168,7 @@ var prettydiff = function prettydiff(api) {
                                 space       : mspace,
                                 styleguide  : mstyleguide,
                                 varword     : mvarword,
-                                vertical    : (mvertical === "jsonly" || mvertical === true || mvertical === "true") ? true : false
+                                vertical    : (mvertical === "jsonly" || mvertical === true || mvertical === "true")
                             });
                             list     = tab.exec(token[a]);
                             if (list !== null) {
@@ -9969,12 +10212,14 @@ var prettydiff = function prettydiff(api) {
                                 comm          : mcomm,
                                 cssinsertlines: mcssinsertlines,
                                 inchar        : mchar,
-                                inlevel       : (mstyle === "noindent") ? 0 : indent,
+                                inlevel       : (mstyle === "noindent")
+                                    ? 0
+                                    : indent,
                                 insize        : msize,
                                 mode          : "beautify",
                                 objsort       : mobjsort,
                                 source        : token[a],
-                                vertical      : (mvertical === true || mvertical === "true") ? true : false
+                                vertical      : (mvertical === true || mvertical === "true")
                             });
                             list     = tab.exec(token[a]);
                             if (list !== null) {
@@ -10042,7 +10287,6 @@ var prettydiff = function prettydiff(api) {
                     level[0] = 0;
                 }());
             }
-
             return (function markuppretty__apply() {
                 var a       = 0,
                     c       = level.length,
@@ -10105,7 +10349,7 @@ var prettydiff = function prettydiff(api) {
                                 len += 1;
                             }
                             if (mwrap === 0 || len <= mwrap) {
-                                token[a] = token[a].replace(" ", " " + atty).replace(/( \/>)$/, "/>");
+                                token[a] = token[a].replace(" ", " " + atty).replace(/(\ \/>)$/, "/>");
                                 return;
                             }
                             content.push(token[a].slice(0, token[a].indexOf(" ")));
@@ -10123,7 +10367,7 @@ var prettydiff = function prettydiff(api) {
                                 wordslen += list[b].length;
                             }
                             content.push(token[a].slice(token[a].indexOf(" ") + 1));
-                            token[a] = content.join("").replace(/( \/>)$/, "/>");
+                            token[a] = content.join("").replace(/(\ \/>)$/, "/>");
                         } else {
                             list = token[a].split(" ");
                             len  = list.length;
@@ -10159,7 +10403,7 @@ var prettydiff = function prettydiff(api) {
                             if (content.length > 0 && content[content.length - 1].charAt(0) === "\n") {
                                 content.pop();
                             }
-                            token[a] = content.join("").replace(/( \/>)$/, "/>");
+                            token[a] = content.join("").replace(/(\ \/>)$/, "/>");
                         }
                     },
                     //JSX tags may contain comments, which are captured as
@@ -10218,9 +10462,9 @@ var prettydiff = function prettydiff(api) {
                     } else if (((types[a] === "content" && mwrap > 0 && token[a].length > mwrap) || attrs[a].length > 0) && mmode === "beautify") {
                         wrap();
                     } else if (attrs[a].length > 0) {
-                        token[a] = token[a].replace(" ", " " + attrs[a].join(" ")).replace(/( \/>)$/, "/>");
+                        token[a] = token[a].replace(" ", " " + attrs[a].join(" ")).replace(/(\ \/>)$/, "/>");
                     } else if (types[a] === "singleton") {
-                        token[a] = token[a].replace(/( \/>)$/, "/>");
+                        token[a] = token[a].replace(/(\ \/>)$/, "/>");
                     }
                     if (token[a] === "</prettydiffli>" && mcorrect === true) {
                         token[a] = "</li>";
@@ -10268,7 +10512,7 @@ var prettydiff = function prettydiff(api) {
                             },
                             analysis      = function markuppretty__apply_summary_analysis(arr) {
                                 var x       = arr.length,
-                                    idtest  = (arr === ids) ? true : false,
+                                    idtest  = (arr === ids),
                                     y       = 0,
                                     data    = [],
                                     content = [];
@@ -10413,7 +10657,6 @@ var prettydiff = function prettydiff(api) {
                                             }
                                         }
                                         attr       = [];
-
                                         //obsolete tags
                                         b          = presentationEl.length;
                                         violations += b;
@@ -10436,7 +10679,6 @@ var prettydiff = function prettydiff(api) {
                                         } else {
                                             attr.push("<h4><strong>0</strong> obsolete HTML tags</h4>");
                                         }
-
                                         //obsolete attributes
                                         b = presentationAt.length;
                                         if (b > 0) {
@@ -10448,7 +10690,7 @@ var prettydiff = function prettydiff(api) {
                                                 attr.push("s");
                                             }
                                             attr.push(" containing obsolete or inappropriate attributes</h4> <p>Obsolete elements do no" +
-                                                "t appropriately describe content.</p> <ol>");
+                                                    "t appropriately describe content.</p> <ol>");
                                             for (x = 0; x < b; x += 1) {
                                                 tagname = token[presentationAt[x][0]].replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(attrs[presentationAt[x][0]][presentationAt[x][1]], "<strong>" + attrs[presentationAt[x][0]][presentationAt[x][1]] + "</strong>");
                                                 if (x < b - 1 && presentationAt[x][0] === presentationAt[x + 1][0]) {
@@ -10469,9 +10711,8 @@ var prettydiff = function prettydiff(api) {
                                             attr.push("</ol>");
                                         } else {
                                             attr.push("<h4><strong>0</strong> HTML tags containing obsolete or inappropriate attributes" +
-                                                "</h4>");
+                                                    "</h4>");
                                         }
-
                                         //form controls missing a required 'id' attribute
                                         b          = formnoID.length;
                                         violations += b;
@@ -10483,7 +10724,7 @@ var prettydiff = function prettydiff(api) {
                                                 attr.push("s");
                                             }
                                             attr.push(" missing a required <em>id</em> attribute</h4> <p>The id attribute is required t" +
-                                                "o bind a point of interaction to an HTML label.</p> <ol>");
+                                                    "o bind a point of interaction to an HTML label.</p> <ol>");
                                             for (x = 0; x < b; x += 1) {
                                                 attr.push("<li><code>");
                                                 attr.push(token[formnoID[x]].replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;"));
@@ -10494,9 +10735,9 @@ var prettydiff = function prettydiff(api) {
                                             attr.push("</ol>");
                                         } else {
                                             attr.push("<h4><strong>0</strong> form control elements missing a required <em>id</em> attr" +
-                                                "ibute</h4> <p>The id attribute is required to bind a point of interaction to an HTML label.</p>");
+                                                    "ibute</h4> <p>The id attribute is required to bind a point of interaction to an " +
+                                                    "HTML label.</p>");
                                         }
-
                                         //form controls missing a binding to a label
                                         b        = formID.length;
                                         formnoID = [];
@@ -10520,7 +10761,7 @@ var prettydiff = function prettydiff(api) {
                                                 attr.push("s");
                                             }
                                             attr.push(" not bound to a label</h4> <p>The <em>id</em> of a form control must match the <" +
-                                                "em>for</em> of a label.</p><ol>");
+                                                    "em>for</em> of a label.</p><ol>");
                                             for (x = 0; x < b; x += 1) {
                                                 attr.push("<li><code>");
                                                 attr.push(token[formnoID[x][0]].replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;"));
@@ -10531,9 +10772,8 @@ var prettydiff = function prettydiff(api) {
                                             attr.push("</ol>");
                                         } else {
                                             attr.push("<h4><strong>0</strong> form control elements not bound to a label</h4> <p>The <e" +
-                                                "m>id</em> of a form control must match the <em>for</em> of a label.</p>");
+                                                    "m>id</em> of a form control must match the <em>for</em> of a label.</p>");
                                         }
-
                                         //elements with tabindex
                                         b          = tabindex.length;
                                         violations += b;
@@ -10545,7 +10785,7 @@ var prettydiff = function prettydiff(api) {
                                                 attr.push("s");
                                             }
                                             attr.push(" with a <em>tabindex</em> attribute</h4> <p>The tabindex attribute should have a" +
-                                                " 0 or -1 value and should not be over used.</p> <ol>");
+                                                    " 0 or -1 value and should not be over used.</p> <ol>");
                                             for (x = 0; x < b; x += 1) {
                                                 attr.push("<li><code>");
                                                 if (tabindex[x][1] === true) {
@@ -10562,9 +10802,8 @@ var prettydiff = function prettydiff(api) {
                                             attr.push("</ol>");
                                         } else {
                                             attr.push("<h4><strong>0</strong> elements with a <em>tabindex</em> attribute</h4> <p>The t" +
-                                                "abindex attribute should have a 0 or -1 value and should not be over used.</p>");
+                                                    "abindex attribute should have a 0 or -1 value and should not be over used.</p>");
                                         }
-
                                         //headings
                                         b = headings.length;
                                         if (b > 0) {
@@ -10575,7 +10814,7 @@ var prettydiff = function prettydiff(api) {
                                                 attr.push("s");
                                             }
                                             attr.push(" and their order</h4> <p>Poorly ordered tags are described with a <strong>strong" +
-                                                "</strong> tag (color red).</p> <ol>");
+                                                    "</strong> tag (color red).</p> <ol>");
                                             for (x = 0; x < b; x += 1) {
                                                 attr.push("<li><code>");
                                                 if (headings[x][2] === true) {
@@ -10593,7 +10832,6 @@ var prettydiff = function prettydiff(api) {
                                         } else {
                                             attr.push("<h4><strong>0</strong> HTML heading elements</h4>");
                                         }
-
                                         //missing alt attributes on images
                                         b          = noalt.length;
                                         violations += b;
@@ -10605,7 +10843,7 @@ var prettydiff = function prettydiff(api) {
                                                 attr.push("s");
                                             }
                                             attr.push(" missing a required <em>alt</em> attribute</h4> <p>The alt attribute is required" +
-                                                " even if it contains no value.</p> <ol>");
+                                                    " even if it contains no value.</p> <ol>");
                                             for (x = 0; x < b; x += 1) {
                                                 attr.push("<li><code>");
                                                 attr.push(token[noalt[x]].replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;"));
@@ -10616,9 +10854,8 @@ var prettydiff = function prettydiff(api) {
                                             attr.push("</ol>");
                                         } else {
                                             attr.push("<h4><strong>0</strong> images missing a required <em>alt</em> attribute</h4> <p>" +
-                                                "The alt attribute is required even if it contains no value.</p>");
+                                                    "The alt attribute is required even if it contains no value.</p>");
                                         }
-
                                         //alt attributes with empty values
                                         b          = emptyalt.length;
                                         violations += b;
@@ -10630,7 +10867,7 @@ var prettydiff = function prettydiff(api) {
                                                 attr.push("s");
                                             }
                                             attr.push(" have an empty <em>alt</em> attribute value</h4> <p>Empty alt text is not necess" +
-                                                "arily a violation, such as the case of tracking pixels. If an image has embedded");
+                                                    "arily a violation, such as the case of tracking pixels. If an image has embedded");
                                             for (x = 0; x < b; x += 1) {
                                                 attr.push("<li><code>");
                                                 attr.push(token[emptyalt[x]].replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;"));
@@ -10642,7 +10879,6 @@ var prettydiff = function prettydiff(api) {
                                         } else {
                                             attr.push("<h4><strong>0</strong> images have an empty <em>alt</em> attribute value</h4>");
                                         }
-
                                         return attr.join("");
                                     };
                                 if (maccessibility === false) {
@@ -10679,9 +10915,9 @@ var prettydiff = function prettydiff(api) {
                                     charchange = (outsize / insize) * 100;
                                 table.push("<h4>Data sizes</h4>");
                                 table.push("<table class='analysis' summary='Data sizes'><caption>This table shows changes i" +
-                                    "n sizes of the data due to beautification.</caption>");
+                                        "n sizes of the data due to beautification.</caption>");
                                 table.push("<thead><tr><th>Data figure</th><th>Input</th><th>Output</th><th>Percent change</" +
-                                    "th></tr></thead><tbody>");
+                                        "th></tr></thead><tbody>");
                                 table.push("<tr><th>Lines of code</th><td>");
                                 table.push(numformat(line));
                                 table.push("</td><td>");
@@ -10704,8 +10940,13 @@ var prettydiff = function prettydiff(api) {
                                     totalItems = stats.cdata[0] + stats.comment[0] + stats.content[0] + stats.end[0] + stats.ignore[0] + stats.script[0] + stats.sgml[0] + stats.singleton[0] + stats.start[0] + stats.style[0] + stats.template[0] + stats.text[0] + stats.xml[0],
                                     totalSizes = stats.cdata[1] + stats.comment[1] + stats.content[1] + stats.end[1] + stats.ignore[1] + stats.script[1] + stats.sgml[1] + stats.singleton[1] + stats.start[1] + stats.style[1] + stats.template[1] + stats.text[1] + stats.xml[1],
                                     rowBuilder = function markuppretty__apply_summary_stats_rowBuilder(type) {
-                                        var itema = (type === "Total*") ? totalItems : stats[type][0],
-                                            itemb = (type === "Total*") ? totalSizes : stats[type][1];
+                                        var itema = (type === "Total*")
+                                                ? totalItems
+                                                : stats[type][0],
+                                            itemb = (type === "Total*")
+                                                ? totalSizes
+                                                : stats[type][1],
+                                            ratio = 0;
                                         stat.push("<tr><th>");
                                         stat.push(type);
                                         if (itema > 0 && (type === "script" || type === "style")) {
@@ -10718,7 +10959,8 @@ var prettydiff = function prettydiff(api) {
                                         stat.push(">");
                                         stat.push(itema);
                                         stat.push("</td><td>");
-                                        stat.push(((itema / totalItems) * 100).toFixed(2));
+                                        ratio = ((itema / totalItems) * 100);
+                                        stat.push(ratio.toFixed(2));
                                         stat.push("%</td><td>");
                                         stat.push(itemb);
                                         stat.push("</td><td");
@@ -10726,14 +10968,16 @@ var prettydiff = function prettydiff(api) {
                                             stat.push(" class='bad'");
                                         }
                                         stat.push(">");
-                                        stat.push(((itemb / totalSizes) * 100).toFixed(2));
+                                        ratio = ((itemb / totalSizes) * 100);
+                                        stat.push(ratio.toFixed(2));
                                         stat.push("%</td></tr>");
                                     };
                                 stat.push("<h4>Statistics and analysis of parsed code</h4>");
                                 stat.push("<table class='analysis' summary='Statistics'><caption>This table provides basic " +
-                                    "statistics about the parsed components of the given code sample after beautification.</caption>");
+                                        "statistics about the parsed components of the given code sample after beautifica" +
+                                        "tion.</caption>");
                                 stat.push("<thead><tr><th>Item type</th><th>Number of instances</th><th>Percentage of total" +
-                                    " items</th><th>Character size</th><th>Percentage of total size</th></tr></thead>");
+                                        " items</th><th>Character size</th><th>Percentage of total size</th></tr></thead>");
                                 stat.push("<tbody>");
                                 rowBuilder("Total*");
                                 rowBuilder("cdata");
@@ -10754,18 +10998,18 @@ var prettydiff = function prettydiff(api) {
                                 stat.push("</td></tr>");
                                 stat.push("</tbody></table> ");
                                 stat.push("<p>* Totals are accounted for parsed code/content tokens only and not extraneous" +
-                                    " space for beautification.</p> ");
+                                        " space for beautification.</p> ");
                                 stat.push("<p>** Script and Style code is measured with minimal white space.</p>");
                                 stat.push("<p>*** This is space that is not associated with text, tags, script, or css.</p>" +
-                                    " ");
+                                        " ");
                                 return stat.join("");
                             }()),
                             zipf          = (function markuppretty__apply_summary_zipf() {
                                 var x          = 0,
+                                    ratio      = 0,
                                     wordlen    = 0,
                                     wordcount  = 0,
                                     word       = "",
-                                    ratio      = "",
                                     wordlist   = [],
                                     wordtotal  = [],
                                     wordproper = [],
@@ -10774,16 +11018,16 @@ var prettydiff = function prettydiff(api) {
                                     sortchild  = function markuppretty__apply_summary_zipf_sortchild(y, z) {
                                         return z[0] - y[0];
                                     };
-                                for (x; x < len; x += 1) {
+                                for (x = x; x < len; x += 1) {
                                     if (types[x] === "content") {
                                         wordlist.push(token[x]);
                                     }
                                 }
-                                wordlist = safeSort(wordlist.join(" ").replace(binfix, "").toLowerCase().replace(/\&nbsp;?/gi, " ").replace(/(\,|\.|\?|\!|\:|\(|\)|"|\{|\}|\[|\])/g, "").replace(/\s+/g, " ").replace(/&/g, "&amp;").replace(/>/g, "&gt;").replace(/</g, "&lt;").split(" "));
+                                wordlist = safeSort(wordlist.join(" ").replace(binfix, "").toLowerCase().replace(/&nbsp;/gi, " ").replace(/(,|\.|\?|!|:|\(|\)|"|\{|\}|\[|\])/g, "").replace(/\s+/g, " ").replace(/&/g, "&amp;").replace(/>/g, "&gt;").replace(/</g, "&lt;").split(" "));
                                 wordlen  = wordlist.length;
                                 for (x = 0; x < wordlen; x += 1) {
                                     word = wordlist[x];
-                                    if (word.length > 2 && word.length < 30 && (/&\#?\w+;/).test(word) === false && word !== "the" && word !== "and" && word !== "for" && word !== "are" && word !== "this" && word !== "from" && word !== "with" && word !== "that" && word !== "to") {
+                                    if (word.length > 2 && word.length < 30 && (/&#?\w+;/).test(word) === false && word !== "the" && word !== "and" && word !== "for" && word !== "are" && word !== "this" && word !== "from" && word !== "with" && word !== "that" && word !== "to") {
                                         if (wordproper.length === 0 || word !== wordproper[wordproper.length - 1][1]) {
                                             wordproper.push([
                                                 1, word
@@ -10802,30 +11046,36 @@ var prettydiff = function prettydiff(api) {
                                 }
                                 wordtotal  = wordtotal.sort(sortchild).slice(0, 11);
                                 wordproper = wordproper.sort(sortchild).slice(0, 11);
-                                wordlen    = (wordproper.length > 10) ? 11 : wordproper.length;
+                                wordlen    = (wordproper.length > 10)
+                                    ? 11
+                                    : wordproper.length;
                                 for (x = 0; x < wordlen; x += 1) {
                                     if (wordtotal[x][1] !== wordproper[x][1]) {
                                         identical = false;
                                         break;
                                     }
                                 }
-                                wordlen = (wordtotal.length > 10) ? 10 : wordtotal.length;
+                                wordlen = (wordtotal.length > 10)
+                                    ? 10
+                                    : wordtotal.length;
                                 if (wordlen > 1) {
                                     wordcount = wordlist.length;
                                     zipfout.push("<h4>Zipf's Law analysis of content</h4>");
                                     zipfout.push("<table class='analysis' summary='Zipf&#39;s Law'><caption>This table demonstrate" +
-                                        "s <em>Zipf&#39;s Law</em> by listing the 10 most occuring words in the content a" +
-                                        "nd the number of times they occurred.</caption>");
+                                            "s <em>Zipf&#39;s Law</em> by listing the 10 most occuring words in the content a" +
+                                            "nd the number of times they occurred.</caption>");
                                     zipfout.push("<thead><tr><th>Word Rank</th><th>Most Occurring Word by Rank</th><th>Number of I" +
-                                        "nstances</th><th>Ratio Increased Over Next Most Frequence Occurance</th><th>Perc" +
-                                        "entage from ");
+                                            "nstances</th><th>Ratio Increased Over Next Most Frequence Occurance</th><th>Perc" +
+                                            "entage from ");
                                     zipfout.push(wordcount);
                                     zipfout.push(" total words</th></tr></thead><tbody>");
                                     if (identical === false) {
                                         zipfout.push("<tr><th colspan='5'>Unfiltered Word Set</th></tr>");
                                     }
                                     for (x = 0; x < wordlen; x += 1) {
-                                        ratio = (wordtotal[x + 1] !== undefined) ? (wordtotal[x][0] / wordtotal[x + 1][0]).toFixed(2) : "1.00";
+                                        ratio = (wordtotal[x + 1] !== undefined)
+                                            ? (wordtotal[x][0] / wordtotal[x + 1][0])
+                                            : 1;
                                         zipfout.push("<tr><td>");
                                         zipfout.push(x + 1);
                                         zipfout.push("</td><td>");
@@ -10833,16 +11083,21 @@ var prettydiff = function prettydiff(api) {
                                         zipfout.push("</td><td>");
                                         zipfout.push(wordtotal[x][0]);
                                         zipfout.push("</td><td>");
-                                        zipfout.push(ratio);
+                                        zipfout.push(ratio.toFixed(2));
                                         zipfout.push("</td><td>");
-                                        zipfout.push(((wordtotal[x][0] / wordcount) * 100).toFixed(2));
+                                        ratio = ((wordtotal[x][0] / wordcount) * 100);
+                                        zipfout.push(ratio.toFixed(2));
                                         zipfout.push("%</td></tr>");
                                     }
-                                    wordlen = (wordproper.length > 10) ? 10 : wordproper.length;
+                                    wordlen = (wordproper.length > 10)
+                                        ? 10
+                                        : wordproper.length;
                                     if (wordlen > 1 && identical === false) {
                                         zipfout.push("<tr><th colspan='5'>Filtered Word Set</th></tr>");
                                         for (x = 0; x < wordlen; x += 1) {
-                                            ratio = (wordproper[x + 1] !== undefined) ? (wordproper[x][0] / wordproper[x + 1][0]).toFixed(2) : "1.00";
+                                            ratio = (wordproper[x + 1] !== undefined)
+                                                ? (wordproper[x][0] / wordproper[x + 1][0])
+                                                : 1;
                                             zipfout.push("<tr><td>");
                                             zipfout.push(x + 1);
                                             zipfout.push("</td><td>");
@@ -10850,9 +11105,10 @@ var prettydiff = function prettydiff(api) {
                                             zipfout.push("</td><td>");
                                             zipfout.push(wordproper[x][0]);
                                             zipfout.push("</td><td>");
-                                            zipfout.push(ratio);
+                                            zipfout.push(ratio.toFixed(2));
                                             zipfout.push("</td><td>");
-                                            zipfout.push(((wordproper[x][0] / wordcount) * 100).toFixed(2));
+                                            ratio = ((wordproper[x][0] / wordcount) * 100);
+                                            zipfout.push(ratio.toFixed(2));
                                             zipfout.push("%</td></tr>");
                                         }
                                     }
@@ -10860,7 +11116,6 @@ var prettydiff = function prettydiff(api) {
                                 }
                                 return zipfout.join("");
                             }());
-
                         if (startend > 0) {
                             sum.push("<p><strong>");
                             sum.push(startend);
@@ -10880,7 +11135,7 @@ var prettydiff = function prettydiff(api) {
                             sum.push(" than start tags!</strong></p>");
                         }
                         sum.push("<p><strong>Total number of HTTP requests (presuming HTML or XML Schema):</strong" +
-                            "> <em>");
+                                "> <em>");
                         sum.push(reqs.length);
                         sum.push("</em></p>");
                         sum.push("<div class='doc'>");
@@ -10901,33 +11156,31 @@ var prettydiff = function prettydiff(api) {
                 return output;
             }());
         };
-
         return core(api);
     },
-
     //the edition values use the format YYMMDD for dates.
-    edition    = {
+    edition = {
         addon        : {
             ace: 150519
         },
         api          : {
-            dom      : 150629, //dom.js
-            nodeLocal: 150629, //node-local.js
-            wsh      : 150629
+            dom      : 150708, //dom.js
+            nodeLocal: 150708, //node-local.js
+            wsh      : 150708
         },
         charDecoder  : 141025,
         css          : 150525, //diffview.css file
-        csspretty    : 150627, //csspretty library
+        csspretty    : 150708, //csspretty library
         csvbeauty    : 140114, //csvbeauty library
         csvmin       : 131224, //csvmin library
-        diffview     : 150501, //diffview library
+        diffview     : 150708, //diffview library
         documentation: 150629, //documentation.xhtml
-        jspretty     : 150629, //jspretty library
+        jspretty     : 150708, //jspretty library
         latest       : 0,
-        markuppretty : 150629, //markuppretty library
-        prettydiff   : 150629, //this file
-        version      : "1.12.11", //version number
-        webtool      : 150509
+        markuppretty : 150708, //markuppretty library
+        prettydiff   : 150708, //this file
+        version      : "1.12.12", //version number
+        webtool      : 150708
     };
 edition.latest = (function edition_latest() {
     "use strict";

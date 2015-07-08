@@ -9,10 +9,11 @@
                     pd = [],
                     read = "file",
                     fail = false,
-                    help = (typeof WScript.Arguments.Named("help") === "string") ? true : false,
+                    filestring = {},
+                    help = (typeof WScript.Arguments.Named("help") === "string"),
                     ext = (WScript.Arguments.Named("extensions") === undefined) ? [""] : (function () {
                         var a = WScript.Arguments.Named("extensions");
-                        a = a.replace(/\,\s+/g, ",");
+                        a = a.replace(/,\s+/g, ",");
                         return a.split(",");
                     }()),
                     outerror = function (x) {
@@ -215,7 +216,7 @@
                             d = a.GetFolder(x);
                             e = d.Files;
                             f = new Enumerator(e);
-                            for (f; f.atEnd() === false; f.moveNext()) {
+                            for (f = f; f.atEnd() === false; f.moveNext()) {
                                 h = f.item().name;
                                 if (ext[0] === "") {
                                     g.push(h + "\n");
@@ -262,7 +263,8 @@
                 }*/
                 if (typeof WScript.Arguments.Named("source") === "string") {
                     if (read === "file") {
-                        args.source = [openfile(WScript.Arguments.Named("source"), "source")].toString();
+                        filestring = [openfile(WScript.Arguments.Named("source"), "source")];
+                        args.source = filestring.toString();
                     } else if (read === "directory") {
                         //args.source = opendir(WScript.Arguments.Named("source"), "source");
                         opendir(WScript.Arguments.Named("source"), "source");
@@ -272,22 +274,22 @@
                 }
                 if (fail === false) {
                     args.api = "wsf";
-                    args.braceline = (WScript.Arguments.Name("braceline") === "true" || WScript.Arguments.Name("braceline") === true) ? true : false;
-                    args.bracepadding = (WScript.Arguments.Named("bracepadding") === "true" || WScript.Arguments.Named("bracepadding") === true) ? true : false;
+                    args.braceline = (WScript.Arguments.Name("braceline") === "true" || WScript.Arguments.Name("braceline") === true);
+                    args.bracepadding = (WScript.Arguments.Named("bracepadding") === "true" || WScript.Arguments.Named("bracepadding") === true);
                     args.braces = (WScript.Arguments.Named("indent") === "allman") ? "allman" : "knr";
                     args.comments = (WScript.Arguments.Named("comments") === "noindent") ? "noindent" : "indent";
-                    args.conditional = (WScript.Arguments.Named("conditional") === "true" || WScript.Arguments.Named("conditional") === true) ? true : false;
-                    args.content = (WScript.Arguments.Named("content") === "true" || WScript.Arguments.Named("content") === true) ? true : false;
+                    args.conditional = (WScript.Arguments.Named("conditional") === "true" || WScript.Arguments.Named("conditional") === true);
+                    args.content = (WScript.Arguments.Named("content") === "true" || WScript.Arguments.Named("content") === true);
                     args.context = (isNaN(WScript.Arguments.Named("context"))) ? "" : Number(WScript.Arguments.Named("context"));
-                    args.correct = (WScript.Arguments.Named("correct") === "true" || WScript.Arguments.Named("correct") === true) ? true : false;
-                    args.cssinsertlines = (WScript.Arguments.Named("cssinsertlines") === "true" || WScript.Arguments.Named("cssinsertlines") === true) ? true : false;
+                    args.correct = (WScript.Arguments.Named("correct") === "true" || WScript.Arguments.Named("correct") === true);
+                    args.cssinsertlines = (WScript.Arguments.Named("cssinsertlines") === "true" || WScript.Arguments.Named("cssinsertlines") === true);
                     args.csvchar = WScript.Arguments.Named("csvchar") || ",";
-                    args.diffcomments = (WScript.Arguments.Named("diffcomments") === "true" || WScript.Arguments.Named("diffcomments") === true) ? true : false;
+                    args.diffcomments = (WScript.Arguments.Named("diffcomments") === "true" || WScript.Arguments.Named("diffcomments") === true);
                     args.difflabel = WScript.Arguments.Named("difflabel") || "new";
-                    args.diffview = (WScript.Arguments.Named("diffview") === "inline") ? "inline" : "sidebyside
-                    args.elseline = (WScript.Arguments.Name("elseline") === "true" || WScript.Arguments.Name("elseline") === true) ? true : false;
-                    args.force_indent = (WScript.Arguments.Named("force_indent") === "true" || WScript.Arguments.Named("force_indent") === true) ? true : false;
-                    args.html = (WScript.Arguments.Named("html") === "true" || WScript.Arguments.Named("html") === true) ? true : false;
+                    args.diffview = (WScript.Arguments.Named("diffview") === "inline") ? "inline" : "sidebyside"
+                    args.elseline = (WScript.Arguments.Name("elseline") === "true" || WScript.Arguments.Name("elseline") === true);
+                    args.force_indent = (WScript.Arguments.Named("force_indent") === "true" || WScript.Arguments.Named("force_indent") === true);
+                    args.html = (WScript.Arguments.Named("html") === "true" || WScript.Arguments.Named("html") === true);
                     args.inchar = WScript.Arguments.Named("inchar") || " ";
                     args.inlevel = (isNaN(WScript.Arguments.Named("inlevel"))) ? 0 : Number(WScript.Arguments.Named("inlevel"));
                     args.insize = (isNaN(WScript.Arguments.Named("insize"))) ? 4 : Number(WScript.Arguments.Named("insize"));
@@ -297,17 +299,17 @@
                     args.mode = WScript.Arguments.Named("mode") || "diff";
                     args.obfuscate = WScript.Arguments.Named("obfuscate") || false;
                     args.objsort = (WScript.Arguments.Named("objsort") === "all" || WScript.Arguments.Named("objsort") === "css" || WScript.Arguments.Named("objsort") === "none") ? WScript.Arguments.Named("objsort") : "js";
-                    args.quote = (WScript.Arguments.Named("quote") === "true" || WScript.Arguments.Named("quote") === true) ? true : false;
+                    args.quote = (WScript.Arguments.Named("quote") === "true" || WScript.Arguments.Named("quote") === true);
                     args.quoteConvert = (WScript.Arguments.Named("quoteConvert") === "double" || WScript.Arguments.Named("quoteConvert") === "single") ? WScript.Arguments.Named("quoteConvert") : "none";
                     args.preserve = (WScript.Arguments.Named("preserve") === "none" || WScript.Arguments.Named("preserve") === "css" || WScript.Arguments.Named("preserve") === "js") ? WScript.Arguments.Named("preserve") : "all";
-                    args.semicolon = (WScript.Arguments.Named("semicolon") === "true" || WScript.Arguments.Named("semicolon") === true) ? true : false;
+                    args.semicolon = (WScript.Arguments.Named("semicolon") === "true" || WScript.Arguments.Named("semicolon") === true);
                     args.sourcelabel = WScript.Arguments.Named("sourcelabel") || "base";
-                    args.space = (WScript.Arguments.Named("space") === "false" || WScript.Arguments.Named("space") === false) ? false : true;
+                    args.space = (WScript.Arguments.Named("space") !== "false" && WScript.Arguments.Named("space") !== false);
                     args.style = (WScript.Arguments.Named("style")) ? "noindent" : "indent";
                     args.styleguide = (typeof WScript.Arguments.Named("styleguide") === "string") ? WScript.Arguments.Named("styleguide") : "none";
-                    args.tagname = (WScript.Arguments.Name("tagmerge") === "true" || WScript.Arguments.Name("tagmerge") === true) ? true : false;
-                    args.titanium = (WScript.Arguments.Named("topcoms") === "true" || WScript.Arguments.Named("topcoms") === true) ? true : false;
-                    args.topcoms = (WScript.Arguments.Named("topcoms") === "false" || WScript.Arguments.Named("topcoms") === false) ? false : true;
+                    args.tagname = (WScript.Arguments.Name("tagmerge") === "true" || WScript.Arguments.Name("tagmerge") === true);
+                    args.titanium = (WScript.Arguments.Named("topcoms") === "true" || WScript.Arguments.Named("topcoms") === true);
+                    args.topcoms = (WScript.Arguments.Named("topcoms") !== "false" && WScript.Arguments.Named("topcoms") !== false);
                     args.varword = (WScript.Arguments.Named("varword") === "each" || WScript.Arguments.Named("varword") === "list") ? WScript.Arguments.Named("varword") : "none";
                     args.vertical = (WScript.Arguments.Named("vertical") === "all" || WScript.Arguments.Named("vertical") === "css" || WScript.Arguments.Named("vertical") === "none") ? WScript.Arguments.Named("vertical") : "js";
                     args.wrap = (isNaN(WScript.Arguments.Named("wrap")) === true) ? 80 : WScript.Arguments.Named("wrap");
@@ -346,7 +348,8 @@
                     if (args.mode === "diff") {
                         if (WScript.Arguments.Named("diff") === "string") {
                             if (read === "file") {
-                                args.diff = [openfile(WScript.Arguments.Named("diff"), "diff")];
+                                filestring = [openfile(WScript.Arguments.Named("diff"), "diff")];
+                                args.diff = filestring.toString();
                             }
                         } else {
                             outerror("Error: Diff parameter is required unless mode is set to \"beautify\" or \"minify\".");
