@@ -6349,6 +6349,9 @@ var prettydiff = function prettydiff(api) {
                                             }
                                         }());
                                     }
+                                    if (ltype === "literal" && token[a - 2] === "+" && (ltoke.charAt(0) === "\"" || ltoke.charAt(0) === "'")) {
+                                        return;
+                                    }
                                     return level.push(indent);
                                 }
                                 return level.push(indent);
@@ -6838,9 +6841,8 @@ var prettydiff = function prettydiff(api) {
                                 }
                                 if ((ltoke.charAt(0) === "\"" || ltoke.charAt(0) === "'") && token[a + 1] !== undefined && (token[a + 1].charAt(0) === "\"" || token[a + 1].charAt(0) === "'") && (token[a - 2] === "=" || token[a - 2] === "(" || (token[a - 2] === "+" && level[a - 2] > 0))) {
                                     if (ltoke.length + 3 + token[a + 1].length < jwrap) {
-                                        return level.push("s");
-                                    }
-                                    if (varline[varline.length - 1] === true) {
+                                        level.push("s");
+                                    } else if (varline[varline.length - 1] === true) {
                                         level.push(indent);
                                     } else {
                                         level.push(indent + 1);
@@ -7172,6 +7174,7 @@ var prettydiff = function prettydiff(api) {
                     }
                 }());
             }
+
             if (jtitanium === true) {
                 token[0] = "";
                 types[0] = "";
@@ -10906,7 +10909,7 @@ var prettydiff = function prettydiff(api) {
         latest       : 0,
         markuppretty : 150713, //markuppretty library
         prettydiff   : 150713, //this file
-        version      : "1.12.13", //version number
+        version      : "1.12.14", //version number
         webtool      : 150713
     };
 edition.latest = (function edition_latest() {
