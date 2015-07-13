@@ -376,6 +376,7 @@
                     <option selected="selected" value="auto">Auto Detect</option>
                     <option value="css">CSS</option>
                     <option value="csv">CSV</option>
+                    <option value="dustjs">Dust.js</option>
                     <option value="ejs">EJS Template</option>
                     <option value="html_ruby">ERB Template</option>
                     <option value="handlebars">Handlebars Template</option>
@@ -406,6 +407,7 @@
                     title="Force a language choice when auto-detect cannot make a decision">
                     <option value="css">CSS</option>
                     <option value="csv">CSV</option>
+                    <option value="dustjs">Dust.js</option>
                     <option value="ejs">EJS Template</option>
                     <option value="html_ruby">ERB Template</option>
                     <option value="handlebars">Handlebars Template</option>
@@ -627,6 +629,17 @@
                                 type="text" value="80"/></span>
                     </p>
                     <p>
+                        <strong>Dust.js Template, Markup Only <a class="apiname" href="documentation.xhtml#textpreserve">(textpreserve)</a></strong>
+                        <span>
+                            <input checked="checked" id="ddustno" name="ddust" title="Do not interpret the markup code as a Dust.js template" type="radio"/>
+                            <label for="ddustno">Not a Dust.js template</label>
+                        </span>
+                        <span>
+                            <input id="ddustyes" name="ddust" title="Interpret the markup code as a Dust.js template" type="radio"/>
+                            <label for="ddusttes">Dust.js template</label>
+                        </span>
+                    </p>
+                    <p>
                         <strong>Force Indentation, Markup Only
                             <a class="apiname" href="documentation.xhtml#force_indent">(force_indent)</a>
                         </strong>
@@ -675,6 +688,17 @@
                                 title="Automatically merge immediately adjacent start and end tags of the same name."
                                 type="radio"/>
                             <label for="dtagmerge-yes">Merge tags</label>
+                        </span>
+                    </p>
+                    <p>
+                        <strong>Preserve text content, Markup only <a class="apiname" href="documentation.xhtml#textpreserve">(textpreserve)</a></strong>
+                        <span>
+                            <input checked="checked" id="dtextpreserveno" name="dtextpreserve" title="Do not literally preserve white space in text." type="radio"/>
+                            <label for="dtextpreserveno">Beautify text content</label>
+                        </span>
+                        <span>
+                            <input id="dtextpreserveyes" name="dtextpreserve" title="Preserve all white space in text content exactly as supplied." type="radio"/>
+                            <label for="dtextpreserveyes">Preserve white space in text</label>
                         </span>
                     </p>
                     <p>
@@ -967,6 +991,17 @@
                             <a href="guide/jscorrect.xhtml">guide</a>.</span>
                     </p>
                     <p>
+                        <strong>Dust.js Template, Markup Only <a class="apiname" href="documentation.xhtml#textpreserve">(textpreserve)</a></strong>
+                        <span>
+                            <input checked="checked" id="bdustno" name="bdust" title="Do not interpret the markup code as a Dust.js template" type="radio"/>
+                            <label for="bdustno">Not a Dust.js template</label>
+                        </span>
+                        <span>
+                            <input id="bdustyes" name="bdust" title="Interpret the markup code as a Dust.js template" type="radio"/>
+                            <label for="bdusttes">Dust.js template</label>
+                        </span>
+                    </p>
+                    <p>
                         <strong>Force Indentation, Markup Only
                             <a class="apiname" href="documentation.xhtml#force_indent">(force_indent)</a>
                         </strong>
@@ -1015,6 +1050,17 @@
                                 title="Automatically merge immediately adjacent start and end tags of the same name."
                                 type="radio"/>
                             <label for="btagmerge-yes">Merge tags</label>
+                        </span>
+                    </p>
+                    <p>
+                        <strong>Preserve text content, Markup only <a class="apiname" href="documentation.xhtml#textpreserve">(textpreserve)</a></strong>
+                        <span>
+                            <input checked="checked" id="btextpreserveno" name="btextpreserve" title="Do not literally preserve white space in text." type="radio"/>
+                            <label for="btextpreserveno">Beautify text content</label>
+                        </span>
+                        <span>
+                            <input id="btextpreserveyes" name="btextpreserve" title="Preserve all white space in text content exactly as supplied." type="radio"/>
+                            <label for="btextpreserveyes">Preserve white space in text</label>
                         </span>
                     </p>
                     <p>
@@ -1284,6 +1330,17 @@
                     </span>
                 </p>
                 <p>
+                    <strong>Dust.js Template, Markup Only <a class="apiname" href="documentation.xhtml#textpreserve">(textpreserve)</a></strong>
+                    <span>
+                        <input checked="checked" id="mdustno" name="mdust" title="Do not interpret the markup code as a Dust.js template" type="radio"/>
+                        <label for="mdustno">Not a Dust.js template</label>
+                    </span>
+                    <span>
+                        <input id="mdustyes" name="mdust" title="Interpret the markup code as a Dust.js template" type="radio"/>
+                        <label for="mdusttes">Dust.js template</label>
+                    </span>
+                </p>
+                <p>
                     <strong>Merge Empty Tag Sets Into A Single Self-Closing Tag, Markup Only
                         <a class="apiname" href="documentation.xhtml#tagmerge">(tagmerge)</a>
                     </strong>
@@ -1298,6 +1355,17 @@
                             title="Automatically merge immediately adjacent start and end tags of the same name."
                             type="radio"/>
                         <label for="mtagmerge-yes">Merge tags</label>
+                    </span>
+                </p>
+                <p>
+                    <strong>Preserve text content, Markup only <a class="apiname" href="documentation.xhtml#textpreserve">(textpreserve)</a></strong>
+                    <span>
+                        <input checked="checked" id="mtextpreserveno" name="mtextpreserve" title="Do not literally preserve white space in text." type="radio"/>
+                        <label for="mtextpreserveno">Beautify text content</label>
+                    </span>
+                    <span>
+                        <input id="mtextpreserveyes" name="mtextpreserve" title="Preserve all white space in text content exactly as supplied." type="radio"/>
+                        <label for="mtextpreserveyes">Preserve white space in text</label>
                     </span>
                 </p>
                 <p>
@@ -1405,6 +1473,17 @@
                     </span>
                 </p>
                 <p>
+                    <strong>Dust.js Template, Markup Only <a class="apiname" href="documentation.xhtml#textpreserve">(textpreserve)</a></strong>
+                    <span>
+                        <input checked="checked" id="pdustno" name="pdust" title="Do not interpret the markup code as a Dust.js template" type="radio"/>
+                        <label for="pdustno">Not a Dust.js template</label>
+                    </span>
+                    <span>
+                        <input id="pdustyes" name="pdust" title="Interpret the markup code as a Dust.js template" type="radio"/>
+                        <label for="pdusttes">Dust.js template</label>
+                    </span>
+                </p>
+                <p>
                     <strong>Merge Empty Tag Sets Into A Single Self-Closing Tag, Markup Only
                         <a class="apiname" href="documentation.xhtml#tagmerge">(tagmerge)</a>
                     </strong>
@@ -1419,6 +1498,17 @@
                             title="Automatically merge immediately adjacent start and end tags of the same name."
                             type="radio"/>
                         <label for="ptagmerge-yes">Merge tags</label>
+                    </span>
+                </p>
+                <p>
+                    <strong>Preserve text content, Markup only <a class="apiname" href="documentation.xhtml#textpreserve">(textpreserve)</a></strong>
+                    <span>
+                        <input checked="checked" id="ptextpreserveno" name="ptextpreserve" title="Do not literally preserve white space in text." type="radio"/>
+                        <label for="ptextpreserveno">Beautify text content</label>
+                    </span>
+                    <span>
+                        <input id="ptextpreserveyes" name="ptextpreserve" title="Preserve all white space in text content exactly as supplied." type="radio"/>
+                        <label for="ptextpreserveyes">Preserve white space in text</label>
                     </span>
                 </p>
                 <p>

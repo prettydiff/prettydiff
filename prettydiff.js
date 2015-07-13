@@ -283,15 +283,15 @@ var prettydiff = function prettydiff(api) {
             //"summary" is a library.  Here is the logic that puts it
             //all together into a combined application
             core         = function core(api) {
-                var spacetest      = (/^\s+$/g),
-                    apioutput      = "",
-                    apidiffout     = "",
-                    builder        = {},
-                    setlangmode    = function dom__langkey_setlangmode(input) {
+                var spacetest   = (/^\s+$/g),
+                    apioutput   = "",
+                    apidiffout  = "",
+                    builder     = {},
+                    setlangmode = function dom__langkey_setlangmode(input) {
                         if (input === "css" || input === "less" || input === "scss") {
                             return "css";
                         }
-                        if (input.indexOf("html") > -1 || input === "html" || input === "ejs" || input === "html_ruby" || input === "handlebars" || input === "twig" || input === "php") {
+                        if (input.indexOf("html") > -1 || input === "html" || input === "ejs" || input === "html_ruby" || input === "handlebars" || input === "twig" || input === "php" || input === "dustjs") {
                             return "html";
                         }
                         if (input === "markup" || input === "jsp" || input === "xml" || input === "xhtml") {
@@ -311,7 +311,7 @@ var prettydiff = function prettydiff(api) {
                         }
                         return "javascript";
                     },
-                    nameproper     = function dom__langkey_nameproper(input) {
+                    nameproper  = function dom__langkey_nameproper(input) {
                         if (input === "javascript") {
                             return "JavaScript";
                         }
@@ -350,190 +350,193 @@ var prettydiff = function prettydiff(api) {
                         }
                         return input.toUpperCase();
                     },
-                    //determines api source as necessary to make a decision about whether to supply
-                    //externally needed JS functions to reports
-                    caccessibility = (api.accessibility === true || api.accessibility === "true"),
-                    capi           = (api.api === undefined || api.api.length === 0)
-                        ? ""
-                        : api.api,
-                    //braceline - should a new line pad the interior of blocks (curly braces) in
-                    //JavaScript
-                    cbraceline     = (api.braceline === true || api.braceline === "true"),
-                    //api.bracepadding - should curly braces be padded with a space in JavaScript?
-                    cbracepadding  = (api.bracepadding === true || api.bracepadding === "true"),
-                    //api.indent - should JSPretty format JavaScript in the normal KNR style or push
-                    //curly braces onto a separate line like the "allman" style
-                    cbraces        = (api.braces === "allman")
-                        ? "allman"
-                        : "knr",
-                    //api.comments - if comments should receive indentation or not
-                    ccomm          = (api.comments === "noindent")
-                        ? "noindent"
-                        : ((api.comments === "nocomment")
-                            ? "nocomment"
-                            : "indent"),
-                    //api.conditional - should IE conditional comments be preserved during markup
-                    //minification
-                    ccond          = (api.conditional === true || api.conditional === "true"),
-                    //api.content - should content be normalized during a diff operation
-                    ccontent       = (api.content === true || api.content === "true"),
-                    //api.context - should the diff report only include the differences, if so then
-                    //buffered by how many lines of code
-                    ccontext       = (api.context === "" || (/^(\s+)$/).test(api.context) || isNaN(api.context))
-                        ? ""
-                        : Number(api.context),
-                    //api.correct - should JSPretty make some corrections for sloppy JS
-                    ccorrect       = (api.correct === true || api.correct === "true"),
-                    //api.cssinsertlines = if a new line should be forced between each css block
-                    ccssinsertlines = (api.cssinsertlines === true || api.cssinsertlines === "true"),
-                    //api.csvchar - what character should be used as a separator
-                    ccsvchar       = (typeof api.csvchar === "string" && api.csvchar.length > 0)
-                        ? api.csvchar
-                        : ",",
-                    //api.diff - source code to compare with
-                    cdiff          = (typeof api.diff === "string" && api.diff.length > 0 && (/^(\s+)$/).test(api.diff) === false)
-                        ? api.diff
-                        : "",
-                    //api.diffcli - if operating from Node.js and set to true diff output will be
-                    //printed to stdout just like git diff
-                    cdiffcli       = (api.diffcli === true || api.diffcli === "true"),
-                    //api.diffcomments - should comments be included in the diff operation
-                    cdiffcomments  = (api.diffcomments === true || api.diffcomments === "true"),
-                    //api.difflabel - a text label to describe the diff code
-                    cdifflabel     = (typeof api.difflabel === "string" && api.difflabel.length > 0)
-                        ? api.difflabel
-                        : "new",
-                    //api.diffview - should the diff report be a single column showing both sources
-                    //simultaneously "inline" or showing the sources in separate columns
-                    //"sidebyside"
-                    cdiffview      = (api.diffview === "inline")
-                        ? "inline"
-                        : "sidebyside",
-                    //api.elseline - for the 'else' keyword onto a new line in JavaScript
-                    celseline      = (api.elseline === true || api.elseline === "true"),
-                    //api.force_indent - should markup beautification always force indentation even
-                    //if disruptive
-                    cforce         = (api.force_indent === true || api.force_indent === "true"),
-                    //api.html - should markup be presumed to be HTML with all the aloppiness HTML
-                    //allows
-                    chtml          = (api.html === true || api.html === "true" || (typeof api.html === "string" && api.html === "html-yes")),
-                    //api.inchar - what character should be used to create a single identation
-                    cinchar        = (typeof api.inchar === "string" && api.inchar.length > 0)
-                        ? api.inchar
-                        : " ",
-                    //api.inlevel - should indentation in JSPretty be buffered with additional
-                    //indentation?  Useful when supplying code to sites accepting markdown
-                    cinlevel       = (isNaN(api.inlevel) || Number(api.inlevel) < 1)
-                        ? 0
-                        : Number(api.inlevel),
-                    //api.insize - how many characters from api.inchar should constitute a single
-                    //indentation
-                    cinsize        = (isNaN(api.insize))
-                        ? 4
-                        : Number(api.insize),
-                    //api.jsscope - do you want to enable the jsscope feature of JSPretty?  This
-                    //feature will output formatted HTML instead of text code showing which
-                    //variables are declared at which functional depth
-                    cjsscope       = (api.jsscope === true || api.jsscope === "true")
-                        ? "report"
-                        : (api.jsscope !== "html" && api.jsscope !== "report")
-                            ? "none"
-                            : api.jsscope,
-                    //api.lang - which programming language will we be analyzing
-                    clang          = (typeof api.lang === "string" && api.lang !== "auto")
-                        ? setlangmode(api.lang.toLowerCase())
-                        : "auto",
-                    //api.langdefault - what language should lang value "auto" resort to when it
-                    //cannot determine the language
-                    clangdefault   = (typeof api.langdefault === "string")
-                        ? setlangmode(api.langdefault.toLowerCase())
-                        : "text",
-                    //api.mode - is this a minify, beautify, or diff operation
-                    cmode          = (typeof api.mode === "string" && (api.mode === "minify" || api.mode === "beautify" || api.mode === "parse"))
-                        ? api.mode
-                        : "diff",
-                    //api.obfuscate - when minifying code with JSPretty should we make it sloppy and
-                    //change variable names to make the code extra small?
-                    cobfuscate     = (api.obfuscate === true || api.obfuscate === "true"),
-                    //api.objsort will alphabetize object keys in JavaScript
-                    cobjsort       = (api.objsort === "all" || (api.objsort === "css" && clang !== "javascript") || (api.objsort === "js" && clang !== "css")),
-                    //api.preserve - should empty lines be preserved in beautify operations of
-                    //JSPretty?
-                    cpreserve      = (api.preserve === "all" || (api.preserve === "css" && clang !== "javascript") || (api.preserve === "js" && clang !== "css")),
-                    //api.quote - should all single quote characters be converted to double quote
-                    //characters during a diff operation to reduce the number of false positive
-                    //comparisons
-                    cquote         = (api.quote === true || api.quote === "true"),
-                    //api.quoteConvert - convert " to ' (or ' to ") of string literals or markup
-                    //attributes
-                    cquoteConvert  = (api.quoteConvert === "single" || api.quoteConvert === "double")
-                        ? api.quoteConvert
-                        : "none",
-                    //api.semicolon - should trailing semicolons be removed during a diff operation
-                    //to reduce the number of false positive comparisons
-                    csemicolon     = (api.semicolon === true || api.semicolon === "true"),
-                    //api.source - the source code in minify and beautify operations or "base" code
-                    //in operations
-                    csource        = (typeof api.source === "string" && api.source.length > 0 && (/^(\s+)$/).test(api.source) === false)
-                        ? api.source
-                        : ((cmode === "diff")
+                    options     = {
+                        //determines api source as necessary to make a decision about whether to supply
+                        //externally needed JS functions to reports
+                        accessibility : (api.accessibility === true || api.accessibility === "true"),
+                        api           : (api.api === undefined || api.api.length === 0)
                             ? ""
-                            : "Source sample is missing."),
-                    //api.sourcelabel - a text label to describe the api.source code for the diff
-                    //report
-                    csourcelabel   = (typeof api.sourcelabel === "string" && api.sourcelabel.length > 0)
-                        ? api.sourcelabel
-                        : "base",
-                    //api.space - should JSPretty include a space between a function keyword and the
-                    //next adjacent opening parenthesis character in beautification operations
-                    cspace         = (api.space !== false && api.space !== "false"),
-                    //api.style - should JavaScript and CSS code receive indentation if embedded
-                    //inline in markup
-                    cstyle         = (api.style === "noindent")
-                        ? "noindent"
-                        : "indent",
-                    //api.styleguide - preset of beautification options to bring a JavaScript sample
-                    //closer to conformance of a given style guide
-                    cstyleguide    = (typeof api.styleguide === "string")
-                        ? api.styleguide
-                        : "",
-                    //api.tagmerge - Allows combining immediately adjacent start and end tags of the
-                    //same name into a single self-closing tag:  <a href="home"></a> into <a
-                    //href="home"/>
-                    ctagmerge = (api.tagmerge === true || api.tagmerge === "true"),
-                    //api.titanium - TSS document support via option, because this is a uniquely
-                    //modified form of JSON
-                    ctitanium      = (api.titanium === true || api.titanium === "true"),
-                    //api.topcoms - should comments at the top of a JavaScript or CSS source be
-                    //preserved during minify operations
-                    ctopcoms       = (api.topcoms === true || api.topcoms === "true"),
-                    //varword - should consecutive variables be merged into a comma separated list
-                    //or the opposite
-                    cvarword       = (api.varword === "each" || api.varword === "list")
-                        ? api.varword
-                        : "none",
-                    //api.vertical - whether or not to vertically align lists of assigns in CSS and
-                    //JavaScript
-                    cvertical      = (api.vertical === "all" || (api.vertical === "css" && clang !== "javascript") || (api.vertical === "js" && clang !== "css")),
-                    //api.wrap - in markup beautification should text content wrap after the first
-                    //complete word up to a certain character length
-                    cwrap          = (isNaN(api.wrap) === true)
-                        ? 80
-                        : Number(api.wrap),
-                    autoval        = [],
-                    autostring     = "",
-                    auto           = function core__auto(a) {
-                        var b        = [],
-                            c        = 0,
-                            d        = 0,
-                            join     = "",
-                            flaga    = false,
-                            flagb    = false,
-                            defaultt = clangdefault,
-                            output   = function core__auto_output(langname) {
+                            : api.api,
+                        //braceline - should a new line pad the interior of blocks (curly braces) in
+                        //JavaScript
+                        braceline     : (api.braceline === true || api.braceline === "true"),
+                        //api.bracepadding - should curly braces be padded with a space in JavaScript?
+                        bracepadding  : (api.bracepadding === true || api.bracepadding === "true"),
+                        //api.indent - should JSPretty format JavaScript in the normal KNR style or push
+                        //curly braces onto a separate line like the "allman" style
+                        braces        : (api.braces === "allman")
+                            ? "allman"
+                            : "knr",
+                        //api.comments - if comments should receive indentation or not
+                        comments      : (api.comments === "noindent")
+                            ? "noindent"
+                            : ((api.comments === "nocomment")
+                                ? "nocomment"
+                                : "indent"),
+                        //api.conditional - should IE conditional comments be preserved during markup
+                        //minification
+                        conditional   : (api.conditional === true || api.conditional === "true"),
+                        //api.content - should content be normalized during a diff operation
+                        content       : (api.content === true || api.content === "true"),
+                        //api.context - should the diff report only include the differences, if so then
+                        //buffered by how many lines of code
+                        context       : (api.context === "" || (/^(\s+)$/).test(api.context) || isNaN(api.context))
+                            ? ""
+                            : Number(api.context),
+                        //api.correct - should JSPretty make some corrections for sloppy JS
+                        correct       : (api.correct === true || api.correct === "true"),
+                        //api.cssinsertlines = if a new line should be forced between each css block
+                        cssinsertlines: (api.cssinsertlines === true || api.cssinsertlines === "true"),
+                        //api.csvchar - what character should be used as a separator
+                        csvchar       : (typeof api.csvchar === "string" && api.csvchar.length > 0)
+                            ? api.csvchar
+                            : ",",
+                        //api.diff - source code to compare with
+                        diff          : (typeof api.diff === "string" && api.diff.length > 0 && (/^(\s+)$/).test(api.diff) === false)
+                            ? api.diff
+                            : "",
+                        //api.diffcli - if operating from Node.js and set to true diff output will be
+                        //printed to stdout just like git diff
+                        diffcli       : (api.diffcli === true || api.diffcli === "true"),
+                        //api.diffcomments - should comments be included in the diff operation
+                        diffcomments  : (api.diffcomments === true || api.diffcomments === "true"),
+                        //api.difflabel - a text label to describe the diff code
+                        difflabel     : (typeof api.difflabel === "string" && api.difflabel.length > 0)
+                            ? api.difflabel
+                            : "new",
+                        //api.diffview - should the diff report be a single column showing both sources
+                        //simultaneously "inline" or showing the sources in separate columns
+                        //"sidebyside"
+                        diffview      : (api.diffview === "inline")
+                            ? "inline"
+                            : "sidebyside",
+                        //api.elseline - for the 'else' keyword onto a new line in JavaScript
+                        dustjs        : (api.dustjs === true || api.dustjs === "true"),
+                        elseline      : (api.elseline === true || api.elseline === "true"),
+                        //api.force_indent - should markup beautification always force indentation even
+                        //if disruptive
+                        force         : (api.force_indent === true || api.force_indent === "true"),
+                        //api.html - should markup be presumed to be HTML with all the aloppiness HTML
+                        //allows
+                        html          : (api.html === true || api.html === "true" || (typeof api.html === "string" && api.html === "html-yes")),
+                        //api.inchar - what character should be used to create a single identation
+                        inchar        : (typeof api.inchar === "string" && api.inchar.length > 0)
+                            ? api.inchar
+                            : " ",
+                        //api.inlevel - should indentation in JSPretty be buffered with additional
+                        //indentation?  Useful when supplying code to sites accepting markdown
+                        inlevel       : (isNaN(api.inlevel) || Number(api.inlevel) < 1)
+                            ? 0
+                            : Number(api.inlevel),
+                        //api.insize - how many characters from api.inchar should constitute a single
+                        //indentation
+                        insize        : (isNaN(api.insize))
+                            ? 4
+                            : Number(api.insize),
+                        //api.jsscope - do you want to enable the jsscope feature of JSPretty?  This
+                        //feature will output formatted HTML instead of text code showing which
+                        //variables are declared at which functional depth
+                        jsscope       : (api.jsscope === true || api.jsscope === "true")
+                            ? "report"
+                            : (api.jsscope !== "html" && api.jsscope !== "report")
+                                ? "none"
+                                : api.jsscope,
+                        //api.lang - which programming language will we be analyzing
+                        lang          : (typeof api.lang === "string" && api.lang !== "auto")
+                            ? setlangmode(api.lang.toLowerCase())
+                            : "auto",
+                        //api.langdefault - what language should lang value "auto" resort to when it
+                        //cannot determine the language
+                        langdefault   : (typeof api.langdefault === "string")
+                            ? setlangmode(api.langdefault.toLowerCase())
+                            : "text",
+                        //api.mode - is this a minify, beautify, or diff operation
+                        mode          : (typeof api.mode === "string" && (api.mode === "minify" || api.mode === "beautify" || api.mode === "parse"))
+                            ? api.mode
+                            : "diff",
+                        //api.obfuscate - when minifying code with JSPretty should we make it sloppy and
+                        //change variable names to make the code extra small?
+                        obfuscate     : (api.obfuscate === true || api.obfuscate === "true"),
+                        //api.objsort will alphabetize object keys in JavaScript
+                        objsort       : (api.objsort === "all"),
+                        //api.preserve - should empty lines be preserved in beautify operations of
+                        //JSPretty?
+                        preserve      : (api.preserve === "all"),
+                        //api.quote - should all single quote characters be converted to double quote
+                        //characters during a diff operation to reduce the number of false positive
+                        //comparisons
+                        quote         : (api.quote === true || api.quote === "true"),
+                        //api.quoteConvert - convert " to ' (or ' to ") of string literals or markup
+                        //attributes
+                        quoteConvert  : (api.quoteConvert === "single" || api.quoteConvert === "double")
+                            ? api.quoteConvert
+                            : "none",
+                        //api.semicolon - should trailing semicolons be removed during a diff operation
+                        //to reduce the number of false positive comparisons
+                        semicolon     : (api.semicolon === true || api.semicolon === "true"),
+                        //api.source - the source code in minify and beautify operations or "base" code
+                        //in operations
+                        source        : (typeof api.source === "string" && api.source.length > 0 && (/^(\s+)$/).test(api.source) === false)
+                            ? api.source
+                            : "",
+                        //api.sourcelabel - a text label to describe the api.source code for the diff
+                        //report
+                        sourcelabel   : (typeof api.sourcelabel === "string" && api.sourcelabel.length > 0)
+                            ? api.sourcelabel
+                            : "base",
+                        //api.space - should JSPretty include a space between a function keyword and the
+                        //next adjacent opening parenthesis character in beautification operations
+                        space         : (api.space !== false && api.space !== "false"),
+                        //api.style - should JavaScript and CSS code receive indentation if embedded
+                        //inline in markup
+                        style         : (api.style === "noindent")
+                            ? "noindent"
+                            : "indent",
+                        //api.styleguide - preset of beautification options to bring a JavaScript sample
+                        //closer to conformance of a given style guide
+                        styleguide    : (typeof api.styleguide === "string")
+                            ? api.styleguide
+                            : "",
+                        //api.tagmerge - Allows combining immediately adjacent start and end tags of the
+                        //same name into a single self-closing tag:  <a href="home"></a> into <a
+                        //href="home"/>
+                        tagmerge      : (api.tagmerge === true || api.tagmerge === "true"),
+                        //api.textpreserve - Force the markup beautifier to retain text (white space
+                        //and all) exactly as provided.
+                        textpreserve  : (api.textpreserve === true || api.textpreserve === "true"),
+                        //api.titanium - TSS document support via option, because this is a uniquely
+                        //modified form of JSON
+                        titanium      : (api.titanium === true || api.titanium === "true"),
+                        //api.topcoms - should comments at the top of a JavaScript or CSS source be
+                        //preserved during minify operations
+                        topcoms       : (api.topcoms === true || api.topcoms === "true"),
+                        //varword - should consecutive variables be merged into a comma separated list
+                        //or the opposite
+                        varword       : (api.varword === "each" || api.varword === "list")
+                            ? api.varword
+                            : "none",
+                        //api.vertical - whether or not to vertically align lists of assigns in CSS and
+                        //JavaScript
+                        vertical      : (api.vertical === "all"),
+                        //api.wrap - in markup beautification should text content wrap after the first
+                        //complete word up to a certain character length
+                        wrap          : (isNaN(api.wrap) === true)
+                            ? 80
+                            : Number(api.wrap)
+                    },
+                    autoval     = [],
+                    autostring  = "",
+                    auto        = function core__auto(a) {
+                        var b      = [],
+                            c      = 0,
+                            d      = 0,
+                            join   = "",
+                            flaga  = false,
+                            flagb  = false,
+                            output = function dom__langkey_auto_output(langname) {
                                 if (langname === "unknown") {
                                     return [
-                                        defaultt, setlangmode(defaultt), "unknown"
+                                        options.langdefault, setlangmode(options.langdefault), "unknown"
                                     ];
                                 }
                                 if (langname === "xhtml") {
@@ -543,7 +546,7 @@ var prettydiff = function prettydiff(api) {
                                 }
                                 if (langname === "tss") {
                                     return [
-                                        "javascript", "javascript", "Titanium Stylesheets"
+                                        "tss", "tss", "Titanium Stylesheets"
                                     ];
                                 }
                                 return [
@@ -630,7 +633,7 @@ var prettydiff = function prettydiff(api) {
                             }
                             return output("unknown");
                         }
-                        if ((((/(>[\w\s:]*)?<(\/|!)?[\w\s:-\[]+/).test(a) === true || (/^(\s*<\?xml)/).test(a) === true) && ((/^([\s\w]*<)/).test(a) === true || (/(>[\s\w]*)$/).test(a) === true)) || ((/^(\s*<s((cript)|(tyle)))/i).test(a) === true && (/(<\/s((cript)|(tyle))>\s*)$/i).test(a) === true)) {
+                        if ((((/(>[\w\s:]*)?<(\/|!)?[\w\s:\-\[]+/).test(a) === true || (/^(\s*<\?xml)/).test(a) === true) && ((/^([\s\w]*<)/).test(a) === true || (/(>[\s\w]*)$/).test(a) === true)) || ((/^(\s*<s((cript)|(tyle)))/i).test(a) === true && (/(<\/s((cript)|(tyle))>\s*)$/i).test(a) === true)) {
                             if (((/\s*<!doctype\ html>/i).test(a) === true && (/\s*<html/i).test(a) === true) || ((/^(\s*<!DOCTYPE\s+((html)|(HTML))\s+PUBLIC\s+)/).test(a) === true && (/XHTML\s+1\.1/).test(a) === false && (/XHTML\s+1\.0\s+(S|s)((trict)|(TRICT))/).test(a) === false)) {
                                 if ((/<%\s*\}/).test(a) === true) {
                                     return output("ejs");
@@ -654,35 +657,35 @@ var prettydiff = function prettydiff(api) {
                                 if ((/<jsp:include\s/).test(a) === true || (/<c:((set)|(if))\s/).test(a) === true) {
                                     return output("jsp");
                                 }
+                                if ((/\{(#|\?|\^|@|<|\+|~)/).test(a) === true && (/\{\//).test(a) === true) {
+                                    return output("dustjs");
+                                }
                                 return output("html");
                             }
-                            if ((/^(\s*<\?xml)/).test(a) === true) {
-                                if ((/<%\s*\}/).test(a) === true) {
-                                    return output("ejs");
-                                }
-                                if ((/<%\s*end/).test(a) === true) {
-                                    return output("html_ruby");
-                                }
-                                if ((/\{\{(#|\/|\{)/).test(a) === true) {
-                                    return output("handlebars");
-                                }
-                                if ((/\{\{end\}\}/).test(a) === true) {
-                                    //place holder for Go lang templates
-                                    return ("xml");
-                                }
-                                if ((/\s?\{%/).test(a) === true && (/\{\{(?!(\{|#|\=))/).test(a) === true) {
-                                    return output("twig");
-                                }
-                                if ((/<\?(?!(xml))/).test(a) === true) {
-                                    return output("php");
-                                }
-                                if ((/<jsp:include\s/).test(a) === true || (/<c:((set)|(if))\s/).test(a) === true) {
-                                    return output("jsp");
-                                }
-                                if ((/XHTML\s+1\.1/).test(a) === true || (/XHTML\s+1\.0\s+(S|s)((trict)|(TRICT))/).test(a) === true) {
-                                    return output("xhtml");
-                                }
+                            if ((/<jsp:include\s/).test(a) === true || (/<c:((set)|(if))\s/).test(a) === true) {
+                                return output("jsp");
+                            }
+                            if ((/<%\s*\}/).test(a) === true) {
+                                return output("ejs");
+                            }
+                            if ((/<%\s*end/).test(a) === true) {
+                                return output("html_ruby");
+                            }
+                            if ((/\{\{(#|\/|\{)/).test(a) === true) {
+                                return output("handlebars");
+                            }
+                            if ((/\{\{end\}\}/).test(a) === true) {
+                                //place holder for Go lang templates
                                 return output("xml");
+                            }
+                            if ((/\s?\{%/).test(a) === true && (/\{\{(?!(\{|#|\=))/).test(a) === true) {
+                                return output("twig");
+                            }
+                            if ((/<\?(?!(xml))/).test(a) === true) {
+                                return output("php");
+                            }
+                            if ((/\{(#|\?|\^|@|<|\+|~)/).test(a) === true && (/\{\//).test(a) === true) {
+                                return output("dustjs");
                             }
                             if ((/<jsp:include\s/).test(a) === true || (/<c:((set)|(if))\s/).test(a) === true) {
                                 return output("jsp");
@@ -691,7 +694,7 @@ var prettydiff = function prettydiff(api) {
                         }
                         return output("unknown");
                     },
-                    proctime       = function core__proctime() {
+                    proctime    = function core__proctime() {
                         var minuteString = "",
                             hourString   = "",
                             minutes      = 0,
@@ -728,45 +731,45 @@ var prettydiff = function prettydiff(api) {
                         }
                         return "<p><strong>Execution time:</strong> <em>" + hourString + minuteString + secondString + "</em></p>";
                     },
-                    pdcomment      = function core__pdcomment() {
+                    pdcomment   = function core__pdcomment() {
                         var comment    = "",
                             a          = 0,
-                            b          = csource.length,
-                            c          = csource.indexOf("/*prettydiff.com") + 16,
+                            b          = options.source.length,
+                            c          = options.source.indexOf("/*prettydiff.com") + 16,
                             difftest   = false,
                             build      = [],
                             comma      = -1,
                             g          = 0,
                             sourceChar = [],
                             quote      = "",
-                            sind       = csource.indexOf("/*prettydiff.com"),
-                            dind       = cdiff.indexOf("/*prettydiff.com");
-                        if ((csource.charAt(c - 17) === "\"" && (/var\s+prettydiff\s*\=\s*function/).test(csource) === false) || (sind < 0 && dind < 0)) {
+                            sind       = options.source.indexOf("/*prettydiff.com"),
+                            dind       = options.diff.indexOf("/*prettydiff.com");
+                        if ((options.source.charAt(c - 17) === "\"" && (/var\s+prettydiff\s*\=\s*function/).test(options.source) === false) || (sind < 0 && dind < 0)) {
                             return;
                         }
-                        if (sind > -1 && (/^(\s*\{\s*"token"\s*:\s*\[)/).test(csource) === true && (/\],\s*"types"\s*:\s*\[/).test(csource) === true) {
+                        if (sind > -1 && (/^(\s*\{\s*"token"\s*:\s*\[)/).test(options.source) === true && (/\],\s*"types"\s*:\s*\[/).test(options.source) === true) {
                             return;
                         }
-                        if (sind < 0 && dind > -1 && (/^(\s*\{\s*"token"\s*:\s*\[)/).test(cdiff) === true && (/\],\s*"types"\s*:\s*\[/).test(cdiff) === true) {
+                        if (sind < 0 && dind > -1 && (/^(\s*\{\s*"token"\s*:\s*\[)/).test(options.diff) === true && (/\],\s*"types"\s*:\s*\[/).test(options.diff) === true) {
                             return;
                         }
-                        if (c === 15 && typeof cdiff === "string") {
-                            c        = cdiff.indexOf("/*prettydiff.com") + 16;
+                        if (c === 15 && typeof options.diff === "string") {
+                            c        = options.diff.indexOf("/*prettydiff.com") + 16;
                             difftest = true;
                         } else if (c === 15) {
                             return;
                         }
                         for (c = c; c < b; c += 1) {
                             if (difftest === false) {
-                                if (csource.charAt(c) === "*" && csource.charAt(c + 1) === "/") {
+                                if (options.source.charAt(c) === "*" && options.source.charAt(c + 1) === "/") {
                                     break;
                                 }
-                                sourceChar.push(csource.charAt(c));
+                                sourceChar.push(options.source.charAt(c));
                             } else {
-                                if (cdiff.charAt(c) === "*" && cdiff.charAt(c + 1) === "/") {
+                                if (options.diff.charAt(c) === "*" && options.diff.charAt(c + 1) === "/") {
                                     break;
                                 }
-                                sourceChar.push(cdiff.charAt(c));
+                                sourceChar.push(options.diff.charAt(c));
                             }
                         }
                         comment = sourceChar.join("").toLowerCase();
@@ -824,358 +827,164 @@ var prettydiff = function prettydiff(api) {
                         for (c = 0; c < b; c += 1) {
                             if (typeof build[c][1] === "string") {
                                 build[c][0] = build[c][0].replace("api.", "");
-                                if (build[c][0] === "braceline") {
-                                    if (build[c][1] === "true") {
-                                        cbraceline = true;
-                                    } else if (build[c][1] === "false") {
-                                        cbraceline = false;
-                                    }
-                                } else if (build[c][0] === "bracepadding") {
-                                    if (build[c][1] === "true") {
-                                        cbracepadding = true;
-                                    } else if (build[c][1] === "false") {
-                                        cbracepadding = false;
-                                    }
-                                } else if (build[c][0] === "braces" || build[c][0] === "indent") {
+                                if (build[c][0] === "braces" || build[c][0] === "indent") {
                                     if (build[c][1] === "knr") {
-                                        cbraces = "knr";
+                                        options.braces = "knr";
                                     } else if (build[c][1] === "allman") {
-                                        cbraces = "allman";
+                                        options.braces = "allman";
                                     }
                                 } else if (build[c][0] === "comments") {
                                     if (build[c][1] === "indent") {
-                                        ccomm = "indent";
+                                        options.comments = "indent";
                                     } else if (build[c][1] === "noindent") {
-                                        ccomm = "noindent";
+                                        options.comments = "noindent";
                                     }
-                                } else if (build[c][0] === "conditional") {
-                                    if (build[c][1] === "true") {
-                                        ccond = true;
-                                    } else if (build[c][1] === "false") {
-                                        ccond = false;
-                                    }
-                                } else if (build[c][0] === "content") {
-                                    if (build[c][1] === "true") {
-                                        ccontent = true;
-                                    } else if (build[c][1] === "false") {
-                                        ccontent = false;
-                                    }
-                                } else if (build[c][0] === "context" && ((/\D/).test(build[c][1]) === false || build[c][1] === "")) {
-                                    ccontext = build[c][1];
-                                } else if (build[c][0] === "correct") {
-                                    if (build[c][1] === "true") {
-                                        ccorrect = true;
-                                    } else if (build[c][1] === "false") {
-                                        ccorrect = false;
-                                    }
-                                } else if (build[c][0] === "csvchar") {
-                                    ccsvchar = build[c][1];
-                                } else if (build[c][0] === "diffcli") {
-                                    if (build[c][1] === "true") {
-                                        cdiffcli = true;
-                                    } else if (build[c][1] === "false") {
-                                        cdiffcli = false;
-                                    }
-                                } else if (build[c][0] === "diffcomments") {
-                                    if (build[c][1] === "true") {
-                                        cdiffcomments = true;
-                                    } else if (build[c][1] === "false") {
-                                        cdiffcomments = false;
-                                    }
-                                } else if (build[c][0] === "difflabel") {
-                                    cdifflabel = build[c][1];
                                 } else if (build[c][0] === "diffview") {
                                     if (build[c][1] === "sidebyside") {
-                                        cdiffview = "sidebyside";
+                                        options.diffview = "sidebyside";
                                     } else if (build[c][1] === "inline") {
-                                        cdiffview = "inline";
+                                        options.diffview = "inline";
                                     }
-                                } else if (build[c][0] === "elseline" && build[c][1] === "true") {
-                                    celseline = true;
-                                } else if (build[c][0] === "force_indent") {
-                                    if (build[c][1] === "true") {
-                                        cforce = true;
-                                    } else if (build[c][1] === "false") {
-                                        cforce = false;
-                                    }
-                                } else if (build[c][0] === "html") {
-                                    if (build[c][1] === "html-no") {
-                                        chtml = "html-no";
-                                    } else if (build[c][1] === "html-yes") {
-                                        chtml = "html-yes";
-                                    }
-                                } else if (build[c][0] === "inchar") {
-                                    cinchar = build[c][1];
-                                } else if (build[c][0] === "inlevel") {
-                                    if (build[c][1] === "true") {
-                                        cinlevel = true;
-                                    } else if (build[c][1] === "false") {
-                                        cinlevel = false;
-                                    }
-                                } else if (build[c][0] === "insize" && (/\D/).test(build[c][1]) === false) {
-                                    cinsize = build[c][1];
-                                } else if (build[c][0] === "jslines") {
-                                    if (build[c][1] === "true") {
-                                        cpreserve = true;
-                                    } else if (build[c][1] === "false") {
-                                        cpreserve = false;
-                                    }
-                                } else if (build[c][0] === "jsscope") {
-                                    if (build[c][1] === "true") {
-                                        cjsscope = true;
-                                    } else if (build[c][1] === "false") {
-                                        cjsscope = false;
-                                    }
-                                } else if (build[c][0] === "jsspace") {
-                                    if (build[c][1] === "true") {
-                                        cspace = true;
-                                    } else if (build[c][1] === "false") {
-                                        cspace = false;
-                                    }
-                                } else if (build[c][0] === "lang") {
-                                    if (build[c][1] === "auto") {
-                                        clang = "auto";
-                                    } else if (build[c][1] === "javascript") {
-                                        clang = "javascript";
-                                    } else if (build[c][1] === "css") {
-                                        clang = "csv";
-                                    } else if (build[c][1] === "csv") {
-                                        clang = "csv";
-                                    } else if (build[c][1] === "markup") {
-                                        clang = "markup";
-                                    } else if (build[c][1] === "text") {
-                                        clang = "text";
-                                    }
-                                } else if (build[c][0] === "langdefault") {
-                                    if (build[c][1] === "javascript") {
-                                        clang = "javascript";
-                                    } else if (build[c][1] === "css") {
-                                        clang = "csv";
-                                    } else if (build[c][1] === "csv") {
-                                        clang = "csv";
-                                    } else if (build[c][1] === "markup") {
-                                        clang = "markup";
-                                    } else if (build[c][1] === "text") {
-                                        clang = "text";
-                                    }
+                                } else if (build[c][0] === "lang" || build[c][0] === "langdefault") {
+                                    options[build[c][0]] = setlangmode(build[c][1]);
                                 } else if (build[c][0] === "mode") {
                                     if (build[c][1] === "beautify") {
-                                        cmode = "beautify";
+                                        options.mode = "beautify";
                                     } else if (build[c][1] === "minify") {
-                                        cmode = "minify";
+                                        options.mode = "minify";
                                     } else if (build[c][1] === "diff") {
-                                        cmode = "diff";
+                                        options.mode = "diff";
                                     } else if (build[c][1] === "parse") {
-                                        cmode = "parse";
-                                    }
-                                } else if (build[c][0] === "obfuscate") {
-                                    if (build[c][1] === "true") {
-                                        cobfuscate = true;
-                                    } else if (build[c][1] === "false") {
-                                        cobfuscate = false;
-                                    }
-                                } else if (build[c][0] === "objsort") {
-                                    if (build[c][1] === "all" || build[c][1] === "true") {
-                                        cobjsort = true;
-                                    } else if (build[c][1] === "css" && clang !== "javascript") {
-                                        cobjsort = true;
-                                    } else if (build[c][1] === "js" && clang !== "css") {
-                                        cobjsort = true;
-                                    } else if (build[c][1] === "none" || build[c][1] === "false") {
-                                        cobjsort = false;
-                                    }
-                                } else if (build[c][0] === "preserve") {
-                                    if (build[c][1] === "all" || build[c][1] === "true") {
-                                        cpreserve = true;
-                                    } else if (build[c][1] === "css" && clang !== "javascript") {
-                                        cpreserve = true;
-                                    } else if (build[c][1] === "js" && clang !== "css") {
-                                        cpreserve = true;
-                                    } else if (build[c][1] === "none" || build[c][1] === "false") {
-                                        cpreserve = false;
-                                    }
-                                } else if (build[c][0] === "quote") {
-                                    if (build[c][1] === "true") {
-                                        cquote = true;
-                                    } else if (build[c][1] === "false") {
-                                        cquote = false;
+                                        options.mode = "parse";
                                     }
                                 } else if (build[c][0] === "quoteConvert") {
                                     if (build[c][1] === "single") {
-                                        cquoteConvert = "single";
+                                        options.quoteConvert = "single";
                                     } else if (build[c][1] === "double") {
-                                        cquoteConvert = "double";
+                                        options.quoteConvert = "double";
                                     } else if (build[c][1] === "none") {
-                                        cquoteConvert = "none";
+                                        options.quoteConvert = "none";
                                     }
-                                } else if (build[c][0] === "semicolon") {
-                                    if (build[c][1] === "true") {
-                                        csemicolon = true;
-                                    } else if (build[c][1] === "false") {
-                                        csemicolon = false;
-                                    }
-                                } else if (build[c][0] === "sourcelabel") {
-                                    csourcelabel = build[c][1];
                                 } else if (build[c][0] === "style") {
                                     if (build[c][1] === "indent") {
-                                        cstyle = "indent";
+                                        options.style = "indent";
                                     } else if (build[c][1] === "noindent") {
-                                        cstyle = "noindent";
-                                    }
-                                } else if (build[c][0] === "styleguide") {
-                                    cstyleguide = build[c][1];
-                                } else if (build[c][0] === "titanium") {
-                                    if (build[c][1] === "true") {
-                                        ctitanium = true;
-                                    } else if (build[c][1] === "false") {
-                                        ctitanium = false;
-                                    }
-                                } else if (build[c][0] === "topcoms") {
-                                    if (build[c][1] === "true") {
-                                        ctopcoms = true;
-                                    } else if (build[c][1] === "false") {
-                                        ctopcoms = false;
+                                        options.style = "noindent";
                                     }
                                 } else if (build[c][0] === "varword") {
                                     if (build[c][1] === "each") {
-                                        cvarword = "each";
+                                        options.varword = "each";
                                     } else if (build[c][1] === "list") {
-                                        cvarword = "list";
+                                        options.varword = "list";
                                     } else if (build[c][1] === "none") {
-                                        cvarword = "none";
+                                        options.varword = "none";
                                     }
-                                } else if (build[c][0] === "vertical") {
-                                    if (build[c][1] === "all" || build[c][1] === "true") {
-                                        cvertical = true;
-                                    } else if (build[c][1] === "css" && clang !== "javascript") {
-                                        cvertical = true;
-                                    } else if (build[c][1] === "js" && clang !== "css") {
-                                        cvertical = true;
-                                    } else if (build[c][1] === "none" || build[c][1] === "false") {
-                                        cvertical = false;
+                                } else if (options[build[c][0]] !== undefined) {
+                                    if (build[c][1] === "true") {
+                                        options[build[c][0]] = true;
+                                    } else if (build[c][1] === "false") {
+                                        options[build[c][0]] = false;
+                                    } else if (isNaN(build[c][1]) === false) {
+                                        options[build[c][0]] = Number(build[c][1]);
+                                    } else {
+                                        options[build[c][0]] = build[c][1];
                                     }
-                                } else if (build[c][0] === "wrap" && isNaN(build[c][1]) === false) {
-                                    cwrap = Number(build[c][1]);
                                 }
                             }
                         }
                     };
+                pdcomment();
                 if (api.preserve === true || api.preserve === "true") {
-                    cpreserve = true;
+                    options.preserve = true;
                 }
                 if (api.alphasort === true || api.alphasort === "true" || api.objsort === true || api.objsort === "true") {
-                    cobjsort = true;
+                    options.objsort = true;
                 }
                 if (api.indent === "allman") {
-                    cbraces = "allman";
+                    options.braces = "allman";
                 }
                 if (api.vertical === true || api.vertical === "true") {
-                    cvertical = true;
+                    options.vertical = true;
                 }
-                if (csource === "Source sample is missing.") {
+                if (options.source === "") {
                     return [
                         "Error: Source sample is missing.", ""
                     ];
                 }
-                if (cdiff === "Diff sample is missing." && cmode === "diff") {
+                if (options.diff === "Diff sample is missing." && options.mode === "diff") {
                     return [
                         "Error: Diff sample is missing.", ""
                     ];
                 }
-                if (clang === "html") {
-                    chtml = true;
-                    clang = "markup";
-                } else if (clang === "tss" || clang === "titanium") {
-                    ctitanium = true;
-                    clang     = "javscript";
-                }
-                if (clang === "auto") {
-                    autoval = auto(csource);
-                    clang   = autoval[1];
+                if (options.lang === "auto") {
+                    autoval      = auto(options.source);
+                    options.lang = autoval[1];
                     if (autoval[2] === "unknown") {
                         autostring = "<p>Code type set to <strong>auto</strong>, but language could not be determined." +
                                 " Language defaulted to <em>" + autoval[0] + "</em>.</p>";
                     } else {
                         autostring = "<p>Code type set to <strong>auto</strong>. Presumed language is <em>" + autoval[2] + "</em>.</p>";
                     }
-                } else if (capi === "dom") {
+                } else if (options.api === "dom") {
                     autoval    = [
-                        clang, clang, clang
+                        options.lang, options.lang, options.lang
                     ];
-                    autostring = "<p>Code type is set to <strong>" + clang + "</strong>.</p>";
+                    autostring = "<p>Code type is set to <strong>" + options.lang + "</strong>.</p>";
                 } else {
-                    clang      = setlangmode(clang);
-                    autostring = "<p>Code type is set to <strong>" + clang + "</strong>.</p>";
+                    options.lang = setlangmode(options.lang);
+                    autostring   = "<p>Code type is set to <strong>" + options.lang + "</strong>.</p>";
                 }
-                pdcomment();
-                if (clang === "css") {
-                    if (api.objsort === "js") {
-                        cobjsort = false;
-                    }
-                    if (api.preserve === "js") {
-                        cpreserve = false;
-                    }
-                    if (api.vertical === "js") {
-                        cvertical = false;
-                    }
+                if (autoval[0] === "dustjs") {
+                    options.dustjs = true;
                 }
-                if (clang === "js") {
-                    if (api.objsort === "css") {
-                        cobjsort = false;
+                if (options.lang === "html") {
+                    options.html = true;
+                    options.lang = "markup";
+                } else if (options.lang === "tss" || options.lang === "titanium") {
+                    options.titanium = true;
+                    options.lang     = "javscript";
+                }
+                if (options.lang === "css") {
+                    if (api.objsort === "css" || api.objsort === "cssonly") {
+                        options.objsort = true;
                     }
-                    if (api.preserve === "css") {
-                        cpreserve = false;
+                    if (api.preserve === "css" || api.preserve === "cssonly") {
+                        options.preserve = true;
                     }
-                    if (api.vertical === "css") {
-                        cvertical = false;
+                    if (api.vertical === "css" || api.vertical === "cssonly") {
+                        options.vertical = true;
                     }
                 }
-                if (cmode === "minify") {
-                    if (clang === "css") {
-                        apioutput = csspretty({
-                            mode        : cmode,
-                            objsort     : cobjsort,
-                            quoteConvert: cquoteConvert,
-                            source      : csource,
-                            topcoms     : ctopcoms
-                        });
-                    } else if (clang === "csv") {
-                        apioutput = csvmin(csource, ccsvchar);
-                    } else if (clang === "markup") {
-                        apioutput = markuppretty({
-                            conditional : ccond,
-                            mode        : cmode,
-                            objsort     : cobjsort,
-                            presume_html: chtml,
-                            quoteConvert: cquoteConvert,
-                            source      : csource,
-                            styleguide  : cstyleguide,
-                            tagmerge    : ctagmerge,
-                            top_comments: ctopcoms
-                        });
-                    } else if (clang === "text") {
-                        apioutput  = csource;
+                if (options.lang === "js") {
+                    if (api.objsort === "js" || api.objsort === "jsonly") {
+                        options.objsort = true;
+                    }
+                    if (api.preserve === "js" || api.preserve === "jsonly") {
+                        options.preserve = true;
+                    }
+                    if (api.vertical === "js" || api.vertical === "jsonly") {
+                        options.vertical = true;
+                    }
+                }
+                if (options.mode === "minify") {
+                    if (options.lang === "css") {
+                        apioutput = csspretty(options);
+                    } else if (options.lang === "csv") {
+                        apioutput = csvmin(options.source, options.csvchar);
+                    } else if (options.lang === "markup") {
+                        apioutput = markuppretty(options);
+                    } else if (options.lang === "text") {
+                        apioutput  = options.source;
                         apidiffout = "";
                     } else {
-                        apioutput = jspretty({
-                            correct     : ccorrect,
-                            mode        : cmode,
-                            obfuscate   : cobfuscate,
-                            objsort     : cobjsort,
-                            quoteConvert: cquoteConvert,
-                            source      : csource,
-                            styleguide  : cstyleguide,
-                            titanium    : ctitanium,
-                            topcoms     : ctopcoms,
-                            varword     : cvarword,
-                            wrap        : -1
-                        });
+                        options.wrap = -1;
+                        apioutput    = jspretty(options);
                     }
                     return (function core__minifyReport() {
                         var sizediff = function core__minifyReport_score() {
                             var a                 = 0,
                                 lines             = 0,
-                                source            = csource,
+                                source            = options.source,
                                 sizeOld           = source.length,
                                 windowsSize       = 0,
                                 sizeNew           = apioutput.length,
@@ -1234,42 +1043,20 @@ var prettydiff = function prettydiff(api) {
                         ];
                     }());
                 }
-                if (cmode === "parse") {
-                    if (clang === "css") {
-                        apioutput = csspretty({
-                            mode        : cmode,
-                            objsort     : cobjsort,
-                            quoteConvert: cquoteConvert,
-                            source      : csource
-                        });
-                    } else if (clang === "csv") {
+                if (options.mode === "parse") {
+                    if (options.lang === "css") {
+                        apioutput = csspretty(options);
+                    } else if (options.lang === "csv") {
                         apioutput  = "CSV not supported in parse mode";
                         apidiffout = "";
-                    } else if (clang === "markup") {
-                        apioutput  = markuppretty({
-                            correct     : ccorrect,
-                            html        : chtml,
-                            mode        : cmode,
-                            objsort     : cobjsort,
-                            quoteConvert: cquoteConvert,
-                            source      : csource,
-                            tagmerge    : ctagmerge,
-                            varword     : cvarword
-                        });
+                    } else if (options.lang === "markup") {
+                        apioutput  = markuppretty(options);
                         autostring = autostring + summary;
-                    } else if (clang === "text") {
-                        apioutput  = csource;
+                    } else if (options.lang === "text") {
+                        apioutput  = options.source;
                         apidiffout = "";
                     } else {
-                        apioutput = jspretty({
-                            correct     : ccorrect,
-                            mode        : cmode,
-                            objsort     : cobjsort,
-                            quoteConvert: cquoteConvert,
-                            source      : csource,
-                            titanium    : ctitanium,
-                            varword     : cvarword
-                        });
+                        apioutput = jspretty(options);
                     }
                     if (apidiffout === false) {
                         apidiffout = "";
@@ -1284,86 +1071,30 @@ var prettydiff = function prettydiff(api) {
                         apioutput, autostring + proctime()
                     ];
                 }
-                if (cmode === "beautify") {
-                    if (clang === "css") {
-                        apioutput  = csspretty({
-                            comm          : ccomm,
-                            cssinsertlines: ccssinsertlines,
-                            inchar        : cinchar,
-                            insize        : cinsize,
-                            mode          : cmode,
-                            objsort       : cobjsort,
-                            preserve      : cpreserve,
-                            quoteConvert  : cquoteConvert,
-                            source        : csource,
-                            vertical      : (api.vertical === "jsonly")
-                                ? false
-                                : cvertical
-                        });
+                if (options.mode === "beautify") {
+                    if (options.lang === "css") {
+                        apioutput  = csspretty(options);
                         apidiffout = summary;
-                    } else if (clang === "csv") {
-                        apioutput  = csvbeauty(csource, ccsvchar);
+                    } else if (options.lang === "csv") {
+                        apioutput  = csvbeauty(options.source, options.csvchar);
                         apidiffout = "";
-                    } else if (clang === "markup") {
-                        apioutput  = markuppretty({
-                            accessibility: caccessibility,
-                            braceline    : cbraceline,
-                            bracepadding : cbracepadding,
-                            braces       : cbraces,
-                            comments     : ccomm,
-                            correct      : ccorrect,
-                            force_indent : cforce,
-                            html         : chtml,
-                            inchar       : cinchar,
-                            inlevel      : cinlevel,
-                            insize       : cinsize,
-                            mode         : cmode,
-                            objsort      : cobjsort,
-                            preserve     : cpreserve,
-                            quoteConvert : cquoteConvert,
-                            source       : csource,
-                            space        : cspace,
-                            style        : cstyle,
-                            styleguide   : cstyleguide,
-                            tagmerge     : ctagmerge,
-                            varword      : cvarword,
-                            vertical     : (api.vertical === "jsonly")
-                                ? "jsonly"
-                                : cvertical,
-                            wrap         : cwrap
-                        });
+                    } else if (options.lang === "markup") {
+                        if (api.vertical === "jsonly") {
+                            options.vertical = "jsonly";
+                        }
+                        apioutput  = markuppretty(options);
                         apidiffout = summary;
-                        if (cinchar !== "\t") {
+                        if (options.inchar !== "\t") {
                             apioutput = apioutput.replace(/\n[\t]*\u0020\/>/g, "");
                         }
-                    } else if (clang === "text") {
-                        apioutput  = csource;
+                    } else if (options.lang === "text") {
+                        apioutput  = options.source;
                         apidiffout = "";
                     } else {
-                        apioutput  = jspretty({
-                            braceline   : cbraceline,
-                            bracepadding: cbracepadding,
-                            braces      : cbraces,
-                            comments    : ccomm,
-                            correct     : ccorrect,
-                            elseline    : celseline,
-                            inchar      : cinchar,
-                            inlevel     : cinlevel,
-                            insize      : cinsize,
-                            jsscope     : cjsscope,
-                            objsort     : cobjsort,
-                            preserve    : cpreserve,
-                            quoteConvert: cquoteConvert,
-                            source      : csource,
-                            space       : cspace,
-                            styleguide  : cstyleguide,
-                            titanium    : ctitanium,
-                            varword     : cvarword,
-                            vertical    : (api.vertical === "jsonly")
-                                ? true
-                                : cvertical,
-                            wrap        : cwrap
-                        });
+                        if (api.vertical === "jsonly") {
+                            options.vertical = "jsonly";
+                        }
+                        apioutput  = jspretty(options);
                         apidiffout = summary;
                     }
                     if (apidiffout === false) {
@@ -1372,7 +1103,7 @@ var prettydiff = function prettydiff(api) {
                     if (jsxstatus === true) {
                         autostring = "<p>Code type is presumed to be <em>React JSX</em>.</p>";
                     }
-                    if (capi === "" && cjsscope !== "none" && clang === "javascript") {
+                    if (options.api === "" && options.jsscope !== "none" && options.lang === "javascript") {
                         builder.head       = "<?xml version='1.0' encoding='UTF-8' ?><!DOCTYPE html PUBLIC '-//W3C//DTD XHTML " +
                                                  "1.1//EN' 'http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd'><html xmlns='http://www." +
                                                  "w3.org/1999/xhtml' xml:lang='en'><head><title>Pretty Diff - The difference tool<" +
@@ -1649,161 +1380,68 @@ var prettydiff = function prettydiff(api) {
                         apioutput, autostring + proctime() + apidiffout
                     ];
                 }
-                if (cmode === "diff") {
-                    summary = "diff";
-                    if (cdiffcomments === false) {
-                        ccomm = "nocomment";
+                if (options.mode === "diff") {
+                    summary          = "diff";
+                    options.vertical = false;
+                    options.jsscope  = false;
+                    options.preserve = false;
+                    if (options.diffcomments === false) {
+                        options.comments = "nocomment";
                     }
-                    if (csource === "" || cdiff === "") {
+                    if (options.source === "" || options.diff === "") {
                         return [
                             "", ""
                         ];
                     }
-                    if (clang === "css") {
-                        apioutput  = csspretty({
-                            comm    : ccomm,
-                            diffcomm: cdiffcomments,
-                            inchar  : cinchar,
-                            insize  : cinsize,
-                            mode    : cmode,
-                            objsort : cobjsort,
-                            preserve: cpreserve,
-                            source  : csource,
-                            topcoms : ctopcoms,
-                            vertical: false
-                        });
-                        apidiffout = csspretty({
-                            comm    : ccomm,
-                            diffcomm: cdiffcomments,
-                            inchar  : cinchar,
-                            insize  : cinsize,
-                            mode    : cmode,
-                            objsort : cobjsort,
-                            preserve: cpreserve,
-                            source  : cdiff,
-                            topcoms : ctopcoms,
-                            vertical: false
-                        });
-                    } else if (clang === "csv") {
-                        apioutput  = csvbeauty(csource, ccsvchar);
-                        apidiffout = csvbeauty(cdiff, ccsvchar);
-                    } else if (clang === "markup") {
-                        apioutput  = markuppretty({
-                            bracepadding: cbracepadding,
-                            braces      : cbraces,
-                            comments    : ccomm,
-                            conditional : ccond,
-                            content     : ccontent,
-                            diffcomments: cdiffcomments,
-                            force_indent: cforce,
-                            html        : chtml,
-                            inchar      : cinchar,
-                            insize      : cinsize,
-                            mode        : cmode,
-                            objsort     : cobjsort,
-                            source      : csource,
-                            style       : cstyle,
-                            styleguide  : cstyleguide,
-                            tagmerge    : ctagmerge,
-                            vertical    : false,
-                            wrap        : cwrap
-                        }).replace(/\n[\t]*\ \/>/g, "");
-                        apidiffout = markuppretty({
-                            bracepadding: cbracepadding,
-                            braces      : cbraces,
-                            comments    : ccomm,
-                            conditional : ccond,
-                            content     : ccontent,
-                            ctagmerge   : ctagmerge,
-                            diffcomments: cdiffcomments,
-                            force_indent: cforce,
-                            html        : chtml,
-                            inchar      : cinchar,
-                            insize      : cinsize,
-                            mode        : cmode,
-                            objsort     : cobjsort,
-                            source      : cdiff,
-                            style       : cstyle,
-                            styleguide  : cstyleguide,
-                            vertical    : false,
-                            wrap        : cwrap
-                        }).replace(/\n[\t]*\ \/>/g, "");
-                    } else if (clang === "text") {
-                        apioutput  = csource;
-                        apidiffout = cdiff;
+                    if (options.lang === "css") {
+                        apioutput  = csspretty(options);
+                        options.source = options.diff;
+                        apidiffout = csspretty(options);
+                    } else if (options.lang === "csv") {
+                        apioutput  = csvbeauty(options.source, options.csvchar);
+                        apidiffout = csvbeauty(options.diff, options.csvchar);
+                    } else if (options.lang === "markup") {
+                        apioutput  = markuppretty(options).replace(/\n[\t]*\ \/>/g, "");
+                        options.source = options.diff;
+                        apidiffout = markuppretty(options).replace(/\n[\t]*\ \/>/g, "");
+                    } else if (options.lang === "text") {
+                        apioutput  = options.source;
+                        apidiffout = options.diff;
                     } else {
-                        apioutput  = jspretty({
-                            bracepadding: cbracepadding,
-                            braces      : cbraces,
-                            comments    : ccomm,
-                            correct     : ccorrect,
-                            elseline    : celseline,
-                            inchar      : cinchar,
-                            inlevel     : cinlevel,
-                            insize      : cinsize,
-                            jsscope     : false,
-                            objsort     : cobjsort,
-                            preserve    : false,
-                            source      : csource,
-                            space       : cspace,
-                            styleguide  : cstyleguide,
-                            titanium    : ctitanium,
-                            vertical    : false,
-                            wrap        : cwrap
-                        });
-                        apidiffout = jspretty({
-                            bracepadding: cbracepadding,
-                            braces      : cbraces,
-                            comments    : ccomm,
-                            correct     : ccorrect,
-                            elseline    : celseline,
-                            inchar      : cinchar,
-                            inlevel     : cinlevel,
-                            insize      : cinsize,
-                            jsscope     : false,
-                            objsort     : cobjsort,
-                            preserve    : false,
-                            source      : cdiff,
-                            space       : cspace,
-                            styleguide  : cstyleguide,
-                            titanium    : ctitanium,
-                            vertical    : false,
-                            wrap        : cwrap
-                        });
+                        apioutput  = jspretty(options);
+                        options.source = options.diff;
+                        apidiffout = jspretty(options);
                     }
-                    if (cquote === true) {
+                    if (options.quote === true) {
                         apioutput  = apioutput.replace(/'/g, "\"");
                         apidiffout = apidiffout.replace(/'/g, "\"");
                     }
-                    if (csemicolon === true) {
+                    if (options.semicolon === true) {
                         apioutput  = apioutput.replace(/;\n/g, "\n");
                         apidiffout = apidiffout.replace(/;\n/g, "\n");
                     }
-                    if (csourcelabel === "" || spacetest.test(csourcelabel)) {
-                        csourcelabel = "Base Text";
+                    if (options.sourcelabel === "" || spacetest.test(options.sourcelabel)) {
+                        options.sourcelabel = "Base Text";
                     }
-                    if (cdifflabel === "" || spacetest.test(cdifflabel)) {
-                        cdifflabel = "New Text";
-                    }
-                    if (cdiffview === "inline") {
-                        cdiffview = true;
+                    if (options.difflabel === "" || spacetest.test(options.difflabel)) {
+                        options.difflabel = "New Text";
                     }
                     return (function core__diff() {
                         var a     = [],
                             s     = "s",
                             t     = "s",
                             achar = "";
-                        if (cdiffcli === true) {
+                        if (options.diffcli === true) {
                             return diffview({
                                 baseTextLines: apioutput,
-                                baseTextName : csourcelabel,
-                                contextSize  : ccontext,
-                                diffcli      : cdiffcli,
-                                inline       : cdiffview,
+                                baseTextName : options.sourcelabel,
+                                contextSize  : options.context,
+                                diffcli      : options.diffcli,
+                                inline       : options.diffview,
                                 newTextLines : apidiffout,
-                                newTextName  : cdifflabel,
-                                tchar        : cinchar,
-                                tsize        : cinsize
+                                newTextName  : options.difflabel,
+                                tchar        : options.inchar,
+                                tsize        : options.insize
                             });
                         }
                         if (apioutput === "Error: This does not appear to be JavaScript." || apidiffout === "Error: This does not appear to be JavaScript.") {
@@ -1814,18 +1452,18 @@ var prettydiff = function prettydiff(api) {
                                 0, 0
                             ];
                         } else {
-                            if (clang !== "text") {
-                                achar = cinchar;
+                            if (options.lang !== "text") {
+                                achar = options.inchar;
                             }
                             a[1] = diffview({
                                 baseTextLines: apioutput,
-                                baseTextName : csourcelabel,
-                                contextSize  : ccontext,
-                                inline       : cdiffview,
+                                baseTextName : options.sourcelabel,
+                                contextSize  : options.context,
+                                inline       : options.diffview,
                                 newTextLines : apidiffout,
-                                newTextName  : cdifflabel,
+                                newTextName  : options.difflabel,
                                 tchar        : achar,
-                                tsize        : cinsize
+                                tsize        : options.insize
                             });
                             if (a[1][2] === 1) {
                                 t = "";
@@ -1838,7 +1476,7 @@ var prettydiff = function prettydiff(api) {
                         if (jsxstatus === true) {
                             autostring = "<p>Code type is presumed to be <em>React JSX</em>.</p>";
                         }
-                        if (capi === "") {
+                        if (options.api === "") {
                             builder.head          = "<?xml version='1.0' encoding='UTF-8' ?><!DOCTYPE html PUBLIC '-//W3C//DTD XHTML " +
                                                         "1.1//EN' 'http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd'><html xmlns='http://www." +
                                                         "w3.org/1999/xhtml' xml:lang='en'><head><title>Pretty Diff - The difference tool<" +
@@ -6457,7 +6095,7 @@ var prettydiff = function prettydiff(api) {
                 }());
             }
 
-            if (jmode === "beautify" || (jmode === "minify" && jobfuscate === true)) {
+            if (jmode === "beautify" || jmode === "diff" || (jmode === "minify" && jobfuscate === true)) {
                 //this function is the pretty-print and var finding algorithm
                 (function jspretty__algorithm() {
                     var a          = 0,
@@ -9094,13 +8732,14 @@ var prettydiff = function prettydiff(api) {
                     : " ",
                 mcomm           = (typeof args.comments === "string" && args.comments === "noindent")
                     ? "noindent"
-                    : ((args.comments === "nocomment")
+                    : (args.comments === "nocomment")
                         ? "nocomment"
-                        : "indent"),
+                        : "indent",
                 mconditional    = (args.html === true || args.conditional === true || args.conditional === "true"),
                 mcont           = (args.content === "true" || args.content === true),
                 mcorrect        = (args.correct === true || args.correct === "true"),
                 mcssinsertlines = (args.cssinsertlines === true || args.cssinsertlines === "true"),
+                mdust           = (args.dustjs === true || args.dustjs === "true"),
                 mforce          = (args.force_indent === "true" || args.force_indent === true),
                 mhtml           = (args.html === "true" || args.html === true),
                 minlevel        = (isNaN(args.inlevel) === true)
@@ -9130,6 +8769,7 @@ var prettydiff = function prettydiff(api) {
                     ? args.styleguide
                     : "none",
                 mtagmerge       = (args.tagmerge === true || args.tagmerge === "true"),
+                mtextpreserve   = (args.textpreserve === true || args.textpreserve === "true"),
                 mtopcomments    = (args.top_comments === true || args.top_comments === "true"),
                 mwrap           = (isNaN(args.wrap) === true || mjsx === true)
                     ? 0
@@ -9242,6 +8882,7 @@ var prettydiff = function prettydiff(api) {
             //<[CDATA[   ]]>     cdata
             //<!--       -->     comment
             //<%--       --%>    comment
+            //{!         !}      comment
             //<!--[if    -->     conditional
             //text       text    content
             //</         >       end
@@ -9259,20 +8900,38 @@ var prettydiff = function prettydiff(api) {
             //[%         %]      template
             //{@         @}      template
             //{#         #}      template
+            //{#         /}      template
+            //{?         /}      template
+            //{^         /}      template
+            //{@         /}      template
+            //{<         /}      template
+            //{+         /}      template
+            //{~         }       template
             //<?         ?>      template
+            //{:else}            template_else
             //{{/        }}      template_end
             //<%\s*}     %>      template_end
             //[%\s*}     %]      template_end
             //{@\s*}     @}      template_end
+            //{/         }       template_end
             //{{#        }}      template_start
             //<%         {\s*%>  template_start
             //[%         {\s*%]  template_start
             //{@         {\s*@}  template_start
+            //{#         }       template_start
+            //{?         }       template_start
+            //{^         }       template_start
+            //{@         }       template_start
+            //{<         }       template_start
+            //{+         }       template_start
             //<?xml      ?>      xml
             if (mmode === "diff") {
                 mwrap = 0;
             } else {
                 mcont = false;
+            }
+            if (mtextpreserve === true) {
+                mwrap = 0;
             }
             (function markuppretty__tokenize() {
                 var a        = 0,
@@ -9400,7 +9059,31 @@ var prettydiff = function prettydiff(api) {
                             }
                         } else if (b[a] === "{") {
                             preserve = true;
-                            if (b[a + 1] === "{") {
+                            if (mdust === true) {
+                                if (b[a + 1] === ":" && b[a + 2] === "e" && b[a + 3] === "l" && b[a + 4] === "s" && b[a + 5] === "e" && b[a + 6] === "}") {
+                                    token.push("{:else}");
+                                    return types.push("template_else");
+                                }
+                                if (b[a + 1] === "!") {
+                                    end = "!}";
+                                    types.push("comment");
+                                } else if (b[a + 1] === "/") {
+                                    end = "}";
+                                    types.push("template_end");
+                                } else if (b[a + 1] === "~") {
+                                    end = "}";
+                                    types.push("singleton");
+                                } else if (b[a + 1] === ">") {
+                                    end = "/}";
+                                    types.push("singleton");
+                                } else if (b[a + 1] === "#" || b[a + 1] === "?" || b[a + 1] === "^" || b[a + 1] === "@" || b[a + 1] === "<" || b[a + 1] === "+") {
+                                    end = "}";
+                                    types.push("template_start");
+                                } else {
+                                    end = "}";
+                                    types.push("template");
+                                }
+                            } else if (b[a + 1] === "{") {
                                 if (b[a + 2] === "{") {
                                     end = "}}}";
                                     types.push("template");
@@ -9513,7 +9196,7 @@ var prettydiff = function prettydiff(api) {
                                                         quote = "\n";
                                                     }
                                                 }
-                                            } else if (b[a] === "{" && (b[a + 1] === "{" || b[a + 1] === "%" || b[a + 1] === "@" || b[a + 1] === "#")) {
+                                            } else if (output[0] !== "{" && b[a] === "{" && (mdust === true || b[a + 1] === "{" || b[a + 1] === "%" || b[a + 1] === "@" || b[a + 1] === "#")) {
                                                 //opening embedded template expression
                                                 if (b[a + 1] === "{") {
                                                     if (b[a + 2] === "{") {
@@ -9521,6 +9204,8 @@ var prettydiff = function prettydiff(api) {
                                                     } else {
                                                         quote = "}}";
                                                     }
+                                                } else if (mdust === true) {
+                                                    quote = "}";
                                                 } else {
                                                     quote = b[a + 1] + "}";
                                                 }
@@ -9593,7 +9278,7 @@ var prettydiff = function prettydiff(api) {
                                 } else if (b[a] === "\"" || b[a] === "'") {
                                     //opening quote
                                     quote = b[a];
-                                } else if (b[a] === "{" && (b[a + 1] === "{" || b[a + 1] === "%" || b[a + 1] === "@" || b[a + 1] === "#")) {
+                                } else if (output[0] !== "{" && b[a] === "{" && (mdust === true || b[a + 1] === "{" || b[a + 1] === "%" || b[a + 1] === "@" || b[a + 1] === "#")) {
                                     //opening embedded template expression
                                     if (b[a + 1] === "{") {
                                         if (b[a + 2] === "{") {
@@ -9601,6 +9286,8 @@ var prettydiff = function prettydiff(api) {
                                         } else {
                                             quote = "}}";
                                         }
+                                    } else if (mdust === true) {
+                                        quote = "}";
                                     } else {
                                         quote = b[a + 1] + "}";
                                     }
@@ -9755,6 +9442,13 @@ var prettydiff = function prettydiff(api) {
                                     return true;
                                 }
                             }
+                            if (mdust === true && types[types.length - 1] === "template_start") {
+                                type  = element.charAt(1);
+                                value = element.slice(element.length - 2);
+                                if ((value === "/}" || value.charAt(0) === type) && (type === "#" || type === "?" || type === "^" || type === "@" || type === "<" || type === "+")) {
+                                    types[types.length - 1] = "template";
+                                }
+                            }
                             return false;
                         }());
                         if (singleton === true) {
@@ -9787,13 +9481,15 @@ var prettydiff = function prettydiff(api) {
                                             quote = "\"";
                                         } else if (b[a] === "'") {
                                             quote = "'";
-                                        } else if (b[a] === "{" && (b[a + 1] === "{" || b[a + 1] === "%" || b[a + 1] === "@" || b[a + 1] === "#")) {
+                                        } else if (output[0] !== "{" && b[a] === "{" && (mdust === true || b[a + 1] === "{" || b[a + 1] === "%" || b[a + 1] === "@" || b[a + 1] === "#")) {
                                             if (b[a + 1] === "{") {
                                                 if (b[a + 2] === "{") {
                                                     quote = "}}}";
                                                 } else {
                                                     quote = "}}";
                                                 }
+                                            } else if (mdust === true) {
+                                                quote = "}";
                                             } else {
                                                 quote = b[a + 1] + "}";
                                             }
@@ -9926,14 +9622,35 @@ var prettydiff = function prettydiff(api) {
                                 } else if (quote === "/" && b[a] === "\n") {
                                     quote = "";
                                 }
-                            } else if (b[a] === "<" || (b[a] === "[" && b[a + 1] === "%") || (b[a] === "{" && (b[a + 1] === "{" || b[a + 1] === "%" || b[a + 1] === "@" || b[a + 1] === "#"))) {
+                            } else if (b[a] === "<" || (b[a] === "[" && b[a + 1] === "%") || (b[a] === "{" && (mdust === true || b[a + 1] === "{" || b[a + 1] === "%" || b[a + 1] === "@" || b[a + 1] === "#"))) {
                                 a -= 1;
                                 if (mcont === true) {
                                     token.push("text");
+                                } else if (mtextpreserve === true) {
+                                    token.push(minspace + output.join(""));
+                                    lines[lines.length - 1] = 0;
                                 } else {
                                     token.push(output.join("").replace(/(\s+)$/, tailSpace).replace(/\s+/g, " "));
                                 }
                                 return types.push("content");
+                            }
+                            if (mdust === true && b[a] === "{" && b[a + 1] === ":" && b[a + 2] === "e" && b[a + 3] === "l" && b[a + 4] === "s" && b[a + 5] === "e" && b[a + 6] === "}") {
+                                a += 6;
+                                if (mcont === true) {
+                                    token.push("text");
+                                } else if (mtextpreserve === true) {
+                                    token.push(minspace + output.join(""));
+                                    lines[lines.length - 1] = 0;
+                                } else {
+                                    token.push(output.join("").replace(/(\s+)$/, tailSpace).replace(/\s+/g, " "));
+                                }
+                                types.push("content");
+                                spacer();
+                                attrs.push([]);
+                                jscom.push(false);
+                                linen.push(line);
+                                token.push("{:else}");
+                                return types.push("template_else");
                             }
                             output.push(b[a]);
                         }
@@ -9950,7 +9667,7 @@ var prettydiff = function prettydiff(api) {
                         tag("");
                     } else if (b[a] === "[" && b[a + 1] === "%") {
                         tag("%]");
-                    } else if (b[a] === "{" && (b[a + 1] === "{" || b[a + 1] === "%" || b[a + 1] === "@" || b[a + 1] === "#")) {
+                    } else if (b[a] === "{" && (mdust === true || b[a + 1] === "{" || b[a + 1] === "%" || b[a + 1] === "@" || b[a + 1] === "#")) {
                         tag("");
                     } else {
                         content();
@@ -10252,6 +9969,12 @@ var prettydiff = function prettydiff(api) {
                             indent            += 1;
                             stats.template[0] += 1;
                             stats.template[1] += token[a].length;
+                        } else if (types[a] === "template_else") {
+                            indent -= 1;
+                            level.push(indent);
+                            indent            += 1;
+                            stats.template[0] += 1;
+                            stats.template[1] += token[a].length;
                         } else if (types[a] === "end") {
                             end();
                             stats.end[0] += 1;
@@ -10261,7 +9984,11 @@ var prettydiff = function prettydiff(api) {
                             stats.template[0] += 1;
                             stats.template[1] += token[a].length;
                         } else if (lines[a] === 0 && (types[a] === "singleton" || types[a] === "content" || types[a] === "template")) {
-                            content();
+                            if (types[a] === "content" && mtextpreserve === true) {
+                                level.push("x");
+                            } else {
+                                content();
+                            }
                             stats[types[a]][0] += 1;
                             stats[types[a]][1] += token[a].length;
                         } else if (types[a] === "script") {
@@ -11164,9 +10891,9 @@ var prettydiff = function prettydiff(api) {
             ace: 150519
         },
         api          : {
-            dom      : 150708, //dom.js
-            nodeLocal: 150708, //node-local.js
-            wsh      : 150708
+            dom      : 150713, //dom.js
+            nodeLocal: 150713, //node-local.js
+            wsh      : 150713
         },
         charDecoder  : 141025,
         css          : 150525, //diffview.css file
@@ -11174,13 +10901,13 @@ var prettydiff = function prettydiff(api) {
         csvbeauty    : 140114, //csvbeauty library
         csvmin       : 131224, //csvmin library
         diffview     : 150708, //diffview library
-        documentation: 150629, //documentation.xhtml
-        jspretty     : 150708, //jspretty library
+        documentation: 150713, //documentation.xhtml
+        jspretty     : 150713, //jspretty library
         latest       : 0,
-        markuppretty : 150708, //markuppretty library
-        prettydiff   : 150708, //this file
-        version      : "1.12.12", //version number
-        webtool      : 150708
+        markuppretty : 150713, //markuppretty library
+        prettydiff   : 150713, //this file
+        version      : "1.12.13", //version number
+        webtool      : 150713
     };
 edition.latest = (function edition_latest() {
     "use strict";

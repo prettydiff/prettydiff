@@ -60,6 +60,8 @@
                             error.push("* diffview       - string  - This determines whether the diff HTML output should display as a side-by-side comparison or if the differences should display in a single table column. Defaults to 'sidebyside'.");
                             error.push("                   Accepted values: sidebyside, inline");
                             error.push("");
+                            error.push("* dustjs         - boolean - If the provided markup code is a Dust.js template. Takes a boolean and defaults to false.");
+                            error.push("");
                             error.push("* elseline       - boolean - The keyword 'else' will be pushed to a new line if this is true. Defaults to false.");
                             error.push("");
                             error.push("* force_indent   - boolean - If lang is 'markup' this will force indentation upon all content and tags without regard for the creation of new text nodes. Default is false.");
@@ -116,6 +118,8 @@
                             error.push("                   Accepted values: airbnb, crockford, google, grunt, jquery, mediawiki, yandex, none");
                             error.push("");
                             error.push("* tagmerge       - boolean - Allows immediately adjacement start and end markup tags of the same name to be combined into a single self-closing tag. Default is false.");
+                            error.push("");
+                            error.push("* textpreserve   - boolean - If text in the provided markup code should be preserved exactly as provided. This option eliminates beautification and wrapping of text content.  Takes a boolean and defaults to false.");
                             error.push("");
                             error.push("* titanium       - boolean - If the JavaScript parser should expect Titanium Style Sheets instead of JavaScript. Default is false.");
                             error.push("");
@@ -286,7 +290,8 @@
                     args.csvchar = WScript.Arguments.Named("csvchar") || ",";
                     args.diffcomments = (WScript.Arguments.Named("diffcomments") === "true" || WScript.Arguments.Named("diffcomments") === true);
                     args.difflabel = WScript.Arguments.Named("difflabel") || "new";
-                    args.diffview = (WScript.Arguments.Named("diffview") === "inline") ? "inline" : "sidebyside"
+                    args.diffview = (WScript.Arguments.Named("diffview") === "inline") ? "inline" : "sidebyside";
+                    args.dustjs = (WScript.Arguments.Name("dustjs") === "true" || WScript.Arguments.Name("dustjs") === true);
                     args.elseline = (WScript.Arguments.Name("elseline") === "true" || WScript.Arguments.Name("elseline") === true);
                     args.force_indent = (WScript.Arguments.Named("force_indent") === "true" || WScript.Arguments.Named("force_indent") === true);
                     args.html = (WScript.Arguments.Named("html") === "true" || WScript.Arguments.Named("html") === true);
@@ -308,6 +313,7 @@
                     args.style = (WScript.Arguments.Named("style")) ? "noindent" : "indent";
                     args.styleguide = (typeof WScript.Arguments.Named("styleguide") === "string") ? WScript.Arguments.Named("styleguide") : "none";
                     args.tagname = (WScript.Arguments.Name("tagmerge") === "true" || WScript.Arguments.Name("tagmerge") === true);
+                    args.textpreserve = (WScript.Arguments.Name("textpreserve") === "true" || WScript.Arguments.Name("textpreserve") === true);
                     args.titanium = (WScript.Arguments.Named("topcoms") === "true" || WScript.Arguments.Named("topcoms") === true);
                     args.topcoms = (WScript.Arguments.Named("topcoms") !== "false" && WScript.Arguments.Named("topcoms") !== false);
                     args.varword = (WScript.Arguments.Named("varword") === "each" || WScript.Arguments.Named("varword") === "list") ? WScript.Arguments.Named("varword") : "none";
