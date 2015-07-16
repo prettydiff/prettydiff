@@ -896,7 +896,7 @@ var pd = {};
                 if (input === "javascript" || input === "json" || input === "jsx") {
                     return "javascript";
                 }
-                if (input === "text") {
+                if (input === "text" || input === "csv") {
                     return "text";
                 }
                 if (input === "csv") {
@@ -1019,7 +1019,7 @@ var pd = {};
                     if ((/^(\s*(\{|\[))/).test(a) === true && (/((\]|\})\s*)$/).test(a) && a.indexOf(",") !== -1) {
                         return output("json");
                     }
-                    if ((/((\}?(\(\))?\)*;?\s*)|([a-z0-9]("|')?\)*);?(\s*\})*)$/i).test(a) === true && ((/(var\s+[a-z]+[a-zA-Z0-9]*)/).test(a) === true || (/((\=|(\$\())\s*function)|(\s*function\s+(\w*\s+)?\()/).test(a) === true || a.indexOf("{") === -1 || (/^(\s*if\s+\()/).test(a) === true)) {
+                    if ((/((\}?(\(\))?\)*;?\s*)|([a-z0-9]("|')?\)*);?(\s*\})*)$/i).test(a) === true && ((/(var\s+(\w|\$)+[a-zA-Z0-9]*)/).test(a) === true || (/((\=|(\$\())\s*function)|(\s*function\s+(\w*\s+)?\()/).test(a) === true || a.indexOf("{") === -1 || (/^(\s*if\s+\()/).test(a) === true)) {
                         if (a.indexOf("(") > -1 || a.indexOf("=") > -1 || (a.indexOf(";") > -1 && a.indexOf("{") > -1)) {
                             if ((/:\s*((number)|(string))/).test(a) === true && (/((public)|(private))\s+/).test(a) === true) {
                                 return output("typescript");
@@ -1152,6 +1152,9 @@ var pd = {};
             value          = pd.o.langvalue;
         }
         if (pd.test.ace === true) {
+            if (value[0] === "tss") {
+                value[0] = "javascript";
+            }
             if (all === true || pd.mode === "beau") {
                 if (all === true && lang === "") {
                     value          = auto(pd.ace.beauIn.getValue());
@@ -2039,10 +2042,10 @@ var pd = {};
                 api.wrap = (wrap === null || isNaN(wrap.value) === true)
                     ? 80
                     : Number(wrap.value);
-                if (api.lang === "auto" || api.lang === "css") {
+                if (pd.o.langvalue[1] === "css") {
                     api.cssinsertlines = (csslines !== null && csslines.checked !== false);
                 }
-                if (api.lang === "auto" || api.lang === "javascript" || api.lang === "jsx" || api.lang === "tss" || api.lang === "json") {
+                if (pd.o.langvalue[1] === "javascript") {
                     braceline        = pd.id("bbraceline-no");
                     elseline         = pd.id("jselseline-yes");
                     braces           = pd.id("jsindent-all");
@@ -2074,7 +2077,7 @@ var pd = {};
                         api.jsscope = "none";
                     }
                 }
-                if (api.lang === "auto" || api.lang === "markup" || api.lang === "html" || api.lang === "xml" || api.lang === "jstl" || api.lang === "dustjs") {
+                if (pd.o.langvalue[1] === "markup" || pd.o.langvalue[1] === "html") {
                     dustjs           = pd.id("bdustyes");
                     forceIndent      = pd.id("bforce_indent-yes");
                     html             = pd.id("html-yes");
@@ -2231,7 +2234,7 @@ var pd = {};
                 } else {
                     api.inchar = " ";
                 }
-                if (api.lang === "auto" || api.lang === "javascript" || api.lang === "jsx" || api.lang === "tss" || api.lang === "json") {
+                if (pd.o.langvalue[1] === "javascript") {
                     elseline         = pd.id("jselselined-yes");
                     space            = pd.id("jsspaced-no");
                     braceline        = pd.id("dbraceline-no");
@@ -2245,7 +2248,7 @@ var pd = {};
                         ? "knr"
                         : "allman";
                 }
-                if (api.lang === "auto" || api.lang === "markup" || api.lang === "html" || api.lang === "xml" || api.lang === "jsp" || api.lang === "dustjs") {
+                if (pd.o.langvalue[1] === "markup" || pd.o.langvalue[1] === "html") {
                     conditional      = pd.id("conditionald-yes");
                     dustjs           = pd.id("ddustyes");
                     forceIndent      = pd.id("dforce_indent-yes");
