@@ -291,7 +291,7 @@ var prettydiff = function prettydiff(api) {
                         if (input === "css" || input === "less" || input === "scss") {
                             return "css";
                         }
-                        if (input.indexOf("html") > -1 || input === "html" || input === "ejs" || input === "html_ruby" || input === "handlebars" || input === "twig" || input === "php" || input === "dustjs") {
+                        if (input.indexOf("html") > -1 || input === "html" || input === "ejs" || input === "html_ruby" || input === "handlebars" || input === "swig" || input === "twig" || input === "php" || input === "dustjs") {
                             return "html";
                         }
                         if (input === "markup" || input === "jsp" || input === "xml" || input === "xhtml") {
@@ -4801,7 +4801,12 @@ var prettydiff = function prettydiff(api) {
                             item = item.slice(1, item.length - 1);
                             bb   = parseInt(item.length / jwrap, 10) * jwrap;
                             for (aa = 0; aa < bb; aa += jwrap) {
-                                token.push(qchar + item.slice(aa, aa + jwrap) + qchar);
+                                if (item.charAt(aa + jwrap) === qchar && item.charAt(aa + jwrap - 1) === "\\") {
+                                    token.push(qchar + item.slice(aa, aa + jwrap + 1) + qchar);
+                                    aa += 1;
+                                } else {
+                                    token.push(qchar + item.slice(aa, aa + jwrap) + qchar);
+                                }
                                 types.push("literal");
                                 lines.push(0);
                                 token.push("+");
@@ -6350,6 +6355,7 @@ var prettydiff = function prettydiff(api) {
                                         }());
                                     }
                                     if (ltype === "literal" && token[a - 2] === "+" && (ltoke.charAt(0) === "\"" || ltoke.charAt(0) === "'")) {
+                                        level[a] = indent;
                                         return;
                                     }
                                     return level.push(indent);
@@ -6833,7 +6839,7 @@ var prettydiff = function prettydiff(api) {
                                 return;
                             }
                             if (ctoke === "+") {
-                                if (ltoke.length === jwrap + 2 && (token[a + 1].charAt(0) === "\"" || token[a + 1].charAt(0) === "'")) {
+                                if ((ltoke.length === jwrap + 2 || ltoke.length === jwrap + 3) && (token[a + 1].charAt(0) === "\"" || token[a + 1].charAt(0) === "'")) {
                                     if (list[list.length - 1] === true || obj[obj.length - 1] === true || methodtest[methodtest.length - 1] === true || ((token[a - 1].charAt(0) === "\"" || token[a - 1].charAt(0) === "'") && (token[a - 2] === "+" || token[a - 2].indexOf("=") > -1 || types[a - 2] === "start"))) {
                                         return level.push(indent + 2);
                                     }
@@ -10227,7 +10233,7 @@ var prettydiff = function prettydiff(api) {
                             value = [],
                             inlevel = minlevel + level[a];
                         if (level[a] === "x") {
-                            inlevel = minlevel
+                            inlevel = minlevel;
                         } else if (level[a] > 0) {
                             inlevel = level[a];
                         }
@@ -10968,7 +10974,7 @@ var prettydiff = function prettydiff(api) {
             ace: 150519
         },
         api          : {
-            dom      : 150715, //dom.js
+            dom      : 150717, //dom.js
             nodeLocal: 150713, //node-local.js
             wsh      : 150713
         },
@@ -10979,11 +10985,11 @@ var prettydiff = function prettydiff(api) {
         csvmin       : 131224, //csvmin library
         diffview     : 150708, //diffview library
         documentation: 150713, //documentation.xhtml
-        jspretty     : 150715, //jspretty library
+        jspretty     : 150717, //jspretty library
         latest       : 0,
         markuppretty : 150715, //markuppretty library
-        prettydiff   : 150715, //this file
-        version      : "1.12.15", //version number
+        prettydiff   : 150717, //this file
+        version      : "1.12.16", //version number
         webtool      : 150713
     };
 edition.latest = (function edition_latest() {

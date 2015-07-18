@@ -887,7 +887,7 @@ var pd = {};
                 if (input === "css" || input === "less" || input === "scss") {
                     return "css";
                 }
-                if (input.indexOf("html") > -1 || input === "html" || input === "ejs" || input === "html_ruby" || input === "handlebars" || input === "twig" || input === "php" || input === "dustjs") {
+                if (input.indexOf("html") > -1 || input === "html" || input === "ejs" || input === "html_ruby" || input === "handlebars" || input === "swig" || input === "twig" || input === "php" || input === "dustjs") {
                     return "html";
                 }
                 if (input === "markup" || input === "jsp" || input === "xml" || input === "xhtml") {
@@ -2010,7 +2010,7 @@ var pd = {};
                 } else {
                     api.vertical = "none";
                 }
-                api.comments = (comments !== null && comments.checked !== false);
+                api.comments = (comments !== null && comments.checked === true) ? "noindent" : "indent";
                 api.insize   = (quantity === null || isNaN(quantity.value) === true)
                     ? 4
                     : Number(quantity.value);
