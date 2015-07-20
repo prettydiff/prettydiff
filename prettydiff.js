@@ -8984,6 +8984,7 @@ var prettydiff = function prettydiff(api) {
                             lastchar  = "",
                             name      = "",
                             jsxquote  = "",
+                            comment   = false,
                             cheat     = false,
                             endtag    = false,
                             nopush    = false,
@@ -9022,6 +9023,7 @@ var prettydiff = function prettydiff(api) {
                                             nopush = true;
                                         } else {
                                             preserve = true;
+                                            comment  = true;
                                             types.push("comment");
                                         }
                                     }
@@ -9044,7 +9046,8 @@ var prettydiff = function prettydiff(api) {
                             } else if (b[a + 1] === "%") {
                                 preserve = true;
                                 if (b[a + 2] === "-" && b[a + 3] === "-") {
-                                    end = "--%>";
+                                    end     = "--%>";
+                                    comment = true;
                                     types.push("comment");
                                 } else {
                                     end = "%>";
@@ -9076,11 +9079,13 @@ var prettydiff = function prettydiff(api) {
                                 types.push("script");
                             } else if (mdust === true) {
                                 if (b[a + 1] === ":" && b[a + 2] === "e" && b[a + 3] === "l" && b[a + 4] === "s" && b[a + 5] === "e" && b[a + 6] === "}") {
+                                    a += 6;
                                     token.push("{:else}");
                                     return types.push("template_else");
                                 }
                                 if (b[a + 1] === "!") {
-                                    end = "!}";
+                                    end     = "!}";
+                                    comment = true;
                                     types.push("comment");
                                 } else if (b[a + 1] === "/") {
                                     end = "}";
@@ -9129,6 +9134,9 @@ var prettydiff = function prettydiff(api) {
                                 line += 1;
                             }
                             output.push(b[a]);
+                            if (comment === true) {
+                                quote = "";
+                            }
                             if (quote === "") {
                                 if (mjsx === true) {
                                     if (b[a] === "{") {
@@ -9154,6 +9162,10 @@ var prettydiff = function prettydiff(api) {
                                         if (quote === "") {
                                             if (b[a + 1] === lastchar) {
                                                 //if at end of tag
+                                                if (attribute[attribute.length - 1] === "/") {
+                                                    attribute.pop();
+                                                    a -= 1;
+                                                }
                                                 element = attribute.join("").replace(/\s+/g, " ");
                                                 name    = attrName(element)[0];
                                                 if (name === "data-prettydiff-ignore") {
@@ -9645,6 +9657,24 @@ var prettydiff = function prettydiff(api) {
                                     quote = "";
                                 }
                             } else if (b[a] === "<" || (b[a] === "[" && b[a + 1] === "%") || (b[a] === "{" && (mjsx === true || mdust === true || b[a + 1] === "{" || b[a + 1] === "%" || b[a + 1] === "@" || b[a + 1] === "#"))) {
+                                if (mdust === true && b[a] === "{" && b[a + 1] === ":" && b[a + 2] === "e" && b[a + 3] === "l" && b[a + 4] === "s" && b[a + 5] === "e" && b[a + 6] === "}") {
+                                    a += 6;
+                                    if (mcont === true) {
+                                        token.push("text");
+                                    } else if (mtextpreserve === true) {
+                                        token.push(minspace + output.join(""));
+                                        lines[lines.length - 1] = 0;
+                                    } else {
+                                        token.push(output.join("").replace(/(\s+)$/, tailSpace).replace(/\s+/g, " "));
+                                    }
+                                    types.push("content");
+                                    spacer();
+                                    attrs.push([]);
+                                    jscom.push(false);
+                                    linen.push(line);
+                                    token.push("{:else}");
+                                    return types.push("template_else");
+                                }
                                 a -= 1;
                                 if (mcont === true) {
                                     token.push("text");
@@ -9655,24 +9685,6 @@ var prettydiff = function prettydiff(api) {
                                     token.push(output.join("").replace(/(\s+)$/, tailSpace).replace(/\s+/g, " "));
                                 }
                                 return types.push("content");
-                            }
-                            if (mdust === true && b[a] === "{" && b[a + 1] === ":" && b[a + 2] === "e" && b[a + 3] === "l" && b[a + 4] === "s" && b[a + 5] === "e" && b[a + 6] === "}") {
-                                a += 6;
-                                if (mcont === true) {
-                                    token.push("text");
-                                } else if (mtextpreserve === true) {
-                                    token.push(minspace + output.join(""));
-                                    lines[lines.length - 1] = 0;
-                                } else {
-                                    token.push(output.join("").replace(/(\s+)$/, tailSpace).replace(/\s+/g, " "));
-                                }
-                                types.push("content");
-                                spacer();
-                                attrs.push([]);
-                                jscom.push(false);
-                                linen.push(line);
-                                token.push("{:else}");
-                                return types.push("template_else");
                             }
                             output.push(b[a]);
                         }
@@ -9697,6 +9709,7 @@ var prettydiff = function prettydiff(api) {
                 }
                 lines[0] = 0;
             }());
+
             if (mmode === "parse") {
                 (function markuppretty__parse() {
                     var a      = 0,
@@ -10974,8 +10987,8 @@ var prettydiff = function prettydiff(api) {
             ace: 150519
         },
         api          : {
-            dom      : 150717, //dom.js
-            nodeLocal: 150713, //node-local.js
+            dom      : 150719, //dom.js
+            nodeLocal: 150719, //node-local.js
             wsh      : 150713
         },
         charDecoder  : 141025,
@@ -10987,9 +11000,9 @@ var prettydiff = function prettydiff(api) {
         documentation: 150713, //documentation.xhtml
         jspretty     : 150717, //jspretty library
         latest       : 0,
-        markuppretty : 150715, //markuppretty library
-        prettydiff   : 150717, //this file
-        version      : "1.12.16", //version number
+        markuppretty : 150719, //markuppretty library
+        prettydiff   : 150719, //this file
+        version      : "1.12.17", //version number
         webtool      : 150713
     };
 edition.latest = (function edition_latest() {
