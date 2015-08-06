@@ -6,7 +6,6 @@
  code without permission so long as this comment exists verbatim in each;
  instance of its use.
 
- http: //www.travelocity.com/
  http: //mailmarkup.org/
  http: //prettydiff.com/
 
@@ -2085,6 +2084,7 @@ var pd = {};
                     tagmerge         = pd.id("btagmerge-yes");
                     textpreserve     = pd.id("btextpreserveyes");
                     api.dustjs       = (pd.o.langvalue[0] === "dustjs" || (dustjs !== null && dustjs.checked === true));
+                    api.dustjs       = (dustjs !== null && dustjs.checked === true);
                     api.force_indent = (forceIndent !== null && forceIndent.checked === true);
                     api.html         = (html !== null && html.checked === true);
                     api.style        = (style === null || style.checked === false)
@@ -2559,9 +2559,6 @@ var pd = {};
                     setTimeout(function dom__recycle_beautifyPromise() {
                         api.source = pd.ace.beauIn.getValue();
                         api.lang   = pd.langkey(false, pd.ace.beauIn, "");
-                        if (pd.o.langvalue[0] === "dustjs") {
-                            api.dustjs = true;
-                        }
                         pd.source  = api.source;
                         pd.diff    = "";
                         app        = application(api.lang);
@@ -2575,9 +2572,6 @@ var pd = {};
                     setTimeout(function dom__recycle_minifyPromise() {
                         api.source = pd.ace.minnIn.getValue();
                         api.lang   = pd.langkey(false, pd.ace.minnIn, "");
-                        if (pd.o.langvalue[0] === "dustjs") {
-                            api.dustjs = true;
-                        }
                         pd.source  = api.source;
                         pd.diff    = "";
                         app        = application(api.lang);
@@ -2591,9 +2585,6 @@ var pd = {};
                     setTimeout(function dom__recycle_parsePromise() {
                         api.source = pd.ace.parsIn.getValue();
                         api.lang   = pd.langkey(false, pd.ace.parsIn, "");
-                        if (pd.o.langvalue[0] === "dustjs") {
-                            api.dustjs = true;
-                        }
                         pd.source  = api.source;
                         pd.diff    = "";
                         app        = application(api.lang);
@@ -2609,16 +2600,10 @@ var pd = {};
                     api.lang = "text";
                 } else if (pd.test.ace === true) {
                     api.lang = pd.langkey(false, pd.ace.diffBase, "");
-                    if (pd.o.langvalue[0] === "dustjs") {
-                        api.dustjs = true;
-                    }
                 } else {
                     api.lang = pd.langkey(false, {
                         value: api.source
                     }, "");
-                    if (pd.o.langvalue[0] === "dustjs") {
-                        api.dustjs = true;
-                    }
                 }
                 if (pd.mode === "diff") {
                     pd.diff = api.diff;
@@ -4855,7 +4840,7 @@ var pd = {};
                         "content", "false"
                     ];
                 }
-                if (id === "dforce_indent" || id === "bforce_indent") {
+                if (id === "dforce_indent-yes" || id === "bforce_indent-yes") {
                     data = [
                         "force_indent", "true"
                     ];
