@@ -119,6 +119,8 @@
                             error.push("");
                             error.push("* tagmerge       - boolean - Allows immediately adjacement start and end markup tags of the same name to be combined into a single self-closing tag. Default is false.");
                             error.push("");
+                            error.push("* tagsort        - boolean - Sort child items of each respective parent element in markup.");
+                            error.push("");
                             error.push("* textpreserve   - boolean - If text in the provided markup code should be preserved exactly as provided. This option eliminates beautification and wrapping of text content.  Takes a boolean and defaults to false.");
                             error.push("");
                             error.push("* titanium       - boolean - If the JavaScript parser should expect Titanium Style Sheets instead of JavaScript. Default is false.");
@@ -313,6 +315,7 @@
                     args.style = (WScript.Arguments.Named("style")) ? "noindent" : "indent";
                     args.styleguide = (typeof WScript.Arguments.Named("styleguide") === "string") ? WScript.Arguments.Named("styleguide") : "none";
                     args.tagname = (WScript.Arguments.Name("tagmerge") === "true" || WScript.Arguments.Name("tagmerge") === true);
+                    args.tagsort = (WScript.Arguments.Name("tagsort") === "true" || WScript.Arguments.Name("tagsort") === true);
                     args.textpreserve = (WScript.Arguments.Name("textpreserve") === "true" || WScript.Arguments.Name("textpreserve") === true);
                     args.titanium = (WScript.Arguments.Named("topcoms") === "true" || WScript.Arguments.Named("topcoms") === true);
                     args.topcoms = (WScript.Arguments.Named("topcoms") !== "false" && WScript.Arguments.Named("topcoms") !== false);

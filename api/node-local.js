@@ -115,6 +115,7 @@ Examples:
             style         : "indent",
             styleguide    : "none",
             tagmerge      : false,
+            tagsort       : false,
             textpreserve  : false,
             titanium      : false,
             topcoms       : false,
@@ -1128,6 +1129,9 @@ Examples:
             a.push("                           tags of the same name to be combined into a single");
             a.push("                           self-closing tag. Default is false.");
             a.push("");
+            a.push("* tagsort      - boolean - Sort child items of each respective markup parent");
+            a.push("                           element.");
+            a.push("");
             a.push("* textpreserve - boolean - If text in the provided markup code should be");
             a.push("                           preserved exactly as provided. This option eliminates");
             a.push("                           beautification and wrapping of text content.  Takes a");
@@ -1433,6 +1437,9 @@ Examples:
                     }
                     if (d[b][0] === "tagmerge" && d[b][1] === "true") {
                         options.tagmerge = true;
+                    }
+                    if (d[b][0] === "tagsort" && d[b][1] === "true") {
+                        options.tagsort = true;
                     }
                     if (d[b][0] === "textpreserve" && d[b][1] === "true") {
                         options.textpreserve = true;

@@ -132,9 +132,6 @@ var pd = {};
                     "quota exceeded", "unexpected number", "quotaexceedederror", "script error", "uncaught rangeerror:", "uncaught error: [$rootscope:infdig"
                 ],
                 a          = 0;
-            /*if (errorObj !== undefined && errorObj !== null) {
-                datapack.message = message + "\n" + errorObj.stack;
-            }*/
 
             //this for loop prevents sending errors I have no intention of fixing
             for (a = exceptions.length - 1; a > -1; a -= 1) {
@@ -1948,6 +1945,7 @@ var pd = {};
                     style        = {},
                     styleguide   = {},
                     tagmerge     = {},
+                    tagsort      = {},
                     textpreserve = {},
                     comments     = pd.id("incomment-no"),
                     chars        = pd.id("beau-space"),
@@ -2082,6 +2080,7 @@ var pd = {};
                     html             = pd.id("html-yes");
                     style            = pd.id("inscript-no");
                     tagmerge         = pd.id("btagmerge-yes");
+                    tagsort          = pd.id("btagsort-yes");
                     textpreserve     = pd.id("btextpreserveyes");
                     api.dustjs       = (pd.o.langvalue[0] === "dustjs" || (dustjs !== null && dustjs.checked === true));
                     api.dustjs       = (dustjs !== null && dustjs.checked === true);
@@ -2091,6 +2090,7 @@ var pd = {};
                         ? "indent"
                         : "noindent";
                     api.tagmerge     = (tagmerge !== null && tagmerge.checked === true);
+                    api.tagsort      = (tagsort !== null && tagsort.checked === true);
                     api.textpreserve = (textpreserve !== null && textpreserve.checked === true);
                 }
             }());
@@ -2109,6 +2109,7 @@ var pd = {};
                     quotecond    = pd.id("mquoteconvert-double"),
                     quotecons    = pd.id("mquoteconvert-single"),
                     tagmerge     = pd.id("mtagmerge-yes"),
+                    tagsort      = pd.id("mtagsort-yes"),
                     textpreserve = pd.id("mtextpreserveyes");
                 if (pd.o.codeMinnIn !== null) {
                     pd.o.codeMinnIn = pd.id("minifyinput");
@@ -2139,6 +2140,7 @@ var pd = {};
                 api.dustjs       = (dustjs !== null && dustjs.checked === true);
                 api.html         = (html !== null && html.checked === true);
                 api.tagmerge     = (tagmerge !== null && tagmerge.checked === true);
+                api.tagsort      = (tagsort !== null && tagsort.checked === true);
                 api.textpreserve = (textpreserve !== null && textpreserve.checked === true);
                 api.topcoms      = (topcoms !== null && topcoms.checked === true);
             }());
@@ -2158,6 +2160,7 @@ var pd = {};
                     style        = {},
                     space        = {},
                     tagmerge     = {},
+                    tagsort      = {},
                     textpreserve = {},
                     wrap         = {},
                     baseLabel    = pd.id("baselabel"),
@@ -2255,6 +2258,7 @@ var pd = {};
                     html             = pd.id("htmld-yes");
                     style            = pd.id("inscriptd-no");
                     tagmerge         = pd.id("dtagmerge-yes");
+                    tagsort          = pd.id("dtagsort-yes");
                     wrap             = pd.id("diff-wrap");
                     api.conditional  = (conditional !== null && conditional.checked === true);
                     api.dustjs       = (dustjs !== null && dustjs.checked === true);
@@ -2264,6 +2268,7 @@ var pd = {};
                         ? "indent"
                         : "noindent";
                     api.tagmerge     = (tagmerge !== null && tagmerge.checked === true);
+                    api.tagsort      = (tagsort !== null && tagsort.checked === true);
                     api.textpreserve = (textpreserve !== null && textpreserve.checked === true);
                     api.wrap         = (wrap === null || isNaN(wrap.value) === true)
                         ? 72
@@ -2381,6 +2386,7 @@ var pd = {};
                     quotecond    = pd.id("pquoteconvert-double"),
                     quotecons    = pd.id("pquoteconvert-single"),
                     tagmerge     = pd.id("ptagmerge-yes"),
+                    tagsort      = pd.id("ptagsort-yes"),
                     textpreserve = pd.id("ptextpreserveyes"),
                     varworde     = pd.id("pvarword-each"),
                     varwordl     = pd.id("pvarword-list");
@@ -2395,6 +2401,7 @@ var pd = {};
                 api.dustjs       = (dustjs !== null && dustjs.checked === true);
                 api.html         = (html !== null && html.checked === true);
                 api.tagmerge     = (tagmerge !== null && tagmerge.checked === true);
+                api.tagsort      = (tagsort !== null && tagsort.checked === true);
                 api.textpreserve = (textpreserve !== null && textpreserve.checked === true);
                 if (objsorta !== null && objsorta.checked === true) {
                     api.objsort = "all";
