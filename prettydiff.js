@@ -2731,9 +2731,6 @@ var prettydiff = function prettydiff(api) {
                                     nl(indent);
                                 }
                             }
-                            if (scssinsertlines === true && types[a + 1] !== "end") {
-                                build.push("\n");
-                            }
                         } else if (types[a] === "semi") {
                             if (token[a] !== "x;") {
                                 build.push(token[a]);
@@ -2745,6 +2742,8 @@ var prettydiff = function prettydiff(api) {
                             }
                         } else if (types[a] === "selector") {
                             if (spres === true && lines[a - 1] > 0) {
+                                nl(indent);
+                            } else if (scssinsertlines === true && a > 0 && (types[a - 1] === "end" || types[a - 1] === "semi")) {
                                 nl(indent);
                             }
                             if (token[a].charAt(token[a].length - 1) === "#") {
