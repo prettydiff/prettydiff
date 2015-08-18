@@ -867,6 +867,13 @@ var pd = {};
                 if (pd.o.codeMinnOut !== null) {
                     pd.ace.minnOut.getSession().setTabSize(value);
                 }
+            } else if (that === pd.id("pars-quan")) {
+                if (pd.o.codeMinnIn !== null) {
+                    pd.ace.minnIn.getSession().setTabSize(value);
+                }
+                if (pd.o.codeMinnOut !== null) {
+                    pd.ace.minnOut.getSession().setTabSize(value);
+                }
             }
         };
     }
@@ -1150,6 +1157,12 @@ var pd = {};
         if (pd.test.ace === true) {
             if (value[0] === "tss") {
                 value[0] = "javascript";
+            } else if (value[0] === "dustjs") {
+                value[0] = "html";
+            } else if (value[0] === "markup") {
+                value[0] = "xml";
+            } else if (value[0] === "text" || value[0] === "csv") {
+                value[0] = "plain_text";
             }
             if (all === true || pd.mode === "beau") {
                 if (all === true && lang === "") {
@@ -1941,6 +1954,7 @@ var pd = {};
                     jscorrect    = {},
                     jshtml       = {},
                     jsspace      = {},
+                    noleadzero   = {},
                     offset       = {},
                     style        = {},
                     styleguide   = {},
@@ -2040,7 +2054,9 @@ var pd = {};
                     ? 80
                     : Number(wrap.value);
                 if (pd.o.langvalue[1] === "css") {
-                    api.cssinsertlines = (csslines !== null && csslines.checked !== false);
+                    noleadzero         = pd.id("bnoleadzero-yes");
+                    api.cssinsertlines = (csslines !== null && csslines.checked === true);
+                    api.noleadzero     = (noleadzero !== null && noleadzero.checked === true);
                 }
                 if (pd.o.langvalue[1] === "javascript") {
                     braceline        = pd.id("bbraceline-no");
@@ -2056,8 +2072,8 @@ var pd = {};
                     api.styleguide   = (styleguide !== null)
                         ? styleguide[styleguide.selectedIndex].value
                         : "";
-                    api.correct      = (jscorrect !== null && jscorrect.checked !== false);
-                    api.elseline     = (elseline !== null && elseline.checked !== false);
+                    api.correct      = (jscorrect !== null && jscorrect.checked === true);
+                    api.elseline     = (elseline !== null && elseline.checked === true);
                     api.braces       = (braces === null || braces.checked === false)
                         ? "knr"
                         : "allman";
@@ -3380,9 +3396,13 @@ var pd = {};
 
     //toggle between parsed html diff report and raw text representation
     pd.save                = function dom__save(x) {
-        var top        = (x.parentNode.nodeName.toLowerCase() === "a")
-                ? x.parentNode.parentNode.parentNode
-                : x.parentNode.parentNode,
+        var anchor     = (x.nodeName.toLowerCase() === "a"),
+            top        = (anchor === true)
+                ? x.parentNode.parentNode
+                : x.parentNode,
+            button     = (anchor === true)
+                ? x.getElementsByTagName("button")[0]
+                : x,
             body       = top.getElementsByTagName("div")[0],
             bodyInner  = body.innerHTML.replace(/\ xmlns\=("|')http:\/\/www\.w3\.org\/1999\/xhtml("|')/g, ""),
             build      = [],
@@ -3390,6 +3410,9 @@ var pd = {};
             content    = [],
             lastChild  = {},
             pageHeight = 0,
+            ro         = pd.id("savepref-report"),
+            reportonly = (ro !== null && ro.checked === true),
+            css        = pd.css.core + pd.css["s" + pd.color],
             diffstring = "var pd={};pd.colSliderProperties=[];(function(){var d=document.getElementsByTagN" +
                         "ame('ol'),cells=d[0].getElemensByTagName('li'),len=cells.length,a=0;pd.colSlider" +
                         "Properties=[d[0].clientWidth,d[1].clientWidth,d[2].parentNode.clientWidth,d[2].p" +
@@ -3457,10 +3480,11 @@ var pd = {};
 
         //added support for Firefox and Opera because they support long
         //URIs.  This extra support allows for local file creation.
-        if (x.nodeName.toLowerCase() === "a" && x.getElementsByTagName("button")[0].innerHTML === "S") {
+        if (anchor === true && button.innerHTML === "S" && reportonly === false) {
             if (bodyInner === "" || ((/Please\ try\ using\ the\ option\ labeled\ ((&lt;)|<)em((&gt;)|>)Plain\ Text\ \(diff\ only\)((&lt;)|<)\/em((&gt;)|>)\./).test(bodyInner) === true && (/div\ class\=("|')diff("|')/).test(bodyInner) === false)) {
                 return false;
             }
+            css = css.replace(/&/g, "&amp;").replace(/>/g, "&gt;").replace(/</g, "&lt;");
             build.push("<?xml version='1.0' encoding='UTF-8' ?><!DOCTYPE html PUBLIC '-//W3C//DTD XHTML " +
                     "1.1//EN' 'http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd'><html xmlns='http://www." +
                     "w3.org/1999/xhtml' xml:lang='en'><head><title>Pretty Diff - The difference tool<" +
@@ -3468,7 +3492,7 @@ var pd = {};
                     "nt='Pretty Diff - The difference tool'/> <link rel='canonical' href='http://pret" +
                     "tydiff.com/' type='application/xhtml+xml'/><meta http-equiv='Content-Type' conte" +
                     "nt='application/xhtml+xml;charset=UTF-8'/><meta http-equiv='Content-Style-Type' " +
-                    "content='text/css'/><style type='text/css'>" + pd.css.core + pd.css["s" + pd.color] + "</style></head><body class='" + pd.color + "' id='webtool'><h1><a href='http://prettydiff.com/'>Pretty Diff - The difference" +
+                    "content='text/css'/><style type='text/css'>" + css + "</style></head><body class='" + pd.color + "' id='webtool'><h1><a href='http://prettydiff.com/'>Pretty Diff - The difference" +
                     " tool</a></h1><div id='doc'>");
             if (top === pd.o.report.code.box) {
                 if (pd.mode === "diff") {
@@ -3540,7 +3564,7 @@ var pd = {};
                     "iff only)</em>. <span style='display:block'>The input does not appear to be mark";
             return;
         }
-        if (x.innerHTML === "S") {
+        if (button.innerHTML === "S") {
             if (pd.mode === "diff") {
                 pd.o.save.checked = true;
             }
@@ -3558,70 +3582,104 @@ var pd = {};
                     content    = bodyInner.split(classQuote);
                     classQuote = classQuote + content[1];
                     bodyInner  = content[0];
-                    build.push(" <p>This is the generated output. Please copy the text output, paste into a text" +
-                            " file, and save as a &quot;.html&quot; file.</p> <textarea rows='40' cols='80' i" +
-                            "d='textreport'>");
-                    build.push("&lt;?xml version='1.0' encoding='UTF-8' ?&gt;&lt;!DOCTYPE html PUBLIC '-//W3C//D" +
-                            "TD XHTML 1.1//EN' 'http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd'&gt;&lt;html xml" +
-                            "ns='http://www.w3.org/1999/xhtml' xml:lang='en'&gt;&lt;head&gt;&lt;title&gt;Pret" +
-                            "ty Diff - The difference tool&lt;/title&gt;&lt;meta name='robots' content='index" +
-                            ", follow'/&gt; &lt;meta name='DC.title' content='Pretty Diff - The difference to" +
-                            "ol'/&gt; &lt;link rel='canonical' href='http://prettydiff.com/' type='applicatio" +
-                            "n/xhtml+xml'/&gt;&lt;meta http-equiv='Content-Type' content='application/xhtml+x" +
-                            "ml;charset=UTF-8'/&gt;&lt;meta http-equiv='Content-Style-Type' content='text/css" +
-                            "'/&gt;&lt;style type='text/css'&gt;" + pd.css.core + pd.css["s" + pd.color] + "&lt;/style&gt;&lt;/head&gt;&lt;body class='" + pd.color + "' id='webtool'&gt;&lt;h1&gt;&lt;a href='http://prettydiff.com/'&gt;Pretty Diff -" +
-                            " The difference tool&lt;/a&gt;&lt;/h1&gt;&lt;div class=\"pdsavecontent\"&gt;");
-                    build.push(bodyInner.replace(/&/g, "&amp;").replace(/>/g, "&gt;").replace(/</g, "&lt;"));
-                    if (content.length === 2) {
+                    css        = css.replace(/&/g, "&amp;").replace(/>/g, "&gt;").replace(/</g, "&lt;");
+                    diffstring = diffstring.replace(/&/g, "&amp;").replace(/>/g, "&gt;").replace(/</g, "&lt;");
+                    beaustring = beaustring.replace(/&/g, "&amp;").replace(/>/g, "&gt;").replace(/</g, "&lt;");
+                    if (reportonly === true) {
+                        build.push(" <h4>Primary Content</h4>");
+                        build.push(" <textarea rows='40' cols='80' id='textreport'>");
                         build.push(classQuote.replace(/&/g, "&amp;").replace(/>/g, "&gt;").replace(/</g, "&lt;"));
+                        build.push("</textarea>");
+                        build.push(" <h4>Additional Data</h4>");
+                        build.push(" <textarea rows='40' cols='80' id='textreportmeta'>");
+                        build.push(bodyInner.replace(/&/g, "&amp;").replace(/>/g, "&gt;").replace(/</g, "&lt;"));
+                        build.push("</textarea>");
+                        build.push(" <h4>Required CSS</h4>");
+                        build.push(" <textarea rows='40' cols='80'>");
+                        build.push(css);
+                        build.push("</textarea>");
                         if (pd.mode === "diff") {
-                            build.push("&lt;script type='");
-                            build.push(type);
-                            build.push("'&gt;&lt;![CDATA[");
-                            build.push(diffstring.replace(/&/g, "&amp;").replace(/>/g, "&gt;").replace(/</g, "&lt;"));
-                            build.push("]]&gt;&lt;/script&gt;");
+                            build.push(" <h4>Required JavaScript</h4>");
+                            build.push(" <textarea rows='40' cols='80'>");
+                            build.push(diffstring);
+                            build.push("</textarea>");
                         } else if (pd.mode === "beau") {
-                            build.push("&lt;script type='");
-                            build.push(type);
-                            build.push("'&gt;&lt;![CDATA[");
-                            build.push(beaustring.replace(/&/g, "&amp;").replace(/>/g, "&gt;").replace(/</g, "&lt;"));
-                            build.push("]]&gt;&lt;/script&gt;");
+                            build.push(" <h4>Required JavaScript</h4>");
+                            build.push(" <textarea rows='40' cols='80'>");
+                            build.push(beaustring);
+                            build.push("</textarea>");
                         }
+                    } else {
+                        build.push(" <p>This is the output for a complete HTML document of your generated contents. Please copy the text output, paste into a text" +
+                                " file, and save as a &quot;.html&quot; file.</p> <textarea rows='40' cols='80' i" +
+                                "d='textreport'>");
+                        build.push("&lt;?xml version='1.0' encoding='UTF-8' ?&gt;&lt;!DOCTYPE html PUBLIC '-//W3C//D" +
+                                "TD XHTML 1.1//EN' 'http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd'&gt;&lt;html xml" +
+                                "ns='http://www.w3.org/1999/xhtml' xml:lang='en'&gt;&lt;head&gt;&lt;title&gt;Pret" +
+                                "ty Diff - The difference tool&lt;/title&gt;&lt;meta name='robots' content='index" +
+                                ", follow'/&gt; &lt;meta name='DC.title' content='Pretty Diff - The difference to" +
+                                "ol'/&gt; &lt;link rel='canonical' href='http://prettydiff.com/' type='applicatio" +
+                                "n/xhtml+xml'/&gt;&lt;meta http-equiv='Content-Type' content='application/xhtml+x" +
+                                "ml;charset=UTF-8'/&gt;&lt;meta http-equiv='Content-Style-Type' content='text/css" +
+                                "'/&gt;&lt;style type='text/css'&gt;" + css + "&lt;/style&gt;&lt;/head&gt;&lt;body class='" + pd.color + "' id='webtool'&gt;&lt;h1&gt;&lt;a href='http://prettydiff.com/'&gt;Pretty Diff -" +
+                                " The difference tool&lt;/a&gt;&lt;/h1&gt;&lt;div class=\"pdsavecontent\"&gt;");
+                        build.push(bodyInner.replace(/&/g, "&amp;").replace(/>/g, "&gt;").replace(/</g, "&lt;"));
+                        if (content.length === 2) {
+                            build.push(classQuote.replace(/&/g, "&amp;").replace(/>/g, "&gt;").replace(/</g, "&lt;"));
+                            if (pd.mode === "diff") {
+                                build.push("&lt;script type='");
+                                build.push(type);
+                                build.push("'&gt;&lt;![CDATA[");
+                                build.push(diffstring);
+                                build.push("]]&gt;&lt;/script&gt;");
+                            } else if (pd.mode === "beau") {
+                                build.push("&lt;script type='");
+                                build.push(type);
+                                build.push("'&gt;&lt;![CDATA[");
+                                build.push(beaustring);
+                                build.push("]]&gt;&lt;/script&gt;");
+                            }
+                        }
+                        build.push("&lt;/div&gt;&lt;/body&gt;&lt;/html&gt;</textarea>");
                     }
                 }
-                build.push("&lt;/div&gt;&lt;/body&gt;&lt;/html&gt;</textarea>");
             }
-            x.innerHTML = "H";
-            x.setAttribute("title", "Convert output to rendered HTML.");
+            button.innerHTML = "H";
+            button.setAttribute("title", "Convert output to rendered HTML.");
             body.innerHTML = build.join("");
         } else {
             if (pd.mode === "diff") {
                 pd.o.save.checked = false;
             }
             if (bodyInner !== "") {
-                if (bodyInner.indexOf("<textarea") > -1) {
-                    bodyInner = bodyInner.replace(/&lt;/g, "<").replace(/&gt;/g, ">").replace(/&amp;/g, "&");
-                }
-                classQuote = (bodyInner.indexOf("<div class='pdsavecontent'") > -1)
-                    ? "<div class='pdsavecontent'>"
-                    : "<div class=\"pdsavecontent\">";
-                content    = bodyInner.split(classQuote);
-                if (content[0].indexOf("</h1>") > -1) {
-                    build.push(content[0].split("</h1>")[1]);
+                if (reportonly === true) {
+                    build.push(pd.id("textreportmeta").value);
+                    build.push(pd.id("textreport").value);
                 } else {
-                    build.push(content[0]);
-                }
-                if (content.length > 1) {
-                    if (content[1].indexOf("<script") > -1) {
-                        content[1] = content[1].substring(0, content[1].indexOf("<script"));
-                    } else if (content[1].indexOf("</body") > -1) {
-                        content[1] = content[1].substring(0, content[1].indexOf("</body") - 6);
+                    if (bodyInner.indexOf("<textarea") > -1) {
+                        bodyInner = bodyInner.replace(/&lt;/g, "<").replace(/&gt;/g, ">").replace(/&amp;/g, "&");
                     }
-                    build.push(content[1]);
+                    classQuote = (bodyInner.indexOf("<div class='pdsavecontent'") > -1)
+                        ? "<div class='pdsavecontent'>"
+                        : "<div class=\"pdsavecontent\">";
+                    content    = bodyInner.split(classQuote);
+                    if (content[0].indexOf("</h1>") > -1) {
+                        build.push(content[0].split("</h1>")[1]);
+                    } else {
+                        build.push(content[0]);
+                    }
+                    if (content.length > 1) {
+                        if (content[1].indexOf("<script") > -1) {
+                            content[1] = content[1].substring(0, content[1].indexOf("<script"));
+                        } else if (content[1].indexOf("</body") > -1) {
+                            content[1] = content[1].substring(0, content[1].indexOf("</body") - 6);
+                        }
+                        build.push(content[1]);
+                    }
                 }
             }
-            x.innerHTML = "S";
-            x.setAttribute("title", "Convert report to text that can be saved.");
+            button.innerHTML = "S";
+            button.setAttribute("title", "Convert report to text that can be saved.");
             body.innerHTML = build.join("");
             content        = body.getElementsByTagName("ol");
             if (content.length > 0) {
@@ -4683,382 +4741,312 @@ var pd = {};
                     data = [];
                 if (id === "baselabel") {
                     data = [
-                        "sourcelabel", "\"" + item.value + "\""
+                        "sourcelabel", item.value
                     ];
-                }
-                if (id === "bbraceline-no" || id === "dbraceline-no") {
+                } else if (id === "bbraceline-no" || id === "dbraceline-no") {
                     data = [
                         "braceline", "false"
                     ];
-                }
-                if (id === "bbraceline-yes" || id === "dbraceline-yes") {
+                } else if (id === "bbraceline-yes" || id === "dbraceline-yes") {
                     data = [
                         "braceline", "true"
                     ];
-                }
-                if (id === "bjslines-all" || id === "djslines-all") {
+                } else if (id === "bjslines-all" || id === "djslines-all") {
                     data = [
                         "preserve", "all"
                     ];
-                }
-                if (id === "bjslines-css" || id === "djslines-css") {
+                } else if (id === "bjslines-css" || id === "djslines-css") {
                     data = [
                         "preserve", "css"
                     ];
-                }
-                if (id === "bjslines-js" || id === "djslines-js") {
+                } else if (id === "bjslines-js" || id === "djslines-js") {
                     data = [
                         "preserve", "js"
                     ];
-                }
-                if (id === "bjslines-none" || id === "djslines-none") {
+                } else if (id === "bjslines-none" || id === "djslines-none") {
                     data = [
                         "preserve", "none"
                     ];
-                }
-                if (id === "bobjsort-all" || id === "dobjsort-all" || id === "mobjsort-all") {
+                } else if (id === "bobjsort-all" || id === "dobjsort-all" || id === "mobjsort-all") {
                     data = [
                         "objsort", "all"
                     ];
-                }
-                if (id === "bobjsort-css" || id === "dobjsort-css" || id === "mobjsort-css") {
+                } else if (id === "bobjsort-css" || id === "dobjsort-css" || id === "mobjsort-css") {
                     data = [
                         "objsort", "css"
                     ];
-                }
-                if (id === "bobjsort-js" || id === "dobjsort-js" || id === "mobjsort-js") {
+                } else if (id === "bobjsort-js" || id === "dobjsort-js" || id === "mobjsort-js") {
                     data = [
                         "objsort", "js"
                     ];
-                }
-                if (id === "bobjsort-none" || id === "dobjsort-none" || id === "mobjsort-none") {
+                } else if (id === "bobjsort-none" || id === "dobjsort-none" || id === "mobjsort-none") {
                     data = [
                         "objsort", "none"
                     ];
-                }
-                if (id === "bquoteconvert-double" || id === "mquoteconvert-double") {
+                } else if (id === "bquoteconvert-double" || id === "mquoteconvert-double") {
                     data = [
                         "quoteConvert", "double"
                     ];
-                }
-                if (id === "bquoteconvert-none" || id === "mquoteconvert-none") {
+                } else if (id === "bquoteconvert-none" || id === "mquoteconvert-none") {
                     data = [
                         "quoteConvert", "none"
                     ];
-                }
-                if (id === "bquoteconvert-single" || id === "mquoteconvert-single") {
+                } else if (id === "bquoteconvert-single" || id === "mquoteconvert-single") {
                     data = [
                         "quoteConvert", "single"
                     ];
-                }
-                if (id === "bstyleguide") {
+                } else if (id === "bstyleguide") {
                     if (item[item.selectedIndex].value === "") {
                         data = [
-                            "styleguide", "\"\""
+                            "styleguide", ""
                         ];
                     } else {
                         data = [
                             "styleguide", item[item.selectedIndex].value
                         ];
                     }
-                }
-                if (id === "btagmerge-no" || id === "dtagmerge-no" || id === "mtagmerge-no" || id === "ptagmerge-no") {
+                } else if (id === "btagmerge-no" || id === "dtagmerge-no" || id === "mtagmerge-no" || id === "ptagmerge-no") {
                     data = [
                         "tagmerge", "false"
                     ];
-                }
-                if (id === "btagmerge-yes" || id === "dtagmerge-yes" || id === "mtagmerge-yes" || id === "ptagmerge-yes") {
+                } else if (id === "btagmerge-yes" || id === "dtagmerge-yes" || id === "mtagmerge-yes" || id === "ptagmerge-yes") {
                     data = [
                         "tagmerge", "true"
                     ];
-                }
-                if (id === "bvarword-each") {
+                } else if (id === "bvarword-each") {
                     data = [
                         "varword", "each"
                     ];
-                }
-                if (id === "bvarword-list") {
+                } else if (id === "bvarword-list") {
                     data = [
                         "varword", "list"
                     ];
-                }
-                if (id === "bvarword-none") {
+                } else if (id === "bvarword-none") {
                     data = [
                         "varword", "none"
                     ];
-                }
-                if (id === "conditionald-no" || id === "conditionalm-no") {
+                } else if (id === "conditionald-no" || id === "conditionalm-no") {
                     data = [
                         "conditional", "false"
                     ];
-                }
-                if (id === "conditionald-yes" || id === "conditionalm-yes") {
+                } else if (id === "conditionald-yes" || id === "conditionalm-yes") {
                     data = [
                         "conditional", "true"
                     ];
-                }
-                if (id === "contextSize") {
+                } else if (id === "contextSize") {
                     data = [
-                        "context", "\"" + item.value + "\""
+                        "context", item.value
                     ];
-                }
-                if (id === "csvchar") {
+                } else if (id === "csvchar") {
                     data = [
-                        "csvchar", "\"" + item.value + "\""
+                        "csvchar", item.value
                     ];
-                }
-                if (id === "diff-char" || id === "beau-char") {
+                } else if (id === "diff-char" || id === "beau-char") {
                     data = [
-                        "inchar", "\"" + item.value + "\""
+                        "inchar", item.value
                     ];
-                }
-                if (id === "diff-line" || id === "beau-line") {
+                } else if (id === "diff-line" || id === "beau-line") {
                     data = [
-                        "inchar", "\"\\n\""
+                        "inchar", "\n"
                     ];
-                }
-                if (id === "diff-quan" || id === "beau-quan" || id === "minn-quan") {
+                } else if (id === "diff-quan" || id === "beau-quan" || id === "minn-quan") {
                     data = [
-                        "insize", "\"" + item.value + "\""
+                        "insize", item.value
                     ];
-                }
-                if (id === "diff-space" || id === "beau-space") {
+                } else if (id === "diff-space" || id === "beau-space") {
                     data = [
-                        "inchar", "\" \""
+                        "inchar", " "
                     ];
-                }
-                if (id === "diff-tab" || id === "beau-tab") {
+                } else if (id === "diff-tab" || id === "beau-tab") {
                     data = [
-                        "inchar", "\"\\t\""
+                        "inchar", "\t"
                     ];
-                }
-                if (id === "diff-wrap" || id === "beau-wrap") {
+                } else if (id === "diff-wrap" || id === "beau-wrap") {
                     data = [
-                        "wrap", "\"" + item.value + "\""
+                        "wrap", item.value
                     ];
-                }
-                if (id === "diffcontent") {
+                } else if (id === "diffcontent") {
                     data = [
                         "content", "true"
                     ];
-                }
-                if (id === "diffcontenty") {
+                } else if (id === "diffcontenty") {
                     data = [
                         "content", "false"
                     ];
-                }
-                if (id === "dforce_indent-yes" || id === "bforce_indent-yes") {
+                } else if (id === "dforce_indent-yes" || id === "bforce_indent-yes") {
                     data = [
                         "force_indent", "true"
                     ];
-                }
-                if (id === "dforce_indent-no" || id === "bforce_indent-no") {
+                } else if (id === "dforce_indent-no" || id === "bforce_indent-no") {
                     data = [
                         "force_indent", "false"
                     ];
-                }
-                if (id === "diffcommentsn") {
+                } else if (id === "diffcommentsn") {
                     data = [
                         "diffcomments", "false"
                     ];
-                }
-                if (id === "diffcommentsy") {
+                } else if (id === "diffcommentsy") {
                     data = [
                         "diffcomments", "true"
                     ];
-                }
-                if (id === "difflabel") {
+                } else if (id === "difflabel") {
                     data = [
-                        "difflabel", "\"" + item.value + "\""
+                        "difflabel", item.value
                     ];
-                }
-                if (id === "diffquote") {
+                } else if (id === "diffquote") {
                     data = [
                         "quote", "true"
                     ];
-                }
-                if (id === "diffquotey") {
+                } else if (id === "diffquotey") {
                     data = [
                         "quote", "false"
                     ];
-                }
-                if (id === "diffscolon") {
+                } else if (id === "diffscolon") {
                     data = [
                         "semicolon", "true"
                     ];
-                }
-                if (id === "diffscolony") {
+                } else if (id === "diffscolony") {
                     data = [
                         "semicolon", "false"
                     ];
-                }
-                if (id === "htmld-no" || id === "html-no" || id === "htmlm-no") {
+                } else if (id === "htmld-no" || id === "html-no" || id === "htmlm-no") {
                     data = [
                         "html", "false"
                     ];
-                }
-                if (id === "htmld-yes" || id === "html-yes" || id === "htmlm-yes") {
+                } else if (id === "htmld-yes" || id === "html-yes" || id === "htmlm-yes") {
                     data = [
                         "html", "true"
                     ];
-                }
-                if (id === "incomment-no") {
+                } else if (id === "incomment-no") {
                     data = [
                         "comments", "noindent"
                     ];
-                }
-                if (id === "incomment-yes") {
+                } else if (id === "incomment-yes") {
                     data = [
                         "comments", "indent"
                     ];
-                }
-                if (id === "inline") {
+                } else if (id === "inline") {
                     data = [
                         "diffview", "inline"
                     ];
-                }
-                if (id === "inlevel") {
+                } else if (id === "inlevel") {
                     data = [
-                        "inlevel", "\"" + item.value + "\""
+                        "inlevel", item.value
                     ];
-                }
-                if (id === "inscriptd-no" || id === "inscript-no") {
+                } else if (id === "inscriptd-no" || id === "inscript-no") {
                     data = [
                         "style", "noindent"
                     ];
-                }
-                if (id === "inscriptd-yes" || id === "inscript-yes") {
+                } else if (id === "inscriptd-yes" || id === "inscript-yes") {
                     data = [
                         "style", "indent"
                     ];
-                }
-                if (id === "jscorrect-no" || id === "mjscorrect-no") {
+                } else if (id === "jscorrect-no" || id === "mjscorrect-no") {
                     data = [
                         "correct", "false"
                     ];
-                }
-                if (id === "jscorrect-yes" || id === "mjscorrect-yes") {
+                } else if (id === "jscorrect-yes" || id === "mjscorrect-yes") {
                     data = [
                         "correct", "true"
                     ];
-                }
-                if (id === "jselseline-no") {
+                } else if (id === "jselseline-no") {
                     data = [
                         "elseline", "false"
                     ];
-                }
-                if (id === "jselseline-yes") {
+                } else if (id === "jselseline-yes") {
                     data = [
                         "elseline", "true"
                     ];
-                }
-                if (id === "jsindentd-all" || id === "jsindent-all") {
+                } else if (id === "jsindentd-all" || id === "jsindent-all") {
                     data = [
                         "indent", "allman"
                     ];
-                }
-                if (id === "jsindentd-knr" || id === "jsindent-knr") {
+                } else if (id === "jsindentd-knr" || id === "jsindent-knr") {
                     data = [
                         "indent", "knr"
                     ];
-                }
-                if (id === "jsscope-html") {
+                } else if (id === "jsscope-html") {
                     data = [
                         "jsscope", "true"
                     ];
-                }
-                if (id === "jsscope-no") {
+                } else if (id === "jsscope-no") {
                     data = [
                         "jsscope", "false"
                     ];
-                }
-                if (id === "jsscope-yes") {
+                } else if (id === "jsscope-yes") {
                     data = [
                         "jsscope", "true"
                     ];
-                }
-                if (id === "jsspaced-no" || id === "jsspace-no") {
+                } else if (id === "jsspaced-no" || id === "jsspace-no") {
                     data = [
                         "jsspace", "false"
                     ];
-                }
-                if (id === "jsspaced-yes" || id === "jsspace-yes") {
+                } else if (id === "jsspaced-yes" || id === "jsspace-yes") {
                     data = [
                         "jsspace", "true"
                     ];
-                }
-                if (id === "lang-default") {
+                } else if (id === "lang-default") {
                     data = [
                         "langdefault", item[item.selectedIndex].value
                     ];
-                }
-                if (id === "langauge") {
+                } else if (id === "langauge") {
                     data = [
-                        "lang", "\"" + item.value + "\""
+                        "lang", item.value
                     ];
-                }
-                if (id === "modebeautify") {
+                } else if (id === "modebeautify") {
                     data = [
                         "mode", "beautify"
                     ];
-                }
-                if (id === "modediff") {
+                } else if (id === "modediff") {
                     data = [
                         "mode", "diff"
                     ];
-                }
-                if (id === "modeminify") {
+                } else if (id === "modeminify") {
                     data = [
                         "mode", "minify"
                     ];
-                }
-                if (id === "modeparse") {
+                } else if (id === "modeparse") {
                     data = [
                         "mode", "parse"
                     ];
-                }
-                if (id === "sidebyside") {
+                } else if (id === "sidebyside") {
                     data = [
                         "diffview", "sidebyside"
                     ];
-                }
-                if (id === "styleguide") {
+                } else if (id === "styleguide") {
                     data = [
-                        "styleguide", "\"" + item.value + "\""
+                        "styleguide", item.value
                     ];
-                }
-                if (id === "topcoms-yes") {
+                } else if (id === "topcoms-yes") {
                     data = [
                         "topcoms", "true"
                     ];
-                }
-                if (id === "topcoms-no") {
+                } else if (id === "topcoms-no") {
                     data = [
                         "topcoms", "false"
                     ];
-                }
-                if (id === "vertical-all") {
+                } else if (id === "vertical-all") {
                     data = [
                         "vertical", "all"
                     ];
-                }
-                if (id === "vertical-cssonly") {
+                } else if (id === "vertical-cssonly") {
                     data = [
                         "vertical", "css"
                     ];
-                }
-                if (id === "vertical-jsonly") {
+                } else if (id === "vertical-jsonly") {
                     data = [
                         "vertical", "js"
                     ];
-                }
-                if (id === "vertical-none") {
+                } else if (id === "vertical-none") {
                     data = [
                         "vertical", "none"
                     ];
                 }
                 if (data.length === 0) {
                     return;
+                }
+                if (data[1] !== "true" && data[1] !== "false") {
+                    data[1] = "\"" + data[1] + "\"";
                 }
                 for (a = pd.commentString.length - 1; a > -1; a -= 1) {
                     if (pd.commentString[a].indexOf(data[0]) > -1) {

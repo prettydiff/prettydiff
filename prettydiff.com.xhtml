@@ -355,6 +355,19 @@
                 </span>
             </p>
             <p>
+                <strong>Save Preference</strong>
+                <span>
+                    <input checked="checked" id="savepref-document" name="savepref"
+                        title="When saving diff output prepare a complete document." type="radio"/>
+                    <label for="savepref-document">Complete Document</label>
+                </span>
+                <span>
+                    <input id="savepref-report" name="savepref"
+                        title="When saving diff output provide only the diff report." type="radio"/>
+                    <label for="savepref-report">Diff Report Only</label>
+                </span>
+            </p>
+            <p>
                 <label class="label" for="colorScheme"
                     title="Pick a color theme with this list of options. Force a theme by default with the address parameter 'c', for example 'c=shadow'.">Color Scheme
                     <a class="apiname" href="documentation.xhtml#color">(color)</a>
@@ -490,6 +503,39 @@
                 <fieldset>
                     <legend>Difference Reduction Options</legend>
                     <p>
+                        <strong>Ignore Content, Markup / JavaScript
+                            <a class="apiname" href="documentation.xhtml#content">(content)</a>
+                        </strong>
+                        <span>
+                            <input checked="checked" id="diffcontenty" name="diffcontent"
+                                title="This option maintains document integrity with regard to markup content and JavaScript string contents."
+                                type="radio"/>
+                            <label for="diffcontenty">Diff content literally</label>
+                        </span>
+                        <span>
+                            <input id="diffcontentn" name="diffcontent"
+                                title="This option removes content from markup or string contents from JavaScript so as to allow comparison of syntax only."
+                                type="radio"/>
+                            <label for="diffcontentn">Normalize content and string literals</label>
+                        </span>
+                    </p>
+                    <p>
+                        <strong>Code Comments
+                            <a class="apiname" href="documentation.xhtml#diffcomments">(diffcomments)</a>
+                        </strong>
+                        <span>
+                            <input checked="checked" id="diffcommentsn" name="diffcomments"
+                                title="This option will remove all code comments from the diff analysis. This effect of this option can be partially overridden when selecting the option 'Preserve HTML conditional comments' for HTML."
+                                type="radio"/>
+                            <label for="diffcommentsn">Remove code comments</label>
+                        </span>
+                        <span>
+                            <input id="diffcommentsy" name="diffcomments"
+                                title="This option will allow comparison of all comments and code." type="radio"/>
+                            <label for="diffcommentsy">Compare code and comments</label>
+                        </span>
+                    </p>
+                    <p>
                         <strong>Diff Quotes
                             <a class="apiname" href="documentation.xhtml#quote">(quote)</a>
                         </strong>
@@ -523,342 +569,318 @@
                             <label for="diffscolonn">Remove trailing semicolons</label>
                         </span>
                     </p>
-                    <p>
-                        <strong>Code Comments
-                            <a class="apiname" href="documentation.xhtml#diffcomments">(diffcomments)</a>
-                        </strong>
-                        <span>
-                            <input checked="checked" id="diffcommentsn" name="diffcomments"
-                                title="This option will remove all code comments from the diff analysis. This effect of this option can be partially overridden when selecting the option 'Preserve HTML conditional comments' for HTML."
-                                type="radio"/>
-                            <label for="diffcommentsn">Remove code comments</label>
-                        </span>
-                        <span>
-                            <input id="diffcommentsy" name="diffcomments"
-                                title="This option will allow comparison of all comments and code." type="radio"/>
-                            <label for="diffcommentsy">Compare code and comments</label>
-                        </span>
-                    </p>
-                    <p>
-                        <strong>Ignore Content, Markup / JavaScript
-                            <a class="apiname" href="documentation.xhtml#content">(content)</a>
-                        </strong>
-                        <span>
-                            <input checked="checked" id="diffcontenty" name="diffcontent"
-                                title="This option maintains document integrity with regard to markup content and JavaScript string contents."
-                                type="radio"/>
-                            <label for="diffcontenty">Diff content literally</label>
-                        </span>
-                        <span>
-                            <input id="diffcontentn" name="diffcontent"
-                                title="This option removes content from markup or string contents from JavaScript so as to allow comparison of syntax only."
-                                type="radio"/>
-                            <label for="diffcontentn">Normalize content and string literals</label>
-                        </span>
-                    </p>
                 </fieldset>
                 <fieldset id="diffbeautify">
                     <legend>Beautification Options</legend>
-                    <p id="diffquanp">
-                        <label class="label" for="diff-quan">Indentation size
-                            <a class="apiname" href="documentation.xhtml#insize">(insize)</a>
-                        </label>
-                        <span>
-                            <input id="diff-quan"
-                                title="This text field expects a value of 0 or a positive integer. The number provided dictates how many characters constitute a single indentation of formatted code."
-                                type="text" value="4"/>
-                        </span>
-                    </p>
-                    <p id="difftypep">
-                        <label class="label" for="diff-char">Indentation character
-                            <a class="apiname" href="documentation.xhtml#inchar">(inchar)</a>
-                        </label>
-                        <span>
-                            <input class="unchecked" id="diff-char"
-                                title="Accessibility Note: In order for this field to be accepted by the application the radio button labeled 'Indent with Other Characters' must be checked. This text field allows entry of any text characters to constitute indentation."
-                                type="text" value="Click me for custom input"/>
-                        </span>
-                        <span id="diff-other-span">
-                            <input id="diff-other" name="diffchar"
-                                title="This option is only provided for functional reasons so as to enable the 'diff-char' text field and ignore its peer radio buttons from the application."
-                                type="radio"/>
-                            <label for="diff-other">Indent with other characters</label>
-                        </span>
-                        <span>
-                            <input checked="checked" id="diff-space" name="diffchar"
-                                title="This option indicates a space character will be the character of indentation."
-                                type="radio"/>
-                            <label for="diff-space">Indent space</label>
-                        </span>
-                        <span>
-                            <input id="diff-tab" name="diffchar"
-                                title="This option makes a tab character the character of indentation."
-                                type="radio"/>
-                            <label for="diff-tab">Indent tab</label>
-                        </span>
-                        <span>
-                            <input id="diff-line" name="diffchar"
-                                title="This option makes a new line character the character of indentation."
-                                type="radio"/>
-                            <label for="diff-line">Indent new line</label>
-                        </span>
-                    </p>
-                    <p>
-                        <strong>Empty Lines
-                            <a class="apiname" href="documentation.xhtml#preserve">(preserve)</a>
-                        </strong>
-                        <span>
-                            <input checked="checked" id="djslines-all" name="djslines"
-                                title="This option retains a single empty line for each series of empty lines of code input."
-                                type="radio"/>
-                            <label for="djslines-all">Preserve empty lines</label>
-                        </span>
-                        <span>
-                            <input id="djslines-none" name="djslines"
-                                title="This option removes all empty lines." type="radio"/>
-                            <label for="djslines-none">Remove empty lines</label>
-                        </span>
-                    </p>
-                    <p>
-                        <label class="label" for="diff-wrap">Wrap text, Markup / JavaScript
-                            <a class="apiname" href="documentation.xhtml#wrap">(wrap)</a>
-                        </label>
-                        <span>
-                            <input id="diff-wrap"
-                                title="Determines how long text and strings can be before wrapping. Use a value of 0 to eliminate wrapping."
-                                type="text" value="80"/></span>
-                    </p>
-                    <p>
-                        <strong>Dust.js Template, Markup Only <a class="apiname" href="documentation.xhtml#textpreserve">(textpreserve)</a></strong>
-                        <span>
-                            <input checked="checked" id="ddustno" name="ddust" title="Do not interpret the markup code as a Dust.js template" type="radio"/>
-                            <label for="ddustno">Not a Dust.js template</label>
-                        </span>
-                        <span>
-                            <input id="ddustyes" name="ddust" title="Interpret the markup code as a Dust.js template" type="radio"/>
-                            <label for="ddusttes">Dust.js template</label>
-                        </span>
-                    </p>
-                    <p>
-                        <strong>Force Indentation, Markup Only
-                            <a class="apiname" href="documentation.xhtml#force_indent">(force_indent)</a>
-                        </strong>
-                        <span>
-                            <input checked="checked" id="dforce_indent-no" name="dforce_indent"
-                                title="This markup only option maintains document integrity with regard to indentation that would create text nodes adjacent to content that did not exist before."
-                                type="radio"/>
-                            <label for="dforce_indent-no">Maintain code integrity</label>
-                        </span>
-                        <span>
-                            <input id="dforce_indent-yes" name="dforce_indent"
-                                title="This markup only option forces indentation for all content and elements without regard for integrity of document structure or content."
-                                type="radio"/>
-                            <label for="dforce_indent-yes">Always force indentation</label>
-                        </span>
-                    </p>
-                    <p>
-                        <strong>Indent Style/Script, Markup Only
-                            <a class="apiname" href="documentation.xhtml#style">(style)</a>
-                        </strong>
-                        <span>
-                            <input checked="checked" id="inscriptd-yes" name="inscriptd"
-                                title="This markup only option sets the baseline for script and style definition from the identation point of the opening markup tag plus one indentation step."
-                                type="radio"/>
-                            <label for="inscriptd-yes">Indent to markup</label>
-                        </span>
-                        <span>
-                            <input id="inscriptd-no" name="inscriptd"
-                                title="This option sets the indentation baseline for script and style code to 0 regardless of surrounding markup."
-                                type="radio"/>
-                            <label for="inscriptd-no">Indent style/script independently</label>
-                        </span>
-                    </p>
-                    <p>
-                        <strong>Merge Empty Tag Sets Into A Single Self-Closing Tag, Markup Only
-                            <a class="apiname" href="documentation.xhtml#tagmerge">(tagmerge)</a>
-                        </strong>
-                        <span>
-                            <input checked="checked" id="dtagmerge-no" name="dtagmerge"
-                                title="Do not automatically merge start and end tags of the same name."
-                                type="radio"/>
-                            <label for="dtagmerge-no">Do not merge tags</label>
-                        </span>
-                        <span>
-                            <input id="dtagmerge-yes" name="dtagmerge"
-                                title="Automatically merge immediately adjacent start and end tags of the same name."
-                                type="radio"/>
-                            <label for="dtagmerge-yes">Merge tags</label>
-                        </span>
-                    </p>
-                    <p>
-                        <strong>Sort Child Items of Each Parent Element, Markup Only
-                            <a class="apiname" href="documentation.xhtml#tagsort">tagsort</a>
-                        </strong>
-                        <span>
-                            <input checked="checked" id="dtagsort-no" name="dtagsort"
-                                title="Do not rearrange markup code." type="radio"/>
-                            <label for="dtagsort-no">Do not sort markup code</label>
-                        </span>
-                        <span>
-                            <input id="dtagsort-yes" name="dtagsort"
-                                title="Sort markup code." type="radio"/>
-                            <label for="dtagsort-yes">Sort markup pieces</label>
-                        </span>
-                    </p>
-                    <p>
-                        <strong>Preserve Text Content, Markup only <a class="apiname" href="documentation.xhtml#textpreserve">(textpreserve)</a></strong>
-                        <span>
-                            <input checked="checked" id="dtextpreserveno" name="dtextpreserve" title="Do not literally preserve white space in text." type="radio"/>
-                            <label for="dtextpreserveno">Beautify text content</label>
-                        </span>
-                        <span>
-                            <input id="dtextpreserveyes" name="dtextpreserve" title="Preserve all white space in text content exactly as supplied." type="radio"/>
-                            <label for="dtextpreserveyes">Preserve white space in text</label>
-                        </span>
-                    </p>
-                    <p>
-                        <strong>Presume HTML, Markup Only
-                            <a class="apiname" href="documentation.xhtml#html">(html)</a>
-                        </strong>
-                        <span>
-                            <input checked="checked" id="htmld-yes" name="presumehtmld"
-                                title="This option determines whether HTML tags like &lt;br&gt; and lt;hr&gt; should be evaluated as singletons, such as &lt;br/&gt; and lt;hr/&gt;."
-                                type="radio"/>
-                            <label for="htmld-yes">Tolerate HTML sillyness</label>
-                        </span>
-                        <span>
-                            <input id="htmld-no" name="presumehtmld"
-                                title="Use this option to ignore HTML specific vocabulary and instead focus purely on syntax."
-                                type="radio"/>
-                            <label for="htmld-no">Strict XML syntax</label>
-                        </span>
-                    </p>
-                    <p>
-                        <strong>IE Comments, HTML Only
-                            <a class="apiname" href="documentation.xhtml#conditional">(conditional)</a>
-                        </strong>
-                        <span>
-                            <input checked="checked" id="conditionald-no" name="conditionald"
-                                title="Use this option to remove HTML contitional comments used by Internet Explorer."
-                                type="radio"/>
-                            <label for="conditionald-no">Remove all comments</label>
-                        </span>
-                        <span>
-                            <input id="conditionald-yes" name="conditionald"
-                                title="Use this option to keep HTML contitional comments used by Internet Explorer."
-                                type="radio"/>
-                            <label for="conditionald-yes">Preserve HTML conditional comments</label>
-                        </span>
-                    </p>
-                    <p>
-                        <strong>Property Sorting, CSS / JavaScript
-                            <a class="apiname" href="documentation.xhtml#objsort">(objsort)</a>
-                        </strong>
-                        <span>
-                            <input checked="checked" id="dobjsort-jsonly" name="dobjsort"
-                                title="Sort JavaScript object properties alphabetically by key name."
-                                type="radio"/>
-                            <label for="dobjsort-jsonly">Sort JavaScript objects</label>
-                        </span>
-                        <span>
-                            <input id="dobjsort-cssonly" name="dobjsort"
-                                title="Sort CSS properties alphabetically by property name." type="radio"/>
-                            <label for="dobjsort-cssonly">Sort CSS properties</label>
-                        </span>
-                        <span>
-                            <input id="dobjsort-all" name="dobjsort"
-                                title="Sort CSS properties and JavaScript object properties alphabetically by key/property name."
-                                type="radio"/>
-                            <label for="dobjsort-all">Sort by key/property</label>
-                        </span>
-                        <span>
-                            <input id="dobjsort-none" name="dobjsort"
-                                title="Turn sorting off for CSS and JavaScript." type="radio"/>
-                            <label for="dobjsort-none">Do not sort</label>
-                        </span>
-                    </p>
-                    <p>
-                        <strong>Brace Padding, JavaScript Only
-                            <a class="apiname" href="documentation.xhtml#bracepadding">(bracepadding)</a>
-                        </strong>
-                        <span>
-                            <input checked="checked" id="dbracepadding-no" name="dbracepadding"
-                                title="This option does not pad braces in JavaScript with spaces." type="radio"/>
-                            <label for="dbracepadding-no">No brace padding</label>
-                        </span>
-                        <span>
-                            <input id="dbracepadding-yes" name="dbracepadding"
-                                title="Inserts a space after the start of a contain and before the end of the container in JavaScript if the contents of that container are not indented; such as: conditions, function arguments, and escaped sequences of template strings."
-                                type="radio"/>
-                            <label for="dbracepadding-yes">Pads container characters from their contents.</label>
-                        </span>
-                    </p>
-                    <p>
-                        <strong>Style of Indent, JavaScript Only
-                            <a class="apiname" href="documentation.xhtml#braces">(braces)</a>
-                        </strong>
-                        <span>
-                            <input checked="checked" id="jsindentd-knr" name="jsindentdiff"
-                                title="This JavaScript only option sets opening curly braces at the end of the current line of code."
-                                type="radio"/>
-                            <label for="jsindentd-knr">K&amp;R style</label>
-                        </span>
-                        <span>
-                            <input id="jsindentd-all" name="jsindentdiff"
-                                title="This JavaScript only option moves opening curly braces onto a new line for visibility of brace contents apart from other code."
-                                type="radio"/>
-                            <label for="jsindentd-all">Allman (ANSI) style &mdash; sets opening curly braces on a new line.</label>
-                        </span>
-                    </p>
-                    <p>
-                        <strong>Function Space, JavaScript Only
-                            <a class="apiname" href="documentation.xhtml#space">(space)</a>
-                        </strong>
-                        <span>
-                            <input checked="checked" id="jsspaced-yes" name="jsspaced"
-                                title="This JavaScript only option retains a single space between the 'function' keyword and the opening parenthesis character of anonymous functions."
-                                type="radio"/>
-                            <label for="jsspaced-yes">Retain function space</label>
-                        </span>
-                        <span>
-                            <input id="jsspaced-no" name="jsspaced"
-                                title="This JavaScript only option removes a single space between the 'function' keyword and the opening parenthesis character of anonymous functions."
-                                type="radio"/>
-                            <label for="jsspaced-no">Remove space following function</label>
-                        </span>
-                    </p>
-                    <p>
-                        <strong>Else on New Line, JavaScript Only
-                            <a class="apiname" href="documentation.xhtml#elseline">(elseline)</a>
-                        </strong>
-                        <span>
-                            <input checked="checked" id="jselselined-no" name="jselselined"
-                                title="This JavaScript only option will precede the 'else' keyword with a space."
-                                type="radio"/>
-                            <label for="jselselined-no">A space precedes 'else'</label>
-                        </span>
-                        <span>
-                            <input id="jselselined-yes" name="jselselined"
-                                title="This JavaScript only option will force the 'else' keyword onto a new line."
-                                type="radio"/>
-                            <label for="jselselined-yes">Force 'else' keyword onto a new line</label>
-                        </span>
-                    </p>
-                    <p>
-                        <strong>Brace Lines, JavaScript Only
-                            <a class="apiname" href="documentation.xhtml#braceline">(braceline)</a>
-                        </strong>
-                        <span>
-                            <input checked="checked" id="dbraceline-no" name="dbraceline"
-                                title="In JavaScript do not pad blocks with empty lines." type="radio"/>
-                            <label for="dbraceline-no">Normal blocks</label>
-                        </span>
-                        <span>
-                            <input id="dbraceline-yes" name="dbraceline"
-                                title="In JavaScript pad blocks with empty lines." type="radio"/>
-                            <label for="draceline-yes">Pad JavaScript blocks with empty lines</label>
-                        </span>
-                    </p>
+                    <fieldset>
+                        <legend>Multiformat Options</legend>
+                        <p id="difftypep">
+                            <label class="label" for="diff-char">Indentation character
+                                <a class="apiname" href="documentation.xhtml#inchar">(inchar)</a>
+                            </label>
+                            <span>
+                                <input class="unchecked" id="diff-char"
+                                    title="Accessibility Note: In order for this field to be accepted by the application the radio button labeled 'Indent with Other Characters' must be checked. This text field allows entry of any text characters to constitute indentation."
+                                    type="text" value="Click me for custom input"/>
+                            </span>
+                            <span id="diff-other-span">
+                                <input id="diff-other" name="diffchar"
+                                    title="This option is only provided for functional reasons so as to enable the 'diff-char' text field and ignore its peer radio buttons from the application."
+                                    type="radio"/>
+                                <label for="diff-other">Indent with other characters</label>
+                            </span>
+                            <span>
+                                <input checked="checked" id="diff-space" name="diffchar"
+                                    title="This option indicates a space character will be the character of indentation."
+                                    type="radio"/>
+                                <label for="diff-space">Indent space</label>
+                            </span>
+                            <span>
+                                <input id="diff-tab" name="diffchar"
+                                    title="This option makes a tab character the character of indentation."
+                                    type="radio"/>
+                                <label for="diff-tab">Indent tab</label>
+                            </span>
+                            <span>
+                                <input id="diff-line" name="diffchar"
+                                    title="This option makes a new line character the character of indentation."
+                                    type="radio"/>
+                                <label for="diff-line">Indent new line</label>
+                            </span>
+                        </p>
+                        <p id="diffquanp">
+                            <label class="label" for="diff-quan">Indentation size
+                                <a class="apiname" href="documentation.xhtml#insize">(insize)</a>
+                            </label>
+                            <span>
+                                <input id="diff-quan"
+                                    title="This text field expects a value of 0 or a positive integer. The number provided dictates how many characters constitute a single indentation of formatted code."
+                                    type="text" value="4"/>
+                            </span>
+                        </p>
+                        <p>
+                            <strong>Property Sorting, CSS / JavaScript
+                                <a class="apiname" href="documentation.xhtml#objsort">(objsort)</a>
+                            </strong>
+                            <span>
+                                <input checked="checked" id="dobjsort-jsonly" name="dobjsort"
+                                    title="Sort JavaScript object properties alphabetically by key name."
+                                    type="radio"/>
+                                <label for="dobjsort-jsonly">Sort JavaScript objects</label>
+                            </span>
+                            <span>
+                                <input id="dobjsort-cssonly" name="dobjsort"
+                                    title="Sort CSS properties alphabetically by property name." type="radio"/>
+                                <label for="dobjsort-cssonly">Sort CSS properties</label>
+                            </span>
+                            <span>
+                                <input id="dobjsort-all" name="dobjsort"
+                                    title="Sort CSS properties and JavaScript object properties alphabetically by key/property name."
+                                    type="radio"/>
+                                <label for="dobjsort-all">Sort by key/property</label>
+                            </span>
+                            <span>
+                                <input id="dobjsort-none" name="dobjsort"
+                                    title="Turn sorting off for CSS and JavaScript." type="radio"/>
+                                <label for="dobjsort-none">Do not sort</label>
+                            </span>
+                        </p>
+                        <p>
+                            <strong>Empty Lines
+                                <a class="apiname" href="documentation.xhtml#preserve">(preserve)</a>
+                            </strong>
+                            <span>
+                                <input checked="checked" id="djslines-all" name="djslines"
+                                    title="This option retains a single empty line for each series of empty lines of code input."
+                                    type="radio"/>
+                                <label for="djslines-all">Preserve empty lines</label>
+                            </span>
+                            <span>
+                                <input id="djslines-none" name="djslines"
+                                    title="This option removes all empty lines." type="radio"/>
+                                <label for="djslines-none">Remove empty lines</label>
+                            </span>
+                        </p>
+                        <p>
+                            <label class="label" for="diff-wrap">Wrap text, Markup / JavaScript
+                                <a class="apiname" href="documentation.xhtml#wrap">(wrap)</a>
+                            </label>
+                            <span>
+                                <input id="diff-wrap"
+                                    title="Determines how long text and strings can be before wrapping. Use a value of 0 to eliminate wrapping."
+                                    type="text" value="80"/></span>
+                        </p>
+                    </fieldset>
+                    <fieldset>
+                        <legend>Markup Options</legend>
+                        <p>
+                            <strong>IE Comments, HTML Only
+                                <a class="apiname" href="documentation.xhtml#conditional">(conditional)</a>
+                            </strong>
+                            <span>
+                                <input checked="checked" id="conditionald-no" name="conditionald"
+                                    title="Use this option to remove HTML contitional comments used by Internet Explorer."
+                                    type="radio"/>
+                                <label for="conditionald-no">Remove all comments</label>
+                            </span>
+                            <span>
+                                <input id="conditionald-yes" name="conditionald"
+                                    title="Use this option to keep HTML contitional comments used by Internet Explorer."
+                                    type="radio"/>
+                                <label for="conditionald-yes">Preserve HTML conditional comments</label>
+                            </span>
+                        </p>
+                        <p>
+                            <strong>Dust.js Template <a class="apiname" href="documentation.xhtml#dustjs">(dustjs)</a></strong>
+                            <span>
+                                <input checked="checked" id="ddustno" name="ddust" title="Do not interpret the markup code as a Dust.js template" type="radio"/>
+                                <label for="ddustno">Not a Dust.js template</label>
+                            </span>
+                            <span>
+                                <input id="ddustyes" name="ddust" title="Interpret the markup code as a Dust.js template" type="radio"/>
+                                <label for="ddusttes">Dust.js template</label>
+                            </span>
+                        </p>
+                        <p>
+                            <strong>Force Indentation
+                                <a class="apiname" href="documentation.xhtml#force_indent">(force_indent)</a>
+                            </strong>
+                            <span>
+                                <input checked="checked" id="dforce_indent-no" name="dforce_indent"
+                                    title="This markup only option maintains document integrity with regard to indentation that would create text nodes adjacent to content that did not exist before."
+                                    type="radio"/>
+                                <label for="dforce_indent-no">Maintain code integrity</label>
+                            </span>
+                            <span>
+                                <input id="dforce_indent-yes" name="dforce_indent"
+                                    title="This markup only option forces indentation for all content and elements without regard for integrity of document structure or content."
+                                    type="radio"/>
+                                <label for="dforce_indent-yes">Always force indentation</label>
+                            </span>
+                        </p>
+                        <p>
+                            <strong>Presume HTML
+                                <a class="apiname" href="documentation.xhtml#html">(html)</a>
+                            </strong>
+                            <span>
+                                <input checked="checked" id="htmld-yes" name="presumehtmld"
+                                    title="This option determines whether HTML tags like &lt;br&gt; and lt;hr&gt; should be evaluated as singletons, such as &lt;br/&gt; and lt;hr/&gt;."
+                                    type="radio"/>
+                                <label for="htmld-yes">Tolerate HTML sillyness</label>
+                            </span>
+                            <span>
+                                <input id="htmld-no" name="presumehtmld"
+                                    title="Use this option to ignore HTML specific vocabulary and instead focus purely on syntax."
+                                    type="radio"/>
+                                <label for="htmld-no">Strict XML syntax</label>
+                            </span>
+                        </p>
+                        <p>
+                            <strong>Indent Style/Script
+                                <a class="apiname" href="documentation.xhtml#style">(style)</a>
+                            </strong>
+                            <span>
+                                <input checked="checked" id="inscriptd-yes" name="inscriptd"
+                                    title="This markup only option sets the baseline for script and style definition from the identation point of the opening markup tag plus one indentation step."
+                                    type="radio"/>
+                                <label for="inscriptd-yes">Indent to markup</label>
+                            </span>
+                            <span>
+                                <input id="inscriptd-no" name="inscriptd"
+                                    title="This option sets the indentation baseline for script and style code to 0 regardless of surrounding markup."
+                                    type="radio"/>
+                                <label for="inscriptd-no">Indent style/script independently</label>
+                            </span>
+                        </p>
+                        <p>
+                            <strong>Merge Empty Tag Sets Into A Single Self-Closing Tag
+                                <a class="apiname" href="documentation.xhtml#tagmerge">(tagmerge)</a>
+                            </strong>
+                            <span>
+                                <input checked="checked" id="dtagmerge-no" name="dtagmerge"
+                                    title="Do not automatically merge start and end tags of the same name."
+                                    type="radio"/>
+                                <label for="dtagmerge-no">Do not merge tags</label>
+                            </span>
+                            <span>
+                                <input id="dtagmerge-yes" name="dtagmerge"
+                                    title="Automatically merge immediately adjacent start and end tags of the same name."
+                                    type="radio"/>
+                                <label for="dtagmerge-yes">Merge tags</label>
+                            </span>
+                        </p>
+                        <p>
+                            <strong>Sort Child Items of Each Parent Element
+                                <a class="apiname" href="documentation.xhtml#tagsort">tagsort</a>
+                            </strong>
+                            <span>
+                                <input checked="checked" id="dtagsort-no" name="dtagsort"
+                                    title="Do not rearrange markup code." type="radio"/>
+                                <label for="dtagsort-no">Do not sort markup code</label>
+                            </span>
+                            <span>
+                                <input id="dtagsort-yes" name="dtagsort"
+                                    title="Sort markup code." type="radio"/>
+                                <label for="dtagsort-yes">Sort markup pieces</label>
+                            </span>
+                        </p>
+                        <p>
+                            <strong>Preserve Text Content <a class="apiname" href="documentation.xhtml#textpreserve">(textpreserve)</a></strong>
+                            <span>
+                                <input checked="checked" id="dtextpreserveno" name="dtextpreserve" title="Do not literally preserve white space in text." type="radio"/>
+                                <label for="dtextpreserveno">Beautify text content</label>
+                            </span>
+                            <span>
+                                <input id="dtextpreserveyes" name="dtextpreserve" title="Preserve all white space in text content exactly as supplied." type="radio"/>
+                                <label for="dtextpreserveyes">Preserve white space in text</label>
+                            </span>
+                        </p>
+                    </fieldset>
+                    <fieldset>
+                        <legend>JavaScript Options</legend>
+                        <p>
+                            <strong>Brace Lines
+                                <a class="apiname" href="documentation.xhtml#braceline">(braceline)</a>
+                            </strong>
+                            <span>
+                                <input checked="checked" id="dbraceline-no" name="dbraceline"
+                                    title="In JavaScript do not pad blocks with empty lines." type="radio"/>
+                                <label for="dbraceline-no">Normal blocks</label>
+                            </span>
+                            <span>
+                                <input id="dbraceline-yes" name="dbraceline"
+                                    title="In JavaScript pad blocks with empty lines." type="radio"/>
+                                <label for="draceline-yes">Pad JavaScript blocks with empty lines</label>
+                            </span>
+                        </p>
+                        <p>
+                            <strong>Brace Padding
+                                <a class="apiname" href="documentation.xhtml#bracepadding">(bracepadding)</a>
+                            </strong>
+                            <span>
+                                <input checked="checked" id="dbracepadding-no" name="dbracepadding"
+                                    title="This option does not pad braces in JavaScript with spaces." type="radio"/>
+                                <label for="dbracepadding-no">No brace padding</label>
+                            </span>
+                            <span>
+                                <input id="dbracepadding-yes" name="dbracepadding"
+                                    title="Inserts a space after the start of a contain and before the end of the container in JavaScript if the contents of that container are not indented; such as: conditions, function arguments, and escaped sequences of template strings."
+                                    type="radio"/>
+                                <label for="dbracepadding-yes">Pads container characters from their contents.</label>
+                            </span>
+                        </p>
+                        <p>
+                            <strong>Style of Indent
+                                <a class="apiname" href="documentation.xhtml#braces">(braces)</a>
+                            </strong>
+                            <span>
+                                <input checked="checked" id="jsindentd-knr" name="jsindentdiff"
+                                    title="This JavaScript only option sets opening curly braces at the end of the current line of code."
+                                    type="radio"/>
+                                <label for="jsindentd-knr">K&amp;R style</label>
+                            </span>
+                            <span>
+                                <input id="jsindentd-all" name="jsindentdiff"
+                                    title="This JavaScript only option moves opening curly braces onto a new line for visibility of brace contents apart from other code."
+                                    type="radio"/>
+                                <label for="jsindentd-all">Allman (ANSI) style &mdash; sets opening curly braces on a new line.</label>
+                            </span>
+                        </p>
+                        <p>
+                            <strong>Else on New Line
+                                <a class="apiname" href="documentation.xhtml#elseline">(elseline)</a>
+                            </strong>
+                            <span>
+                                <input checked="checked" id="jselselined-no" name="jselselined"
+                                    title="This JavaScript only option will precede the 'else' keyword with a space."
+                                    type="radio"/>
+                                <label for="jselselined-no">A space precedes 'else'</label>
+                            </span>
+                            <span>
+                                <input id="jselselined-yes" name="jselselined"
+                                    title="This JavaScript only option will force the 'else' keyword onto a new line."
+                                    type="radio"/>
+                                <label for="jselselined-yes">Force 'else' keyword onto a new line</label>
+                            </span>
+                        </p>
+                        <p>
+                            <strong>Function Space
+                                <a class="apiname" href="documentation.xhtml#space">(space)</a>
+                            </strong>
+                            <span>
+                                <input checked="checked" id="jsspaced-yes" name="jsspaced"
+                                    title="This JavaScript only option retains a single space between the 'function' keyword and the opening parenthesis character of anonymous functions."
+                                    type="radio"/>
+                                <label for="jsspaced-yes">Retain function space</label>
+                            </span>
+                            <span>
+                                <input id="jsspaced-no" name="jsspaced"
+                                    title="This JavaScript only option removes a single space between the 'function' keyword and the opening parenthesis character of anonymous functions."
+                                    type="radio"/>
+                                <label for="jsspaced-no">Remove space following function</label>
+                            </span>
+                        </p>
+                    </fieldset>
                 </fieldset>
             </div>
             <div class="options" id="beauops" style="display:none;">
@@ -920,9 +942,6 @@
                             <label for="beau-line">Indent new line</label>
                         </span>
                     </p>
-                </fieldset>
-                <fieldset>
-                    <legend>Advanced Options</legend>
                     <p>
                         <strong>Indent Comments
                             <a class="apiname" href="documentation.xhtml#comments">(comments)</a>
@@ -955,706 +974,753 @@
                             <label for="bjslines-none">Remove empty lines</label>
                         </span>
                     </p>
+                </fieldset>
+                <fieldset>
+                    <legend>Advanced Options</legend>
+                    <fieldset>
+                        <legend>Multiformat Options</legend>
+                        <p>
+                            <strong>Fix Sloppy Code, Markup / JavaScript
+                                <a class="apiname" href="documentation.xhtml#correct">(correct)</a>
+                            </strong>
+                            <span>
+                                <input checked="checked" id="jscorrect-no" name="jscorrect"
+                                    title="Do not alter or remove sloppy JavaScript code or correct for missing end list item tags in HTML."
+                                    type="radio"/>
+                                <label for="jscorrect-no">Ignore code correction</label>
+                            </span>
+                            <span>
+                                <input id="jscorrect-yes" name="jscorrect"
+                                    title="This JavaScript only option automatically converts some sloppy behaviors into known best practices."
+                                    type="radio"/>
+                                <label for="jscorrect-yes">Correct for sloppiness</label>
+                            </span>
+                            <span>Read the
+                                <a href="guide/jscorrect.xhtml">guide</a>.</span>
+                        </p>
+                        <p>
+                            <strong>Property Sorting, CSS / JavaScript
+                                <a class="apiname" href="documentation.xhtml#objsort">(objsort)</a>
+                            </strong>
+                            <span>
+                                <input checked="checked" id="bobjsort-jsonly" name="bobjsort"
+                                    title="Sort JavaScript object properties alphabetically by key name."
+                                    type="radio"/>
+                                <label for="bobjsort-jsonly">Sort JavaScript objects</label>
+                            </span>
+                            <span>
+                                <input id="bobjsort-cssonly" name="bobjsort"
+                                    title="Sort CSS properties alphabetically by property name." type="radio"/>
+                                <label for="bobjsort-cssonly">Sort CSS properties</label>
+                            </span>
+                            <span>
+                                <input id="bobjsort-all" name="bobjsort"
+                                    title="Sort CSS properties and JavaScript object properties alphabetically by key/property name."
+                                    type="radio"/>
+                                <label for="bobjsort-all">Sort by key/property</label>
+                            </span>
+                            <span>
+                                <input id="bobjsort-none" name="bobjsort"
+                                    title="Turn sorting off for CSS and JavaScript." type="radio"/>
+                                <label for="bobjsort-none">Do not sort</label>
+                            </span>
+                        </p>
+                        <p>
+                            <strong>Quotes, Markup / JavaScript
+                                <a class="apiname" href="documentation.xhtml#quoteconvert">(quoteconvert)</a>
+                            </strong>
+                            <span>
+                                <input checked="checked" id="bquoteconvert-none" name="bquoteconvert"
+                                    title="Do not convert quote characters." type="radio"/>
+                                <label for="bquoteconvert-none">Leave the quotes alone</label>
+                            </span>
+                            <span>
+                                <input id="bquoteconvert-double" name="bquoteconvert"
+                                    title="Convert double quotes to single quotes for JavaScript strings and markup attributes."
+                                    type="radio"/>
+                                <label for="bquoteconvert-double">Convert to double quotes</label>
+                            </span>
+                            <span>
+                                <input id="bquoteconvert-single" name="bquoteconvert"
+                                    title="Convert single quotes to double quotes for JavaScript strings and markup attributes."
+                                    type="radio"/>
+                                <label for="bquoteconvert-single">Convert to single quotes</label>
+                            </span>
+                        </p>
+                        <p>
+                            <strong>Vertically Align, CSS / JavaScript
+                                <a class="apiname" href="documentation.xhtml#vertical">(vertical)</a>
+                            </strong>
+                            <span>
+                                <input checked="checked" id="vertical-jsonly" name="vertical"
+                                    title="This option provides vertical alignment of assignments only to JavaScript and not CSS like languages."
+                                    type="radio"/>
+                                <label for="vertical-jsonly">Vertically align JavaScript</label>
+                            </span>
+                            <span>
+                                <input id="vertical-cssonly" name="vertical"
+                                    title="This option causes lists of CSS properties to be vertically aligned for faster reading."
+                                    type="radio"/>
+                                <label for="vertical-cssonly">Vertically align CSS</label>
+                            </span>
+                            <span>
+                                <input id="vertical-all" name="vertical"
+                                    title="This option pads property names in JavaScript and CSS like languages so that their values are vertically aligned."
+                                    type="radio"/>
+                                <label for="vertical-all">Vertically align CSS/JS</label>
+                            </span>
+                            <span>
+                                <input id="vertical-none" name="vertical"
+                                    title="This option prevents padding of variable and property names for vertical alignment in all languages."
+                                    type="radio"/>
+                                <label for="vertical-none">Do not vertical align</label>
+                            </span>
+                        </p>
+                        <p>
+                            <label class="label" for="beau-wrap">Wrap text, Markup / JavaScript
+                                <a class="apiname" href="documentation.xhtml#wrap">(wrap)</a>
+                            </label>
+                            <span>
+                                <input id="beau-wrap"
+                                    title="Determines how long text and strings can be before wrapping. Use a value of 0 to eliminate wrapping."
+                                    type="text" value="80"/></span>
+                        </p>
+                    </fieldset>
+                    <fieldset>
+                        <legend>CSS Options</legend>
+                        <p>
+                            <strong>Insert Extra Lines
+                                <a class="apiname" href="documentation.xhtml#cssinsertlines">(cssinsertlines)</a>
+                            </strong>
+                            <span><input checked="checked" id="cssinsertlines-no" name="cssinsertlines"
+                                title="Do not insert new lines between CSS blocks." type="radio"/>
+                                <label for="cssinsertlines-no">Do not create empty lines.</label>
+                            </span>
+                            <span><input id="cssinsertlines-yes" name="cssinsertlines"
+                                title="Insert empty lines between CSS blocks." type="radio"/>
+                                <label for="cssinsertlines-yes">Insert a new line character between each CSS block.</label>
+                            </span>
+                        </p>
+                        <p>
+                            <strong>Leading 0s
+                                <a class="apiname" href="documentation.xhtml#noleadzero">(noleadzero)</a>
+                            </strong>
+                            <span>
+                                <input checked="checked" id="bnoleadzero-no" name="bnoleadzero"
+                                    title="Retain or add leading 0s of values immediately before a decimal."
+                                    type="radio"/>
+                                <label for="bnoleadzero-no">Retain/add leading 0s</label>
+                            </span>
+                            <span>
+                                <input id="bnoleadzero-yes" name="bnoleadzero"
+                                    title="Remove or prevent leading 0s of values immediately before a decimal."
+                                    type="radio"/>
+                                <label for="bnoleadzero-yes">Remove/prevent leading 0s</label>
+                            </span>
+                        </p>
+                    </fieldset>
+                    <fieldset>
+                        <legend>Markup Options</legend>
+                        <p>
+                            <strong>Dust.js Template <a class="apiname" href="documentation.xhtml#dustjs">(dustjs)</a></strong>
+                            <span>
+                                <input checked="checked" id="bdustno" name="bdust" title="Do not interpret the markup code as a Dust.js template" type="radio"/>
+                                <label for="bdustno">Not a Dust.js template</label>
+                            </span>
+                            <span>
+                                <input id="bdustyes" name="bdust" title="Interpret the markup code as a Dust.js template" type="radio"/>
+                                <label for="bdusttes">Dust.js template</label>
+                            </span>
+                        </p>
+                        <p>
+                            <strong>Force Indentation
+                                <a class="apiname" href="documentation.xhtml#force_indent">(force_indent)</a>
+                            </strong>
+                            <span>
+                                <input checked="checked" id="bforce_indent-no" name="bforce_indent"
+                                    title="This markup only option maintains document integrity with regard to indentation that would create text nodes adjacent to content that did not exist before."
+                                    type="radio"/>
+                                <label for="bforce_indent-no">Maintain code integrity</label>
+                            </span>
+                            <span>
+                                <input id="bforce_indent-yes" name="bforce_indent"
+                                    title="This markup only option forces indentation for all content and elements without regard for integrity of document structure or content."
+                                    type="radio"/>
+                                <label for="bforce_indent-yes">Always force indentation</label>
+                            </span>
+                        </p>
+                        <p>
+                            <strong>Presume HTML
+                                <a class="apiname" href="documentation.xhtml#html">(html)</a>
+                            </strong>
+                            <span>
+                                <input checked="checked" id="html-yes" name="presumehtml"
+                                    title="This option determines whether HTML tags like &lt;br&gt; and lt;hr&gt; should be evaluated as singletons, such as &lt;br/&gt; and lt;hr/&gt;."
+                                    type="radio"/>
+                                <label for="html-yes">Tolerate HTML sillyness</label>
+                            </span>
+                            <span>
+                                <input id="html-no" name="presumehtml"
+                                    title="Use this option to ignore HTML specific vocabulary and instead focus purely on syntax."
+                                    type="radio"/>
+                                <label for="html-no">Strict XML syntax</label>
+                            </span>
+                        </p>
+                        <p>
+                            <strong>Indent Style/Script
+                                <a class="apiname" href="documentation.xhtml#style">(style)</a>
+                            </strong>
+                            <span>
+                                <input checked="checked" id="inscript-yes" name="inscript"
+                                    title="This markup only option sets the baseline for script and style definition from the identation point of the opening markup tag plus one indentation step."
+                                    type="radio"/>
+                                <label for="inscript-yes">Indent to markup</label>
+                            </span>
+                            <span>
+                                <input id="inscript-no" name="inscript"
+                                    title="This option sets the indentation baseline for script and style code to 0 regardless of surrounding markup."
+                                    type="radio"/>
+                                <label for="inscript-no">Indent script/style independently</label>
+                            </span>
+                        </p>
+                        <p>
+                            <strong>Merge Empty Tag Sets Into A Single Self-Closing Tag
+                                <a class="apiname" href="documentation.xhtml#tagmerge">(tagmerge)</a>
+                            </strong>
+                            <span>
+                                <input checked="checked" id="btagmerge-no" name="btagmerge"
+                                    title="Do not automatically merge start and end tags of the same name."
+                                    type="radio"/>
+                                <label for="btagmerge-no">Do not merge tags</label>
+                            </span>
+                            <span>
+                                <input id="btagmerge-yes" name="btagmerge"
+                                    title="Automatically merge immediately adjacent start and end tags of the same name."
+                                    type="radio"/>
+                                <label for="btagmerge-yes">Merge tags</label>
+                            </span>
+                        </p>
+                        <p>
+                            <strong>Sort Child Items of Each Parent Element
+                                <a class="apiname" href="documentation.xhtml#tagsort">tagsort</a>
+                            </strong>
+                            <span>
+                                <input checked="checked" id="btagsort-no" name="btagsort"
+                                    title="Do not rearrange markup code." type="radio"/>
+                                <label for="btagsort-no">Do not sort markup code</label>
+                            </span>
+                            <span>
+                                <input id="btagsort-yes" name="btagsort"
+                                    title="Sort markup code." type="radio"/>
+                                <label for="btagsort-yes">Sort markup pieces</label>
+                            </span>
+                        </p>
+                        <p>
+                            <strong>Preserve Text Content <a class="apiname" href="documentation.xhtml#textpreserve">(textpreserve)</a></strong>
+                            <span>
+                                <input checked="checked" id="btextpreserveno" name="btextpreserve" title="Do not literally preserve white space in text." type="radio"/>
+                                <label for="btextpreserveno">Beautify text content</label>
+                            </span>
+                            <span>
+                                <input id="btextpreserveyes" name="btextpreserve" title="Preserve all white space in text content exactly as supplied." type="radio"/>
+                                <label for="btextpreserveyes">Preserve white space in text</label>
+                            </span>
+                        </p>
+                    </fieldset>
+                    <fieldset>
+                        <legend>JavaScript Options</legend>
+                        <p>
+                            <strong>Brace Lines
+                                <a class="apiname" href="documentation.xhtml#braceline">(braceline)</a>
+                            </strong>
+                            <span>
+                                <input checked="checked" id="bbraceline-no" name="bbraceline"
+                                    title="In JavaScript do not pad blocks with empty lines." type="radio"/>
+                                <label for="bbraceline-no">Normal blocks</label>
+                            </span>
+                            <span>
+                                <input id="bbraceline-yes" name="bbraceline"
+                                    title="In JavaScript pad blocks with empty lines." type="radio"/>
+                                <label for="braceline-yes">Pad JavaScript blocks with empty lines</label>
+                            </span>
+                        </p>
+                        <p>
+                            <strong>Brace Padding
+                                <a class="apiname" href="documentation.xhtml#bracepadding">(bracepadding)</a>
+                            </strong>
+                            <span>
+                                <input checked="checked" id="bracepadding-no" name="bracepadding"
+                                    title="This option does not pad braces in JavaScript with spaces." type="radio"/>
+                                <label for="bracepadding-no">No brace padding</label>
+                            </span>
+                            <span>
+                                <input id="bracepadding-yes" name="bracepadding"
+                                    title="Inserts a space after the start of a contain and before the end of the container in JavaScript if the contents of that container are not indented; such as: conditions, function arguments, and escaped sequences of template strings."
+                                    type="radio"/>
+                                <label for="bracepadding-yes">Pads container characters from their contents.</label>
+                            </span>
+                        </p>
+                        <p>
+                            <strong>Style of Indent
+                                <a class="apiname" href="documentation.xhtml#braces">(braces)</a>
+                            </strong>
+                            <span>
+                                <input checked="checked" id="jsindent-knr" name="jsindent"
+                                    title="This JavaScript only option sets opening curly braces at the end of the current line of code."
+                                    type="radio"/>
+                                <label for="jsindent-knr">K&amp;R style</label>
+                            </span>
+                            <span>
+                                <input id="jsindent-all" name="jsindent"
+                                    title="This JavaScript only option moves opening curly braces onto a new line for visibility of brace contents apart from other code."
+                                    type="radio"/>
+                                <label for="jsindent-all">Allman (ANSI) style &mdash; sets opening curly braces on a new line.</label>
+                            </span>
+                        </p>
+                        <p>
+                            <strong>Else on New Line
+                                <a class="apiname" href="documentation.xhtml#elseline">(elseline)</a>
+                            </strong>
+                            <span>
+                                <input checked="checked" id="jselseline-no" name="jselseline"
+                                    title="This JavaScript only option will precede the 'else' keyword with a space."
+                                    type="radio"/>
+                                <label for="jselseline-no">A space precedes 'else'</label>
+                            </span>
+                            <span>
+                                <input id="jselseline-yes" name="jselseline"
+                                    title="This JavaScript only option will force the 'else' keyword onto a new line."
+                                    type="radio"/>
+                                <label for="jselseline-yes">Force 'else' keyword onto a new line</label>
+                            </span>
+                        </p>
+                        <p>
+                            <strong>Scope Analysis
+                                <a class="apiname" href="documentation.xhtml#jsscope">(jsscope)</a>
+                            </strong>
+                            <span>
+                                <input checked="checked" id="jsscope-no" name="jsscope"
+                                    title="This option will causes standard text beautification for JavaScript"
+                                    type="radio"/>
+                                <label for="jsscope-no">Standard beautification</label>
+                            </span>
+                            <span>
+                                <input id="jsscope-yes" name="jsscope"
+                                    title="This option will display a colorful HTML output of the code that color codes variables to the scope they are declared so as to illustrate the nature of closure and inheritance."
+                                    type="radio"/>
+                                <label for="jsscope-yes">Scope analysis report</label>
+                            </span>
+                            <span>
+                                <input id="jsscope-html" name="jsscope"
+                                    title="This option outputs HTML so that a colorful code snippet is created for use in web pages."
+                                    type="radio"/>
+                                <label for="jsscope-html">HTML output</label>
+                            </span>
+                            <span>Read about
+                                <a href="guide/jshtml.xhtml">HTML output</a>
+                                and
+                                <a href="guide/closure_with_jsscope.xhtml">scope</a>
+                                with this feature</span>
+                        </p>
+                        <p>
+                            <strong>Function Space
+                                <a class="apiname" href="documentation.xhtml#space">(space)</a>
+                            </strong>
+                            <span>
+                                <input checked="checked" id="jsspace-yes" name="jsspace"
+                                    title="This JavaScript only option retains a single space between the 'function' keyword and the opening parenthesis character of anonymous functions."
+                                    type="radio"/>
+                                <label for="jsspace-yes">Retain function space</label>
+                            </span>
+                            <span>
+                                <input id="jsspace-no" name="jsspace"
+                                    title="This JavaScript only option removes a single space between the 'function' keyword and the opening parenthesis character of anonymous functions."
+                                    type="radio"/>
+                                <label for="jsspace-no">Remove space following function</label>
+                            </span>
+                        </p>
+                        <p>
+                            <label class="label" for="bstyleguide">Style Guide
+                                <a class="apiname" href="documentation.xhtml#styleguide">(styleguide)</a>
+                            </label>
+                            <select id="bstyleguide">
+                                <option selected="selected" value="">None</option>
+                                <option value="airbnb">AirBnB</option>
+                                <option value="crockford">Crockford</option>
+                                <option value="google">Google</option>
+                                <option value="grunt">Grunt</option>
+                                <option value="jquery">jQuery</option>
+                                <option value="jslint">JSLint</option>
+                                <option value="mrdoobs">Mr. Doob's</option>
+                                <option value="mediawiki">MediaWiki</option>
+                                <option value="meteor">Meteor</option>
+                                <option value="yandex">Yandex</option>
+                            </select>
+                            <span>Read about
+                                <a href="guide/styleguide.xhtml">style guide support</a>
+                            </span>
+                        </p>
+                        <p>
+                            <strong>Variable Lists
+                                <a class="apiname" href="documentation.xhtml#varword">(varword)</a>
+                            </strong>
+                            <span>
+                                <input checked="checked" id="bvarword-none" name="bvarword"
+                                    title="Ignore this option." type="radio"/>
+                                <label for="bvardword-none">Leave the variables alone</label>
+                            </span>
+                            <span>
+                                <input id="bvarword-list" name="bvarword"
+                                    title="In JavaScript change consecutive variable declarations into a comma separated list with a single var keyword."
+                                    type="radio"/>
+                                <label for="bvardword-list">Comma separated list</label>
+                            </span>
+                            <span>
+                                <input id="bvarword-each" name="bvarword"
+                                    title="In JavaScript change a comma separated list of variables into individual statements each starting with a var keyword."
+                                    type="radio"/>
+                                <label for="bvardword-each">Separate variables</label>
+                            </span>
+                        </p>
+                    </fieldset>
+                </fieldset>
+            </div>
+            <div class="options" id="miniops" style="display:none;">
+                <h2>Minify Options</h2>
+                <p class="apiname">(API name in parenthesis)</p>
+                <fieldset>
+                    <legend>Multifunction Options</legend>
                     <p>
-                        <label class="label" for="beau-wrap">Wrap text, Markup / JavaScript
-                            <a class="apiname" href="documentation.xhtml#wrap">(wrap)</a>
-                        </label>
+                        <strong>Property Sorting, CSS / JavaScript
+                            <a class="apiname" href="documentation.xhtml#objsort">(objsort)</a>
+                        </strong>
                         <span>
-                            <input id="beau-wrap"
-                                title="Determines how long text and strings can be before wrapping. Use a value of 0 to eliminate wrapping."
-                                type="text" value="80"/></span>
+                            <input checked="checked" id="mobjsort-jsonly" name="mobjsort"
+                                title="Sort JavaScript object properties alphabetically by key name."
+                                type="radio"/>
+                            <label for="mobjsort-jsonly">Sort JavaScript objects</label>
+                        </span>
+                        <span>
+                            <input id="mobjsort-cssonly" name="mobjsort"
+                                title="Sort CSS properties alphabetically by property name." type="radio"/>
+                            <label for="mobjsort-cssonly">Sort CSS properties</label>
+                        </span>
+                        <span>
+                            <input id="mobjsort-all" name="mobjsort"
+                                title="Sort CSS properties and JavaScript object properties alphabetically by key/property name."
+                                type="radio"/>
+                            <label for="mobjsort-all">Sort by key/property</label>
+                        </span>
+                        <span>
+                            <input id="mobjsort-none" name="mobjsort"
+                                title="Turn sorting off for CSS and JavaScript." type="radio"/>
+                            <label for="mobjsort-none">Do not sort</label>
+                        </span>
                     </p>
                     <p>
                         <strong>Quotes, Markup / JavaScript
                             <a class="apiname" href="documentation.xhtml#quoteconvert">(quoteconvert)</a>
                         </strong>
                         <span>
-                            <input checked="checked" id="bquoteconvert-none" name="bquoteconvert"
-                                title="Do not convert quote characters." type="radio"/>
-                            <label for="bquoteconvert-none">Leave the quotes alone</label>
-                        </span>
-                        <span>
-                            <input id="bquoteconvert-double" name="bquoteconvert"
+                            <input checked="checked" id="mquoteconvert-double" name="mquoteconvert"
                                 title="Convert double quotes to single quotes for JavaScript strings and markup attributes."
                                 type="radio"/>
-                            <label for="bquoteconvert-double">Convert to double quotes</label>
+                            <label for="mquoteconvert-double">Convert to double quotes</label>
                         </span>
                         <span>
-                            <input id="bquoteconvert-single" name="bquoteconvert"
+                            <input id="mquoteconvert-single" name="mquoteconvert"
                                 title="Convert single quotes to double quotes for JavaScript strings and markup attributes."
                                 type="radio"/>
-                            <label for="bquoteconvert-single">Convert to single quotes</label>
+                            <label for="mquoteconvert-single">Convert to single quotes</label>
+                        </span>
+                        <span>
+                            <input id="mquoteconvert-none" name="mquoteconvert"
+                                title="Do not convert quote characters." type="radio"/>
+                            <label for="mquoteconvert-none">Leave the quotes alone</label>
                         </span>
                     </p>
                     <p>
-                        <strong>Fix Sloppy Code, Markup / JavaScript
-                            <a class="apiname" href="documentation.xhtml#correct">(correct)</a>
+                        <strong>Top Comments, CSS / JavaScript
+                            <a class="apiname" href="documentation.xhtml#topcoms">(topcoms)</a>
                         </strong>
                         <span>
-                            <input checked="checked" id="jscorrect-no" name="jscorrect"
-                                title="Do not alter or remove sloppy JavaScript code or correct for missing end list item tags in HTML."
+                            <input checked="checked" id="topcoms-no" name="topcoms"
+                                title="Use this remove all comments in JavaScript and CSS including comments above the first line of code."
                                 type="radio"/>
-                            <label for="jscorrect-no">Ignore code correction</label>
+                            <label for="topcoms-no">Minify all comments</label>
                         </span>
                         <span>
-                            <input id="jscorrect-yes" name="jscorrect"
-                                title="This JavaScript only option automatically converts some sloppy behaviors into known best practices."
+                            <input id="topcoms-yes" name="topcoms"
+                                title="Use this option retain comments comments above the first line of JavaScript and CSS code."
                                 type="radio"/>
-                            <label for="jscorrect-yes">Correct for sloppiness</label>
-                        </span>
-                        <span>Read the
-                            <a href="guide/jscorrect.xhtml">guide</a>.</span>
-                    </p>
-                    <p>
-                        <strong>Dust.js Template, Markup Only <a class="apiname" href="documentation.xhtml#textpreserve">(textpreserve)</a></strong>
-                        <span>
-                            <input checked="checked" id="bdustno" name="bdust" title="Do not interpret the markup code as a Dust.js template" type="radio"/>
-                            <label for="bdustno">Not a Dust.js template</label>
-                        </span>
-                        <span>
-                            <input id="bdustyes" name="bdust" title="Interpret the markup code as a Dust.js template" type="radio"/>
-                            <label for="bdusttes">Dust.js template</label>
+                            <label for="topcoms-yes">Preserve comments before any code</label>
                         </span>
                     </p>
+                </fieldset>
+                <fieldset>
+                    <legend>Markup Options</legend>
                     <p>
-                        <strong>Force Indentation, Markup Only
-                            <a class="apiname" href="documentation.xhtml#force_indent">(force_indent)</a>
+                        <strong>IE Comments, HTML Only
+                            <a class="apiname" href="documentation.xhtml#conditional">(conditional)</a>
                         </strong>
                         <span>
-                            <input checked="checked" id="bforce_indent-no" name="bforce_indent"
-                                title="This markup only option maintains document integrity with regard to indentation that would create text nodes adjacent to content that did not exist before."
+                            <input checked="checked" id="conditionalm-no" name="conditionalm"
+                                title="Use this option to remove HTML contitional comments used by Internet Explorer."
                                 type="radio"/>
-                            <label for="bforce_indent-no">Maintain code integrity</label>
+                            <label for="conditionalm-no">Remove all comments</label>
                         </span>
                         <span>
-                            <input id="bforce_indent-yes" name="bforce_indent"
-                                title="This markup only option forces indentation for all content and elements without regard for integrity of document structure or content."
+                            <input id="conditionalm-yes" name="conditionalm"
+                                title="Use this option to keep HTML contitional comments used by Internet Explorer."
                                 type="radio"/>
-                            <label for="bforce_indent-yes">Always force indentation</label>
+                            <label for="conditionalm-yes">Preserve HTML conditional comments</label>
                         </span>
                     </p>
                     <p>
-                        <strong>Indent Style/Script, Markup Only
-                            <a class="apiname" href="documentation.xhtml#style">(style)</a>
-                        </strong>
+                        <strong>Dust.js Template <a class="apiname" href="documentation.xhtml#dustjs">(dustjs)</a></strong>
                         <span>
-                            <input checked="checked" id="inscript-yes" name="inscript"
-                                title="This markup only option sets the baseline for script and style definition from the identation point of the opening markup tag plus one indentation step."
-                                type="radio"/>
-                            <label for="inscript-yes">Indent to markup</label>
+                            <input checked="checked" id="mdustno" name="mdust" title="Do not interpret the markup code as a Dust.js template" type="radio"/>
+                            <label for="mdustno">Not a Dust.js template</label>
                         </span>
                         <span>
-                            <input id="inscript-no" name="inscript"
-                                title="This option sets the indentation baseline for script and style code to 0 regardless of surrounding markup."
-                                type="radio"/>
-                            <label for="inscript-no">Indent script/style independently</label>
+                            <input id="mdustyes" name="mdust" title="Interpret the markup code as a Dust.js template" type="radio"/>
+                            <label for="mdusttes">Dust.js template</label>
                         </span>
                     </p>
                     <p>
-                        <strong>Merge Empty Tag Sets Into A Single Self-Closing Tag, Markup Only
-                            <a class="apiname" href="documentation.xhtml#tagmerge">(tagmerge)</a>
-                        </strong>
-                        <span>
-                            <input checked="checked" id="btagmerge-no" name="btagmerge"
-                                title="Do not automatically merge start and end tags of the same name."
-                                type="radio"/>
-                            <label for="btagmerge-no">Do not merge tags</label>
-                        </span>
-                        <span>
-                            <input id="btagmerge-yes" name="btagmerge"
-                                title="Automatically merge immediately adjacent start and end tags of the same name."
-                                type="radio"/>
-                            <label for="btagmerge-yes">Merge tags</label>
-                        </span>
-                    </p>
-                    <p>
-                        <strong>Sort Child Items of Each Parent Element, Markup Only
-                            <a class="apiname" href="documentation.xhtml#tagsort">tagsort</a>
-                        </strong>
-                        <span>
-                            <input checked="checked" id="btagsort-no" name="btagsort"
-                                title="Do not rearrange markup code." type="radio"/>
-                            <label for="btagsort-no">Do not sort markup code</label>
-                        </span>
-                        <span>
-                            <input id="btagsort-yes" name="btagsort"
-                                title="Sort markup code." type="radio"/>
-                            <label for="btagsort-yes">Sort markup pieces</label>
-                        </span>
-                    </p>
-                    <p>
-                        <strong>Preserve Text Content, Markup only <a class="apiname" href="documentation.xhtml#textpreserve">(textpreserve)</a></strong>
-                        <span>
-                            <input checked="checked" id="btextpreserveno" name="btextpreserve" title="Do not literally preserve white space in text." type="radio"/>
-                            <label for="btextpreserveno">Beautify text content</label>
-                        </span>
-                        <span>
-                            <input id="btextpreserveyes" name="btextpreserve" title="Preserve all white space in text content exactly as supplied." type="radio"/>
-                            <label for="btextpreserveyes">Preserve white space in text</label>
-                        </span>
-                    </p>
-                    <p>
-                        <strong>Presume HTML, Markup Only
+                        <strong>Presume HTML
                             <a class="apiname" href="documentation.xhtml#html">(html)</a>
                         </strong>
                         <span>
-                            <input checked="checked" id="html-yes" name="presumehtml"
+                            <input checked="checked" id="htmlm-yes" name="presumehtmlm"
                                 title="This option determines whether HTML tags like &lt;br&gt; and lt;hr&gt; should be evaluated as singletons, such as &lt;br/&gt; and lt;hr/&gt;."
                                 type="radio"/>
-                            <label for="html-yes">Tolerate HTML sillyness</label>
+                            <label for="htmlm-yes">Tolerate HTML sillyness</label>
                         </span>
                         <span>
-                            <input id="html-no" name="presumehtml"
+                            <input id="htmlm-no" name="presumehtmlm"
                                 title="Use this option to ignore HTML specific vocabulary and instead focus purely on syntax."
                                 type="radio"/>
-                            <label for="html-no">Strict XML syntax</label>
+                            <label for="htmlm-no">Strict XML syntax</label>
                         </span>
                     </p>
                     <p>
-                        <strong>Insert Extra Lines, CSS
-                            <a class="apiname" href="documentation.xhtml#cssinsertlines">(cssinsertlines)</a>
+                        <strong>Merge Empty Tag Sets Into A Single Self-Closing Tag
+                            <a class="apiname" href="documentation.xhtml#tagmerge">(tagmerge)</a>
                         </strong>
-                        <span><input checked="checked" id="cssinsertlines-no" name="cssinsertlines"
-                            title="Do not insert new lines between CSS blocks." type="radio"/>
-                            <label for="cssinsertlines-no">Do not create empty lines.</label>
+                        <span>
+                            <input checked="checked" id="mtagmerge-no" name="mtagmerge"
+                                title="Do not automatically merge start and end tags of the same name."
+                                type="radio"/>
+                            <label for="mtagmerge-no">Do not merge tags</label>
                         </span>
-                        <span><input id="cssinsertlines-yes" name="cssinsertlines"
-                            title="Insert empty lines between CSS blocks." type="radio"/>
-                            <label for="cssinsertlines-yes">Insert a new line character between each CSS block.</label>
+                        <span>
+                            <input id="mtagmerge-yes" name="mtagmerge"
+                                title="Automatically merge immediately adjacent start and end tags of the same name."
+                                type="radio"/>
+                            <label for="mtagmerge-yes">Merge tags</label>
                         </span>
                     </p>
+                    <p>
+                        <strong>Sort Child Items of Each Parent Element
+                            <a class="apiname" href="documentation.xhtml#tagsort">tagsort</a>
+                        </strong>
+                        <span>
+                            <input checked="checked" id="mtagsort-no" name="mtagsort"
+                                title="Do not rearrange markup code." type="radio"/>
+                            <label for="mtagsort-no">Do not sort markup code</label>
+                        </span>
+                        <span>
+                            <input id="mtagsort-yes" name="mtagsort"
+                                title="Sort markup code." type="radio"/>
+                            <label for="mtagsort-yes">Sort markup pieces</label>
+                        </span>
+                    </p>
+                    <p>
+                        <strong>Preserve Text Content <a class="apiname" href="documentation.xhtml#textpreserve">(textpreserve)</a></strong>
+                        <span>
+                            <input checked="checked" id="mtextpreserveno" name="mtextpreserve" title="Do not literally preserve white space in text." type="radio"/>
+                            <label for="mtextpreserveno">Beautify text content</label>
+                        </span>
+                        <span>
+                            <input id="mtextpreserveyes" name="mtextpreserve" title="Preserve all white space in text content exactly as supplied." type="radio"/>
+                            <label for="mtextpreserveyes">Preserve white space in text</label>
+                        </span>
+                    </p>
+                </fieldset>
+            </div>
+            <div class="options" id="parseops" style="display:none;">
+                <h2>Parse Options</h2>
+                <p class="apiname">(API name in parenthesis)</p>
+                <fieldset>
+                    <legend>Multifunction Options</legend>
                     <p>
                         <strong>Property Sorting, CSS / JavaScript
                             <a class="apiname" href="documentation.xhtml#objsort">(objsort)</a>
                         </strong>
                         <span>
-                            <input checked="checked" id="bobjsort-jsonly" name="bobjsort"
+                            <input checked="checked" id="pobjsort-jsonly" name="pobjsort"
                                 title="Sort JavaScript object properties alphabetically by key name."
                                 type="radio"/>
-                            <label for="bobjsort-jsonly">Sort JavaScript objects</label>
+                            <label for="pobjsort-jsonly">Sort JavaScript objects</label>
                         </span>
                         <span>
-                            <input id="bobjsort-cssonly" name="bobjsort"
+                            <input id="pobjsort-cssonly" name="pobjsort"
                                 title="Sort CSS properties alphabetically by property name." type="radio"/>
-                            <label for="bobjsort-cssonly">Sort CSS properties</label>
+                            <label for="pobjsort-cssonly">Sort CSS properties</label>
                         </span>
                         <span>
-                            <input id="bobjsort-all" name="bobjsort"
+                            <input id="pobjsort-all" name="pobjsort"
                                 title="Sort CSS properties and JavaScript object properties alphabetically by key/property name."
                                 type="radio"/>
-                            <label for="bobjsort-all">Sort by key/property</label>
+                            <label for="pobjsort-all">Sort by key/property</label>
                         </span>
                         <span>
-                            <input id="bobjsort-none" name="bobjsort"
+                            <input id="pobjsort-none" name="pobjsort"
                                 title="Turn sorting off for CSS and JavaScript." type="radio"/>
-                            <label for="bobjsort-none">Do not sort</label>
+                            <label for="pobjsort-none">Do not sort</label>
                         </span>
                     </p>
                     <p>
-                        <strong>Vertically Align, CSS / JavaScript
-                            <a class="apiname" href="documentation.xhtml#vertical">(vertical)</a>
+                        <strong>Quotes, Markup / JavaScript
+                            <a class="apiname" href="documentation.xhtml#quoteconvert">(quoteconvert)</a>
                         </strong>
                         <span>
-                            <input checked="checked" id="vertical-jsonly" name="vertical"
-                                title="This option provides vertical alignment of assignments only to JavaScript and not CSS like languages."
+                            <input checked="checked" id="pquoteconvert-none" name="pquoteconvert"
+                                title="Do not convert quote characters." type="radio"/>
+                            <label for="pquoteconvert-none">Leave the quotes alone</label>
+                        </span>
+                        <span>
+                            <input id="pquoteconvert-double" name="pquoteconvert"
+                                title="Convert double quotes to single quotes for JavaScript strings and markup attributes."
                                 type="radio"/>
-                            <label for="vertical-jsonly">Vertically align JavaScript</label>
+                            <label for="pquoteconvert-double">Convert to double quotes</label>
                         </span>
                         <span>
-                            <input id="vertical-cssonly" name="vertical"
-                                title="This option causes lists of CSS properties to be vertically aligned for faster reading."
+                            <input id="pquoteconvert-single" name="pquoteconvert"
+                                title="Convert single quotes to double quotes for JavaScript strings and markup attributes."
                                 type="radio"/>
-                            <label for="vertical-cssonly">Vertically align CSS</label>
-                        </span>
-                        <span>
-                            <input id="vertical-all" name="vertical"
-                                title="This option pads property names in JavaScript and CSS like languages so that their values are vertically aligned."
-                                type="radio"/>
-                            <label for="vertical-all">Vertically align CSS/JS</label>
-                        </span>
-                        <span>
-                            <input id="vertical-none" name="vertical"
-                                title="This option prevents padding of variable and property names for vertical alignment in all languages."
-                                type="radio"/>
-                            <label for="vertical-none">Do not vertical align</label>
-                        </span>
-                    </p>
-                    <p>
-                        <strong>Brace Padding, JavaScript Only
-                            <a class="apiname" href="documentation.xhtml#bracepadding">(bracepadding)</a>
-                        </strong>
-                        <span>
-                            <input checked="checked" id="bracepadding-no" name="bracepadding"
-                                title="This option does not pad braces in JavaScript with spaces." type="radio"/>
-                            <label for="bracepadding-no">No brace padding</label>
-                        </span>
-                        <span>
-                            <input id="bracepadding-yes" name="bracepadding"
-                                title="Inserts a space after the start of a contain and before the end of the container in JavaScript if the contents of that container are not indented; such as: conditions, function arguments, and escaped sequences of template strings."
-                                type="radio"/>
-                            <label for="bracepadding-yes">Pads container characters from their contents.</label>
-                        </span>
-                    </p>
-                    <p>
-                        <strong>Scope Analysis, JavaScript Only
-                            <a class="apiname" href="documentation.xhtml#jsscope">(jsscope)</a>
-                        </strong>
-                        <span>
-                            <input checked="checked" id="jsscope-no" name="jsscope"
-                                title="This option will causes standard text beautification for JavaScript"
-                                type="radio"/>
-                            <label for="jsscope-no">Standard beautification</label>
-                        </span>
-                        <span>
-                            <input id="jsscope-yes" name="jsscope"
-                                title="This option will display a colorful HTML output of the code that color codes variables to the scope they are declared so as to illustrate the nature of closure and inheritance."
-                                type="radio"/>
-                            <label for="jsscope-yes">Scope analysis report</label>
-                        </span>
-                        <span>
-                            <input id="jsscope-html" name="jsscope"
-                                title="This option outputs HTML so that a colorful code snippet is created for use in web pages."
-                                type="radio"/>
-                            <label for="jsscope-html">HTML output</label>
-                        </span>
-                        <span>Read about
-                            <a href="guide/jshtml.xhtml">HTML output</a>
-                            and
-                            <a href="guide/closure_with_jsscope.xhtml">scope</a>
-                            with this feature</span>
-                    </p>
-                    <p>
-                        <strong>Style of Indent, JavaScript Only
-                            <a class="apiname" href="documentation.xhtml#braces">(braces)</a>
-                        </strong>
-                        <span>
-                            <input checked="checked" id="jsindent-knr" name="jsindent"
-                                title="This JavaScript only option sets opening curly braces at the end of the current line of code."
-                                type="radio"/>
-                            <label for="jsindent-knr">K&amp;R style</label>
-                        </span>
-                        <span>
-                            <input id="jsindent-all" name="jsindent"
-                                title="This JavaScript only option moves opening curly braces onto a new line for visibility of brace contents apart from other code."
-                                type="radio"/>
-                            <label for="jsindent-all">Allman (ANSI) style &mdash; sets opening curly braces on a new line.</label>
-                        </span>
-                    </p>
-                    <p>
-                        <strong>Function Space, JavaScript Only
-                            <a class="apiname" href="documentation.xhtml#space">(space)</a>
-                        </strong>
-                        <span>
-                            <input checked="checked" id="jsspace-yes" name="jsspace"
-                                title="This JavaScript only option retains a single space between the 'function' keyword and the opening parenthesis character of anonymous functions."
-                                type="radio"/>
-                            <label for="jsspace-yes">Retain function space</label>
-                        </span>
-                        <span>
-                            <input id="jsspace-no" name="jsspace"
-                                title="This JavaScript only option removes a single space between the 'function' keyword and the opening parenthesis character of anonymous functions."
-                                type="radio"/>
-                            <label for="jsspace-no">Remove space following function</label>
-                        </span>
-                    </p>
-                    <p>
-                        <strong>Else on New Line, JavaScript Only
-                            <a class="apiname" href="documentation.xhtml#elseline">(elseline)</a>
-                        </strong>
-                        <span>
-                            <input checked="checked" id="jselseline-no" name="jselseline"
-                                title="This JavaScript only option will precede the 'else' keyword with a space."
-                                type="radio"/>
-                            <label for="jselseline-no">A space precedes 'else'</label>
-                        </span>
-                        <span>
-                            <input id="jselseline-yes" name="jselseline"
-                                title="This JavaScript only option will force the 'else' keyword onto a new line."
-                                type="radio"/>
-                            <label for="jselseline-yes">Force 'else' keyword onto a new line</label>
-                        </span>
-                    </p>
-                    <p>
-                        <strong>Brace Lines, JavaScript Only
-                            <a class="apiname" href="documentation.xhtml#braceline">(braceline)</a>
-                        </strong>
-                        <span>
-                            <input checked="checked" id="bbraceline-no" name="bbraceline"
-                                title="In JavaScript do not pad blocks with empty lines." type="radio"/>
-                            <label for="bbraceline-no">Normal blocks</label>
-                        </span>
-                        <span>
-                            <input id="bbraceline-yes" name="bbraceline"
-                                title="In JavaScript pad blocks with empty lines." type="radio"/>
-                            <label for="braceline-yes">Pad JavaScript blocks with empty lines</label>
-                        </span>
-                    </p>
-                    <p>
-                        <strong>Variable Lists, JavaScript Only
-                            <a class="apiname" href="documentation.xhtml#varword">(varword)</a>
-                        </strong>
-                        <span>
-                            <input checked="checked" id="bvarword-none" name="bvarword"
-                                title="Ignore this option." type="radio"/>
-                            <label for="bvardword-none">Leave the variables alone</label>
-                        </span>
-                        <span>
-                            <input id="bvarword-list" name="bvarword"
-                                title="In JavaScript change consecutive variable declarations into a comma separated list with a single var keyword."
-                                type="radio"/>
-                            <label for="bvardword-list">Comma separated list</label>
-                        </span>
-                        <span>
-                            <input id="bvarword-each" name="bvarword"
-                                title="In JavaScript change a comma separated list of variables into individual statements each starting with a var keyword."
-                                type="radio"/>
-                            <label for="bvardword-each">Separate variables</label>
-                        </span>
-                    </p>
-                    <p>
-                        <label class="label" for="bstyleguide">Style Guide, JavaScript Only
-                            <a class="apiname" href="documentation.xhtml#styleguide">(styleguide)</a>
-                        </label>
-                        <select id="bstyleguide">
-                            <option selected="selected" value="">None</option>
-                            <option value="airbnb">AirBnB</option>
-                            <option value="crockford">Crockford</option>
-                            <option value="google">Google</option>
-                            <option value="grunt">Grunt</option>
-                            <option value="jquery">jQuery</option>
-                            <option value="jslint">JSLint</option>
-                            <option value="mrdoobs">Mr. Doob's</option>
-                            <option value="mediawiki">MediaWiki</option>
-                            <option value="meteor">Meteor</option>
-                            <option value="yandex">Yandex</option>
-                        </select>
-                        <span>Read about
-                            <a href="guide/styleguide.xhtml">style guide support</a>
+                            <label for="pquoteconvert-single">Convert to single quotes</label>
                         </span>
                     </p>
                 </fieldset>
-            </div>
-            <div class="options" id="miniops" style="display:none;">
-                <h2>Minify Options</h2>
-                <p class="apiname">(API name in parenthesis)</p>
-                <p>
-                    <strong>Quotes, Markup / JavaScript
-                        <a class="apiname" href="documentation.xhtml#quoteconvert">(quoteconvert)</a>
-                    </strong>
-                    <span>
-                        <input checked="checked" id="mquoteconvert-double" name="mquoteconvert"
-                            title="Convert double quotes to single quotes for JavaScript strings and markup attributes."
-                            type="radio"/>
-                        <label for="mquoteconvert-double">Convert to double quotes</label>
-                    </span>
-                    <span>
-                        <input id="mquoteconvert-single" name="mquoteconvert"
-                            title="Convert single quotes to double quotes for JavaScript strings and markup attributes."
-                            type="radio"/>
-                        <label for="mquoteconvert-single">Convert to single quotes</label>
-                    </span>
-                    <span>
-                        <input id="mquoteconvert-none" name="mquoteconvert"
-                            title="Do not convert quote characters." type="radio"/>
-                        <label for="mquoteconvert-none">Leave the quotes alone</label>
-                    </span>
-                </p>
-                <p>
-                    <strong>Dust.js Template, Markup Only <a class="apiname" href="documentation.xhtml#textpreserve">(textpreserve)</a></strong>
-                    <span>
-                        <input checked="checked" id="mdustno" name="mdust" title="Do not interpret the markup code as a Dust.js template" type="radio"/>
-                        <label for="mdustno">Not a Dust.js template</label>
-                    </span>
-                    <span>
-                        <input id="mdustyes" name="mdust" title="Interpret the markup code as a Dust.js template" type="radio"/>
-                        <label for="mdusttes">Dust.js template</label>
-                    </span>
-                </p>
-                <p>
-                    <strong>Merge Empty Tag Sets Into A Single Self-Closing Tag, Markup Only
-                        <a class="apiname" href="documentation.xhtml#tagmerge">(tagmerge)</a>
-                    </strong>
-                    <span>
-                        <input checked="checked" id="mtagmerge-no" name="mtagmerge"
-                            title="Do not automatically merge start and end tags of the same name."
-                            type="radio"/>
-                        <label for="mtagmerge-no">Do not merge tags</label>
-                    </span>
-                    <span>
-                        <input id="mtagmerge-yes" name="mtagmerge"
-                            title="Automatically merge immediately adjacent start and end tags of the same name."
-                            type="radio"/>
-                        <label for="mtagmerge-yes">Merge tags</label>
-                    </span>
-                </p>
-                <p>
-                    <strong>Sort Child Items of Each Parent Element, Markup Only
-                        <a class="apiname" href="documentation.xhtml#tagsort">tagsort</a>
-                    </strong>
-                    <span>
-                        <input checked="checked" id="mtagsort-no" name="mtagsort"
-                            title="Do not rearrange markup code." type="radio"/>
-                        <label for="mtagsort-no">Do not sort markup code</label>
-                    </span>
-                    <span>
-                        <input id="mtagsort-yes" name="mtagsort"
-                            title="Sort markup code." type="radio"/>
-                        <label for="mtagsort-yes">Sort markup pieces</label>
-                    </span>
-                </p>
-                <p>
-                    <strong>Preserve Text Content, Markup only <a class="apiname" href="documentation.xhtml#textpreserve">(textpreserve)</a></strong>
-                    <span>
-                        <input checked="checked" id="mtextpreserveno" name="mtextpreserve" title="Do not literally preserve white space in text." type="radio"/>
-                        <label for="mtextpreserveno">Beautify text content</label>
-                    </span>
-                    <span>
-                        <input id="mtextpreserveyes" name="mtextpreserve" title="Preserve all white space in text content exactly as supplied." type="radio"/>
-                        <label for="mtextpreserveyes">Preserve white space in text</label>
-                    </span>
-                </p>
-                <p>
-                    <strong>Presume HTML, Markup Only
-                        <a class="apiname" href="documentation.xhtml#html">(html)</a>
-                    </strong>
-                    <span>
-                        <input checked="checked" id="htmlm-yes" name="presumehtmlm"
-                            title="This option determines whether HTML tags like &lt;br&gt; and lt;hr&gt; should be evaluated as singletons, such as &lt;br/&gt; and lt;hr/&gt;."
-                            type="radio"/>
-                        <label for="htmlm-yes">Tolerate HTML sillyness</label>
-                    </span>
-                    <span>
-                        <input id="htmlm-no" name="presumehtmlm"
-                            title="Use this option to ignore HTML specific vocabulary and instead focus purely on syntax."
-                            type="radio"/>
-                        <label for="htmlm-no">Strict XML syntax</label>
-                    </span>
-                </p>
-                <p>
-                    <strong>IE Comments, HTML Only
-                        <a class="apiname" href="documentation.xhtml#conditional">(conditional)</a>
-                    </strong>
-                    <span>
-                        <input checked="checked" id="conditionalm-no" name="conditionalm"
-                            title="Use this option to remove HTML contitional comments used by Internet Explorer."
-                            type="radio"/>
-                        <label for="conditionalm-no">Remove all comments</label>
-                    </span>
-                    <span>
-                        <input id="conditionalm-yes" name="conditionalm"
-                            title="Use this option to keep HTML contitional comments used by Internet Explorer."
-                            type="radio"/>
-                        <label for="conditionalm-yes">Preserve HTML conditional comments</label>
-                    </span>
-                </p>
-                <p>
-                    <strong>Property Sorting, CSS / JavaScript
-                        <a class="apiname" href="documentation.xhtml#objsort">(objsort)</a>
-                    </strong>
-                    <span>
-                        <input checked="checked" id="mobjsort-jsonly" name="mobjsort"
-                            title="Sort JavaScript object properties alphabetically by key name."
-                            type="radio"/>
-                        <label for="mobjsort-jsonly">Sort JavaScript objects</label>
-                    </span>
-                    <span>
-                        <input id="mobjsort-cssonly" name="mobjsort"
-                            title="Sort CSS properties alphabetically by property name." type="radio"/>
-                        <label for="mobjsort-cssonly">Sort CSS properties</label>
-                    </span>
-                    <span>
-                        <input id="mobjsort-all" name="mobjsort"
-                            title="Sort CSS properties and JavaScript object properties alphabetically by key/property name."
-                            type="radio"/>
-                        <label for="mobjsort-all">Sort by key/property</label>
-                    </span>
-                    <span>
-                        <input id="mobjsort-none" name="mobjsort"
-                            title="Turn sorting off for CSS and JavaScript." type="radio"/>
-                        <label for="mobjsort-none">Do not sort</label>
-                    </span>
-                </p>
-                <p>
-                    <strong>Top Comments, CSS / JavaScript
-                        <a class="apiname" href="documentation.xhtml#topcoms">(topcoms)</a>
-                    </strong>
-                    <span>
-                        <input checked="checked" id="topcoms-no" name="topcoms"
-                            title="Use this remove all comments in JavaScript and CSS including comments above the first line of code."
-                            type="radio"/>
-                        <label for="topcoms-no">Minify all comments</label>
-                    </span>
-                    <span>
-                        <input id="topcoms-yes" name="topcoms"
-                            title="Use this option retain comments comments above the first line of JavaScript and CSS code."
-                            type="radio"/>
-                        <label for="topcoms-yes">Preserve comments before any code</label>
-                    </span>
-                </p>
-            </div>
-            <div class="options" id="parseops" style="display:none;">
-                <h2>Parse Options</h2>
-                <p class="apiname">(API name in parenthesis)</p>
-                <p>
-                    <strong>Quotes, Markup / JavaScript
-                        <a class="apiname" href="documentation.xhtml#quoteconvert">(quoteconvert)</a>
-                    </strong>
-                    <span>
-                        <input checked="checked" id="pquoteconvert-none" name="pquoteconvert"
-                            title="Do not convert quote characters." type="radio"/>
-                        <label for="pquoteconvert-none">Leave the quotes alone</label>
-                    </span>
-                    <span>
-                        <input id="pquoteconvert-double" name="pquoteconvert"
-                            title="Convert double quotes to single quotes for JavaScript strings and markup attributes."
-                            type="radio"/>
-                        <label for="pquoteconvert-double">Convert to double quotes</label>
-                    </span>
-                    <span>
-                        <input id="pquoteconvert-single" name="pquoteconvert"
-                            title="Convert single quotes to double quotes for JavaScript strings and markup attributes."
-                            type="radio"/>
-                        <label for="pquoteconvert-single">Convert to single quotes</label>
-                    </span>
-                </p>
-                <p>
-                    <strong>Dust.js Template, Markup Only <a class="apiname" href="documentation.xhtml#textpreserve">(textpreserve)</a></strong>
-                    <span>
-                        <input checked="checked" id="pdustno" name="pdust" title="Do not interpret the markup code as a Dust.js template" type="radio"/>
-                        <label for="pdustno">Not a Dust.js template</label>
-                    </span>
-                    <span>
-                        <input id="pdustyes" name="pdust" title="Interpret the markup code as a Dust.js template" type="radio"/>
-                        <label for="pdusttes">Dust.js template</label>
-                    </span>
-                </p>
-                <p>
-                    <strong>Merge Empty Tag Sets Into A Single Self-Closing Tag, Markup Only
-                        <a class="apiname" href="documentation.xhtml#tagmerge">(tagmerge)</a>
-                    </strong>
-                    <span>
-                        <input checked="checked" id="ptagmerge-no" name="ptagmerge"
-                            title="Do not automatically merge start and end tags of the same name."
-                            type="radio"/>
-                        <label for="ptagmerge-no">Do not merge tags</label>
-                    </span>
-                    <span>
-                        <input id="ptagmerge-yes" name="ptagmerge"
-                            title="Automatically merge immediately adjacent start and end tags of the same name."
-                            type="radio"/>
-                        <label for="ptagmerge-yes">Merge tags</label>
-                    </span>
-                </p>
-                <p>
-                    <strong>Sort Child Items of Each Parent Element, Markup Only
-                        <a class="apiname" href="documentation.xhtml#tagsort">tagsort</a>
-                    </strong>
-                    <span>
-                        <input checked="checked" id="ptagsort-no" name="ptagsort"
-                            title="Do not rearrange markup code." type="radio"/>
-                        <label for="ptagsort-no">Do not sort markup code</label>
-                    </span>
-                    <span>
-                        <input id="ptagsort-yes" name="ptagsort"
-                            title="Sort markup code." type="radio"/>
-                        <label for="ptagsort-yes">Sort markup pieces</label>
-                    </span>
-                </p>
-                <p>
-                    <strong>Preserve Text Content, Markup only <a class="apiname" href="documentation.xhtml#textpreserve">(textpreserve)</a></strong>
-                    <span>
-                        <input checked="checked" id="ptextpreserveno" name="ptextpreserve" title="Do not literally preserve white space in text." type="radio"/>
-                        <label for="ptextpreserveno">Beautify text content</label>
-                    </span>
-                    <span>
-                        <input id="ptextpreserveyes" name="ptextpreserve" title="Preserve all white space in text content exactly as supplied." type="radio"/>
-                        <label for="ptextpreserveyes">Preserve white space in text</label>
-                    </span>
-                </p>
-                <p>
-                    <strong>Presume HTML, Markup Only
-                        <a class="apiname" href="documentation.xhtml#html">(html)</a>
-                    </strong>
-                    <span>
-                        <input checked="checked" id="phtml-yes" name="ppresumehtml"
-                            title="This option determines whether HTML tags like &lt;br&gt; and lt;hr&gt; should be evaluated as singletons, such as &lt;br/&gt; and lt;hr/&gt;."
-                            type="radio"/>
-                        <label for="phtml-yes">Tolerate HTML sillyness</label>
-                    </span>
-                    <span>
-                        <input id="phtml-no" name="ppresumehtml"
-                            title="Use this option to ignore HTML specific vocabulary and instead focus purely on syntax."
-                            type="radio"/>
-                        <label for="phtml-no">Strict XML syntax</label>
-                    </span>
-                </p>
-                <p>
-                    <strong>Property Sorting, CSS / JavaScript
-                        <a class="apiname" href="documentation.xhtml#objsort">(objsort)</a>
-                    </strong>
-                    <span>
-                        <input checked="checked" id="pobjsort-jsonly" name="pobjsort"
-                            title="Sort JavaScript object properties alphabetically by key name."
-                            type="radio"/>
-                        <label for="pobjsort-jsonly">Sort JavaScript objects</label>
-                    </span>
-                    <span>
-                        <input id="pobjsort-cssonly" name="pobjsort"
-                            title="Sort CSS properties alphabetically by property name." type="radio"/>
-                        <label for="pobjsort-cssonly">Sort CSS properties</label>
-                    </span>
-                    <span>
-                        <input id="pobjsort-all" name="pobjsort"
-                            title="Sort CSS properties and JavaScript object properties alphabetically by key/property name."
-                            type="radio"/>
-                        <label for="pobjsort-all">Sort by key/property</label>
-                    </span>
-                    <span>
-                        <input id="pobjsort-none" name="pobjsort"
-                            title="Turn sorting off for CSS and JavaScript." type="radio"/>
-                        <label for="pobjsort-none">Do not sort</label>
-                    </span>
-                </p>
-                <p>
-                    <strong>Fix Sloppy Code, JavaScript Only
-                        <a class="apiname" href="documentation.xhtml#correct">(correct)</a>
-                    </strong>
-                    <span>
-                        <input checked="checked" id="pjscorrect-no" name="pjscorrect"
-                            title="Do not alter or remove sloppy JavaScript code." type="radio"/>
-                        <label for="pjscorrect-no">Ignore code correction</label>
-                    </span>
-                    <span>
-                        <input id="pjscorrect-yes" name="pjscorrect"
-                            title="This JavaScript only option automatically converts some sloppy behaviors into known best practices."
-                            type="radio"/>
-                        <label for="pjscorrect-yes">Correct for sloppiness</label>
-                    </span>
-                    <span>Read the
-                        <a href="guide/jscorrect.xhtml">guide</a>.</span>
-                </p>
-                <p>
-                    <strong>Variable Lists, JavaScript Only
-                        <a class="apiname" href="documentation.xhtml#varword">(varword)</a>
-                    </strong>
-                    <span>
-                        <input checked="checked" id="pvarword-none" name="pvarword"
-                            title="Ignore this option." type="radio"/>
-                        <label for="pvardword-none">Leave the variables alone</label>
-                    </span>
-                    <span>
-                        <input id="pvarword-list" name="pvarword"
-                            title="In JavaScript change consecutive variable declarations into a comma separated list with a single var keyword."
-                            type="radio"/>
-                        <label for="pvardword-list">Comma separated list</label>
-                    </span>
-                    <span>
-                        <input id="pvarword-each" name="pvarword"
-                            title="In JavaScript change a comma separated list of variables into individual statements each starting with a var keyword."
-                            type="radio"/>
-                        <label for="pvardword-each">Separate variables</label>
-                    </span>
-                </p>
+                <fieldset>
+                    <legend>Markup Options</legend>
+                    <p>
+                        <strong>Dust.js Template <a class="apiname" href="documentation.xhtml#dustjs">(dustjs)</a></strong>
+                        <span>
+                            <input checked="checked" id="pdustno" name="pdust" title="Do not interpret the markup code as a Dust.js template" type="radio"/>
+                            <label for="pdustno">Not a Dust.js template</label>
+                        </span>
+                        <span>
+                            <input id="pdustyes" name="pdust" title="Interpret the markup code as a Dust.js template" type="radio"/>
+                            <label for="pdusttes">Dust.js template</label>
+                        </span>
+                    </p>
+                    <p>
+                        <strong>Presume HTML
+                            <a class="apiname" href="documentation.xhtml#html">(html)</a>
+                        </strong>
+                        <span>
+                            <input checked="checked" id="phtml-yes" name="ppresumehtml"
+                                title="This option determines whether HTML tags like &lt;br&gt; and lt;hr&gt; should be evaluated as singletons, such as &lt;br/&gt; and lt;hr/&gt;."
+                                type="radio"/>
+                            <label for="phtml-yes">Tolerate HTML sillyness</label>
+                        </span>
+                        <span>
+                            <input id="phtml-no" name="ppresumehtml"
+                                title="Use this option to ignore HTML specific vocabulary and instead focus purely on syntax."
+                                type="radio"/>
+                            <label for="phtml-no">Strict XML syntax</label>
+                        </span>
+                    </p>
+                    <p>
+                        <strong>Merge Empty Tag Sets Into A Single Self-Closing Tag
+                            <a class="apiname" href="documentation.xhtml#tagmerge">(tagmerge)</a>
+                        </strong>
+                        <span>
+                            <input checked="checked" id="ptagmerge-no" name="ptagmerge"
+                                title="Do not automatically merge start and end tags of the same name."
+                                type="radio"/>
+                            <label for="ptagmerge-no">Do not merge tags</label>
+                        </span>
+                        <span>
+                            <input id="ptagmerge-yes" name="ptagmerge"
+                                title="Automatically merge immediately adjacent start and end tags of the same name."
+                                type="radio"/>
+                            <label for="ptagmerge-yes">Merge tags</label>
+                        </span>
+                    </p>
+                    <p>
+                        <strong>Sort Child Items of Each Parent Element
+                            <a class="apiname" href="documentation.xhtml#tagsort">tagsort</a>
+                        </strong>
+                        <span>
+                            <input checked="checked" id="ptagsort-no" name="ptagsort"
+                                title="Do not rearrange markup code." type="radio"/>
+                            <label for="ptagsort-no">Do not sort markup code</label>
+                        </span>
+                        <span>
+                            <input id="ptagsort-yes" name="ptagsort"
+                                title="Sort markup code." type="radio"/>
+                            <label for="ptagsort-yes">Sort markup pieces</label>
+                        </span>
+                    </p>
+                    <p>
+                        <strong>Preserve Text Content <a class="apiname" href="documentation.xhtml#textpreserve">(textpreserve)</a></strong>
+                        <span>
+                            <input checked="checked" id="ptextpreserveno" name="ptextpreserve" title="Do not literally preserve white space in text." type="radio"/>
+                            <label for="ptextpreserveno">Beautify text content</label>
+                        </span>
+                        <span>
+                            <input id="ptextpreserveyes" name="ptextpreserve" title="Preserve all white space in text content exactly as supplied." type="radio"/>
+                            <label for="ptextpreserveyes">Preserve white space in text</label>
+                        </span>
+                    </p>
+                </fieldset>
+                <fieldset>
+                    <legend>JavaScript Options</legend>
+                    <p>
+                        <strong>Fix Sloppy Code
+                            <a class="apiname" href="documentation.xhtml#correct">(correct)</a>
+                        </strong>
+                        <span>
+                            <input checked="checked" id="pjscorrect-no" name="pjscorrect"
+                                title="Do not alter or remove sloppy JavaScript code." type="radio"/>
+                            <label for="pjscorrect-no">Ignore code correction</label>
+                        </span>
+                        <span>
+                            <input id="pjscorrect-yes" name="pjscorrect"
+                                title="This JavaScript only option automatically converts some sloppy behaviors into known best practices."
+                                type="radio"/>
+                            <label for="pjscorrect-yes">Correct for sloppiness</label>
+                        </span>
+                        <span>Read the
+                            <a href="guide/jscorrect.xhtml">guide</a>.</span>
+                    </p>
+                    <p>
+                        <strong>Variable Lists
+                            <a class="apiname" href="documentation.xhtml#varword">(varword)</a>
+                        </strong>
+                        <span>
+                            <input checked="checked" id="pvarword-none" name="pvarword"
+                                title="Ignore this option." type="radio"/>
+                            <label for="pvardword-none">Leave the variables alone</label>
+                        </span>
+                        <span>
+                            <input id="pvarword-list" name="pvarword"
+                                title="In JavaScript change consecutive variable declarations into a comma separated list with a single var keyword."
+                                type="radio"/>
+                            <label for="pvardword-list">Comma separated list</label>
+                        </span>
+                        <span>
+                            <input id="pvarword-each" name="pvarword"
+                                title="In JavaScript change a comma separated list of variables into individual statements each starting with a var keyword."
+                                type="radio"/>
+                            <label for="pvardword-each">Separate variables</label>
+                        </span>
+                    </p>
+                </fieldset>
             </div>
             <p class="button">
                 <button type="button" value="Execute">Execute</button>

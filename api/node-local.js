@@ -100,6 +100,7 @@ Examples:
             lang          : "auto",
             langdefault   : "text",
             mode          : "diff",
+            noleadzero    : false,
             obfuscate     : false,
             objsort       : "js",
             output        : "",
@@ -1044,6 +1045,9 @@ Examples:
             a.push("                           * parse    - returns an object with shallow arrays");
             a.push("                 Accepted values: diff, beautify, minify, parse");
             a.push("");
+            a.push("* noleadzero   - boolean - If in CSS values leading 0s immediately preceeding a");
+            a.push("                           decimal should be removed or prevented.");
+            a.push("");
             a.push("* obfuscate    - boolean - If JavaScript minification should result in smaller");
             a.push("                           variable names and fewer simicolons.  Default is");
             a.push("                           false.");
@@ -1272,84 +1276,58 @@ Examples:
                 if (d[b].length === 2) {
                     if (options.version === false && d[b][0] === "" && (d[b][1] === "help" || d[b][1] === "man" || d[b][1] === "manual")) {
                         help = true;
-                    }
-                    if (help === false && d[b][0] === "" && (d[b][1] === "v" || d[b][1] === "version")) {
+                    } else if (help === false && d[b][0] === "" && (d[b][1] === "v" || d[b][1] === "version")) {
                         options.version = true;
-                    }
-                    if (d[b][0] === "api") {
+                    } else if (d[b][0] === "api") {
                         options.api = "node";
-                    }
-                    if (d[b][0] === "braceline" && d[b][1] === "true") {
+                    } else if (d[b][0] === "braceline" && d[b][1] === "true") {
                         options.braceline = true;
-                    }
-                    if (d[b][0] === "bracepadding" && d[b][1] === "true") {
+                    } else if (d[b][0] === "bracepadding" && d[b][1] === "true") {
                         options.bracepadding = true;
-                    }
-                    if ((d[b][0] === "braces" && d[b][1] === "allman") || (d[b][0] === "indent" && d[b][1] === "allman")) {
+                    } else if ((d[b][0] === "braces" && d[b][1] === "allman") || (d[b][0] === "indent" && d[b][1] === "allman")) {
                         options.braces = "allman";
-                    }
-                    if (d[b][0] === "color" && (d[b][1] === "default" || d[b][1] === "coffee" || d[b][1] === "dark" || d[b][1] === "canvas" || d[b][1] === "white")) {
+                    } else if (d[b][0] === "color" && (d[b][1] === "default" || d[b][1] === "coffee" || d[b][1] === "dark" || d[b][1] === "canvas" || d[b][1] === "white")) {
                         options.color = d[b][1];
-                    }
-                    if (d[b][0] === "comments" && d[b][1] === "noindent") {
+                    } else if (d[b][0] === "comments" && d[b][1] === "noindent") {
                         options.comments = "noindent";
-                    }
-                    if (d[b][0] === "conditional" && d[b][1] === "true") {
+                    } else if (d[b][0] === "conditional" && d[b][1] === "true") {
                         options.conditional = true;
-                    }
-                    if (d[b][0] === "content" && d[b][1] === "true") {
+                    } else if (d[b][0] === "content" && d[b][1] === "true") {
                         options.content = true;
-                    }
-                    if (d[b][0] === "context" && isNaN(d[b][1]) === false) {
+                    } else if (d[b][0] === "context" && isNaN(d[b][1]) === false) {
                         options.context = Number(d[b][1]);
-                    }
-                    if (d[b][0] === "correct" && d[b][1] === "true") {
+                    } else if (d[b][0] === "correct" && d[b][1] === "true") {
                         options.correct = true;
-                    }
-                    if (d[b][0] === "cssinsertlines" && d[b][1] === "true") {
+                    } else if (d[b][0] === "cssinsertlines" && d[b][1] === "true") {
                         options.cssinsertlines = true;
-                    }
-                    if (d[b][0] === "csvchar" && d[b][1].length > 0) {
+                    } else if (d[b][0] === "csvchar" && d[b][1].length > 0) {
                         options.csvchar = d[b][1];
-                    }
-                    if (d[b][0] === "diff" && d[b][1].length > 0) {
+                    } else if (d[b][0] === "diff" && d[b][1].length > 0) {
                         options.diff = pathslash(d[b][0], d[b][1]);
-                    }
-                    if (d[b][0] === "diffcli" && d[b][1] === "true") {
+                    } else if (d[b][0] === "diffcli" && d[b][1] === "true") {
                         options.diffcli = true;
-                    }
-                    if (d[b][0] === "diffcomments" && d[b][1] === "true") {
+                    } else if (d[b][0] === "diffcomments" && d[b][1] === "true") {
                         options.diffcomments = true;
-                    }
-                    if (d[b][0] === "difflabel" && d[b][1].length > 0) {
+                    } else if (d[b][0] === "difflabel" && d[b][1].length > 0) {
                         options.difflabel = d[b][1];
-                    }
-                    if (d[b][0] === "diffview" && d[b][1] === "inline") {
+                    } else if (d[b][0] === "diffview" && d[b][1] === "inline") {
                         options.diffview = "inline";
-                    }
-                    if (d[b][0] === "dustjs" && d[b][1] === "true") {
+                    } else if (d[b][0] === "dustjs" && d[b][1] === "true") {
                         options.dustjs = true;
-                    }
-                    if (d[b][0] === "elseline" && d[b][1] === "true") {
+                    } else if (d[b][0] === "elseline" && d[b][1] === "true") {
                         options.elseline = true;
-                    }
-                    if (d[b][0] === "force_indent" && d[b][1] === "true") {
+                    } else if (d[b][0] === "force_indent" && d[b][1] === "true") {
                         options.force_indent = true;
-                    }
-                    if (d[b][0] === "html" && d[b][1] === "true") {
+                    } else if (d[b][0] === "html" && d[b][1] === "true") {
                         options.html = true;
-                    }
-                    if (d[b][0] === "inchar" && d[b][1].length > 0) {
+                    } else if (d[b][0] === "inchar" && d[b][1].length > 0) {
                         d[b][1]        = d[b][1].replace(/\\t/g, "\u0009").replace(/\\n/g, "\u000a").replace(/\\r/g, "\u000d").replace(/\\f/g, "\u000c").replace(/\\b/g, "\u0008");
                         options.inchar = d[b][1];
-                    }
-                    if (d[b][0] === "inlevel" && isNaN(d[b][1]) === false) {
+                    } else if (d[b][0] === "inlevel" && isNaN(d[b][1]) === false) {
                         options.inlevel = Number(d[b][1]);
-                    }
-                    if (d[b][0] === "insize" && isNaN(d[b][1]) === false) {
+                    } else if (d[b][0] === "insize" && isNaN(d[b][1]) === false) {
                         options.insize = Number(d[b][1]);
-                    }
-                    if (d[b][0] === "jsscope") {
+                    } else if (d[b][0] === "jsscope") {
                         if (d[b][1] === "true") {
                             options.jsscope = "report";
                         } else if (d[b][1] === "report" || d[b][1] === "html") {
@@ -1357,46 +1335,38 @@ Examples:
                         } else {
                             options.jsscope = "none";
                         }
-                    }
-                    if (d[b][0] === "lang" && (d[b][1] === "markup" || d[b][1] === "javascript" || d[b][1] === "css" || d[b][1] === "html" || d[b][1] === "csv" || d[b][1] === "text")) {
+                    } else if (d[b][0] === "lang" && (d[b][1] === "markup" || d[b][1] === "javascript" || d[b][1] === "css" || d[b][1] === "html" || d[b][1] === "csv" || d[b][1] === "text")) {
                         options.lang = d[b][1];
                         if (d[b][1] === "html") {
                             options.html = true;
                         }
-                    }
-                    if (d[b][0] === "langdefault" && (d[b][1] === "markup" || d[b][1] === "javascript" || d[b][1] === "css" || d[b][1] === "html" || d[b][1] === "csv")) {
+                    } else if (d[b][0] === "langdefault" && (d[b][1] === "markup" || d[b][1] === "javascript" || d[b][1] === "css" || d[b][1] === "html" || d[b][1] === "csv")) {
                         options.langdefault = d[b][1];
-                    }
-                    if (d[b][0] === "mode" && (d[b][1] === "minify" || d[b][1] === "beautify" || d[b][1] === "parse")) {
+                    } else if (d[b][0] === "mode" && (d[b][1] === "minify" || d[b][1] === "beautify" || d[b][1] === "parse")) {
                         options.mode = d[b][1];
-                    }
-                    if (d[b][0] === "obfuscate" && d[b][1] === "true") {
+                    } else if (d[b][0] === "noleadzero" && d[b][1] === "true") {
+                        options.noleadzero = true;
+                    } else if (d[b][0] === "obfuscate" && d[b][1] === "true") {
                         options.obfuscation = true;
-                    }
-                    if (d[b][0] === "objsort") {
+                    } else if (d[b][0] === "objsort") {
                         if (d[b][1] === "all" || d[b][1] === "none" || d[b][1] === "css" || d[b][1] === "js") {
                             options.objsort = d[b][1];
                         } else if (d[b][1] === "true") {
                             options.objsort = "js";
                         }
-                    }
-                    if (d[b][0] === "output" && d[b][1].length > 0) {
+                    } else if (d[b][0] === "output" && d[b][1].length > 0) {
                         options.output = pathslash(d[b][0], d[b][1]);
-                    }
-                    if (d[b][0] === "preserve") {
+                    } else if (d[b][0] === "preserve") {
                         if (d[b][1] === "all" || d[b][1] === "none" || d[b][1] === "css" || d[b][1] === "js") {
                             options.preserve = d[b][1];
                         } else if (d[b][1] === "true") {
                             options.preserve = "all";
                         }
-                    }
-                    if (d[b][0] === "quote" && d[b][1] === "true") {
+                    } else if (d[b][0] === "quote" && d[b][1] === "true") {
                         options.quote = true;
-                    }
-                    if (d[b][0] === "quoteConvert" && (d[b][1] === "single" || d[b][1] === "double")) {
+                    } else if (d[b][0] === "quoteConvert" && (d[b][1] === "single" || d[b][1] === "double")) {
                         options.quoteConvert = d[b][1];
-                    }
-                    if (d[b][0] === "readmethod") {
+                    } else if (d[b][0] === "readmethod") {
                         if (d[b][1] === "auto") {
                             options.readmethod = "auto";
                         }
@@ -1413,54 +1383,39 @@ Examples:
                             options.readmethod = "subdirectory";
                         }
                         method = options.readmethod;
-                    }
-                    if (d[b][0] === "report") {
+                    } else if (d[b][0] === "report") {
                         options.output = d[b][1];
-                    }
-                    if (d[b][0] === "semicolon" && d[b][1] === "true") {
+                    } else if (d[b][0] === "semicolon" && d[b][1] === "true") {
                         options.semicolon = true;
-                    }
-                    if (d[b][0] === "source" && d[b][1].length > 0) {
+                    } else if (d[b][0] === "source" && d[b][1].length > 0) {
                         options.source = pathslash(d[b][0], d[b][1]);
-                    }
-                    if (d[b][0] === "sourcelabel" && d[b][1].length > 0) {
+                    } else if (d[b][0] === "sourcelabel" && d[b][1].length > 0) {
                         options.sourcelabel = d[b][1];
-                    }
-                    if (d[b][0] === "space" && d[b][1] === "false") {
+                    } else if (d[b][0] === "space" && d[b][1] === "false") {
                         options.space = false;
-                    }
-                    if (d[b][0] === "style" && d[b][1] === "noindent") {
+                    } else if (d[b][0] === "style" && d[b][1] === "noindent") {
                         options.style = "noindent";
-                    }
-                    if (d[b][0] === "styleguide") {
+                    } else if (d[b][0] === "styleguide") {
                         options.styleguide = d[b][1];
-                    }
-                    if (d[b][0] === "tagmerge" && d[b][1] === "true") {
+                    } else if (d[b][0] === "tagmerge" && d[b][1] === "true") {
                         options.tagmerge = true;
-                    }
-                    if (d[b][0] === "tagsort" && d[b][1] === "true") {
+                    } else if (d[b][0] === "tagsort" && d[b][1] === "true") {
                         options.tagsort = true;
-                    }
-                    if (d[b][0] === "textpreserve" && d[b][1] === "true") {
+                    } else if (d[b][0] === "textpreserve" && d[b][1] === "true") {
                         options.textpreserve = true;
-                    }
-                    if (d[b][0] === "titanium" && d[b][1] === "true") {
+                    } else if (d[b][0] === "titanium" && d[b][1] === "true") {
                         options.titanium = true;
-                    }
-                    if (d[b][0] === "topcoms" && d[b][1] === "true") {
+                    } else if (d[b][0] === "topcoms" && d[b][1] === "true") {
                         options.topcoms = true;
-                    }
-                    if (d[b][0] === "varword" && (d[b][1] === "each" || d[b][1] === "list")) {
+                    } else if (d[b][0] === "varword" && (d[b][1] === "each" || d[b][1] === "list")) {
                         options.varword = d[b][1];
-                    }
-                    if (d[b][0] === "vertical") {
+                    } else if (d[b][0] === "vertical") {
                         if (d[b][1] === "all" || d[b][1] === "none" || d[b][1] === "css" || d[b][1] === "js") {
                             options.vertical = d[b][1];
                         } else if (d[b][1] === "true") {
                             options.vertical = "all";
                         }
-                    }
-                    if (d[b][0] === "wrap") {
+                    } else if (d[b][0] === "wrap") {
                         if (isNaN(d[b][1]) === true) {
                             options.wrap = 80;
                         } else {
