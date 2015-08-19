@@ -2129,7 +2129,7 @@ var prettydiff = function prettydiff(api) {
                                                 parts.push(" ");
                                             }
                                             cc -= 1;
-                                        } while (cc > 0 && types[cc] !== "comment" && types[cc] !== "comment-inline" && types[cc] !== "end" && types[cc] !== "start" && types[cc] !== "semi" && types[cc] !== undefined);
+                                        } while (cc > -1 && types[cc] !== "comment" && types[cc] !== "comment-inline" && types[cc] !== "end" && types[cc] !== "start" && types[cc] !== "semi" && types[cc] !== undefined);
                                         parts.reverse();
                                         cc += 1;
                                         dd = aa - cc;
@@ -6559,12 +6559,12 @@ var prettydiff = function prettydiff(api) {
                                 }
                                 if (jbraces === true && ltype !== "operator" && ltoke !== "return") {
                                     level[a - 1] = indent - 1;
-                                } else if (ltoke === ")") {
+                                } else if (ltoke === ")" || ltoke === ",") {
                                     level[a - 1] = "s";
                                 } else if (ltoke === "{" || ltoke === "x{" || ltoke === "[" || ltoke === "}" || ltoke === "x}") {
                                     level[a - 1] = indent - 1;
                                 }
-                                if (destruct[destruct.length - 1] === true) {
+                                if (destruct[destruct.length - 1] === true && ltype !== "word") {
                                     return level.push("x");
                                 }
                                 return level.push(indent);
@@ -11217,16 +11217,16 @@ var prettydiff = function prettydiff(api) {
         },
         charDecoder  : 141025, //charDecoder library
         css          : 150817, //diffview.css file
-        csspretty    : 150817, //csspretty library
+        csspretty    : 150818, //csspretty library
         csvbeauty    : 140114, //csvbeauty library
         csvmin       : 131224, //csvmin library
         diffview     : 150708, //diffview library
         documentation: 150817, //documentation.xhtml
         jspretty     : 150817, //jspretty library
         latest       : 0,
-        markuppretty : 150817, //markuppretty library
-        prettydiff   : 150817, //this file
-        version      : "1.13.0", //version number
+        markuppretty : 150818, //markuppretty library
+        prettydiff   : 150818, //this file
+        version      : "1.13.1", //version number
         webtool      : 150817  //prettydiff.com.xhtml
     };
 edition.latest = (function edition_latest() {
