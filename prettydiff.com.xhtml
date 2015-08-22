@@ -364,7 +364,7 @@
                 <span>
                     <input id="savepref-report" name="savepref"
                         title="When saving diff output provide only the diff report." type="radio"/>
-                    <label for="savepref-report">Diff Report Only</label>
+                    <label for="savepref-report">Report Only</label>
                 </span>
             </p>
             <p>
@@ -1122,6 +1122,17 @@
                     <fieldset>
                         <legend>Markup Options</legend>
                         <p>
+                            <strong>Force an Empty Line Above Comments <a class="apiname" href="documentation.xhtml#commline">(commline)</a></strong>
+                            <span>
+                                <input checked="checked" id="bcommline-no" name="bcommline" title="Do not force new lines above comments." type="radio"/>
+                                <label for="bcommline-no">No extra empty lines</label>
+                            </span>
+                            <span>
+                                <input id="bcommline-yes" name="bcommline" title="Force new lines above comments." type="radio"/>
+                                <label for="bcommline-yes">Force new lines above comments</label>
+                            </span>
+                        </p>
+                        <p>
                             <strong>Dust.js Template <a class="apiname" href="documentation.xhtml#dustjs">(dustjs)</a></strong>
                             <span>
                                 <input checked="checked" id="bdustno" name="bdust" title="Do not interpret the markup code as a Dust.js template" type="radio"/>
@@ -1129,7 +1140,7 @@
                             </span>
                             <span>
                                 <input id="bdustyes" name="bdust" title="Interpret the markup code as a Dust.js template" type="radio"/>
-                                <label for="bdusttes">Dust.js template</label>
+                                <label for="bdustyes">Dust.js template</label>
                             </span>
                         </p>
                         <p>
@@ -1164,6 +1175,17 @@
                                     title="Use this option to ignore HTML specific vocabulary and instead focus purely on syntax."
                                     type="radio"/>
                                 <label for="html-no">Strict XML syntax</label>
+                            </span>
+                        </p>
+                        <p>
+                            <strong>End Self-Closing Tags with a Space <a class="apiname" href="documentation.xhtml#spaceclose">(spaceclose)</a></strong>
+                            <span>
+                                <input checked="checked" id="bspaceclose-no" name="bspaceclose" title="End self-closing tags with no space '/&gt;'." type="radio"/>
+                                <label for="bspaceclose-no">No extra space</label>
+                            </span>
+                            <span>
+                                <input id="bspaceclose-yes" name="bspaceclose" title="End self-closing tags with a space, ' /&gt;'." type="radio"/>
+                                <label for="bspaceclose-yes">End self-closing tags with a space, ' /&gt;'</label>
                             </span>
                         </p>
                         <p>

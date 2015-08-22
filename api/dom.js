@@ -1947,6 +1947,7 @@ var pd = {};
                 var braceline    = {},
                     bracepadding = {},
                     braces       = {},
+                    commline     = {},
                     dustjs       = {},
                     elseline     = {},
                     forceIndent  = {},
@@ -1956,6 +1957,7 @@ var pd = {};
                     jsspace      = {},
                     noleadzero   = {},
                     offset       = {},
+                    spaceclose   = {},
                     style        = {},
                     styleguide   = {},
                     tagmerge     = {},
@@ -2091,17 +2093,21 @@ var pd = {};
                     }
                 }
                 if (pd.o.langvalue[1] === "markup" || pd.o.langvalue[1] === "html") {
+                    commline         = pd.id("bcommline-yes");
                     dustjs           = pd.id("bdustyes");
                     forceIndent      = pd.id("bforce_indent-yes");
                     html             = pd.id("html-yes");
+                    spaceclose       = pd.id("bspaceclose-yes");
                     style            = pd.id("inscript-no");
                     tagmerge         = pd.id("btagmerge-yes");
                     tagsort          = pd.id("btagsort-yes");
                     textpreserve     = pd.id("btextpreserveyes");
+                    api.commline     = (commline !== null && commline.checked === true);
                     api.dustjs       = (pd.o.langvalue[0] === "dustjs" || (dustjs !== null && dustjs.checked === true));
                     api.dustjs       = (dustjs !== null && dustjs.checked === true);
                     api.force_indent = (forceIndent !== null && forceIndent.checked === true);
                     api.html         = (html !== null && html.checked === true);
+                    api.spaceclose   = (spaceclose !== null && spaceclose.checked === true);
                     api.style        = (style === null || style.checked === false)
                         ? "indent"
                         : "noindent";
@@ -5141,7 +5147,7 @@ var pd = {};
         }
         if (pd.test.ace === true) {
             if (baseText !== null && newText !== null) {
-                math                  = (height / 12) - (19.5 + headline);
+                math                  = (height / 12) - (21.5 + headline);
                 baseText.style.height = math + "em";
                 newText.style.height  = math + "em";
                 pd.ace.diffBase.setStyle("height:" + math + "em");
@@ -5149,7 +5155,7 @@ var pd = {};
                 pd.ace.diffBase.resize();
                 pd.ace.diffNew.resize();
             }
-            math = (height / 12) - (18.12 + headline);
+            math = (height / 12) - (20.12 + headline);
             if (pd.o.codeBeauIn !== null) {
                 beauIn.style.height = math + "em";
                 pd.ace.beauIn.setStyle("height:" + math + "em");
@@ -5165,7 +5171,7 @@ var pd = {};
                 pd.ace.parsIn.setStyle("height:" + math + "em");
                 pd.ace.parsIn.resize();
             }
-            math = (height / 12) - (15.725 + headline);
+            math = (height / 12) - (17.725 + headline);
             if (pd.o.codeBeauOut !== null) {
                 beauOut.style.height = math + "em";
                 pd.ace.beauOut.setStyle("height:" + math + "em");
@@ -5183,11 +5189,11 @@ var pd = {};
             }
         } else {
             if (baseText !== null && newText !== null) {
-                math                  = (height / 12) - (20 + headline);
+                math                  = (height / 12) - (21.5 + headline);
                 baseText.style.height = math + "em";
                 newText.style.height  = math + "em";
             }
-            math = (height / 12) - (18.65 + headline);
+            math = (height / 12) - (20.65 + headline);
             if (pd.o.codeBeauIn !== null) {
                 pd.o.codeBeauIn.style.height = math + "em";
             }
@@ -5197,7 +5203,7 @@ var pd = {};
             if (pd.o.codeParsIn !== null) {
                 pd.o.codeParsIn.style.height = math + "em";
             }
-            math = (height / 12) - (16.3 + headline);
+            math = (height / 12) - (18.3 + headline);
             if (pd.o.codeBeauOut !== null) {
                 pd.o.codeBeauOut.style.height = math + "em";
             }

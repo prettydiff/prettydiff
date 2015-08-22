@@ -41,7 +41,7 @@ Examples:
         sState        = [],
         dState        = [],
         clidata       = [
-            [], []
+            [], [], []
         ],
         slash         = ((/^([a-zA-Z]:\\)/).test(cwd) === true)
             ? "\\"
@@ -78,6 +78,7 @@ Examples:
             braces        : "knr",
             color         : "white",
             comments      : "indent",
+            commline      : false,
             conditional   : false,
             content       : false,
             context       : "",
@@ -113,8 +114,10 @@ Examples:
             source        : "",
             sourcelabel   : "base",
             space         : true,
+            spaceclose    : false,
             style         : "indent",
             styleguide    : "none",
+            summaryonly   : false,
             tagmerge      : false,
             tagsort       : false,
             textpreserve  : false,
@@ -186,6 +189,13 @@ Examples:
                 diffCount.push(sfiledump.length + " files");
             }
             if (options.diffcli === true && options.mode === "diff") {
+                if (options.summaryonly === true && clidata[2].length > 0) {
+                    log.push("\nFiles changed:\n");
+                    log.push(colors.filepath.start);
+                    log.push(clidata[2].join("\n"));
+                    log.push(colors.filepath.end);
+                    log.push("\n\n");
+                }
                 if (clidata[0].length > 0) {
                     log.push("\nFiles deleted:\n");
                     log.push(colors.del.lineStart);
@@ -203,22 +213,32 @@ Examples:
             }
             log.push("Pretty Diff ");
             if (options.mode === "diff") {
-                log.push("found ");
-                log.push(diffCount[0]);
-                log.push(" difference");
-                log.push(plural[0]);
-                log.push(" in ");
-                log.push(diffCount[1]);
-                log.push(" file");
-                log.push(plural[1]);
-                log.push(" out of ");
+                if (method !== "directory" && method !== "subdirectory") {
+                    log.push("found ");
+                    log.push(diffCount[0]);
+                    log.push(" difference");
+                    log.push(plural[0]);
+                    log.push(". ");
+                } else {
+                    log.push("found ");
+                    log.push(diffCount[0]);
+                    log.push(" difference");
+                    log.push(plural[0]);
+                    log.push(" in ");
+                    log.push(diffCount[1]);
+                    log.push(" file");
+                    log.push(plural[1]);
+                    log.push(" out of ");
+                }
             } else if (options.mode === "beautify") {
                 log.push("beautified ");
             } else if (options.mode === "minify") {
                 log.push("minified ");
             }
-            log.push(diffCount[diffCount.length - 1]);
-            log.push(". ");
+            if (options.mode !== "diff" || method === "directory" || method === "subdirectory") {
+                log.push(diffCount[diffCount.length - 1]);
+                log.push(". ");
+            }
             if (options.mode === "diff" && (method === "directory" || method === "subdirectory")) {
                 log.push(clidata[1].length);
                 log.push(" file");
@@ -946,6 +966,9 @@ Examples:
             a.push("                           sthe code. Default is 'indent'.");
             a.push("                 Accepted values: indent, noindent");
             a.push("");
+            a.push("* commline     - boolean - If a blank new line should be forced above comments");
+            a.push("                           in markup. Default is false.");
+            a.push("");
             a.push("* conditional  - boolean - If true then conditional comments used by Internet");
             a.push("                           Explorer are preserved at minification of markup.");
             a.push("                           Default is false.");
@@ -1115,6 +1138,10 @@ Examples:
             a.push("");
             a.push("* space        - boolean - If false the space following the function keyword for");
             a.push("                           anonymous functions is removed. Default is true.");
+            a.push("");
+            a.push("* spaceclose   - boolean - If false markup self-closing tags end with '/>' and");
+            a.push("                           ' />' if true. Default is false.");
+            a.push("");
             a.push("* style        - string  - If mode is 'beautify' and lang is 'markup' or 'html'");
             a.push("                           this will determine whether the contents of script");
             a.push("                           and style tags should always start at position 0 of");
@@ -1128,6 +1155,9 @@ Examples:
             a.push("                           is 'none'.");
             a.push("                 Accepted values: airbnb, crockford, google, grunt, jquery,");
             a.push("                                  mediawiki, meteor, yandex, none");
+            a.push("");
+            a.push("* summaryonly  - boolean - Node only option to output only number of differences");
+            a.push("                           and generate no reports. Default is false.");
             a.push("");
             a.push("* tagmerge     - boolean - Allows immediately adjacement start and end markup");
             a.push("                           tags of the same name to be combined into a single");
@@ -1290,6 +1320,8 @@ Examples:
                         options.color = d[b][1];
                     } else if (d[b][0] === "comments" && d[b][1] === "noindent") {
                         options.comments = "noindent";
+                    } else if (d[b][0] === "commline" && d[b][1] === "true") {
+                        options.commline = true;
                     } else if (d[b][0] === "conditional" && d[b][1] === "true") {
                         options.conditional = true;
                     } else if (d[b][0] === "content" && d[b][1] === "true") {
@@ -1393,10 +1425,14 @@ Examples:
                         options.sourcelabel = d[b][1];
                     } else if (d[b][0] === "space" && d[b][1] === "false") {
                         options.space = false;
+                    } else if (d[b][0] === "spaceclose" && d[b][1] === "true") {
+                        options.spaceclose = true;
                     } else if (d[b][0] === "style" && d[b][1] === "noindent") {
                         options.style = "noindent";
                     } else if (d[b][0] === "styleguide") {
                         options.styleguide = d[b][1];
+                    } else if (d[b][0] === "summaryonly" && d[b][1] === "true") {
+                        options.summaryonly = true;
                     } else if (d[b][0] === "tagmerge" && d[b][1] === "true") {
                         options.tagmerge = true;
                     } else if (d[b][0] === "tagsort" && d[b][1] === "true") {
@@ -1439,6 +1475,10 @@ Examples:
             }
             if (options.mode !== "diff") {
                 options.diffcli = false;
+                options.summaryonly = false;
+            }
+            if (options.summaryonly === true) {
+                options.diffcli = true;
             }
             return c;
         }()),
@@ -1521,51 +1561,52 @@ Examples:
             }
         },
 
-        //write the CLI output for the diffcli option
-        cliWrite      = function (output, path) {
-            console.log(output);
+        //write output to terminal
+        cliWrite      = function (output, path, last) {
             var a      = 0,
-                b      = 0,
                 plural = "",
                 pdlen  = output[0].length;
             diffCount[0] += output[output.length - 1];
             diffCount[1] += 1;
-            if (diffCount[0] !== 1) {
-                plural = "s";
-            }
-            if (options.readmethod === "screen") {
-                console.log("\nScreen input with " + diffCount[0] + " difference" + plural);
-            } else if (output[5].length === 0) {
-                console.log("\n" + colors.filepath.start + path + "\nLine: " + output[0][a] + colors.filepath.end);
-            }
-            for (a = 0; a < pdlen; a += 1) {
-                if (output[5].length > 0 && output[5][b] !== undefined) {
-                    if (output[5][b][0] + 1 === output[0][a]) {
+            if (options.summaryonly === true) {
+                clidata[2].push(path);
+            } else {
+                if (diffCount[0] !== 1) {
+                    plural = "s";
+                }
+                if (options.readmethod === "screen") {
+                    console.log("\nScreen input with " + diffCount[0] + " difference" + plural);
+                } else if (output[5].length === 0) {
+                    console.log("\n" + colors.filepath.start + path + "\nLine: " + output[0][a] + colors.filepath.end);
+                }
+                for (a = 0; a < pdlen; a += 1) {
+                    if (output[0][a + 1] !== undefined && output[0][a] === output[2][a + 1] && output[2][a] === output[0][a + 1] && output[0][a] !== output[2][a]) {
                         if (options.readmethod === "screen") {
                             console.log("\nLine: " + output[0][a] + colors.filepath.end);
                         } else {
                             console.log("\n" + colors.filepath.start + path + "\nLine: " + output[0][a] + colors.filepath.end);
                         }
-                        b += 1;
-                    } else if (output[5][b][1] + 1 === output[2][a]) {
-                        if (options.readmethod === "screen") {
-                            console.log("\nLine: " + output[2][a] + colors.filepath.end);
-                        } else {
-                            console.log("\n" + colors.filepath.start + path + "\nLine: " + output[2][a] + colors.filepath.end);
+                        if (output[3][a - 2] !== undefined) {
+                            console.log(output[3][a - 2]);
                         }
-                        b += 1;
+                        if (output[3][a - 1] !== undefined) {
+                            console.log(output[3][a - 1]);
+                        }
+                    }
+                    if (output[4][a] === "delete") {
+                        console.log(colors.del.lineStart + output[1][a].replace(/\\x1B/g, "\\x1B").replace(/<p(d)>/g, colors.del.charStart).replace(/<\/pd>/g, colors.del.charEnd) + colors.del.lineEnd);
+                    } else if (output[4][a] === "insert") {
+                        console.log(colors.ins.lineStart + output[3][a].replace(/\\x1B/g, "\\x1B").replace(/<p(d)>/g, colors.ins.charStart).replace(/<\/pd>/g, colors.ins.charEnd) + colors.ins.lineEnd);
+                    } else if (output[4][a] === "equal" && a > 1) {
+                        console.log(output[3][a]);
+                    } else if (output[4][a] === "replace") {
+                        console.log(colors.del.lineStart + output[1][a].replace(/\\x1B/g, "\\x1B").replace(/<p(d)>/g, colors.del.charStart).replace(/<\/pd>/g, colors.del.charEnd) + colors.del.lineEnd);
+                        console.log(colors.ins.lineStart + output[3][a].replace(/\\x1B/g, "\\x1B").replace(/<p(d)>/g, colors.ins.charStart).replace(/<\/pd>/g, colors.ins.charEnd) + colors.ins.lineEnd);
                     }
                 }
-                if (output[4][a] === "delete") {
-                    console.log(colors.del.lineStart + output[1][a].replace(/\\x1B/g, "\\x1B").replace(/<p(d)>/g, colors.del.charStart).replace(/<\/pd>/g, colors.del.charEnd) + colors.del.lineEnd);
-                } else if (output[4][a] === "insert") {
-                    console.log(colors.ins.lineStart + output[3][a].replace(/\\x1B/g, "\\x1B").replace(/<p(d)>/g, colors.ins.charStart).replace(/<\/pd>/g, colors.ins.charEnd) + colors.ins.lineEnd);
-                } else if (output[4][a] === "equal") {
-                    console.log(output[3][a]);
-                } else if (output[4][a] === "replace") {
-                    console.log(colors.del.lineStart + output[1][a].replace(/\\x1B/g, "\\x1B").replace(/<p(d)>/g, colors.del.charStart).replace(/<\/pd>/g, colors.del.charEnd) + colors.del.lineEnd);
-                    console.log(colors.ins.lineStart + output[3][a].replace(/\\x1B/g, "\\x1B").replace(/<p(d)>/g, colors.ins.charStart).replace(/<\/pd>/g, colors.ins.charEnd) + colors.ins.lineEnd);
-                }
+            }
+            if (last === true) {
+                ender();
             }
         },
 
@@ -1600,7 +1641,7 @@ Examples:
             if (typeof options.context !== "number" || options.context < 0) {
                 console.log("\n" + colors.filepath.start + data.localpath + colors.filepath.end);
             }
-            cliWrite(prettydiff.api(options), data.localpath);
+            cliWrite(prettydiff.api(options), data.localpath, data.last);
         },
 
         //is a file read operation complete?
@@ -1617,24 +1658,28 @@ Examples:
             if (data.index !== sfiledump.length - 1) {
                 data.last = false;
             }
-            if ((options.mode === "diff" && sState[data.index] === true && dState[data.index] === true && sfiledump[data.index] !== dfiledump[data.index]) || (options.mode !== "diff" && sState[data.index] === true)) {
-                if (options.diffcli === true) {
-                    cliWrite(data);
-                } else if (method === "filescreen") {
-                    if (data.type === "diff") {
-                        options.diff = data.file;
-                    } else {
-                        options.source = data.file;
+            if ((options.mode === "diff" && sState[data.index] === true && dState[data.index] === true) || (options.mode !== "diff" && sState[data.index] === true)) {
+                if (sfiledump[data.index] !== dfiledump[data.index]) {
+                    if (options.diffcli === true) {
+                        cliFile(data);
+                    } else if (method === "filescreen") {
+                        if (data.type === "diff") {
+                            options.diff = data.file;
+                        } else {
+                            options.source = data.file;
+                        }
+                        screenWrite();
+                    } else if (method === "file" || method === "directory" || method === "subdirectory") {
+                        fileWrite(data);
                     }
-                    screenWrite();
-                } else if (method === "file" || method === "directory" || method === "subdirectory") {
-                    fileWrite(data);
+                    sState[data.index] = false;
+                    if (options.mode === "diff") {
+                        dState[data.index] = false;
+                    }
+                } else if (method === "screen" || method === "file" || method === "filescreen") {
+                    ender();
                 }
-                sState[data.index] = false;
-                if (options.mode === "diff") {
-                    dState[data.index] = false;
-                }
-            } else if (data.last === true && data.type !== "diff") {
+            } else if (data.last === true && data.type !== "diff" && options.diffcli === false) {
                 ender();
             }
         },
@@ -1868,13 +1913,13 @@ Examples:
     if (options.source === "") {
         return console.log("Error: 'source' argument is empty");
     }
-    if (options.mode === "diff" || (options.jsscope !== "none" && options.mode === "beautify")) {
-        if (options.mode === "diff" && options.diff === "") {
-            return console.log("Error: 'diff' argument is empty");
-        }
+    if (options.mode === "diff" && options.diff === "") {
+        return console.log("Error: 'diff' argument is empty");
+    }
+    if ((options.mode === "diff" && options.summaryonly === false) || (options.jsscope !== "none" && options.mode === "beautify")) {
         options.report = true;
     }
-    if (options.output === "" && options.mode === "diff") {
+    if ((options.output === "" || options.summaryonly === true) && options.mode === "diff") {
         if (options.readmethod !== "screen") {
             options.diffcli = true;
         }
@@ -1882,8 +1927,11 @@ Examples:
             options.context = 2;
         }
     }
-    if (method === "file" && options.output === "") {
+    if (method === "file" && options.output === "" && options.summaryonly === false) {
         return console.log("Error: 'readmethod' is value 'file' and argument 'output' is empty");
+    }
+    if (options.summaryonly === true) {
+        options.report = false;
     }
 
     //determine file types and then execute

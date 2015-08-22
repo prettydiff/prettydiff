@@ -2,7 +2,7 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN" "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">
 <html xml:lang="en" xmlns="http://www.w3.org/1999/xhtml">
     <head>
-        <title>Pretty Diff - The difference tool</title>
+        <title>Pretty Diff - Documentation</title>
         <link href="http://prettydiff.com/documentation.xhtml" rel="canonical"
             type="application/xhtml+xml"/>
         <link href="http://prettydiff.com/images/favicon.ico" rel="icon"
@@ -106,78 +106,32 @@
                         <li>
                             <a href="#function_io">Input and Output</a>
                         </li>
-                        <li>
-                            <a href="#function_nodejs">Executing with Node.js</a>
-                        </li>
-                        <li>
-                            <a href="#function_wsh">Executing with Windows Script Host</a>
-                        </li>
                     </ol>
                 </li>
                 <li>
-                    <a href="#beautification">Beautification</a>
+                    <a href="#environments">Environments</a>
                     <ol>
                         <li>
-                            <a href="#beau_javascript">JavaScript</a>
+                            <a href="#environments_webtool">Web Tool</a>
                         </li>
                         <li>
-                            <a href="#beau_css">CSS</a>
+                            <a href="#environments_nodejs">Node.js</a>
                         </li>
                         <li>
-                            <a href="#beau_csv">CSV</a>
-                        </li>
-                        <li>
-                            <a href="#beau_markup">Markup</a>
+                            <a href="#environments_wsh">WSH</a>
                         </li>
                     </ol>
                 </li>
                 <li>
-                    <a href="#minification">Minification</a>
+                    <a href="#contribute">How to Contribute</a>
                     <ol>
+                        <li><a href="#contribute_summary">Summary of the Code</a></li>
+                        <li><a href="#contribute_develope">Local Development Environment</a></li>
+                        <li><a href="#contribute_publication">Publication Process</a></li>
                         <li>
-                            <a href="#mini_javascript">JavaScript</a>
-                        </li>
-                        <li>
-                            <a href="#mini_css">CSS</a>
-                        </li>
-                        <li>
-                            <a href="#mini_csv">CSV</a>
-                        </li>
-                        <li>
-                            <a href="#mini_markup">Markup</a>
+                            <a href="#contribute_newoption">Checklist for Adding New Options</a>
                         </li>
                     </ol>
-                </li>
-                <li>
-                    <a href="#prettydiff">Pretty Diff</a>
-                    <ol>
-                        <li>
-                            <a href="#pd_diffcode">Diff Code</a>
-                        </li>
-                        <li>
-                            <a href="#pd_diffprocess">Diff Process</a>
-                        </li>
-                    </ol>
-                </li>
-                <li>
-                    <a href="#parse">Parsing</a>
-                    <ol>
-                        <li>
-                            <a href="#parse_overview">Overview of Parsing</a>
-                        </li>
-                        <li>
-                            <a href="#parse_javascript">JavaScript Parsing</a>
-                        </li>
-                        <li>
-                            <a href="#parse_css">CSS Parsing</a>
-                        </li>
-                        <li>
-                            <a href="#parse_markup">Markup Parsing</a>
-                        </li>
-                    </ol>
-                </li>
-                <li>
-                    <a href="#checklist_option">Checklist - Adding New Options</a>
                 </li>
                 <li>
                     <a href="#components">Component Files</a>
@@ -306,6 +260,7 @@
                     "&lt;", are included into sections of content and not escaped or wrapped in
                     script/style tags. This error occurs regardless if less than characters embedded
                     within content are quoted or not.</li>
+                <li>Current issues are located on <a href="https://github.com/prettydiff/prettydiff/issues">Github</a>.</li>
             </ol>
         </div>
         <div id="execution">
@@ -557,7 +512,8 @@
                         <h4>comments</h4>
                         <ul>
                             <li>
-                                <h5>Description</h5>Determines whether comments should be indented. This
+                                <h5>Description</h5>
+                                Determines whether comments should be indented. This
                                 property is only used in beautification mode.</li>
                             <li>
                                 <h5>Type</h5>
@@ -571,6 +527,23 @@
                             <li>
                                 <h5>As labeled in the HTML tool</h5>
                                 Indent Comments</li>
+                        </ul>
+                    </li>
+                    <li id="commline">
+                        <h4>commline</h4>
+                        <ul>
+                            <li>
+                                <h5>Description</h5>
+                                Whether a blank line should be forced above markup comments.</li>
+                            <li>
+                                <h5>Type</h5>
+                                boolean</li>
+                            <li>
+                                <h5>Default</h5>
+                                false</li>
+                            <li>
+                                <h5>As labeled in the HTML tool</h5>
+                                Force an Empty Line Above Comments</li>
                         </ul>
                     </li>
                     <li id="conditional">
@@ -1284,6 +1257,23 @@
                                 Function Space</li>
                         </ul>
                     </li>
+                    <li id="spaceclose">
+                        <h4>spaceclose</h4>
+                        <ul>
+                            <li>
+                                <h5>Description</h5>
+                                Whether markup self-closing tags should terminate with or without a space, for example "<strong> /&gt;</strong>" or "<strong>/&gt;</strong>". A value of true forces the space and false forces its removal.</li>
+                            <li>
+                                <h5>Type</h5>
+                                boolean</li>
+                            <li>
+                                <h5>Default</h5>
+                                false</li>
+                            <li>
+                                <h5>As labeled in the HTML tool</h5>
+                                End Self-Closing Tags with a Space</li>
+                        </ul>
+                    </li>
                     <li id="style">
                         <h4>style</h4>
                         <ul>
@@ -1331,6 +1321,22 @@
                                 <h5>As labeled in the HTML tool</h5>
                                 Style Guide
                             </li>
+                        </ul>
+                    </li>
+                    <li id="summaryonly">
+                        <h4>summaryonly
+                            <strong>(node-local.js only)</strong>
+                        </h4>
+                        <ul>
+                            <li>
+                                <h5>Description</h5>
+                                A Node only option if there should be no files generated and no output to the screen except for a final summary.</li>
+                            <li>
+                                <h5>Type</h5>
+                                boolean</li>
+                            <li>
+                                <h5>Default</h5>
+                                false</li>
                         </ul>
                     </li>
                     <li id="tagmerge">
@@ -1551,14 +1557,19 @@
                     <li>
                         <code>&lt;p&gt;</code>
                         <code>&nbsp;&nbsp;&nbsp;&nbsp;This is a statement with a</code>
-                        <code>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;a href="#"&gt;</code>
-                        <code>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;hyperlink</code>
-                        <code>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;/a&gt;</code>
+                        <code>&nbsp;&nbsp;&nbsp;&nbsp;&lt;a href="#"&gt;</code>
+                        <code>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;hyperlink</code>
+                        <code>&nbsp;&nbsp;&nbsp;&nbsp;&lt;/a&gt;</code>
                         <code>&nbsp;&nbsp;&nbsp;&nbsp;.</code>
                         <code>&lt;/p&gt;</code>
                     </li>
+                    <li>
+                        <code>&lt;p&gt;This is a statement with a</code>
+                        <code>&nbsp;&nbsp;&nbsp;&nbsp;&lt;a href="#"&gt;hyperlink&lt;/a&gt;.</code>
+                        <code>&lt;/p&gt;</code>
+                    </li>
                 </ol>
-                <p>The differences between the two prior examples is that the second example
+                <p>The differences between the first two examples is that the second example
                     introduces white space tokens where they do not exist in the first example. In
                     the first example there are no characters between the opening &lt;p&gt; tag and
                     the text or the opening &lt;a&gt; and the text while this is not true of the
@@ -1566,7 +1577,8 @@
                     logical comparison. A well crafted beautifier, or pretty printer, will take
                     these differences into account so far as to alter the entirety of a code base
                     for easier reading but not at the cost of manipulating how the code is parsed by
-                    a given interpreter.</p>
+                    a given interpreter. The third example is correct output that does not introduce
+                    additional white space characters to the parsed and tokenized output.</p>
                 <p>Code must never be minified if it cannot be automatically recovered into an
                     easily readable form and must never be beautified if such beautification changes
                     how the code is parsed. This is the importance of regression. The most extreme
@@ -1626,72 +1638,71 @@
             <div id="function_io">
                 <h3>Input and Output</h3>
                 <p>The function outputs an array of two indexes. The first array index is always
-                    the processed data and the second array index contains some meta data. In the
-                    case of the "beautify" and "minify" operations the first index of the output
+                    the processed data and the second array index contains meta data about the report. In the
+                    case of the "beautify", "minify", and "parse" operations the first index of the output
                     array is the processed source code as text and the second array index is the
                     code report, as seen generated on the client side tool, formatted as HTML. The
                     output from the diff operation returns an HTML table of the actual diff output
                     as the first array index and a some minor meta data about the number of errors
                     in the second array index with both indexes formatted as HTML and neither
-                    comprising a complete HTML document. To form the diff output of the prettydiff
-                    function into a single HTML document I supply the following extra code from the
-                    various files in the
-                    <a href="api">api</a>
-                    directory:</p>
-                <ol>
-                    <li>output = prettydiff(...);</li>
-                    <li>heading = '&lt;?xml version="1.0" encoding="UTF-8" ?&gt;&lt;!DOCTYPE html
-                        PUBLIC "-//W3C//DTD XHTML 1.1//EN"
-                        "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd"&gt;&lt;html
-                        xmlns="http://www.w3.org/1999/xhtml"
-                        xml:lang="en"&gt;&lt;head&gt;&lt;title&gt;Pretty Diff&lt;/title&gt;&lt;link
-                        rel="canonical" href="http://prettydiff.com/"
-                        type="application/xhtml+xml"/&gt;&lt;meta http-equiv="Content-Type"
-                        content="application/xhtml+xml;charset=UTF-8"/&gt;&lt;meta name="robots"
-                        content="index, follow"/&gt;&lt;meta name="DC.title" content="Pretty Diff - The
-                        difference tool"/&gt;&lt;link rel="icon" type="image/x-icon"
-                        href="http://prettydiff.com/images/favicon.ico"/&gt;&lt;link rel="meta"
-                        href="http://prettydiff.com/labels.rdf" type="application/rdf+xml" title="ICRA
-                        labels"/&gt;&lt;meta http-equiv="pics-Label" content='(pics-1.1
-                        "http://www.icra.org/pics/vocabularyv03/" l gen true for "http://prettydiff.com"
-                        r (n 0 s 0 v 0 l 0 oa 0 ob 0 oc 0 od 0 oe 0 of 0 og 0 oh 0 c 1) gen true for
-                        "http://www.prettydiff.com" r (n 0 s 0 v 0 l 0 oa 0 ob 0 oc 0 od 0 oe 0 of 0 og
-                        0 oh 0 c 1))'/&gt;&lt;meta name="author" content="Austin Cheney"/&gt;&lt;meta
-                        name="description" content="Pretty Diff tool can minify, beautify, or diff
-                        between minified and beautified code.This tool can even beautify and minify
-                        HTML."/&gt;&lt;meta name="distribution" content="Global"/&gt;&lt;meta
-                        http-equiv="Page-Enter" content="blendTrans(Duration=0)"/&gt;&lt;meta
-                        http-equiv="Page-Exit" content="blendTrans(Duration=0)"/&gt;&lt;meta
-                        http-equiv="content-style-type" content="text/css"/&gt;&lt;meta
-                        http-equiv="content-script-type" content="text/javascript"/&gt;&lt;meta
-                        name="google-site-verification"
-                        content="qL8AV9yjL2-ZFGV9ey6wU3t7pTZdpD4lIetUSiNen7E"/&gt;&lt;link
-                        rel="stylesheet" type="text/css" href="http://prettydiff.com/diffview.css"
-                        media="all"/&gt;&lt;/head&gt;&lt;body&gt;&lt;h1&gt;Pretty Diff - The difference
-                        tool&lt;/h1&gt;&lt;span class="clear"&gt;&lt;/span&gt;&lt;div
-                        id="diffoutput"&gt;';</li>
-                    <li>return heading + output[1] + "&lt;/div&gt;" + output[0] +
-                        "&lt;/body&gt;&lt;/html&gt;";</li>
-                </ol>
+                    comprising a complete HTML document.</p>
             </div>
-            <div id="function_nodejs">
+        </div>
+        <div id="environments">
+            <h2>Environments</h2>
+            <div id="environments_webtool">
+                <h3>Web Tool</h3>
+                <p>The web tool is the means of accessing Pretty Diff through a web browser from the domain <a href="http://prettydiff.com/">http://prettydiff.com/</a> or locally from the prettydiff.com.xhtml file. This HTML interface is entirely powered by the <a href="api/node-local.js">node-local.js</a> library.</p>
+                <p>To access the tool's options just scroll down the page a bit. Options are sorted by language categorty and then alphabetically the name of each option's respective API key.</p>
+                <p>Since some of Pretty Diff's reporting capabilities are generated as HTML the web tool is the easiest way to examine these features. Some of these features include <a href="guide/jshtml.xhtml">colorful JavaScript code by scope</a> and the diff report.</p>
+                <p>To save down an HTML report follow these easy steps:</p>
+                <ol>
+                    <li>Generate the report in question, such as running a regular code comparison.</li>
+                    <li>The web tool generates reports in a floating window on the page.  In the top right corner of this window are three square icons. The first such icon is red with the letter "<strong>S</strong>". Click this icon.</li>
+                    <li>In Firefox you will be automatically prompted to save a file that is a fully prepared document containing the necessary HTML, CSS, and JavaScript.  In other browsers a textarea will appear containing the code of a complete and fully prepared document for saving into a file using other software, such as a text editor.</li>
+                    <li>In the cases where only the report is desired, instead of a complete document, the web tool provides an option <em>Save Preference</em>. Select the option for <em>Report Only</em>. Instead of generating a complete document this option will instead generate four textareas for: necessary CSS, necessary JavaScript, HTML formatted data about the report, and the report content itself.</li>
+                </ol>
+                <p>For convenience and additional productivity the <em>Code Report</em> window can be dragged offscreen to the right of the page. Doing this will allow unobstructed access to the web tool and allow the generated code report to be visible simultaneously. This is particularly handy if working in the web tool frequently across multiple monitors.</p>
+            </div>
+            <div id="environments_nodejs">
                 <h3>Executing with
                     <a href="http://nodejs.org/">Node.js</a>
                 </h3>
-                <p>Node.js is a command line run time. Node.js execution could be the result of
-                    a one-time execution or part of a scripted automation process. To execute the
-                    prettydiff function with Node.js the following code needs to be added after the
-                    prettydiff function. Nothing else needs to occur for compatibility or
-                    integration with Node.js.</p>
-                <p>
-                    <code>if(typeof exports!=="string"){exports.api=function(x){"use strict";return
-                        prettydiff(x);};}</code>
-                </p>
-                <p>Some Node.js API files are supplied as part of the Pretty Diff project. An
-                    actively maintained API for use on the local file system is supplied as
-                    <a href="api/node-local.js">api/node-local.js</a>.</p>
+                <p>Using Node.js is the preferred way to access Pretty Diff from the command line. This access can be a manual action or the result of other automation.</p>
+                <p>Pretty Diff can be manually downloaded from the <a href="https://github.com/prettydiff/prettydiff">Github</a> repository or more easily installed with <a href="https://www.npmjs.com/package/prettydiff">NPM</a>. Pretty Diff supports both a local and a global NPM installation.</p>
+                <p>Here are some examples of running Pretty Diff from the command line with global NPM installation:</p>
+                <ol>
+                    <li><code>npm install prettydiff -g</code></li>
+                    <li><code>prettydiff source:"myCodeLocation" readmethod:"file" mode:"beautify"</code></li>
+                </ol>
+                <p>Running Pretty Diff from a local NPM installation or from a manual download is a bit more tedious, but allows easier experimentation with the code. Here is a code example:</p>
+                <ol>
+                    <li><code>npm install prettydiff</code></li>
+                    <li><code>node node_modules/prettydiff/api/node-local.js source:"myCodeLocation" readmethod:"file" mode:"beautify"</code></li>
+                </ol>
+                <p>Pretty Diff can also be used as a Node module in other code projects.  Here is an example in code:</p>
+                <ol>
+                    <li>
+                        <code>&nbsp;&nbsp;&nbsp;&nbsp;var prettydiff = require("prettydiff"),</code>
+                        <code>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;args       = {</code>
+                        <code>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;source: "asdf",</code>
+                        <code>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;diff  : "asdd",</code>
+                        <code>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;lang  : "text"</code>
+                        <code>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;},</code>
+                        <code>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;output     = [];</code>
+                    </li>
+                    <li>
+                        <code>&nbsp;&nbsp;&nbsp;&nbsp;output = prettydiff.api(args);</code>
+                    </li>
+                </ol>
+                <p>Some Node specific funtionality is provided.</p>
+                <ul>
+                    <li><strong><a href="#diffcli">diffcli</a></strong> The diffcli option allows for differences to be printed to the screen directly instead of generating HTML based code reports. This functionality closely resembles the old Unix <em>diff</em> utility.</li>
+                    <li><strong><a href="#readmethod">readmethod</a></strong> The readmethod option determines how the application should interact with the filesystem or remote files.</li>
+                    <li><strong><a href="#summaryonly">summaryonly</a></strong> The summaryonly option allows for Pretty Diff to perform a full examination, but only outputs to screen a list of changed files and a count of differences and writes no files.</li>
+                </ul>
             </div>
-            <div id="function_wsh">
+            <div id="environments_wsh">
                 <h3>Executing with
                     <a href="http://msdn.microsoft.com/en-us/library/9bbdkx3k%28v=VS.85%29.aspx">Windows Script Host</a>
                     (WSH)</h3>
@@ -1718,447 +1729,52 @@
                     script execution in the context of the PowerShell language.</p>
             </div>
         </div>
-        <div id="beautification">
-            <h2>Beautification</h2>
-            <div id="beau_javascript">
-                <h3>JavaScript</h3>
-                <p>JavaScript beautification uses the
-                    <a href="lib/jspretty.js">jspretty</a>
-                    library. JavaScript is beautified in a manner that conforms to the rules of
-                    JSHint and JSLint. jspretty counts unnecessary use of the
-                    <em>new</em>
-                    keyword in its report summary, which is any use except immediately preceeding
-                    one of these global objects:</p>
-                <blockquote>"ActiveXObject", "ArrayBuffer", "AudioContext", "Canvas",
-                    "CustomAnimation", "DOMParser", "DataView", "Date", "Error", "EvalError",
-                    "FadeAnimation", "FileReader", "Flash", "Float32Array", "Float64Array",
-                    "FormField", "Frame", "Generator", "HotKey", "Image", "Iterator", "Intl",
-                    "Int16Array", "Int32Array", "Int8Array", "InternalError", "Loader", "Map",
-                    "MenuItem", "MoveAnimation", "Notification", "ParallelArray", "Point",
-                    "Promise", "Proxy", "RangeError", "Rectangle", "ReferenceError", "Reflect",
-                    "RegExp", "ResizeAnimation", "RotateAnimation", "Set", "SQLite", "ScrollBar",
-                    "Set", "Shadow", "StopIteration", "Symbol", "SyntaxError", "Text", "TextArea",
-                    "Timer", "TypeError", "URL", "Uint16Array", "Uint32Array", "Uint8Array",
-                    "Uint8ClampedArray", "URIError", "WeakMap", "WeakSet", "Web", "Window",
-                    "XMLHttpRequest"</blockquote>
-                <h4>Summary</h4>
-                <p>An unassigned anonymous function creates the summary report and assigns its
-                    output to a variable named
-                    <em>summary</em>. Variable
-                    <em>summary</em>
-                    is not declared within jspretty. It is used as a closure from a higher scope so
-                    that it may be externally available and yet still access all the internals of
-                    jspretty.</p>
-            </div>
-            <div id="beau_css">
-                <h3>CSS</h3>
-                <p>CSS beautification uses
-                    <a href="lib/csspretty.js">csspretty</a>
-                    library. A minimalist parser that is capable of quick extension and deep
-                    analysis. csspretty is written to supply extended support for the conventions of
-                    SCSS and LESS grammars.</p>
-            </div>
-            <div id="beau_csv">
-                <h3>CSV</h3>
-                <p>CSV typically stands for
-                    <em>comma separated values</em>, but in this tool it stands for character separated values. The
-                    <a href="lib/csvbeauty.js">csvbeauty</a>
-                    library takes a sequence of characters and splits the input upon that supplied
-                    sequence onto new lines. Prior existing line breaks, if they were quoted, are
-                    converted to a space contained by braces:
-                    <em>{ }</em>. Unquote line breaks are converted into two simultaneous line
-                    breaks. If the final character(s) match the user supplied character sequence,
-                    after charDecoder processing, then those characters are converted into
-                    <em>{|}</em>
-                    so that csvmin will know a character sequence must exist at the extreme end of
-                    input. Escaped double quote characters, escaped using the formal CSV method by
-                    immediately preceeding the characters with an extra double quote character, are
-                    converted in a single double quote character to improve legibility.</p>
-                <p>CSV beautification uses
-                    <a href="lib/charDecoder.js">charDecoder</a>
-                    to decode Unicode character entities. The charDecode library accepts any
-                    combination of HTML decimal Unicode entities and Unicode hexadecimal entities.
-                    HTML decimal entities must begin with an ampersand and pound character '&amp;#',
-                    be immediately followed with between one and six decimals, and be immediately
-                    terminated by a semicolon ';'. Examples of accepted HTML entities are:</p>
+        <div id="contribute">
+            <h2>How to Contribute</h2>
+            <div id="contribute_summary">
+                <h3>Summary of the Code</h3>
+                <p>Pretty Diff is written in an imperative functional manner. This means the architecture of the code and its separation of concerns is achieved by a tree of functions. For instance, major libraries are a top level function, major tasks are their first level of nested functions, and so forth. The organization of these functions in both name and relationship is extremely declarative, but the actual code instructions are extremely direct to their purpose without any attempt to describe their purpose or reasoning.</p>
+                <p>The best way to examine the Pretty Diff code is in any code editor that allows <em>folding</em> on functions and syntax coloring for JavaScript. Without a code folding feature the code will appear extremely large and challenging to work with.</p>
+                <p>Pretty Diff is organized as a single large function named <em>prettydiff</em>. It is composed of a <em>core</em> function and several libraries. The principle libraries are:</p>
                 <ul>
-                    <li>&amp;#9;</li>
-                    <li>&amp;#37;</li>
-                    <li>&amp;#10279;</li>
+                    <li><strong>core</strong> - This function interprets input from the API, determines which other libraries to execute, and formats the output. The administrative assistant of the application.</li>
+                    <li><strong>csspretty</strong> - A library to parse and beautify CSS and CSS like languages, such as SCSS and LESS.</li>
+                    <li><strong>diffview</strong> - The diff library. The current library only accepts text input, though there are plans for a more intelligent library with <a href="https://github.com/prettydiff/prettydiff/issues/71">Pretty Diff 2.0</a>.</li>
+                    <li><strong>jspretty</strong> - The library to parse JavaScript and do additional cool things to JavaScript code.</li>
+                    <li><strong>markuppretty</strong> - The library to parse all manners of markup based languages include many various templating schemes.</li>
                 </ul>
-                <p>The Unicode hexadecimal entities must begin with a lowercase u and plus
-                    character 'u+', be immediately followed by a four or five digit hexadecimal
-                    value, and be immediately terminated by a plus character. Hexadecimal values
-                    smaller than four digits must be padded with 0 characters necessary to achieve
-                    four digits. Examples of accepted Unicode entities are:</p>
+                <p>The library files are independently located in the application's <a href="lib">lib</a> directory. This directory is provide for convenience and experimentation only. All the code library code is already located directly inside the application file at <a href="prettydiff.js">prettydiff.js</a>.</p>
+            </div>
+            <div id="contribute_develope">
+                <h3>Local Development Environment</h3>
+                <p>Pretty Diff requires no build process and no dependencies to start modifying and executing the code. You can get the code by these means:</p>
                 <ul>
-                    <li>u+0009+</li>
-                    <li>u+003c+</li>
-                    <li>u+1037a+</li>
-                </ul>
-                <p>Please be aware that charDecode is reliant upon the interpreting
-                    application's HTML character rendering engine to map entity values to character
-                    maps, which means if the browser does not support the entity supplied the
-                    browser will return a generic character marker instead of the intended
-                    character. The content will then be separated in accordance to the rendered
-                    sequence value, which means a generic character marker will be used in the
-                    separation instead of the character referenced by the supplied entity. In
-                    summary, if your browser has limited support for Unicode characters you must
-                    expect equally limited results when using entity references.</p>
-            </div>
-            <div id="beau_markup">
-                <h3>Markup</h3>
-                <p>Markup beautification uses the
-                    <a href="lib/markuppretty.js">markuppretty</a>
-                    library. The code is formally parsed. The parsed code is then analyzed for
-                    indentation. The beautify mode of markuppretty also provides a summary with some
-                    analytics and accessibility analysis on the way.</p>
-                <h4>Markup Summary</h4>
-                <p>The markuppretty function contains, at its end, an unassigned anonymous
-                    function that generates
-                    <em>summary</em>. Variable
-                    <em>summary</em>
-                    is not provided a scope by markuppretty, because it is meant to be supplied as a
-                    closure to markuppretty. This summary variable must be provided a scope by some
-                    external declaration.</p>
-                <p>The markup_summary creates a report of the number of parts comprising the
-                    markup, the weight of each of those parts, and a score using a math formula to
-                    compute a performance rating that reinforces reliance upon structure and</p>
-            </div>
-        </div>
-        <div id="minification">
-            <h2>Minification</h2>
-            <div id="mini_javascript">
-                <h3>JavaScript</h3>
-                <p>The custom built
-                    <a href="lib/jspretty.js">csspretty</a>
-                    library is used to analyze and minify JavaScript code. It is also capable of
-                    providing some minor auto-correction, such as inserting missing semicolons and
-                    curly braces.</p>
-            </div>
-            <div id="mini_css">
-                <h3>CSS</h3>
-                <p>The custom built
-                    <a href="lib/csspretty.js">csspretty</a>
-                    library is used to analyze and minify CSS code.</p>
-            </div>
-            <div id="mini_csv">
-                <h3>CSV</h3>
-                <p>CSV typically stands for
-                    <em>comma separated values</em>, but in this tool it stands for character separated values. The
-                    <a href="lib/csvmin.js">csvmin</a>
-                    library reverts all changes inflicted by the
-                    <a href="lib/csvbeauty.js">csvbeauty</a>
-                    library.</p>
-                <p>CSV beautification uses
-                    <a href="lib/charDecoder.js">charDecoder</a>
-                    to decode Unicode character entities. The charDecode library accepts any
-                    combination of HTML decimal Unicode entities and Unicode hexadecimal entities.
-                    HTML decimal entities must begin with an ampersand and pound character '&amp;#',
-                    be immediately followed with between one and six decimals, and be immediately
-                    terminated by a semicolon ';'. Examples of accepted HTML entities are:</p>
-                <ul>
-                    <li>&amp;#9;</li>
-                    <li>&amp;#37;</li>
-                    <li>&amp;#10279;</li>
-                </ul>
-                <p>The Unicode hexadecimal entities must begin with a lowercase u and plus
-                    character 'u+', be immediately followed by a four or five digit hexadecimal
-                    value, and be immediately terminated by a plus character. Hexadecimal values
-                    smaller than four digits must be padded with 0 characters necessary to achieve
-                    four digits. Examples of accepted Unicode entities are:</p>
-                <ul>
-                    <li>u+0009+</li>
-                    <li>u+003c+</li>
-                    <li>u+1037a+</li>
-                </ul>
-                <p>Please be aware that charDecoder is reliant upon the interpreting
-                    application's HTML character rendering engine to map entity values to character
-                    maps, which means if the browser does not support the entity supplied the
-                    browser will return a generic character marker instead of the intended
-                    character. The content will then be separated in accordance to the rendered
-                    sequence value, which means a generic character marker will be used in the
-                    separation instead of the character referenced by the supplied entity. In
-                    summary, if your browser has limited support for Unicode characters you must
-                    expect equally limited results when using entity references. csvmin does not
-                    revert any changes supplied by the charDecoder library.</p>
-            </div>
-            <div id="mini_markup">
-                <h3>Markup</h3>
-                <p>Markup is minified using
-                    <a href="lib/markuppretty.js">markuppretty</a>. This library does little more
-                    than tokenize a run of whitespace characters into a single space character and
-                    scrubbing of comments. It does, however, preserve whitespace inside ASP and PHP
-                    tags and preserve SSI tags. It will also assume the contents of a script tag are
-                    JavaScript and minify them according, and also assumes the contents of style
-                    tags are CSS and minifies them as such.</p>
-            </div>
-        </div>
-        <div id="prettydiff">
-            <h2>Pretty Diff</h2>
-            <div id="pd_diffcode">
-                <h3>Diff Code</h3>
-                <p>The diff engine uses
-                    <a href="lib/diffview.js">diffview</a>. Originally by Snowtide Informatics
-                    Systems. diffview is almost entirely rewritten from scratch so that JavaScript
-                    arrays are used to store the dynamic output instead of DOM objects. This change
-                    has result in a faster and more extensible application. charcomp is the function
-                    used to highlight per character differences.</p>
-            </div>
-            <div id="pd_diffprocess">
-                <h3>Diff Process</h3>
-                <p>JavaScript code is beautified with the
-                    <a href="lib/jspretty.js">jspretty</a>
-                    library and then compared. CSV is first minified with
-                    <a href="lib/csvmin.js">csvmin</a>
-                    and then beautified with
-                    <a href="lib/csvbeauty.js">csvbeauty</a>. CSS is beautified with the
-                    <a href="lib/csspretty.js">csspretty</a>
-                    library and then compared. Markup is beautified using the
-                    <a href="lib/markuppretty.js">markuppretty</a>
-                    library. Plain text is compared without any minification or beautification. If
-                    code that needs to be compared is not compatible with the other processes then
-                    use the plain text mode.</p>
-            </div>
-        </div>
-        <div id="parse">
-            <h2>Parsing</h2>
-            <div id="parse_overview">
-                <h3>Overview of Parsing</h3>
-                <p>Most parsers generate an
-                    <a href="https://en.wikipedia.org/wiki/Abstract_syntax_tree">Abstract Syntax Tree</a>,
-                    instead the libraries used in Pretty Diff generate parallel arrays. This means
-                    multiple separate arrays are generated with a one to one relation of values at
-                    any given indexes between the arrays.</p>
-                <p>The parse data is exposed if the
-                    <a href="#mode">mode</a>
-                    option has a value of
-                    <em>parse</em>. The language CSV is not currently supported in parse mode.</p>
-                <p>The parse data is always returned as object with two or three properties.
-                    This is handy if Pretty Diff is embedded directly in some application and the
-                    parse data needs to be immediately available. In other instances the generated
-                    object will need to be converted to a string using the
-                    <a
-                        href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/JSON/stringify">JSON.stringify</a>
-                    method.</p>
-            </div>
-            <div id="parse_javscript">
-                <h3>JavaScript Parsing</h3>
-                <p>For JavaScript and similar languages, such as React JSX, the jspretty library
-                    returns an object containing two arrays associated with the property names:
-                    token and types. The token array contains the actual parsed code into atomic
-                    fragments called tokens. The types array contains a categorical label that
-                    identifies each token into a grouped term.</p>
-                <p>The jspretty creates some tokens that are not present in the code source. In
-                    the case of missing semicolons and missing curly braces the jspretty library
-                    will create these tokens in the proper location. The created tokens are pseudo
-                    tokens in this form: "x;", "x{", and "x}". If the
-                    <a href="#correct">correct</a>
-                    option is used the pseudo tokens are converted to actual code tokens. When the
-                    correct option is not used the pseudo tokens will be present in the parsed
-                    output, but are removed from the output when the
-                    <a href="#mode">mode</a>
-                    option is not "parse".</p>
-                <p>Here are the supported types:</p>
-                <ul>
-                    <li>
-                        <strong>comment</strong>
-                        &mdash; Describes JavaScript code comments. This describes all block comments
-                        (/*) and most inline comments (//).</li>
-                    <li>
-                        <strong>comment-inline</strong>
-                        &mdash; Describes JavaScript inline comments that follow code tokens on the same
-                        line of code.</li>
-                    <li>
-                        <strong>end</strong>
-                        &mdash; Described all closing square braces, closing curly braces, and closing
-                        parenthesis.</li>
-                    <li>
-                        <strong>literal</strong>
-                        &mdash; Describes string and number types. Also used for the literal portion of
-                        ES6 template strings, Unix shebang, embedded ASP, PHP, and SSI code.</li>
-                    <li>
-                        <strong>markup</strong>
-                        &mdash; Describes blocks of XML code for the React JSX language.</li>
-                    <li>
-                        <strong>method</strong>
-                        &mdash; Describes an open parenthesis that is immediately following a word
-                        token.</li>
-                    <li>
-                        <strong>operator</strong>
-                        &mdash; Describes all arithmetic characters, comparison characters, and syntax
-                        characters not described elsewhere. A subtraction character immediately
-                        preceding a number and not following a word, end, or literal type is joined with
-                        the number in type literal and not described as an operator.</li>
-                    <li>
-                        <strong>regex</strong>
-                        &mdash; Describes a regular expression instance.</li>
-                    <li>
-                        <strong>separator</strong>
-                        &mdash; Describes commas, semicolons, and periods that are not present to
-                        describe a decimal point in a number.</li>
-                    <li>
-                        <strong>start</strong>
-                        &mdash; Describes all opening square braces, all opening curly braces, and open
-                        parenthesis characters not described by type
-                        <em>method</em>.</li>
-                    <li>
-                        <strong>word</strong>
-                        &mdash; Describes all references and keywords. In the jspretty library a word
-                        token may contain any character that is not described by another type and is not
-                        a white space character, which is more flexibility than the JavaScript language
-                        allows.</li>
-                </ul>
-            </div>
-            <div id="parse_css">
-                <h3>CSS Parsing</h3>
-                <p>The csspretty library parses CSS and similar languages, such as: SCSS (Sass)
-                    and Less. In the parse mode an object containing two parallel arrays are
-                    generated ans assigned to properties: token and types.</p>
-                <p>The types generated by csspretty are:</p>
-                <ul>
-                    <li>
-                        <strong>colon</strong>
-                        &mdash; Describes a colon that separates properties from values and variables.</li>
-                    <li>
-                        <strong>comment</strong>
-                        &mdash; Describes block comments (/*), which are the only valid comment type in
-                        CSS, and inline comments that are used in SCSS and Less.</li>
-                    <li>
-                        <strong>comment-inline</strong>
-                        &mdash; Describes an inline comment (//) that follows code on the same line of
-                        code.</li>
-                    <li>
-                        <strong>end</strong>
-                        &mdash; Describes an end curly brace.</li>
-                    <li>
-                        <strong>property</strong>
-                        &mdash; Describes a CSS presentation property.</li>
-                    <li>
-                        <strong>propvar</strong>
-                        &mdash; Describes a SCSS or Less variable used where a value type is expected.</li>
-                    <li>
-                        <strong>pseudo</strong>
-                        &mdash; Describes a method following a colon type. This is primarily used for
-                        the SCSS "extend" method.</li>
-                    <li>
-                        <strong>selector</strong>
-                        &mdash; Describes a reference name which precedes a start type. The csspretty
-                        library preserves selectors as a single token and does not break them down into
-                        individual items of syntax or reference.</li>
-                    <li>
-                        <strong>semi</strong>
-                        &mdash; Describes a semicolon that separates properties.</li>
-                    <li>
-                        <strong>start</strong>
-                        &mdash; Describes an opening curly brace.</li>
-                    <li>
-                        <strong>value</strong>
-                        &mdash; Describes something assigned to a property.</li>
-                </ul>
-            </div>
-            <div id="parse_markup">
-                <h3>Markup Parsing</h3>
-                <p>All markup type languages are parsed with the markuppretty library and
-                    returns an object containing two parallel arrays: token and types.</p>
-                <p>The HTML5 specification allows for list item elements to contain text content
-                    without an end tag. A start tag without a matching end tag would disrupt
-                    beautification, so Pretty Diff attempts to identify these instances by use of a
-                    pseudo tag: &lt;/prettydiffli&gt;. If the option
-                    <a href="#correct">correct</a>
-                    the pseudo tags are instantly supplied as &lt;/li&gt; tags otherwise the Pretty
-                    Diff pseudo tag is removed immediately prior to generating output. The pseudo
-                    token logic is only evaluated if the input is HTML.</p>
-                <p>Types available in
-                    <em>types</em>
-                    array:</p>
-                <ul>
-                    <li>
-                        <strong>cdata</strong>
-                        &mdash; Any tag that begins with "&lt;[CDATA[" and ends with "]]&gt;".</li>
-                    <li>
-                        <strong>comment</strong>
-                        &mdash; Any tag that begins with "&lt;!--" and ends with "--&gt;" or begins with</li>
-                    <li>
-                        <strong>content</strong>
-                        &mdash; Text node types</li>
-                    <li>
-                        <strong>end</strong>
-                        &mdash; End tags, tags that start with "&lt;/"</li>
-                    <li>
-                        <strong>ignore</strong>
-                        &mdash; Any tag containing the attribute "data-prettydiff-ignore" or tags named</li>
-                    <li>
-                        <strong>script</strong>
-                        &mdash; Text contents of a script tag that contains either no "type" attribute
+                    <li>Clone from Github - <code>git clone https://github.com/prettydiff/prettydiff.git</code></li>
+                    <li>Install from NPM locally - <code>npm install prettydiff</code></li>
+                    <li>Manually grabbing the files from the site:
                         <ul>
-                            <li>text/javascript</li>
-                            <li>application/javascript</li>
-                            <li>application/x-javascript</li>
-                            <li>text/ecmascript</li>
-                            <li>application/ecmascript</li>
-                            <li>text/jsx</li>
-                            <li>application/jsx</li>
-                            <li>text/cjs</li>
+                            <li><a href="prettydiff.com.xhtml">prettydiff.com.xhtml</a></li>
+                            <li><a href="prettydiff.js">prettydiff.js</a></li>
+                            <li><a href="diffview.css">diffview.css</a></li>
+                            <li><a href="documentation.xhtml">documentation.xhtml</a></li>
+                            <li><a href="api/dom.js">api/dom.js</a></li>
+                            <li><a href="api/node-local.js">api/node-local.js</a></li>
                         </ul>
                     </li>
-                    <li>
-                        <strong>sgml</strong>
-                        &mdash; Any tag that begins with "&lt;!" where the following character is not</li>
-                    <li>
-                        <strong>singleton</strong>
-                        &mdash; Singleton tags, tags that end with "/&gt;". Singleton types receive</li>
-                    <li>
-                        <strong>start</strong>
-                        &mdash; Start tags, tags delimited by angle braces only</li>
-                    <li>
-                        <strong>style</strong>
-                        &mdash; Tags named "style" and contains either no "type" attribute or the</li>
-                    <li>
-                        <strong>template</strong>
-                        &mdash; Any tag that begins and ends with the the following delimiters. Template
-                        <ul>
-                            <li>&lt;!--# --&gt;</li>
-                            <li>&lt;% %&gt;</li>
-                            <li>&lt;? ?&gt;</li>
-                            <li>&#x007b;&#x007b;&#x007b; &#x007d;&#x007d;&#x007d;</li>
-                            <li>&#x007b;&#x007b; &#x007d;&#x007d;</li>
-                            <li>&#x007b;% %&#x007d;</li>
-                            <li>&#x007b;@ @&#x007d;</li>
-                            <li>&#x007b;# #&#x007d;</li>
-                            <li>[% %]</li>
-                        </ul>
-                    </li>
-                    <li>
-                        <strong>template_end</strong>
-                        &mdash; Any tag that begins and ends with the following delimiters (\s* means
-                        <ul>
-                            <li>&#x007b;&#x007b;/ &#x007d;&#x007d;</li>
-                            <li>&lt;%\s*&#x007d; %&gt;</li>
-                            <li>[%\s*&#x007d; %]</li>
-                            <li>&#x007b;@\s*&#x007d; @&#x007d;</li>
-                        </ul>
-                    </li>
-                    <li>
-                        <strong>template_start</strong>
-                        &mdash; Any tag that begins and ends with the following delimiters (\s* means
-                        any amount of white space characters). Template_start types are treated similar
-                        to start types during beautification.
-                        <ul>
-                            <li>&#x007b;&#x007b;# &#x007d;&#x007d;</li>
-                            <li>&lt;% &#x007b;\s*%&gt;</li>
-                            <li>[% &#x007b;\s*%]</li>
-                            <li>&#x007b;@ &#x007b;\s*@&#x007d;</li>
-                        </ul>
-                    </li>
-                    <li>
-                        <strong>xml</strong>
-                        &mdash; Any tag that begins with "&lt;?xml" and ends with "?&gt;"</li>
                 </ul>
+                <p>Pretty Diff supports both local and global NPM installation, but local installation is preferred for code examination. The node-local.js file is not required to dive into the Pretty Diff application unless you wish to experiment with command line functionality. I have found that it is faster to experiment with application features using the web tool where the options are already presented as a collection of radio buttons.</p>
+                <p>This is all the knowledge you need to jump into the Pretty Diff code, but the code may likely open more questions than answers. Feel free to open issues on Github or email to <a href="mailto:info@prettydiff.com">info@prettydiff.com</a>.</p>
+            </div>
+            <div id="contribute_publication">
+                <h3>Publication Process</h3>
+                <p>In the process of publishing new features for QA and experimental considerations updates are dumped into <a href="http://prettydiff.com/ignore/testlocation">http://prettydiff.com/ignore/testlocation</a>.</p>
+                <p>Pretty Diff mostly adheres to the principles of <a href="http://semver.org/">semver</a> for publishing updates. Semver is defined by proximity of changes to an application's API while Pretty Diff also accounts for breadth of code changes in a given release and depth of functional changes.</p>
+                <p>New versions (official releases) are first launched to the Pretty Diff webserver. Pushes to the Github master branch only occur from the web server as a tagged release. Pretty Diff is willing to accept pushes to branches pull requests to branchs from any location. Only after the master branch on Github is updated with a release is the code published to NPM.</p>
+                <p>Pretty Diff uses the milestone feature of Github issues to document the development roadmap. You can see exactly what priorities are major releases and in which order they will be approached according to milestone release version. You can also influence the roadmap by providing bug reports and requesting enhancements.</p>
             </div>
         </div>
-        <div id="checklist_option">
-            <h2>Checklist - Adding New Options</h2>
+        <div id="contribute_newoption">
+            <h2>Checklist for Adding New Options</h2>
             <ol>
                 <li>Define the option in this documentation file.</li>
                 <li>Add the new option to Prettydiff's

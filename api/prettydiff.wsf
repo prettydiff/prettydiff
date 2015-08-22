@@ -39,6 +39,8 @@
                             error.push("* comments       - string  - If mode is 'beautify' this will determine whether comments should always start at position 0 of each line or if comments should be indented according to the code. Default is 'indent'.");
                             error.push("                   Accepted values: indent, noindent");
                             error.push("");
+                            error.push("* commline       - boolean - If a blank new line should be forced above comments in markup. Default is false.");
+                            error.push("");
                             error.push("* conditional    - boolean - If true then conditional comments used by Internet Explorer are preserved at minification of markup. Default is false.");
                             error.push("");
                             error.push("* content        - boolean - If true and mode is 'diff' this will normalize all string literals in JavaScript to 'text' and all content in markup to 'text' so as to eliminate some differences from the HTML diff report. Default is false.");
@@ -112,6 +114,8 @@
                             error.push("* sourcelabel    - string  - This allows for a descriptive label of the source file code of the diff HTML output. Defaults to 'base'.");
                             error.push("");
                             error.push("* space          - boolean - If false the space after the function keyword is removed from anonymous functions from JavaScript beautification. The default is true.");
+                            error.push("");
+                            error.push("*spaceclose      - boolean - If false markup self-closing tags end with '/>' and ' />' if true. Default is false.");
                             error.push("");
                             error.push("* style          - string  - If mode is 'beautify' and lang is 'markup' or 'html' this will determine whether the contents of script and style tags should always start at position 0 of each line or if such content should be indented starting from the opening script or style tag. Default is 'indent'.");
                             error.push("                   Accepted values: indent, noindent");
@@ -286,6 +290,7 @@
                     args.bracepadding = (WScript.Arguments.Named("bracepadding") === "true" || WScript.Arguments.Named("bracepadding") === true);
                     args.braces = (WScript.Arguments.Named("indent") === "allman") ? "allman" : "knr";
                     args.comments = (WScript.Arguments.Named("comments") === "noindent") ? "noindent" : "indent";
+                    args.commline = (WScript.Arguments.Named("commline") === "true" || WScript.Arguments.Named("commline") === true);
                     args.conditional = (WScript.Arguments.Named("conditional") === "true" || WScript.Arguments.Named("conditional") === true);
                     args.content = (WScript.Arguments.Named("content") === "true" || WScript.Arguments.Named("content") === true);
                     args.context = (isNaN(WScript.Arguments.Named("context"))) ? "" : Number(WScript.Arguments.Named("context"));
@@ -315,6 +320,7 @@
                     args.semicolon = (WScript.Arguments.Named("semicolon") === "true" || WScript.Arguments.Named("semicolon") === true);
                     args.sourcelabel = WScript.Arguments.Named("sourcelabel") || "base";
                     args.space = (WScript.Arguments.Named("space") !== "false" && WScript.Arguments.Named("space") !== false);
+                    args.spaceclose = (WScript.Arguments.Named("spaceclose") === "true" || WScript.Arguments.Named("spaceclose") === true);
                     args.style = (WScript.Arguments.Named("style")) ? "noindent" : "indent";
                     args.styleguide = (typeof WScript.Arguments.Named("styleguide") === "string") ? WScript.Arguments.Named("styleguide") : "none";
                     args.tagname = (WScript.Arguments.Name("tagmerge") === "true" || WScript.Arguments.Name("tagmerge") === true);
