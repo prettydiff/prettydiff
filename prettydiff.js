@@ -11298,7 +11298,7 @@ var prettydiff = function prettydiff(api) {
         latest       : 0,
         markuppretty : 150830, //markuppretty library
         prettydiff   : 150830, //this file
-        version      : "1.13.3", //version number
+        version      : "1.13.4", //version number
         webtool      : 150830  //prettydiff.com.xhtml
     };
 edition.latest = (function edition_latest() {
