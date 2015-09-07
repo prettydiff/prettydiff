@@ -40,7 +40,9 @@
                 <input id="modeminify" name="mode" title="This option tells thetool to return white space compressed code. Force this display by default with the address parameter 'm=minify'." type="radio"/>
                 <label for="modeminify" title="This option tells thetool to return white space compressed code. Force this display by default with the address parameter 'm=minify'.">Minify</label></span>
         </p>
-                <p id="update">Updated:</p>
+        <div class="metainfo">
+            <p id="update">Updated:</p>
+        </div>
         <div id="codeInput">
             <div id="Beautify" style="display:none;"><h2 title="The term pretty-print is synonymous with code beautification.">Beautify
                 Code</h2>
@@ -84,27 +86,64 @@
         </div>
         <div class="options" id="options"><h2>Main Options</h2>
             <input id="language" type="hidden" value="javascript"/>
-            <p><label class="label" for="colorScheme">Color scheme</label>
+            <p><label class="label" for="colorScheme">Color scheme <a class="apiname" href="documentation.xhtml#color">(color)</a></label>
                 <select id="colorScheme"><option>Canvas</option><option selected="selected">Shadow</option><option>White</option></select>
             </p>
-            <p><strong>Auto-Correct sloppiness</strong>
+            <p><strong>Auto-Correct sloppiness <a class="apiname" href="documentation.xhtml#correct">(correct)</a></strong>
                 <span>
                     <input id="jscorrect-yes" title="This option will add semicolons and curly braces where missing plus a few minor other alterations to the code." type="checkbox"/>
                     <label for="jscorrect-yes">Make code more JSLint happy</label></span>
             </p>
             <fieldset>
                 <legend>Beautify Options</legend>
-                <p><label class="label" for="beau-quan">Indentation size</label>
+                <p>
+                    <strong>Brace Lines
+                        <a class="apiname" href="documentation.xhtml#braceline">(braceline)</a>
+                    </strong>
                     <span>
-                        <input id="beau-quan" title="This text field expects a value of 0 or a positive integer. The number provided dictates how many characters constitute a single indentation of formatted code." type="text" value="4"/>
+                        <input id="bbraceline-yes" name="bbraceline"
+                            title="In JavaScript pad blocks with empty lines." type="checkbox"/>
+                        <label for="braceline-yes">Pad JavaScript blocks with empty lines</label>
                     </span>
                 </p>
-                <p><label class="label" for="inlevel">Indentation offset</label>
+                <p>
+                    <strong>Brace Padding
+                        <a class="apiname" href="documentation.xhtml#bracepadding">(bracepadding)</a>
+                    </strong>
                     <span>
-                        <input id="inlevel" title="This text field expects a value of 0 or a positive integer. This value supplies addition indentation, or padding, as an offset." type="text" value="0"/>
+                        <input id="bracepadding-yes" name="bracepadding"
+                            title="Inserts a space after the start of a contain and before the end of the container in JavaScript if the contents of that container are not indented; such as: conditions, function arguments, and escaped sequences of template strings."
+                            type="checkbox"/>
+                        <label for="bracepadding-yes">Pads container characters from their contents.</label>
                     </span>
                 </p>
-                <p><label class="label" for="beau-char">Indentation character</label>
+                <p><strong>Style of indent <a class="apiname" href="documentation.xhtml#braces">(braces)</a></strong>
+                    <span>
+                        <input id="jsindent-all" title="This JavaScript only option moves opening curly braces onto a new line for visibility of brace contents apart from other code." type="checkbox"/>
+                        <label for="jsindent-all">Allman (ANSI) Style</label></span>
+                </p>
+                <p><strong>Indent comments <a class="apiname" href="documentation.xhtml#comments">(comments)</a></strong>
+                    <span>
+                        <input id="incomment-no" title="This option will force comments to the start of the line without the benefit of indentation." type="checkbox"/>
+                        <label for="incomment-no">No comment indentation</label></span>
+                </p>
+                <p><strong>Else on new line <a class="apiname" href="documentation.xhtml#elseline">(elseline)</a></strong>
+                    <span>
+                        <input id="jselseline-yes" title="This JavaScript only option will force the 'else' keyword onto a new line." type="checkbox"/>
+                        <label for="jselseline-yes">Forse 'else' keyword onto a new line</label></span>
+                </p>
+                <p>
+                    <strong>Trailing Commas
+                        <a class="apiname" href="documentation.xhtml#endcomma">(endcomma)</a>
+                    </strong>
+                    <span>
+                        <input id="bendcomma-yes" name="bendcomma"
+                            title="Adds trailing commas to arrays and object literals."
+                            type="checkbox"/>
+                        <label for="bendcomma-yes">Add trailing commas</label>
+                    </span>
+                </p>
+                <p><label class="label" for="beau-char">Indentation character <a class="apiname" href="documentation.xhtml#inchar">(inchar)</a></label>
                     <span>
                         <input class="unchecked" id="beau-char" title="Accessibility Note:In order for this field to be accepted by the application the radio button labeled 'Indent with Other Characters' must be checked. This text field allows entry of any text characters to constitute indentation." type="text" value="Click me for custom input"/>
                     </span>
@@ -121,53 +160,101 @@
                         <input id="beau-line" name="beauchar" title="This option makes a new line character the character of indentation." type="radio"/>
                         <label for="beau-line">Indent new line</label></span>
                 </p>
-                <p><strong>Indent comments</strong>
+                <p><label class="label" for="inlevel">Indentation offset <a class="apiname" href="documentation.xhtml#inlevel">(inlevel)</a></label>
                     <span>
-                        <input id="incomment-no" title="This option will force comments to the start of the line without the benefit of indentation." type="checkbox"/>
-                        <label for="incomment-no">No comment indentation</label></span>
+                        <input id="inlevel" title="This text field expects a value of 0 or a positive integer. This value supplies addition indentation, or padding, as an offset." type="text" value="0"/>
+                    </span>
                 </p>
-                <p><strong>Style of indent</strong>
+                <p><label class="label" for="beau-quan">Indentation size <a class="apiname" href="documentation.xhtml#insize">(insize)</a></label>
                     <span>
-                        <input id="jsindent-all" title="This JavaScript only option moves opening curly braces onto a new line for visibility of brace contents apart from other code." type="checkbox"/>
-                        <label for="jsindent-all">Allman (ANSI) Style</label></span>
+                        <input id="beau-quan" title="This text field expects a value of 0 or a positive integer. The number provided dictates how many characters constitute a single indentation of formatted code." type="text" value="4"/>
+                    </span>
                 </p>
-                <p><strong>Function space</strong>
-                    <span>
-                        <input id="jsspace-no" title="This JavaScript only option removes a single space between the 'function' keyword and the opening parenthesis character." type="checkbox"/>
-                        <label for="jsspace-no">Remove function space</label></span>
-                </p>
-                <p><strong>Scope analysis</strong>
+                <p><strong>Scope analysis <a class="apiname" href="documentation.xhtml#jsscope">(jsscope)</a></strong>
                     <span>
                         <input id="jsscope-yes" title="This option will display a colorful HTML output of the code that color codes variables to the scope they are declared so as to illustrate the nature of closure." type="checkbox"/>
                         <label for="jsscope-yes">Scope analysis output</label></span>
                 </p>
-                <p><strong>Empty lines</strong>
+                <p><strong>Property Sorting <a class="apiname" href="documentation.xhtml#objsort">(objsort)</a></strong>
+                    <span>
+                        <input id="bobjsort-jsonly" type="checkbox" name="mobjsort" title="Sort JavaScript object properties alphabetically by key name."/>
+                        <label for="bobjsort-jsonly">Sort JavaScript objects</label></span>
+                </p>
+                <p><strong>Empty lines <a class="apiname" href="documentation.xhtml#preserve">(preserve)</a></strong>
                     <span>
                         <input id="jslines-no" title="This JavaScript only option removes all empty lines." type="checkbox"/>
                         <label for="jslines-no">Remove empty lines</label></span>
                 </p>
-                <p><strong>Vertically align</strong>
+                <p>
+                    <strong>Quotes, Markup / JavaScript
+                        <a class="apiname" href="documentation.xhtml#quoteconvert">(quoteconvert)</a>
+                    </strong>
+                    <span>
+                        <input checked="checked" id="bquoteconvert-none" name="bquoteconvert"
+                            title="Do not convert quote characters." type="radio"/>
+                        <label for="bquoteconvert-none">Leave the quotes alone</label>
+                    </span>
+                    <span>
+                        <input id="bquoteconvert-double" name="bquoteconvert"
+                            title="Convert double quotes to single quotes for JavaScript strings and markup attributes."
+                            type="radio"/>
+                        <label for="bquoteconvert-double">Convert to double quotes</label>
+                    </span>
+                    <span>
+                        <input id="bquoteconvert-single" name="bquoteconvert"
+                            title="Convert single quotes to double quotes for JavaScript strings and markup attributes."
+                            type="radio"/>
+                        <label for="bquoteconvert-single">Convert to single quotes</label>
+                    </span>
+                </p>
+                <p><strong>Function space <a class="apiname" href="documentation.xhtml#space">(space)</a></strong>
+                    <span>
+                        <input id="jsspace-no" title="This JavaScript only option removes a single space between the 'function' keyword and the opening parenthesis character." type="checkbox"/>
+                        <label for="jsspace-no">Remove function space</label></span>
+                </p>
+                <p>
+                    <strong>Variable Lists
+                        <a class="apiname" href="documentation.xhtml#varword">(varword)</a>
+                    </strong>
+                    <span>
+                        <input checked="checked" id="bvarword-none" name="bvarword"
+                            title="Ignore this option." type="radio"/>
+                        <label for="bvardword-none">Leave the variables alone</label>
+                    </span>
+                    <span>
+                        <input id="bvarword-list" name="bvarword"
+                            title="In JavaScript change consecutive variable declarations into a comma separated list with a single var keyword."
+                            type="radio"/>
+                        <label for="bvardword-list">Comma separated list</label>
+                    </span>
+                    <span>
+                        <input id="bvarword-each" name="bvarword"
+                            title="In JavaScript change a comma separated list of variables into individual statements each starting with a var keyword."
+                            type="radio"/>
+                        <label for="bvardword-each">Separate variables</label>
+                    </span>
+                </p>
+                <p><strong>Vertically align <a class="apiname" href="documentation.xhtml#vertical">(vertical)</a></strong>
                     <span>
                         <input id="vertical-yes" title="This option causes lists of assignments and properties to be vertically aligned for faster reading." type="checkbox"/>
                         <label for="vertical-yes">Align assignments and property declarations vertically</label></span>
                 </p>
-                <p><strong>Else on new line</strong>
+                <p>
+                    <label class="label" for="beau-wrap">Wrap text, Markup / JavaScript
+                        <a class="apiname" href="documentation.xhtml#wrap">(wrap)</a>
+                    </label>
                     <span>
-                        <input id="jselseline-yes" title="This JavaScript only option will force the 'else' keyword onto a new line." type="checkbox"/>
-                        <label for="jselseline-yes">Forse 'else' keyword onto a new line</label></span>
+                        <input id="beau-wrap"
+                            title="Determines how long text and strings can be before wrapping. Use a value of 0 to eliminate wrapping."
+                            type="text" value="80"/></span>
                 </p>
             </fieldset>
             <fieldset>
                 <legend>Minify Options</legend>
-                <p><strong>Top comments</strong>
+                <p><strong>Top comments <a class="apiname" href="documentation.xhtml#topcoms">(topcoms)</a></strong>
                     <span>
                         <input id="topcoms-yes" title="Use this option retain comments comments above the first line of code." type="checkbox"/>
                         <label for="topcoms-yes">Preserve comments before any code</label></span>
-                </p>
-                <p><strong>Obfuscation</strong>
-                    <span>
-                        <input id="obfuscate-yes" title="Use this option to shorten variable names and remove some semicolons." type="checkbox"/>
-                        <label for="obfuscate-yes">Shorten variable names and remove some semicolons (Warning: changes to variable names cannot be undone)</label></span>
                 </p>
             </fieldset>
         </div>

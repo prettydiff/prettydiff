@@ -1,0 +1,46 @@
+
+//http://prettydiff.com/.prettydiffrc
+//Options are passed in as "opts".  You can define the options directly:
+//
+//option.mode = "minify";
+//
+//Instead, you can also define the values using logic:
+//
+//if (option.mode === "beautify" || option.lang === "auto") {
+//    option.wrap = 120;
+//}
+var preset = function (option) {
+    "use strict";
+    //       edit below this line
+
+
+
+
+
+
+
+
+    //       edit above this line
+    return option;
+};
+
+if (typeof exports === "object" || typeof exports === "function") {
+    //commonjs and nodejs support
+    exports.preset = function preset_commonjs(x) {
+        "use strict";
+        return preset(x);
+    };
+} else if ((typeof define === "object" || typeof define === "function") && (ace === undefined || ace.createEditSession === undefined)) {
+    //requirejs support
+    define(function preset_requirejs(require, exports) {
+        "use strict";
+        exports.preset = function preset_requirejs_export(x) {
+            return preset(x);
+        };
+        //worthless if block to appease RequireJS and JSLint
+        if (typeof require === "number") {
+            return require;
+        }
+        return exports.preset;
+    });
+}

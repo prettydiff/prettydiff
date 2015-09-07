@@ -86,6 +86,20 @@
                     <a href="#execution">Execution</a>
                 </li>
                 <li>
+                    <a href="#environments">Environments</a>
+                    <ol>
+                        <li>
+                            <a href="#environments_webtool">Web Tool</a>
+                        </li>
+                        <li>
+                            <a href="#environments_nodejs">Node.js</a>
+                        </li>
+                        <li>
+                            <a href="#environments_wsh">WSH</a>
+                        </li>
+                    </ol>
+                </li>
+                <li>
                     <a href="#parameters">Web Tool URI Parameters</a>
                 </li>
                 <li>
@@ -105,20 +119,6 @@
                         </li>
                         <li>
                             <a href="#function_io">Input and Output</a>
-                        </li>
-                    </ol>
-                </li>
-                <li>
-                    <a href="#environments">Environments</a>
-                    <ol>
-                        <li>
-                            <a href="#environments_webtool">Web Tool</a>
-                        </li>
-                        <li>
-                            <a href="#environments_nodejs">Node.js</a>
-                        </li>
-                        <li>
-                            <a href="#environments_wsh">WSH</a>
                         </li>
                     </ol>
                 </li>
@@ -302,6 +302,88 @@
                         <code>&nbsp;&nbsp;&nbsp;&nbsp;output = prettydiff(args);</code>
                     </li>
                 </ul>
+            </div>
+        </div>
+        <div id="environments">
+            <h2>Environments</h2>
+            <div id="environments_webtool">
+                <h3>Web Tool</h3>
+                <p>The web tool is the means of accessing Pretty Diff through a web browser from the domain <a href="http://prettydiff.com/">http://prettydiff.com/</a> or locally from the prettydiff.com.xhtml file. This HTML interface is entirely powered by the <a href="api/node-local.js">node-local.js</a> library.</p>
+                <p>To access the tool's options just scroll down the page a bit. Options are sorted by language categorty and then alphabetically the name of each option's respective API key.</p>
+                <p>Since some of Pretty Diff's reporting capabilities are generated as HTML the web tool is the easiest way to examine these features. Some of these features include <a href="guide/jshtml.xhtml">colorful JavaScript code by scope</a> and the diff report.</p>
+                <p>To save down an HTML report follow these easy steps:</p>
+                <ol>
+                    <li>Generate the report in question, such as running a regular code comparison.</li>
+                    <li>The web tool generates reports in a floating window on the page.  In the top right corner of this window are three square icons. The first such icon is red with the letter "<strong>S</strong>". Click this icon.</li>
+                    <li>In Firefox you will be automatically prompted to save a file that is a fully prepared document containing the necessary HTML, CSS, and JavaScript.  In other browsers a textarea will appear containing the code of a complete and fully prepared document for saving into a file using other software, such as a text editor.</li>
+                    <li>In the cases where only the report is desired, instead of a complete document, the web tool provides an option <em>Save Preference</em>. Select the option for <em>Report Only</em>. Instead of generating a complete document this option will instead generate four textareas for: necessary CSS, necessary JavaScript, HTML formatted data about the report, and the report content itself.</li>
+                </ol>
+                <p>For convenience and additional productivity the <em>Code Report</em> window can be dragged offscreen to the right of the page. Doing this will allow unobstructed access to the web tool and allow the generated code report to be visible simultaneously. This is particularly handy if working in the web tool frequently across multiple monitors.</p>
+            </div>
+            <div id="environments_nodejs">
+                <h3>Executing with
+                    <a href="http://nodejs.org/">Node.js</a>
+                </h3>
+                <p>Using Node.js is the preferred way to access Pretty Diff from the command line. This access can be a manual action or the result of other automation.</p>
+                <p>Pretty Diff can be manually downloaded from the <a href="https://github.com/prettydiff/prettydiff">Github</a> repository or more easily installed with <a href="https://www.npmjs.com/package/prettydiff">NPM</a>. Pretty Diff supports both a local and a global NPM installation.</p>
+                <p>Here are some examples of running Pretty Diff from the command line with global NPM installation:</p>
+                <ol>
+                    <li><code>npm install prettydiff -g</code></li>
+                    <li><code>prettydiff source:"myCodeLocation" readmethod:"file" mode:"beautify"</code></li>
+                </ol>
+                <p>Running Pretty Diff from a local NPM installation or from a manual download is a bit more tedious, but allows easier experimentation with the code. Here is a code example:</p>
+                <ol>
+                    <li><code>npm install prettydiff</code></li>
+                    <li><code>node node_modules/prettydiff/api/node-local.js source:"myCodeLocation" readmethod:"file" mode:"beautify"</code></li>
+                </ol>
+                <p>Pretty Diff can also be used as a Node module in other code projects.  Here is an example in code:</p>
+                <ol>
+                    <li>
+                        <code>&nbsp;&nbsp;&nbsp;&nbsp;var prettydiff = require("prettydiff"),</code>
+                        <code>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;args       = {</code>
+                        <code>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;source: "asdf",</code>
+                        <code>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;diff  : "asdd",</code>
+                        <code>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;lang  : "text"</code>
+                        <code>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;},</code>
+                        <code>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;output     = [];</code>
+                    </li>
+                    <li>
+                        <code>&nbsp;&nbsp;&nbsp;&nbsp;output = prettydiff.api(args);</code>
+                    </li>
+                </ol>
+                <p>Pretty Diff supports saved configurations using a <strong><a href=".prettydiffrc">.prettydiffrc</a></strong> file. Pretty Diff will first for the file in the command prompt's current directory and then look for it in the application's directory.  Pretty Diff will attempt to parse this file first as a simple <em>JSON</em> object, but advanced logic is allowed in the provide format. This file is not evaluated until after the options from the command prompt are evaluated, so the JS logic format allows setting options relative to the values of other provided options.</p>
+                <p>Some Node specific funtionality is provided.</p>
+                <ul>
+                    <li><strong><a href="#diffcli">diffcli</a></strong> The diffcli option allows for differences to be printed to the screen directly instead of generating HTML based code reports. This functionality closely resembles the old Unix <em>diff</em> utility.</li>
+                    <li><strong><a href="#readmethod">readmethod</a></strong> The readmethod option determines how the application should interact with the filesystem or remote files.</li>
+                    <li><strong><a href="#summaryonly">summaryonly</a></strong> The summaryonly option allows for Pretty Diff to perform a full examination, but only outputs to screen a list of changed files and a count of differences and writes no files.</li>
+                </ul>
+            </div>
+            <div id="environments_wsh">
+                <h3>Executing with
+                    <a href="http://msdn.microsoft.com/en-us/library/9bbdkx3k%28v=VS.85%29.aspx">Windows Script Host</a>
+                    (WSH)</h3>
+                <p>Windows Script Host allows for a JavaScript run time in Windows environments
+                    from a command line with output directly returned to the command line or in a
+                    debugger window. To execute JavaScript with WSH a file is needed to supply the
+                    JavaScript function call, pass arguments from command line into a JavaScript
+                    compatible format, and to request dependencies.</p>
+                <p>An actively maintained API is provided at
+                    <a href="api/prettydiff.wsf">api/prettydiff.wsf</a>. A WSF file follows basic
+                    XML syntax and may allow multiple operations of different languages to execute
+                    in tandem so long as each operation is confined to a
+                    <em>job</em>
+                    tag. The
+                    <em>named</em>
+                    elements in the example file are used to intercept arguments supplied via
+                    command line.</p>
+                <p>The example file would be operated for HTML compatibility using the following
+                    command:
+                    <code>cscript prettydiff.wsf /source:"my_source_file.js" /html:true /mode:"beautify"</code>
+                </p>
+                <p>Writing the output of a WSH task into a file would require an additional
+                    ActiveX instruction in the wsh.wsf file or would require the automation of
+                    script execution in the context of the PowerShell language.</p>
             </div>
         </div>
         <div id="parameters">
@@ -806,6 +888,23 @@
                                 Else on New Line</li>
                         </ul>
                     </li>
+                    <li id="endcomma">
+                        <h4>endcomma</h4>
+                        <ul>
+                            <li>
+                                <h5>Description</h5>
+                                If a terminating comma should be inserted into arrays, object literals, and destructured objects.</li>
+                            <li>
+                                <h5>Type</h5>
+                                boolean</li>
+                            <li>
+                                <h5>Default</h5>
+                                false</li>
+                            <li>
+                                <h5>As labeled in the HTML tool</h5>
+                                Trailing Commas</li>
+                        </ul>
+                    </li>
                     <li id="force_indent">
                         <h4>force_indent</h4>
                         <ul>
@@ -1027,23 +1126,6 @@
                             <li>
                                 <h5>As labeled in the HTML tool</h5>
                                 Leading 0s</li>
-                        </ul>
-                    </li>
-                    <li id="obfuscate">
-                        <h4>obfuscate</h4>
-                        <ul>
-                            <li>
-                                <h5>Description</h5>
-                                A converts reference names into smaller names during JavaScript minification.</li>
-                            <li>
-                                <h5>Type</h5>
-                                boolean</li>
-                            <li>
-                                <h5>Default</h5>
-                                false</li>
-                            <li>
-                                <h5>As labeled in the HTML tool</h5>
-                                Obfuscation</li>
                         </ul>
                     </li>
                     <li id="objsort">
@@ -1646,87 +1728,6 @@
                     as the first array index and a some minor meta data about the number of errors
                     in the second array index with both indexes formatted as HTML and neither
                     comprising a complete HTML document.</p>
-            </div>
-        </div>
-        <div id="environments">
-            <h2>Environments</h2>
-            <div id="environments_webtool">
-                <h3>Web Tool</h3>
-                <p>The web tool is the means of accessing Pretty Diff through a web browser from the domain <a href="http://prettydiff.com/">http://prettydiff.com/</a> or locally from the prettydiff.com.xhtml file. This HTML interface is entirely powered by the <a href="api/node-local.js">node-local.js</a> library.</p>
-                <p>To access the tool's options just scroll down the page a bit. Options are sorted by language categorty and then alphabetically the name of each option's respective API key.</p>
-                <p>Since some of Pretty Diff's reporting capabilities are generated as HTML the web tool is the easiest way to examine these features. Some of these features include <a href="guide/jshtml.xhtml">colorful JavaScript code by scope</a> and the diff report.</p>
-                <p>To save down an HTML report follow these easy steps:</p>
-                <ol>
-                    <li>Generate the report in question, such as running a regular code comparison.</li>
-                    <li>The web tool generates reports in a floating window on the page.  In the top right corner of this window are three square icons. The first such icon is red with the letter "<strong>S</strong>". Click this icon.</li>
-                    <li>In Firefox you will be automatically prompted to save a file that is a fully prepared document containing the necessary HTML, CSS, and JavaScript.  In other browsers a textarea will appear containing the code of a complete and fully prepared document for saving into a file using other software, such as a text editor.</li>
-                    <li>In the cases where only the report is desired, instead of a complete document, the web tool provides an option <em>Save Preference</em>. Select the option for <em>Report Only</em>. Instead of generating a complete document this option will instead generate four textareas for: necessary CSS, necessary JavaScript, HTML formatted data about the report, and the report content itself.</li>
-                </ol>
-                <p>For convenience and additional productivity the <em>Code Report</em> window can be dragged offscreen to the right of the page. Doing this will allow unobstructed access to the web tool and allow the generated code report to be visible simultaneously. This is particularly handy if working in the web tool frequently across multiple monitors.</p>
-            </div>
-            <div id="environments_nodejs">
-                <h3>Executing with
-                    <a href="http://nodejs.org/">Node.js</a>
-                </h3>
-                <p>Using Node.js is the preferred way to access Pretty Diff from the command line. This access can be a manual action or the result of other automation.</p>
-                <p>Pretty Diff can be manually downloaded from the <a href="https://github.com/prettydiff/prettydiff">Github</a> repository or more easily installed with <a href="https://www.npmjs.com/package/prettydiff">NPM</a>. Pretty Diff supports both a local and a global NPM installation.</p>
-                <p>Here are some examples of running Pretty Diff from the command line with global NPM installation:</p>
-                <ol>
-                    <li><code>npm install prettydiff -g</code></li>
-                    <li><code>prettydiff source:"myCodeLocation" readmethod:"file" mode:"beautify"</code></li>
-                </ol>
-                <p>Running Pretty Diff from a local NPM installation or from a manual download is a bit more tedious, but allows easier experimentation with the code. Here is a code example:</p>
-                <ol>
-                    <li><code>npm install prettydiff</code></li>
-                    <li><code>node node_modules/prettydiff/api/node-local.js source:"myCodeLocation" readmethod:"file" mode:"beautify"</code></li>
-                </ol>
-                <p>Pretty Diff can also be used as a Node module in other code projects.  Here is an example in code:</p>
-                <ol>
-                    <li>
-                        <code>&nbsp;&nbsp;&nbsp;&nbsp;var prettydiff = require("prettydiff"),</code>
-                        <code>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;args       = {</code>
-                        <code>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;source: "asdf",</code>
-                        <code>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;diff  : "asdd",</code>
-                        <code>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;lang  : "text"</code>
-                        <code>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;},</code>
-                        <code>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;output     = [];</code>
-                    </li>
-                    <li>
-                        <code>&nbsp;&nbsp;&nbsp;&nbsp;output = prettydiff.api(args);</code>
-                    </li>
-                </ol>
-                <p>Some Node specific funtionality is provided.</p>
-                <ul>
-                    <li><strong><a href="#diffcli">diffcli</a></strong> The diffcli option allows for differences to be printed to the screen directly instead of generating HTML based code reports. This functionality closely resembles the old Unix <em>diff</em> utility.</li>
-                    <li><strong><a href="#readmethod">readmethod</a></strong> The readmethod option determines how the application should interact with the filesystem or remote files.</li>
-                    <li><strong><a href="#summaryonly">summaryonly</a></strong> The summaryonly option allows for Pretty Diff to perform a full examination, but only outputs to screen a list of changed files and a count of differences and writes no files.</li>
-                </ul>
-            </div>
-            <div id="environments_wsh">
-                <h3>Executing with
-                    <a href="http://msdn.microsoft.com/en-us/library/9bbdkx3k%28v=VS.85%29.aspx">Windows Script Host</a>
-                    (WSH)</h3>
-                <p>Windows Script Host allows for a JavaScript run time in Windows environments
-                    from a command line with output directly returned to the command line or in a
-                    debugger window. To execute JavaScript with WSH a file is needed to supply the
-                    JavaScript function call, pass arguments from command line into a JavaScript
-                    compatible format, and to request dependencies.</p>
-                <p>An actively maintained API is provided at
-                    <a href="api/prettydiff.wsf">api/prettydiff.wsf</a>. A WSF file follows basic
-                    XML syntax and may allow multiple operations of different languages to execute
-                    in tandem so long as each operation is confined to a
-                    <em>job</em>
-                    tag. The
-                    <em>named</em>
-                    elements in the example file are used to intercept arguments supplied via
-                    command line.</p>
-                <p>The example file would be operated for HTML compatibility using the following
-                    command:
-                    <code>cscript prettydiff.wsf /source:"my_source_file.js" /html:true /mode:"beautify"</code>
-                </p>
-                <p>Writing the output of a WSH task into a file would require an additional
-                    ActiveX instruction in the wsh.wsf file or would require the automation of
-                    script execution in the context of the PowerShell language.</p>
             </div>
         </div>
         <div id="contribute">

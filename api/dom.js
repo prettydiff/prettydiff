@@ -260,202 +260,8 @@ var pd = {};
 
     //the various CSS color themes
     pd.css                = {
-        core   : "body{font-family:'Arial';font-size:10px;overflow-y:scroll}#announcement.big{colo" +
-                     "r:#00c;font-weight:bold;height:auto;left:14em;margin:0;overflow:hidden;position:" +
-                     "absolute;text-overflow:ellipsis;top:4.5em;white-space:nowrap;width:50%;z-index:5" +
-                     "}#announcement.big strong.duplicate{display:block}#announcement.big span{display" +
-                     ":block}#announcement.normal{color:#000;font-weight:normal;height:2.5em;margin:0 " +
-                     "-5em -4.75em;position:static;width:27.5em}#apireturn textarea{font-size:1.2em;he" +
-                     "ight:50em;width:100%}#apitest input,#apitest label,#apitest select,#apitest text" +
-                     "area{float:left}#apitest input,#apitest select,#apitest textarea{width:30em}#api" +
-                     "test label{width:20em}#apitest p{clear:both;padding-top:0.75em}#beau-other-span," +
-                     "#diff-other-span{left:-20em;position:absolute;width:0}#beauops p strong,#options" +
-                     " p strong,#diffops p strong,#miniops p strong,#options .label,#diffops .label,#m" +
-                     "iniops .label,#beauops .label{display:block;float:left;font-size:1.2em;font-weig" +
-                     "ht:bold;margin-bottom:1em;width:17.5em}#beauops span strong,#miniops span strong" +
-                     ",#diffops span strong{display:inline;float:none;font-size:1em;width:auto}#feedre" +
-                     "port{right:38.8em}#beautyinput,#minifyinput,#baseText,#newText,#beautyoutput,#mi" +
-                     "nifyoutput{font-size:1em}#Beautify,#Minify,#diffBase,#diffNew{border-radius:0.4e" +
-                     "m;padding:1em 1.25em 0}#Beautify .input,#Minify .input,#Beautify .output,#Minify" +
-                     " .output{width:49%}#Beautify .input label,#Beautify .output label,#Minify .input" +
-                     " label,#Minify .output label{display:block;font-size:1.05em;font-weight:bold}#Be" +
-                     "autify p.file,#Minify p.file{clear:none;float:none}#Beautify textarea,#Minify te" +
-                     "xtarea{margin-bottom:0.75em}#checklist_option li{font-weight:bold}#checklist_opt" +
-                     "ion li li{font-weight:normal}#codeInput{margin-bottom:1em;margin-top:-3.5em}#cod" +
-                     "eInput #diffBase p,#codeInput #diffNew p{clear:both;float:none}#codeInput .input" +
-                     "{clear:none;float:left}#codeInput .output{clear:none;float:right;margin-top:-2.4" +
-                     "em}#cssreport.doc table{position:absolute}#css-size{left:24em}#css-uri{left:40em" +
-                     "}#css-uri td{text-align:left}#csvchar{width:11.8em}#dcolorScheme{float:right;mar" +
-                     "gin:-2em 0 0}#dcolorScheme label{display:inline-block;font-size:1em}#diff .addso" +
-                     "urce{cursor:pointer;margin-bottom:1em;padding:0}#diff .addsource input{display:b" +
-                     "lock;float:left;margin:0.5em 0.5em -1.5em}#diff .addsource label{cursor:pointer;" +
-                     "display:inline-block;font-size:1.2em;padding:0.5em 0.5em 0.5em 2em}#diffBase,#di" +
-                     "ffNew,#Beautify,#Minify,#doc div,#doc div div,#doc ol,#option_comment,#update,#t" +
-                     "hirdparties img,#diffoutput #thirdparties,.box h3.heading,.box .body,.options,.d" +
-                     "iff .replace em,.diff .delete em,.diff .insert em,button,fieldset{border-style:s" +
-                     "olid;border-width:0.1em}#diffBase,#diffNew{padding:1.25em 1%;width:47%}#diffBase" +
-                     " textarea,#diffNew textarea{width:99.5%}#diffBase{float:left;margin-right:1%}#di" +
-                     "ffNew{float:right}#diffoutput{width:100%}#diffoutput #thirdparties li{display:in" +
-                     "line-block;list-style-type:none}#diffoutput li em,#diffoutput p em,.analysis .ba" +
-                     "d,.analysis .good{font-weight:bold}#diffoutput ul{font-size:1.2em;margin-top:1em" +
-                     "}#diffoutput ul li{display:list-item;list-style-type:disc}#displayOps{float:righ" +
-                     "t;font-size:1.5em;font-weight:bold;margin:0 1em 0 0;position:relative;width:22.5" +
-                     "em;z-index:10}#displayOps #displayOps-hide{clear:both;float:none;position:absolu" +
-                     "te;top:-20em}#displayOps.default{position:static}#displayOps.maximized{margin-bo" +
-                     "ttom:-2em;position:relative}#displayOps a{border-style:solid;border-width:0.1em;" +
-                     "height:1.2em;line-height:1.4;margin:0.1em 0 0 5em;padding:0.05em 0 0.3em;text-al" +
-                     "ign:center;text-decoration:none}#displayOps button,#displayOps a{font-size:1em}#" +
-                     "displayOps li{clear:none;display:block;float:left;list-style:none;margin:0;text-" +
-                     "align:right;width:9em}#doc_contents a{text-decoration:none}#doc_contents ol{padd" +
-                     "ing-bottom:1em}#doc_contents ol ol li{font-size:0.75em;list-style:lower-alpha;ma" +
-                     "rgin:0.5em 0 1em 3em}#doc #doc_contents ol ol{background-color:inherit;border-st" +
-                     "yle:none;margin:0.25em 0.3em 0 0;padding-bottom:0}#doc div.beautify{border-style" +
-                     ":none}#doc #execution h3{background:transparent;border-style:none;font-size:1em;" +
-                     "font-weight:bold}#doc code,.doc code{display:block;font-family:'Courier New',Cou" +
-                     "rier,'Lucida Console',monospace;font-size:1.1em}#doc div,.doc div{margin-bottom:" +
-                     "2em;padding:0 0.5em 0.5em}#doc div div,.doc div div{clear:both;margin-bottom:1em" +
-                     "}#doc em,.doc em,.box .body em{font-style:normal;font-weight:bold}#doc h2,.doc h" +
-                     "2{font-size:1.6em;margin:0.5em 0.5em 0.5em 0}#doc h3,.doc h3{margin-top:0.5em}#d" +
-                     "oc ol,.doc ol{clear:both;padding:0}#doc ol li span,.doc ol li span{display:block" +
-                     ";margin-left:2em}#doc ol ol,#doc ul ol,.doc ol ol,.doc ul ol{margin-right:0.5em}" +
-                     "#doc td span,.doc td span{display:block}#doc table,.doc table,.box .body table{b" +
-                     "order-collapse:collapse;border-style:solid;border-width:0.2em;clear:both}#doc ta" +
-                     "ble,.doc table{font-size:1.2em}#doc td,#doc th,.doc td,.doc th{border-left-style" +
-                     ":solid;border-left-width:0.1em;border-top-style:solid;border-top-width:0.1em;pad" +
-                     "ding:0.5em}#doc th,.doc th{font-weight:bold}#doc ul,.doc ul{margin-top:1em}#doc " +
-                     "ul li,.doc ul li{font-size:1.2em}#feedemail{display:block;width:100%}#feedreport" +
-                     "body{text-align:center}#feedreportbody .radiogroup .feedlabel{display:block;marg" +
-                     "in:0 0 1em;width:auto;font-size:1.4em}#feedreportbody .radiogroup span{margin:0 " +
-                     "0 2em;display:inline-block;width:5em}#feedreportbody .radiogroup input{position:" +
-                     "absolute;top:-2000em}#feedreportbody .radiogroup label{display:inline-block;bord" +
-                     "er-style:solid;border-width:0.1em;line-height:1.5;text-align:center;height:1.5em" +
-                     ";width:1.5em;border-radius:50%;cursor:pointer}#feedreportbody .radiogroup span s" +
-                     "pan{font-size:0.8em;display:block;margin:0;width:auto}#feedsubmit{position:stati" +
-                     "c;width:50%;float:none;text-shadow:none;height:3em;margin:2.5em auto 0;font-fami" +
-                     "ly:inherit}#function_properties h4{font-size:1.2em;float:none}#function_properti" +
-                     "es h4 strong{color:#c00}#function_properties h5{margin:0 0 0 -2.5em;font-size:1e" +
-                     "m}#function_properties ol{padding-right:1em}#functionGroup.append{border-radius:" +
-                     "0.2em;border-style:solid;border-width:0.1em;padding:0.7em 1.2em;position:relativ" +
-                     "e;top:-2.625em}#functionGroup.append input{cursor:pointer}#functionGroup.append " +
-                     "label{cursor:pointer;font-size:1em}#functionGroup.append span{display:inline-blo" +
-                     "ck;margin-left:2em}#hideOptions{margin-left:5em}#introduction{clear:both;margin:" +
-                     "0 0 0 5.6em;position:relative;top:-2.75em}#introduction .information,#webtool #i" +
-                     "ntroduction h2{left:-90em;position:absolute;top:0;width:10em}#introduction h2{fl" +
-                     "oat:none}#introduction li{clear:none;display:block;float:left;font-size:1.4em;ma" +
-                     "rgin:0 4.95em -1em 0}#introduction li li{font-size:1em;margin-left:2em}#introduc" +
-                     "tion ul{clear:both;height:3em;margin:0 0 0 -5.5em;overflow:hidden;width:100em}#m" +
-                     "odalSave p{background:#eee;color:#333;font-size:3em;padding:1em;position:absolut" +
-                     "e;text-align:center;top:10em;width:25em;z-index:9001}#modalSave p em{display:blo" +
-                     "ck;font-size:0.75em;margin-top:1em}#modalSave p strong{color:#c00;font-weight:bo" +
-                     "ld}#modalSave span{background:#000;display:block;left:0;opacity:0.5;position:abs" +
-                     "olute;top:0;z-index:9000}#codereport{right:19.8em}#option_comment{font-size:1.2e" +
-                     "m;height:2.5em;margin-bottom:-1.5em;width:100%}#option_commentClear{float:right;" +
-                     "height:2em;margin:-0.5em -0.25em 0 0;padding:0;width:15em}#options{margin:0 0 1e" +
-                     "m}#options label{width:auto}#options p,#addOptions p{clear:both;font-size:1em;ma" +
-                     "rgin:0;padding:1em 0 0}#options p span{height:2em;margin:0 0 0 1em}#pdsamples{li" +
-                     "st-style-position:inside;margin:0;padding:0;position:relative;z-index:10}#pdsamp" +
-                     "les li{border-radius:1em;border-style:solid;border-width:0.1em;margin:0 0 3em;pa" +
-                     "dding:1em}#pdsamples li div{border-radius:1em;border-style:solid;border-width:0." +
-                     "1em;margin:0;padding:1em}#pdsamples li p{display:inline-block;font-size:1em;marg" +
-                     "in:0}#pdsamples li p a{display:block;margin:0 0 1em 2em}#pdsamples li ul{margin:" +
-                     "0 0 0 2em}#reports{height:4em}#reports h2{display:none}#samples #dcolorScheme{po" +
-                     "sition:relative;z-index:1000}#samples #pdsamples li li{background:none transpare" +
-                     "nt;border-style:none;display:list-item;list-style:disc outside;margin:0;padding:" +
-                     "0.5em}#samples h1{float:none}#samples h2{float:none;font-size:1.5em;border-style" +
-                     ":none;margin:1em 0}#showOptionsCallOut{background:#fff;border:0.1em solid #000;b" +
-                     "ox-shadow:0.2em 0.2em 0.4em rgba(0,0,0,.15);left:28.6%;padding:0.5em;position:ab" +
-                     "solute;top:4.6em;width:20%;z-index:1000}#showOptionsCallOut a{color:#66f;font-we" +
-                     "ight:bold}#showOptionsCallOut em{color:#c00}#showOptionsCallOut strong{color:#09" +
-                     "0}#statreport{right:0.8em}#statreport .body p,#statreport .body li,#statreport ." +
-                     "body h3{font-size:1.2em}#statreport .body h3{margin-top:0}#statreport .body ul{m" +
-                     "argin-top:1em}#textareaTabKey{position:absolute;border-width:0.1em;border-style:" +
-                     "solid;padding:0.5em;width:24em;right:51%}#textareaTabKey strong{text-decoration:" +
-                     "underline}#textreport{width:100%}#thirdparties a{border-style:none;display:block" +
-                     ";height:4em;text-decoration:none}#title_text{border-style:solid;border-width:0.0" +
-                     "5em;display:block;float:left;font-size:1em;margin-left:0.55em;padding:0.1em}#top" +
-                     "{left:0;overflow:scroll;position:absolute;top:-200em;width:1em}#top em{font-weig" +
-                     "ht:bold}#update{clear:left;float:right;font-weight:bold;padding:0.5em;position:a" +
-                     "bsolute;right:1.25em;top:4.75em}#webtool .diff h3{border-style:none solid solid;" +
-                     "border-width:0 0.1em 0.2em;box-shadow:none;display:block;font-family:Verdana;mar" +
-                     "gin:0 0 0 -.1em;padding:0.2em 2em;text-align:left}#webtool .options input[type=t" +
-                     "ext]{margin-right:1em;width:11.6em}#webtool .options input[type=text],div input," +
-                     "textarea{border-style:inset;border-width:0.1em}.analysis th{text-align:left}.ana" +
-                     "lysis td{text-align:right}.beautify,.diff{border-style:solid;border-width:0.2em;" +
-                     "display:inline-block;font-family:'Courier New',Courier,'Lucida Console',monospac" +
-                     "e;margin:0 1em 1em 0;position:relative}.beautify .count,.diff .count{border-styl" +
-                     "e:solid;border-width:0 0.1em 0 0;font-weight:normal;padding:0;text-align:right}." +
-                     "beautify .count li,.diff .count li{padding-left:2em}.beautify .count li{padding-" +
-                     "top:0.5em}.beautify .count li.fold,.diff .count li.fold{color:#900;cursor:pointe" +
-                     "r;font-weight:bold;padding-left:0.5em}.beautify .data,.diff .data{text-align:lef" +
-                     "t;white-space:pre}.beautify .data em{display:inline-block;font-style:normal;font" +
-                     "-weight:bold;padding-top:0.5em}.beautify .data li,.diff .data li{padding-left:0." +
-                     "5em;white-space:pre}.beautify li,.diff li{border-style:none none solid;border-wi" +
-                     "dth:0 0 0.1em;display:block;line-height:1.2;list-style-type:none;margin:0;paddin" +
-                     "g-bottom:0;padding-right:0.5em}.beautify ol,.diff ol{display:table-cell;margin:0" +
-                     ";padding:0}.box{border-style:solid;border-width:0;left:auto;margin:0;padding:0;p" +
-                     "osition:absolute;z-index:10}.box button{border-radius:0;border-style:solid;borde" +
-                     "r-width:0.1em;display:block;float:right;font-family:'Lucida Console','Trebuchet " +
-                     "MS','Arial';height:1.75em;padding:0;position:absolute;right:0;text-align:center;" +
-                     "top:0;width:1.75em;z-index:7}.box button.resize{border-width:0.05em;cursor:se-re" +
-                     "size;font-size:1.667em;font-weight:normal;height:0.8em;line-height:0.5em;margin:" +
-                     "-.85em 0 0;position:absolute;right:0.05em;top:100%;width:0.85em}.box button.mini" +
-                     "mize{margin:0.35em 4em 0 0}.box button.maximize{margin:0.35em 1.75em 0 0}.box bu" +
-                     "tton.save{margin:0.35em 6.25em 0 0}.box .buttons{float:right;margin:0}.box h3.he" +
-                     "ading{cursor:pointer;float:left;font-size:1em;height:3em;margin:0 0 -3.2em;posit" +
-                     "ion:relative;width:17em;z-index:6}.box h3.heading span{display:block;font-size:1" +
-                     ".8em;padding:0.25em 0 0 0.5em}.box .body{clear:both;height:20em;margin-top:-.1em" +
-                     ";overflow:scroll;padding:4.25em 1em 1em;position:relative;right:0;top:0;width:75" +
-                     "em;z-index:5}.button{margin:1em 0;text-align:center}.button button{display:block" +
-                     ";font-size:2em;height:1.5em;margin:0 auto;padding:0;width:50%}.clear{clear:both;" +
-                     "display:block}.diff .skip{border-style:none none solid;border-width:0 0 0.1em}.d" +
-                     "iff .diff-left,.diff .diff-right{display:table-cell}.diff .diff-left{border-styl" +
-                     "e:none none none solid;border-width:0 0 0 0.1em}.diff .diff-right{border-style:n" +
-                     "one none none solid;border-width:0 0 0 0.1em;margin-left:-.1em;min-width:16.5em;" +
-                     "right:0;top:0}.diff-right .data ol{min-width:16.5em}.diff-right .data{border-sty" +
-                     "le:none solid none none;border-width:0 0.1em 0 0;width:100%}.diff-right .data li" +
-                     "{min-width:16.5em}.diff li,.diff p,.diff h3,.beautify li{font-size:1.1em}.diff l" +
-                     "i{padding-top:0.5em}.diff li em{font-style:normal;margin:0 -.09em;padding:0.05em" +
-                     " 0}.diff p.author{border-style:solid;border-width:0.2em 0.1em 0.1em;margin:0;ove" +
-                     "rflow:hidden;padding:0.4em;text-align:right}.difflabel{display:block;height:0}.f" +
-                     "ile,.labeltext{font-size:0.9em;font-weight:bold;margin-bottom:1em}.file input,.l" +
-                     "abeltext input{display:inline-block;margin:0 0.7em 0 0;width:16em}.input,.output" +
-                     "{margin:0}.options{border-radius:0.4em;clear:both;margin-bottom:1em;padding:1em " +
-                     "1em 3.5em;width:auto}.options input,.options label{border-style:none;display:blo" +
-                     "ck;float:left}.output label{text-align:right}.options p span label{font-size:1em" +
-                     "}.options p span{display:block;float:left;font-size:1.2em;min-width:14em;padding" +
-                     "-bottom:0.5em}.options select,#csvchar{margin:0 0 0 1em}.options span label{marg" +
-                     "in-left:0.4em}body#doc{font-size:0.8em;margin:0 auto;max-width:80em}body#doc #fu" +
-                     "nction_properties ul{margin:0}body#doc #function_properties ul li{font-size:0.9e" +
-                     "m;margin:0.5em 0 0 4em}body#doc ul li,body#doc ol li{font-size:1.1em}body#doc ta" +
-                     "ble{font-size:1em}button,a.button{border-radius:0.15em;display:block;font-weight" +
-                     ":bold;padding:0.2em 0;width:100%}div .button{text-align:center}div button,div a." +
-                     "button{display:inline-block;font-weight:bold;margin:1em 0;padding:1em 2em}button" +
-                     ":hover,a.button:hover{cursor:pointer}fieldset{border-radius:0.9em;clear:both;mar" +
-                     "gin:3.5em 0 -2em;padding:0 0 0 1em}h1{float:left;font-size:2em;margin:0 0.5em 0." +
-                     "5em 0}h1 svg,h1 img{border-style:solid;border-width:0.05em;float:left;height:1.5" +
-                     "em;margin-right:0.5em;width:1.5em}h1 span{font-size:0.5em}h2,h3{background:#fff;" +
-                     "border-style:solid;border-width:0.075em;display:inline-block;font-size:1.8em;fon" +
-                     "t-weight:bold;margin:0 0.5em 0.5em 0;padding:0 0.2em}h3{font-size:1.6em}h4{font-" +
-                     "size:1.4em}input[type='radio']{margin:0 0.25em}input[type='file']{box-shadow:non" +
-                     "e}label{display:inline;font-size:1.4em}legend{border-style:solid;border-width:0." +
-                     "1em;font-size:1.2em;font-weight:bold;margin-left:-.25em}li{clear:both;margin:1em" +
-                     " 0 1em 3em}li h4{display:inline;float:left;margin:0.4em 0;text-align:left;width:" +
-                     "14em}ol li{font-size:1.4em;list-style-type:decimal}ol li li{font-size:1em}p{clea" +
-                     "r:both;font-size:1.2em;margin:0 0 1em}select{border-style:inset;border-width:0.1" +
-                     "em;width:11.85em}strong.new{background:#ff6;font-style:italic}strong label{font-" +
-                     "size:1em;width:inherit}textarea{display:inline-block;font-family:'Courier New',C" +
-                     "ourier,'Lucida Console',monospace;height:10em;margin:0 0 -.1em;width:100%}ul{mar" +
-                     "gin:-1.4em 0 2em;padding:0}ul li{list-style-type:none}@media print{div{width:100" +
-                     "%}html td{font-size:0.8em;white-space:normal}p,.options,#Beautify,#Minify,#diff," +
-                     "ul{display:none}}@media screen and (-webkit-min-device-pixel-ratio:0){.beautify " +
-                     ".count li{padding-top:0.546em}.beautify .data li{line-height:1.3}}@media (max-wi" +
-                     "dth: 640px){#functionGroup{height:4em}#functionGroup.append span{margin-left:0.5" +
-                     "em;position:relative;z-index:10}#displayOps{margin-bottom:-2em;padding-right:0.7" +
-                     "5em;width:auto}#displayOps li{padding-top:2em}#displayOps a{margin-left:1em}#dif" +
-                     "fBase,#diffNew{width:46%}#reports{display:none}.labeltext input,.file input{widt" +
-                     "h:12em}#update{margin-top:2.75em}#codeInput label{display:none}#doc #dcolorSchem" +
-                     "e{margin:0 0 1em}}",
-        scanvas: "#doc.canvas{color:#444}#webtool.canvas input.unchecked{background:#ccc;color:#33" +
+        core   : "body#webtool,body#doc{font-family:'Lucida Sans Unicode','Helvetica','Arial', sans-serif;font-size:10px;overflow-y:scroll}div#webtool{font-size:10px}#about_license a{display:block}#webtool #announcement{color:#00c;font-weight:bold;height:auto;left:14em;margin:0;overflow:hidden;position:absolute;text-overflow:ellipsis;top:0.5em;white-space:nowrap;width:40%;z-index:5}#webtool #announcement strong.duplicate{display:block}#webtool #announcement span{display:block}#apireturn textarea{font-size:1.2em;height:50em;width:100%}#apitest input,#apitest label,#apitest select,#apitest textarea{float:left}#apitest input,#apitest select,#apitest textarea{width:30em}#apitest label{width:20em}#apitest p{clear:both;padding-top:0.75em}#beau-other-span,#diff-other-span{left:-20em;position:absolute;width:0}#webtool #beauops p strong,#webtool #options p strong,#webtool #diffops p strong,#webtool #miniops p strong,#webtool #parseops p strong,#webtool #options .label,#webtool #diffops .label,#webtool #miniops .label,#webtool #beauops .label,#webtool #parseops .label{display:block;float:none;font-size:1em;font-weight:bold;margin-bottom:0.5em}#beauops span strong,#miniops span strong,#diffops span strong{display:inline;float:none;font-size:1em;width:auto}#feedreport{right:38.8em}#beautyinput,#minifyinput,#parseinput,#baseText,#newText,#beautyoutput,#minifyoutput,#parseoutput{font-size:1em}#Beautify,#Minify,#Parse,#diffBase,#diffNew{border-radius:0.4em;padding:1em 1.25em}#Beautify .input,#Minify .input,#Parse .input,#Beautify .output,#Minify .output,#Parse .output{width:49%}#Beautify .input label,#Beautify .output label,#Minify .input label,#Minify .output label,#Parse .input label,#Parse .output label{display:block;font-size:1.05em;font-weight:bold}#Beautify p.file,#Minify p.file,#Parse p.file{clear:none;float:none}#Beautify textarea,#Minify textarea,#Parse textarea{margin-bottom:0.75em}#checklist_option li{font-weight:bold}#checklist_option li li{font-weight:normal}#codeInput{margin-bottom:1em}#codeInput #diffBase p,#codeInput #diffNew p{clear:both;float:none}#codeInput .input{clear:none;float:left}#codeInput .output{clear:none;float:right;margin-top:-2.4em}#cssreport.doc table{position:absolute}#css-size{left:24em}#css-uri{left:40em}#css-uri td{text-align:left}#webtool #csvchar{width:11.8em}#webtool #dcolorScheme,#doc #dcolorScheme{float:right;margin:-3em 0 0}#webtool #dcolorScheme label,#doc #dcolorScheme label{display:inline-block;font-size:1em}#diff .addsource{cursor:pointer;margin-bottom:1em;padding:0}#diff .addsource input{display:block;float:left;margin:0.5em 0.5em -1.5em}#diff .addsource label{cursor:pointer;display:inline-block;font-size:1.2em;padding:0.5em 0.5em 0.5em 2em}#diffBase,#diffNew,#Beautify,#Minify,#Parse#doc div,#doc div div,#doc ol,#webtool #option_comment,#update,#thirdparties img,#diffoutput #thirdparties,.ace_editor,#webtool .box h3.heading,#webtool .box .body,#webtool .options,.diff .replace em,.diff .delete em,.diff .insert em,button,fieldset{border-style:solid;border-width:0.1em}#diffBase,#diffNew{padding:1.25em 1%;width:47%}#diffBase textarea,#diffNew textarea{width:99.5%}#diffBase{float:left;margin-right:1%}#diffNew{float:right}#diffoutput{width:100%}#diffoutput #thirdparties li{display:inline-block;list-style-type:none}#diffoutput li em,#diffoutput p em,.analysis .bad,.analysis .good{font-weight:bold}#diffoutput ul{font-size:1.2em;margin-top:1em}#diffoutput ul li,#doc #parse ul li{display:list-item;list-style-type:disc}#doc_contents a{text-decoration:none}#doc_contents ol{padding-bottom:1em}#doc_contents ol ol li{font-size:0.75em;list-style:lower-alpha;margin:0.5em 0 1em 3em}#doc #doc_contents ol ol{background-color:inherit;border-style:none;margin:0.25em 0.3em 0 0;padding-bottom:0}#doc div.beautify{border-style:none}#doc #execution h3{background:transparent;border-style:none;font-size:1em;font-weight:bold}#doc code,.doc code{display:block;font-family:'Courier New',Courier,'Lucida Console',monospace;font-size:1.1em}#doc div,.doc div{margin-bottom:2em;padding:0 0.5em 0.5em}#doc div div,.doc div div{clear:both;margin-bottom:1em}#doc em,.doc em,#webtool .box .body em{font-style:normal;font-weight:bold}#doc div h2,.doc div h2{font-size:1.6em;margin:0.5em 0.5em 0.5em 0}#doc div h3,.doc div h3{margin-bottom:0.5em;margin-top:0.5em}#doc ol,.doc ol{clear:both;padding:0}#doc ol li span,.doc ol li span{display:block;margin-left:2em}#doc ol ol,#doc ul ol,.doc ol ol,.doc ul ol{margin-right:0.5em}#doc td span,.doc td span{display:block}#doc table,.doc table,#webtool .box .body table{border-collapse:collapse;border-style:solid;border-width:0.2em;clear:both}#doc table,.doc table{font-size:1.2em}#doc td,#doc th,.doc td,.doc th{border-left-style:solid;border-left-width:0.1em;border-top-style:solid;border-top-width:0.1em;padding:0.5em}#doc th,.doc th{font-weight:bold}#doc ul,.doc ul{margin-top:1em}#doc ul li,.doc ul li{font-size:1.2em}#feedemail{display:block;width:100%}#feedreportbody{text-align:center}#feedreportbody .radiogroup .feedlabel{display:block;font-size:1.4em;margin:0 0 1em;width:auto}#feedreportbody .radiogroup span{display:inline-block;margin:0 0 2em;width:5em}#feedreportbody .radiogroup input{position:absolute;top:-2000em}#feedreportbody .radiogroup label{border-radius:50%;border-style:solid;border-width:0.1em;cursor:pointer;display:inline-block;height:1.5em;line-height:1.5;text-align:center;width:1.5em}#feedreportbody .radiogroup span span{display:block;font-size:0.8em;margin:0;width:auto}#feedsubmit{float:none;font-family:inherit;height:3em;margin:2.5em auto 0;position:static;text-shadow:none;width:50%}#doc #function_properties h4{float:none;font-size:1.2em}#doc #function_properties li{padding:0 0 0 0.5em}#function_properties h4 strong{color:#c00}#function_properties h5{font-size:1em;margin:0 0 0 -2.5em}#function_properties ol{padding-right:1em}#webtool #functionGroup,#webtool #headline{border-radius:0.2em;border-style:solid;border-width:0.1em;padding:0.7em 1.2em}#webtool #functionGroup input{cursor:pointer}#webtool #functionGroup label{cursor:pointer;font-size:1em}#webtool #functionGroup span{display:inline-block;margin-left:2em}#webtool #headline{margin: 0 0 1em;}#webtool #headline h2{background:transparent;border-style:none;float:left;line-height:1;margin:0 0.25em 0 0;padding:0}#webtool #headline p{clear:none;float:left;font-size: 1.8em;line-height:1;margin:0}#webtool #hideOptions{margin-left:5em}#webtool #infolinks{float:right;margin:0 0 -4em}#webtool #infolinks li{display:inline-block;font-size:1.4em;list-style:none;margin:0.5em 1em 0}#jserror code{font-family:'Courier New',Courier,'Lucida Console',monospace}#jserror span{display:block}#webtool #modalSave p{background:#eee;color:#333;font-size:2em;padding:1em;position:absolute;text-align:center;top:10em;width:25em;z-index:9001}#modalSave p em{display:block;font-size:0.75em;margin-top:1em}#modalSave p strong{color:#c00;font-weight:bold}#modalSave span{background:#000;display:block;left:0;opacity:0.5;position:absolute;top:0;z-index:9000}#codereport{right:19.8em}#webtool #option_comment{font-size:1.2em;height:2.5em;width:100%}#webtool #option_commentClear{margin:-0.5em -0.25em 0 0}#options{margin:0 0 1em}#options #resetOptions{margin:0 0 -6em}#options p.apiname, #addOptions p.apiname{float:left;font-size:1.2em;line-height:2.4;margin:0 -40em 0 15em;padding:0}#options span.apiname, #addOptions span.apiname{display:inline-block;float:none;font-size:1em;margin:0 0 0 1em;width:auto}#options .resetbutton{padding:0}#webtool #options button{float:right;height:2em;padding:0;width:15em}#options label{width:auto}#options p,#addOptions p{clear:both;font-size:1em;margin:0;padding:1em 0 0}#webtool #options p span{height:2em;margin:0 0 0 1em}#pdsamples{list-style-position:inside;margin:0;padding:0;position:relative;z-index:10}#pdsamples li{border-radius:1em;border-style:solid;border-width:0.1em;margin:0 0 3em;padding:1em}#pdsamples li div{border-radius:1em;border-style:solid;border-width:0.1em;margin:0;padding:1em}#pdsamples li p{display:inline-block;font-size:1em;margin:0}#pdsamples li p a{display:block;margin:0 0 1em 2em}#pdsamples li ul{margin:0 0 0 2em}#reports{height:4em}#webtool #reports h2{display:none}#samples #dcolorScheme{position:relative;z-index:1000}#samples #pdsamples li li{background:none transparent;border-style:none;display:list-item;list-style:disc outside;margin:0;padding:0.5em}#samples h1{float:none}#samples h2{border-style:none;float:none;font-size:1.5em;margin:1em 0}#showOptionsCallOut{background:#fff;border:0.1em solid #000;box-shadow:0.2em 0.2em 0.4em rgba(0,0,0,.15);left:28.6%;padding:0.5em;position:absolute;top:4.6em;width:20%;z-index:1000}#showOptionsCallOut a{color:#66f;font-weight:bold}#showOptionsCallOut em{color:#c00}#showOptionsCallOut strong{color:#090}#statreport{right:0.8em}#statreport .body p,#statreport .body li,#statreport .body h3{font-size:1.2em}#statreport .body h3{margin-top:0}#statreport .body ul{margin-top:1em}#textareaTabKey{border-style:solid;border-width:0.1em;left:51%;padding:0.5em;position:absolute;width:28em}#textareaTabKey strong{text-decoration:underline}#textareaTabKey em{font-weight:bold}#textreport{width:100%}#thirdparties a{border-style:none;display:block;height:4em;text-decoration:none}#update{clear:left;float:right;font-weight:bold;padding:0.25em;position:absolute;right:0;top:0;z-index:2;}#update span{display:block}#update span span{display:inline-block;float:right}#webtool .diff h3{border-style:none solid solid;border-width:0 0.1em 0.2em;box-shadow:none;display:block;font-family:Verdana;font-size:1.2em;margin:0 0 0 -.1em;padding:0.2em 2em;text-align:left}#webtool .options input[type=text]{margin-right:1em;width:11.6em}#webtool .options input[type=text],#webtool div input,#webtool textarea{border-style:inset;border-width:0.1em}.analysis th{text-align:left}.analysis .parseData td{font-family:'Courier New',Courier,'Lucida Console',monospace;text-align:left;white-space:pre}.analysis td{text-align:right}#webtool .beautify,#webtool .diff{border-style:solid;border-width:0.2em;display:inline-block;font-family:'Courier New',Courier,'Lucida Console',monospace;margin:0 1em 1em 0;position:relative}#webtool .beautify .count,#webtool .diff .count{border-style:solid;border-width:0 0.1em 0 0;font-weight:normal;padding:0;text-align:right}#webtool .beautify .count li,#webtool .diff .count li{padding-left:2em}#webtool .beautify .count li{padding-top:0.5em}#webtool .beautify .count li.fold,#webtool .diff .count li.fold{color:#900;cursor:pointer;font-weight:bold;padding-left:0.5em}#webtool .beautify .data,#webtool .diff .data{text-align:left;white-space:pre}#webtool .beautify .data em{display:inline-block;font-style:normal;font-weight:bold;padding-top:0.5em}#webtool .beautify .data li,#webtool .diff .data li{padding-left:0.5em;white-space:pre}#webtool .beautify li,#webtool .diff li{border-style:none none solid;border-width:0 0 0.1em;display:block;line-height:1.2;list-style-type:none;margin:0;padding-bottom:0;padding-right:0.5em}#webtool .beautify ol,#webtool .diff ol{display:table-cell;margin:0;padding:0}#webtool .box{border-style:solid;border-width:0;left:auto;margin:0;padding:0;position:absolute;z-index:10}#webtool .box .buttons button{border-radius:0;border-style:solid;border-width:0.1em;display:block;float:right;font-family:'Lucida Console','Trebuchet MS','Arial';height:1.75em;padding:0;position:absolute;right:0;text-align:center;top:0;width:1.75em;z-index:7}#webtool .box .buttons button.resize{border-width:0.05em;cursor:se-resize;font-size:1.667em;font-weight:normal;height:0.8em;line-height:0.5em;margin:-.85em 0 0;position:absolute;right:0.05em;top:100%;width:0.85em}#webtool .box .buttons button.minimize{margin:0.35em 4em 0 0}#webtool .box .buttons button.maximize{margin:0.35em 1.75em 0 0}#webtool .box .buttons button.save{margin:0.35em 6.25em 0 0}#webtool .box .buttons{float:right;margin:0}#webtool .box h3.heading{float:left;font-size:1em;height:3em;margin:0 0 -3.2em;padding:0;position:relative;width:17em;z-index:6}#webtool .box h3.heading button{background:transparent;border-radius:0;border-style:none;box-shadow:none;cursor:pointer;display:block;font-size:1.8em;height:100%;margin:0;padding:0.25em 0 0 0.5em;text-align:left}#webtool .box .heading button:hover{background:transparent;color:inherit;text-shadow:none}#webtool .box .body{clear:both;height:20em;margin-top:-.1em;overflow:scroll;padding:4.25em 1em 1em;position:relative;right:0;top:0;width:75em;z-index:5}#webtool .button{margin:1em 0;text-align:center}#webtool .button button{display:block;font-size:2em;height:1.5em;margin:0 auto;padding:0;width:50%}#webtool .clear,#doc .clear{clear:both;display:block}.diff .skip{border-style:none none solid;border-width:0 0 0.1em}.diff .diff-left,.diff .diff-right{display:table-cell}.diff .diff-left{border-style:none none none solid;border-width:0 0 0 0.1em}.diff .diff-right{border-style:none none none solid;border-width:0 0 0 0.1em;margin-left:-.1em;min-width:16.5em;right:0;top:0}.diff-right .data ol{min-width:16.5em}.diff-right .data{border-style:none solid none none;border-width:0 0.1em 0 0;width:100%}.diff-right .data li{min-width:16.5em}.diff li,.diff p,.diff h3,.beautify li{font-size:1.1em}.diff li{padding-top:0.5em}.diff li em{font-style:normal;margin:0 -.09em;padding:0.05em 0}#webtool .diff p.author{border-style:solid;border-width:0.2em 0.1em 0.1em;margin:0;overflow:hidden;padding:0.4em;text-align:right}.difflabel{display:block;height:0}#webtool .file,#webtool .labeltext{font-size:0.9em;font-weight:bold;margin-bottom:1em}#webtool .file input,#webtool .labeltext input{display:inline-block;margin:0 0.7em 0 0;width:16em}#webtool .input,#webtool.output{margin:0}.metainfo{position:relative;}#webtool .options{border-radius:0.4em;clear:both;margin-bottom:1em;padding:1em;width:auto}#webtool .options input,#webtool .options label{border-style:none;display:block;float:left}#webtool .output label{text-align:right}#webtool .options p span label{font-size:1em}#webtool .options p span{display:block;float:left;font-size:1em;min-width:16em;padding-bottom:0.5em}#webtool .options select,#webtool #csvchar{margin:0 0 0 1em}#webtool .options fieldset select{float:left;margin:0 1em 0 0}#webtool .options span label{margin-left:0.4em}body#doc{font-size:0.8em;margin:0 auto;max-width:80em}body#doc #function_properties ul{margin:0}body#doc #function_properties ul li{font-size:0.9em;margin:0.5em 0 0 4em}body#doc ul li,body#doc ol li{font-size:1.1em}body#doc table{font-size:1em}#webtool button,#webtool a.button{border-radius:0.15em;display:block;font-weight:bold;padding:0.2em 0;width:100%}#webtool div .button{text-align:center}#webtool div button,#webtool div a.button{display:inline-block;font-weight:bold;margin:1em 0;padding:1em 2em}#webtool button:hover,#webtool a.button:hover{cursor:pointer}#webtool fieldset,#doc fieldset{border-radius:1em;clear:both;margin:1em 0 0;padding:0 1em 1em}#webtool h1{float:left;font-size:2em;margin:0 0.5em 0.5em 0}#webtool h1{position:absolute;top:-200em;z-index:0;}#webtool h1 svg,#doc h1 svg{border-style:solid;border-width:0.05em;float:left;height:1.5em;margin-right:0.5em;width:1.5em}#webtool h1 span,#doc h1 span{font-size:0.5em}#webtool h2,#doc h2,#webtool h3,#doc h3{border-style:solid;border-width:0.075em;display:inline-block;font-size:1.8em;font-weight:bold;margin:0 0.5em 0.5em 0;padding:0 0.2em}#webtool h3,#doc h3{font-size:1.6em}#webtool h4,#doc h4{font-size:1.4em}#webtool inputt[type='radio'],#doc input[type='radio']{margin:0 0.25em}#webtool input[type='file']{box-shadow:none}#webtool label,#doc label{display:inline;font-size:1.4em}#webtool legend,#doc legend{border-radius:1em;border-style:solid;border-width:0.1em;font-size:1.4em;font-weight:bold;margin-left:-0.25em;padding:0 0.5em}#webtool fieldset fieldset legend{font-size:1.2em}#webtool li,#doc li{clear:both;margin:1em 0 1em 3em}#webtool li h4,#doc li h4{display:inline;float:left;margin:0.4em 0;text-align:left;width:14em}#webtool ol li{font-size:1.2em}#doc ol li{font-size:1.4em;list-style-type:decimal}#webtool ol li li,#doc ol li li{font-size:1em}#webtool p,#doc p{clear:both;font-size:1.2em;margin:0 0 1em}#webtool select,#doc select{border-style:inset;border-width:0.1em;width:13.5em}#webtool strong.new,#doc strong .new{background:#ff6;font-style:italic}#webtool strong label,#doc strong label{font-size:1em;width:inherit}#webtool textarea{display:inline-block;font-family:'Courier New',Courier,'Lucida Console',monospace;height:10em;margin:0 0 -.1em;width:100%}#webtool ul,#doc ul{margin:-1.4em 0 2em;padding:0}#webtool ul li,#doc ul li{list-style-type:none}@media print{#webtool div,#doc div{width:100%}html td{font-size:0.8em;white-space:normal}#webtool p,#doc p,#webtool .options,#Beautify,#Minify,#Parse,#diff,#webtool ul,#doc ul{display:none}}@media screen and (-webkit-min-device-pixel-ratio:0){.beautify .count li{padding-top:0.546em}.beautify .data li{line-height:1.3}}@media (max-width: 640px){#codeInput label{display:none}#diffBase,#diffNew{width:46%}#doc #dcolorScheme{margin:0 0 1em}#functionGroup,#headline{height:4em}#functionGroup span{margin-left:0.5em;position:relative;z-index:10}#infolinks{margin:0}#reports{display:none}#update{margin-top:2.75em}#webtool .labeltext input,#webtool .file input{width:12em}}",
+scanvas: "#doc.canvas{color:#444}#webtool.canvas input.unchecked{background:#ccc;color:#33" +
                      "3}.canvas *:focus,.canvas .filefocus,.canvas #feedreportbody .focus,.canvas #fee" +
                      "dreportbody .active-focus{outline:0.1em dashed #00f}.canvas #Beautify,.canvas #M" +
                      "inify,.canvas #diffBase,.canvas #diffNew{background:#d8d8cf;border-color:#664;bo" +
@@ -1022,7 +828,7 @@ var pd = {};
                     if ((/^(\s*(\{|\[))/).test(a) === true && (/((\]|\})\s*)$/).test(a) && a.indexOf(",") !== -1) {
                         return output("json");
                     }
-                    if ((/((\}?(\(\))?\)*;?\s*)|([a-z0-9]("|')?\)*);?(\s*\})*)$/i).test(a) === true && ((/(var\s+(\w|\$)+[a-zA-Z0-9]*)/).test(a) === true || (/((\=|(\$\())\s*function)|(\s*function\s+(\w*\s+)?\()/).test(a) === true || a.indexOf("{") === -1 || (/^(\s*if\s+\()/).test(a) === true)) {
+                    if ((/((\}?(\(\))?\)*;?\s*)|([a-z0-9]("|')?\)*);?(\s*\})*)$/i).test(a) === true && ((/(var\s+(\w|\$)+[a-zA-Z0-9]*)/).test(a) === true || (/console\.log\(/).test(a) === true || (/document\.get/).test(a) === true || (/((\=|(\$\())\s*function)|(\s*function\s+(\w*\s+)?\()/).test(a) === true || a.indexOf("{") === -1 || (/^(\s*if\s+\()/).test(a) === true)) {
                         if (a.indexOf("(") > -1 || a.indexOf("=") > -1 || (a.indexOf(";") > -1 && a.indexOf("{") > -1)) {
                             if ((/:\s*((number)|(string))/).test(a) === true && (/((public)|(private))\s+/).test(a) === true) {
                                 return output("typescript");
@@ -1950,6 +1756,7 @@ var pd = {};
                     commline     = {},
                     dustjs       = {},
                     elseline     = {},
+                    endcomma     = {},
                     forceIndent  = {},
                     html         = {},
                     jscorrect    = {},
@@ -2063,6 +1870,7 @@ var pd = {};
                 if (pd.o.langvalue[1] === "javascript") {
                     braceline        = pd.id("bbraceline-no");
                     elseline         = pd.id("jselseline-yes");
+                    endcomma         = pd.id("bendcomma-yes");
                     braces           = pd.id("jsindent-all");
                     jscorrect        = pd.id("jscorrect-yes");
                     jshtml           = pd.id("jsscope-html");
@@ -2076,6 +1884,7 @@ var pd = {};
                         : "";
                     api.correct      = (jscorrect !== null && jscorrect.checked === true);
                     api.elseline     = (elseline !== null && elseline.checked === true);
+                    api.endcomma     = (endcomma !== null && endcomma.checked === true);
                     api.braces       = (braces === null || braces.checked === false)
                         ? "knr"
                         : "allman";
@@ -3403,9 +3212,7 @@ var pd = {};
     //toggle between parsed html diff report and raw text representation
     pd.save                = function dom__save(x) {
         var anchor     = (x.nodeName.toLowerCase() === "a"),
-            top        = (anchor === true)
-                ? x.parentNode.parentNode
-                : x.parentNode,
+            top        = (x.parentNode.parentNode.nodeName.toLowerCase() === "p") ? x.parentNode.parentNode.parentNode : x.parentNode.parentNode,
             button     = (anchor === true)
                 ? x.getElementsByTagName("button")[0]
                 : x,
@@ -3419,51 +3226,7 @@ var pd = {};
             ro         = pd.id("savepref-report"),
             reportonly = (ro !== null && ro.checked === true),
             css        = pd.css.core + pd.css["s" + pd.color],
-            diffstring = "var pd={};pd.colSliderProperties=[];(function(){var d=document.getElementsByTagN" +
-                        "ame('ol'),cells=d[0].getElemensByTagName('li'),len=cells.length,a=0;pd.colSlider" +
-                        "Properties=[d[0].clientWidth,d[1].clientWidth,d[2].parentNode.clientWidth,d[2].p" +
-                        "arentNode.parentNode.clientWidth,d[2].parentNode.offsetLeft-d[2].parentNode.pare" +
-                        "ntNode.offsetLeft,];for(a=0;a<len;a+=1){if(cells[a].getAttribute('class')==='fol" +
-                        "d'){cells[a].onmousedown=pd.difffold;}}if(d.length>3){d[2].onmousedown=pd.colSli" +
-                        "derGrab;d[2].ontouchstart=pd.colSliderGrab;}}());pd.difffold=function dom__difff" +
-                        "old(){var a=0,b=0,self=this,title=self.getAttribute('title').split('line '),min=" +
-                        "Number(title[1].substr(0,title[1].indexOf(' '))),max=Number(title[2]),inner=self" +
-                        ".innerHTML,lists=[],parent=self.parentNode.parentNode,listnodes=(parent.getAttri" +
-                        "bute('class')==='diff')?parent.getElementsByTagName('ol'):parent.parentNode.getE" +
-                        "lementsByTagName('ol'),listLen=listnodes.length;for(a=0;a<listLen;a+=1){lists.pu" +
-                        "sh(listnodes[a].getElementsByTagName('li'));}for(a=0;a<min;a+=1){if(lists[0][a]." +
-                        "getAttribute('class')==='empty'){min+=1;max+=1;}}max=(max>=lists[0].length)?list" +
-                        "s[0].length:max;if(inner.charAt(0)==='-'){self.innerHTML='+'+inner.substr(1);for" +
-                        "(a=min;a<max;a+=1){for(b=0;b<listLen;b+=1){lists[b][a].style.display='none';}}}e" +
-                        "lse{self.innerHTML='-'+inner.substr(1);for(a=min;a<max;a+=1){for(b=0;b<listLen;b" +
-                        "+=1){lists[b][a].style.display='block';}}}};pd.colSliderGrab=function dom__colSl" +
-                        "iderGrab(e){var event=e||window.event,touch=(e!==null&&e.type==='touchstart')?tr" +
-                        "ue:false,node=this,diffRight=node.parentNode,diff=diffRight.parentNode,subOffset" +
-                        "=0,counter=pd.colSliderProperties[0],data=pd.colSliderProperties[1],width=pd.col" +
-                        "SliderProperties[2],total=pd.colSliderProperties[3],offset=pd.colSliderPropertie" +
-                        "s[4],min=0,max=data-1,status='ew',minAdjust=min+15,maxAdjust=max-15,withinRange=" +
-                        "false,diffLeft=diffRight.previousSibling,drop=function dom__colSliderGrab_drop(f" +
-                        "){f=f||window.event;f.preventDefault();node.style.cursor=status+'-resize';if(tou" +
-                        "ch===true){document.ontouchmove=null;document.ontouchend=null;}else{document.onm" +
-                        "ousemove=null;document.onmouseup=null;}},boxmove=function dom__colSliderGrab_box" +
-                        "move(f){f=f||window.event;f.preventDefault();if(touch===true){subOffset=offset-f" +
-                        ".touches[0].clientX;}else{subOffset=offset-f.clientX;}if(subOffset>minAdjust&&su" +
-                        "bOffset<maxAdjust){withinRange=true;}if(withinRange===true&&subOffset>maxAdjust)" +
-                        "{diffRight.style.width=((total-counter-2)/10)+'em';status='e';}else if(withinRan" +
-                        "ge===true&&subOffset<minAdjust){diffRight.style.width=(width/10)+'em';status='w'" +
-                        ";}else if(subOffset<max&&subOffset>min){diffRight.style.width=((width+subOffset)" +
-                        "/10)+'em';status='ew';}if(touch===true){document.ontouchend=drop;}else{document." +
-                        "onmouseup=drop;}};event.preventDefault();if(typeof pd.o==='object'&&pd.o.report." +
-                        "code.box!==null){offset+=pd.o.report.code.box.offsetLeft;offset-=pd.o.report.cod" +
-                        "e.body.scrollLeft;}else{subOffset=(document.body.parentNode.scrollLeft>document." +
-                        "body.scrollLeft)?document.body.parentNode.scrollLeft:document.body.scrollLeft;of" +
-                        "fset-=subOffset;}offset+=node.clientWidth;node.style.cursor='ew-resize';diff.sty" +
-                        "le.width=(total/10)+'em';diff.style.display='inline-block';if(diffLeft.nodeType!" +
-                        "==1){do{diffLeft=diffLeft.previousSibling;}while(diffLeft.nodeType!==1);}diffLef" +
-                        "t.style.display='block';diffRight.style.width=(diffRight.clientWidth/10)+'em';di" +
-                        "ffRight.style.position='absolute';if(touch===true){document.ontouchmove=boxmove;" +
-                        "document.ontouchstart=false;}else{document.onmousemove=boxmove;document.onmoused" +
-                        "own=null;}};",
+            diffstring = "var pd={};pd.colSliderProperties=[];pd.difffold=function dom__difffold(){var a=0,b=0,self=this,title=self.getAttribute(\"title\").split(\"line \"),min=Number(title[1].substr(0,title[1].indexOf(\" \"))),max=Number(title[2]),inner=self.innerHTML,lists=[],parent=self.parentNode.parentNode,listnodes=(parent.getAttribute(\"class\")===\"diff\")?parent.getElementsByTagName(\"ol\"):parent.parentNode.getElementsByTagName(\"ol\"),listLen=listnodes.length;for(a=0;a<listLen;a+=1){lists.push(listnodes[a].getElementsByTagName(\"li\"))}for(a=0;a<min;a+=1){if(lists[0][a].getAttribute(\"class\")===\"empty\"){min+=1;max+=1}}max=(max>=lists[0].length)?lists[0].length:max;if(inner.charAt(0)===\"-\"){self.innerHTML=\"+\"+inner.substr(1);for(a=min;a<max;a+=1){for(b=0;b<listLen;b+=1){lists[b][a].style.display=\"none\"}}}else{self.innerHTML=\"-\"+inner.substr(1);for(a=min;a<max;a+=1){for(b=0;b<listLen;b+=1){lists[b][a].style.display=\"block\"}}}};pd.colSliderGrab=function dom__colSliderGrab(e){var event=e||window.event,touch=(e!==null&&e.type===\"touchstart\")?true:false,node=this,diffRight=node.parentNode,diff=diffRight.parentNode,subOffset=0,counter=pd.colSliderProperties[0],data=pd.colSliderProperties[1],width=pd.colSliderProperties[2],total=pd.colSliderProperties[3],offset=pd.colSliderProperties[4],min=0,max=data-1,status=\"ew\",minAdjust=min+15,maxAdjust=max-15,withinRange=false,diffLeft=diffRight.previousSibling,drop=function dom__colSliderGrab_drop(f){f=f||window.event;f.preventDefault();node.style.cursor=status+\"-resize\";if(touch===true){document.ontouchmove=null;document.ontouchend=null}else{document.onmousemove=null;document.onmouseup=null}},boxmove=function dom__colSliderGrab_boxmove(f){f=f||window.event;f.preventDefault();if(touch===true){subOffset=offset-f.touches[0].clientX}else{subOffset=offset-f.clientX}if(subOffset>minAdjust&&subOffset<maxAdjust){withinRange=true}if(withinRange===true&&subOffset>maxAdjust){diffRight.style.width=((total-counter-2)/10)+\"em\";status=\"e\"}else if(withinRange===true&&subOffset<minAdjust){diffRight.style.width=(width/10)+\"em\";status=\"w\"}else if(subOffset<max&&subOffset>min){diffRight.style.width=((width+subOffset)/10)+\"em\";status=\"ew\"}if(touch===true){document.ontouchend=drop}else{document.onmouseup=drop}};event.preventDefault();if(typeof pd.o===\"object\"&&pd.o.report.code.box!==null){offset+=pd.o.report.code.box.offsetLeft;offset-=pd.o.report.code.body.scrollLeft}else{subOffset=(document.body.parentNode.scrollLeft>document.body.scrollLeft)?document.body.parentNode.scrollLeft:document.body.scrollLeft;offset-=subOffset}offset+=node.clientWidth;node.style.cursor=\"ew-resize\";diff.style.width=(total/10)+\"em\";diff.style.display=\"inline-block\";if(diffLeft.nodeType!==1){do{diffLeft=diffLeft.previousSibling}while(diffLeft.nodeType!==1)}diffLeft.style.display=\"block\";diffRight.style.width=(diffRight.clientWidth/10)+\"em\";diffRight.style.position=\"absolute\";if(touch===true){document.ontouchmove=boxmove;document.ontouchstart=false}else{document.onmousemove=boxmove;document.onmousedown=null}};(function(){\"use strict\";var d=document.getElementsByTagName(\"ol\"),cells=d[0].getElementsByTagName(\"li\"),len=cells.length,a=0;pd.colSliderProperties=[d[0].clientWidth,d[1].clientWidth,d[2].parentNode.clientWidth,d[2].parentNode.parentNode.clientWidth,d[2].parentNode.offsetLeft-d[2].parentNode.parentNode.offsetLeft];for(a=0;a<len;a+=1){if(cells[a].getAttribute(\"class\")===\"fold\"){cells[a].onmousedown=pd.difffold}}if(d.length>3){d[2].onmousedown=pd.colSliderGrab;d[2].ontouchstart=pd.colSliderGrab}}());",
             beaustring = "pd.beaufold=function dom__beaufold(){var self=this,title=self.getAttribute('titl" +
                         "e').split('line '),min=Number(title[1].substr(0,title[1].indexOf(' '))),max=Numb" +
                         "er(title[2]),a=0,b='',list=[self.parentNode.getElementsByTagName('li'),self.pare" +
@@ -3476,12 +3239,13 @@ var pd = {};
                         "}self.innerHTML='-'+self.innerHTML.substr(1);}};",
             span       = pd.id("inline"),
             inline     = (span !== null && span.checked !== false),
-            type       = "";
+            type       = "application/javascript";
         if (bodyInner.innerHTML === "") {
             return;
         }
-        if (inline === false) {
-            type = document.getElementsByTagName("script")[0].getAttribute("type");
+        
+        if (reportonly === true && anchor === true) {
+            x.removeAttribute("href");
         }
 
         //added support for Firefox and Opera because they support long
@@ -3517,19 +3281,17 @@ var pd = {};
                             "nces per lines compared.</p></div>");
                     build.push(classQuote);
                     build.push(content[1]);
+                    build.push("<script type='");
+                    build.push(type);
+                    build.push("'><![CDATA[");
+                    //build.push("'>");
                     if (pd.mode === "diff") {
-                        build.push("<script type='");
-                        build.push(type);
-                        build.push("'><![CDATA[");
                         build.push(diffstring);
-                        build.push("]]></script>");
                     } else if (pd.mode === "beau") {
-                        build.push("<script type='");
-                        build.push(type);
-                        build.push("'><![CDATA[");
                         build.push(beaustring);
-                        build.push("]]></script>");
                     }
+                    build.push("]]></script>");
+                    //build.push("</script>");
                 }
             }
             build.push("</body></html>");
@@ -3560,7 +3322,7 @@ var pd = {};
             lastChild.appendChild(span);
             pd.o.page.appendChild(lastChild);
             span.style.left = (((pd.o.page.clientWidth + 10) - span.clientWidth) / 2) + "px";
-            return;
+            return false;
         }
         //Webkit and IE get the old functionality of a textarea with
         //HTML text content to copy and paste into a text file.
@@ -3594,7 +3356,9 @@ var pd = {};
                     if (reportonly === true) {
                         build.push(" <h4>Primary Content</h4>");
                         build.push(" <textarea rows='40' cols='80' id='textreport'>");
+                        build.push("&lt;div id=\"webtool\" class=\"" + pd.color + "\"&gt;");
                         build.push(classQuote.replace(/&/g, "&amp;").replace(/>/g, "&gt;").replace(/</g, "&lt;"));
+                        build.push("&lt;/div&gt;");
                         build.push("</textarea>");
                         build.push(" <h4>Additional Data</h4>");
                         build.push(" <textarea rows='40' cols='80' id='textreportmeta'>");
@@ -3646,69 +3410,75 @@ var pd = {};
                                 build.push("]]&gt;&lt;/script&gt;");
                             }
                         }
-                        build.push("&lt;/div&gt;&lt;/body&gt;&lt;/html&gt;</textarea>");
+                        build.push("&lt;/div&gt;");
+                        if (reportonly === true) {
+                            build.push("&lt;/div&gt;");
+                        }
+                        build.push("&lt;/body&gt;&lt;/html&gt;</textarea>");
                     }
                 }
             }
             button.innerHTML = "H";
             button.setAttribute("title", "Convert output to rendered HTML.");
             body.innerHTML = build.join("");
-        } else {
-            if (pd.mode === "diff") {
-                pd.o.save.checked = false;
-            }
-            if (bodyInner !== "") {
-                if (reportonly === true) {
-                    build.push(pd.id("textreportmeta").value);
-                    build.push(pd.id("textreport").value);
+            return false;
+        }
+        if (pd.mode === "diff") {
+            pd.o.save.checked = false;
+        }
+        if (bodyInner !== "") {
+            if (reportonly === true) {
+                bodyInner = bodyInner.replace(/&lt;div\ id\=("|')webtool("|')\ class\=("|')\w+("|')&gt;/, "").replace(/&lt;\/div&gt;&;lt;script/, "&lt;script");
+                build.push(pd.id("textreportmeta").value);
+                build.push(pd.id("textreport").value);
+            } else {
+                if (bodyInner.indexOf("<textarea") > -1) {
+                    bodyInner = bodyInner.replace(/&lt;/g, "<").replace(/&gt;/g, ">").replace(/&amp;/g, "&");
+                }
+                classQuote = (bodyInner.indexOf("<div class='pdsavecontent'") > -1)
+                    ? "<div class='pdsavecontent'>"
+                    : "<div class=\"pdsavecontent\">";
+                content    = bodyInner.split(classQuote);
+                if (content[0].indexOf("</h1>") > -1) {
+                    build.push(content[0].split("</h1>")[1]);
                 } else {
-                    if (bodyInner.indexOf("<textarea") > -1) {
-                        bodyInner = bodyInner.replace(/&lt;/g, "<").replace(/&gt;/g, ">").replace(/&amp;/g, "&");
+                    build.push(content[0]);
+                }
+                if (content.length > 1) {
+                    if (content[1].indexOf("<script") > -1) {
+                        content[1] = content[1].substring(0, content[1].indexOf("<script"));
+                    } else if (content[1].indexOf("</body") > -1) {
+                        content[1] = content[1].substring(0, content[1].indexOf("</body") - 6);
                     }
-                    classQuote = (bodyInner.indexOf("<div class='pdsavecontent'") > -1)
-                        ? "<div class='pdsavecontent'>"
-                        : "<div class=\"pdsavecontent\">";
-                    content    = bodyInner.split(classQuote);
-                    if (content[0].indexOf("</h1>") > -1) {
-                        build.push(content[0].split("</h1>")[1]);
-                    } else {
-                        build.push(content[0]);
-                    }
-                    if (content.length > 1) {
-                        if (content[1].indexOf("<script") > -1) {
-                            content[1] = content[1].substring(0, content[1].indexOf("<script"));
-                        } else if (content[1].indexOf("</body") > -1) {
-                            content[1] = content[1].substring(0, content[1].indexOf("</body") - 6);
-                        }
-                        build.push(content[1]);
-                    }
+                    build.push(content[1]);
                 }
             }
-            button.innerHTML = "S";
-            button.setAttribute("title", "Convert report to text that can be saved.");
-            body.innerHTML = build.join("");
-            content        = body.getElementsByTagName("ol");
-            if (content.length > 0) {
-                if (pd.mode === "diff") {
-                    pd.colSliderProperties  = [
-                        content[0].clientWidth, content[1].clientWidth, content[2].parentNode.clientWidth, content[2].parentNode.parentNode.clientWidth, content[2].parentNode.offsetLeft - content[2].parentNode.parentNode.offsetLeft
-                    ];
-                    content[2].onmousedown  = pd.colSliderGrab;
-                    content[2].ontouchstart = pd.colSliderGrab;
-                }
-                content = content[0].getElementsByTagName("li");
-                for (pageHeight = content.length - 1; pageHeight > -1; pageHeight -= 1) {
-                    if (content[pageHeight].getAttribute("class") === "fold") {
-                        if (pd.mode === "beau") {
-                            content[pageHeight].onmousedown = pd.beaufold;
-                        } else if (pd.mode === "diff") {
-                            content[pageHeight].onmousedown = pd.difffold;
-                        }
+        }
+        button.innerHTML = "S";
+        button.setAttribute("title", "Convert report to text that can be saved.");
+        body.innerHTML = build.join("");
+        content        = body.getElementsByTagName("ol");
+        if (content.length > 0) {
+            if (pd.mode === "diff") {
+                pd.colSliderProperties  = [
+                    content[0].clientWidth, content[1].clientWidth, content[2].parentNode.clientWidth, content[2].parentNode.parentNode.clientWidth, content[2].parentNode.offsetLeft - content[2].parentNode.parentNode.offsetLeft
+                ];
+                content[2].onmousedown  = pd.colSliderGrab;
+                content[2].ontouchstart = pd.colSliderGrab;
+            }
+            content = content[0].getElementsByTagName("li");
+            for (pageHeight = content.length - 1; pageHeight > -1; pageHeight -= 1) {
+                if (content[pageHeight].getAttribute("class") === "fold") {
+                    if (pd.mode === "beau") {
+                        content[pageHeight].onmousedown = pd.beaufold;
+                    } else if (pd.mode === "diff") {
+                        content[pageHeight].onmousedown = pd.difffold;
                     }
                 }
             }
         }
         pd.options(x.parentNode);
+        return false;
     };
 
     //basic drag and drop for the report windows
@@ -4757,6 +4527,38 @@ var pd = {};
                     data = [
                         "braceline", "true"
                     ];
+                } else if (id === "bcommline-no") {
+                    data = [
+                        "commline", "false"
+                    ];
+                } else if (id === "bcommline-yes") {
+                    data = [
+                        "commline", "true"
+                    ];
+                } else if (id === "bdustno" || id === "ddustno" || id === "mdustno" || id === "pdustno") {
+                    data = [
+                        "dustjs", "false"
+                    ];
+                } else if (id === "bdustyes" || id === "ddustyes" || id === "mdustyes" || id === "pdustyes") {
+                    data = [
+                        "dustjs", "true"
+                    ];
+                } else if (id === "bendcomma-no") {
+                    data = [
+                        "endcomma", "false"
+                    ];
+                } else if (id === "bendcomma-yes") {
+                    data = [
+                        "endcomma", "true"
+                    ];
+                } else if (id === "bforce_indent-no" || id === "dforce_indent-no") {
+                    data = [
+                        "force_indent", "false"
+                    ];
+                } else if (id === "bforce_indent-yes" || id === "dforce_indent-yes") {
+                    data = [
+                        "force_indent", "true"
+                    ];
                 } else if (id === "bjslines-all" || id === "djslines-all") {
                     data = [
                         "preserve", "all"
@@ -4772,6 +4574,14 @@ var pd = {};
                 } else if (id === "bjslines-none" || id === "djslines-none") {
                     data = [
                         "preserve", "none"
+                    ];
+                } else if (id === "bnoleadzero-no") {
+                    data = [
+                        "noleadzero", "false"
+                    ];
+                } else if (id === "bnoleadzero-yes") {
+                    data = [
+                        "noleadzero", "true"
                     ];
                 } else if (id === "bobjsort-all" || id === "dobjsort-all" || id === "mobjsort-all") {
                     data = [
@@ -4801,6 +4611,14 @@ var pd = {};
                     data = [
                         "quoteConvert", "single"
                     ];
+                } else if (id === "bspaceclose-no") {
+                    data = [
+                        "spaceclose", "false"
+                    ];
+                } else if (id === "bspaceclose-yes") {
+                    data = [
+                        "spaceclose", "true"
+                    ];
                 } else if (id === "bstyleguide") {
                     if (item[item.selectedIndex].value === "") {
                         data = [
@@ -4819,15 +4637,31 @@ var pd = {};
                     data = [
                         "tagmerge", "true"
                     ];
-                } else if (id === "bvarword-each") {
+                } else if (id === "btagsort-no" || id === "dtagsort-no" || id === "mtagsort-no" || id === "ptagsort-no") {
+                    data = [
+                        "tagsort", "false"
+                    ];
+                } else if (id === "btagsort-yes" || id === "dtagsort-yes" || id === "mtagsort-yes" || id === "ptagsort-yes") {
+                    data = [
+                        "tagsort", "true"
+                    ];
+                } else if (id === "btextpreserveno" || id === "dtextpreserveno" || id === "mtextpreserveno" || id === "ptextpreserveno") {
+                    data = [
+                        "textpreserve", "false"
+                    ];
+                } else if (id === "btextpreserveyes" || id === "dtextpreserveyes" || id === "mtextpreserveyes" || id === "ptextpreserveyes") {
+                    data = [
+                        "textpreserve", "true"
+                    ];
+                } else if (id === "bvarword-each" || id === "dvarword-each" || id === "mvarword-each" || id === "pvarword-each") {
                     data = [
                         "varword", "each"
                     ];
-                } else if (id === "bvarword-list") {
+                } else if (id === "bvarword-list" || id === "dvarword-list" || id === "mvarword-list" || id === "pvarword-list") {
                     data = [
                         "varword", "list"
                     ];
-                } else if (id === "bvarword-none") {
+                } else if (id === "bvarword-none" || id === "dvarword-none" || id === "mvarword-none" || id === "pvarword-none") {
                     data = [
                         "varword", "none"
                     ];
@@ -4846,6 +4680,14 @@ var pd = {};
                 } else if (id === "csvchar") {
                     data = [
                         "csvchar", item.value
+                    ];
+                } else if (id === "cssinsertlines-no") {
+                    data = [
+                        "cssinsertlines", "false"
+                    ];
+                } else if (id === "cssinsertlines-yes") {
+                    data = [
+                        "cssinsertlines", "true"
                     ];
                 } else if (id === "diff-char" || id === "beau-char") {
                     data = [
@@ -4879,14 +4721,6 @@ var pd = {};
                     data = [
                         "content", "false"
                     ];
-                } else if (id === "dforce_indent-yes" || id === "bforce_indent-yes") {
-                    data = [
-                        "force_indent", "true"
-                    ];
-                } else if (id === "dforce_indent-no" || id === "bforce_indent-no") {
-                    data = [
-                        "force_indent", "false"
-                    ];
                 } else if (id === "diffcommentsn") {
                     data = [
                         "diffcomments", "false"
@@ -4915,11 +4749,11 @@ var pd = {};
                     data = [
                         "semicolon", "false"
                     ];
-                } else if (id === "htmld-no" || id === "html-no" || id === "htmlm-no") {
+                } else if (id === "htmld-no" || id === "html-no" || id === "htmlm-no" || id === "phtml-no") {
                     data = [
                         "html", "false"
                     ];
-                } else if (id === "htmld-yes" || id === "html-yes" || id === "htmlm-yes") {
+                } else if (id === "htmld-yes" || id === "html-yes" || id === "htmlm-yes" || id === "phtml-yes") {
                     data = [
                         "html", "true"
                     ];
@@ -5147,7 +4981,7 @@ var pd = {};
         }
         if (pd.test.ace === true) {
             if (baseText !== null && newText !== null) {
-                math                  = (height / 12) - (21.5 + headline);
+                math                  = (height / 12) - (24.35 + headline);
                 baseText.style.height = math + "em";
                 newText.style.height  = math + "em";
                 pd.ace.diffBase.setStyle("height:" + math + "em");
@@ -5155,7 +4989,7 @@ var pd = {};
                 pd.ace.diffBase.resize();
                 pd.ace.diffNew.resize();
             }
-            math = (height / 12) - (20.12 + headline);
+            math = (height / 12) - (22.12 + headline);
             if (pd.o.codeBeauIn !== null) {
                 beauIn.style.height = math + "em";
                 pd.ace.beauIn.setStyle("height:" + math + "em");
@@ -5171,7 +5005,7 @@ var pd = {};
                 pd.ace.parsIn.setStyle("height:" + math + "em");
                 pd.ace.parsIn.resize();
             }
-            math = (height / 12) - (17.725 + headline);
+            math = (height / 12) - (19.725 + headline);
             if (pd.o.codeBeauOut !== null) {
                 beauOut.style.height = math + "em";
                 pd.ace.beauOut.setStyle("height:" + math + "em");
@@ -5189,11 +5023,11 @@ var pd = {};
             }
         } else {
             if (baseText !== null && newText !== null) {
-                math                  = (height / 12) - (21.5 + headline);
+                math                  = (height / 12) - (24.35 + headline);
                 baseText.style.height = math + "em";
                 newText.style.height  = math + "em";
             }
-            math = (height / 12) - (20.65 + headline);
+            math = (height / 12) - (22 + headline);
             if (pd.o.codeBeauIn !== null) {
                 pd.o.codeBeauIn.style.height = math + "em";
             }
@@ -5203,7 +5037,7 @@ var pd = {};
             if (pd.o.codeParsIn !== null) {
                 pd.o.codeParsIn.style.height = math + "em";
             }
-            math = (height / 12) - (18.3 + headline);
+            math = (height / 12) - (19.65 + headline);
             if (pd.o.codeBeauOut !== null) {
                 pd.o.codeBeauOut.style.height = math + "em";
             }

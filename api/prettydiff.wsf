@@ -66,6 +66,8 @@
                             error.push("");
                             error.push("* elseline       - boolean - The keyword 'else' will be pushed to a new line if this is true. Defaults to false.");
                             error.push("");
+                            error.push("* endcomma       - boolean - If there should be a trailing comma in JavaScript arrays and objects.");
+                            error.push("");
                             error.push("* force_indent   - boolean - If lang is 'markup' this will force indentation upon all content and tags without regard for the creation of new text nodes. Default is false.");
                             error.push("");
                             error.push("* help           - string  - This list of argument definitions. The value is unnecessary and is required only to pass in use of the parameter.");
@@ -91,8 +93,6 @@
                             error.push("                   Accepted values: diff, beautify, minify, parse");
                             error.push("");
                             error.push("* noleadzero     - boolean - If in CSS values leading 0s immediately preceeding a decimal should be removed or prevented.");
-                            error.push("");
-                            error.push("* obfuscate      - boolean - If JavaScript minification should result in smaller variable names and fewer simicolons. Default is false.");
                             error.push("");
                             error.push("* objsort        - string  - Sorts properties by key name in JavaScript and/or CSS. Defaults to 'js', which sorts JavaScript object properties.");
                             error.push("                   Accepted values: all, css, js, none");
@@ -302,6 +302,7 @@
                     args.diffview = (WScript.Arguments.Named("diffview") === "inline") ? "inline" : "sidebyside";
                     args.dustjs = (WScript.Arguments.Name("dustjs") === "true" || WScript.Arguments.Name("dustjs") === true);
                     args.elseline = (WScript.Arguments.Name("elseline") === "true" || WScript.Arguments.Name("elseline") === true);
+                    args.endcomma = (WScript.Arguments.Name("endcomma") === "true" || WScript.Arguments.Name("endcomma") === true);
                     args.force_indent = (WScript.Arguments.Named("force_indent") === "true" || WScript.Arguments.Named("force_indent") === true);
                     args.html = (WScript.Arguments.Named("html") === "true" || WScript.Arguments.Named("html") === true);
                     args.inchar = WScript.Arguments.Named("inchar") || " ";
@@ -312,7 +313,6 @@
                     args.langdefault = (WScript.Arguments.Named("langdefault") === "markup" || WScript.Arguments.Named("langdefault") === "html" || WScript.Arguments.Named("langdefault") === "css" || WScript.Arguments.Named("langdefault") === "csv" || WScript.Arguments.Named("langdefault") === "javascript") ? WScript.Arguments.Named("langdefault") : "text";
                     args.mode = (WScript.Arguments.Named("mode") || "diff");
                     args.noleadzero = (WScript.Arguments.Named("noleadzero") === "true" || WScript.Arguments.Named("noleadzero") === true);
-                    args.obfuscate = (WScript.Arguments.Named("obfuscate") || false);
                     args.objsort = (WScript.Arguments.Named("objsort") === "all" || WScript.Arguments.Named("objsort") === "css" || WScript.Arguments.Named("objsort") === "none") ? WScript.Arguments.Named("objsort") : "js";
                     args.quote = (WScript.Arguments.Named("quote") === "true" || WScript.Arguments.Named("quote") === true);
                     args.quoteConvert = (WScript.Arguments.Named("quoteConvert") === "double" || WScript.Arguments.Named("quoteConvert") === "single") ? WScript.Arguments.Named("quoteConvert") : "none";

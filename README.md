@@ -1,7 +1,6 @@
 Try it online at [http://prettydiff.com/](http://prettydiff.com/).
 
-![Pretty Diff logo](http://prettydiff.com/images/pdlogoxs.svg) Pretty Diff
-===
+# ![Pretty Diff logo](http://prettydiff.com/images/pdlogoxs.svg) Pretty Diff
 
 [![Gitter](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/prettydiff/prettydiff?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
 [![npm version](https://badge.fury.io/js/prettydiff.svg)](https://www.npmjs.com/package/prettydiff)
@@ -9,13 +8,11 @@ Try it online at [http://prettydiff.com/](http://prettydiff.com/).
 [![npm downloads](https://img.shields.io/npm/dm/prettydiff.svg)](https://www.npmjs.com/package/prettydiff)
 [![Twitter Tweets](https://img.shields.io/twitter/url/http/prettydiff.com.svg?style=social)](https://twitter.com/intent/tweet?text=Handy%20web%20development%20tool:%20%20url=http%3A%2F%2Fprettydiff.com)
 
-Summary
----
+## Summary
 
 Language aware code comparison tool for several web based languages. It also beautifies, minifies, and a few other things.
 
-Benefits - see [overview page](http://prettydiff.com/overview.xhtml) for more details
----
+## Benefits - see [overview page](http://prettydiff.com/overview.xhtml) for more details
 
 * [React JSX format support](http://prettydiff.com/guide/react_jsx.xhtml)
 * LESS, SCSS (Sass), and CSS support
@@ -26,9 +23,11 @@ Benefits - see [overview page](http://prettydiff.com/overview.xhtml) for more de
 * [Markup beautification with optional opt out](http://prettydiff.com/guide/tag_ignore.xhtml)
 * [JavaScript auto correction](http://prettydiff.com/guide/jscorrect.xhtml)
 * [Supports a ton of options](http://prettydiff.com/documentation.php#function_properties)
+* [Default beautifier](https://atom.io/packages/atom-beautify/) for several languages in [Atom.io](https://atom.io/)
 
-Run with Node.js / io.js / CommonJS / RequireJS
----
+## Executing Pretty Diff
+
+### Run with Node.js / io.js / CommonJS / RequireJS
 
 Node.js and io.js support is provided by api/node-local.js.  This file can execute in the following modes:
 
@@ -39,7 +38,7 @@ Node.js and io.js support is provided by api/node-local.js.  This file can execu
 * directory - everything in a directory is processed into a specified output directory except ".", "..", and subdirectories
 * subdirectory - process the entire directory tree
 
-**Execute in the context of a NodeJS application**
+#### Execute in the context of a NodeJS application
 
 First install the prettydiff package locally
 
@@ -55,7 +54,7 @@ Add this code to your application
         },
         output     = prettydiff.api(args);
 
-**Execute from the command line**
+#### Execute from the command line
 
 First install the prettydiff package globally
 
@@ -80,8 +79,7 @@ To see only the version number supply only *v* or *version* as an argument:
     prettydiff v
     prettydiff version
 
-Run in a web browser with api/dom.js
----
+### Run in a web browser with api/dom.js
 
 Please feel free to use prettydiff.com.xhtml file to supplement dom.js.  Otherwise, dom.js requires supplemental assistance to map DOM nodes from an HTML source.  dom.js is fault tolerant so nodes mapped to the supplied prettydiff.com.xhtml don't need to be supported from custom HTML.
 
@@ -90,8 +88,7 @@ To run Pretty Diff using dom.js include the following two script tags and bind t
     <script type="application/javascript" src="prettydiff.js"></script>
     <script type="application/javascript" src="api/dom.js"></script>
 
-Run on Windows command line with WSH
----
+### Run on Windows command line with WSH
 
 Create a WSH script file using XML syntax and with a file extension of
 "WSF".  This file must have a tag for each supported argument, must be
@@ -104,8 +101,7 @@ Pretty Diff would be executed using the following on CLI:
     cscript prettydiff.wsf
     cscript prettydiff.wsf /source:"myFile.xml" /mode:"beautify"
 
-Execute with vanilla JS
----
+### Execute with vanilla JS
 
     var args   = {
             source: "asdf",
@@ -114,8 +110,9 @@ Execute with vanilla JS
         },
         output = prettydiff(args);
 
-License:
----
+### Run Pretty Diff in [Atom](https://atom.io/) code editor with the [atom-beautify](https://atom.io/packages/atom-beautify) package.
+
+## License:
 
  @source: http://prettydiff.com/prettydiff.js
 
@@ -158,8 +155,7 @@ License:
 
  @licend  The above is the entire license notice for Pretty Diff.
 
-Acknowledgements
----
+## Acknowledgements
  
  * Harry Whitfield - http://g6auc.me.uk/
   - JS Pretty QA
