@@ -442,6 +442,8 @@ var prettydiff = function prettydiff(api) {
                         langdefault   : (typeof api.langdefault === "string")
                             ? setlangmode(api.langdefault.toLowerCase())
                             : "text",
+                        //methodchain - if JavaScript method chains should be strung onto a single line instead of indented
+                        methodchain   : (api.methodchain === true || api.methodchain === "true"),
                         //mode - is this a minify, beautify, or diff operation
                         mode          : (typeof api.mode === "string" && (api.mode === "minify" || api.mode === "beautify" || api.mode === "parse"))
                             ? api.mode
@@ -2450,7 +2452,7 @@ var prettydiff = function prettydiff(api) {
                                         if (token[set[xx][2]] !== undefined && token[set[xx][0]].indexOf(name) === 0) {
                                             if (token[set[xx][2]].indexOf("!important") > -1) {
                                                 important = true;
-                                                token[set[xx][2]] = token[set[xx][2]].replace(/\s*\!important/, "");
+                                                token[set[xx][2]] = token[set[xx][2]].replace(/\s*!important/, "");
                                             }
                                             if (token[set[xx][0]] === name || token[set[xx][0]].indexOf(name + " ") === 0) {
                                                 yy       += 1;
@@ -3056,7 +3058,7 @@ var prettydiff = function prettydiff(api) {
                 tchar         = (typeof args.tchar === "string")
                     ? args.tchar
                     : " ",
-                inline        = (args.inline === true || args.inline === "true"),
+                inline        = (args.inline === true || args.inline === "true" || args.inline === "inline"),
                 tab           = (function diffview__tab() {
                     var a      = 0,
                         output = [];
@@ -4098,6 +4100,7 @@ var prettydiff = function prettydiff(api) {
                     : ((Number(args.inlevel) > -1)
                         ? Number(args.inlevel)
                         : 0),
+                jmethodchain  = (args.methodchain === true || args.methodchain === "true"),
                 jmode         = (args.mode === "minify" || args.mode === "parse" || args.mode === "diff")
                     ? args.mode
                     : "beautify",
@@ -4359,7 +4362,7 @@ var prettydiff = function prettydiff(api) {
                                 }
                                 if (commaTest === true && token[cc] === "," && start < end) {
                                     keys.push([
-                                        start, end + 1, false
+                                        start, end + 1
                                     ]);
                                     end = start - 1;
                                 }
@@ -4367,7 +4370,7 @@ var prettydiff = function prettydiff(api) {
                             if (dd < 0 && cc < startlen) {
                                 if (keys.length > 0 && keys[keys.length - 1][0] > cc + 1) {
                                     keys.push([
-                                        cc + 1, keys[keys.length - 1][0] - 1, keys[keys.length - 1][2]
+                                        cc + 1, keys[keys.length - 1][0] - 1
                                     ]);
                                 }
                                 if (token[cc - 1] === "=" || token[cc - 1] === ":" || token[cc - 1] === "(" || token[cc - 1] === "[" || token[cc - 1] === "," || types[cc - 1] === "word" || cc === 0) {
@@ -4377,6 +4380,9 @@ var prettydiff = function prettydiff(api) {
                                         commaTest = false;
                                         for (dd = 0; dd < keylen; dd += 1) {
                                             keyend = keys[dd][1];
+                                            if (lines[keys[dd][0] - 1] === 2 && pairLines.length > 0) {
+                                                pairLines[pairLines.length - 1] = 2;
+                                            }
                                             for (ee = keys[dd][0]; ee < keyend; ee += 1) {
                                                 pairToken.push(token[ee]);
                                                 pairTypes.push(types[ee]);
@@ -4386,11 +4392,6 @@ var prettydiff = function prettydiff(api) {
                                                 } else if (token[ee] !== "," && types[ee] !== "comment" && types[ee] !== "comment-inline") {
                                                     commaTest = false;
                                                 }
-                                            }
-                                            if (dd < keylen - 1 && keys[dd + 1][2] === true) {
-                                                pairLines[pairLines.length - 1] = 2;
-                                            } else {
-                                                pairLines[pairLines.length - 1] = 0;
                                             }
                                             if (commaTest === false) {
                                                 ee = pairTypes.length - 1;
@@ -4402,12 +4403,8 @@ var prettydiff = function prettydiff(api) {
                                                 ee += 1;
                                                 pairToken.splice(ee, 0, ",");
                                                 pairTypes.splice(ee, 0, "separator");
-                                                if (pairLines[ee - 1] === 2) {
-                                                    pairLines[ee - 1] = 0;
-                                                    pairLines.splice(ee, 0, 2);
-                                                } else {
-                                                    pairLines.splice(ee, 0, 0);
-                                                }
+                                                pairLines.splice(ee, 0, pairLines[ee - 1]);
+                                                pairLines[ee - 1] = 0;
                                             }
                                         }
                                         ee = pairTypes.length - 1;
@@ -4426,12 +4423,12 @@ var prettydiff = function prettydiff(api) {
                                         token = token.concat(pairToken);
                                         types = types.concat(pairTypes);
                                         lines = lines.concat(pairLines);
-                                        if (jendcomma === true) {
+                                        if (jendcomma === true && types[lengtha - 1] !== "start" && types[lengtha - 1] !== "method") {
                                             token.push(",");
                                             types.push("separator");
                                             lines.push(0);
                                         }
-                                    } else if (jendcomma === true) {
+                                    } else if (jendcomma === true && types[lengtha - 1] !== "start" && types[lengtha - 1] !== "method") {
                                         token.push(",");
                                         types.push("separator");
                                         lines.push(0);
@@ -4721,6 +4718,9 @@ var prettydiff = function prettydiff(api) {
                                     bb -= 1;
                                 }
                                 if (bb < 0) {
+                                    if (token[aa - 1] === "import") {
+                                        return;
+                                    }
                                     if (token[aa - 1] === "do" || typel === "word" || typel === "literal" || (opers === true && colon === false)) {
                                         break;
                                     }
@@ -4728,7 +4728,7 @@ var prettydiff = function prettydiff(api) {
                                 }
                                 if (bb === 0) {
                                     if (token[aa] === "," && aa < len && isEnd === true) {
-                                        if (jendcomma === true && token[lengtha - 1] !== ",") {
+                                        if (jendcomma === true && token[lengtha - 1] !== "," && types[lengtha - 1] !== "start" && types[lengtha - 1] !== "method") {
                                             token.push(",");
                                             types.push("separator");
                                             lines.push(0);
@@ -4925,17 +4925,19 @@ var prettydiff = function prettydiff(api) {
                     strlen         = function jspretty__tokenize_strlen(item) {
                         var aa    = 0,
                             bb    = 0,
+                            cc    = 0,
                             str   = "",
                             qchar = item.charAt(0);
                         if (item.length > jwrap + 2) {
                             item = item.slice(1, item.length - 1);
                             bb   = parseInt(item.length / jwrap, 10) * jwrap;
                             for (aa = 0; aa < bb; aa += jwrap) {
-                                if (item.charAt(aa + jwrap) === qchar && item.charAt(aa + jwrap - 1) === "\\") {
-                                    token.push(qchar + item.slice(aa, aa + jwrap + 1) + qchar);
-                                    aa += 1;
+                                cc = aa + jwrap;
+                                if (item.charAt(cc - 1) === "\\") {
+                                    token.push(qchar + item.slice(aa, cc - 1) + qchar);
+                                    aa -= 1;
                                 } else {
-                                    str = qchar + item.slice(aa, aa + jwrap) + qchar;
+                                    str = qchar + item.slice(aa, cc) + qchar;
                                     token.push(str);
                                 }
                                 types.push("literal");
@@ -4944,7 +4946,7 @@ var prettydiff = function prettydiff(api) {
                                 types.push("operator");
                                 lines.push(0);
                             }
-                            if (aa - jwrap !== jwrap && (aa !== bb || aa === jwrap)) {
+                            if (aa < item.length) {
                                 token.push(qchar + item.slice(aa, aa + jwrap) + qchar);
                                 types.push("literal");
                                 lines.push(0);
@@ -6125,7 +6127,7 @@ var prettydiff = function prettydiff(api) {
                         asifix();
                         stats.container += 1;
                         plusplus();
-                        if (jendcomma === false && ltoke === ",") {
+                        if ((jendcomma === false || token[lengtha - 2] === "[") && ltoke === ",") {
                             token.pop();
                             types.pop();
                             lines.pop();
@@ -6304,8 +6306,26 @@ var prettydiff = function prettydiff(api) {
                         lettest    = -1,
                         varlen     = [],
                         methodtest = [],
+                        starttype  = [],
+                        methodbreak = [false],
+                        arrbreak   = [],
                         destruct   = [],
                         assignlist = [false],
+                        destructfix = function jspretty__algorithm_destructFix() {
+                            var c = 0,
+                                d = 1;
+                            for (c = a - 1; c > -1; c -= 1) {
+                                if (types[c] === "end") {
+                                    d += 1;
+                                } else if (types[c] === "start" || types[c] === "method") {
+                                    d -= 1;
+                                }
+                                if (d === 0) {
+                                    level[c] = indent;
+                                    return;
+                                }
+                            }
+                        },
                         tern       = function jspretty__algorithm_tern() {
                             var c = 0,
                                 d = 0;
@@ -6327,62 +6347,71 @@ var prettydiff = function prettydiff(api) {
                                 }
                             }
                         },
-                        functest   = function jspretty__algorithm_functest() {
-                            var aa   = 0,
-                                bb   = 1,
-                                curl = (token[a - 1] === "}");
-                            for (aa = a - 2; aa > -1; aa -= 1) {
-                                if (curl === true) {
-                                    if (token[aa] === "}") {
-                                        bb += 1;
+                        separator  = function jspretty__algorithm_separator() {
+                            var methtest = false,
+                                functest = false,
+                                funcargs = false,
+                                propertybreak = function jspretty__algorithm_separator_propertybreak(funcarg) {
+                                    var c = 0,
+                                        d = 0,
+                                        e = 0;
+                                    methodbreak[methodbreak.length - 1] = true;
+                                    indent += 1;
+                                    if (funcarg === true) {
+                                        methtest = true;
                                     }
-                                    if (token[aa] === "{") {
-                                        bb -= 1;
-                                    }
-                                } else {
-                                    if (token[aa] === ")") {
-                                        bb += 1;
-                                    }
-                                    if (token[aa] === "(") {
-                                        bb -= 1;
-                                    }
-                                }
-                                if (bb < 0) {
-                                    level[a - 1] = indent;
-                                    return false;
-                                }
-                                if (bb === 0) {
-                                    if (token[aa - 1] === ")" && curl === false) {
-                                        bb = 1;
-                                        for (aa -= 2; aa > -1; aa -= 1) {
-                                            if (token[aa] === ")") {
-                                                bb += 1;
+                                    for (c = a - 1; c > -1; c -= 1) {
+                                        if (types[c] === "end") {
+                                            d += 1;
+                                            if (types[c + 1] !== "end" && types[c + 1] !== "start" && token[c + 1] !== ".") {
+                                                break;
                                             }
-                                            if (token[aa] === "(") {
-                                                bb -= 1;
-                                            }
-                                            if (bb === 0) {
-                                                if (token[aa - 1] === "function" || token[aa - 2] === "function") {
-                                                    return true;
+                                        } else if (types[c] === "start" || types[c] === "method") {
+                                            d -= 1;
+                                        }
+                                        if (d === 0) {
+                                            if (token[c] === ".") {
+                                                if (token[c - 1] === "}") {
+                                                    break;
                                                 }
-                                                return false;
+                                                e = c - 1;
+                                                level[e] = indent;
+                                                methtest = true;
+                                            } else if (types[c] === "separator" || types[c] === "operator" || token[c] === "return" || token[c] === "var" || token[c] === "let" || token[c] === "const") {
+                                                if (methtest === true && token[c] === "," && types[c + 1] === "word") {
+                                                    level[c] = indent - 1;
+                                                }
+                                                break;
+                                            }
+                                        } else if (d > 0) {
+                                            if (token[c] === "function") {
+                                                methtest = true;
+                                                functest = true;
+                                                break;
+                                            }
+                                            if (methtest === true && (d > 1 || token[c + 1] !== ".") && level[c] !== "x" && level[c] !== "s" && token[c] !== "]") {
+                                                level[c] += 1;
                                             }
                                         }
-                                        return false;
+                                        if (d < 0) {
+                                            if (token[c] === "[") {
+                                                level[c] = indent - 1;
+                                            }
+                                            break;
+                                        }
                                     }
-                                    if (curl === false && token[aa + 1] === "function") {
-                                        return true;
+                                    if (funcarg === false && methtest === true && types[e] !== "comment" && types[e] !== "comment-inline") {
+                                        if (e > 0) {
+                                            level[e] = "x";
+                                        } else {
+                                            level[a - 1] = "x";
+                                        }
                                     }
-                                    return false;
-                                }
-                            }
-                            return false;
-                        },
-                        separator  = function jspretty__algorithm_separator() {
+                                };
                             if (ternary.length > 0 && ctoke !== ".") {
                                 tern();
                             }
-                            if (types[a - 1] === "comment-inline" && a > 1) {
+                            if (jmethodchain === true && types[a - 1] === "comment-inline" && a > 1) {
                                 return (function jspretty__algorithm_separator_commentfix() {
                                     var c    = 0,
                                         d    = b,
@@ -6405,7 +6434,53 @@ var prettydiff = function prettydiff(api) {
                                 }());
                             }
                             if (ctoke === ".") {
-                                level[a - 1] = "x";
+                                if (jmethodchain === true) {
+                                    level[a - 1] = "x";
+                                } else {
+                                    if (starttype[starttype.length - 1] !== "paren" && starttype[starttype.length - 1] !== "method" && (ltoke === ")" || methodbreak[methodbreak.length - 1] === true || (types[a + 1] === "word" && types[a + 2] === "method"))) {
+                                        if (methodbreak[methodbreak.length - 1] === false) {
+                                            funcargs = (function jspretty__algorithm_separator_funcargs() {
+                                                var aa = 0,
+                                                    bb = b,
+                                                    cc = 0,
+                                                    firstmeth = false;
+                                                for (aa = a + 1; aa < bb; aa += 1) {
+                                                    if (types[aa] === "end") {
+                                                        cc += 1;
+                                                        if (cc > 1 || (cc === 0 && token[aa] === ")")) {
+                                                            return false;
+                                                        }
+                                                    } else if (types[aa] === "start" || types[aa] === "method") {
+                                                        cc -= 1;
+                                                        if (firstmeth === false && cc === -1 && types[aa] === "method") {
+                                                            firstmeth = true;
+                                                        }
+
+                                                    }
+                                                    if (cc === -1 && token[aa] === "function") {
+                                                        return true;
+                                                    }
+                                                }
+                                            }());
+                                            propertybreak(funcargs);
+                                            if (methtest === true) {
+                                                if (functest === false) {
+                                                    level[a - 1] = indent;
+                                                } else {
+                                                    level[a - 1] = "x";
+                                                }
+                                            } else {
+                                                indent -= 1;
+                                                methodbreak[methodbreak.length - 1] = false;
+                                                level[a - 1] = "x";
+                                            }
+                                        } else {
+                                            level[a - 1] = indent;
+                                        }
+                                    } else {
+                                        level[a - 1] = "x";
+                                    }
+                                }
                                 return level.push("x");
                             }
                             if (ctoke === ",") {
@@ -6492,6 +6567,14 @@ var prettydiff = function prettydiff(api) {
                                         }
                                     }());
                                 }
+                                if (methodbreak[methodbreak.length - 1] === true) {
+                                    indent -= 1;
+                                    methodbreak[methodbreak.length - 1] = false;
+                                    methtest = true;
+                                    if (starttype[starttype.length - 1] === "array") {
+                                        arrbreak[arrbreak.length - 1] = true;
+                                    }
+                                }
                                 if ((obj[obj.length - 1] === true && destruct[destruct.length - 1] === false) || (token[a - 2] === "+" && ltype === "literal" && level[a - 2] > 0 && (ltoke.charAt(0) === "\"" || ltoke.charAt(0) === "'"))) {
                                     level.push(indent);
                                     return;
@@ -6510,8 +6593,10 @@ var prettydiff = function prettydiff(api) {
 
                                             if (d === -1) {
                                                 if (token[c] === "[" && token[c + 1] !== "]" && token[c + 2] !== "]") {
-                                                    if (obj[obj.length - 1] === true || destruct[destruct.length - 1] === false) {
+                                                    if (obj[obj.length - 1] === true || destruct[destruct.length - 1] === false || arrbreak[arrbreak.length - 1] === true) {
                                                         level[c] = indent;
+                                                    } else if (methtest === false && destruct[destruct.length - 1] === true) {
+                                                        level[c] = "x";
                                                     }
                                                     if (token[a - 2] === "+" && ltype === "literal" && level[a - 2] > 0 && (ltoke.charAt(0) === "\"" || ltoke.charAt(0) === "'")) {
                                                         for (d = a - 2; d > c; d -= 2) {
@@ -6525,8 +6610,14 @@ var prettydiff = function prettydiff(api) {
                                                         return;
                                                     }
                                                 }
+                                                if (arrbreak[arrbreak.length - 1] === true) {
+                                                    return level.push(indent);
+                                                }
                                                 return level.push("s");
                                             }
+                                        }
+                                        if (arrbreak[arrbreak.length - 1] === true) {
+                                            return level.push(indent);
                                         }
                                         return level.push("s");
                                     }());
@@ -6563,6 +6654,10 @@ var prettydiff = function prettydiff(api) {
                             if (ctoke === ";" || ctoke === "x;") {
                                 if (ctoke === "x;") {
                                     scolon += 1;
+                                }
+                                if (methodbreak[methodbreak.length - 1] === true) {
+                                    indent -= 1;
+                                    methodbreak[methodbreak.length - 1] = false;
                                 }
                                 level[a - 1] = "x";
                                 if (fortest === 0) {
@@ -6624,19 +6719,47 @@ var prettydiff = function prettydiff(api) {
                             list.push(false);
                             listtest.push(false);
                             methodtest.push(true);
+                            starttype.push("method");
+                            methodbreak.push(false);
                             obj.push(false);
                             assignlist.push(false);
+                            arrbreak.push(false);
                             destruct.push(false);
                             if (fortest > 0) {
                                 fortest += 1;
                             }
                         },
                         start      = function jspretty__algorithm_start() {
+                            var functest   = function jspretty__algorithm_start_functest() {
+                                var aa   = 0,
+                                    bb   = 0;
+                                for (aa = a - 1; aa > -1; aa -= 1) {
+                                    if (types[aa] === "end") {
+                                        bb += 1;
+                                    } else if (types[aa] === "start" || types[aa] === "method") {
+                                        bb -= 1;
+                                        if (bb === 0) {
+                                            if (token[aa - 1] === "function" || token[aa - 2] === "function") {
+                                                return true;
+                                            }
+                                        }
+                                        if (bb < 0) {
+                                            return false;
+                                        }
+                                    }
+                                }
+                                return false;
+                            };
                             list.push(false);
                             listtest.push(false);
                             methodtest.push(false);
+                            methodbreak.push(false);
                             assignlist.push(false);
-                            if (ctoke !== "[") {
+                            arrbreak.push(false);
+                            if (ctoke === "{" && ltoke === ")" && destruct[destruct.length - 1] === true) {
+                                destructfix();
+                            }
+                            if (ctoke !== "[" && destruct.length > 0) {
                                 destruct[destruct.length - 1] = false;
                             }
                             if ((ltoke === "(" && types[a - 2] === "word" && token[a - 2] !== "if" && token[a - 2] !== "for" && token[a - 2] !== "catch" && token[a - 2] !== "while" && token[a - 2] !== "return" && token[a - 2] !== "typeof" && token[a - 3] !== "function") || (ctoke !== "(" && ltype === "word" && ltoke !== "else" && ltoke !== "do" && ltoke !== "try" && ltoke !== "catch" && ltoke !== "finally")) {
@@ -6644,13 +6767,18 @@ var prettydiff = function prettydiff(api) {
                             } else {
                                 destruct.push(false);
                             }
-                            if (ctoke !== "(") {
-                                indent += 1;
-                            }
                             if (ltoke === "for") {
                                 fortest = 1;
                             }
                             if (ctoke === "{" || ctoke === "x{") {
+                                indent += 1;
+                                if (ltype === "operator" || ltype === "start") {
+                                    starttype.push("obj");
+                                } else if (functest() === true) {
+                                    starttype.push("function");
+                                } else {
+                                    starttype.push("curly");
+                                }
                                 casetest.push(false);
                                 varlen.push([]);
                                 if (ctoke === "{") {
@@ -6675,6 +6803,7 @@ var prettydiff = function prettydiff(api) {
                             }
                             obj.push(false);
                             if (ctoke === "(") {
+                                starttype.push("paren");
                                 if (ltoke === "-" && token[a - 2] === "(") {
                                     level[a - 2] = "x";
                                 }
@@ -6690,7 +6819,7 @@ var prettydiff = function prettydiff(api) {
                                     fortest += 1;
                                 }
                                 if (ltoke === "}" || ltoke === ")") {
-                                    if (types[a - 1] !== "comment" && types[a - 1] !== "comment-inline" && functest() === true) {
+                                    if (types[a - 1] !== "comment" && types[a - 1] !== "comment-inline" && starttype[starttype.length - 1] === "function") {
                                         level[a - 1] = "x";
                                     } else {
                                         level[a - 1] = indent;
@@ -6708,6 +6837,8 @@ var prettydiff = function prettydiff(api) {
                                 return level.push("x");
                             }
                             if (ctoke === "[") {
+                                indent += 1;
+                                starttype.push("array");
                                 if (ltoke === "[") {
                                     list[list.length - 2] = true;
                                 }
@@ -6742,6 +6873,9 @@ var prettydiff = function prettydiff(api) {
                             }
                             if (fortest === 1 && ctoke === ")" && varline[varline.length - 1] === true) {
                                 varline[varline.length - 1] = false;
+                            }
+                            if (methodbreak[methodbreak.length - 1] === true) {
+                                indent -= 1;
                             }
                             if (ctoke !== ")" && (ltype !== "markup" || (ltype === "markup" && token[a - 2] !== "return"))) {
                                 indent -= 1;
@@ -6845,7 +6979,10 @@ var prettydiff = function prettydiff(api) {
                                 }
                                 casetest.pop();
                             }
-                            if (destruct[destruct.length - 1] === true) {
+                            if (ctoke === "]" && (methodbreak[methodbreak.length - 1] === true || arrbreak[arrbreak.length - 1] === true)) {
+                                level[a - 1] = indent;
+                                level.push("x");
+                            } else if (destruct[destruct.length - 1] === true) {
                                 level[a - 1] = "x";
                                 level.push("x");
                             } else if ((types[a - 1] === "comment" && token[a - 1].substr(0, 2) === "//") || types[a - 1] === "comment-inline") {
@@ -6925,6 +7062,9 @@ var prettydiff = function prettydiff(api) {
                             list.pop();
                             listtest.pop();
                             methodtest.pop();
+                            methodbreak.pop();
+                            arrbreak.pop();
+                            starttype.pop();
                             destruct.pop();
                             if (ctoke === "}") {
                                 if (varline[varline.length - 1] === true || (obj[obj.length - 1] === true && ltoke !== "{")) {
@@ -6942,23 +7082,11 @@ var prettydiff = function prettydiff(api) {
                         },
                         operator   = function jspretty__algorithm_operator() {
                             if (destruct[destruct.length - 1] === true) {
-                                (function jspretty__algorithm_operator_destructFix() {
-                                    var c = 0,
-                                        d = 1;
-                                    for (c = a - 1; c > -1; c -= 1) {
-                                        if (types[c] === "end") {
-                                            d += 1;
-                                        } else if (types[c] === "start" || types[c] === "method") {
-                                            d -= 1;
-                                        }
-                                        if (d === 0) {
-                                            level[c] = indent;
-                                            return;
-                                        }
-                                    }
-                                }());
+                                destructfix();
                             }
-                            destruct[destruct.length - 1] = false;
+                            if (destruct.length > 0) {
+                                destruct[destruct.length - 1] = false;
+                            }
                             if (ctoke === "!" || ctoke === "...") {
                                 if (ltoke === "(") {
                                     level[a - 1] = "x";
@@ -6980,6 +7108,10 @@ var prettydiff = function prettydiff(api) {
                                 level[a - 1] = indent;
                             }
                             if (ctoke === ":") {
+                                if (methodbreak[methodbreak.length - 1] === true) {
+                                    indent -= 1;
+                                    methodbreak[methodbreak.length - 1] = false;
+                                }
                                 if (obj[obj.length - 1] === true) {
                                     if (ternary.length > 0) {
                                         (function jspretty__algorithm_operator_ternObj() {
@@ -7045,9 +7177,11 @@ var prettydiff = function prettydiff(api) {
                                         if (d > 0) {
                                             if (d === 1 && token[c] === "{" && ternary.length === 0) {
                                                 obj[obj.length - 1] = true;
-                                                level[c + 1] = "x";
-                                                if (varlen[varlen.length -1][varlen[varlen.length - 1].length - 1] !== c + 1) {
-                                                    varlen[varlen.length - 1].push(c + 1);
+                                                if (types[c + 1] !== "comment") {
+                                                    level[c + 1] = "x";
+                                                    if (varlen[varlen.length -1][varlen[varlen.length - 1].length - 1] !== c + 1) {
+                                                        varlen[varlen.length - 1].push(c + 1);
+                                                    }
                                                 }
                                             }
                                             break;
@@ -7080,7 +7214,7 @@ var prettydiff = function prettydiff(api) {
                                 return;
                             }
                             if (ctoke === "+") {
-                                if ((ltoke.length === jwrap + 2 || ltoke.length === jwrap + 3) && (token[a + 1].charAt(0) === "\"" || token[a + 1].charAt(0) === "'")) {
+                                if ((ltoke.length === jwrap + 2 || ltoke.length === jwrap + 1) && (token[a + 1].charAt(0) === "\"" || token[a + 1].charAt(0) === "'")) {
                                     if (list[list.length - 1] === true || obj[obj.length - 1] === true || methodtest[methodtest.length - 1] === true || ((token[a - 1].charAt(0) === "\"" || token[a - 1].charAt(0) === "'") && (token[a - 2] === "+" || token[a - 2].indexOf("=") > -1 || types[a - 2] === "start"))) {
                                         return level.push(indent + 2);
                                     }
@@ -7100,7 +7234,7 @@ var prettydiff = function prettydiff(api) {
                             if (ctoke !== "?" || ternary.length === 0) {
                                 level[a - 1] = "s";
                             }
-                            if (ctoke.indexOf("=") > -1 && ctoke !== "==" && ctoke !== "===" && ctoke !== "!=" && ctoke !== "!==" && ctoke !== ">=" && ctoke !== "<=" && varlen.length > 0 && methodtest[methodtest.length - 1] === false && obj[obj.length - 1] === false) {
+                            if (ctoke.indexOf("=") > -1 && ctoke !== "==" && ctoke !== "===" && ctoke !== "!=" && ctoke !== "!==" && ctoke !== ">=" && ctoke !== "<=" && varlen.length > 0 && (methodtest.length === 0 || methodtest[methodtest.length - 1] === false) && (obj.length === 0 || obj[obj.length - 1] === false)) {
                                 if (assignlist[assignlist.length - 1] === true) {
                                     (function jspretty__algorithm_operator_assignTest() {
                                         var c = 0,
@@ -7368,7 +7502,9 @@ var prettydiff = function prettydiff(api) {
                         ctype = types[a];
                         ctoke = token[a];
                         if (ctype === "comment") {
-                            if (lines[a - 1] === 0 && types[a - 1] !== "comment") {
+                            if (token[a - 1] === ",") {
+                                level[a - 1] = indent;
+                            } else if (lines[a - 1] === 0 && types[a - 1] !== "comment" && types[a - 1] !== "comment-inline") {
                                 level[a - 1] = "x";
                             } else if (ltoke === "=" && (/^(\/\*\*\s*@[a-z_]+\s)/).test(ctoke) === true) {
                                 level[a - 1] = "s";
@@ -9054,6 +9190,7 @@ var prettydiff = function prettydiff(api) {
                 //start      end     type
                 //<[CDATA[   ]]>     cdata
                 //<!--       -->     comment
+                //<#--       -->     comment
                 //<%--       --%>    comment
                 //{!         !}      comment
                 //<!--[if    -->     conditional
@@ -9082,6 +9219,7 @@ var prettydiff = function prettydiff(api) {
                 //{~         }       template
                 //<?         ?>      template
                 //{:else}            template_else
+                //<#else     >       template_else
                 //{{/        }}      template_end
                 //<%\s*}     %>      template_end
                 //[%\s*}     %]      template_end
@@ -9276,6 +9414,18 @@ var prettydiff = function prettydiff(api) {
                                     end = ">>";
                                 }
                                 types.push("template");
+                            } else if (b[a + 1] === "#") {
+                                if (b[a + 2] === "e" && b[a + 3] === "l" && b[a + 4] === "s" && b[a + 5] === "e") {
+                                    end = ">";
+                                    types.push("template_else");
+                                } else if (b[a + 2] === "-" && b[a + 3] === "-") {
+                                    end = "-->";
+                                    types.push("comment");
+                                    preserve = true;
+                                } else {
+                                    end = ">";
+                                    types.push("start");
+                                }
                             } else {
                                 if (b[a + 1] === "/") {
                                     types.push("end");
@@ -9584,7 +9734,8 @@ var prettydiff = function prettydiff(api) {
                                 attn  = token[token.length - 1],
                                 value = "",
                                 type  = "",
-                                d     = 0;
+                                d     = 0,
+                                ee    = 1;
                             if (types[types.length - 1] === "end") {
                                 if (types[types.length - 2] === "singleton" && attn.charAt(attn.length - 2) !== "/" && "/" + tagName(attn) === tname) {
                                     types[types.length - 2] = "start";
@@ -9628,6 +9779,28 @@ var prettydiff = function prettydiff(api) {
                                 } else if (tname === "style" && (quote === "" || quote === "text/css")) {
                                     ext = true;
                                 }
+                            }
+                            if (tname === "/#assign" || tname === "/#global") {
+                                for (d = types.length - 2; d > -1; d -= 1) {
+                                    if (types[d] === "start" || types[d] === "template_start") {
+                                        ee -= 1;
+                                    } else if (types[d] === "end" || types[d] === "template_end") {
+                                        ee += 1;
+                                    }
+                                    if (ee === 1) {
+                                        if ((token[d].indexOf("<#assign") === 0 && tname === "/#assign") || (token[d].indexOf("<#global") === 0 && tname === "/#global")) {
+                                            types[d] = "start";
+                                            return false;
+                                        }
+                                    }
+                                    if (ee === 0) {
+                                        return false;
+                                    }
+                                }
+                                return false;
+                            }
+                            if (tname.charAt(0) === "#" && types[types.length - 1] === "start" && (tname === "#assign" || tname === "#break" || tname === "#case" || tname === "#default" || tname === "#fallback" || tname === "#flush" || tname === "#ftl" || tname === "#global" || tname === "#import" || tname === "#include" || tname === "#local" || tname === "#t" || tname === "#lt" || tname === "#rt" || tname === "#nested" || tname === "#nt" || tname === "#recover" || tname === "#recurse" || tname === "#return" || tname === "#sep" || tname === "#setting" || tname === "#stop" || tname === "#visit")) {
+                                return true;
                             }
                             if (mhtml === true) {
                                 //simple means of looking for missing li end tags
@@ -11267,26 +11440,26 @@ var prettydiff = function prettydiff(api) {
     //the edition values use the format YYMMDD for dates.
     edition = {
         addon        : {
-            ace: 150907
+            ace: 150918
         },
         api          : {
-            dom      : 150907, //dom.js
-            nodeLocal: 150907, //node-local.js
-            wsh      : 150907  //prettydiff.wsf
+            dom      : 150918, //dom.js
+            nodeLocal: 150918, //node-local.js
+            wsh      : 150918  //prettydiff.wsf
         },
         charDecoder  : 141025, //charDecoder library
         css          : 150907, //diffview.css file
-        csspretty    : 150907, //csspretty library
+        csspretty    : 150918, //csspretty library
         csvbeauty    : 140114, //csvbeauty library
         csvmin       : 131224, //csvmin library
         diffview     : 150708, //diffview library
-        documentation: 150907, //documentation.xhtml
-        jspretty     : 150907, //jspretty library
+        documentation: 150918, //documentation.xhtml
+        jspretty     : 150918, //jspretty library
         latest       : 0,
-        markuppretty : 150830, //markuppretty library
-        prettydiff   : 150907, //this file
-        version      : "1.13.5", //version number
-        webtool      : 150907  //prettydiff.com.xhtml
+        markuppretty : 150918, //markuppretty library
+        prettydiff   : 150918, //this file
+        version      : "1.13.6", //version number
+        webtool      : 150918  //prettydiff.com.xhtml
     };
 edition.latest = (function edition_latest() {
     "use strict";

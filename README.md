@@ -79,6 +79,12 @@ To see only the version number supply only *v* or *version* as an argument:
     prettydiff v
     prettydiff version
 
+#### Set configurations with a **.prettydiffrc** file.
+
+Pretty Diff will first look for a .prettydiffrc file from the current directory in the command prompt. If the .prettydiffrc is not present in the current directory it will then look for it in the application's directory.
+
+The .prettydiffrc first checks for JSON format. This allows a simple means of defining options in a file. It also allows a [JavaScript application format](http://prettydiff.com/.prettydiffrc) so that options can be set conditionally.
+
 ### Run in a web browser with api/dom.js
 
 Please feel free to use prettydiff.com.xhtml file to supplement dom.js.  Otherwise, dom.js requires supplemental assistance to map DOM nodes from an HTML source.  dom.js is fault tolerant so nodes mapped to the supplied prettydiff.com.xhtml don't need to be supported from custom HTML.

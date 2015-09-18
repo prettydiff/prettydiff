@@ -89,6 +89,8 @@
                             error.push("* langdefault    - string  - The fallback value if option lang is provided the value 'auto' and the language cannot be detected.");
                             error.push("                   Accepted values: markup, javascript, css, html, csv, text");
                             error.push("");
+                            error.push("* methodchain    - boolean - Whether consecutive JavaScript methods should be chained onto a single line of code instead of indented. Default is false.");
+                            error.push("");
                             error.push("* mode           - string  - The operation to be performed. Defaults to 'diff'.");
                             error.push("                   Accepted values: diff, beautify, minify, parse");
                             error.push("");
@@ -311,6 +313,7 @@
                     args.jsscope = (WScript.Arguments.Named("jsscope") === "html" || WScript.Arguments.Named("jsscope") === "report") ? WScript.Arguments.Named("jsscope") : "none";
                     args.lang = WScript.Arguments.Named("lang") || "auto";
                     args.langdefault = (WScript.Arguments.Named("langdefault") === "markup" || WScript.Arguments.Named("langdefault") === "html" || WScript.Arguments.Named("langdefault") === "css" || WScript.Arguments.Named("langdefault") === "csv" || WScript.Arguments.Named("langdefault") === "javascript") ? WScript.Arguments.Named("langdefault") : "text";
+                    args.methodchain = (WScript.Arguments.Named("methodchain") === "true" || WScript.Arguments.Named("methodchain") === true);
                     args.mode = (WScript.Arguments.Named("mode") || "diff");
                     args.noleadzero = (WScript.Arguments.Named("noleadzero") === "true" || WScript.Arguments.Named("noleadzero") === true);
                     args.objsort = (WScript.Arguments.Named("objsort") === "all" || WScript.Arguments.Named("objsort") === "css" || WScript.Arguments.Named("objsort") === "none") ? WScript.Arguments.Named("objsort") : "js";

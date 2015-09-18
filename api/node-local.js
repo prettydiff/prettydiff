@@ -101,6 +101,7 @@ Examples:
             jsscope       : "none",
             lang          : "auto",
             langdefault   : "text",
+            methodchain   : false,
             mode          : "diff",
             noleadzero    : false,
             objsort       : "js",
@@ -1063,6 +1064,10 @@ Examples:
             a.push("                           language cannot be detected.");
             a.push("                 Accepted values: markup, javascript, css, html, csv, text");
             a.push("");
+            a.push("* methodchain  - boolean - Whether consecutive JavaScript methods should be");
+            a.push("                           chained onto a single line of code instead of");
+            a.push("                           indented. Default is false.");
+            a.push("");
             a.push("* mode         - string  - The operation to be performed. Defaults to 'diff'.");
             a.push("                           * diff     - returns either command line list of");
             a.push("                                        differences or an HTML report");
@@ -1798,6 +1803,8 @@ Examples:
                         }
                     } else if (d[b][0] === "langdefault" && (d[b][1] === "markup" || d[b][1] === "javascript" || d[b][1] === "css" || d[b][1] === "html" || d[b][1] === "csv")) {
                         options.langdefault = d[b][1];
+                    } else if (d[b][0] === "methodchain" && d[b][1] === "true") {
+                        options.methodchain = true;
                     } else if (d[b][0] === "mode" && (d[b][1] === "minify" || d[b][1] === "beautify" || d[b][1] === "parse")) {
                         options.mode = d[b][1];
                     } else if (d[b][0] === "noleadzero" && d[b][1] === "true") {
@@ -2120,15 +2127,21 @@ Examples:
                     }
                     if ((/^(\s*\{)/).test(data) === true && (/(\}\s*)$/).test(data) === true) {
                         pdrc = JSON.parse(data);
+                        b = 0;
                         for (key in pdrc) {
                             if (pdrc.hasOwnProperty(key)) {
+                                b += 1;
                                 options[key] = pdrc[key];
                             }
+                        }
+                        if (b > 0) {
+                            help = false;
                         }
                         init();
                     } else {
                         pdrc = require(rcpath);
                         if (pdrc.preset !== undefined) {
+                            options.help = false;
                             options = pdrc.preset(options);
                             init();
                         }

@@ -1762,6 +1762,7 @@ scanvas: "#doc.canvas{color:#444}#webtool.canvas input.unchecked{background:#ccc
                     jscorrect    = {},
                     jshtml       = {},
                     jsspace      = {},
+                    methodchain  = {},
                     noleadzero   = {},
                     offset       = {},
                     spaceclose   = {},
@@ -1869,30 +1870,32 @@ scanvas: "#doc.canvas{color:#444}#webtool.canvas input.unchecked{background:#ccc
                 }
                 if (pd.o.langvalue[1] === "javascript") {
                     braceline        = pd.id("bbraceline-no");
+                    bracepadding     = pd.id("bracepadding-no");
+                    braces           = pd.id("jsindent-all");
                     elseline         = pd.id("jselseline-yes");
                     endcomma         = pd.id("bendcomma-yes");
-                    braces           = pd.id("jsindent-all");
                     jscorrect        = pd.id("jscorrect-yes");
                     jshtml           = pd.id("jsscope-html");
                     jsspace          = pd.id("jsspace-no");
+                    methodchain      = pd.id("bmethodchain-yes");
                     offset           = pd.id("inlevel");
-                    bracepadding     = pd.id("bracepadding-no");
                     styleguide       = pd.id("bstyleguide");
                     api.braceline    = (braceline === null || braceline.checked === false);
-                    api.styleguide   = (styleguide !== null)
-                        ? styleguide[styleguide.selectedIndex].value
-                        : "";
-                    api.correct      = (jscorrect !== null && jscorrect.checked === true);
-                    api.elseline     = (elseline !== null && elseline.checked === true);
-                    api.endcomma     = (endcomma !== null && endcomma.checked === true);
+                    api.bracepadding = (bracepadding === null || bracepadding.checked === false);
                     api.braces       = (braces === null || braces.checked === false)
                         ? "knr"
                         : "allman";
-                    api.bracepadding = (bracepadding === null || bracepadding.checked === false);
+                    api.correct      = (jscorrect !== null && jscorrect.checked === true);
+                    api.elseline     = (elseline !== null && elseline.checked === true);
+                    api.endcomma     = (endcomma !== null && endcomma.checked === true);
                     api.inlevel      = (offset === null || isNaN(offset.value) === true)
                         ? 0
                         : Number(offset.value);
+                    api.methodchain  = (methodchain !== null && methodchain.checked === true);
                     api.space        = (jsspace === null || jsspace.checked === false);
+                    api.styleguide   = (styleguide !== null)
+                        ? styleguide[styleguide.selectedIndex].value
+                        : "";
                     if (pd.o.jsscope !== null && pd.o.jsscope.checked === true) {
                         api.jsscope = "report";
                     } else if (jshtml !== null && jshtml.checked === true) {
@@ -1988,6 +1991,7 @@ scanvas: "#doc.canvas{color:#444}#webtool.canvas input.unchecked{background:#ccc
                     elseline     = {},
                     forceIndent  = {},
                     html         = {},
+                    methodchain  = {},
                     style        = {},
                     space        = {},
                     tagmerge     = {},
@@ -2069,18 +2073,20 @@ scanvas: "#doc.canvas{color:#444}#webtool.canvas input.unchecked{background:#ccc
                     api.inchar = " ";
                 }
                 if (pd.o.langvalue[1] === "javascript") {
-                    elseline         = pd.id("jselselined-yes");
-                    space            = pd.id("jsspaced-no");
                     braceline        = pd.id("dbraceline-no");
-                    braces           = pd.id("jsindentd-all");
                     bracepadding     = pd.id("dbracepadding-no");
-                    api.elseline     = (elseline !== null && elseline.checked !== false);
-                    api.space        = (space === null || space.checked === false);
+                    braces           = pd.id("jsindentd-all");
+                    elseline         = pd.id("jselselined-yes");
+                    methodchain      = pd.id("dmethodchain-yes");
+                    space            = pd.id("jsspaced-no");
                     api.braceline    = (braceline === null || braceline.checked === false);
                     api.bracepadding = (bracepadding === null || bracepadding.checked === false);
                     api.braces       = (braces === null || braces.checked === false)
                         ? "knr"
                         : "allman";
+                    api.elseline     = (elseline !== null && elseline.checked !== false);
+                    api.methodchain  = (methodchain !== null && methodchain.checked === true);
+                    api.space        = (space === null || space.checked === false);
                 }
                 if (pd.o.langvalue[1] === "markup" || pd.o.langvalue[1] === "html") {
                     conditional      = pd.id("conditionald-yes");
@@ -2520,28 +2526,28 @@ scanvas: "#doc.canvas{color:#444}#webtool.canvas input.unchecked{background:#ccc
                 if (pd.audio !== undefined) {
                     pd.audio.play();
                 }
-                /*(function dom__sequence_blinky() {
-                    var color = pd.id("colorScheme"),
-                        ind = color.selectedIndex,
-                        y = 0,
-                        z = ind,
-                        change = function dom__sequence_blinky_change() {
-                            z -= 1;
-                            y += 1;
-                            if (z < 0) {
-                                z = color.getElementsByTagName("option").length - 1;
-                            }
-                            color.selectedIndex = z;
-                            pd.colorScheme(color);
-                            if (y < 20) {
-                                setTimeout(change, 50);
-                            } else {
-                                color.selectedIndex = ind;
-                                pd.colorScheme(color);
-                            }
-                        };
-                    setTimeout(change, 50);
-                }());*/
+                //(function dom__sequence_blinky() {
+                //    var color = pd.id("colorScheme"),
+                //        ind = color.selectedIndex,
+                //        y = 0,
+                //        z = ind,
+                //        change = function dom__sequence_blinky_change() {
+                //            z -= 1;
+                //            y += 1;
+                //            if (z < 0) {
+                //                z = color.getElementsByTagName("option").length - 1;
+                //            }
+                //            color.selectedIndex = z;
+                //            pd.colorScheme(color);
+                //            if (y < 20) {
+                //                setTimeout(change, 50);
+                //            } else {
+                //                color.selectedIndex = ind;
+                //                pd.colorScheme(color);
+                //            }
+                //        };
+                //    setTimeout(change, 50);
+                //}());
                 (function dom__sequence_colorChange() {
                     var color  = pd.id("colorScheme"),
                         ind    = color.selectedIndex,
@@ -2888,7 +2894,7 @@ scanvas: "#doc.canvas{color:#444}#webtool.canvas input.unchecked{background:#ccc
                         boxLocal.style.left      = leftLocal + "em";
                         boxLocal.style.top       = topLocal + "em";
                         if (width + incW < widthTarget || height + incH < heightTarget) {
-                            setTimeout(grow, 1);
+                            setTimeout(dom__minimize_growth_grow, 1);
                         } else {
                             boxLocal.style.left      = leftTarget + "em";
                             boxLocal.style.top       = topTarget + "em";
@@ -2973,7 +2979,7 @@ scanvas: "#doc.canvas{color:#444}#webtool.canvas input.unchecked{background:#ccc
                         boxLocal.style.left      = leftLocal + "em";
                         boxLocal.style.top       = topLocal + "em";
                         if (width - incW > 16.8) {
-                            setTimeout(shrink, 1);
+                            setTimeout(dom__minimize_shrinkage, 1);
                         } else {
                             boxLocal.style.left                                         = "auto";
                             boxLocal.style.top                                          = "auto";
@@ -3238,12 +3244,11 @@ scanvas: "#doc.canvas{color:#444}#webtool.canvas input.unchecked{background:#ccc
                         "[a].getAttribute('title');b=b.substring(b.indexOf('to line ')+1);a=Number(b)-1;}" +
                         "}self.innerHTML='-'+self.innerHTML.substr(1);}};",
             span       = pd.id("inline"),
-            inline     = (span !== null && span.checked !== false),
             type       = "application/javascript";
         if (bodyInner.innerHTML === "") {
             return;
         }
-        
+
         if (reportonly === true && anchor === true) {
             x.removeAttribute("href");
         }
@@ -4575,6 +4580,14 @@ scanvas: "#doc.canvas{color:#444}#webtool.canvas input.unchecked{background:#ccc
                     data = [
                         "preserve", "none"
                     ];
+                } else if (id === "bmethodchain-no" || id === "dmethodchain-no") {
+                    data = [
+                        "methodchain", "false"
+                    ];
+                } else if (id === "bmethodchain-yes" || id === "dmethodchain-yes") {
+                    data = [
+                        "methodchain", "true"
+                    ];
                 } else if (id === "bnoleadzero-no") {
                     data = [
                         "noleadzero", "false"
@@ -4852,10 +4865,6 @@ scanvas: "#doc.canvas{color:#444}#webtool.canvas input.unchecked{background:#ccc
                 } else if (id === "sidebyside") {
                     data = [
                         "diffview", "sidebyside"
-                    ];
-                } else if (id === "styleguide") {
-                    data = [
-                        "styleguide", item.value
                     ];
                 } else if (id === "topcoms-yes") {
                     data = [
@@ -5821,6 +5830,9 @@ scanvas: "#doc.canvas{color:#444}#webtool.canvas input.unchecked{background:#ccc
                         }
                     }
                 } else {
+                    if (typeof pd.settings[id] === "number") {
+                        inputs[a].selectedIndex = pd.settings[id];
+                    }
                     inputs[a].onchange = pd.options;
                 }
             }

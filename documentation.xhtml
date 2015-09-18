@@ -225,6 +225,9 @@
                     <li>
                         <a href="guide/codeArchitecture.xhtml">Brief overview of the prettydiff.js code architecture</a>
                     </li>
+                    <li>
+                        <a href="guide/prettydiffrc.xhtml">The .prettydiffrc file</a>
+                    </li>
                 </ol>
             </div>
             <div id="about_unrelated">
@@ -351,7 +354,7 @@
                         <code>&nbsp;&nbsp;&nbsp;&nbsp;output = prettydiff.api(args);</code>
                     </li>
                 </ol>
-                <p>Pretty Diff supports saved configurations using a <strong><a href=".prettydiffrc">.prettydiffrc</a></strong> file. Pretty Diff will first for the file in the command prompt's current directory and then look for it in the application's directory.  Pretty Diff will attempt to parse this file first as a simple <em>JSON</em> object, but advanced logic is allowed in the provide format. This file is not evaluated until after the options from the command prompt are evaluated, so the JS logic format allows setting options relative to the values of other provided options.</p>
+                <p>Pretty Diff supports saved configurations using a <strong><a href=".prettydiffrc">.prettydiffrc</a></strong> file. Pretty Diff will first for the file in the command prompt's current directory and then look for it in the application's directory.  Pretty Diff will attempt to parse this file first as a simple <em>JSON</em> object, but advanced logic is allowed in the provide format. This file is not evaluated until after the options from the command prompt are evaluated, so the JS logic format allows setting options relative to the values of other provided options. Additional technical details are available in the <a href="guide/prettydiffrc.xhtml">guide</a>.</p>
                 <p>Some Node specific funtionality is provided.</p>
                 <ul>
                     <li><strong><a href="#diffcli">diffcli</a></strong> The diffcli option allows for differences to be printed to the screen directly instead of generating HTML based code reports. This functionality closely resembles the old Unix <em>diff</em> utility.</li>
@@ -1089,6 +1092,19 @@
                             <li>
                                 <h5>As labeled in the HTML tool</h5>
                                 Auto detect default</li>
+                        </ul>
+                    </li>
+                    <li id="methodchain">
+                        <h4>methodchain</h4>
+                        <ul>
+                            <li><h5>Description</h5>
+                                Whether consecutive methods should be continuously chained onto a single line of code.</li>
+                            <li><h5>Type</h5>
+                                boolean</li>
+                            <li><h5>Default</h5>
+                                false</li>
+                            <li><h5>As labeled in the HTML tool</h5>
+                                Chain Methods</li>
                         </ul>
                     </li>
                     <li id="mode">
