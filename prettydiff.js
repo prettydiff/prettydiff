@@ -2736,7 +2736,7 @@ var prettydiff = function prettydiff(api) {
                                 }
                                 build.push(token[a]);
                                 indent += 1;
-                                if (types[a + 1] !== "selector") {
+                                if (types[a + 1] !== "selector" || scssinsertlines === false) {
                                     nl(indent);
                                 }
                             }
@@ -4688,12 +4688,24 @@ var prettydiff = function prettydiff(api) {
                         var len   = token.length - 1,
                             aa    = len,
                             bb    = 0,
+                            next  = (function jspretty__tokenize_asi_next() {
+                                var cc = 0;
+                                for (cc = a + 1; cc < b; cc += 1) {
+                                    if ((/\s/).test(c[cc]) === false) {
+                                        return c[cc];
+                                    }
+                                }
+                                return "";
+                            }()),
                             tokel = token[len],
                             typel = types[len],
                             colon = false,
                             early = false,
                             paren = false,
                             opers = false;
+                        if (next !== "" && "=<>+*?|^:&%~,.()]".indexOf(next) > -1) {
+                            return;
+                        }
                         if (typel === "comment" || typel === "comment-inline") {
                             do {
                                 len -= 1;
@@ -11449,16 +11461,16 @@ var prettydiff = function prettydiff(api) {
         },
         charDecoder  : 141025, //charDecoder library
         css          : 150907, //diffview.css file
-        csspretty    : 150918, //csspretty library
+        csspretty    : 150921, //csspretty library
         csvbeauty    : 140114, //csvbeauty library
         csvmin       : 131224, //csvmin library
         diffview     : 150708, //diffview library
         documentation: 150918, //documentation.xhtml
-        jspretty     : 150918, //jspretty library
+        jspretty     : 150921, //jspretty library
         latest       : 0,
         markuppretty : 150918, //markuppretty library
-        prettydiff   : 150918, //this file
-        version      : "1.13.6", //version number
+        prettydiff   : 150921, //this file
+        version      : "1.13.7", //version number
         webtool      : 150918  //prettydiff.com.xhtml
     };
 edition.latest = (function edition_latest() {
@@ -11487,3 +11499,4 @@ if (typeof exports === "object" || typeof exports === "function") {
         return exports.api;
     });
 }
+
