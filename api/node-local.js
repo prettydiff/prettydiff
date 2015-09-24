@@ -102,6 +102,7 @@ Examples:
             lang          : "auto",
             langdefault   : "text",
             methodchain   : false,
+            miniwrap      : false,
             mode          : "diff",
             noleadzero    : false,
             objsort       : "js",
@@ -1068,6 +1069,10 @@ Examples:
             a.push("                           chained onto a single line of code instead of");
             a.push("                           indented. Default is false.");
             a.push("");
+            a.push("* miniwrap     - boolean - Whether minified JavaScript should wrap after a");
+            a.push("                           specified character width. This option requires a");
+            a.push("                           value from option 'wrap'.");
+            a.push("");
             a.push("* mode         - string  - The operation to be performed. Defaults to 'diff'.");
             a.push("                           * diff     - returns either command line list of");
             a.push("                                        differences or an HTML report");
@@ -1805,6 +1810,8 @@ Examples:
                         options.langdefault = d[b][1];
                     } else if (d[b][0] === "methodchain" && d[b][1] === "true") {
                         options.methodchain = true;
+                    } else if (d[b][0] === "miniwrap" && d[b][1] === "true") {
+                        options.miniwrap = true;
                     } else if (d[b][0] === "mode" && (d[b][1] === "minify" || d[b][1] === "beautify" || d[b][1] === "parse")) {
                         options.mode = d[b][1];
                     } else if (d[b][0] === "noleadzero" && d[b][1] === "true") {

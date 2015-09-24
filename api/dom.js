@@ -20,7 +20,8 @@ var pd = {};
 
     if (location.href.indexOf("codemirror=") > 0) {
         (function dom__codemirror() {
-            var loc     = location.href.split("codemirror="),
+            var loc     = location.href
+                    .split("codemirror="),
                 value   = "",
                 address = "";
             if (loc[1].indexOf("&") > 0) {
@@ -55,7 +56,8 @@ var pd = {};
         ace          : (location.href.toLowerCase().indexOf("ace=false") < 0 && typeof ace === "object"),
         //get the lowercase useragent string
         agent        : (typeof navigator === "object")
-            ? navigator.userAgent.toLowerCase()
+            ? navigator.userAgent
+                .toLowerCase()
             : "",
         //test for standard web audio support
         audio        : ((typeof AudioContext === "function" || typeof AudioContext === "object") && AudioContext !== null)
@@ -250,18 +252,246 @@ var pd = {};
     };
     pd.o.report.feed.body = (pd.o.report.feed.box === null)
         ? null
-        : pd.o.report.feed.box.getElementsByTagName("div")[0];
+        : pd.o
+            .report
+            .feed
+            .box
+            .getElementsByTagName("div")[0];
     pd.o.report.code.body = (pd.o.report.code.box === null)
         ? null
-        : pd.o.report.code.box.getElementsByTagName("div")[0];
+        : pd.o
+            .report
+            .code
+            .box
+            .getElementsByTagName("div")[0];
     pd.o.report.stat.body = (pd.o.report.stat.box === null)
         ? null
-        : pd.o.report.stat.box.getElementsByTagName("div")[0];
+        : pd.o
+            .report
+            .stat
+            .box
+            .getElementsByTagName("div")[0];
 
     //the various CSS color themes
     pd.css                = {
-        core   : "body#webtool,body#doc{font-family:'Lucida Sans Unicode','Helvetica','Arial', sans-serif;font-size:10px;overflow-y:scroll}div#webtool{font-size:10px}#about_license a{display:block}#webtool #announcement{color:#00c;font-weight:bold;height:auto;left:14em;margin:0;overflow:hidden;position:absolute;text-overflow:ellipsis;top:0.5em;white-space:nowrap;width:40%;z-index:5}#webtool #announcement strong.duplicate{display:block}#webtool #announcement span{display:block}#apireturn textarea{font-size:1.2em;height:50em;width:100%}#apitest input,#apitest label,#apitest select,#apitest textarea{float:left}#apitest input,#apitest select,#apitest textarea{width:30em}#apitest label{width:20em}#apitest p{clear:both;padding-top:0.75em}#beau-other-span,#diff-other-span{left:-20em;position:absolute;width:0}#webtool #beauops p strong,#webtool #options p strong,#webtool #diffops p strong,#webtool #miniops p strong,#webtool #parseops p strong,#webtool #options .label,#webtool #diffops .label,#webtool #miniops .label,#webtool #beauops .label,#webtool #parseops .label{display:block;float:none;font-size:1em;font-weight:bold;margin-bottom:0.5em}#beauops span strong,#miniops span strong,#diffops span strong{display:inline;float:none;font-size:1em;width:auto}#feedreport{right:38.8em}#beautyinput,#minifyinput,#parseinput,#baseText,#newText,#beautyoutput,#minifyoutput,#parseoutput{font-size:1em}#Beautify,#Minify,#Parse,#diffBase,#diffNew{border-radius:0.4em;padding:1em 1.25em}#Beautify .input,#Minify .input,#Parse .input,#Beautify .output,#Minify .output,#Parse .output{width:49%}#Beautify .input label,#Beautify .output label,#Minify .input label,#Minify .output label,#Parse .input label,#Parse .output label{display:block;font-size:1.05em;font-weight:bold}#Beautify p.file,#Minify p.file,#Parse p.file{clear:none;float:none}#Beautify textarea,#Minify textarea,#Parse textarea{margin-bottom:0.75em}#checklist_option li{font-weight:bold}#checklist_option li li{font-weight:normal}#codeInput{margin-bottom:1em}#codeInput #diffBase p,#codeInput #diffNew p{clear:both;float:none}#codeInput .input{clear:none;float:left}#codeInput .output{clear:none;float:right;margin-top:-2.4em}#cssreport.doc table{position:absolute}#css-size{left:24em}#css-uri{left:40em}#css-uri td{text-align:left}#webtool #csvchar{width:11.8em}#webtool #dcolorScheme,#doc #dcolorScheme{float:right;margin:-3em 0 0}#webtool #dcolorScheme label,#doc #dcolorScheme label{display:inline-block;font-size:1em}#diff .addsource{cursor:pointer;margin-bottom:1em;padding:0}#diff .addsource input{display:block;float:left;margin:0.5em 0.5em -1.5em}#diff .addsource label{cursor:pointer;display:inline-block;font-size:1.2em;padding:0.5em 0.5em 0.5em 2em}#diffBase,#diffNew,#Beautify,#Minify,#Parse#doc div,#doc div div,#doc ol,#webtool #option_comment,#update,#thirdparties img,#diffoutput #thirdparties,.ace_editor,#webtool .box h3.heading,#webtool .box .body,#webtool .options,.diff .replace em,.diff .delete em,.diff .insert em,button,fieldset{border-style:solid;border-width:0.1em}#diffBase,#diffNew{padding:1.25em 1%;width:47%}#diffBase textarea,#diffNew textarea{width:99.5%}#diffBase{float:left;margin-right:1%}#diffNew{float:right}#diffoutput{width:100%}#diffoutput #thirdparties li{display:inline-block;list-style-type:none}#diffoutput li em,#diffoutput p em,.analysis .bad,.analysis .good{font-weight:bold}#diffoutput ul{font-size:1.2em;margin-top:1em}#diffoutput ul li,#doc #parse ul li{display:list-item;list-style-type:disc}#doc_contents a{text-decoration:none}#doc_contents ol{padding-bottom:1em}#doc_contents ol ol li{font-size:0.75em;list-style:lower-alpha;margin:0.5em 0 1em 3em}#doc #doc_contents ol ol{background-color:inherit;border-style:none;margin:0.25em 0.3em 0 0;padding-bottom:0}#doc div.beautify{border-style:none}#doc #execution h3{background:transparent;border-style:none;font-size:1em;font-weight:bold}#doc code,.doc code{display:block;font-family:'Courier New',Courier,'Lucida Console',monospace;font-size:1.1em}#doc div,.doc div{margin-bottom:2em;padding:0 0.5em 0.5em}#doc div div,.doc div div{clear:both;margin-bottom:1em}#doc em,.doc em,#webtool .box .body em{font-style:normal;font-weight:bold}#doc div h2,.doc div h2{font-size:1.6em;margin:0.5em 0.5em 0.5em 0}#doc div h3,.doc div h3{margin-bottom:0.5em;margin-top:0.5em}#doc ol,.doc ol{clear:both;padding:0}#doc ol li span,.doc ol li span{display:block;margin-left:2em}#doc ol ol,#doc ul ol,.doc ol ol,.doc ul ol{margin-right:0.5em}#doc td span,.doc td span{display:block}#doc table,.doc table,#webtool .box .body table{border-collapse:collapse;border-style:solid;border-width:0.2em;clear:both}#doc table,.doc table{font-size:1.2em}#doc td,#doc th,.doc td,.doc th{border-left-style:solid;border-left-width:0.1em;border-top-style:solid;border-top-width:0.1em;padding:0.5em}#doc th,.doc th{font-weight:bold}#doc ul,.doc ul{margin-top:1em}#doc ul li,.doc ul li{font-size:1.2em}#feedemail{display:block;width:100%}#feedreportbody{text-align:center}#feedreportbody .radiogroup .feedlabel{display:block;font-size:1.4em;margin:0 0 1em;width:auto}#feedreportbody .radiogroup span{display:inline-block;margin:0 0 2em;width:5em}#feedreportbody .radiogroup input{position:absolute;top:-2000em}#feedreportbody .radiogroup label{border-radius:50%;border-style:solid;border-width:0.1em;cursor:pointer;display:inline-block;height:1.5em;line-height:1.5;text-align:center;width:1.5em}#feedreportbody .radiogroup span span{display:block;font-size:0.8em;margin:0;width:auto}#feedsubmit{float:none;font-family:inherit;height:3em;margin:2.5em auto 0;position:static;text-shadow:none;width:50%}#doc #function_properties h4{float:none;font-size:1.2em}#doc #function_properties li{padding:0 0 0 0.5em}#function_properties h4 strong{color:#c00}#function_properties h5{font-size:1em;margin:0 0 0 -2.5em}#function_properties ol{padding-right:1em}#webtool #functionGroup,#webtool #headline{border-radius:0.2em;border-style:solid;border-width:0.1em;padding:0.7em 1.2em}#webtool #functionGroup input{cursor:pointer}#webtool #functionGroup label{cursor:pointer;font-size:1em}#webtool #functionGroup span{display:inline-block;margin-left:2em}#webtool #headline{margin: 0 0 1em;}#webtool #headline h2{background:transparent;border-style:none;float:left;line-height:1;margin:0 0.25em 0 0;padding:0}#webtool #headline p{clear:none;float:left;font-size: 1.8em;line-height:1;margin:0}#webtool #hideOptions{margin-left:5em}#webtool #infolinks{float:right;margin:0 0 -4em}#webtool #infolinks li{display:inline-block;font-size:1.4em;list-style:none;margin:0.5em 1em 0}#jserror code{font-family:'Courier New',Courier,'Lucida Console',monospace}#jserror span{display:block}#webtool #modalSave p{background:#eee;color:#333;font-size:2em;padding:1em;position:absolute;text-align:center;top:10em;width:25em;z-index:9001}#modalSave p em{display:block;font-size:0.75em;margin-top:1em}#modalSave p strong{color:#c00;font-weight:bold}#modalSave span{background:#000;display:block;left:0;opacity:0.5;position:absolute;top:0;z-index:9000}#codereport{right:19.8em}#webtool #option_comment{font-size:1.2em;height:2.5em;width:100%}#webtool #option_commentClear{margin:-0.5em -0.25em 0 0}#options{margin:0 0 1em}#options #resetOptions{margin:0 0 -6em}#options p.apiname, #addOptions p.apiname{float:left;font-size:1.2em;line-height:2.4;margin:0 -40em 0 15em;padding:0}#options span.apiname, #addOptions span.apiname{display:inline-block;float:none;font-size:1em;margin:0 0 0 1em;width:auto}#options .resetbutton{padding:0}#webtool #options button{float:right;height:2em;padding:0;width:15em}#options label{width:auto}#options p,#addOptions p{clear:both;font-size:1em;margin:0;padding:1em 0 0}#webtool #options p span{height:2em;margin:0 0 0 1em}#pdsamples{list-style-position:inside;margin:0;padding:0;position:relative;z-index:10}#pdsamples li{border-radius:1em;border-style:solid;border-width:0.1em;margin:0 0 3em;padding:1em}#pdsamples li div{border-radius:1em;border-style:solid;border-width:0.1em;margin:0;padding:1em}#pdsamples li p{display:inline-block;font-size:1em;margin:0}#pdsamples li p a{display:block;margin:0 0 1em 2em}#pdsamples li ul{margin:0 0 0 2em}#reports{height:4em}#webtool #reports h2{display:none}#samples #dcolorScheme{position:relative;z-index:1000}#samples #pdsamples li li{background:none transparent;border-style:none;display:list-item;list-style:disc outside;margin:0;padding:0.5em}#samples h1{float:none}#samples h2{border-style:none;float:none;font-size:1.5em;margin:1em 0}#showOptionsCallOut{background:#fff;border:0.1em solid #000;box-shadow:0.2em 0.2em 0.4em rgba(0,0,0,.15);left:28.6%;padding:0.5em;position:absolute;top:4.6em;width:20%;z-index:1000}#showOptionsCallOut a{color:#66f;font-weight:bold}#showOptionsCallOut em{color:#c00}#showOptionsCallOut strong{color:#090}#statreport{right:0.8em}#statreport .body p,#statreport .body li,#statreport .body h3{font-size:1.2em}#statreport .body h3{margin-top:0}#statreport .body ul{margin-top:1em}#textareaTabKey{border-style:solid;border-width:0.1em;left:51%;padding:0.5em;position:absolute;width:28em}#textareaTabKey strong{text-decoration:underline}#textareaTabKey em{font-weight:bold}#textreport{width:100%}#thirdparties a{border-style:none;display:block;height:4em;text-decoration:none}#update{clear:left;float:right;font-weight:bold;padding:0.25em;position:absolute;right:0;top:0;z-index:2;}#update span{display:block}#update span span{display:inline-block;float:right}#webtool .diff h3{border-style:none solid solid;border-width:0 0.1em 0.2em;box-shadow:none;display:block;font-family:Verdana;font-size:1.2em;margin:0 0 0 -.1em;padding:0.2em 2em;text-align:left}#webtool .options input[type=text]{margin-right:1em;width:11.6em}#webtool .options input[type=text],#webtool div input,#webtool textarea{border-style:inset;border-width:0.1em}.analysis th{text-align:left}.analysis .parseData td{font-family:'Courier New',Courier,'Lucida Console',monospace;text-align:left;white-space:pre}.analysis td{text-align:right}#webtool .beautify,#webtool .diff{border-style:solid;border-width:0.2em;display:inline-block;font-family:'Courier New',Courier,'Lucida Console',monospace;margin:0 1em 1em 0;position:relative}#webtool .beautify .count,#webtool .diff .count{border-style:solid;border-width:0 0.1em 0 0;font-weight:normal;padding:0;text-align:right}#webtool .beautify .count li,#webtool .diff .count li{padding-left:2em}#webtool .beautify .count li{padding-top:0.5em}#webtool .beautify .count li.fold,#webtool .diff .count li.fold{color:#900;cursor:pointer;font-weight:bold;padding-left:0.5em}#webtool .beautify .data,#webtool .diff .data{text-align:left;white-space:pre}#webtool .beautify .data em{display:inline-block;font-style:normal;font-weight:bold;padding-top:0.5em}#webtool .beautify .data li,#webtool .diff .data li{padding-left:0.5em;white-space:pre}#webtool .beautify li,#webtool .diff li{border-style:none none solid;border-width:0 0 0.1em;display:block;line-height:1.2;list-style-type:none;margin:0;padding-bottom:0;padding-right:0.5em}#webtool .beautify ol,#webtool .diff ol{display:table-cell;margin:0;padding:0}#webtool .box{border-style:solid;border-width:0;left:auto;margin:0;padding:0;position:absolute;z-index:10}#webtool .box .buttons button{border-radius:0;border-style:solid;border-width:0.1em;display:block;float:right;font-family:'Lucida Console','Trebuchet MS','Arial';height:1.75em;padding:0;position:absolute;right:0;text-align:center;top:0;width:1.75em;z-index:7}#webtool .box .buttons button.resize{border-width:0.05em;cursor:se-resize;font-size:1.667em;font-weight:normal;height:0.8em;line-height:0.5em;margin:-.85em 0 0;position:absolute;right:0.05em;top:100%;width:0.85em}#webtool .box .buttons button.minimize{margin:0.35em 4em 0 0}#webtool .box .buttons button.maximize{margin:0.35em 1.75em 0 0}#webtool .box .buttons button.save{margin:0.35em 6.25em 0 0}#webtool .box .buttons{float:right;margin:0}#webtool .box h3.heading{float:left;font-size:1em;height:3em;margin:0 0 -3.2em;padding:0;position:relative;width:17em;z-index:6}#webtool .box h3.heading button{background:transparent;border-radius:0;border-style:none;box-shadow:none;cursor:pointer;display:block;font-size:1.8em;height:100%;margin:0;padding:0.25em 0 0 0.5em;text-align:left}#webtool .box .heading button:hover{background:transparent;color:inherit;text-shadow:none}#webtool .box .body{clear:both;height:20em;margin-top:-.1em;overflow:scroll;padding:4.25em 1em 1em;position:relative;right:0;top:0;width:75em;z-index:5}#webtool .button{margin:1em 0;text-align:center}#webtool .button button{display:block;font-size:2em;height:1.5em;margin:0 auto;padding:0;width:50%}#webtool .clear,#doc .clear{clear:both;display:block}.diff .skip{border-style:none none solid;border-width:0 0 0.1em}.diff .diff-left,.diff .diff-right{display:table-cell}.diff .diff-left{border-style:none none none solid;border-width:0 0 0 0.1em}.diff .diff-right{border-style:none none none solid;border-width:0 0 0 0.1em;margin-left:-.1em;min-width:16.5em;right:0;top:0}.diff-right .data ol{min-width:16.5em}.diff-right .data{border-style:none solid none none;border-width:0 0.1em 0 0;width:100%}.diff-right .data li{min-width:16.5em}.diff li,.diff p,.diff h3,.beautify li{font-size:1.1em}.diff li{padding-top:0.5em}.diff li em{font-style:normal;margin:0 -.09em;padding:0.05em 0}#webtool .diff p.author{border-style:solid;border-width:0.2em 0.1em 0.1em;margin:0;overflow:hidden;padding:0.4em;text-align:right}.difflabel{display:block;height:0}#webtool .file,#webtool .labeltext{font-size:0.9em;font-weight:bold;margin-bottom:1em}#webtool .file input,#webtool .labeltext input{display:inline-block;margin:0 0.7em 0 0;width:16em}#webtool .input,#webtool.output{margin:0}.metainfo{position:relative;}#webtool .options{border-radius:0.4em;clear:both;margin-bottom:1em;padding:1em;width:auto}#webtool .options input,#webtool .options label{border-style:none;display:block;float:left}#webtool .output label{text-align:right}#webtool .options p span label{font-size:1em}#webtool .options p span{display:block;float:left;font-size:1em;min-width:16em;padding-bottom:0.5em}#webtool .options select,#webtool #csvchar{margin:0 0 0 1em}#webtool .options fieldset select{float:left;margin:0 1em 0 0}#webtool .options span label{margin-left:0.4em}body#doc{font-size:0.8em;margin:0 auto;max-width:80em}body#doc #function_properties ul{margin:0}body#doc #function_properties ul li{font-size:0.9em;margin:0.5em 0 0 4em}body#doc ul li,body#doc ol li{font-size:1.1em}body#doc table{font-size:1em}#webtool button,#webtool a.button{border-radius:0.15em;display:block;font-weight:bold;padding:0.2em 0;width:100%}#webtool div .button{text-align:center}#webtool div button,#webtool div a.button{display:inline-block;font-weight:bold;margin:1em 0;padding:1em 2em}#webtool button:hover,#webtool a.button:hover{cursor:pointer}#webtool fieldset,#doc fieldset{border-radius:1em;clear:both;margin:1em 0 0;padding:0 1em 1em}#webtool h1{float:left;font-size:2em;margin:0 0.5em 0.5em 0}#webtool h1{position:absolute;top:-200em;z-index:0;}#webtool h1 svg,#doc h1 svg{border-style:solid;border-width:0.05em;float:left;height:1.5em;margin-right:0.5em;width:1.5em}#webtool h1 span,#doc h1 span{font-size:0.5em}#webtool h2,#doc h2,#webtool h3,#doc h3{border-style:solid;border-width:0.075em;display:inline-block;font-size:1.8em;font-weight:bold;margin:0 0.5em 0.5em 0;padding:0 0.2em}#webtool h3,#doc h3{font-size:1.6em}#webtool h4,#doc h4{font-size:1.4em}#webtool inputt[type='radio'],#doc input[type='radio']{margin:0 0.25em}#webtool input[type='file']{box-shadow:none}#webtool label,#doc label{display:inline;font-size:1.4em}#webtool legend,#doc legend{border-radius:1em;border-style:solid;border-width:0.1em;font-size:1.4em;font-weight:bold;margin-left:-0.25em;padding:0 0.5em}#webtool fieldset fieldset legend{font-size:1.2em}#webtool li,#doc li{clear:both;margin:1em 0 1em 3em}#webtool li h4,#doc li h4{display:inline;float:left;margin:0.4em 0;text-align:left;width:14em}#webtool ol li{font-size:1.2em}#doc ol li{font-size:1.4em;list-style-type:decimal}#webtool ol li li,#doc ol li li{font-size:1em}#webtool p,#doc p{clear:both;font-size:1.2em;margin:0 0 1em}#webtool select,#doc select{border-style:inset;border-width:0.1em;width:13.5em}#webtool strong.new,#doc strong .new{background:#ff6;font-style:italic}#webtool strong label,#doc strong label{font-size:1em;width:inherit}#webtool textarea{display:inline-block;font-family:'Courier New',Courier,'Lucida Console',monospace;height:10em;margin:0 0 -.1em;width:100%}#webtool ul,#doc ul{margin:-1.4em 0 2em;padding:0}#webtool ul li,#doc ul li{list-style-type:none}@media print{#webtool div,#doc div{width:100%}html td{font-size:0.8em;white-space:normal}#webtool p,#doc p,#webtool .options,#Beautify,#Minify,#Parse,#diff,#webtool ul,#doc ul{display:none}}@media screen and (-webkit-min-device-pixel-ratio:0){.beautify .count li{padding-top:0.546em}.beautify .data li{line-height:1.3}}@media (max-width: 640px){#codeInput label{display:none}#diffBase,#diffNew{width:46%}#doc #dcolorScheme{margin:0 0 1em}#functionGroup,#headline{height:4em}#functionGroup span{margin-left:0.5em;position:relative;z-index:10}#infolinks{margin:0}#reports{display:none}#update{margin-top:2.75em}#webtool .labeltext input,#webtool .file input{width:12em}}",
-scanvas: "#doc.canvas{color:#444}#webtool.canvas input.unchecked{background:#ccc;color:#33" +
+        core   : "body#webtool,body#doc{font-family:'Lucida Sans Unicode','Helvetica','Arial', san" +
+                     "s-serif;font-size:10px;overflow-y:scroll}div#webtool{font-size:10px}#about_licen" +
+                     "se a{display:block}#webtool #announcement{color:#00c;font-weight:bold;height:aut" +
+                     "o;left:14em;margin:0;overflow:hidden;position:absolute;text-overflow:ellipsis;to" +
+                     "p:0.5em;white-space:nowrap;width:40%;z-index:5}#webtool #announcement strong.dup" +
+                     "licate{display:block}#webtool #announcement span{display:block}#apireturn textar" +
+                     "ea{font-size:1.2em;height:50em;width:100%}#apitest input,#apitest label,#apitest" +
+                     " select,#apitest textarea{float:left}#apitest input,#apitest select,#apitest tex" +
+                     "tarea{width:30em}#apitest label{width:20em}#apitest p{clear:both;padding-top:0.7" +
+                     "5em}#beau-other-span,#diff-other-span{left:-20em;position:absolute;width:0}#webt" +
+                     "ool #beauops p strong,#webtool #options p strong,#webtool #diffops p strong,#web" +
+                     "tool #miniops p strong,#webtool #parseops p strong,#webtool #options .label,#web" +
+                     "tool #diffops .label,#webtool #miniops .label,#webtool #beauops .label,#webtool " +
+                     "#parseops .label{display:block;float:none;font-size:1em;font-weight:bold;margin-" +
+                     "bottom:0.5em}#beauops span strong,#miniops span strong,#diffops span strong{disp" +
+                     "lay:inline;float:none;font-size:1em;width:auto}#feedreport{right:38.8em}#beautyi" +
+                     "nput,#minifyinput,#parseinput,#baseText,#newText,#beautyoutput,#minifyoutput,#pa" +
+                     "rseoutput{font-size:1em}#Beautify,#Minify,#Parse,#diffBase,#diffNew{border-radiu" +
+                     "s:0.4em;padding:1em 1.25em}#Beautify .input,#Minify .input,#Parse .input,#Beauti" +
+                     "fy .output,#Minify .output,#Parse .output{width:49%}#Beautify .input label,#Beau" +
+                     "tify .output label,#Minify .input label,#Minify .output label,#Parse .input labe" +
+                     "l,#Parse .output label{display:block;font-size:1.05em;font-weight:bold}#Beautify" +
+                     " p.file,#Minify p.file,#Parse p.file{clear:none;float:none}#Beautify textarea,#M" +
+                     "inify textarea,#Parse textarea{margin-bottom:0.75em}#checklist_option li{font-we" +
+                     "ight:bold}#checklist_option li li{font-weight:normal}#codeInput{margin-bottom:1e" +
+                     "m}#codeInput #diffBase p,#codeInput #diffNew p{clear:both;float:none}#codeInput " +
+                     ".input{clear:none;float:left}#codeInput .output{clear:none;float:right;margin-to" +
+                     "p:-2.4em}#cssreport.doc table{position:absolute}#css-size{left:24em}#css-uri{lef" +
+                     "t:40em}#css-uri td{text-align:left}#webtool #csvchar{width:11.8em}#webtool #dcol" +
+                     "orScheme,#doc #dcolorScheme{float:right;margin:-3em 0 0}#webtool #dcolorScheme l" +
+                     "abel,#doc #dcolorScheme label{display:inline-block;font-size:1em}#diff .addsourc" +
+                     "e{cursor:pointer;margin-bottom:1em;padding:0}#diff .addsource input{display:bloc" +
+                     "k;float:left;margin:0.5em 0.5em -1.5em}#diff .addsource label{cursor:pointer;dis" +
+                     "play:inline-block;font-size:1.2em;padding:0.5em 0.5em 0.5em 2em}#diffBase,#diffN" +
+                     "ew,#Beautify,#Minify,#Parse#doc div,#doc div div,#doc ol,#webtool #option_commen" +
+                     "t,#update,#thirdparties img,#diffoutput #thirdparties,.ace_editor,#webtool .box " +
+                     "h3.heading,#webtool .box .body,#webtool .options,.diff .replace em,.diff .delete" +
+                     " em,.diff .insert em,button,fieldset{border-style:solid;border-width:0.1em}#diff" +
+                     "Base,#diffNew{padding:1.25em 1%;width:47%}#diffBase textarea,#diffNew textarea{w" +
+                     "idth:99.5%}#diffBase{float:left;margin-right:1%}#diffNew{float:right}#diffoutput" +
+                     "{width:100%}#diffoutput #thirdparties li{display:inline-block;list-style-type:no" +
+                     "ne}#diffoutput li em,#diffoutput p em,.analysis .bad,.analysis .good{font-weight" +
+                     ":bold}#diffoutput ul{font-size:1.2em;margin-top:1em}#diffoutput ul li,#doc #pars" +
+                     "e ul li{display:list-item;list-style-type:disc}#doc_contents a{text-decoration:n" +
+                     "one}#doc_contents ol{padding-bottom:1em}#doc_contents ol ol li{font-size:0.75em;" +
+                     "list-style:lower-alpha;margin:0.5em 0 1em 3em}#doc #doc_contents ol ol{backgroun" +
+                     "d-color:inherit;border-style:none;margin:0.25em 0.3em 0 0;padding-bottom:0}#doc " +
+                     "div.beautify{border-style:none}#doc #execution h3{background:transparent;border-" +
+                     "style:none;font-size:1em;font-weight:bold}#doc code,.doc code{display:block;font" +
+                     "-family:'Courier New',Courier,'Lucida Console',monospace;font-size:1.1em}#doc di" +
+                     "v,.doc div{margin-bottom:2em;padding:0 0.5em 0.5em}#doc div div,.doc div div{cle" +
+                     "ar:both;margin-bottom:1em}#doc em,.doc em,#webtool .box .body em{font-style:norm" +
+                     "al;font-weight:bold}#doc div h2,.doc div h2{font-size:1.6em;margin:0.5em 0.5em 0" +
+                     ".5em 0}#doc div h3,.doc div h3{margin-bottom:0.5em;margin-top:0.5em}#doc ol,.doc" +
+                     " ol{clear:both;padding:0}#doc ol li span,.doc ol li span{display:block;margin-le" +
+                     "ft:2em}#doc ol ol,#doc ul ol,.doc ol ol,.doc ul ol{margin-right:0.5em}#doc td sp" +
+                     "an,.doc td span{display:block}#doc table,.doc table,#webtool .box .body table{bo" +
+                     "rder-collapse:collapse;border-style:solid;border-width:0.2em;clear:both}#doc tab" +
+                     "le,.doc table{font-size:1.2em}#doc td,#doc th,.doc td,.doc th{border-left-style:" +
+                     "solid;border-left-width:0.1em;border-top-style:solid;border-top-width:0.1em;padd" +
+                     "ing:0.5em}#doc th,.doc th{font-weight:bold}#doc ul,.doc ul{margin-top:1em}#doc u" +
+                     "l li,.doc ul li{font-size:1.2em}#feedemail{display:block;width:100%}#feedreportb" +
+                     "ody{text-align:center}#feedreportbody .radiogroup .feedlabel{display:block;font-" +
+                     "size:1.4em;margin:0 0 1em;width:auto}#feedreportbody .radiogroup span{display:in" +
+                     "line-block;margin:0 0 2em;width:5em}#feedreportbody .radiogroup input{position:a" +
+                     "bsolute;top:-2000em}#feedreportbody .radiogroup label{border-radius:50%;border-s" +
+                     "tyle:solid;border-width:0.1em;cursor:pointer;display:inline-block;height:1.5em;l" +
+                     "ine-height:1.5;text-align:center;width:1.5em}#feedreportbody .radiogroup span sp" +
+                     "an{display:block;font-size:0.8em;margin:0;width:auto}#feedsubmit{float:none;font" +
+                     "-family:inherit;height:3em;margin:2.5em auto 0;position:static;text-shadow:none;" +
+                     "width:50%}#doc #function_properties h4{float:none;font-size:1.2em}#doc #function" +
+                     "_properties li{padding:0 0 0 0.5em}#function_properties h4 strong{color:#c00}#fu" +
+                     "nction_properties h5{font-size:1em;margin:0 0 0 -2.5em}#function_properties ol{p" +
+                     "adding-right:1em}#webtool #functionGroup,#webtool #headline{border-radius:0.2em;" +
+                     "border-style:solid;border-width:0.1em;padding:0.7em 1.2em}#webtool #functionGrou" +
+                     "p input{cursor:pointer}#webtool #functionGroup label{cursor:pointer;font-size:1e" +
+                     "m}#webtool #functionGroup span{display:inline-block;margin-left:2em}#webtool #he" +
+                     "adline{margin: 0 0 1em;}#webtool #headline h2{background:transparent;border-styl" +
+                     "e:none;float:left;line-height:1;margin:0 0.25em 0 0;padding:0}#webtool #headline" +
+                     " p{clear:none;float:left;font-size: 1.8em;line-height:1;margin:0}#webtool #hideO" +
+                     "ptions{margin-left:5em}#webtool #infolinks{float:right;margin:0 0 -4em}#webtool " +
+                     "#infolinks li{display:inline-block;font-size:1.4em;list-style:none;margin:0.5em " +
+                     "1em 0}#jserror code{font-family:'Courier New',Courier,'Lucida Console',monospace" +
+                     "}#jserror span{display:block}#webtool #modalSave p{background:#eee;color:#333;fo" +
+                     "nt-size:2em;padding:1em;position:absolute;text-align:center;top:10em;width:25em;" +
+                     "z-index:9001}#modalSave p em{display:block;font-size:0.75em;margin-top:1em}#moda" +
+                     "lSave p strong{color:#c00;font-weight:bold}#modalSave span{background:#000;displ" +
+                     "ay:block;left:0;opacity:0.5;position:absolute;top:0;z-index:9000}#codereport{rig" +
+                     "ht:19.8em}#webtool #option_comment{font-size:1.2em;height:2.5em;width:100%}#webt" +
+                     "ool #option_commentClear{margin:-0.5em -0.25em 0 0}#options{margin:0 0 1em}#opti" +
+                     "ons #resetOptions{margin:0 0 -6em}#options p.apiname, #addOptions p.apiname{floa" +
+                     "t:left;font-size:1.2em;line-height:2.4;margin:0 -40em 0 15em;padding:0}#options " +
+                     "span.apiname, #addOptions span.apiname{display:inline-block;float:none;font-size" +
+                     ":1em;margin:0 0 0 1em;width:auto}#options .resetbutton{padding:0}#webtool #optio" +
+                     "ns button{float:right;height:2em;padding:0;width:15em}#options label{width:auto}" +
+                     "#options p,#addOptions p{clear:both;font-size:1em;margin:0;padding:1em 0 0}#webt" +
+                     "ool #options p span{height:2em;margin:0 0 0 1em}#pdsamples{list-style-position:i" +
+                     "nside;margin:0;padding:0;position:relative;z-index:10}#pdsamples li{border-radiu" +
+                     "s:1em;border-style:solid;border-width:0.1em;margin:0 0 3em;padding:1em}#pdsample" +
+                     "s li div{border-radius:1em;border-style:solid;border-width:0.1em;margin:0;paddin" +
+                     "g:1em}#pdsamples li p{display:inline-block;font-size:1em;margin:0}#pdsamples li " +
+                     "p a{display:block;margin:0 0 1em 2em}#pdsamples li ul{margin:0 0 0 2em}#reports{" +
+                     "height:4em}#webtool #reports h2{display:none}#samples #dcolorScheme{position:rel" +
+                     "ative;z-index:1000}#samples #pdsamples li li{background:none transparent;border-" +
+                     "style:none;display:list-item;list-style:disc outside;margin:0;padding:0.5em}#sam" +
+                     "ples h1{float:none}#samples h2{border-style:none;float:none;font-size:1.5em;marg" +
+                     "in:1em 0}#showOptionsCallOut{background:#fff;border:0.1em solid #000;box-shadow:" +
+                     "0.2em 0.2em 0.4em rgba(0,0,0,.15);left:28.6%;padding:0.5em;position:absolute;top" +
+                     ":4.6em;width:20%;z-index:1000}#showOptionsCallOut a{color:#66f;font-weight:bold}" +
+                     "#showOptionsCallOut em{color:#c00}#showOptionsCallOut strong{color:#090}#statrep" +
+                     "ort{right:0.8em}#statreport .body p,#statreport .body li,#statreport .body h3{fo" +
+                     "nt-size:1.2em}#statreport .body h3{margin-top:0}#statreport .body ul{margin-top:" +
+                     "1em}#textareaTabKey{border-style:solid;border-width:0.1em;left:51%;padding:0.5em" +
+                     ";position:absolute;width:28em}#textareaTabKey strong{text-decoration:underline}#" +
+                     "textareaTabKey em{font-weight:bold}#textreport{width:100%}#thirdparties a{border" +
+                     "-style:none;display:block;height:4em;text-decoration:none}#update{clear:left;flo" +
+                     "at:right;font-weight:bold;padding:0.25em;position:absolute;right:0;top:0;z-index" +
+                     ":2;}#update span{display:block}#update span span{display:inline-block;float:righ" +
+                     "t}#webtool .diff h3{border-style:none solid solid;border-width:0 0.1em 0.2em;box" +
+                     "-shadow:none;display:block;font-family:Verdana;font-size:1.2em;margin:0 0 0 -.1e" +
+                     "m;padding:0.2em 2em;text-align:left}#webtool .options input[type=text]{margin-ri" +
+                     "ght:1em;width:11.6em}#webtool .options input[type=text],#webtool div input,#webt" +
+                     "ool textarea{border-style:inset;border-width:0.1em}.analysis th{text-align:left}" +
+                     ".analysis .parseData td{font-family:'Courier New',Courier,'Lucida Console',monos" +
+                     "pace;text-align:left;white-space:pre}.analysis td{text-align:right}#webtool .bea" +
+                     "utify,#webtool .diff{border-style:solid;border-width:0.2em;display:inline-block;" +
+                     "font-family:'Courier New',Courier,'Lucida Console',monospace;margin:0 1em 1em 0;" +
+                     "position:relative}#webtool .beautify .count,#webtool .diff .count{border-style:s" +
+                     "olid;border-width:0 0.1em 0 0;font-weight:normal;padding:0;text-align:right}#web" +
+                     "tool .beautify .count li,#webtool .diff .count li{padding-left:2em}#webtool .bea" +
+                     "utify .count li{padding-top:0.5em}#webtool .beautify .count li.fold,#webtool .di" +
+                     "ff .count li.fold{color:#900;cursor:pointer;font-weight:bold;padding-left:0.5em}" +
+                     "#webtool .beautify .data,#webtool .diff .data{text-align:left;white-space:pre}#w" +
+                     "ebtool .beautify .data em{display:inline-block;font-style:normal;font-weight:bol" +
+                     "d;padding-top:0.5em}#webtool .beautify .data li,#webtool .diff .data li{padding-" +
+                     "left:0.5em;white-space:pre}#webtool .beautify li,#webtool .diff li{border-style:" +
+                     "none none solid;border-width:0 0 0.1em;display:block;line-height:1.2;list-style-" +
+                     "type:none;margin:0;padding-bottom:0;padding-right:0.5em}#webtool .beautify ol,#w" +
+                     "ebtool .diff ol{display:table-cell;margin:0;padding:0}#webtool .box{border-style" +
+                     ":solid;border-width:0;left:auto;margin:0;padding:0;position:absolute;z-index:10}" +
+                     "#webtool .box .buttons button{border-radius:0;border-style:solid;border-width:0." +
+                     "1em;display:block;float:right;font-family:'Lucida Console','Trebuchet MS','Arial" +
+                     "';height:1.75em;padding:0;position:absolute;right:0;text-align:center;top:0;widt" +
+                     "h:1.75em;z-index:7}#webtool .box .buttons button.resize{border-width:0.05em;curs" +
+                     "or:se-resize;font-size:1.667em;font-weight:normal;height:0.8em;line-height:0.5em" +
+                     ";margin:-.85em 0 0;position:absolute;right:0.05em;top:100%;width:0.85em}#webtool" +
+                     " .box .buttons button.minimize{margin:0.35em 4em 0 0}#webtool .box .buttons butt" +
+                     "on.maximize{margin:0.35em 1.75em 0 0}#webtool .box .buttons button.save{margin:0" +
+                     ".35em 6.25em 0 0}#webtool .box .buttons{float:right;margin:0}#webtool .box h3.he" +
+                     "ading{float:left;font-size:1em;height:3em;margin:0 0 -3.2em;padding:0;position:r" +
+                     "elative;width:17em;z-index:6}#webtool .box h3.heading button{background:transpar" +
+                     "ent;border-radius:0;border-style:none;box-shadow:none;cursor:pointer;display:blo" +
+                     "ck;font-size:1.8em;height:100%;margin:0;padding:0.25em 0 0 0.5em;text-align:left" +
+                     "}#webtool .box .heading button:hover{background:transparent;color:inherit;text-s" +
+                     "hadow:none}#webtool .box .body{clear:both;height:20em;margin-top:-.1em;overflow:" +
+                     "scroll;padding:4.25em 1em 1em;position:relative;right:0;top:0;width:75em;z-index" +
+                     ":5}#webtool .button{margin:1em 0;text-align:center}#webtool .button button{displ" +
+                     "ay:block;font-size:2em;height:1.5em;margin:0 auto;padding:0;width:50%}#webtool ." +
+                     "clear,#doc .clear{clear:both;display:block}.diff .skip{border-style:none none so" +
+                     "lid;border-width:0 0 0.1em}.diff .diff-left,.diff .diff-right{display:table-cell" +
+                     "}.diff .diff-left{border-style:none none none solid;border-width:0 0 0 0.1em}.di" +
+                     "ff .diff-right{border-style:none none none solid;border-width:0 0 0 0.1em;margin" +
+                     "-left:-.1em;min-width:16.5em;right:0;top:0}.diff-right .data ol{min-width:16.5em" +
+                     "}.diff-right .data{border-style:none solid none none;border-width:0 0.1em 0 0;wi" +
+                     "dth:100%}.diff-right .data li{min-width:16.5em}.diff li,.diff p,.diff h3,.beauti" +
+                     "fy li{font-size:1.1em}.diff li{padding-top:0.5em}.diff li em{font-style:normal;m" +
+                     "argin:0 -.09em;padding:0.05em 0}#webtool .diff p.author{border-style:solid;borde" +
+                     "r-width:0.2em 0.1em 0.1em;margin:0;overflow:hidden;padding:0.4em;text-align:righ" +
+                     "t}.difflabel{display:block;height:0}#webtool .file,#webtool .labeltext{font-size" +
+                     ":0.9em;font-weight:bold;margin-bottom:1em}#webtool .file input,#webtool .labelte" +
+                     "xt input{display:inline-block;margin:0 0.7em 0 0;width:16em}#webtool .input,#web" +
+                     "tool.output{margin:0}.metainfo{position:relative;}#webtool .options{border-radiu" +
+                     "s:0.4em;clear:both;margin-bottom:1em;padding:1em;width:auto}#webtool .options in" +
+                     "put,#webtool .options label{border-style:none;display:block;float:left}#webtool " +
+                     ".output label{text-align:right}#webtool .options p span label{font-size:1em}#web" +
+                     "tool .options p span{display:block;float:left;font-size:1em;min-width:16em;paddi" +
+                     "ng-bottom:0.5em}#webtool .options select,#webtool #csvchar{margin:0 0 0 1em}#web" +
+                     "tool .options fieldset select{float:left;margin:0 1em 0 0}#webtool .options span" +
+                     " label{margin-left:0.4em}body#doc{font-size:0.8em;margin:0 auto;max-width:80em}b" +
+                     "ody#doc #function_properties ul{margin:0}body#doc #function_properties ul li{fon" +
+                     "t-size:0.9em;margin:0.5em 0 0 4em}body#doc ul li,body#doc ol li{font-size:1.1em}" +
+                     "body#doc table{font-size:1em}#webtool button,#webtool a.button{border-radius:0.1" +
+                     "5em;display:block;font-weight:bold;padding:0.2em 0;width:100%}#webtool div .butt" +
+                     "on{text-align:center}#webtool div button,#webtool div a.button{display:inline-bl" +
+                     "ock;font-weight:bold;margin:1em 0;padding:1em 2em}#webtool button:hover,#webtool" +
+                     " a.button:hover{cursor:pointer}#webtool fieldset,#doc fieldset{border-radius:1em" +
+                     ";clear:both;margin:1em 0 0;padding:0 1em 1em}#webtool h1{float:left;font-size:2e" +
+                     "m;margin:0 0.5em 0.5em 0}#webtool h1{position:absolute;top:-200em;z-index:0;}#we" +
+                     "btool h1 svg,#doc h1 svg{border-style:solid;border-width:0.05em;float:left;heigh" +
+                     "t:1.5em;margin-right:0.5em;width:1.5em}#webtool h1 span,#doc h1 span{font-size:0" +
+                     ".5em}#webtool h2,#doc h2,#webtool h3,#doc h3{border-style:solid;border-width:0.0" +
+                     "75em;display:inline-block;font-size:1.8em;font-weight:bold;margin:0 0.5em 0.5em " +
+                     "0;padding:0 0.2em}#webtool h3,#doc h3{font-size:1.6em}#webtool h4,#doc h4{font-s" +
+                     "ize:1.4em}#webtool inputt[type='radio'],#doc input[type='radio']{margin:0 0.25em" +
+                     "}#webtool input[type='file']{box-shadow:none}#webtool label,#doc label{display:i" +
+                     "nline;font-size:1.4em}#webtool legend,#doc legend{border-radius:1em;border-style" +
+                     ":solid;border-width:0.1em;font-size:1.4em;font-weight:bold;margin-left:-0.25em;p" +
+                     "adding:0 0.5em}#webtool fieldset fieldset legend{font-size:1.2em}#webtool li,#do" +
+                     "c li{clear:both;margin:1em 0 1em 3em}#webtool li h4,#doc li h4{display:inline;fl" +
+                     "oat:left;margin:0.4em 0;text-align:left;width:14em}#webtool ol li{font-size:1.2e" +
+                     "m}#doc ol li{font-size:1.4em;list-style-type:decimal}#webtool ol li li,#doc ol l" +
+                     "i li{font-size:1em}#webtool p,#doc p{clear:both;font-size:1.2em;margin:0 0 1em}#" +
+                     "webtool select,#doc select{border-style:inset;border-width:0.1em;width:13.5em}#w" +
+                     "ebtool strong.new,#doc strong .new{background:#ff6;font-style:italic}#webtool st" +
+                     "rong label,#doc strong label{font-size:1em;width:inherit}#webtool textarea{displ" +
+                     "ay:inline-block;font-family:'Courier New',Courier,'Lucida Console',monospace;hei" +
+                     "ght:10em;margin:0 0 -.1em;width:100%}#webtool ul,#doc ul{margin:-1.4em 0 2em;pad" +
+                     "ding:0}#webtool ul li,#doc ul li{list-style-type:none}@media print{#webtool div," +
+                     "#doc div{width:100%}html td{font-size:0.8em;white-space:normal}#webtool p,#doc p" +
+                     ",#webtool .options,#Beautify,#Minify,#Parse,#diff,#webtool ul,#doc ul{display:no" +
+                     "ne}}@media screen and (-webkit-min-device-pixel-ratio:0){.beautify .count li{pad" +
+                     "ding-top:0.546em}.beautify .data li{line-height:1.3}}@media (max-width: 640px){#" +
+                     "codeInput label{display:none}#diffBase,#diffNew{width:46%}#doc #dcolorScheme{mar" +
+                     "gin:0 0 1em}#functionGroup,#headline{height:4em}#functionGroup span{margin-left:" +
+                     "0.5em;position:relative;z-index:10}#infolinks{margin:0}#reports{display:none}#up" +
+                     "date{margin-top:2.75em}#webtool .labeltext input,#webtool .file input{width:12em" +
+                     "}}",
+        scanvas: "#doc.canvas{color:#444}#webtool.canvas input.unchecked{background:#ccc;color:#33" +
                      "3}.canvas *:focus,.canvas .filefocus,.canvas #feedreportbody .focus,.canvas #fee" +
                      "dreportbody .active-focus{outline:0.1em dashed #00f}.canvas #Beautify,.canvas #M" +
                      "inify,.canvas #diffBase,.canvas #diffNew{background:#d8d8cf;border-color:#664;bo" +
@@ -599,10 +829,11 @@ scanvas: "#doc.canvas{color:#444}#webtool.canvas input.unchecked{background:#ccc
     };
 
     if (pd.test.ace === true) {
-        pd.aceApply = function (nodeName) {
+        pd.aceApply = function (nodeName, className, maxWidth) {
             var div        = document.createElement("div"),
+                span       = document.createElement("span"),
                 node       = pd.o[nodeName],
-                parent     = node.parentNode,
+                parent     = node.parentNode.parentNode,
                 attributes = node.attributes,
                 len        = attributes.length,
                 a          = 0,
@@ -613,7 +844,15 @@ scanvas: "#doc.canvas{color:#444}#webtool.canvas input.unchecked{background:#ccc
                 }
             }
             parent.appendChild(div);
-            parent.removeChild(node);
+            if (className === "output") {
+                span.setAttribute("class", "clear");
+                parent.appendChild(span);
+            }
+            parent.removeChild(node.parentNode);
+            div.setAttribute("class", className);if (maxWidth === true) {
+                div.style.width = "100%";
+            }
+            div.style.fontSize           = "1.25em";
             edit                         = ace.edit(div);
             pd.o[nodeName]               = div.getElementsByTagName("textarea")[0];
             edit["\u0024blockScrolling"] = Infinity;
@@ -621,31 +860,37 @@ scanvas: "#doc.canvas{color:#444}#webtool.canvas input.unchecked{background:#ccc
         };
         pd.ace      = {};
         if (pd.o.codeDiffBase !== null) {
-            pd.ace.diffBase = pd.aceApply("codeDiffBase");
+            pd.ace.diffBase = pd.aceApply("codeDiffBase", "input", true);
         }
         if (pd.o.codeDiffNew !== null) {
-            pd.ace.diffNew = pd.aceApply("codeDiffNew");
+            pd.ace.diffNew = pd.aceApply("codeDiffNew", "input", true);
         }
         if (pd.o.codeBeauIn !== null) {
-            pd.ace.beauIn = pd.aceApply("codeBeauIn");
+            pd.ace.beauIn = pd.aceApply("codeBeauIn", "input", false);
         }
         if (pd.o.codeBeauOut !== null) {
-            pd.ace.beauOut = pd.aceApply("codeBeauOut");
-            pd.ace.beauOut.setReadOnly(true);
+            pd.ace.beauOut = pd.aceApply("codeBeauOut", "output", false);
+            pd.ace
+                .beauOut
+                .setReadOnly(true);
         }
         if (pd.o.codeMinnIn !== null) {
-            pd.ace.minnIn = pd.aceApply("codeMinnIn");
+            pd.ace.minnIn = pd.aceApply("codeMinnIn", "input", false);
         }
         if (pd.o.codeMinnOut !== null) {
-            pd.ace.minnOut = pd.aceApply("codeMinnOut");
-            pd.ace.minnOut.setReadOnly(true);
+            pd.ace.minnOut = pd.aceApply("codeMinnOut", "output", false);
+            pd.ace
+                .minnOut
+                .setReadOnly(true);
         }
         if (pd.o.codeParsIn !== null) {
-            pd.ace.parsIn = pd.aceApply("codeParsIn");
+            pd.ace.parsIn = pd.aceApply("codeParsIn", "input", false);
         }
         if (pd.o.codeParsOut !== null) {
-            pd.ace.parsOut = pd.aceApply("codeParsOut");
-            pd.ace.parsOut.setReadOnly(true);
+            pd.ace.parsOut = pd.aceApply("codeParsOut", "output", false);
+            pd.ace
+                .parsOut
+                .setReadOnly(true);
         }
 
         //set indentation size in Ace Code Editor
@@ -654,31 +899,55 @@ scanvas: "#doc.canvas{color:#444}#webtool.canvas input.unchecked{background:#ccc
                 value = Number(that.value);
             if (that === pd.id("diff-quan")) {
                 if (pd.o.codeDiffBase !== null) {
-                    pd.ace.diffBase.getSession().setTabSize(value);
+                    pd.ace
+                        .diffBase
+                        .getSession()
+                        .setTabSize(value);
                 }
                 if (pd.o.codeDiffNew !== null) {
-                    pd.ace.diffNew.getSession().setTabSize(value);
+                    pd.ace
+                        .diffNew
+                        .getSession()
+                        .setTabSize(value);
                 }
             } else if (that === pd.id("beau-quan")) {
                 if (pd.o.codeBeauIn !== null) {
-                    pd.ace.beauIn.getSession().setTabSize(value);
+                    pd.ace
+                        .beauIn
+                        .getSession()
+                        .setTabSize(value);
                 }
                 if (pd.o.codeBeauOut !== null) {
-                    pd.ace.beauOut.getSession().setTabSize(value);
+                    pd.ace
+                        .beauOut
+                        .getSession()
+                        .setTabSize(value);
                 }
             } else if (that === pd.id("minn-quan")) {
                 if (pd.o.codeMinnIn !== null) {
-                    pd.ace.minnIn.getSession().setTabSize(value);
+                    pd.ace
+                        .minnIn
+                        .getSession()
+                        .setTabSize(value);
                 }
                 if (pd.o.codeMinnOut !== null) {
-                    pd.ace.minnOut.getSession().setTabSize(value);
+                    pd.ace
+                        .minnOut
+                        .getSession()
+                        .setTabSize(value);
                 }
             } else if (that === pd.id("pars-quan")) {
                 if (pd.o.codeMinnIn !== null) {
-                    pd.ace.minnIn.getSession().setTabSize(value);
+                    pd.ace
+                        .minnIn
+                        .getSession()
+                        .setTabSize(value);
                 }
                 if (pd.o.codeMinnOut !== null) {
-                    pd.ace.minnOut.getSession().setTabSize(value);
+                    pd.ace
+                        .minnOut
+                        .getSession()
+                        .setTabSize(value);
                 }
             }
         };
@@ -771,23 +1040,15 @@ scanvas: "#doc.canvas{color:#444}#webtool.canvas input.unchecked{background:#ccc
                     flagb  = false,
                     output = function dom__langkey_auto_output(langname) {
                         if (langname === "unknown") {
-                            return [
-                                defaultt, setlangmode(defaultt), "unknown"
-                            ];
+                            return [defaultt, setlangmode(defaultt), "unknown"];
                         }
                         if (langname === "xhtml") {
-                            return [
-                                "xml", "html", "XHTML"
-                            ];
+                            return ["xml", "html", "XHTML"];
                         }
                         if (langname === "tss") {
-                            return [
-                                "tss", "tss", "Titanium Stylesheets"
-                            ];
+                            return ["tss", "tss", "Titanium Stylesheets"];
                         }
-                        return [
-                            langname, setlangmode(langname), nameproper(langname)
-                        ];
+                        return [langname, setlangmode(langname), nameproper(langname)];
                     };
                 if (a === null) {
                     return;
@@ -801,7 +1062,8 @@ scanvas: "#doc.canvas{color:#444}#webtool.canvas input.unchecked{background:#ccc
                     }
                     return output("css");
                 }
-                b = a.replace(/\[[a-zA-Z][\w\-]*\=("|')?[a-zA-Z][\w\-]*("|')?\]/g, "").split("");
+                b = a.replace(/\[[a-zA-Z][\w\-]*\=("|')?[a-zA-Z][\w\-]*("|')?\]/g, "")
+                    .split("");
                 c = b.length;
                 if ((/^([\s\w\-]*<)/).test(a) === false && (/(>[\s\w\-]*)$/).test(a) === false) {
                     for (d = 1; d < c; d += 1) {
@@ -975,9 +1237,15 @@ scanvas: "#doc.canvas{color:#444}#webtool.canvas input.unchecked{background:#ccc
                     value          = auto(pd.ace.beauIn.getValue());
                     pd.o.langvalue = value;
                 }
-                pd.ace.beauIn.getSession().setMode("ace/mode/" + value[0]);
+                pd.ace
+                    .beauIn
+                    .getSession()
+                    .setMode("ace/mode/" + value[0]);
                 if (pd.o.codeBeauOut !== null) {
-                    pd.ace.beauOut.getSession().setMode("ace/mode/" + value[0]);
+                    pd.ace
+                        .beauOut
+                        .getSession()
+                        .setMode("ace/mode/" + value[0]);
                 }
             }
             if (all === true || pd.mode === "minn") {
@@ -985,9 +1253,15 @@ scanvas: "#doc.canvas{color:#444}#webtool.canvas input.unchecked{background:#ccc
                     value          = auto(pd.ace.minnIn.getValue());
                     pd.o.langvalue = value;
                 }
-                pd.ace.minnIn.getSession().setMode("ace/mode/" + value[0]);
+                pd.ace
+                    .minnIn
+                    .getSession()
+                    .setMode("ace/mode/" + value[0]);
                 if (pd.o.codeMinnOut !== null) {
-                    pd.ace.minnOut.getSession().setMode("ace/mode/" + value[0]);
+                    pd.ace
+                        .minnOut
+                        .getSession()
+                        .setMode("ace/mode/" + value[0]);
                 }
             }
             if (all === true || pd.mode === "pars") {
@@ -995,9 +1269,15 @@ scanvas: "#doc.canvas{color:#444}#webtool.canvas input.unchecked{background:#ccc
                     value          = auto(pd.ace.parsIn.getValue());
                     pd.o.langvalue = value;
                 }
-                pd.ace.parsIn.getSession().setMode("ace/mode/" + value[0]);
+                pd.ace
+                    .parsIn
+                    .getSession()
+                    .setMode("ace/mode/" + value[0]);
                 if (pd.o.codeParsOut !== null) {
-                    pd.ace.parsOut.getSession().setMode("ace/mode/" + value[0]);
+                    pd.ace
+                        .parsOut
+                        .getSession()
+                        .setMode("ace/mode/" + value[0]);
                 }
             }
             if (all === true || pd.mode === "diff") {
@@ -1006,10 +1286,16 @@ scanvas: "#doc.canvas{color:#444}#webtool.canvas input.unchecked{background:#ccc
                     pd.o.langvalue = value;
                 }
                 if (pd.o.codeDiffBase !== null) {
-                    pd.ace.diffBase.getSession().setMode("ace/mode/" + value[0]);
+                    pd.ace
+                        .diffBase
+                        .getSession()
+                        .setMode("ace/mode/" + value[0]);
                 }
                 if (pd.o.codeDiffNew !== null) {
-                    pd.ace.diffNew.getSession().setMode("ace/mode/" + value[0]);
+                    pd.ace
+                        .diffNew
+                        .getSession()
+                        .setMode("ace/mode/" + value[0]);
                 }
             }
         }
@@ -1140,20 +1426,26 @@ scanvas: "#doc.canvas{color:#444}#webtool.canvas input.unchecked{background:#ccc
     //output
     pd.beaufold            = function dom__beaufold() {
         var self  = this,
-            title = self.getAttribute("title").split("line "),
+            title = self.getAttribute("title")
+                .split("line "),
             min   = Number(title[1].substr(0, title[1].indexOf(" "))),
             max   = Number(title[2]),
             a     = 0,
             b     = "",
             list  = [
-                self.parentNode.getElementsByTagName("li"), self.parentNode.nextSibling.getElementsByTagName("li")
+                self.parentNode
+                    .getElementsByTagName("li"),
+                self.parentNode
+                    .nextSibling
+                    .getElementsByTagName("li")
             ];
         if (self.innerHTML.charAt(0) === "-") {
             for (a = min; a < max; a += 1) {
                 list[0][a].style.display = "none";
                 list[1][a].style.display = "none";
             }
-            self.innerHTML = "+" + self.innerHTML.substr(1);
+            self.innerHTML = "+" + self.innerHTML
+                .substr(1);
         } else {
             for (a = min; a < max; a += 1) {
                 list[0][a].style.display = "block";
@@ -1164,7 +1456,8 @@ scanvas: "#doc.canvas{color:#444}#webtool.canvas input.unchecked{background:#ccc
                     a = Number(b) - 1;
                 }
             }
-            self.innerHTML = "-" + self.innerHTML.substr(1);
+            self.innerHTML = "-" + self.innerHTML
+                .substr(1);
         }
     };
 
@@ -1173,7 +1466,8 @@ scanvas: "#doc.canvas{color:#444}#webtool.canvas input.unchecked{background:#ccc
         var a         = 0,
             b         = 0,
             self      = this,
-            title     = self.getAttribute("title").split("line "),
+            title     = self.getAttribute("title")
+                .split("line "),
             min       = Number(title[1].substr(0, title[1].indexOf(" "))),
             max       = Number(title[2]),
             inner     = self.innerHTML,
@@ -1181,7 +1475,8 @@ scanvas: "#doc.canvas{color:#444}#webtool.canvas input.unchecked{background:#ccc
             parent    = self.parentNode.parentNode,
             listnodes = (parent.getAttribute("class") === "diff")
                 ? parent.getElementsByTagName("ol")
-                : parent.parentNode.getElementsByTagName("ol"),
+                : parent.parentNode
+                    .getElementsByTagName("ol"),
             listLen   = listnodes.length;
         for (a = 0; a < listLen; a += 1) {
             lists.push(listnodes[a].getElementsByTagName("li"));
@@ -1217,7 +1512,9 @@ scanvas: "#doc.canvas{color:#444}#webtool.canvas input.unchecked{background:#ccc
     pd.keydown             = function dom__keydown(e) {
         var event = e || window.event;
         if (pd.test.keypress === true && (pd.test.keystore.length === 0 || event.keyCode !== pd.test.keystore[pd.test.keystore.length - 1]) && event.keyCode !== 17) {
-            pd.test.keystore.push(event.keyCode);
+            pd.test
+                .keystore
+                .push(event.keyCode);
         }
         if (event.keyCode === 17 || event.ctrlKey === true) {
             pd.test.keypress = true;
@@ -1257,9 +1554,7 @@ scanvas: "#doc.canvas{color:#444}#webtool.canvas input.unchecked{background:#ccc
                                 sum  = (summary === undefined)
                                     ? ""
                                     : summary;
-                            return [
-                                code, sum
-                            ];
+                            return [code, sum];
                         };
                     }
                     if (pd.mode === "minn") {
@@ -1268,17 +1563,13 @@ scanvas: "#doc.canvas{color:#444}#webtool.canvas input.unchecked{background:#ccc
                                 sum  = (summary === undefined)
                                     ? ""
                                     : summary;
-                            return [
-                                code, sum
-                            ];
+                            return [code, sum];
                         };
                     }
                 } else if (typeof csvbeauty === "function" && lang === "csv") {
                     if (pd.mode === "beau") {
                         return function dom__recycle_application_csvbeauty() {
-                            return [
-                                csvbeauty(api), ""
-                            ];
+                            return [csvbeauty(api), ""];
                         };
                     }
                     if (pd.mode === "minn") {
@@ -1287,9 +1578,7 @@ scanvas: "#doc.canvas{color:#444}#webtool.canvas input.unchecked{background:#ccc
                                 sum  = (summary === undefined)
                                     ? ""
                                     : summary;
-                            return [
-                                code, sum
-                            ];
+                            return [code, sum];
                         };
                     }
                 }
@@ -1299,9 +1588,7 @@ scanvas: "#doc.canvas{color:#444}#webtool.canvas input.unchecked{background:#ccc
                             sum  = (summary === undefined)
                                 ? ""
                                 : summary;
-                        return [
-                            code, sum
-                        ];
+                        return [code, sum];
                     };
                 }
                 if (typeof jspretty === "function") {
@@ -1310,9 +1597,7 @@ scanvas: "#doc.canvas{color:#444}#webtool.canvas input.unchecked{background:#ccc
                             sum  = (summary === undefined)
                                 ? ""
                                 : summary;
-                        return [
-                            code, sum
-                        ];
+                        return [code, sum];
                     };
                 }
             },
@@ -1352,7 +1637,12 @@ scanvas: "#doc.canvas{color:#444}#webtool.canvas input.unchecked{background:#ccc
                 if (autotest === true) {
                     api.lang = "auto";
                 }
-                button = pd.o.report.code.box.getElementsByTagName("p")[0].getElementsByTagName("button")[0];
+                button = pd.o
+                    .report
+                    .code
+                    .box
+                    .getElementsByTagName("p")[0]
+                    .getElementsByTagName("button")[0];
                 if (button.getAttribute("class") === "save" && button.innerHTML === "H") {
                     chromeSave       = true;
                     button.innerHTML = "S";
@@ -1360,8 +1650,12 @@ scanvas: "#doc.canvas{color:#444}#webtool.canvas input.unchecked{background:#ccc
                 if (api.mode === "beautify") {
                     if (pd.o.codeBeauOut !== null) {
                         if (pd.test.ace === true) {
-                            pd.ace.beauOut.setValue(output[0]);
-                            pd.ace.beauOut.clearSelection();
+                            pd.ace
+                                .beauOut
+                                .setValue(output[0]);
+                            pd.ace
+                                .beauOut
+                                .clearSelection();
                         } else {
                             pd.o.codeBeauOut.value = output[0];
                         }
@@ -1371,7 +1665,11 @@ scanvas: "#doc.canvas{color:#444}#webtool.canvas input.unchecked{background:#ccc
                             pd.o.report.code.body.innerHTML = output[1];
                             if (autotest === true) {
                                 if (pd.o.report.code.body.firstChild.nodeType > 1) {
-                                    pd.o.report.code.body.removeChild(pd.o.report.code.body.firstChild);
+                                    pd.o
+                                        .report
+                                        .code
+                                        .body
+                                        .removeChild(pd.o.report.code.body.firstChild);
                                 }
                                 pd.o.report.code.body.firstChild.innerHTML = "Code type is set to <strong>auto</strong>. <span>Presumed language is <em>" + pd.o.langvalue[2] + "</em>.</span>";
                             }
@@ -1396,7 +1694,11 @@ scanvas: "#doc.canvas{color:#444}#webtool.canvas input.unchecked{background:#ccc
                                 }
                                 pd.o.report.code.box.style.top   = (pd.settings.codereport.top / 10) + "em";
                                 pd.o.report.code.box.style.right = "auto";
-                                diffList                         = pd.o.report.code.body.getElementsByTagName("ol");
+                                diffList                         = pd.o
+                                    .report
+                                    .code
+                                    .body
+                                    .getElementsByTagName("ol");
                                 if (diffList.length > 0) {
                                     (function dom__recycle_execOutput_beauList() {
                                         var a    = 0,
@@ -1421,7 +1723,12 @@ scanvas: "#doc.canvas{color:#444}#webtool.canvas input.unchecked{background:#ccc
                     }
                 }
                 if (api.mode === "diff" && pd.o.report.code.box !== null) {
-                    buttons = pd.o.report.code.box.getElementsByTagName("p")[0].getElementsByTagName("button");
+                    buttons = pd.o
+                        .report
+                        .code
+                        .box
+                        .getElementsByTagName("p")[0]
+                        .getElementsByTagName("button");
                     if (output[0].length > 125000) {
                         pd.test.filled.code = true;
                     } else {
@@ -1434,13 +1741,21 @@ scanvas: "#doc.canvas{color:#444}#webtool.canvas input.unchecked{background:#ccc
                         pd.o.report.code.body.innerHTML = output[1] + output[0];
                         if (autotest === true && pd.o.report.code.body.firstChild !== null) {
                             if (pd.o.report.code.body.firstChild.nodeType > 1) {
-                                pd.o.report.code.body.removeChild(pd.o.report.code.body.firstChild);
+                                pd.o
+                                    .report
+                                    .code
+                                    .body
+                                    .removeChild(pd.o.report.code.body.firstChild);
                             }
                             pd.o.report.code.body.firstChild.innerHTML = "Code type is set to <strong>auto</strong>. <span>Presumed language is <em>" + pd.o.langvalue[2] + "</em>.</span>";
                         }
                     }
                     if (pd.o.report.code.body.innerHTML.toLowerCase().indexOf("<textarea") === -1) {
-                        diffList = pd.o.report.code.body.getElementsByTagName("ol");
+                        diffList = pd.o
+                            .report
+                            .code
+                            .body
+                            .getElementsByTagName("ol");
                         if (diffList.length > 0) {
                             (function dom__recycle_execOutput_diffList() {
                                 var cells = diffList[0].getElementsByTagName("li"),
@@ -1483,8 +1798,12 @@ scanvas: "#doc.canvas{color:#444}#webtool.canvas input.unchecked{background:#ccc
                     }
                     if (pd.o.codeMinnOut !== null) {
                         if (pd.test.ace === true) {
-                            pd.ace.minnOut.setValue(output[0]);
-                            pd.ace.minnOut.clearSelection();
+                            pd.ace
+                                .minnOut
+                                .setValue(output[0]);
+                            pd.ace
+                                .minnOut
+                                .clearSelection();
                         } else {
                             pd.o.codeMinnOut.value = output[0];
                         }
@@ -1498,7 +1817,11 @@ scanvas: "#doc.canvas{color:#444}#webtool.canvas input.unchecked{background:#ccc
                         pd.o.report.code.body.innerHTML = output[1];
                         if (autotest === true && pd.o.report.code.body.firstChild !== null) {
                             if (pd.o.report.code.body.firstChild.nodeType > 1) {
-                                pd.o.report.code.body.removeChild(pd.o.report.code.body.firstChild);
+                                pd.o
+                                    .report
+                                    .code
+                                    .body
+                                    .removeChild(pd.o.report.code.body.firstChild);
                             }
                             pd.o.report.code.body.firstChild.innerHTML = "Code type is set to <strong>auto</strong>. <span>Presumed language is <em>" + pd.o.langvalue[2] + "</em>.</span>";
                         }
@@ -1522,8 +1845,12 @@ scanvas: "#doc.canvas{color:#444}#webtool.canvas input.unchecked{background:#ccc
                     }
                     if (pd.o.codeMinnOut !== null) {
                         if (pd.test.ace === true) {
-                            pd.ace.parsOut.setValue(pdlang);
-                            pd.ace.parsOut.clearSelection();
+                            pd.ace
+                                .parsOut
+                                .setValue(pdlang);
+                            pd.ace
+                                .parsOut
+                                .clearSelection();
                         } else {
                             pd.o.codeParsOut.value = pdlang;
                         }
@@ -1582,7 +1909,11 @@ scanvas: "#doc.canvas{color:#444}#webtool.canvas input.unchecked{background:#ccc
                             pd.o.report.code.body.innerHTML = output[1] + build;
                             if (autotest === true && pd.o.report.code.body.firstChild !== null) {
                                 if (pd.o.report.code.body.firstChild.nodeType > 1) {
-                                    pd.o.report.code.body.removeChild(pd.o.report.code.body.firstChild);
+                                    pd.o
+                                        .report
+                                        .code
+                                        .body
+                                        .removeChild(pd.o.report.code.body.firstChild);
                                 }
                                 pd.o.report.code.body.firstChild.innerHTML = "Code type is set to <strong>auto</strong>. <span>Presumed language is <em>" + pd.o.langvalue[2] + "</em>.</span>";
                             }
@@ -1619,21 +1950,34 @@ scanvas: "#doc.canvas{color:#444}#webtool.canvas input.unchecked{background:#ccc
                         }());
                     }
                     if (errortext.indexOf("end tag") > 0 || errortext.indexOf("Duplicate id") > 0) {
-                        pd.o.announce.setAttribute("class", "error");
+                        pd.o
+                            .announce
+                            .setAttribute("class", "error");
                         pd.o.announce.innerHTML = errortext;
                     } else if (pd.id("jserror") !== null) {
-                        pd.o.announce.removeAttribute("class");
-                        pd.o.announce.innerHTML = "<strong>" + pd.id("jserror").getElementsByTagName("strong")[0].innerHTML + "</strong> <span>See 'Code Report' for details</span>";
+                        pd.o
+                            .announce
+                            .removeAttribute("class");
+                        pd.o.announce.innerHTML = "<strong>" + pd.id("jserror")
+                            .getElementsByTagName("strong")[0]
+                            .innerHTML + "</strong> <span>See 'Code Report' for details</span>";
                     } else {
                         if (autotest === true) {
-                            pd.o.announce.setAttribute("class", "alert");
+                            pd.o
+                                .announce
+                                .setAttribute("class", "alert");
                             pd.o.announce.innerHTML = "Code type is set to <strong>auto</strong>. <span>Presumed language is <em>" + pd.o.langvalue[2] + "</em>.</span>";
                         } else {
                             pd.o.announce.innerHTML = "Language set to <em>" + pd.o.langvalue[2] + "</em>.";
                         }
                     }
                 }
-                buttons = pd.o.report.code.box.getElementsByTagName("p")[0].getElementsByTagName("button");
+                buttons = pd.o
+                    .report
+                    .code
+                    .box
+                    .getElementsByTagName("p")[0]
+                    .getElementsByTagName("button");
                 if (chromeSave === true) {
                     pd.save(buttons[0]);
                 } else if (pd.o.save !== null && pd.o.save.checked === true) {
@@ -1702,7 +2046,8 @@ scanvas: "#doc.canvas{color:#444}#webtool.canvas input.unchecked{background:#ccc
 
         node = pd.id("showOptionsCallOut");
         if (node !== null) {
-            node.parentNode.removeChild(node);
+            node.parentNode
+                .removeChild(node);
         }
         if (pd.test.accessibility === true) {
             api.accessibility = true;
@@ -1716,7 +2061,9 @@ scanvas: "#doc.canvas{color:#444}#webtool.canvas input.unchecked{background:#ccc
             }
             if (pd.test.keypress === true) {
                 if (pd.test.keystore.length > 0) {
-                    pd.test.keystore.pop();
+                    pd.test
+                        .keystore
+                        .pop();
                     if (pd.test.keystore.length === 0) {
                         pd.test.keypress = false;
                     }
@@ -1733,8 +2080,14 @@ scanvas: "#doc.canvas{color:#444}#webtool.canvas input.unchecked{background:#ccc
         api.lang        = (pd.o.lang === null)
             ? "javascript"
             : (pd.o.lang.nodeName.toLowerCase() === "select")
-                ? pd.o.lang[pd.o.lang.selectedIndex].value.toLowerCase()
-                : pd.o.lang.value.toLowerCase();
+                ? pd.o
+                    .lang[pd.o.lang.selectedIndex]
+                    .value
+                    .toLowerCase()
+                : pd.o
+                    .lang
+                    .value
+                    .toLowerCase();
         api.langdefault = (pd.o.langdefault !== null)
             ? pd.o.langdefault[pd.o.langdefault.selectedIndex].value
             : "javascript";
@@ -1789,7 +2142,9 @@ scanvas: "#doc.canvas{color:#444}#webtool.canvas input.unchecked{background:#ccc
                     wrap         = pd.id("beau-wrap");
                 if (pd.o.codeBeauIn !== null) {
                     if (pd.test.ace === true) {
-                        api.source = pd.ace.beauIn.getValue();
+                        api.source = pd.ace
+                            .beauIn
+                            .getValue();
                     } else {
                         api.source = pd.o.codeBeauIn.value;
                     }
@@ -1831,7 +2186,9 @@ scanvas: "#doc.canvas{color:#444}#webtool.canvas input.unchecked{background:#ccc
                 } else {
                     api.vertical = "none";
                 }
-                api.comments = (comments !== null && comments.checked === true) ? "noindent" : "indent";
+                api.comments = (comments !== null && comments.checked === true)
+                    ? "noindent"
+                    : "indent";
                 api.insize   = (quantity === null || isNaN(quantity.value) === true)
                     ? 4
                     : Number(quantity.value);
@@ -1935,8 +2292,8 @@ scanvas: "#doc.canvas{color:#444}#webtool.canvas input.unchecked{background:#ccc
                 var conditional  = pd.id("conditionalm-yes"),
                     dustjs       = pd.id("mdustyes"),
                     html         = pd.id("htmlm-yes"),
-                    topcoms      = pd.id("topcoms-yes"),
                     correct      = pd.id("mjscorrect-yes"),
+                    miniwrap     = pd.id("miniwrapm-yes"),
                     objsorta     = pd.id("mobjsort-all"),
                     objsortc     = pd.id("mobjsort-cssonly"),
                     objsortj     = pd.id("mobjsort-jsonly"),
@@ -1944,11 +2301,15 @@ scanvas: "#doc.canvas{color:#444}#webtool.canvas input.unchecked{background:#ccc
                     quotecons    = pd.id("mquoteconvert-single"),
                     tagmerge     = pd.id("mtagmerge-yes"),
                     tagsort      = pd.id("mtagsort-yes"),
-                    textpreserve = pd.id("mtextpreserveyes");
+                    textpreserve = pd.id("mtextpreserveyes"),
+                    topcoms      = pd.id("topcoms-yes"),
+                    wrap         = pd.id("mini-wrap");
                 if (pd.o.codeMinnIn !== null) {
                     pd.o.codeMinnIn = pd.id("minifyinput");
                     if (pd.test.ace === true) {
-                        api.source = pd.ace.minnIn.getValue();
+                        api.source = pd.ace
+                            .minnIn
+                            .getValue();
                     } else {
                         api.source = pd.o.codeMinnIn.value;
                     }
@@ -1973,10 +2334,14 @@ scanvas: "#doc.canvas{color:#444}#webtool.canvas input.unchecked{background:#ccc
                 api.correct      = (correct !== null && correct.checked === true);
                 api.dustjs       = (dustjs !== null && dustjs.checked === true);
                 api.html         = (html !== null && html.checked === true);
+                api.miniwrap     = (miniwrap !== null && miniwrap.checked === true);
                 api.tagmerge     = (tagmerge !== null && tagmerge.checked === true);
                 api.tagsort      = (tagsort !== null && tagsort.checked === true);
                 api.textpreserve = (textpreserve !== null && textpreserve.checked === true);
                 api.topcoms      = (topcoms !== null && topcoms.checked === true);
+                api.wrap         = (wrap !== null && isNaN(wrap.value) === false)
+                    ? wrap.value
+                    : -1;
             }());
             api.mode = "minify";
         }
@@ -2124,7 +2489,9 @@ scanvas: "#doc.canvas{color:#444}#webtool.canvas input.unchecked{background:#ccc
                 }
                 if (pd.o.codeDiffBase !== null) {
                     if (pd.test.ace === true) {
-                        api.source = pd.ace.diffBase.getValue();
+                        api.source = pd.ace
+                            .diffBase
+                            .getValue();
                     } else {
                         api.source = pd.o.codeDiffBase.value;
                     }
@@ -2133,7 +2500,9 @@ scanvas: "#doc.canvas{color:#444}#webtool.canvas input.unchecked{background:#ccc
                 }
                 if (pd.o.codeDiffNew !== null) {
                     if (pd.test.ace === true) {
-                        api.diff = pd.ace.diffNew.getValue();
+                        api.diff = pd.ace
+                            .diffNew
+                            .getValue();
                     } else {
                         api.diff = pd.o.codeDiffNew.value;
                     }
@@ -2145,8 +2514,10 @@ scanvas: "#doc.canvas{color:#444}#webtool.canvas input.unchecked{background:#ccc
                     (function dom__recycle_xhrDiff() {
                         var filetest       = (api.diff.indexOf("file:///") === 0),
                             protocolRemove = (filetest === true)
-                                ? api.diff.split(":///")[1]
-                                : api.diff.split("://")[1],
+                                ? api.diff
+                                    .split(":///")[1]
+                                : api.diff
+                                    .split("://")[1],
                             slashIndex     = (protocolRemove !== undefined)
                                 ? protocolRemove.indexOf("/")
                                 : 0,
@@ -2161,7 +2532,8 @@ scanvas: "#doc.canvas{color:#444}#webtool.canvas input.unchecked{background:#ccc
                             xhr.onreadystatechange = function dom__recycle_xhrDiff_stateChange() {
                                 if (xhr.readyState === 4) {
                                     if (xhr.status === 200 || xhr.status === 0) {
-                                        api.diff = xhr.responseText.replace(/\r\n/g, "\n");
+                                        api.diff = xhr.responseText
+                                            .replace(/\r\n/g, "\n");
                                         if (completes === true) {
                                             pd.source = api.source;
                                             if (pd.o.langvalue[1] === "text") {
@@ -2207,7 +2579,9 @@ scanvas: "#doc.canvas{color:#444}#webtool.canvas input.unchecked{background:#ccc
         if (pd.mode === "pars") {
             if (api.lang === "csv" && pd.o.codeParsIn !== null) {
                 if (pd.test.ace === true) {
-                    pd.ace.parsIn.setValue("CSV is not supported in 'Parse Only' mode.");
+                    pd.ace
+                        .parsIn
+                        .setValue("CSV is not supported in 'Parse Only' mode.");
                 } else {
                     pd.o.codeParsIn.value = "CSV is not supported in 'Parse Only' mode.";
                 }
@@ -2229,7 +2603,9 @@ scanvas: "#doc.canvas{color:#444}#webtool.canvas input.unchecked{background:#ccc
                     varwordl     = pd.id("pvarword-list");
                 if (pd.o.codeParsIn !== null) {
                     if (pd.test.ace === true) {
-                        api.source = pd.ace.parsIn.getValue();
+                        api.source = pd.ace
+                            .parsIn
+                            .getValue();
                     } else {
                         api.source = pd.o.codeParsIn.value;
                     }
@@ -2270,8 +2646,10 @@ scanvas: "#doc.canvas{color:#444}#webtool.canvas input.unchecked{background:#ccc
             (function dom__recycle_xhrSource() {
                 var filetest       = (api.source.indexOf("file:///") === 0),
                     protocolRemove = (filetest === true)
-                        ? api.source.split(":///")[1]
-                        : api.source.split("://")[1],
+                        ? api.source
+                            .split(":///")[1]
+                        : api.source
+                            .split("://")[1],
                     slashIndex     = (protocolRemove !== undefined)
                         ? protocolRemove.indexOf("/")
                         : 0,
@@ -2286,7 +2664,8 @@ scanvas: "#doc.canvas{color:#444}#webtool.canvas input.unchecked{background:#ccc
                     xhr.onreadystatechange = function dom__recycle_xhrSource_statechange() {
                         if (xhr.readyState === 4) {
                             if (xhr.status === 200 || xhr.status === 0) {
-                                api.source = xhr.responseText.replace(/\r\n/g, "\n");
+                                api.source = xhr.responseText
+                                    .replace(/\r\n/g, "\n");
                                 if (pd.mode !== "diff" || (requestd === true && completed === true)) {
                                     pd.source = api.source;
                                     if (pd.test.ace === true) {
@@ -2401,7 +2780,9 @@ scanvas: "#doc.canvas{color:#444}#webtool.canvas input.unchecked{background:#ccc
             if (pd.test.ace === true && api.mode !== "diff") {
                 if (api.mode === "beautify") {
                     setTimeout(function dom__recycle_beautifyPromise() {
-                        api.source = pd.ace.beauIn.getValue();
+                        api.source = pd.ace
+                            .beauIn
+                            .getValue();
                         api.lang   = pd.langkey(false, pd.ace.beauIn, "");
                         pd.source  = api.source;
                         pd.diff    = "";
@@ -2414,7 +2795,9 @@ scanvas: "#doc.canvas{color:#444}#webtool.canvas input.unchecked{background:#ccc
                 }
                 if (api.mode === "minify") {
                     setTimeout(function dom__recycle_minifyPromise() {
-                        api.source = pd.ace.minnIn.getValue();
+                        api.source = pd.ace
+                            .minnIn
+                            .getValue();
                         api.lang   = pd.langkey(false, pd.ace.minnIn, "");
                         pd.source  = api.source;
                         pd.diff    = "";
@@ -2427,7 +2810,9 @@ scanvas: "#doc.canvas{color:#444}#webtool.canvas input.unchecked{background:#ccc
                 }
                 if (api.mode === "parse") {
                     setTimeout(function dom__recycle_parsePromise() {
-                        api.source = pd.ace.parsIn.getValue();
+                        api.source = pd.ace
+                            .parsIn
+                            .getValue();
                         api.lang   = pd.langkey(false, pd.ace.parsIn, "");
                         pd.source  = api.source;
                         pd.diff    = "";
@@ -2493,38 +2878,49 @@ scanvas: "#doc.canvas{color:#444}#webtool.canvas input.unchecked{background:#ccc
             key   = event.keyCode;
         if (len === 0 || len === 1) {
             if (key === 38) {
-                pd.test.keysequence.push(true);
+                pd.test
+                    .keysequence
+                    .push(true);
             } else {
                 pd.test.keysequence = [];
             }
         } else if (len === 2 || len === 3) {
             if (key === 40) {
-                pd.test.keysequence.push(true);
+                pd.test
+                    .keysequence
+                    .push(true);
             } else {
                 pd.test.keysequence = [];
             }
         } else if (len === 4 || len === 6) {
             if (key === 37) {
-                pd.test.keysequence.push(true);
+                pd.test
+                    .keysequence
+                    .push(true);
             } else {
                 pd.test.keysequence = [];
             }
         } else if (len === 5 || len === 7) {
             if (key === 39) {
-                pd.test.keysequence.push(true);
+                pd.test
+                    .keysequence
+                    .push(true);
             } else {
                 pd.test.keysequence = [];
             }
         } else if (len === 8) {
             if (key === 66) {
-                pd.test.keysequence.push(true);
+                pd.test
+                    .keysequence
+                    .push(true);
             } else {
                 pd.test.keysequence = [];
             }
         } else if (len === 9) {
             if (key === 65) {
                 if (pd.audio !== undefined) {
-                    pd.audio.play();
+                    pd.audio
+                        .play();
                 }
                 //(function dom__sequence_blinky() {
                 //    var color = pd.id("colorScheme"),
@@ -2551,7 +2947,8 @@ scanvas: "#doc.canvas{color:#444}#webtool.canvas input.unchecked{background:#ccc
                 (function dom__sequence_colorChange() {
                     var color  = pd.id("colorScheme"),
                         ind    = color.selectedIndex,
-                        max    = color.getElementsByTagName("option").length - 1,
+                        max    = color.getElementsByTagName("option")
+                            .length - 1,
                         change = function dom__sequence_colorChange_change() {
                             color.selectedIndex = ind;
                             pd.colorScheme(color);
@@ -2618,13 +3015,17 @@ scanvas: "#doc.canvas{color:#444}#webtool.canvas input.unchecked{background:#ccc
                 return;
             }
             if (len === 0 && (key === 16 || key === 17 || key === 224)) {
-                return pd.test.tabesc.push(key);
+                return pd.test
+                    .tabesc
+                    .push(key);
             }
             if (len === 1 && (key === 17 || key === 224)) {
                 if (pd.test.tabesc[0] === 17 || pd.test.tabesc[0] === 224) {
                     esc = true;
                 } else {
-                    return pd.test.tabesc.push(key);
+                    return pd.test
+                        .tabesc
+                        .push(key);
                 }
             } else if (len === 2 && (key === 17 || key === 224)) {
                 esc = true;
@@ -2635,34 +3036,54 @@ scanvas: "#doc.canvas{color:#444}#webtool.canvas input.unchecked{background:#ccc
                 if (len === 2) {
                     //back tab
                     if (node === pd.o.codeDiffBase) {
-                        pd.id("diffbasefile").focus();
+                        pd.id("diffbasefile")
+                            .focus();
                     } else if (node === pd.o.codeDiffNew) {
-                        pd.id("diffnewfile").focus();
+                        pd.id("diffnewfile")
+                            .focus();
                     } else if (node === pd.o.codeBeauIn) {
-                        pd.id("beautyfile").focus();
+                        pd.id("beautyfile")
+                            .focus();
                     } else if (node === pd.o.codeBeauOut) {
-                        pd.o.codeBeauIn.focus();
+                        pd.o
+                            .codeBeauIn
+                            .focus();
                     } else if (node === pd.o.codeMinnIn) {
-                        pd.id("minifyfile").focus();
+                        pd.id("minifyfile")
+                            .focus();
                     } else if (node === pd.o.codeMinnOut) {
-                        pd.o.codeMinnIn.focus();
+                        pd.o
+                            .codeMinnIn
+                            .focus();
                     } else if (node === pd.o.codeParsIn) {
-                        pd.id("parsefile").focus();
+                        pd.id("parsefile")
+                            .focus();
                     } else if (node === pd.o.codeParsOut) {
-                        pd.o.codeParsIn.focus();
+                        pd.o
+                            .codeParsIn
+                            .focus();
                     }
                 } else {
                     //forward tab
                     if (node === pd.o.codeDiffBase) {
-                        pd.id("newlabel").focus();
+                        pd.id("newlabel")
+                            .focus();
                     } else if (node === pd.o.codeDiffNew || node === pd.o.codeBeauOut || node === pd.o.codeMinnOut) {
-                        pd.id("button-primary").getElementsByTagName("button")[0].focus();
+                        pd.id("button-primary")
+                            .getElementsByTagName("button")[0]
+                            .focus();
                     } else if (node === pd.o.codeBeauIn) {
-                        pd.o.codeBeauOut.focus();
+                        pd.o
+                            .codeBeauOut
+                            .focus();
                     } else if (node === pd.o.codeMinnIn) {
-                        pd.o.codeMinnOut.focus();
+                        pd.o
+                            .codeMinnOut
+                            .focus();
                     } else if (node === pd.o.codeParsIn) {
-                        pd.o.codeParsOut.focus();
+                        pd.o
+                            .codeParsOut
+                            .focus();
                     }
                 }
                 if (pd.test.tabesc[0] === 16) {
@@ -2719,7 +3140,9 @@ scanvas: "#doc.canvas{color:#444}#webtool.canvas input.unchecked{background:#ccc
         files = input.files;
         if (pd.test.fs === true && files[0] !== null && typeof files[0] === "object") {
             if (input.nodeName === "input") {
-                input = input.parentNode.parentNode.getElementsByTagName("textarea")[0];
+                input = input.parentNode
+                    .parentNode
+                    .getElementsByTagName("textarea")[0];
             }
             fileLoad  = function dom__file_onload(e) {
                 var event = e || window.event;
@@ -2727,17 +3150,33 @@ scanvas: "#doc.canvas{color:#444}#webtool.canvas input.unchecked{background:#ccc
                 if (a === fileCount) {
                     if (pd.test.ace === true) {
                         if (id === "beautyfile") {
-                            pd.ace.beauIn.setValue(fileStore.join("\n\n"));
-                            pd.ace.beauIn.clearSelection();
+                            pd.ace
+                                .beauIn
+                                .setValue(fileStore.join("\n\n"));
+                            pd.ace
+                                .beauIn
+                                .clearSelection();
                         } else if (id === "minifyfile") {
-                            pd.ace.minnIn.setValue(fileStore.join("\n\n"));
-                            pd.ace.minnIn.clearSelection();
+                            pd.ace
+                                .minnIn
+                                .setValue(fileStore.join("\n\n"));
+                            pd.ace
+                                .minnIn
+                                .clearSelection();
                         } else if (id === "diffbasefile") {
-                            pd.ace.diffBase.setValue(fileStore.join("\n\n"));
-                            pd.ace.diffBase.clearSelection();
+                            pd.ace
+                                .diffBase
+                                .setValue(fileStore.join("\n\n"));
+                            pd.ace
+                                .diffBase
+                                .clearSelection();
                         } else if (id === "diffnewfile") {
-                            pd.ace.diffNew.setValue(fileStore.join("\n\n"));
-                            pd.ace.diffNew.clearSelection();
+                            pd.ace
+                                .diffNew
+                                .setValue(fileStore.join("\n\n"));
+                            pd.ace
+                                .diffNew
+                                .clearSelection();
                         }
                     } else {
                         if (id === "beautyfile") {
@@ -2802,11 +3241,15 @@ scanvas: "#doc.canvas{color:#444}#webtool.canvas input.unchecked{background:#ccc
                 }
                 return x.selectedIndex;
             }()),
-            color     = option[index].innerHTML.toLowerCase().replace(/\s+/g, ""),
+            color     = option[index].innerHTML
+                .toLowerCase()
+                .replace(/\s+/g, ""),
             theme     = "",
             logoColor = "",
             logo      = pd.id("pdlogo");
-        pd.o.page.setAttribute("class", color);
+        pd.o
+            .page
+            .setAttribute("class", color);
         if (pd.test.ace === true) {
             if (color === "white") {
                 theme = "ace/theme/textmate";
@@ -2817,12 +3260,24 @@ scanvas: "#doc.canvas{color:#444}#webtool.canvas input.unchecked{background:#ccc
             if (color === "canvas") {
                 theme = "ace/theme/canvas";
             }
-            pd.ace.diffBase.setTheme(theme);
-            pd.ace.diffNew.setTheme(theme);
-            pd.ace.beauIn.setTheme(theme);
-            pd.ace.beauOut.setTheme(theme);
-            pd.ace.minnIn.setTheme(theme);
-            pd.ace.minnOut.setTheme(theme);
+            pd.ace
+                .diffBase
+                .setTheme(theme);
+            pd.ace
+                .diffNew
+                .setTheme(theme);
+            pd.ace
+                .beauIn
+                .setTheme(theme);
+            pd.ace
+                .beauOut
+                .setTheme(theme);
+            pd.ace
+                .minnIn
+                .setTheme(theme);
+            pd.ace
+                .minnOut
+                .setTheme(theme);
         }
         pd.color = color;
         if (logo !== null) {
@@ -2836,7 +3291,8 @@ scanvas: "#doc.canvas{color:#444}#webtool.canvas input.unchecked{background:#ccc
                 logoColor = "000";
             }
             logo.style.borderColor = "#" + logoColor;
-            logo.getElementsByTagName("g")[0].setAttribute("fill", "#" + logoColor);
+            logo.getElementsByTagName("g")[0]
+                .setAttribute("fill", "#" + logoColor);
         }
         pd.options(x);
     };
@@ -3117,7 +3573,8 @@ scanvas: "#doc.canvas{color:#444}#webtool.canvas input.unchecked{background:#ccc
         if (x.nodeType !== 1) {
             return;
         }
-        buttons = x.parentNode.getElementsByTagName("button");
+        buttons = x.parentNode
+            .getElementsByTagName("button");
         resize  = buttons[buttons.length - 1];
         parent  = x.parentNode;
         save    = (parent.innerHTML.indexOf("save") > -1);
@@ -3218,12 +3675,15 @@ scanvas: "#doc.canvas{color:#444}#webtool.canvas input.unchecked{background:#ccc
     //toggle between parsed html diff report and raw text representation
     pd.save                = function dom__save(x) {
         var anchor     = (x.nodeName.toLowerCase() === "a"),
-            top        = (x.parentNode.parentNode.nodeName.toLowerCase() === "p") ? x.parentNode.parentNode.parentNode : x.parentNode.parentNode,
+            top        = (x.parentNode.parentNode.nodeName.toLowerCase() === "p")
+                ? x.parentNode.parentNode.parentNode
+                : x.parentNode.parentNode,
             button     = (anchor === true)
                 ? x.getElementsByTagName("button")[0]
                 : x,
             body       = top.getElementsByTagName("div")[0],
-            bodyInner  = body.innerHTML.replace(/\ xmlns\=("|')http:\/\/www\.w3\.org\/1999\/xhtml("|')/g, ""),
+            bodyInner  = body.innerHTML
+                .replace(/\ xmlns\=("|')http:\/\/www\.w3\.org\/1999\/xhtml("|')/g, ""),
             build      = [],
             classQuote = "",
             content    = [],
@@ -3232,7 +3692,51 @@ scanvas: "#doc.canvas{color:#444}#webtool.canvas input.unchecked{background:#ccc
             ro         = pd.id("savepref-report"),
             reportonly = (ro !== null && ro.checked === true),
             css        = pd.css.core + pd.css["s" + pd.color],
-            diffstring = "var pd={};pd.colSliderProperties=[];pd.difffold=function dom__difffold(){var a=0,b=0,self=this,title=self.getAttribute(\"title\").split(\"line \"),min=Number(title[1].substr(0,title[1].indexOf(\" \"))),max=Number(title[2]),inner=self.innerHTML,lists=[],parent=self.parentNode.parentNode,listnodes=(parent.getAttribute(\"class\")===\"diff\")?parent.getElementsByTagName(\"ol\"):parent.parentNode.getElementsByTagName(\"ol\"),listLen=listnodes.length;for(a=0;a<listLen;a+=1){lists.push(listnodes[a].getElementsByTagName(\"li\"))}for(a=0;a<min;a+=1){if(lists[0][a].getAttribute(\"class\")===\"empty\"){min+=1;max+=1}}max=(max>=lists[0].length)?lists[0].length:max;if(inner.charAt(0)===\"-\"){self.innerHTML=\"+\"+inner.substr(1);for(a=min;a<max;a+=1){for(b=0;b<listLen;b+=1){lists[b][a].style.display=\"none\"}}}else{self.innerHTML=\"-\"+inner.substr(1);for(a=min;a<max;a+=1){for(b=0;b<listLen;b+=1){lists[b][a].style.display=\"block\"}}}};pd.colSliderGrab=function dom__colSliderGrab(e){var event=e||window.event,touch=(e!==null&&e.type===\"touchstart\")?true:false,node=this,diffRight=node.parentNode,diff=diffRight.parentNode,subOffset=0,counter=pd.colSliderProperties[0],data=pd.colSliderProperties[1],width=pd.colSliderProperties[2],total=pd.colSliderProperties[3],offset=pd.colSliderProperties[4],min=0,max=data-1,status=\"ew\",minAdjust=min+15,maxAdjust=max-15,withinRange=false,diffLeft=diffRight.previousSibling,drop=function dom__colSliderGrab_drop(f){f=f||window.event;f.preventDefault();node.style.cursor=status+\"-resize\";if(touch===true){document.ontouchmove=null;document.ontouchend=null}else{document.onmousemove=null;document.onmouseup=null}},boxmove=function dom__colSliderGrab_boxmove(f){f=f||window.event;f.preventDefault();if(touch===true){subOffset=offset-f.touches[0].clientX}else{subOffset=offset-f.clientX}if(subOffset>minAdjust&&subOffset<maxAdjust){withinRange=true}if(withinRange===true&&subOffset>maxAdjust){diffRight.style.width=((total-counter-2)/10)+\"em\";status=\"e\"}else if(withinRange===true&&subOffset<minAdjust){diffRight.style.width=(width/10)+\"em\";status=\"w\"}else if(subOffset<max&&subOffset>min){diffRight.style.width=((width+subOffset)/10)+\"em\";status=\"ew\"}if(touch===true){document.ontouchend=drop}else{document.onmouseup=drop}};event.preventDefault();if(typeof pd.o===\"object\"&&pd.o.report.code.box!==null){offset+=pd.o.report.code.box.offsetLeft;offset-=pd.o.report.code.body.scrollLeft}else{subOffset=(document.body.parentNode.scrollLeft>document.body.scrollLeft)?document.body.parentNode.scrollLeft:document.body.scrollLeft;offset-=subOffset}offset+=node.clientWidth;node.style.cursor=\"ew-resize\";diff.style.width=(total/10)+\"em\";diff.style.display=\"inline-block\";if(diffLeft.nodeType!==1){do{diffLeft=diffLeft.previousSibling}while(diffLeft.nodeType!==1)}diffLeft.style.display=\"block\";diffRight.style.width=(diffRight.clientWidth/10)+\"em\";diffRight.style.position=\"absolute\";if(touch===true){document.ontouchmove=boxmove;document.ontouchstart=false}else{document.onmousemove=boxmove;document.onmousedown=null}};(function(){\"use strict\";var d=document.getElementsByTagName(\"ol\"),cells=d[0].getElementsByTagName(\"li\"),len=cells.length,a=0;pd.colSliderProperties=[d[0].clientWidth,d[1].clientWidth,d[2].parentNode.clientWidth,d[2].parentNode.parentNode.clientWidth,d[2].parentNode.offsetLeft-d[2].parentNode.parentNode.offsetLeft];for(a=0;a<len;a+=1){if(cells[a].getAttribute(\"class\")===\"fold\"){cells[a].onmousedown=pd.difffold}}if(d.length>3){d[2].onmousedown=pd.colSliderGrab;d[2].ontouchstart=pd.colSliderGrab}}());",
+            diffstring = "var pd={};pd.colSliderProperties=[];pd.difffold=function dom__difffold(){var a=0" +
+                        ",b=0,self=this,title=self.getAttribute(\"title\").split(\"line \"),min=Number(ti" +
+                        "tle[1].substr(0,title[1].indexOf(\" \"))),max=Number(title[2]),inner=self.innerH" +
+                        "TML,lists=[],parent=self.parentNode.parentNode,listnodes=(parent.getAttribute(\"" +
+                        "class\")===\"diff\")?parent.getElementsByTagName(\"ol\"):parent.parentNode.getEl" +
+                        "ementsByTagName(\"ol\"),listLen=listnodes.length;for(a=0;a<listLen;a+=1){lists.p" +
+                        "ush(listnodes[a].getElementsByTagName(\"li\"))}for(a=0;a<min;a+=1){if(lists[0][a" +
+                        "].getAttribute(\"class\")===\"empty\"){min+=1;max+=1}}max=(max>=lists[0].length)" +
+                        "?lists[0].length:max;if(inner.charAt(0)===\"-\"){self.innerHTML=\"+\"+inner.subs" +
+                        "tr(1);for(a=min;a<max;a+=1){for(b=0;b<listLen;b+=1){lists[b][a].style.display=\"" +
+                        "none\"}}}else{self.innerHTML=\"-\"+inner.substr(1);for(a=min;a<max;a+=1){for(b=0" +
+                        ";b<listLen;b+=1){lists[b][a].style.display=\"block\"}}}};pd.colSliderGrab=functi" +
+                        "on dom__colSliderGrab(e){var event=e||window.event,touch=(e!==null&&e.type===\"t" +
+                        "ouchstart\")?true:false,node=this,diffRight=node.parentNode,diff=diffRight.paren" +
+                        "tNode,subOffset=0,counter=pd.colSliderProperties[0],data=pd.colSliderProperties[" +
+                        "1],width=pd.colSliderProperties[2],total=pd.colSliderProperties[3],offset=pd.col" +
+                        "SliderProperties[4],min=0,max=data-1,status=\"ew\",minAdjust=min+15,maxAdjust=ma" +
+                        "x-15,withinRange=false,diffLeft=diffRight.previousSibling,drop=function dom__col" +
+                        "SliderGrab_drop(f){f=f||window.event;f.preventDefault();node.style.cursor=status" +
+                        "+\"-resize\";if(touch===true){document.ontouchmove=null;document.ontouchend=null" +
+                        "}else{document.onmousemove=null;document.onmouseup=null}},boxmove=function dom__" +
+                        "colSliderGrab_boxmove(f){f=f||window.event;f.preventDefault();if(touch===true){s" +
+                        "ubOffset=offset-f.touches[0].clientX}else{subOffset=offset-f.clientX}if(subOffse" +
+                        "t>minAdjust&&subOffset<maxAdjust){withinRange=true}if(withinRange===true&&subOff" +
+                        "set>maxAdjust){diffRight.style.width=((total-counter-2)/10)+\"em\";status=\"e\"}" +
+                        "else if(withinRange===true&&subOffset<minAdjust){diffRight.style.width=(width/10" +
+                        ")+\"em\";status=\"w\"}else if(subOffset<max&&subOffset>min){diffRight.style.widt" +
+                        "h=((width+subOffset)/10)+\"em\";status=\"ew\"}if(touch===true){document.ontouche" +
+                        "nd=drop}else{document.onmouseup=drop}};event.preventDefault();if(typeof pd.o===" +
+                        "\"object\"&&pd.o.report.code.box!==null){offset+=pd.o.report.code.box.offsetLeft" +
+                        ";offset-=pd.o.report.code.body.scrollLeft}else{subOffset=(document.body.parentNo" +
+                        "de.scrollLeft>document.body.scrollLeft)?document.body.parentNode.scrollLeft:docu" +
+                        "ment.body.scrollLeft;offset-=subOffset}offset+=node.clientWidth;node.style.curso" +
+                        "r=\"ew-resize\";diff.style.width=(total/10)+\"em\";diff.style.display=\"inline-b" +
+                        "lock\";if(diffLeft.nodeType!==1){do{diffLeft=diffLeft.previousSibling}while(diff" +
+                        "Left.nodeType!==1)}diffLeft.style.display=\"block\";diffRight.style.width=(diffR" +
+                        "ight.clientWidth/10)+\"em\";diffRight.style.position=\"absolute\";if(touch===tru" +
+                        "e){document.ontouchmove=boxmove;document.ontouchstart=false}else{document.onmous" +
+                        "emove=boxmove;document.onmousedown=null}};(function(){\"use strict\";var d=docum" +
+                        "ent.getElementsByTagName(\"ol\"),cells=d[0].getElementsByTagName(\"li\"),len=cel" +
+                        "ls.length,a=0;pd.colSliderProperties=[d[0].clientWidth,d[1].clientWidth,d[2].par" +
+                        "entNode.clientWidth,d[2].parentNode.parentNode.clientWidth,d[2].parentNode.offse" +
+                        "tLeft-d[2].parentNode.parentNode.offsetLeft];for(a=0;a<len;a+=1){if(cells[a].get" +
+                        "Attribute(\"class\")===\"fold\"){cells[a].onmousedown=pd.difffold}}if(d.length>3" +
+                        "){d[2].onmousedown=pd.colSliderGrab;d[2].ontouchstart=pd.colSliderGrab}}());",
             beaustring = "pd.beaufold=function dom__beaufold(){var self=this,title=self.getAttribute('titl" +
                         "e').split('line '),min=Number(title[1].substr(0,title[1].indexOf(' '))),max=Numb" +
                         "er(title[2]),a=0,b='',list=[self.parentNode.getElementsByTagName('li'),self.pare" +
@@ -3259,7 +3763,9 @@ scanvas: "#doc.canvas{color:#444}#webtool.canvas input.unchecked{background:#ccc
             if (bodyInner === "" || ((/Please\ try\ using\ the\ option\ labeled\ ((&lt;)|<)em((&gt;)|>)Plain\ Text\ \(diff\ only\)((&lt;)|<)\/em((&gt;)|>)\./).test(bodyInner) === true && (/div\ class\=("|')diff("|')/).test(bodyInner) === false)) {
                 return false;
             }
-            css = css.replace(/&/g, "&amp;").replace(/>/g, "&gt;").replace(/</g, "&lt;");
+            css = css.replace(/&/g, "&amp;")
+                .replace(/>/g, "&gt;")
+                .replace(/</g, "&lt;");
             build.push("<?xml version='1.0' encoding='UTF-8' ?><!DOCTYPE html PUBLIC '-//W3C//DTD XHTML " +
                     "1.1//EN' 'http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd'><html xmlns='http://www." +
                     "w3.org/1999/xhtml' xml:lang='en'><head><title>Pretty Diff - The difference tool<" +
@@ -3325,7 +3831,9 @@ scanvas: "#doc.canvas{color:#444}#webtool.canvas input.unchecked{background:#ccc
             span.innerHTML = "Just rename the file extension from '<strong>.part</strong>' to '<strong>.xhtml<" +
                                  "/strong>'. <em>Click anywhere to close this reminder.</em>";
             lastChild.appendChild(span);
-            pd.o.page.appendChild(lastChild);
+            pd.o
+                .page
+                .appendChild(lastChild);
             span.style.left = (((pd.o.page.clientWidth + 10) - span.clientWidth) / 2) + "px";
             return false;
         }
@@ -3355,9 +3863,15 @@ scanvas: "#doc.canvas{color:#444}#webtool.canvas input.unchecked{background:#ccc
                     content    = bodyInner.split(classQuote);
                     classQuote = classQuote + content[1];
                     bodyInner  = content[0];
-                    css        = css.replace(/&/g, "&amp;").replace(/>/g, "&gt;").replace(/</g, "&lt;");
-                    diffstring = diffstring.replace(/&/g, "&amp;").replace(/>/g, "&gt;").replace(/</g, "&lt;");
-                    beaustring = beaustring.replace(/&/g, "&amp;").replace(/>/g, "&gt;").replace(/</g, "&lt;");
+                    css        = css.replace(/&/g, "&amp;")
+                        .replace(/>/g, "&gt;")
+                        .replace(/</g, "&lt;");
+                    diffstring = diffstring.replace(/&/g, "&amp;")
+                        .replace(/>/g, "&gt;")
+                        .replace(/</g, "&lt;");
+                    beaustring = beaustring.replace(/&/g, "&amp;")
+                        .replace(/>/g, "&gt;")
+                        .replace(/</g, "&lt;");
                     if (reportonly === true) {
                         build.push(" <h4>Primary Content</h4>");
                         build.push(" <textarea rows='40' cols='80' id='textreport'>");
@@ -3385,9 +3899,9 @@ scanvas: "#doc.canvas{color:#444}#webtool.canvas input.unchecked{background:#ccc
                             build.push("</textarea>");
                         }
                     } else {
-                        build.push(" <p>This is the output for a complete HTML document of your generated contents. Please copy the text output, paste into a text" +
-                                " file, and save as a &quot;.html&quot; file.</p> <textarea rows='40' cols='80' i" +
-                                "d='textreport'>");
+                        build.push(" <p>This is the output for a complete HTML document of your generated contents. " +
+                                "Please copy the text output, paste into a text file, and save as a &quot;.html&q" +
+                                "uot; file.</p> <textarea rows='40' cols='80' id='textreport'>");
                         build.push("&lt;?xml version='1.0' encoding='UTF-8' ?&gt;&lt;!DOCTYPE html PUBLIC '-//W3C//D" +
                                 "TD XHTML 1.1//EN' 'http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd'&gt;&lt;html xml" +
                                 "ns='http://www.w3.org/1999/xhtml' xml:lang='en'&gt;&lt;head&gt;&lt;title&gt;Pret" +
@@ -3433,12 +3947,15 @@ scanvas: "#doc.canvas{color:#444}#webtool.canvas input.unchecked{background:#ccc
         }
         if (bodyInner !== "") {
             if (reportonly === true) {
-                bodyInner = bodyInner.replace(/&lt;div\ id\=("|')webtool("|')\ class\=("|')\w+("|')&gt;/, "").replace(/&lt;\/div&gt;&;lt;script/, "&lt;script");
+                bodyInner = bodyInner.replace(/&lt;div\ id\=("|')webtool("|')\ class\=("|')\w+("|')&gt;/, "")
+                    .replace(/&lt;\/div&gt;&;lt;script/, "&lt;script");
                 build.push(pd.id("textreportmeta").value);
                 build.push(pd.id("textreport").value);
             } else {
                 if (bodyInner.indexOf("<textarea") > -1) {
-                    bodyInner = bodyInner.replace(/&lt;/g, "<").replace(/&gt;/g, ">").replace(/&amp;/g, "&");
+                    bodyInner = bodyInner.replace(/&lt;/g, "<")
+                        .replace(/&gt;/g, ">")
+                        .replace(/&amp;/g, "&");
                 }
                 classQuote = (bodyInner.indexOf("<div class='pdsavecontent'") > -1)
                     ? "<div class='pdsavecontent'>"
@@ -3488,11 +4005,14 @@ scanvas: "#doc.canvas{color:#444}#webtool.canvas input.unchecked{background:#ccc
 
     //basic drag and drop for the report windows
     pd.grab                = function dom__grab(e, x) {
-        var box        = x.parentNode.parentNode,
+        var box        = (x.nodeName.toLowerCase() === "h3")
+                ? x.parentNode
+                : x.parentNode.parentNode,
             parent     = box.getElementsByTagName("p")[0],
             save       = (parent.innerHTML.indexOf("save") > -1),
             minifyTest = (parent.style.display === "none"),
-            buttons    = box.getElementsByTagName("p")[0].getElementsByTagName("button"),
+            buttons    = box.getElementsByTagName("p")[0]
+                .getElementsByTagName("button"),
             minButton  = (save === true)
                 ? buttons[1]
                 : buttons[0],
@@ -3612,11 +4132,13 @@ scanvas: "#doc.canvas{color:#444}#webtool.canvas input.unchecked{background:#ccc
             radios    = [],
             text      = (pd.id("feedtextarea") === null)
                 ? ""
-                : pd.id("feedtextarea").value,
+                : pd.id("feedtextarea")
+                    .value,
             a         = 0,
             email     = (pd.id("feedemail") === null)
                 ? ""
-                : pd.id("feedemail").value,
+                : pd.id("feedemail")
+                    .value,
             xhr       = {},
             sendit    = function dom__feedsubmit_sendit() {
                 var node = pd.id("feedintro");
@@ -3624,7 +4146,12 @@ scanvas: "#doc.canvas{color:#444}#webtool.canvas input.unchecked{background:#ccc
                 xhr.open("POST", "http://prettydiff.com:8000/feedback/", true);
                 xhr.setRequestHeader("Content-type", "application/json; charset=utf-8");
                 xhr.send(JSON.stringify(datapack));
-                pd.o.report.feed.box.getElementsByTagName("button")[1].click();
+                pd.o
+                    .report
+                    .feed
+                    .box
+                    .getElementsByTagName("button")[1]
+                    .click();
                 if (node !== null) {
                     node.innerHTML = "Please feel free to submit feedback about Pretty Diff at any time by answering t" +
                             "he following questions.";
@@ -3649,7 +4176,10 @@ scanvas: "#doc.canvas{color:#444}#webtool.canvas input.unchecked{background:#ccc
         if (pd.id("feedradio1") === null || namecheck.knownname !== pd.settings.knownname) {
             return;
         }
-        radios = pd.id("feedradio1").parentNode.parentNode.getElementsByTagName("input");
+        radios = pd.id("feedradio1")
+            .parentNode
+            .parentNode
+            .getElementsByTagName("input");
         for (a = radios.length - 1; a > -1; a -= 1) {
             if (radios[a].checked === true) {
                 break;
@@ -3686,7 +4216,9 @@ scanvas: "#doc.canvas{color:#444}#webtool.canvas input.unchecked{background:#ccc
             optioncheck = function dom__prettyvis_optioncheck() {
                 var c     = 0,
                     langs = [];
-                langs = pd.o.lang.getElementsByTagName("option");
+                langs = pd.o
+                    .lang
+                    .getElementsByTagName("option");
                 for (c = langs.length - 1; c > -1; c -= 1) {
                     if (langs[c].value === "text") {
                         if (pd.o.lang.selectedIndex === c) {
@@ -3712,7 +4244,8 @@ scanvas: "#doc.canvas{color:#444}#webtool.canvas input.unchecked{background:#ccc
         }
         node = pd.id("showOptionsCallOut");
         if (node !== null) {
-            node.parentNode.removeChild(node);
+            node.parentNode
+                .removeChild(node);
         }
         if (a === pd.o.modeBeau) {
             pd.mode = "beau";
@@ -3763,18 +4296,26 @@ scanvas: "#doc.canvas{color:#444}#webtool.canvas input.unchecked{background:#ccc
                             storage = "";
                         }
                         if (pd.test.ace === true) {
-                            pd.ace.beauIn.setValue(storage);
-                            pd.ace.beauIn.clearSelection();
+                            pd.ace
+                                .beauIn
+                                .setValue(storage);
+                            pd.ace
+                                .beauIn
+                                .clearSelection();
                             pd.langkey(false, pd.ace.beauIn, "");
                         } else {
                             pd.o.codeBeauIn.value = storage;
                         }
                     } else if (pd.test.ace === true) {
-                        pd.ace.beauIn.setValue(" ");
+                        pd.ace
+                            .beauIn
+                            .setValue(" ");
                     }
                 }
                 if (pd.test.ace === true && pd.o.codeBeauOut !== null) {
-                    pd.ace.beauOut.setValue(" ");
+                    pd.ace
+                        .beauOut
+                        .setValue(" ");
                 }
             }
             if (pd.test.load === false && pd.o.jsscope !== null && pd.o.jsscope.checked === true) {
@@ -3833,18 +4374,26 @@ scanvas: "#doc.canvas{color:#444}#webtool.canvas input.unchecked{background:#ccc
                             storage = "";
                         }
                         if (pd.test.ace === true) {
-                            pd.ace.minnIn.setValue(storage);
-                            pd.ace.minnIn.clearSelection();
+                            pd.ace
+                                .minnIn
+                                .setValue(storage);
+                            pd.ace
+                                .minnIn
+                                .clearSelection();
                             pd.langkey(false, pd.ace.minnIn, "");
                         } else {
                             pd.o.codeMinnIn.value = storage;
                         }
                     } else if (pd.test.ace === true) {
-                        pd.ace.minnIn.setValue(" ");
+                        pd.ace
+                            .minnIn
+                            .setValue(" ");
                     }
                 }
                 if (pd.test.ace === true && pd.o.codeMinnOut !== null) {
-                    pd.ace.minnOut.setValue(" ");
+                    pd.ace
+                        .minnOut
+                        .setValue(" ");
                 }
             }
             pd.test.render.minn = true;
@@ -3852,7 +4401,9 @@ scanvas: "#doc.canvas{color:#444}#webtool.canvas input.unchecked{background:#ccc
         if (a === pd.o.modeDiff) {
             pd.mode = "diff";
             if (langtest === true) {
-                langOps = pd.o.lang.getElementsByTagName("option");
+                langOps = pd.o
+                    .lang
+                    .getElementsByTagName("option");
                 for (b = langOps.length - 1; b > -1; b -= 1) {
                     langOps[b].disabled = false;
                 }
@@ -3926,8 +4477,12 @@ scanvas: "#doc.canvas{color:#444}#webtool.canvas input.unchecked{background:#ccc
                             storage = "";
                         }
                         if (pd.test.ace === true) {
-                            pd.ace.diffBase.setValue(storage);
-                            pd.ace.diffBase.clearSelection();
+                            pd.ace
+                                .diffBase
+                                .setValue(storage);
+                            pd.ace
+                                .diffBase
+                                .clearSelection();
                             if (lang !== "text") {
                                 pd.langkey(false, pd.ace.diffBase, "");
                             }
@@ -3935,7 +4490,9 @@ scanvas: "#doc.canvas{color:#444}#webtool.canvas input.unchecked{background:#ccc
                             pd.o.codeDiffBase.value = storage;
                         }
                     } else if (pd.test.ace === true) {
-                        pd.ace.diffBase.setValue(" ");
+                        pd.ace
+                            .diffBase
+                            .setValue(" ");
                     }
                 }
                 if (pd.o.codeDiffNew !== null) {
@@ -3945,8 +4502,12 @@ scanvas: "#doc.canvas{color:#444}#webtool.canvas input.unchecked{background:#ccc
                             storage = "";
                         }
                         if (pd.test.ace === true) {
-                            pd.ace.diffNew.setValue(storage);
-                            pd.ace.diffNew.clearSelection();
+                            pd.ace
+                                .diffNew
+                                .setValue(storage);
+                            pd.ace
+                                .diffNew
+                                .clearSelection();
                             if (lang !== "text") {
                                 pd.langkey(false, pd.ace.diffNew, "");
                             }
@@ -3954,7 +4515,9 @@ scanvas: "#doc.canvas{color:#444}#webtool.canvas input.unchecked{background:#ccc
                             pd.o.codeDiffNew.value = storage;
                         }
                     } else if (pd.test.ace === true) {
-                        pd.ace.diffNew.setValue(" ");
+                        pd.ace
+                            .diffNew
+                            .setValue(" ");
                     }
                 }
                 pd.test.render.diff = true;
@@ -4011,18 +4574,26 @@ scanvas: "#doc.canvas{color:#444}#webtool.canvas input.unchecked{background:#ccc
                             storage = "";
                         }
                         if (pd.test.ace === true) {
-                            pd.ace.parsIn.setValue(storage);
-                            pd.ace.parsIn.clearSelection();
+                            pd.ace
+                                .parsIn
+                                .setValue(storage);
+                            pd.ace
+                                .parsIn
+                                .clearSelection();
                             pd.langkey(false, pd.ace.parsIn, "");
                         } else {
                             pd.o.codeParsIn.value = storage;
                         }
                     } else if (pd.test.ace === true) {
-                        pd.ace.parsIn.setValue(" ");
+                        pd.ace
+                            .parsIn
+                            .setValue(" ");
                     }
                 }
                 if (pd.test.ace === true && pd.o.codeParsOut !== null) {
-                    pd.ace.parsOut.setValue(" ");
+                    pd.ace
+                        .parsOut
+                        .setValue(" ");
                 }
             }
             pd.test.render.pars = true;
@@ -4049,7 +4620,9 @@ scanvas: "#doc.canvas{color:#444}#webtool.canvas input.unchecked{background:#ccc
                     if (pd.test.ace === true) {
                         node             = pd.o.codeBeauIn.parentNode.parentNode;
                         node.style.width = "49%";
-                        pd.ace.beauIn.resize();
+                        pd.ace
+                            .beauIn
+                            .resize();
                     } else {
                         node             = pd.o.codeBeauIn.parentNode;
                         node.style.width = "49%";
@@ -4086,7 +4659,9 @@ scanvas: "#doc.canvas{color:#444}#webtool.canvas input.unchecked{background:#ccc
                     if (pd.test.ace === true) {
                         node             = pd.o.codeBeauIn.parentNode.parentNode;
                         node.style.width = "100%";
-                        pd.ace.beauIn.resize();
+                        pd.ace
+                            .beauIn
+                            .resize();
                     } else {
                         node             = pd.o.codeBeauIn.parentNode;
                         node.style.width = "100%";
@@ -4366,54 +4941,162 @@ scanvas: "#doc.canvas{color:#444}#webtool.canvas input.unchecked{background:#ccc
         if (pd.test.ace === true) {
             if (pd.mode === "diff") {
                 if (node === pd.id("diff-space")) {
-                    pd.ace.diffBase.getSession().setUseSoftTabs(true);
-                    pd.ace.diffNew.getSession().setUseSoftTabs(true);
-                    pd.ace.minnIn.getSession().setUseSoftTabs(true);
-                    pd.ace.minnOut.getSession().setUseSoftTabs(true);
-                    pd.ace.parsIn.getSession().setUseSoftTabs(true);
-                    pd.ace.parsOut.getSession().setUseSoftTabs(true);
+                    pd.ace
+                        .diffBase
+                        .getSession()
+                        .setUseSoftTabs(true);
+                    pd.ace
+                        .diffNew
+                        .getSession()
+                        .setUseSoftTabs(true);
+                    pd.ace
+                        .minnIn
+                        .getSession()
+                        .setUseSoftTabs(true);
+                    pd.ace
+                        .minnOut
+                        .getSession()
+                        .setUseSoftTabs(true);
+                    pd.ace
+                        .parsIn
+                        .getSession()
+                        .setUseSoftTabs(true);
+                    pd.ace
+                        .parsOut
+                        .getSession()
+                        .setUseSoftTabs(true);
                     quan = pd.id("diff-quan");
                     if (quan !== null && isNaN(Number(quan.value)) === false) {
-                        pd.ace.diffBase.getSession().setTabSize(Number(node.value));
-                        pd.ace.diffNew.getSession().setTabSize(Number(node.value));
-                        pd.ace.minnIn.getSession().setTabSize(Number(node.value));
-                        pd.ace.minnOut.getSession().setTabSize(Number(node.value));
-                        pd.ace.parsIn.getSession().setTabSize(Number(node.value));
-                        pd.ace.parsOut.getSession().setTabSize(Number(node.value));
+                        pd.ace
+                            .diffBase
+                            .getSession()
+                            .setTabSize(Number(node.value));
+                        pd.ace
+                            .diffNew
+                            .getSession()
+                            .setTabSize(Number(node.value));
+                        pd.ace
+                            .minnIn
+                            .getSession()
+                            .setTabSize(Number(node.value));
+                        pd.ace
+                            .minnOut
+                            .getSession()
+                            .setTabSize(Number(node.value));
+                        pd.ace
+                            .parsIn
+                            .getSession()
+                            .setTabSize(Number(node.value));
+                        pd.ace
+                            .parsOut
+                            .getSession()
+                            .setTabSize(Number(node.value));
                     }
                 } else {
-                    pd.ace.diffBase.getSession().setUseSoftTabs(false);
-                    pd.ace.diffNew.getSession().setUseSoftTabs(false);
-                    pd.ace.minnIn.getSession().setUseSoftTabs(false);
-                    pd.ace.minnOut.getSession().setUseSoftTabs(false);
-                    pd.ace.parsIn.getSession().setUseSoftTabs(false);
-                    pd.ace.parsOut.getSession().setUseSoftTabs(false);
+                    pd.ace
+                        .diffBase
+                        .getSession()
+                        .setUseSoftTabs(false);
+                    pd.ace
+                        .diffNew
+                        .getSession()
+                        .setUseSoftTabs(false);
+                    pd.ace
+                        .minnIn
+                        .getSession()
+                        .setUseSoftTabs(false);
+                    pd.ace
+                        .minnOut
+                        .getSession()
+                        .setUseSoftTabs(false);
+                    pd.ace
+                        .parsIn
+                        .getSession()
+                        .setUseSoftTabs(false);
+                    pd.ace
+                        .parsOut
+                        .getSession()
+                        .setUseSoftTabs(false);
                 }
             }
             if (pd.mode === "beau") {
                 if (node === pd.id("beau-space")) {
-                    pd.ace.beauIn.getSession().setUseSoftTabs(true);
-                    pd.ace.beauOut.getSession().setUseSoftTabs(true);
-                    pd.ace.minnIn.getSession().setUseSoftTabs(true);
-                    pd.ace.minnOut.getSession().setUseSoftTabs(true);
-                    pd.ace.parsIn.getSession().setUseSoftTabs(true);
-                    pd.ace.parsOut.getSession().setUseSoftTabs(true);
+                    pd.ace
+                        .beauIn
+                        .getSession()
+                        .setUseSoftTabs(true);
+                    pd.ace
+                        .beauOut
+                        .getSession()
+                        .setUseSoftTabs(true);
+                    pd.ace
+                        .minnIn
+                        .getSession()
+                        .setUseSoftTabs(true);
+                    pd.ace
+                        .minnOut
+                        .getSession()
+                        .setUseSoftTabs(true);
+                    pd.ace
+                        .parsIn
+                        .getSession()
+                        .setUseSoftTabs(true);
+                    pd.ace
+                        .parsOut
+                        .getSession()
+                        .setUseSoftTabs(true);
                     quan = pd.id("beau-quan");
                     if (quan !== null && isNaN(Number(quan.value)) === false) {
-                        pd.ace.beauIn.getSession().setTabSize(Number(node.value));
-                        pd.ace.beauOut.getSession().setTabSize(Number(node.value));
-                        pd.ace.minnIn.getSession().setTabSize(Number(node.value));
-                        pd.ace.minnOut.getSession().setTabSize(Number(node.value));
-                        pd.ace.parsIn.getSession().setTabSize(Number(node.value));
-                        pd.ace.parsOut.getSession().setTabSize(Number(node.value));
+                        pd.ace
+                            .beauIn
+                            .getSession()
+                            .setTabSize(Number(node.value));
+                        pd.ace
+                            .beauOut
+                            .getSession()
+                            .setTabSize(Number(node.value));
+                        pd.ace
+                            .minnIn
+                            .getSession()
+                            .setTabSize(Number(node.value));
+                        pd.ace
+                            .minnOut
+                            .getSession()
+                            .setTabSize(Number(node.value));
+                        pd.ace
+                            .parsIn
+                            .getSession()
+                            .setTabSize(Number(node.value));
+                        pd.ace
+                            .parsOut
+                            .getSession()
+                            .setTabSize(Number(node.value));
                     }
                 } else {
-                    pd.ace.beauIn.getSession().setUseSoftTabs(false);
-                    pd.ace.beauOut.getSession().setUseSoftTabs(false);
-                    pd.ace.minnIn.getSession().setUseSoftTabs(false);
-                    pd.ace.minnOut.getSession().setUseSoftTabs(false);
-                    pd.ace.parsIn.getSession().setUseSoftTabs(false);
-                    pd.ace.parsOut.getSession().setUseSoftTabs(false);
+                    pd.ace
+                        .beauIn
+                        .getSession()
+                        .setUseSoftTabs(false);
+                    pd.ace
+                        .beauOut
+                        .getSession()
+                        .setUseSoftTabs(false);
+                    pd.ace
+                        .minnIn
+                        .getSession()
+                        .setUseSoftTabs(false);
+                    pd.ace
+                        .minnOut
+                        .getSession()
+                        .setUseSoftTabs(false);
+                    pd.ace
+                        .parsIn
+                        .getSession()
+                        .setUseSoftTabs(false);
+                    pd.ace
+                        .parsOut
+                        .getSession()
+                        .setUseSoftTabs(false);
                 }
             }
         }
@@ -4456,7 +5139,8 @@ scanvas: "#doc.canvas{color:#444}#webtool.canvas input.unchecked{background:#ccc
         if (item.nodeName.toLowerCase() !== "div" && pd.test.load === false) {
             item.focus();
         }
-        node   = item.nodeName.toLowerCase();
+        node   = item.nodeName
+            .toLowerCase();
         name   = item.getAttribute("name");
         type   = item.getAttribute("type");
         id     = item.getAttribute("id");
@@ -4467,12 +5151,14 @@ scanvas: "#doc.canvas{color:#444}#webtool.canvas input.unchecked{background:#ccc
         if (node === "input") {
             if (type === "radio") {
                 if (id === "beau-other") {
-                    pd.settings.beauchar = pd.id("beau-char").value;
+                    pd.settings.beauchar = pd.id("beau-char")
+                        .value;
                 } else {
                     pd.settings[name] = id;
                 }
                 if (id === "diff-other") {
-                    pd.settings.diffchar = pd.id("diff-char").value;
+                    pd.settings.diffchar = pd.id("diff-char")
+                        .value;
                 } else {
                     pd.settings[name] = id;
                 }
@@ -4509,7 +5195,8 @@ scanvas: "#doc.canvas{color:#444}#webtool.canvas input.unchecked{background:#ccc
                 }
             }
         } else if (node === "button" && id !== null) {
-            pd.settings[id] = item.innerHTML.replace(/\s+/g, " ");
+            pd.settings[id] = item.innerHTML
+                .replace(/\s+/g, " ");
         }
         if (pd.test.json === true && pd.test.ls === true) {
             localStorage.settings = JSON.stringify(pd.settings);
@@ -4547,6 +5234,10 @@ scanvas: "#doc.canvas{color:#444}#webtool.canvas input.unchecked{background:#ccc
                 } else if (id === "bdustyes" || id === "ddustyes" || id === "mdustyes" || id === "pdustyes") {
                     data = [
                         "dustjs", "true"
+                    ];
+                } else if (id === "beau-wrap" || id === "diff-wrap" || id === "mini-wrap") {
+                    data = [
+                        "wrap", item.value
                     ];
                 } else if (id === "bendcomma-no") {
                     data = [
@@ -4722,10 +5413,6 @@ scanvas: "#doc.canvas{color:#444}#webtool.canvas input.unchecked{background:#ccc
                     data = [
                         "inchar", "\t"
                     ];
-                } else if (id === "diff-wrap" || id === "beau-wrap") {
-                    data = [
-                        "wrap", item.value
-                    ];
                 } else if (id === "diffcontent") {
                     data = [
                         "content", "true"
@@ -4846,6 +5533,14 @@ scanvas: "#doc.canvas{color:#444}#webtool.canvas input.unchecked{background:#ccc
                     data = [
                         "lang", item.value
                     ];
+                } else if (id === "miniwrapm-no") {
+                    data = [
+                        "miniwrap", "false"
+                    ];
+                } else if (id === "miniwrapm-yes") {
+                    data = [
+                        "miniwrap", "true"
+                    ];
                 } else if (id === "modebeautify") {
                     data = [
                         "mode", "beautify"
@@ -4904,20 +5599,32 @@ scanvas: "#doc.canvas{color:#444}#webtool.canvas input.unchecked{background:#ccc
                     }
                 }
                 if (a < 0) {
-                    pd.commentString.push(data.join(": "));
-                    pd.commentString.sort();
+                    pd.commentString
+                        .push(data.join(": "));
+                    pd.commentString
+                        .sort();
                 }
                 if (pd.o.comment !== null) {
                     if (pd.commentString.length === 0) {
                         pd.o.comment.innerHTML = "/*prettydiff.com */";
                     } else if (pd.commentString.length === 1) {
-                        pd.o.comment.innerHTML = "/*prettydiff.com " + pd.commentString[0].replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/api\./g, "") + " */";
+                        pd.o.comment.innerHTML = "/*prettydiff.com " + pd.commentString[0]
+                            .replace(/&/g, "&amp;")
+                            .replace(/</g, "&lt;")
+                            .replace(/>/g, "&gt;")
+                            .replace(/api\./g, "") + " */";
                     } else {
-                        pd.o.comment.innerHTML = "/*prettydiff.com " + pd.commentString.join(", ").replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/api\./g, "") + " */";
+                        pd.o.comment.innerHTML = "/*prettydiff.com " + pd.commentString
+                            .join(", ")
+                            .replace(/&/g, "&amp;")
+                            .replace(/</g, "&lt;")
+                            .replace(/>/g, "&gt;")
+                            .replace(/api\./g, "") + " */";
                     }
                 }
                 if (pd.test.ls === true && pd.test.json === true) {
-                    localStorage.commentString = JSON.stringify(pd.commentString).replace(/api\./g, "");
+                    localStorage.commentString = JSON.stringify(pd.commentString)
+                        .replace(/api\./g, "");
                 }
             }());
         }
@@ -4954,7 +5661,12 @@ scanvas: "#doc.canvas{color:#444}#webtool.canvas input.unchecked{background:#ccc
                 nametry = JSON.stringify(localStorage.settings);
             }
             if (localStorage.settings === undefined || nametry.knownname === undefined || nametry === "" || nametry.indexOf("knownname") < 0) {
-                name = "\"" + Math.random().toString().slice(2) + Math.random().toString().slice(2) + "\"";
+                name = "\"" + Math.random()
+                    .toString()
+                    .slice(2) + Math
+                    .random()
+                    .toString()
+                    .slice(2) + "\"";
             }
             pd.settings.knownname = name;
         }
@@ -4993,42 +5705,73 @@ scanvas: "#doc.canvas{color:#444}#webtool.canvas input.unchecked{background:#ccc
                 math                  = (height / 12) - (24.35 + headline);
                 baseText.style.height = math + "em";
                 newText.style.height  = math + "em";
-                pd.ace.diffBase.setStyle("height:" + math + "em");
-                pd.ace.diffNew.setStyle("height:" + math + "em");
-                pd.ace.diffBase.resize();
-                pd.ace.diffNew.resize();
+                pd.ace
+                    .diffBase
+                    .setStyle("height:" + math + "em");
+                pd.ace
+                    .diffNew
+                    .setStyle("height:" + math + "em");
+                pd.ace
+                    .diffBase
+                    .resize();
+                pd.ace
+                    .diffNew
+                    .resize();
             }
-            math = (height / 12) - (22.12 + headline);
+            math = (height / 12) - (19.725 + headline);
             if (pd.o.codeBeauIn !== null) {
                 beauIn.style.height = math + "em";
-                pd.ace.beauIn.setStyle("height:" + math + "em");
-                pd.ace.beauIn.resize();
+                pd.ace
+                    .beauIn
+                    .setStyle("height:" + math + "em");
+                pd.ace
+                    .beauIn
+                    .resize();
             }
             if (pd.o.codeMinnIn !== null) {
                 minnIn.style.height = math + "em";
-                pd.ace.minnIn.setStyle("height:" + math + "em");
-                pd.ace.minnIn.resize();
+                pd.ace
+                    .minnIn
+                    .setStyle("height:" + math + "em");
+                pd.ace
+                    .minnIn
+                    .resize();
             }
             if (pd.o.codeParsIn !== null) {
                 parsIn.style.height = math + "em";
-                pd.ace.parsIn.setStyle("height:" + math + "em");
-                pd.ace.parsIn.resize();
+                pd.ace
+                    .parsIn
+                    .setStyle("height:" + math + "em");
+                pd.ace
+                    .parsIn
+                    .resize();
             }
-            math = (height / 12) - (19.725 + headline);
             if (pd.o.codeBeauOut !== null) {
                 beauOut.style.height = math + "em";
-                pd.ace.beauOut.setStyle("height:" + math + "em");
-                pd.ace.beauOut.resize();
+                pd.ace
+                    .beauOut
+                    .setStyle("height:" + math + "em");
+                pd.ace
+                    .beauOut
+                    .resize();
             }
             if (pd.o.codeMinnOut !== null) {
                 minnOut.style.height = math + "em";
-                pd.ace.minnOut.setStyle("height:" + math + "em");
-                pd.ace.minnOut.resize();
+                pd.ace
+                    .minnOut
+                    .setStyle("height:" + math + "em");
+                pd.ace
+                    .minnOut
+                    .resize();
             }
             if (pd.o.codeParsOut !== null) {
                 parsOut.style.height = math + "em";
-                pd.ace.parsOut.setStyle("height:" + math + "em");
-                pd.ace.parsOut.resize();
+                pd.ace
+                    .parsOut
+                    .setStyle("height:" + math + "em");
+                pd.ace
+                    .parsOut
+                    .resize();
             }
         } else {
             if (baseText !== null && newText !== null) {
@@ -5095,7 +5838,9 @@ scanvas: "#doc.canvas{color:#444}#webtool.canvas input.unchecked{background:#ccc
             },
             page          = (pd.o.page === null)
                 ? ""
-                : pd.o.page.getAttribute("id"),
+                : pd.o
+                    .page
+                    .getAttribute("id"),
             backspace     = function dom__load_backspace(event) {
                 var aa = event || window.event,
                     bb = aa.srcElement || aa.target;
@@ -5114,12 +5859,14 @@ scanvas: "#doc.canvas{color:#444}#webtool.canvas input.unchecked{background:#ccc
                         ? x
                         : this,
                     elId   = el.getAttribute("id"),
-                    loc    = location.href.indexOf("ace=false"),
+                    loc    = location.href
+                        .indexOf("ace=false"),
                     place  = [],
                     symbol = "?";
                 pd.options(el);
                 if (elId.indexOf("-yes") > 0 && loc > 0) {
-                    place = location.href.split("ace=false");
+                    place = location.href
+                        .split("ace=false");
                     if (place[1].indexOf("&") < 0 && place[1].indexOf("%26") < 0) {
                         place[0]      = place[0].slice(0, place[0].length - 1);
                         location.href = place.join("");
@@ -5138,10 +5885,12 @@ scanvas: "#doc.canvas{color:#444}#webtool.canvas input.unchecked{background:#ccc
                 var event  = e || window.event,
                     item   = this.parentNode,
                     radio  = item.getElementsByTagName("input")[0],
-                    radios = item.parentNode.getElementsByTagName("input"),
+                    radios = item.parentNode
+                        .getElementsByTagName("input"),
                     aa     = 0;
                 for (aa = radios.length - 1; aa > -1; aa -= 1) {
-                    radios[aa].parentNode.removeAttribute("class");
+                    radios[aa].parentNode
+                        .removeAttribute("class");
                     radios[aa].checked = false;
                 }
                 radio.checked = true;
@@ -5173,7 +5922,8 @@ scanvas: "#doc.canvas{color:#444}#webtool.canvas input.unchecked{background:#ccc
                 }
                 tabkey.style.display = "block";
                 if (pd.test.ace === true) {
-                    this.parentNode.parentNode.setAttribute("class", this.parentNode.parentNode.getAttribute("class") + " filefocus");
+                    this.parentNode
+                        .setAttribute("class", this.parentNode.getAttribute("class") + " filefocus");
                 }
             },
             textareablur  = function dom__load_textareablur() {
@@ -5183,7 +5933,8 @@ scanvas: "#doc.canvas{color:#444}#webtool.canvas input.unchecked{background:#ccc
                 }
                 tabkey.style.display = "none";
                 if (pd.test.ace === true) {
-                    this.parentNode.parentNode.setAttribute("class", this.parentNode.parentNode.getAttribute("class").replace(" filefocus", ""));
+                    this.parentNode
+                        .setAttribute("class", this.parentNode.getAttribute("class").replace(" filefocus", ""));
                 }
             },
             filefocus     = function dom__load_filefocus() {
@@ -5197,7 +5948,11 @@ scanvas: "#doc.canvas{color:#444}#webtool.canvas input.unchecked{background:#ccc
                 if (pd.o.report.code.box === null) {
                     return;
                 }
-                button = pd.o.report.code.box.getElementsByTagName("button")[0];
+                button = pd.o
+                    .report
+                    .code
+                    .box
+                    .getElementsByTagName("button")[0];
                 if (button.getAttribute("class") !== "save") {
                     return;
                 }
@@ -5222,7 +5977,9 @@ scanvas: "#doc.canvas{color:#444}#webtool.canvas input.unchecked{background:#ccc
             }
             node = pd.id("hideOptions");
             if (pd.id("option_commentClear") !== null) {
-                pd.id("option_commentClear").onclick = pd.clearComment;
+                pd.id("option_commentClear")
+                    .onclick = pd
+                    .clearComment;
             }
             document.onkeypress          = backspace;
             document.onkeydown           = backspace;
@@ -5235,7 +5992,12 @@ scanvas: "#doc.canvas{color:#444}#webtool.canvas input.unchecked{background:#ccc
             pd.settings.feedback         = {};
             pd.settings.feedback.newb    = false;
             pd.settings.feedback.veteran = false;
-            pd.settings.knownname        = "\"" + Math.random().toString().slice(2) + Math.random().toString().slice(2) + "\"";
+            pd.settings.knownname        = "\"" + Math.random()
+                .toString()
+                .slice(2) + Math
+                .random()
+                .toString()
+                .slice(2) + "\"";
             pd.keypress                  = {
                 date    : {},
                 keys    : [],
@@ -5303,11 +6065,17 @@ scanvas: "#doc.canvas{color:#444}#webtool.canvas input.unchecked{background:#ccc
                     }
                     if (localStorage.settings !== undefined && localStorage.settings !== null) {
                         if (localStorage.settings.indexOf(":undefined") > 0) {
-                            localStorage.settings = localStorage.settings.replace(/:undefined/g, ":false");
+                            localStorage.settings = localStorage.settings
+                                .replace(/:undefined/g, ":false");
                         }
                         pd.settings = JSON.parse(localStorage.settings);
                         if (pd.settings.knownname === undefined || typeof pd.settings.knownname === "number") {
-                            pd.settings.knownname = "\"" + Math.random().toString().slice(2) + Math.random().toString().slice(2) + "\"";
+                            pd.settings.knownname = "\"" + Math.random()
+                                .toString()
+                                .slice(2) + Math
+                                .random()
+                                .toString()
+                                .slice(2) + "\"";
                             localStorage.settings = JSON.stringify(pd.settings);
                         }
                         if (pd.settings.diffreport !== undefined) {
@@ -5318,7 +6086,12 @@ scanvas: "#doc.canvas{color:#444}#webtool.canvas input.unchecked{background:#ccc
                             pd.settings.codereport = {};
                         }
                     } else if (pd.settings.knownname === undefined || typeof pd.settings.knownname === "number") {
-                        pd.settings.knownname = "\"" + Math.random().toString().slice(2) + Math.random().toString().slice(2) + "\"";
+                        pd.settings.knownname = "\"" + Math.random()
+                            .toString()
+                            .slice(2) + Math
+                            .random()
+                            .toString()
+                            .slice(2) + "\"";
                         localStorage.settings = JSON.stringify(pd.settings);
                     }
                     if (localStorage.stat !== undefined) {
@@ -5544,7 +6317,12 @@ scanvas: "#doc.canvas{color:#444}#webtool.canvas input.unchecked{background:#ccc
                     pd.o.report.feed.box.ondrop      = pd.filedrop;
                 }
                 pd.o.report.feed.body.onmousedown = top;
-                title                             = pd.o.report.feed.box.getElementsByTagName("h3")[0].getElementsByTagName("button")[0];
+                title                             = pd.o
+                    .report
+                    .feed
+                    .box
+                    .getElementsByTagName("h3")[0]
+                    .getElementsByTagName("button")[0];
                 title.onmousedown                 = grab;
                 title.ontouchstart                = grab;
                 title.onfocus                     = headerfocus;
@@ -5553,7 +6331,11 @@ scanvas: "#doc.canvas{color:#444}#webtool.canvas input.unchecked{background:#ccc
                     pd.settings.feedreport = {};
                 }
                 if (pd.settings.feedreport !== undefined && pd.settings.feedreport.min === false) {
-                    buttons               = pd.o.report.feed.box.getElementsByTagName("p")[0];
+                    buttons               = pd.o
+                        .report
+                        .feed
+                        .box
+                        .getElementsByTagName("p")[0];
                     buttons.style.display = "block";
                     title.style.cursor    = "move";
                     if (buttons.innerHTML.indexOf("save") > 0) {
@@ -5581,7 +6363,9 @@ scanvas: "#doc.canvas{color:#444}#webtool.canvas input.unchecked{background:#ccc
                     pd.o.report.feed.body.style.height  = (pd.settings.feedreport.height / 10) + "em";
                     pd.o.report.feed.body.style.display = "block";
                 }
-                pd.id("feedsubmit").onclick = pd.feedsubmit;
+                pd.id("feedsubmit")
+                    .onclick = pd
+                    .feedsubmit;
             }
             if (pd.o.report.code.box !== null) {
                 if (pd.test.fs === true) {
@@ -5590,12 +6374,21 @@ scanvas: "#doc.canvas{color:#444}#webtool.canvas input.unchecked{background:#ccc
                     pd.o.report.code.box.ondrop      = pd.filedrop;
                 }
                 pd.o.report.code.body.onmousedown = top;
-                title                             = pd.o.report.code.box.getElementsByTagName("h3")[0].getElementsByTagName("button")[0];
+                title                             = pd.o
+                    .report
+                    .code
+                    .box
+                    .getElementsByTagName("h3")[0]
+                    .getElementsByTagName("button")[0];
                 title.onmousedown                 = grab;
                 title.ontouchstart                = grab;
                 title.onfocus                     = headerfocus;
                 title.onblur                      = headerblur;
-                buttons                           = pd.o.report.code.box.getElementsByTagName("p")[0];
+                buttons                           = pd.o
+                    .report
+                    .code
+                    .box
+                    .getElementsByTagName("p")[0];
                 node                              = pd.id("jsscope-yes");
                 if (node !== null && node.checked === true && buttons.innerHTML.indexOf("save") < 0) {
                     if (pd.test.agent.indexOf("firefox") > 0 || pd.test.agent.indexOf("presto") > 0) {
@@ -5649,13 +6442,22 @@ scanvas: "#doc.canvas{color:#444}#webtool.canvas input.unchecked{background:#ccc
                     pd.o.report.stat.box.ondrop      = pd.filedrop;
                 }
                 pd.o.report.stat.body.onmousedown = top;
-                title                             = pd.o.report.stat.box.getElementsByTagName("h3")[0].getElementsByTagName("button")[0];
+                title                             = pd.o
+                    .report
+                    .stat
+                    .box
+                    .getElementsByTagName("h3")[0]
+                    .getElementsByTagName("button")[0];
                 title.onmousedown                 = grab;
                 title.ontouchstart                = grab;
                 title.onfocus                     = headerfocus;
                 title.onblur                      = headerblur;
                 if (pd.settings.statreport !== undefined && pd.settings.statreport.min === false) {
-                    buttons               = pd.o.report.stat.box.getElementsByTagName("p")[0];
+                    buttons               = pd.o
+                        .report
+                        .stat
+                        .box
+                        .getElementsByTagName("p")[0];
                     buttons.style.display = "block";
                     title.style.cursor    = "move";
                     if (buttons.innerHTML.indexOf("save") > 0) {
@@ -5701,7 +6503,9 @@ scanvas: "#doc.canvas{color:#444}#webtool.canvas input.unchecked{background:#ccc
                         inputs[a].onfocus                                             = feedradio;
                         inputs[a].onblur                                              = feedblur;
                         inputs[a].onclick                                             = feedradio;
-                        inputs[a].parentNode.getElementsByTagName("label")[0].onclick = feedradio;
+                        inputs[a].parentNode
+                            .getElementsByTagName("label")[0]
+                            .onclick = feedradio;
                     }
                     if (name === "mode") {
                         inputs[a].onclick = pd.prettyvis;
@@ -5752,7 +6556,8 @@ scanvas: "#doc.canvas{color:#444}#webtool.canvas input.unchecked{background:#ccc
                             acedisable(inputs[a]);
                         }
                         if (id === "ace-yes" && inputs[a].checked === true && pd.test.ace === false) {
-                            pd.id("ace-no").checked = true;
+                            pd.id("ace-no")
+                                .checked = true;
                         }
                         inputs[a].onclick = acedisable;
                     } else {
@@ -5764,31 +6569,55 @@ scanvas: "#doc.canvas{color:#444}#webtool.canvas input.unchecked{background:#ccc
                         if (pd.settings[id] !== undefined && pd.settings[id] !== "4" && isNaN(pd.settings[id]) === false) {
                             if (id === "diff-quan") {
                                 if (pd.o.codeDiffBase !== null) {
-                                    pd.ace.diffBase.getSession().setTabSize(Number(pd.settings[id]));
+                                    pd.ace
+                                        .diffBase
+                                        .getSession()
+                                        .setTabSize(Number(pd.settings[id]));
                                 }
                                 if (pd.o.codeDiffNew !== null) {
-                                    pd.ace.diffNew.getSession().setTabSize(Number(pd.settings[id]));
+                                    pd.ace
+                                        .diffNew
+                                        .getSession()
+                                        .setTabSize(Number(pd.settings[id]));
                                 }
                             } else if (id === "beau-quan") {
                                 if (pd.o.codeBeauIn !== null) {
-                                    pd.ace.beauIn.getSession().setTabSize(Number(pd.settings[id]));
+                                    pd.ace
+                                        .beauIn
+                                        .getSession()
+                                        .setTabSize(Number(pd.settings[id]));
                                 }
                                 if (pd.o.codeBeauOut !== null) {
-                                    pd.ace.beauOut.getSession().setTabSize(Number(pd.settings[id]));
+                                    pd.ace
+                                        .beauOut
+                                        .getSession()
+                                        .setTabSize(Number(pd.settings[id]));
                                 }
                             } else if (id === "minn-quan") {
                                 if (pd.o.codeMinnIn !== null) {
-                                    pd.ace.minnIn.getSession().setTabSize(Number(pd.settings[id]));
+                                    pd.ace
+                                        .minnIn
+                                        .getSession()
+                                        .setTabSize(Number(pd.settings[id]));
                                 }
                                 if (pd.o.codeMinnOut !== null) {
-                                    pd.ace.minnOut.getSession().setTabSize(Number(pd.settings[id]));
+                                    pd.ace
+                                        .minnOut
+                                        .getSession()
+                                        .setTabSize(Number(pd.settings[id]));
                                 }
                             } else if (id === "pars-quan") {
                                 if (pd.o.codeParsIn !== null) {
-                                    pd.ace.parsIn.getSession().setTabSize(Number(pd.settings[id]));
+                                    pd.ace
+                                        .parsIn
+                                        .getSession()
+                                        .setTabSize(Number(pd.settings[id]));
                                 }
                                 if (pd.o.codeParsOut !== null) {
-                                    pd.ace.parsOut.getSession().setTabSize(Number(pd.settings[id]));
+                                    pd.ace
+                                        .parsOut
+                                        .getSession()
+                                        .setTabSize(Number(pd.settings[id]));
                                 }
                             }
                         }
@@ -5851,7 +6680,15 @@ scanvas: "#doc.canvas{color:#444}#webtool.canvas input.unchecked{background:#ccc
                     inputs[a].onclick = pd.minimize;
                 } else if (name === "maximize") {
                     inputs[a].onclick = pd.maximize;
-                    if (pd.settings[inputs[a].parentNode.parentNode.getAttribute("id")] !== undefined && pd.settings[inputs[a].parentNode.parentNode.getAttribute("id")].max === true) {
+                    if (pd.settings[
+                        inputs[a].parentNode
+                            .parentNode
+                            .getAttribute("id")
+                    ] !== undefined && pd.settings[
+                        inputs[a].parentNode
+                            .parentNode
+                            .getAttribute("id")
+                    ].max === true) {
                         inputs[a].click();
                     }
                 } else if (name === "resize") {
@@ -5909,9 +6746,12 @@ scanvas: "#doc.canvas{color:#444}#webtool.canvas input.unchecked{background:#ccc
                 if (pd.commentString.length === 0) {
                     pd.o.comment.innerHTML = "/*prettydiff.com */";
                 } else if (pd.commentString.length === 1) {
-                    pd.o.comment.innerHTML = "/*prettydiff.com " + pd.commentString[0].replace("api.", "") + " */";
+                    pd.o.comment.innerHTML = "/*prettydiff.com " + pd.commentString[0]
+                        .replace("api.", "") + " */";
                 } else {
-                    pd.o.comment.innerHTML = "/*prettydiff.com " + pd.commentString.join(", ").replace(/api\./g, "") + " */";
+                    pd.o.comment.innerHTML = "/*prettydiff.com " + pd.commentString
+                        .join(", ")
+                        .replace(/api\./g, "") + " */";
                 }
             }
             node = pd.id("button-primary");
@@ -5931,16 +6771,21 @@ scanvas: "#doc.canvas{color:#444}#webtool.canvas input.unchecked{background:#ccc
                             ? color.getElementsByTagName("option")
                             : [],
                         options  = (pd.o.lang !== null)
-                            ? pd.o.lang.getElementsByTagName("option")
+                            ? pd.o
+                                .lang
+                                .getElementsByTagName("option")
                             : [],
-                        params   = location.href.split("?")[1].split("&"),
+                        params   = location.href
+                            .split("?")[1]
+                            .split("&"),
                         paramLen = params.length,
                         value    = "",
                         source   = "",
                         diff     = "";
                     for (b = 0; b < paramLen; b += 1) {
                         if (params[b].indexOf("m=") === 0) {
-                            value = params[b].toLowerCase().substr(2);
+                            value = params[b].toLowerCase()
+                                .substr(2);
                             if (value === "beautify" && pd.o.modeBeau !== null) {
                                 pd.prettyvis(pd.o.modeBeau);
                                 pd.o.modeBeau.checked = true;
@@ -5960,14 +6805,19 @@ scanvas: "#doc.canvas{color:#444}#webtool.canvas input.unchecked{background:#ccc
                             diff = params[b].substr(2);
                             if (pd.o.codeDiffNew !== null) {
                                 if (pd.test.ace === true) {
-                                    pd.ace.diffNew.setValue(diff);
-                                    pd.ace.diffNew.clearSelection();
+                                    pd.ace
+                                        .diffNew
+                                        .setValue(diff);
+                                    pd.ace
+                                        .diffNew
+                                        .clearSelection();
                                 } else {
                                     pd.o.codeDiffNew.value = diff;
                                 }
                             }
                         } else if (params[b].indexOf("l=") === 0 && pd.o.lang !== null) {
-                            value = params[b].toLowerCase().substr(2);
+                            value = params[b].toLowerCase()
+                                .substr(2);
                             if (value === "text" || value === "plain" || value === "plaintext") {
                                 value = "text";
                                 pd.prettyvis(pd.o.modeDiff);
@@ -5989,18 +6839,43 @@ scanvas: "#doc.canvas{color:#444}#webtool.canvas input.unchecked{background:#ccc
                                 }
                             }
                             if (pd.test.ace === true && c > -1) {
-                                pd.ace.diffBase.getSession().setMode("ace/mode/" + value);
-                                pd.ace.diffNew.getSession().setMode("ace/mode/" + value);
-                                pd.ace.beauIn.getSession().setMode("ace/mode/" + value);
-                                pd.ace.beauOut.getSession().setMode("ace/mode/" + value);
-                                pd.ace.minnIn.getSession().setMode("ace/mode/" + value);
-                                pd.ace.minnOut.getSession().setMode("ace/mode/" + value);
-                                pd.ace.parsIn.getSession().setMode("ace/mode/" + value);
-                                pd.ace.parsOut.getSession().setMode("ace/mode/" + value);
+                                pd.ace
+                                    .diffBase
+                                    .getSession()
+                                    .setMode("ace/mode/" + value);
+                                pd.ace
+                                    .diffNew
+                                    .getSession()
+                                    .setMode("ace/mode/" + value);
+                                pd.ace
+                                    .beauIn
+                                    .getSession()
+                                    .setMode("ace/mode/" + value);
+                                pd.ace
+                                    .beauOut
+                                    .getSession()
+                                    .setMode("ace/mode/" + value);
+                                pd.ace
+                                    .minnIn
+                                    .getSession()
+                                    .setMode("ace/mode/" + value);
+                                pd.ace
+                                    .minnOut
+                                    .getSession()
+                                    .setMode("ace/mode/" + value);
+                                pd.ace
+                                    .parsIn
+                                    .getSession()
+                                    .setMode("ace/mode/" + value);
+                                pd.ace
+                                    .parsOut
+                                    .getSession()
+                                    .setMode("ace/mode/" + value);
                             }
                             pd.codeOps(pd.o.lang);
                         } else if (params[b].indexOf("c=") === 0) {
-                            value = params[b].toLowerCase().substr(2);
+                            value = params[b].toLowerCase()
+                                .substr(2);
                             for (c = colors.length - 1; c > -1; c -= 1) {
                                 if (colors[c].innerHTML.toLowerCase() === value) {
                                     color.selectedIndex = c;
@@ -6027,7 +6902,8 @@ scanvas: "#doc.canvas{color:#444}#webtool.canvas input.unchecked{background:#ccc
                             if (node !== null) {
                                 pd.options(node);
                             }
-                            value = params[b].toLowerCase().substr(2);
+                            value = params[b].toLowerCase()
+                                .substr(2);
                             for (c = options.length - 1; c > -1; c -= 1) {
                                 if (options[c].value === "html") {
                                     pd.o.lang.selectedIndex = c;
@@ -6036,46 +6912,86 @@ scanvas: "#doc.canvas{color:#444}#webtool.canvas input.unchecked{background:#ccc
                                 }
                             }
                             if (pd.test.ace === true) {
-                                pd.ace.diffBase.getSession().setMode("ace/mode/html");
-                                pd.ace.diffNew.getSession().setMode("ace/mode/html");
-                                pd.ace.beauIn.getSession().setMode("ace/mode/html");
-                                pd.ace.beauOut.getSession().setMode("ace/mode/html");
-                                pd.ace.minnIn.getSession().setMode("ace/mode/html");
-                                pd.ace.minnOut.getSession().setMode("ace/mode/html");
-                                pd.ace.parsIn.getSession().setMode("ace/mode/html");
-                                pd.ace.parsOut.getSession().setMode("ace/mode/html");
+                                pd.ace
+                                    .diffBase
+                                    .getSession()
+                                    .setMode("ace/mode/html");
+                                pd.ace
+                                    .diffNew
+                                    .getSession()
+                                    .setMode("ace/mode/html");
+                                pd.ace
+                                    .beauIn
+                                    .getSession()
+                                    .setMode("ace/mode/html");
+                                pd.ace
+                                    .beauOut
+                                    .getSession()
+                                    .setMode("ace/mode/html");
+                                pd.ace
+                                    .minnIn
+                                    .getSession()
+                                    .setMode("ace/mode/html");
+                                pd.ace
+                                    .minnOut
+                                    .getSession()
+                                    .setMode("ace/mode/html");
+                                pd.ace
+                                    .parsIn
+                                    .getSession()
+                                    .setMode("ace/mode/html");
+                                pd.ace
+                                    .parsOut
+                                    .getSession()
+                                    .setMode("ace/mode/html");
                             }
                         }
                     }
                     if (source !== "") {
                         if (pd.o.codeBeauIn !== null && pd.mode === "beau") {
                             if (pd.test.ace === true) {
-                                pd.ace.beauIn.setValue(source);
-                                pd.ace.beauIn.clearSelection();
+                                pd.ace
+                                    .beauIn
+                                    .setValue(source);
+                                pd.ace
+                                    .beauIn
+                                    .clearSelection();
                             } else {
                                 pd.o.codeBeauIn.value = source;
                             }
                             pd.recycle();
                         } else if (pd.o.codeMinnIn !== null && pd.mode === "minn") {
                             if (pd.test.ace === true) {
-                                pd.ace.minnIn.setValue(source);
-                                pd.ace.minnIn.clearSelection();
+                                pd.ace
+                                    .minnIn
+                                    .setValue(source);
+                                pd.ace
+                                    .minnIn
+                                    .clearSelection();
                             } else {
                                 pd.o.codeMinnIn.value = source;
                             }
                             pd.recycle();
                         } else if (pd.o.codeParsIn !== null && pd.mode === "pars") {
                             if (pd.test.ace === true) {
-                                pd.ace.parsIn.setValue(source);
-                                pd.ace.parsIn.clearSelection();
+                                pd.ace
+                                    .parsIn
+                                    .setValue(source);
+                                pd.ace
+                                    .parsIn
+                                    .clearSelection();
                             } else {
                                 pd.o.codeParsIn.value = source;
                             }
                             pd.recycle();
                         } else if (pd.o.codeDiffBase !== null && pd.mode === "diff") {
                             if (pd.test.ace === true) {
-                                pd.ace.diffBase.setValue(source);
-                                pd.ace.diffBase.clearSelection();
+                                pd.ace
+                                    .diffBase
+                                    .setValue(source);
+                                pd.ace
+                                    .diffBase
+                                    .clearSelection();
                             } else {
                                 pd.o.codeDiffBase.value = source;
                             }
@@ -6112,7 +7028,12 @@ scanvas: "#doc.canvas{color:#444}#webtool.canvas input.unchecked{background:#ccc
                 if (pd.test.json === true && pd.test.ls === true) {
                     localStorage.settings = JSON.stringify(pd.settings);
                 }
-                pd.o.report.feed.box.getElementsByTagName("button")[0].click();
+                pd.o
+                    .report
+                    .feed
+                    .box
+                    .getElementsByTagName("button")[0]
+                    .click();
             }
             if (pd.settings.feedback.veteran === false && pd.stat.usage > 2500 && pd.test.domain === true && pd.o.report.feed.box !== null) {
                 pd.settings.feedback.veteran = true;
@@ -6123,7 +7044,12 @@ scanvas: "#doc.canvas{color:#444}#webtool.canvas input.unchecked{background:#ccc
                 if (pd.test.json === true && pd.test.ls === true) {
                     localStorage.settings = JSON.stringify(pd.settings);
                 }
-                pd.o.report.feed.box.getElementsByTagName("button")[0].click();
+                pd.o
+                    .report
+                    .feed
+                    .box
+                    .getElementsByTagName("button")[0]
+                    .click();
             }
             if (pd.test.audio !== null) {
                 pd.audio        = {};
@@ -7012,20 +7938,27 @@ scanvas: "#doc.canvas{color:#444}#webtool.canvas input.unchecked{background:#ccc
                         "q3KbT6yiBpTZoH6XK2NzYaizgv406AYS4MAPM7NFDUja6zKBGdRN+aBymxq9LrJtK1qavVCozjOtabE5" +
                         "6wrRGLJCsIU5TEFNRTMuOTkgKGFscGhhKao=");
                 pd.audio.play   = function dom__load_audio() {
-                    var source  = pd.test.audio.createBufferSource(),
+                    var source  = pd.test
+                            .audio
+                            .createBufferSource(),
                         buff    = new ArrayBuffer(pd.audio.binary.length),
                         bytes   = new Uint8Array(buff),
                         z       = 0,
                         bytelen = buff.byteLength;
                     for (z = 0; z < bytelen; z += 1) {
-                        bytes[z] = pd.audio.binary.charCodeAt(z);
+                        bytes[z] = pd.audio
+                            .binary
+                            .charCodeAt(z);
                     }
-                    pd.test.audio.decodeAudioData(buff, function dom__load_audio_decode(buffer) {
-                        source.buffer = buffer;
-                        source.loop   = false;
-                        source.connect(pd.test.audio.destination);
-                        source.start(0, 0, 1.8);
-                    });
+                    pd
+                        .test
+                        .audio
+                        .decodeAudioData(buff, function dom__load_audio_decode(buffer) {
+                            source.buffer = buffer;
+                            source.loop   = false;
+                            source.connect(pd.test.audio.destination);
+                            source.start(0, 0, 1.8);
+                        });
                 };
             }
         }
@@ -7041,7 +7974,9 @@ scanvas: "#doc.canvas{color:#444}#webtool.canvas input.unchecked{background:#ccc
                     date          = 0,
                     lib           = "",
                     colorParam    = (typeof location === "object" && typeof location.href === "string" && location.href.indexOf("?") > -1)
-                        ? location.href.toLowerCase().split("?")[1]
+                        ? location.href
+                            .toLowerCase()
+                            .split("?")[1]
                         : "",
                     conversion    = function dom__load_doc_conversion(dateInstance) {
                         var str   = String(dateInstance),
@@ -7057,7 +7992,8 @@ scanvas: "#doc.canvas{color:#444}#webtool.canvas input.unchecked{background:#ccc
                 node = pd.id("colorScheme");
                 if (node !== null) {
                     if (localStorage !== null && localStorage.settings !== undefined && localStorage.settings !== null && localStorage.settings.indexOf(":undefined") > 0) {
-                        localStorage.settings = localStorage.settings.replace(/:undefined/g, ":false");
+                        localStorage.settings = localStorage.settings
+                            .replace(/:undefined/g, ":false");
                     }
                     pd.settings = (pd.test.ls === true && pd.test.json === true && localStorage.settings !== undefined)
                         ? JSON.parse(localStorage.settings)
@@ -7094,107 +8030,78 @@ scanvas: "#doc.canvas{color:#444}#webtool.canvas input.unchecked{background:#ccc
                         if (lib === "charDecoder.js") {
                             date               = edition.charDecoder;
                             dateCell.innerHTML = conversion(date);
-                            dateList.push([
-                                date, row[b].innerHTML
-                            ]);
+                            dateList.push([date, row[b].innerHTML]);
                         } else if (lib === "csspretty.js") {
                             date               = edition.csspretty;
                             dateCell.innerHTML = conversion(date);
-                            dateList.push([
-                                date, row[b].innerHTML
-                            ]);
+                            dateList.push([date, row[b].innerHTML]);
                         } else if (lib === "csvbeauty.js") {
                             date               = edition.csvbeauty;
                             dateCell.innerHTML = conversion(date);
-                            dateList.push([
-                                date, row[b].innerHTML
-                            ]);
+                            dateList.push([date, row[b].innerHTML]);
                         } else if (lib === "csvmin.js") {
                             date               = edition.csvmin;
                             dateCell.innerHTML = conversion(date);
-                            dateList.push([
-                                date, row[b].innerHTML
-                            ]);
+                            dateList.push([date, row[b].innerHTML]);
                         } else if (lib === "diffview.css") {
                             date               = edition.css;
                             dateCell.innerHTML = conversion(date);
-                            dateList.push([
-                                date, row[b].innerHTML
-                            ]);
+                            dateList.push([date, row[b].innerHTML]);
                         } else if (lib === "diffview.js") {
                             date               = edition.diffview;
                             dateCell.innerHTML = conversion(date);
-                            dateList.push([
-                                date, row[b].innerHTML
-                            ]);
+                            dateList.push([date, row[b].innerHTML]);
                         } else if (lib === "documentation.xhtml") {
                             date               = edition.documentation;
                             dateCell.innerHTML = conversion(date);
-                            dateList.push([
-                                date, row[b].innerHTML
-                            ]);
+                            dateList.push([date, row[b].innerHTML]);
                         } else if (lib === "dom.js") {
                             date               = edition.api.dom;
                             dateCell.innerHTML = conversion(date);
-                            dateList.push([
-                                date, row[b].innerHTML
-                            ]);
+                            dateList.push([date, row[b].innerHTML]);
                         } else if (lib === "jspretty.js") {
                             date               = edition.jspretty;
                             dateCell.innerHTML = conversion(date);
-                            dateList.push([
-                                date, row[b].innerHTML
-                            ]);
+                            dateList.push([date, row[b].innerHTML]);
                         } else if (lib === "markup_beauty.js") {
                             date               = edition.markup_beauty;
                             dateCell.innerHTML = conversion(date);
-                            dateList.push([
-                                date, row[b].innerHTML
-                            ]);
+                            dateList.push([date, row[b].innerHTML]);
                         } else if (lib === "markupmin.js") {
                             date               = edition.markupmin;
                             dateCell.innerHTML = conversion(date);
-                            dateList.push([
-                                date, row[b].innerHTML
-                            ]);
+                            dateList.push([date, row[b].innerHTML]);
                         } else if (lib === "node-local.js") {
                             date               = edition.api.nodeLocal;
                             dateCell.innerHTML = conversion(date);
-                            dateList.push([
-                                date, row[b].innerHTML
-                            ]);
+                            dateList.push([date, row[b].innerHTML]);
                         } else if (lib === "prettydiff.com.xhtml") {
                             date               = edition.webtool;
                             dateCell.innerHTML = conversion(date);
-                            dateList.push([
-                                date, row[b].innerHTML
-                            ]);
+                            dateList.push([date, row[b].innerHTML]);
                         } else if (lib === "prettydiff.js") {
                             date               = edition.prettydiff;
                             dateCell.innerHTML = conversion(date);
-                            dateList.push([
-                                date, row[b].innerHTML
-                            ]);
+                            dateList.push([date, row[b].innerHTML]);
                         } else if (lib === "prettydiff.wsf") {
                             date               = edition.api.wsh;
                             dateCell.innerHTML = conversion(date);
-                            dateList.push([
-                                date, row[b].innerHTML
-                            ]);
+                            dateList.push([date, row[b].innerHTML]);
                         } else if (lib === "ace") {
                             date               = edition.addon.ace;
                             dateCell.innerHTML = conversion(date);
-                            dateList.push([
-                                date, row[b].innerHTML
-                            ]);
+                            dateList.push([date, row[b].innerHTML]);
                         }
                     }
                     rowLen   = dateList.length;
-                    dateList = dateList.sort(function dom__load_sort_forward(componentArea, row) {
-                        return componentArea[1] === row[1];
-                    }).reverse().sort(function dom__load_sort_reverse(componentArea, row) {
-                        return componentArea[0] - row[0];
-                    });
+                    dateList = dateList
+                        .sort(function dom__load_sort_forward(componentArea, row) {
+                            return componentArea[1] === row[1];
+                        })
+                        .reverse()
+                        .sort(function dom__load_sort_reverse(componentArea, row) {
+                            return componentArea[0] - row[0];
+                        });
                     for (b = dateList.length - 1; b > -1; b -= 1) {
                         output.push("<tr>");
                         output.push(dateList[b][1]);

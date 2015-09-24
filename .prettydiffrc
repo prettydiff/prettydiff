@@ -1,6 +1,6 @@
 //JSON format is supported, so please feel free to replace the contents of this file with JSON
 //http://prettydiff.com/.prettydiffrc
-//Options are passed in as "opts".  You can define the options directly:
+//Options are passed in as "option".  You can define the options directly:
 //
 //option.mode = "minify";
 //
@@ -12,7 +12,7 @@
 var preset = function (option) {
     "use strict";
     //       edit below this line
-    options.help = true;
+    option.help = true;
 
 
 

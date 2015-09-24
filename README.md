@@ -14,6 +14,7 @@ Language aware code comparison tool for several web based languages. It also bea
 
 ## Benefits - see [overview page](http://prettydiff.com/overview.xhtml) for more details
 
+* ES6 / JS2015 ready
 * [React JSX format support](http://prettydiff.com/guide/react_jsx.xhtml)
 * LESS, SCSS (Sass), and CSS support
 * Separate support for XML and HTML
@@ -67,7 +68,7 @@ Run in windows
 Run in Linux and OSX
 
     prettydiff source:"myDirectory" mode:"beautify" readmethod:"subdirectory" output:"path/to/outputDirectory"
-    
+
 To see a *man* page provide no arguments or these: help, man, manual
 
     prettydiff
@@ -125,7 +126,7 @@ Pretty Diff would be executed using the following on CLI:
  @documentation - English: http://prettydiff.com/documentation.xhtml
 
  @licstart  The following is the entire license notice for Pretty Diff.
- 
+
  This code may not be used or redistributed unless the following
  conditions are met:
 
@@ -162,7 +163,7 @@ Pretty Diff would be executed using the following on CLI:
  @licend  The above is the entire license notice for Pretty Diff.
 
 ## Acknowledgements
- 
+
  * Harry Whitfield - http://g6auc.me.uk/
   - JS Pretty QA
   - JS Pretty widget

@@ -91,6 +91,8 @@
                             error.push("");
                             error.push("* methodchain    - boolean - Whether consecutive JavaScript methods should be chained onto a single line of code instead of indented. Default is false.");
                             error.push("");
+                            error.push("* miniwrap       - boolean - Whether minified JavaScript should wrap after a specified character width. This option requires a value from option 'wrap'.");
+                            error.push("");
                             error.push("* mode           - string  - The operation to be performed. Defaults to 'diff'.");
                             error.push("                   Accepted values: diff, beautify, minify, parse");
                             error.push("");
@@ -117,7 +119,7 @@
                             error.push("");
                             error.push("* space          - boolean - If false the space after the function keyword is removed from anonymous functions from JavaScript beautification. The default is true.");
                             error.push("");
-                            error.push("*spaceclose      - boolean - If false markup self-closing tags end with '/>' and ' />' if true. Default is false.");
+                            error.push("* spaceclose     - boolean - If false markup self-closing tags end with '/>' and ' />' if true. Default is false.");
                             error.push("");
                             error.push("* style          - string  - If mode is 'beautify' and lang is 'markup' or 'html' this will determine whether the contents of script and style tags should always start at position 0 of each line or if such content should be indented starting from the opening script or style tag. Default is 'indent'.");
                             error.push("                   Accepted values: indent, noindent");
@@ -314,6 +316,7 @@
                     args.lang = WScript.Arguments.Named("lang") || "auto";
                     args.langdefault = (WScript.Arguments.Named("langdefault") === "markup" || WScript.Arguments.Named("langdefault") === "html" || WScript.Arguments.Named("langdefault") === "css" || WScript.Arguments.Named("langdefault") === "csv" || WScript.Arguments.Named("langdefault") === "javascript") ? WScript.Arguments.Named("langdefault") : "text";
                     args.methodchain = (WScript.Arguments.Named("methodchain") === "true" || WScript.Arguments.Named("methodchain") === true);
+                    args.miniwrap = (WScript.Arguments.Named("miniwrap") === "true" || WScript.Arguments.Named("miniwrap") === true);
                     args.mode = (WScript.Arguments.Named("mode") || "diff");
                     args.noleadzero = (WScript.Arguments.Named("noleadzero") === "true" || WScript.Arguments.Named("noleadzero") === true);
                     args.objsort = (WScript.Arguments.Named("objsort") === "all" || WScript.Arguments.Named("objsort") === "css" || WScript.Arguments.Named("objsort") === "none") ? WScript.Arguments.Named("objsort") : "js";
