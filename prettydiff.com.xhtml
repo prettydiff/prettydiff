@@ -1625,35 +1625,6 @@
                         </span>
                     </p>
                 </fieldset>
-                <fieldset>
-                    <legend>JavaScript Options</legend>
-                    <p>
-                        <strong>Minify Wrapping, for use with <em>wrap</em>
-                            <a class="apiname" href="documentation.xhtml#miniwrap">(miniwrap)</a>
-                        </strong>
-                        <span>
-                            <input checked="checked" id="miniwrapm-no" name="miniwrapm"
-                                title="Disable code wrapping for minified code."
-                                type="radio"/>
-                            <label for="miniwrapm-no">Disable code wrapping</label>
-                        </span>
-                        <span>
-                            <input id="miniwrapm-yes" name="miniwrapm"
-                                title="Use this option to force the code to wrap to a specified character width."
-                                type="radio"/>
-                            <label for="miniwrapm-yes">Wrap code to value specified with option <em>wrap</em></label>
-                        </span>
-                    </p>
-                    <p>
-                        <label class="label" for="mini-wrap">Wrap all code, requires <em>miniwrap</em>
-                            <a class="apiname" href="documentation.xhtml#wrap">(wrap)</a>
-                        </label>
-                        <span>
-                            <input id="mini-wrap"
-                                title="Determines how many characters wide code should be before wrapping.  Requires option 'miniwrap'."
-                                type="text" value="80"/></span>
-                    </p>
-                </fieldset>
             </div>
             <div class="options" id="parseops" style="display:none;">
                 <h2>Parse Options</h2>
@@ -1840,7 +1811,13 @@
             <p>Special thanks to <a href="http://g6auc.me.uk/">Harry Whitfield</a>, <a href="https://plus.google.com/105958105635636993368/posts">Andreas Greuel</a>, and countless others.</p>
         </div>
         <script src="ace/ace.js" type="application/javascript"></script>
-        <script src="prettydiff.js" type="application/javascript"></script>
         <script src="api/dom.js" type="application/javascript"></script>
+        <script src="lib/csspretty.js" type="application/javascript"></script>
+        <script src="lib/csvpretty.js" type="application/javascript"></script>
+        <script src="lib/diffview.js" type="application/javascript"></script>
+        <script src="lib/jspretty.js" type="application/javascript"></script>
+        <script src="lib/markuppretty.js" type="application/javascript"></script>
+        <script src="lib/safeSort.js" type="application/javascript"></script>
+        <script src="prettydiff.js" type="application/javascript"></script>
     </body>
 </html>

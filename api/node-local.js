@@ -32,7 +32,16 @@ Examples:
 
 (function () {
     "use strict";
-    var prettydiff    = require("../prettydiff.js"),
+    var libs          = (function () {
+            global.safeSort      = require("../lib/safeSort.js").api;
+            global.csspretty     = require("../lib/csspretty.js").api;
+            global.csvpretty     = require("../lib/csvpretty.js").api;
+            global.diffview      = require("../lib/diffview.js").api;
+            global.jspretty      = require("../lib/jspretty.js").api;
+            global.markuppretty  = require("../lib/markuppretty.js").api;
+            global.jsxstatus     = global.jspretty.jsxstatus;
+        }()),
+        prettydiff    = require("../prettydiff.js"),
         fs            = require("fs"),
         http          = require("http"),
         cwd           = process.cwd(),
@@ -43,18 +52,19 @@ Examples:
         clidata       = [
             [], [], []
         ],
-        slash         = ((/^([a-zA-Z]:\\)/).test(cwd) === true)
-            ? "\\"
-            : "/",
         method        = "auto",
         startTime     = Date.now(),
         versionString = (function () {
-            var dstring = prettydiff.edition.latest.toString(),
-                mstring = Number(dstring.slice(2, 4)) - 1,
+            var dstring = "",
+                mstring = 0,
                 month   = [
                     "January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"
                 ];
-            return "\x1B[36mVersion\x1B[39m: " + prettydiff.edition.version + " \x1B[36mDated\x1B[39m: " + dstring.slice(4, 6) + " " + month[mstring] + " 20" + dstring.slice(0, 2);
+            global.edition = prettydiff.edition;
+            global.report = prettydiff.report;
+            dstring = global.edition.latest.toString();
+            mstring = Number(dstring.slice(2, 4)) - 1;
+            return "\x1B[36mVersion\x1B[39m: " + global.edition.version + " \x1B[36mDated\x1B[39m: " + dstring.slice(4, 6) + " " + month[mstring] + " 20" + dstring.slice(0, 2);
         }()),
         dir           = [
             0, 0, 0
@@ -1218,7 +1228,7 @@ Examples:
         //write output to a file
         //executed from fileComplete
         fileWrite     = function (data) {
-            var dirs      = data.localpath.split(slash),
+            var dirs      = data.localpath.split("/"),
                 suffix    = (options.mode === "diff")
                     ? "-diff.html"
                     : "-report.html",
@@ -1229,7 +1239,7 @@ Examples:
                     "", ""
                 ],
                 writing   = function (ending) {
-                    fs.writeFile(address.oabspath + slash + finalpath + ending, report[0], function (err) {
+                    fs.writeFile(address.oabspath + "/" + finalpath + ending, report[0], function (err) {
                         if (err !== null) {
                             console.log("\nError writing report output.\n");
                             console.log(err);
@@ -1252,7 +1262,7 @@ Examples:
                     }
                 },
                 newdir    = function () {
-                    fs.mkdir(address.oabspath + slash + dirs.slice(0, count).join(slash), function () {
+                    fs.mkdir(address.oabspath + "/" + dirs.slice(0, count).join("/"), function () {
                         count += 1;
                         if (count < dirs.length + 1) {
                             newdir();
@@ -1271,7 +1281,7 @@ Examples:
             } else {
                 finalpath = (method === "file")
                     ? filename
-                    : dirs.join(slash) + slash + filename;
+                    : dirs.join("/") + "/" + filename;
             }
             report = reports();
             if (options.mode === "parse") {
@@ -1477,15 +1487,11 @@ Examples:
                         var item    = {},
                             dirtest = function (itempath, lastitem) {
                                 var pusher = function (itempath) {
-                                    if (slash === "\\") {
-                                        itempath = itempath.replace(/\//g, slash);
-                                    } else {
-                                        itempath = itempath.replace(/\\/g, slash);
-                                    }
+                                    itempath = itempath.replace(/\\/g, "/");
                                     if (listtype === "diff") {
-                                        dfiles.path.push(itempath.replace(address.dabspath + slash, ""));
+                                        dfiles.path.push(itempath.replace(address.dabspath + "/", ""));
                                     } else {
-                                        sfiles.path.push(itempath.replace(address.sabspath + slash, ""));
+                                        sfiles.path.push(itempath.replace(address.sabspath + "/", ""));
                                     }
                                     item.count += 1;
                                 };
@@ -1509,14 +1515,14 @@ Examples:
                                                         end = true;
                                                     }
                                                     readLocalFile({
-                                                        absolutepath: address.dabspath + slash + dfiles.path[b],
+                                                        absolutepath: address.dabspath + "/" + dfiles.path[b],
                                                         index       : b,
                                                         last        : end,
                                                         localpath   : dfiles.path[b],
                                                         type        : "diff"
                                                     });
                                                     readLocalFile({
-                                                        absolutepath: address.sabspath + slash + sfiles.path[b],
+                                                        absolutepath: address.sabspath + "/" + sfiles.path[b],
                                                         index       : b,
                                                         last        : end,
                                                         localpath   : sfiles.path[b],
@@ -1553,7 +1559,7 @@ Examples:
                                                     }
                                                     if (sfiles.path[b] !== undefined) {
                                                         readLocalFile({
-                                                            absolutepath: address.sabspath + slash + sfiles.path[b],
+                                                            absolutepath: address.sabspath + "/" + sfiles.path[b],
                                                             index       : b,
                                                             last        : end,
                                                             localpath   : sfiles.path[b],
@@ -1620,9 +1626,9 @@ Examples:
                                 for (x = 0; x < total; x += 1) {
                                     if (x === total - 1) {
                                         item.directories -= 1;
-                                        dirtest(start + slash + files[x], true);
+                                        dirtest(start + "/" + files[x], true);
                                     } else {
-                                        dirtest(start + slash + files[x], false);
+                                        dirtest(start + "/" + files[x], false);
                                     }
                                 }
                             });
@@ -1652,22 +1658,22 @@ Examples:
                         itempath = "",
                         ind      = "",
                         abspath  = function () {
-                            var tree  = cwd.split(slash),
+                            var tree  = cwd.split("/"),
                                 ups   = [],
                                 uplen = 0;
                             if (itempath.indexOf("..") === 0) {
-                                ups   = itempath.split(".." + slash);
+                                ups   = itempath.split("../");
                                 uplen = ups.length;
                                 do {
                                     uplen -= 1;
                                     tree.pop();
                                 } while (uplen > 1);
-                                return tree.join(slash) + slash + ups[ups.length - 1];
+                                return tree.join("/") + "/" + ups[ups.length - 1];
                             }
                             if ((/^([a-z]:\\)/).test(itempath) === true || itempath.indexOf("/") === 0) {
                                 return itempath;
                             }
-                            return cwd + slash + itempath;
+                            return cwd + "/" + itempath;
                         };
                     if (name === "diff") {
                         ind = 0;
@@ -1683,18 +1689,11 @@ Examples:
                         return x;
                     }
                     if (y < 0) {
-                        if (slash === "/") {
-                            itempath = x.replace(/\\/g, "/");
-                        } else {
-                            itempath = x.replace(/\//g, "\\");
-                        }
+                        itempath = x.replace(/\\/g, "/");
                     } else {
                         z = x.slice(0, y);
                         x = x.slice(y + 3);
-                        if (slash === "/") {
-                            itempath = z + "://" + x.replace(/\\/g, "/");
-                        }
-                        itempath = z + "://" + x.replace(/\//g, "\\");
+                        itempath = z + "://" + x.replace(/\\/g, "/");
                     }
                     fs.stat(itempath, function (err, stat) {
                         if (err !== null) {
@@ -2130,7 +2129,7 @@ Examples:
                     encoding: "utf8"
                 }, function (error, data) {
                     if (error) {
-                        return console.log(error);
+                        return init();
                     }
                     if ((/^(\s*\{)/).test(data) === true && (/(\}\s*)$/).test(data) === true) {
                         pdrc = JSON.parse(data);
