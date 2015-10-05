@@ -96,25 +96,25 @@ if (typeof require === "function" && typeof ace !== "object") {
     (function glib_prettydiff() {
         "use strict";
         var localPath = (typeof process === "object" && process.cwd() === "/" && typeof __dirname === "string")
-            ? __dirname + "/"
-            : "";
+            ? __dirname
+            : ".";
         if (global.csspretty === undefined) {
-            global.csspretty = require(localPath + "lib/csspretty.js").api;
+            global.csspretty = require(localPath + "/lib/csspretty.js").api;
         }
         if (global.csvpretty === undefined) {
-            global.csvpretty = require(localPath + "lib/csvpretty.js").api;
+            global.csvpretty = require(localPath + "/lib/csvpretty.js").api;
         }
         if (global.diffview === undefined) {
-            global.diffview = require(localPath + "lib/diffview.js").api;
+            global.diffview = require(localPath + "/lib/diffview.js").api;
         }
         if (global.jspretty === undefined) {
-            global.jspretty = require(localPath + "lib/jspretty.js").api;
+            global.jspretty = require(localPath + "/lib/jspretty.js").api;
         }
         if (global.markuppretty === undefined) {
-            global.markuppretty = require(localPath + "lib/markuppretty.js").api;
+            global.markuppretty = require(localPath + "/lib/markuppretty.js").api;
         }
         if (global.safeSort === undefined) {
-            global.safeSort = require(localPath + "lib/safeSort.js").api;
+            global.safeSort = require(localPath + "/lib/safeSort.js").api;
         }
     }());
 } else {

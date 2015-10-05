@@ -33,15 +33,19 @@ Examples:
 (function () {
     "use strict";
     var libs          = (function () {
-            global.safeSort      = require("../lib/safeSort.js").api;
-            global.csspretty     = require("../lib/csspretty.js").api;
-            global.csvpretty     = require("../lib/csvpretty.js").api;
-            global.diffview      = require("../lib/diffview.js").api;
-            global.jspretty      = require("../lib/jspretty.js").api;
-            global.markuppretty  = require("../lib/markuppretty.js").api;
+            var localPath = (typeof process === "object" && process.cwd() === "/" && typeof __dirname === "string")
+                ? __dirname.replace(/(api)$/, "")
+                : "../";
+            global.safeSort      = require(localPath + "lib/safeSort.js").api;
+            global.csspretty     = require(localPath + "lib/csspretty.js").api;
+            global.csvpretty     = require(localPath + "lib/csvpretty.js").api;
+            global.diffview      = require(localPath + "lib/diffview.js").api;
+            global.jspretty      = require(localPath + "lib/jspretty.js").api;
+            global.markuppretty  = require(localPath + "lib/markuppretty.js").api;
             global.jsxstatus     = global.jspretty.jsxstatus;
+            return localPath;
         }()),
-        prettydiff    = require("../prettydiff.js"),
+        prettydiff    = require(libs + "prettydiff.js"),
         fs            = require("fs"),
         http          = require("http"),
         cwd           = process.cwd(),
@@ -1642,7 +1646,7 @@ Examples:
                 readDir(address.dabspath, "diff");
             }
         },
-        
+
         //defaults for the options
         args          = (function () {
             var a         = process.argv.slice(2),

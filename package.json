@@ -1,13 +1,26 @@
 {
   "name": "prettydiff",
+  "description": "Language aware code comparison tool for several web based languages. It also beautifies, minifies, and a few other things.",
+  "version": "1.14.3",
   "author": {
     "name": "Austin Cheney",
     "email": "info@prettydiff.com",
     "url": "http://prettydiff.com/"
   },
-  "bin": "./bin/prettydiff",
-  "version": "1.14.2",
-  "description": "Language aware code comparison tool for several web based languages. It also beautifies, minifies, and a few other things.",
+  "homepage": "http://prettydiff.com/",
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/prettydiff/prettydiff.git"
+  },
+  "bugs": {
+    "url": "https://groups.google.com/forum/#!forum/pretty-diff",
+    "email": "pretty-diff@googlegroups.com"
+  },
+  "main": "prettydiff.js",
+  "dist": {
+    "tarball": "http://repository.orbitz.net/api/npm/npm/prettydiff/-/prettydiff-1.14.2.tgz",
+    "shasum": "117778a515f0ab89d8127749a715dc1bef088a01"
+  },
   "keywords": [
     "diff",
     "prettydiff",
@@ -21,20 +34,26 @@
     "css",
     "javascript"
   ],
-  "homepage": "http://prettydiff.com/",
-  "main": "prettydiff.js",
-  "bugs": {
-    "url": "https://groups.google.com/forum/#!forum/pretty-diff",
-    "email": "pretty-diff@googlegroups.com"
-  },
-  "repository": {
-    "type": "git",
-    "url": "git://github.com/prettydiff/prettydiff.git"
+  "bin": {
+    "prettydiff": "./bin/prettydiff"
   },
   "maintainers": [
     {
       "name": "austincheney",
-      "email": "info@prettydiff.com"
+      "email": "austin.cheney@us.army.mil"
     }
-  ]
+  ],
+  "directories": {},
+  "scripts": {},
+  "_from": "prettydiff@1.14.2",
+  "_npmVersion": "1.4.23",
+  "_npmUser": {
+    "name": "austincheney",
+    "email": "edward.a.cheney.mil@mail.mil"
+  },
+  "_id": "prettydiff@1.14.2",
+  "gitHead": "581ae0f7529060b6b1659ebc719172e0c078adc7",
+  "_shasum": "117778a515f0ab89d8127749a715dc1bef088a01",
+  "_resolved": "http://repository.orbitz.net/api/npm/npm/prettydiff/-/prettydiff-1.14.2.tgz",
+  "readme": "ERROR: No README data found!"
 }
