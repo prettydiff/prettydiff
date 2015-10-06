@@ -33,7 +33,7 @@ Examples:
 (function () {
     "use strict";
     var libs          = (function () {
-            var localPath = (typeof process === "object" && process.cwd() === "/" && typeof __dirname === "string")
+            var localPath = (process.cwd() === "/")
                 ? __dirname.replace(/(api)$/, "")
                 : "../";
             global.safeSort      = require(localPath + "lib/safeSort.js").api;
@@ -1905,7 +1905,7 @@ Examples:
                     }
                 }
             }
-            fs.exists(process.cwd() + "/.prettydiffrc", function (exists) {
+            fs.stat(libs + "/.prettydiffrc", function (err, stats) {
                 var newopts = {},
                     pdrc    = {},
                     rcpath  = "",
@@ -2121,8 +2121,8 @@ Examples:
                             status();
                         }
                     };
-                if (exists === true) {
-                    rcpath = process.cwd() + "/.prettydiffrc";
+                if (stats.isFile() === true) {
+                    rcpath = libs + "/.prettydiffrc";
                 } else {
                     rcpath = "../.prettydiffrc";
                 }
