@@ -6006,87 +6006,220 @@ var pd       = {},
             },
             headerblur    = function dom__load_headerblur() {
                 this.onclick = null;
+            },
+            checkForEdition = function dom__load_checkForEdition() {
+                var target = (page === "webtool")
+                        ? pd.id("update")
+                        : pd.id("components"),
+                    outputTool = function dom__load_checkForEdition_outputTool() {
+                        var str   = String(global.edition.latest),
+                            list  = [
+                                str.charAt(0) + str.charAt(1), Number(str.charAt(2) + str.charAt(3)), str.charAt(4) + str.charAt(5)
+                            ],
+                            month = [
+                                "January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"
+                            ];
+                        list[1] -= 1;
+                        if (list[2].charAt(0) === "0") {
+                            list[2] = list[2].substr(1);
+                        }
+                        return "Updated: " + list[2] + " " + month[list[1]] + " 20" + list[0] + "<span>Version: <span>" + global.edition.version + "</span></span>";
+                    },
+                    outputDoc = function dom__load_checkForEdition_outputDoc() {
+                        var b = 0,
+                            date = 0,
+                            row = [],
+                            rowLen = 0,
+                            dateCell = {},
+                            dateList = [],
+                            lib = "",
+                            output = [],
+                            conversion    = function dom__load_checkForEdition_outputDoc_conversion(dateInstance) {
+                                var str   = String(dateInstance),
+                                    list  = [
+                                        str.charAt(0) + str.charAt(1), Number(str.charAt(2) + str.charAt(3)), str.charAt(4) + str.charAt(5)
+                                    ],
+                                    month = [
+                                        "Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"
+                                    ];
+                                list[1] -= 1;
+                                return list[2] + " " + month[list[1]] + " 20" + list[0];
+                            };
+                        target = target.getElementsByTagName("tbody")[0];
+                        row           = target.getElementsByTagName("tr");
+                        rowLen        = row.length;
+                        for (b = 0; b < rowLen; b += 1) {
+                            dateCell = row[b].getElementsByTagName("td")[3];
+                            lib      = row[b].getElementsByTagName("a")[0].innerHTML;
+                            if (lib === "csspretty.js") {
+                                date               = global.edition.csspretty;
+                                dateCell.innerHTML = conversion(date);
+                                dateList.push([date, row[b].innerHTML]);
+                            } else if (lib === "csvpretty.js") {
+                                date               = global.edition.csvpretty;
+                                dateCell.innerHTML = conversion(date);
+                                dateList.push([date, row[b].innerHTML]);
+                            } else if (lib === "diffview.css") {
+                                date               = global.edition.css;
+                                dateCell.innerHTML = conversion(date);
+                                dateList.push([date, row[b].innerHTML]);
+                            } else if (lib === "diffview.js") {
+                                date               = global.edition.diffview;
+                                dateCell.innerHTML = conversion(date);
+                                dateList.push([date, row[b].innerHTML]);
+                            } else if (lib === "documentation.xhtml") {
+                                date               = global.edition.documentation;
+                                dateCell.innerHTML = conversion(date);
+                                dateList.push([date, row[b].innerHTML]);
+                            } else if (lib === "dom.js") {
+                                date               = global.edition.api.dom;
+                                dateCell.innerHTML = conversion(date);
+                                dateList.push([date, row[b].innerHTML]);
+                            } else if (lib === "jspretty.js") {
+                                date               = global.edition.jspretty;
+                                dateCell.innerHTML = conversion(date);
+                                dateList.push([date, row[b].innerHTML]);
+                            } else if (lib === "markuppretty.js") {
+                                date               = global.edition.markuppretty;
+                                dateCell.innerHTML = conversion(date);
+                                dateList.push([date, row[b].innerHTML]);
+                            } else if (lib === "node-local.js") {
+                                date               = global.edition.api.nodeLocal;
+                                dateCell.innerHTML = conversion(date);
+                                dateList.push([date, row[b].innerHTML]);
+                            } else if (lib === "prettydiff.com.xhtml") {
+                                date               = global.edition.webtool;
+                                dateCell.innerHTML = conversion(date);
+                                dateList.push([date, row[b].innerHTML]);
+                            } else if (lib === "prettydiff.js") {
+                                date               = global.edition.prettydiff;
+                                dateCell.innerHTML = conversion(date);
+                                dateList.push([date, row[b].innerHTML]);
+                            } else if (lib === "prettydiff.wsf") {
+                                date               = global.edition.api.wsh;
+                                dateCell.innerHTML = conversion(date);
+                                dateList.push([date, row[b].innerHTML]);
+                            } else if (lib === "safeSort.js") {
+                                date               = global.edition.safeSort;
+                                dateCell.innerHTML = conversion(date);
+                                dateList.push([date, row[b].innerHTML]);
+                            } else if (lib === "ace") {
+                                date               = global.edition.addon.ace;
+                                dateCell.innerHTML = conversion(date);
+                                dateList.push([date, row[b].innerHTML]);
+                            }
+                        }
+                        rowLen   = dateList.length;
+                        dateList = dateList
+                            .sort(function dom__load_doc_sortForward(target, row) {
+                                return target[1] === row[1];
+                            })
+                            .reverse()
+                            .sort(function dom__load_doc_sortReverse(target, row) {
+                                return target[0] - row[0];
+                            });
+                        for (b = dateList.length - 1; b > -1; b -= 1) {
+                            output.push("<tr>");
+                            output.push(dateList[b][1]);
+                            output.push("</tr>");
+                        }
+                        target.innerHTML = output.join("");
+                    },
+                    delay = function dom__load_checkForEdition_delay() {
+                        if (global.edition === undefined) {
+                            setTimeout(delay, 100);
+                        } else {
+                            if (target !== null && typeof global.edition === "object") {
+                                if (page === "webtool") {
+                                    target.innerHTML = outputTool();
+                                } else {
+                                    outputDoc();
+                                }
+                            }
+                        }
+                    };
+                delay();
             };
-        if (typeof safeSort === "function") {
-            global.safeSort = safeSort;
-        }
-        if (typeof csspretty === "function") {
-            global.csspretty = csspretty;
-        }
-        if (typeof csvpretty === "function") {
-            global.csvpretty = csvpretty;
-        }
-        if (typeof diffview === "function") {
-            global.diffview = diffview;
-        }
-        if (typeof jspretty === "function") {
-            global.jspretty = jspretty;
-        }
-        if (typeof markuppretty === "function") {
-            global.markuppretty = markuppretty;
-        }
-        pd.data.node.report.feed.body = (pd.data.node.report.feed.box === null)
-            ? null
-            : pd.data.node
-                .report
-                .feed
-                .box
-                .getElementsByTagName("div")[0];
-        pd.data.node.report.code.body = (pd.data.node.report.code.box === null)
-            ? null
-            : pd.data.node
-                .report
-                .code
-                .box
-                .getElementsByTagName("div")[0];
-        pd.data.node.report.stat.body = (pd.data.node.report.stat.box === null)
-            ? null
-            : pd.data.node
-                .report
-                .stat
-                .box
-                .getElementsByTagName("div")[0];
-
-        if (pd.test.ace === true) {
-            if (pd.data.node.codeDiffBase !== null) {
-                pd.ace.diffBase = pd.app.aceApply("codeDiffBase", "input", true);
-            }
-            if (pd.data.node.codeDiffNew !== null) {
-                pd.ace.diffNew = pd.app.aceApply("codeDiffNew", "input", true);
-            }
-            if (pd.data.node.codeBeauIn !== null) {
-                pd.ace.beauIn = pd.app.aceApply("codeBeauIn", "input", false);
-            }
-            if (pd.data.node.codeBeauOut !== null) {
-                pd.ace.beauOut = pd.app.aceApply("codeBeauOut", "output", false);
-                pd.ace
-                    .beauOut
-                    .setReadOnly(true);
-            }
-            if (pd.data.node.codeMinnIn !== null) {
-                pd.ace.minnIn = pd.app.aceApply("codeMinnIn", "input", false);
-            }
-            if (pd.data.node.codeMinnOut !== null) {
-                pd.ace.minnOut = pd.app.aceApply("codeMinnOut", "output", false);
-                pd.ace
-                    .minnOut
-                    .setReadOnly(true);
-            }
-            if (pd.data.node.codeParsIn !== null) {
-                pd.ace.parsIn = pd.app.aceApply("codeParsIn", "input", false);
-            }
-            if (pd.data.node.codeParsOut !== null) {
-                pd.ace.parsOut = pd.app.aceApply("codeParsOut", "output", false);
-                pd.ace
-                    .parsOut
-                    .setReadOnly(true);
-            }
-        }
-
-        pd.app.fixHeight();
-        window.onresize = pd.app.fixHeight;
-        window.onkeyup  = pd.areaShiftUp;
         if (page === "webtool") {
+            if (typeof safeSort === "function") {
+                global.safeSort = safeSort;
+            }
+            if (typeof csspretty === "function") {
+                global.csspretty = csspretty;
+            }
+            if (typeof csvpretty === "function") {
+                global.csvpretty = csvpretty;
+            }
+            if (typeof diffview === "function") {
+                global.diffview = diffview;
+            }
+            if (typeof jspretty === "function") {
+                global.jspretty = jspretty;
+            }
+            if (typeof markuppretty === "function") {
+                global.markuppretty = markuppretty;
+            }
+            pd.data.node.report.feed.body = (pd.data.node.report.feed.box === null)
+                ? null
+                : pd.data.node
+                    .report
+                    .feed
+                    .box
+                    .getElementsByTagName("div")[0];
+            pd.data.node.report.code.body = (pd.data.node.report.code.box === null)
+                ? null
+                : pd.data.node
+                    .report
+                    .code
+                    .box
+                    .getElementsByTagName("div")[0];
+            pd.data.node.report.stat.body = (pd.data.node.report.stat.box === null)
+                ? null
+                : pd.data.node
+                    .report
+                    .stat
+                    .box
+                    .getElementsByTagName("div")[0];
+
+            if (pd.test.ace === true) {
+                if (pd.data.node.codeDiffBase !== null) {
+                    pd.ace.diffBase = pd.app.aceApply("codeDiffBase", "input", true);
+                }
+                if (pd.data.node.codeDiffNew !== null) {
+                    pd.ace.diffNew = pd.app.aceApply("codeDiffNew", "input", true);
+                }
+                if (pd.data.node.codeBeauIn !== null) {
+                    pd.ace.beauIn = pd.app.aceApply("codeBeauIn", "input", false);
+                }
+                if (pd.data.node.codeBeauOut !== null) {
+                    pd.ace.beauOut = pd.app.aceApply("codeBeauOut", "output", false);
+                    pd.ace
+                        .beauOut
+                        .setReadOnly(true);
+                }
+                if (pd.data.node.codeMinnIn !== null) {
+                    pd.ace.minnIn = pd.app.aceApply("codeMinnIn", "input", false);
+                }
+                if (pd.data.node.codeMinnOut !== null) {
+                    pd.ace.minnOut = pd.app.aceApply("codeMinnOut", "output", false);
+                    pd.ace
+                        .minnOut
+                        .setReadOnly(true);
+                }
+                if (pd.data.node.codeParsIn !== null) {
+                    pd.ace.parsIn = pd.app.aceApply("codeParsIn", "input", false);
+                }
+                if (pd.data.node.codeParsOut !== null) {
+                    pd.ace.parsOut = pd.app.aceApply("codeParsOut", "output", false);
+                    pd.ace
+                        .parsOut
+                        .setReadOnly(true);
+                }
+            }
+
+            pd.app.fixHeight();
+            window.onresize = pd.app.fixHeight;
+            window.onkeyup  = pd.areaShiftUp;
             if (pd.data.node.announce !== null) {
                 pd.data.announcetext = pd.data.node.announce.innerHTML;
             }
@@ -6836,25 +6969,6 @@ var pd       = {},
                 for (a = 0; a < inputsLen; a += 1) {
                     inputs[a].onclick = thirdparty;
                 }
-            }
-            //webkit users get sucky textareas, because they refuse to
-            //accept bugs related to long scrolling errors
-            node = pd.id("update");
-            if (node !== null && typeof global.edition === "object") {
-                node.innerHTML = (function dom__load_doc_conversion() {
-                    var str   = String(global.edition.latest),
-                        list  = [
-                            str.charAt(0) + str.charAt(1), Number(str.charAt(2) + str.charAt(3)), str.charAt(4) + str.charAt(5)
-                        ],
-                        month = [
-                            "January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"
-                        ];
-                    list[1] -= 1;
-                    if (list[2].charAt(0) === "0") {
-                        list[2] = list[2].substr(1);
-                    }
-                    return "Updated: " + list[2] + " " + month[list[1]] + " 20" + list[0] + "<span>Version: <span>" + global.edition.version + "</span></span>";
-                }());
             }
             if (pd.data.node.comment !== null) {
                 if (pd.data.commentString.length === 0) {
@@ -8074,34 +8188,18 @@ var pd       = {},
                         });
                 };
             }
+            checkForEdition();
         }
         if (page === "doc") {
             (function dom__load_doc() {
                 var b             = 0,
-                    componentArea = {},
                     row           = [],
-                    dateCell      = {},
-                    dateList      = [],
-                    output        = [],
                     rowLen        = 0,
-                    date          = 0,
-                    lib           = "",
                     colorParam    = (typeof location === "object" && typeof location.href === "string" && location.href.indexOf("?") > -1)
                         ? location.href
                             .toLowerCase()
                             .split("?")[1]
-                        : "",
-                    conversion    = function dom__load_doc_conversion(dateInstance) {
-                        var str   = String(dateInstance),
-                            list  = [
-                                str.charAt(0) + str.charAt(1), Number(str.charAt(2) + str.charAt(3)), str.charAt(4) + str.charAt(5)
-                            ],
-                            month = [
-                                "Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"
-                            ];
-                        list[1] -= 1;
-                        return list[2] + " " + month[list[1]] + " 20" + list[0];
-                    };
+                        : "";
                 node = pd.id("colorScheme");
                 if (node !== null) {
                     if (localStorage !== null && localStorage.settings !== undefined && localStorage.settings !== null && localStorage.settings.indexOf(":undefined") > 0) {
@@ -8132,88 +8230,6 @@ var pd       = {},
                     pd.event.colorScheme(node);
                     node.onchange = pd.event.colorScheme;
                 }
-                componentArea = pd.id("components");
-                if (componentArea !== null && typeof global.edition === "object") {
-                    componentArea = componentArea.getElementsByTagName("tbody")[0];
-                    row           = componentArea.getElementsByTagName("tr");
-                    rowLen        = row.length;
-                    for (b = 0; b < rowLen; b += 1) {
-                        dateCell = row[b].getElementsByTagName("td")[3];
-                        lib      = row[b].getElementsByTagName("a")[0].innerHTML;
-                        if (lib === "csspretty.js") {
-                            date               = global.edition.csspretty;
-                            dateCell.innerHTML = conversion(date);
-                            dateList.push([date, row[b].innerHTML]);
-                        } else if (lib === "csvpretty.js") {
-                            date               = global.edition.csvpretty;
-                            dateCell.innerHTML = conversion(date);
-                            dateList.push([date, row[b].innerHTML]);
-                        } else if (lib === "diffview.css") {
-                            date               = global.edition.css;
-                            dateCell.innerHTML = conversion(date);
-                            dateList.push([date, row[b].innerHTML]);
-                        } else if (lib === "diffview.js") {
-                            date               = global.edition.diffview;
-                            dateCell.innerHTML = conversion(date);
-                            dateList.push([date, row[b].innerHTML]);
-                        } else if (lib === "documentation.xhtml") {
-                            date               = global.edition.documentation;
-                            dateCell.innerHTML = conversion(date);
-                            dateList.push([date, row[b].innerHTML]);
-                        } else if (lib === "dom.js") {
-                            date               = global.edition.api.dom;
-                            dateCell.innerHTML = conversion(date);
-                            dateList.push([date, row[b].innerHTML]);
-                        } else if (lib === "jspretty.js") {
-                            date               = global.edition.jspretty;
-                            dateCell.innerHTML = conversion(date);
-                            dateList.push([date, row[b].innerHTML]);
-                        } else if (lib === "markuppretty.js") {
-                            date               = global.edition.markuppretty;
-                            dateCell.innerHTML = conversion(date);
-                            dateList.push([date, row[b].innerHTML]);
-                        } else if (lib === "node-local.js") {
-                            date               = global.edition.api.nodeLocal;
-                            dateCell.innerHTML = conversion(date);
-                            dateList.push([date, row[b].innerHTML]);
-                        } else if (lib === "prettydiff.com.xhtml") {
-                            date               = global.edition.webtool;
-                            dateCell.innerHTML = conversion(date);
-                            dateList.push([date, row[b].innerHTML]);
-                        } else if (lib === "prettydiff.js") {
-                            date               = global.edition.prettydiff;
-                            dateCell.innerHTML = conversion(date);
-                            dateList.push([date, row[b].innerHTML]);
-                        } else if (lib === "prettydiff.wsf") {
-                            date               = global.edition.api.wsh;
-                            dateCell.innerHTML = conversion(date);
-                            dateList.push([date, row[b].innerHTML]);
-                        } else if (lib === "safeSort.js") {
-                            date               = global.edition.safeSort;
-                            dateCell.innerHTML = conversion(date);
-                            dateList.push([date, row[b].innerHTML]);
-                        } else if (lib === "ace") {
-                            date               = global.edition.addon.ace;
-                            dateCell.innerHTML = conversion(date);
-                            dateList.push([date, row[b].innerHTML]);
-                        }
-                    }
-                    rowLen   = dateList.length;
-                    dateList = dateList
-                        .sort(function dom__load_doc_sortForward(componentArea, row) {
-                            return componentArea[1] === row[1];
-                        })
-                        .reverse()
-                        .sort(function dom__load_doc_sortReverse(componentArea, row) {
-                            return componentArea[0] - row[0];
-                        });
-                    for (b = dateList.length - 1; b > -1; b -= 1) {
-                        output.push("<tr>");
-                        output.push(dateList[b][1]);
-                        output.push("</tr>");
-                    }
-                    componentArea.innerHTML = output.join("");
-                }
                 (function dom__doc_foldSearch() {
                     var div   = document.getElementsByTagName("div"),
                         len   = div.length,
@@ -8237,6 +8253,7 @@ var pd       = {},
                         }
                     }
                 }());
+                checkForEdition();
             }());
         }
         pd.test.load = false;

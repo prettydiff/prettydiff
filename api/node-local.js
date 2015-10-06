@@ -1656,6 +1656,7 @@ Examples:
                 e         = [],
                 f         = 0,
                 alphasort = false,
+                pdrcpath  = __dirname.replace(/((\/|\\)api)$/, "") + "/.prettydiffrc",
                 pathslash = function (name, x) {
                     var y        = x.indexOf("://"),
                         z        = "",
@@ -1905,7 +1906,8 @@ Examples:
                     }
                 }
             }
-            fs.stat(libs + "/.prettydiffrc", function (err, stats) {
+
+            fs.stat(pdrcpath, function (err, stats) {
                 var newopts = {},
                     pdrc    = {},
                     rcpath  = "",
@@ -2121,42 +2123,44 @@ Examples:
                             status();
                         }
                     };
-                if (stats.isFile() === true) {
-                    rcpath = libs + "/.prettydiffrc";
+
+                if (err !== null) {
+                    init();
+                } else if (stats.isFile() === true) {
+                    fs.readFile(pdrcpath, {
+                        encoding: "utf8"
+                    }, function (error, data) {
+                        if (error) {
+                            return init();
+                        }
+                        if ((/^(\s*\{)/).test(data) === true && (/(\}\s*)$/).test(data) === true) {
+                            pdrc = JSON.parse(data);
+                            b = 0;
+                            for (key in pdrc) {
+                                if (pdrc.hasOwnProperty(key) && key !== "help" && key !== "version" && key !== "v" && key !== "man" && key !== "manual") {
+                                    b += 1;
+                                    options[key] = pdrc[key];
+                                }
+                            }
+                            if (b > 0) {
+                                help = false;
+                            }
+                            init();
+                        } else {
+                            pdrc = require(pdrcpath);
+                            if (pdrc.preset !== undefined) {
+                                options.help = false;
+                                options = pdrc.preset(options);
+                                init();
+                            }
+                        }
+                    });
                 } else {
-                    rcpath = "../.prettydiffrc";
+                    init();
                 }
                 if (c === 0) {
                     help = true;
                 }
-                fs.readFile(rcpath, {
-                    encoding: "utf8"
-                }, function (error, data) {
-                    if (error) {
-                        return init();
-                    }
-                    if ((/^(\s*\{)/).test(data) === true && (/(\}\s*)$/).test(data) === true) {
-                        pdrc = JSON.parse(data);
-                        b = 0;
-                        for (key in pdrc) {
-                            if (pdrc.hasOwnProperty(key)) {
-                                b += 1;
-                                options[key] = pdrc[key];
-                            }
-                        }
-                        if (b > 0) {
-                            help = false;
-                        }
-                        init();
-                    } else {
-                        pdrc = require(rcpath);
-                        if (pdrc.preset !== undefined) {
-                            options.help = false;
-                            options = pdrc.preset(options);
-                            init();
-                        }
-                    }
-                });
             });
         }());
 }());

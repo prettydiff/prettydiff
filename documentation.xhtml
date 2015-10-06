@@ -80,9 +80,6 @@
                     </ol>
                 </li>
                 <li>
-                    <a href="#knownissues">Known Issues</a>
-                </li>
-                <li>
                     <a href="#execution">Execution</a>
                 </li>
                 <li>
@@ -103,22 +100,22 @@
                     <a href="#parameters">Web Tool URI Parameters</a>
                 </li>
                 <li>
-                    <a href="#pdfunction">Pretty Diff Function</a>
+                    <a href="#options">Pretty Diff Function</a>
                     <ol>
                         <li>
-                            <a href="#function_overview">Overview</a>
+                            <a href="#options_precedence">Overview</a>
                         </li>
                         <li>
-                            <a href="#function_properties">Pretty Diff API (Options)</a>
+                            <a href="#options_definitions">Option Definitions</a>
                         </li>
                         <li>
-                            <a href="#function_practices">Practices of Pretty Diff</a>
+                            <a href="#options_practices">Practices of Pretty Diff</a>
                         </li>
                         <li>
-                            <a href="#function_option">Option Comment</a>
+                            <a href="#options_comment">Pretty Diff Comment</a>
                         </li>
                         <li>
-                            <a href="#function_io">Input and Output</a>
+                            <a href="#options_io">Input and Output</a>
                         </li>
                     </ol>
                 </li>
@@ -253,25 +250,6 @@
                     </li>
                 </ol>
             </div>
-        </div>
-        <div id="knownissues">
-            <h2>Known Issues</h2>
-            <ol>
-                <li>Webkit browsers, such as Google Chrome and Apple Safari, do not support
-                    beautification of white space characters or layout in textarea elements. As a
-                    result the web interface offers a slightly degraded experience for these
-                    browsers in order to prevent corruption of output. Please see these bugs for
-                    more experience:
-                    <a href="https://bugs.webkit.org/show_bug.cgi?id=51168">51168</a>
-                    and
-                    <a href="https://bugs.webkit.org/show_bug.cgi?id=90739">90739</a>.</li>
-                <li>Markup beautification will output flawed data if less than characters,
-                    "&lt;", are included into sections of content and not escaped or wrapped in
-                    script/style tags. This error occurs regardless if less than characters embedded
-                    within content are quoted or not.</li>
-                <li>Current issues are located on
-                    <a href="https://github.com/prettydiff/prettydiff/issues">Github</a>.</li>
-            </ol>
         </div>
         <div id="execution">
             <h2>Execution</h2>
@@ -548,47 +526,21 @@
                 </ol>
             </div>
         </div>
-        <div id="pdfunction">
-            <h2>Pretty Diff Function</h2>
-            <div id="function_overview">
-                <h3>Overview</h3>
-                <p>Pretty Diff is an application written entirely in JavaScript and expressed as
-                    a single function named 'prettydiff()'. This application was originally written
-                    as a means to algorithmically difference between two similar pieces of code
-                    regardless of minification and other white space differences. The result is a
-                    fast difference engine offering many options that allows access to the world's
-                    most advanced markup beautification algorithm.</p>
-                <p>While the Pretty Diff application is expressed as a single function it
-                    contains a few libraries. These libraries are a diff engine and a few language
-                    parsers for providing beautification and minification. The libraries can be used
-                    independently of Pretty Diff. Browse the libraries in the local
-                    <em>
-                        <a href="lib">lib</a>
-                    </em>
-                    directory.</p>
-                <p>The Pretty Diff application is completely environment agnostic. It can run on
-                    the command line, web browser, or any other environment. All that is required is
-                    an appropriate API. Feel free to write your own or use the ones provided in the
-                    local
-                    <em>
-                        <a href="api">API</a>
-                    </em>
-                    directory.</p>
-                <p>There is one exception in the Pretty Diff application to complete
-                    environmental isolation. At this time the
-                    <a href="lib/charDecoder.js">charDecoder.js</a>
-                    code is entirely reliant upon DOM access. This library transforms character
-                    entity references into literal characters and vise versa. Pretty Diff does not
-                    contain a Unicode character map, so this library is reliant upon execution in a
-                    web browser, but it does degrade gracefully in other environments.</p>
-                <p>The Pretty Diff function receives input from a single argument. This argument
-                    is a really big object literal that specifies the code to process and options on
-                    how to process it. Read about the various options in the
-                    <a href="#function_properties">Pretty Diff API</a>
-                    section of this document.</p>
+        <div id="options">
+            <h2>Pretty Diff Options</h2>
+            <div id="options_precedence">
+                <h3>Precedence</h3>
+                <p>Pretty Diff sets option values according to this order of precedence from highest priority to lowest:</p>
+                <ol>
+                    <li>The <a href="#styleguide">styleguide</a> option, which is only used in the <a href="lib/jspretty.js">jspretty</a> library.</li>
+                    <li>The <a href="#options_comment">Pretty Diff comment</a>.</li>
+                    <li>The <a href="">.prettydiffrc</a> file, which is only available to the <a href="api/node-local.js">node-local</a> file (command line Node.js).</li>
+                    <li>User supplied options</li>
+                    <li>Default option values</li>
+                </ol>
             </div>
-            <div id="function_properties">
-                <h3>Pretty Diff API (Options)</h3>
+            <div id="options_definitions">
+                <h3>Option Definitions</h3>
                 <ol>
                     <li id="api">
                         <h4>api</h4>
@@ -1729,7 +1681,7 @@
                     </li>
                 </ol>
             </div>
-            <div id="function_practices">
+            <div id="options_practices">
                 <h3>Practices of Pretty Diff</h3>
                 <p>Pretty Diff hopes to encourage conventions of efficiency, but not at cost to
                     recursion, regression testing, or altered functionality. For example consider
@@ -1828,8 +1780,8 @@
                     by supplying minor functional changes to the code which be easily and
                     intelligently reversed without error or prior knowledge of the code sample.</p>
             </div>
-            <div id="function_option">
-                <h3>Option Comment</h3>
+            <div id="options_comment">
+                <h3>Pretty Diff Comment</h3>
                 <p>The Pretty Diff option comment is similar in convention to the JSLint option
                     comment. In the case where multiple Pretty Diff option comments are present in a
                     document only the first will be processed. If in diff mode and an option comment
@@ -1851,7 +1803,7 @@
                         api.inchar: "abc", api.html: true */--&gt;</li>
                 </ul>
             </div>
-            <div id="function_io">
+            <div id="options_io">
                 <h3>Input and Output</h3>
                 <p>The function outputs an array of two indexes. The first array index is always
                     the processed data and the second array index contains meta data about the
@@ -1928,10 +1880,31 @@
                     <li>Manually grabbing the files from the site:
                         <ul>
                             <li>
-                                <a href="prettydiff.com.xhtml">prettydiff.com.xhtml</a>
+                                <a href="api/dom.js">api/dom.js</a>
                             </li>
                             <li>
-                                <a href="prettydiff.js">prettydiff.js</a>
+                                <a href="api/node-local.js">api/node-local.js</a>
+                            </li>
+                            <li>
+                                <a href="api/prettydiff.wsf">api/prettydiff.wsf</a>
+                            </li>
+                            <li>
+                                <a href="lib/csspretty.js">lib/csspretty.js</a>
+                            </li>
+                            <li>
+                                <a href="lib/csvpretty.js">lib/csvpretty.js</a>
+                            </li>
+                            <li>
+                                <a href="lib/diffview.js">lib/diffview.js</a>
+                            </li>
+                            <li>
+                                <a href="lib/jspretty.js">lib/jspretty.js</a>
+                            </li>
+                            <li>
+                                <a href="lib/markuppretty.js">lib/markuppretty.js</a>
+                            </li>
+                            <li>
+                                <a href="lib/safeSort.js">lib/safeSort.js</a>
                             </li>
                             <li>
                                 <a href="diffview.css">diffview.css</a>
@@ -1940,10 +1913,10 @@
                                 <a href="documentation.xhtml">documentation.xhtml</a>
                             </li>
                             <li>
-                                <a href="api/dom.js">api/dom.js</a>
+                                <a href="prettydiff.com.xhtml">prettydiff.com.xhtml</a>
                             </li>
                             <li>
-                                <a href="api/node-local.js">api/node-local.js</a>
+                                <a href="prettydiff.js">prettydiff.js</a>
                             </li>
                         </ul>
                     </li>
@@ -2213,7 +2186,13 @@
             <p>Please send comments, feedback, and requests to
                 <a href="mailto:info@prettydiff.com">info@prettydiff.com</a>.</p>
         </div>
-        <script src="prettydiff.js" type="application/javascript"></script>
         <script src="api/dom.js" type="application/javascript"></script>
+        <script src="lib/safeSort.js" type="application/javascript"></script>
+        <script src="lib/csspretty.js" type="application/javascript"></script>
+        <script src="lib/csvpretty.js" type="application/javascript"></script>
+        <script src="lib/diffview.js" type="application/javascript"></script>
+        <script src="lib/jspretty.js" type="application/javascript"></script>
+        <script src="lib/markuppretty.js" type="application/javascript"></script>
+        <script src="prettydiff.js" type="application/javascript"></script>
     </body>
 </html>
