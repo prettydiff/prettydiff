@@ -4477,6 +4477,13 @@ var pd       = {},
                     verticalj    = pd.id("vertical-jsonly"),
                     wrap         = pd.id("beau-wrap");
                 if (pd.data.node.codeBeauIn !== null) {
+                    if (api.lang === "auto" && pd.data.langvalue.length === 0) {
+                        if (pd.test.ace === true) {
+                            pd.app.langkey(false, pd.ace.beauIn, "");
+                        } else {
+                            pd.app.langkey(false, pd.data.node.codeBeauIn, "");
+                        }
+                    }
                     if (pd.test.ace === true) {
                         api.source = pd.ace
                             .beauIn
@@ -4641,6 +4648,13 @@ var pd       = {},
                     topcoms      = pd.id("topcoms-yes"),
                     wrap         = pd.id("mini-wrap");
                 if (pd.data.node.codeMinnIn !== null) {
+                    if (api.lang === "auto" && pd.data.langvalue.length === 0) {
+                        if (pd.test.ace === true) {
+                            pd.app.langkey(false, pd.ace.minnIn, "");
+                        } else {
+                            pd.app.langkey(false, pd.data.node.codeMinnIn, "");
+                        }
+                    }
                     pd.data.node.codeMinnIn = pd.id("minifyinput");
                     if (pd.test.ace === true) {
                         api.source = pd.ace
@@ -4715,6 +4729,13 @@ var pd       = {},
                     semicolon    = pd.id("diffscolonn");
                 pd.data.node.codeDiffBase = pd.id("baseText");
                 pd.data.node.codeDiffNew  = pd.id("newText");
+                if (pd.data.node.codeDiffBase !== null && api.lang === "auto" && pd.data.langvalue.length === 0) {
+                    if (pd.test.ace === true) {
+                        pd.app.langkey(false, pd.ace.diffBase, "");
+                    } else {
+                        pd.app.langkey(false, pd.data.node.codeDiffBase, "");
+                    }
+                }
                 api.content       = (content !== null && content.checked !== false);
                 api.context       = (context !== null && context.value !== "" && isNaN(context.value) === false)
                     ? Number(context.value)
@@ -4913,15 +4934,23 @@ var pd       = {},
             }());
         }
         if (pd.data.mode === "pars") {
-            if (api.lang === "csv" && pd.data.node.codeParsIn !== null) {
-                if (pd.test.ace === true) {
-                    pd.ace
-                        .parsIn
-                        .setValue("CSV is not supported in 'Parse Only' mode.");
-                } else {
-                    pd.data.node.codeParsIn.value = "CSV is not supported in 'Parse Only' mode.";
+            if (pd.data.node.codeParsIn !== null) {
+                if (api.lang === "auto" && pd.data.langvalue.length === 0) {
+                    if (pd.test.ace === true) {
+                        pd.app.langkey(false, pd.ace.parsIn, "");
+                    } else {
+                        pd.app.langkey(false, pd.data.node.codeParsIn, "");
+                    }
+                } else if (api.lang === "csv") {
+                    if (pd.test.ace === true) {
+                        pd.ace
+                            .parsIn
+                            .setValue("CSV is not supported in 'Parse Only' mode.");
+                    } else {
+                        pd.data.node.codeParsIn.value = "CSV is not supported in 'Parse Only' mode.";
+                    }
+                    return;
                 }
-                return;
             }
             (function dom__event_recycle_parse() {
                 var dustjs       = pd.id("pdustyes"),
@@ -6127,7 +6156,7 @@ var pd       = {},
                     },
                     delay = function dom__load_checkForEdition_delay() {
                         if (global.edition === undefined) {
-                            setTimeout(delay, 100);
+                            setTimeout(dom__load_checkForEdition_delay, 100);
                         } else {
                             if (target !== null && typeof global.edition === "object") {
                                 if (page === "webtool") {

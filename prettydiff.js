@@ -1658,7 +1658,7 @@ global.edition        = {
         ace: 150918
     },
     api          : {
-        dom      : 151003, //dom.js
+        dom      : 151007, //dom.js
         nodeLocal: 151005, //node-local.js
         wsh      : 151003
     },
@@ -1667,12 +1667,12 @@ global.edition        = {
     csvpretty    : 151003, //csvpretty lib
     diffview     : 151003, //diffview lib
     documentation: 151003, //documentation.xhtml
-    jspretty     : 151004, //jspretty lib
+    jspretty     : 151007, //jspretty lib
     latest       : 0,
-    markuppretty : 151004, //markuppretty lib
+    markuppretty : 151007, //markuppretty lib
     prettydiff   : 151005, //this file
     safeSort     : 151003, //safeSort lib
-    version      : "1.14.4", //version number
+    version      : "1.14.6", //version number
     webtool      : 151004
 };
 global.edition.latest = (function edition_latest() {
