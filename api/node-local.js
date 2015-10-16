@@ -48,7 +48,9 @@ Examples:
         prettydiff    = require(libs + "prettydiff.js"),
         fs            = require("fs"),
         http          = require("http"),
-        cwd           = __dirname,
+        cwd           = (process.cwd() === "/")
+            ? __dirname
+            : process.cwd(),
         sfiledump     = [],
         dfiledump     = [],
         sState        = [],
@@ -1244,7 +1246,7 @@ Examples:
                 ],
                 writing   = function (ending) {
                     if (data.file === "") {
-                        fs.writeFile(address.oabspath + finalpath + ending, "", function (err) {
+                        fs.writeFile(finalpath + ending, "", function (err) {
                             if (err !== null) {
                                 console.log("\nError writing report output.\n");
                                 console.log(err);
@@ -1253,7 +1255,9 @@ Examples:
                             }
                         });
                     } else if (ending.indexOf("-report") === 0) {
-                        fs.writeFile(address.oabspath + finalpath + ending, report[1], function (err) {
+                      console.log('here', finalpath);
+                      console.log('here', finalpath);
+                        fs.writeFile(finalpath + ending, report[1], function (err) {
                             if (err !== null) {
                                 console.log("\nError writing report output.\n");
                                 console.log(err);
@@ -1262,7 +1266,7 @@ Examples:
                             }
                         });
                     } else {
-                        fs.writeFile(address.oabspath + finalpath + ending, report[0], function (err) {
+                        fs.writeFile(finalpath + ending, report[0], function (err) {
                             if (err !== null) {
                                 console.log("\nError writing report output.\n");
                                 console.log(err);
@@ -1298,25 +1302,21 @@ Examples:
             dirs.pop();
             options.source = sfiledump[data.index];
             if (options.mode === "diff") {
-                finalpath    = (dirs.length > 0)
-                    ? "__" + dirs.join("__") + "__" + filename
-                    : filename;
+                finalpath    = "__" + dirs.join("__") + "__" + filename;
                 options.diff = dfiledump[data.index];
             } else {
-                finalpath = (method === "file")
-                    ? filename
-                    : dirs.join("/") + "/" + filename;
+                finalpath = dirs.join("/") + "/" + filename;
             }
             if (data.binary === true) {
                 if (dirs.length > 0 && options.mode !== "diff") {
                     newdir();
                 }
-                return fs.writeFile(address.oabspath + finalpath, data.file, function (err) {
+                return fs.writeFile(finalpath, data.file, function (err) {
                     if (err !== null) {
                         console.log("\nError writing report output.\n");
                         console.log(err);
                     } else {
-                        console.log("Binary copied: " + address.oabspath + finalpath);
+                        console.log("Binary copied: " + finalpath);
                     }
                     if (data.last === true) {
                         ender();
@@ -1465,7 +1465,7 @@ Examples:
                 ender();
             }
         },
-        
+
         //read from a binary file
         readBinaryFile = function (data) {
             fs.open(data.absolutepath, "r", function (err, fd) {
@@ -1600,13 +1600,13 @@ Examples:
                                                 var group = (type === "source")
                                                     ? address.sabspath
                                                     : address.dabspath;
-                                                fs.stat(group + filename, function (errc, statb) {
+                                                fs.stat(filename, function (errc, statb) {
                                                     var filesize = 0;
                                                     if (errc === null) {
                                                         filesize = statb.size;
                                                     }
                                                     readLocalFile({
-                                                        absolutepath: group + filename,
+                                                        absolutepath: filename,
                                                         index       : index,
                                                         last        : finalone,
                                                         localpath   : filename,
@@ -1752,12 +1752,15 @@ Examples:
                 e         = [],
                 f         = 0,
                 alphasort = false,
-                pdrcpath  = __dirname.replace(/((\/|\\)api)$/, "") + "/.prettydiffrc",
+                pdrcpath  = (process.cwd() === "/")
+                    ? __dirname.replace(/((\/|\\)api)$/, "") + "/.prettydiffrc"
+                    : process.cwd().replace(/((\/|\\)api)$/, "") + "/.prettydiffrc",
                 pathslash = function (name, x) {
                     var y        = x.indexOf("://"),
                         z        = "",
                         itempath = "",
                         ind      = "",
+                        path     = require("path"),
                         abspath  = function () {
                             var tree  = cwd.split("/"),
                                 ups   = [],
@@ -1774,7 +1777,7 @@ Examples:
                             if ((/^([a-z]:(\\|\/))/).test(itempath) === true || itempath.indexOf("/") === 0) {
                                 return itempath;
                             }
-                            return cwd + "/" + itempath;
+                            return path.join(cwd, itempath);
                         };
                     if (name === "diff") {
                         ind = 0;
@@ -2228,7 +2231,8 @@ Examples:
                     }, function (error, data) {
                         var s = options.source,
                             d = options.diff,
-                            o = options.output;
+                            o = options.output,
+                            h = false;
                         if (error !== null) {
                             return init();
                         }
@@ -2239,16 +2243,29 @@ Examples:
                                 if (pdrc.hasOwnProperty(key) && key !== "help" && key !== "version" && key !== "v" && key !== "man" && key !== "manual") {
                                     b += 1;
                                     options[key] = pdrc[key];
+                                    if (key === "help" && pdrc[key] === true) {
+                                        h = true;
+                                        b -= 1;
+                                    }
                                 }
                             }
-                            if (b > 0) {
+                            if (b > 0 && h === false) {
                                 help = false;
+                            }
+                            method = options.readmethod;
+                            if (s !== options.source) {
+                                pathslash("source", options.source);
+                            }
+                            if (d !== options.diff) {
+                                pathslash("diff", options.diff);
+                            }
+                            if (o !== options.output) {
+                                pathslash("output", options.output);
                             }
                             init();
                         } else {
                             pdrc = require(pdrcpath);
                             if (pdrc.preset !== undefined) {
-                                help = false;
                                 options = pdrc.preset(options);
                                 method = options.readmethod;
                                 if (s !== options.source) {
@@ -2259,6 +2276,9 @@ Examples:
                                 }
                                 if (o !== options.output) {
                                     pathslash("output", options.output);
+                                }
+                                if (options.help === false) {
+                                    help = false;
                                 }
                                 init();
                             }
