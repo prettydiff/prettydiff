@@ -48,7 +48,9 @@ Examples:
         prettydiff    = require(libs + "prettydiff.js"),
         fs            = require("fs"),
         http          = require("http"),
-        cwd           = __dirname,
+        cwd           = (process.cwd() === "/")
+            ? __dirname
+            : process.cwd(),
         sfiledump     = [],
         dfiledump     = [],
         sState        = [],
@@ -83,6 +85,9 @@ Examples:
         },
         help          = false,
         diffCount     = [
+            0, 0
+        ],
+        total         = [
             0, 0
         ],
         options       = {
@@ -1242,14 +1247,31 @@ Examples:
                 report    = [
                     "", ""
                 ],
-                writing   = function (ending) {
-                    if (data.file === "") {
+                writing   = function (ending, tot) {
+                    if (data.binary === true) {
+                        fs.writeFile(address.oabspath + finalpath, data.file, function (err) {
+                            if (err !== null) {
+                                console.log("\nError writing report output.\n");
+                                console.log(err);
+                            } else {
+                                console.log("Binary copied: " + address.oabspath + finalpath);
+                            }
+                            total += tot;
+                            if (total[1] === total[0]) {
+                                ender();
+                            }
+                        });
+                    } else if (data.file === "") {
                         fs.writeFile(address.oabspath + finalpath + ending, "", function (err) {
                             if (err !== null) {
                                 console.log("\nError writing report output.\n");
                                 console.log(err);
                             } else if (method === "file") {
                                 console.log("\nReport successfully written to file.");
+                            }
+                            total += tot;
+                            if (total[1] === total[0]) {
+                                ender();
                             }
                         });
                     } else if (ending.indexOf("-report") === 0) {
@@ -1260,6 +1282,10 @@ Examples:
                             } else if (method === "file") {
                                 console.log("\nReport successfully written to file.");
                             }
+                            total += tot;
+                            if (total[1] === total[0]) {
+                                ender();
+                            }
                         });
                     } else {
                         fs.writeFile(address.oabspath + finalpath + ending, report[0], function (err) {
@@ -1269,20 +1295,23 @@ Examples:
                             } else if (method === "file") {
                                 console.log("\nReport successfully written to file.");
                             }
+                            total += tot;
+                            if (total[1] === total[0]) {
+                                ender();
+                            }
                         });
                     }
                 },
                 files     = function () {
-                    if (options.mode === "diff" || (options.mode === "beautify" && options.jsscope !== "none")) {
-                        writing(suffix);
+                    if (data.binary === true) {
+                        writing("", 1);
+                    } else if (options.mode === "diff" || (options.mode === "beautify" && options.jsscope !== "none")) {
+                        writing(suffix, 1);
                     } else {
                         if (options.report === true) {
-                            writing(suffix);
+                            writing(suffix, 0);
                         }
-                        writing("");
-                    }
-                    if (data.last === true) {
-                        ender();
+                        writing("", 1);
                     }
                 },
                 newdir    = function () {
@@ -1290,7 +1319,7 @@ Examples:
                         count += 1;
                         if (count < dirs.length + 1) {
                             newdir();
-                        } else if (data.binary === false) {
+                        } else {
                             files();
                         }
                     });
@@ -1310,18 +1339,10 @@ Examples:
             if (data.binary === true) {
                 if (dirs.length > 0 && options.mode !== "diff") {
                     newdir();
+                } else {
+                    files();
                 }
-                return fs.writeFile(address.oabspath + finalpath, data.file, function (err) {
-                    if (err !== null) {
-                        console.log("\nError writing report output.\n");
-                        console.log(err);
-                    } else {
-                        console.log("Binary copied: " + address.oabspath + finalpath);
-                    }
-                    if (data.last === true) {
-                        ender();
-                    }
-                });
+                return;
             }
             report = reports();
             if (options.mode === "parse") {
@@ -1461,11 +1482,11 @@ Examples:
                 } else if (method === "screen" || method === "file" || method === "filescreen") {
                     ender();
                 }
-            } else if (data.last === true && data.type !== "diff" && options.diffcli === false && data.binary === false) {
+            } else if (data.last === true && data.type !== "diff" && options.diffcli === false && data.binary === false && total[0] === 0) {
                 ender();
             }
         },
-        
+
         //read from a binary file
         readBinaryFile = function (data) {
             fs.open(data.absolutepath, "r", function (err, fd) {
@@ -1529,10 +1550,20 @@ Examples:
                         return readLocalFile(data);
                     }
                     data.size = stat.size;
-                    open();
+                    if (data.size > 0) {
+                        open();
+                    } else {
+                        data.binary = false;
+                        fileComplete(data);
+                    }
                 });
             } else {
-                open();
+                if (data.size > 0) {
+                    open();
+                } else {
+                    data.binary = false;
+                    fileComplete(data);
+                }
             }
         },
 
@@ -1598,8 +1629,8 @@ Examples:
                                             end    = false,
                                             sizer = function (index, type, filename, finalone) {
                                                 var group = (type === "source")
-                                                    ? address.sabspath
-                                                    : address.dabspath;
+                                                    ? address.sabspath + "/"
+                                                    : address.dabspath + "/";
                                                 fs.stat(group + filename, function (errc, statb) {
                                                     var filesize = 0;
                                                     if (errc === null) {
@@ -1654,14 +1685,15 @@ Examples:
                                             }
                                         } else {
                                             if (options.output !== "") {
+                                                total[0] = length;
                                                 for (b = 0; b < length; b += 1) {
                                                     if (b === length - 1) {
                                                         end = true;
                                                     }
                                                     if (sfiles.path[b] !== undefined) {
                                                         sizer(b, "source", sfiles.path[b], end);
-                                                    } else if (end === true) {
-                                                        ender();
+                                                    } else {
+                                                        total[0] -= 1;
                                                     }
                                                 }
                                             } else {
@@ -1758,6 +1790,7 @@ Examples:
                         z        = "",
                         itempath = "",
                         ind      = "",
+                        path     = require("path"),
                         abspath  = function () {
                             var tree  = cwd.split("/"),
                                 ups   = [],
@@ -1774,7 +1807,7 @@ Examples:
                             if ((/^([a-z]:(\\|\/))/).test(itempath) === true || itempath.indexOf("/") === 0) {
                                 return itempath;
                             }
-                            return cwd + "/" + itempath;
+                            return path.join(cwd, itempath);
                         };
                     if (name === "diff") {
                         ind = 0;
@@ -1815,6 +1848,9 @@ Examples:
                     }
                     if (name === "output") {
                         address.oabspath = abspath();
+                        if (address.oabspath.charAt(address.oabspath.length - 1) !== "/") {
+                            address.oabspath = address.oabspath + "/";
+                        }
                         address.oorgpath = itempath;
                         fs.mkdir(address.oabspath, function () {
                             return;
@@ -2228,7 +2264,8 @@ Examples:
                     }, function (error, data) {
                         var s = options.source,
                             d = options.diff,
-                            o = options.output;
+                            o = options.output,
+                            h = false;
                         if (error !== null) {
                             return init();
                         }
@@ -2239,9 +2276,13 @@ Examples:
                                 if (pdrc.hasOwnProperty(key) && key !== "help" && key !== "version" && key !== "v" && key !== "man" && key !== "manual") {
                                     b += 1;
                                     options[key] = pdrc[key];
+                                    if (key === "help" && pdrc[key] === true) {
+                                        h = true;
+                                        b -= 1;
+                                    }
                                 }
                             }
-                            if (b > 0) {
+                            if (b > 0 && h === false) {
                                 help = false;
                             }
                             method = options.readmethod;
@@ -2258,7 +2299,6 @@ Examples:
                         } else {
                             pdrc = require(pdrcpath);
                             if (pdrc.preset !== undefined) {
-                                help = false;
                                 options = pdrc.preset(options);
                                 method = options.readmethod;
                                 if (s !== options.source) {
@@ -2269,6 +2309,10 @@ Examples:
                                 }
                                 if (o !== options.output) {
                                     pathslash("output", options.output);
+                                }
+                                help = false;
+                                if (options.help === true) {
+                                    help = true;
                                 }
                                 init();
                             }
