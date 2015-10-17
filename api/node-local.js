@@ -2265,7 +2265,7 @@ Examples:
                         var s = options.source,
                             d = options.diff,
                             o = options.output,
-                            h = false;
+                            h = options.help;
                         if (error !== null) {
                             return init();
                         }
@@ -2310,8 +2310,7 @@ Examples:
                                 if (o !== options.output) {
                                     pathslash("output", options.output);
                                 }
-                                help = false;
-                                if (options.help === true) {
+                                if (options.help === true || h === true) {
                                     help = true;
                                 }
                                 init();
