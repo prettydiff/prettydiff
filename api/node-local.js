@@ -2244,6 +2244,16 @@ Examples:
                             if (b > 0) {
                                 help = false;
                             }
+                            method = options.readmethod;
+                            if (s !== options.source) {
+                                pathslash("source", options.source);
+                            }
+                            if (d !== options.diff) {
+                                pathslash("diff", options.diff);
+                            }
+                            if (o !== options.output) {
+                                pathslash("output", options.output);
+                            }
                             init();
                         } else {
                             pdrc = require(pdrcpath);
