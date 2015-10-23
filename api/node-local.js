@@ -87,6 +87,9 @@ Examples:
         diffCount     = [
             0, 0
         ],
+        total         = [
+            0, 0
+        ],
         options       = {
             api           : "",
             braceline     : false,
@@ -1244,14 +1247,31 @@ Examples:
                 report    = [
                     "", ""
                 ],
-                writing   = function (ending) {
-                    if (data.file === "") {
-                        fs.writeFile(finalpath + ending, "", function (err) {
+                writing   = function (ending, tot) {
+                    if (data.binary === true) {
+                        fs.writeFile(address.oabspath + finalpath, data.file, function (err) {
+                            if (err !== null) {
+                                console.log("\nError writing report output.\n");
+                                console.log(err);
+                            } else {
+                                console.log("Binary copied: " + address.oabspath + finalpath);
+                            }
+                            total += tot;
+                            if (total[1] === total[0]) {
+                                ender();
+                            }
+                        });
+                    } else if (data.file === "") {
+                        fs.writeFile(address.oabspath + finalpath + ending, "", function (err) {
                             if (err !== null) {
                                 console.log("\nError writing report output.\n");
                                 console.log(err);
                             } else if (method === "file") {
                                 console.log("\nReport successfully written to file.");
+                            }
+                            total += tot;
+                            if (total[1] === total[0]) {
+                                ender();
                             }
                         });
                     } else if (ending.indexOf("-report") === 0) {
@@ -1264,6 +1284,10 @@ Examples:
                             } else if (method === "file") {
                                 console.log("\nReport successfully written to file.");
                             }
+                            total += tot;
+                            if (total[1] === total[0]) {
+                                ender();
+                            }
                         });
                     } else {
                         fs.writeFile(finalpath + ending, report[0], function (err) {
@@ -1273,20 +1297,23 @@ Examples:
                             } else if (method === "file") {
                                 console.log("\nReport successfully written to file.");
                             }
+                            total += tot;
+                            if (total[1] === total[0]) {
+                                ender();
+                            }
                         });
                     }
                 },
                 files     = function () {
-                    if (options.mode === "diff" || (options.mode === "beautify" && options.jsscope !== "none")) {
-                        writing(suffix);
+                    if (data.binary === true) {
+                        writing("", 1);
+                    } else if (options.mode === "diff" || (options.mode === "beautify" && options.jsscope !== "none")) {
+                        writing(suffix, 1);
                     } else {
                         if (options.report === true) {
-                            writing(suffix);
+                            writing(suffix, 0);
                         }
-                        writing("");
-                    }
-                    if (data.last === true) {
-                        ender();
+                        writing("", 1);
                     }
                 },
                 newdir    = function () {
@@ -1294,7 +1321,7 @@ Examples:
                         count += 1;
                         if (count < dirs.length + 1) {
                             newdir();
-                        } else if (data.binary === false) {
+                        } else {
                             files();
                         }
                     });
@@ -1310,18 +1337,10 @@ Examples:
             if (data.binary === true) {
                 if (dirs.length > 0 && options.mode !== "diff") {
                     newdir();
+                } else {
+                    files();
                 }
-                return fs.writeFile(finalpath, data.file, function (err) {
-                    if (err !== null) {
-                        console.log("\nError writing report output.\n");
-                        console.log(err);
-                    } else {
-                        console.log("Binary copied: " + finalpath);
-                    }
-                    if (data.last === true) {
-                        ender();
-                    }
-                });
+                return;
             }
             report = reports();
             if (options.mode === "parse") {
@@ -1461,7 +1480,7 @@ Examples:
                 } else if (method === "screen" || method === "file" || method === "filescreen") {
                     ender();
                 }
-            } else if (data.last === true && data.type !== "diff" && options.diffcli === false && data.binary === false) {
+            } else if (data.last === true && data.type !== "diff" && options.diffcli === false && data.binary === false && total[0] === 0) {
                 ender();
             }
         },
@@ -1529,10 +1548,20 @@ Examples:
                         return readLocalFile(data);
                     }
                     data.size = stat.size;
-                    open();
+                    if (data.size > 0) {
+                        open();
+                    } else {
+                        data.binary = false;
+                        fileComplete(data);
+                    }
                 });
             } else {
-                open();
+                if (data.size > 0) {
+                    open();
+                } else {
+                    data.binary = false;
+                    fileComplete(data);
+                }
             }
         },
 
@@ -1598,9 +1627,9 @@ Examples:
                                             end    = false,
                                             sizer = function (index, type, filename, finalone) {
                                                 var group = (type === "source")
-                                                    ? address.sabspath
-                                                    : address.dabspath;
-                                                fs.stat(filename, function (errc, statb) {
+                                                    ? address.sabspath + "/"
+                                                    : address.dabspath + "/";
+                                                fs.stat(group + filename, function (errc, statb) {
                                                     var filesize = 0;
                                                     if (errc === null) {
                                                         filesize = statb.size;
@@ -1654,14 +1683,15 @@ Examples:
                                             }
                                         } else {
                                             if (options.output !== "") {
+                                                total[0] = length;
                                                 for (b = 0; b < length; b += 1) {
                                                     if (b === length - 1) {
                                                         end = true;
                                                     }
                                                     if (sfiles.path[b] !== undefined) {
                                                         sizer(b, "source", sfiles.path[b], end);
-                                                    } else if (end === true) {
-                                                        ender();
+                                                    } else {
+                                                        total[0] -= 1;
                                                     }
                                                 }
                                             } else {
@@ -1818,6 +1848,9 @@ Examples:
                     }
                     if (name === "output") {
                         address.oabspath = abspath();
+                        if (address.oabspath.charAt(address.oabspath.length - 1) !== "/") {
+                            address.oabspath = address.oabspath + "/";
+                        }
                         address.oorgpath = itempath;
                         fs.mkdir(address.oabspath, function () {
                             return;
@@ -2232,7 +2265,7 @@ Examples:
                         var s = options.source,
                             d = options.diff,
                             o = options.output,
-                            h = false;
+                            h = options.help;
                         if (error !== null) {
                             return init();
                         }
@@ -2277,8 +2310,8 @@ Examples:
                                 if (o !== options.output) {
                                     pathslash("output", options.output);
                                 }
-                                if (options.help === false) {
-                                    help = false;
+                                if (options.help === true || h === true) {
+                                    help = true;
                                 }
                                 init();
                             }
