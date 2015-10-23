@@ -48,6 +48,7 @@ Examples:
         prettydiff    = require(libs + "prettydiff.js"),
         fs            = require("fs"),
         http          = require("http"),
+        path          = require("path"),
         cwd           = (process.cwd() === "/")
             ? __dirname
             : process.cwd(),
@@ -1275,8 +1276,6 @@ Examples:
                             }
                         });
                     } else if (ending.indexOf("-report") === 0) {
-                      console.log('here', finalpath);
-                      console.log('here', finalpath);
                         fs.writeFile(finalpath + ending, report[1], function (err) {
                             if (err !== null) {
                                 console.log("\nError writing report output.\n");
@@ -1629,7 +1628,7 @@ Examples:
                                                 var group = (type === "source")
                                                     ? address.sabspath + "/"
                                                     : address.dabspath + "/";
-                                                fs.stat(group + filename, function (errc, statb) {
+                                                fs.stat(filename, function (errc, statb) {
                                                     var filesize = 0;
                                                     if (errc === null) {
                                                         filesize = statb.size;
@@ -1783,14 +1782,13 @@ Examples:
                 f         = 0,
                 alphasort = false,
                 pdrcpath  = (process.cwd() === "/")
-                    ? __dirname.replace(/((\/|\\)api)$/, "") + "/.prettydiffrc"
-                    : process.cwd().replace(/((\/|\\)api)$/, "") + "/.prettydiffrc",
+                    ? path.join(__dirname.replace(/((\/|\\)api)$/, ""), ".prettydiffrc")
+                    : path.join(process.cwd().replace(/((\/|\\)api)$/, ""), ".prettydiffrc"),
                 pathslash = function (name, x) {
                     var y        = x.indexOf("://"),
                         z        = "",
                         itempath = "",
                         ind      = "",
-                        path     = require("path"),
                         abspath  = function () {
                             var tree  = cwd.split("/"),
                                 ups   = [],
@@ -2321,7 +2319,7 @@ Examples:
                     init();
                 }
                 if (c === 0) {
-                    help = true;
+                    //REMOVE COMMENT help = true;
                 }
             });
         }());
