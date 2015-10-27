@@ -384,7 +384,7 @@
                         args.html = true;
                     }
                     if (args.mode === "diff") {
-                        if (WScript.Arguments.Named("diff") === "string") {
+                        if (typeof WScript.Arguments.Named("diff") === "string") {
                             if (read === "file") {
                                 filestring = [openfile(WScript.Arguments.Named("diff"), "diff")];
                                 args.diff = filestring.toString();
