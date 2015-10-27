@@ -48,6 +48,7 @@ Examples:
         prettydiff    = require(libs + "prettydiff.js"),
         fs            = require("fs"),
         http          = require("http"),
+        path          = require("path"),
         cwd           = (process.cwd() === "/")
             ? __dirname
             : process.cwd(),
@@ -1275,7 +1276,7 @@ Examples:
                             }
                         });
                     } else if (ending.indexOf("-report") === 0) {
-                        fs.writeFile(address.oabspath + finalpath + ending, report[1], function (err) {
+                        fs.writeFile(finalpath + ending, report[1], function (err) {
                             if (err !== null) {
                                 console.log("\nError writing report output.\n");
                                 console.log(err);
@@ -1288,7 +1289,7 @@ Examples:
                             }
                         });
                     } else {
-                        fs.writeFile(address.oabspath + finalpath + ending, report[0], function (err) {
+                        fs.writeFile(finalpath + ending, report[0], function (err) {
                             if (err !== null) {
                                 console.log("\nError writing report output.\n");
                                 console.log(err);
@@ -1327,14 +1328,10 @@ Examples:
             dirs.pop();
             options.source = sfiledump[data.index];
             if (options.mode === "diff") {
-                finalpath    = (dirs.length > 0)
-                    ? "__" + dirs.join("__") + "__" + filename
-                    : filename;
+                finalpath    = "__" + dirs.join("__") + "__" + filename;
                 options.diff = dfiledump[data.index];
             } else {
-                finalpath = (method === "file")
-                    ? filename
-                    : dirs.join("/") + "/" + filename;
+                finalpath = dirs.join("/") + "/" + filename;
             }
             if (data.binary === true) {
                 if (dirs.length > 0 && options.mode !== "diff") {
@@ -1631,13 +1628,13 @@ Examples:
                                                 var group = (type === "source")
                                                     ? address.sabspath + "/"
                                                     : address.dabspath + "/";
-                                                fs.stat(group + filename, function (errc, statb) {
+                                                fs.stat(filename, function (errc, statb) {
                                                     var filesize = 0;
                                                     if (errc === null) {
                                                         filesize = statb.size;
                                                     }
                                                     readLocalFile({
-                                                        absolutepath: group + filename,
+                                                        absolutepath: filename,
                                                         index       : index,
                                                         last        : finalone,
                                                         localpath   : filename,
@@ -1784,13 +1781,14 @@ Examples:
                 e         = [],
                 f         = 0,
                 alphasort = false,
-                pdrcpath  = __dirname.replace(/((\/|\\)api)$/, "") + "/.prettydiffrc",
+                pdrcpath  = (process.cwd() === "/")
+                    ? path.join(__dirname.replace(/((\/|\\)api)$/, ""), ".prettydiffrc")
+                    : path.join(process.cwd().replace(/((\/|\\)api)$/, ""), ".prettydiffrc"),
                 pathslash = function (name, x) {
                     var y        = x.indexOf("://"),
                         z        = "",
                         itempath = "",
                         ind      = "",
-                        path     = require("path"),
                         abspath  = function () {
                             var tree  = cwd.split("/"),
                                 ups   = [],
@@ -2265,7 +2263,7 @@ Examples:
                         var s = options.source,
                             d = options.diff,
                             o = options.output,
-                            h = false;
+                            h = options.help;
                         if (error !== null) {
                             return init();
                         }
@@ -2310,8 +2308,7 @@ Examples:
                                 if (o !== options.output) {
                                     pathslash("output", options.output);
                                 }
-                                help = false;
-                                if (options.help === true) {
+                                if (options.help === true || h === true) {
                                     help = true;
                                 }
                                 init();
@@ -2322,7 +2319,7 @@ Examples:
                     init();
                 }
                 if (c === 0) {
-                    help = true;
+                    //REMOVE COMMENT help = true;
                 }
             });
         }());
