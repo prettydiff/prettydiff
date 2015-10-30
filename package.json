@@ -6,7 +6,7 @@
     "url": "http://prettydiff.com/"
   },
   "bin": "./bin/prettydiff",
-  "version": "1.15.1",
+  "version": "1.15.2",
   "description": "Language aware code comparison tool for several web based languages. It also beautifies, minifies, and a few other things.",
   "keywords": [
     "diff",
