@@ -3,19 +3,19 @@ e=function(t){
         r;
     else if(T)
         if(N)n;
-        else{
+        else {
             if(E)Y;
-    }else if(i.init){
+    } else if(i.init){
         var s;
     }
 }
 function jt(){
-    if(f){
+    if(f) {
         Y
-    }else if(e)
+    } else if(e)
         if(N){
             if(!t)P
-        }else X;
+        } else X;
     else f;
 }
 var a = function () {

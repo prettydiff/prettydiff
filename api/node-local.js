@@ -32,50 +32,55 @@ Examples:
 
 (function () {
     "use strict";
-    var libs          = (function () {
-            var localPath = (process.cwd() === "/")
-                ? __dirname.replace(/(api)$/, "")
-                : "../";
-            global.safeSort      = require(localPath + "lib/safeSort.js").api;
-            global.csspretty     = require(localPath + "lib/csspretty.js").api;
-            global.csvpretty     = require(localPath + "lib/csvpretty.js").api;
-            global.diffview      = require(localPath + "lib/diffview.js").api;
-            global.jspretty      = require(localPath + "lib/jspretty.js").api;
-            global.markuppretty  = require(localPath + "lib/markuppretty.js").api;
-            global.jsxstatus     = global.jspretty.jsxstatus;
+    var cwd            = process.cwd(),
+        localPath      = (cwd === "/" || (/^([a-z]:\\)$/).test(cwd) === true)
+            ? __dirname.replace(/(api)$/, "")
+            : "../",
+        libs           = (function () {
+            global.safeSort     = require(localPath + "lib/safeSort.js").api;
+            global.csspretty    = require(localPath + "lib/csspretty.js").api;
+            global.csvpretty    = require(localPath + "lib/csvpretty.js").api;
+            global.diffview     = require(localPath + "lib/diffview.js").api;
+            global.jspretty     = require(localPath + "lib/jspretty.js").api;
+            global.markuppretty = require(localPath + "lib/markuppretty.js").api;
+            global.jsxstatus    = global.jspretty.jsxstatus;
             return localPath;
         }()),
-        prettydiff    = require(libs + "prettydiff.js"),
-        fs            = require("fs"),
-        http          = require("http"),
-        cwd           = (process.cwd() === "/")
+        prettydiff     = require(libs + "prettydiff.js"),
+        fs             = require("fs"),
+        http           = require("http"),
+        path           = require("path"),
+        cwd            = (process.cwd() === "/")
             ? __dirname
             : process.cwd(),
-        sfiledump     = [],
-        dfiledump     = [],
-        sState        = [],
-        dState        = [],
-        clidata       = [
+        sfiledump      = [],
+        dfiledump      = [],
+        sState         = [],
+        dState         = [],
+        clidata        = [
             [], [], []
         ],
-        method        = "auto",
-        startTime     = Date.now(),
-        versionString = (function () {
+        lf             = "\n",
+        method         = "auto",
+        startTime      = Date.now(),
+        versionString  = (function () {
             var dstring = "",
                 mstring = 0,
                 month   = [
                     "January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"
                 ];
             global.edition = prettydiff.edition;
-            global.report = prettydiff.report;
-            dstring = global.edition.latest.toString();
-            mstring = Number(dstring.slice(2, 4)) - 1;
+            global.report  = prettydiff.report;
+            dstring        = global.edition
+                .latest
+                .toString();
+            mstring        = Number(dstring.slice(2, 4)) - 1;
             return "\x1B[36mVersion\x1B[39m: " + global.edition.version + " \x1B[36mDated\x1B[39m: " + dstring.slice(4, 6) + " " + month[mstring] + " 20" + dstring.slice(0, 2);
         }()),
-        dir           = [
+        dir            = [
             0, 0, 0
         ],
-        address       = {
+        address        = {
             dabspath: "",
             dorgpath: "",
             oabspath: "",
@@ -83,14 +88,14 @@ Examples:
             sabspath: "",
             sorgpath: ""
         },
-        help          = false,
-        diffCount     = [
+        help           = false,
+        diffCount      = [
             0, 0
         ],
-        total         = [
+        total          = [
             0, 0
         ],
-        options       = {
+        options        = {
             api           : "",
             braceline     : false,
             bracepadding  : false,
@@ -102,6 +107,7 @@ Examples:
             content       : false,
             context       : "",
             correct       : false,
+            crlf          : false,
             cssinsertlines: false,
             csvchar       : ",",
             diff          : "",
@@ -123,6 +129,7 @@ Examples:
             methodchain   : false,
             miniwrap      : false,
             mode          : "diff",
+            nocaseindent  : false,
             noleadzero    : false,
             objsort       : "js",
             output        : "",
@@ -131,6 +138,7 @@ Examples:
             quoteConvert  : "none",
             readmethod    : "screen",
             report        : true,
+            selectorlist  : false,
             semicolon     : false,
             source        : "",
             sourcelabel   : "base",
@@ -149,7 +157,7 @@ Examples:
             vertical      : "js",
             wrap          : 80
         },
-        colors        = {
+        colors         = {
             del     : {
                 charEnd  : "\x1B[22m",
                 charStart: "\x1B[1m",
@@ -169,7 +177,7 @@ Examples:
         },
 
         //ending messaging with stats
-        ender         = function () {
+        ender          = function () {
             var plural = (function () {
                     var a   = 0,
                         len = diffCount.length,
@@ -211,28 +219,28 @@ Examples:
             }
             if (options.diffcli === true && options.mode === "diff") {
                 if (options.summaryonly === true && clidata[2].length > 0) {
-                    log.push("\nFiles changed:\n");
+                    log.push(lf + "Files changed:" + lf);
                     log.push(colors.filepath.start);
-                    log.push(clidata[2].join("\n"));
+                    log.push(clidata[2].join(lf));
                     log.push(colors.filepath.end);
-                    log.push("\n\n");
+                    log.push(lf + lf);
                 }
                 if (clidata[0].length > 0) {
-                    log.push("\nFiles deleted:\n");
+                    log.push(lf + "Files deleted:" + lf);
                     log.push(colors.del.lineStart);
-                    log.push(clidata[0].join("\n"));
+                    log.push(clidata[0].join(lf));
                     log.push(colors.del.lineEnd);
-                    log.push("\n\n");
+                    log.push(lf + lf);
                 }
                 if (clidata[1].length > 0) {
-                    log.push("\nFiles inserted:\n");
+                    log.push(lf + "Files inserted:" + lf);
                     log.push(colors.ins.lineStart);
-                    log.push(clidata[1].join("\n"));
+                    log.push(clidata[1].join(lf));
                     log.push(colors.ins.lineEnd);
-                    log.push("\n\n");
+                    log.push(lf + lf);
                 }
             }
-            log.push("\nPretty Diff ");
+            log.push(lf + "Pretty Diff ");
             if (options.mode === "diff") {
                 if (method !== "directory" && method !== "subdirectory") {
                     log.push("found ");
@@ -278,13 +286,13 @@ Examples:
             if (time !== 1) {
                 log.push("s");
             }
-            log.push(".\n");
+            log.push("." + lf);
             console.log(log.join(""));
         },
 
         //extract errorcount from diff
         //report files for ender stats
-        counter       = function (x) {
+        counter        = function (x) {
             var num = Number(x.substring(14, x.indexOf("</em>")));
             if (num > 0) {
                 diffCount[0] += num;
@@ -294,7 +302,7 @@ Examples:
         },
 
         //html report template
-        reports       = function () {
+        reports        = function () {
             var result = prettydiff.api(options),
                 css    = {
                     core   : "body{font-family:'Arial';font-size:10px;overflow-y:scroll}#announcement.big{colo" +
@@ -837,9 +845,7 @@ Examples:
                         "nt='application/xhtml+xml;charset=UTF-8'/><meta http-equiv='Content-Style-Type' " +
                         "content='text/css'/><style type='text/css'>"];
             if (result[0].indexOf("Error: ") === 0) {
-                return [
-                    result[0], ""
-                ];
+                return [result[0], ""];
             }
             a.push(css.core);
             a.push(css["s" + options.color]);
@@ -924,17 +930,14 @@ Examples:
                 a.push("]]></script>");
                 a.push("</body></html>");
                 return [
-                    a.join(""), ""
-                ];
+                    a.join(""), ""];
             }
             a.push("</body></html>");
-            return [
-                result[0], a.join("")
-            ];
+            return [result[0], a.join("")];
         },
 
         //instructions
-        error         = (function () {
+        error          = (function () {
             var a       = [],
                 color   = {
                     accepted: "\x1B[31m",
@@ -957,7 +960,7 @@ Examples:
                     }
                     return value[0] + ":\x1B[39m" + items.join(",");
                 };
-            a.push("\n");
+            a.push(lf);
             a.push("\x1B[1mOptions\x1B[22m");
             a.push("");
             a.push("Arguments      - Type    - Definition");
@@ -1008,6 +1011,9 @@ Examples:
             a.push("* correct      - boolean - Automatically correct some sloppiness in JavaScript.");
             a.push("                           The default is 'false' and it is only applied during");
             a.push("                           JavaScript beautification.");
+            a.push("");
+            a.push("* crlf         - boolean - If line termination should be Windows (LF) format.");
+            a.push("                           Unix (LF) format is the default.");
             a.push("");
             a.push("* cssinsertlines - boolean - Inserts new line characters between every CSS code");
             a.push("                           block. Default is false.");
@@ -1100,6 +1106,9 @@ Examples:
             a.push("                           * parse    - returns an object with shallow arrays");
             a.push("                 Accepted values: diff, beautify, minify, parse");
             a.push("");
+            a.push("* nocaseindent - boolean - If a case statement should receive the same");
+            a.push("                           indentation as the containing switch block.");
+            a.push("");
             a.push("* noleadzero   - boolean - If in CSS values leading 0s immediately preceeding a");
             a.push("                           decimal should be removed or prevented.");
             a.push("");
@@ -1152,6 +1161,9 @@ Examples:
             a.push("                           The default value is true.  If false reports will be");
             a.push("                           suppressed for 'beautify' and 'minify' modes if");
             a.push("                           readmethod is 'file' or 'directory'.");
+            a.push("");
+            a.push("* selectorlist - boolean - If comma separated CSS selectors should be retained");
+            a.push("                           on a single line of code.");
             a.push("");
             a.push("* semicolon    - boolean - If true and mode is 'diff' and lang is 'javascript'");
             a.push("                           all semicolon characters that immediately preceed");
@@ -1231,13 +1243,20 @@ Examples:
             a.push("");
             a.push(versionString);
             a.push("");
-            return a.join("\n").replace(/\n\*\ \w+\s+-/g, opname).replace(/-\ boolean\ -/g, "- " + color.bool + "boolean\x1B[39m -").replace(/-\ string\ {2,}-/g, "- " + color.string + "string\x1B[39m  -").replace(/-\ number\ {2,}-/g, "- " + color.number + "number\x1B[39m  -").replace(/\n\ {17,}Accepted\ values:/g, "\n                 " + color.accepted + "Accepted values:\x1B[39m").replace(/Accepted\ values:\\x1B\[39m(\s+\w+,?)+/g, vallist);
+            return a.join(lf)
+                .replace(/\r?\n\*\ \w+\s+-/g, opname)
+                .replace(/-\ boolean\ -/g, "- " + color.bool + "boolean\x1B[39m -")
+                .replace(/-\ string\ {2,}-/g, "- " + color.string + "string\x1B[39m  -")
+                .replace(/-\ number\ {2,}-/g, "- " + color.number + "number\x1B[39m  -")
+                .replace(/\r?\n\ {17,}Accepted\ values:/g, lf + "                 " + color.accepted + "Accepted values:\x1B[39m")
+                .replace(/Accepted\ values:\\x1B\[39m(\s+\w+,?)+/g, vallist);
         }()),
 
         //write output to a file
         //executed from fileComplete
-        fileWrite     = function (data) {
-            var dirs      = data.localpath.split("/"),
+        fileWrite      = function (data) {
+            var dirs      = data.localpath
+                    .split("/"),
                 suffix    = (options.mode === "diff")
                     ? "-diff.html"
                     : "-report.html",
@@ -1249,57 +1268,61 @@ Examples:
                 ],
                 writing   = function (ending, tot) {
                     if (data.binary === true) {
-                        fs.writeFile(address.oabspath + finalpath, data.file, function (err) {
-                            if (err !== null) {
-                                console.log("\nError writing report output.\n");
-                                console.log(err);
-                            } else {
-                                console.log("Binary copied: " + address.oabspath + finalpath);
-                            }
-                            total += tot;
-                            if (total[1] === total[0]) {
-                                ender();
-                            }
-                        });
+                        fs
+                            .writeFile(finalpath, data.file, function (err) {
+                                if (err !== null) {
+                                    console.log(lf + "Error writing report output." + lf);
+                                    console.log(err);
+                                } else {
+                                    console.log("Binary copied: " + address.oabspath + finalpath);
+                                }
+                                total[1] += tot;
+                                if (total[1] === total[0]) {
+                                    ender();
+                                }
+                            });
                     } else if (data.file === "") {
-                        fs.writeFile(address.oabspath + finalpath + ending, "", function (err) {
-                            if (err !== null) {
-                                console.log("\nError writing report output.\n");
-                                console.log(err);
-                            } else if (method === "file") {
-                                console.log("\nReport successfully written to file.");
-                            }
-                            total += tot;
-                            if (total[1] === total[0]) {
-                                ender();
-                            }
-                        });
+                        fs
+                            .writeFile(finalpath + ending, "", function (err) {
+                                if (err !== null) {
+                                    console.log(lf + "Error writing report output." + lf);
+                                    console.log(err);
+                                } else if (method === "file") {
+                                    console.log(lf + "Report successfully written to file.");
+                                }
+                                total[1] += tot;
+                                if (total[1] === total[0]) {
+                                    ender();
+                                }
+                            });
                     } else if (ending.indexOf("-report") === 0) {
-                        fs.writeFile(address.oabspath + finalpath + ending, report[1], function (err) {
-                            if (err !== null) {
-                                console.log("\nError writing report output.\n");
-                                console.log(err);
-                            } else if (method === "file") {
-                                console.log("\nReport successfully written to file.");
-                            }
-                            total += tot;
-                            if (total[1] === total[0]) {
-                                ender();
-                            }
-                        });
+                        fs
+                            .writeFile(finalpath + ending, report[1], function (err) {
+                                if (err !== null) {
+                                    console.log(lf + "Error writing report output." + lf);
+                                    console.log(err);
+                                } else if (method === "file") {
+                                    console.log(lf + "Report successfully written to file.");
+                                }
+                                total[1] += tot;
+                                if (total[1] === total[0]) {
+                                    ender();
+                                }
+                            });
                     } else {
-                        fs.writeFile(address.oabspath + finalpath + ending, report[0], function (err) {
-                            if (err !== null) {
-                                console.log("\nError writing report output.\n");
-                                console.log(err);
-                            } else if (method === "file") {
-                                console.log("\nReport successfully written to file.");
-                            }
-                            total += tot;
-                            if (total[1] === total[0]) {
-                                ender();
-                            }
-                        });
+                        fs
+                            .writeFile(finalpath + ending, report[0], function (err) {
+                                if (err !== null) {
+                                    console.log(lf + "Error writing report output." + lf);
+                                    console.log(err);
+                                } else if (method === "file") {
+                                    console.log(lf + "Report successfully written to file.");
+                                }
+                                total[1] += tot;
+                                if (total[1] === total[0]) {
+                                    ender();
+                                }
+                            });
                     }
                 },
                 files     = function () {
@@ -1315,26 +1338,23 @@ Examples:
                     }
                 },
                 newdir    = function () {
-                    fs.mkdir(address.oabspath + dirs.slice(0, count).join("/"), function () {
-                        count += 1;
-                        if (count < dirs.length + 1) {
-                            newdir();
-                        } else {
-                            files();
-                        }
-                    });
+                    fs
+                        .mkdir(address.oabspath + dirs.slice(0, count).join("/"), function () {
+                            count += 1;
+                            if (count < dirs.length + 1) {
+                                newdir();
+                            } else {
+                                files();
+                            }
+                        });
                 };
             dirs.pop();
             options.source = sfiledump[data.index];
             if (options.mode === "diff") {
-                finalpath    = (dirs.length > 0)
-                    ? "__" + dirs.join("__") + "__" + filename
-                    : filename;
+                finalpath    = "__" + dirs.join("__") + "__" + filename;
                 options.diff = dfiledump[data.index];
             } else {
-                finalpath = (method === "file")
-                    ? filename
-                    : dirs.join("/") + "/" + filename;
+                finalpath = dirs.join("/") + "/" + filename;
             }
             if (data.binary === true) {
                 if (dirs.length > 0 && options.mode !== "diff") {
@@ -1365,7 +1385,7 @@ Examples:
         },
 
         //write output to terminal
-        cliWrite      = function (output, path, last) {
+        cliWrite       = function (output, path, last) {
             var a      = 0,
                 plural = "",
                 pdlen  = output[0].length;
@@ -1378,16 +1398,16 @@ Examples:
                     plural = "s";
                 }
                 if (options.readmethod === "screen") {
-                    console.log("\nScreen input with " + diffCount[0] + " difference" + plural);
+                    console.log(lf + "Screen input with " + diffCount[0] + " difference" + plural);
                 } else if (output[5].length === 0) {
-                    console.log("\n" + colors.filepath.start + path + "\nLine: " + output[0][a] + colors.filepath.end);
+                    console.log(lf + colors.filepath.start + path + lf + "Line: " + output[0][a] + colors.filepath.end);
                 }
                 for (a = 0; a < pdlen; a += 1) {
                     if (output[0][a + 1] !== undefined && output[0][a] === output[2][a + 1] && output[2][a] === output[0][a + 1] && output[0][a] !== output[2][a]) {
                         if (options.readmethod === "screen") {
-                            console.log("\nLine: " + output[0][a] + colors.filepath.end);
+                            console.log(lf + "Line: " + output[0][a] + colors.filepath.end);
                         } else {
-                            console.log("\n" + colors.filepath.start + path + "\nLine: " + output[0][a] + colors.filepath.end);
+                            console.log(lf + colors.filepath.start + path + lf + "Line: " + output[0][a] + colors.filepath.end);
                         }
                         if (output[3][a - 2] !== undefined) {
                             console.log(output[3][a - 2]);
@@ -1415,7 +1435,7 @@ Examples:
 
         //write output to screen
         //executed from fileComplete
-        screenWrite   = function () {
+        screenWrite    = function () {
             var report = [];
             if (options.jsscope !== "none" && options.mode === "beautify" && (options.lang === "javascript" || options.lang === "auto")) {
                 return reports();
@@ -1432,17 +1452,19 @@ Examples:
 
         //generate the diff output
         //for CLI from files
-        cliFile       = function (data) {
+        cliFile        = function (data) {
             options.source = sfiledump[data.index];
             options.diff   = dfiledump[data.index];
             if (options.source.indexOf("undefined") === 0) {
-                options.source = options.source.replace("undefined", "");
+                options.source = options.source
+                    .replace("undefined", "");
             }
             if (options.diff.indexOf("undefined") === 0) {
-                options.diff = options.diff.replace("undefined", "");
+                options.diff = options.diff
+                    .replace("undefined", "");
             }
             if (typeof options.context !== "number" || options.context < 0) {
-                console.log("\n" + colors.filepath.start + data.localpath + colors.filepath.end);
+                console.log(lf + colors.filepath.start + data.localpath + colors.filepath.end);
             }
             cliWrite(prettydiff.api(options), data.localpath, data.last);
         },
@@ -1450,7 +1472,7 @@ Examples:
         //is a file read operation complete?
         //executed from readLocalFile
         //executed from readHttpFile
-        fileComplete  = function (data) {
+        fileComplete   = function (data) {
             if (data.type === "diff") {
                 dfiledump[data.index] = data.file;
                 dState[data.index]    = true;
@@ -1489,74 +1511,79 @@ Examples:
 
         //read from a binary file
         readBinaryFile = function (data) {
-            fs.open(data.absolutepath, "r", function (err, fd) {
-                var buff = new Buffer(data.size);
-                if (err !== null) {
-                    return readBinaryFile(data);
-                }
-                fs.read(fd, buff, 0, data.size, 0, function (erra, bytesRead, buffer) {
-                    if (erra !== null) {
+            fs
+                .open(data.absolutepath, "r", function (err, fd) {
+                    var buff = new Buffer(data.size);
+                    if (err !== null) {
                         return readBinaryFile(data);
                     }
-                    if (bytesRead > 0) {
-                        data.file = buffer;
-                    }
-                    fileComplete(data);
+                    fs
+                        .read(fd, buff, 0, data.size, 0, function (erra, bytesRead, buffer) {
+                            if (erra !== null) {
+                                return readBinaryFile(data);
+                            }
+                            if (bytesRead > 0) {
+                                data.file = buffer;
+                            }
+                            fileComplete(data);
+                        });
                 });
-            });
         },
 
         //read from a file and determine if text
-        readLocalFile = function (data) {
+        readLocalFile  = function (data) {
             var open = function () {
-                fs.open(data.absolutepath, "r", function (err, fd) {
-                    var msize = (data.size < 100)
-                            ? data.size
-                            : 100,
-                        buff = new Buffer(msize);
-                    if (err !== null) {
-                        return readLocalFile(data);
-                    }
-                    fs.read(fd, buff, 0, msize, 1, function (erra, bytes, buffer) {
-                        if (erra !== null) {
+                fs
+                    .open(data.absolutepath, "r", function (err, fd) {
+                        var msize = (data.size < 100)
+                                ? data.size
+                                : 100,
+                            buff  = new Buffer(msize);
+                        if (err !== null) {
                             return readLocalFile(data);
                         }
-                        var bstring = buffer.toString("utf8", 0, buffer.length);
-                        bstring = bstring.slice(2, bstring.length - 2);
-                        if ((/[\u0002-\u0008|\u000e-\u001f]/).test(bstring) === true) {
-                            data.binary = true;
-                            readBinaryFile(data);
-                        } else {
-                            data.binary = false;
-                            fs.readFile(data.absolutepath, {
-                                encoding: "utf8"
-                            }, function (err, dump) {
-                                if (err !== null) {
+                        fs
+                            .read(fd, buff, 0, msize, 1, function (erra, bytes, buffer) {
+                                if (erra !== null) {
                                     return readLocalFile(data);
                                 }
-                                if (data.file === undefined) {
-                                    data.file = "";
+                                var bstring = buffer.toString("utf8", 0, buffer.length);
+                                bstring = bstring.slice(2, bstring.length - 2);
+                                if ((/[\u0002-\u0008]|[\u000e-\u001f]/).test(bstring) === true) {
+                                    data.binary = true;
+                                    readBinaryFile(data);
+                                } else {
+                                    data.binary = false;
+                                    fs.readFile(data.absolutepath, {
+                                        encoding: "utf8"
+                                    }, function (err, dump) {
+                                        if (err !== null) {
+                                            return readLocalFile(data);
+                                        }
+                                        if (data.file === undefined) {
+                                            data.file = "";
+                                        }
+                                        data.file += dump;
+                                        fileComplete(data);
+                                    });
                                 }
-                                data.file += dump;
-                                fileComplete(data);
                             });
-                        }
                     });
-                });
             };
             if (data.size === undefined) {
-                fs.stat(data.absolutepath, function (errx, stat) {
-                    if (errx !== null) {
-                        return readLocalFile(data);
-                    }
-                    data.size = stat.size;
-                    if (data.size > 0) {
-                        open();
-                    } else {
-                        data.binary = false;
-                        fileComplete(data);
-                    }
-                });
+                fs
+                    .stat(data.absolutepath, function (errx, stat) {
+                        if (errx !== null) {
+                            return readLocalFile(data);
+                        }
+                        data.size = stat.size;
+                        if (data.size > 0) {
+                            open();
+                        } else {
+                            data.binary = false;
+                            fileComplete(data);
+                        }
+                    });
             } else {
                 if (data.size > 0) {
                     open();
@@ -1569,7 +1596,7 @@ Examples:
 
         //resolve file contents from a web address
         //executed from init
-        readHttpFile  = function (data) {
+        readHttpFile   = function (data) {
             var file = [
                 "", 0
             ];
@@ -1589,7 +1616,7 @@ Examples:
 
         //gather files in directory and sub directories
         //executed from init
-        directory     = function () {
+        directory      = function () {
             //the following four are necessary because you can
             //walk a directory tree from a relative path but you
             //cannot read file contents with a relative path in
@@ -1614,9 +1641,11 @@ Examples:
                                 var pusher = function (itempath) {
                                     itempath = itempath.replace(/\\/g, "/");
                                     if (listtype === "diff") {
-                                        dfiles.path.push(itempath.replace(address.dabspath + "/", ""));
+                                        dfiles.path
+                                            .push(itempath.replace(address.dabspath + "/", ""));
                                     } else {
-                                        sfiles.path.push(itempath.replace(address.sabspath + "/", ""));
+                                        sfiles.path
+                                            .push(itempath.replace(address.sabspath + "/", ""));
                                     }
                                     item.count += 1;
                                 };
@@ -1627,17 +1656,17 @@ Examples:
                                                 ? Math.min(sfiles.path.length, dfiles.path.length)
                                                 : sfiles.path.length,
                                             end    = false,
-                                            sizer = function (index, type, filename, finalone) {
+                                            sizer  = function (index, type, filename, finalone) {
                                                 var group = (type === "source")
                                                     ? address.sabspath + "/"
                                                     : address.dabspath + "/";
-                                                fs.stat(group + filename, function (errc, statb) {
+                                                fs.stat(filename, function (errc, statb) {
                                                     var filesize = 0;
                                                     if (errc === null) {
                                                         filesize = statb.size;
                                                     }
                                                     readLocalFile({
-                                                        absolutepath: group + filename,
+                                                        absolutepath: filename,
                                                         index       : index,
                                                         last        : finalone,
                                                         localpath   : filename,
@@ -1646,9 +1675,11 @@ Examples:
                                                     });
                                                 });
                                             };
-                                        sfiles.path.sort();
+                                        sfiles.path
+                                            .sort();
                                         if (options.mode === "diff") {
-                                            dfiles.path.sort();
+                                            dfiles.path
+                                                .sort();
                                             for (b = 0; b < length; b += 1) {
                                                 dState.push(false);
                                                 sState.push(false);
@@ -1668,7 +1699,8 @@ Examples:
                                                         if (length === dfiles.path.length) {
                                                             length += 1;
                                                         }
-                                                        dfiles.path.splice(b, 0, "");
+                                                        dfiles.path
+                                                            .splice(b, 0, "");
                                                     } else if (dfiles.path[b] < sfiles.path[b]) {
                                                         if (options.diffcli === true) {
                                                             clidata[1].push(dfiles.path[b]);
@@ -1676,7 +1708,8 @@ Examples:
                                                         if (length === sfiles.path.length) {
                                                             length += 1;
                                                         }
-                                                        sfiles.path.splice(b, 0, "");
+                                                        sfiles.path
+                                                            .splice(b, 0, "");
                                                     }
                                                     if (b === length - 1) {
                                                         ender();
@@ -1711,7 +1744,7 @@ Examples:
                                             item.count += 1;
                                         }
                                         if (method === "directory") {
-                                            item.total -= 1;
+                                            item.total       -= 1;
                                             item.directories = 0;
                                         }
                                     } else if (stata.isFile() === true) {
@@ -1722,7 +1755,7 @@ Examples:
                                         } else {
                                             sfiles.total -= 1;
                                         }
-                                        console.log(itempath + "\nis an unsupported type");
+                                        console.log(itempath + lf + "is an unsupported type");
                                     }
                                     if (lastitem === true && ((options.mode === "diff" && sfiles.count === sfiles.total && dfiles.count === dfiles.total && sfiles.directories === 0 && dfiles.directories === 0) || (options.mode !== "diff" && item.directories === 0 && item.count === item.total))) {
                                         return preprocess();
@@ -1733,37 +1766,38 @@ Examples:
                             return console.log(erra);
                         }
                         if (stat.isDirectory() === true) {
-                            fs.readdir(start, function (errd, files) {
-                                var x     = 0,
-                                    total = files.length;
-                                if (errd !== null || total === 0) {
-                                    if (method === "subdirectory") {
-                                        if (listtype === "diff") {
-                                            dfiles.directories -= 1;
+                            fs
+                                .readdir(start, function (errd, files) {
+                                    var x         = 0,
+                                        filetotal = files.length;
+                                    if (errd !== null || filetotal === 0) {
+                                        if (method === "subdirectory") {
+                                            if (listtype === "diff") {
+                                                dfiles.directories -= 1;
+                                            } else {
+                                                sfiles.directories -= 1;
+                                            }
+                                        }
+                                        if (errd !== null) {
+                                            return console.log(errd);
+                                        }
+                                        return;
+                                    }
+                                    if (listtype === "diff") {
+                                        item = dfiles;
+                                    } else {
+                                        item = sfiles;
+                                    }
+                                    item.total += filetotal;
+                                    for (x = 0; x < filetotal; x += 1) {
+                                        if (x === filetotal - 1) {
+                                            item.directories -= 1;
+                                            dirtest(start + "/" + files[x], true);
                                         } else {
-                                            sfiles.directories -= 1;
+                                            dirtest(start + "/" + files[x], false);
                                         }
                                     }
-                                    if (errd !== null) {
-                                        return console.log(errd);
-                                    }
-                                    return;
-                                }
-                                if (listtype === "diff") {
-                                    item = dfiles;
-                                } else {
-                                    item = sfiles;
-                                }
-                                item.total += total;
-                                for (x = 0; x < total; x += 1) {
-                                    if (x === total - 1) {
-                                        item.directories -= 1;
-                                        dirtest(start + "/" + files[x], true);
-                                    } else {
-                                        dirtest(start + "/" + files[x], false);
-                                    }
-                                }
-                            });
+                                });
                         } else {
                             return console.log("path: " + start + " is not a directory");
                         }
@@ -1776,15 +1810,16 @@ Examples:
         },
 
         //defaults for the options
-        args          = (function () {
-            var a         = process.argv.slice(2),
+        args           = (function () {
+            var a         = process.argv
+                    .slice(2),
                 b         = 0,
                 c         = a.length,
                 d         = [],
                 e         = [],
                 f         = 0,
                 alphasort = false,
-                pdrcpath  = __dirname.replace(/((\/|\\)api)$/, "") + "/.prettydiffrc",
+                pdrcpath  = localPath + ".prettydiffrc",
                 pathslash = function (name, x) {
                     var y        = x.indexOf("://"),
                         z        = "",
@@ -1825,23 +1860,24 @@ Examples:
                     if (y < 0) {
                         itempath = x.replace(/\\/g, "/");
                     } else {
-                        z = x.slice(0, y);
-                        x = x.slice(y + 3);
+                        z        = x.slice(0, y);
+                        x        = x.slice(y + 3);
                         itempath = z + "://" + x.replace(/\\/g, "/");
                     }
-                    fs.stat(itempath, function (err, stat) {
-                        if (err !== null) {
-                            dir[ind] = -1;
-                            return "";
-                        }
-                        if (stat.isDirectory() === true) {
-                            dir[ind] = 1;
-                        } else if (stat.isFile() === true) {
-                            dir[ind] = 2;
-                        } else {
-                            dir[ind] = -1;
-                        }
-                    });
+                    fs
+                        .stat(itempath, function (err, stat) {
+                            if (err !== null) {
+                                dir[ind] = -1;
+                                return "";
+                            }
+                            if (stat.isDirectory() === true) {
+                                dir[ind] = 1;
+                            } else if (stat.isFile() === true) {
+                                dir[ind] = 2;
+                            } else {
+                                dir[ind] = -1;
+                            }
+                        });
                     if (name === "diff") {
                         address.dabspath = abspath();
                         address.dorgpath = itempath;
@@ -1898,6 +1934,9 @@ Examples:
                         options.context = Number(d[b][1]);
                     } else if (d[b][0] === "correct" && d[b][1] === "true") {
                         options.correct = true;
+                    } else if (d[b][0] === "crlf" && d[b][1] === "true") {
+                        options.crlf = true;
+                        lf           = "\r\n";
                     } else if (d[b][0] === "cssinsertlines" && d[b][1] === "true") {
                         options.cssinsertlines = true;
                     } else if (d[b][0] === "csvchar" && d[b][1].length > 0) {
@@ -1923,7 +1962,11 @@ Examples:
                     } else if (d[b][0] === "html" && d[b][1] === "true") {
                         options.html = true;
                     } else if (d[b][0] === "inchar" && d[b][1].length > 0) {
-                        d[b][1]        = d[b][1].replace(/\\t/g, "\u0009").replace(/\\n/g, "\u000a").replace(/\\r/g, "\u000d").replace(/\\f/g, "\u000c").replace(/\\b/g, "\u0008");
+                        d[b][1]        = d[b][1].replace(/\\t/g, "\u0009")
+                            .replace(/\\n/g, "\u000a")
+                            .replace(/\\r/g, "\u000d")
+                            .replace(/\\f/g, "\u000c")
+                            .replace(/\\b/g, "\u0008");
                         options.inchar = d[b][1];
                     } else if (d[b][0] === "inlevel" && isNaN(d[b][1]) === false) {
                         options.inlevel = Number(d[b][1]);
@@ -1950,6 +1993,8 @@ Examples:
                         options.miniwrap = true;
                     } else if (d[b][0] === "mode" && (d[b][1] === "minify" || d[b][1] === "beautify" || d[b][1] === "parse")) {
                         options.mode = d[b][1];
+                    } else if (d[b][0] === "nocaseindent" && d[b][1] === "true") {
+                        options.nocaseindent = true;
                     } else if (d[b][0] === "noleadzero" && d[b][1] === "true") {
                         options.noleadzero = true;
                     } else if (d[b][0] === "objsort") {
@@ -1989,6 +2034,8 @@ Examples:
                         method = options.readmethod;
                     } else if (d[b][0] === "report") {
                         options.output = d[b][1];
+                    } else if (d[b][0] === "selectorlist" && d[b][1] === "true") {
+                        options.selectorlist = true;
                     } else if (d[b][0] === "semicolon" && d[b][1] === "true") {
                         options.semicolon = true;
                     } else if (d[b][0] === "source" && d[b][1].length > 0) {
@@ -2039,291 +2086,293 @@ Examples:
                 }
             }
 
-            fs.stat(pdrcpath, function (err, stats) {
-                var newopts = {},
-                    pdrc    = {},
-                    rcpath  = "",
-                    key     = "",
-                    init = function init() {
-                        var state  = true,
-                            status = function () {
-                                //status codes
-                                //-1 is not file or directory
-                                //0 is status pending
-                                //1 is directory
-                                //2 is file
-                                //3 is file via http/s
-                                //
-                                //dir[0] - diff
-                                //dir[1] - output
-                                //dir[2] - source
-                                if (dir[2] === 0) {
-                                    return;
-                                }
-                                if (method === "auto") {
-                                    if (dir[2] === 1) {
-                                        method = "subdirectory";
-                                    } else if (dir[2] > 1) {
-                                        if (options.output === "") {
-                                            method = "filescreen";
-                                        } else {
-                                            if (options.output === "" && options.mode !== "diff") {
-                                                console.log("\x1B[91m\nNo output option is specified, so no files written.\n\x1B[39m");
-                                            }
-                                            method = "file";
-                                            if (options.output === "") {
-                                                return console.log("Error: 'readmethod' is value 'file' and argument 'output' is empty");
-                                            }
-                                        }
-                                    } else if (dir[2] < 0) {
-                                        method = "screen";
-                                    }
-                                }
-                                if (dir[2] < 0) {
-                                    state = false;
-                                    if (options.readmethod === "screen" && options.mode !== "diff") {
-                                        return screenWrite();
-                                    }
-                                    if (options.readmethod !== "screen") {
-                                        return console.log("source is not a directory or file");
-                                    }
-                                }
-                                if (dir[2] === 1 && method !== "directory" && method !== "subdirectory") {
-                                    state = false;
-                                    return console.log("source is a directory but readmethod option is not 'auto', 'directory', or 'subd" +
-                                            "irectory'");
-                                }
-                                if (dir[2] > 1) {
-                                    if (method === "directory" || method === "subdirectory") {
-                                        state = false;
-                                        return console.log("source is a file but readmethod option is 'directory' or 'subdirectory'");
-                                    }
-                                    if (method === "screen") {
-                                        method = "filescreen";
-                                    }
-                                }
-                                if (options.mode === "diff") {
-                                    if (dir[0] === 0 || dir[2] === 0) {
+            fs
+                .stat(pdrcpath, function (err, stats) {
+                    var newopts = {},
+                        pdrc    = {},
+                        rcpath  = "",
+                        key     = "",
+                        init    = function init() {
+                            var state  = true,
+                                status = function () {
+                                    //status codes
+                                    //-1 is not file or directory
+                                    //0 is status pending
+                                    //1 is directory
+                                    //2 is file
+                                    //3 is file via http/s
+                                    //
+                                    //dir[0] - diff
+                                    //dir[1] - output
+                                    //dir[2] - source
+                                    if (dir[2] === 0) {
                                         return;
                                     }
-                                    if (dir[0] < 0) {
+                                    if (method === "auto") {
+                                        if (dir[2] === 1) {
+                                            method = "subdirectory";
+                                        } else if (dir[2] > 1) {
+                                            if (options.output === "") {
+                                                method = "filescreen";
+                                            } else {
+                                                if (options.output === "" && options.mode !== "diff") {
+                                                    console.log("\x1B[91m\nNo output option is specified, so no files written.\n\x1B[39m");
+                                                }
+                                                method = "file";
+                                                if (options.output === "") {
+                                                    return console.log("Error: 'readmethod' is value 'file' and argument 'output' is empty");
+                                                }
+                                            }
+                                        } else if (dir[2] < 0) {
+                                            method = "screen";
+                                        }
+                                    }
+                                    if (dir[2] < 0) {
                                         state = false;
-                                        if (dir[2] < 0 && options.readmethod === "screen") {
+                                        if (options.readmethod === "screen" && options.mode !== "diff") {
                                             return screenWrite();
                                         }
-                                        return console.log("diff is not a directory or file");
-                                    }
-                                    if (dir[0] === 1 && method !== "directory" && method !== "subdirectory") {
-                                        state = false;
-                                        return console.log("diff is a directory but readmethod option is not 'directory' or 'subdirectory'");
-                                    }
-                                    if (dir[0] > 2 && (method === "directory" || method === "subdirectory")) {
-                                        state = false;
-                                        return console.log("diff is a file but readmethod option is 'directory' or 'subdirectory'");
-                                    }
-                                    if (dir[0] > 1 && method === "screen") {
-                                        method = "filescreen";
-                                    }
-                                    if (dir[0] > 1 && dir[2] > 1 && (method === "file" || method === "filescreen")) {
-                                        state = false;
-                                        dState.push(false);
-                                        sState.push(false);
-                                        if (dir[0] === 3) {
-                                            readHttpFile({
-                                                absolutepath: options.diff,
-                                                index       : 0,
-                                                last        : true,
-                                                localpath   : options.diff,
-                                                type        : "diff"
-                                            });
-                                        } else {
-                                            readLocalFile({
-                                                absolutepath: options.diff,
-                                                index       : 0,
-                                                last        : true,
-                                                localpath   : options.diff,
-                                                type        : "diff"
-                                            });
+                                        if (options.readmethod !== "screen") {
+                                            return console.log("source is not a directory or file");
                                         }
-                                        if (dir[2] === 3) {
-                                            readHttpFile({
-                                                absolutepath: options.source,
-                                                index       : 0,
-                                                last        : true,
-                                                localpath   : options.source,
-                                                type        : "source"
-                                            });
-                                        } else {
-                                            readLocalFile({
-                                                absolutepath: options.source,
-                                                index       : 0,
-                                                last        : true,
-                                                localpath   : options.source,
-                                                type        : "source"
-                                            });
+                                    }
+                                    if (dir[2] === 1 && method !== "directory" && method !== "subdirectory") {
+                                        state = false;
+                                        return console.log("source is a directory but readmethod option is not 'auto', 'directory', or 'subd" +
+                                                "irectory'");
+                                    }
+                                    if (dir[2] > 1) {
+                                        if (method === "directory" || method === "subdirectory") {
+                                            state = false;
+                                            return console.log("source is a file but readmethod option is 'directory' or 'subdirectory'");
                                         }
-                                        return;
-                                    }
-                                    if (dir[0] === 1 && dir[2] === 1 && (method === "directory" || method === "subdirectory")) {
-                                        state = false;
-                                        return directory();
-                                    }
-                                } else {
-                                    if (dir[2] > 1 && (method === "file" || method === "filescreen")) {
-                                        state = false;
-                                        sState.push(false);
-                                        if (dir[2] === 3) {
-                                            readHttpFile({
-                                                absolutepath: options.source,
-                                                index       : 0,
-                                                last        : true,
-                                                localpath   : options.source,
-                                                type        : "source"
-                                            });
-                                        } else {
-                                            readLocalFile({
-                                                absolutepath: options.source,
-                                                index       : 0,
-                                                last        : true,
-                                                localpath   : options.source,
-                                                type        : "source"
-                                            });
+                                        if (method === "screen") {
+                                            method = "filescreen";
                                         }
-                                        return;
                                     }
-                                    if (dir[2] === 1 && (method === "directory" || method === "subdirectory")) {
-                                        state = false;
-                                        return directory();
+                                    if (options.mode === "diff") {
+                                        if (dir[0] === 0 || dir[2] === 0) {
+                                            return;
+                                        }
+                                        if (dir[0] < 0) {
+                                            state = false;
+                                            if (dir[2] < 0 && options.readmethod === "screen") {
+                                                return screenWrite();
+                                            }
+                                            return console.log("diff is not a directory or file");
+                                        }
+                                        if (dir[0] === 1 && method !== "directory" && method !== "subdirectory") {
+                                            state = false;
+                                            return console.log("diff is a directory but readmethod option is not 'directory' or 'subdirectory'");
+                                        }
+                                        if (dir[0] > 2 && (method === "directory" || method === "subdirectory")) {
+                                            state = false;
+                                            return console.log("diff is a file but readmethod option is 'directory' or 'subdirectory'");
+                                        }
+                                        if (dir[0] > 1 && method === "screen") {
+                                            method = "filescreen";
+                                        }
+                                        if (dir[0] > 1 && dir[2] > 1 && (method === "file" || method === "filescreen")) {
+                                            state = false;
+                                            dState.push(false);
+                                            sState.push(false);
+                                            if (dir[0] === 3) {
+                                                readHttpFile({
+                                                    absolutepath: options.diff,
+                                                    index       : 0,
+                                                    last        : true,
+                                                    localpath   : options.diff,
+                                                    type        : "diff"
+                                                });
+                                            } else {
+                                                readLocalFile({
+                                                    absolutepath: options.diff,
+                                                    index       : 0,
+                                                    last        : true,
+                                                    localpath   : options.diff,
+                                                    type        : "diff"
+                                                });
+                                            }
+                                            if (dir[2] === 3) {
+                                                readHttpFile({
+                                                    absolutepath: options.source,
+                                                    index       : 0,
+                                                    last        : true,
+                                                    localpath   : options.source,
+                                                    type        : "source"
+                                                });
+                                            } else {
+                                                readLocalFile({
+                                                    absolutepath: options.source,
+                                                    index       : 0,
+                                                    last        : true,
+                                                    localpath   : options.source,
+                                                    type        : "source"
+                                                });
+                                            }
+                                            return;
+                                        }
+                                        if (dir[0] === 1 && dir[2] === 1 && (method === "directory" || method === "subdirectory")) {
+                                            state = false;
+                                            return directory();
+                                        }
+                                    } else {
+                                        if (dir[2] > 1 && (method === "file" || method === "filescreen")) {
+                                            state = false;
+                                            sState.push(false);
+                                            if (dir[2] === 3) {
+                                                readHttpFile({
+                                                    absolutepath: options.source,
+                                                    index       : 0,
+                                                    last        : true,
+                                                    localpath   : options.source,
+                                                    type        : "source"
+                                                });
+                                            } else {
+                                                readLocalFile({
+                                                    absolutepath: options.source,
+                                                    index       : 0,
+                                                    last        : true,
+                                                    localpath   : options.source,
+                                                    type        : "source"
+                                                });
+                                            }
+                                            return;
+                                        }
+                                        if (dir[2] === 1 && (method === "directory" || method === "subdirectory")) {
+                                            state = false;
+                                            return directory();
+                                        }
                                     }
-                                }
-                            },
-                            delay  = function () {
-                                if (state === true) {
-                                    status();
-                                    setTimeout(function () {
-                                        delay();
-                                    }, 50);
-                                }
-                            };
-                        if (alphasort === true) {
-                            options.objsort = "all";
-                        }
-                        if (options.lang === "tss") {
-                            options.titanium = true;
-                            options.lang     = "javascript";
-                        }
-                        if (options.mode !== "diff") {
-                            options.diffcli = false;
-                            options.summaryonly = false;
-                        }
-                        if (options.summaryonly === true) {
-                            options.diffcli = true;
-                        }
-
-                        if (help === true) {
-                            return console.log(error);
-                        }
-                        if (c === 1 && options.version === true) {
-                            return console.log(versionString);
-                        }
-                        if (options.source === "") {
-                            return console.log("Error: 'source' argument is empty");
-                        }
-                        if (options.mode === "diff" && options.diff === "") {
-                            return console.log("Error: 'diff' argument is empty");
-                        }
-                        if ((options.mode === "diff" && options.summaryonly === false) || (options.jsscope !== "none" && options.mode === "beautify")) {
-                            options.report = true;
-                        }
-                        if ((options.output === "" || options.summaryonly === true) && options.mode === "diff") {
-                            if (options.readmethod !== "screen") {
+                                },
+                                delay  = function () {
+                                    if (state === true) {
+                                        status();
+                                        setTimeout(function () {
+                                            delay();
+                                        }, 50);
+                                    }
+                                };
+                            if (alphasort === true) {
+                                options.objsort = "all";
+                            }
+                            if (options.lang === "tss") {
+                                options.titanium = true;
+                                options.lang     = "javascript";
+                            }
+                            if (options.mode !== "diff") {
+                                options.diffcli     = false;
+                                options.summaryonly = false;
+                            }
+                            if (options.summaryonly === true) {
                                 options.diffcli = true;
                             }
-                            if (process.argv.join(" ").indexOf(" context:") === -1) {
-                                options.context = 2;
-                            }
-                        }
-                        if (method === "file" && options.output === "" && options.summaryonly === false && options.diffcli === false) {
-                            return console.log("Error: 'readmethod' is value 'file' and argument 'output' is empty");
-                        }
-                        if (options.summaryonly === true) {
-                            options.report = false;
-                        }
-                        if (dir[2] === 0 || (options.mode === "diff" && dir[0] === 0)) {
-                            delay();
-                        } else {
-                            status();
-                        }
-                    };
 
-                if (err !== null) {
-                    init();
-                } else if (stats.isFile() === true) {
-                    fs.readFile(pdrcpath, {
-                        encoding: "utf8"
-                    }, function (error, data) {
-                        var s = options.source,
-                            d = options.diff,
-                            o = options.output,
-                            h = false;
-                        if (error !== null) {
-                            return init();
-                        }
-                        if ((/^(\s*\{)/).test(data) === true && (/(\}\s*)$/).test(data) === true) {
-                            pdrc = JSON.parse(data);
-                            b = 0;
-                            for (key in pdrc) {
-                                if (pdrc.hasOwnProperty(key) && key !== "help" && key !== "version" && key !== "v" && key !== "man" && key !== "manual") {
-                                    b += 1;
-                                    options[key] = pdrc[key];
-                                    if (key === "help" && pdrc[key] === true) {
-                                        h = true;
-                                        b -= 1;
+                            if (help === true) {
+                                return console.log(error);
+                            }
+                            if (c === 1 && options.version === true) {
+                                return console.log(versionString);
+                            }
+                            if (options.source === "") {
+                                return console.log("Error: 'source' argument is empty");
+                            }
+                            if (options.mode === "diff" && options.diff === "") {
+                                return console.log("Error: 'diff' argument is empty");
+                            }
+                            if ((options.mode === "diff" && options.summaryonly === false) || (options.jsscope !== "none" && options.mode === "beautify")) {
+                                options.report = true;
+                            }
+                            if ((options.output === "" || options.summaryonly === true) && options.mode === "diff") {
+                                if (options.readmethod !== "screen") {
+                                    options.diffcli = true;
+                                }
+                                if (process.argv.join(" ").indexOf(" context:") === -1) {
+                                    options.context = 2;
+                                }
+                            }
+                            if (method === "file" && options.output === "" && options.summaryonly === false && options.diffcli === false) {
+                                return console.log("Error: 'readmethod' is value 'file' and argument 'output' is empty");
+                            }
+                            if (options.summaryonly === true) {
+                                options.report = false;
+                            }
+                            if (dir[2] === 0 || (options.mode === "diff" && dir[0] === 0)) {
+                                delay();
+                            } else {
+                                status();
+                            }
+                        };
+
+                    if (err !== null) {
+                        init();
+                    } else if (stats.isFile() === true) {
+                        fs
+                            .readFile(pdrcpath, {
+                                encoding: "utf8"
+                            }, function (error, data) {
+                                var s = options.source,
+                                    d = options.diff,
+                                    o = options.output,
+                                    h = false;
+                                if (error !== null) {
+                                    return init();
+                                }
+                                if ((/^(\s*\{)/).test(data) === true && (/(\}\s*)$/).test(data) === true) {
+                                    pdrc = JSON.parse(data);
+                                    b    = 0;
+                                    for (key in pdrc) {
+                                        if (pdrc.hasOwnProperty(key) && key !== "help" && key !== "version" && key !== "v" && key !== "man" && key !== "manual") {
+                                            b            += 1;
+                                            options[key] = pdrc[key];
+                                            if (key === "help" && pdrc[key] === true) {
+                                                h = true;
+                                                b -= 1;
+                                            }
+                                        }
+                                    }
+                                    if (b > 0 && h === false) {
+                                        help = false;
+                                    }
+                                    method = options.readmethod;
+                                    if (s !== options.source) {
+                                        pathslash("source", options.source);
+                                    }
+                                    if (d !== options.diff) {
+                                        pathslash("diff", options.diff);
+                                    }
+                                    if (o !== options.output) {
+                                        pathslash("output", options.output);
+                                    }
+                                    init();
+                                } else {
+                                    pdrc = require(pdrcpath);
+                                    if (pdrc.preset !== undefined) {
+                                        options = pdrc.preset(options);
+                                        method  = options.readmethod;
+                                        if (s !== options.source) {
+                                            pathslash("source", options.source);
+                                        }
+                                        if (d !== options.diff) {
+                                            pathslash("diff", options.diff);
+                                        }
+                                        if (o !== options.output) {
+                                            pathslash("output", options.output);
+                                        }
+                                        help = false;
+                                        if (options.help === true) {
+                                            help = true;
+                                        }
+                                        init();
                                     }
                                 }
-                            }
-                            if (b > 0 && h === false) {
-                                help = false;
-                            }
-                            method = options.readmethod;
-                            if (s !== options.source) {
-                                pathslash("source", options.source);
-                            }
-                            if (d !== options.diff) {
-                                pathslash("diff", options.diff);
-                            }
-                            if (o !== options.output) {
-                                pathslash("output", options.output);
-                            }
-                            init();
-                        } else {
-                            pdrc = require(pdrcpath);
-                            if (pdrc.preset !== undefined) {
-                                options = pdrc.preset(options);
-                                method = options.readmethod;
-                                if (s !== options.source) {
-                                    pathslash("source", options.source);
-                                }
-                                if (d !== options.diff) {
-                                    pathslash("diff", options.diff);
-                                }
-                                if (o !== options.output) {
-                                    pathslash("output", options.output);
-                                }
-                                help = false;
-                                if (options.help === true) {
-                                    help = true;
-                                }
-                                init();
-                            }
-                        }
-                    });
-                } else {
-                    init();
-                }
-                if (c === 0) {
-                    help = true;
-                }
-            });
+                            });
+                    } else {
+                        init();
+                    }
+                    if (c === 0) {
+                        help = true;
+                    }
+                });
         }());
 }());

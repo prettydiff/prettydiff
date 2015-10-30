@@ -24,6 +24,7 @@
                         a = a.replace(/,\s+/g, ",");
                         return a.split(",");
                     }()),
+                    lf = "\n",
                     outerror = function (x) {
                         var a = 0,
                             b = 0,
@@ -56,6 +57,8 @@
                             error.push("* context        - number  - This shortens the diff output by allowing a specified number of equivalent lines between each line of difference. Defaults to an empty string, which nullifies its use.");
                             error.push("");
                             error.push("* correct        - boolean - Automatically correct some sloppiness in JavaScript.  The default is 'false' and it currently only works if mode is 'beautify'.");
+                            error.push("");
+                            error.push("* crlf           - boolean - If line termination should be Windows (LF) format. Unix (LF) format is the default.");
                             error.push("");
                             error.push("* cssinsertlines - boolean - Inserts new line characters between blocks of CSS code. Default is false.");
                             error.push("");
@@ -104,6 +107,8 @@
                             error.push("* mode           - string  - The operation to be performed. Defaults to 'diff'.");
                             error.push("                   Accepted values: diff, beautify, minify, parse");
                             error.push("");
+                            error.push("* nocaseindent   - boolean - If a case statement should receive the same indentation as the containing switch block.");
+                            error.push("");
                             error.push("* noleadzero     - boolean - If in CSS values leading 0s immediately preceeding a decimal should be removed or prevented.");
                             error.push("");
                             error.push("* objsort        - string  - Sorts properties by key name in JavaScript and/or CSS. Defaults to 'js', which sorts JavaScript object properties.");
@@ -118,6 +123,8 @@
                             error.push("");
                             error.push("* quoteConvert   - string  - If strings in JavaScript or attributes in markup should be double quoted, single quoted, or left to the author. Default is 'none'.");
                             error.push("                   Accepted values: double, single, none");
+                            error.push("");
+                            error.push("* selectorlist   - boolean - If comma separated CSS selectors should be retained on a single line of code.");
                             error.push("");
                             error.push("* semicolon      - boolean - If true and mode is 'diff' and lang is 'javascript' all semicolon characters that immediately preceed any white space containing a new line character will be removed so as to elimate some differences from the diff report HTML output.");
                             error.push("");
@@ -202,7 +209,7 @@
                                 }
                             }
                         } else {
-                            WScript.Echo(error.join("|prettybreak|").replace(/\s+/g, " ").replace(/\|prettybreak\|/g, "\n").replace(/\s+Accepted/g, "\n   Accepted"));
+                            WScript.Echo(error.join("|prettybreak|").replace(/\s+/g, " ").replace(/\|prettybreak\|/g, lf).replace(/\s+Accepted/g, lf + "   Accepted"));
                         }
                         fail = true;
                     },
@@ -218,7 +225,7 @@
                                 c.push(b.ReadLine());
                             }
                             b.Close();
-                            return c.join("\n");
+                            return c.join(lf);
                         }
                         if (y === "source") {
                             outerror("Source file cannot be found.");
@@ -243,7 +250,7 @@
                             for (f = f; f.atEnd() === false; f.moveNext()) {
                                 h = f.item().name;
                                 if (ext[0] === "") {
-                                    g.push(h + "\n");
+                                    g.push(h + lf);
                                 } else {
                                     for (i = 0; i < j; i += 1) {
                                         k = "." + ext[i];
@@ -313,6 +320,7 @@
                     args.content = (WScript.Arguments.Named("content") === "true" || WScript.Arguments.Named("content") === true);
                     args.context = (isNaN(WScript.Arguments.Named("context"))) ? "" : Number(WScript.Arguments.Named("context"));
                     args.correct = (WScript.Arguments.Named("correct") === "true" || WScript.Arguments.Named("correct") === true);
+                    args.crlf = (WScript.Arguments.Named("crlf") === "true" || WScript.Arguments.Named("crlf") === true);
                     args.cssinsertlines = (WScript.Arguments.Named("cssinsertlines") === "true" || WScript.Arguments.Named("cssinsertlines") === true);
                     args.csvchar = (WScript.Arguments.Named("csvchar") || ",");
                     args.diffcomments = (WScript.Arguments.Named("diffcomments") === "true" || WScript.Arguments.Named("diffcomments") === true);
@@ -332,11 +340,13 @@
                     args.methodchain = (WScript.Arguments.Named("methodchain") === "true" || WScript.Arguments.Named("methodchain") === true);
                     args.miniwrap = (WScript.Arguments.Named("miniwrap") === "true" || WScript.Arguments.Named("miniwrap") === true);
                     args.mode = (WScript.Arguments.Named("mode") || "diff");
+                    args.nocaseindent = (WScript.Arguments.Named("nocaseindent") === "true" || WScript.Arguments.Named("nocaseindent") === true);
                     args.noleadzero = (WScript.Arguments.Named("noleadzero") === "true" || WScript.Arguments.Named("noleadzero") === true);
                     args.objsort = (WScript.Arguments.Named("objsort") === "all" || WScript.Arguments.Named("objsort") === "css" || WScript.Arguments.Named("objsort") === "none") ? WScript.Arguments.Named("objsort") : "js";
                     args.quote = (WScript.Arguments.Named("quote") === "true" || WScript.Arguments.Named("quote") === true);
                     args.quoteConvert = (WScript.Arguments.Named("quoteConvert") === "double" || WScript.Arguments.Named("quoteConvert") === "single") ? WScript.Arguments.Named("quoteConvert") : "none";
                     args.preserve = (WScript.Arguments.Named("preserve") === "none" || WScript.Arguments.Named("preserve") === "css" || WScript.Arguments.Named("preserve") === "js") ? WScript.Arguments.Named("preserve") : "all";
+                    args.selectorlist = (WScript.Arguments.Named("selectorlist") === "true" || WScript.Arguments.Named("selectorlist") === true);
                     args.semicolon = (WScript.Arguments.Named("semicolon") === "true" || WScript.Arguments.Named("semicolon") === true);
                     args.sourcelabel = WScript.Arguments.Named("sourcelabel") || "base";
                     args.space = (WScript.Arguments.Named("space") !== "false" && WScript.Arguments.Named("space") !== false);
@@ -353,6 +363,9 @@
                     args.wrap = (isNaN(WScript.Arguments.Named("wrap")) === true) ? 80 : WScript.Arguments.Named("wrap");
                     color = WScript.Arguments.Named("color") || "shadow";
                     args.inchar = args.inchar.replace(/\\t/g, "\u0009").replace(/\\n/g, "\u000a").replace(/\\r/g, "\u000d").replace(/\\f/g, "\u000c").replace(/\\b/g, "\u0008");
+                    if (args.crlf === true) {
+                        lf = "\r\n";
+                    }
                     if (args.inlevel < 1) {
                         args.inlevel = 0;
                     }
@@ -384,7 +397,7 @@
                         args.html = true;
                     }
                     if (args.mode === "diff") {
-                        if (WScript.Arguments.Named("diff") === "string") {
+                        if (typeof WScript.Arguments.Named("diff") === "string") {
                             if (read === "file") {
                                 filestring = [openfile(WScript.Arguments.Named("diff"), "diff")];
                                 args.diff = filestring.toString();
@@ -405,7 +418,7 @@
                         report = [""];
                     } else {
                         if (WScript.Fullname.indexOf("cscript.exe") > -1 && args.mode !== "diff") {
-                            report.push("\n\n\n\n");
+                            report.push(lf + lf + lf + lf);
                         }
                         report.push("<?xml version='1.0' encoding='UTF-8' ?><!DOCTYPE html PUBLIC '-//W3C//DTD XHTML 1.1//EN' 'http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd'><html xmlns='http://www.w3.org/1999/xhtml' xml:lang='en'><head><title>Pretty Diff - The difference tool</title><meta name='robots' content='index, follow'/> <meta name='DC.title' content='Pretty Diff - The difference tool'/> <link rel='canonical' href='http://prettydiff.com/' type='application/xhtml+xml'/><meta http-equiv='Content-Type' content='application/xhtml+xml;charset=UTF-8'/><meta http-equiv='Content-Style-Type' content='text/css'/><style type='text/css'>");
                         report.push(css.body);

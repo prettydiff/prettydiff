@@ -238,6 +238,8 @@ var prettydiff = function prettydiff_(api) {
                         : Number(api.context),
                     //correct - should JSPretty make some corrections for sloppy JS
                     correct       : (api.correct === true || api.correct === "true"),
+                    //crlf - if output should use \r\n (Windows compatible) for line termination
+                    crlf: (api.crlf === true || api.crlf === "true"),
                     //cssinsertlines = if a new line should be forced between each css block
                     cssinsertlines: (api.cssinsertlines === true || api.cssinsertlines === "true"),
                     //csvchar - what character should be used as a separator
@@ -276,7 +278,7 @@ var prettydiff = function prettydiff_(api) {
                     //html - should markup be presumed to be HTML with all the aloppiness HTML
                     //allows
                     html          : (api.html === true || api.html === "true" || (typeof api.html === "string" && api.html === "html-yes")),
-                    //inchar - what character should be used to create a single identation
+                    //inchar - what character(s) should be used to create a single identation
                     inchar        : (typeof api.inchar === "string" && api.inchar.length > 0)
                         ? api.inchar
                         : " ",
@@ -307,6 +309,8 @@ var prettydiff = function prettydiff_(api) {
                     langdefault   : (typeof api.langdefault === "string")
                         ? setlangmode(api.langdefault.toLowerCase())
                         : "text",
+                    //lineendcrlf - if the line terminator should be 'crlf' instead of 'lf'
+                    lineendcrlf: (api.lineendcrlf === true || api.lineendcrlf === "true"),
                     //methodchain - if JavaScript method chains should be strung onto a single line
                     //instead of indented
                     methodchain   : (api.methodchain === true || api.methodchain === "true"),
@@ -317,6 +321,8 @@ var prettydiff = function prettydiff_(api) {
                     mode          : (typeof api.mode === "string" && (api.mode === "minify" || api.mode === "beautify" || api.mode === "parse"))
                         ? api.mode
                         : "diff",
+                    //nocaseindent - if a 'case' should be indented to its parent 'switch'
+                    nocaseindent: (api.nocaseindent === true || api.nocaseindent === "true"),
                     //noleadzero - in CSS removes and prevents a run of 0s from appearing
                     //immediately before a value's decimal.
                     noleadzero    : (api.noleadzero === true || api.noleadzero === "true"),
@@ -333,6 +339,8 @@ var prettydiff = function prettydiff_(api) {
                     quoteConvert  : (api.quoteConvert === "single" || api.quoteConvert === "double")
                         ? api.quoteConvert
                         : "none",
+                    //selectorlist - should comma separated CSS selector lists be on one line
+                    selectorlist: (api.selectorlist === true || api.selectorlist === "true"),
                     //semicolon - should trailing semicolons be removed during a diff operation to
                     //reduce the number of false positive comparisons
                     semicolon     : (api.semicolon === true || api.semicolon === "true"),
@@ -413,7 +421,7 @@ var prettydiff = function prettydiff_(api) {
                     if (a === null) {
                         return;
                     }
-                    if (a === undefined || (/^(\s*#(?!(!\/)))/).test(a) === true || (/\n\s*(\.|@)mixin\(?(\s*)/).test(a) === true) {
+                    if ((/(\s|;|\})((if)|(for)|(function\s*\w*))\s*\(/).test(a) === false && (/return\s*\w*\s*(;|\})/).test(a) === false && (a === undefined || (/^(\s*#(?!(!\/)))/).test(a) === true || (/\n\s*(\.|@)\w+(\(?|(\s*:))/).test(a) === true)) {
                         if ((/\$[a-zA-Z]/).test(a) === true || (/\{\s*(\w|\.|\$|#)+\s*\{/).test(a) === true) {
                             return output("scss");
                         }
@@ -450,7 +458,7 @@ var prettydiff = function prettydiff_(api) {
                         if ((/^(\s*(\{|\[))/).test(a) === true && (/((\]|\})\s*)$/).test(a) && a.indexOf(",") !== -1) {
                             return output("json");
                         }
-                        if ((/((\}?(\(\))?\)*;?\s*)|([a-z0-9]("|')?\)*);?(\s*\})*)$/i).test(a) === true && ((/(var\s+(\w|\$)+[a-zA-Z0-9]*)/).test(a) === true || (/console\.log\(/).test(a) === true || (/document\.get/).test(a) === true || (/((\=|(\$\())\s*function)|(\s*function\s+(\w*\s+)?\()/).test(a) === true || a.indexOf("{") === -1 || (/^(\s*if\s+\()/).test(a) === true)) {
+                        if ((/((\}?(\(\))?\)*;?\s*)|([a-z0-9]("|')?\)*);?(\s*\})*)$/i).test(a) === true && ((/((var)|(let)|(const))\s+(\w|\$)+[a-zA-Z0-9]*/).test(a) === true || (/console\.log\(/).test(a) === true || (/document\.get/).test(a) === true || (/((\=|(\$\())\s*function)|(\s*function\s+(\w*\s+)?\()/).test(a) === true || a.indexOf("{") === -1 || (/^(\s*if\s+\()/).test(a) === true)) {
                             if (a.indexOf("(") > -1 || a.indexOf("=") > -1 || (a.indexOf(";") > -1 && a.indexOf("{") > -1)) {
                                 if ((/:\s*((number)|(string))/).test(a) === true && (/((public)|(private))\s+/).test(a) === true) {
                                     return output("typescript");
@@ -863,7 +871,7 @@ var prettydiff = function prettydiff_(api) {
                             percentWindows    = "",
                             output            = [];
                         for (a = 0; a < sizeOld; a += 1) {
-                            if (source.charAt(a) === "\n") {
+                            if (source.charAt(a) === "\n" && (options.crlf === false || source.charAt(a - 1) === "\r")) {
                                 lines += 1;
                             }
                         }
@@ -952,7 +960,7 @@ var prettydiff = function prettydiff_(api) {
                     apioutput  = global.markuppretty(options);
                     apidiffout = global.report;
                     if (options.inchar !== "\t") {
-                        apioutput = apioutput.replace(/\n[\t]*\u0020\/>/g, "");
+                        apioutput = apioutput.replace(/\r?\n[\t]*\u0020\/>/g, "");
                     }
                 } else if (options.lang === "text") {
                     apioutput  = options.source;
@@ -1267,10 +1275,10 @@ var prettydiff = function prettydiff_(api) {
                     apidiffout = global.csvpretty(options);
                 } else if (options.lang === "markup") {
                     apioutput      = global.markuppretty(options)
-                        .replace(/\n[\t]*\ \/>/g, "");
+                        .replace(/\r?\n[\t]*\ \/>/g, "");
                     options.source = options.diff;
                     apidiffout     = global.markuppretty(options)
-                        .replace(/\n[\t]*\ \/>/g, "");
+                        .replace(/\r?\n[\t]*\ \/>/g, "");
                 } else if (options.lang === "text") {
                     apioutput  = options.source;
                     apidiffout = options.diff;
@@ -1284,8 +1292,8 @@ var prettydiff = function prettydiff_(api) {
                     apidiffout = apidiffout.replace(/'/g, "\"");
                 }
                 if (options.semicolon === true) {
-                    apioutput  = apioutput.replace(/;\n/g, "\n");
-                    apidiffout = apidiffout.replace(/;\n/g, "\n");
+                    apioutput  = apioutput.replace(/;\r\n/g, "\r\n").replace(/;\n/g, "\n");
+                    apidiffout = apidiffout.replace(/;\r\n/g, "\r\n").replace(/;\n/g, "\n");
                 }
                 if (options.sourcelabel === "" || spacetest.test(options.sourcelabel)) {
                     options.sourcelabel = "Base Text";
@@ -1296,20 +1304,11 @@ var prettydiff = function prettydiff_(api) {
                 return (function core__diff() {
                     var a     = [],
                         s     = "s",
-                        t     = "s",
-                        achar = "";
+                        t     = "s";
+                    options.diff = apidiffout;
+                    options.source = apioutput;
                     if (options.diffcli === true) {
-                        return global.diffview({
-                            baseTextLines: apioutput,
-                            baseTextName : options.sourcelabel,
-                            contextSize  : options.context,
-                            diffcli      : options.diffcli,
-                            inline       : options.diffview,
-                            newTextLines : apidiffout,
-                            newTextName  : options.difflabel,
-                            tchar        : options.inchar,
-                            tsize        : options.insize
-                        });
+                        return global.diffview(options);
                     }
                     if (apioutput === "Error: This does not appear to be JavaScript." || apidiffout === "Error: This does not appear to be JavaScript.") {
                         a[1] = [
@@ -1319,19 +1318,10 @@ var prettydiff = function prettydiff_(api) {
                             0, 0
                         ];
                     } else {
-                        if (options.lang !== "text") {
-                            achar = options.inchar;
+                        if (options.lang === "text") {
+                            options.inchar = "";
                         }
-                        a[1] = global.diffview({
-                            baseTextLines: apioutput,
-                            baseTextName : options.sourcelabel,
-                            contextSize  : options.context,
-                            inline       : options.diffview,
-                            newTextLines : apidiffout,
-                            newTextName  : options.difflabel,
-                            tchar        : achar,
-                            tsize        : options.insize
-                        });
+                        a[1] = global.diffview(options);
                         if (a[1][2] === 1) {
                             t = "";
                             if (a[1][1] === 0) {
@@ -1658,22 +1648,22 @@ global.edition        = {
         ace: 150918
     },
     api          : {
-        dom      : 151007, //dom.js
-        nodeLocal: 151014, //node-local.js
-        wsh      : 151003
+        dom      : 151029, //dom.js
+        nodeLocal: 151029, //node-local.js
+        wsh      : 151029
     },
-    css          : 151014, //diffview.css file
-    csspretty    : 151003, //csspretty lib
-    csvpretty    : 151003, //csvpretty lib
-    diffview     : 151003, //diffview lib
-    documentation: 151012, //documentation.xhtml
-    jspretty     : 151007, //jspretty lib
+    css          : 151029, //diffview.css file
+    csspretty    : 151029, //csspretty lib
+    csvpretty    : 151029, //csvpretty lib
+    diffview     : 151029, //diffview lib
+    documentation: 151029, //documentation.xhtml
+    jspretty     : 151029, //jspretty lib
     latest       : 0,
-    markuppretty : 151012, //markuppretty lib
-    prettydiff   : 151005, //this file
+    markuppretty : 151029, //markuppretty lib
+    prettydiff   : 151029, //this file
     safeSort     : 151003, //safeSort lib
-    version      : "1.14.8", //version number
-    webtool      : 151004
+    version      : "1.15.0", //version number
+    webtool      : 151029
 };
 global.edition.latest = (function edition_latest() {
     "use strict";

@@ -533,11 +533,21 @@
             <h2>Pretty Diff Options</h2>
             <div id="options_precedence">
                 <h3>Precedence</h3>
-                <p>Pretty Diff sets option values according to this order of precedence from highest priority to lowest:</p>
+                <p>Pretty Diff sets option values according to this order of precedence from
+                    highest priority to lowest:</p>
                 <ol>
-                    <li>The <a href="#styleguide">styleguide</a> option, which is only used in the <a href="lib/jspretty.js">jspretty</a> library.</li>
-                    <li>The <a href="#options_comment">Pretty Diff comment</a>.</li>
-                    <li>The <a href="">.prettydiffrc</a> file, which is only available to the <a href="api/node-local.js">node-local</a> file (command line Node.js).</li>
+                    <li>The
+                        <a href="#styleguide">styleguide</a>
+                        option, which is only used in the
+                        <a href="lib/jspretty.js">jspretty</a>
+                        library.</li>
+                    <li>The
+                        <a href="#options_comment">Pretty Diff comment</a>.</li>
+                    <li>The
+                        <a href="">.prettydiffrc</a>
+                        file, which is only available to the
+                        <a href="api/node-local.js">node-local</a>
+                        file (command line Node.js).</li>
                     <li>User supplied options</li>
                     <li>Default option values</li>
                 </ol>
@@ -750,6 +760,24 @@
                             <li>
                                 <h5>As labeled in the HTML tool</h5>
                                 Fix Sloppy Code</li>
+                        </ul>
+                    </li>
+                    <li id="crlf">
+                        <h4>crlf</h4>
+                        <ul>
+                            <li>
+                                <h5>Description</h5>
+                                If the line termination of processed output should be Windows CRLF format. Unix
+                                format (LF) is the default.</li>
+                            <li>
+                                <h5>Type</h5>
+                                boolean</li>
+                            <li>
+                                <h5>Default</h5>
+                                false</li>
+                            <li>
+                                <h5>As labeled in the HTML tool</h5>
+                                Line Termination</li>
                         </ul>
                     </li>
                     <li id="cssinsertlines">
@@ -1194,6 +1222,31 @@
                                 Function</li>
                         </ul>
                     </li>
+                    <li id="nocaseindent">
+                        <h4>nocaseindent</h4>
+                        <ul>
+                            <li>
+                                <h5>Description</h5>
+                                If the JavaScript keywords
+                                <em>case</em>
+                                and
+                                <em>default</em>
+                                should receive the same indentation as their parent
+                                <em>switch</em>
+                                keyword. This feature is required by certain code validators and style checkers,
+                                such as
+                                <a href="http://jslint.com/">JSLint</a>.</li>
+                            <li>
+                                <h5>Type</h5>
+                                boolean</li>
+                            <li>
+                                <h5>Default</h5>
+                                false</li>
+                            <li>
+                                <h5>As labeled in the HTML tool</h5>
+                                Case Indentation</li>
+                        </ul>
+                    </li>
                     <li id="noleadzero">
                         <h4>noleadzero</h4>
                         <ul>
@@ -1351,6 +1404,23 @@
                             <li>
                                 <h5>Default</h5>
                                 true</li>
+                        </ul>
+                    </li>
+                    <li id="selectorlist">
+                        <h4>selectorlist</h4>
+                        <ul>
+                            <li>
+                                <h5>Description</h5>
+                                Retains comma separated CSS selectors on a single line of code.</li>
+                            <li>
+                                <h5>Type</h5>
+                                boolean</li>
+                            <li>
+                                <h5>Default</h5>
+                                false</li>
+                            <li>
+                                <h5>As labeled in the HTML tool</h5>
+                                Comma Separated Selector Lists</li>
                         </ul>
                     </li>
                     <li id="semicolon">

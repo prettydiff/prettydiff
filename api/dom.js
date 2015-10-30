@@ -1,5 +1,5 @@
 /*prettydiff.com api.topcoms: true, api.inchar: " ", api.insize: 4, api.vertical: true */
-/*global ace, ActiveXObject, ArrayBuffer, AudioContext, console, document, FileReader, localStorage, location, global, prettydiff, navigator, setTimeout, Uint8Array, window, XMLHttpRequest*/
+/*global ace, ActiveXObject, ArrayBuffer, AudioContext, console, csspretty, csvpretty, diffview, document, FileReader, global, jspretty, localStorage, location, markuppretty, prettydiff, navigator, safeSort, setTimeout, Uint8Array, window, XMLHttpRequest*/
 /*jslint for: true, this: true*/
 /***********************************************************************
  This is written by Austin Cheney on 3 Mar 2009. Anybody may use this;
@@ -10,8 +10,8 @@
  http: //prettydiff.com/
 
  ***********************************************************************/
-var pd       = {},
-    global   = {};
+var pd     = {},
+    global = {};
 
 (function dom__init() {
     "use strict";
@@ -45,7 +45,7 @@ var pd       = {},
         }());
     }
 
-    pd.id = function dom__id(x) {
+    pd.id   = function dom__id(x) {
         if (document.getElementById === undefined) {
             return;
         }
@@ -110,7 +110,7 @@ var pd       = {},
         return;
     }
     if (pd.test.xhr === true && pd.test.domain === true) {
-        pd.error = function dom__error(message, url, line, column) {
+        pd.error       = function dom__error(message, url, line, column) {
             var xhr        = (typeof XMLHttpRequest === "function" || typeof XMLHttpRequest === "object")
                     ? new XMLHttpRequest()
                     : new ActiveXObject("Microsoft.XMLHTTP"),
@@ -162,570 +162,570 @@ var pd       = {},
         window.onerror = pd.error;
     }
     //namespace for data points and dom nodes
-    pd.data = {
-        announcetext: "",
-        audio:{},
-        color: "white", //for use with HTML themes
+    pd.data             = {
+        announcetext       : "",
+        audio              : {},
+        color              : "white", //for use with HTML themes
         colSliderProperties: [],
-        commentString: [],
-        css: {
+        commentString      : [],
+        css                : {
             core   : "body#webtool,body#doc{font-family:'Lucida Sans Unicode','Helvetica','Arial', san" +
-                     "s-serif;font-size:10px;overflow-y:scroll}div#webtool{font-size:10px}#about_licen" +
-                     "se a{display:block}#webtool #announcement{color:#00c;font-weight:bold;height:aut" +
-                     "o;left:14em;margin:0;overflow:hidden;position:absolute;text-overflow:ellipsis;to" +
-                     "p:0.5em;white-space:nowrap;width:40%;z-index:5}#webtool #announcement strong.dup" +
-                     "licate{display:block}#webtool #announcement span{display:block}#apireturn textar" +
-                     "ea{font-size:1.2em;height:50em;width:100%}#apitest input,#apitest label,#apitest" +
-                     " select,#apitest textarea{float:left}#apitest input,#apitest select,#apitest tex" +
-                     "tarea{width:30em}#apitest label{width:20em}#apitest p{clear:both;padding-top:0.7" +
-                     "5em}#beau-other-span,#diff-other-span{left:-20em;position:absolute;width:0}#webt" +
-                     "ool #beauops p strong,#webtool #options p strong,#webtool #diffops p strong,#web" +
-                     "tool #miniops p strong,#webtool #parseops p strong,#webtool #options .label,#web" +
-                     "tool #diffops .label,#webtool #miniops .label,#webtool #beauops .label,#webtool " +
-                     "#parseops .label{display:block;float:none;font-size:1em;font-weight:bold;margin-" +
-                     "bottom:0.5em}#beauops span strong,#miniops span strong,#diffops span strong{disp" +
-                     "lay:inline;float:none;font-size:1em;width:auto}#feedreport{right:38.8em}#beautyi" +
-                     "nput,#minifyinput,#parseinput,#baseText,#newText,#beautyoutput,#minifyoutput,#pa" +
-                     "rseoutput{font-size:1em}#Beautify,#Minify,#Parse,#diffBase,#diffNew{border-radiu" +
-                     "s:0.4em;padding:1em 1.25em}#Beautify .input,#Minify .input,#Parse .input,#Beauti" +
-                     "fy .output,#Minify .output,#Parse .output{width:49%}#Beautify .input label,#Beau" +
-                     "tify .output label,#Minify .input label,#Minify .output label,#Parse .input labe" +
-                     "l,#Parse .output label{display:block;font-size:1.05em;font-weight:bold}#Beautify" +
-                     " p.file,#Minify p.file,#Parse p.file{clear:none;float:none}#Beautify textarea,#M" +
-                     "inify textarea,#Parse textarea{margin-bottom:0.75em}#checklist_option li{font-we" +
-                     "ight:bold}#checklist_option li li{font-weight:normal}#codeInput{margin-bottom:1e" +
-                     "m}#codeInput #diffBase p,#codeInput #diffNew p{clear:both;float:none}#codeInput " +
-                     ".input{clear:none;float:left}#codeInput .output{clear:none;float:right;margin-to" +
-                     "p:-2.4em}#cssreport.doc table{position:absolute}#css-size{left:24em}#css-uri{lef" +
-                     "t:40em}#css-uri td{text-align:left}#webtool #csvchar{width:11.8em}#webtool #dcol" +
-                     "orScheme,#doc #dcolorScheme{float:right;margin:-3em 0 0}#webtool #dcolorScheme l" +
-                     "abel,#doc #dcolorScheme label{display:inline-block;font-size:1em}#diff .addsourc" +
-                     "e{cursor:pointer;margin-bottom:1em;padding:0}#diff .addsource input{display:bloc" +
-                     "k;float:left;margin:0.5em 0.5em -1.5em}#diff .addsource label{cursor:pointer;dis" +
-                     "play:inline-block;font-size:1.2em;padding:0.5em 0.5em 0.5em 2em}#diffBase,#diffN" +
-                     "ew,#Beautify,#Minify,#Parse#doc div,#doc div div,#doc ol,#webtool #option_commen" +
-                     "t,#update,#thirdparties img,#diffoutput #thirdparties,.ace_editor,#webtool .box " +
-                     "h3.heading,#webtool .box .body,#webtool .options,.diff .replace em,.diff .delete" +
-                     " em,.diff .insert em,button,fieldset{border-style:solid;border-width:0.1em}#diff" +
-                     "Base,#diffNew{padding:1.25em 1%;width:47%}#diffBase textarea,#diffNew textarea{w" +
-                     "idth:99.5%}#diffBase{float:left;margin-right:1%}#diffNew{float:right}#diffoutput" +
-                     "{width:100%}#diffoutput #thirdparties li{display:inline-block;list-style-type:no" +
-                     "ne}#diffoutput li em,#diffoutput p em,.analysis .bad,.analysis .good{font-weight" +
-                     ":bold}#diffoutput ul{font-size:1.2em;margin-top:1em}#diffoutput ul li,#doc #pars" +
-                     "e ul li{display:list-item;list-style-type:disc}#doc_contents a{text-decoration:n" +
-                     "one}#doc_contents ol{padding-bottom:1em}#doc_contents ol ol li{font-size:0.75em;" +
-                     "list-style:lower-alpha;margin:0.5em 0 1em 3em}#doc #doc_contents ol ol{backgroun" +
-                     "d-color:inherit;border-style:none;margin:0.25em 0.3em 0 0;padding-bottom:0}#doc " +
-                     "div.beautify{border-style:none}#doc #execution h3{background:transparent;border-" +
-                     "style:none;font-size:1em;font-weight:bold}#doc code,.doc code{display:block;font" +
-                     "-family:'Courier New',Courier,'Lucida Console',monospace;font-size:1.1em}#doc di" +
-                     "v,.doc div{margin-bottom:2em;padding:0 0.5em 0.5em}#doc div div,.doc div div{cle" +
-                     "ar:both;margin-bottom:1em}#doc em,.doc em,#webtool .box .body em{font-style:norm" +
-                     "al;font-weight:bold}#doc div h2,.doc div h2{font-size:1.6em;margin:0.5em 0.5em 0" +
-                     ".5em 0}#doc div h3,.doc div h3{margin-bottom:0.5em;margin-top:0.5em}#doc ol,.doc" +
-                     " ol{clear:both;padding:0}#doc ol li span,.doc ol li span{display:block;margin-le" +
-                     "ft:2em}#doc ol ol,#doc ul ol,.doc ol ol,.doc ul ol{margin-right:0.5em}#doc td sp" +
-                     "an,.doc td span{display:block}#doc table,.doc table,#webtool .box .body table{bo" +
-                     "rder-collapse:collapse;border-style:solid;border-width:0.2em;clear:both}#doc tab" +
-                     "le,.doc table{font-size:1.2em}#doc td,#doc th,.doc td,.doc th{border-left-style:" +
-                     "solid;border-left-width:0.1em;border-top-style:solid;border-top-width:0.1em;padd" +
-                     "ing:0.5em}#doc th,.doc th{font-weight:bold}#doc ul,.doc ul{margin-top:1em}#doc u" +
-                     "l li,.doc ul li{font-size:1.2em}#feedemail{display:block;width:100%}#feedreportb" +
-                     "ody{text-align:center}#feedreportbody .radiogroup .feedlabel{display:block;font-" +
-                     "size:1.4em;margin:0 0 1em;width:auto}#feedreportbody .radiogroup span{display:in" +
-                     "line-block;margin:0 0 2em;width:5em}#feedreportbody .radiogroup input{position:a" +
-                     "bsolute;top:-2000em}#feedreportbody .radiogroup label{border-radius:50%;border-s" +
-                     "tyle:solid;border-width:0.1em;cursor:pointer;display:inline-block;height:1.5em;l" +
-                     "ine-height:1.5;text-align:center;width:1.5em}#feedreportbody .radiogroup span sp" +
-                     "an{display:block;font-size:0.8em;margin:0;width:auto}#feedsubmit{float:none;font" +
-                     "-family:inherit;height:3em;margin:2.5em auto 0;position:static;text-shadow:none;" +
-                     "width:50%}#doc #function_properties h4{float:none;font-size:1.2em}#doc #function" +
-                     "_properties li{padding:0 0 0 0.5em}#function_properties h4 strong{color:#c00}#fu" +
-                     "nction_properties h5{font-size:1em;margin:0 0 0 -2.5em}#function_properties ol{p" +
-                     "adding-right:1em}#webtool #functionGroup,#webtool #headline{border-radius:0.2em;" +
-                     "border-style:solid;border-width:0.1em;padding:0.7em 1.2em}#webtool #functionGrou" +
-                     "p input{cursor:pointer}#webtool #functionGroup label{cursor:pointer;font-size:1e" +
-                     "m}#webtool #functionGroup span{display:inline-block;margin-left:2em}#webtool #he" +
-                     "adline{margin: 0 0 1em;}#webtool #headline h2{background:transparent;border-styl" +
-                     "e:none;float:left;line-height:1;margin:0 0.25em 0 0;padding:0}#webtool #headline" +
-                     " p{clear:none;float:left;font-size: 1.8em;line-height:1;margin:0}#webtool #hideO" +
-                     "ptions{margin-left:5em}#webtool #infolinks{float:right;margin:0 0 -4em}#webtool " +
-                     "#infolinks li{display:inline-block;font-size:1.4em;list-style:none;margin:0.5em " +
-                     "1em 0}#jserror code{font-family:'Courier New',Courier,'Lucida Console',monospace" +
-                     "}#jserror span{display:block}#webtool #modalSave p{background:#eee;color:#333;fo" +
-                     "nt-size:2em;padding:1em;position:absolute;text-align:center;top:10em;width:25em;" +
-                     "z-index:9001}#modalSave p em{display:block;font-size:0.75em;margin-top:1em}#moda" +
-                     "lSave p strong{color:#c00;font-weight:bold}#modalSave span{background:#000;displ" +
-                     "ay:block;left:0;opacity:0.5;position:absolute;top:0;z-index:9000}#codereport{rig" +
-                     "ht:19.8em}#webtool #option_comment{font-size:1.2em;height:2.5em;width:100%}#webt" +
-                     "ool #option_commentClear{margin:-0.5em -0.25em 0 0}#options{margin:0 0 1em}#opti" +
-                     "ons #resetOptions{margin:0 0 -6em}#options p.apiname, #addOptions p.apiname{floa" +
-                     "t:left;font-size:1.2em;line-height:2.4;margin:0 -40em 0 15em;padding:0}#options " +
-                     "span.apiname, #addOptions span.apiname{display:inline-block;float:none;font-size" +
-                     ":1em;margin:0 0 0 1em;width:auto}#options .resetbutton{padding:0}#webtool #optio" +
-                     "ns button{float:right;height:2em;padding:0;width:15em}#options label{width:auto}" +
-                     "#options p,#addOptions p{clear:both;font-size:1em;margin:0;padding:1em 0 0}#webt" +
-                     "ool #options p span{height:2em;margin:0 0 0 1em}#pdsamples{list-style-position:i" +
-                     "nside;margin:0;padding:0;position:relative;z-index:10}#pdsamples li{border-radiu" +
-                     "s:1em;border-style:solid;border-width:0.1em;margin:0 0 3em;padding:1em}#pdsample" +
-                     "s li div{border-radius:1em;border-style:solid;border-width:0.1em;margin:0;paddin" +
-                     "g:1em}#pdsamples li p{display:inline-block;font-size:1em;margin:0}#pdsamples li " +
-                     "p a{display:block;margin:0 0 1em 2em}#pdsamples li ul{margin:0 0 0 2em}#reports{" +
-                     "height:4em}#webtool #reports h2{display:none}#samples #dcolorScheme{position:rel" +
-                     "ative;z-index:1000}#samples #pdsamples li li{background:none transparent;border-" +
-                     "style:none;display:list-item;list-style:disc outside;margin:0;padding:0.5em}#sam" +
-                     "ples h1{float:none}#samples h2{border-style:none;float:none;font-size:1.5em;marg" +
-                     "in:1em 0}#showOptionsCallOut{background:#fff;border:0.1em solid #000;box-shadow:" +
-                     "0.2em 0.2em 0.4em rgba(0,0,0,.15);left:28.6%;padding:0.5em;position:absolute;top" +
-                     ":4.6em;width:20%;z-index:1000}#showOptionsCallOut a{color:#66f;font-weight:bold}" +
-                     "#showOptionsCallOut em{color:#c00}#showOptionsCallOut strong{color:#090}#statrep" +
-                     "ort{right:0.8em}#statreport .body p,#statreport .body li,#statreport .body h3{fo" +
-                     "nt-size:1.2em}#statreport .body h3{margin-top:0}#statreport .body ul{margin-top:" +
-                     "1em}#textareaTabKey{border-style:solid;border-width:0.1em;left:51%;padding:0.5em" +
-                     ";position:absolute;width:28em}#textareaTabKey strong{text-decoration:underline}#" +
-                     "textareaTabKey em{font-weight:bold}#textreport{width:100%}#thirdparties a{border" +
-                     "-style:none;display:block;height:4em;text-decoration:none}#update{clear:left;flo" +
-                     "at:right;font-weight:bold;padding:0.25em;position:absolute;right:0;top:0;z-index" +
-                     ":2;}#update span{display:block}#update span span{display:inline-block;float:righ" +
-                     "t}#webtool .diff h3{border-style:none solid solid;border-width:0 0.1em 0.2em;box" +
-                     "-shadow:none;display:block;font-family:Verdana;font-size:1.2em;margin:0 0 0 -.1e" +
-                     "m;padding:0.2em 2em;text-align:left}#webtool .options input[type=text]{margin-ri" +
-                     "ght:1em;width:11.6em}#webtool .options input[type=text],#webtool div input,#webt" +
-                     "ool textarea{border-style:inset;border-width:0.1em}.analysis th{text-align:left}" +
-                     ".analysis .parseData td{font-family:'Courier New',Courier,'Lucida Console',monos" +
-                     "pace;text-align:left;white-space:pre}.analysis td{text-align:right}#webtool .bea" +
-                     "utify,#webtool .diff{border-style:solid;border-width:0.2em;display:inline-block;" +
-                     "font-family:'Courier New',Courier,'Lucida Console',monospace;margin:0 1em 1em 0;" +
-                     "position:relative}#webtool .beautify .count,#webtool .diff .count{border-style:s" +
-                     "olid;border-width:0 0.1em 0 0;font-weight:normal;padding:0;text-align:right}#web" +
-                     "tool .beautify .count li,#webtool .diff .count li{padding-left:2em}#webtool .bea" +
-                     "utify .count li{padding-top:0.5em}#webtool .beautify .count li.fold,#webtool .di" +
-                     "ff .count li.fold{color:#900;cursor:pointer;font-weight:bold;padding-left:0.5em}" +
-                     "#webtool .beautify .data,#webtool .diff .data{text-align:left;white-space:pre}#w" +
-                     "ebtool .beautify .data em{display:inline-block;font-style:normal;font-weight:bol" +
-                     "d;padding-top:0.5em}#webtool .beautify .data li,#webtool .diff .data li{padding-" +
-                     "left:0.5em;white-space:pre}#webtool .beautify li,#webtool .diff li{border-style:" +
-                     "none none solid;border-width:0 0 0.1em;display:block;line-height:1.2;list-style-" +
-                     "type:none;margin:0;padding-bottom:0;padding-right:0.5em}#webtool .beautify ol,#w" +
-                     "ebtool .diff ol{display:table-cell;margin:0;padding:0}#webtool .box{border-style" +
-                     ":solid;border-width:0;left:auto;margin:0;padding:0;position:absolute;z-index:10}" +
-                     "#webtool .box .buttons button{border-radius:0;border-style:solid;border-width:0." +
-                     "1em;display:block;float:right;font-family:'Lucida Console','Trebuchet MS','Arial" +
-                     "';height:1.75em;padding:0;position:absolute;right:0;text-align:center;top:0;widt" +
-                     "h:1.75em;z-index:7}#webtool .box .buttons button.resize{border-width:0.05em;curs" +
-                     "or:se-resize;font-size:1.667em;font-weight:normal;height:0.8em;line-height:0.5em" +
-                     ";margin:-.85em 0 0;position:absolute;right:0.05em;top:100%;width:0.85em}#webtool" +
-                     " .box .buttons button.minimize{margin:0.35em 4em 0 0}#webtool .box .buttons butt" +
-                     "on.maximize{margin:0.35em 1.75em 0 0}#webtool .box .buttons button.save{margin:0" +
-                     ".35em 6.25em 0 0}#webtool .box .buttons{float:right;margin:0}#webtool .box h3.he" +
-                     "ading{float:left;font-size:1em;height:3em;margin:0 0 -3.2em;padding:0;position:r" +
-                     "elative;width:17em;z-index:6}#webtool .box h3.heading button{background:transpar" +
-                     "ent;border-radius:0;border-style:none;box-shadow:none;cursor:pointer;display:blo" +
-                     "ck;font-size:1.8em;height:100%;margin:0;padding:0.25em 0 0 0.5em;text-align:left" +
-                     "}#webtool .box .heading button:hover{background:transparent;color:inherit;text-s" +
-                     "hadow:none}#webtool .box .body{clear:both;height:20em;margin-top:-.1em;overflow:" +
-                     "scroll;padding:4.25em 1em 1em;position:relative;right:0;top:0;width:75em;z-index" +
-                     ":5}#webtool .button{margin:1em 0;text-align:center}#webtool .button button{displ" +
-                     "ay:block;font-size:2em;height:1.5em;margin:0 auto;padding:0;width:50%}#webtool ." +
-                     "clear,#doc .clear{clear:both;display:block}.diff .skip{border-style:none none so" +
-                     "lid;border-width:0 0 0.1em}.diff .diff-left,.diff .diff-right{display:table-cell" +
-                     "}.diff .diff-left{border-style:none none none solid;border-width:0 0 0 0.1em}.di" +
-                     "ff .diff-right{border-style:none none none solid;border-width:0 0 0 0.1em;margin" +
-                     "-left:-.1em;min-width:16.5em;right:0;top:0}.diff-right .data ol{min-width:16.5em" +
-                     "}.diff-right .data{border-style:none solid none none;border-width:0 0.1em 0 0;wi" +
-                     "dth:100%}.diff-right .data li{min-width:16.5em}.diff li,.diff p,.diff h3,.beauti" +
-                     "fy li{font-size:1.1em}.diff li{padding-top:0.5em}.diff li em{font-style:normal;m" +
-                     "argin:0 -.09em;padding:0.05em 0}#webtool .diff p.author{border-style:solid;borde" +
-                     "r-width:0.2em 0.1em 0.1em;margin:0;overflow:hidden;padding:0.4em;text-align:righ" +
-                     "t}.difflabel{display:block;height:0}#webtool .file,#webtool .labeltext{font-size" +
-                     ":0.9em;font-weight:bold;margin-bottom:1em}#webtool .file input,#webtool .labelte" +
-                     "xt input{display:inline-block;margin:0 0.7em 0 0;width:16em}#webtool .input,#web" +
-                     "tool.output{margin:0}.metainfo{position:relative;}#webtool .options{border-radiu" +
-                     "s:0.4em;clear:both;margin-bottom:1em;padding:1em;width:auto}#webtool .options in" +
-                     "put,#webtool .options label{border-style:none;display:block;float:left}#webtool " +
-                     ".output label{text-align:right}#webtool .options p span label{font-size:1em}#web" +
-                     "tool .options p span{display:block;float:left;font-size:1em;min-width:16em;paddi" +
-                     "ng-bottom:0.5em}#webtool .options select,#webtool #csvchar{margin:0 0 0 1em}#web" +
-                     "tool .options fieldset select{float:left;margin:0 1em 0 0}#webtool .options span" +
-                     " label{margin-left:0.4em}body#doc{font-size:0.8em;margin:0 auto;max-width:80em}b" +
-                     "ody#doc #function_properties ul{margin:0}body#doc #function_properties ul li{fon" +
-                     "t-size:0.9em;margin:0.5em 0 0 4em}body#doc ul li,body#doc ol li{font-size:1.1em}" +
-                     "body#doc table{font-size:1em}#webtool button,#webtool a.button{border-radius:0.1" +
-                     "5em;display:block;font-weight:bold;padding:0.2em 0;width:100%}#webtool div .butt" +
-                     "on{text-align:center}#webtool div button,#webtool div a.button{display:inline-bl" +
-                     "ock;font-weight:bold;margin:1em 0;padding:1em 2em}#webtool button:hover,#webtool" +
-                     " a.button:hover{cursor:pointer}#webtool fieldset,#doc fieldset{border-radius:1em" +
-                     ";clear:both;margin:1em 0 0;padding:0 1em 1em}#webtool h1{float:left;font-size:2e" +
-                     "m;margin:0 0.5em 0.5em 0}#webtool h1{position:absolute;top:-200em;z-index:0;}#we" +
-                     "btool h1 svg,#doc h1 svg{border-style:solid;border-width:0.05em;float:left;heigh" +
-                     "t:1.5em;margin-right:0.5em;width:1.5em}#webtool h1 span,#doc h1 span{font-size:0" +
-                     ".5em}#webtool h2,#doc h2,#webtool h3,#doc h3{border-style:solid;border-width:0.0" +
-                     "75em;display:inline-block;font-size:1.8em;font-weight:bold;margin:0 0.5em 0.5em " +
-                     "0;padding:0 0.2em}#webtool h3,#doc h3{font-size:1.6em}#webtool h4,#doc h4{font-s" +
-                     "ize:1.4em}#webtool inputt[type='radio'],#doc input[type='radio']{margin:0 0.25em" +
-                     "}#webtool input[type='file']{box-shadow:none}#webtool label,#doc label{display:i" +
-                     "nline;font-size:1.4em}#webtool legend,#doc legend{border-radius:1em;border-style" +
-                     ":solid;border-width:0.1em;font-size:1.4em;font-weight:bold;margin-left:-0.25em;p" +
-                     "adding:0 0.5em}#webtool fieldset fieldset legend{font-size:1.2em}#webtool li,#do" +
-                     "c li{clear:both;margin:1em 0 1em 3em}#webtool li h4,#doc li h4{display:inline;fl" +
-                     "oat:left;margin:0.4em 0;text-align:left;width:14em}#webtool ol li{font-size:1.2e" +
-                     "m}#doc ol li{font-size:1.4em;list-style-type:decimal}#webtool ol li li,#doc ol l" +
-                     "i li{font-size:1em}#webtool p,#doc p{clear:both;font-size:1.2em;margin:0 0 1em}#" +
-                     "webtool select,#doc select{border-style:inset;border-width:0.1em;width:13.5em}#w" +
-                     "ebtool strong.new,#doc strong .new{background:#ff6;font-style:italic}#webtool st" +
-                     "rong label,#doc strong label{font-size:1em;width:inherit}#webtool textarea{displ" +
-                     "ay:inline-block;font-family:'Courier New',Courier,'Lucida Console',monospace;hei" +
-                     "ght:10em;margin:0 0 -.1em;width:100%}#webtool ul,#doc ul{margin:-1.4em 0 2em;pad" +
-                     "ding:0}#webtool ul li,#doc ul li{list-style-type:none}@media print{#webtool div," +
-                     "#doc div{width:100%}html td{font-size:0.8em;white-space:normal}#webtool p,#doc p" +
-                     ",#webtool .options,#Beautify,#Minify,#Parse,#diff,#webtool ul,#doc ul{display:no" +
-                     "ne}}@media screen and (-webkit-min-device-pixel-ratio:0){.beautify .count li{pad" +
-                     "ding-top:0.546em}.beautify .data li{line-height:1.3}}@media (max-width: 640px){#" +
-                     "codeInput label{display:none}#diffBase,#diffNew{width:46%}#doc #dcolorScheme{mar" +
-                     "gin:0 0 1em}#functionGroup,#headline{height:4em}#functionGroup span{margin-left:" +
-                     "0.5em;position:relative;z-index:10}#infolinks{margin:0}#reports{display:none}#up" +
-                     "date{margin-top:2.75em}#webtool .labeltext input,#webtool .file input{width:12em" +
-                     "}}",
+                         "s-serif;font-size:10px;overflow-y:scroll}div#webtool{font-size:10px}#about_licen" +
+                         "se a{display:block}#webtool #announcement{color:#00c;font-weight:bold;height:aut" +
+                         "o;left:14em;margin:0;overflow:hidden;position:absolute;text-overflow:ellipsis;to" +
+                         "p:0.5em;white-space:nowrap;width:40%;z-index:5}#webtool #announcement strong.dup" +
+                         "licate{display:block}#webtool #announcement span{display:block}#apireturn textar" +
+                         "ea{font-size:1.2em;height:50em;width:100%}#apitest input,#apitest label,#apitest" +
+                         " select,#apitest textarea{float:left}#apitest input,#apitest select,#apitest tex" +
+                         "tarea{width:30em}#apitest label{width:20em}#apitest p{clear:both;padding-top:0.7" +
+                         "5em}#beau-other-span,#diff-other-span{left:-20em;position:absolute;width:0}#webt" +
+                         "ool #beauops p strong,#webtool #options p strong,#webtool #diffops p strong,#web" +
+                         "tool #miniops p strong,#webtool #parseops p strong,#webtool #options .label,#web" +
+                         "tool #diffops .label,#webtool #miniops .label,#webtool #beauops .label,#webtool " +
+                         "#parseops .label{display:block;float:none;font-size:1em;font-weight:bold;margin-" +
+                         "bottom:0.5em}#beauops span strong,#miniops span strong,#diffops span strong{disp" +
+                         "lay:inline;float:none;font-size:1em;width:auto}#feedreport{right:38.8em}#beautyi" +
+                         "nput,#minifyinput,#parseinput,#baseText,#newText,#beautyoutput,#minifyoutput,#pa" +
+                         "rseoutput{font-size:1em}#Beautify,#Minify,#Parse,#diffBase,#diffNew{border-radiu" +
+                         "s:0.4em;padding:1em 1.25em}#Beautify .input,#Minify .input,#Parse .input,#Beauti" +
+                         "fy .output,#Minify .output,#Parse .output{width:49%}#Beautify .input label,#Beau" +
+                         "tify .output label,#Minify .input label,#Minify .output label,#Parse .input labe" +
+                         "l,#Parse .output label{display:block;font-size:1.05em;font-weight:bold}#Beautify" +
+                         " p.file,#Minify p.file,#Parse p.file{clear:none;float:none}#Beautify textarea,#M" +
+                         "inify textarea,#Parse textarea{margin-bottom:0.75em}#checklist_option li{font-we" +
+                         "ight:bold}#checklist_option li li{font-weight:normal}#codeInput{margin-bottom:1e" +
+                         "m}#codeInput #diffBase p,#codeInput #diffNew p{clear:both;float:none}#codeInput " +
+                         ".input{clear:none;float:left}#codeInput .output{clear:none;float:right;margin-to" +
+                         "p:-2.4em}#cssreport.doc table{position:absolute}#css-size{left:24em}#css-uri{lef" +
+                         "t:40em}#css-uri td{text-align:left}#webtool #csvchar{width:11.8em}#webtool #dcol" +
+                         "orScheme,#doc #dcolorScheme{float:right;margin:-3em 0 0}#webtool #dcolorScheme l" +
+                         "abel,#doc #dcolorScheme label{display:inline-block;font-size:1em}#diff .addsourc" +
+                         "e{cursor:pointer;margin-bottom:1em;padding:0}#diff .addsource input{display:bloc" +
+                         "k;float:left;margin:0.5em 0.5em -1.5em}#diff .addsource label{cursor:pointer;dis" +
+                         "play:inline-block;font-size:1.2em;padding:0.5em 0.5em 0.5em 2em}#diffBase,#diffN" +
+                         "ew,#Beautify,#Minify,#Parse#doc div,#doc div div,#doc ol,#webtool #option_commen" +
+                         "t,#update,#thirdparties img,#diffoutput #thirdparties,.ace_editor,#webtool .box " +
+                         "h3.heading,#webtool .box .body,#webtool .options,.diff .replace em,.diff .delete" +
+                         " em,.diff .insert em,button,fieldset{border-style:solid;border-width:0.1em}#diff" +
+                         "Base,#diffNew{padding:1.25em 1%;width:47%}#diffBase textarea,#diffNew textarea{w" +
+                         "idth:99.5%}#diffBase{float:left;margin-right:1%}#diffNew{float:right}#diffoutput" +
+                         "{width:100%}#diffoutput #thirdparties li{display:inline-block;list-style-type:no" +
+                         "ne}#diffoutput li em,#diffoutput p em,.analysis .bad,.analysis .good{font-weight" +
+                         ":bold}#diffoutput ul{font-size:1.2em;margin-top:1em}#diffoutput ul li,#doc #pars" +
+                         "e ul li{display:list-item;list-style-type:disc}#doc_contents a{text-decoration:n" +
+                         "one}#doc_contents ol{padding-bottom:1em}#doc_contents ol ol li{font-size:0.75em;" +
+                         "list-style:lower-alpha;margin:0.5em 0 1em 3em}#doc #doc_contents ol ol{backgroun" +
+                         "d-color:inherit;border-style:none;margin:0.25em 0.3em 0 0;padding-bottom:0}#doc " +
+                         "div.beautify{border-style:none}#doc #execution h3{background:transparent;border-" +
+                         "style:none;font-size:1em;font-weight:bold}#doc code,.doc code{display:block;font" +
+                         "-family:'Courier New',Courier,'Lucida Console',monospace;font-size:1.1em}#doc di" +
+                         "v,.doc div{margin-bottom:2em;padding:0 0.5em 0.5em}#doc div div,.doc div div{cle" +
+                         "ar:both;margin-bottom:1em}#doc em,.doc em,#webtool .box .body em{font-style:norm" +
+                         "al;font-weight:bold}#doc div h2,.doc div h2{font-size:1.6em;margin:0.5em 0.5em 0" +
+                         ".5em 0}#doc div h3,.doc div h3{margin-bottom:0.5em;margin-top:0.5em}#doc ol,.doc" +
+                         " ol{clear:both;padding:0}#doc ol li span,.doc ol li span{display:block;margin-le" +
+                         "ft:2em}#doc ol ol,#doc ul ol,.doc ol ol,.doc ul ol{margin-right:0.5em}#doc td sp" +
+                         "an,.doc td span{display:block}#doc table,.doc table,#webtool .box .body table{bo" +
+                         "rder-collapse:collapse;border-style:solid;border-width:0.2em;clear:both}#doc tab" +
+                         "le,.doc table{font-size:1.2em}#doc td,#doc th,.doc td,.doc th{border-left-style:" +
+                         "solid;border-left-width:0.1em;border-top-style:solid;border-top-width:0.1em;padd" +
+                         "ing:0.5em}#doc th,.doc th{font-weight:bold}#doc ul,.doc ul{margin-top:1em}#doc u" +
+                         "l li,.doc ul li{font-size:1.2em}#feedemail{display:block;width:100%}#feedreportb" +
+                         "ody{text-align:center}#feedreportbody .radiogroup .feedlabel{display:block;font-" +
+                         "size:1.4em;margin:0 0 1em;width:auto}#feedreportbody .radiogroup span{display:in" +
+                         "line-block;margin:0 0 2em;width:5em}#feedreportbody .radiogroup input{position:a" +
+                         "bsolute;top:-2000em}#feedreportbody .radiogroup label{border-radius:50%;border-s" +
+                         "tyle:solid;border-width:0.1em;cursor:pointer;display:inline-block;height:1.5em;l" +
+                         "ine-height:1.5;text-align:center;width:1.5em}#feedreportbody .radiogroup span sp" +
+                         "an{display:block;font-size:0.8em;margin:0;width:auto}#feedsubmit{float:none;font" +
+                         "-family:inherit;height:3em;margin:2.5em auto 0;position:static;text-shadow:none;" +
+                         "width:50%}#doc #function_properties h4{float:none;font-size:1.2em}#doc #function" +
+                         "_properties li{padding:0 0 0 0.5em}#function_properties h4 strong{color:#c00}#fu" +
+                         "nction_properties h5{font-size:1em;margin:0 0 0 -2.5em}#function_properties ol{p" +
+                         "adding-right:1em}#webtool #functionGroup,#webtool #headline{border-radius:0.2em;" +
+                         "border-style:solid;border-width:0.1em;padding:0.7em 1.2em}#webtool #functionGrou" +
+                         "p input{cursor:pointer}#webtool #functionGroup label{cursor:pointer;font-size:1e" +
+                         "m}#webtool #functionGroup span{display:inline-block;margin-left:2em}#webtool #he" +
+                         "adline{margin: 0 0 1em;}#webtool #headline h2{background:transparent;border-styl" +
+                         "e:none;float:left;line-height:1;margin:0 0.25em 0 0;padding:0}#webtool #headline" +
+                         " p{clear:none;float:left;font-size: 1.8em;line-height:1;margin:0}#webtool #hideO" +
+                         "ptions{margin-left:5em}#webtool #infolinks{float:right;margin:0 0 -4em}#webtool " +
+                         "#infolinks li{display:inline-block;font-size:1.4em;list-style:none;margin:0.5em " +
+                         "1em 0}#jserror code{font-family:'Courier New',Courier,'Lucida Console',monospace" +
+                         "}#jserror span{display:block}#webtool #modalSave p{background:#eee;color:#333;fo" +
+                         "nt-size:2em;padding:1em;position:absolute;text-align:center;top:10em;width:25em;" +
+                         "z-index:9001}#modalSave p em{display:block;font-size:0.75em;margin-top:1em}#moda" +
+                         "lSave p strong{color:#c00;font-weight:bold}#modalSave span{background:#000;displ" +
+                         "ay:block;left:0;opacity:0.5;position:absolute;top:0;z-index:9000}#codereport{rig" +
+                         "ht:19.8em}#webtool #option_comment{font-size:1.2em;height:2.5em;width:100%}#webt" +
+                         "ool #option_commentClear{margin:-0.5em -0.25em 0 0}#options{margin:0 0 1em}#opti" +
+                         "ons #resetOptions{margin:0 0 -6em}#options p.apiname, #addOptions p.apiname{floa" +
+                         "t:left;font-size:1.2em;line-height:2.4;margin:0 -40em 0 15em;padding:0}#options " +
+                         "span.apiname, #addOptions span.apiname{display:inline-block;float:none;font-size" +
+                         ":1em;margin:0 0 0 1em;width:auto}#options .resetbutton{padding:0}#webtool #optio" +
+                         "ns button{float:right;height:2em;padding:0;width:15em}#options label{width:auto}" +
+                         "#options p,#addOptions p{clear:both;font-size:1em;margin:0;padding:1em 0 0}#webt" +
+                         "ool #options p span{height:2em;margin:0 0 0 1em}#pdsamples{list-style-position:i" +
+                         "nside;margin:0;padding:0;position:relative;z-index:10}#pdsamples li{border-radiu" +
+                         "s:1em;border-style:solid;border-width:0.1em;margin:0 0 3em;padding:1em}#pdsample" +
+                         "s li div{border-radius:1em;border-style:solid;border-width:0.1em;margin:0;paddin" +
+                         "g:1em}#pdsamples li p{display:inline-block;font-size:1em;margin:0}#pdsamples li " +
+                         "p a{display:block;margin:0 0 1em 2em}#pdsamples li ul{margin:0 0 0 2em}#reports{" +
+                         "height:4em}#webtool #reports h2{display:none}#samples #dcolorScheme{position:rel" +
+                         "ative;z-index:1000}#samples #pdsamples li li{background:none transparent;border-" +
+                         "style:none;display:list-item;list-style:disc outside;margin:0;padding:0.5em}#sam" +
+                         "ples h1{float:none}#samples h2{border-style:none;float:none;font-size:1.5em;marg" +
+                         "in:1em 0}#showOptionsCallOut{background:#fff;border:0.1em solid #000;box-shadow:" +
+                         "0.2em 0.2em 0.4em rgba(0,0,0,.15);left:28.6%;padding:0.5em;position:absolute;top" +
+                         ":4.6em;width:20%;z-index:1000}#showOptionsCallOut a{color:#66f;font-weight:bold}" +
+                         "#showOptionsCallOut em{color:#c00}#showOptionsCallOut strong{color:#090}#statrep" +
+                         "ort{right:0.8em}#statreport .body p,#statreport .body li,#statreport .body h3{fo" +
+                         "nt-size:1.2em}#statreport .body h3{margin-top:0}#statreport .body ul{margin-top:" +
+                         "1em}#textareaTabKey{border-style:solid;border-width:0.1em;left:51%;padding:0.5em" +
+                         ";position:absolute;width:28em}#textareaTabKey strong{text-decoration:underline}#" +
+                         "textareaTabKey em{font-weight:bold}#textreport{width:100%}#thirdparties a{border" +
+                         "-style:none;display:block;height:4em;text-decoration:none}#update{clear:left;flo" +
+                         "at:right;font-weight:bold;padding:0.25em;position:absolute;right:0;top:0;z-index" +
+                         ":2;}#update span{display:block}#update span span{display:inline-block;float:righ" +
+                         "t}#webtool .diff h3{border-style:none solid solid;border-width:0 0.1em 0.2em;box" +
+                         "-shadow:none;display:block;font-family:Verdana;font-size:1.2em;margin:0 0 0 -.1e" +
+                         "m;padding:0.2em 2em;text-align:left}#webtool .options input[type=text]{margin-ri" +
+                         "ght:1em;width:11.6em}#webtool .options input[type=text],#webtool div input,#webt" +
+                         "ool textarea{border-style:inset;border-width:0.1em}.analysis th{text-align:left}" +
+                         ".analysis .parseData td{font-family:'Courier New',Courier,'Lucida Console',monos" +
+                         "pace;text-align:left;white-space:pre}.analysis td{text-align:right}#webtool .bea" +
+                         "utify,#webtool .diff{border-style:solid;border-width:0.2em;display:inline-block;" +
+                         "font-family:'Courier New',Courier,'Lucida Console',monospace;margin:0 1em 1em 0;" +
+                         "position:relative}#webtool .beautify .count,#webtool .diff .count{border-style:s" +
+                         "olid;border-width:0 0.1em 0 0;font-weight:normal;padding:0;text-align:right}#web" +
+                         "tool .beautify .count li,#webtool .diff .count li{padding-left:2em}#webtool .bea" +
+                         "utify .count li{padding-top:0.5em}#webtool .beautify .count li.fold,#webtool .di" +
+                         "ff .count li.fold{color:#900;cursor:pointer;font-weight:bold;padding-left:0.5em}" +
+                         "#webtool .beautify .data,#webtool .diff .data{text-align:left;white-space:pre}#w" +
+                         "ebtool .beautify .data em{display:inline-block;font-style:normal;font-weight:bol" +
+                         "d;padding-top:0.5em}#webtool .beautify .data li,#webtool .diff .data li{padding-" +
+                         "left:0.5em;white-space:pre}#webtool .beautify li,#webtool .diff li{border-style:" +
+                         "none none solid;border-width:0 0 0.1em;display:block;line-height:1.2;list-style-" +
+                         "type:none;margin:0;padding-bottom:0;padding-right:0.5em}#webtool .beautify ol,#w" +
+                         "ebtool .diff ol{display:table-cell;margin:0;padding:0}#webtool .box{border-style" +
+                         ":solid;border-width:0;left:auto;margin:0;padding:0;position:absolute;z-index:10}" +
+                         "#webtool .box .buttons button{border-radius:0;border-style:solid;border-width:0." +
+                         "1em;display:block;float:right;font-family:'Lucida Console','Trebuchet MS','Arial" +
+                         "';height:1.75em;padding:0;position:absolute;right:0;text-align:center;top:0;widt" +
+                         "h:1.75em;z-index:7}#webtool .box .buttons button.resize{border-width:0.05em;curs" +
+                         "or:se-resize;font-size:1.667em;font-weight:normal;height:0.8em;line-height:0.5em" +
+                         ";margin:-.85em 0 0;position:absolute;right:0.05em;top:100%;width:0.85em}#webtool" +
+                         " .box .buttons button.minimize{margin:0.35em 4em 0 0}#webtool .box .buttons butt" +
+                         "on.maximize{margin:0.35em 1.75em 0 0}#webtool .box .buttons button.save{margin:0" +
+                         ".35em 6.25em 0 0}#webtool .box .buttons{float:right;margin:0}#webtool .box h3.he" +
+                         "ading{float:left;font-size:1em;height:3em;margin:0 0 -3.2em;padding:0;position:r" +
+                         "elative;width:17em;z-index:6}#webtool .box h3.heading button{background:transpar" +
+                         "ent;border-radius:0;border-style:none;box-shadow:none;cursor:pointer;display:blo" +
+                         "ck;font-size:1.8em;height:100%;margin:0;padding:0.25em 0 0 0.5em;text-align:left" +
+                         "}#webtool .box .heading button:hover{background:transparent;color:inherit;text-s" +
+                         "hadow:none}#webtool .box .body{clear:both;height:20em;margin-top:-.1em;overflow:" +
+                         "scroll;padding:4.25em 1em 1em;position:relative;right:0;top:0;width:75em;z-index" +
+                         ":5}#webtool .button{margin:1em 0;text-align:center}#webtool .button button{displ" +
+                         "ay:block;font-size:2em;height:1.5em;margin:0 auto;padding:0;width:50%}#webtool ." +
+                         "clear,#doc .clear{clear:both;display:block}.diff .skip{border-style:none none so" +
+                         "lid;border-width:0 0 0.1em}.diff .diff-left,.diff .diff-right{display:table-cell" +
+                         "}.diff .diff-left{border-style:none none none solid;border-width:0 0 0 0.1em}.di" +
+                         "ff .diff-right{border-style:none none none solid;border-width:0 0 0 0.1em;margin" +
+                         "-left:-.1em;min-width:16.5em;right:0;top:0}.diff-right .data ol{min-width:16.5em" +
+                         "}.diff-right .data{border-style:none solid none none;border-width:0 0.1em 0 0;wi" +
+                         "dth:100%}.diff-right .data li{min-width:16.5em}.diff li,.diff p,.diff h3,.beauti" +
+                         "fy li{font-size:1.1em}.diff li{padding-top:0.5em}.diff li em{font-style:normal;m" +
+                         "argin:0 -.09em;padding:0.05em 0}#webtool .diff p.author{border-style:solid;borde" +
+                         "r-width:0.2em 0.1em 0.1em;margin:0;overflow:hidden;padding:0.4em;text-align:righ" +
+                         "t}.difflabel{display:block;height:0}#webtool .file,#webtool .labeltext{font-size" +
+                         ":0.9em;font-weight:bold;margin-bottom:1em}#webtool .file input,#webtool .labelte" +
+                         "xt input{display:inline-block;margin:0 0.7em 0 0;width:16em}#webtool .input,#web" +
+                         "tool.output{margin:0}.metainfo{position:relative;}#webtool .options{border-radiu" +
+                         "s:0.4em;clear:both;margin-bottom:1em;padding:1em;width:auto}#webtool .options in" +
+                         "put,#webtool .options label{border-style:none;display:block;float:left}#webtool " +
+                         ".output label{text-align:right}#webtool .options p span label{font-size:1em}#web" +
+                         "tool .options p span{display:block;float:left;font-size:1em;min-width:16em;paddi" +
+                         "ng-bottom:0.5em}#webtool .options select,#webtool #csvchar{margin:0 0 0 1em}#web" +
+                         "tool .options fieldset select{float:left;margin:0 1em 0 0}#webtool .options span" +
+                         " label{margin-left:0.4em}body#doc{font-size:0.8em;margin:0 auto;max-width:80em}b" +
+                         "ody#doc #function_properties ul{margin:0}body#doc #function_properties ul li{fon" +
+                         "t-size:0.9em;margin:0.5em 0 0 4em}body#doc ul li,body#doc ol li{font-size:1.1em}" +
+                         "body#doc table{font-size:1em}#webtool button,#webtool a.button{border-radius:0.1" +
+                         "5em;display:block;font-weight:bold;padding:0.2em 0;width:100%}#webtool div .butt" +
+                         "on{text-align:center}#webtool div button,#webtool div a.button{display:inline-bl" +
+                         "ock;font-weight:bold;margin:1em 0;padding:1em 2em}#webtool button:hover,#webtool" +
+                         " a.button:hover{cursor:pointer}#webtool fieldset,#doc fieldset{border-radius:1em" +
+                         ";clear:both;margin:1em 0 0;padding:0 1em 1em}#webtool h1{float:left;font-size:2e" +
+                         "m;margin:0 0.5em 0.5em 0}#webtool h1{position:absolute;top:-200em;z-index:0;}#we" +
+                         "btool h1 svg,#doc h1 svg{border-style:solid;border-width:0.05em;float:left;heigh" +
+                         "t:1.5em;margin-right:0.5em;width:1.5em}#webtool h1 span,#doc h1 span{font-size:0" +
+                         ".5em}#webtool h2,#doc h2,#webtool h3,#doc h3{border-style:solid;border-width:0.0" +
+                         "75em;display:inline-block;font-size:1.8em;font-weight:bold;margin:0 0.5em 0.5em " +
+                         "0;padding:0 0.2em}#webtool h3,#doc h3{font-size:1.6em}#webtool h4,#doc h4{font-s" +
+                         "ize:1.4em}#webtool inputt[type='radio'],#doc input[type='radio']{margin:0 0.25em" +
+                         "}#webtool input[type='file']{box-shadow:none}#webtool label,#doc label{display:i" +
+                         "nline;font-size:1.4em}#webtool legend,#doc legend{border-radius:1em;border-style" +
+                         ":solid;border-width:0.1em;font-size:1.4em;font-weight:bold;margin-left:-0.25em;p" +
+                         "adding:0 0.5em}#webtool fieldset fieldset legend{font-size:1.2em}#webtool li,#do" +
+                         "c li{clear:both;margin:1em 0 1em 3em}#webtool li h4,#doc li h4{display:inline;fl" +
+                         "oat:left;margin:0.4em 0;text-align:left;width:14em}#webtool ol li{font-size:1.2e" +
+                         "m}#doc ol li{font-size:1.4em;list-style-type:decimal}#webtool ol li li,#doc ol l" +
+                         "i li{font-size:1em}#webtool p,#doc p{clear:both;font-size:1.2em;margin:0 0 1em}#" +
+                         "webtool select,#doc select{border-style:inset;border-width:0.1em;width:13.5em}#w" +
+                         "ebtool strong.new,#doc strong .new{background:#ff6;font-style:italic}#webtool st" +
+                         "rong label,#doc strong label{font-size:1em;width:inherit}#webtool textarea{displ" +
+                         "ay:inline-block;font-family:'Courier New',Courier,'Lucida Console',monospace;hei" +
+                         "ght:10em;margin:0 0 -.1em;width:100%}#webtool ul,#doc ul{margin:-1.4em 0 2em;pad" +
+                         "ding:0}#webtool ul li,#doc ul li{list-style-type:none}@media print{#webtool div," +
+                         "#doc div{width:100%}html td{font-size:0.8em;white-space:normal}#webtool p,#doc p" +
+                         ",#webtool .options,#Beautify,#Minify,#Parse,#diff,#webtool ul,#doc ul{display:no" +
+                         "ne}}@media screen and (-webkit-min-device-pixel-ratio:0){.beautify .count li{pad" +
+                         "ding-top:0.546em}.beautify .data li{line-height:1.3}}@media (max-width: 640px){#" +
+                         "codeInput label{display:none}#diffBase,#diffNew{width:46%}#doc #dcolorScheme{mar" +
+                         "gin:0 0 1em}#functionGroup,#headline{height:4em}#functionGroup span{margin-left:" +
+                         "0.5em;position:relative;z-index:10}#infolinks{margin:0}#reports{display:none}#up" +
+                         "date{margin-top:2.75em}#webtool .labeltext input,#webtool .file input{width:12em" +
+                         "}}",
             scanvas: "#doc.canvas{color:#444}#webtool.canvas input.unchecked{background:#ccc;color:#33" +
-                     "3}.canvas *:focus,.canvas .filefocus,.canvas #feedreportbody .focus,.canvas #fee" +
-                     "dreportbody .active-focus{outline:0.1em dashed #00f}.canvas #Beautify,.canvas #M" +
-                     "inify,.canvas #diffBase,.canvas #diffNew{background:#d8d8cf;border-color:#664;bo" +
-                     "x-shadow:0 0.2em 0.4em rgba(128,128,92,0.5);color:#444}.canvas #beautyoutput,.ca" +
-                     "nvas #minifyoutput{background:#ccc}.canvas #diffoutput #thirdparties{background:" +
-                     "#c8c8bf;border-color:#664}.canvas #diffoutput #thirdparties a{color:#664}.canvas" +
-                     " #diffoutput p em,.canvas #diffoutput li em{color:#050}.canvas #feedreportbody ." +
-                     "radiogroup label{background:#f8f8f8}.canvas #feedreportbody .feedradio1:hover,.c" +
-                     "anvas #feedreportbody .active .feedradio1{background:#f66}.canvas #feedreportbod" +
-                     "y .feedradio2:hover,.canvas #feedreportbody .active .feedradio2{background:#f96}" +
-                     ".canvas #feedreportbody .feedradio3:hover,.canvas #feedreportbody .active .feedr" +
-                     "adio3{background:#fc9}.canvas #feedreportbody .feedradio4:hover,.canvas #feedrep" +
-                     "ortbody .active .feedradio4{background:#ff9}.canvas #feedreportbody .feedradio5:" +
-                     "hover,.canvas #feedreportbody .active .feedradio5{background:#eea}.canvas #feedr" +
-                     "eportbody .feedradio6:hover,.canvas #feedreportbody .active .feedradio6{backgrou" +
-                     "nd:#cd9}.canvas #feedreportbody .feedradio7:hover,.canvas #feedreportbody .activ" +
-                     "e .feedradio7{background:#8d8}.canvas #functionGroup.append{background:#d8d8cf;b" +
-                     "order-color:#664;box-shadow:0 0.2em 0.4em rgba(128,128,92,0.5)}.canvas #option_c" +
-                     "omment{background:#e8e8e8;border-color:#664;color:#444}.canvas #pdsamples li{bac" +
-                     "kground:#d8d8cf;border-color:#664}.canvas #pdsamples li div{background:#e8e8e8;b" +
-                     "order-color:#664}.canvas #pdsamples li div a{color:#664}.canvas #pdsamples li p " +
-                     "a{color:#450}.canvas #textareaTabKey{background:#c8c8bf;border-color:#c33;color:" +
-                     "#555}.canvas #top em{color:#fcc}.canvas #update,.canvas #title_text{background:#" +
-                     "f8f8ee;box-shadow:0 0.1em 0.2em rgba(128,128,92,0.75);color:#464}.canvas .beauti" +
-                     "fy .data em.s0,#doc.canvas .beautify .data em.s0{color:#000}.canvas .beautify .d" +
-                     "ata em.s1,#doc.canvas .beautify .data em.s1{color:#f66}.canvas .beautify .data e" +
-                     "m.s2,#doc.canvas .beautify .data em.s2{color:#12f}.canvas .beautify .data em.s3," +
-                     "#doc.canvas .beautify .data em.s3{color:#090}.canvas .beautify .data em.s4,#doc." +
-                     "canvas .beautify .data em.s4{color:#d6d}.canvas .beautify .data em.s5,#doc.canva" +
-                     "s .beautify .data em.s5{color:#7cc}.canvas .beautify .data em.s6,#doc.canvas .be" +
-                     "autify .data em.s6{color:#c85}.canvas .beautify .data em.s7,#doc.canvas .beautif" +
-                     "y .data em.s7{color:#737}.canvas .beautify .data em.s8,#doc.canvas .beautify .da" +
-                     "ta em.s8{color:#6d0}.canvas .beautify .data em.s9,#doc.canvas .beautify .data em" +
-                     ".s9{color:#dd0s}.canvas .beautify .data em.s10,#doc.canvas .beautify .data em.s1" +
-                     "0{color:#893}.canvas .beautify .data em.s11,#doc.canvas .beautify .data em.s11{c" +
-                     "olor:#b97}.canvas .beautify .data em.s12,#doc.canvas .beautify .data em.s12{colo" +
-                     "r:#bbb}.canvas .beautify .data em.s13,#doc.canvas .beautify .data em.s13{color:#" +
-                     "cc3}.canvas .beautify .data em.s14,#doc.canvas .beautify .data em.s14{color:#333" +
-                     "}.canvas .beautify .data em.s15,#doc.canvas .beautify .data em.s15{color:#9d9}.c" +
-                     "anvas .beautify .data em.s16,#doc.canvas .beautify .data em.s16{color:#880}.canv" +
-                     "as .beautify .data .l0{background:#f8f8ef}.canvas .beautify .data .l1{background" +
-                     ":#fed}.canvas .beautify .data .l2{background:#def}.canvas .beautify .data .l3{ba" +
-                     "ckground:#efe}.canvas .beautify .data .l4{background:#fef}.canvas .beautify .dat" +
-                     "a .l5{background:#eef}.canvas .beautify .data .l6{background:#fff8cc}.canvas .be" +
-                     "autify .data .l7{background:#ede}.canvas .beautify .data .l8{background:#efc}.ca" +
-                     "nvas .beautify .data .l9{background:#ffd}.canvas .beautify .data .l10{background" +
-                     ":#edc}.canvas .beautify .data .l11{background:#fdb}.canvas .beautify .data .l12{" +
-                     "background:#f8f8f8}.canvas .beautify .data .l13{background:#ffb}.canvas .beautif" +
-                     "y .data .l14{background:#eec}.canvas .beautify .data .l15{background:#cfc}.canva" +
-                     "s .beautify .data .l16{background:#eea}.canvas .beautify .data .c0{background:#d" +
-                     "dd}.canvas .beautify .data li{color:#777}.canvas .analysis .bad{background-color" +
-                     ":#ecb;color:#744}.canvas .analysis .good{background-color:#cdb;color:#474}.canva" +
-                     "s .box{background:#ccc;border-color:#664}.canvas .box .body{background:#e8e8e8;b" +
-                     "order-color:#664;box-shadow:0 0.2em 0.4em rgba(128,128,92,0.75);color:#666}.canv" +
-                     "as .box button{box-shadow:0 0.1em 0.2em rgba(128,128,92,0.75)}.canvas .box butto" +
-                     "n.maximize{background:#cfd8cf;border-color:#464;color:#464}.canvas .box button.m" +
-                     "aximize:hover{background:#cfc;border-color:#282;color:#282}.canvas .box button.m" +
-                     "inimize{background:#cfcfd8;border-color:#446;color:#446}.canvas .box button.mini" +
-                     "mize:hover{background:#bbf;border-color:#228;color:#228}.canvas .box button.resi" +
-                     "ze{background:#cfcfd8;border-color:#446;color:#446}.canvas .box button.resize:ho" +
-                     "ver{background:#bbf;border-color:#228;color:#228}.canvas .box button.save{backgr" +
-                     "ound:#d8cfcf;border-color:#644;color:#644}.canvas .box button.save:hover{backgro" +
-                     "und:#fcc;border-color:#822;color:#822}.canvas .box h3.heading:hover{background:#" +
-                     "d8d8cf}.canvas .diff,.canvas .beautify,.canvas ol,.canvas .diff p.author,.canvas" +
-                     " .diff h3,.canvas .diff-right,.canvas .diff-left{border-color:#664}.canvas .diff" +
-                     " .count,.canvas .beautify .count{background:#c8c8bf}.canvas .diff .count .empty{" +
-                     "background:#c8c8bf;border-color:#664;color:#c8c8bf}.canvas .diff .data,.canvas ." +
-                     "beautify .data{background:#f8f8ef}.canvas .diff .data .delete em{background-colo" +
-                     "r:#fdc;border-color:#600;color:#933}.canvas .diff .data .insert em{background-co" +
-                     "lor:#efc;border-color:#060;color:#464}.canvas .diff .data .replace em{background" +
-                     "-color:#ffd;border-color:#664;color:#880}.canvas .diff .delete{background-color:" +
-                     "#da9;border-color:#c87;color:#600}.canvas .diff .equal,.canvas .beautify .data l" +
-                     "i{background-color:#f8f8ef;border-color:#ddd;color:#666}.canvas .diff .insert{ba" +
-                     "ckground-color:#bd9;border-color:#9c7;color:#040}.canvas .diff .replace{backgrou" +
-                     "nd-color:#dda;border-color:#cc8;color:#660}.canvas .diff .skip{background-color:" +
-                     "#eee;border-color:#ccc}.canvas .diff h3{background:#c8c8bf;color:#664}.canvas .d" +
-                     "iff p.author{background:#ddc;color:#666}.canvas #doc .analysis thead th,.canvas " +
-                     "#doc .analysis th[colspan],.canvas .doc .analysis thead th,.canvas .doc .analysi" +
-                     "s th[colspan]{background:#c8c8bf}.canvas #doc div,.canvas .doc div,#doc.canvas d" +
-                     "iv{background:#c8c8bf;border-color:#664}.canvas #doc div:hover,.canvas .doc div:" +
-                     "hover,#doc.canvas div:hover{background:#d8d8cf}.canvas #doc div div,.canvas .doc" +
-                     " div div,#doc.canvas div div{background:#e8e8e8;border-color:#664}.canvas #doc d" +
-                     "iv div:hover,.canvas .doc div div:hover,#doc.canvas div div:hover,#doc.canvas di" +
-                     "v ol:hover{background:#f8f8ef}.canvas #doc em,.canvas .doc em,.canvas .box .body" +
-                     " em,.canvas .box .body .doc em{color:#472}.canvas #doc ol,.canvas .doc ol,#doc.c" +
-                     "anvas ol{background:#e8e8e8;border-color:#664}.canvas #doc strong,.canvas .doc s" +
-                     "trong,.canvas .box .body strong{color:#933}.canvas #doc table,.canvas .doc table" +
-                     ",#doc.canvas table,.canvas .box .body table{background:#f8f8ef;border-color:#664" +
-                     ";color:#666}.canvas #doc td,.canvas .doc td,#doc.canvas td{border-color:#664}.ca" +
-                     "nvas #doc th,.canvas .doc th,#doc.canvas th{background:#c8c8bf;border-left-color" +
-                     ":#664;border-top-color:#664}.canvas #doc tr:hover,.canvas .doc tr:hover,#doc.can" +
-                     "vas tr:hover{background:#c8c8bf}.canvas .file input,.canvas .labeltext input,.ca" +
-                     "nvas .options input[type=text],.canvas .options select{background:#f8f8f8;border" +
-                     "-color:#664}.canvas .options{background:#d8d8cf;border-color:#664;box-shadow:0 0" +
-                     ".2em 0.4em rgba(128,128,92,0.5);color:#444}.canvas a{color:#450}.canvas a.button" +
-                     ",.canvas button{background:#d8d8cf;border-color:#664;box-shadow:0 0.1em 0.2em rg" +
-                     "ba(128,128,92,0.75);color:#664}.canvas a.button:hover,.canvas a.button:active,.c" +
-                     "anvas button:hover,.canvas button:active{background:#ffe}.canvas fieldset{backgr" +
-                     "ound:#e8e8e8;border-color:#664}.canvas h1 svg{border-color:#664;box-shadow:0 0.1" +
-                     "em 0.2em rgba(128,128,92,0.75)}.canvas h2,.canvas h3{background:#f8f8ef;border-c" +
-                     "olor:#664;box-shadow:0 0.1em 0.2em rgba(128,128,92,0.75);text-shadow:none}.canva" +
-                     "s input,.canvas select{box-shadow:0.1em 0.1em 0.2em #999}.canvas legend{backgrou" +
-                     "nd:#f8f8ef;border-color:#664}.canvas textarea{background:#f8f8ef;border-color:#6" +
-                     "64}.canvas textarea:hover{background:#e8e8e8}html .canvas,body.canvas{background" +
-                     ":#e8e8e8;color:#666}",
+                         "3}.canvas *:focus,.canvas .filefocus,.canvas #feedreportbody .focus,.canvas #fee" +
+                         "dreportbody .active-focus{outline:0.1em dashed #00f}.canvas #Beautify,.canvas #M" +
+                         "inify,.canvas #diffBase,.canvas #diffNew{background:#d8d8cf;border-color:#664;bo" +
+                         "x-shadow:0 0.2em 0.4em rgba(128,128,92,0.5);color:#444}.canvas #beautyoutput,.ca" +
+                         "nvas #minifyoutput{background:#ccc}.canvas #diffoutput #thirdparties{background:" +
+                         "#c8c8bf;border-color:#664}.canvas #diffoutput #thirdparties a{color:#664}.canvas" +
+                         " #diffoutput p em,.canvas #diffoutput li em{color:#050}.canvas #feedreportbody ." +
+                         "radiogroup label{background:#f8f8f8}.canvas #feedreportbody .feedradio1:hover,.c" +
+                         "anvas #feedreportbody .active .feedradio1{background:#f66}.canvas #feedreportbod" +
+                         "y .feedradio2:hover,.canvas #feedreportbody .active .feedradio2{background:#f96}" +
+                         ".canvas #feedreportbody .feedradio3:hover,.canvas #feedreportbody .active .feedr" +
+                         "adio3{background:#fc9}.canvas #feedreportbody .feedradio4:hover,.canvas #feedrep" +
+                         "ortbody .active .feedradio4{background:#ff9}.canvas #feedreportbody .feedradio5:" +
+                         "hover,.canvas #feedreportbody .active .feedradio5{background:#eea}.canvas #feedr" +
+                         "eportbody .feedradio6:hover,.canvas #feedreportbody .active .feedradio6{backgrou" +
+                         "nd:#cd9}.canvas #feedreportbody .feedradio7:hover,.canvas #feedreportbody .activ" +
+                         "e .feedradio7{background:#8d8}.canvas #functionGroup.append{background:#d8d8cf;b" +
+                         "order-color:#664;box-shadow:0 0.2em 0.4em rgba(128,128,92,0.5)}.canvas #option_c" +
+                         "omment{background:#e8e8e8;border-color:#664;color:#444}.canvas #pdsamples li{bac" +
+                         "kground:#d8d8cf;border-color:#664}.canvas #pdsamples li div{background:#e8e8e8;b" +
+                         "order-color:#664}.canvas #pdsamples li div a{color:#664}.canvas #pdsamples li p " +
+                         "a{color:#450}.canvas #textareaTabKey{background:#c8c8bf;border-color:#c33;color:" +
+                         "#555}.canvas #top em{color:#fcc}.canvas #update,.canvas #title_text{background:#" +
+                         "f8f8ee;box-shadow:0 0.1em 0.2em rgba(128,128,92,0.75);color:#464}.canvas .beauti" +
+                         "fy .data em.s0,#doc.canvas .beautify .data em.s0{color:#000}.canvas .beautify .d" +
+                         "ata em.s1,#doc.canvas .beautify .data em.s1{color:#f66}.canvas .beautify .data e" +
+                         "m.s2,#doc.canvas .beautify .data em.s2{color:#12f}.canvas .beautify .data em.s3," +
+                         "#doc.canvas .beautify .data em.s3{color:#090}.canvas .beautify .data em.s4,#doc." +
+                         "canvas .beautify .data em.s4{color:#d6d}.canvas .beautify .data em.s5,#doc.canva" +
+                         "s .beautify .data em.s5{color:#7cc}.canvas .beautify .data em.s6,#doc.canvas .be" +
+                         "autify .data em.s6{color:#c85}.canvas .beautify .data em.s7,#doc.canvas .beautif" +
+                         "y .data em.s7{color:#737}.canvas .beautify .data em.s8,#doc.canvas .beautify .da" +
+                         "ta em.s8{color:#6d0}.canvas .beautify .data em.s9,#doc.canvas .beautify .data em" +
+                         ".s9{color:#dd0s}.canvas .beautify .data em.s10,#doc.canvas .beautify .data em.s1" +
+                         "0{color:#893}.canvas .beautify .data em.s11,#doc.canvas .beautify .data em.s11{c" +
+                         "olor:#b97}.canvas .beautify .data em.s12,#doc.canvas .beautify .data em.s12{colo" +
+                         "r:#bbb}.canvas .beautify .data em.s13,#doc.canvas .beautify .data em.s13{color:#" +
+                         "cc3}.canvas .beautify .data em.s14,#doc.canvas .beautify .data em.s14{color:#333" +
+                         "}.canvas .beautify .data em.s15,#doc.canvas .beautify .data em.s15{color:#9d9}.c" +
+                         "anvas .beautify .data em.s16,#doc.canvas .beautify .data em.s16{color:#880}.canv" +
+                         "as .beautify .data .l0{background:#f8f8ef}.canvas .beautify .data .l1{background" +
+                         ":#fed}.canvas .beautify .data .l2{background:#def}.canvas .beautify .data .l3{ba" +
+                         "ckground:#efe}.canvas .beautify .data .l4{background:#fef}.canvas .beautify .dat" +
+                         "a .l5{background:#eef}.canvas .beautify .data .l6{background:#fff8cc}.canvas .be" +
+                         "autify .data .l7{background:#ede}.canvas .beautify .data .l8{background:#efc}.ca" +
+                         "nvas .beautify .data .l9{background:#ffd}.canvas .beautify .data .l10{background" +
+                         ":#edc}.canvas .beautify .data .l11{background:#fdb}.canvas .beautify .data .l12{" +
+                         "background:#f8f8f8}.canvas .beautify .data .l13{background:#ffb}.canvas .beautif" +
+                         "y .data .l14{background:#eec}.canvas .beautify .data .l15{background:#cfc}.canva" +
+                         "s .beautify .data .l16{background:#eea}.canvas .beautify .data .c0{background:#d" +
+                         "dd}.canvas .beautify .data li{color:#777}.canvas .analysis .bad{background-color" +
+                         ":#ecb;color:#744}.canvas .analysis .good{background-color:#cdb;color:#474}.canva" +
+                         "s .box{background:#ccc;border-color:#664}.canvas .box .body{background:#e8e8e8;b" +
+                         "order-color:#664;box-shadow:0 0.2em 0.4em rgba(128,128,92,0.75);color:#666}.canv" +
+                         "as .box button{box-shadow:0 0.1em 0.2em rgba(128,128,92,0.75)}.canvas .box butto" +
+                         "n.maximize{background:#cfd8cf;border-color:#464;color:#464}.canvas .box button.m" +
+                         "aximize:hover{background:#cfc;border-color:#282;color:#282}.canvas .box button.m" +
+                         "inimize{background:#cfcfd8;border-color:#446;color:#446}.canvas .box button.mini" +
+                         "mize:hover{background:#bbf;border-color:#228;color:#228}.canvas .box button.resi" +
+                         "ze{background:#cfcfd8;border-color:#446;color:#446}.canvas .box button.resize:ho" +
+                         "ver{background:#bbf;border-color:#228;color:#228}.canvas .box button.save{backgr" +
+                         "ound:#d8cfcf;border-color:#644;color:#644}.canvas .box button.save:hover{backgro" +
+                         "und:#fcc;border-color:#822;color:#822}.canvas .box h3.heading:hover{background:#" +
+                         "d8d8cf}.canvas .diff,.canvas .beautify,.canvas ol,.canvas .diff p.author,.canvas" +
+                         " .diff h3,.canvas .diff-right,.canvas .diff-left{border-color:#664}.canvas .diff" +
+                         " .count,.canvas .beautify .count{background:#c8c8bf}.canvas .diff .count .empty{" +
+                         "background:#c8c8bf;border-color:#664;color:#c8c8bf}.canvas .diff .data,.canvas ." +
+                         "beautify .data{background:#f8f8ef}.canvas .diff .data .delete em{background-colo" +
+                         "r:#fdc;border-color:#600;color:#933}.canvas .diff .data .insert em{background-co" +
+                         "lor:#efc;border-color:#060;color:#464}.canvas .diff .data .replace em{background" +
+                         "-color:#ffd;border-color:#664;color:#880}.canvas .diff .delete{background-color:" +
+                         "#da9;border-color:#c87;color:#600}.canvas .diff .equal,.canvas .beautify .data l" +
+                         "i{background-color:#f8f8ef;border-color:#ddd;color:#666}.canvas .diff .insert{ba" +
+                         "ckground-color:#bd9;border-color:#9c7;color:#040}.canvas .diff .replace{backgrou" +
+                         "nd-color:#dda;border-color:#cc8;color:#660}.canvas .diff .skip{background-color:" +
+                         "#eee;border-color:#ccc}.canvas .diff h3{background:#c8c8bf;color:#664}.canvas .d" +
+                         "iff p.author{background:#ddc;color:#666}.canvas #doc .analysis thead th,.canvas " +
+                         "#doc .analysis th[colspan],.canvas .doc .analysis thead th,.canvas .doc .analysi" +
+                         "s th[colspan]{background:#c8c8bf}.canvas #doc div,.canvas .doc div,#doc.canvas d" +
+                         "iv{background:#c8c8bf;border-color:#664}.canvas #doc div:hover,.canvas .doc div:" +
+                         "hover,#doc.canvas div:hover{background:#d8d8cf}.canvas #doc div div,.canvas .doc" +
+                         " div div,#doc.canvas div div{background:#e8e8e8;border-color:#664}.canvas #doc d" +
+                         "iv div:hover,.canvas .doc div div:hover,#doc.canvas div div:hover,#doc.canvas di" +
+                         "v ol:hover{background:#f8f8ef}.canvas #doc em,.canvas .doc em,.canvas .box .body" +
+                         " em,.canvas .box .body .doc em{color:#472}.canvas #doc ol,.canvas .doc ol,#doc.c" +
+                         "anvas ol{background:#e8e8e8;border-color:#664}.canvas #doc strong,.canvas .doc s" +
+                         "trong,.canvas .box .body strong{color:#933}.canvas #doc table,.canvas .doc table" +
+                         ",#doc.canvas table,.canvas .box .body table{background:#f8f8ef;border-color:#664" +
+                         ";color:#666}.canvas #doc td,.canvas .doc td,#doc.canvas td{border-color:#664}.ca" +
+                         "nvas #doc th,.canvas .doc th,#doc.canvas th{background:#c8c8bf;border-left-color" +
+                         ":#664;border-top-color:#664}.canvas #doc tr:hover,.canvas .doc tr:hover,#doc.can" +
+                         "vas tr:hover{background:#c8c8bf}.canvas .file input,.canvas .labeltext input,.ca" +
+                         "nvas .options input[type=text],.canvas .options select{background:#f8f8f8;border" +
+                         "-color:#664}.canvas .options{background:#d8d8cf;border-color:#664;box-shadow:0 0" +
+                         ".2em 0.4em rgba(128,128,92,0.5);color:#444}.canvas a{color:#450}.canvas a.button" +
+                         ",.canvas button{background:#d8d8cf;border-color:#664;box-shadow:0 0.1em 0.2em rg" +
+                         "ba(128,128,92,0.75);color:#664}.canvas a.button:hover,.canvas a.button:active,.c" +
+                         "anvas button:hover,.canvas button:active{background:#ffe}.canvas fieldset{backgr" +
+                         "ound:#e8e8e8;border-color:#664}.canvas h1 svg{border-color:#664;box-shadow:0 0.1" +
+                         "em 0.2em rgba(128,128,92,0.75)}.canvas h2,.canvas h3{background:#f8f8ef;border-c" +
+                         "olor:#664;box-shadow:0 0.1em 0.2em rgba(128,128,92,0.75);text-shadow:none}.canva" +
+                         "s input,.canvas select{box-shadow:0.1em 0.1em 0.2em #999}.canvas legend{backgrou" +
+                         "nd:#f8f8ef;border-color:#664}.canvas textarea{background:#f8f8ef;border-color:#6" +
+                         "64}.canvas textarea:hover{background:#e8e8e8}html .canvas,body.canvas{background" +
+                         ":#e8e8e8;color:#666}",
             sshadow: "#doc.shadow{color:#ddd}#doc.shadow h3 a{color:#f90}#webtool.shadow input.uncheck" +
-                     "ed{background:#666;color:#ddd}.shadow *:focus,.shadow .filefocus,.shadow #feedre" +
-                     "portbody .focus,.shadow #feedreportbody .active-focus{outline:0.1em dashed #00f}" +
-                     ".shadow #beautyoutput,.shadow #minifyoutput{background:#555;color:#eee}.shadow #" +
-                     "Beautify,.shadow #Minify,.shadow #diffBase,.shadow #diffNew{background:#666;bord" +
-                     "er-color:#999;color:#ddd}.shadow #Beautify label,.shadow #Minify label,.shadow #" +
-                     "diffBase label,.shadow #diffNew label{text-shadow:0.1em 0.1em 0.1em #333}.shadow" +
-                     " #diffoutput #thirdparties{background:#666;border-color:#999}.shadow #diffoutput" +
-                     " #thirdparties a{box-shadow:0 0.2em 0.4em rgba(0,0,0,1);color:#000}.shadow #doc " +
-                     "div,.shadow .doc div,#doc.shadow div{background:#666;border-color:#999}.shadow #" +
-                     "doc div:hover,.shadow .doc div:hover,#doc.shadow div:hover{background:#777}.shad" +
-                     "ow #doc div div,.shadow .doc div div,#doc.shadow div div{background:#333;border-" +
-                     "color:#999}.shadow #doc div div:hover,.shadow .doc div div:hover,#doc.shadow div" +
-                     " div:hover,#doc.shadow div ol:hover{background:#444}.shadow #doc em,.shadow .doc" +
-                     " em,.shadow .box .body em,.shadow .box .body .doc em,.shadow #diffoutput p em,.s" +
-                     "hadow #diffoutput li em{color:#684}.shadow #doc ol,.shadow .doc ol,#doc.shadow o" +
-                     "l{background:#333;border-color:#999}.shadow #doc strong,.shadow .doc strong,.sha" +
-                     "dow .box .body strong{color:#b33}.shadow #doc table,.shadow .doc table,#doc.shad" +
-                     "ow table,.shadow .diff,.shadow .beautify,.shadow .box .body table{background:#33" +
-                     "3;border-color:#999;color:#ddd}.shadow #doc th,.shadow .doc th,#doc.shadow th{ba" +
-                     "ckground:#bbb;border-left-color:#999;border-top-color:#999;color:#333}.shadow #d" +
-                     "oc tr:hover,.shadow .doc tr:hover,#doc.shadow tr:hover{background:#555}.shadow #" +
-                     "feedreportbody .radiogroup label{background:#000}.shadow #feedreportbody .feedra" +
-                     "dio1:hover,.shadow #feedreportbody .active .feedradio1{background:#700}.shadow #" +
-                     "feedreportbody .feedradio2:hover,.shadow #feedreportbody .active .feedradio2{bac" +
-                     "kground:#742}.shadow #feedreportbody .feedradio3:hover,.shadow #feedreportbody ." +
-                     "active .feedradio3{background:#763}.shadow #feedreportbody .feedradio4:hover,.sh" +
-                     "adow #feedreportbody .active .feedradio4{background:#880}.shadow #feedreportbody" +
-                     " .feedradio5:hover,.shadow #feedreportbody .active .feedradio5{background:#675}." +
-                     "shadow #feedreportbody .feedradio6:hover,.shadow #feedreportbody .active .feedra" +
-                     "dio6{background:#452}.shadow #feedreportbody .feedradio7:hover,.shadow #feedrepo" +
-                     "rtbody .active .feedradio7{background:#362}.shadow #functionGroup.append{backgro" +
-                     "und:#eee;border-color:#ccc;box-shadow:0 0.1em 0.2em rgba(64,64,64,0.15)}.shadow " +
-                     "#functionGroup.append{background:#666;border-color:#999}.shadow #option_comment{" +
-                     "background:#333;border-color:#999;color:#ddd}.shadow #option_comment,.shadow inp" +
-                     "ut,.shadow select{box-shadow:0.1em 0.1em 0.2em #000}.shadow #pdsamples li{backgr" +
-                     "ound:#666;border-color:#999}.shadow #pdsamples li div{background:#333;border-col" +
-                     "or:#999}.shadow #pdsamples li p a{color:#f90}.shadow #pdsamples li p a:hover{col" +
-                     "or:#fc0}.shadow #textreport{background:#222}.shadow #title_text{border-color:#22" +
-                     "2;color:#eee}.shadow #top em{color:#9c6}.shadow #update{background:#ddd;border-c" +
-                     "olor:#000;color:#222}.shadow .analysis .bad{background-color:#400;color:#c66}.sh" +
-                     "adow .analysis .good{background-color:#040;color:#6a6}.shadow .beautify .data em" +
-                     ".s0,#doc.shadow .beautify .data em.s0{color:#fff}.shadow .beautify .data em.s1,#" +
-                     "doc.shadow .beautify .data em.s1{color:#c44}.shadow .beautify .data em.s2,#doc.s" +
-                     "hadow .beautify .data em.s2{color:#69c}.shadow .beautify .data em.s3,#doc.shadow" +
-                     " .beautify .data em.s3{color:#0c0}.shadow .beautify .data em.s4,#doc.shadow .bea" +
-                     "utify .data em.s4{color:#c0c}.shadow .beautify .data em.s5,#doc.shadow .beautify" +
-                     " .data em.s5{color:#0cc}.shadow .beautify .data em.s6,#doc.shadow .beautify .dat" +
-                     "a em.s6{color:#981}.shadow .beautify .data em.s7,#doc.shadow .beautify .data em." +
-                     "s7{color:#a7a}.shadow .beautify .data em.s8,#doc.shadow .beautify .data em.s8{co" +
-                     "lor:#7a7}.shadow .beautify .data em.s9,#doc.shadow .beautify .data em.s9{color:#" +
-                     "ff6}.shadow .beautify .data em.s10,#doc.shadow .beautify .data em.s10{color:#33f" +
-                     "}.shadow .beautify .data em.s11,#doc.shadow .beautify .data em.s11{color:#933}.s" +
-                     "hadow .beautify .data em.s12,#doc.shadow .beautify .data em.s12{color:#990}.shad" +
-                     "ow .beautify .data em.s13,#doc.shadow .beautify .data em.s13{color:#987}.shadow " +
-                     ".beautify .data em.s14,#doc.shadow .beautify .data em.s14{color:#fc3}.shadow .be" +
-                     "autify .data em.s15,#doc.shadow .beautify .data em.s15{color:#897}.shadow .beaut" +
-                     "ify .data em.s16,#doc.shadow .beautify .data em.s16{color:#f30}.shadow .beautify" +
-                     " .data .l0{background:#333}.shadow .beautify .data .l1{background:#633}.shadow ." +
-                     "beautify .data .l2{background:#335}.shadow .beautify .data .l3{background:#353}." +
-                     "shadow .beautify .data .l4{background:#636}.shadow .beautify .data .l5{backgroun" +
-                     "d:#366}.shadow .beautify .data .l6{background:#640}.shadow .beautify .data .l7{b" +
-                     "ackground:#303}.shadow .beautify .data .l8{background:#030}.shadow .beautify .da" +
-                     "ta .l9{background:#660}.shadow .beautify .data .l10{background:#003}.shadow .bea" +
-                     "utify .data .l11{background:#300}.shadow .beautify .data .l12{background:#553}.s" +
-                     "hadow .beautify .data .l13{background:#432}.shadow .beautify .data .l14{backgrou" +
-                     "nd:#640}.shadow .beautify .data .l15{background:#562}.shadow .beautify .data .l1" +
-                     "6{background:#600}.shadow .beautify .data .c0{background:#666}.shadow .box{backg" +
-                     "round:#000;border-color:#999;box-shadow:0.6em 0.6em 0.8em rgba(0,0,0,.75)}.shado" +
-                     "w .box .body{background:#333;border-color:#999;color:#ddd}.shadow .box button{bo" +
-                     "x-shadow:0 0.1em 0.2em rgba(0,0,0,0.75);text-shadow:0.1em 0.1em 0.1em rgba(0,0,0" +
-                     ",.5)}.shadow .box button.maximize{background:#9c9;border-color:#030;color:#030}." +
-                     "shadow .box button.maximize:hover{background:#cfc;border-color:#060;color:#060}." +
-                     "shadow .box button.minimize{background:#bbf;border-color:#006;color:#006}.shadow" +
-                     " .box button.minimize:hover{background:#eef;border-color:#228;color:#228}.shadow" +
-                     " .box button.resize{background:#bbf;border-color:#446;color:#446}.shadow .box bu" +
-                     "tton.resize:hover{background:#ddf;border-color:#228;color:#228}.shadow .box butt" +
-                     "on.save{background:#d99;border-color:#300;color:#300}.shadow .box button.save:ho" +
-                     "ver{background:#fcc;border-color:#822;color:#822}.shadow .box h3{background:#ccc" +
-                     ";border-color:#333;box-shadow:0.2em 0.2em 0.8em #000;color:#222}.shadow .box h3." +
-                     "heading:hover{background:#222;border-color:#ddd;color:#ddd}.shadow .diff,.shadow" +
-                     " .beautify,.shadow .diff div,.shadow .diff p,.ahadow .diff ol,.shadow .beautify " +
-                     "ol,.shadow .diff li,.ahadow .beautify li,.shadow .diff .count li,.shadow .beauti" +
-                     "fy .count li,.shadow .diff-right .data{border-color:#999}.shadow .diff .count,.s" +
-                     "hadow .beautify .count,#doc.shadow .diff .count,#doc.shadow .beautify .count{bac" +
-                     "kground:#bbb;color:#333}.shadow .diff .count .empty{background:#bbb;color:#bbb}." +
-                     "shadow .diff .data,.shadow .beautify .data{background:#333;color:#ddd}.shadow .d" +
-                     "iff .data .delete em{background-color:#700;border-color:#c66;color:#f99}.shadow " +
-                     ".diff .data .insert em{background-color:#363;border-color:#6c0;color:#cfc}.shado" +
-                     "w .diff .data .replace em{background-color:#440;border-color:#220;color:#cc9}.sh" +
-                     "adow .diff .delete{background-color:#300;border-color:#400;color:#c66}.shadow .d" +
-                     "iff .diff-right{border-color:#999 #999 #999 #333}.shadow .diff .empty{background" +
-                     "-color:#999;border-color:#888}.shadow .diff .equal,.shadow .beautify .data li{ba" +
-                     "ckground-color:#333;border-color:#404040;color:#ddd}.shadow .diff .insert{backgr" +
-                     "ound-color:#040;border-color:#005000;color:#6c6}.shadow .diff .replace{backgroun" +
-                     "d-color:#664;border-color:#707050;color:#bb8}.shadow .diff .skip{background-colo" +
-                     "r:#000;border-color:#555}.shadow .diff h3,.shadow #doc .analysis th[colspan],.sh" +
-                     "adow #doc .analysis thead th,.shadow .doc .analysis th[colspan],.shadow .doc .an" +
-                     "alysis thead th{background:#555;border-color:#999;color:#ddd}.shadow .diff p.aut" +
-                     "hor{background:#555;border-color:#999;color:#ddd}.shadow .file input,.shadow .la" +
-                     "beltext input,.shadow .options input[type=text],.shadow .options select{backgrou" +
-                     "nd:#333;border-color:#999;color:#ddd}.shadow .options{background:#666;border-col" +
-                     "or:#999;color:#ddd;text-shadow:0.1em 0.1em 0.2em #333}.shadow .options fieldset " +
-                     "span input[type=text]{background:#222;border-color:#333}.shadow a{color:#f90}.sh" +
-                     "adow a:hover{color:#c30}.shadow a.button,.shadow button{background:#630;border-c" +
-                     "olor:#600;box-shadow:0 0.2em 0.4em rgba(0,0,0,1);color:#f90;text-shadow:0.1em 0." +
-                     "1em 0.1em #000}.shadow a.button:hover,.shadow a.button:active,.shadow button:hov" +
-                     "er,.shadow button:active{background:#300;border-color:#c00;color:#fc0;text-shado" +
-                     "w:0.1em 0.1em 0.1em rgba(0,0,0,.5)}.shadow h1 svg{border-color:#222;box-shadow:0" +
-                     ".2em 0.2em 0.4em #000}.shadow h2,.shadow h3{background-color:#666;border-color:#" +
-                     "666;box-shadow:none;color:#ddd;padding-left:0;text-shadow:none}.shadow textarea{" +
-                     "background:#333;border-color:#000;color:#ddd}.shadow textarea:hover{background:#" +
-                     "000}.shadow fieldset{background:#333;border-color:#999}.shadow input[disabled]{b" +
-                     "ox-shadow:none}.shadow legend{background:#eee;border-color:#333;box-shadow:0 0.1" +
-                     "em 0.2em rgba(0,0,0,0.75);color:#222;text-shadow:none}.shadow table td{border-co" +
-                     "lor:#999}html .shadow,body.shadow{background:#222;color:#eee}",
+                         "ed{background:#666;color:#ddd}.shadow *:focus,.shadow .filefocus,.shadow #feedre" +
+                         "portbody .focus,.shadow #feedreportbody .active-focus{outline:0.1em dashed #00f}" +
+                         ".shadow #beautyoutput,.shadow #minifyoutput{background:#555;color:#eee}.shadow #" +
+                         "Beautify,.shadow #Minify,.shadow #diffBase,.shadow #diffNew{background:#666;bord" +
+                         "er-color:#999;color:#ddd}.shadow #Beautify label,.shadow #Minify label,.shadow #" +
+                         "diffBase label,.shadow #diffNew label{text-shadow:0.1em 0.1em 0.1em #333}.shadow" +
+                         " #diffoutput #thirdparties{background:#666;border-color:#999}.shadow #diffoutput" +
+                         " #thirdparties a{box-shadow:0 0.2em 0.4em rgba(0,0,0,1);color:#000}.shadow #doc " +
+                         "div,.shadow .doc div,#doc.shadow div{background:#666;border-color:#999}.shadow #" +
+                         "doc div:hover,.shadow .doc div:hover,#doc.shadow div:hover{background:#777}.shad" +
+                         "ow #doc div div,.shadow .doc div div,#doc.shadow div div{background:#333;border-" +
+                         "color:#999}.shadow #doc div div:hover,.shadow .doc div div:hover,#doc.shadow div" +
+                         " div:hover,#doc.shadow div ol:hover{background:#444}.shadow #doc em,.shadow .doc" +
+                         " em,.shadow .box .body em,.shadow .box .body .doc em,.shadow #diffoutput p em,.s" +
+                         "hadow #diffoutput li em{color:#684}.shadow #doc ol,.shadow .doc ol,#doc.shadow o" +
+                         "l{background:#333;border-color:#999}.shadow #doc strong,.shadow .doc strong,.sha" +
+                         "dow .box .body strong{color:#b33}.shadow #doc table,.shadow .doc table,#doc.shad" +
+                         "ow table,.shadow .diff,.shadow .beautify,.shadow .box .body table{background:#33" +
+                         "3;border-color:#999;color:#ddd}.shadow #doc th,.shadow .doc th,#doc.shadow th{ba" +
+                         "ckground:#bbb;border-left-color:#999;border-top-color:#999;color:#333}.shadow #d" +
+                         "oc tr:hover,.shadow .doc tr:hover,#doc.shadow tr:hover{background:#555}.shadow #" +
+                         "feedreportbody .radiogroup label{background:#000}.shadow #feedreportbody .feedra" +
+                         "dio1:hover,.shadow #feedreportbody .active .feedradio1{background:#700}.shadow #" +
+                         "feedreportbody .feedradio2:hover,.shadow #feedreportbody .active .feedradio2{bac" +
+                         "kground:#742}.shadow #feedreportbody .feedradio3:hover,.shadow #feedreportbody ." +
+                         "active .feedradio3{background:#763}.shadow #feedreportbody .feedradio4:hover,.sh" +
+                         "adow #feedreportbody .active .feedradio4{background:#880}.shadow #feedreportbody" +
+                         " .feedradio5:hover,.shadow #feedreportbody .active .feedradio5{background:#675}." +
+                         "shadow #feedreportbody .feedradio6:hover,.shadow #feedreportbody .active .feedra" +
+                         "dio6{background:#452}.shadow #feedreportbody .feedradio7:hover,.shadow #feedrepo" +
+                         "rtbody .active .feedradio7{background:#362}.shadow #functionGroup.append{backgro" +
+                         "und:#eee;border-color:#ccc;box-shadow:0 0.1em 0.2em rgba(64,64,64,0.15)}.shadow " +
+                         "#functionGroup.append{background:#666;border-color:#999}.shadow #option_comment{" +
+                         "background:#333;border-color:#999;color:#ddd}.shadow #option_comment,.shadow inp" +
+                         "ut,.shadow select{box-shadow:0.1em 0.1em 0.2em #000}.shadow #pdsamples li{backgr" +
+                         "ound:#666;border-color:#999}.shadow #pdsamples li div{background:#333;border-col" +
+                         "or:#999}.shadow #pdsamples li p a{color:#f90}.shadow #pdsamples li p a:hover{col" +
+                         "or:#fc0}.shadow #textreport{background:#222}.shadow #title_text{border-color:#22" +
+                         "2;color:#eee}.shadow #top em{color:#9c6}.shadow #update{background:#ddd;border-c" +
+                         "olor:#000;color:#222}.shadow .analysis .bad{background-color:#400;color:#c66}.sh" +
+                         "adow .analysis .good{background-color:#040;color:#6a6}.shadow .beautify .data em" +
+                         ".s0,#doc.shadow .beautify .data em.s0{color:#fff}.shadow .beautify .data em.s1,#" +
+                         "doc.shadow .beautify .data em.s1{color:#c44}.shadow .beautify .data em.s2,#doc.s" +
+                         "hadow .beautify .data em.s2{color:#69c}.shadow .beautify .data em.s3,#doc.shadow" +
+                         " .beautify .data em.s3{color:#0c0}.shadow .beautify .data em.s4,#doc.shadow .bea" +
+                         "utify .data em.s4{color:#c0c}.shadow .beautify .data em.s5,#doc.shadow .beautify" +
+                         " .data em.s5{color:#0cc}.shadow .beautify .data em.s6,#doc.shadow .beautify .dat" +
+                         "a em.s6{color:#981}.shadow .beautify .data em.s7,#doc.shadow .beautify .data em." +
+                         "s7{color:#a7a}.shadow .beautify .data em.s8,#doc.shadow .beautify .data em.s8{co" +
+                         "lor:#7a7}.shadow .beautify .data em.s9,#doc.shadow .beautify .data em.s9{color:#" +
+                         "ff6}.shadow .beautify .data em.s10,#doc.shadow .beautify .data em.s10{color:#33f" +
+                         "}.shadow .beautify .data em.s11,#doc.shadow .beautify .data em.s11{color:#933}.s" +
+                         "hadow .beautify .data em.s12,#doc.shadow .beautify .data em.s12{color:#990}.shad" +
+                         "ow .beautify .data em.s13,#doc.shadow .beautify .data em.s13{color:#987}.shadow " +
+                         ".beautify .data em.s14,#doc.shadow .beautify .data em.s14{color:#fc3}.shadow .be" +
+                         "autify .data em.s15,#doc.shadow .beautify .data em.s15{color:#897}.shadow .beaut" +
+                         "ify .data em.s16,#doc.shadow .beautify .data em.s16{color:#f30}.shadow .beautify" +
+                         " .data .l0{background:#333}.shadow .beautify .data .l1{background:#633}.shadow ." +
+                         "beautify .data .l2{background:#335}.shadow .beautify .data .l3{background:#353}." +
+                         "shadow .beautify .data .l4{background:#636}.shadow .beautify .data .l5{backgroun" +
+                         "d:#366}.shadow .beautify .data .l6{background:#640}.shadow .beautify .data .l7{b" +
+                         "ackground:#303}.shadow .beautify .data .l8{background:#030}.shadow .beautify .da" +
+                         "ta .l9{background:#660}.shadow .beautify .data .l10{background:#003}.shadow .bea" +
+                         "utify .data .l11{background:#300}.shadow .beautify .data .l12{background:#553}.s" +
+                         "hadow .beautify .data .l13{background:#432}.shadow .beautify .data .l14{backgrou" +
+                         "nd:#640}.shadow .beautify .data .l15{background:#562}.shadow .beautify .data .l1" +
+                         "6{background:#600}.shadow .beautify .data .c0{background:#666}.shadow .box{backg" +
+                         "round:#000;border-color:#999;box-shadow:0.6em 0.6em 0.8em rgba(0,0,0,.75)}.shado" +
+                         "w .box .body{background:#333;border-color:#999;color:#ddd}.shadow .box button{bo" +
+                         "x-shadow:0 0.1em 0.2em rgba(0,0,0,0.75);text-shadow:0.1em 0.1em 0.1em rgba(0,0,0" +
+                         ",.5)}.shadow .box button.maximize{background:#9c9;border-color:#030;color:#030}." +
+                         "shadow .box button.maximize:hover{background:#cfc;border-color:#060;color:#060}." +
+                         "shadow .box button.minimize{background:#bbf;border-color:#006;color:#006}.shadow" +
+                         " .box button.minimize:hover{background:#eef;border-color:#228;color:#228}.shadow" +
+                         " .box button.resize{background:#bbf;border-color:#446;color:#446}.shadow .box bu" +
+                         "tton.resize:hover{background:#ddf;border-color:#228;color:#228}.shadow .box butt" +
+                         "on.save{background:#d99;border-color:#300;color:#300}.shadow .box button.save:ho" +
+                         "ver{background:#fcc;border-color:#822;color:#822}.shadow .box h3{background:#ccc" +
+                         ";border-color:#333;box-shadow:0.2em 0.2em 0.8em #000;color:#222}.shadow .box h3." +
+                         "heading:hover{background:#222;border-color:#ddd;color:#ddd}.shadow .diff,.shadow" +
+                         " .beautify,.shadow .diff div,.shadow .diff p,.ahadow .diff ol,.shadow .beautify " +
+                         "ol,.shadow .diff li,.ahadow .beautify li,.shadow .diff .count li,.shadow .beauti" +
+                         "fy .count li,.shadow .diff-right .data{border-color:#999}.shadow .diff .count,.s" +
+                         "hadow .beautify .count,#doc.shadow .diff .count,#doc.shadow .beautify .count{bac" +
+                         "kground:#bbb;color:#333}.shadow .diff .count .empty{background:#bbb;color:#bbb}." +
+                         "shadow .diff .data,.shadow .beautify .data{background:#333;color:#ddd}.shadow .d" +
+                         "iff .data .delete em{background-color:#700;border-color:#c66;color:#f99}.shadow " +
+                         ".diff .data .insert em{background-color:#363;border-color:#6c0;color:#cfc}.shado" +
+                         "w .diff .data .replace em{background-color:#440;border-color:#220;color:#cc9}.sh" +
+                         "adow .diff .delete{background-color:#300;border-color:#400;color:#c66}.shadow .d" +
+                         "iff .diff-right{border-color:#999 #999 #999 #333}.shadow .diff .empty{background" +
+                         "-color:#999;border-color:#888}.shadow .diff .equal,.shadow .beautify .data li{ba" +
+                         "ckground-color:#333;border-color:#404040;color:#ddd}.shadow .diff .insert{backgr" +
+                         "ound-color:#040;border-color:#005000;color:#6c6}.shadow .diff .replace{backgroun" +
+                         "d-color:#664;border-color:#707050;color:#bb8}.shadow .diff .skip{background-colo" +
+                         "r:#000;border-color:#555}.shadow .diff h3,.shadow #doc .analysis th[colspan],.sh" +
+                         "adow #doc .analysis thead th,.shadow .doc .analysis th[colspan],.shadow .doc .an" +
+                         "alysis thead th{background:#555;border-color:#999;color:#ddd}.shadow .diff p.aut" +
+                         "hor{background:#555;border-color:#999;color:#ddd}.shadow .file input,.shadow .la" +
+                         "beltext input,.shadow .options input[type=text],.shadow .options select{backgrou" +
+                         "nd:#333;border-color:#999;color:#ddd}.shadow .options{background:#666;border-col" +
+                         "or:#999;color:#ddd;text-shadow:0.1em 0.1em 0.2em #333}.shadow .options fieldset " +
+                         "span input[type=text]{background:#222;border-color:#333}.shadow a{color:#f90}.sh" +
+                         "adow a:hover{color:#c30}.shadow a.button,.shadow button{background:#630;border-c" +
+                         "olor:#600;box-shadow:0 0.2em 0.4em rgba(0,0,0,1);color:#f90;text-shadow:0.1em 0." +
+                         "1em 0.1em #000}.shadow a.button:hover,.shadow a.button:active,.shadow button:hov" +
+                         "er,.shadow button:active{background:#300;border-color:#c00;color:#fc0;text-shado" +
+                         "w:0.1em 0.1em 0.1em rgba(0,0,0,.5)}.shadow h1 svg{border-color:#222;box-shadow:0" +
+                         ".2em 0.2em 0.4em #000}.shadow h2,.shadow h3{background-color:#666;border-color:#" +
+                         "666;box-shadow:none;color:#ddd;padding-left:0;text-shadow:none}.shadow textarea{" +
+                         "background:#333;border-color:#000;color:#ddd}.shadow textarea:hover{background:#" +
+                         "000}.shadow fieldset{background:#333;border-color:#999}.shadow input[disabled]{b" +
+                         "ox-shadow:none}.shadow legend{background:#eee;border-color:#333;box-shadow:0 0.1" +
+                         "em 0.2em rgba(0,0,0,0.75);color:#222;text-shadow:none}.shadow table td{border-co" +
+                         "lor:#999}html .shadow,body.shadow{background:#222;color:#eee}",
             swhite : "#webtool.white input.unchecked{background:#ccc;color:#666}.white *:focus,.white " +
-                     ".filefocus,.white #feedreportbody .focus,.white #feedreportbody .active-focus{ou" +
-                     "tline:0.1em dashed #00f}.white #beautyoutput,.white #minifyoutput{background:#dd" +
-                     "d}.white #Beautify,.white #Minify,.white #diffBase,.white #diffNew{background:#e" +
-                     "ee;border-color:#ccc;box-shadow:0 0.2em 0.4em rgba(64,64,64,0.15)}.white #diffou" +
-                     "tput #thirdparties{background:#eee}.white #diffoutput p em,.white #diffoutput li" +
-                     " em{color:#c00}.white #doc .analysis thead th,.white #doc .analysis th[colspan]," +
-                     ".white .doc .analysis thead th,.white .doc .analysis th[colspan]{background:#eef" +
-                     "}.white #doc div,.white .doc div,#doc.white div{background:#ddd;border-color:#99" +
-                     "9}.white #doc div:hover,.white .doc div:hover,#doc.white div:hover{background:#c" +
-                     "cc}.white #doc div div,.white .doc div div,#doc.white div div{background:#eee;bo" +
-                     "rder-color:#999}.white #doc div div:hover,.white .doc div div:hover,#doc.white d" +
-                     "iv div:hover,#doc.white div ol:hover{background:#fff}.white #doc em,.white .doc " +
-                     "em,#doc.white em{color:#060}.white #doc ol,.white .doc ol,#doc.white ol{backgrou" +
-                     "nd:#f8f8f8;border-color:#999}.white #doc strong,.white .doc strong,.white .box ." +
-                     "body strong{color:#c00}#doc.white table,.white #doc table,.white .doc table,.whi" +
-                     "te .box .body table{background:#fff;border-color:#999}.white #doc th,.white .doc" +
-                     " th,#doc.white th{background:#ddd;border-left-color:#999;border-top-color:#999}." +
-                     "white #doc tr:hover,.white .doc tr:hover,#doc.white tr:hover{background:#ddd}.wh" +
-                     "ite #feedreportbody .radiogroup label{background:#f8f8f8}.white #feedreportbody " +
-                     ".feedradio1:hover,.white #feedreportbody .active .feedradio1,.white #feedreportb" +
-                     "ody .active-focus .feedradio1{background:#f66}.white #feedreportbody .feedradio2" +
-                     ":hover,.white #feedreportbody .active .feedradio2,.white #feedreportbody .active" +
-                     "-focus .feedradio2{background:#f96}.white #feedreportbody .feedradio3:hover,.whi" +
-                     "te #feedreportbody .active .feedradio3,.white #feedreportbody .active-focus .fee" +
-                     "dradio3{background:#fc9}.white #feedreportbody .feedradio4:hover,.white #feedrep" +
-                     "ortbody .active .feedradio4,.white #feedreportbody .active-focus .feedradio4{bac" +
-                     "kground:#ff9}.white #feedreportbody .feedradio5:hover,.white #feedreportbody .ac" +
-                     "tive .feedradio5,.white #feedreportbody .active-focus .feedradio5{background:#ee" +
-                     "a}.white #feedreportbody .feedradio6:hover,.white #feedreportbody .active .feedr" +
-                     "adio6,.white #feedreportbody .active-focus .feedradio6{background:#cd9}.white #f" +
-                     "eedreportbody .feedradio7:hover,.white #feedreportbody .active .feedradio7,.whit" +
-                     "e #feedreportbody .active-focus .feedradio7{background:#8d8}.white #functionGrou" +
-                     "p.append{background:#eee;border-color:#ccc;box-shadow:0 0.1em 0.2em rgba(64,64,6" +
-                     "4,0.15)}.white #introduction h2{border-color:#999;color:#333}.white #option_comm" +
-                     "ent{background:#ddd;border-color:#999}.white #pdsamples li{background:#eee;borde" +
-                     "r-color:#999}.white #pdsamples li div{background:#ddd;border-color:#999}.white #" +
-                     "pdsamples li div a{color:#47a}.white #pdsamples li p a{color:#009}.white #thirdp" +
-                     "arties img,.white #diffoutput #thirdparties{border-color:#999}.white #textareaTa" +
-                     "bKey{background:#fff;border-color:#ccf}.white #thirdparties img{box-shadow:0.2em" +
-                     " 0.2em 0.4em #999}.white #title_text{border-color:#fff;color:#333}.white #top em" +
-                     "{color:#00f}.white #update{background:#ddd;border-color:#999;box-shadow:0 0.1em " +
-                     "0.2em rgba(64,64,64,0.15)}.white .analysis .bad{background-color:#ebb;color:#400" +
-                     "}.white .analysis .good{background-color:#cec;color:#040}.white .beautify .data " +
-                     ".l0{background:#fff}.white .beautify .data .l1{background:#fed}.white .beautify " +
-                     ".data .l2{background:#def}.white .beautify .data .l3{background:#efe}.white .bea" +
-                     "utify .data .l4{background:#fef}.white .beautify .data .l5{background:#eef}.whit" +
-                     "e .beautify .data .l6{background:#fff8cc}.white .beautify .data .l7{background:#" +
-                     "ede}.white .beautify .data .l8{background:#efc}.white .beautify .data .l9{backgr" +
-                     "ound:#ffd}.white .beautify .data .l10{background:#edc}.white .beautify .data .l1" +
-                     "1{background:#fdb}.white .beautify .data .l12{background:#f8f8f8}.white .beautif" +
-                     "y .data .l13{background:#ffb}.white .beautify .data .l14{background:#eec}.white " +
-                     ".beautify .data .l15{background:#cfc}.white .beautify .data .l16{background:#eea" +
-                     "}.white .beautify .data .c0{background:#ddd}.white .beautify .data em.s0,#doc.wh" +
-                     "ite .beautify .data em.s0{color:#000}.white .beautify .data em.s1,#doc.white .be" +
-                     "autify .data em.s1{color:#f66}.white .beautify .data em.s2,#doc.white .beautify " +
-                     ".data em.s2{color:#12f}.white .beautify .data em.s3,#doc.white .beautify .data e" +
-                     "m.s3{color:#090}.white .beautify .data em.s4,#doc.white .beautify .data em.s4{co" +
-                     "lor:#d6d}.white .beautify .data em.s5,#doc.white .beautify .data em.s5{color:#7c" +
-                     "c}.white .beautify .data em.s6,#doc.white .beautify .data em.s6{color:#c85}.whit" +
-                     "e .beautify .data em.s7,#doc.white .beautify .data em.s7{color:#737}.white .beau" +
-                     "tify .data em.s8,#doc.white .beautify .data em.s8{color:#6d0}.white .beautify .d" +
-                     "ata em.s9,#doc.white .beautify .data em.s9{color:#dd0}.white .beautify .data em." +
-                     "s10,#doc.white .beautify .data em.s10{color:#893}.white .beautify .data em.s11,#" +
-                     "doc.white .beautify .data em.s11{color:#b97}.white .beautify .data em.s12,#doc.w" +
-                     "hite .beautify .data em.s12{color:#bbb}.white .beautify .data em.s13,#doc.white " +
-                     ".beautify .data em.s13{color:#cc3}.white .beautify .data em.s14,#doc.white .beau" +
-                     "tify .data em.s14{color:#333}.white .beautify .data em.s15,#doc.white .beautify " +
-                     ".data em.s15{color:#9d9}.white .beautify .data em.s16,#doc.white .beautify .data" +
-                     " em.s16{color:#880}.white .beautify .data li{color:#777}.white .box{background:#" +
-                     "666;border-color:#999;box-shadow:0 0.4em 0.8em rgba(64,64,64,0.25)}.white .box ." +
-                     "body{background:#eee;border-color:#888;box-shadow:0 0 0.4em rgba(64,64,64,0.75)}" +
-                     ".white .box .body em,.white .box .body .doc em{color:#090}.white .box button{box" +
-                     "-shadow:0 0.1em 0.2em rgba(0,0,0,0.25);text-shadow:0.1em 0.1em 0.1em rgba(0,0,0," +
-                     ".25)}.white .box button.maximize{background:#9c9;border-color:#030;color:#030}.w" +
-                     "hite .box button.maximize:hover{background:#cfc;border-color:#060;color:#060}.wh" +
-                     "ite .box button.minimize{background:#bbf;border-color:#006;color:#006}.white .bo" +
-                     "x button.minimize:hover{background:#eef;border-color:#228;color:#228}.white .box" +
-                     " button.resize{background:#bbf;border-color:#446;color:#446}.white .box button.r" +
-                     "esize:hover{background:#ddf;border-color:#228;color:#228}.white .box button.save" +
-                     "{background:#d99;border-color:#300;color:#300}.white .box button.save:hover{back" +
-                     "ground:#fcc;border-color:#822;color:#822}.white .box h3.heading{background:#ddd;" +
-                     "border-color:#888;box-shadow:0.2em 0.2em 0.4em #ccc}.white .box h3.heading:hover" +
-                     "{background:#333;color:#eee}.white .diff,.white .beautify,.white .diff ol,.white" +
-                     " .beautify ol,.white .diff .diff-left,.white .diff .diff-right,.white h3,.white " +
-                     "p.author{border-color:#999}.white .diff .count li,.white .beautify .count li{bac" +
-                     "kground:#eed;border-color:#bbc;color:#886}.white .diff .data .delete em{backgrou" +
-                     "nd-color:#fdd;border-color:#700;color:#600}.white .diff .data .insert em{backgro" +
-                     "und-color:#efc;border-color:#070;color:#050}.white .diff .data .replace em{backg" +
-                     "round-color:#ffd;border-color:#963;color:#630}.white .diff .delete{background-co" +
-                     "lor:#fbb;border-color:#eaa}.white .diff .equal,.white .beautify .data li{backgro" +
-                     "und-color:#fff;border-color:#eee}.white .diff .empty{background-color:#ddd;borde" +
-                     "r-color:#ccc}.white .diff .insert{background-color:#bfb;border-color:#aea}.white" +
-                     " .diff .replace{background-color:#fea;border-color:#dd8}.white .diff .skip{backg" +
-                     "round-color:#efefef;border-color:#ddd}.white .diff h3{background:#ddd;border-bot" +
-                     "tom-color:#bbc}.white .diff p.author{background:#efefef;border-top-color:#bbc}.w" +
-                     "hite .file input,.white .labeltext input{border-color:#fff}.white .options{backg" +
-                     "round:#eee;border-color:#ccc;box-shadow:0 0.2em 0.4em rgba(64,64,64,0.15);text-s" +
-                     "hadow:0.05em 0.05em 0.1em #ddd}.white .options input[type=text],.white .options " +
-                     "select{border-color:#999}.white .options h2,.white #Beautify h2,.white #Minify h" +
-                     "2,.white #diffBase h2,.white #diffNew h2{background:#eee;border-color:#eee;box-s" +
-                     "hadow:none;text-shadow:none}.white a{color:#009}.white a.button:hover,.white a.b" +
-                     "utton:active,.white button:hover,.white button:active{background:#fee;border-col" +
-                     "or:#cbb;color:#966;text-shadow:0.05em 0.05em 0.1em #f8e8e8}.white fieldset{backg" +
-                     "round:#ddd;border-color:#999}.white h1 svg{background:#eee;border-color:#999;box" +
-                     "-shadow:0 0.1em 0.2em rgba(150,150,150,0.5)}.white h2,.white h3{background:#fefe" +
-                     "fe;border-color:#999;box-shadow:none;text-shadow:none}.white legend{background:#" +
-                     "fff;border-color:#999;color:#333;text-shadow:none}.white div input{border-color:" +
-                     "#999}.white textarea{border-color:#ccc;border-style:solid}.white textarea:hover{" +
-                     "background:#eef8ff}body.white button,body.white a.button{background:#f8f8f8;bord" +
-                     "er-color:#bbb;box-shadow:0 0.1em 0.2em rgba(64,64,64,0.15);color:#666;text-shado" +
-                     "w:0.05em 0.05em 0.1em #e0e0e0}html .white,body.white{color:#333}#about_license a" +
-                     "{display:block}"
+                         ".filefocus,.white #feedreportbody .focus,.white #feedreportbody .active-focus{ou" +
+                         "tline:0.1em dashed #00f}.white #beautyoutput,.white #minifyoutput{background:#dd" +
+                         "d}.white #Beautify,.white #Minify,.white #diffBase,.white #diffNew{background:#e" +
+                         "ee;border-color:#ccc;box-shadow:0 0.2em 0.4em rgba(64,64,64,0.15)}.white #diffou" +
+                         "tput #thirdparties{background:#eee}.white #diffoutput p em,.white #diffoutput li" +
+                         " em{color:#c00}.white #doc .analysis thead th,.white #doc .analysis th[colspan]," +
+                         ".white .doc .analysis thead th,.white .doc .analysis th[colspan]{background:#eef" +
+                         "}.white #doc div,.white .doc div,#doc.white div{background:#ddd;border-color:#99" +
+                         "9}.white #doc div:hover,.white .doc div:hover,#doc.white div:hover{background:#c" +
+                         "cc}.white #doc div div,.white .doc div div,#doc.white div div{background:#eee;bo" +
+                         "rder-color:#999}.white #doc div div:hover,.white .doc div div:hover,#doc.white d" +
+                         "iv div:hover,#doc.white div ol:hover{background:#fff}.white #doc em,.white .doc " +
+                         "em,#doc.white em{color:#060}.white #doc ol,.white .doc ol,#doc.white ol{backgrou" +
+                         "nd:#f8f8f8;border-color:#999}.white #doc strong,.white .doc strong,.white .box ." +
+                         "body strong{color:#c00}#doc.white table,.white #doc table,.white .doc table,.whi" +
+                         "te .box .body table{background:#fff;border-color:#999}.white #doc th,.white .doc" +
+                         " th,#doc.white th{background:#ddd;border-left-color:#999;border-top-color:#999}." +
+                         "white #doc tr:hover,.white .doc tr:hover,#doc.white tr:hover{background:#ddd}.wh" +
+                         "ite #feedreportbody .radiogroup label{background:#f8f8f8}.white #feedreportbody " +
+                         ".feedradio1:hover,.white #feedreportbody .active .feedradio1,.white #feedreportb" +
+                         "ody .active-focus .feedradio1{background:#f66}.white #feedreportbody .feedradio2" +
+                         ":hover,.white #feedreportbody .active .feedradio2,.white #feedreportbody .active" +
+                         "-focus .feedradio2{background:#f96}.white #feedreportbody .feedradio3:hover,.whi" +
+                         "te #feedreportbody .active .feedradio3,.white #feedreportbody .active-focus .fee" +
+                         "dradio3{background:#fc9}.white #feedreportbody .feedradio4:hover,.white #feedrep" +
+                         "ortbody .active .feedradio4,.white #feedreportbody .active-focus .feedradio4{bac" +
+                         "kground:#ff9}.white #feedreportbody .feedradio5:hover,.white #feedreportbody .ac" +
+                         "tive .feedradio5,.white #feedreportbody .active-focus .feedradio5{background:#ee" +
+                         "a}.white #feedreportbody .feedradio6:hover,.white #feedreportbody .active .feedr" +
+                         "adio6,.white #feedreportbody .active-focus .feedradio6{background:#cd9}.white #f" +
+                         "eedreportbody .feedradio7:hover,.white #feedreportbody .active .feedradio7,.whit" +
+                         "e #feedreportbody .active-focus .feedradio7{background:#8d8}.white #functionGrou" +
+                         "p.append{background:#eee;border-color:#ccc;box-shadow:0 0.1em 0.2em rgba(64,64,6" +
+                         "4,0.15)}.white #introduction h2{border-color:#999;color:#333}.white #option_comm" +
+                         "ent{background:#ddd;border-color:#999}.white #pdsamples li{background:#eee;borde" +
+                         "r-color:#999}.white #pdsamples li div{background:#ddd;border-color:#999}.white #" +
+                         "pdsamples li div a{color:#47a}.white #pdsamples li p a{color:#009}.white #thirdp" +
+                         "arties img,.white #diffoutput #thirdparties{border-color:#999}.white #textareaTa" +
+                         "bKey{background:#fff;border-color:#ccf}.white #thirdparties img{box-shadow:0.2em" +
+                         " 0.2em 0.4em #999}.white #title_text{border-color:#fff;color:#333}.white #top em" +
+                         "{color:#00f}.white #update{background:#ddd;border-color:#999;box-shadow:0 0.1em " +
+                         "0.2em rgba(64,64,64,0.15)}.white .analysis .bad{background-color:#ebb;color:#400" +
+                         "}.white .analysis .good{background-color:#cec;color:#040}.white .beautify .data " +
+                         ".l0{background:#fff}.white .beautify .data .l1{background:#fed}.white .beautify " +
+                         ".data .l2{background:#def}.white .beautify .data .l3{background:#efe}.white .bea" +
+                         "utify .data .l4{background:#fef}.white .beautify .data .l5{background:#eef}.whit" +
+                         "e .beautify .data .l6{background:#fff8cc}.white .beautify .data .l7{background:#" +
+                         "ede}.white .beautify .data .l8{background:#efc}.white .beautify .data .l9{backgr" +
+                         "ound:#ffd}.white .beautify .data .l10{background:#edc}.white .beautify .data .l1" +
+                         "1{background:#fdb}.white .beautify .data .l12{background:#f8f8f8}.white .beautif" +
+                         "y .data .l13{background:#ffb}.white .beautify .data .l14{background:#eec}.white " +
+                         ".beautify .data .l15{background:#cfc}.white .beautify .data .l16{background:#eea" +
+                         "}.white .beautify .data .c0{background:#ddd}.white .beautify .data em.s0,#doc.wh" +
+                         "ite .beautify .data em.s0{color:#000}.white .beautify .data em.s1,#doc.white .be" +
+                         "autify .data em.s1{color:#f66}.white .beautify .data em.s2,#doc.white .beautify " +
+                         ".data em.s2{color:#12f}.white .beautify .data em.s3,#doc.white .beautify .data e" +
+                         "m.s3{color:#090}.white .beautify .data em.s4,#doc.white .beautify .data em.s4{co" +
+                         "lor:#d6d}.white .beautify .data em.s5,#doc.white .beautify .data em.s5{color:#7c" +
+                         "c}.white .beautify .data em.s6,#doc.white .beautify .data em.s6{color:#c85}.whit" +
+                         "e .beautify .data em.s7,#doc.white .beautify .data em.s7{color:#737}.white .beau" +
+                         "tify .data em.s8,#doc.white .beautify .data em.s8{color:#6d0}.white .beautify .d" +
+                         "ata em.s9,#doc.white .beautify .data em.s9{color:#dd0}.white .beautify .data em." +
+                         "s10,#doc.white .beautify .data em.s10{color:#893}.white .beautify .data em.s11,#" +
+                         "doc.white .beautify .data em.s11{color:#b97}.white .beautify .data em.s12,#doc.w" +
+                         "hite .beautify .data em.s12{color:#bbb}.white .beautify .data em.s13,#doc.white " +
+                         ".beautify .data em.s13{color:#cc3}.white .beautify .data em.s14,#doc.white .beau" +
+                         "tify .data em.s14{color:#333}.white .beautify .data em.s15,#doc.white .beautify " +
+                         ".data em.s15{color:#9d9}.white .beautify .data em.s16,#doc.white .beautify .data" +
+                         " em.s16{color:#880}.white .beautify .data li{color:#777}.white .box{background:#" +
+                         "666;border-color:#999;box-shadow:0 0.4em 0.8em rgba(64,64,64,0.25)}.white .box ." +
+                         "body{background:#eee;border-color:#888;box-shadow:0 0 0.4em rgba(64,64,64,0.75)}" +
+                         ".white .box .body em,.white .box .body .doc em{color:#090}.white .box button{box" +
+                         "-shadow:0 0.1em 0.2em rgba(0,0,0,0.25);text-shadow:0.1em 0.1em 0.1em rgba(0,0,0," +
+                         ".25)}.white .box button.maximize{background:#9c9;border-color:#030;color:#030}.w" +
+                         "hite .box button.maximize:hover{background:#cfc;border-color:#060;color:#060}.wh" +
+                         "ite .box button.minimize{background:#bbf;border-color:#006;color:#006}.white .bo" +
+                         "x button.minimize:hover{background:#eef;border-color:#228;color:#228}.white .box" +
+                         " button.resize{background:#bbf;border-color:#446;color:#446}.white .box button.r" +
+                         "esize:hover{background:#ddf;border-color:#228;color:#228}.white .box button.save" +
+                         "{background:#d99;border-color:#300;color:#300}.white .box button.save:hover{back" +
+                         "ground:#fcc;border-color:#822;color:#822}.white .box h3.heading{background:#ddd;" +
+                         "border-color:#888;box-shadow:0.2em 0.2em 0.4em #ccc}.white .box h3.heading:hover" +
+                         "{background:#333;color:#eee}.white .diff,.white .beautify,.white .diff ol,.white" +
+                         " .beautify ol,.white .diff .diff-left,.white .diff .diff-right,.white h3,.white " +
+                         "p.author{border-color:#999}.white .diff .count li,.white .beautify .count li{bac" +
+                         "kground:#eed;border-color:#bbc;color:#886}.white .diff .data .delete em{backgrou" +
+                         "nd-color:#fdd;border-color:#700;color:#600}.white .diff .data .insert em{backgro" +
+                         "und-color:#efc;border-color:#070;color:#050}.white .diff .data .replace em{backg" +
+                         "round-color:#ffd;border-color:#963;color:#630}.white .diff .delete{background-co" +
+                         "lor:#fbb;border-color:#eaa}.white .diff .equal,.white .beautify .data li{backgro" +
+                         "und-color:#fff;border-color:#eee}.white .diff .empty{background-color:#ddd;borde" +
+                         "r-color:#ccc}.white .diff .insert{background-color:#bfb;border-color:#aea}.white" +
+                         " .diff .replace{background-color:#fea;border-color:#dd8}.white .diff .skip{backg" +
+                         "round-color:#efefef;border-color:#ddd}.white .diff h3{background:#ddd;border-bot" +
+                         "tom-color:#bbc}.white .diff p.author{background:#efefef;border-top-color:#bbc}.w" +
+                         "hite .file input,.white .labeltext input{border-color:#fff}.white .options{backg" +
+                         "round:#eee;border-color:#ccc;box-shadow:0 0.2em 0.4em rgba(64,64,64,0.15);text-s" +
+                         "hadow:0.05em 0.05em 0.1em #ddd}.white .options input[type=text],.white .options " +
+                         "select{border-color:#999}.white .options h2,.white #Beautify h2,.white #Minify h" +
+                         "2,.white #diffBase h2,.white #diffNew h2{background:#eee;border-color:#eee;box-s" +
+                         "hadow:none;text-shadow:none}.white a{color:#009}.white a.button:hover,.white a.b" +
+                         "utton:active,.white button:hover,.white button:active{background:#fee;border-col" +
+                         "or:#cbb;color:#966;text-shadow:0.05em 0.05em 0.1em #f8e8e8}.white fieldset{backg" +
+                         "round:#ddd;border-color:#999}.white h1 svg{background:#eee;border-color:#999;box" +
+                         "-shadow:0 0.1em 0.2em rgba(150,150,150,0.5)}.white h2,.white h3{background:#fefe" +
+                         "fe;border-color:#999;box-shadow:none;text-shadow:none}.white legend{background:#" +
+                         "fff;border-color:#999;color:#333;text-shadow:none}.white div input{border-color:" +
+                         "#999}.white textarea{border-color:#ccc;border-style:solid}.white textarea:hover{" +
+                         "background:#eef8ff}body.white button,body.white a.button{background:#f8f8f8;bord" +
+                         "er-color:#bbb;box-shadow:0 0.1em 0.2em rgba(64,64,64,0.15);color:#666;text-shado" +
+                         "w:0.05em 0.05em 0.1em #e0e0e0}html .white,body.white{color:#333}#about_license a" +
+                         "{display:block}"
         },
-        diff: "",
-        langvalue   : [],
-        mode: "diff",
-        node: {
+        diff               : "",
+        langvalue          : [],
+        mode               : "diff",
+        node               : {
             announce    : pd.id("announcement"),
             beau        : pd.id("Beautify"),
             beauOps     : pd.id("beauops"),
@@ -768,16 +768,16 @@ var pd       = {},
             },
             save        : pd.id("diff-save")
         },
-        settings: {},
-        source: "",
-        sourceLength      : {
+        settings           : {},
+        source             : "",
+        sourceLength       : {
             beau    : 0,
             diffBase: 0,
             diffNew : 0,
             minn    : 0,
             pars    : 0
         },
-        stat: {
+        stat               : {
             avday : 1,
             beau  : 0,
             css   : 0,
@@ -795,15 +795,15 @@ var pd       = {},
             useday: 0,
             visit : 0
         },
-        tabtrue: false,
-        zIndex: 10
+        tabtrue            : false,
+        zIndex             : 10
     };
     //namespace for Ace editors
-    pd.ace = {};
+    pd.ace              = {};
     //namespace for internal functions
-    pd.app = {
+    pd.app              = {
         //builds the Ace editors
-        aceApply: function dom__app_aceApply(nodeName, className, maxWidth) {
+        aceApply : function dom__app_aceApply(nodeName, className, maxWidth) {
             var div        = document.createElement("div"),
                 span       = document.createElement("span"),
                 node       = pd.data.node[nodeName],
@@ -823,16 +823,18 @@ var pd       = {},
                 parent.appendChild(span);
             }
             parent.removeChild(node.parentNode);
-            div.setAttribute("class", className);if (maxWidth === true) {
+            div.setAttribute("class", className);
+            if (maxWidth === true) {
                 div.style.width = "100%";
             }
             div.style.fontSize           = "1.25em";
             edit                         = ace.edit(div);
-            pd.data.node[nodeName]               = div.getElementsByTagName("textarea")[0];
+            pd.data.node[nodeName]       = div.getElementsByTagName("textarea")[0];
             edit["\u0024blockScrolling"] = Infinity;
             return edit;
         },
-        //Readjusts the heights of the editors to compensate for various changes to the interface, like screen resize
+        //Readjusts the heights of the editors to compensate for various changes to the
+        //interface, like screen resize
         fixHeight: function dom__app_fixHeight() {
             var baseText = pd.id("baseText"),
                 newText  = pd.id("newText"),
@@ -950,7 +952,7 @@ var pd       = {},
             }
         },
         //sets indentation size in Ace editors
-        insize: function dom__app_insize() {
+        insize   : function dom__app_insize() {
             var that  = this,
                 value = Number(that.value);
             if (that === pd.id("diff-quan")) {
@@ -1012,7 +1014,7 @@ var pd       = {},
         //list
         //obj - the ace obj passed in. {} empty object if `all` is true
         //lang - a language passed in. "" empty string means auto detect
-        langkey : function dom__app_langkey(all, obj, lang) {
+        langkey  : function dom__app_langkey(all, obj, lang) {
             var value       = [],
                 sample      = "",
                 setlangmode = function dom__app_langkey_setlangmode(input) {
@@ -1107,7 +1109,7 @@ var pd       = {},
                     if (a === null) {
                         return;
                     }
-                    if (a === undefined || (/^(\s*#(?!(!\/)))/).test(a) === true || (/\n\s*(\.|@)mixin\(?(\s*)/).test(a) === true) {
+                    if ((/(\s|;|\})((if)|(for)|(function\s*\w*))\s*\(/).test(a) === false && (/((var)|(let)|(const))\s*\w/).test(a) === false && (/return\s*\w*\s*(;|\})/).test(a) === false && (a === undefined || (/^(\s*#(?!(!\/)))/).test(a) === true || (/\n\s*(\.|@)\w+(\(?|(\s*:))/).test(a) === true)) {
                         if ((/\$[a-zA-Z]/).test(a) === true || (/\{\s*(\w|\.|\$|#)+\s*\{/).test(a) === true) {
                             return output("scss");
                         }
@@ -1144,7 +1146,7 @@ var pd       = {},
                         if ((/^(\s*(\{|\[))/).test(a) === true && (/((\]|\})\s*)$/).test(a) && a.indexOf(",") !== -1) {
                             return output("json");
                         }
-                        if ((/((\}?(\(\))?\)*;?\s*)|([a-z0-9]("|')?\)*);?(\s*\})*)$/i).test(a) === true && ((/(var\s+(\w|\$)+[a-zA-Z0-9]*)/).test(a) === true || (/console\.log\(/).test(a) === true || (/document\.get/).test(a) === true || (/((\=|(\$\())\s*function)|(\s*function\s+(\w*\s+)?\()/).test(a) === true || a.indexOf("{") === -1 || (/^(\s*if\s+\()/).test(a) === true)) {
+                        if ((/((\}?(\(\))?\)*;?\s*)|([a-z0-9]("|')?\)*);?(\s*\})*)$/i).test(a) === true && ((/(((var)|(let)|(const))\s+(\w|\$)+[a-zA-Z0-9]*)/).test(a) === true || (/console\.log\(/).test(a) === true || (/document\.get/).test(a) === true || (/((\=|(\$\())\s*function)|(\s*function\s+(\w*\s+)?\()/).test(a) === true || a.indexOf("{") === -1 || (/^(\s*if\s+\()/).test(a) === true)) {
                             if (a.indexOf("(") > -1 || a.indexOf("=") > -1 || (a.indexOf(";") > -1 && a.indexOf("{") > -1)) {
                                 if ((/:\s*((number)|(string))/).test(a) === true && (/((public)|(private))\s+/).test(a) === true) {
                                     return output("typescript");
@@ -1261,25 +1263,25 @@ var pd       = {},
                 pd.data.langvalue = [
                     "plain_text", "csv", "CSV"
                 ];
-                value          = pd.data.langvalue;
+                value             = pd.data.langvalue;
             } else if (lang === "text") {
                 pd.data.langvalue = [
                     "plain_text", "text", "Plain Text"
                 ];
-                value          = pd.data.langvalue;
+                value             = pd.data.langvalue;
             } else if (lang !== "") {
                 pd.data.langvalue = [
                     lang, setlangmode(lang), nameproper(lang)
                 ];
-                value          = pd.data.langvalue;
+                value             = pd.data.langvalue;
             } else if (sample !== "" || pd.test.ace === false) {
                 pd.data.langvalue = auto(sample);
-                value          = pd.data.langvalue;
+                value             = pd.data.langvalue;
             } else {
                 pd.data.langvalue = [
                     defaultt, setlangmode(defaultt), nameproper(defaultt)
                 ];
-                value          = pd.data.langvalue;
+                value             = pd.data.langvalue;
             }
             if (pd.test.ace === true) {
                 if (value[0] === "tss") {
@@ -1291,7 +1293,7 @@ var pd       = {},
                 }
                 if (all === true || pd.data.mode === "beau") {
                     if (all === true && lang === "") {
-                        value          = auto(pd.ace.beauIn.getValue());
+                        value             = auto(pd.ace.beauIn.getValue());
                         pd.data.langvalue = value;
                     }
                     pd.ace
@@ -1307,7 +1309,7 @@ var pd       = {},
                 }
                 if (all === true || pd.data.mode === "minn") {
                     if (all === true && lang === "") {
-                        value          = auto(pd.ace.minnIn.getValue());
+                        value             = auto(pd.ace.minnIn.getValue());
                         pd.data.langvalue = value;
                     }
                     pd.ace
@@ -1323,7 +1325,7 @@ var pd       = {},
                 }
                 if (all === true || pd.data.mode === "pars") {
                     if (all === true && lang === "") {
-                        value          = auto(pd.ace.parsIn.getValue());
+                        value             = auto(pd.ace.parsIn.getValue());
                         pd.data.langvalue = value;
                     }
                     pd.ace
@@ -1339,7 +1341,7 @@ var pd       = {},
                 }
                 if (all === true || pd.data.mode === "diff") {
                     if (all === true && lang === "") {
-                        value          = auto(pd.ace.diffBase.getValue());
+                        value             = auto(pd.ace.diffBase.getValue());
                         pd.data.langvalue = value;
                     }
                     if (pd.data.node.codeDiffBase !== null) {
@@ -1387,7 +1389,7 @@ var pd       = {},
             return pd.data.langvalue[1];
         },
         //store tool changes into localStorage to maintain state
-        options: function dom__app_options(x) {
+        options  : function dom__app_options(x) {
             var item   = {},
                 node   = "",
                 name   = "",
@@ -1556,6 +1558,14 @@ var pd       = {},
                         data = [
                             "methodchain", "true"
                         ];
+                    } else if (id === "bnocaseindent-no" || id === "dnocaseindent-no") {
+                        data = [
+                            "nocaseindent", "false"
+                        ];
+                    } else if (id === "bnocaseindent-yes" || id === "dnocaseindent-yes") {
+                        data = [
+                            "nocaseindent", "true"
+                        ];
                     } else if (id === "bnoleadzero-no") {
                         data = [
                             "noleadzero", "false"
@@ -1591,6 +1601,14 @@ var pd       = {},
                     } else if (id === "bquoteconvert-single" || id === "mquoteconvert-single") {
                         data = [
                             "quoteConvert", "single"
+                        ];
+                    } else if (id === "bselectorlist-no" || id === "dselectorlist-no") {
+                        data = [
+                            "selectorlist", "false"
+                        ];
+                    } else if (id === "bselectorlist-yes" || id === "dselectorlist-yes") {
+                        data = [
+                            "selectorlist", "true"
                         ];
                     } else if (id === "bspaceclose-no") {
                         data = [
@@ -1810,6 +1828,14 @@ var pd       = {},
                         data = [
                             "lang", item.value
                         ];
+                    } else if (id === "lterminator-crlf") {
+                        data = [
+                            "crlf", "true"
+                        ];
+                    } else if (id === "lterminator-lf") {
+                        data = [
+                            "crlf", "false"
+                        ];
                     } else if (id === "miniwrapm-no") {
                         data = [
                             "miniwrap", "false"
@@ -1876,22 +1902,26 @@ var pd       = {},
                         }
                     }
                     if (a < 0) {
-                        pd.data.commentString
+                        pd.data
+                            .commentString
                             .push(data.join(": "));
-                        pd.data.commentString
+                        pd.data
+                            .commentString
                             .sort();
                     }
                     if (pd.data.node.comment !== null) {
                         if (pd.data.commentString.length === 0) {
                             pd.data.node.comment.innerHTML = "/*prettydiff.com */";
                         } else if (pd.data.commentString.length === 1) {
-                            pd.data.node.comment.innerHTML = "/*prettydiff.com " + pd.data.commentString[0]
+                            pd.data.node.comment.innerHTML = "/*prettydiff.com " + pd.data
+                                .commentString[0]
                                 .replace(/&/g, "&amp;")
                                 .replace(/</g, "&lt;")
                                 .replace(/>/g, "&gt;")
                                 .replace(/api\./g, "") + " */";
                         } else {
-                            pd.data.node.comment.innerHTML = "/*prettydiff.com " + pd.data.commentString
+                            pd.data.node.comment.innerHTML = "/*prettydiff.com " + pd.data
+                                .commentString
                                 .join(", ")
                                 .replace(/&/g, "&amp;")
                                 .replace(/</g, "&lt;")
@@ -1907,7 +1937,7 @@ var pd       = {},
             }
         },
         //intelligently raise the z-index of the report windows
-        zTop: function dom__app_top(x) {
+        zTop     : function dom__app_top(x) {
             var indexListed = pd.data.zIndex,
                 indexes     = [
                     (pd.data.node.report.feed.box === null)
@@ -1929,9 +1959,9 @@ var pd       = {},
         }
     };
     //namespace for event handlers
-    pd.event = {
+    pd.event            = {
         //fixing areaTabOut in the case of unintentional back tabs
-        areaShiftUp: function dom__event_areaShiftUp(e) {
+        areaShiftUp  : function dom__event_areaShiftUp(e) {
             var event = e || window.event;
             if (event.keyCode === 16 && pd.test.tabesc.length > 0) {
                 pd.test.tabesc = [];
@@ -1941,7 +1971,7 @@ var pd       = {},
             }
         },
         //allows visual folding of function in the JSPretty jsscope HTML output
-        beaufold: function dom__event_beaufold() {
+        beaufold     : function dom__event_beaufold() {
             var self  = this,
                 title = self.getAttribute("title")
                     .split("line "),
@@ -1978,15 +2008,15 @@ var pd       = {},
             }
         },
         //clears the Pretty Diff comment string
-        clearComment: function dom__event_clearComment() {
+        clearComment : function dom__event_clearComment() {
             localStorage.commentString = "[]";
-            pd.data.commentString           = [];
+            pd.data.commentString      = [];
             if (pd.data.node.comment !== null) {
                 pd.data.node.comment.innerHTML = "/*prettydiff.com */";
             }
         },
         //change the color scheme of the web UI
-        colorScheme: function dom__event_colorScheme(node) {
+        colorScheme  : function dom__event_colorScheme(node) {
             var x         = (node !== undefined && node.nodeType === 1)
                     ? node
                     : this,
@@ -2005,7 +2035,8 @@ var pd       = {},
                 theme     = "",
                 logoColor = "",
                 logo      = pd.id("pdlogo");
-            pd.data.node
+            pd.data
+                .node
                 .page
                 .setAttribute("class", color);
             if (pd.test.ace === true) {
@@ -2052,9 +2083,11 @@ var pd       = {},
                 logo.getElementsByTagName("g")[0]
                     .setAttribute("fill", "#" + logoColor);
             }
-            pd.app.options(x);
+            pd.app
+                .options(x);
         },
-        //allows grabbing and resizing columns (from the third column) in the diff side-by-side report
+        //allows grabbing and resizing columns (from the third column) in the diff
+        //side-by-side report
         colSliderGrab: function dom__event_colSliderGrab(e) {
             var event       = e || window.event,
                 touch       = (e !== null && e.type === "touchstart"),
@@ -2144,7 +2177,7 @@ var pd       = {},
             }
         },
         //allows visual folding of consecutive equal lines in a diff report
-        difffold: function dom__event_difffold() {
+        difffold     : function dom__event_difffold() {
             var a         = 0,
                 b         = 0,
                 self      = this,
@@ -2191,7 +2224,7 @@ var pd       = {},
             }
         },
         //submits the comment card
-        feedsubmit: function dom__event_feedsubmit(auto) {
+        feedsubmit   : function dom__event_feedsubmit(auto) {
             var datapack  = {},
                 namecheck = (localStorage.settings !== undefined)
                     ? JSON.parse(localStorage.settings)
@@ -2213,7 +2246,8 @@ var pd       = {},
                     xhr.open("POST", "http://prettydiff.com:8000/feedback/", true);
                     xhr.setRequestHeader("Content-type", "application/json; charset=utf-8");
                     xhr.send(JSON.stringify(datapack));
-                    pd.data.node
+                    pd.data
+                        .node
                         .report
                         .feed
                         .box
@@ -2267,13 +2301,14 @@ var pd       = {},
             sendit();
         },
         //nullifies the current "file" event
-        filenull: function dom__event_filenull(e) {
+        filenull     : function dom__event_filenull(e) {
             var event = e || window.event;
             event.stopPropagation();
             event.preventDefault();
         },
-        //this function allows typing of tab characters into textareas without the textarea loosing focus
-        fixtabs: function dom__event_fixtabs(e, node) {
+        //this function allows typing of tab characters into textareas without the
+        //textarea loosing focus
+        fixtabs      : function dom__event_fixtabs(e, node) {
             var x     = node || this,
                 start = "",
                 end   = "",
@@ -2294,7 +2329,7 @@ var pd       = {},
             return false;
         },
         //tests if a key press is a short command
-        keydown: function dom__event_keydown(e) {
+        keydown      : function dom__event_keydown(e) {
             var event = e || window.event;
             if (pd.test.keypress === true && (pd.test.keystore.length === 0 || event.keyCode !== pd.test.keystore[pd.test.keystore.length - 1]) && event.keyCode !== 17) {
                 pd.test
@@ -2306,7 +2341,7 @@ var pd       = {},
             }
         },
         //alters available options depending upon language selection
-        langOps: function dom__event_langOps(node) {
+        langOps      : function dom__event_langOps(node) {
             var x    = {},
                 lang = "",
                 xml  = false,
@@ -2495,19 +2530,23 @@ var pd       = {},
                     }
                 }
                 if (lang === "auto") {
-                    pd.app.langkey(true, {}, "");
+                    pd.app
+                        .langkey(true, {}, "");
                 } else {
-                    pd.app.langkey(true, {}, lang);
+                    pd.app
+                        .langkey(true, {}, lang);
                 }
                 if (pd.test.load === false && pd.data.mode !== "diff") {
-                    pd.app.hideOutput(x);
+                    pd.app
+                        .hideOutput(x);
                 }
             } else {
-                pd.app.options(x);
+                pd.app
+                    .options(x);
             }
         },
         //maximize report window to available browser window
-        maximize: function dom__event_maximize(node) {
+        maximize     : function dom__event_maximize(node) {
             var x       = (node.nodeType === 1)
                     ? node
                     : this,
@@ -2525,7 +2564,8 @@ var pd       = {},
                     : document.body.scrollLeft,
                 buttons = [],
                 resize  = {};
-            pd.app.zTop(box);
+            pd.app
+                .zTop(box);
             if (x.nodeType !== 1) {
                 return;
             }
@@ -2553,8 +2593,8 @@ var pd       = {},
                 pd.data.settings[id].height = body.clientHeight - 36;
                 pd.data.settings[id].width  = body.clientWidth - 3;
                 pd.data.settings[id].zindex = box.style.zIndex;
-                box.style.top          = (top / 10) + "em";
-                box.style.left         = (left / 10) + "em";
+                box.style.top               = (top / 10) + "em";
+                box.style.left              = (left / 10) + "em";
                 if (typeof window.innerHeight === "number") {
                     body.style.height = ((window.innerHeight / 10) - 5.5) + "em";
                     if (save === true) {
@@ -2569,7 +2609,7 @@ var pd       = {},
                 //return to normal size
             } else {
                 pd.data.settings[id].max = false;
-                x.innerHTML         = "\u2191";
+                x.innerHTML              = "\u2191";
                 x.setAttribute("title", "Maximize this dialogue to the browser window.");
                 box.style.top  = (pd.data.settings[id].top / 10) + "em";
                 box.style.left = (pd.data.settings[id].left / 10) + "em";
@@ -2582,11 +2622,12 @@ var pd       = {},
                 body.style.height    = (pd.data.settings[id].height / 10) + "em";
                 box.style.zIndex     = pd.data.settings[id].zindex;
                 resize.style.display = "block";
-                pd.app.options(box);
+                pd.app
+                    .options(box);
             }
         },
         //minimize report windows to the default size and location
-        minimize: function dom__event_minimize(e, steps, node) {
+        minimize     : function dom__event_minimize(e, steps, node) {
             var x         = node || this,
                 parent    = {},
                 box       = {},
@@ -2645,7 +2686,8 @@ var pd       = {},
                                 bodyLocal.style.width    = widthTarget + "em";
                                 bodyLocal.style.height   = heightTarget + "em";
                                 headingLocal.style.width = (widthTarget - saveSpace) + "em";
-                                pd.app.options(boxLocal);
+                                pd.app
+                                    .options(boxLocal);
                                 return false;
                             }
                         };
@@ -2660,15 +2702,15 @@ var pd       = {},
                         widthTarget  = (pd.data.settings[id].width / 10);
                         heightTarget = (pd.data.settings[id].height / 10);
                     } else {
-                        topLocal               += 4;
+                        topLocal                    += 4;
                         pd.data.settings[id].left   = 200;
                         pd.data.settings[id].top    = (topLocal * 10);
                         pd.data.settings[id].width  = 550;
                         pd.data.settings[id].height = 450;
-                        leftTarget             = 10;
-                        topTarget              = 2;
-                        widthTarget            = 55;
-                        heightTarget           = 45;
+                        leftTarget                  = 10;
+                        topTarget                   = 2;
+                        widthTarget                 = 55;
+                        heightTarget                = 45;
                     }
                     widthTarget  = widthTarget - 0.3;
                     heightTarget = heightTarget - 3.55;
@@ -2678,7 +2720,8 @@ var pd       = {},
                         bodyLocal.style.width  = widthTarget + "em";
                         bodyLocal.style.height = heightTarget + "em";
                         heading.style.width    = (widthTarget - saveSpace) + "em";
-                        pd.app.options(boxLocal);
+                        pd.app
+                            .options(boxLocal);
                         return false;
                     }
                     incW                    = (widthTarget > width)
@@ -2728,7 +2771,7 @@ var pd       = {},
                                 boxLocal.style.left                                         = "auto";
                                 boxLocal.style.top                                          = "auto";
                                 boxLocal.style.right                                        = finalLocal + "em";
-                                pd.data.settings[id].max                                         = false;
+                                pd.data.settings[id].max                                    = false;
                                 boxLocal.style.borderWidth                                  = "0em";
                                 bodyLocal.style.display                                     = "none";
                                 headingLocal.style.borderLeftStyle                          = "solid";
@@ -2736,7 +2779,8 @@ var pd       = {},
                                 headingLocal.getElementsByTagName("button")[0].style.cursor = "pointer";
                                 headingLocal.style.margin                                   = "0em 0em -3.2em 0.1em";
                                 box.style.zIndex                                            = "2";
-                                pd.app.options(boxLocal);
+                                pd.app
+                                    .options(boxLocal);
                                 return false;
                             }
                         };
@@ -2807,11 +2851,11 @@ var pd       = {},
                         pd.data.settings[id].width  = body.clientWidth;
                     }
                     if (pd.data.zIndex > 2) {
-                        pd.data.zIndex           -= 3;
+                        pd.data.zIndex      -= 3;
                         parent.style.zIndex = pd.data.zIndex;
                     }
                 } else {
-                    buttonMax.innerHTML    = "\u2191";
+                    buttonMax.innerHTML         = "\u2191";
                     pd.data.settings[id].top    += 1;
                     pd.data.settings[id].left   -= 7;
                     pd.data.settings[id].height += 35.5;
@@ -2823,7 +2867,8 @@ var pd       = {},
 
                 //grow
             } else {
-                pd.app.zTop(box);
+                pd.app
+                    .zTop(box);
                 parent.style.display                                   = "block";
                 box.style.borderWidth                                  = ".1em";
                 box.style.right                                        = "auto";
@@ -2838,7 +2883,7 @@ var pd       = {},
             return false;
         },
         //toggles between modes
-        modeToggle: function dom__event_modeToggle(x) {
+        modeToggle   : function dom__event_modeToggle(x) {
             var a           = {},
                 b           = 0,
                 lang        = (pd.data.node.lang === null)
@@ -2855,7 +2900,8 @@ var pd       = {},
                 optioncheck = function dom__event_modeToggle_optioncheck() {
                     var c     = 0,
                         langs = [];
-                    langs = pd.data.node
+                    langs = pd.data
+                        .node
                         .lang
                         .getElementsByTagName("option");
                     for (c = langs.length - 1; c > -1; c -= 1) {
@@ -2941,7 +2987,8 @@ var pd       = {},
                                 pd.ace
                                     .beauIn
                                     .clearSelection();
-                                pd.app.langkey(false, pd.ace.beauIn, "");
+                                pd.app
+                                    .langkey(false, pd.ace.beauIn, "");
                             } else {
                                 pd.data.node.codeBeauIn.value = storage;
                             }
@@ -2958,7 +3005,8 @@ var pd       = {},
                     }
                 }
                 if (pd.test.load === false && pd.data.node.jsscope !== null && pd.data.node.jsscope.checked === true) {
-                    pd.app.hideOutput(pd.data.node.jsscope);
+                    pd.app
+                        .hideOutput(pd.data.node.jsscope);
                 }
                 pd.test.render.beau = true;
             }
@@ -3019,7 +3067,8 @@ var pd       = {},
                                 pd.ace
                                     .minnIn
                                     .clearSelection();
-                                pd.app.langkey(false, pd.ace.minnIn, "");
+                                pd.app
+                                    .langkey(false, pd.ace.minnIn, "");
                             } else {
                                 pd.data.node.codeMinnIn.value = storage;
                             }
@@ -3040,7 +3089,8 @@ var pd       = {},
             if (a === pd.data.node.modeDiff) {
                 pd.data.mode = "diff";
                 if (langtest === true) {
-                    langOps = pd.data.node
+                    langOps = pd.data
+                        .node
                         .lang
                         .getElementsByTagName("option");
                     for (b = langOps.length - 1; b > -1; b -= 1) {
@@ -3123,7 +3173,8 @@ var pd       = {},
                                     .diffBase
                                     .clearSelection();
                                 if (lang !== "text") {
-                                    pd.app.langkey(false, pd.ace.diffBase, "");
+                                    pd.app
+                                        .langkey(false, pd.ace.diffBase, "");
                                 }
                             } else {
                                 pd.data.node.codeDiffBase.value = storage;
@@ -3148,7 +3199,8 @@ var pd       = {},
                                     .diffNew
                                     .clearSelection();
                                 if (lang !== "text") {
-                                    pd.app.langkey(false, pd.ace.diffNew, "");
+                                    pd.app
+                                        .langkey(false, pd.ace.diffNew, "");
                                 }
                             } else {
                                 pd.data.node.codeDiffNew.value = storage;
@@ -3219,7 +3271,8 @@ var pd       = {},
                                 pd.ace
                                     .parsIn
                                     .clearSelection();
-                                pd.app.langkey(false, pd.ace.parsIn, "");
+                                pd.app
+                                    .langkey(false, pd.ace.parsIn, "");
                             } else {
                                 pd.data.node.codeParsIn.value = storage;
                             }
@@ -3261,13 +3314,15 @@ var pd       = {},
                 }
             }
             if (a !== pd.data.node.modeDiff) {
-                pd.app.hideOutput(a);
+                pd.app
+                    .hideOutput(a);
             } else {
-                pd.app.options(a);
+                pd.app
+                    .options(a);
             }
         },
         //reset tool to default configuration
-        reset: function dom__event_reset() {
+        reset        : function dom__event_reset() {
             var nametry = "",
                 name    = "";
             localStorage.codeBeautify  = "";
@@ -3277,7 +3332,7 @@ var pd       = {},
             localStorage.codeParse     = "";
             localStorage.commentString = "[]";
             if (pd.data.settings === undefined || pd.data.settings.knownname === undefined) {
-                if (pd.data.settings=== undefined) {
+                if (pd.data.settings === undefined) {
                     pd.data.settings = {
                         feedback: {
                             newb   : false,
@@ -3291,8 +3346,7 @@ var pd       = {},
                 if (localStorage.settings === undefined || nametry.knownname === undefined || nametry === "" || nametry.indexOf("knownname") < 0) {
                     name = "\"" + Math.random()
                         .toString()
-                        .slice(2) + Math
-                        .random()
+                        .slice(2) + Math.random()
                         .toString()
                         .slice(2) + "\"";
                 }
@@ -3305,7 +3359,7 @@ var pd       = {},
                 };
             }
             localStorage.settings = "{\"feedback\":{\"newb\":" + pd.data.settings.feedback.newb + ",\"veteran\":" + pd.data.settings.feedback.veteran + "},\"codereport\":{},\"statreport\":{},\"knownname\":" + pd.data.settings.knownname + "}";
-            pd.data.commentString      = [];
+            pd.data.commentString = [];
             if (pd.data.node.comment !== null) {
                 pd.data.node.comment.innerHTML = "/*prettydiff.com */";
             }
@@ -3313,7 +3367,7 @@ var pd       = {},
             location.reload();
         },
         //resize report window to custom width and height on drag
-        resize: function dom__event_resize(e, x) {
+        resize       : function dom__event_resize(e, x) {
             var parent     = x.parentNode,
                 save       = (parent.innerHTML.indexOf("save") > -1),
                 box        = parent.parentNode,
@@ -3332,7 +3386,8 @@ var pd       = {},
                     document.onmousemove = null;
                     bodyWidth            = body.clientWidth;
                     bodyHeight           = body.clientHeight;
-                    pd.app.options(box);
+                    pd.app
+                        .options(box);
                     document.onmouseup = null;
                 },
                 boxsize    = function dom__event_resize_boxsize(f) {
@@ -3346,7 +3401,8 @@ var pd       = {},
                     body.style.height  = ((bodyHeight + ((f.clientY - offseth) - body.mouseY)) / 10) + "em";
                     document.onmouseup = drop;
                 };
-            pd.app.zTop(box);
+            pd.app
+                .zTop(box);
             e                    = e || window.event;
             body.mouseX          = e.clientX;
             body.mouseY          = e.clientY;
@@ -3354,7 +3410,7 @@ var pd       = {},
             document.onmousedown = null;
         },
         //toggle between parsed html diff report and raw text representation
-        save: function dom__event_save(x) {
+        save         : function dom__event_save(x) {
             var anchor     = (x.nodeName.toLowerCase() === "a"),
                 top        = (x.parentNode.parentNode.nodeName.toLowerCase() === "p")
                     ? x.parentNode.parentNode.parentNode
@@ -3401,23 +3457,22 @@ var pd       = {},
                             "else if(withinRange===true&&subOffset<minAdjust){diffRight.style.width=(width/10" +
                             ")+\"em\";status=\"w\"}else if(subOffset<max&&subOffset>min){diffRight.style.widt" +
                             "h=((width+subOffset)/10)+\"em\";status=\"ew\"}if(touch===true){document.ontouche" +
-                            "nd=drop}else{document.onmouseup=drop}};event.preventDefault();if(typeof pd.o===" +
-                            "\"object\"&&pd.o.report.code.box!==null){offset+=pd.o.report.code.box.offsetLeft" +
-                            ";offset-=pd.o.report.code.body.scrollLeft}else{subOffset=(document.body.parentNo" +
-                            "de.scrollLeft>document.body.scrollLeft)?document.body.parentNode.scrollLeft:docu" +
-                            "ment.body.scrollLeft;offset-=subOffset}offset+=node.clientWidth;node.style.curso" +
-                            "r=\"ew-resize\";diff.style.width=(total/10)+\"em\";diff.style.display=\"inline-b" +
-                            "lock\";if(diffLeft.nodeType!==1){do{diffLeft=diffLeft.previousSibling}while(diff" +
-                            "Left.nodeType!==1)}diffLeft.style.display=\"block\";diffRight.style.width=(diffR" +
-                            "ight.clientWidth/10)+\"em\";diffRight.style.position=\"absolute\";if(touch===tru" +
-                            "e){document.ontouchmove=boxmove;document.ontouchstart=false}else{document.onmous" +
-                            "emove=boxmove;document.onmousedown=null}};(function(){\"use strict\";var d=docum" +
-                            "ent.getElementsByTagName(\"ol\"),cells=d[0].getElementsByTagName(\"li\"),len=cel" +
-                            "ls.length,a=0;pd.colSliderProperties=[d[0].clientWidth,d[1].clientWidth,d[2].par" +
-                            "entNode.clientWidth,d[2].parentNode.parentNode.clientWidth,d[2].parentNode.offse" +
-                            "tLeft-d[2].parentNode.parentNode.offsetLeft];for(a=0;a<len;a+=1){if(cells[a].get" +
-                            "Attribute(\"class\")===\"fold\"){cells[a].onmousedown=pd.difffold}}if(d.length>3" +
-                            "){d[2].onmousedown=pd.colSliderGrab;d[2].ontouchstart=pd.colSliderGrab}}());",
+                            "nd=drop}else{document.onmouseup=drop}};event.preventDefault();if(typeof pd.o===" + "\"object\"&&pd.o.report.code.box!==null){offset+=pd.o.report.code.box.offsetLeft" +
+                        ";offset-=pd.o.report.code.body.scrollLeft}else{subOffset=(document.body.parentNo" +
+                        "de.scrollLeft>document.body.scrollLeft)?document.body.parentNode.scrollLeft:docu" +
+                        "ment.body.scrollLeft;offset-=subOffset}offset+=node.clientWidth;node.style.curso" +
+                        "r=\"ew-resize\";diff.style.width=(total/10)+\"em\";diff.style.display=\"inline-b" +
+                        "lock\";if(diffLeft.nodeType!==1){do{diffLeft=diffLeft.previousSibling}while(diff" +
+                        "Left.nodeType!==1)}diffLeft.style.display=\"block\";diffRight.style.width=(diffR" +
+                        "ight.clientWidth/10)+\"em\";diffRight.style.position=\"absolute\";if(touch===tru" +
+                        "e){document.ontouchmove=boxmove;document.ontouchstart=false}else{document.onmous" +
+                        "emove=boxmove;document.onmousedown=null}};(function(){\"use strict\";var d=docum" +
+                        "ent.getElementsByTagName(\"ol\"),cells=d[0].getElementsByTagName(\"li\"),len=cel" +
+                        "ls.length,a=0;pd.colSliderProperties=[d[0].clientWidth,d[1].clientWidth,d[2].par" +
+                        "entNode.clientWidth,d[2].parentNode.parentNode.clientWidth,d[2].parentNode.offse" +
+                        "tLeft-d[2].parentNode.parentNode.offsetLeft];for(a=0;a<len;a+=1){if(cells[a].get" +
+                        "Attribute(\"class\")===\"fold\"){cells[a].onmousedown=pd.difffold}}if(d.length>3" +
+                        "){d[2].onmousedown=pd.colSliderGrab;d[2].ontouchstart=pd.colSliderGrab}}());",
                 beaustring = "pd.beaufold=function dom__beaufold(){var self=this,title=self.getAttribute('titl" +
                             "e').split('line '),min=Number(title[1].substr(0,title[1].indexOf(' '))),max=Numb" +
                             "er(title[2]),a=0,b='',list=[self.parentNode.getElementsByTagName('li'),self.pare" +
@@ -3489,7 +3544,8 @@ var pd       = {},
                 build.push("</body></html>");
                 x.setAttribute("href", "data:text/prettydiff;charset=utf-8," + encodeURIComponent(build.join("")));
                 x.onclick = function dom__event_save_rebind() {
-                    pd.event.save(this);
+                    pd.event
+                        .save(this);
                 };
 
                 //prompt to save file created above.  below is the creation
@@ -3512,7 +3568,8 @@ var pd       = {},
                 span.innerHTML = "Just rename the file extension from '<strong>.part</strong>' to '<strong>.xhtml<" +
                                      "/strong>'. <em>Click anywhere to close this reminder.</em>";
                 lastChild.appendChild(span);
-                pd.data.node
+                pd.data
+                    .node
                     .page
                     .appendChild(lastChild);
                 span.style.left = (((pd.data.node.page.clientWidth + 10) - span.clientWidth) / 2) + "px";
@@ -3520,7 +3577,8 @@ var pd       = {},
             }
             //Webkit and IE get the old functionality of a textarea with
             //HTML text content to copy and paste into a text file.
-            pd.app.zTop(top);
+            pd.app
+                .zTop(top);
             if ((/Please\ try\ using\ the\ option\ labeled\ ((&lt;)|<)em((&gt;)|>)Plain\ Text\ \(diff\ only\)((&lt;)|<)\/em((&gt;)|>)\./).test(bodyInner) === true && (/div\ class\=("|')diff("|')/).test(bodyInner) === false) {
                 pd.data.node.report.code.body.innerHTML = "<p><strong>Error:</strong> Please try using the option labeled <em>Plain Text (d" +
                         "iff only)</em>. <span style='display:block'>The input does not appear to be mark";
@@ -3663,11 +3721,11 @@ var pd       = {},
             content        = body.getElementsByTagName("ol");
             if (content.length > 0) {
                 if (pd.data.mode === "diff") {
-                    pd.data.colSliderProperties  = [
+                    pd.data.colSliderProperties = [
                         content[0].clientWidth, content[1].clientWidth, content[2].parentNode.clientWidth, content[2].parentNode.parentNode.clientWidth, content[2].parentNode.offsetLeft - content[2].parentNode.parentNode.offsetLeft
                     ];
-                    content[2].onmousedown  = pd.event.colSliderGrab;
-                    content[2].ontouchstart = pd.event.colSliderGrab;
+                    content[2].onmousedown      = pd.event.colSliderGrab;
+                    content[2].ontouchstart     = pd.event.colSliderGrab;
                 }
                 content = content[0].getElementsByTagName("li");
                 for (pageHeight = content.length - 1; pageHeight > -1; pageHeight -= 1) {
@@ -3680,11 +3738,12 @@ var pd       = {},
                     }
                 }
             }
-            pd.app.options(x.parentNode);
+            pd.app
+                .options(x.parentNode);
             return false;
         },
         //analyzes combinations of consecutive key presses
-        sequence: function dom__event_sequence(e) {
+        sequence     : function dom__event_sequence(e) {
             var seq   = pd.test.keysequence,
                 len   = seq.length,
                 event = e || window.event,
@@ -3732,7 +3791,8 @@ var pd       = {},
             } else if (len === 9) {
                 if (key === 65) {
                     if (pd.audio !== undefined) {
-                        pd.data.audio
+                        pd.data
+                            .audio
                             .play();
                     }
                     //(function dom__event_sequence_blinky() {
@@ -3785,7 +3845,7 @@ var pd       = {},
 
     //recycle bundles arguments in preparation for executing prettydiff
     //references events: beaufold, colSliderGrab, difffold, minimize, save
-    pd.event.recycle             = function dom__event_recycle(e) {
+    pd.event.recycle    = function dom__event_recycle(e) {
         var api         = {},
             output      = [],
             domain      = (/^((https?:\/\/)|(file:\/\/\/))/),
@@ -3798,6 +3858,7 @@ var pd       = {},
             completes   = false,
             completed   = false,
             autotest    = false,
+            crlf        = pd.id("lterminator-crlf"),
             textout     = ((pd.data.node.jsscope === null || pd.data.node.jsscope.checked === false) && (node === null || node.checked === false)),
             app         = function dom__event_recycle_appInit() {
                 return;
@@ -3818,7 +3879,8 @@ var pd       = {},
                                 : global.report;
                         return [code, sum];
                     };
-                } else if (typeof global.csvpretty === "function" && lang === "csv") {
+                }
+                if (typeof global.csvpretty === "function" && lang === "csv") {
                     return global.csvpretty;
                 }
                 if (typeof global.csspretty === "function" && lang === "css") {
@@ -3846,24 +3908,32 @@ var pd       = {},
                     buttons    = {},
                     pdlang     = "",
                     chromeSave = false;
-                node      = pd.id("showOptionsCallOut");
+                node           = pd.id("showOptionsCallOut");
                 pd.data.zIndex += 1;
                 if (autotest === true) {
                     if (pd.data.langvalue[1] === "javascript") {
                         if (output[1] !== undefined && output[1].indexOf("React JSX") > 0 && ((api.jsscope === "report" && (/Code\ type\ is\ presumed\ to\ be\ React\ JSX/).test(output[1]) === false && (/Presumed\ language\ is\ &lt;em&gt;React\ JSX/).test(output[1]) === false) || api.jsscope !== "report")) {
                             if (pd.test.ace === true) {
                                 if (pd.data.mode === "beau") {
-                                    pd.app.langkey(false, pd.ace.beauIn, "jsx");
-                                    pd.app.langkey(false, pd.ace.beauOut, "jsx");
+                                    pd.app
+                                        .langkey(false, pd.ace.beauIn, "jsx");
+                                    pd.app
+                                        .langkey(false, pd.ace.beauOut, "jsx");
                                 } else if (pd.data.mode === "minn") {
-                                    pd.app.langkey(false, pd.ace.minnIn, "jsx");
-                                    pd.app.langkey(false, pd.ace.minnOut, "jsx");
+                                    pd.app
+                                        .langkey(false, pd.ace.minnIn, "jsx");
+                                    pd.app
+                                        .langkey(false, pd.ace.minnOut, "jsx");
                                 } else if (pd.data.mode === "pars") {
-                                    pd.app.langkey(false, pd.ace.parsIn, "jsx");
-                                    pd.app.langkey(false, pd.ace.parsOut, "jsx");
+                                    pd.app
+                                        .langkey(false, pd.ace.parsIn, "jsx");
+                                    pd.app
+                                        .langkey(false, pd.ace.parsOut, "jsx");
                                 } else if (pd.data.mode === "minn") {
-                                    pd.app.langkey(false, pd.ace.diffBase, "jsx");
-                                    pd.app.langkey(false, pd.ace.diffNew, "jsx");
+                                    pd.app
+                                        .langkey(false, pd.ace.diffBase, "jsx");
+                                    pd.app
+                                        .langkey(false, pd.ace.diffNew, "jsx");
                                 }
                             } else {
                                 pd.data.langvalue = [
@@ -3876,7 +3946,8 @@ var pd       = {},
                 if (autotest === true) {
                     api.lang = "auto";
                 }
-                button = pd.data.node
+                button = pd.data
+                    .node
                     .report
                     .code
                     .box
@@ -3908,17 +3979,17 @@ var pd       = {},
                     if (pd.data.node.report.code.box !== null) {
                         if (api.lang === "csv") {
                             (function dom__event_recycle_execOutput_csvTable() {
-                                var a = 0,
-                                    b = output[0].length,
-                                    c = 0,
-                                    d = 0,
-                                    cells = 0,
+                                var a       = 0,
+                                    b       = output[0].length,
+                                    c       = 0,
+                                    d       = 0,
+                                    cells   = 0,
                                     heading = false,
-                                    tr = {},
-                                    table = {},
-                                    td = {},
-                                    body = {},
-                                    div = {};
+                                    tr      = {},
+                                    table   = {},
+                                    td      = {},
+                                    body    = {},
+                                    div     = {};
                                 for (a = 0; a < b; a += 1) {
                                     if (output[0][a].length > cells) {
                                         cells = output[0][a].length;
@@ -3949,17 +4020,17 @@ var pd       = {},
                                         }
                                     }
                                 }
-                                div = document.createElement("div");
+                                div   = document.createElement("div");
                                 table = document.createElement("table");
                                 div.setAttribute("class", "doc");
                                 table.setAttribute("class", "analysis");
                                 table.setAttribute("summary", "CSV data");
                                 a = 0;
                                 if (heading === true) {
-                                    a = 1;
-                                    body = document.createElement("thead");
-                                    tr = document.createElement("tr");
-                                    td = document.createElement("th");
+                                    a            = 1;
+                                    body         = document.createElement("thead");
+                                    tr           = document.createElement("tr");
+                                    td           = document.createElement("th");
                                     td.innerHTML = "Index";
                                     tr.appendChild(td);
                                     for (c = 0; c < cells; c += 1) {
@@ -3994,23 +4065,28 @@ var pd       = {},
                                 table.appendChild(body);
                                 div.appendChild(table);
                                 pd.data.node.report.code.body.innerHTML = output[1];
-                                pd.data.node.report.code.body.appendChild(div);
+                                pd.data
+                                    .node
+                                    .report
+                                    .code
+                                    .body
+                                    .appendChild(div);
                                 if (pd.test.ls === true) {
                                     if (pd.data.mode === "beau") {
                                         pd.data.stat.beau += 1;
-                                        node         = pd.id("stbeau");
+                                        node              = pd.id("stbeau");
                                         if (node !== null) {
                                             node.innerHTML = pd.data.stat.beau;
                                         }
                                     } else if (pd.data.mode === "minn") {
                                         pd.data.stat.minn += 1;
-                                        node         = pd.id("stminn");
+                                        node              = pd.id("stminn");
                                         if (node !== null) {
                                             node.innerHTML = pd.data.stat.minn;
                                         }
                                     } else if (pd.data.mode === "pars") {
                                         pd.data.stat.pars += 1;
-                                        node         = pd.id("stpars");
+                                        node              = pd.id("stpars");
                                         if (node !== null) {
                                             node.innerHTML = pd.data.stat.pars;
                                         }
@@ -4053,7 +4129,8 @@ var pd       = {},
                                 pd.data.node.report.code.body.innerHTML = output[1] + build;
                                 if (autotest === true && pd.data.node.report.code.body.firstChild !== null) {
                                     if (pd.data.node.report.code.body.firstChild.nodeType > 1) {
-                                        pd.data.node
+                                        pd.data
+                                            .node
                                             .report
                                             .code
                                             .body
@@ -4063,7 +4140,7 @@ var pd       = {},
                                 }
                                 if (pd.test.ls === true) {
                                     pd.data.stat.pars += 1;
-                                    node         = pd.id("stpars");
+                                    node              = pd.id("stpars");
                                     if (node !== null) {
                                         node.innerHTML = pd.data.stat.pars;
                                     }
@@ -4096,7 +4173,8 @@ var pd       = {},
                             pd.data.node.report.code.body.innerHTML = output[1];
                             if (autotest === true) {
                                 if (pd.data.node.report.code.body.firstChild.nodeType > 1) {
-                                    pd.data.node
+                                    pd.data
+                                        .node
                                         .report
                                         .code
                                         .body
@@ -4125,7 +4203,8 @@ var pd       = {},
                                 }
                                 pd.data.node.report.code.box.style.top   = (pd.data.settings.codereport.top / 10) + "em";
                                 pd.data.node.report.code.box.style.right = "auto";
-                                diffList                         = pd.data.node
+                                diffList                                 = pd.data
+                                    .node
                                     .report
                                     .code
                                     .body
@@ -4147,13 +4226,14 @@ var pd       = {},
                     }
                     if (pd.test.ls === true) {
                         pd.data.stat.beau += 1;
-                        node         = pd.id("stbeau");
+                        node              = pd.id("stbeau");
                         if (node !== null) {
                             node.innerHTML = pd.data.stat.beau;
                         }
                     }
                 } else if (api.mode === "diff" && pd.data.node.report.code.box !== null) {
-                    buttons = pd.data.node
+                    buttons = pd.data
+                        .node
                         .report
                         .code
                         .box
@@ -4171,7 +4251,8 @@ var pd       = {},
                         pd.data.node.report.code.body.innerHTML = output[1] + output[0];
                         if (autotest === true && pd.data.node.report.code.body.firstChild !== null) {
                             if (pd.data.node.report.code.body.firstChild.nodeType > 1) {
-                                pd.data.node
+                                pd.data
+                                    .node
                                     .report
                                     .code
                                     .body
@@ -4181,7 +4262,8 @@ var pd       = {},
                         }
                     }
                     if (pd.data.node.report.code.body.innerHTML.toLowerCase().indexOf("<textarea") === -1) {
-                        diffList = pd.data.node
+                        diffList = pd.data
+                            .node
                             .report
                             .code
                             .body
@@ -4204,17 +4286,17 @@ var pd       = {},
                                     0, 0, 0, 0, 0
                                 ];
                             } else {
-                                pd.data.colSliderProperties   = [
+                                pd.data.colSliderProperties = [
                                     diffList[0].clientWidth, diffList[1].clientWidth, diffList[2].parentNode.clientWidth, diffList[2].parentNode.parentNode.clientWidth, diffList[2].parentNode.offsetLeft - diffList[2].parentNode.parentNode.offsetLeft
                                 ];
-                                diffList[2].onmousedown  = pd.event.colSliderGrab;
-                                diffList[2].ontouchstart = pd.event.colSliderGrab;
+                                diffList[2].onmousedown     = pd.event.colSliderGrab;
+                                diffList[2].ontouchstart    = pd.event.colSliderGrab;
                             }
                         }
                     }
                     if (pd.test.ls === true) {
                         pd.data.stat.diff += 1;
-                        node         = pd.id("stdiff");
+                        node              = pd.id("stdiff");
                         if (node !== null) {
                             node.innerHTML = pd.data.stat.diff;
                         }
@@ -4246,7 +4328,8 @@ var pd       = {},
                         pd.data.node.report.code.body.innerHTML = output[1];
                         if (autotest === true && pd.data.node.report.code.body.firstChild !== null) {
                             if (pd.data.node.report.code.body.firstChild.nodeType > 1) {
-                                pd.data.node
+                                pd.data
+                                    .node
                                     .report
                                     .code
                                     .body
@@ -4259,7 +4342,7 @@ var pd       = {},
                     }
                     if (pd.test.ls === true) {
                         pd.data.stat.minn += 1;
-                        node         = pd.id("stminn");
+                        node              = pd.id("stminn");
                         if (node !== null) {
                             node.innerHTML = pd.data.stat.minn;
                         }
@@ -4286,12 +4369,14 @@ var pd       = {},
                         }());
                     }
                     if (errortext.indexOf("end tag") > 0 || errortext.indexOf("Duplicate id") > 0) {
-                        pd.data.node
+                        pd.data
+                            .node
                             .announce
                             .setAttribute("class", "error");
                         pd.data.node.announce.innerHTML = errortext;
                     } else if (pd.id("jserror") !== null) {
-                        pd.data.node
+                        pd.data
+                            .node
                             .announce
                             .removeAttribute("class");
                         pd.data.node.announce.innerHTML = "<strong>" + pd.id("jserror")
@@ -4299,7 +4384,8 @@ var pd       = {},
                             .innerHTML + "</strong> <span>See 'Code Report' for details</span>";
                     } else {
                         if (autotest === true) {
-                            pd.data.node
+                            pd.data
+                                .node
                                 .announce
                                 .setAttribute("class", "alert");
                             pd.data.node.announce.innerHTML = "Code type is set to <strong>auto</strong>. <span>Presumed language is <em>" + pd.data.langvalue[2] + "</em>.</span>";
@@ -4308,23 +4394,28 @@ var pd       = {},
                         }
                     }
                 }
-                buttons = pd.data.node
+                buttons = pd.data
+                    .node
                     .report
                     .code
                     .box
                     .getElementsByTagName("p")[0]
                     .getElementsByTagName("button");
                 if (chromeSave === true) {
-                    pd.event.save(buttons[0]);
+                    pd.event
+                        .save(buttons[0]);
                 } else if (pd.data.node.save !== null && pd.data.node.save.checked === true) {
                     if (buttons[0].parentNode.nodeName.toLowerCase() === "a") {
-                        pd.event.save(buttons[0].parentNode);
+                        pd.event
+                            .save(buttons[0].parentNode);
                     } else {
-                        pd.event.save(buttons[0]);
+                        pd.event
+                            .save(buttons[0]);
                     }
                 }
                 if (buttons[1].parentNode.style.display === "none" && (pd.data.mode === "diff" || (pd.data.mode === "beau" && api.jsscope === "report" && lang === "javascript"))) {
-                    pd.event.minimize(buttons[1].onclick, 1, buttons[1]);
+                    pd.event
+                        .minimize(buttons[1].onclick, 1, buttons[1]);
                 }
                 if (pd.test.ls === true) {
                     (function dom__event_recycle_stats() {
@@ -4332,31 +4423,31 @@ var pd       = {},
                         lang = lang.toLowerCase();
                         if (lang === "csv") {
                             pd.data.stat.csv += 1;
-                            node        = pd.id("stcsv");
+                            node             = pd.id("stcsv");
                             if (node !== null) {
                                 node.innerHTML = pd.data.stat.csv;
                             }
                         } else if (lang === "plain text") {
                             pd.data.stat.text += 1;
-                            node         = pd.id("sttext");
+                            node              = pd.id("sttext");
                             if (node !== null) {
                                 node.innerHTML = pd.data.stat.text;
                             }
                         } else if (lang === "javascript") {
                             pd.data.stat.js += 1;
-                            node       = pd.id("stjs");
+                            node            = pd.id("stjs");
                             if (node !== null) {
                                 node.innerHTML = pd.data.stat.js;
                             }
                         } else if (lang === "markup" || lang === "html" || lang === "xml" || lang === "xhtml") {
                             pd.data.stat.markup += 1;
-                            node           = pd.id("stmarkup");
+                            node                = pd.id("stmarkup");
                             if (node !== null) {
                                 node.innerHTML = pd.data.stat.markup;
                             }
                         } else if (lang === "css") {
                             pd.data.stat.css += 1;
-                            node        = pd.id("stcss");
+                            node             = pd.id("stcss");
                             if (node !== null) {
                                 node.innerHTML = pd.data.stat.css;
                             }
@@ -4368,7 +4459,7 @@ var pd       = {},
                         }
                         if (size > pd.data.stat.large) {
                             pd.data.stat.large = size;
-                            node          = pd.id("stlarge");
+                            node               = pd.id("stlarge");
                             if (node !== null) {
                                 node.innerHTML = size;
                             }
@@ -4387,6 +4478,9 @@ var pd       = {},
         }
         if (pd.test.accessibility === true) {
             api.accessibility = true;
+        }
+        if (crlf !== null && crlf.checked === true) {
+            api.crlf = true;
         }
         if (typeof event === "object" && event !== null && event.type === "keyup") {
             //jsscope does not get the convenience of keypress execution, because its
@@ -4416,11 +4510,13 @@ var pd       = {},
         api.lang        = (pd.data.node.lang === null)
             ? "javascript"
             : (pd.data.node.lang.nodeName.toLowerCase() === "select")
-                ? pd.data.node
+                ? pd.data
+                    .node
                     .lang[pd.data.node.lang.selectedIndex]
                     .value
                     .toLowerCase()
-                : pd.data.node
+                : pd.data
+                    .node
                     .lang
                     .value
                     .toLowerCase();
@@ -4431,6 +4527,8 @@ var pd       = {},
         api.csvchar     = (node === null || node.value.length === 0)
             ? ","
             : node.value;
+        node            = pd.id("lterminator-crlf");
+        api.crlf        = (node !== null && node.checked === true);
         api.api         = "dom";
         if (api.lang === "auto") {
             autotest = true;
@@ -4452,6 +4550,7 @@ var pd       = {},
                     jshtml       = {},
                     jsspace      = {},
                     methodchain  = {},
+                    nocaseindent = {},
                     noleadzero   = {},
                     offset       = {},
                     spaceclose   = {},
@@ -4470,6 +4569,7 @@ var pd       = {},
                     quantity     = pd.id("beau-quan"),
                     quotecond    = pd.id("bquoteconvert-double"),
                     quotecons    = pd.id("bquoteconvert-single"),
+                    selectorlist = pd.id("bselectorlist-yes"),
                     varworde     = pd.id("bvarword-each"),
                     varwordl     = pd.id("bvarword-list"),
                     verticala    = pd.id("vertical-all"),
@@ -4479,9 +4579,11 @@ var pd       = {},
                 if (pd.data.node.codeBeauIn !== null) {
                     if (api.lang === "auto" && pd.data.langvalue.length === 0) {
                         if (pd.test.ace === true) {
-                            pd.app.langkey(false, pd.ace.beauIn, "");
+                            pd.app
+                                .langkey(false, pd.ace.beauIn, "");
                         } else {
-                            pd.app.langkey(false, pd.data.node.codeBeauIn, "");
+                            pd.app
+                                .langkey(false, pd.data.node.codeBeauIn, "");
                         }
                     }
                     if (pd.test.ace === true) {
@@ -4529,12 +4631,13 @@ var pd       = {},
                 } else {
                     api.vertical = "none";
                 }
-                api.comments = (comments !== null && comments.checked === true)
+                api.comments     = (comments !== null && comments.checked === true)
                     ? "noindent"
                     : "indent";
-                api.insize   = (quantity === null || isNaN(quantity.value) === true)
+                api.insize       = (quantity === null || isNaN(quantity.value) === true)
                     ? 4
                     : Number(quantity.value);
+                api.selectorlist = (selectorlist !== null && selectorlist.checked === true);
                 if (chars === null || chars.checked === false) {
                     chars = pd.id("beau-tab");
                     if (chars === null || chars.checked === false) {
@@ -4578,6 +4681,7 @@ var pd       = {},
                     jshtml           = pd.id("jsscope-html");
                     jsspace          = pd.id("jsspace-no");
                     methodchain      = pd.id("bmethodchain-yes");
+                    nocaseindent     = pd.id("bnocaseindent-yes");
                     offset           = pd.id("inlevel");
                     styleguide       = pd.id("bstyleguide");
                     api.braceline    = (braceline === null || braceline.checked === false);
@@ -4592,6 +4696,7 @@ var pd       = {},
                         ? 0
                         : Number(offset.value);
                     api.methodchain  = (methodchain !== null && methodchain.checked === true);
+                    api.nocaseindent = (nocaseindent !== null && nocaseindent.checked === true);
                     api.space        = (jsspace === null || jsspace.checked === false);
                     api.styleguide   = (styleguide !== null)
                         ? styleguide[styleguide.selectedIndex].value
@@ -4650,9 +4755,11 @@ var pd       = {},
                 if (pd.data.node.codeMinnIn !== null) {
                     if (api.lang === "auto" && pd.data.langvalue.length === 0) {
                         if (pd.test.ace === true) {
-                            pd.app.langkey(false, pd.ace.minnIn, "");
+                            pd.app
+                                .langkey(false, pd.ace.minnIn, "");
                         } else {
-                            pd.app.langkey(false, pd.data.node.codeMinnIn, "");
+                            pd.app
+                                .langkey(false, pd.data.node.codeMinnIn, "");
                         }
                     }
                     pd.data.node.codeMinnIn = pd.id("minifyinput");
@@ -4707,6 +4814,7 @@ var pd       = {},
                     forceIndent  = {},
                     html         = {},
                     methodchain  = {},
+                    nocaseindent = {},
                     style        = {},
                     space        = {},
                     tagmerge     = {},
@@ -4726,33 +4834,37 @@ var pd       = {},
                     jslinesa     = pd.id("djslines-all"),
                     quantity     = pd.id("diff-quan"),
                     quote        = pd.id("diffquoten"),
+                    selectorlist = pd.id("dselectorlist-yes"),
                     semicolon    = pd.id("diffscolonn");
                 pd.data.node.codeDiffBase = pd.id("baseText");
                 pd.data.node.codeDiffNew  = pd.id("newText");
                 if (pd.data.node.codeDiffBase !== null && api.lang === "auto" && pd.data.langvalue.length === 0) {
                     if (pd.test.ace === true) {
-                        pd.app.langkey(false, pd.ace.diffBase, "");
+                        pd.app
+                            .langkey(false, pd.ace.diffBase, "");
                     } else {
-                        pd.app.langkey(false, pd.data.node.codeDiffBase, "");
+                        pd.app
+                            .langkey(false, pd.data.node.codeDiffBase, "");
                     }
                 }
-                api.content       = (content !== null && content.checked !== false);
-                api.context       = (context !== null && context.value !== "" && isNaN(context.value) === false)
+                api.content      = (content !== null && content.checked !== false);
+                api.context      = (context !== null && context.value !== "" && isNaN(context.value) === false)
                     ? Number(context.value)
                     : "";
-                api.diffcomments  = (comments === null || comments.checked === true);
-                api.difflabel     = (newLabel === null)
+                api.diffcomments = (comments === null || comments.checked === true);
+                api.difflabel    = (newLabel === null)
                     ? "new"
                     : newLabel.value;
-                api.diffview      = (inline === null || inline.checked === false)
+                api.diffview     = (inline === null || inline.checked === false)
                     ? "sidebyside"
                     : "inline";
-                api.insize        = (quantity === null || isNaN(quantity.value) === true)
+                api.insize       = (quantity === null || isNaN(quantity.value) === true)
                     ? 4
                     : Number(quantity.value);
-                api.quote         = (quote !== null && quote.checked !== false);
-                api.semicolon     = (semicolon !== null && semicolon.checked !== false);
-                api.sourcelabel   = (baseLabel === null)
+                api.quote        = (quote !== null && quote.checked !== false);
+                api.selectorlist = (selectorlist !== null && selectorlist.checked === true);
+                api.semicolon    = (semicolon !== null && semicolon.checked !== false);
+                api.sourcelabel  = (baseLabel === null)
                     ? "base"
                     : baseLabel.value;
                 if (objsorta !== null && objsorta.checked === true) {
@@ -4800,6 +4912,7 @@ var pd       = {},
                     braces           = pd.id("jsindentd-all");
                     elseline         = pd.id("jselselined-yes");
                     methodchain      = pd.id("dmethodchain-yes");
+                    nocaseindent     = pd.id("dnocaseindent-yes");
                     space            = pd.id("jsspaced-no");
                     api.braceline    = (braceline === null || braceline.checked === false);
                     api.bracepadding = (bracepadding === null || bracepadding.checked === false);
@@ -4808,6 +4921,7 @@ var pd       = {},
                         : "allman";
                     api.elseline     = (elseline !== null && elseline.checked !== false);
                     api.methodchain  = (methodchain !== null && methodchain.checked === true);
+                    api.nocaseindent = (nocaseindent !== null && nocaseindent.checked === true);
                     api.space        = (space === null || space.checked === false);
                 }
                 if (pd.data.langvalue[1] === "markup" || pd.data.langvalue[1] === "html") {
@@ -4897,11 +5011,13 @@ var pd       = {},
                                                 api.lang = "text";
                                             } else {
                                                 if (pd.test.ace === true) {
-                                                    api.lang = pd.app.langkey(false, pd.ace.diffBase, "");
+                                                    api.lang = pd.app
+                                                        .langkey(false, pd.ace.diffBase, "");
                                                 } else {
-                                                    api.lang = pd.app.langkey(false, {
-                                                        value: pd.data.source
-                                                    }, "");
+                                                    api.lang = pd.app
+                                                        .langkey(false, {
+                                                            value: pd.data.source
+                                                        }, "");
                                                 }
                                             }
                                             if (pd.data.mode === "diff") {
@@ -4937,9 +5053,11 @@ var pd       = {},
             if (pd.data.node.codeParsIn !== null) {
                 if (api.lang === "auto" && pd.data.langvalue.length === 0) {
                     if (pd.test.ace === true) {
-                        pd.app.langkey(false, pd.ace.parsIn, "");
+                        pd.app
+                            .langkey(false, pd.ace.parsIn, "");
                     } else {
-                        pd.app.langkey(false, pd.data.node.codeParsIn, "");
+                        pd.app
+                            .langkey(false, pd.data.node.codeParsIn, "");
                     }
                 } else if (api.lang === "csv") {
                     if (pd.test.ace === true) {
@@ -5035,18 +5153,21 @@ var pd       = {},
                                     pd.data.source = api.source;
                                     if (pd.test.ace === true) {
                                         if (pd.data.mode !== "diff") {
-                                            api.lang = pd.app.langkey(false, pd.ace[pd.data.mode + "In"], "");
+                                            api.lang = pd.app
+                                                .langkey(false, pd.ace[pd.data.mode + "In"], "");
                                         } else if (pd.data.langvalue[1] === "text") {
                                             api.lang = "text";
                                         } else {
-                                            api.lang = pd.app.langkey(false, pd.ace.diffBase, "");
+                                            api.lang = pd.app
+                                                .langkey(false, pd.ace.diffBase, "");
                                         }
                                     } else if (pd.data.mode === "diff" && pd.data.langvalue[1] === "text") {
                                         api.lang = "text";
                                     } else {
-                                        api.lang = pd.app.langkey(false, {
-                                            value: pd.data.source
-                                        }, "");
+                                        api.lang = pd.app
+                                            .langkey(false, {
+                                                value: pd.data.source
+                                            }, "");
                                     }
                                     if (pd.data.mode === "diff") {
                                         pd.data.diff = api.diff;
@@ -5079,7 +5200,7 @@ var pd       = {},
             if (pd.data.node.report.stat.box !== null) {
                 pd.data.stat.usage  += 1;
                 pd.data.stat.useday = Math.round(pd.data.stat.usage / ((Date.now() - pd.data.stat.fdate) / 86400000));
-                node           = pd.id("stusage");
+                node                = pd.id("stusage");
                 if (node !== null) {
                     node.innerHTML = pd.data.stat.usage;
                 }
@@ -5099,41 +5220,41 @@ var pd       = {},
                     codesize = api.source.length + pd.data.sourceLength.diffBase + pd.data.sourceLength.diffNew + pd.data.sourceLength.minn + pd.data.sourceLength.pars;
                     if (api.source.length < 2096000 && codesize < 4800000) {
                         localStorage.codeBeautify = api.source;
-                        pd.data.sourceLength.beau          = api.source.length;
+                        pd.data.sourceLength.beau = api.source.length;
                     } else {
                         localStorage.codeBeautify = "";
-                        pd.data.sourceLength.beau          = 0;
+                        pd.data.sourceLength.beau = 0;
                     }
                 } else if (api.mode === "minify") {
                     codesize = api.source.length + pd.data.sourceLength.beau + pd.data.sourceLength.diffBase + pd.data.sourceLength.diffNew + pd.data.sourceLength.pars;
                     if (api.source.length < 2096000 && codesize < 4800000) {
-                        localStorage.codeMinify = api.source;
-                        pd.data.sourceLength.minn        = api.source.length;
+                        localStorage.codeMinify   = api.source;
+                        pd.data.sourceLength.minn = api.source.length;
                     } else {
-                        localStorage.codeMinify = "";
-                        pd.data.sourceLength.minn        = 0;
+                        localStorage.codeMinify   = "";
+                        pd.data.sourceLength.minn = 0;
                     }
                 } else if (api.mode === "parse") {
                     codesize = api.source.length + pd.data.sourceLength.beau + pd.data.sourceLength.diffBase + pd.data.sourceLength.diffNew + pd.data.sourceLength.minn;
                     if (api.source.length < 2096000 && codesize < 4800000) {
-                        localStorage.codeParse = api.source;
-                        pd.data.sourceLength.pars       = api.source.length;
+                        localStorage.codeParse    = api.source;
+                        pd.data.sourceLength.pars = api.source.length;
                     } else {
-                        localStorage.codeParse = "";
-                        pd.data.sourceLength.pars       = 0;
+                        localStorage.codeParse    = "";
+                        pd.data.sourceLength.pars = 0;
                     }
                 } else if (api.mode === "diff") {
                     codesize = pd.data.sourceLength.beau + pd.data.sourceLength.minn + api.source.length + api.diff.length;
                     if (api.source.length < 2096000 && api.diff.length < 2096000 && codesize < 4800000) {
-                        localStorage.codeDiffBase = api.source;
-                        localStorage.codeDiffNew  = api.diff;
-                        pd.data.sourceLength.diffBase      = api.source.length;
-                        pd.data.sourceLength.diffNew       = api.diff.length;
+                        localStorage.codeDiffBase     = api.source;
+                        localStorage.codeDiffNew      = api.diff;
+                        pd.data.sourceLength.diffBase = api.source.length;
+                        pd.data.sourceLength.diffNew  = api.diff.length;
                     } else {
-                        localStorage.codeDiffBase = "";
-                        localStorage.codeDiffNew  = "";
-                        pd.data.sourceLength.diffBase      = 0;
-                        pd.data.sourceLength.diffNew       = 0;
+                        localStorage.codeDiffBase     = "";
+                        localStorage.codeDiffNew      = "";
+                        pd.data.sourceLength.diffBase = 0;
+                        pd.data.sourceLength.diffNew  = 0;
                     }
                 }
             }());
@@ -5145,13 +5266,16 @@ var pd       = {},
             if (pd.test.ace === true && api.mode !== "diff") {
                 if (api.mode === "beautify") {
                     setTimeout(function dom__event_recycle_beautifyPromise() {
-                        api.source = pd.ace
+                        api.source     = pd.ace
                             .beauIn
                             .getValue();
-                        api.lang   = (pd.data.langvalue[0] !== "plain_text") ? pd.app.langkey(false, pd.ace.beauIn, "") : api.lang;
-                        pd.data.source  = api.source;
-                        pd.data.diff    = "";
-                        app        = application(api.lang);
+                        api.lang       = (pd.data.langvalue[0] !== "plain_text")
+                            ? pd.app
+                                .langkey(false, pd.ace.beauIn, "")
+                            : api.lang;
+                        pd.data.source = api.source;
+                        pd.data.diff   = "";
+                        app            = application(api.lang);
                         if (app !== undefined) {
                             output = app(api);
                         }
@@ -5160,13 +5284,16 @@ var pd       = {},
                 }
                 if (api.mode === "minify") {
                     setTimeout(function dom__event_recycle_minifyPromise() {
-                        api.source = pd.ace
+                        api.source     = pd.ace
                             .minnIn
                             .getValue();
-                        api.lang   = (pd.data.langvalue[0] !== "plain_text") ? pd.app.langkey(false, pd.ace.minnIn, "") : api.lang;
-                        pd.data.source  = api.source;
-                        pd.data.diff    = "";
-                        app        = application(api.lang);
+                        api.lang       = (pd.data.langvalue[0] !== "plain_text")
+                            ? pd.app
+                                .langkey(false, pd.ace.minnIn, "")
+                            : api.lang;
+                        pd.data.source = api.source;
+                        pd.data.diff   = "";
+                        app            = application(api.lang);
                         if (app !== undefined) {
                             output = app(api);
                         }
@@ -5175,13 +5302,16 @@ var pd       = {},
                 }
                 if (api.mode === "parse") {
                     setTimeout(function dom__event_recycle_parsePromise() {
-                        api.source = pd.ace
+                        api.source     = pd.ace
                             .parsIn
                             .getValue();
-                        api.lang   = (pd.data.langvalue[0] !== "plain_text") ? pd.app.langkey(false, pd.ace.parsIn, "") : api.lang;
-                        pd.data.source  = api.source;
-                        pd.data.diff    = "";
-                        app        = application(api.lang);
+                        api.lang       = (pd.data.langvalue[0] !== "plain_text")
+                            ? pd.app
+                                .langkey(false, pd.ace.parsIn, "")
+                            : api.lang;
+                        pd.data.source = api.source;
+                        pd.data.diff   = "";
+                        app            = application(api.lang);
                         if (app !== undefined) {
                             output = app(api);
                         }
@@ -5195,11 +5325,13 @@ var pd       = {},
                 } else if (pd.data.langvalue[1] === "csv") {
                     api.lang = "csv";
                 } else if (pd.test.ace === true) {
-                    api.lang = pd.app.langkey(false, pd.ace.diffBase, "");
+                    api.lang = pd.app
+                        .langkey(false, pd.ace.diffBase, "");
                 } else {
-                    api.lang = pd.app.langkey(false, {
-                        value: api.source
-                    }, "");
+                    api.lang = pd.app
+                        .langkey(false, {
+                            value: api.source
+                        }, "");
                 }
                 if (pd.data.mode === "diff") {
                     pd.data.diff = api.diff;
@@ -5218,33 +5350,37 @@ var pd       = {},
     //toggles an editor between 100% and 50% width if the output isn't textual
     //references apps: langkey, options
     //references events: recycle
-    pd.app.hideOutput            = function dom__app_hideOutput(x) {
-        var node    = {},
-            state   = false,
+    pd.app.hideOutput   = function dom__app_hideOutput(x) {
+        var node      = {},
+            state     = false,
             targetOut = {},
             targetIn  = {},
             inprop    = "",
-            restore = function dom__app_hideOutput_restore() {
+            restore   = function dom__app_hideOutput_restore() {
                 targetOut.parentNode.style.display = "block";
                 if (targetOut !== null) {
                     node             = targetIn.parentNode;
                     node.style.width = "49%";
                     if (pd.test.ace === true) {
-                        pd.ace[inprop].resize();
+                        pd.ace[inprop]
+                            .resize();
                     }
                     targetIn.onkeyup   = pd.event.recycle;
                     targetIn.onkeydown = function dom_app_hideOutput_restore_bindTargetInDown(e) {
                         var event = e || window.event;
                         if (pd.test.ace === false) {
-                            pd.event.fixtabs(event, targetIn);
+                            pd.event
+                                .fixtabs(event, targetIn);
                         }
-                        pd.event.keydown(event);
+                        pd.event
+                            .keydown(event);
                     };
                 }
                 if (x === undefined) {
                     return;
                 }
-                pd.app.options(x);
+                pd.app
+                    .options(x);
             },
             langval   = (pd.data.node.lang === null)
                 ? "javascript"
@@ -5281,25 +5417,30 @@ var pd       = {},
                     node             = targetIn.parentNode;
                     node.style.width = "100%";
                     if (pd.test.ace === true) {
-                        pd.ace[inprop].resize();
+                        pd.ace[inprop]
+                            .resize();
                     }
                     if (pd.test.ace === true) {
                         targetIn.onkeyup = function dom__app_hideOutput_langkeyEditor(e) {
                             var event = e || window.event;
-                            pd.app.langkey(false, pd.ace[inprop], "");
-                            pd.event.recycle(event);
+                            pd.app
+                                .langkey(false, pd.ace[inprop], "");
+                            pd.event
+                                .recycle(event);
                         };
                     } else {
                         targetIn.onkeyup = function dom__app_hideOutput_langkeyTextarea(e) {
                             var event = e || window.event;
-                            pd.event.recycle(event);
+                            pd.event
+                                .recycle(event);
                         };
                     }
                 }
                 if (langval === "csv") {
                     x = pd.data.node.lang;
                 }
-                pd.app.options(x);
+                pd.app
+                    .options(x);
             } else {
                 restore();
             }
@@ -5308,9 +5449,10 @@ var pd       = {},
         }
     };
 
-    //provides interaction to simulate a text input into a radio buttonset with appropriate accessibility response
+    //provides interaction to simulate a text input into a radio buttonset with
+    //appropriate accessibility response
     //references app: options
-    pd.app.indentchar            = function dom__app_indentchar(x) {
+    pd.app.indentchar   = function dom__app_indentchar(x) {
         var node      = {},
             quan      = {},
             beauChar  = pd.id("beau-char"),
@@ -5520,23 +5662,26 @@ var pd       = {},
             }
         }
         if (node === beauChar) {
-            pd.app.options(beauChar);
+            pd.app
+                .options(beauChar);
         } else if (node === diffChar) {
-            pd.app.options(diffChar);
+            pd.app
+                .options(diffChar);
         } else {
-            pd.app.options(node);
+            pd.app
+                .options(node);
         }
     };
 
     //provide a means for keyboard users to escape a textarea
     //references events: sequence
-    pd.event.areaTabOut          = function dom__event_areaTabOut(event, node) {
-        var len = pd.test.tabesc.length,
-            esc = false,
-            key = 0;
-        node  = node || this;
-        event = event || window.event;
-        key   = event.keyCode;
+    pd.event.areaTabOut = function dom__event_areaTabOut(e, node) {
+        var len   = pd.test.tabesc.length,
+            esc   = false,
+            key   = 0,
+            event = e || window.event;
+        node = node || this;
+        key  = event.keyCode;
         if (key === 17 || key === 224) {
             if (pd.data.tabtrue === false && (pd.test.tabesc[0] === 17 || pd.test.tabesc[0] === 224 || len > 1)) {
                 return;
@@ -5554,7 +5699,7 @@ var pd       = {},
             }
         }
         if (esc === true) {
-            esc        = false;
+            esc             = false;
             pd.data.tabtrue = false;
             if ((len === 1 && pd.test.tabesc[0] !== 16 && key !== pd.test.tabesc[0]) || (len === 2 && key !== pd.test.tabesc[1])) {
                 pd.test.tabesc = [];
@@ -5591,21 +5736,24 @@ var pd       = {},
                         pd.id("beautyfile")
                             .focus();
                     } else if (node === pd.data.node.codeBeauOut) {
-                        pd.data.node
+                        pd.data
+                            .node
                             .codeBeauIn
                             .focus();
                     } else if (node === pd.data.node.codeMinnIn) {
                         pd.id("minifyfile")
                             .focus();
                     } else if (node === pd.data.node.codeMinnOut) {
-                        pd.data.node
+                        pd.data
+                            .node
                             .codeMinnIn
                             .focus();
                     } else if (node === pd.data.node.codeParsIn) {
                         pd.id("parsefile")
                             .focus();
                     } else if (node === pd.data.node.codeParsOut) {
-                        pd.data.node
+                        pd.data
+                            .node
                             .codeParsIn
                             .focus();
                     }
@@ -5619,15 +5767,18 @@ var pd       = {},
                             .getElementsByTagName("button")[0]
                             .focus();
                     } else if (node === pd.data.node.codeBeauIn) {
-                        pd.data.node
+                        pd.data
+                            .node
                             .codeBeauOut
                             .focus();
                     } else if (node === pd.data.node.codeMinnIn) {
-                        pd.data.node
+                        pd.data
+                            .node
                             .codeMinnOut
                             .focus();
                     } else if (node === pd.data.node.codeParsIn) {
-                        pd.data.node
+                        pd.data
+                            .node
                             .codeParsOut
                             .focus();
                     }
@@ -5639,12 +5790,13 @@ var pd       = {},
                 }
             }
         }
-        pd.event.sequence(event);
+        pd.event
+            .sequence(event);
     };
 
     //read from files if the W3C File API is supported
     //references events: recycle
-    pd.event.file = function dom__event_file() {
+    pd.event.file       = function dom__event_file() {
         var a         = 0,
             input     = this,
             id        = "",
@@ -5715,7 +5867,8 @@ var pd       = {},
                         }
                     }
                     if (pd.data.mode !== "diff") {
-                        pd.event.recycle();
+                        pd.event
+                            .recycle();
                     }
                 }
             };
@@ -5734,23 +5887,25 @@ var pd       = {},
                 }
             }
             if (pd.data.mode !== "diff") {
-                pd.event.recycle();
+                pd.event
+                    .recycle();
             }
         }
     };
 
     //callback for filedrop event
     //references events: file
-    pd.event.filedrop            = function dom__event_filedrop(e) {
+    pd.event.filedrop   = function dom__event_filedrop(e) {
         var event = e || window.event;
         event.stopPropagation();
         event.preventDefault();
-        pd.event.file();
+        pd.event
+            .file();
     };
 
     //basic drag and drop for the report windows
     //references events: minimize
-    pd.event.grab                = function dom__event_grab(e, x) {
+    pd.event.grab       = function dom__event_grab(e, x) {
         var box        = (x.nodeName.toLowerCase() === "h3")
                 ? x.parentNode
                 : x.parentNode.parentNode,
@@ -5802,7 +5957,8 @@ var pd       = {},
                 box.style.height   = "auto";
                 heading.style.top  = "100%";
                 resize.style.top   = "100%";
-                pd.app.options(box);
+                pd.app
+                    .options(box);
                 event.preventDefault();
                 return false;
             },
@@ -5828,10 +5984,12 @@ var pd       = {},
             } else {
                 box.style.left = "auto";
             }
-            pd.event.minimize(e, 50, minButton);
+            pd.event
+                .minimize(e, 50, minButton);
             return false;
         }
-        pd.app.zTop(box);
+        pd.app
+            .zTop(box);
         if (e.preventDefault !== undefined) {
             e.preventDefault();
         }
@@ -5866,50 +6024,56 @@ var pd       = {},
             document.onmousemove = boxmove;
             document.onmousedown = null;
         }
-        pd.app.options(box);
+        pd.app
+            .options(box);
         return false;
     };
 
     //alter tool on page load in reflection to saved state
     (function dom__load() {
-        var a             = 0,
-            inputs        = [],
-            inputsLen     = 0,
-            id            = "",
-            name          = "",
-            type          = "",
-            node          = {},
-            buttons       = {},
-            title         = {},
-            statdump      = [],
-            thirdparty    = function dom__load_thirdparty() {
+        var a               = 0,
+            inputs          = [],
+            inputsLen       = 0,
+            id              = "",
+            name            = "",
+            type            = "",
+            node            = {},
+            buttons         = {},
+            title           = {},
+            statdump        = [],
+            thirdparty      = function dom__load_thirdparty() {
                 var that = this,
                     href = that.getAttribute("href");
                 window.open(href, "thirdparty");
                 return false;
             },
-            resize        = function dom__load_resize(e) {
+            resize          = function dom__load_resize(e) {
                 var that = this;
-                pd.event.resize(e, that);
+                pd.event
+                    .resize(e, that);
             },
-            save          = function dom__load_save() {
+            save            = function dom__load_save() {
                 var that = this;
-                pd.event.save(that);
+                pd.event
+                    .save(that);
             },
-            grab          = function dom__load_grab(e) {
+            grab            = function dom__load_grab(e) {
                 var that = this;
-                pd.event.grab(e, that);
+                pd.event
+                    .grab(e, that);
             },
-            top           = function dom__load_top() {
+            top             = function dom__load_top() {
                 var that = this;
-                pd.app.zTop(that.parentNode);
+                pd.app
+                    .zTop(that.parentNode);
             },
-            page          = (pd.data.node.page === null)
+            page            = (pd.data.node.page === null)
                 ? ""
-                : pd.data.node
+                : pd.data
+                    .node
                     .page
                     .getAttribute("id"),
-            backspace     = function dom__load_backspace(event) {
+            backspace       = function dom__load_backspace(event) {
                 var aa = event || window.event,
                     bb = aa.srcElement || aa.target;
                 if (aa.keyCode === 8) {
@@ -5919,10 +6083,11 @@ var pd       = {},
                     return false;
                 }
                 if (aa.type === "keydown") {
-                    pd.event.sequence(aa);
+                    pd.event
+                        .sequence(aa);
                 }
             },
-            acedisable    = function dom__load_acedisable(x) {
+            acedisable      = function dom__load_acedisable(x) {
                 var el     = (typeof x === "object" && x.nodeType === 1)
                         ? x
                         : this,
@@ -5931,7 +6096,8 @@ var pd       = {},
                         .indexOf("ace=false"),
                     place  = [],
                     symbol = "?";
-                pd.app.options(el);
+                pd.app
+                    .options(el);
                 if (elId.indexOf("-yes") > 0 && loc > 0) {
                     place = location.href
                         .split("ace=false");
@@ -5946,10 +6112,11 @@ var pd       = {},
                     location.href = location.href + symbol + "ace=false";
                 }
             },
-            hideOutput    = function dom__load_hideOutput() {
-                pd.app.hideOutput(this);
+            hideOutput      = function dom__load_hideOutput() {
+                pd.app
+                    .hideOutput(this);
             },
-            feedradio     = function dom__load_feedradio(e) {
+            feedradio       = function dom__load_feedradio(e) {
                 var event  = e || window.event,
                     item   = this.parentNode,
                     radio  = item.getElementsByTagName("input")[0],
@@ -5967,11 +6134,11 @@ var pd       = {},
                 event.preventDefault();
                 return false;
             },
-            feedblur      = function dom__load_feedblur() {
+            feedblur        = function dom__load_feedblur() {
                 var label = this.parentNode;
                 label.setAttribute("class", "active");
             },
-            textareafocus = function dom__load_textareafocus() {
+            textareafocus   = function dom__load_textareafocus() {
                 var tabkey = pd.id("textareaTabKey"),
                     aria   = pd.id("arialive");
                 if (tabkey === null) {
@@ -5994,7 +6161,7 @@ var pd       = {},
                         .setAttribute("class", this.parentNode.getAttribute("class") + " filefocus");
                 }
             },
-            textareablur  = function dom__load_textareablur() {
+            textareablur    = function dom__load_textareablur() {
                 var tabkey = pd.id("textareaTabKey");
                 if (tabkey === null) {
                     return;
@@ -6005,18 +6172,19 @@ var pd       = {},
                         .setAttribute("class", this.parentNode.getAttribute("class").replace(" filefocus", ""));
                 }
             },
-            filefocus     = function dom__load_filefocus() {
+            filefocus       = function dom__load_filefocus() {
                 this.setAttribute("class", "filefocus");
             },
-            fileblur      = function dom__load_fileblur() {
+            fileblur        = function dom__load_fileblur() {
                 this.removeAttribute("class");
             },
-            savecheck     = function dom__load_savecheck() {
+            savecheck       = function dom__load_savecheck() {
                 var button = {};
                 if (pd.data.node.report.code.box === null) {
                     return;
                 }
-                button = pd.data.node
+                button = pd.data
+                    .node
                     .report
                     .code
                     .box
@@ -6030,14 +6198,14 @@ var pd       = {},
                     button.innerHTML = "S";
                 }
             },
-            headerfocus   = function dom__load_headerfocus() {
+            headerfocus     = function dom__load_headerfocus() {
                 this.onclick = pd.event.minimize;
             },
-            headerblur    = function dom__load_headerblur() {
+            headerblur      = function dom__load_headerblur() {
                 this.onclick = null;
             },
             checkForEdition = function dom__load_checkForEdition() {
-                var target = (page === "webtool")
+                var target     = (page === "webtool")
                         ? pd.id("update")
                         : pd.id("components"),
                     outputTool = function dom__load_checkForEdition_outputTool() {
@@ -6054,16 +6222,16 @@ var pd       = {},
                         }
                         return "Updated: " + list[2] + " " + month[list[1]] + " 20" + list[0] + "<span>Version: <span>" + global.edition.version + "</span></span>";
                     },
-                    outputDoc = function dom__load_checkForEdition_outputDoc() {
-                        var b = 0,
-                            date = 0,
-                            row = [],
-                            rowLen = 0,
-                            dateCell = {},
-                            dateList = [],
-                            lib = "",
-                            output = [],
-                            conversion    = function dom__load_checkForEdition_outputDoc_conversion(dateInstance) {
+                    outputDoc  = function dom__load_checkForEdition_outputDoc() {
+                        var b          = 0,
+                            date       = 0,
+                            row        = [],
+                            rowLen     = 0,
+                            dateCell   = {},
+                            dateList   = [],
+                            lib        = "",
+                            output     = [],
+                            conversion = function dom__load_checkForEdition_outputDoc_conversion(dateInstance) {
                                 var str   = String(dateInstance),
                                     list  = [
                                         str.charAt(0) + str.charAt(1), Number(str.charAt(2) + str.charAt(3)), str.charAt(4) + str.charAt(5)
@@ -6075,8 +6243,8 @@ var pd       = {},
                                 return list[2] + " " + month[list[1]] + " 20" + list[0];
                             };
                         target = target.getElementsByTagName("tbody")[0];
-                        row           = target.getElementsByTagName("tr");
-                        rowLen        = row.length;
+                        row    = target.getElementsByTagName("tr");
+                        rowLen = row.length;
                         for (b = 0; b < rowLen; b += 1) {
                             dateCell = row[b].getElementsByTagName("td")[3];
                             lib      = row[b].getElementsByTagName("a")[0].innerHTML;
@@ -6139,10 +6307,9 @@ var pd       = {},
                             }
                         }
                         rowLen   = dateList.length;
-                        dateList = dateList
-                            .sort(function dom__load_doc_sortForward(target, row) {
-                                return target[1] === row[1];
-                            })
+                        dateList = dateList.sort(function dom__load_doc_sortForward(target, row) {
+                            return target[1] === row[1];
+                        })
                             .reverse()
                             .sort(function dom__load_doc_sortReverse(target, row) {
                                 return target[0] - row[0];
@@ -6154,7 +6321,7 @@ var pd       = {},
                         }
                         target.innerHTML = output.join("");
                     },
-                    delay = function dom__load_checkForEdition_delay() {
+                    delay      = function dom__load_checkForEdition_delay() {
                         if (global.edition === undefined) {
                             setTimeout(dom__load_checkForEdition_delay, 100);
                         } else {
@@ -6190,21 +6357,24 @@ var pd       = {},
             }
             pd.data.node.report.feed.body = (pd.data.node.report.feed.box === null)
                 ? null
-                : pd.data.node
+                : pd.data
+                    .node
                     .report
                     .feed
                     .box
                     .getElementsByTagName("div")[0];
             pd.data.node.report.code.body = (pd.data.node.report.code.box === null)
                 ? null
-                : pd.data.node
+                : pd.data
+                    .node
                     .report
                     .code
                     .box
                     .getElementsByTagName("div")[0];
             pd.data.node.report.stat.body = (pd.data.node.report.stat.box === null)
                 ? null
-                : pd.data.node
+                : pd.data
+                    .node
                     .report
                     .stat
                     .box
@@ -6212,54 +6382,58 @@ var pd       = {},
 
             if (pd.test.ace === true) {
                 if (pd.data.node.codeDiffBase !== null) {
-                    pd.ace.diffBase = pd.app.aceApply("codeDiffBase", "input", true);
+                    pd.ace.diffBase = pd.app
+                        .aceApply("codeDiffBase", "input", true);
                 }
                 if (pd.data.node.codeDiffNew !== null) {
-                    pd.ace.diffNew = pd.app.aceApply("codeDiffNew", "input", true);
+                    pd.ace.diffNew = pd.app
+                        .aceApply("codeDiffNew", "input", true);
                 }
                 if (pd.data.node.codeBeauIn !== null) {
-                    pd.ace.beauIn = pd.app.aceApply("codeBeauIn", "input", false);
+                    pd.ace.beauIn = pd.app
+                        .aceApply("codeBeauIn", "input", false);
                 }
                 if (pd.data.node.codeBeauOut !== null) {
-                    pd.ace.beauOut = pd.app.aceApply("codeBeauOut", "output", false);
+                    pd.ace.beauOut = pd.app
+                        .aceApply("codeBeauOut", "output", false);
                     pd.ace
                         .beauOut
                         .setReadOnly(true);
                 }
                 if (pd.data.node.codeMinnIn !== null) {
-                    pd.ace.minnIn = pd.app.aceApply("codeMinnIn", "input", false);
+                    pd.ace.minnIn = pd.app
+                        .aceApply("codeMinnIn", "input", false);
                 }
                 if (pd.data.node.codeMinnOut !== null) {
-                    pd.ace.minnOut = pd.app.aceApply("codeMinnOut", "output", false);
+                    pd.ace.minnOut = pd.app
+                        .aceApply("codeMinnOut", "output", false);
                     pd.ace
                         .minnOut
                         .setReadOnly(true);
                 }
                 if (pd.data.node.codeParsIn !== null) {
-                    pd.ace.parsIn = pd.app.aceApply("codeParsIn", "input", false);
+                    pd.ace.parsIn = pd.app
+                        .aceApply("codeParsIn", "input", false);
                 }
                 if (pd.data.node.codeParsOut !== null) {
-                    pd.ace.parsOut = pd.app.aceApply("codeParsOut", "output", false);
+                    pd.ace.parsOut = pd.app
+                        .aceApply("codeParsOut", "output", false);
                     pd.ace
                         .parsOut
                         .setReadOnly(true);
                 }
             }
 
-            pd.app.fixHeight();
-            window.onresize = pd.app.fixHeight;
-            window.onkeyup  = pd.areaShiftUp;
+            pd.app
+                .fixHeight();
             if (pd.data.node.announce !== null) {
                 pd.data.announcetext = pd.data.node.announce.innerHTML;
             }
             node = pd.id("hideOptions");
             if (pd.id("option_commentClear") !== null) {
                 pd.id("option_commentClear")
-                    .onclick = pd
-                    .event.clearComment;
+                    .onclick = pd.event.clearComment;
             }
-            document.onkeypress          = backspace;
-            document.onkeydown           = backspace;
             pd.data.settings.feedreport       = {};
             pd.data.settings.codereport       = {};
             pd.data.settings.statreport       = {};
@@ -6268,11 +6442,10 @@ var pd       = {},
             pd.data.settings.feedback.veteran = false;
             pd.data.settings.knownname        = "\"" + Math.random()
                 .toString()
-                .slice(2) + Math
-                .random()
+                .slice(2) + Math.random()
                 .toString()
                 .slice(2) + "\"";
-            pd.keypress                  = {
+            pd.keypress                       = {
                 date    : {},
                 keys    : [],
                 state   : false,
@@ -6346,11 +6519,10 @@ var pd       = {},
                         if (pd.data.settings.knownname === undefined || typeof pd.data.settings.knownname === "number") {
                             pd.data.settings.knownname = "\"" + Math.random()
                                 .toString()
-                                .slice(2) + Math
-                                .random()
+                                .slice(2) + Math.random()
                                 .toString()
                                 .slice(2) + "\"";
-                            localStorage.settings = JSON.stringify(pd.data.settings);
+                            localStorage.settings      = JSON.stringify(pd.data.settings);
                         }
                         if (pd.data.settings.diffreport !== undefined) {
                             delete pd.data.settings.diffreport;
@@ -6362,11 +6534,10 @@ var pd       = {},
                     } else if (pd.data.settings.knownname === undefined || typeof pd.data.settings.knownname === "number") {
                         pd.data.settings.knownname = "\"" + Math.random()
                             .toString()
-                            .slice(2) + Math
-                            .random()
+                            .slice(2) + Math.random()
                             .toString()
                             .slice(2) + "\"";
-                        localStorage.settings = JSON.stringify(pd.data.settings);
+                        localStorage.settings      = JSON.stringify(pd.data.settings);
                     }
                     if (localStorage.stat !== undefined) {
                         if (statdump.length === 0) {
@@ -6459,129 +6630,6 @@ var pd       = {},
                     inputs[a].removeAttribute("wrap");
                 }
             }
-            if (pd.data.node.codeBeauIn !== null) {
-                pd.data.node.codeBeauIn.onkeyup = function dom__load_bindBeauInUp(e) {
-                    var event = e || window.event;
-                    pd.event.recycle(event);
-                };
-                if (pd.test.ace === true) {
-                    pd.data.node.codeBeauIn.onfocus   = textareafocus;
-                    pd.data.node.codeBeauIn.onblur    = textareablur;
-                    pd.data.node.codeBeauIn.onkeydown = function dom__load_bindBeauInDownCM(e) {
-                        var event = e || window.event;
-                        pd.event.areaTabOut(event, this);
-                        pd.event.keydown(event);
-                    };
-                } else {
-                    pd.data.node.codeBeauIn.onfocus   = textareafocus;
-                    pd.data.node.codeBeauIn.onblur    = textareablur;
-                    pd.data.node.codeBeauIn.onkeydown = function dom__load_bindBeauInDown(e) {
-                        var event = e || window.event;
-                        pd.event.fixtabs(event, pd.data.node.codeBeauIn);
-                        pd.event.areaTabOut(event, this);
-                        pd.event.keydown(event);
-                    };
-                }
-            }
-            if (pd.data.node.codeBeauOut !== null && pd.test.ace === true) {
-                pd.data.node.codeBeauOut.onfocus   = textareafocus;
-                pd.data.node.codeBeauOut.onblur    = textareablur;
-                pd.data.node.codeBeauOut.onkeydown = pd.event.areaTabOut;
-            }
-            if (pd.data.node.codeMinnIn !== null) {
-                pd.data.node.codeMinnIn.onkeyup = function dom__load_bindMinnInUp(e) {
-                    var event = e || window.event;
-                    pd.event.recycle(event);
-                };
-                if (pd.test.ace === true) {
-                    pd.data.node.codeMinnIn.onfocus   = textareafocus;
-                    pd.data.node.codeMinnIn.onblur    = textareablur;
-                    pd.data.node.codeMinnIn.onkeydown = function dom__load_bindMinnInDownCM(e) {
-                        var event = e || window.event;
-                        pd.event.areaTabOut(event, this);
-                        pd.event.keydown(event);
-                    };
-                } else {
-                    pd.data.node.codeMinnIn.onfocus   = textareafocus;
-                    pd.data.node.codeMinnIn.onblur    = textareablur;
-                    pd.data.node.codeMinnIn.onkeydown = function dom__load_bindMinnInDown(e) {
-                        var event = e || window.event;
-                        pd.event.fixtabs(event, this);
-                        pd.event.areaTabOut(event, this);
-                        pd.event.keydown(event);
-                    };
-                }
-            }
-            if (pd.data.node.codeMinnOut !== null && pd.test.ace === true) {
-                pd.data.node.codeMinnOut.onfocus   = textareafocus;
-                pd.data.node.codeMinnOut.onblur    = textareablur;
-                pd.data.node.codeMinnOut.onkeydown = pd.event.areaTabOut;
-            }
-            if (pd.data.node.codeParsIn !== null) {
-                pd.data.node.codeParsIn.onkeyup = function dom__load_bindParsInUp(e) {
-                    var event = e || window.event;
-                    pd.event.recycle(event);
-                };
-                if (pd.test.ace === true) {
-                    pd.data.node.codeParsIn.onfocus   = textareafocus;
-                    pd.data.node.codeParsIn.onblur    = textareablur;
-                    pd.data.node.codeParsIn.onkeydown = function dom__load_bindParsInDownCM(e) {
-                        var event = e || window.event;
-                        pd.event.areaTabOut(event, this);
-                        pd.event.keydown(event);
-                    };
-                } else {
-                    pd.data.node.codeParsIn.onfocus   = textareafocus;
-                    pd.data.node.codeParsIn.onblur    = textareablur;
-                    pd.data.node.codeParsIn.onkeydown = function dom__load_bindParsInDown(e) {
-                        var event = e || window.event;
-                        pd.event.fixtabs(event, pd.data.node.codeParsIn);
-                        pd.event.areaTabOut(event, this);
-                        pd.event.keydown(event);
-                    };
-                }
-            }
-            if (pd.data.node.codeParsOut !== null && pd.test.ace === true) {
-                pd.data.node.codeParsOut.onfocus   = textareafocus;
-                pd.data.node.codeParsOut.onblur    = textareablur;
-                pd.data.node.codeParsOut.onkeydown = pd.event.areaTabOut;
-            }
-            if (pd.data.node.codeDiffBase !== null) {
-                if (pd.test.ace === true) {
-                    pd.data.node.codeDiffBase.onkeyup   = function dom__load_bindAutoDiffBase() {
-                        pd.app.langkey(false, pd.ace.diffBase, "");
-                    };
-                    pd.data.node.codeDiffBase.onfocus   = textareafocus;
-                    pd.data.node.codeDiffBase.onblur    = textareablur;
-                    pd.data.node.codeDiffBase.onkeydown = pd.event.areaTabOut;
-                } else {
-                    pd.data.node.codeDiffBase.onfocus   = textareafocus;
-                    pd.data.node.codeDiffBase.onblur    = textareablur;
-                    pd.data.node.codeDiffBase.onkeydown = function dom__load_bindDiffBaseDown(e) {
-                        var event = e || window.event;
-                        pd.event.fixtabs(event, this);
-                        pd.event.areaTabOut(event, this);
-                    };
-                }
-            }
-            if (pd.data.node.codeDiffNew !== null) {
-                if (pd.test.ace === true) {
-                    pd.data.node.codeDiffNew.onkeyup   = function dom__load_bindAutoDiffNew() {
-                        pd.app.langkey(false, pd.ace.diffNew, "");
-                    };
-                    pd.data.node.codeDiffNew.onfocus   = textareafocus;
-                    pd.data.node.codeDiffNew.onblur    = textareablur;
-                    pd.data.node.codeDiffNew.onkeydown = pd.event.areaTabOut;
-                } else {
-                    pd.data.node.codeDiffNew.onfocus   = textareafocus;
-                    pd.data.node.codeDiffNew.onblur    = textareablur;
-                    pd.data.node.codeDiffNew.onkeydown = function dom__load_bindDiffNewDown(e) {
-                        var event = e || window.event;
-                        pd.event.fixtabs(event, this);
-                        pd.event.event.areaTabOut(event, this);
-                    };
-                }
-            }
             if (pd.test.domain === false) {
                 pd.data.node.report.feed.box.style.display = "none";
             } else if (pd.data.node.report.feed.box !== null) {
@@ -6591,21 +6639,23 @@ var pd       = {},
                     pd.data.node.report.feed.box.ondrop      = pd.event.filedrop;
                 }
                 pd.data.node.report.feed.body.onmousedown = top;
-                title                             = pd.data.node
+                title                                     = pd.data
+                    .node
                     .report
                     .feed
                     .box
                     .getElementsByTagName("h3")[0]
                     .getElementsByTagName("button")[0];
-                title.onmousedown                 = grab;
-                title.ontouchstart                = grab;
-                title.onfocus                     = headerfocus;
-                title.onblur                      = headerblur;
+                title.onmousedown                         = grab;
+                title.ontouchstart                        = grab;
+                title.onfocus                             = headerfocus;
+                title.onblur                              = headerblur;
                 if (pd.data.settings.feedreport === undefined) {
                     pd.data.settings.feedreport = {};
                 }
                 if (pd.data.settings.feedreport !== undefined && pd.data.settings.feedreport.min === false) {
-                    buttons               = pd.data.node
+                    buttons               = pd.data
+                        .node
                         .report
                         .feed
                         .box
@@ -6647,22 +6697,24 @@ var pd       = {},
                     pd.data.node.report.code.box.ondrop      = pd.event.filedrop;
                 }
                 pd.data.node.report.code.body.onmousedown = top;
-                title                             = pd.data.node
+                title                                     = pd.data
+                    .node
                     .report
                     .code
                     .box
                     .getElementsByTagName("h3")[0]
                     .getElementsByTagName("button")[0];
-                title.onmousedown                 = grab;
-                title.ontouchstart                = grab;
-                title.onfocus                     = headerfocus;
-                title.onblur                      = headerblur;
-                buttons                           = pd.data.node
+                title.onmousedown                         = grab;
+                title.ontouchstart                        = grab;
+                title.onfocus                             = headerfocus;
+                title.onblur                              = headerblur;
+                buttons                                   = pd.data
+                    .node
                     .report
                     .code
                     .box
                     .getElementsByTagName("p")[0];
-                node                              = pd.id("jsscope-yes");
+                node                                      = pd.id("jsscope-yes");
                 if (node !== null && node.checked === true && buttons.innerHTML.indexOf("save") < 0) {
                     if (pd.test.agent.indexOf("firefox") > 0 || pd.test.agent.indexOf("presto") > 0) {
                         node = document.createElement("a");
@@ -6715,18 +6767,20 @@ var pd       = {},
                     pd.data.node.report.stat.box.ondrop      = pd.event.filedrop;
                 }
                 pd.data.node.report.stat.body.onmousedown = top;
-                title                             = pd.data.node
+                title                                     = pd.data
+                    .node
                     .report
                     .stat
                     .box
                     .getElementsByTagName("h3")[0]
                     .getElementsByTagName("button")[0];
-                title.onmousedown                 = grab;
-                title.ontouchstart                = grab;
-                title.onfocus                     = headerfocus;
-                title.onblur                      = headerblur;
+                title.onmousedown                         = grab;
+                title.ontouchstart                        = grab;
+                title.onfocus                             = headerfocus;
+                title.onblur                              = headerblur;
                 if (pd.data.settings.statreport !== undefined && pd.data.settings.statreport.min === false) {
-                    buttons               = pd.data.node
+                    buttons               = pd.data
+                        .node
                         .report
                         .stat
                         .box
@@ -6769,13 +6823,14 @@ var pd       = {},
                     if (id === pd.data.settings[name]) {
                         inputs[a].checked = true;
                         if (name === "beauchar" || name === "diffchar") {
-                            pd.app.indentchar(inputs[a]);
+                            pd.app
+                                .indentchar(inputs[a]);
                         }
                     }
                     if (id.indexOf("feedradio") === 0) {
-                        inputs[a].onfocus                                             = feedradio;
-                        inputs[a].onblur                                              = feedblur;
-                        inputs[a].onclick                                             = feedradio;
+                        inputs[a].onfocus = feedradio;
+                        inputs[a].onblur  = feedblur;
+                        inputs[a].onclick = feedradio;
                         inputs[a].parentNode
                             .getElementsByTagName("label")[0]
                             .onclick = feedradio;
@@ -6783,9 +6838,11 @@ var pd       = {},
                     if (name === "mode") {
                         inputs[a].onclick = pd.event.modeToggle;
                         if (pd.data.settings.mode === id) {
-                            pd.event.modeToggle(inputs[a]);
+                            pd.event
+                                .modeToggle(inputs[a]);
                         } else if (pd.data.settings.mode === undefined) {
-                            pd.event.modeToggle(pd.data.node.modeDiff);
+                            pd.event
+                                .modeToggle(pd.data.node.modeDiff);
                         }
                     } else if (name === "diffchar") {
                         inputs[a].onclick = pd.app.indentchar;
@@ -6822,7 +6879,8 @@ var pd       = {},
                     } else if (name === "jsscope") {
                         inputs[a].onclick = hideOutput;
                         if (id === "jsscope-yes" && inputs[a].checked === true) {
-                            pd.app.hideOutput(inputs[a]);
+                            pd.app
+                                .hideOutput(inputs[a]);
                         }
                     } else if (name === "ace-radio") {
                         if (id === "ace-no" && inputs[a].checked === true && pd.test.ace === true) {
@@ -6921,7 +6979,8 @@ var pd       = {},
                     inputs[a].onchange = pd.event.colorScheme;
                     if (pd.data.settings.colorScheme !== undefined) {
                         inputs[a].selectedIndex = Number(pd.data.settings.colorScheme);
-                        pd.event.colorScheme(inputs[a]);
+                        pd.event
+                            .colorScheme(inputs[a]);
                     }
                 } else if (id === "language") {
                     inputs[a].onchange = pd.event.langOps;
@@ -6931,7 +6990,8 @@ var pd       = {},
                             inputs[a].selectedIndex = 0;
                         }
                         if (pd.data.node.lang[pd.data.node.lang.selectedIndex].value === "csv" && pd.data.mode !== "diff") {
-                            pd.app.hideOutput(inputs[a]);
+                            pd.app
+                                .hideOutput(inputs[a]);
                         }
                     }
                 } else {
@@ -7003,10 +7063,12 @@ var pd       = {},
                 if (pd.data.commentString.length === 0) {
                     pd.data.node.comment.innerHTML = "/*prettydiff.com */";
                 } else if (pd.data.commentString.length === 1) {
-                    pd.data.node.comment.innerHTML = "/*prettydiff.com " + pd.data.commentString[0]
+                    pd.data.node.comment.innerHTML = "/*prettydiff.com " + pd.data
+                        .commentString[0]
                         .replace("api.", "") + " */";
                 } else {
-                    pd.data.node.comment.innerHTML = "/*prettydiff.com " + pd.data.commentString
+                    pd.data.node.comment.innerHTML = "/*prettydiff.com " + pd.data
+                        .commentString
                         .join(", ")
                         .replace(/api\./g, "") + " */";
                 }
@@ -7028,7 +7090,8 @@ var pd       = {},
                             ? color.getElementsByTagName("option")
                             : [],
                         options  = (pd.data.node.lang !== null)
-                            ? pd.data.node
+                            ? pd.data
+                                .node
                                 .lang
                                 .getElementsByTagName("option")
                             : [],
@@ -7044,16 +7107,20 @@ var pd       = {},
                             value = params[b].toLowerCase()
                                 .substr(2);
                             if (value === "beautify" && pd.data.node.modeBeau !== null) {
-                                pd.event.modeToggle(pd.data.node.modeBeau);
+                                pd.event
+                                    .modeToggle(pd.data.node.modeBeau);
                                 pd.data.node.modeBeau.checked = true;
                             } else if (value === "minify" && pd.data.node.modeMinn !== null) {
-                                pd.event.modeToggle(pd.data.node.modeMinn);
+                                pd.event
+                                    .modeToggle(pd.data.node.modeMinn);
                                 pd.data.node.modeMinn.checked = true;
                             } else if (value === "diff" && pd.data.node.modeDiff !== null) {
-                                pd.event.modeToggle(pd.data.node.modeDiff);
+                                pd.event
+                                    .modeToggle(pd.data.node.modeDiff);
                                 pd.data.node.modeDiff.checked = true;
                             } else if (value === "parse" && pd.data.node.modePars !== null) {
-                                pd.event.modeToggle(pd.data.node.modePars);
+                                pd.event
+                                    .modeToggle(pd.data.node.modePars);
                                 pd.data.node.modePars.checked = true;
                             }
                         } else if (params[b].indexOf("s=") === 0) {
@@ -7077,7 +7144,8 @@ var pd       = {},
                                 .substr(2);
                             if (value === "text" || value === "plain" || value === "plaintext") {
                                 value = "text";
-                                pd.event.modeToggle(pd.data.node.modeDiff);
+                                pd.event
+                                    .modeToggle(pd.data.node.modeDiff);
                             } else if (value === "js" || value === "") {
                                 value = "javascript";
                             } else if (value === "markup") {
@@ -7129,14 +7197,16 @@ var pd       = {},
                                     .getSession()
                                     .setMode("ace/mode/" + value);
                             }
-                            pd.event.langOps(pd.data.node.lang);
+                            pd.event
+                                .langOps(pd.data.node.lang);
                         } else if (params[b].indexOf("c=") === 0) {
                             value = params[b].toLowerCase()
                                 .substr(2);
                             for (c = colors.length - 1; c > -1; c -= 1) {
                                 if (colors[c].innerHTML.toLowerCase() === value) {
                                     color.selectedIndex = c;
-                                    pd.event.colorScheme(color);
+                                    pd.event
+                                        .colorScheme(color);
                                     break;
                                 }
                             }
@@ -7144,7 +7214,8 @@ var pd       = {},
                             if (pd.data.node.jsscope !== null) {
                                 pd.data.node.jsscope.checked = true;
                             }
-                            pd.app.hideOutput(pd.data.node.jsscope);
+                            pd.app
+                                .hideOutput(pd.data.node.jsscope);
                         } else if (params[b].indexOf("jscorrect") === 0) {
                             node = pd.id("jscorrect-yes");
                             if (node !== null) {
@@ -7153,18 +7224,21 @@ var pd       = {},
                         } else if (params[b].indexOf("html") === 0) {
                             node = pd.id("html-yes");
                             if (node !== null) {
-                                pd.app.options(node);
+                                pd.app
+                                    .options(node);
                             }
                             node = pd.id("htmld-yes");
                             if (node !== null) {
-                                pd.app.options(node);
+                                pd.app
+                                    .options(node);
                             }
                             value = params[b].toLowerCase()
                                 .substr(2);
                             for (c = options.length - 1; c > -1; c -= 1) {
                                 if (options[c].value === "html") {
                                     pd.data.node.lang.selectedIndex = c;
-                                    pd.event.langOps(pd.data.node.lang);
+                                    pd.event
+                                        .langOps(pd.data.node.lang);
                                     break;
                                 }
                             }
@@ -7216,7 +7290,8 @@ var pd       = {},
                             } else {
                                 pd.data.node.codeBeauIn.value = source;
                             }
-                            pd.event.recycle();
+                            pd.event
+                                .recycle();
                         } else if (pd.data.node.codeMinnIn !== null && pd.data.mode === "minn") {
                             if (pd.test.ace === true) {
                                 pd.ace
@@ -7228,7 +7303,8 @@ var pd       = {},
                             } else {
                                 pd.data.node.codeMinnIn.value = source;
                             }
-                            pd.event.recycle();
+                            pd.event
+                                .recycle();
                         } else if (pd.data.node.codeParsIn !== null && pd.data.mode === "pars") {
                             if (pd.test.ace === true) {
                                 pd.ace
@@ -7240,7 +7316,8 @@ var pd       = {},
                             } else {
                                 pd.data.node.codeParsIn.value = source;
                             }
-                            pd.event.recycle();
+                            pd.event
+                                .recycle();
                         } else if (pd.data.node.codeDiffBase !== null && pd.data.mode === "diff") {
                             if (pd.test.ace === true) {
                                 pd.ace
@@ -7253,7 +7330,8 @@ var pd       = {},
                                 pd.data.node.codeDiffBase.value = source;
                             }
                             if (diff !== "") {
-                                pd.event.recycle();
+                                pd.event
+                                    .recycle();
                             }
                         }
                     }
@@ -7277,7 +7355,7 @@ var pd       = {},
             }
             if (pd.data.settings.feedback.newb === false && pd.data.stat.usage > 2 && pd.data.stat.visit < 5 && pd.test.domain === true && pd.data.node.report.feed.box !== null) {
                 pd.data.settings.feedback.newb = true;
-                node                      = pd.id("feedintro");
+                node                           = pd.id("feedintro");
                 if (node !== null) {
                     node.innerHTML = "Thank you for trying Pretty Diff. Please let me know what you think of this tool" +
                             ".";
@@ -7285,7 +7363,8 @@ var pd       = {},
                 if (pd.test.json === true && pd.test.ls === true) {
                     localStorage.settings = JSON.stringify(pd.data.settings);
                 }
-                pd.data.node
+                pd.data
+                    .node
                     .report
                     .feed
                     .box
@@ -7301,7 +7380,8 @@ var pd       = {},
                 if (pd.test.json === true && pd.test.ls === true) {
                     localStorage.settings = JSON.stringify(pd.data.settings);
                 }
-                pd.data.node
+                pd.data
+                    .node
                     .report
                     .feed
                     .box
@@ -8202,7 +8282,8 @@ var pd       = {},
                         z       = 0,
                         bytelen = buff.byteLength;
                     for (z = 0; z < bytelen; z += 1) {
-                        bytes[z] = pd.data.audio
+                        bytes[z] = pd.data
+                            .audio
                             .binary
                             .charCodeAt(z);
                     }
@@ -8217,14 +8298,166 @@ var pd       = {},
                         });
                 };
             }
+            if (pd.data.node.codeBeauIn !== null) {
+                pd.data.node.codeBeauIn.onkeyup = function dom__load_bindBeauInUp(e) {
+                    var event = e || window.event;
+                    pd.event
+                        .recycle(event);
+                };
+                if (pd.test.ace === true) {
+                    pd.data.node.codeBeauIn.onfocus   = textareafocus;
+                    pd.data.node.codeBeauIn.onblur    = textareablur;
+                    pd.data.node.codeBeauIn.onkeydown = function dom__load_bindBeauInDownCM(e) {
+                        var event = e || window.event;
+                        pd.event
+                            .areaTabOut(event, this);
+                        pd.event
+                            .keydown(event);
+                    };
+                } else {
+                    pd.data.node.codeBeauIn.onfocus   = textareafocus;
+                    pd.data.node.codeBeauIn.onblur    = textareablur;
+                    pd.data.node.codeBeauIn.onkeydown = function dom__load_bindBeauInDown(e) {
+                        var event = e || window.event;
+                        pd.event
+                            .fixtabs(event, pd.data.node.codeBeauIn);
+                        pd.event
+                            .areaTabOut(event, this);
+                        pd.event
+                            .keydown(event);
+                    };
+                }
+            }
+            if (pd.data.node.codeBeauOut !== null && pd.test.ace === true) {
+                pd.data.node.codeBeauOut.onfocus   = textareafocus;
+                pd.data.node.codeBeauOut.onblur    = textareablur;
+                pd.data.node.codeBeauOut.onkeydown = pd.event.areaTabOut;
+            }
+            if (pd.data.node.codeMinnIn !== null) {
+                pd.data.node.codeMinnIn.onkeyup = function dom__load_bindMinnInUp(e) {
+                    var event = e || window.event;
+                    pd.event
+                        .recycle(event);
+                };
+                if (pd.test.ace === true) {
+                    pd.data.node.codeMinnIn.onfocus   = textareafocus;
+                    pd.data.node.codeMinnIn.onblur    = textareablur;
+                    pd.data.node.codeMinnIn.onkeydown = function dom__load_bindMinnInDownCM(e) {
+                        var event = e || window.event;
+                        pd.event
+                            .areaTabOut(event, this);
+                        pd.event
+                            .keydown(event);
+                    };
+                } else {
+                    pd.data.node.codeMinnIn.onfocus   = textareafocus;
+                    pd.data.node.codeMinnIn.onblur    = textareablur;
+                    pd.data.node.codeMinnIn.onkeydown = function dom__load_bindMinnInDown(e) {
+                        var event = e || window.event;
+                        pd.event
+                            .fixtabs(event, this);
+                        pd.event
+                            .areaTabOut(event, this);
+                        pd.event
+                            .keydown(event);
+                    };
+                }
+            }
+            if (pd.data.node.codeMinnOut !== null && pd.test.ace === true) {
+                pd.data.node.codeMinnOut.onfocus   = textareafocus;
+                pd.data.node.codeMinnOut.onblur    = textareablur;
+                pd.data.node.codeMinnOut.onkeydown = pd.event.areaTabOut;
+            }
+            if (pd.data.node.codeParsIn !== null) {
+                pd.data.node.codeParsIn.onkeyup = function dom__load_bindParsInUp(e) {
+                    var event = e || window.event;
+                    pd.event
+                        .recycle(event);
+                };
+                if (pd.test.ace === true) {
+                    pd.data.node.codeParsIn.onfocus   = textareafocus;
+                    pd.data.node.codeParsIn.onblur    = textareablur;
+                    pd.data.node.codeParsIn.onkeydown = function dom__load_bindParsInDownCM(e) {
+                        var event = e || window.event;
+                        pd.event
+                            .areaTabOut(event, this);
+                        pd.event
+                            .keydown(event);
+                    };
+                } else {
+                    pd.data.node.codeParsIn.onfocus   = textareafocus;
+                    pd.data.node.codeParsIn.onblur    = textareablur;
+                    pd.data.node.codeParsIn.onkeydown = function dom__load_bindParsInDown(e) {
+                        var event = e || window.event;
+                        pd.event
+                            .fixtabs(event, pd.data.node.codeParsIn);
+                        pd.event
+                            .areaTabOut(event, this);
+                        pd.event
+                            .keydown(event);
+                    };
+                }
+            }
+            if (pd.data.node.codeParsOut !== null && pd.test.ace === true) {
+                pd.data.node.codeParsOut.onfocus   = textareafocus;
+                pd.data.node.codeParsOut.onblur    = textareablur;
+                pd.data.node.codeParsOut.onkeydown = pd.event.areaTabOut;
+            }
+            if (pd.data.node.codeDiffBase !== null) {
+                if (pd.test.ace === true) {
+                    pd.data.node.codeDiffBase.onkeyup   = function dom__load_bindAutoDiffBase() {
+                        pd.app
+                            .langkey(false, pd.ace.diffBase, "");
+                    };
+                    pd.data.node.codeDiffBase.onfocus   = textareafocus;
+                    pd.data.node.codeDiffBase.onblur    = textareablur;
+                    pd.data.node.codeDiffBase.onkeydown = pd.event.areaTabOut;
+                } else {
+                    pd.data.node.codeDiffBase.onfocus   = textareafocus;
+                    pd.data.node.codeDiffBase.onblur    = textareablur;
+                    pd.data.node.codeDiffBase.onkeydown = function dom__load_bindDiffBaseDown(e) {
+                        var event = e || window.event;
+                        pd.event
+                            .fixtabs(event, this);
+                        pd.event
+                            .areaTabOut(event, this);
+                    };
+                }
+            }
+            if (pd.data.node.codeDiffNew !== null) {
+                if (pd.test.ace === true) {
+                    pd.data.node.codeDiffNew.onkeyup   = function dom__load_bindAutoDiffNew() {
+                        pd.app
+                            .langkey(false, pd.ace.diffNew, "");
+                    };
+                    pd.data.node.codeDiffNew.onfocus   = textareafocus;
+                    pd.data.node.codeDiffNew.onblur    = textareablur;
+                    pd.data.node.codeDiffNew.onkeydown = pd.event.areaTabOut;
+                } else {
+                    pd.data.node.codeDiffNew.onfocus   = textareafocus;
+                    pd.data.node.codeDiffNew.onblur    = textareablur;
+                    pd.data.node.codeDiffNew.onkeydown = function dom__load_bindDiffNewDown(e) {
+                        var event = e || window.event;
+                        pd.event
+                            .fixtabs(event, this);
+                        pd.event
+                            .event
+                            .areaTabOut(event, this);
+                    };
+                }
+            }
+            window.onresize     = pd.app.fixHeight;
+            window.onkeyup      = pd.event.areaShiftUp;
+            document.onkeypress = backspace;
+            document.onkeydown  = backspace;
             checkForEdition();
         }
         if (page === "doc") {
             (function dom__load_doc() {
-                var b             = 0,
-                    row           = [],
-                    rowLen        = 0,
-                    colorParam    = (typeof location === "object" && typeof location.href === "string" && location.href.indexOf("?") > -1)
+                var b          = 0,
+                    row        = [],
+                    rowLen     = 0,
+                    colorParam = (typeof location === "object" && typeof location.href === "string" && location.href.indexOf("?") > -1)
                         ? location.href
                             .toLowerCase()
                             .split("?")[1]
@@ -8256,7 +8489,8 @@ var pd       = {},
                     if (((rowLen > 0 && b !== rowLen) || rowLen === 0) && pd.data.settings.colorScheme !== undefined) {
                         node.selectedIndex = pd.data.settings.colorScheme;
                     }
-                    pd.event.colorScheme(node);
+                    pd.event
+                        .colorScheme(node);
                     node.onchange = pd.event.colorScheme;
                 }
                 (function dom__doc_foldSearch() {

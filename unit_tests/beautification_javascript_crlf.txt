@@ -1,3 +1,4 @@
+var a;
 function foo(bar)
 {
     return bar++;
