@@ -12,8 +12,10 @@
         <link href="diffview.css" media="all" rel="stylesheet" type="text/css"/>
         <link href="images/apple-touch-icon-57.png" rel="apple-touch-icon" sizes="57x57"/>
         <link href="images/apple-touch-icon-72.png" rel="apple-touch-icon" sizes="72x72"/>
-        <link href="images/apple-touch-icon-114.png" rel="apple-touch-icon" sizes="114x114"/>
-        <link href="images/apple-touch-icon-144.png" rel="apple-touch-icon" sizes="144x144"/>
+        <link href="images/apple-touch-icon-114.png" rel="apple-touch-icon"
+            sizes="114x114"/>
+        <link href="images/apple-touch-icon-144.png" rel="apple-touch-icon"
+            sizes="144x144"/>
         <meta content="width=device-width, initial-scale=1" name="viewport"/>
         <meta content="index, follow" name="robots"/>
         <meta content="Pretty Diff - The difference tool" name="DC.title"/>
@@ -372,6 +374,23 @@
                 </span>
             </p>
             <p>
+                <strong>Line Termination
+                    <a href="documentation.xhtml#crlf">(crlf)</a>
+                </strong>
+                <span>
+                    <input checked="checked" id="lterminator-lf" name="lterminator"
+                        title="Terminate line of output with LF for compatibility with Unix and Linux based systems."
+                        type="radio"/>
+                    <label for="lterminator-lf">Unix Style (LF)</label>
+                </span>
+                <span>
+                    <input id="lterminator-crlf" name="lterminator"
+                        title="Terminate lines of output with CRLF for compatibility with Windows."
+                        type="radio"/>
+                    <label for="lterminator-crlf">Windows Style (CRLF)</label>
+                </span>
+            </p>
+            <p>
                 <label class="label" for="colorScheme"
                     title="Pick a color theme with this list of options. Force a theme by default with the address parameter 'c', for example 'c=shadow'.">Color Scheme
                     <a class="apiname" href="documentation.xhtml#color">(color)</a>
@@ -676,6 +695,25 @@
                         </p>
                     </fieldset>
                     <fieldset>
+                        <legend>CSS Options</legend>
+                        <p>
+                            <strong>Comma Separated Selector Lists
+                                <a class="apiname" href="documentation.xhtml#selectorlist">(selectorlist)</a>
+                            </strong>
+                            <span>
+                                <input checked="checked" id="dselectorlist-no" name="dselectorlist"
+                                    title="Breaks comma separated lists of selectors onto multiple lines."
+                                    type="radio"/>
+                                <label for="dselectorlist-no">Broken into new lines</label>
+                            </span>
+                            <span>
+                                <input id="dselectorlist-yes" name="dselectorlist"
+                                    title="Keeps lists of selectors on a single line of code." type="radio"/>
+                                <label for="dselectorlist-yes">Retain on a single line</label>
+                            </span>
+                        </p>
+                    </fieldset>
+                    <fieldset>
                         <legend>Markup Options</legend>
                         <p>
                             <strong>IE Comments, HTML Only
@@ -695,13 +733,17 @@
                             </span>
                         </p>
                         <p>
-                            <strong>Dust.js Template <a class="apiname" href="documentation.xhtml#dustjs">(dustjs)</a></strong>
+                            <strong>Dust.js Template
+                                <a class="apiname" href="documentation.xhtml#dustjs">(dustjs)</a>
+                            </strong>
                             <span>
-                                <input checked="checked" id="ddustno" name="ddust" title="Do not interpret the markup code as a Dust.js template" type="radio"/>
+                                <input checked="checked" id="ddustno" name="ddust"
+                                    title="Do not interpret the markup code as a Dust.js template" type="radio"/>
                                 <label for="ddustno">Not a Dust.js template</label>
                             </span>
                             <span>
-                                <input id="ddustyes" name="ddust" title="Interpret the markup code as a Dust.js template" type="radio"/>
+                                <input id="ddustyes" name="ddust"
+                                    title="Interpret the markup code as a Dust.js template" type="radio"/>
                                 <label for="ddustyes">Dust.js template</label>
                             </span>
                         </p>
@@ -783,19 +825,23 @@
                                 <label for="dtagsort-no">Do not sort markup code</label>
                             </span>
                             <span>
-                                <input id="dtagsort-yes" name="dtagsort"
-                                    title="Sort markup code." type="radio"/>
+                                <input id="dtagsort-yes" name="dtagsort" title="Sort markup code." type="radio"/>
                                 <label for="dtagsort-yes">Sort markup pieces</label>
                             </span>
                         </p>
                         <p>
-                            <strong>Preserve Text Content <a class="apiname" href="documentation.xhtml#textpreserve">(textpreserve)</a></strong>
+                            <strong>Preserve Text Content
+                                <a class="apiname" href="documentation.xhtml#textpreserve">(textpreserve)</a>
+                            </strong>
                             <span>
-                                <input checked="checked" id="dtextpreserveno" name="dtextpreserve" title="Do not literally preserve white space in text." type="radio"/>
+                                <input checked="checked" id="dtextpreserveno" name="dtextpreserve"
+                                    title="Do not literally preserve white space in text." type="radio"/>
                                 <label for="dtextpreserveno">Beautify text content</label>
                             </span>
                             <span>
-                                <input id="dtextpreserveyes" name="dtextpreserve" title="Preserve all white space in text content exactly as supplied." type="radio"/>
+                                <input id="dtextpreserveyes" name="dtextpreserve"
+                                    title="Preserve all white space in text content exactly as supplied."
+                                    type="radio"/>
                                 <label for="dtextpreserveyes">Preserve white space in text</label>
                             </span>
                         </p>
@@ -873,15 +919,28 @@
                             </strong>
                             <span>
                                 <input checked="checked" id="dmethodchain-no" name="dmethodchain"
-                                    title="Indent a run of methods."
-                                    type="radio"/>
+                                    title="Indent a run of methods." type="radio"/>
                                 <label for="dmethodchain-no">Indent a run of methods</label>
                             </span>
                             <span>
                                 <input id="dmethodchain-yes" name="dmethodchain"
-                                    title="Chain methods onto a single line."
-                                    type="radio"/>
+                                    title="Chain methods onto a single line." type="radio"/>
                                 <label for="dmethodchain-yes">Chain methods onto a single line</label>
+                            </span>
+                        </p>
+                        <p>
+                            <strong>Case Indentation
+                                <a class="apiname" href="documentation.xhtml#nocaseindent">(nocaseindent)</a>
+                            </strong>
+                            <span>
+                                <input checked="checked" id="dnocaseindent-no" name="dnocaseindent"
+                                    title="Indent cases in switch blocks" type="radio"/>
+                                <label for="dnocaseident-no">Indent case statements</label>
+                            </span>
+                            <span>
+                                <input id="dnocaseindent-yes" name="dnocaseindent"
+                                    title="Do not indent cases in switch blocks." type="radio"/>
+                                <label for="dmethodchain-yes">Do not indent cases in switch blocks</label>
                             </span>
                         </p>
                         <p>
@@ -1139,28 +1198,52 @@
                                 <label for="bnoleadzero-yes">Remove/prevent leading 0s</label>
                             </span>
                         </p>
+                        <p>
+                            <strong>Comma Separated Selector Lists
+                                <a class="apiname" href="documentation.xhtml#selectorlist">(selectorlist)</a>
+                            </strong>
+                            <span>
+                                <input checked="checked" id="bselectorlist-no" name="bselectorlist"
+                                    title="Breaks comma separated lists of selectors onto multiple lines."
+                                    type="radio"/>
+                                <label for="bselectorlist-no">Broken into new lines</label>
+                            </span>
+                            <span>
+                                <input id="bselectorlist-yes" name="bselectorlist"
+                                    title="Keeps lists of selectors on a single line of code." type="radio"/>
+                                <label for="bselectorlist-yes">Retain on a single line</label>
+                            </span>
+                        </p>
                     </fieldset>
                     <fieldset>
                         <legend>Markup Options</legend>
                         <p>
-                            <strong>Force an Empty Line Above Comments <a class="apiname" href="documentation.xhtml#commline">(commline)</a></strong>
+                            <strong>Force an Empty Line Above Comments
+                                <a class="apiname" href="documentation.xhtml#commline">(commline)</a>
+                            </strong>
                             <span>
-                                <input checked="checked" id="bcommline-no" name="bcommline" title="Do not force new lines above comments." type="radio"/>
+                                <input checked="checked" id="bcommline-no" name="bcommline"
+                                    title="Do not force new lines above comments." type="radio"/>
                                 <label for="bcommline-no">No extra empty lines</label>
                             </span>
                             <span>
-                                <input id="bcommline-yes" name="bcommline" title="Force new lines above comments." type="radio"/>
+                                <input id="bcommline-yes" name="bcommline"
+                                    title="Force new lines above comments." type="radio"/>
                                 <label for="bcommline-yes">Force new lines above comments</label>
                             </span>
                         </p>
                         <p>
-                            <strong>Dust.js Template <a class="apiname" href="documentation.xhtml#dustjs">(dustjs)</a></strong>
+                            <strong>Dust.js Template
+                                <a class="apiname" href="documentation.xhtml#dustjs">(dustjs)</a>
+                            </strong>
                             <span>
-                                <input checked="checked" id="bdustno" name="bdust" title="Do not interpret the markup code as a Dust.js template" type="radio"/>
+                                <input checked="checked" id="bdustno" name="bdust"
+                                    title="Do not interpret the markup code as a Dust.js template" type="radio"/>
                                 <label for="bdustno">Not a Dust.js template</label>
                             </span>
                             <span>
-                                <input id="bdustyes" name="bdust" title="Interpret the markup code as a Dust.js template" type="radio"/>
+                                <input id="bdustyes" name="bdust"
+                                    title="Interpret the markup code as a Dust.js template" type="radio"/>
                                 <label for="bdustyes">Dust.js template</label>
                             </span>
                         </p>
@@ -1199,13 +1282,17 @@
                             </span>
                         </p>
                         <p>
-                            <strong>End Self-Closing Tags with a Space <a class="apiname" href="documentation.xhtml#spaceclose">(spaceclose)</a></strong>
+                            <strong>End Self-Closing Tags with a Space
+                                <a class="apiname" href="documentation.xhtml#spaceclose">(spaceclose)</a>
+                            </strong>
                             <span>
-                                <input checked="checked" id="bspaceclose-no" name="bspaceclose" title="End self-closing tags with no space '/&gt;'." type="radio"/>
+                                <input checked="checked" id="bspaceclose-no" name="bspaceclose"
+                                    title="End self-closing tags with no space '/&gt;'." type="radio"/>
                                 <label for="bspaceclose-no">No extra space</label>
                             </span>
                             <span>
-                                <input id="bspaceclose-yes" name="bspaceclose" title="End self-closing tags with a space, ' /&gt;'." type="radio"/>
+                                <input id="bspaceclose-yes" name="bspaceclose"
+                                    title="End self-closing tags with a space, ' /&gt;'." type="radio"/>
                                 <label for="bspaceclose-yes">End self-closing tags with a space, ' /&gt;'</label>
                             </span>
                         </p>
@@ -1253,19 +1340,23 @@
                                 <label for="btagsort-no">Do not sort markup code</label>
                             </span>
                             <span>
-                                <input id="btagsort-yes" name="btagsort"
-                                    title="Sort markup code." type="radio"/>
+                                <input id="btagsort-yes" name="btagsort" title="Sort markup code." type="radio"/>
                                 <label for="btagsort-yes">Sort markup pieces</label>
                             </span>
                         </p>
                         <p>
-                            <strong>Preserve Text Content <a class="apiname" href="documentation.xhtml#textpreserve">(textpreserve)</a></strong>
+                            <strong>Preserve Text Content
+                                <a class="apiname" href="documentation.xhtml#textpreserve">(textpreserve)</a>
+                            </strong>
                             <span>
-                                <input checked="checked" id="btextpreserveno" name="btextpreserve" title="Do not literally preserve white space in text." type="radio"/>
+                                <input checked="checked" id="btextpreserveno" name="btextpreserve"
+                                    title="Do not literally preserve white space in text." type="radio"/>
                                 <label for="btextpreserveno">Beautify text content</label>
                             </span>
                             <span>
-                                <input id="btextpreserveyes" name="btextpreserve" title="Preserve all white space in text content exactly as supplied." type="radio"/>
+                                <input id="btextpreserveyes" name="btextpreserve"
+                                    title="Preserve all white space in text content exactly as supplied."
+                                    type="radio"/>
                                 <label for="btextpreserveyes">Preserve white space in text</label>
                             </span>
                         </p>
@@ -1343,14 +1434,12 @@
                             </strong>
                             <span>
                                 <input checked="checked" id="bendcomma-no" name="bendcomma"
-                                    title="Removes trailing commas from arrays and object literals."
-                                    type="radio"/>
+                                    title="Removes trailing commas from arrays and object literals." type="radio"/>
                                 <label for="bendcomma-no">Remove trailing commas</label>
                             </span>
                             <span>
                                 <input id="bendcomma-yes" name="bendcomma"
-                                    title="Adds trailing commas to arrays and object literals."
-                                    type="radio"/>
+                                    title="Adds trailing commas to arrays and object literals." type="radio"/>
                                 <label for="bendcomma-yes">Add trailing commas</label>
                             </span>
                         </p>
@@ -1388,15 +1477,28 @@
                             </strong>
                             <span>
                                 <input checked="checked" id="bmethodchain-no" name="bmethodchain"
-                                    title="Indent a run of methods."
-                                    type="radio"/>
+                                    title="Indent a run of methods." type="radio"/>
                                 <label for="bmethodchain-no">Indent a run of methods</label>
                             </span>
                             <span>
                                 <input id="bmethodchain-yes" name="bmethodchain"
-                                    title="Chain methods onto a single line."
-                                    type="radio"/>
+                                    title="Chain methods onto a single line." type="radio"/>
                                 <label for="bmethodchain-yes">Chain methods onto a single line</label>
+                            </span>
+                        </p>
+                        <p>
+                            <strong>Case Indentation
+                                <a class="apiname" href="documentation.xhtml#nocaseindent">(nocaseindent)</a>
+                            </strong>
+                            <span>
+                                <input checked="checked" id="bnocaseindent-no" name="bnocaseindent"
+                                    title="Indent cases in switch blocks" type="radio"/>
+                                <label for="bnocaseident-no">Indent case statements</label>
+                            </span>
+                            <span>
+                                <input id="bnocaseindent-yes" name="bnocaseindent"
+                                    title="Do not indent cases in switch blocks." type="radio"/>
+                                <label for="bmethodchain-yes">Do not indent cases in switch blocks</label>
                             </span>
                         </p>
                         <p>
@@ -1554,13 +1656,17 @@
                         </span>
                     </p>
                     <p>
-                        <strong>Dust.js Template <a class="apiname" href="documentation.xhtml#dustjs">(dustjs)</a></strong>
+                        <strong>Dust.js Template
+                            <a class="apiname" href="documentation.xhtml#dustjs">(dustjs)</a>
+                        </strong>
                         <span>
-                            <input checked="checked" id="mdustno" name="mdust" title="Do not interpret the markup code as a Dust.js template" type="radio"/>
+                            <input checked="checked" id="mdustno" name="mdust"
+                                title="Do not interpret the markup code as a Dust.js template" type="radio"/>
                             <label for="mdustno">Not a Dust.js template</label>
                         </span>
                         <span>
-                            <input id="mdustyes" name="mdust" title="Interpret the markup code as a Dust.js template" type="radio"/>
+                            <input id="mdustyes" name="mdust"
+                                title="Interpret the markup code as a Dust.js template" type="radio"/>
                             <label for="mdustyes">Dust.js template</label>
                         </span>
                     </p>
@@ -1608,19 +1714,23 @@
                             <label for="mtagsort-no">Do not sort markup code</label>
                         </span>
                         <span>
-                            <input id="mtagsort-yes" name="mtagsort"
-                                title="Sort markup code." type="radio"/>
+                            <input id="mtagsort-yes" name="mtagsort" title="Sort markup code." type="radio"/>
                             <label for="mtagsort-yes">Sort markup pieces</label>
                         </span>
                     </p>
                     <p>
-                        <strong>Preserve Text Content <a class="apiname" href="documentation.xhtml#textpreserve">(textpreserve)</a></strong>
+                        <strong>Preserve Text Content
+                            <a class="apiname" href="documentation.xhtml#textpreserve">(textpreserve)</a>
+                        </strong>
                         <span>
-                            <input checked="checked" id="mtextpreserveno" name="mtextpreserve" title="Do not literally preserve white space in text." type="radio"/>
+                            <input checked="checked" id="mtextpreserveno" name="mtextpreserve"
+                                title="Do not literally preserve white space in text." type="radio"/>
                             <label for="mtextpreserveno">Beautify text content</label>
                         </span>
                         <span>
-                            <input id="mtextpreserveyes" name="mtextpreserve" title="Preserve all white space in text content exactly as supplied." type="radio"/>
+                            <input id="mtextpreserveyes" name="mtextpreserve"
+                                title="Preserve all white space in text content exactly as supplied."
+                                type="radio"/>
                             <label for="mtextpreserveyes">Preserve white space in text</label>
                         </span>
                     </p>
@@ -1684,13 +1794,17 @@
                 <fieldset>
                     <legend>Markup Options</legend>
                     <p>
-                        <strong>Dust.js Template <a class="apiname" href="documentation.xhtml#dustjs">(dustjs)</a></strong>
+                        <strong>Dust.js Template
+                            <a class="apiname" href="documentation.xhtml#dustjs">(dustjs)</a>
+                        </strong>
                         <span>
-                            <input checked="checked" id="pdustno" name="pdust" title="Do not interpret the markup code as a Dust.js template" type="radio"/>
+                            <input checked="checked" id="pdustno" name="pdust"
+                                title="Do not interpret the markup code as a Dust.js template" type="radio"/>
                             <label for="pdustno">Not a Dust.js template</label>
                         </span>
                         <span>
-                            <input id="pdustyes" name="pdust" title="Interpret the markup code as a Dust.js template" type="radio"/>
+                            <input id="pdustyes" name="pdust"
+                                title="Interpret the markup code as a Dust.js template" type="radio"/>
                             <label for="pdustyes">Dust.js template</label>
                         </span>
                     </p>
@@ -1738,19 +1852,23 @@
                             <label for="ptagsort-no">Do not sort markup code</label>
                         </span>
                         <span>
-                            <input id="ptagsort-yes" name="ptagsort"
-                                title="Sort markup code." type="radio"/>
+                            <input id="ptagsort-yes" name="ptagsort" title="Sort markup code." type="radio"/>
                             <label for="ptagsort-yes">Sort markup pieces</label>
                         </span>
                     </p>
                     <p>
-                        <strong>Preserve Text Content <a class="apiname" href="documentation.xhtml#textpreserve">(textpreserve)</a></strong>
+                        <strong>Preserve Text Content
+                            <a class="apiname" href="documentation.xhtml#textpreserve">(textpreserve)</a>
+                        </strong>
                         <span>
-                            <input checked="checked" id="ptextpreserveno" name="ptextpreserve" title="Do not literally preserve white space in text." type="radio"/>
+                            <input checked="checked" id="ptextpreserveno" name="ptextpreserve"
+                                title="Do not literally preserve white space in text." type="radio"/>
                             <label for="ptextpreserveno">Beautify text content</label>
                         </span>
                         <span>
-                            <input id="ptextpreserveyes" name="ptextpreserve" title="Preserve all white space in text content exactly as supplied." type="radio"/>
+                            <input id="ptextpreserveyes" name="ptextpreserve"
+                                title="Preserve all white space in text content exactly as supplied."
+                                type="radio"/>
                             <label for="ptextpreserveyes">Preserve white space in text</label>
                         </span>
                     </p>
@@ -1808,7 +1926,9 @@
                 <a href="https://groups.google.com/d/forum/pretty-diff">Pretty Diff mailing list</a>
                 or at
                 <a href="https://github.com/austincheney/prettydiff">Github</a>.</p>
-            <p>Special thanks to <a href="http://g6auc.me.uk/">Harry Whitfield</a>, <a href="https://plus.google.com/105958105635636993368/posts">Andreas Greuel</a>, and countless others.</p>
+            <p>Special thanks to
+                <a href="http://g6auc.me.uk/">Harry Whitfield</a>,
+                <a href="https://plus.google.com/105958105635636993368/posts">Andreas Greuel</a>, and countless others.</p>
         </div>
         <script src="ace/ace.js" type="application/javascript"></script>
         <script src="api/dom.js" type="application/javascript"></script>

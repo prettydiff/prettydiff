@@ -1,0 +1,25 @@
+var csspretty = function csspretty_(options) {
+    "use strict";
+    var first = (boo)
+            ? testarr
+            : (asdf)
+                ? blah
+                : ride,
+        oooh = (qq)
+            ? []
+            : [
+                "str1", "str2"
+            ],
+        lf = (options.crlf === true || options.crlf === "true")
+            ? "\r\n"
+            : (x)
+                ? (yy)
+                    ? [
+                        "str1", "str2"
+                    ]
+                    : (zz)
+                        ? ee
+                        : cc
+                : bb;
+    a;
+};
