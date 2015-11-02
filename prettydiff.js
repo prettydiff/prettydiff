@@ -1653,7 +1653,7 @@ global.edition        = {
         wsh      : 151029
     },
     css          : 151031, //diffview.css file
-    csspretty    : 151029, //csspretty lib
+    csspretty    : 151102, //csspretty lib
     csvpretty    : 151029, //csvpretty lib
     diffview     : 151029, //diffview lib
     documentation: 151029, //documentation.xhtml
@@ -1662,7 +1662,7 @@ global.edition        = {
     markuppretty : 151031, //markuppretty lib
     prettydiff   : 151029, //this file
     safeSort     : 151003, //safeSort lib
-    version      : "1.15.5", //version number
+    version      : "1.15.6", //version number
     webtool      : 151029
 };
 global.edition.latest = (function edition_latest() {
