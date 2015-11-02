@@ -6,7 +6,7 @@
     "url": "http://prettydiff.com/"
   },
   "bin": "./bin/prettydiff",
-  "version": "1.15.4",
+  "version": "1.15.5",
   "description": "Language aware code comparison tool for several web based languages. It also beautifies, minifies, and a few other things.",
   "keywords": [
     "diff",
@@ -24,9 +24,10 @@
   "homepage": "http://prettydiff.com/",
   "main": "prettydiff.js",
   "bugs": {
-    "url": "https://groups.google.com/forum/#!forum/pretty-diff",
-    "email": "pretty-diff@googlegroups.com"
+    "url": "https://github.com/prettydiff/prettydiff/issues",
+    "email": "info@prettydiff.com"
   },
+  "license": "SEE LICENSE IN license.txt",
   "repository": {
     "type": "git",
     "url": "git://github.com/prettydiff/prettydiff.git"

@@ -1556,8 +1556,8 @@ Examples:
                                     data.binary = false;
                                     fs.readFile(data.absolutepath, {
                                         encoding: "utf8"
-                                    }, function (err, dump) {
-                                        if (err !== null) {
+                                    }, function (errb, dump) {
+                                        if (errb !== null && errb !== undefined) {
                                             return readLocalFile(data);
                                         }
                                         if (data.file === undefined) {
@@ -1819,7 +1819,7 @@ Examples:
                 e         = [],
                 f         = 0,
                 alphasort = false,
-                pdrcpath  = localPath + ".prettydiffrc",
+                pdrcpath  = __dirname.replace(/(api)$/, "") + ".prettydiffrc",
                 pathslash = function (name, x) {
                     var y        = x.indexOf("://"),
                         z        = "",
@@ -2305,6 +2305,9 @@ Examples:
                         };
 
                     if (err !== null) {
+                        if (c === 0) {
+                            help = true;
+                        }
                         init();
                     } else if (stats.isFile() === true) {
                         fs

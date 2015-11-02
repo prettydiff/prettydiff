@@ -1,0 +1,45 @@
+*******   license start   *******
+@source: http://prettydiff.com/prettydiff.js
+@documentation - English: http://prettydiff.com/documentation.php
+
+@licstart  The following is the entire license notice for Pretty Diff.
+
+This code may not be used or redistributed unless the following
+conditions are met:
+
+* Prettydiff created by Austin Cheney originally on 3 Mar 2009.
+http://prettydiff.com/
+
+* The use of diffview.js and prettydiff.js must contain the following
+copyright:
+Copyright (c) 2007, Snowtide Informatics Systems, Inc.
+All rights reserved.
+- Redistributions of source code must retain the above copyright
+notice, this list of conditions and the following disclaimer.
+- Redistributions in binary form must reproduce the above copyright
+notice, this list of conditions and the following disclaimer in the
+documentation and/or other materials provided with the
+distribution.
+- Neither the name of the Snowtide Informatics Systems nor the
+names of its contributors may be used to endorse or promote products
+derived from this software without specific prior written
+permission.
+- used as diffview function
+http://prettydiff.com/lib/diffview.js
+
+* The code mentioned above has significantly expanded documentation in
+each of the respective function's external JS file as linked from the
+documentation page:
+http://prettydiff.com/documentation.php
+
+* In addition to the previously stated requirements any use of any
+component, aside from directly using the full files in their entirety,
+must restate the license mentioned at the top of each concerned file.
+
+If each and all these conditions are met use, extension, alteration,
+and redistribution of Pretty Diff and its required assets is unlimited
+and free without author permission.
+
+@licend  The above is the entire license notice for Pretty Diff.
+*******   license end   *******
+
