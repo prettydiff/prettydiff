@@ -2083,8 +2083,10 @@ var pd     = {},
                 logo.getElementsByTagName("g")[0]
                     .setAttribute("fill", "#" + logoColor);
             }
-            pd.app
-                .options(x);
+            if (pd.test.load === false) {
+                pd.app
+                    .options(x);
+            }
         },
         //allows grabbing and resizing columns (from the third column) in the diff
         //side-by-side report
@@ -3313,12 +3315,14 @@ var pd     = {},
                     db.style.display = "none";
                 }
             }
-            if (a !== pd.data.node.modeDiff) {
-                pd.app
-                    .hideOutput(a);
-            } else {
-                pd.app
-                    .options(a);
+            if (pd.test.load === false) {
+                if (a !== pd.data.node.modeDiff) {
+                    pd.app
+                        .hideOutput(a);
+                } else {
+                    pd.app
+                        .options(a);
+                }
             }
         },
         //reset tool to default configuration
@@ -4148,7 +4152,7 @@ var pd     = {},
                             }());
                         }
                         if (pd.data.node.report.code.body.style.display === "none") {
-                            pd.grab({
+                            pd.event.grab({
                                 type: "onmousedown"
                             }, pd.data.node.report.code.box.getElementsByTagName("h3")[0]);
                         }
@@ -4197,7 +4201,7 @@ var pd     = {},
                             }
                             if (pd.data.langvalue[1] === "javascript") {
                                 if (pd.data.node.report.code.body.style.display === "none") {
-                                    pd.grab({
+                                    pd.event.grab({
                                         type: "onmousedown"
                                     }, pd.data.node.report.code.box.getElementsByTagName("h3")[0]);
                                 }
@@ -5405,7 +5409,7 @@ var pd     = {},
             inprop    = "beauIn";
         }
         if (targetOut === null || (state === true && targetOut.parentNode.style.display === "none") || (state === false && targetOut.parentNode.style.display === "block")) {
-            return;
+            return pd.app.options(x);
         }
         if (langval !== "csv" && pd.data.mode !== "beau") {
             state = false;
@@ -5661,15 +5665,17 @@ var pd     = {},
                 }
             }
         }
-        if (node === beauChar) {
-            pd.app
-                .options(beauChar);
-        } else if (node === diffChar) {
-            pd.app
-                .options(diffChar);
-        } else {
-            pd.app
-                .options(node);
+        if (pd.test.load === false) {
+            if (node === beauChar) {
+                pd.app
+                    .options(beauChar);
+            } else if (node === diffChar) {
+                pd.app
+                    .options(diffChar);
+            } else {
+                pd.app
+                    .options(node);
+            }
         }
     };
 

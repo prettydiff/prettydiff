@@ -95,7 +95,7 @@
 if (typeof require === "function" && typeof ace !== "object") {
     (function glib_prettydiff() {
         "use strict";
-        var localPath = (typeof process === "object" && process.cwd() === "/" && typeof __dirname === "string")
+        var localPath = (typeof process === "object" && typeof process.cwd === "function" && (process.cwd() === "/" || (/^([a-z]:\\)$/).test(process.cwd()) === true) && typeof __dirname === "string")
             ? __dirname
             : ".";
         if (global.csspretty === undefined) {
@@ -1681,8 +1681,9 @@ if (typeof exports === "object" || typeof exports === "function") {
     //requirejs support
     define(function requirejs(require, exports) {
         "use strict";
-        exports.global = global;
-        exports.api    = function requirejs_export(x) {
+        exports.report  = global.report;
+        exports.edition = global.edition;
+        exports.api     = function requirejs_export(x) {
             return prettydiff(x);
         };
         //worthless if block to appease RequireJS and JSLint
