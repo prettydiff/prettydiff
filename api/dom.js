@@ -2,8 +2,8 @@
 /*global ace, ActiveXObject, ArrayBuffer, AudioContext, console, csspretty, csvpretty, diffview, document, FileReader, global, jspretty, localStorage, location, markuppretty, prettydiff, navigator, safeSort, setTimeout, Uint8Array, window, XMLHttpRequest*/
 /*jslint for: true, this: true*/
 /***********************************************************************
- This is written by Austin Cheney on 3 Mar 2009. Anybody may use this;
- code without permission so long as this comment exists verbatim in each;
+ This is written by Austin Cheney on 3 Mar 2009. Anybody may use this
+ code without permission so long as this comment exists verbatim in each
  instance of its use.
 
  http: //mailmarkup.org/
@@ -69,7 +69,7 @@ var pd     = {},
             ? new AudioContext()
             : null,
         //am I served from the Pretty Diff domain
-        domain       : (location.href.indexOf("prettydiff.com") < 15),
+        domain       : (location.href.indexOf("prettydiff.com") < 15 && location.href.indexOf("prettydiff.com") > -1),
         //If the output is too large the report must open and minimize in a single step
         filled       : {
             code: false,
@@ -5409,7 +5409,10 @@ var pd     = {},
             inprop    = "beauIn";
         }
         if (targetOut === null || (state === true && targetOut.parentNode.style.display === "none") || (state === false && targetOut.parentNode.style.display === "block")) {
-            return pd.app.options(x);
+            if (pd.test.load === false) {
+                pd.app.options(x);
+            }
+            return;
         }
         if (langval !== "csv" && pd.data.mode !== "beau") {
             state = false;
@@ -5443,8 +5446,10 @@ var pd     = {},
                 if (langval === "csv") {
                     x = pd.data.node.lang;
                 }
-                pd.app
-                    .options(x);
+                if (pd.test.load === false) {
+                    pd.app
+                        .options(x);
+                }
             } else {
                 restore();
             }
