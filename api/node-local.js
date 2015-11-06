@@ -2318,7 +2318,7 @@ Examples:
                                     d = options.diff,
                                     o = options.output,
                                     h = false;
-                                if (error !== null) {
+                                if (error !== null && error !== undefined) {
                                     return init();
                                 }
                                 if ((/^(\s*\{)/).test(data) === true && (/(\}\s*)$/).test(data) === true) {
