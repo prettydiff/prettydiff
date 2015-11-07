@@ -130,7 +130,7 @@ var prettydiff = function prettydiff_(api) {
     var startTime = (typeof Date.now === "function")
             ? Date.now()
             : (function prettydiff__dateShim() {
-                var dateItem = new Date;
+                var dateItem = new Date();
                 return Date.parse(dateItem);
             }()),
         core      = function core_(api) {
@@ -568,7 +568,7 @@ var prettydiff = function prettydiff_(api) {
                         elapsed      = (typeof Date.now === "function")
                             ? ((Date.now() - startTime) / 1000)
                             : (function core__proctime_dateShim() {
-                                var dateitem = new Date;
+                                var dateitem = new Date();
                                 return Date.parse(dateitem);
                             }()),
                         secondString = elapsed.toFixed(3),
@@ -1657,12 +1657,12 @@ global.edition        = {
     csvpretty    : 151029, //csvpretty lib
     diffview     : 151029, //diffview lib
     documentation: 151029, //documentation.xhtml
-    jspretty     : 151104, //jspretty lib
+    jspretty     : 151106, //jspretty lib
     latest       : 0,
     markuppretty : 151105, //markuppretty lib
-    prettydiff   : 151029, //this file
+    prettydiff   : 151106, //this file
     safeSort     : 151003, //safeSort lib
-    version      : "1.15.10", //version number
+    version      : "1.15.11", //version number
     webtool      : 151104 //index.xhtml
 };
 global.edition.latest = (function edition_latest() {
