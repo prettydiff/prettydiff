@@ -1648,7 +1648,7 @@ global.edition        = {
         ace: 150918
     },
     api          : {
-        dom      : 151104, //dom.js
+        dom      : 151109, //dom.js
         nodeLocal: 151105, //node-local.js
         wsh      : 151029 //prettydiff.wsf
     },
@@ -1659,10 +1659,10 @@ global.edition        = {
     documentation: 151029, //documentation.xhtml
     jspretty     : 151109, //jspretty lib
     latest       : 0,
-    markuppretty : 151108, //markuppretty lib
+    markuppretty : 151109, //markuppretty lib
     prettydiff   : 151106, //this file
     safeSort     : 151003, //safeSort lib
-    version      : "1.15.14", //version number
+    version      : "1.15.15", //version number
     webtool      : 151104 //index.xhtml
 };
 global.edition.latest = (function edition_latest() {
