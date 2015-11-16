@@ -433,7 +433,7 @@ var prettydiff = function prettydiff_(api) {
                     b = a.replace(/\[[a-zA-Z][\w\-]*\=("|')?[a-zA-Z][\w\-]*("|')?\]/g, "")
                         .split("");
                     c = b.length;
-                    if ((/^([\s\w\-]*<)/).test(a) === false && (/(>[\s\w\-]*)$/).test(a) === false) {
+                    if (((/^([\s\w\-]*<)/).test(a) === false || a.indexOf("<") < 0 || a.indexOf("function") < a.indexOf("<")) && (/(>[\s\w\-]*)$/).test(a) === false) {
                         for (d = 1; d < c; d += 1) {
                             if (flaga === false) {
                                 if (b[d] === "*" && b[d - 1] === "/") {
@@ -468,7 +468,7 @@ var prettydiff = function prettydiff_(api) {
                             return output("unknown");
                         }
                         if (a.indexOf("{") !== -1 && (/^(\s*[\{\$\.#@a-z0-9])|^(\s*\/(\*|\/))|^(\s*\*\s*\{)/i).test(a) === true && (/^(\s*if\s*\()/).test(a) === false && (/\=\s*(\{|\[|\()/).test(join) === false && (((/(\+|-|\=|\?)\=/).test(join) === false || (/\/\/\s*\=+/).test(join) === true) || ((/\=+('|")?\)/).test(a) === true && (/;\s*base64/).test(a) === true)) && (/function(\s+\w+)*\s*\(/).test(join) === false) {
-                            if ((/:\s*((number)|(string))/).test(a) === true && (/((public)|(private))\s+/).test(a) === true) {
+                            if (((/:\s*((number)|(string))/).test(a) === true || (/this\.\w+\s*\=/).test(a) === true) && (/((public)|(private))\s+/).test(a) === true) {
                                 return output("typescript");
                             }
                             if ((/((public)|(private))\s+(((static)?\s+(v|V)oid)|(class)|(final))/).test(a) === true) {
@@ -477,7 +477,7 @@ var prettydiff = function prettydiff_(api) {
                             if ((/<[a-zA-Z]/).test(a) === true && (/<\/[a-zA-Z]/).test(a) === true && ((/\s?\{%/).test(a) === true || (/\{(\{|#)(?!(\{|#|\=))/).test(a) === true)) {
                                 return output("twig");
                             }
-                            if ((/^\s*($|@)/).test(a) === false && ((/:\s*(\{|\(|\[)/).test(a) === true || (/^(\s*return;?\s*\{)/).test(a) === true) && (/(\};?\s*)$/).test(a) === true) {
+                            if ((/^\s*($|@)/).test(a) === false && ((/:\s*(\{|\(|\[)/).test(a) === true || (/(\{|\s|;)render\s*\(\)\s*\{/).test(a) === true || (/^(\s*return;?\s*\{)/).test(a) === true) && (/(\};?\s*)$/).test(a) === true) {
                                 return output("javascript");
                             }
                             if ((/\{\{#/).test(a) === true && (/\{\{\//).test(a) === true && (/<\w/).test(a) === true) {
@@ -1648,21 +1648,21 @@ global.edition        = {
         ace: 150918
     },
     api          : {
-        dom      : 151109, //dom.js
+        dom      : 151116, //dom.js
         nodeLocal: 151105, //node-local.js
         wsh      : 151029 //prettydiff.wsf
     },
     css          : 151109, //diffview.css file
-    csspretty    : 151110, //csspretty lib
+    csspretty    : 151116, //csspretty lib
     csvpretty    : 151029, //csvpretty lib
     diffview     : 151029, //diffview lib
     documentation: 151029, //documentation.xhtml
-    jspretty     : 151109, //jspretty lib
+    jspretty     : 151116, //jspretty lib
     latest       : 0,
     markuppretty : 151110, //markuppretty lib
-    prettydiff   : 151106, //this file
+    prettydiff   : 151116, //this file
     safeSort     : 151003, //safeSort lib
-    version      : "1.15.16", //version number
+    version      : "1.15.17", //version number
     webtool      : 151104 //index.xhtml
 };
 global.edition.latest = (function edition_latest() {

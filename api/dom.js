@@ -853,7 +853,7 @@ var pd = {},
             }
             if (pd.test.ace === true) {
                 if (baseText !== null && newText !== null) {
-                    math = (height / 12) - (25.35 + headline);
+                    math = (height / 12.5) - (21.35 + headline);
                     baseText.style.height = math + "em";
                     newText.style.height = math + "em";
                     pd
@@ -873,7 +873,7 @@ var pd = {},
                         .diffNew
                         .resize();
                 }
-                math = (height / 12) - (22.625 + headline);
+                math = (height / 12.5) - (18.625 + headline);
                 if (pd.data.node.codeBeauIn !== null) {
                     beauIn.style.height = math + "em";
                     pd
@@ -1089,7 +1089,7 @@ var pd = {},
                         return "Titanium Stylesheets";
                     }
                     if (input === "typescript") {
-                        return "TypeScript (not supported yet)";
+                        return "TypeScript (not yet supported)";
                     }
                     if (input === "twig") {
                         return "HTML TWIG Template";
@@ -1148,7 +1148,7 @@ var pd = {},
                         .replace(/\[[a-zA-Z][\w\-]*\=("|')?[a-zA-Z][\w\-]*("|')?\]/g, "")
                         .split("");
                     c = b.length;
-                    if ((/^([\s\w\-]*<)/).test(a) === false && (/(>[\s\w\-]*)$/).test(a) === false) {
+                    if (((/^([\s\w\-]*<)/).test(a) === false || a.indexOf("<") < 0 || a.indexOf("function") < a.indexOf("<")) && (/(>[\s\w\-]*)$/).test(a) === false) {
                         for (d = 1; d < c; d += 1) {
                             if (flaga === false) {
                                 if (b[d] === "*" && b[d - 1] === "/") {
@@ -1183,7 +1183,7 @@ var pd = {},
                             return output("unknown");
                         }
                         if (a.indexOf("{") !== -1 && (/^(\s*[\{\$\.#@a-z0-9])|^(\s*\/(\*|\/))|^(\s*\*\s*\{)/i).test(a) === true && (/^(\s*if\s*\()/).test(a) === false && (/\=\s*(\{|\[|\()/).test(join) === false && (((/(\+|-|\=|\?)\=/).test(join) === false || (/\/\/\s*\=+/).test(join) === true) || ((/\=+('|")?\)/).test(a) === true && (/;\s*base64/).test(a) === true)) && (/function(\s+\w+)*\s*\(/).test(join) === false) {
-                            if ((/:\s*((number)|(string))/).test(a) === true && (/((public)|(private))\s+/).test(a) === true) {
+                            if (((/:\s*((number)|(string))/).test(a) === true || (/this\.\w+\s*\=/).test(a) === true) && (/((public)|(private))\s+/).test(a) === true) {
                                 return output("typescript");
                             }
                             if ((/((public)|(private))\s+(((static)?\s+(v|V)oid)|(class)|(final))/).test(a) === true) {
@@ -1192,7 +1192,7 @@ var pd = {},
                             if ((/<[a-zA-Z]/).test(a) === true && (/<\/[a-zA-Z]/).test(a) === true && ((/\s?\{%/).test(a) === true || (/\{(\{|#)(?!(\{|#|\=))/).test(a) === true)) {
                                 return output("twig");
                             }
-                            if ((/^\s*($|@)/).test(a) === false && ((/:\s*(\{|\(|\[)/).test(a) === true || (/^(\s*return;?\s*\{)/).test(a) === true) && (/(\};?\s*)$/).test(a) === true) {
+                            if ((/^\s*($|@)/).test(a) === false && ((/:\s*(\{|\(|\[)/).test(a) === true || (/(\{|\s|;)render\s*\(\)\s*\{/).test(a) === true || (/^(\s*return;?\s*\{)/).test(a) === true) && (/(\};?\s*)$/).test(a) === true) {
                                 return output("javascript");
                             }
                             if ((/\{\{#/).test(a) === true && (/\{\{\//).test(a) === true && (/<\w/).test(a) === true) {
