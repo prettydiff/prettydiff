@@ -1,0 +1,29 @@
+var a = function () {
+    var b = "",
+        c = [
+            0, 0, 0, 0, 0
+        ],
+        d = "";
+};
+
+var a = function () {
+    var b = "",
+        c = [
+            0, 0, 0, 0, 0
+        ],
+        d = "";
+};
+var a = "",
+    b = [
+        0, 0, 0, 0
+    ],
+    c = "";
+function () {
+    xecute({
+        action: "aceupdate",
+        args  : [
+            t.$deltas, t
+        ],
+        merge : t.mergeUndoDeltas
+    });
+}

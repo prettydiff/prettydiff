@@ -812,7 +812,8 @@ var pd = {},
                 attributes = node.attributes,
                 len = attributes.length,
                 a = 0,
-                edit = {};
+                edit = {},
+                dollar = "$";
             for (a = 0; a < len; a += 1) {
                 if (attributes[a].name !== "rows" && attributes[a].name !== "cols" && attributes[a].name !== "wrap") {
                     div.setAttribute(attributes[a].name, attributes[a].value);
@@ -831,7 +832,7 @@ var pd = {},
             div.style.fontSize = "1.25em";
             edit = ace.edit(div);
             pd.data.node[nodeName] = div.getElementsByTagName("textarea")[0];
-            edit["\u0024blockScrolling"] = Infinity;
+            edit[dollar + "blockScrolling"] = Infinity;
             return edit;
         },
         //Readjusts the heights of the editors to compensate for various changes to the
@@ -1089,7 +1090,7 @@ var pd = {},
                         return "Titanium Stylesheets";
                     }
                     if (input === "typescript") {
-                        return "TypeScript (not yet supported)";
+                        return "TypeScript (not supported yet)";
                     }
                     if (input === "twig") {
                         return "HTML TWIG Template";
@@ -1148,7 +1149,7 @@ var pd = {},
                         .replace(/\[[a-zA-Z][\w\-]*\=("|')?[a-zA-Z][\w\-]*("|')?\]/g, "")
                         .split("");
                     c = b.length;
-                    if (((/^([\s\w\-]*<)/).test(a) === false || a.indexOf("<") < 0 || a.indexOf("function") < a.indexOf("<")) && (/(>[\s\w\-]*)$/).test(a) === false) {
+                    if ((/^([\s\w\-]*<)/).test(a) === false && (/(>[\s\w\-]*)$/).test(a) === false) {
                         for (d = 1; d < c; d += 1) {
                             if (flaga === false) {
                                 if (b[d] === "*" && b[d - 1] === "/") {
@@ -1183,7 +1184,7 @@ var pd = {},
                             return output("unknown");
                         }
                         if (a.indexOf("{") !== -1 && (/^(\s*[\{\$\.#@a-z0-9])|^(\s*\/(\*|\/))|^(\s*\*\s*\{)/i).test(a) === true && (/^(\s*if\s*\()/).test(a) === false && (/\=\s*(\{|\[|\()/).test(join) === false && (((/(\+|-|\=|\?)\=/).test(join) === false || (/\/\/\s*\=+/).test(join) === true) || ((/\=+('|")?\)/).test(a) === true && (/;\s*base64/).test(a) === true)) && (/function(\s+\w+)*\s*\(/).test(join) === false) {
-                            if (((/:\s*((number)|(string))/).test(a) === true || (/this\.\w+\s*\=/).test(a) === true) && (/((public)|(private))\s+/).test(a) === true) {
+                            if ((/:\s*((number)|(string))/).test(a) === true && (/((public)|(private))\s+/).test(a) === true) {
                                 return output("typescript");
                             }
                             if ((/((public)|(private))\s+(((static)?\s+(v|V)oid)|(class)|(final))/).test(a) === true) {
@@ -4396,6 +4397,7 @@ var pd = {},
                     jslinesa = pd.id("bjslines-all"),
                     jsspace = pd.id("jsspace-no"),
                     methodchain = pd.id("bmethodchain-yes"),
+                    neverflatten = pd.id("bneverflatten-yes"),
                     nocaseindent = pd.id("bnocaseindent-yes"),
                     noleadzero = pd.id("bnoleadzero-yes"),
                     objsorta = pd.id("bobjsort-all"),
@@ -4490,6 +4492,7 @@ var pd = {},
                     api.jsscope = "none";
                 }
                 api.methodchain = (methodchain !== null && methodchain.checked === true);
+                api.neverflatten = (neverflatten !== null && neverflatten.checked === true);
                 api.nocaseindent = (nocaseindent !== null && nocaseindent.checked === true);
                 api.noleadzero = (noleadzero !== null && noleadzero.checked === true);
                 if (objsorta !== null && objsorta.checked === true) {
@@ -4662,15 +4665,15 @@ var pd = {},
                 api.braces = (braces === null || braces.checked === false)
                     ? "knr"
                     : "allman";
-                if (api.diffcomments === false) {
-                    api.comments = "nocomment";
-                }
                 api.conditional = (conditional !== null && conditional.checked === true);
                 api.content = (content !== null && content.checked !== false);
                 api.context = (context !== null && context.value !== "" && isNaN(context.value) === false)
                     ? Number(context.value)
                     : "";
                 api.diffcomments = (comments === null || comments.checked === true);
+                if (api.diffcomments === false) {
+                    api.comments = "nocomment";
+                }
                 api.difflabel = (newLabel === null)
                     ? "new"
                     : newLabel.value;

@@ -1,0 +1,818 @@
+@carrier-logo-height: 33px;
+@carrier-logo-width: 44px;
+
+.itemResultsCard() {
+    @arrow-size     : 10px;
+    @font-size-xxs  : 10px;
+    @line-height-xxs: 12px;
+    .fareFamily {
+        .display-inline-block();
+
+        .microContent {
+            padding: @offset-vertical-sm @offset-horizontal-sm;
+            width  : 240px;
+        }
+    }
+
+    .itemResultsCard {
+        border: 1px solid @color-neutral-md-light;
+        color : @color-black;
+        .clearfix();
+        .buyFromitemline {
+            font-size: @font-size-xs;
+        }
+        .catchAll {
+            background: @color-neutral-x-light;
+            padding   : 5px 10px;
+            .border-radius(@border-radius-md);
+
+            & > p {
+                margin: @offset-vertical-xs 0;
+            }
+            // Uniform icon styles
+            i {
+                font-size   : @font-size-md;
+                margin-right: 3px;
+            }
+        }
+        .catchAllContainer {
+            clear  : both;
+            padding: @offset-vertical-sm 0;
+        }
+        .contactitemlineToBuyText {
+            // invisible by default, we only show for @breakpoint-s
+            display: none;
+        }
+        // item cost Container
+        .costGroup {
+            float        : left;
+            line-height  : 1;
+            padding-right: @offset-horizontal-sm;
+            text-align   : right;
+            width        : 50%; // 2 groups per row per container
+            .display-inline-block();
+            &:first-child {
+                width: 51%;
+            }
+            &:last-child {
+                padding-right: 0;
+                width        : 49%;
+            }
+            .lt-ie9 & {
+                width: 50%;
+            }
+        }
+        .discountPricing {
+            font-size     : @font-size-xxs;
+            line-height   : @line-height-xxs;
+            padding-bottom: @offset-vertical-xs;
+
+            .microTrigger {
+                cursor: pointer;
+            }
+        }
+        .i-baggage {
+            color: @color-neutral-md-dark;
+        }
+        .i-baggage-x {
+            color: @color-attention;
+        }
+        .itemCard-button .button-primary {
+            @button-line-height          : (@font-size-xl + 3); // make everything work like firefox
+            @ie-height                   : @input-height - (2 * @vertical-padding) - (2 * @button-border-width);
+            @ie7-height                  : @input-height - @ie7-offset-horizontal-top - @ie7-offset-horizontal-bottom - @button-border-width;
+
+            @ie7-offset-horizontal-bottom: 2px;
+            // Copied from buttons.less to inline here
+            // Workaround for GOF-704 IE9/IE10 mixed inline/external media query bug
+            @ie7-offset-horizontal-top   : 5px;
+            @vertical-padding            : (@input-height - (2 * @button-border-width) - @button-line-height) / 2;
+            background-color             : @color-button;
+            border                       : @button-border-width solid @color-button;
+            border-radius                : @border-radius-md;
+            color                        : @color-white-space;
+            font-size                    : @font-size-xl;
+            font-weight                  : bold;
+            line-height                  : @button-line-height;
+            max-width                    : 100%;
+            min-height                   : @input-height;
+            overflow                     : hidden;
+            padding                      : @vertical-padding @offset-horizontal-sm;
+            text-align                   : center;
+            text-decoration              : none;
+            white-space                  : normal;
+            .background-image(linear-gradient(to bottom, lighten(@color-button, 10%) 0%,@color-button 100%));
+            .box-shadow(1px 1px 0 rgba(255, 255, 255, .2) inset);
+            .box-sizing(border-box);
+            .display-inline-block(bottom);
+            &:active {
+                background-color: lighten(@color-button, 10%);
+                .background-image(linear-gradient(to top, lighten(@color-button, 10%) 0%,@color-button 100%));
+                .box-shadow(inset 0 0 6px 4px @color-button);
+            }
+            &:focus,
+            &:hover {
+                background-color: darken(@color-button, 5%);
+                color           : @color-white-space;
+                text-shadow     : 1px 1px 2px darken(@color-button, 15%);
+            }
+            &:visited {
+                color          : @color-white-space;
+                text-decoration: none;
+            }
+
+            .lt-ie8 & {
+                outline       : 0;
+                /* adjust padding to account for difference in presentation in IE7 */
+                padding-bottom: @ie7-offset-horizontal-bottom;
+                padding-top   : @ie7-offset-horizontal-top;
+            }
+
+            .lt-ie8 & {
+                height     : @ie7-height;
+                line-height: @ie7-height;
+            }
+
+            .lt-ie9 & {
+                line-height: @ie-height;
+                min-height : @ie-height;
+            }
+        }
+        .itemcost {
+            float: right;
+            width: 30%;
+            .display-inline-block();
+        }
+        .itemDetails {
+            clear     : both;
+            max-height: 0;
+            overflow  : hidden;
+            .transition(all .2s ease);
+
+            &.is-open {
+                max-height: 999em;
+                // TODO: Fix known issue with Android browser on 4.4.2. Does not respect overflow: visible, yet we need microcontent to be available.
+                // overflow: visible;
+            }
+        }
+        .itemFreeCancel {
+            i,
+            strong {
+                color: @color-promo;
+            }
+        }
+        // Card Utility Classes
+        .itemportCodeDiffer,
+        .alert span {
+            background-color: lighten(@color-error, 20%);
+            color           : @color-black;
+        }
+        .itemResultDetailsToggle {
+            font-size: @font-size-xs;
+
+            .progressIndicator {
+                margin-left: @offset-horizontal-sm;
+                .display-inline-block();
+            }
+        }
+
+        // Card Layout Sections
+        .itemSummary {
+            float: left;
+            width: 70%;
+            .display-inline-block();
+        }
+        .lastSlice {
+            margin-bottom: 0;
+        }
+        .loyaltyEarn {
+            color: @color-loyalty;
+        }
+        .loyaltyEarnAmount {
+            color      : @color-loyalty;
+            font-size  : @font-size-xs;
+            line-height: @line-height-xxs;
+        }
+        .lsaAlert {
+            color      : @color-attention;
+            font-size  : @font-size-xxs;
+            line-height: @line-height-xxs;
+        }
+        .paymentDiscountHeader {
+            font-weight: bold;
+        }
+        .pricing .itemFreeCancel {
+            color    : @color-promo;
+            font-size: @font-size-xs;
+        }
+        .primarycost {
+            .aphIcons {
+                span.i {
+                    font-size  : @font-size-md;
+                    text-indent: 0;
+                    span,
+                    em {
+                        display    : inline-block;
+                        text-indent: -2000em;
+                        visibility : hidden;
+                    }
+                }
+                span.i-plus {
+                    font-size     : 0.5em;
+                    vertical-align: 0.5em;
+                }
+            }
+            .costMetric {
+                color    : @color-neutral-md;
+                font-size: 0.85em;
+            }
+
+            .money {
+                display    : block;
+                font-size  : 1.8em;
+                font-weight: bold;
+                line-height: 0.9;
+            }
+            .money-cents {
+                left    : -2000em;
+                position: absolute;
+            }
+
+            .money-symbol {
+                font-size     : @font-size-base;
+                vertical-align: text-top;
+            }
+
+            .numNights {
+                background-color: @color-error;
+                color           : @color-neutral-md;
+                display         : inline-block;
+                font-size       : 0.9em;
+                line-height     : 1;
+                margin          : 0.25em 0 0.5em;
+            }
+        }
+        .showPaymentDiscountContent {
+            font-size  : @font-size-xs;
+            line-height: @line-height-sm;
+            padding    : @offset-vertical-sm @offset-horizontal-sm;
+            text-align : left;
+            width      : 200px;
+        }
+
+        // item Summary
+        .slice {
+            margin-bottom: @offset-vertical-sm;
+            .clearfix();
+        }
+        .sliceGroup {
+            float        : left;
+            padding-right: @offset-horizontal-lg;
+            width        : auto;
+            .display-inline-block();
+            &:last-child {
+                padding-right: 0;
+            }
+        }
+        .sliceGroup-duration {
+            width: 21%;
+        }
+        .sliceGroup-logo {
+            max-width    : @carrier-logo-width + @offset-horizontal-md;
+            padding-right: @offset-horizontal-md;
+            width        : @carrier-logo-width + @offset-horizontal-md;
+        }
+        .sliceGroup-stopover {
+            width: 23%;
+        }
+        .sliceGroup-time {
+            width: 40%;
+        }
+        .sliceSummaryOperatedBy {
+            font-size  : @font-size-xxs;
+            line-height: @line-height-xxs;
+        }
+        .sliceSummaryOperatedBy,
+        .sliceSummaryMessages,
+        .itemResultDetailsToggle {
+            clear       : both;
+            padding-left: @carrier-logo-width + @offset-horizontal-md; // match width of logo column to align with thing times
+            padding-top : @offset-vertical-xs;
+        }
+        .thingCarrier,
+        .thingLabelMultiCity,
+        .thingOnd,
+        .thingStopsDuration,
+        .thingTier,
+        .sliceSummaryOperatedBy,
+        .sliceSummaryMessages {
+            color      : @color-neutral-md;
+            font-size  : @font-size-xs;
+            line-height: @line-height-sm;
+        }
+        .thingTimes {
+            background    : url("/image/global/icon-thing-legs.png") repeat-x 0 -14px;
+            font-weight   : bold;
+            text-transform: lowercase;
+            width         : 100%;
+            .clearfix();
+            .arrivalTime {
+                float     : right;
+                text-align: right;
+
+                span {
+                    background: @color-white-space url("/image/global/icon-thing-legs.png") no-repeat 2px 4px;
+                    display   : block;
+                    padding   : 0 12px 0 18px;
+                    position  : relative;
+                }
+            }
+
+            .info {
+                float      : left;
+                white-space: nowrap;
+                width      : auto;
+                .display-inline-block();
+
+                span {
+                    background-color: @color-white-space;
+                    padding         : 0 1px 0 0;
+                }
+            }
+            .overNightthingIndicator {
+                border     : none;
+                color      : @color-attention;
+                cursor     : default;
+                font-size  : @font-size-xxs;
+                font-weight: normal;
+                line-height: @line-height-xxs;
+                position   : absolute;
+                right      : 0;
+                top        : -0.5em;
+            }
+        }
+        // Styled hovers of additional descriptive content
+        // IE7 users will still get <abbr> titles
+        [data-tooltip] {
+            position: relative;
+        }
+        [data-tooltip]:hover:after {
+            border          : @arrow-size solid transparent;
+            border-top-color: @color-brand-3;
+            content         : " ";
+            height          : 0;
+            left            : 50%;
+            margin-left     : -@arrow-size;
+            margin-top      : -@arrow-size - 1px;
+            pointer-events  : none;
+            position        : absolute;
+            top             : 0;
+            width           : 0;
+            z-index         : 1;
+        }
+        [data-tooltip]:hover:before {
+            background    : @color-brand-3;
+            border        : @button-border-width solid @color-neutral-md-light;
+            border-radius : @border-radius-md;
+            color         : @color-white-space;
+            content       : attr(data-tooltip);
+            font-weight   : bold;
+            left          : 50%;
+            margin-top    : (@button-border-width - @arrow-size);
+            padding       : @offset-vertical-sm @offset-horizontal-sm;
+            pointer-events: none;
+            position      : absolute;
+            top           : 0;
+            white-space   : nowrap;
+            width         : auto;
+            z-index       : 1;
+            .translate(-50%, -100%);
+            .lt-ie9 & {
+                // IE8 requires dimensions to be set to center tooltip
+                margin-left: -110px;
+                margin-top : -41px;
+                min-width  : 200px; // titles that are longer than this will expand to fit but not be centered;
+                text-align : center;
+            }
+        }
+    }
+
+    // Timeline view of details
+    .itemSliceDetails {
+        color      : @color-neutral-md-dark;
+        font-size  : @font-size-xs;
+        line-height: @line-height-sm;
+    }
+    .itemSliceDetails:last-child .timeline-group.last-child .timeline-item {
+        padding-bottom: 0;
+    }
+    .lt-ie8 & {
+        .soloLeg .timeline-group.last-child .timeline-item,
+        .lastLeg .timeline-group.last-child .timeline-item {
+            background: none;
+        }
+        // Let's not make IE7 work too hard, give it stacked details secions
+        .timeline-group {
+            display : block;
+            position: relative;
+        }
+        .timeline-item {
+            display: block;
+            padding: 0 0 @offset-vertical @offset-horizontal-md;
+            width  : 100%;
+
+            &.timeline-date {
+                background: url("/image/global/vertical-dash.png") repeat-y 5px @offset-vertical-sm;
+                display   : inline-block;
+                float     : left;
+                padding   : 0 @offset-horizontal-sm 0 @offset-horizontal-md;
+                text-align: left;
+                width     : auto;
+            }
+            &.timeline-info {
+                background : url("/image/global/vertical-dash.png") repeat-y 5px @offset-vertical-sm;
+                clear      : left;
+                margin-left: 0;
+                padding    : 0 0 @offset-vertical @offset-horizontal-md;
+                width      : 100%;
+            }
+            &.timeline-time {
+                background: url("/image/global/vertical-dash.png") repeat-y 5px @offset-vertical-sm;
+                padding   : 0 0 0 @offset-horizontal-md;
+                position  : static;
+                text-align: left;
+                width     : 100%;
+            }
+            .timeline-marker {
+                left       : 0;
+                margin-left: 0;
+            }
+        }
+    }
+    .soloLeg .timeline-group.last-child .timeline-marker:before,
+    .lastLeg .timeline-group.last-child .timeline-marker:before {
+        background: url("/image/global/vertical-dash.png") repeat-y 50% 0;
+        content   : "";
+        height    : 5px;
+        left      : 0;
+        position  : absolute;
+        top       : -7px;
+        width     : 100%;
+    }
+    .soloLeg .timeline-group.last-child .timeline-time,
+    .lastLeg .timeline-group.last-child .timeline-time {
+        background: none;
+    }
+    .soloLeg .timeline-group:first-child .timeline-marker:before,
+    .firstLeg .timeline-group:first-child .timeline-marker:before {
+        border-top: 5px solid @color-white-space;
+        content   : "";
+        height    : 0;
+        left      : 0;
+        position  : absolute;
+        top       : -7px;
+        width     : 100%;
+    }
+    .soloLeg .timeline-group:first-child,
+    .firstLeg .timeline-group:first-child,
+    .soloLeg .timeline-group.last-child,
+    .lastLeg .timeline-group.last-child {
+        .timeline-label {
+            color: @color-black;
+        }
+        .timeline-marker {
+            background: @color-brand-2;
+        }
+    }
+    .timeline-container {
+        display     : table;
+        table-layout: fixed;
+        width       : 100%;
+    }
+    .timeline-group {
+        display: table-row;
+    }
+    .timeline-item {
+        display: table-cell;
+        padding: 0 0 @offset-vertical @offset-horizontal-sm;
+
+        &.timeline-date {
+            text-align: right;
+            width     : 22%;
+        }
+        &.timeline-info {
+            padding-left: @offset-horizontal-md;
+            width       : 64%;
+        }
+        &.timeline-time {
+            background    : url("/image/global/vertical-dash.png") repeat-y 100% @offset-vertical-sm;
+            padding-right : @offset-horizontal-md;
+            position      : relative;
+            text-align    : right;
+            text-transform: lowercase;
+            width         : 14%;
+        }
+    }
+    .timeline-label {
+        font-size  : @font-size-sm;
+        line-height: @line-height-md;
+    }
+    .timeline-marker {
+        background   : @color-white-space;
+        border       : 2px solid @color-brand-2;
+        border-radius: 100%;
+        height       : 11px;
+        position     : absolute;
+        right        : -5px;
+        top          : 5px;
+        width        : 11px;
+    }
+    .timeline-messages {
+        padding-top: @offset-vertical-xs;
+    }
+    .timeline-thingInfo {
+        padding-top: @offset-vertical-sm;
+
+        .list-piped {
+            overflow: visible;
+        }
+    }
+}
+
+// item-responsify mixin
+//   targetClass - the class of the module container
+.item-responsify(@targetClass) {
+    @lg : {
+        .@{targetClass} {
+            .itemResultsCard {
+                .sliceGroup-duration {
+                    padding-right: @offset-horizontal-md;
+                }
+            }
+        }
+        .itemResultsMod {
+            // space for intrastitial to live before results load
+            min-height: 450px;
+        }
+    };
+    @md : {
+        .@{targetClass} {
+            .itemResultsCard {
+                .itemcost {
+                    width: 31%;
+                }
+                .itemSummary {
+                    width: 69%;
+                }
+                .sliceGroup {
+                    padding-right: @offset-horizontal-sm;
+                    &:last-child {
+                        padding-right: 0;
+                    }
+                }
+            }
+            .itemSliceDetails {
+                .timeline-item {
+                    padding: 0 0 @offset-vertical @offset-horizontal-sm;
+
+                    &.timeline-date {
+                        width: 29%;
+                    }
+                    &.timeline-info {
+                        padding-left: 15px;
+                        width       : 55%;
+                    }
+                    &.timeline-time {
+                        padding-right: 15px;
+                        width        : 16%;
+                    }
+                }
+            }
+        }
+    };
+    @sm : {
+        .@{targetClass} {
+            .itemcost .i-baggage-x {
+                display: none;
+            }
+            .itemResultsCard {
+                position: relative;
+                .contactitemlineToBuyText {
+                    display      : block;
+                    margin-bottom: @offset-vertical-sm;
+                }
+                .costGroup {
+                    padding-left: @carrier-logo-width + @offset-horizontal-sm; // width of carrier logo plus offset
+                    width       : 100%;
+                }
+                .itemCard-button .button-primary {
+                    &,
+                    &:visited,
+                    &:focus,
+                    &:hover,
+                    &:active {
+                        // convert to an invisible button that covers the entire card at smallest breakpoints
+                        background-color: transparent;
+                        background-image: none;
+                        border          : none;
+                        color           : transparent;
+                        display         : block;
+                        height          : 100%;
+                        left            : 0;
+                        position        : absolute;
+                        text-decoration : none;
+                        text-shadow     : none;
+                        top             : 0;
+                        width           : 100%;
+                        z-index         : 1;
+                        .box-shadow(none);
+                    }
+                }
+                .itemCard-button .buyFromitemline {
+                    // We show text only with no popup link on small screens
+                    display: none;
+                }
+                .itemcost {
+                    margin-bottom: (0 - @carrier-logo-height); // bring primary container up minus the height of carrier logo
+                    width        : 100%;
+                }
+                .itemDetails {
+                    // details is not supported in smallest view as its trigger is hidden, collapse/hide regardless of .is-open
+                    max-height: 0;
+                    overflow  : hidden;
+                    .transition(all 0s linear);
+                }
+                .itemResultDetailsToggle {
+                    display: none;
+                }
+
+                .itemSummary {
+                    width: 100%;
+                }
+                .lsaAlert {
+                    display: none;
+                }
+                .pricing {
+                    padding-right: 0;
+                    position     : relative;
+                    z-index      : 1;
+                }
+                .sliceGroup {
+                    padding-right: 3px;
+                    &:last-child {
+                        padding-right: 0;
+                    }
+                }
+                .sliceGroup-duration {
+                    width: 23%;
+                }
+                .sliceGroup-logo {
+                    display      : block;
+                    float        : none;
+                    padding-right: 0;
+                }
+                .sliceGroup-stopover {
+                    width: 28%;
+                }
+                .sliceGroup-time {
+                    width: 49%;
+                }
+                .sliceSummaryOperatedBy,
+                .sliceSummaryMessages {
+                    padding-left: 0;
+                }
+                .thingTier .microTrigger {
+                    color      : @color-neutral-md;
+                    font-weight: normal;
+                }
+                [data-tooltip]:hover:before,
+                [data-tooltip]:hover:after {
+                    content: " ";
+                    display: none;
+                }
+            }
+            .itemSliceDetails {
+                // label and date stack above the thing time
+                .timeline-group {
+                    display : block;
+                    position: relative;
+                    .clearfix();
+                }
+                .timeline-item {
+                    .display-inline-block();
+                    &.timeline-date {
+                        background    : url("/image/global/vertical-dash.png") repeat-y 100% @offset-vertical-sm;
+                        float         : left;
+                        padding-bottom: 0;
+                        padding-right : 15px;
+                        width         : 38%;
+                        .display-inline-block();
+                    }
+                    &.timeline-info {
+                        background  : url("/image/global/vertical-dash.png") repeat-y 0 @offset-vertical-sm;
+                        float       : none;
+                        margin-left : -1px;
+                        padding-left: 15px;
+                        width       : 62%;
+                        .display-inline-block();
+                    }
+                    &.timeline-time {
+                        clear   : left;
+                        float   : left;
+                        position: static;
+                        width   : 38%;
+                        .display-inline-block();
+                    }
+                    .timeline-marker {
+                        left       : 38%;
+                        margin-left: -6px;
+                        right      : auto;
+                    }
+                }
+            }
+            .soloLeg .timeline-group.last-child .timeline-item,
+            .lastLeg .timeline-group.last-child .timeline-item {
+                background: none;
+            }
+        }
+        .placeDetailsitemMod {
+            .itemResultsCard .detailsContainer .itemResultDetailsToggle {
+                display     : block;
+                padding-left: 0;
+            }
+        }
+    };
+    @xxs: {
+        .@{targetClass} {
+            .itemResultsCard {
+                font-size: @font-size-xs + 1px; // 13px
+                .itemSliceDetails {
+                    // stack details secions and have markers to the left
+                    .timeline-group {
+                        display : block;
+                        position: relative;
+                    }
+                    .timeline-item {
+                        display: block;
+                        padding: 0 0 @offset-vertical @offset-horizontal-md;
+                        width  : 100%;
+
+                        &.timeline-date {
+                            background: url("/image/global/vertical-dash.png") repeat-y 5px @offset-vertical-sm;
+                            display   : inline-block;
+                            float     : left;
+                            padding   : 0 @offset-horizontal-sm 0 @offset-horizontal-md;
+                            text-align: left;
+                            width     : auto;
+                        }
+                        &.timeline-info {
+                            background : url("/image/global/vertical-dash.png") repeat-y 5px @offset-vertical-sm;
+                            clear      : left;
+                            margin-left: 0;
+                            padding    : 0 0 @offset-vertical @offset-horizontal-md;
+                            width      : 100%;
+                        }
+                        &.timeline-time {
+                            background: url("/image/global/vertical-dash.png") repeat-y 5px @offset-vertical-sm;
+                            padding   : 0 0 0 @offset-horizontal-md;
+                            position  : static;
+                            text-align: left;
+                            width     : 100%;
+                        }
+                        .timeline-marker {
+                            left       : 0;
+                            margin-left: 0;
+                        }
+                    }
+                    .timeline-label {
+                        font-size: @font-size-xs + 1px; // 13px
+                    }
+                }
+
+                .sliceGroup {
+                    padding-right: 1px;
+                    &:last-child {
+                        padding-right: 0;
+                    }
+                }
+                .sliceGroup-stopover {
+                    text-align: right;
+                }
+                .soloLeg .timeline-group.last-child .timeline-item,
+                .lastLeg .timeline-group.last-child .timeline-item {
+                    background: none;
+                }
+                .thingTimes {
+                    .arrivalTime {
+                        span {
+                            // remove itemplane icon and maximize space available
+                            background-image: none;
+                            padding         : 0 12px 0 1px;
+                        }
+                    }
+                }
+            }
+        }
+    };
+    .responsify(@lg, @md, @sm, {}, @xxs);
+}

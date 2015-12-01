@@ -1,0 +1,5 @@
+/*prettydiff.com crlf:true*/
+var a;
+function foo(bar) {
+    return bar++;
+}

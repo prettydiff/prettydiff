@@ -1,0 +1,21 @@
+{
+    "lkp": {
+        "asd": thn, {
+            asdf: asdf
+        }
+    },
+    "xyz": [
+        ["iuo": "sdf"]
+    ]
+}
+{
+    sd : [
+        {
+            sdf: df
+        },
+        asd
+    ],
+    sdf: sdf, {
+        asd: thn
+    }
+}

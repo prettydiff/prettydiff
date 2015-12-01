@@ -1,6 +1,5 @@
 /*prettydiff.com api.topcoms: true, api.insize: 4, api.inchar: " ", api.vertical: true */
 /*global __dirname, ace, csspretty, csvpretty, define, diffview, exports, global, jspretty, markuppretty, process, require, safeSort */
-/*jslint for: true*/
 /*
 
  Execute in a NodeJS app:
@@ -35,7 +34,7 @@
 
                 *******   license start   *******
  @source: http://prettydiff.com/prettydiff.js
- @documentation - English: http://prettydiff.com/documentation.php
+ @documentation - English: http://prettydiff.com/documentation.xhtml
 
  @licstart  The following is the entire license notice for Pretty Diff.
 
@@ -321,6 +320,8 @@ var prettydiff = function prettydiff_(api) {
                     mode          : (typeof api.mode === "string" && (api.mode === "minify" || api.mode === "beautify" || api.mode === "parse"))
                         ? api.mode
                         : "diff",
+                    //neverflatten - prevent flattening of destructured lists in JavaScript
+                    neverflatten: (api.neverflatten === true || api.neverflatten === "true"),
                     //nocaseindent - if a 'case' should be indented to its parent 'switch'
                     nocaseindent: (api.nocaseindent === true || api.nocaseindent === "true"),
                     //noleadzero - in CSS removes and prevents a run of 0s from appearing
@@ -634,7 +635,7 @@ var prettydiff = function prettydiff_(api) {
                     } else if (c === 15) {
                         return;
                     }
-                    for (c = c; c < b; c += 1) {
+                    for (c; c < b; c += 1) {
                         if (difftest === false) {
                             if (options.source.charAt(c) === "*" && options.source.charAt(c + 1) === "/") {
                                 break;
@@ -832,7 +833,7 @@ var prettydiff = function prettydiff_(api) {
                     options.vertical = true;
                 }
             }
-            if (options.lang === "js") {
+            if (options.lang === "javascript" || options.lang === "js") {
                 if (api.objsort === "js" || api.objsort === "jsonly") {
                     options.objsort = true;
                 }
@@ -1648,22 +1649,22 @@ global.edition        = {
         ace: 150918
     },
     api          : {
-        dom      : 151116, //dom.js
-        nodeLocal: 151105, //node-local.js
-        wsh      : 151029 //prettydiff.wsf
+        dom      : 151130, //dom.js
+        nodeLocal: 151130, //node-local.js
+        wsh      : 151130 //prettydiff.wsf
     },
     css          : 151109, //diffview.css file
-    csspretty    : 151116, //csspretty lib
-    csvpretty    : 151029, //csvpretty lib
-    diffview     : 151029, //diffview lib
-    documentation: 151029, //documentation.xhtml
-    jspretty     : 151116, //jspretty lib
+    csspretty    : 151130, //csspretty lib
+    csvpretty    : 151130, //csvpretty lib
+    diffview     : 151130, //diffview lib
+    documentation: 151130, //documentation.xhtml
+    jspretty     : 151130, //jspretty lib
     latest       : 0,
-    markuppretty : 151110, //markuppretty lib
-    prettydiff   : 151116, //this file
-    safeSort     : 151003, //safeSort lib
-    version      : "1.15.17", //version number
-    webtool      : 151104 //index.xhtml
+    markuppretty : 151130, //markuppretty lib
+    prettydiff   : 151130, //this file
+    safeSort     : 151130, //safeSort lib
+    version      : "1.16.0", //version number
+    webtool      : 151130 //index.xhtml
 };
 global.edition.latest = (function edition_latest() {
     "use strict";

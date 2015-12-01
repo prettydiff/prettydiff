@@ -1,0 +1,218 @@
+var ListItem = React.createClass({
+    render: function () {
+        return (
+            <li className="ListItem">
+                <a href={"/items/" + this.props.item.id}>
+                    this.props.item.name
+                </a>
+            </li>
+        );
+    }
+});
+
+var List = React.createClass({
+    render    : function () {
+        return <ul className="List">
+            this.renderList()
+        </ul>;
+    },
+    renderList: function () {
+        return this
+            .props
+            .items
+            .map(function (item) {
+                return <ListItem item={item} key={item.id}/>;
+            });
+    }
+});
+var Mist = React.createClass({
+    renderList: function () {
+        return this
+            .props
+            .items
+            .map(function (item) {
+                return <ListItem item={return <tag>{item}</tag>} key={item.id}/>;
+            });
+    }
+});
+var content = (
+    <Nav>
+        {/* child comment, put {} around */}
+        <Person /* multi
+            /* multi
+            line
+            comment */
+            //attr="test"
+            name={window.isloggedin
+            ? window.name
+            : ""} // end of line comment
+        />
+    </Nav>
+);
+var qwer = <Dropdown>
+    A dropdown list
+    <Menu>
+        <MenuItem>Do Something</MenuItem>
+        <MenuItem>Do Something Fun!</MenuItem>
+        <MenuItem>Do Something Else</MenuItem>
+    </Menu>
+</DropDown>;
+render(dropdown);
+
+// JSX
+var box = <Box>
+    {shouldShowAnswer(user)
+        ? <Answer value={false}>no</Answer>
+        : <Box.Comment>
+            Text Content
+        </Box.Comment>}
+</Box>;
+var a = function () {
+    return <tsdf>asdf</tsdf>;
+};
+
+var HelloMessage = React.createClass({
+    render: function () {
+        return <div>Hello
+            {this.props.name}</div>;
+    }
+});
+React.render(<HelloMessage name="John"/>, mountNode);
+
+var Timer = React.createClass({
+    componentDidMount   : function () {
+        this.interval = setInterval(this.tick, 1000);
+    },
+    componentWillUnmount: function () {
+        clearInterval(this.interval);
+    },
+    getInitialState     : function () {
+        return {secondsElapsed: 0};
+    },
+    render              : function () {
+        return (
+            <div>Seconds Elapsed:
+                {this.state.secondsElapsed}</div>
+        );
+    },
+    tick                : function () {
+        this.setState({
+            secondsElapsed: this.state.secondsElapsed + 1
+        });
+    }
+});
+React.render(<Timer/>, mountNode);
+
+var Timer = React.createClass({
+    componentDidMount   : function () {
+        this.interval = setInterval(this.tick, 1000);
+    },
+    componentWillUnmount: function () {
+        clearInterval(this.interval);
+    },
+    getInitialState     : function () {
+        return {secondsElapsed: 0};
+    },
+    render              : function () {
+        return (
+            <div>Seconds Elapsed:
+                {this.state.secondsElapsed}</div>
+        );
+    },
+    tick                : function () {
+        this.setState({
+            secondsElapsed: this.state.secondsElapsed + 1
+        });
+    }
+});
+React.render(<Timer/>, mountNode);
+
+var TodoList = React.createClass({
+    render: function () {
+        var createItem = function (itemText) {
+            return <li>{itemText}</li>;
+        };
+        return <ul>{this
+                .props
+                .items
+                .map(createItem)}</ul>;
+    }
+});
+var TodoApp = React.createClass({
+    getInitialState: function () {
+        return {items: [], text: ""};
+    },
+    handleSubmit   : function (e) {
+        e.preventDefault();
+        var nextItems = this
+            .state
+            .items
+            .concat([this.state.text]);
+        var nextText = "";
+        this.setState({items: nextItems, text: nextText});
+    },
+    onChange       : function (e) {
+        this.setState({text: e.target.value});
+    },
+    render         : function () {
+        return (
+            <div>
+                <h3>TODO</h3>
+                <TodoList items={this.state.items}/>
+                <form onsubmit={this.handlesubmit}>
+                    <input onchange={this.onchange} value={this.state.text}/>
+                    <button>{"Add #" + (this.state.items.length + 1)}</button>
+                </form>
+            </div>
+        );
+    }
+});
+React.render(<TodoApp/>, mountNode);
+
+var converter = new Showdown.converter();
+var MarkdownEditor = React.createClass({
+    getInitialState: function () {
+        return {value: "Type some *markdown* here!"};
+    },
+    handleChange   : function () {
+        this.setState({
+            value: this
+                .refs
+                .textarea
+                .getDOMNode()
+                .value
+        });
+    },
+    render         : function () {
+        return (
+            <div className="MarkdownEditor">
+                <h3>Input</h3>
+                <textarea
+                    onchange={this.handlechange}
+                    ref="textarea"
+                    defaultvalue={this.state.value}/>
+                <h3>Output</h3>
+                <div
+                    className="content"
+                    dangerouslysetinnerhtml={{
+                    __html: converter.makehtml(this.state.value)
+                }}/>
+            </div>
+        );
+    }
+});
+React.render(<MarkdownEditor/>, mountNode);
+
+import React from "react";
+class MyComponent extends React.Component {
+    render () {
+        var a = 1;
+        return (
+            <h1 style={{
+                margin: 0
+            }}>
+                Test
+            </h1>
+        );
+    }
+}

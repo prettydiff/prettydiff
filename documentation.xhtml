@@ -3,11 +3,18 @@
 <html xml:lang="en" xmlns="http://www.w3.org/1999/xhtml">
     <head>
         <title>Pretty Diff - Documentation</title>
-        <link href="http://prettydiff.com/documentation.xhtml" rel="canonical"
+        <link
+            href="http://prettydiff.com/documentation.xhtml"
+            rel="canonical"
             type="application/xhtml+xml"/>
-        <link href="http://prettydiff.com/images/favicon.ico" rel="icon"
+        <link
+            href="http://prettydiff.com/images/favicon.ico"
+            rel="icon"
             type="image/x-icon"/>
-        <link href="http://prettydiff.com/labels.rdf" rel="meta" title="ICRA labels"
+        <link
+            href="http://prettydiff.com/labels.rdf"
+            rel="meta"
+            title="ICRA labels"
             type="application/rdf+xml"/>
         <link href="diffview.css" media="all" rel="stylesheet" type="text/css"/>
         <meta content="width=device-width, initial-scale=1" name="viewport"/>
@@ -27,17 +34,24 @@
         <meta content="blendTrans(Duration=0)" http-equiv="Page-Exit"/>
         <meta content="text/css" http-equiv="content-style-type"/>
         <meta content="application/javascript" http-equiv="content-script-type"/>
-        <meta content="qL8AV9yjL2-ZFGV9ey6wU3t7pTZdpD4lIetUSiNen7E"
+        <meta
+            content="qL8AV9yjL2-ZFGV9ey6wU3t7pTZdpD4lIetUSiNen7E"
             name="google-site-verification"/>
         <meta content="#bbbbff" name="msapplication-TileColor"/>
         <meta content="images/pdlogo.svg" name="msapplication-TileImage"/>
     </head>
     <body class="white" id="doc">
         <h1>
-            <svg height="2000.000000pt" preserveAspectRatio="xMidYMid meet" version="1.0"
-                viewBox="0 0 2000.000000 2000.000000" width="2000.000000pt"
+            <svg
+                height="2000.000000pt"
+                preserveAspectRatio="xMidYMid meet"
+                version="1.0"
+                viewBox="0 0 2000.000000 2000.000000"
+                width="2000.000000pt"
                 xmlns="http://www.w3.org/2000/svg">
-                <g fill="#999" stroke="none"
+                <g
+                    fill="#999"
+                    stroke="none"
                     transform="translate(0.000000,2000.000000) scale(0.100000,-0.100000)">
                     <path
                         d="M14871 18523 c-16 -64 -611 -2317 -946 -3588 -175 -660 -319 -1202 -320 -1204 -2 -2 -50 39 -107 91 -961 876 -2202 1358 -3498 1358 -1255 0 -2456 -451 -3409 -1279 -161 -140 -424 -408 -560 -571 -507 -607 -870 -1320 -1062 -2090 -58 -232 -386 -1479 -2309 -8759 -148 -563 -270 -1028 -270 -1033 0 -4 614 -8 1365 -8 l1364 0 10 38 c16 63 611 2316 946 3587 175 660 319 1202 320 1204 2 2 50 -39 107 -91 543 -495 1169 -862 1863 -1093 1707 -568 3581 -211 4965 946 252 210 554 524 767 796 111 143 312 445 408 613 229 406 408 854 525 1320 57 225 380 1451 2310 8759 148 563 270 1028 270 1033 0 4 -614 8 -1365 8 l-1364 0 -10 -37z m-4498 -5957 c477 -77 889 -256 1245 -542 523 -419 850 -998 954 -1689 18 -121 18 -549 0 -670 -80 -529 -279 -972 -612 -1359 -412 -480 -967 -779 -1625 -878 -121 -18 -549 -18 -670 0 -494 74 -918 255 -1283 548 -523 419 -850 998 -954 1689 -18 121 -18 549 0 670 104 691 431 1270 954 1689 365 293 828 490 1283 545 50 6 104 13 120 15 72 10 495 -3 588 -18z"/></g>
@@ -1222,6 +1236,23 @@
                                 Function</li>
                         </ul>
                     </li>
+                    <li id="neverflatten">
+                        <h4>neverflatten</h4>
+                        <ul>
+                            <li>
+                                <h5>Description</h5>
+                                Prevents flattening of destructured lists in JavaScript.</li>
+                            <li>
+                                <h5>Type</h5>
+                                boolean</li>
+                            <li>
+                                <h5>Default</h5>
+                                false</li>
+                            <li>
+                                <h5>As labeled in the HTML tool</h5>
+                                Never Flatten Destructured Lists</li>
+                        </ul>
+                    </li>
                     <li id="nocaseindent">
                         <h4>nocaseindent</h4>
                         <ul>
@@ -1904,40 +1935,13 @@
                     <em>folding</em>
                     on functions and syntax coloring for JavaScript. Without a code folding feature
                     the code will appear extremely large and challenging to work with.</p>
-                <p>Pretty Diff is organized as a single large function named
-                    <em>prettydiff</em>. It is composed of a
-                    <em>core</em>
-                    function and several libraries. The principle libraries are:</p>
-                <ul>
-                    <li>
-                        <strong>core</strong>
-                        - This function interprets input from the API, determines which other libraries
-                        to execute, and formats the output. The administrative assistant of the
-                        application.</li>
-                    <li>
-                        <strong>csspretty</strong>
-                        - A library to parse and beautify CSS and CSS like languages, such as SCSS and
-                        LESS.</li>
-                    <li>
-                        <strong>diffview</strong>
-                        - The diff library. The current library only accepts text input, though there
-                        are plans for a more intelligent library with
-                        <a href="https://github.com/prettydiff/prettydiff/issues/71">Pretty Diff 2.0</a>.</li>
-                    <li>
-                        <strong>jspretty</strong>
-                        - The library to parse JavaScript and do additional cool things to JavaScript
-                        code.</li>
-                    <li>
-                        <strong>markuppretty</strong>
-                        - The library to parse all manners of markup based languages include many
-                        various templating schemes.</li>
-                </ul>
-                <p>The library files are independently located in the application's
-                    <a href="lib">lib</a>
-                    directory. This directory is provide for convenience and experimentation only.
-                    All the code library code is already located directly inside the application
-                    file at
-                    <a href="prettydiff.js">prettydiff.js</a>.</p>
+                <p>The primary application file is
+                    <a href="prettydiff.js">prettydiff.js</a>. It provides a central point by which
+                    all features, options, and libraries are interconnected.</p>
+                <p>The library files are located in the
+                    <a href="lib/">lib</a>
+                    directory and may be run independently apart from the rest of the Pretty Diff
+                    application.</p>
             </div>
             <div id="contribute_develope">
                 <h3>Local Development Environment</h3>

@@ -1,0 +1,59 @@
+<div id="comments">
+    {{#each comments}}
+        <h2>
+            <a href="/posts/{{../permalink}}#{{id}}">
+                {{title}}</a>
+        </h2>
+        <div>{{body}}</div>
+    {{/each}}
+</div>
+<div>
+    {@if(5){@}
+        <span class="r"/>
+    {@}else{@}
+        <span class="q"/>
+    {@}@}
+</div>
+<div>
+    <%if(5){%>
+        <span class="r"/>
+    <%}else{%>
+        <span class="q"/>
+    <%}%>
+</div>
+<div>
+    [%if(5){%]
+        <span class="r"/>
+    [%}else{%]
+        <span class="q"/>
+    [%}%]
+</div>
+<div>
+    {@ if(5){ @}
+        <span class="r"/>
+    {@ }else{ @}
+        <span class="q"/>
+    {@ } @}
+</div>
+<div>
+    <% if(5){ %>
+        <span class="r"/>
+    <% }else{ %>
+        <span class="q"/>
+    <% } %>
+</div>
+<div>
+    [% if(5){ %]
+        <span class="r"/>
+    [% }else{ %]
+        <span class="q"/>
+    [% } %]
+</div>
+
+<div class="swa-g-screen-reader-only">
+    {@ if (ond.isLastOndOfNonOneWayTrip) { @}
+        {{= resources.returnFlightSummary }}
+    {@ } else { @}
+        {{= resources.outboundFlightSummary }}
+    {@ } @}
+</div>

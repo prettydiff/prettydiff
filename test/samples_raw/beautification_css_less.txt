@@ -1,0 +1,827 @@
+    @carrier-logo-height: 33px;
+    @carrier-logo-width: 44px;
+
+    .itemResultsCard() {
+    	@arrow-size: 10px;
+    	@font-size-xxs: 10px;
+    	@line-height-xxs: 12px;
+
+    	.itemResultsCard {
+    		border: 1px solid @color-neutral-md-light;
+    		.clearfix();
+    		color: @color-black;
+
+    		// Card Layout Sections
+    		.itemSummary {
+    			.display-inline-block();
+    			float: left;
+    			width: 70%;
+    		}
+    		.itemcost {
+    			.display-inline-block();
+    			float: right;
+    			width: 30%;
+    		}
+    		.itemDetails {
+    			clear: both;
+    			max-height: 0;
+    			overflow: hidden;
+    			.transition(all .2s ease);
+
+    			&.is-open {
+    				max-height: 999em;
+    				// TODO: Fix known issue with Android browser on 4.4.2. Does not respect overflow: visible, yet we need microcontent to be available.
+    				// overflow: visible;
+    			}
+    		}
+    		// Card Utility Classes
+    		.itemportCodeDiffer,
+    		.alert span {
+    			background-color: lighten(@color-error, 20%);
+    			color: @color-black;
+    		}
+    		.contactitemlineToBuyText {
+    			// invisible by default, we only show for @breakpoint-s
+    			display: none;
+    		}
+    		.buyFromitemline {
+    		    font-size: @font-size-xs;
+    		    }
+
+    		// item Summary
+    		.slice {
+    			.clearfix();
+    			margin-bottom: @offset-vertical-sm;
+    		}
+    		.lastSlice {
+    			margin-bottom: 0;
+    		}
+    		.sliceGroup {
+    			.display-inline-block();
+    			float: left;
+    			padding-right: @offset-horizontal-lg;
+    			width: auto;
+
+    			&:last-child {
+    				padding-right: 0;
+    			}
+    		}
+    		.sliceGroup-logo {
+    			max-width: @carrier-logo-width + @offset-horizontal-md;
+    			padding-right: @offset-horizontal-md;
+    			width: @carrier-logo-width + @offset-horizontal-md;
+    		}
+    		.sliceGroup-time {
+    			width: 40%;
+    		}
+    		.sliceGroup-duration {
+    			width: 21%;
+    		}
+    		.sliceGroup-stopover {
+    			width: 23%;
+    		}
+    		.thingTimes {
+    			.clearfix();
+    			background: url("/image/global/icon-thing-legs.png") repeat-x 0 -14px;
+    			font-weight: bold;
+    			text-transform: lowercase;
+    			width: 100%;
+
+    			.info {
+    				.display-inline-block();
+    				float: left;
+    				white-space: nowrap;
+    				width: auto;
+
+    				span {
+    					background-color: @color-white-space;
+    					padding: 0 1px 0 0;
+    				}
+    			}
+    			.arrivalTime {
+    				float: right;
+    				text-align: right;
+
+    				span {
+    					background: @color-white-space url("/image/global/icon-thing-legs.png") no-repeat 2px 4px;
+    					display: block;
+    					padding: 0 12px 0 18px;
+    					position: relative;
+    				}
+    			}
+    			.overNightthingIndicator {
+    				border: none;
+    				color: @color-attention;
+    				cursor: default;
+    				font-size: @font-size-xxs;
+    				font-weight: normal;
+    				line-height: @line-height-xxs;
+    				position: absolute;
+    				right: 0;
+    				top: -0.5em;
+    			}
+    		}
+    		.thingCarrier,
+    		.thingLabelMultiCity,
+    		.thingOnd,
+    		.thingStopsDuration,
+    		.thingTier,
+    		.sliceSummaryOperatedBy,
+    		.sliceSummaryMessages {
+    			color: @color-neutral-md;
+    			font-size: @font-size-xs;
+    			line-height: @line-height-sm;
+    		}
+    		.sliceSummaryOperatedBy,
+    		.sliceSummaryMessages,
+    		.itemResultDetailsToggle {
+    			clear: both;
+    			padding-left: @carrier-logo-width + @offset-horizontal-md; // match width of logo column to align with thing times
+    			padding-top: @offset-vertical-xs;
+    		}
+    		.itemResultDetailsToggle {
+    			font-size: @font-size-xs;
+
+    			.progressIndicator {
+    				.display-inline-block();
+    				margin-left: @offset-horizontal-sm;
+    			}
+    		}
+    		.sliceSummaryOperatedBy {
+    			font-size: @font-size-xxs;
+    			line-height: @line-height-xxs;
+    		}
+    		// Styled hovers of additional descriptive content
+    		// IE7 users will still get <abbr> titles
+    		[data-tooltip] {
+    			position: relative;
+    		}
+    		[data-tooltip]:hover:before {
+    			background: @color-brand-3;
+    			border-radius: @border-radius-md;
+    			border: @button-border-width solid @color-neutral-md-light;
+    			color: @color-white-space;
+    			content: attr(data-tooltip);
+    			font-weight: bold;
+    			left: 50%;
+    			margin-top: (@button-border-width - @arrow-size);
+    			padding: @offset-vertical-sm @offset-horizontal-sm;
+    			pointer-events: none;
+    			position: absolute;
+    			top: 0;
+    			.translate(-50%, -100%);
+    			white-space: nowrap;
+    			width: auto;
+    			z-index: 1;
+    			.lt-ie9 & {
+    				// IE8 requires dimensions to be set to center tooltip
+    				margin-left: -110px;
+    				margin-top: -41px;
+    				min-width: 200px; // titles that are longer than this will expand to fit but not be centered;
+    				text-align: center;
+    			}
+    		}
+    		[data-tooltip]:hover:after {
+    			border: @arrow-size solid transparent;
+    			border-top-color: @color-brand-3;
+    			content: " ";
+    			height: 0;
+    			left: 50%;
+    			margin-left: -@arrow-size;
+    			margin-top: -@arrow-size - 1px;
+    			pointer-events: none;
+    			position: absolute;
+    			top: 0;
+    			width: 0;
+    			z-index: 1;
+    		}
+    		// item cost Container
+    		.costGroup {
+    			.display-inline-block();
+    			float: left;
+                line-height: 1;
+    			padding-right: @offset-horizontal-sm;
+    			width: 50%; // 2 groups per row per container
+    			text-align: right;
+
+    			&:first-child {
+    				width: 51%;
+    			}
+    			&:last-child {
+    				padding-right: 0;
+    				width: 49%;
+    			}
+    			.lt-ie9 & {
+    				width: 50%;
+    			}
+    		}
+            .primarycost {
+
+                .money {
+                    display: block;
+                    font-size: 1.8em;
+                    font-weight: bold;
+                    line-height: 0.9;
+                }
+
+                .money-symbol {
+                    font-size: @font-size-base;
+                    vertical-align: text-top;
+                }
+                .money-cents {
+                    position: absolute;
+                    left: -2000em;
+                }
+
+                .numNights {
+                    background-color: @color-error;
+                    color: @color-neutral-md;
+                    display: inline-block;
+                    font-size: 0.9em;
+                    line-height: 1;
+                    margin: 0.25em 0 0.5em;
+                }
+                .aphIcons {
+                    span.i {
+                        text-indent: 0;
+                        font-size: @font-size-md;
+                        span, em {
+                            display: inline-block;
+                            text-indent: -2000em;
+                            visibility: hidden;
+                        }
+                    }
+                    span.i-plus {
+                        font-size: 0.5em;
+                        vertical-align: 0.5em;
+                    }
+                }
+                .costMetric {
+                    color: @color-neutral-md;
+                    font-size: 0.85em;
+                }
+            }
+    		.discountPricing {
+    			font-size: @font-size-xxs;
+    			line-height: @line-height-xxs;
+    			padding-bottom: @offset-vertical-xs;
+
+    			.microTrigger {
+    				cursor: pointer;
+    			}
+    		}
+    		.showPaymentDiscountContent {
+    			font-size: @font-size-xs;
+    			line-height: @line-height-sm;
+    			padding: @offset-vertical-sm @offset-horizontal-sm;
+    			text-align: left;
+    			width: 200px;
+    		}
+    		.paymentDiscountHeader {
+    			font-weight: bold;
+    		}
+    		.loyaltyEarnAmount {
+    			color: @color-loyalty;
+    			font-size: @font-size-xs;
+    			line-height: @line-height-xxs;
+    		}
+    		.itemCard-button .button-primary {
+    			overflow: hidden;
+
+    			// Copied from buttons.less to inline here
+    			// Workaround for GOF-704 IE9/IE10 mixed inline/external media query bug
+    			@ie7-offset-horizontal-top: 5px;
+    			@ie7-offset-horizontal-bottom: 2px;
+    			@button-line-height: (@font-size-xl + 3); // make everything work like firefox
+    			@vertical-padding: (@input-height - (2 * @button-border-width) - @button-line-height) / 2;
+    			@ie7-height: @input-height - @ie7-offset-horizontal-top - @ie7-offset-horizontal-bottom - @button-border-width;
+    			@ie-height: @input-height - (2 * @vertical-padding) - (2 * @button-border-width);
+
+    			background-color: @color-button;
+    			.background-image(linear-gradient(to bottom, lighten(@color-button, 10%) 0%,@color-button 100%));
+    			border-radius: @border-radius-md;
+    			border: @button-border-width solid @color-button;
+    			.box-shadow(1px 1px 0 rgba(255, 255, 255, .2) inset);
+    			.box-sizing(border-box);
+    			color: @color-white-space;
+    			.display-inline-block(bottom);
+    			font-size: @font-size-xl;
+    			font-weight: bold;
+    			line-height: @button-line-height;
+    			max-width: 100%;
+    			min-height: @input-height;
+    			padding: @vertical-padding @offset-horizontal-sm;
+    			text-align: center;
+    			text-decoration: none;
+    			white-space: normal;
+
+    			&:visited {
+    				color: @color-white-space;
+    				text-decoration: none;
+    			}
+
+    			&:focus,
+    			&:hover {
+    				background-color: darken(@color-button, 5%);
+    				text-shadow: 1px 1px 2px darken(@color-button, 15%);
+    				color: @color-white-space;
+    			}
+
+    			&:active {
+    				background-color: lighten(@color-button, 10%);
+    				.background-image(linear-gradient(to top, lighten(@color-button, 10%) 0%,@color-button 100%));
+    				.box-shadow(inset 0 0 6px 4px @color-button);
+    			}
+
+    			.lt-ie8 & {
+    				outline: 0;
+    				padding-top: @ie7-offset-horizontal-top; /* adjust padding to account for difference in presentation in IE7 */
+    				padding-bottom: @ie7-offset-horizontal-bottom;
+    			}
+
+    			.lt-ie8 & {
+    				height: @ie7-height;
+    				line-height: @ie7-height;
+    			}
+
+    			.lt-ie9 & {
+    				min-height: @ie-height;
+    				line-height: @ie-height;
+    			}
+    		}
+    		.lsaAlert {
+    			color: @color-attention;
+    			font-size: @font-size-xxs;
+    			line-height: @line-height-xxs;
+    		}
+    		.catchAllContainer {
+    			clear: both;
+    			padding: @offset-vertical-sm 0;
+    		}
+    		.catchAll {
+    			background: @color-neutral-x-light;
+    			.border-radius(@border-radius-md);
+    			padding: 5px 10px;
+
+    			& > p {
+    				margin: @offset-vertical-xs 0;
+    			}
+    			// Uniform icon styles
+    			i {
+    				font-size: @font-size-md;
+    				margin-right: 3px;
+    			}
+    		}
+    		.loyaltyEarn {
+    			color: @color-loyalty;
+    		}
+    		.pricing .itemFreeCancel {
+    			color: @color-promo;
+    			font-size: @font-size-xs;
+    		}
+    		.itemFreeCancel {
+    			i, strong {
+    				color: @color-promo;
+    			}
+    		}
+    		.i-baggage {
+    			color: @color-neutral-md-dark;
+    		}
+    		.i-baggage-x {
+    			color: @color-attention;
+    		}
+    	}
+
+    	// Timeline view of details
+    	.itemSliceDetails {
+    		color: @color-neutral-md-dark;
+    		font-size: @font-size-xs;
+    		line-height: @line-height-sm;
+    	}
+    	.timeline-container {
+    		display: table;
+    		table-layout: fixed;
+    		width: 100%;
+    	}
+    	.timeline-group {
+    		display: table-row;
+    	}
+    	.timeline-item {
+    		display: table-cell;
+    		padding: 0 0 @offset-vertical @offset-horizontal-sm;
+
+    		&.timeline-date {
+    			text-align: right;
+    			width: 22%;
+    		}
+    		&.timeline-time {
+    			background: url("/image/global/vertical-dash.png") repeat-y 100% @offset-vertical-sm;
+    			padding-right: @offset-horizontal-md;
+    			position: relative;
+    			text-align: right;
+    			text-transform: lowercase;
+    			width: 14%;
+    		}
+    		&.timeline-info {
+    			padding-left: @offset-horizontal-md;
+    			width: 64%;
+    		}
+    	}
+    	.itemSliceDetails:last-child .timeline-group.last-child .timeline-item {
+    		padding-bottom: 0;
+    	}
+    	.timeline-marker {
+    		background: @color-white-space;
+    		border-radius: 100%;
+    		border: 2px solid @color-brand-2;
+    		height: 11px;
+    		position: absolute;
+    		right: -5px;
+    		top: 5px;
+    		width: 11px;
+    	}
+    	.timeline-label {
+    		font-size: @font-size-sm;
+    		line-height: @line-height-md;
+    	}
+    	.soloLeg .timeline-group:first-child,
+    	.firstLeg .timeline-group:first-child,
+    	.soloLeg .timeline-group.last-child,
+    	.lastLeg .timeline-group.last-child {
+    		.timeline-label {
+    			color: @color-black;
+    		}
+    		.timeline-marker {
+    			background: @color-brand-2;
+    		}
+    	}
+    	.soloLeg .timeline-group:first-child .timeline-marker:before,
+    	.firstLeg .timeline-group:first-child .timeline-marker:before {
+    		border-top: 5px solid @color-white-space;
+    		content: "";
+    		height: 0;
+    		left: 0;
+    		position: absolute;
+    		top: -7px;
+    		width: 100%;
+    	}
+    	.soloLeg .timeline-group.last-child .timeline-marker:before,
+    	.lastLeg .timeline-group.last-child .timeline-marker:before {
+    		background: url("/image/global/vertical-dash.png") repeat-y 50% 0;
+    		content: "";
+    		height: 5px;
+    		left: 0;
+    		position: absolute;
+    		top: -7px;
+    		width: 100%;
+    	}
+    	.soloLeg .timeline-group.last-child .timeline-time,
+    	.lastLeg .timeline-group.last-child .timeline-time {
+    		background: none;
+    	}
+    	.timeline-thingInfo {
+    		padding-top: @offset-vertical-sm;
+
+    		.list-piped {
+    			overflow: visible;
+    		}
+    	}
+    	.timeline-messages {
+    		padding-top: @offset-vertical-xs;
+    	}
+    	.fareFamily {
+    		.display-inline-block();
+
+    		.microContent {
+    			padding: @offset-vertical-sm @offset-horizontal-sm;
+    			width: 240px;
+    		}
+    	}
+    	.lt-ie8 & {
+    		// Let's not make IE7 work too hard, give it stacked details secions
+    		.timeline-group {
+    			display: block;
+    			position: relative;
+    		}
+    		.timeline-item {
+    			display: block;
+    			padding: 0 0 @offset-vertical @offset-horizontal-md;
+    			width: 100%;
+
+    			&.timeline-date {
+    				background: url("/image/global/vertical-dash.png") repeat-y 5px @offset-vertical-sm;
+    				display: inline-block;
+    				float: left;
+    				padding: 0 @offset-horizontal-sm 0 @offset-horizontal-md;
+    				text-align: left;
+    				width: auto;
+    			}
+    			&.timeline-time {
+    				background: url("/image/global/vertical-dash.png") repeat-y 5px @offset-vertical-sm;
+    				padding: 0 0 0 @offset-horizontal-md;
+    				position: static;
+    				text-align: left;
+    				width: 100%;
+    			}
+    			&.timeline-info {
+    				background: url("/image/global/vertical-dash.png") repeat-y 5px @offset-vertical-sm;
+    				clear: left;
+    				margin-left: 0;
+    				padding: 0 0 @offset-vertical @offset-horizontal-md;
+    				width: 100%;
+    			}
+    			.timeline-marker {
+    				left: 0;
+    				margin-left: 0;
+    			}
+    		}
+    		.soloLeg .timeline-group.last-child .timeline-item,
+    		.lastLeg .timeline-group.last-child .timeline-item {
+    			background: none;
+    		}
+    	}
+    }
+
+    // item-responsify mixin
+    //   targetClass - the class of the module container
+    .item-responsify(@targetClass) {
+    	@lg: {
+    		.@{targetClass} {
+    			.itemResultsCard {
+    				.sliceGroup-duration {
+    					padding-right: @offset-horizontal-md;
+    				}
+    			}
+    		}
+    		.itemResultsMod {
+    			// space for intrastitial to live before results load
+    			min-height: 450px;
+    		}
+    	};
+
+    	@md: {
+    		.@{targetClass} {
+    			.itemResultsCard {
+    				.itemSummary {
+    					width: 69%;
+    				}
+    				.itemcost {
+    					width: 31%;
+    				}
+    				.sliceGroup {
+    					padding-right: @offset-horizontal-sm;
+
+    					&:last-child {
+    						padding-right: 0;
+    					}
+    				}
+    			}
+    			.itemSliceDetails {
+    				.timeline-item {
+    					padding: 0 0 @offset-vertical @offset-horizontal-sm;
+
+    					&.timeline-date {
+    						width: 29%;
+    					}
+    					&.timeline-time {
+    						width: 16%;
+    						padding-right: 15px;
+    					}
+    					&.timeline-info {
+    						width: 55%;
+    						padding-left: 15px;
+    					}
+    				}
+    			}
+    		}
+    	};
+
+    	@sm: {
+    		.@{targetClass} {
+    			.itemResultsCard {
+    				position: relative;
+
+    				.itemSummary {
+    					width: 100%;
+    				}
+    				.itemcost {
+    					margin-bottom: (0 - @carrier-logo-height); // bring primary container up minus the height of carrier logo
+    					width: 100%;
+    				}
+    				.contactitemlineToBuyText {
+    					display: block;
+    					margin-bottom: @offset-vertical-sm;
+    				}
+    				.costGroup {
+    					padding-left: @carrier-logo-width + @offset-horizontal-sm; // width of carrier logo plus offset
+    					width: 100%;
+    				}
+    				.pricing {
+    					padding-right: 0;
+    					position: relative;
+    					z-index: 1;
+    				}
+    				.itemCard-button .buyFromitemline {
+    					// We show text only with no popup link on small screens
+    					display: none;
+    				}
+    				.itemCard-button .button-primary {
+    					&,
+    					&:visited,
+    					&:focus,
+    					&:hover,
+    					&:active {
+    						// convert to an invisible button that covers the entire card at smallest breakpoints
+    						background-color: transparent;
+    						background-image: none;
+    						border: none;
+    						.box-shadow(none);
+    						color: transparent;
+    						display: block;
+    						height: 100%;
+    						left: 0;
+    						position: absolute;
+    						text-decoration: none;
+    						text-shadow: none;
+    						top: 0;
+    						width: 100%;
+    						z-index: 1;
+    					}
+    				}
+    				.sliceGroup {
+    					padding-right: 3px;
+
+    					&:last-child {
+    						padding-right: 0;
+    					}
+    				}
+    				.sliceGroup-logo {
+    					display: block;
+    					float: none;
+    					padding-right: 0;
+    				}
+    				.sliceGroup-time {
+    					width: 49%;
+    				}
+    				.sliceGroup-duration {
+    					width: 23%;
+    				}
+    				.sliceGroup-stopover {
+    					width: 28%;
+    				}
+    				.sliceSummaryOperatedBy,
+    				.sliceSummaryMessages {
+    					padding-left: 0;
+    				}
+    				[data-tooltip]:hover:before,
+    				[data-tooltip]:hover:after {
+    					content: " ";
+    					display: none;
+    				}
+    				.lsaAlert {
+    					display: none;
+    				}
+    				.itemResultDetailsToggle {
+    					display: none;
+    				}
+    				.itemDetails {
+    					// details is not supported in smallest view as its trigger is hidden, collapse/hide regardless of .is-open
+    					max-height: 0;
+    					overflow: hidden;
+    					.transition(all 0s linear);
+    				}
+    				.thingTier .microTrigger {
+    					color: @color-neutral-md;
+    					font-weight: normal;
+    				}
+    			}
+    			.itemSliceDetails {
+    				// label and date stack above the thing time
+    				.timeline-group {
+    					.clearfix();
+    					display: block;
+    					position: relative;
+    				}
+    				.timeline-item {
+    					.display-inline-block();
+    					&.timeline-date {
+    						.display-inline-block();
+    						background: url("/image/global/vertical-dash.png") repeat-y 100% @offset-vertical-sm;
+    						float: left;
+    						padding-bottom: 0;
+    						padding-right: 15px;
+    						width: 38%;
+    					}
+    					&.timeline-time {
+    						.display-inline-block();
+    						clear: left;
+    						float: left;
+    						position: static;
+    						width: 38%;
+    					}
+    					&.timeline-info {
+    						.display-inline-block();
+    						background: url("/image/global/vertical-dash.png") repeat-y 0 @offset-vertical-sm;
+    						float: none;
+    						margin-left: -1px;
+    						padding-left: 15px;
+    						width: 62%;
+    					}
+    					.timeline-marker {
+    						left: 38%;
+    						margin-left: -6px;
+    						right: auto;
+    					}
+    				}
+    			}
+    			.soloLeg .timeline-group.last-child .timeline-item,
+    			.lastLeg .timeline-group.last-child .timeline-item {
+    				background: none;
+    			}
+    			.itemcost .i-baggage-x {
+    				display: none;
+    			}
+    		}
+    		.placeDetailsitemMod {
+    			.itemResultsCard .detailsContainer .itemResultDetailsToggle {
+    				display: block;
+    				padding-left: 0;
+    			}
+    		}
+    	};
+
+    	@xxs: {
+    		.@{targetClass} {
+    			.itemResultsCard {
+    				font-size: @font-size-xs + 1px; // 13px
+
+    				.sliceGroup {
+    					padding-right: 1px;
+
+    					&:last-child {
+    						padding-right: 0;
+    					}
+    				}
+    				.sliceGroup-stopover {
+    					text-align: right;
+    				}
+    				.thingTimes {
+    					.arrivalTime {
+    						span {
+    							// remove itemplane icon and maximize space available
+    							background-image: none;
+    							padding: 0 12px 0 1px;
+    						}
+    					}
+    				}
+    				.itemSliceDetails {
+    					// stack details secions and have markers to the left
+    					.timeline-group {
+    						display: block;
+    						position: relative;
+    					}
+    					.timeline-item {
+    						display: block;
+    						padding: 0 0 @offset-vertical @offset-horizontal-md;
+    						width: 100%;
+
+    						&.timeline-date {
+    							background: url("/image/global/vertical-dash.png") repeat-y 5px @offset-vertical-sm;
+    							display: inline-block;
+    							float: left;
+    							padding: 0 @offset-horizontal-sm 0 @offset-horizontal-md;
+    							text-align: left;
+    							width: auto;
+    						}
+    						&.timeline-time {
+    							background: url("/image/global/vertical-dash.png") repeat-y 5px @offset-vertical-sm;
+    							padding: 0 0 0 @offset-horizontal-md;
+    							position: static;
+    							text-align: left;
+    							width: 100%;
+    						}
+    						&.timeline-info {
+    							background: url("/image/global/vertical-dash.png") repeat-y 5px @offset-vertical-sm;
+    							clear: left;
+    							margin-left: 0;
+    							padding: 0 0 @offset-vertical @offset-horizontal-md;
+    							width: 100%;
+    						}
+    						.timeline-marker {
+    							left: 0;
+    							margin-left: 0;
+    						}
+    					}
+    					.timeline-label {
+    						font-size: @font-size-xs + 1px; // 13px
+    					}
+    				}
+    				.soloLeg .timeline-group.last-child .timeline-item,
+    				.lastLeg .timeline-group.last-child .timeline-item {
+    					background: none;
+    				}
+    			}
+    		}
+    	};
+    	.responsify(@lg, @md, @sm, {}, @xxs);
+    }

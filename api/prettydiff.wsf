@@ -107,6 +107,7 @@
                             error.push("* mode           - string  - The operation to be performed. Defaults to 'diff'.");
                             error.push("                   Accepted values: diff, beautify, minify, parse");
                             error.push("");
+                            error.push("* neverflatten   - boolean - If destructured lists in JavaScript should never be flattened.");
                             error.push("* nocaseindent   - boolean - If a case statement should receive the same indentation as the containing switch block.");
                             error.push("");
                             error.push("* noleadzero     - boolean - If in CSS values leading 0s immediately preceeding a decimal should be removed or prevented.");
@@ -340,6 +341,7 @@
                     args.methodchain = (WScript.Arguments.Named("methodchain") === "true" || WScript.Arguments.Named("methodchain") === true);
                     args.miniwrap = (WScript.Arguments.Named("miniwrap") === "true" || WScript.Arguments.Named("miniwrap") === true);
                     args.mode = (WScript.Arguments.Named("mode") || "diff");
+                    args.neverflatten = (WScript.Arguments.Named("neverflatten") === "true" || WScript.Arguments.Named("neverflatten") === true);
                     args.nocaseindent = (WScript.Arguments.Named("nocaseindent") === "true" || WScript.Arguments.Named("nocaseindent") === true);
                     args.noleadzero = (WScript.Arguments.Named("noleadzero") === "true" || WScript.Arguments.Named("noleadzero") === true);
                     args.objsort = (WScript.Arguments.Named("objsort") === "all" || WScript.Arguments.Named("objsort") === "css" || WScript.Arguments.Named("objsort") === "none") ? WScript.Arguments.Named("objsort") : "js";

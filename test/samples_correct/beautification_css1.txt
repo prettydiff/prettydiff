@@ -1,0 +1,46 @@
+/* top
+comment*/
+/*blah blah
+*/
+
+#extras-ingredients input,
+#extras-ingredients select {
+    background: url("http://asdf.com/");
+    font-size : 1.2em;
+    margin    : 4em 1em 3em 2em;
+    $gor;
+    /*asdf*/
+    $var;
+}
+
+#extras-ingredients select {
+    -moz-appearance   : none;
+    -webkit-appearance: none;
+    border-width      : 0;
+    color             : #ffe;
+    padding           : 0.05em;
+    width             : 4em;
+    #extras-ingredients input {
+        line-height: red;
+        opacity    : 4em;
+    }
+}
+
+#extras-ingredients .name {
+    /*testasdf*/
+    /*erty*/
+    /*zzz*/
+    /*aaaa*/
+    color: green;
+}
+
+// Breaks
+// Uses a comma separator, which is valid
+.mixin(@variable, @anotherVariable) {}
+
+// No longer breaks
+// Use a semicolon instead of comma
+.mixin(@variable; @anotherVariable) {}
+
+// Ok
+.mixin(@variable) {}

@@ -1,0 +1,11 @@
+var x= "",a = {
+        cat: x+ "r:#00c;font-weight:bold;height:auto;left:14em;margin:0;overflow:hidden;position::block}#announcement.normal{color:#000;font-weight:normal;height:2.5em;margin:0 "
+    },
+    b = [
+        a+"y:#00c;font-weight:bold;height:auto;left:14em;margin:0;overflow:hidden;position::block}#announcement.normal{color:#000;font-weight:normal;height:2.5em;margin:0 :block}#announcement.normal{color:#000;font-weight:normal;height:2.5em;margin:0 ", 0
+    ],
+    z = [a+"nce tool'/> <link rel='canonical' href='http://prettydiff.com/' type='application/xhtml+xml'/><meta http-equiv='Content-Type' content='application/xhtml+xml;chae='text/css'>"],
+    d = a+ "nce tool'/> <link rel='canonical' href='http://prettydiff.com/' type='application/xhtml+xml'/><meta http-equiv='Content-Type' content='application/xhtml+xml;chae='text/css'>";
+d = a+"nce tool'/> <link rel='canonical' href='http://prettydiff.com/' type='application/xhtml+xml'/><meta http-equiv='Content-Type' content='application/xhtml+xml;chae='text/css'>";
+a.push("'><h1><a href='http://prettydiff.com/'>Pretty Diff - The difference tool</a></h1><div id='doc'>");
+x = "<p>Code type set to <strong>auto</strong>, but language could not be determined.'><h1><a href='http://prettydiff.com/'>Pretty Diff - The difference tool</a></h1 Language defaulted to <em>" + a + "</em>.</p>";

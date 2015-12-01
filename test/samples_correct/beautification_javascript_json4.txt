@@ -1,0 +1,38 @@
+(function () {
+    var f = [
+            {}, {}
+        ],
+        c = "";
+}());
+
+{
+    sd : [
+        {
+            sdf: df
+        },
+        [
+            {
+                sdf: "fds"
+            },
+            sdf
+        ]
+    ],
+    sdf: sdf, {
+        asd: thn
+    }
+};
+HotelDetails.packageInfo = {
+    "selectedHotelInfo": {
+        "rooms": [
+            {
+                "rates": [
+                    {
+                        "rateSummary": {
+                            "priceDifferencePerRoom": 0.00
+                        }
+                    }
+                ]
+            }
+        ]
+    }
+}

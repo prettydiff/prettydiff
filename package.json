@@ -1,41 +1,45 @@
 {
-  "name": "prettydiff",
-  "author": {
-    "name": "Austin Cheney",
-    "email": "info@prettydiff.com",
-    "url": "http://prettydiff.com/"
-  },
-  "bin": "./bin/prettydiff",
-  "version": "1.15.17",
-  "description": "Language aware code comparison tool for several web based languages. It also beautifies, minifies, and a few other things.",
-  "keywords": [
-    "diff",
-    "prettydiff",
-    "pretty diff",
-    "pretty print",
-    "pretty-print",
-    "beautify",
-    "minify",
-    "xml",
-    "html",
-    "css",
-    "javascript"
-  ],
-  "homepage": "http://prettydiff.com/",
-  "main": "prettydiff.js",
-  "bugs": {
-    "url": "https://github.com/prettydiff/prettydiff/issues",
-    "email": "info@prettydiff.com"
-  },
-  "license": "SEE LICENSE IN license.txt",
-  "repository": {
-    "type": "git",
-    "url": "git://github.com/prettydiff/prettydiff.git"
-  },
-  "maintainers": [
-    {
-      "name": "austincheney",
-      "email": "info@prettydiff.com"
-    }
-  ]
+    "author"     : {
+        "email": "info@prettydiff.com",
+        "name" : "Austin Cheney",
+        "url"  : "http://prettydiff.com/"
+    },
+    "bin"        : "./bin/prettydiff",
+    "bugs"       : {
+        "email": "info@prettydiff.com",
+        "url"  : "https://github.com/prettydiff/prettydiff/issues"
+    },
+    "description": "Language aware code comparison tool for several web based languages. It also beautifies, minifies, and a few other things.",
+    "homepage"   : "http://prettydiff.com/",
+    "keywords"   : [
+        "diff",
+        "prettydiff",
+        "pretty diff",
+        "pretty print",
+        "pretty-print",
+        "beautify",
+        "minify",
+        "xml",
+        "html",
+        "css",
+        "javascript"
+    ],
+    "license"    : "SEE LICENSE IN license.txt",
+    "main"       : "prettydiff.js",
+    "maintainers": [
+        {
+            "email": "info@prettydiff.com",
+            "name" : "austincheney"
+        }
+    ],
+    "name"       : "prettydiff",
+    "repository" : {
+        "type": "git",
+        "url" : "git://github.com/prettydiff/prettydiff.git"
+    },
+    "scripts"    : {
+        "prepublish": "node test/lint.js",
+        "test"      : "node test/lint.js"
+    },
+    "version"    : "1.16.0"
 }
