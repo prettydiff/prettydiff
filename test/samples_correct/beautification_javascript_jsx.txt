@@ -1,3 +1,4 @@
+/*prettydiff.com spaceclose:false*/
 var ListItem = React.createClass({
     render: function () {
         return (
@@ -205,7 +206,7 @@ React.render(<MarkdownEditor/>, mountNode);
 
 import React from "react";
 class MyComponent extends React.Component {
-    render () {
+    render() {
         var a = 1;
         return (
             <h1 style={{

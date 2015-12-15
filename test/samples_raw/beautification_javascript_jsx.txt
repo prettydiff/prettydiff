@@ -1,3 +1,4 @@
+/*prettydiff.com spaceclose:false*/
 var ListItem = React.createClass({
     render: function () {
         return (

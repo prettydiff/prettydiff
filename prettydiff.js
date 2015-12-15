@@ -1,4 +1,4 @@
-/*prettydiff.com api.topcoms: true, api.insize: 4, api.inchar: " ", api.vertical: true */
+/*prettydiff.com topcoms: true, insize: 4, inchar: " ", vertical: true */
 /*global __dirname, ace, csspretty, csvpretty, define, diffview, exports, global, jspretty, markuppretty, process, require, safeSort */
 /*
 
@@ -377,6 +377,7 @@ var prettydiff = function prettydiff_(api) {
                     tagsort       : (api.tagsort === true || api.tagsort === "true"),
                     //textpreserve - Force the markup beautifier to retain text (white space and
                     //all) exactly as provided.
+                    ternaryline   : (api.ternaryline === true || api.ternaryline === "true"),
                     textpreserve  : (api.textpreserve === true || api.textpreserve === "true"),
                     //titanium - TSS document support via option, because this is a uniquely
                     //modified form of JSON
@@ -459,7 +460,7 @@ var prettydiff = function prettydiff_(api) {
                         if ((/^(\s*(\{|\[))/).test(a) === true && (/((\]|\})\s*)$/).test(a) && a.indexOf(",") !== -1) {
                             return output("json");
                         }
-                        if ((/((\}?(\(\))?\)*;?\s*)|([a-z0-9]("|')?\)*);?(\s*\})*)$/i).test(a) === true && ((/((var)|(let)|(const))\s+(\w|\$)+[a-zA-Z0-9]*/).test(a) === true || (/console\.log\(/).test(a) === true || (/document\.get/).test(a) === true || (/((\=|(\$\())\s*function)|(\s*function\s+(\w*\s+)?\()/).test(a) === true || a.indexOf("{") === -1 || (/^(\s*if\s+\()/).test(a) === true)) {
+                        if ((/((\}?(\(\))?\)*;?\s*)|([a-z0-9]("|')?\)*);?(\s*\})*)$/i).test(a) === true && ((/((var)|(let)|(const))\s+(\w|\$)+[a-zA-Z0-9]*/).test(a) === true || (/console\.log\(/).test(a) === true || (/export\s+default\s+class\s+/).test(a) === true || (/document\.get/).test(a) === true || (/((\=|(\$\())\s*function)|(\s*function\s+(\w*\s+)?\()/).test(a) === true || a.indexOf("{") === -1 || (/^(\s*if\s+\()/).test(a) === true)) {
                             if (a.indexOf("(") > -1 || a.indexOf("=") > -1 || (a.indexOf(";") > -1 && a.indexOf("{") > -1)) {
                                 if ((/:\s*((number)|(string))/).test(a) === true && (/((public)|(private))\s+/).test(a) === true) {
                                     return output("typescript");
@@ -501,7 +502,7 @@ var prettydiff = function prettydiff_(api) {
                         return output("unknown");
                     }
                     if ((((/(>[\w\s:]*)?<(\/|!)?[\w\s:\-\[]+/).test(a) === true || (/^(\s*<\?xml)/).test(a) === true) && ((/^([\s\w]*<)/).test(a) === true || (/(>[\s\w]*)$/).test(a) === true)) || ((/^(\s*<s((cript)|(tyle)))/i).test(a) === true && (/(<\/s((cript)|(tyle))>\s*)$/i).test(a) === true)) {
-                        if (((/\s*<!doctype\ html>/i).test(a) === true && (/\s*<html/i).test(a) === true) || ((/^(\s*<!DOCTYPE\s+((html)|(HTML))\s+PUBLIC\s+)/).test(a) === true && (/XHTML\s+1\.1/).test(a) === false && (/XHTML\s+1\.0\s+(S|s)((trict)|(TRICT))/).test(a) === false)) {
+                        if ((/^(\s*<!doctype\ html>)/i).test(a) === true || (/^(\s*<html)/i).test(a) === true || ((/^(\s*<!DOCTYPE\s+((html)|(HTML))\s+PUBLIC\s+)/).test(a) === true && (/XHTML\s+1\.1/).test(a) === false && (/XHTML\s+1\.0\s+(S|s)((trict)|(TRICT))/).test(a) === false)) {
                             if ((/<%\s*\}/).test(a) === true) {
                                 return output("ejs");
                             }
@@ -604,21 +605,29 @@ var prettydiff = function prettydiff_(api) {
                     return "<p><strong>Execution time:</strong> <em>" + hourString + minuteString + secondString + "</em></p>";
                 },
                 pdcomment   = function core__pdcomment() {
-                    var comment    = "",
+                    var comment    = options.source,
                         a          = 0,
                         b          = options.source.length,
+                        str        = "/*prettydiff.com",
                         c          = options.source
-                            .indexOf("/*prettydiff.com") + 16,
-                        difftest   = false,
+                            .indexOf(str) + 16,
                         build      = [],
                         comma      = -1,
                         g          = 0,
                         sourceChar = [],
                         quote      = "",
                         sind       = options.source
-                            .indexOf("/*prettydiff.com"),
+                            .indexOf(str),
                         dind       = options.diff
-                            .indexOf("/*prettydiff.com");
+                            .indexOf(str);
+                    if (sind < 0) {
+                        str  = "<!--prettydiff.com";
+                        sind = options.source.indexOf(str);
+                        c    = sind + 18;
+                    }
+                    if (dind < 0) {
+                        dind = options.source.indexOf("<!--prettydiff.com");
+                    }
                     if ((options.source.charAt(c - 17) === "\"" && options.source.charAt(c) === "\"") || (sind < 0 && dind < 0)) {
                         return;
                     }
@@ -631,21 +640,30 @@ var prettydiff = function prettydiff_(api) {
                     if (c === 15 && typeof options.diff === "string") {
                         c        = options.diff
                             .indexOf("/*prettydiff.com") + 16;
-                        difftest = true;
-                    } else if (c === 15) {
+                        comment  = options.diff;
+                    } else if (c === 17 && typeof options.diff === "string") {
+                        str      = "<!--prettydiff.com";
+                        c        = options.diff
+                            .indexOf(str) + 18;
+                        comment  = options.diff;
+                    } else if (c === 17) {
                         return;
                     }
-                    for (c; c < b; c += 1) {
-                        if (difftest === false) {
-                            if (options.source.charAt(c) === "*" && options.source.charAt(c + 1) === "/") {
-                                break;
+                    for (c = c; c < b; c += 1) {
+                        if (quote === "") {
+                            if (comment.charAt(c) === "\"" || comment.charAt(c) === "'") {
+                                quote = comment.charAt(c);
+                            } else {
+                                if (comment.charAt(c) === "*" && comment.charAt(c + 1) === "/" && str === "/*prettydiff.com") {
+                                    break;
+                                }
+                                if (comment.charAt(c) === "-" && comment.charAt(c + 1) === "-" && comment.charAt(c + 2) === ">" && str === "<!--prettydiff.com") {
+                                    break;
+                                }
+                                sourceChar.push(comment.charAt(c));
                             }
-                            sourceChar.push(options.source.charAt(c));
-                        } else {
-                            if (options.diff.charAt(c) === "*" && options.diff.charAt(c + 1) === "/") {
-                                break;
-                            }
-                            sourceChar.push(options.diff.charAt(c));
+                        } else if (comment.charAt(c) === quote) {
+                            quote = "";
                         }
                     }
                     comment = sourceChar.join("")
@@ -1625,7 +1643,7 @@ var prettydiff = function prettydiff_(api) {
                                                     "e;document.onmousedown=null;};";
                         builder.scriptEnd     = "]]></script>";
                         return [
-                            builder.head + builder.cssCore + builder.cssColor + builder.cssExtra + builder.body + builder.bodyColor + builder.title + auto + proctime() + a[0] + builder.accessibility + a[1][0] + builder.scriptOpen + builder.scriptBody + builder.scriptEnd + "</body></html>", ""
+                            builder.head + builder.cssCore + builder.cssColor + builder.cssExtra + builder.body + builder.bodyColor + builder.title + autostring + proctime() + a[0] + builder.accessibility + a[1][0] + builder.scriptOpen + builder.scriptBody + builder.scriptEnd + "</body></html>", ""
                         ];
                     }
                     if (options.mode === "diff") {
@@ -1649,22 +1667,22 @@ global.edition        = {
         ace: 150918
     },
     api          : {
-        dom      : 151130, //dom.js
-        nodeLocal: 151130, //node-local.js
-        wsh      : 151130 //prettydiff.wsf
+        dom      : 151214, //dom.js
+        nodeLocal: 151214, //node-local.js
+        wsh      : 151214 //prettydiff.wsf
     },
     css          : 151109, //diffview.css file
-    csspretty    : 151130, //csspretty lib
+    csspretty    : 151214, //csspretty lib
     csvpretty    : 151130, //csvpretty lib
     diffview     : 151130, //diffview lib
-    documentation: 151130, //documentation.xhtml
-    jspretty     : 151130, //jspretty lib
+    documentation: 151214, //documentation.xhtml
+    jspretty     : 151214, //jspretty lib
     latest       : 0,
-    markuppretty : 151130, //markuppretty lib
-    prettydiff   : 151130, //this file
+    markuppretty : 151214, //markuppretty lib
+    prettydiff   : 151214, //this file
     safeSort     : 151130, //safeSort lib
-    version      : "1.16.0", //version number
-    webtool      : 151130 //index.xhtml
+    version      : "1.16.1", //version number
+    webtool      : 151214 //index.xhtml
 };
 global.edition.latest = (function edition_latest() {
     "use strict";

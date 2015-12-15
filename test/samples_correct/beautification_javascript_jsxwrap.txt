@@ -11,6 +11,6 @@ var New = React.createClass({
             asdf="asdf"
             qwer="qwer"
             rty="rty"
-            dfgsdfgsdfg="sdfgsdfg"/>);
+            dfgsdfgsdfg="sdfgsdfg" />);
     }
 });

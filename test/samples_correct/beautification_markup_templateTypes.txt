@@ -9,44 +9,44 @@
 </div>
 <div>
     {@if(5){@}
-        <span class="r"/>
+        <span class="r" />
     {@}else{@}
-        <span class="q"/>
+        <span class="q" />
     {@}@}
 </div>
 <div>
     <%if(5){%>
-        <span class="r"/>
+        <span class="r" />
     <%}else{%>
-        <span class="q"/>
+        <span class="q" />
     <%}%>
 </div>
 <div>
     [%if(5){%]
-        <span class="r"/>
+        <span class="r" />
     [%}else{%]
-        <span class="q"/>
+        <span class="q" />
     [%}%]
 </div>
 <div>
     {@ if(5){ @}
-        <span class="r"/>
+        <span class="r" />
     {@ }else{ @}
-        <span class="q"/>
+        <span class="q" />
     {@ } @}
 </div>
 <div>
     <% if(5){ %>
-        <span class="r"/>
+        <span class="r" />
     <% }else{ %>
-        <span class="q"/>
+        <span class="q" />
     <% } %>
 </div>
 <div>
     [% if(5){ %]
-        <span class="r"/>
+        <span class="r" />
     [% }else{ %]
-        <span class="q"/>
+        <span class="q" />
     [% } %]
 </div>
 
@@ -56,4 +56,13 @@
     {@ } else { @}
         {{= resources.outboundFlightSummary }}
     {@ } @}
+</div>
+
+<div class="container">
+    <% flash.each do | key, value | %>
+    <div class="alert alert-" <%= key %>>
+        <%= value %>
+    </div>
+    <% end %>
+    <%= yield %>
 </div>

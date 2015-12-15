@@ -139,48 +139,48 @@
         <title>Travelocity Travel: Cheap Airline Tickets, Hotels, Flights, Vacations,
             Cruises & Car Rentals</title>
 
-        <link href="http://www.travelocity.com/" rel="canonical"/>
+        <link href="http://www.travelocity.com/" rel="canonical" />
         <!--tcysnp04|151.193.220.28-->
         <meta
             content="Travel, Airline Tickets, Cheap Airline Tickets, Hotels, Flights, Vacations, Cruises, Car Rental"
-            name="keywords">
+            name="keywords" />
         <meta
             content="Book travel for less with specials on cheap airline tickets, hotels, cruises, car rentals, and flights on Travelocity, your one-stop resource for travel and vacation needs."
-            name="description">
-        <meta content="General" name="rating">
-        <meta content="no" http-equiv="imagetoolbar"/>
-        <meta content="finding great cruise deals" name="facebook_label"/>
+            name="description" />
+        <meta content="General" name="rating" />
+        <meta content="no" http-equiv="imagetoolbar" />
+        <meta content="finding great cruise deals" name="facebook_label" />
         <meta
             content="(PICS-1.1 'http://www.rsac.org/ratingsv01.html' L GEN TRUE COMMENT 'RSACi North America Server' FOR '.' ON '1998.06.01T11:39-0800' R (N 0 S 0 V 0 L 0))"
-            http-equiv="PICS-Label">
+            http-equiv="PICS-Label" />
         <meta
             content="(PICS-1.1 'http://www.classify.org/safesurf/' L GEN TRUE FOR './' BY 'iag@travelocity.com' R (SS~~000 1))"
-            http-equiv="PICS-Label">
+            http-equiv="PICS-Label" />
         <link
             href="https://plus.google.com/u/0/b/114623008020664723497/"
-            rel="publisher"/>
+            rel="publisher" />
         <script src="http://i.travelpn.com.edgesuite.net/js/TealeafConfigV.js"></script>
         <link
             href="http://i.travelpn.com.edgesuite.net/blueprint/css/screen.css"
             media="screen,all"
             rel="stylesheet"
-            type="text/css"/>
+            type="text/css" />
         <link
             href="http://www.travelocity.com/fd-css-consolidator/0,6712,hp|20120123|TRAVELOCITY,00.css"
             media="screen,all"
             rel="stylesheet"
-            type="text/css"/>
+            type="text/css" />
         <link
             href="http://i.travelpn.com.edgesuite.net/blueprint/css/print.css"
             id="blueprint-print"
             media="print"
             rel="stylesheet"
-            type="text/css"/>
+            type="text/css" />
         <!--[if IE]> <link href="http://i.travelpn.com.edgesuite.net/blueprint/css/ie.css" rel="stylesheet" type="text/css" id="blueprint-IE" /> <link type="text/css" href="http://i.travelpn.com.edgesuite.net/css/quirks.css" rel="stylesheet" /> <![endif]-->
         <link
             href="http://i.travelpn.com/css/calendar_datepicker.css"
             rel="stylesheet"
-            type="text/css"/>
+            type="text/css" />
 
     </head>
 
@@ -191,7 +191,7 @@
             href="http://i.travelpn.com.edgesuite.net/css/headerfooter_v1_5hp.css"
             media="screen,all"
             rel="stylesheet"
-            type="text/css"/>
+            type="text/css" />
 
         <script language="javascript" type="text/javascript">
             var WRInitTime = (new Date()).getTime();
@@ -244,7 +244,7 @@
                     <div class="branding-logo">
                         <a href="http://www.travelocity.com/" title="Travelocity"><img
                             alt="Travelocity Logo"
-                            src="http://i.travelpn.com.edgesuite.net/images/graphics/travelocity-logo228x69.gif"/></a>
+                            src="http://i.travelpn.com.edgesuite.net/images/graphics/travelocity-logo228x69.gif" /></a>
                     </div>
                     <div id="placeholder">
                         <div class="name-holder">
@@ -260,21 +260,21 @@
                                 action="http://www.travelocity.com/SearchResults"
                                 id="cse-search-box"
                                 method="get">
-                                <input name="cx" type="hidden" value="016693651687389605847:0afinf3zpw0">
-                                <input name="Service" type="hidden" value="TRAVELOCITY">
+                                <input name="cx" type="hidden" value="016693651687389605847:0afinf3zpw0" />
+                                <input name="Service" type="hidden" value="TRAVELOCITY" />
                                 <label class="trav-search-text obscure" for="search-field">Search in Travelocity</label>
                                 <input
                                     autocomplete="off"
                                     id="search-field"
                                     name="searchCriteria"
                                     style="color:#666"
-                                    type="text">
+                                    type="text" />
                                 <input
                                     alt="Search Travelocity"
                                     id="search-btn"
                                     name="sa"
                                     type="submit"
-                                    value="GO">
+                                    value="GO" />
 
                             </form>
                         </div>
@@ -403,28 +403,28 @@
                                                             id="nav-fh"
                                                             name="nav"
                                                             type="radio"
-                                                            value="form-fh"/>
+                                                            value="form-fh" />
                                                             <label for="nav-fh">
                                                                 <span class="cb-nav-msg">SAVE!</span>
                                                                 Flight + Hotel</label>
                                                         </li>
-                                                        <li class="cb-span-3"><input class="nav-fh" id="nav-fhc" name="nav" type="radio" value="form-fhc"/>
+                                                        <li class="cb-span-3"><input class="nav-fh" id="nav-fhc" name="nav" type="radio" value="form-fhc" />
                                                             <label for="nav-fhc">Flight + Hotel + Car</label>
                                                         </li>
-                                                        <li class="span-2"><input class="nav-ho" id="nav-ho" name="nav" type="radio" value="form-ho"/>
+                                                        <li class="span-2"><input class="nav-ho" id="nav-ho" name="nav" type="radio" value="form-ho" />
                                                             <label for="nav-ho">Hotel Only</label>
                                                         </li>
-                                                        <li class="cb-span-3"><input class="nav-hcx" id="nav-hcx" name="nav" type="radio" value="form-hcx"/>
+                                                        <li class="cb-span-3"><input class="nav-hcx" id="nav-hcx" name="nav" type="radio" value="form-hcx" />
                                                             <label for="nav-hcx">Hotel + Car</label>
                                                         </li>
-                                                        <li class="span-2"><input class="nav-fo" id="nav-fo" name="nav" type="radio" value="form-fo"/>
+                                                        <li class="span-2"><input class="nav-fo" id="nav-fo" name="nav" type="radio" value="form-fo" />
                                                             <label for="nav-fo">Flight Only</label>
                                                         </li>
 
-                                                        <li class="cb-span-3"><input class="nav-co" id="nav-co" name="nav" type="radio" value="form-co"/>
+                                                        <li class="cb-span-3"><input class="nav-co" id="nav-co" name="nav" type="radio" value="form-co" />
                                                             <label for="nav-co">Car Only</label>
                                                         </li>
-                                                        <li class="cb-span-3 prefix-2-m"><input class="nav-cro" id="nav-cro" name="nav" type="radio" value="form-cro"/>
+                                                        <li class="cb-span-3 prefix-2-m"><input class="nav-cro" id="nav-cro" name="nav" type="radio" value="form-cro" />
                                                             <label for="nav-cro">Cruise</label>
                                                         </li>
                                                     </ul>
@@ -440,16 +440,16 @@
                                     method="post"
                                     name="formFH">
 
-                                    <input name="stops" type="hidden" value="2"/>
-                                    <input id="fh-pkg" name="pkg_type" type="hidden" value="fh_pkg"/>
+                                    <input name="stops" type="hidden" value="2" />
+                                    <input id="fh-pkg" name="pkg_type" type="hidden" value="fh_pkg" />
                                     <input
                                         disabled="disabled"
                                         id="fhc-pkg"
                                         name="pkg_type"
                                         type="hidden"
-                                        value="fhc_pkg"/>
-                                    <input name="Service" type="hidden" value="TRAVELOCITY"/>
-                                    <input name="dateFormat" type="hidden" value="mm/dd/yyyy"/>
+                                        value="fhc_pkg" />
+                                    <input name="Service" type="hidden" value="TRAVELOCITY" />
+                                    <input name="dateFormat" type="hidden" value="mm/dd/yyyy" />
                                     <div>
                                         <ul class="cb-rows span-8 last">
                                             <li class="cb-row">
@@ -468,7 +468,7 @@
                                                             name="leavingFrom"
                                                             title="Departure city or Airport code"
                                                             type="text"
-                                                            value="DFW"/>
+                                                            value="DFW" />
                                                         <label for="fh-to">To:</label>
                                                         <input
                                                             class="cb-span-5 cb-to"
@@ -476,7 +476,7 @@
                                                             name="goingTo"
                                                             title="Arrival city or Airport code"
                                                             type="text"
-                                                            value="LAS"/>
+                                                            value="LAS" />
                                                     </div>
                                                     <div class="clear"></div>
                                                 </div>
@@ -503,7 +503,7 @@
                                                                 id="fh-fromdate"
                                                                 name="leavingDate"
                                                                 type="text"
-                                                                value="02/17/2012"/>
+                                                                value="02/17/2012" />
                                                         </span>
                                                         <span class="span-2 cb-nolabel last">
 
@@ -552,7 +552,7 @@
                                                                 id="fh-todate"
                                                                 name="returningDate"
                                                                 type="text"
-                                                                value="02/21/2012"/>
+                                                                value="02/21/2012" />
                                                         </span>
                                                         <span class="span-2 cb-nolabel last">
                                                             <label class="accessible" for="fh-totime">Returning Time:</label>
@@ -620,7 +620,7 @@
                                                         <fieldset>
                                                             <div class="span-1 cb-room-legend">Room 1:</div>
                                                             <div class="cb-room span-1">
-                                                                <label class="cb-rooms-label" for="fh-adult">Adults<br/>(18-64)</label>
+                                                                <label class="cb-rooms-label" for="fh-adult">Adults<br />(18-64)</label>
 
                                                                 <select id="fh-adult" name="adult1">
                                                                     <option>0</option>
@@ -633,7 +633,7 @@
                                                                 </select>
                                                             </div>
                                                             <div class="cb-room span-1">
-                                                                <label class="cb-rooms-label" for="fh-child">Minors<br/>(2-17)</label>
+                                                                <label class="cb-rooms-label" for="fh-child">Minors<br />(2-17)</label>
                                                                 <select class="cb-children" id="fh-child" name="child1">
                                                                     <option selected="selected">0</option>
                                                                     <option>1</option>
@@ -645,7 +645,7 @@
 
                                                             </div>
                                                             <div class="cb-room span-1 last">
-                                                                <label class="cb-rooms-label" for="fh-seniors">Seniors<br/>(65+)</label>
+                                                                <label class="cb-rooms-label" for="fh-seniors">Seniors<br />(65+)</label>
                                                                 <select id="fh-seniors" name="senior1">
                                                                     <option selected="selected">0</option>
                                                                     <option>1</option>
@@ -773,11 +773,11 @@
                                                         </fieldset>
                                                     </div>
                                                     <div class="cb-rooms cb-room-additional">
-                                                        <hr class="cb-divider cb-span-5"/>
+                                                        <hr class="cb-divider cb-span-5" />
                                                         <fieldset class="prefix-1">
                                                             <div class="span-1 cb-multi-room-legend">Room 2:</div>
                                                             <div class="cb-room span-1">
-                                                                <label class="cb-rooms-label accessible" for="fh-adult2">Adults<br/>(18-64)</label>
+                                                                <label class="cb-rooms-label accessible" for="fh-adult2">Adults<br />(18-64)</label>
 
                                                                 <select id="fh-adult2" name="adult2">
                                                                     <option>0</option>
@@ -790,7 +790,7 @@
                                                                 </select>
                                                             </div>
                                                             <div class="cb-room span-1">
-                                                                <label class="cb-rooms-label accessible" for="fh-child2">Minors<br/>(2-17)</label>
+                                                                <label class="cb-rooms-label accessible" for="fh-child2">Minors<br />(2-17)</label>
                                                                 <select class="cb-children" id="fh-child2" name="child2">
                                                                     <option selected="selected">0</option>
                                                                     <option>1</option>
@@ -802,7 +802,7 @@
 
                                                             </div>
                                                             <div class="cb-room span-1 last">
-                                                                <label class="cb-rooms-label accessible" for="fh-seniors2">Seniors<br/>(65+)</label>
+                                                                <label class="cb-rooms-label accessible" for="fh-seniors2">Seniors<br />(65+)</label>
                                                                 <select id="fh-seniors2" name="senior2">
                                                                     <option selected="selected">0</option>
                                                                     <option>1</option>
@@ -930,12 +930,12 @@
                                                         </fieldset>
                                                     </div>
                                                     <div class="cb-rooms cb-room-additional">
-                                                        <hr class="cb-divider cb-span-5"/>
+                                                        <hr class="cb-divider cb-span-5" />
                                                         <fieldset class="prefix-1">
                                                             <div class="span-1 cb-multi-room-legend">Room 3:</div>
                                                             <div class="cb-room span-1">
 
-                                                                <label class="cb-rooms-label accessible" for="fh-adult3">Adults<br/>(18-64)</label>
+                                                                <label class="cb-rooms-label accessible" for="fh-adult3">Adults<br />(18-64)</label>
                                                                 <select id="fh-adult3" name="adult3">
                                                                     <option>0</option>
                                                                     <option selected="selected">1</option>
@@ -947,7 +947,7 @@
                                                                 </select>
                                                             </div>
                                                             <div class="cb-room span-1">
-                                                                <label class="cb-rooms-label accessible" for="fh-child3">Minors<br/>(2-17)</label>
+                                                                <label class="cb-rooms-label accessible" for="fh-child3">Minors<br />(2-17)</label>
 
                                                                 <select class="cb-children" id="fh-child3" name="child3">
                                                                     <option selected="selected">0</option>
@@ -959,7 +959,7 @@
                                                                 </select>
                                                             </div>
                                                             <div class="cb-room span-1 last">
-                                                                <label class="cb-rooms-label accessible" for="fh-seniors3">Seniors<br/>(65+)</label>
+                                                                <label class="cb-rooms-label accessible" for="fh-seniors3">Seniors<br />(65+)</label>
                                                                 <select id="fh-seniors3" name="senior3">
                                                                     <option selected="selected">0</option>
                                                                     <option>1</option>
@@ -1087,12 +1087,12 @@
                                                         </fieldset>
                                                     </div>
                                                     <div class="cb-rooms cb-room-additional">
-                                                        <hr class="cb-divider cb-span-5"/>
+                                                        <hr class="cb-divider cb-span-5" />
                                                         <fieldset class="prefix-1">
                                                             <div class="span-1 cb-multi-room-legend">Room 4:</div>
                                                             <div class="cb-room span-1">
 
-                                                                <label class="cb-rooms-label accessible" for="fh-adult4">Adults<br/>(18-64)</label>
+                                                                <label class="cb-rooms-label accessible" for="fh-adult4">Adults<br />(18-64)</label>
                                                                 <select id="fh-adult4" name="adult4">
                                                                     <option>0</option>
                                                                     <option selected="selected">1</option>
@@ -1104,7 +1104,7 @@
                                                                 </select>
                                                             </div>
                                                             <div class="cb-room span-1">
-                                                                <label class="cb-rooms-label accessible" for="fh-child4">Minors<br/>(2-17)</label>
+                                                                <label class="cb-rooms-label accessible" for="fh-child4">Minors<br />(2-17)</label>
 
                                                                 <select class="cb-children" id="fh-child4" name="child4">
                                                                     <option selected="selected">0</option>
@@ -1116,7 +1116,7 @@
                                                                 </select>
                                                             </div>
                                                             <div class="cb-room span-1 last">
-                                                                <label class="cb-rooms-label accessible" for="fh-seniors4">Seniors<br/>(65+)</label>
+                                                                <label class="cb-rooms-label accessible" for="fh-seniors4">Seniors<br />(65+)</label>
                                                                 <select id="fh-seniors4" name="senior4">
                                                                     <option selected="selected">0</option>
                                                                     <option>1</option>
@@ -1254,7 +1254,7 @@
                                                             alt="Search for Flight + Hotel"
                                                             class="cb-span-5 cb-submit"
                                                             type="submit"
-                                                            value="Search Now"/>
+                                                            value="Search Now" />
                                                         <div class="cb-span-5 cb-advanced">
                                                             <a
                                                                 href="http://travel.travelocity.com/trips/InitialSearch.do?Service=TRAVELOCITY"
@@ -1278,30 +1278,30 @@
                                         disabled="disabled"
                                         name="fhPath"
                                         type="hidden"
-                                        value="http://travel.travelocity.com/trips/ClarifySearchTimekeeper.do"/>
+                                        value="http://travel.travelocity.com/trips/ClarifySearchTimekeeper.do" />
                                     <input
                                         disabled="disabled"
                                         name="foPath"
                                         type="hidden"
-                                        value="http://travel.travelocity.com/flights/InitialSearch.do"/>
-                                    <input name="Service" type="hidden" value="TRAVELOCITY"/>
-                                    <input name="last_pgd_page" type="hidden" value="ushpnbff.pgd"/>
-                                    <input name="entryPoint" type="hidden" value="FD"/>
+                                        value="http://travel.travelocity.com/flights/InitialSearch.do" />
+                                    <input name="Service" type="hidden" value="TRAVELOCITY" />
+                                    <input name="last_pgd_page" type="hidden" value="ushpnbff.pgd" />
+                                    <input name="entryPoint" type="hidden" value="FD" />
                                     <input
                                         disabled="disabled"
                                         id="airTripType"
                                         name="tripType"
                                         type="hidden"
-                                        value="airPlusHotel"/>
+                                        value="airPlusHotel" />
                                     <input
                                         disabled="disabled"
                                         id="airpreferlevel"
                                         name="preferLevel"
                                         type="hidden"
-                                        value="ONLY"/>
-                                    <input name="pkg_type" type="hidden" value="fh_pkg"/>
+                                        value="ONLY" />
+                                    <input name="pkg_type" type="hidden" value="fh_pkg" />
 
-                                    <input name="flightType" type="hidden" value="roundtrip"/>
+                                    <input name="flightType" type="hidden" value="roundtrip" />
                                     <div>
                                         <ul class="cb-rows span-8 last">
                                             <li class="cb-row">
@@ -1322,7 +1322,7 @@
                                                                     id="sub-nav-fo"
                                                                     name="subnav"
                                                                     type="radio"
-                                                                    value="form-fo"/>
+                                                                    value="form-fo" />
                                                                     <label for="sub-nav-fo">Round-Trip</label>
                                                                 </li>
                                                                 <li class="span-2 last"><input
@@ -1330,7 +1330,7 @@
                                                                     id="sub-nav-fow"
                                                                     name="subnav"
                                                                     type="radio"
-                                                                    value="form-fow"/>
+                                                                    value="form-fow" />
                                                                     <label for="sub-nav-fow">One-Way</label>
                                                                 </li>
                                                             </ul>
@@ -1343,7 +1343,7 @@
                                                             name="leavingFrom"
                                                             title="Departure city or Airport code"
                                                             type="text"
-                                                            value="DFW"/>
+                                                            value="DFW" />
 
                                                         <label for="fo-to">To:</label>
                                                         <input
@@ -1352,12 +1352,12 @@
                                                             name="goingTo"
                                                             title="Arrival city or Airport code"
                                                             type="text"
-                                                            value="LAS"/>
+                                                            value="LAS" />
                                                         <a
                                                             href="http://travel.travelocity.com/flights/GoToNewSearch.do?flightType=multicity"
                                                             id="multidest">Multiple Destinations?</a>
                                                         <div class="cb-span-5 cb-near-airport cb-csa">
-                                                            <input id="fo-includeairport" name="nearbyAirports" type="checkbox" value="on"/>
+                                                            <input id="fo-includeairport" name="nearbyAirports" type="checkbox" value="on" />
                                                             <label for="fo-includeairport">Compare Surrounding Airports</label>
                                                         </div>
                                                     </div>
@@ -1378,7 +1378,7 @@
                                                             id="radioexactDates"
                                                             name="dateTypeSelect"
                                                             type="radio"
-                                                            value="exactDates"/>
+                                                            value="exactDates" />
                                                             <label for="radioexactDates">Exact Dates
                                                                 <span>US/Canada Only</span>
                                                             </label>
@@ -1388,7 +1388,7 @@
                                                             id="radioplusMinusDates"
                                                             name="dateTypeSelect"
                                                             type="radio"
-                                                            value="plusMinusDates"/>
+                                                            value="plusMinusDates" />
                                                             <label for="radioplusMinusDates">+/- 1 to 3 Days</label>
                                                         </li>
 
@@ -1408,7 +1408,7 @@
                                                                 id="fo-fromdate"
                                                                 name="leavingDate"
                                                                 type="text"
-                                                                value="02/17/2012"/>
+                                                                value="02/17/2012" />
                                                         </span>
                                                         <span class="span-2 last cb-exact-time">
                                                             <label class="span-2 last hidden-label" for="fo-fromtime">Departure Time:</label>
@@ -1485,7 +1485,7 @@
                                                                 id="fo-todate"
                                                                 name="returningDate"
                                                                 type="text"
-                                                                value="02/21/2012"/>
+                                                                value="02/21/2012" />
                                                         </span>
                                                         <span class="span-2 last cb-exact-time">
 
@@ -1573,7 +1573,7 @@
                                                         <fieldset>
                                                             <legend class="accessible">Passengers</legend>
                                                             <div class="span-1">
-                                                                <label class="cb-pass-label" for="fo-adults">Adults<br/>(18-64)</label>
+                                                                <label class="cb-pass-label" for="fo-adults">Adults<br />(18-64)</label>
                                                                 <select id="fo-adults" name="adults">
                                                                     <option>0</option>
                                                                     <option selected="selected">1</option>
@@ -1586,7 +1586,7 @@
 
                                                             </div>
                                                             <div class="span-1">
-                                                                <label class="cb-pass-label" for="fo-minors">Minors<br/>(2-17)</label>
+                                                                <label class="cb-pass-label" for="fo-minors">Minors<br />(2-17)</label>
                                                                 <select class="cb-children" id="fo-minors" name="children">
                                                                     <option selected="selected">0</option>
                                                                     <option>1</option>
@@ -1597,7 +1597,7 @@
                                                                 </select>
                                                             </div>
                                                             <div class="span-1 last">
-                                                                <label class="cb-pass-label" for="fo-seniors">Seniors<br/>(65+)</label>
+                                                                <label class="cb-pass-label" for="fo-seniors">Seniors<br />(65+)</label>
 
                                                                 <select id="fo-seniors" name="seniors">
                                                                     <option selected="selected">0</option>
@@ -1735,7 +1735,7 @@
                                                             alt="Search for Flight + Hotel"
                                                             class="cb-span-5 cb-submit"
                                                             type="submit"
-                                                            value="Search Now"/>
+                                                            value="Search Now" />
 
                                                         <div class="cb-span-5 cb-advanced">
                                                             <a
@@ -1755,22 +1755,22 @@
                                     id="cb-form-ho"
                                     method="post"
                                     name="formHO">
-                                    <input name="Service" type="hidden" value="TRAVELOCITY"/>
-                                    <input name="SEQ" type="hidden" value="34235604"/>
+                                    <input name="Service" type="hidden" value="TRAVELOCITY" />
+                                    <input name="SEQ" type="hidden" value="34235604" />
 
-                                    <input name="searchMode" type="hidden" value="city"/>
-                                    <input name="expr_path" type="hidden" value="Y"/>
-                                    <input name="dateFormat" type="hidden" value="mm/dd/yyyy"/>
-                                    <input name="opaqueTabSelected" type="hidden" value="0"/>
+                                    <input name="searchMode" type="hidden" value="city" />
+                                    <input name="expr_path" type="hidden" value="Y" />
+                                    <input name="dateFormat" type="hidden" value="mm/dd/yyyy" />
+                                    <input name="opaqueTabSelected" type="hidden" value="0" />
                                     <div>
-                                        <input disabled="disabled" id="ts-ho-to" name="ts_city" type="hidden" value=""/>
+                                        <input disabled="disabled" id="ts-ho-to" name="ts_city" type="hidden" value="" />
                                         <ul class="cb-rows span-8 last">
                                             <li class="cb-row">
                                                 <div>
                                                     <div class="span-3">
                                                         <h3 class="cb-row-title">
                                                             <em>2.</em>
-                                                            Enter the city you<br/>want to stay in</h3>
+                                                            Enter the city you<br />want to stay in</h3>
                                                     </div>
 
                                                     <div class="span-5 last cb-form-column">
@@ -1780,7 +1780,7 @@
                                                                 id="ho-top-secret"
                                                                 name="ts-hotels"
                                                                 type="checkbox"
-                                                                value="formTSH"/>
+                                                                value="formTSH" />
                                                             <label for="ho-top-secret">Find
                                                                 <strong>Top Secret Hotels</strong>
                                                             </label>
@@ -1987,7 +1987,7 @@
                                                                     name="city"
                                                                     title="City or Airport Code:"
                                                                     type="text"
-                                                                    value="LAS"/>
+                                                                    value="LAS" />
                                                             </div>
                                                             <div class="cb-state-row span-2 last">
                                                                 <label class="span-2 last" for="ho-state">State/Province:</label>
@@ -2230,7 +2230,7 @@
                                                                 id="ho-fromdate"
                                                                 name="leavingDate"
                                                                 type="text"
-                                                                value="02/17/2012"/>
+                                                                value="02/17/2012" />
                                                         </span>
                                                         <div class="clear"></div>
                                                     </div>
@@ -2243,7 +2243,7 @@
                                                                 id="ho-todate"
                                                                 name="returningDate"
                                                                 type="text"
-                                                                value="02/21/2012"/>
+                                                                value="02/21/2012" />
                                                         </span>
                                                         <div class="clear"></div>
                                                     </div>
@@ -2274,7 +2274,7 @@
                                                         <fieldset>
                                                             <div class="span-1 cb-room-legend">Room 1:</div>
                                                             <div class="cb-room span-1">
-                                                                <label class="cb-rooms-label" for="ho-adults1">Adults<br/>(18+)</label>
+                                                                <label class="cb-rooms-label" for="ho-adults1">Adults<br />(18+)</label>
                                                                 <select id="ho-adults1" name="adult1">
                                                                     <option selected="selected">1</option>
                                                                     <option>2</option>
@@ -2286,7 +2286,7 @@
 
                                                             </div>
                                                             <div class="cb-room span-1">
-                                                                <label class="cb-rooms-label" for="ho-minors1">Minors<br/>(0-17)</label>
+                                                                <label class="cb-rooms-label" for="ho-minors1">Minors<br />(0-17)</label>
                                                                 <select class="cb-children" id="ho-minors1" name="child1">
                                                                     <option selected="selected">0</option>
                                                                     <option>1</option>
@@ -2423,11 +2423,11 @@
                                                         </fieldset>
                                                     </div>
                                                     <div class="cb-rooms cb-room-additional">
-                                                        <hr class="cb-divider cb-span-5"/>
+                                                        <hr class="cb-divider cb-span-5" />
                                                         <fieldset class="prefix-1">
                                                             <div class="span-1 cb-multi-room-legend">Room 2:</div>
                                                             <div class="cb-room span-1">
-                                                                <label class="cb-rooms-label accessible" for="ho-adults2">Adults<br/>(18+)</label>
+                                                                <label class="cb-rooms-label accessible" for="ho-adults2">Adults<br />(18+)</label>
 
                                                                 <select id="ho-adults2" name="adult2">
                                                                     <option selected="selected">1</option>
@@ -2439,7 +2439,7 @@
                                                                 </select>
                                                             </div>
                                                             <div class="cb-room span-1">
-                                                                <label class="cb-rooms-label accessible" for="ho-minors2">Minors<br/>(0-17)</label>
+                                                                <label class="cb-rooms-label accessible" for="ho-minors2">Minors<br />(0-17)</label>
                                                                 <select class="cb-children" id="ho-minors2" name="child2">
                                                                     <option selected="selected">0</option>
                                                                     <option>1</option>
@@ -2576,7 +2576,7 @@
                                                         </fieldset>
                                                     </div>
                                                     <div class="cb-rooms cb-room-additional">
-                                                        <hr class="cb-divider cb-span-5"/>
+                                                        <hr class="cb-divider cb-span-5" />
                                                         <fieldset class="prefix-1">
                                                             <div class="span-1 cb-multi-room-legend">Room 3:</div>
                                                             <div class="cb-room span-1">
@@ -2592,7 +2592,7 @@
                                                                 </select>
                                                             </div>
                                                             <div class="cb-room span-1">
-                                                                <label class="cb-rooms-label accessible" for="ho-minors3">Minors<br/>(0-17)</label>
+                                                                <label class="cb-rooms-label accessible" for="ho-minors3">Minors<br />(0-17)</label>
 
                                                                 <select class="cb-children" id="ho-minors3" name="child3">
                                                                     <option selected="selected">0</option>
@@ -2729,12 +2729,12 @@
                                                         </fieldset>
                                                     </div>
                                                     <div class="cb-rooms cb-room-additional">
-                                                        <hr class="cb-divider cb-span-5"/>
+                                                        <hr class="cb-divider cb-span-5" />
                                                         <fieldset class="prefix-1">
                                                             <div class="span-1 cb-multi-room-legend">Room 4:</div>
                                                             <div class="cb-room span-1">
 
-                                                                <label class="cb-rooms-label accessible" for="ho-adults4">Adults<br/>(18+)</label>
+                                                                <label class="cb-rooms-label accessible" for="ho-adults4">Adults<br />(18+)</label>
                                                                 <select id="ho-adults4" name="adult4">
                                                                     <option selected="selected">1</option>
                                                                     <option>2</option>
@@ -2745,7 +2745,7 @@
                                                                 </select>
                                                             </div>
                                                             <div class="cb-room span-1">
-                                                                <label class="cb-rooms-label accessible" for="ho-minors4">Minors<br/>(0-17)</label>
+                                                                <label class="cb-rooms-label accessible" for="ho-minors4">Minors<br />(0-17)</label>
 
                                                                 <select class="cb-children" id="ho-minors4" name="child4">
                                                                     <option selected="selected">0</option>
@@ -2899,7 +2899,7 @@
                                                             alt="Search for Hotel + Cars"
                                                             class="cb-span-5 cb-submit"
                                                             type="submit"
-                                                            value="Search Now"/>
+                                                            value="Search Now" />
                                                         <div class="cb-span-5 cb-advanced">
                                                             <a
                                                                 href="http://travel.travelocity.com/hotel/HotelAdvancedRequest.do?Service=TRAVELOCITY"
@@ -2918,14 +2918,14 @@
                                     class="form-co"
                                     id="cb-form-co"
                                     method="post">
-                                    <input name="language" type="hidden" value="EN"/>
-                                    <input name="Service" type="hidden" value="TRAVELOCITY"/>
-                                    <input name="SEQ" type="hidden" value="34235604"/>
+                                    <input name="language" type="hidden" value="EN" />
+                                    <input name="Service" type="hidden" value="TRAVELOCITY" />
+                                    <input name="SEQ" type="hidden" value="34235604" />
 
-                                    <input name="searchMode" type="hidden" value="city"/>
-                                    <input name="expr_path" type="hidden" value="Y"/>
-                                    <input name="dateFormat" type="hidden" value="MM/dd/yyyy"/>
-                                    <input name="rdoChkDropoff" type="hidden" value="RT"/>
+                                    <input name="searchMode" type="hidden" value="city" />
+                                    <input name="expr_path" type="hidden" value="Y" />
+                                    <input name="dateFormat" type="hidden" value="MM/dd/yyyy" />
+                                    <input name="rdoChkDropoff" type="hidden" value="RT" />
                                     <div>
                                         <ul class="cb-rows span-8 last">
                                             <li class="cb-row">
@@ -2933,7 +2933,7 @@
                                                     <div class="span-3">
                                                         <h3 class="cb-row-title">
                                                             <em>2.</em>
-                                                            Enter your pick-up<br/>and drop-off city<br/>or airport code</h3>
+                                                            Enter your pick-up<br />and drop-off city<br />or airport code</h3>
                                                     </div>
 
                                                     <div class="span-5 last cb-form-column">
@@ -2958,7 +2958,7 @@
                                                                 name="pickupCity"
                                                                 title="Pick-up city or Airport code"
                                                                 type="text"
-                                                                value="LAS"/>
+                                                                value="LAS" />
                                                         </fieldset>
                                                         <!-- /at an airport -->
                                                         <!-- near an address -->
@@ -2966,14 +2966,14 @@
                                                         <fieldset class="pu_addr" id="co-near-address">
                                                             <legend class="accessible">Near an Address</legend>
                                                             <label for="co-address">Street Address (optional):</label>
-                                                            <input class="cb-span-5" id="co-address" name="pickupGeoStreet" type="text"/>
+                                                            <input class="cb-span-5" id="co-address" name="pickupGeoStreet" type="text" />
                                                             <label for="co-city">City:</label>
                                                             <input
                                                                 class="cb-span-5"
                                                                 id="co-city"
                                                                 name="pickupGeoCity"
                                                                 type="text"
-                                                                value=""/>
+                                                                value="" />
                                                             <div class="cb-state-row cb-ie-row">
 
                                                                 <span class="span-2">
@@ -3053,7 +3053,7 @@
 
                                                                 <span class="span-2 last">
                                                                     <label for="co-zip">Zip/Postal Code:</label>
-                                                                    <input class="span-2 last" id="co-zip" name="pickupGeoZip" type="text"/>
+                                                                    <input class="span-2 last" id="co-zip" name="pickupGeoZip" type="text" />
                                                                     <div class="clear"></div>
                                                                 </span>
                                                             </div>
@@ -3088,7 +3088,7 @@
                                                         <fieldset class="pu_poi" id="co-near-poi">
                                                             <legend class="accessible">Near a Place of Interest</legend>
                                                             <label for="co-interest">Place of Interest (US/CA only):</label>
-                                                            <input class="cb-span-5" id="co-interest" name="pickupPoi" type="text"/>
+                                                            <input class="cb-span-5" id="co-interest" name="pickupPoi" type="text" />
 
                                                             <label class="span-2 cb-inline" for="co-poistate">State/Province:</label>
                                                             <select class="cb-state" id="co-poistate" name="pickupPoiState">
@@ -3170,7 +3170,7 @@
                                                                 id="co-poi-includeairport"
                                                                 name="chkIncludeGeoAirportLocations"
                                                                 type="checkbox"
-                                                                value="on"/>
+                                                                value="on" />
                                                             <label for="co-poi-includeairport">Include Airport Locations</label>
                                                         </div>
 
@@ -3183,7 +3183,7 @@
                                                 <div class="span-3">
                                                     <h3 class="cb-row-title">
                                                         <em>3.</em>
-                                                        Choose your pick-up<br/>and drop-off dates</h3>
+                                                        Choose your pick-up<br />and drop-off dates</h3>
                                                 </div>
                                                 <div class="span-5 last cb-form-column">
                                                     <div class="cal-group">
@@ -3195,7 +3195,7 @@
                                                                 id="co-fromdate"
                                                                 name="pickupDate"
                                                                 type="text"
-                                                                value="02/17/2012"/>
+                                                                value="02/17/2012" />
                                                         </span>
                                                         <span class="span-2 cb-nolabel last">
                                                             <label class="cb-span-2 accessible" for="co-fromtime">Car Pick-Up Time</label>
@@ -3325,7 +3325,7 @@
                                                                 id="co-todate"
                                                                 name="dropoffDate"
                                                                 type="text"
-                                                                value="02/21/2012"/>
+                                                                value="02/21/2012" />
                                                         </span>
                                                         <span class="span-2 cb-nolabel last">
                                                             <label class="accessible cb-span-2" for="co-totime">Car Drop-Off Time</label>
@@ -3482,7 +3482,7 @@
                                                             alt="Search for Cars"
                                                             class="cb-span-5 cb-submit"
                                                             type="submit"
-                                                            value="Search Now"/>
+                                                            value="Search Now" />
                                                         <div class="cb-span-5 cb-advanced">
                                                             <a
                                                                 href="http://travel.travelocity.com/car/CarRequest.do?Service=TRAVELOCITY&amp;tr_module=CARS"
@@ -3501,12 +3501,12 @@
                                     class="form-hcx"
                                     id="cb-form-hcx"
                                     method="get">
-                                    <input name="Service" type="hidden" value="TRAVELOCITY"/>
-                                    <input name="SEQ" type="hidden" value="34235604"/>
-                                    <input name="searchMode" type="hidden" value="city"/>
+                                    <input name="Service" type="hidden" value="TRAVELOCITY" />
+                                    <input name="SEQ" type="hidden" value="34235604" />
+                                    <input name="searchMode" type="hidden" value="city" />
 
-                                    <input name="expr_path" type="hidden" value="Y"/>
-                                    <input name="dateFormat" type="hidden" value="mm/dd/yyyy"/>
+                                    <input name="expr_path" type="hidden" value="Y" />
+                                    <input name="dateFormat" type="hidden" value="mm/dd/yyyy" />
                                     <div>
                                         <ul class="cb-rows span-8 last">
                                             <li class="cb-row">
@@ -3517,7 +3517,7 @@
                                                             Enter your destination city and airport code</h3>
                                                     </div>
                                                     <div class="span-5 last cb-nav-row cb-form-column">
-                                                        <input name="rdoLocPickup" type="hidden" value="pu_air"/>
+                                                        <input name="rdoLocPickup" type="hidden" value="pu_air" />
 
                                                         <fieldset id="hcx-at-airport">
                                                             <!-- at an airport -->
@@ -3721,7 +3721,7 @@
                                                                     name="city"
                                                                     title="Pick-up city or Airport code"
                                                                     type="text"
-                                                                    value="LAS"/>
+                                                                    value="LAS" />
                                                             </div>
                                                             <div class="cb-state-row span-2 last">
                                                                 <label class="span-2 last" for="hcx-state">State/Province:</label>
@@ -3820,7 +3820,7 @@
                                                                 id="hcx-fromdate"
                                                                 name="leavingDate"
                                                                 type="text"
-                                                                value="02/17/2012"/>
+                                                                value="02/17/2012" />
                                                         </span>
                                                         <span class="span-2 last">
                                                             <label for="hcx-fromtime">Car Pick-Up</label>
@@ -3867,7 +3867,7 @@
                                                                 id="hcx-todate"
                                                                 name="returningDate"
                                                                 type="text"
-                                                                value="02/21/2012"/>
+                                                                value="02/21/2012" />
                                                         </span>
 
                                                         <span class="span-2 last">
@@ -3933,7 +3933,7 @@
                                                             <div class="span-1 cb-room-legend">Room 1:</div>
                                                             <div class="cb-room span-1">
 
-                                                                <label class="cb-rooms-label" for="hcx-adults1">Adults<br/>(18+)</label>
+                                                                <label class="cb-rooms-label" for="hcx-adults1">Adults<br />(18+)</label>
                                                                 <select id="hcx-adults1" name="adult1">
                                                                     <option selected="selected">1</option>
                                                                     <option>2</option>
@@ -3944,7 +3944,7 @@
                                                                 </select>
                                                             </div>
                                                             <div class="cb-room span-1">
-                                                                <label class="cb-rooms-label" for="hcx-minors1">Minors<br/>(0-17)</label>
+                                                                <label class="cb-rooms-label" for="hcx-minors1">Minors<br />(0-17)</label>
 
                                                                 <select class="cb-children" id="hcx-minors1" name="child1">
                                                                     <option selected="selected">0</option>
@@ -4081,11 +4081,11 @@
                                                         </fieldset>
                                                     </div>
                                                     <div class="cb-rooms cb-room-additional">
-                                                        <hr class="cb-divider cb-span-5"/>
+                                                        <hr class="cb-divider cb-span-5" />
                                                         <fieldset class="prefix-1">
                                                             <div class="span-1 cb-multi-room-legend">Room 2:</div>
                                                             <div class="cb-room span-1">
-                                                                <label class="cb-rooms-label accessible" for="hcx-adults2">Adults<br/>(18+)</label>
+                                                                <label class="cb-rooms-label accessible" for="hcx-adults2">Adults<br />(18+)</label>
 
                                                                 <select id="hcx-adults2" name="adult2">
                                                                     <option selected="selected">1</option>
@@ -4097,7 +4097,7 @@
                                                                 </select>
                                                             </div>
                                                             <div class="cb-room span-1">
-                                                                <label class="cb-rooms-label accessible" for="hcx-minors2">Minors<br/>(0-17)</label>
+                                                                <label class="cb-rooms-label accessible" for="hcx-minors2">Minors<br />(0-17)</label>
                                                                 <select class="cb-children" id="hcx-minors2" name="child2">
                                                                     <option selected="selected">0</option>
                                                                     <option>1</option>
@@ -4234,7 +4234,7 @@
                                                         </fieldset>
                                                     </div>
                                                     <div class="cb-rooms cb-room-additional">
-                                                        <hr class="cb-divider cb-span-5"/>
+                                                        <hr class="cb-divider cb-span-5" />
                                                         <fieldset class="prefix-1">
                                                             <div class="span-1 cb-multi-room-legend">Room 3:</div>
                                                             <div class="cb-room span-1">
@@ -4250,7 +4250,7 @@
                                                                 </select>
                                                             </div>
                                                             <div class="cb-room span-1">
-                                                                <label class="cb-rooms-label accessible" for="hcx-minors3">Minors<br/>(0-17)</label>
+                                                                <label class="cb-rooms-label accessible" for="hcx-minors3">Minors<br />(0-17)</label>
 
                                                                 <select class="cb-children" id="hcx-minors3" name="child3">
                                                                     <option selected="selected">0</option>
@@ -4387,12 +4387,12 @@
                                                         </fieldset>
                                                     </div>
                                                     <div class="cb-rooms cb-room-additional">
-                                                        <hr class="cb-divider cb-span-5"/>
+                                                        <hr class="cb-divider cb-span-5" />
                                                         <fieldset class="prefix-1">
                                                             <div class="span-1 cb-multi-room-legend">Room 4:</div>
                                                             <div class="cb-room span-1">
 
-                                                                <label class="cb-rooms-label accessible" for="hcx-adults4">Adults<br/>(18+)</label>
+                                                                <label class="cb-rooms-label accessible" for="hcx-adults4">Adults<br />(18+)</label>
                                                                 <select id="hcx-adults4" name="adult4">
                                                                     <option selected="selected">1</option>
                                                                     <option>2</option>
@@ -4403,7 +4403,7 @@
                                                                 </select>
                                                             </div>
                                                             <div class="cb-room span-1">
-                                                                <label class="cb-rooms-label accessible" for="hcx-minors4">Minors<br/>(0-17)</label>
+                                                                <label class="cb-rooms-label accessible" for="hcx-minors4">Minors<br />(0-17)</label>
 
                                                                 <select class="cb-children" id="hcx-minors4" name="child4">
                                                                     <option selected="selected">0</option>
@@ -4551,7 +4551,7 @@
                                                             class="cb-span-5 cb-submit"
                                                             name="Search"
                                                             type="submit"
-                                                            value="Search"/>
+                                                            value="Search" />
                                                         <div class="cb-span-5 cb-advanced">
                                                             <a
                                                                 href="http://vacations.travelocity.com/hotelplus/HotelCarAdvancedSearch.html?serviceTag=TRAVELOCITY"
@@ -4573,17 +4573,17 @@
                                     <input
                                         name="org.apache.struts.taglib.html.TOKEN"
                                         type="hidden"
-                                        value="1898bf4f1d3cd5a3bf82ae79deac1ad7"/>
-                                    <input name="pageName" type="hidden" value="CRZ_Z1100"/>
-                                    <input name="sourceOfQuery" type="hidden" value="CRU"/>
-                                    <input name="vacation_types" type="hidden" value="C"/>
-                                    <input name="dateType" type="hidden" value="SINGLE_DATE"/>
-                                    <input name="SEQ" type="hidden" value="34235604"/>
+                                        value="1898bf4f1d3cd5a3bf82ae79deac1ad7" />
+                                    <input name="pageName" type="hidden" value="CRZ_Z1100" />
+                                    <input name="sourceOfQuery" type="hidden" value="CRU" />
+                                    <input name="vacation_types" type="hidden" value="C" />
+                                    <input name="dateType" type="hidden" value="SINGLE_DATE" />
+                                    <input name="SEQ" type="hidden" value="34235604" />
 
-                                    <input name="HPTRACK" type="hidden" value="mpc_cru_srch"/>
-                                    <input name="Service" type="hidden" value="TRAVELOCITY"/>
-                                    <input name="promolink" type="hidden" value="false"/>
-                                    <input name="searchNearbyPorts" type="hidden" value="true"/>
+                                    <input name="HPTRACK" type="hidden" value="mpc_cru_srch" />
+                                    <input name="Service" type="hidden" value="TRAVELOCITY" />
+                                    <input name="promolink" type="hidden" value="false" />
+                                    <input name="searchNearbyPorts" type="hidden" value="true" />
                                     <div>
                                         <ul class="cb-rows span-8 last">
                                             <li class="cb-row">
@@ -4753,7 +4753,7 @@
                                                             name="srRt"
                                                             title="I am 55 years old or older"
                                                             type="checkbox"
-                                                            value="true"/>
+                                                            value="true" />
                                                             <span class="cb-fake-label">
                                                                 <a
                                                                     href="http://travel.travelocity.com/ecruise/SpecialRates.do?Service=TRAVELOCITY#senior"
@@ -4765,7 +4765,7 @@
                                                             name="milRt"
                                                             title="I have served in Military"
                                                             type="checkbox"
-                                                            value="true"/>
+                                                            value="true" />
                                                             <span class="cb-fake-label">Have You
                                                                 <a
                                                                     href="http://travel.travelocity.com/ecruise/SpecialRates.do?Service=TRAVELOCITY#military"
@@ -4778,7 +4778,7 @@
                                                             name="pPc"
                                                             title="I have taken a cruise before"
                                                             type="checkbox"
-                                                            value="true"/>
+                                                            value="true" />
                                                             <span class="cb-fake-label">Have You
                                                                 <a
                                                                     href="http://travel.travelocity.com/ecruise/SpecialRates.do?Service=TRAVELOCITY#pastpassenger"
@@ -4803,7 +4803,7 @@
                                                             alt="Search for Cruises"
                                                             class="cb-span-5 cb-submit"
                                                             type="submit"
-                                                            value="Search Now"/>
+                                                            value="Search Now" />
                                                         <div class="cb-span-5 cb-advanced">
                                                             <a
                                                                 href="http://travel.travelocity.com/ecruise/CruiseSearchForm.do?Service=TRAVELOCITY&amp;pageName=CRZ_Z1100"
@@ -4826,12 +4826,12 @@
 
                             <h2>Travel Deals from:</h2>
                             <form action="#" id="deals-origin" name="origins">
-                                <input id="tdAirportCode" name="airportCode" type="hidden" value=""/>
+                                <input id="tdAirportCode" name="airportCode" type="hidden" value="" />
                                 <select id="travelDeals-origin" title="Departure City">
 
                                     <option>Select Departure City</option>
                                 </select>
-                                <input alt="GO" class="submit-secondary left" type="submit" value="GO"/>
+                                <input alt="GO" class="submit-secondary left" type="submit" value="GO" />
                             </form>
 
                             <div
@@ -4918,14 +4918,14 @@
                                                 id="hp-subscribe-email"
                                                 name="Email"
                                                 title="Sign up for deal alert emails"
-                                                type="text"/>
+                                                type="text" />
                                             <input
                                                 alt="GO"
                                                 class="submit-secondary"
                                                 id="hp-submit"
                                                 name="submit"
                                                 type="submit"
-                                                value="GO"/>
+                                                value="GO" />
 
                                         </form>
                                         <span class="clear"></span>
@@ -4947,19 +4947,15 @@
                         <div class="round box" id="mkt-message-mod">
                             <h3>
                                 <a
-                                    href="http://leisure.travelocity.com/Promotions/0,,TRAVELOCITY%7C6866%7Ccruises_main,00.html?locLink=GLB_HOMEPAGE|PROMO1
-
-">Offer Ends Soon!</a>
+                                    href="http://leisure.travelocity.com/Promotions/0,,TRAVELOCITY%7C6866%7Ccruises_main,00.html?locLink=GLB_HOMEPAGE|PROMO1">Offer Ends Soon!</a>
                             </h3>
                             <p id="mkt-message">
-                                <span>2012 Cruise Super Sale!</span><br/>
+                                <span>2012 Cruise Super Sale!</span><br />
                                 Hurry and receive up to $600 in savings on a trip of a lfetime. Book Now and
                                 take advantage!
-                                <br/>
+                                <br />
                                 <a
-                                    href="http://leisure.travelocity.com/Promotions/0,,TRAVELOCITY%7C6866%7Ccruises_main,00.html?locLink=GLB_HOMEPAGE|PROMO1
-
-">Read More</a>
+                                    href="http://leisure.travelocity.com/Promotions/0,,TRAVELOCITY%7C6866%7Ccruises_main,00.html?locLink=GLB_HOMEPAGE|PROMO1">Read More</a>
                             </p>
 
                             <span class="clear"></span>
@@ -4975,9 +4971,9 @@
                                 height="64"
                                 src="http://i.travelpn.com.edgesuite.net/images/graphics_prod/other/sideModule_priceGuarantee_123x64.jpg"
                                 style="float:left;"
-                                width="123"></a>
+                                width="123" /></a>
 
-                            We'll match the price and give you $50 toward future travel.<br/>
+                            We'll match the price and give you $50 toward future travel.<br />
                             <a
                                 href="http://leisure.travelocity.com/Promotions/0,,TRAVELOCITY|4818|mkt_main,00.html"
                                 style="float:right;">Learn more</a>
@@ -5001,8 +4997,8 @@
                                             href="http://leisure.travelocity.com/Promotions/0,,TRAVELOCITY|2077|pkg_main,00.html?locLink=GLB_HOMEPAGE|DESSTORE"
                                             rel="nofollow"><img
                                             alt="Destination Photo"
-                                            src="http://i.travelpn.com.edgesuite.net/images/graphics_prod/other/110503_hawaii_126x94.jpg"/></a>
-                                        Hawaii<br/>
+                                            src="http://i.travelpn.com.edgesuite.net/images/graphics_prod/other/110503_hawaii_126x94.jpg" /></a>
+                                        Hawaii<br />
                                         <a
                                             href="http://leisure.travelocity.com/Promotions/0,,TRAVELOCITY|2077|pkg_main,00.html?locLink=GLB_HOMEPAGE|DESSTORE"
                                             rel="nofollow">Save up to 50%</a>
@@ -5013,8 +5009,8 @@
                                             href="http://leisure.travelocity.com/Promotions/0,,TRAVELOCITY%7C6591%7Cmkt_WDW,00.html?locLink=GLB_HOMEPAGE|DESSTORE"
                                             rel="nofollow"><img
                                             alt="Destination Photo"
-                                            src="http://i.travelpn.com.edgesuite.net/images/graphics_prod/other/110601_Disneyworld_126x94.jpg"/></a>
-                                        Disney<br/>
+                                            src="http://i.travelpn.com.edgesuite.net/images/graphics_prod/other/110601_Disneyworld_126x94.jpg" /></a>
+                                        Disney<br />
                                         <a
                                             href="http://leisure.travelocity.com/Promotions/0,,TRAVELOCITY%7C6591%7Cmkt_WDW,00.html?locLink=GLB_HOMEPAGE|DESSTORE"
                                             rel="nofollow">Save up to 30%</a>
@@ -5025,8 +5021,8 @@
                                             href="http://leisure.travelocity.com/Promotions/0,,TRAVELOCITY|2045|pkg_main,00.html?locLink=GLB_HOMEPAGE|DESSTORE"
                                             rel="nofollow"><img
                                             alt="Destination Photo"
-                                            src="http://i.travelpn.com.edgesuite.net/images/graphics_prod/other/110503_caribbean_126x94.jpg"/></a>
-                                        Caribbean<br/>
+                                            src="http://i.travelpn.com.edgesuite.net/images/graphics_prod/other/110503_caribbean_126x94.jpg" /></a>
+                                        Caribbean<br />
                                         <a
                                             href="http://leisure.travelocity.com/Promotions/0,,TRAVELOCITY|2045|pkg_main,00.html?locLink=GLB_HOMEPAGE|DESSTORE"
                                             rel="nofollow">Save up to 65%</a>
@@ -5037,8 +5033,8 @@
                                             href="http://leisure.travelocity.com/Promotions/0,,TRAVELOCITY|2141|pkg_main,00.html?locLink=GLB_HOMEPAGE|DESSTORE"
                                             rel="nofollow"><img
                                             alt="Destination Photo"
-                                            src="http://i.travelpn.com.edgesuite.net/images/graphics_prod/other/110503_lasvegas_126x94.jpg"/></a>
-                                        Las Vegas<br/>
+                                            src="http://i.travelpn.com.edgesuite.net/images/graphics_prod/other/110503_lasvegas_126x94.jpg" /></a>
+                                        Las Vegas<br />
                                         <a
                                             href="http://leisure.travelocity.com/Promotions/0,,TRAVELOCITY|2141|pkg_main,00.html?locLink=GLB_HOMEPAGE|DESSTORE"
                                             rel="nofollow">Complimentary Show Tickets!</a>
@@ -5049,8 +5045,8 @@
                                             href="http://leisure.travelocity.com/Promotions/0,,TRAVELOCITY|3009|pkg_main,00.html?locLink=GLB_HOMEPAGE|DESSTORE"
                                             rel="nofollow"><img
                                             alt="Destination Photo"
-                                            src="http://i.travelpn.com.edgesuite.net/images/graphics_prod/other/120119_skier_126x94.jpg"/></a>
-                                        Ski<br/>
+                                            src="http://i.travelpn.com.edgesuite.net/images/graphics_prod/other/120119_skier_126x94.jpg" /></a>
+                                        Ski<br />
                                         <a
                                             href="http://leisure.travelocity.com/Promotions/0,,TRAVELOCITY|3009|pkg_main,00.html?locLink=GLB_HOMEPAGE|DESSTORE"
                                             rel="nofollow">Save 33%</a>
@@ -5094,13 +5090,13 @@
                                     </li>
                                     <li>
                                         <a
-                                            href="http://www.travelocity.com/deals-d4980-nevada-las-vegas-vacations?locLink=GLB_HOMEPAGE|SEOSECT">Las Vegas Vacation<br/>
+                                            href="http://www.travelocity.com/deals-d4980-nevada-las-vegas-vacations?locLink=GLB_HOMEPAGE|SEOSECT">Las Vegas Vacation<br />
                                             Packages</a>
                                     </li>
 
                                     <li>
                                         <a
-                                            href="http://www.travelocity.com/deals-d8613-new-york-new-york-city-vacations?locLink=GLB_HOMEPAGE|SEOSECT">New York Vacation<br/>
+                                            href="http://www.travelocity.com/deals-d8613-new-york-new-york-city-vacations?locLink=GLB_HOMEPAGE|SEOSECT">New York Vacation<br />
                                             Packages</a>
                                     </li>
                                 </ul>
@@ -5115,7 +5111,7 @@
                                     </li>
                                     <li>
                                         <a
-                                            href="http://www.travelocity.com/deals-d7972-hawaii-honolulu-vacations?locLink=GLB_HOMEPAGE|SEOSECT">Honolulu Vacation<br/>
+                                            href="http://www.travelocity.com/deals-d7972-hawaii-honolulu-vacations?locLink=GLB_HOMEPAGE|SEOSECT">Honolulu Vacation<br />
                                             Packages</a>
                                     </li>
 
@@ -5288,14 +5284,14 @@
                             <img
                                 alt="Get up to 10% back on your Travelocity Purchases. The Travelocity Rewards American Express&reg; Card"
                                 src="http://i.travelpn.com.edgesuite.net/images/graphics_prod/other/tvly_amex_card_3_191x62.gif"
-                                style="margin-bottom:5px;margin-top:-9px;"/></a>
+                                style="margin-bottom:5px;margin-top:-9px;" /></a>
                         <a
                             href="http://leisure.travelocity.com/Promotions/0,,TRAVELOCITY|5531|mkt_main,00.html"
                             target="_new">
 
                             <img
                                 alt="American Express&reg; - Official Card of Travelocity"
-                                src="http://i.travelpn.com.edgesuite.net/images/graphics_prod/other/110330_amex_graphic_191x31.gif"/></a>
+                                src="http://i.travelpn.com.edgesuite.net/images/graphics_prod/other/110330_amex_graphic_191x31.gif" /></a>
                     </div>
 
                 </div>

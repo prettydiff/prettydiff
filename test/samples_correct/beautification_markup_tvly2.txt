@@ -3,24 +3,24 @@
     <head>
 
         <!--<COMMENT TITLE="MONITOR"></COMMENT>-->
-        <meta content="GENERAL" name="rating"/>
-        <meta content="noodp" name="robots"/>
+        <meta content="GENERAL" name="rating" />
+        <meta content="noodp" name="robots" />
         <title>Travelocity Travel: Vacations, Cheap Flights, Airline Tickets & Airfares</title>
         <meta
             content="Plan your trip with Travelocity. Buy airline tickets, read reviews & reserve a hotel. Find deals on vacations, rental cars & cruises. Great prices guaranteed!"
-            name="description">
+            name="description" />
         <meta
             content="Travelocity, Travel, Cheap Flights, Hotels, Vacations, Cruises, Cheap Airfare, Airline Tickets, Travel Agency, Car Rental, Hotel Reservations, Vacation Packages, Cruise Deals"
-            name="keywords">
-        <meta content="ADF9631428903DBA778A77046B80A4A8" name="msvalidate.01"/>
-        <meta content="3F675B8EC041A0CA8496F5CA19F92C16" name="msvalidate.01"/>
+            name="keywords" />
+        <meta content="ADF9631428903DBA778A77046B80A4A8" name="msvalidate.01" />
+        <meta content="3F675B8EC041A0CA8496F5CA19F92C16" name="msvalidate.01" />
         <!-- Bing Webmaster Tools -->
-        <meta content="f23066f9248025f1b2e079c7089ce26f" name="p:domain_verify"/>
+        <meta content="f23066f9248025f1b2e079c7089ce26f" name="p:domain_verify" />
         <!-- Pinterest -->
-        <meta content="aeVxP6zTHeQzT620ipj5+ikXd/VXcdlKoYUJ/C6vVdY=" name="verify-v1"/>
-        <META content="016fe886aca30800" name="y_key"/>
-        <meta content="64067037679" property="fb:page_id"/>
-        <link href="www.travelocity.com" rel="canonical"/>
+        <meta content="aeVxP6zTHeQzT620ipj5+ikXd/VXcdlKoYUJ/C6vVdY=" name="verify-v1" />
+        <META content="016fe886aca30800" name="y_key" />
+        <meta content="64067037679" property="fb:page_id" />
+        <link href="www.travelocity.com" rel="canonical" />
         <script
             src="/minify/popunder-min-4092290603.js?v=release-2014-02-r1-2874-962065-1"></script>
         <!-- 0 ms -->
@@ -107,7 +107,7 @@
 
         <link
             href="/minify/fusion.v2.3.core-min-1471479639.css?v=release-2014-02-r1-2874-962065-1"
-            rel="stylesheet"/>
+            rel="stylesheet" />
         <!-- 16 ms -->
         <!--[if IE 6]> <link rel="stylesheet" href="/minify/fusion.v2.3.coreIE6-min-3866661693.css?v=release-2014-02-r1-2874-962065-1" /><!-- 0 ms -->
         <![endif]-->
@@ -375,7 +375,7 @@
         <link
             href="/static/publish/region_us/css/home.css?v=2"
             rel="stylesheet"
-            type="text/css"/>
+            type="text/css" />
 
         <script
             src="/minify/tealeaf-bundle-min-2357928261.js?v=release-2014-02-r1-2874-962065-1"></script>
@@ -383,18 +383,18 @@
 
         <link
             href="/minify/wizard-popup-min-2468453993.css?v=release-2014-02-r1-2874-962065-1"
-            rel="stylesheet"/>
+            rel="stylesheet" />
         <!-- 0 ms -->
         <!--<COMMENT TITLE="MONITOR"></COMMENT>-->
 
         <link
             href="/static/publish/region_us/css/rewards_unrealdeals_storefront.css"
             rel="stylesheet"
-            type="text/css"/>
+            type="text/css" />
         <link
             href="/static/publish/travelocity/css/tvly_below_wizard.css"
             rel="stylesheet"
-            type="text/css"/>
+            type="text/css" />
 
     </head>
 
@@ -402,7 +402,7 @@
 
         <link
             href="/minify/new-header-min-3026463305.css?v=release-2014-02-r1-2874-962065-1"
-            rel="stylesheet"/>
+            rel="stylesheet" />
         <!-- 0 ms -->
 
         <style>
@@ -463,7 +463,7 @@
                     class="hidden toggle-checkbox"
                     id="menuToggle"
                     type="checkbox"
-                    value="show menu"/>
+                    value="show menu" />
                 <!-- / End Responsive Menu Toggle -->
 
                 <div class="site-navigation cf" id="globalSiteNavigation" role="navigation">
@@ -790,7 +790,7 @@
 
         <div class="xp-grd-ctn xp-grd-widget xp-b-clearfix" id="xp_hp_contentContainer">
             <div class="xp-grd-col-10 module" id="xp_hp_aCol">
-                <input id="PostToSearch" type="hidden" value="/Search"/>
+                <input id="PostToSearch" type="hidden" value="/Search" />
 
                 <script
                     src="/minify/exp.search.common.v2-min-109799387.js?v=release-2014-02-r1-2874-962065-1"></script>
@@ -805,7 +805,7 @@
                     expNamespace("cx.exp.widgetlibrary.search.common.container");
                 </script>
                 <div class="xp-b-clearfix xp-pl-widget" id="container">
-                    <input id="uw_wizardstate" name="uw_wizardstate" type="hidden" value="">
+                    <input id="uw_wizardstate" name="uw_wizardstate" type="hidden" value="" />
                     <div class="xp-w-rnd-out-top">
                         <span>
                             <!-- -->
@@ -839,7 +839,7 @@
                                                     id="flight-only"
                                                     name="srch"
                                                     type="radio"
-                                                    wizardType="flightOnly"/>
+                                                    wizardType="flightOnly" />
                                                 <label
                                                     class="xp-b-left xp-w-label-lob"
                                                     for="flight-only"
@@ -856,7 +856,7 @@
                                                     id="hot-only"
                                                     name="srch"
                                                     type="radio"
-                                                    wizardType="hotelOnly"/>
+                                                    wizardType="hotelOnly" />
                                                 <label class="xp-b-left xp-w-label-lob" for="hot-only" id="hot-only-label">
                                                     Hotel
                                                 </label>
@@ -869,7 +869,7 @@
                                                     id="car-only"
                                                     name="srch"
                                                     type="radio"
-                                                    wizardType="carOnly"/>
+                                                    wizardType="carOnly" />
                                                 <label class="xp-b-left xp-w-label-lob" for="car-only" id="car-only-label">
                                                     Car
                                                 </label>
@@ -882,7 +882,7 @@
                                                     id="activities-only"
                                                     name="srch"
                                                     type="radio"
-                                                    wizardType="activitiesOnly"/>
+                                                    wizardType="activitiesOnly" />
                                                 <label
                                                     class="xp-b-left xp-w-label-lob"
                                                     for="activities-only"
@@ -898,7 +898,7 @@
                                                     id="cruise-only"
                                                     name="srch"
                                                     type="radio"
-                                                    wizardType="cruiseOnly"/>
+                                                    wizardType="cruiseOnly" />
                                                 <label
                                                     class="xp-b-left xp-w-label-lob"
                                                     for="cruise-only"
@@ -930,7 +930,7 @@
                                                         id="flight-hot"
                                                         name="srch"
                                                         type="radio"
-                                                        wizardType="flightAndHotel"/>
+                                                        wizardType="flightAndHotel" />
                                                     <label class="xp-b-left xp-w-label-lob" for="flight-hot" id="flight-hot-label">
                                                         Flight + Hotel
                                                     </label>
@@ -944,7 +944,7 @@
                                                         id="flight-car"
                                                         name="srch"
                                                         type="radio"
-                                                        wizardType="flightAndCar"/>
+                                                        wizardType="flightAndCar" />
                                                     <label class="xp-b-left xp-w-label-lob" for="flight-car" id="flight-car-label">
                                                         Flight + Car
                                                     </label>
@@ -958,7 +958,7 @@
                                                         id="flight-hot-car"
                                                         name="srch"
                                                         type="radio"
-                                                        wizardType="flightHotelAndCar"/>
+                                                        wizardType="flightHotelAndCar" />
                                                     <label
                                                         class="xp-b-left xp-w-label-lob"
                                                         for="flight-hot-car"
@@ -975,7 +975,7 @@
                                                         id="hot-car"
                                                         name="srch"
                                                         type="radio"
-                                                        wizardType="hotelAndCar"/>
+                                                        wizardType="hotelAndCar" />
                                                     <label class="xp-b-left xp-w-label-lob" for="hot-car" id="hot-car-label">
                                                         Hotel + Car
                                                     </label>
@@ -1014,18 +1014,18 @@
                                     <div id="uw_flight_wiz">
 
                                         <FORM NAME="fltWizFrm" action="/Home.htm" id="fltWizFrm" method="post">
-                                            <input id="action" name="action" type="hidden" value="">
+                                            <input id="action" name="action" type="hidden" value="" />
                                             <input
                                                 id="uw_flight_add_multi_dest_hidden"
                                                 name="uw_flight_add_multi_dest_hidden"
                                                 type="hidden"
-                                                value="false">
+                                                value="false" />
                                             <input
                                                 id="uw_flight_default_date"
                                                 name="uw_flight_default_date"
                                                 type="hidden"
-                                                value="02/19/2014">
-                                            <input name="flightSearchWizard_inpBundType" type="hidden" value=""/>
+                                                value="02/19/2014" />
+                                            <input name="flightSearchWizard_inpBundType" type="hidden" value="" />
 
                                             <!-- destination and date panel -->
                                             <div>
@@ -1114,16 +1114,16 @@
                                                                     required="true"
                                                                     requiredmessage="requiredFieldMessage"
                                                                     type="text"
-                                                                    value=""/>
+                                                                    value="" />
                                                                 <input
                                                                     id="uw_flight_origin_input_tla"
                                                                     name="flightSearchWizard_inpOrigin"
-                                                                    type="hidden"/>
+                                                                    type="hidden" />
                                                                 <input
                                                                     id="hidden_tla_uw_flight_origin_input"
                                                                     name="hiddenDepartureLocationCodes"
                                                                     type="hidden"
-                                                                    value=""/>
+                                                                    value="" />
                                                             </div>
                                                             <div class="xp-w-cell-small" id="uw_flight_dep_date">
                                                                 <label for="uw_flight_dep_date_input" id="uw_flight_dep_date_label">Departing:</label>
@@ -1140,7 +1140,7 @@
                                                                     required="true"
                                                                     requiredmessage="requiredFieldMessage"
                                                                     type="text"
-                                                                    value="mm/dd/yy"/>
+                                                                    value="mm/dd/yy" />
                                                             </div>
                                                             <div class="xp-w-cell-mid xp-w-cell-last" id="uw_flight_dep_time">
                                                                 <label for="uw_flight_dep_time_input" id="uw_flight_dep_time_label">Time:</label>
@@ -1247,16 +1247,16 @@
                                                                     required="true"
                                                                     requiredmessage="requiredFieldMessage"
                                                                     type="text"
-                                                                    value=""/>
+                                                                    value="" />
                                                                 <input
                                                                     id="uw_flight_destination_input_tla"
                                                                     name="flightSearchWizard_inpDestination"
-                                                                    type="hidden"/>
+                                                                    type="hidden" />
                                                                 <input
                                                                     id="hidden_tla_uw_flight_destination_input"
                                                                     name="hiddenArrivalLocationCodes"
                                                                     type="hidden"
-                                                                    value=""/>
+                                                                    value="" />
                                                             </div>
                                                             <div id="uw_flight_ret_date_container">
                                                                 <div class="xp-w-cell-small" id="uw_flight_ret_date">
@@ -1276,7 +1276,7 @@
                                                                         required="true"
                                                                         requiredmessage="requiredFieldMessage"
                                                                         type="text"
-                                                                        value="mm/dd/yy"/>
+                                                                        value="mm/dd/yy" />
                                                                 </div>
                                                                 <div class="xp-w-cell-mid xp-w-cell-last" id="uw_flight_ret_time">
                                                                     <label for="uw_flight_return_time" id="uw_flight_return_time_label">Time:</label>
@@ -1383,7 +1383,7 @@
                                                         <div class="xp-w-row xp-b-clearfix">
                                                             <div class="xp-w-cell-small" id="uw_flight_trvlr_adult">
                                                                 <label for="uw_flight_adults_input" id="uw_flight_adults_label">
-                                                                    Adult<br/>(18-64)
+                                                                    Adult<br />(18-64)
                                                                 </label>
                                                                 <select id="uw_flight_adults_input" name="flightSearchWizard_inpNumAdults">
                                                                     <option value="0">0</option>
@@ -1404,7 +1404,7 @@
                                                             </div>
                                                             <div class="xp-w-cell-small" id="uw_flight_trvlr_seniors">
                                                                 <label for="uw_flight_seniors_input" id="uw_flight_seniors_label">
-                                                                    Seniors<br/>(65+)
+                                                                    Seniors<br />(65+)
                                                                 </label>
                                                                 <select id="uw_flight_seniors_input" name="flightSearchWizard_inpNumSeniors">
                                                                     <option selected="selected" value="0">0</option>
@@ -1425,7 +1425,7 @@
                                                             </div>
                                                             <div class="xp-w-cell-small" id="uw_flight_trvlr_children">
                                                                 <label for="uw_flight_children_input" id="uw_flight_children_label">
-                                                                    Children<br/>(0-17)
+                                                                    Children<br />(0-17)
                                                                 </label>
                                                                 <select id="uw_flight_children_input" name="flightSearchWizard_inpNumChildren">
                                                                     <option selected="selected" value="0">0</option>
@@ -2103,7 +2103,7 @@
                                             <!-- AB testing -->
 
                                             <!-- cross-sell search button  -->
-                                            <br/>
+                                            <br />
                                             <p class="xp-b-clearfix" id="uw-flight-fh-submit">
                                                 <span class="xp-b-right">
                                                     <span class="xp-b-leftSubmit2">
@@ -2133,7 +2133,7 @@
 	<div class='xp-w-rnd-inn-cnt'>
 		<div class='xp-w-row xp-b-clearfix'>
 			<div id='uw_flight_leavingfrom_container@{flightno}' class='xp-w-cell xp-w-cell-large'>
-				<label id='uw_flight_origin_label@{flightno}' for='uw_flight_origin_input@{flightno}'><span id='uw_flight_text@{flightno}' class='xp-w-blue'>Flight @{flightno}:</span> Leaving from:</label> 
+				<label id='uw_flight_origin_label@{flightno}' for='uw_flight_origin_input@{flightno}'><span id='uw_flight_text@{flightno}' class='xp-w-blue'>Flight @{flightno}:</span> Leaving from:</label>
 				<input type='text' name='flightSearchWizard_inpMultiLeavingFrom' id='uw_flight_origin_input@{flightno}' maxLength='100' value='@{multiOrig}'/>
 				<input type='hidden' id='hidden_tla_uw_flight_origin_input@{flightno}' name='hiddenDepartureLocationCodes' value=''/>
 			</div>
@@ -2145,90 +2145,90 @@
 						<label id='uw_flight_return_time_label@{flightno}' for='uw_flight_dep_time_input@{flightno}'>Time:</label>
 						<select name='flightSearchWizard_inpMultiDepartureTime' id='uw_flight_dep_time_input@{flightno}'>
 							<option value =12AM [:if '12AM'==timeindex:]selected='selected'[:/if:]>
-								12 AM							
-							</option>										
+								12 AM
+							</option>
 							<option value =1AM [:if '1AM'==timeindex:]selected='selected'[:/if:]>
-								1 AM							
-							</option>										
+								1 AM
+							</option>
 							<option value =2AM [:if '2AM'==timeindex:]selected='selected'[:/if:]>
-								2 AM							
-							</option>										
+								2 AM
+							</option>
 							<option value =3AM [:if '3AM'==timeindex:]selected='selected'[:/if:]>
-								3 AM							
-							</option>										
+								3 AM
+							</option>
 							<option value =4AM [:if '4AM'==timeindex:]selected='selected'[:/if:]>
-								4 AM							
-							</option>										
+								4 AM
+							</option>
 							<option value =5AM [:if '5AM'==timeindex:]selected='selected'[:/if:]>
-								5 AM							
-							</option>										
+								5 AM
+							</option>
 							<option value =6AM [:if '6AM'==timeindex:]selected='selected'[:/if:]>
-								6 AM							
-							</option>										
+								6 AM
+							</option>
 							<option value =7AM [:if '7AM'==timeindex:]selected='selected'[:/if:]>
-								7 AM							
-							</option>										
+								7 AM
+							</option>
 							<option value =8AM [:if '8AM'==timeindex:]selected='selected'[:/if:]>
-								8 AM							
-							</option>										
+								8 AM
+							</option>
 							<option value =9AM [:if '9AM'==timeindex:]selected='selected'[:/if:]>
-								9 AM							
-							</option>										
+								9 AM
+							</option>
 							<option value =10AM [:if '10AM'==timeindex:]selected='selected'[:/if:]>
-								10 AM							
-							</option>										
+								10 AM
+							</option>
 							<option value =11AM [:if '11AM'==timeindex:]selected='selected'[:/if:]>
-								11 AM							
-							</option>										
+								11 AM
+							</option>
 							<option value =12PM [:if '12PM'==timeindex:]selected='selected'[:/if:]>
-								12 PM							
-							</option>										
+								12 PM
+							</option>
 							<option value =1PM [:if '1PM'==timeindex:]selected='selected'[:/if:]>
-								1 PM							
-							</option>										
+								1 PM
+							</option>
 							<option value =2PM [:if '2PM'==timeindex:]selected='selected'[:/if:]>
-								2 PM							
-							</option>										
+								2 PM
+							</option>
 							<option value =3PM [:if '3PM'==timeindex:]selected='selected'[:/if:]>
-								3 PM							
-							</option>										
+								3 PM
+							</option>
 							<option value =4PM [:if '4PM'==timeindex:]selected='selected'[:/if:]>
-								4 PM							
-							</option>										
+								4 PM
+							</option>
 							<option value =5PM [:if '5PM'==timeindex:]selected='selected'[:/if:]>
-								5 PM							
-							</option>										
+								5 PM
+							</option>
 							<option value =6PM [:if '6PM'==timeindex:]selected='selected'[:/if:]>
-								6 PM							
-							</option>										
+								6 PM
+							</option>
 							<option value =7PM [:if '7PM'==timeindex:]selected='selected'[:/if:]>
-								7 PM							
-							</option>										
+								7 PM
+							</option>
 							<option value =8PM [:if '8PM'==timeindex:]selected='selected'[:/if:]>
-								8 PM							
-							</option>										
+								8 PM
+							</option>
 							<option value =9PM [:if '9PM'==timeindex:]selected='selected'[:/if:]>
-								9 PM							
-							</option>										
+								9 PM
+							</option>
 							<option value =10PM [:if '10PM'==timeindex:]selected='selected'[:/if:]>
-								10 PM							
-							</option>										
+								10 PM
+							</option>
 							<option value =11PM [:if '11PM'==timeindex:]selected='selected'[:/if:]>
-								11 PM							
-							</option>										
+								11 PM
+							</option>
 							<option value =362 [:if '362'==timeindex:]selected='selected'[:/if:]>
-								Any							
-							</option>										
+								Any
+							</option>
 							<option value =361 [:if '361'==timeindex:]selected='selected'[:/if:]>
-								Morn.							
-							</option>										
+								Morn.
+							</option>
 							<option value =721 [:if '721'==timeindex:]selected='selected'[:/if:]>
-								Noon							
-							</option>										
+								Noon
+							</option>
 							<option value =1081 [:if '1081'==timeindex:]selected='selected'[:/if:]>
-								Eve.							
-							</option>										
-						</select>				
+								Eve.
+							</option>
+						</select>
 					</div>
 			</div>
 		</div>
@@ -2240,7 +2240,7 @@
 			</div>
 		</div>
 	</div>
-	
+
 "
                                         id="flMultidestTemplate"></div>
 
@@ -2506,7 +2506,7 @@
                                         class="pbestPriceGuaranteeImage"
                                         height="34"
                                         src="//media.travelocitycustomercare.com/media/content/expus/graphics/other/bpg/101019_wizard_bpg_150x35_tvly.jpg"
-                                        width="150"/></a>
+                                        width="150" /></a>
                                 </div>
 
                             </div>
@@ -2625,7 +2625,7 @@
                         var index = selectElement.selectedIndex;
                         var selectedDestValue = selectElement.options[index].value;
                         if (selectedDestValue == "others") {
-                            // TODO drop down here is where the popup window for other POSs should live 
+                            // TODO drop down here is where the popup window for other POSs should live
                             window.open("http://www.expedia.com", "otherPOSs", "height=100,width=400,top=0,left=0,toolbar=no,menubar=no,scrollbars=no,resizable=" +
                                     "no,location=no,status=no");
 
@@ -2661,7 +2661,7 @@
                         var selectedOriginValue = selectElement.options[index].value;
 
                         if (selectedOriginValue == "others") {
-                            // TODO drop down here is where the popup window for other POSs should live 
+                            // TODO drop down here is where the popup window for other POSs should live
                             window.open("http://www.expedia.com", "otherPOSs", "height=100,width=400,top=0,left=0,toolbar=no,menubar=no,scrollbars=no,resizable=" +
                                     "no,location=no,status=no");
 
@@ -2906,7 +2906,7 @@
 
                         if (false) {
                             if (selectedLob == "flightAndHotel") {
-                                // show image and text line			
+                                // show image and text line
                                 document
                                     .getElementById("pkgLPBenefitText")
                                     .style
@@ -3167,7 +3167,7 @@
                 </script>
 
                 <div class="box " id="travelocity_gastr">
-                    <br/>
+                    <br />
                     <a href="http://shop.travelocity.com/vc/tvly/go-and-smell-the-roses/">
                         <div id="variant1_small"></div>
                         <div id="variant1_large"></div>
@@ -3244,7 +3244,7 @@
                     <link
                         href="/static/publish/region_us/css/slider.css"
                         rel="stylesheet"
-                        type="text/css"/>
+                        type="text/css" />
                     <script
                         src="/static/publish/travelocity/js/doubleclickSlider.js"
                         type="text/javascript"></script>
@@ -3260,7 +3260,7 @@
                             // {"id":"slide-3","client":"","desc":""},
                             // {"id":"slide-4","client":"","desc":""},
                             // {"id":"slide-5","client":"","desc":""},
-                            // {"id":"slide-6","client":"","desc":""} 
+                            // {"id":"slide-6","client":"","desc":""}
                         ];
                     </script>
 
@@ -3384,7 +3384,7 @@
                 <div class="HPEverywhere" id="subColDeal" style="margin-bottom:25px;">
                     <div class="column HPDealCol1">
                         <h2 class="ExpediaHeadings">
-                            <span class="ExpediaHeadingsColorA">Take Travelocity</span><br/>
+                            <span class="ExpediaHeadingsColorA">Take Travelocity</span><br />
                             <span class="ExpediaHeadingsColorB">Everywhere</span>
                         </h2>
                         <p class="HPDealSubCol">
@@ -3472,28 +3472,28 @@
                                     onClick="s_exp_trackClick(this,'e','Homepage.Facebook.Icon')"
                                     target="_blank"><img
                                     alt="Facebook icon"
-                                    src="http://media.travelocitycustomercare.com/media/content/expus/graphics/launch/home/tvly/facebook_68x68.png"/></a>
+                                    src="http://media.travelocitycustomercare.com/media/content/expus/graphics/launch/home/tvly/facebook_68x68.png" /></a>
                                 <a
                                     class="social_col2"
                                     href="https://twitter.com/travelocity"
                                     onClick="s_exp_trackClick(this,'e','Homepage.Twitter.Icon')"
                                     target="_blank"><img
                                     alt="Twitter icon"
-                                    src="http://media.travelocitycustomercare.com/media/content/expus/graphics/launch/home/tvly/twitter_68x68.png"/></a>
+                                    src="http://media.travelocitycustomercare.com/media/content/expus/graphics/launch/home/tvly/twitter_68x68.png" /></a>
                                 <a
                                     class="social_col1"
                                     href="https://plus.google.com/+Travelocity"
                                     onClick="s_exp_trackClick(this,'e','Homepage.GooglePlus.Icon')"
                                     target="_blank"><img
                                     alt="Google Plus icon"
-                                    src="http://media.travelocitycustomercare.com/media/content/expus/graphics/launch/home/tvly/google-plus_68x68.png"/></a>
+                                    src="http://media.travelocitycustomercare.com/media/content/expus/graphics/launch/home/tvly/google-plus_68x68.png" /></a>
                                 <a
                                     class="social_col2"
                                     href="http://www.youtube.com/travelocity"
                                     onClick="s_exp_trackClick(this,'e','Homepage.YouTube.Icon')"
                                     target="_blank"><img
                                     alt="YouTube icon"
-                                    src="http://media.travelocitycustomercare.com/media/content/expus/graphics/launch/home/tvly/youtube_68x68.png"/></a>
+                                    src="http://media.travelocitycustomercare.com/media/content/expus/graphics/launch/home/tvly/youtube_68x68.png" /></a>
                             </div>
                         </div>
                     </div>
@@ -3508,11 +3508,11 @@
                 <div id="subColDeal">
                     <div class="column HPDealCol1">
                         <h2 class="ExpediaHeadings">
-                            <span class="ExpediaHeadingsColorA">Today's</span><br/>
+                            <span class="ExpediaHeadingsColorA">Today's</span><br />
                             <span class="ExpediaHeadingsColorB">Top Deals</span>
                         </h2>
                         <p class="HPDealSubCol">
-                            Start your search with a look<br/>at the best rates on our site.
+                            Start your search with a look<br />at the best rates on our site.
                         </p>
                     </div>
                     <div id="dealsleftarrow"></div>
@@ -3523,7 +3523,7 @@
                                 <div class="adcontent">
                                     <a
                                         href="http://www.travelocity.com/p/promo/deals?promo=springbreak&mcicid=249425447"><img
-                                        src="http://media.travelocitycustomercare.com/media/content/expus/graphics/promos/other/travelhook/131220_spring-break-sale_146x146.jpg"/></a>
+                                        src="http://media.travelocitycustomercare.com/media/content/expus/graphics/promos/other/travelhook/131220_spring-break-sale_146x146.jpg" /></a>
                                     <span class="offertext">
                                         <a
                                             href="http://www.travelocity.com/p/promo/deals?promo=springbreak&mcicid=249425447"></a>
@@ -3541,7 +3541,7 @@
                                 <div class="adcontent">
                                     <a
                                         href="http://www.travelocity.com/p/promo/deals?promo=long-weekend&mcicid=249425787"><img
-                                        src="http://media.travelocitycustomercare.com/media/content/expus/graphics/promos/other/travelhook/131220_long-weekend_146x146.jpg"/></a>
+                                        src="http://media.travelocitycustomercare.com/media/content/expus/graphics/promos/other/travelhook/131220_long-weekend_146x146.jpg" /></a>
                                     <span class="offertext">
                                         <a
                                             href="http://www.travelocity.com/p/promo/deals?promo=long-weekend&mcicid=249425787"></a>
@@ -3558,7 +3558,7 @@
                             <div class="adBox" style="left: 324px;">
                                 <div class="adcontent">
                                     <a href="http://www.travelocity.com/vc/flights-sem/ski/?mcicid=249426350"><img
-                                        src="http://media.travelocitycustomercare.com/media/content/expus/graphics/promos/other/travelhook/140204_ski-sale_146x146.jpg"/></a>
+                                        src="http://media.travelocitycustomercare.com/media/content/expus/graphics/promos/other/travelhook/140204_ski-sale_146x146.jpg" /></a>
                                     <span class="offertext">
                                         <a href="http://www.travelocity.com/vc/flights-sem/ski/?mcicid=249426350"></a>
                                     </span>
@@ -3574,7 +3574,7 @@
                                 <div class="adcontent">
                                     <a
                                         href="http://www.travelocity.com/c/content/site/en/TRAVELOCITY/cruises/promotions/travelocity-cruise-super-sale.html?mcicid=249426441"><img
-                                        src="http://media.travelocitycustomercare.com/media/content/expus/graphics/promos/other/travelhook/140102_cruise-super-sale-exp-thumb_146x146.jpg"/></a>
+                                        src="http://media.travelocitycustomercare.com/media/content/expus/graphics/promos/other/travelhook/140102_cruise-super-sale-exp-thumb_146x146.jpg" /></a>
                                     <span class="offertext">
                                         <a
                                             href="http://www.travelocity.com/c/content/site/en/TRAVELOCITY/cruises/promotions/travelocity-cruise-super-sale.html?mcicid=249426441"></a>
@@ -3592,7 +3592,7 @@
                                 <div class="adcontent">
                                     <a
                                         href="http://www.travelocity.com//p/promo/deals?promo=hotels-four-star-under-250&mcicid=249426506"><img
-                                        src="http://media.travelocitycustomercare.com/media/content/expus/graphics/promos/other/travelhook/140103_hotel-thumbs-luxury_146x146.jpg"/></a>
+                                        src="http://media.travelocitycustomercare.com/media/content/expus/graphics/promos/other/travelhook/140103_hotel-thumbs-luxury_146x146.jpg" /></a>
                                     <span class="offertext">
                                         <a
                                             href="http://www.travelocity.com//p/promo/deals?promo=hotels-four-star-under-250&mcicid=249426506"></a>
@@ -3610,7 +3610,7 @@
                                 <div class="adcontent">
                                     <a
                                         href="http://www.travelocity.com/p/promo/deals?promo=last-minute&mcicid=249426589"><img
-                                        src="http://media.travelocitycustomercare.com/media/content/expus/graphics/promos/other/travelhook/140204_last-minute_146x146.jpg"/></a>
+                                        src="http://media.travelocitycustomercare.com/media/content/expus/graphics/promos/other/travelhook/140204_last-minute_146x146.jpg" /></a>
                                     <span class="offertext">
                                         <a
                                             href="http://www.travelocity.com/p/promo/deals?promo=last-minute&mcicid=249426589"></a>
@@ -3628,7 +3628,7 @@
                                 <div class="adcontent">
                                     <a
                                         href="http://www.travelocity.com/p/multi-deal/getaway-day.htm?mcicid=251541916"><img
-                                        src="http://media.travelocitycustomercare.com/media/content/expus/graphics/promos/other/travelhook/getaway-day.jpg"/></a>
+                                        src="http://media.travelocitycustomercare.com/media/content/expus/graphics/promos/other/travelhook/getaway-day.jpg" /></a>
                                     <span class="offertext">
                                         <a
                                             href="http://www.travelocity.com/p/multi-deal/getaway-day.htm?mcicid=251541916"></a>
@@ -3662,11 +3662,11 @@
                 <div id="subColValue">
                     <div class="column HPDealCol1">
                         <h2 class="ExpediaHeadings">
-                            <span class="ExpediaHeadingsColorA">Featured</span><br/>
+                            <span class="ExpediaHeadingsColorA">Featured</span><br />
                             <span class="ExpediaHeadingsColorB">Offers</span>
                         </h2>
                         <p class="HPDealSubCol">
-                            See what's in store<br/>from our travel partners.
+                            See what's in store<br />from our travel partners.
                         </p>
                     </div>
                     <div class="inactive" id="valueleftarrow"></div>
@@ -3677,7 +3677,7 @@
                                 <div class="adcontent">
                                     <a
                                         href="http://www.travelocity.com/p/promo/deals?promo=default&mcicid=245516336#!hotel/template/closest/;destination:choose;dow:Anytime;minstar:3;minprice:25;staylength:3;lat:36.110796;lng:-115.169757;miles:25;dates:5;region:800045;airport:LAS;zoom:4;destination_name:The%20Strip"><img
-                                        src="http://media.travelocitycustomercare.com/media/content/expus/graphics/promos/other/travelhook/140103_las-vegas-sale_146x146.jpg"/></a>
+                                        src="http://media.travelocitycustomercare.com/media/content/expus/graphics/promos/other/travelhook/140103_las-vegas-sale_146x146.jpg" /></a>
                                     <span class="offertext">
                                         <a
                                             href="http://www.travelocity.com/p/promo/deals?promo=default&mcicid=245516336#!hotel/template/closest/;destination:choose;dow:Anytime;minstar:3;minprice:25;staylength:3;lat:36.110796;lng:-115.169757;miles:25;dates:5;region:800045;airport:LAS;zoom:4;destination_name:The%20Strip"></a>
@@ -3695,7 +3695,7 @@
                                 <div class="adcontent">
                                     <a
                                         href="http://www.travelocity.com/p/promo/deals?promo=default&mcicid=245516338#!hotel/template/closest/;destination:choose;dow:Anytime;minstar:3;minprice:25;staylength:3;lat:40.760016;lng:-73.983777;miles:25;dates:5;region:800077;airport:NYC;zoom:4;destination_name:Broadway%20-%20Times%20Square"><img
-                                        src="http://media.travelocitycustomercare.com/media/content/expus/graphics/promos/other/travelhook/140103_nyc-sale_146x146.jpg"/></a>
+                                        src="http://media.travelocitycustomercare.com/media/content/expus/graphics/promos/other/travelhook/140103_nyc-sale_146x146.jpg" /></a>
                                     <span class="offertext">
                                         <a
                                             href="http://www.travelocity.com/p/promo/deals?promo=default&mcicid=245516338#!hotel/template/closest/;destination:choose;dow:Anytime;minstar:3;minprice:25;staylength:3;lat:40.760016;lng:-73.983777;miles:25;dates:5;region:800077;airport:NYC;zoom:4;destination_name:Broadway%20-%20Times%20Square"></a>
@@ -3713,7 +3713,7 @@
                                 <div class="adcontent">
                                     <a
                                         href="http://www.travelocity.com/p/promo/deals?promo=default&mcicid=246488718"><img
-                                        src="http://media.travelocitycustomercare.com/media/content/expus/graphics/promos/other/travelhook/140103_generic_2_146x146.jpg"/></a>
+                                        src="http://media.travelocitycustomercare.com/media/content/expus/graphics/promos/other/travelhook/140103_generic_2_146x146.jpg" /></a>
                                     <span class="offertext">
                                         <a
                                             href="http://www.travelocity.com/p/promo/deals?promo=default&mcicid=246488718"></a>
@@ -3731,7 +3731,7 @@
                                 <div class="adcontent">
                                     <a
                                         href="http://www.travelocity.com/p/promo/deals?promo=flights&mcicid=247493982"><img
-                                        src="http://media.travelocitycustomercare.com/media/content/expus/graphics/promos/other/travelhook/140103_generic_1_146x146.jpg"/></a>
+                                        src="http://media.travelocitycustomercare.com/media/content/expus/graphics/promos/other/travelhook/140103_generic_1_146x146.jpg" /></a>
                                     <span class="offertext">
                                         <a
                                             href="http://www.travelocity.com/p/promo/deals?promo=flights&mcicid=247493982"></a>
@@ -3765,7 +3765,7 @@
 
                 <div class="column HPWhyCol">
                     <h2 class="ExpediaHeadings">
-                        <span class="ExpediaHeadingsColorA">Why book with</span><br/>
+                        <span class="ExpediaHeadingsColorA">Why book with</span><br />
                         <span class="ExpediaHeadingsColorB">Travelocity?</span>
                     </h2>
                 </div>
@@ -3774,7 +3774,7 @@
                     <h4 class="HPSectionInfo ExpediaHeadingsColorB"><img
                         alt="*"
                         class="HPcheckmark"
-                        src="//media.travelocitycustomercare.com/media/content/expus/graphics/launch/home/tvly/20120511_hp_check_tvly.png"/>Largest Selection</h4>
+                        src="//media.travelocitycustomercare.com/media/content/expus/graphics/launch/home/tvly/20120511_hp_check_tvly.png" />Largest Selection</h4>
                     <ul class="xp-t-body-global HPWhyBook">
                         <li>140,000+ hotels worldwide</li>
                         <li>130+ airlines</li>
@@ -3785,7 +3785,7 @@
                     <h4 class="HPSectionInfo ExpediaHeadingsColorB"><img
                         alt="*"
                         class="HPcheckmark"
-                        src="//media.travelocitycustomercare.com/media/content/expus/graphics/launch/home/tvly/20120511_hp_check_tvly.png"/>Save More</h4>
+                        src="//media.travelocitycustomercare.com/media/content/expus/graphics/launch/home/tvly/20120511_hp_check_tvly.png" />Save More</h4>
                     <ul class="xp-t-body-global HPWhyBook">
                         <li>
                             <a href="/p/info-other/guarantees.htm?mcicid=hp.bpginfo">Get the best rates, or get a refund&mdash;plus a $50 coupon</a>
@@ -3800,7 +3800,7 @@
                     <h4 class="HPSectionInfo ExpediaHeadingsColorB"><img
                         alt="*"
                         class="HPcheckmark"
-                        src="//media.travelocitycustomercare.com/media/content/expus/graphics/launch/home/tvly/20120511_hp_check_tvly.png"/>We're Always Here</h4>
+                        src="//media.travelocitycustomercare.com/media/content/expus/graphics/launch/home/tvly/20120511_hp_check_tvly.png" />We're Always Here</h4>
                     <ul class="xp-t-body-global HPWhyBook">
                         <li>
                             <a href="http://shop.travelocity.com/p/support.htm">Call or email us, anytime</a>
@@ -3815,7 +3815,7 @@
                 <div class="HPETravel">
                     <div class="column HPETravelCol1">
                         <h1 class="ExpediaHeadings">
-                            <span class="ExpediaHeadingsColorA">Travelocity</span><br/>
+                            <span class="ExpediaHeadingsColorA">Travelocity</span><br />
                             <span class="ExpediaHeadingsColorB">Travel</span>
                         </h1>
                         <p class="xp-t-body-global">
@@ -3826,7 +3826,7 @@
 
                     <div class="column HPETravelMap1">
                         <h2 class="ExpediaHeadings">
-                            <span class="ExpediaHeadingsColorA">Browse</span><br/>
+                            <span class="ExpediaHeadingsColorA">Browse</span><br />
                             <span class="ExpediaHeadingsColorB">by Continent</span>
                         </h2>
                         <p class="xp-t-body-global">
@@ -3835,13 +3835,13 @@
                             <a href="/Africa-And-Indian-Ocean.d6023185.Destination-Travel-Guide">Africa</a>
                             <span class="HPgreyline">|</span>
                             <a href="/United-States-Of-America.d201.Destination-Travel-Guide">United States</a>
-                            <br/>
+                            <br />
                             <a href="/Canada.d31.Destination-Travel-Guide">Canada</a>
                             <span class="HPgreyline">|</span>
                             <a href="/South-America.d6023117.Destination-Travel-Guide">South America</a>
                             <span class="HPgreyline">|</span>
                             <a href="/Europe.d6022967.Destination-Travel-Guide">Europe</a>
-                            <br/>
+                            <br />
                             <a
                                 href="/Australia-New-Zealand-And-The-South-Pacific.d6023180.Destination-Travel-Guide">Australia &amp; South Pacific</a>
                             <span class="HPgreyline">|</span>
@@ -3856,7 +3856,7 @@
                             alt="world map"
                             height="131"
                             src="http://media.travelocitycustomercare.com/media/content/expus/graphics/launch/home/20120511_hp_map.png"
-                            width="275"/>
+                            width="275" />
                     </div>
                 </div>
 
@@ -3905,7 +3905,7 @@
 
         <link
             href="/minify/new-footer-css-min-1375106963.css?v=release-2014-02-r1-2874-962065-1"
-            rel="stylesheet"/>
+            rel="stylesheet" />
         <!-- 0 ms -->
 
         <script>
@@ -4188,7 +4188,7 @@
         </div>
 
         <div style="display:none;">
-            <input id="pageId" type="hidden" value="Homepage"/>
+            <input id="pageId" type="hidden" value="Homepage" />
         </div>
         <script type="text/javascript">
             if ("undefined" != typeof(fnTHJSInc) && fnTHJSInc) {
@@ -4375,7 +4375,7 @@
             border="0"
             height="1"
             src="http://www.wtp101.com/pixel?id=18922"
-            width="1"/>
+            width="1" />
 
         <script type="text/javascript">
             $LAB
@@ -4428,7 +4428,7 @@ this, see http://google.com/ads/remarketingsetup
                     height="1"
                     src="//googleads.g.doubleclick.net/pagead/viewthroughconversion/984745899/?value=0&amp;guid=ON&amp;script=0"
                     style="border-style:none;"
-                    width="1"/>
+                    width="1" />
             </div>
         </noscript>
 

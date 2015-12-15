@@ -1,0 +1,19 @@
+/*prettydiff.com endcomma:true*/
+var a = 1;
+class DtFiltersPage {
+
+    beforeRegister() {
+        this.properties = {
+            page: {
+                observer: "_updateUrl",
+                type    : Number,
+                value   : 0,
+            },
+            type: {
+                observer: "_updateUrl",
+                type    : String,
+                value   : "list",
+            },
+        };
+    }
+}

@@ -1050,7 +1050,7 @@ var pd = {},
                     if (input.indexOf("html") > -1 || input === "html" || input === "ejs" || input === "html_ruby" || input === "handlebars" || input === "swig" || input === "twig" || input === "php" || input === "dustjs") {
                         return "html";
                     }
-                    if (input === "markup" || input === "jsp" || input === "xml" || input === "xhtml") {
+                    if (input === "markup" || input === "jsp" || input === "xml" || input === "xhtml" || input === "coldfusion") {
                         return "markup";
                     }
                     if (input === "javascript" || input === "json" || input === "jsx") {
@@ -1103,6 +1103,9 @@ var pd = {},
                     }
                     if (input === "dustjs") {
                         return "Dust.js";
+                    }
+                    if (input === "coldfusion") {
+                        return "ColdFusion";
                     }
                     return input.toUpperCase();
                 },
@@ -1174,7 +1177,7 @@ var pd = {},
                         if ((/^(\s*(\{|\[))/).test(a) === true && (/((\]|\})\s*)$/).test(a) && a.indexOf(",") !== -1) {
                             return output("json");
                         }
-                        if ((/((\}?(\(\))?\)*;?\s*)|([a-z0-9]("|')?\)*);?(\s*\})*)$/i).test(a) === true && ((/(((var)|(let)|(const))\s+(\w|\$)+[a-zA-Z0-9]*)/).test(a) === true || (/console\.log\(/).test(a) === true || (/document\.get/).test(a) === true || (/((\=|(\$\())\s*function)|(\s*function\s+(\w*\s+)?\()/).test(a) === true || a.indexOf("{") === -1 || (/^(\s*if\s+\()/).test(a) === true)) {
+                        if ((/((\}?(\(\))?\)*;?\s*)|([a-z0-9]("|')?\)*);?(\s*\})*)$/i).test(a) === true && ((/(((var)|(let)|(const))\s+(\w|\$)+[a-zA-Z0-9]*)/).test(a) === true || (/console\.log\(/).test(a) === true || (/export\s+default\s+class\s+/).test(a) === true || (/document\.get/).test(a) === true || (/((\=|(\$\())\s*function)|(\s*function\s+(\w*\s+)?\()/).test(a) === true || a.indexOf("{") === -1 || (/^(\s*if\s+\()/).test(a) === true)) {
                             if (a.indexOf("(") > -1 || a.indexOf("=") > -1 || (a.indexOf(";") > -1 && a.indexOf("{") > -1)) {
                                 if ((/:\s*((number)|(string))/).test(a) === true && (/((public)|(private))\s+/).test(a) === true) {
                                     return output("typescript");
@@ -1216,7 +1219,7 @@ var pd = {},
                         return output("unknown");
                     }
                     if ((((/(>[\w\s:]*)?<(\/|!)?[\w\s:\-\[]+/).test(a) === true || (/^(\s*<\?xml)/).test(a) === true) && ((/^([\s\w]*<)/).test(a) === true || (/(>[\s\w]*)$/).test(a) === true)) || ((/^(\s*<s((cript)|(tyle)))/i).test(a) === true && (/(<\/s((cript)|(tyle))>\s*)$/i).test(a) === true)) {
-                        if (((/\s*<!doctype\ html>/i).test(a) === true && (/\s*<html/i).test(a) === true) || ((/^(\s*<!DOCTYPE\s+((html)|(HTML))\s+PUBLIC\s+)/).test(a) === true && (/XHTML\s+1\.1/).test(a) === false && (/XHTML\s+1\.0\s+(S|s)((trict)|(TRICT))/).test(a) === false)) {
+                        if ((/^(\s*<!doctype\ html>)/i).test(a) === true || (/^(\s*<html)/i).test(a) === true || ((/^(\s*<!DOCTYPE\s+((html)|(HTML))\s+PUBLIC\s+)/).test(a) === true && (/XHTML\s+1\.1/).test(a) === false && (/XHTML\s+1\.0\s+(S|s)((trict)|(TRICT))/).test(a) === false)) {
                             if ((/<%\s*\}/).test(a) === true) {
                                 return output("ejs");
                             }
@@ -1318,11 +1321,13 @@ var pd = {},
                         value = auto(pd.ace.beauIn.getValue());
                         pd.data.langvalue = value;
                     }
-                    pd
-                        .ace
-                        .beauIn
-                        .getSession()
-                        .setMode("ace/mode/" + value[0]);
+                    if (pd.data.node.codeBeauIn !== null) {
+                        pd
+                            .ace
+                            .beauIn
+                            .getSession()
+                            .setMode("ace/mode/" + value[0]);
+                    }
                     if (pd.data.node.codeBeauOut !== null) {
                         pd
                             .ace
@@ -1336,11 +1341,13 @@ var pd = {},
                         value = auto(pd.ace.minnIn.getValue());
                         pd.data.langvalue = value;
                     }
-                    pd
-                        .ace
-                        .minnIn
-                        .getSession()
-                        .setMode("ace/mode/" + value[0]);
+                    if (pd.data.node.codeMinnIn !== null) {
+                        pd
+                            .ace
+                            .minnIn
+                            .getSession()
+                            .setMode("ace/mode/" + value[0]);
+                    }
                     if (pd.data.node.codeMinnOut !== null) {
                         pd
                             .ace
@@ -1354,11 +1361,13 @@ var pd = {},
                         value = auto(pd.ace.parsIn.getValue());
                         pd.data.langvalue = value;
                     }
-                    pd
-                        .ace
-                        .parsIn
-                        .getSession()
-                        .setMode("ace/mode/" + value[0]);
+                    if (pd.data.node.codeParsIn !== null) {
+                        pd
+                            .ace
+                            .parsIn
+                            .getSession()
+                            .setMode("ace/mode/" + value[0]);
+                    }
                     if (pd.data.node.codeParsOut !== null) {
                         pd
                             .ace
@@ -1604,6 +1613,10 @@ var pd = {},
                         data = ["tagsort", "false"];
                     } else if (id === "btagsort-yes" || id === "dtagsort-yes" || id === "mtagsort-yes" || id === "ptagsort-yes") {
                         data = ["tagsort", "true"];
+                    } else if (id === "bternaryline-no" || id === "dternaryline-no") {
+                        data = ["ternaryline", "false"];
+                    } else if (id === "bternaryline-yes" || id === "dternaryline-yes") {
+                        data = ["ternaryline", "true"];
                     } else if (id === "btextpreserveno" || id === "dtextpreserveno" || id === "mtextpreserveno" || id === "ptextpreserveno") {
                         data = ["textpreserve", "false"];
                     } else if (id === "btextpreserveyes" || id === "dtextpreserveyes" || id === "mtextpreserveyes" || id === "ptextpreserveyes") {
@@ -4413,6 +4426,7 @@ var pd = {},
                     styleguide = pd.id("bstyleguide"),
                     tagmerge = pd.id("btagmerge-yes"),
                     tagsort = pd.id("btagsort-yes"),
+                    ternaryline = pd.id("bternaryline-yes"),
                     textpreserve = pd.id("btextpreserveyes"),
                     varworde = pd.id("bvarword-each"),
                     varwordl = pd.id("bvarword-list"),
@@ -4527,6 +4541,7 @@ var pd = {},
                     : "";
                 api.tagmerge = (tagmerge !== null && tagmerge.checked === true);
                 api.tagsort = (tagsort !== null && tagsort.checked === true);
+                api.ternaryline = (ternaryline !== null && ternaryline.checked === true);
                 api.textpreserve = (textpreserve !== null && textpreserve.checked === true);
                 if (varworde !== null && varworde.checked === true) {
                     api.varword = "each";
@@ -4621,34 +4636,35 @@ var pd = {},
                 var braceline = pd.id("dbraceline-no"),
                     bracepadding = pd.id("dbracepadding-no"),
                     braces = pd.id("jsindentd-all"),
+                    baseLabel = pd.id("baselabel"),
+                    chars = pd.id("diff-space"),
+                    comments = pd.id("diffcommentsy"),
                     conditional = pd.id("conditionald-yes"),
+                    content = pd.id("diffcontentn"),
+                    context = pd.id("contextSize"),
                     dustjs = pd.id("ddustyes"),
                     elseline = pd.id("jselselined-yes"),
                     forceIndent = pd.id("dforce_indent-yes"),
                     html = pd.id("htmld-yes"),
+                    inline = pd.id("inline"),
+                    jslinesa = pd.id("djslines-all"),
                     methodchain = pd.id("dmethodchain-yes"),
+                    newLabel = pd.id("newlabel"),
                     nocaseindent = pd.id("dnocaseindent-yes"),
+                    objsorta = pd.id("dobjsort-all"),
+                    objsortc = pd.id("dobjsort-cssonly"),
+                    objsortj = pd.id("dobjsort-jsonly"),
+                    quantity = pd.id("diff-quan"),
+                    quote = pd.id("diffquoten"),
+                    selectorlist = pd.id("dselectorlist-yes"),
+                    semicolon = pd.id("diffscolonn"),
                     style = pd.id("inscriptd-no"),
                     space = pd.id("jsspaced-no"),
                     tagmerge = pd.id("dtagmerge-yes"),
                     tagsort = pd.id("dtagsort-yes"),
+                    ternaryline = pd.id("dternaryline-yes"),
                     textpreserve = pd.id("dtextpreserveyes"),
-                    wrap = pd.id("diff-wrap"),
-                    baseLabel = pd.id("baselabel"),
-                    chars = pd.id("diff-space"),
-                    comments = pd.id("diffcommentsy"),
-                    content = pd.id("diffcontentn"),
-                    context = pd.id("contextSize"),
-                    inline = pd.id("inline"),
-                    newLabel = pd.id("newlabel"),
-                    objsorta = pd.id("dobjsort-all"),
-                    objsortc = pd.id("dobjsort-cssonly"),
-                    objsortj = pd.id("dobjsort-jsonly"),
-                    jslinesa = pd.id("djslines-all"),
-                    quantity = pd.id("diff-quan"),
-                    quote = pd.id("diffquoten"),
-                    selectorlist = pd.id("dselectorlist-yes"),
-                    semicolon = pd.id("diffscolonn");
+                    wrap = pd.id("diff-wrap");
                 pd.data.node.codeDiffBase = pd.id("baseText");
                 pd.data.node.codeDiffNew = pd.id("newText");
                 if (pd.data.node.codeDiffBase !== null && api.lang === "auto" && pd.data.langvalue.length === 0) {
@@ -4715,6 +4731,7 @@ var pd = {},
                     : "noindent";
                 api.tagmerge = (tagmerge !== null && tagmerge.checked === true);
                 api.tagsort = (tagsort !== null && tagsort.checked === true);
+                api.ternaryline = (ternaryline !== null && ternaryline.checked === true);
                 api.textpreserve = (textpreserve !== null && textpreserve.checked === true);
                 api.wrap = (wrap === null || isNaN(wrap.value) === true)
                     ? 72
@@ -5485,7 +5502,6 @@ var pd = {},
 
     //read from files if the W3C File API is supported
     //references events: recycle
-
     pd.event.file = function dom__event_file() {
         var a = 0,
             input = this,

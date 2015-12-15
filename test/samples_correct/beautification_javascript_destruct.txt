@@ -37,7 +37,7 @@ function jspretty__tokenize() {
     import (["a", "b", "c"]) from "wherever";
     const {DefaultRoute, Route, Redirect} = Router;
     class App extends Component {
-        render () {
+        render() {
             return (
                 <div>Hello World</div>
             );

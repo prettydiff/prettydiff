@@ -29,7 +29,7 @@ Examples:
  readmethod:"filescreen"
 */
 
-(function () {
+(function pdNodeLocal() {
     "use strict";
     var localPath      = (process.cwd() === "/" || (/^([a-z]:\\)$/).test(process.cwd()) === true)
             ? __dirname.replace(/(api)$/, "")
@@ -37,7 +37,7 @@ Examples:
         cwd            = (process.cwd() === "/")
             ? __dirname
             : process.cwd(),
-        libs           = (function () {
+        libs           = (function pdNodeLocal__libs() {
             global.safeSort     = require(localPath + "lib/safeSort.js").api;
             global.csspretty    = require(localPath + "lib/csspretty.js").api;
             global.csvpretty    = require(localPath + "lib/csvpretty.js").api;
@@ -60,15 +60,27 @@ Examples:
         lf             = "\n",
         method         = "auto",
         startTime      = Date.now(),
-        versionString  = (function () {
+        versionString  = (function pdNodeLocal__versionString() {
             var dstring = "",
                 mstring = 0,
                 month   = [
-                    "January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"
+                    "January",
+                    "February",
+                    "March",
+                    "April",
+                    "May",
+                    "June",
+                    "July",
+                    "August",
+                    "September",
+                    "October",
+                    "November",
+                    "December"
                 ];
             global.edition = prettydiff.edition;
             global.report  = prettydiff.report;
-            dstring        = global.edition
+            dstring        = global
+                .edition
                 .latest
                 .toString();
             mstring        = Number(dstring.slice(2, 4)) - 1;
@@ -93,7 +105,7 @@ Examples:
             0, 0
         ],
         options        = {
-            api           : "",
+            api           : "node",
             braceline     : false,
             bracepadding  : false,
             braces        : "knr",
@@ -147,6 +159,7 @@ Examples:
             summaryonly   : false,
             tagmerge      : false,
             tagsort       : false,
+            ternaryline   : false,
             textpreserve  : false,
             titanium      : false,
             topcoms       : false,
@@ -175,8 +188,8 @@ Examples:
         },
 
         //ending messaging with stats
-        ender          = function () {
-            var plural = (function () {
+        ender          = function pdNodeLocal__ender() {
+            var plural = (function pdNodeLocal__ender_plural() {
                     var a   = 0,
                         len = diffCount.length,
                         arr = [];
@@ -290,7 +303,7 @@ Examples:
 
         //extract errorcount from diff
         //report files for ender stats
-        counter        = function (x) {
+        counter        = function pdNodeLocal__counter(x) {
             var num = Number(x.substring(14, x.indexOf("</em>")));
             if (num > 0) {
                 diffCount[0] += num;
@@ -300,7 +313,7 @@ Examples:
         },
 
         //html report template
-        reports        = function () {
+        reports        = function pdNodeLocal__reports() {
             var result = prettydiff.api(options),
                 css    = {
                     core   : "body{font-family:'Arial';font-size:10px;overflow-y:scroll}#announcement.big{colo" +
@@ -876,8 +889,6 @@ Examples:
                 return a.join("");
             }
             if (options.mode === "diff") {
-                a.push("<p>Accessibility note. &lt;em&gt; tags in the output represent character differe" +
-                        "nces per lines compared.</p>");
                 a.push(result[0]);
                 a.push("<script type='application/javascript'><![CDATA[");
                 a.push("var pd={};pd.colSliderProperties=[];(function(){var d=document.getElementsByTagN" +
@@ -928,14 +939,18 @@ Examples:
                 a.push("]]></script>");
                 a.push("</body></html>");
                 return [
-                    a.join(""), ""];
+                    a.join(""),
+                    ""
+                ];
             }
             a.push("</body></html>");
-            return [result[0], a.join("")];
+            return [
+                result[0], a.join("")
+            ];
         },
 
         //instructions
-        error          = (function () {
+        error          = (function pdNodeLocal__error() {
             var a       = [],
                 color   = {
                     accepted: "\x1B[31m",
@@ -944,11 +959,11 @@ Examples:
                     string  : "\x1B[33m",
                     word    : "\x1B[32m"
                 },
-                opname  = function (x) {
+                opname  = function pdNodeLocal__opname(x) {
                     var value = x.match(/\w+/);
                     return x.replace(value, color.word + value + "\x1B[39m");
                 },
-                vallist = function (x) {
+                vallist = function pdNodeLocal__vallist(x) {
                     var value = x.split(":\x1B[39m"),
                         items = value[1].split(","),
                         len   = items.length,
@@ -1213,6 +1228,9 @@ Examples:
             a.push("                           eliminates beautification and wrapping of text");
             a.push("                           content.  Takes a boolean and defaults to false.");
             a.push("");
+            a.push("* ternaryline  - boolean - If ternary operators in JavaScript (? and :) should");
+            a.push("                           remain on the same line.  Defaults to false.");
+            a.push("");
             a.push("* titanium     - boolean - Forces the JavaScript parser to parse Titanium Style");
             a.push("                           Sheets instead of JavaScript. Default is false.");
             a.push("");
@@ -1244,7 +1262,8 @@ Examples:
             a.push("");
             a.push(versionString);
             a.push("");
-            return a.join(lf)
+            return a
+                .join(lf)
                 .replace(/\r?\n\*\ \w+\s+-/g, opname)
                 .replace(/-\ boolean\ -/g, "- " + color.bool + "boolean\x1B[39m -")
                 .replace(/-\ string\ {2,}-/g, "- " + color.string + "string\x1B[39m  -")
@@ -1255,8 +1274,9 @@ Examples:
 
         //write output to a file
         //executed from fileComplete
-        fileWrite      = function (data) {
-            var dirs      = data.localpath
+        fileWrite      = function pdNodeLocal__fileWrite(data) {
+            var dirs      = data
+                    .localpath
                     .split("/"),
                 suffix    = (options.mode === "diff")
                     ? "-diff.html"
@@ -1267,10 +1287,10 @@ Examples:
                 report    = [
                     "", ""
                 ],
-                writing   = function (ending, tot) {
+                writing   = function pdNodeLocal__fileWrite_writing(ending, tot) {
                     if (data.binary === true) {
                         fs
-                            .writeFile(finalpath, data.file, function (err) {
+                            .writeFile(finalpath, data.file, function pdNodeLocal__fileWrite_writing_writeFileBinary(err) {
                                 if (err !== null) {
                                     console.log(lf + "Error writing report output." + lf);
                                     console.log(err);
@@ -1284,7 +1304,7 @@ Examples:
                             });
                     } else if (data.file === "") {
                         fs
-                            .writeFile(finalpath + ending, "", function (err) {
+                            .writeFile(finalpath + ending, "", function pdNodeLocal__fileWrite_writing_writeFileEmpty(err) {
                                 if (err !== null) {
                                     console.log(lf + "Error writing report output." + lf);
                                     console.log(err);
@@ -1298,7 +1318,7 @@ Examples:
                             });
                     } else if (ending.indexOf("-report") === 0) {
                         fs
-                            .writeFile(finalpath + ending, report[1], function (err) {
+                            .writeFile(finalpath + ending, report[1], function pdNodeLocal__fileWrite_writing_writeFileReport(err) {
                                 if (err !== null) {
                                     console.log(lf + "Error writing report output." + lf);
                                     console.log(err);
@@ -1312,7 +1332,7 @@ Examples:
                             });
                     } else {
                         fs
-                            .writeFile(finalpath + ending, report[0], function (err) {
+                            .writeFile(finalpath + ending, report[0], function pdNodeLocal__fileWrite_writing_writeFileText(err) {
                                 if (err !== null) {
                                     console.log(lf + "Error writing report output." + lf);
                                     console.log(err);
@@ -1326,7 +1346,7 @@ Examples:
                             });
                     }
                 },
-                files     = function () {
+                files     = function pdNodeLocal__fileWrite_files() {
                     if (data.binary === true) {
                         writing("", 1);
                     } else if (options.mode === "diff" || (options.mode === "beautify" && options.jsscope !== "none")) {
@@ -1338,12 +1358,12 @@ Examples:
                         writing("", 1);
                     }
                 },
-                newdir    = function () {
+                newdir    = function pdNodeLocal__fileWrite_newdir() {
                     fs
-                        .mkdir(address.oabspath + dirs.slice(0, count).join("/"), function () {
+                        .mkdir(address.oabspath + dirs.slice(0, count).join("/"), function pdNodeLocal__fileWrite_newdir_callback() {
                             count += 1;
                             if (count < dirs.length + 1) {
-                                newdir();
+                                pdNodeLocal__fileWrite_newdir();
                             } else {
                                 files();
                             }
@@ -1386,7 +1406,7 @@ Examples:
         },
 
         //write output to terminal
-        cliWrite       = function (output, path, last) {
+        cliWrite       = function pdNodeLocal__cliWrite(output, path, last) {
             var a      = 0,
                 plural = "",
                 pdlen  = output[0].length;
@@ -1436,10 +1456,13 @@ Examples:
 
         //write output to screen
         //executed from fileComplete
-        screenWrite    = function () {
+        screenWrite    = function pdNodeLocal__screenWrite() {
             var report = [];
+            if (options.mode === "diff") {
+                return console.log(reports()[0]);
+            }
             if (options.jsscope !== "none" && options.mode === "beautify" && (options.lang === "javascript" || options.lang === "auto")) {
-                return reports();
+                return console.log(reports()[0]);
             }
             report = prettydiff.api(options);
             if (options.mode === "parse") {
@@ -1453,15 +1476,17 @@ Examples:
 
         //generate the diff output
         //for CLI from files
-        cliFile        = function (data) {
+        cliFile        = function pdNodeLocal__cliFile(data) {
             options.source = sfiledump[data.index];
             options.diff   = dfiledump[data.index];
             if (options.source.indexOf("undefined") === 0) {
-                options.source = options.source
+                options.source = options
+                    .source
                     .replace("undefined", "");
             }
             if (options.diff.indexOf("undefined") === 0) {
-                options.diff = options.diff
+                options.diff = options
+                    .diff
                     .replace("undefined", "");
             }
             if (typeof options.context !== "number" || options.context < 0) {
@@ -1473,7 +1498,7 @@ Examples:
         //is a file read operation complete?
         //executed from readLocalFile
         //executed from readHttpFile
-        fileComplete   = function (data) {
+        fileComplete   = function pdNodeLocal__fileComplete(data) {
             if (data.type === "diff") {
                 dfiledump[data.index] = data.file;
                 dState[data.index]    = true;
@@ -1511,17 +1536,17 @@ Examples:
         },
 
         //read from a binary file
-        readBinaryFile = function (data) {
+        readBinaryFile = function pdNodeLocal__readBinaryFile(data) {
             fs
-                .open(data.absolutepath, "r", function (err, fd) {
+                .open(data.absolutepath, "r", function pdNodeLocal__readBinaryFile_open(err, fd) {
                     var buff = new Buffer(data.size);
                     if (err !== null) {
-                        return readBinaryFile(data);
+                        return pdNodeLocal__readBinaryFile(data);
                     }
                     fs
-                        .read(fd, buff, 0, data.size, 0, function (erra, bytesRead, buffer) {
+                        .read(fd, buff, 0, data.size, 0, function pdNodeLocal__readBinaryFile_open_read(erra, bytesRead, buffer) {
                             if (erra !== null) {
-                                return readBinaryFile(data);
+                                return pdNodeLocal__readBinaryFile(data);
                             }
                             if (bytesRead > 0) {
                                 data.file = buffer;
@@ -1532,21 +1557,21 @@ Examples:
         },
 
         //read from a file and determine if text
-        readLocalFile  = function (data) {
-            var open = function () {
+        readLocalFile  = function pdNodeLocal__readLocalFile(data) {
+            var open = function pdNodeLocal__readLocalFile_open() {
                 fs
-                    .open(data.absolutepath, "r", function (err, fd) {
+                    .open(data.absolutepath, "r", function pdNodeLocal__readLocalFile_open_callback(err, fd) {
                         var msize = (data.size < 100)
                                 ? data.size
                                 : 100,
                             buff  = new Buffer(msize);
                         if (err !== null) {
-                            return readLocalFile(data);
+                            return pdNodeLocal__readLocalFile(data);
                         }
                         fs
-                            .read(fd, buff, 0, msize, 1, function (erra, bytes, buffer) {
+                            .read(fd, buff, 0, msize, 1, function pdNodeLocal__readLocalFile_open_callback_read(erra, bytes, buffer) {
                                 if (erra !== null) {
-                                    return readLocalFile(data);
+                                    return pdNodeLocal__readLocalFile(data);
                                 }
                                 var bstring = buffer.toString("utf8", 0, buffer.length);
                                 bstring = bstring.slice(2, bstring.length - 2);
@@ -1557,9 +1582,9 @@ Examples:
                                     data.binary = false;
                                     fs.readFile(data.absolutepath, {
                                         encoding: "utf8"
-                                    }, function (errb, dump) {
+                                    }, function pdNodeLocal__readLocalFile_open_callback_read_readFile(errb, dump) {
                                         if (errb !== null && errb !== undefined) {
-                                            return readLocalFile(data);
+                                            return pdNodeLocal__readLocalFile(data);
                                         }
                                         if (data.file === undefined) {
                                             data.file = "";
@@ -1574,9 +1599,9 @@ Examples:
             };
             if (data.size === undefined) {
                 fs
-                    .stat(data.absolutepath, function (errx, stat) {
+                    .stat(data.absolutepath, function pdNodeLocal__readLocalFile_stat(errx, stat) {
                         if (errx !== null) {
-                            return readLocalFile(data);
+                            return pdNodeLocal__readLocalFile(data);
                         }
                         data.size = stat.size;
                         if (data.size > 0) {
@@ -1598,14 +1623,12 @@ Examples:
 
         //resolve file contents from a web address
         //executed from init
-        readHttpFile   = function (data) {
-            var file = [
-                "", 0
-            ];
-            http.get(data.absolutepath, function (res) {
+        readHttpFile   = function pdNodeLocal__readHttpFile(data) {
+            var file = ["", 0];
+            http.get(data.absolutepath, function pdNodeLocal__readHttpFile_get(res) {
                 file[1] = Number(res.headers["content-length"]);
                 res.setEncoding("utf8");
-                res.on("data", function (chunk) {
+                res.on("data", function pdNodeLocal__readHttpFile_get_response(chunk) {
                     file[0] += chunk;
                     if (file[0].length === file[1]) {
                         data.file      = file[0];
@@ -1618,7 +1641,7 @@ Examples:
 
         //gather files in directory and sub directories
         //executed from init
-        directory      = function () {
+        directory      = function pdNodeLocal__directory() {
             //the following four are necessary because you can
             //walk a directory tree from a relative path but you
             //cannot read file contents with a relative path in
@@ -1635,171 +1658,179 @@ Examples:
                     path       : [],
                     total      : 0
                 },
-                readDir = function (start, listtype) {
-                    fs.stat(start, function (erra, stat) {
-                        var item    = {},
-                            dirtest = function (itempath, lastitem) {
-                                var pusher = function (itempath) {
-                                    itempath = itempath.replace(/\\/g, "/");
-                                    if (listtype === "diff") {
-                                        dfiles.path
-                                            .push(itempath.replace(address.dabspath + "/", ""));
-                                    } else {
-                                        sfiles.path
-                                            .push(itempath.replace(address.sabspath + "/", ""));
-                                    }
-                                    item.count += 1;
-                                };
-                                fs.stat(itempath, function (errb, stata) {
-                                    var preprocess = function () {
-                                        var b      = 0,
-                                            length = (options.mode === "diff")
-                                                ? Math.min(sfiles.path.length, dfiles.path.length)
-                                                : sfiles.path.length,
-                                            end    = false,
-                                            sizer  = function (index, type, filename, finalone) {
-                                                fs.stat(filename, function (errc, statb) {
-                                                    var filesize = 0;
-                                                    if (errc === null) {
-                                                        filesize = statb.size;
-                                                    }
-                                                    readLocalFile({
-                                                        absolutepath: filename,
-                                                        index       : index,
-                                                        last        : finalone,
-                                                        localpath   : filename,
-                                                        size        : filesize,
-                                                        type        : type
-                                                    });
-                                                });
-                                            };
-                                        sfiles.path
-                                            .sort();
-                                        if (options.mode === "diff") {
-                                            dfiles.path
-                                                .sort();
-                                            for (b = 0; b < length; b += 1) {
-                                                dState.push(false);
-                                                sState.push(false);
-                                                sfiledump.push("");
-                                                dfiledump.push("");
-                                                if (sfiles.path[b] === dfiles.path[b]) {
-                                                    if (b === length - 1) {
-                                                        end = true;
-                                                    }
-                                                    sizer(b, "diff", dfiles.path[b], end);
-                                                    sizer(b, "source", sfiles.path[b], end);
-                                                } else {
-                                                    if (sfiles.path[b] < dfiles.path[b]) {
-                                                        if (options.diffcli === true) {
-                                                            clidata[0].push(sfiles.path[b]);
-                                                        }
-                                                        if (length === dfiles.path.length) {
-                                                            length += 1;
-                                                        }
-                                                        dfiles.path
-                                                            .splice(b, 0, "");
-                                                    } else if (dfiles.path[b] < sfiles.path[b]) {
-                                                        if (options.diffcli === true) {
-                                                            clidata[1].push(dfiles.path[b]);
-                                                        }
-                                                        if (length === sfiles.path.length) {
-                                                            length += 1;
-                                                        }
-                                                        sfiles.path
-                                                            .splice(b, 0, "");
-                                                    }
-                                                    if (b === length - 1) {
-                                                        ender();
-                                                    }
-                                                }
-                                            }
+                readDir = function pdNodeLocal__directory_readDir(start, listtype) {
+                    fs
+                        .stat(start, function pdNodeLocal__directory_readDir_stat(erra, stat) {
+                            var item    = {},
+                                dirtest = function pdNodeLocal__directory_readDir_stat_dirtest(itempath, lastitem) {
+                                    var pusher = function pdNodeLocal__directory_readDir_stat_dirtest_pusher(itempath) {
+                                        itempath = itempath.replace(/\\/g, "/");
+                                        if (listtype === "diff") {
+                                            dfiles
+                                                .path
+                                                .push(itempath.replace(address.dabspath + "/", ""));
                                         } else {
-                                            if (options.output !== "") {
-                                                total[0] = length;
+                                            sfiles
+                                                .path
+                                                .push(itempath.replace(address.sabspath + "/", ""));
+                                        }
+                                        item.count += 1;
+                                    };
+                                    fs.stat(itempath, function pdNodeLocal__directory_readDir_stat_dirtest_stat(errb, stata) {
+                                        var preprocess = function pdNodeLocal__directory_readDir_stat_dirtest_stat_preprocess() {
+                                            var b      = 0,
+                                                length = (options.mode === "diff")
+                                                    ? Math.min(sfiles.path.length, dfiles.path.length)
+                                                    : sfiles.path.length,
+                                                end    = false,
+                                                sizer  = function pdNodeLocal__directory_readDir_stat_dirtest_stat_preprocess_sizer(index, type, filename, finalone) {
+                                                    fs
+                                                        .stat(filename, function pdNodeLocal__directory_readDir_stat_dirtest_stat_preprocess_sizer_stat(errc, statb) {
+                                                            var filesize = 0;
+                                                            if (errc === null) {
+                                                                filesize = statb.size;
+                                                            }
+                                                            readLocalFile({
+                                                                absolutepath: filename,
+                                                                index       : index,
+                                                                last        : finalone,
+                                                                localpath   : filename,
+                                                                size        : filesize,
+                                                                type        : type
+                                                            });
+                                                        });
+                                                };
+                                            sfiles
+                                                .path
+                                                .sort();
+                                            if (options.mode === "diff") {
+                                                dfiles
+                                                    .path
+                                                    .sort();
                                                 for (b = 0; b < length; b += 1) {
-                                                    if (b === length - 1) {
-                                                        end = true;
-                                                    }
-                                                    if (sfiles.path[b] !== undefined) {
+                                                    dState.push(false);
+                                                    sState.push(false);
+                                                    sfiledump.push("");
+                                                    dfiledump.push("");
+                                                    if (sfiles.path[b] === dfiles.path[b]) {
+                                                        if (b === length - 1) {
+                                                            end = true;
+                                                        }
+                                                        sizer(b, "diff", dfiles.path[b], end);
                                                         sizer(b, "source", sfiles.path[b], end);
                                                     } else {
-                                                        total[0] -= 1;
+                                                        if (sfiles.path[b] < dfiles.path[b]) {
+                                                            if (options.diffcli === true) {
+                                                                clidata[0].push(sfiles.path[b]);
+                                                            }
+                                                            if (length === dfiles.path.length) {
+                                                                length += 1;
+                                                            }
+                                                            dfiles
+                                                                .path
+                                                                .splice(b, 0, "");
+                                                        } else if (dfiles.path[b] < sfiles.path[b]) {
+                                                            if (options.diffcli === true) {
+                                                                clidata[1].push(dfiles.path[b]);
+                                                            }
+                                                            if (length === sfiles.path.length) {
+                                                                length += 1;
+                                                            }
+                                                            sfiles
+                                                                .path
+                                                                .splice(b, 0, "");
+                                                        }
+                                                        if (b === length - 1) {
+                                                            ender();
+                                                        }
                                                     }
                                                 }
                                             } else {
-                                                ender();
+                                                if (options.output !== "") {
+                                                    total[0] = length;
+                                                    for (b = 0; b < length; b += 1) {
+                                                        if (b === length - 1) {
+                                                            end = true;
+                                                        }
+                                                        if (sfiles.path[b] !== undefined) {
+                                                            sizer(b, "source", sfiles.path[b], end);
+                                                        } else {
+                                                            total[0] -= 1;
+                                                        }
+                                                    }
+                                                } else {
+                                                    ender();
+                                                }
                                             }
+                                        };
+                                        if (errb !== null) {
+                                            return console.log(errb);
                                         }
-                                    };
-                                    if (errb !== null) {
-                                        return console.log(errb);
-                                    }
-                                    if (stata.isDirectory() === true) {
-                                        if (method === "subdirectory") {
-                                            item.directories += 1;
-                                            readDir(itempath, listtype);
-                                            item.count += 1;
-                                        }
-                                        if (method === "directory") {
-                                            item.total       -= 1;
-                                            item.directories = 0;
-                                        }
-                                    } else if (stata.isFile() === true) {
-                                        pusher(itempath);
-                                    } else {
-                                        if (listtype === "diff") {
-                                            dfiles.total -= 1;
+                                        if (stata.isDirectory() === true) {
+                                            if (method === "subdirectory") {
+                                                item.directories += 1;
+                                                pdNodeLocal__directory_readDir(itempath, listtype);
+                                                item.count += 1;
+                                            }
+                                            if (method === "directory") {
+                                                item.total       -= 1;
+                                                item.directories = 0;
+                                            }
+                                        } else if (stata.isFile() === true) {
+                                            pusher(itempath);
                                         } else {
-                                            sfiles.total -= 1;
-                                        }
-                                        console.log(itempath + lf + "is an unsupported type");
-                                    }
-                                    if (lastitem === true && ((options.mode === "diff" && sfiles.count === sfiles.total && dfiles.count === dfiles.total && sfiles.directories === 0 && dfiles.directories === 0) || (options.mode !== "diff" && item.directories === 0 && item.count === item.total))) {
-                                        return preprocess();
-                                    }
-                                });
-                            };
-                        if (erra !== null) {
-                            return console.log(erra);
-                        }
-                        if (stat.isDirectory() === true) {
-                            fs
-                                .readdir(start, function (errd, files) {
-                                    var x         = 0,
-                                        filetotal = files.length;
-                                    if (errd !== null || filetotal === 0) {
-                                        if (method === "subdirectory") {
                                             if (listtype === "diff") {
-                                                dfiles.directories -= 1;
+                                                dfiles.total -= 1;
                                             } else {
-                                                sfiles.directories -= 1;
+                                                sfiles.total -= 1;
+                                            }
+                                            console.log(itempath + lf + "is an unsupported type");
+                                        }
+                                        if (lastitem === true && ((options.mode === "diff" && sfiles.count === sfiles.total && dfiles.count === dfiles.total && sfiles.directories === 0 && dfiles.directories === 0) || (options.mode !== "diff" && item.directories === 0 && item.count === item.total))) {
+                                            return preprocess();
+                                        }
+                                    });
+                                };
+                            if (erra !== null) {
+                                return console.log(erra);
+                            }
+                            if (stat.isDirectory() === true) {
+                                fs
+                                    .readdir(start, function pdNodeLocal__directory_readDir_stat_readdir(errd, files) {
+                                        var x         = 0,
+                                            filetotal = files.length;
+                                        if (errd !== null || filetotal === 0) {
+                                            if (method === "subdirectory") {
+                                                if (listtype === "diff") {
+                                                    dfiles.directories -= 1;
+                                                } else {
+                                                    sfiles.directories -= 1;
+                                                }
+                                            }
+                                            if (errd !== null) {
+                                                return console.log(errd);
+                                            }
+                                            return;
+                                        }
+                                        if (listtype === "diff") {
+                                            item = dfiles;
+                                        } else {
+                                            item = sfiles;
+                                        }
+                                        item.total += filetotal;
+                                        for (x = 0; x < filetotal; x += 1) {
+                                            if (x === filetotal - 1) {
+                                                item.directories -= 1;
+                                                dirtest(start + "/" + files[x], true);
+                                            } else {
+                                                dirtest(start + "/" + files[x], false);
                                             }
                                         }
-                                        if (errd !== null) {
-                                            return console.log(errd);
-                                        }
-                                        return;
-                                    }
-                                    if (listtype === "diff") {
-                                        item = dfiles;
-                                    } else {
-                                        item = sfiles;
-                                    }
-                                    item.total += filetotal;
-                                    for (x = 0; x < filetotal; x += 1) {
-                                        if (x === filetotal - 1) {
-                                            item.directories -= 1;
-                                            dirtest(start + "/" + files[x], true);
-                                        } else {
-                                            dirtest(start + "/" + files[x], false);
-                                        }
-                                    }
-                                });
-                        } else {
-                            return console.log("path: " + start + " is not a directory");
-                        }
-                    });
+                                    });
+                            } else {
+                                return console.log("path: " + start + " is not a directory");
+                            }
+                        });
                 };
             readDir(address.sabspath, "source");
             if (options.mode === "diff") {
@@ -1808,8 +1839,9 @@ Examples:
         };
 
     //defaults for the options
-    (function () {
-        var a         = process.argv
+    (function pdNodeLocal__start() {
+        var a         = process
+                .argv
                 .slice(2),
             b         = 0,
             c         = a.length,
@@ -1818,13 +1850,13 @@ Examples:
             f         = 0,
             alphasort = false,
             pdrcpath  = __dirname.replace(/(api)$/, "") + ".prettydiffrc",
-            pathslash = function (name, x) {
+            pathslash = function pdNodeLocal__start_pathslash(name, x) {
                 var y        = x.indexOf("://"),
                     z        = "",
                     itempath = "",
                     ind      = "",
                     path     = require("path"),
-                    abspath  = function () {
+                    abspath  = function pdNodeLocal__start_pathslash_abspath() {
                         var tree  = cwd.split("/"),
                             ups   = [],
                             uplen = 0;
@@ -1863,7 +1895,7 @@ Examples:
                     itempath = z + "://" + x.replace(/\\/g, "/");
                 }
                 fs
-                    .stat(itempath, function (err, stat) {
+                    .stat(itempath, function pdNodeLocal__start_pathslash_stat(err, stat) {
                         if (err !== null) {
                             dir[ind] = -1;
                             return "";
@@ -1886,7 +1918,7 @@ Examples:
                         address.oabspath = address.oabspath + "/";
                     }
                     address.oorgpath = itempath;
-                    fs.mkdir(address.oabspath, function () {
+                    fs.mkdir(address.oabspath, function pdNodeLocal__start_pathslash_mkdir() {
                         return;
                     });
                 }
@@ -1918,7 +1950,7 @@ Examples:
                     options.bracepadding = true;
                 } else if ((d[b][0] === "braces" && d[b][1] === "allman") || (d[b][0] === "indent" && d[b][1] === "allman")) {
                     options.braces = "allman";
-                } else if (d[b][0] === "color" && (d[b][1] === "default" || d[b][1] === "coffee" || d[b][1] === "dark" || d[b][1] === "canvas" || d[b][1] === "white")) {
+                } else if (d[b][0] === "color" && (d[b][1] === "canvas" || d[b][1] === "shadow")) {
                     options.color = d[b][1];
                 } else if (d[b][0] === "comments" && d[b][1] === "noindent") {
                     options.comments = "noindent";
@@ -1960,7 +1992,8 @@ Examples:
                 } else if (d[b][0] === "html" && d[b][1] === "true") {
                     options.html = true;
                 } else if (d[b][0] === "inchar" && d[b][1].length > 0) {
-                    d[b][1]        = d[b][1].replace(/\\t/g, "\u0009")
+                    d[b][1]        = d[b][1]
+                        .replace(/\\t/g, "\u0009")
                         .replace(/\\n/g, "\u000a")
                         .replace(/\\r/g, "\u000d")
                         .replace(/\\f/g, "\u000c")
@@ -2056,6 +2089,8 @@ Examples:
                     options.tagmerge = true;
                 } else if (d[b][0] === "tagsort" && d[b][1] === "true") {
                     options.tagsort = true;
+                } else if (d[b][0] === "ternaryline" && d[b][1] === "true") {
+                    options.ternaryline = true;
                 } else if (d[b][0] === "textpreserve" && d[b][1] === "true") {
                     options.textpreserve = true;
                 } else if (d[b][0] === "titanium" && d[b][1] === "true") {
@@ -2087,12 +2122,10 @@ Examples:
         }
 
         fs
-            .stat(pdrcpath, function (err, stats) {
-                var pdrc    = {},
-                    key     = "",
-                    init    = function init() {
+            .stat(pdrcpath, function pdNodeLocal__start_stat(err, stats) {
+                var init = function pdNodeLocal__start_stat_init() {
                         var state  = true,
-                            status = function () {
+                            status = function pdNodeLocal__start_stat_init_status() {
                                 //status codes
                                 //-1 is not file or directory
                                 //0 is status pending
@@ -2175,38 +2208,14 @@ Examples:
                                         dState.push(false);
                                         sState.push(false);
                                         if (dir[0] === 3) {
-                                            readHttpFile({
-                                                absolutepath: options.diff,
-                                                index       : 0,
-                                                last        : true,
-                                                localpath   : options.diff,
-                                                type        : "diff"
-                                            });
+                                            readHttpFile({absolutepath: options.diff, index: 0, last: true, localpath: options.diff, type: "diff"});
                                         } else {
-                                            readLocalFile({
-                                                absolutepath: options.diff,
-                                                index       : 0,
-                                                last        : true,
-                                                localpath   : options.diff,
-                                                type        : "diff"
-                                            });
+                                            readLocalFile({absolutepath: options.diff, index: 0, last: true, localpath: options.diff, type: "diff"});
                                         }
                                         if (dir[2] === 3) {
-                                            readHttpFile({
-                                                absolutepath: options.source,
-                                                index       : 0,
-                                                last        : true,
-                                                localpath   : options.source,
-                                                type        : "source"
-                                            });
+                                            readHttpFile({absolutepath: options.source, index: 0, last: true, localpath: options.source, type: "source"});
                                         } else {
-                                            readLocalFile({
-                                                absolutepath: options.source,
-                                                index       : 0,
-                                                last        : true,
-                                                localpath   : options.source,
-                                                type        : "source"
-                                            });
+                                            readLocalFile({absolutepath: options.source, index: 0, last: true, localpath: options.source, type: "source"});
                                         }
                                         return;
                                     }
@@ -2219,21 +2228,9 @@ Examples:
                                         state = false;
                                         sState.push(false);
                                         if (dir[2] === 3) {
-                                            readHttpFile({
-                                                absolutepath: options.source,
-                                                index       : 0,
-                                                last        : true,
-                                                localpath   : options.source,
-                                                type        : "source"
-                                            });
+                                            readHttpFile({absolutepath: options.source, index: 0, last: true, localpath: options.source, type: "source"});
                                         } else {
-                                            readLocalFile({
-                                                absolutepath: options.source,
-                                                index       : 0,
-                                                last        : true,
-                                                localpath   : options.source,
-                                                type        : "source"
-                                            });
+                                            readLocalFile({absolutepath: options.source, index: 0, last: true, localpath: options.source, type: "source"});
                                         }
                                         return;
                                     }
@@ -2243,11 +2240,11 @@ Examples:
                                     }
                                 }
                             },
-                            delay  = function () {
+                            delay  = function pdNodeLocal__start_stat_init_delay() {
                                 if (state === true) {
                                     status();
-                                    setTimeout(function () {
-                                        delay();
+                                    setTimeout(function pdNodeLocal__start_stat_init_delay_setTimeout() {
+                                        pdNodeLocal__start_stat_init_delay();
                                     }, 50);
                                 }
                             };
@@ -2311,28 +2308,33 @@ Examples:
                     fs
                         .readFile(pdrcpath, {
                             encoding: "utf8"
-                        }, function (error, data) {
+                        }, function pdNodeLocal__start_stat_readFile(error, data) {
                             var s       = options.source,
                                 dd      = options.diff,
                                 o       = options.output,
-                                keyname = "",
-                                h       = false;
+                                h       = false,
+                                pdrc    = {},
+                                pdkeys  = [],
+                                eachkey = function pdNodeLocal__start_stat_readFile_eachkey(val) {
+                                    if (val !== "help" && val !== "version" && val !== "v" && val !== "man" && val !== "manual") {
+                                        b += 1;
+                                        if (options[val] !== undefined) {
+                                            options[val] = pdrc[val];
+                                            if (val === "help" && pdrc[val] === true) {
+                                                h = true;
+                                                b -= 1;
+                                            }
+                                        }
+                                    }
+                                };
                             if (error !== null && error !== undefined) {
                                 return init();
                             }
                             if ((/^(\s*\{)/).test(data) === true && (/(\}\s*)$/).test(data) === true) {
-                                pdrc = JSON.parse(data);
-                                b    = 0;
-                                for (keyname in pdrc) {
-                                    if (pdrc.hasOwnProperty(keyname) && keyname !== "help" && keyname !== "version" && keyname !== "v" && keyname !== "man" && keyname !== "manual") {
-                                        b            += 1;
-                                        options[keyname] = pdrc[keyname];
-                                        if (key === "help" && pdrc[keyname] === true) {
-                                            h = true;
-                                            b -= 1;
-                                        }
-                                    }
-                                }
+                                pdrc    = JSON.parse(data);
+                                pdkeys  = Object.keys(pdrc);
+                                b       = 0;
+                                pdkeys.forEach(eachkey);
                                 if (b > 0 && h === false) {
                                     help = false;
                                 }

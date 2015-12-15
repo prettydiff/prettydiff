@@ -147,6 +147,8 @@
                             error.push("");
                             error.push("* tagsort        - boolean - Sort child items of each respective parent element in markup.");
                             error.push("");
+                            error.push("* ternaryline    - boolean - If ternary operators in JavaScript (? and :) should remain on the same line.  Defaults to false.");
+                            error.push("");
                             error.push("* textpreserve   - boolean - If text in the provided markup code should be preserved exactly as provided. This option eliminates beautification and wrapping of text content.  Takes a boolean and defaults to false.");
                             error.push("");
                             error.push("* titanium       - boolean - If the JavaScript parser should expect Titanium Style Sheets instead of JavaScript. Default is false.");

@@ -1,3 +1,4 @@
+<!--prettydiff.com spaceclose:false-->
 <a t="<b><f>asdf<f></b>">
     <c>qwer
         <d/>asdf

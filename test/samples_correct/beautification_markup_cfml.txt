@@ -1,0 +1,272 @@
+<cfset tags=GetTagList() />
+
+<cfset bodies=structNew() />
+<cfset namespace="cf" />
+<cfset tags=tags[namespace] />
+<cfset maxLength=0 />
+
+<cfloop index="tagname" list="#StructKeyList(tags)#">
+    <cfset tag=getTagData(namespace, tagname) />
+
+    <cfif not structkeyExists(bodies, tag.bodyType)>
+        <cfset bodies[tag.bodyType]=ArrayNew(1) />
+    </cfif>
+
+    <cfset ArrayAppend(bodies[tag.bodyType], tagname) />
+
+</cfloop>
+
+<cfoutput>
+    <table>
+        <tr>
+            <cfloop index="key" list="#structKeyList(bodies)#">
+                <th>#key# end tag</th>
+                <cfif ArrayLen(bodies[key]) GT maxLength>
+                    <cfset maxLength=ArrayLen(bodies[key]) />
+                </cfif>
+                <cfset ArraySort(bodies[key], "text", "asc") />
+            </cfloop>
+
+            <cfloop from="1" index="i" to="#maxLength#">
+                <tr>
+                    <cfloop index="key" list="#structKeyList(bodies)#">
+                        <td>
+                            <cfif ArrayLen(bodies[key]) GTE i>
+                                #bodies[key][i]#
+                            <cfelse>
+                                &nbsp;
+                            </cfif>
+                        </td>
+                    </cfloop>
+                </tr>
+            </cfloop>
+        </tr>
+    </table>
+    <cfif x EQ 1 OR y EQ 2>
+        <cfset z=3 />
+        <CFIF ListLen(Attributes.Site_Type_ID) OR ListLen(Attributes.Class_Type_ID) OR Attributes.Grantee_ID OR Attributes.Resa_ID OR Attributes.Class_Site_ID OR Attributes.Class_ID OR Attributes.NotComplete></CFIF>
+    </cfif>
+    <CFMODULE
+        ReturnVariable="displayContent"
+        Template="../../common/capture_content.cfm">
+        <CFIF Len(FileName)>
+            <CFSET Caption="Mailing Labels Created" />
+            <div>
+                <CFOUTPUT>
+                    <a href="profdev/display/#fileName#">Download Mailing Labels</a>
+                </CFOUTPUT>
+            </div>
+            <p>
+                To save this file right click on the link above and choose "Save Target As..."
+            </p>
+            <p>
+                If you would like a coversheet for these labels that describes how they were
+                filtered then
+                <CFSET formParams="mailtype=#Attributes.MailType#" />
+                <cfif isdefined("form.fieldnames")>
+                    <cfloop index="field" list="#form.fieldnames#">
+                        <cfset formParams=ListAppend(formParams, "#field#=" & evaluate("form."&"#field#"),"&") />
+                    </cfloop>
+                </cfif>
+                <cfmodule>asdf</cfmodule>
+                <CFMODULE ReturnVariable="someVariable" Template="../../common/my_module.cfm">
+                    <CFIF Len(FileName)>
+                        do some stuff since it is true
+                    <CFELSE>
+                        do some other stuff since it is false
+                    </CFIF>
+                </CFMODULE>
+                <CF_AEMIS_PRINT
+                    Caption="Load the Coversheet"
+                    Image=""
+                    pURL="index.cfm?Section=#request.site.Section#&Page=#request.site.Page#&Step=CoverSheet&#formParams#" /></p>
+            <p>
+                To use these labels, open the file in Microsoft Word and print them.
+            </p>
+            <cfif isdefined("form.fieldnames")>
+                <cfloop index="field" list="#form.fieldnames#">
+                    <cfset formParams=ListAppend(formParams, "#field#=" & evaluate("form."&"#field#"),"&") />
+                </cfloop>
+            </cfif>
+            <p class="warning">It is always a good idea to print one test page on plain
+                paper and overlay it on your labels before printing the entire list to make sure
+                everything is configured on your printer correctly.
+            </p>
+            <p>
+                Mailing Labels are formatted for standard Avery 5160 mailing label stock.
+            </p>
+        <CFELSE>
+            <CFSET Caption="Mailing Label Creation Error" />
+            There were no people found that match your filter criteria. Please go back to
+            the filter and try again.
+        </CFIF>
+        <cfset links="<p><a href=""index.cfm?Section=#request.site.Section#&Page=#request.site.Page#&Step=#LastStep#&#formParams#&TimeStamp=#request.site.TimeStamp#"">Generate</a> another set of #captionText# mailing labels</p>" />
+        <cfset formParams=ListAppend(formParams, "#field#=" & evaluate("form."&"#field#"),"&") />
+        <cfif isdefined("form.fieldnames")>
+            <cfloop index="field" list="#form.fieldnames#">
+                <cfset formParams=ListAppend(formParams, "#field#=" & evaluate("form."&"#field#"),"&") />
+            </cfloop>
+        </cfif>
+        <cfif isdefined("form.fieldnames")>
+            <cfloop index="field" list="#form.fieldnames#">
+                <cfset formParams=ListAppend(formParams, "#field#=" & evaluate("form."&"#field#"),"&") />
+            </cfloop>
+        </cfif>
+        <CFIF (Attributes.X OR (Attributes.Value123 EQ SOME_VALUE)) AND NOT Attributes.Z></CFIF>
+        <cfscript>
+            function crc16(str) {
+
+                var Crc16Tab = listToArray("0,4129,8258,12387,16516,20645,24774,28903,33032,37161,41290,45419,49548,53677,57" +
+                        "806,61935,4657,528,12915,8786,21173,17044,29431,25302,37689,33560,45947,41818,54" +
+                        "205,50076,62463,58334,9314,13379,1056,5121,25830,29895,17572,21637,42346,46411,3" +
+                        "4088,38153,58862,62927,50604,54669,13907,9842,5649,1584,30423,26358,22165,18100," +
+                        "46939,42874,38681,34616,63455,59390,55197,51132,18628,22757,26758,30887,2112,624" +
+                        "1,10242,14371,51660,55789,59790,63919,35144,39273,43274,47403,23285,19156,31415," +
+                        "27286,6769,2640,14899,10770,56317,52188,64447,60318,39801,35672,47931,43802,2781" +
+                        "4,31879,19684,23749,11298,15363,3168,7233,60846,64911,52716,56781,44330,48395,36" +
+                        "200,40265,32407,28342,24277,20212,15891,11826,7761,3696,65439,61374,57309,53244," +
+                        "48923,44858,40793,36728,37256,33193,45514,41451,53516,49453,61774,57711,4224,161" +
+                        ",12482,8419,20484,16421,28742,24679,33721,37784,41979,46042,49981,54044,58239,62" +
+                        "302,689,4752,8947,13010,16949,21012,25207,29270,46570,42443,38312,34185,62830,58" +
+                        "703,54572,50445,13538,9411,5280,1153,29798,25671,21540,17413,42971,47098,34713,3" +
+                        "8840,59231,63358,50973,55100,9939,14066,1681,5808,26199,30326,17941,22068,55628," +
+                        "51565,63758,59695,39368,35305,47498,43435,22596,18533,30726,26663,6336,2273,1446" +
+                        "6,10403,52093,56156,60223,64286,35833,39896,43963,48026,19061,23124,27191,31254," +
+                        "2801,6864,10931,14994,64814,60687,56684,52557,48554,44427,40424,36297,31782,2765" +
+                        "5,23652,19525,15522,11395,7392,3265,61215,65342,53085,57212,44955,49082,36825,40" +
+                        "952,28183,32310,20053,24180,11923,16050,3793,7920");
+
+                var n = 1;
+                var length = len(str);
+                var crc = 0;
+                var ch = "";
+
+                if (not structKeyExists(request, "eswsoftware")) {
+                    request.eswsoftware = structNew();
+                }
+                if (not structKeyExists(request.eswsoftware, "crc16")) {
+                    request.eswsoftware.crc16 = structNew();
+                }
+                request.eswsoftware.crc16.version = 1;
+
+                for (; n lte length; n = n + 1) {
+                    ch  = mid(str, n, 1);
+
+                    crc = bitAnd(bitXor(bitShlN(crc, 8), Crc16Tab[1 + bitAnd(bitXor(bitShrN(crc, 8), asc(ch)), 255)]), 65535);
+                }
+                return formatBaseN(crc, 16);
+
+            }
+        </cfscript>
+        <cfquery name="qVesselExists" datasource="#getDSN()#">
+            SELECT vessel_code
+            FROM master_vessel
+            WHERE REGEXP_REPLACE(regexp_replace(vessel_long_name, '( *[[:punct:]])', ''), '\s*', '') = <CFQUERYPARAM CFSQLType="CF_SQL_Varchar" Value="#condensedVesselText#" />
+            AND operator_code = <CFQUERYPARAM CFSQLType="CF_SQL_Integer" Value="#Arguments.OperatorCode#" />
+        </cfquery>
+        <cfreturn variables.instance.coderFactory.getCoder("dataset","#arguments.datasetID#") />
+        <cfset reportCount=reportCount + 1 />
+        <div <cfif reportCount NEQ ListLen(reportList)>class="paged"</cfif>></div>
+        <CFFUNCTION Name="FixDatasetForLine" output="false">
+            <CFARGUMENT Name="Line_ID" Required="True" Type="String" />
+
+            <cfset var l=structNew() />
+
+            <cfquery name="l.cinfo" datasource="#getDSN()#">
+                SELECT d.id as dataset_id, d.period, l.receiving_date FROM line_container l, dataset_container d
+                WHERE l.id = <cfqueryparam cfsqltype="cf_sql_integer" value="#arguments.line_id#" />
+                AND d.id = l.dataset_id
+            </cfquery>
+            <cfset l.true_period="1/#Month(l.cinfo.receiving_date)#/#Year(l.cinfo.receiving_date)#" />
+            <cfreturn l />
+        </CFFUNCTION>
+
+        <cfquery name="q" datasource="#getDSN()#">
+            SELECT *
+
+            FROM    foobar_leasor c
+            WHERE   1=1
+            <cfif LEN(arguments.fromOrganizationCode)>
+                <cfif arguments.fromOrganizationType EQ "R">
+                    AND op1.organization_code = <cfqueryparam
+                        cfsqltype="cf_sql_integer"
+                        value="#arguments.FromOrganizationCode#" />
+                <cfelse>
+                    AND ts1.ts_oper = <cfqueryparam
+                        cfsqltype="cf_sql_integer"
+                        value="#arguments.FromOrganizationCode#" />
+                </cfif>
+            </cfif>
+        </cfquery>
+
+        <cfcomponent extends="BaseComponent">
+
+            <cffunction
+                hint="returns the leasor_id for the newly created leasor foobar record"
+                name="create"
+                output="false"
+                returntype="numeric">
+                <cfargument name="foobarcode" required="true" type="numeric" />
+
+                <cfreturn getImportLeasor().CodeAndErrorCheck(argumentCollection = {,
+                    foobarCode = arguments.foobarCode
+                }) />
+
+            </cffunction>
+
+        </cfcomponent>
+
+        <cfquery name="c" datasource="#getDSN()#">
+            SELECT certification_id
+            FROM aemis.pd_certification
+            WHERE certification = <cfqueryparam
+                cfsqltype="cf_sql_varchar"
+                value="#Trim(arguments.data.certification[arguments.data.currentRow])#" />
+            and open_py <= 2015 AND (close_py >= 2015 OR close_py IS NULL)
+        </cfquery>
+
+        <cftransaction>
+            <cftry>
+                <cfloop query="arguments.data">
+                    <!--- do some stuff.. doesn't matter.. --->
+
+                </cfloop>
+                <!--- everything worked, commit the transaction! --->
+                <cftransaction action="commit" />
+                <cfcatch>
+                    <!--- something went wrong; roll back the transaction! --->
+                    <cftransaction action="rollback" />
+                </cfcatch>
+            </cftry>
+        </cftransaction>
+
+        <cfif local.col EQ arguments.ignoreRowIfMissingDataInColumn AND NOT LEN(Trim(local.cellValue))>
+            <cfset local.break=false />
+            <!--- just get rid of this row since we think it is empty --->
+            <cfset ArrayDeleteAt(local.ary,local.aryRowIndex) />
+            <cfbreak />
+        </cfif>
+
+        <CFFUNCTION
+            Name="GetByLineID"
+            access="public"
+            output="false"
+            returntype="struct">
+            <cfargument name="ContainerLineID" required="true" type="numeric" />
+            <cfset var qD="" />
+            <cfquery name="qD" datasource="#getDSN()#">
+                SELECT  d.*
+                FROM     line_container  l,
+                dataset_container d
+                WHERE l.dataset_container_id  = d.id
+                AND l.id                    = <CFQUERYPARAM CFSQLType="CF_SQL_Integer" Value="#arguments.ContainerLineID#" />
+
+            </cfquery>
+            <cfset qd=ConvertQueryToArray(qd) />
+
+            <cfreturn qd[1] />
+        </CFFUNCTION>
+        <cfset getContainerCoder().CheckLine(line_id) />
+        <cfset getContainerCoder().CrossCheckLine(line_id) />
+    </CFMODULE>
+</cfoutput>

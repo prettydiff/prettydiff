@@ -132,23 +132,23 @@ setTimeout(testxxx, 100);
 <meta name="facebook_label" content="finding great cruise deals" />
 <meta http-equiv='PICS-Label' content='(PICS-1.1 "http://www.rsac.org/ratingsv01.html" L GEN TRUE COMMENT "RSACi North America Server" FOR "." ON "1998.06.01T11:39-0800" R (N 0 S 0 V 0 L 0))'>
 <meta http-equiv='PICS-Label' content='(PICS-1.1 "http://www.classify.org/safesurf/" L GEN TRUE FOR "./" BY "iag@travelocity.com" R (SS~~000 1))'>
-<link href="https://plus.google.com/u/0/b/114623008020664723497/" rel="publisher" /> 
+<link href="https://plus.google.com/u/0/b/114623008020664723497/" rel="publisher" />
 <script src="http://i.travelpn.com.edgesuite.net/js/TealeafConfigV.js"></script>
 <link href="http://i.travelpn.com.edgesuite.net/blueprint/css/screen.css" rel="stylesheet" type="text/css" media="screen,all" />
 <link href="http://www.travelocity.com/fd-css-consolidator/0,6712,hp|20120123|TRAVELOCITY,00.css" rel="stylesheet" type="text/css" media="screen,all" />
 <link href="http://i.travelpn.com.edgesuite.net/blueprint/css/print.css" rel="stylesheet" type="text/css" id="blueprint-print" media="print" />
-<!--[if IE]> 
+<!--[if IE]>
 <link href="http://i.travelpn.com.edgesuite.net/blueprint/css/ie.css" rel="stylesheet" type="text/css" id="blueprint-IE" />
 <link type="text/css" href="http://i.travelpn.com.edgesuite.net/css/quirks.css" rel="stylesheet" />
-<![endif]--> 
-<link type="text/css" href="http://i.travelpn.com/css/calendar_datepicker.css" rel="stylesheet"/>	
+<![endif]-->
+<link type="text/css" href="http://i.travelpn.com/css/calendar_datepicker.css" rel="stylesheet"/>
 
 
 
 </head>
 
 <body>
-	
+
 <!-- LIBRARY: TRAVELOCITY_cobrand.lib HEADER -->
 <link rel="stylesheet" href="http://i.travelpn.com.edgesuite.net/css/headerfooter_v1_5hp.css" type="text/css" media="screen,all" />
 
@@ -189,8 +189,8 @@ setTimeout(testxxx, 100);
 		</div>
 		<div class="site-search">
 			<form id="cse-search-box" method="get" action="http://www.travelocity.com/SearchResults">
-			<input type="hidden" value="016693651687389605847:0afinf3zpw0" name="cx">                          
-			<input type="hidden" value="TRAVELOCITY" name="Service">                          
+			<input type="hidden" value="016693651687389605847:0afinf3zpw0" name="cx">
+			<input type="hidden" value="TRAVELOCITY" name="Service">
 			<label class="trav-search-text obscure" for="search-field">Search in Travelocity</label>
 			<input type="text" autocomplete="off" id="search-field" name="searchCriteria" style="color:#666">
 			<input type="submit" alt="Search Travelocity" value="GO" name="sa" id="search-btn">
@@ -253,10 +253,10 @@ setTimeout(testxxx, 100);
 	<div id="page-content" class="container">
 
 		<div id="left-column" class="column span-8">
-		 <div  class="cb520 round cannonball cb-default-fo">		
+		 <div  class="cb520 round cannonball cb-default-fo">
 				<div class="cb-forms">
 					 <ul class="cb-rows span-8 last">
-    <li class="cb-row cb-first-row"> 
+    <li class="cb-row cb-first-row">
         <div class="span-3">
 			<h3 class="cb-row-title"><em>1.</em> Select an option to start your travel search</h3>
 		</div>
@@ -290,13 +290,13 @@ setTimeout(testxxx, 100);
     <input type="hidden" value="fh_pkg" name="pkg_type" id="fh-pkg" />
 	<input type="hidden" value="fhc_pkg" name="pkg_type" id="fhc-pkg" disabled="disabled" />
 	<input type="hidden" value="TRAVELOCITY" name="Service"/>
-        <input type="hidden" value="mm/dd/yyyy" name="dateFormat"/><div>	
+        <input type="hidden" value="mm/dd/yyyy" name="dateFormat"/><div>
     <ul class="cb-rows span-8 last">
         <li class="cb-row">
             <div>
                 <div class="span-3"><h3 class="cb-row-title"><em>2.</em> Enter your origin and destination cities</h3></div>
 
-                <div class="span-5 last cb-form-column">                    
+                <div class="span-5 last cb-form-column">
                     <label for="fh-from">From:</label>
                     <input type="text" id="fh-from" title="Departure city or Airport code" name="leavingFrom" value="DFW" class="cb-span-5 cb-from" />
                     <label for="fh-to">To:</label>
@@ -323,7 +323,7 @@ setTimeout(testxxx, 100);
                     <span class="span-2 cb-nolabel last">
 
                         <label for="fh-fromtime" class="accessible">Departure Time:</label>
-                        <select name="dateLeavingTime" id="fh-fromtime" class="cb-fromtime span-2 last">				
+                        <select name="dateLeavingTime" id="fh-fromtime" class="cb-fromtime span-2 last">
 						<option>12:00am</option><option>1:00am</option><option>2:00am</option><option>3:00am</option><option>4:00am</option><option>5:00am</option><option>6:00am</option><option>7:00am</option><option>8:00am</option><option>9:00am</option><option>10:00am</option><option>11:00am</option><option>12:00pm</option><option>1:00pm</option><option>2:00pm</option><option>3:00pm</option><option>4:00pm</option><option>5:00pm</option><option>6:00pm</option><option>7:00pm</option><option>8:00pm</option><option>9:00pm</option><option>10:00pm</option><option>11:00pm</option>
 
 				<option value="Morning">Morning</option>
@@ -405,7 +405,7 @@ setTimeout(testxxx, 100);
                 </div>
                 <div class="cb-rooms cb-room-additional">
                     <hr class="cb-divider cb-span-5" />
-                    <fieldset class="prefix-1">                        
+                    <fieldset class="prefix-1">
                         <div class="span-1 cb-multi-room-legend">Room 2:</div>
                         <div class="cb-room span-1">
                             <label for="fh-adult2" class="cb-rooms-label accessible">Adults<br />(18-64)</label>
@@ -514,7 +514,7 @@ setTimeout(testxxx, 100);
         </li>
     </ul>
 </div>
-</form> 
+</form>
 
 <form method="post" action="http://travel.travelocity.com/flights/InitialSearch.do" name="form-fo" class="form-fo" id="cb-form-fo">
     <input type="hidden" value="http://travel.travelocity.com/trips/ClarifySearchTimekeeper.do" name="fhPath" disabled="disabled" />
@@ -540,7 +540,7 @@ setTimeout(testxxx, 100);
                             <li class="span-2 last"><input type="radio" id="sub-nav-fow" class="nav-fo" name="subnav" value="form-fow"/><label for="sub-nav-fow">One-Way</label></li>
                         </ul>
                     </fieldset>
-					<div class="clear"></div>					
+					<div class="clear"></div>
                     <label for="fo-from">From:</label>
                     <input type="text" id="fo-from" title="Departure city or Airport code" name="leavingFrom" value="DFW" class="cb-span-5 cb-from" />
 
@@ -557,12 +557,12 @@ setTimeout(testxxx, 100);
         </li>
         <li class="cb-row">
             <div class="span-3"><h3 class="cb-row-title"><em>3.</em> Choose your travel dates</h3></div>
-            <div class="span-5 last cb-form-column">	
+            <div class="span-5 last cb-form-column">
                 <ul class="cb-list cb-datetypes">
                     <li class="span-2 cb-exact-dates cb-no-csa"><input type="radio" id="radioexactDates" checked="checked" value="exactDates" name="dateTypeSelect" /><label for="radioexactDates">Exact Dates <span>US/Canada Only</span></label></li>
 
                     <li class="span-2 cb-plus-minus last"><input type="radio" id="radioplusMinusDates" value="plusMinusDates" name="dateTypeSelect" /><label for="radioplusMinusDates">+/- 1 to 3 Days</label></li>
-                    
+
                 </ul>
                 <div class="clear"></div>
                 <ul class="cb-list cb-datetype-msg">
@@ -570,7 +570,7 @@ setTimeout(testxxx, 100);
                     <li class="cb-span-5 cb-plus-minus-msg">Compare the Best Prices on and Around Your Dates.</li>
                     <li class="cb-span-5 cb-flex-dates-msg">Find the Best Days to Travel.</li>
 
-                </ul>                
+                </ul>
                 <div class="cal-group cb-exact-dates">
                     <span class="span-2 cb-date">
                         <label for="fo-fromdate">Depart:</label>
@@ -609,7 +609,7 @@ setTimeout(testxxx, 100);
 </select>
 
  </span>
-                    <div class="clear"></div>                    
+                    <div class="clear"></div>
                 </div>
                 <div class="cal-group cb-return-dates cb-exact-dates">
                     <span class="span-2 cb-date">
@@ -649,7 +649,7 @@ setTimeout(testxxx, 100);
  </span>
 
                     <div class="clear"></div>
-                    <div class="cb-span-5 cb-best-date"><a onclick="window.open('http://www.travelocity.com/info/info_popup/0,,TRAVELOCITY:EN|TF_ALL_DATES,00.html','window_name','toolbar=no,status=no,scrollbars=yes,resizable=no,width=450,height=255'); return false;" href="http://www.travelocity.com/info/info_popup/0,,TRAVELOCITY:EN|TF_ALL_DATES,00.html">Learn More About Flexible Dates</a></div>                    
+                    <div class="cb-span-5 cb-best-date"><a onclick="window.open('http://www.travelocity.com/info/info_popup/0,,TRAVELOCITY:EN|TF_ALL_DATES,00.html','window_name','toolbar=no,status=no,scrollbars=yes,resizable=no,width=450,height=255'); return false;" href="http://www.travelocity.com/info/info_popup/0,,TRAVELOCITY:EN|TF_ALL_DATES,00.html">Learn More About Flexible Dates</a></div>
                 </div>
             </div>
             <div class="clear"></div>
@@ -701,7 +701,7 @@ setTimeout(testxxx, 100);
             	</div>
 			</div>
             <div class="clear"></div>
-        </li>	
+        </li>
 	</ul>
 </div>
 </form> <form method="post" action="http://travel.travelocity.com/hotel/HotelCobrand.do" name="formHO" class="form-ho" id="cb-form-ho">
@@ -712,7 +712,7 @@ setTimeout(testxxx, 100);
     <input type="hidden" value="Y" name="expr_path" />
     <input type="hidden" value="mm/dd/yyyy" name="dateFormat" />
     <input type="hidden" value="0" name="opaqueTabSelected" />
-<div>	
+<div>
     <input type="hidden" disabled="disabled" name="ts_city" id="ts-ho-to" value="" />
     <ul class="cb-rows span-8 last">
         <li class="cb-row">
@@ -749,7 +749,7 @@ setTimeout(testxxx, 100);
                         <label for="ho-ts-list" class="cb-nolabel">Destination</label>
                         <select id="ho-ts-list" name="TS_HO_destlist" class="cb-span-5">
                       		<optgroup label="United States">
-	<option value="Albany|NY|US">Albany, NY</option>	
+	<option value="Albany|NY|US">Albany, NY</option>
 	<option value="Albuquerque|NM|US">Albuquerque, NM</option>
 	<option value="Anaheim|CA|US">Anaheim, CA</option>
 
@@ -856,7 +856,7 @@ setTimeout(testxxx, 100);
 	<option value="West Palm Beach|FL|US">West Palm Beach, FL</option>
 	<option value="Westchester/Hudson Valley|NY|US">Westchester/Hudson Valley, NY</option>
 </optgroup>
-<optgroup label="Canada">	
+<optgroup label="Canada">
 	<option value="Banff|AB|CA">Banff, AB</option>
 	<option value="YYC|AB|CA">Calgary, AB</option>
 
@@ -869,11 +869,11 @@ setTimeout(testxxx, 100);
 
 	<option value="YYJ|BC|CA">Victoria, BC</option>
 </optgroup>
-<optgroup label="Caribbean">	
+<optgroup label="Caribbean">
 	<option value="Dominican Republic|DO">Dominican Republic</option>
 	<option value="Jamaica|JM">Jamaica</option>
 </optgroup>
-<optgroup label="Mexico">	
+<optgroup label="Mexico">
 	<option value="Cancun|MX">Cancun</option>
 	<option value="Cozumel|MX">Cozumel</option>
 
@@ -882,7 +882,7 @@ setTimeout(testxxx, 100);
 	<option value="Riviera Maya|MX">Riviera Maya</option>
 	<option value="San Jose del Cabo|MX">San Jose del Cabo</option>
 </optgroup>
-<optgroup label="Central & South America">	
+<optgroup label="Central & South America">
 	<option value="Buenos Aires|AR">Buenos Aires, Argentina</option>
 	<option value="SJO|CR">San Jose, Costa Rica</option>
 
@@ -929,7 +929,7 @@ setTimeout(testxxx, 100);
 	                <div class="cb-rooms span-4 last">
 
 	                    <fieldset>
-	                        <div class="span-1 cb-room-legend">Room 1:</div> 
+	                        <div class="span-1 cb-room-legend">Room 1:</div>
 							<div class="cb-room span-1">
 	                            <label for="ho-adults1" class="cb-rooms-label">Adults<br />(18+)</label>
 	                            <select id="ho-adults1" name="adult1"><option selected="selected">1</option><option>2</option><option>3</option><option>4</option><option>5</option><option>6</option></select>
@@ -952,11 +952,11 @@ setTimeout(testxxx, 100);
 	                            <div class="span-1"><select name="minorAge5Room1" title="Age of fifth minor in the first room"><option selected="selected">-?-</option><option>0</option><option>1</option><option>2</option><option>3</option><option>4</option><option>5</option><option>6</option><option>7</option><option>8</option><option>9</option><option>10</option><option>11</option><option>12</option><option>13</option><option>14</option><option>15</option><option>16</option><option>17</option></select></div>
 
 	                        </fieldset>
-						</fieldset>				
+						</fieldset>
 	                </div>
                 <div class="cb-rooms cb-room-additional">
                     <hr class="cb-divider cb-span-5" />
-                    <fieldset class="prefix-1">                        
+                    <fieldset class="prefix-1">
                         <div class="span-1 cb-multi-room-legend">Room 2:</div>
                         <div class="cb-room span-1">
                             <label for="ho-adults2" class="cb-rooms-label accessible">Adults<br />(18+)</label>
@@ -1067,7 +1067,7 @@ setTimeout(testxxx, 100);
     <input type="hidden" value="Y" name="expr_path"/>
     <input type="hidden" name="dateFormat" value="MM/dd/yyyy"/>
     <input type="hidden" name="rdoChkDropoff" value="RT"/>
-<div>	
+<div>
     <ul class="cb-rows span-8 last">
         <li class="cb-row"><div>
 		    <div class="span-3"><h3 class="cb-row-title"><em>2.</em> Enter your pick-up<br/>and drop-off city<br/>or airport code</h3></div>
@@ -1141,12 +1141,12 @@ setTimeout(testxxx, 100);
                     <input type="checkbox" value="on" name="chkIncludeGeoAirportLocations" id="co-poi-includeairport"/>
                     <label for="co-poi-includeairport">Include Airport Locations</label>
                 </div>
-				
+
 				</div>
 				<div class="clear"></div>
             </div>
 
-           
+
         </li><li class="cb-row">
             <div class="span-3"><h3 class="cb-row-title"><em>3.</em> Choose your pick-up<br/>and drop-off dates</h3></div>
             <div class="span-5 last cb-form-column">
@@ -1417,7 +1417,7 @@ setTimeout(testxxx, 100);
                     <option value="APUP">Pick-ups</option>
                     <option value="AWGN">Station Wagons</option>
                     <option value="ACNV">Convertibles</option>
-                </select>       
+                </select>
             <div class="clear"></div>
 
 			</div>
@@ -1456,7 +1456,7 @@ setTimeout(testxxx, 100);
 
 					<div class="span-3 cb-grid-margin">
         				<label for="hcx-to" class="span-3 last">Airport City or Airport Code:</label>
-                    	<input type="text" name="city" title="Pick-up city or Airport code" id="hcx-to" value="LAS" class="span-3 cb-to-city last" />					
+                    	<input type="text" name="city" title="Pick-up city or Airport code" id="hcx-to" value="LAS" class="span-3 cb-to-city last" />
 					</div>
 					<div class="cb-state-row span-2 last">
                     	<label for="hcx-state" class="span-2 last">State/Province:</label>
@@ -1465,9 +1465,9 @@ setTimeout(testxxx, 100);
 
                         	<optgroup label="CA"><option>AB</option><option>BC</option><option>MB</option><option>NB</option><option>NL</option><option>NS</option><option>NT</option><option>ON</option><option>PE</option><option>QC</option><option>SK</option><option>YT</option></optgroup>
                     	</select>
-					</div>				
-                </fieldset>			
-			
+					</div>
+                </fieldset>
+
 				</div>
 
             <div class="clear"></div></div>
@@ -1554,7 +1554,7 @@ setTimeout(testxxx, 100);
 							<option value="21">9:00 pm</option>
 
 							<option value="22">10:00 pm</option>
-							<option value="23">11:00 pm</option>			
+							<option value="23">11:00 pm</option>
                         </select>
                     </span>
                     <div class="clear"></div>
@@ -1577,7 +1577,7 @@ setTimeout(testxxx, 100);
 					</div>
 	                <div class="cb-rooms span-4 last">
 	                    <fieldset>
-	                        <div class="span-1 cb-room-legend">Room 1:</div> 
+	                        <div class="span-1 cb-room-legend">Room 1:</div>
 							<div class="cb-room span-1">
 
 	                            <label for="hcx-adults1" class="cb-rooms-label">Adults<br />(18+)</label>
@@ -1600,11 +1600,11 @@ setTimeout(testxxx, 100);
 	                            <div class="span-1"><select name="minorAge5Room1" title="Age of fifth minor in the first room"><option selected="selected">-?-</option><option>0</option><option>1</option><option>2</option><option>3</option><option>4</option><option>5</option><option>6</option><option>7</option><option>8</option><option>9</option><option>10</option><option>11</option><option>12</option><option>13</option><option>14</option><option>15</option><option>16</option><option>17</option></select></div>
 
 	                        </fieldset>
-						</fieldset>				
+						</fieldset>
 	                </div>
                 <div class="cb-rooms cb-room-additional">
                     <hr class="cb-divider cb-span-5" />
-                    <fieldset class="prefix-1">                        
+                    <fieldset class="prefix-1">
                         <div class="span-1 cb-multi-room-legend">Room 2:</div>
                         <div class="cb-room span-1">
                             <label for="hcx-adults2" class="cb-rooms-label accessible">Adults<br />(18+)</label>
@@ -1687,13 +1687,13 @@ setTimeout(testxxx, 100);
                     </fieldset>
                 </div>
 				<div class="clear"></div>
-			</div>			
+			</div>
         </li>
         <li class="cb-row cb-last-row">
             <div class="span-5 last prefix-3 cb-form-column">
 			<div class="clear">
 
-			
+
                 <input type="submit" class="cb-span-5 cb-submit" value="Search" alt="Search for Hotel + Cars" name="Search" />
 				<div class="cb-span-5 cb-advanced">
 					<a href="http://vacations.travelocity.com/hotelplus/HotelCarAdvancedSearch.html?serviceTag=TRAVELOCITY" rel="nofollow">See Advanced Search Options</a>
@@ -1717,7 +1717,7 @@ setTimeout(testxxx, 100);
 	    <input type="hidden" name="Service" value="TRAVELOCITY" />
 	    <input type="hidden" name="promolink" value="false" />
 		<input type="hidden" value="true" name="searchNearbyPorts" />
-<div>		
+<div>
     <ul class="cb-rows span-8 last">
         <li class="cb-row">
             <div>
@@ -1742,18 +1742,18 @@ setTimeout(testxxx, 100);
 
 			        	</select>
 					</div>
-					
+
 					<label for="departurePort" class="cb-span-5">Cruise Departure Port:</label>
 					<select name="departurePort" class="cb-span-5 departurePort" id="departurePort">
 						<option value="">Any Departure Port</option>
 					</select>
 					<div class="clear"></div>
-					
+
 					<label for="cro-cruiseline" class="cb-span-5">Cruise Line:</label>
 
 					<select name="cruiseVendor" class="cb-span-5" id="cro-cruiseline">
 						<option selected="selected" value="">All Cruise Lines</option>
-					</select>				
+					</select>
 					<div class="clear"></div>
 				</div>
             </div>
@@ -1876,7 +1876,7 @@ setTimeout(testxxx, 100);
 			<div id="prevCruise" class="cb-previous-cruise">
 			<div class="cb-span-5 cb-previous-cruise-labels">Select all previously sailed cruise lines.</div>
 			<ul id="ppvOptions" class="cb-list"></ul>
-			</div>				
+			</div>
             </div>
             <div class="clear"></div>
         </li>
@@ -1896,9 +1896,9 @@ setTimeout(testxxx, 100);
 </form> </div>
 				<div class="clear"></div>
 			</div>
-			
+
 			<div id="vacs-deals-mod" class="round box">
-			 
+
 				<h2>Travel Deals from:</h2>
 				<form id="deals-origin" name="origins" action="#">
 					<input type="hidden" name="airportCode" id="tdAirportCode" value="" />
@@ -1908,7 +1908,7 @@ setTimeout(testxxx, 100);
 					</select>
 					<input class="submit-secondary left" type="submit" value="GO" alt="GO" />
 				</form>
-				
+
 				<div id="td-div-important-info" class="important-info-alert-msg" style="display:none">
 					<div class="important-info-alert-icon">
 						<div class="important-info-alert-title">Important Information</div>
@@ -1917,9 +1917,9 @@ setTimeout(testxxx, 100);
 						<span class="clear"></span>
 					</div>
 				</div>
-				
+
 			 <span class="clear"></span>
-				
+
 				<div id="hp-deals">
 					<table>
 						<thead>
@@ -1936,8 +1936,8 @@ setTimeout(testxxx, 100);
 						<a href="/Travel-Deals" id="see-more-deals-link" class="see-more-deals" title="See More Deals">See More Deals</a><span class="clear"></span>
 
 					</div>
-					
-					 
+
+
 					<div class="deal-alert-signup">
 						<div id="sm-div-existing-account" class="error-msg" style="display:none">
 							<div class="error-icon">
@@ -1954,7 +1954,7 @@ setTimeout(testxxx, 100);
 								<span class="clear"></span>
 
 							</div>
-						</div> 
+						</div>
 						<div id="sm-div-thanks" class="positive-alert-msg" style="display:none">
 							<div class="positive-alert-icon">
 								<div class="positive-alert-title">Thank You for Registering!</div>
@@ -1965,7 +1965,7 @@ setTimeout(testxxx, 100);
 						</div>
 						<h3 class="title">Sign up for Deal Alerts</h3>
 						<div class="email-signup">
-							<form id="hp-email-submit" action="#" onsubmit="return false" name="hp-subscribe-account"> 
+							<form id="hp-email-submit" action="#" onsubmit="return false" name="hp-subscribe-account">
 								<span class="label"><label>Enter your email address to get great savings and deals</label></span>
 								<span class="clear"></span>
 								<input name="Email" id="hp-subscribe-email" type="text" title="Sign up for deal alert emails" class="signup" />
@@ -1978,38 +1978,34 @@ setTimeout(testxxx, 100);
 					<span class="clear"></span>
 					 </div>
 			</div>
-			 
-				
+
+
 			 </div><!-- #leftColumn -->
-		
+
 		<div id="center-column" class="column span-5">
 
 			<div class="sp" id="super-promo">
 			</div>
-			
+
 			<!-- Vignette V6 Mon Jan 23 11:00:14 2012 -->
 
 				<div id="mkt-message-mod" class="round box">
-					<h3><a href="http://leisure.travelocity.com/Promotions/0,,TRAVELOCITY%7C6866%7Ccruises_main,00.html?locLink=GLB_HOMEPAGE|PROMO1
-
-">Offer Ends Soon!</a></h3>
+					<h3><a href="http://leisure.travelocity.com/Promotions/0,,TRAVELOCITY%7C6866%7Ccruises_main,00.html?locLink=GLB_HOMEPAGE|PROMO1">Offer Ends Soon!</a></h3>
 					<p id="mkt-message"><span>2012 Cruise Super Sale!</span><br />
-Hurry and receive up to $600 in savings on a trip of a lfetime. Book Now and take advantage! <br /><a href="http://leisure.travelocity.com/Promotions/0,,TRAVELOCITY%7C6866%7Ccruises_main,00.html?locLink=GLB_HOMEPAGE|PROMO1
-
-">Read More</a></p>
+Hurry and receive up to $600 in savings on a trip of a lfetime. Book Now and take advantage! <br /><a href="http://leisure.travelocity.com/Promotions/0,,TRAVELOCITY%7C6866%7Ccruises_main,00.html?locLink=GLB_HOMEPAGE|PROMO1">Read More</a></p>
 
 					<span class="clear"></span>
-				</div>			
+				</div>
 			  <div id="right-guarantee" class="round box" style="overflow: hidden; height: 100%">
 				<a href="http://leisure.travelocity.com/Promotions/0,,TRAVELOCITY|4818|mkt_main,00.html"><img src="http://i.travelpn.com.edgesuite.net/images/graphics_prod/other/sideModule_priceGuarantee_123x64.jpg" border="0" width="123" height="64" alt="Travelocity Best Price Guarantee" style="float:left;"></a>
-				 
+
 				We'll match the price and give you $50 toward future travel.<br />
 	        	<a href="http://leisure.travelocity.com/Promotions/0,,TRAVELOCITY|4818|mkt_main,00.html" style="float:right;">Learn more</a>
 				  </div>
-			
+
 			<div class="ad" id="right-ad">
 
-			
+
 			</div>
 		</div>
 		<span class="clear"></span>
@@ -2024,17 +2020,17 @@ Hurry and receive up to $600 in savings on a trip of a lfetime. Book Now and tak
 					<!-- Vignette V6 Mon Jan 23 11:00:15 2012 -->
 <ul>
 					<li><a href="http://leisure.travelocity.com/Promotions/0,,TRAVELOCITY|2077|pkg_main,00.html?locLink=GLB_HOMEPAGE|DESSTORE" rel="nofollow"><img src="http://i.travelpn.com.edgesuite.net/images/graphics_prod/other/110503_hawaii_126x94.jpg" alt="Destination Photo"/></a> Hawaii<br/> <a href="http://leisure.travelocity.com/Promotions/0,,TRAVELOCITY|2077|pkg_main,00.html?locLink=GLB_HOMEPAGE|DESSTORE" rel="nofollow">Save up to 50%</a></li>
-			
+
 					<li><a href="http://leisure.travelocity.com/Promotions/0,,TRAVELOCITY%7C6591%7Cmkt_WDW,00.html?locLink=GLB_HOMEPAGE|DESSTORE" rel="nofollow"><img src="http://i.travelpn.com.edgesuite.net/images/graphics_prod/other/110601_Disneyworld_126x94.jpg" alt="Destination Photo"/></a> Disney<br/> <a href="http://leisure.travelocity.com/Promotions/0,,TRAVELOCITY%7C6591%7Cmkt_WDW,00.html?locLink=GLB_HOMEPAGE|DESSTORE" rel="nofollow">Save up to 30%</a></li>
-			
+
 					<li><a href="http://leisure.travelocity.com/Promotions/0,,TRAVELOCITY|2045|pkg_main,00.html?locLink=GLB_HOMEPAGE|DESSTORE" rel="nofollow"><img src="http://i.travelpn.com.edgesuite.net/images/graphics_prod/other/110503_caribbean_126x94.jpg" alt="Destination Photo"/></a> Caribbean<br/> <a href="http://leisure.travelocity.com/Promotions/0,,TRAVELOCITY|2045|pkg_main,00.html?locLink=GLB_HOMEPAGE|DESSTORE" rel="nofollow">Save up to 65%</a></li>
 
-			
+
 					<li><a href="http://leisure.travelocity.com/Promotions/0,,TRAVELOCITY|2141|pkg_main,00.html?locLink=GLB_HOMEPAGE|DESSTORE" rel="nofollow"><img src="http://i.travelpn.com.edgesuite.net/images/graphics_prod/other/110503_lasvegas_126x94.jpg" alt="Destination Photo"/></a> Las Vegas<br/> <a href="http://leisure.travelocity.com/Promotions/0,,TRAVELOCITY|2141|pkg_main,00.html?locLink=GLB_HOMEPAGE|DESSTORE" rel="nofollow">Complimentary Show Tickets!</a></li>
-			
+
 					<li class="lastdest" ><a href="http://leisure.travelocity.com/Promotions/0,,TRAVELOCITY|3009|pkg_main,00.html?locLink=GLB_HOMEPAGE|DESSTORE" rel="nofollow"><img src="http://i.travelpn.com.edgesuite.net/images/graphics_prod/other/120119_skier_126x94.jpg" alt="Destination Photo"/></a> Ski<br/> <a href="http://leisure.travelocity.com/Promotions/0,,TRAVELOCITY|3009|pkg_main,00.html?locLink=GLB_HOMEPAGE|DESSTORE" rel="nofollow">Save 33%</a></li>
 			</ul> </div>
-				
+
 				<a href="http://leisure.travelocity.com/Promotions/0,,TRAVELOCITY|5288|vacation_deals,00.html" class="top-dest-see-more">See More</a>
 
 				<span class="clear"></span>
@@ -2042,7 +2038,7 @@ Hurry and receive up to $600 in savings on a trip of a lfetime. Book Now and tak
 			</div>
 
 			<div id="additional-dest-mod" class="round box">
-				 
+
 					 <h5>Trending Now in Travel</h5>
 				<div id="popular-dest-mod">
 					<ul class="left">
@@ -2064,7 +2060,7 @@ Hurry and receive up to $600 in savings on a trip of a lfetime. Book Now and tak
 						<li><a href="http://www.travelocity.com/flight-d4980-nevada-las-vegas-cheap-flights?locLink=GLB_HOMEPAGE|SEOSECT">Cheap Flights To Las Vegas</a></li>
 						<li><a href="http://www.travelocity.com/flight-d7915-mexico-cancun-cheap-flights?locLink=GLB_HOMEPAGE|SEOSECT">Flights To Cancun</a></li>
 						<li><a href="http://www.travelocity.com/flight-d2253-hawaii-hawaii-cheap-flights?locLink=GLB_HOMEPAGE|SEOSECT">Flights to Hawaii</a></li>
-						<li><a href="http://www.travelocity.com/flight-d8530-florida-orlando-cheap-flights?locLink=GLB_HOMEPAGE|SEOSECT">Cheap Flights To Orlando</a></li>						
+						<li><a href="http://www.travelocity.com/flight-d8530-florida-orlando-cheap-flights?locLink=GLB_HOMEPAGE|SEOSECT">Cheap Flights To Orlando</a></li>
 					</ul>
 				</div>
 
@@ -2109,7 +2105,7 @@ Hurry and receive up to $600 in savings on a trip of a lfetime. Book Now and tak
 				</div>
 				<span class="clear"></span>  </div>
 			<div id="misc-links">
-				
+
 					<ul>
 						<li><a id="cust-support" href="/vstrack?locLink=GLB_HOMEPAGE%7CSUBNAV&amp;dst=http%3A%2F%2Fus%2Ecusthelp%2Ecom%2Fcgi%2Dbin%2Fus%2Ecfg%2Fphp%2Fenduser%2Fhome%2Ephp%3Fp%5Fsid%3D%26prod%5Flvl1%3D41%26prod%5Flvl2%3D43%26p%5Fprods%3D41%252C43%26p%5Fpv%3D2%2E43">Customer Support 1.888.872.8356</a>|</li>
 						<li><a href="http://travel.travelocity.com/mystuff/MyStuffControllerInit.do?target_page=MyAccount&amp;Service=TRAVELOCITY&locLink=GLB_HOMEPAGE|SUBNAV">My Account</a>|</li>
@@ -2126,8 +2122,8 @@ Hurry and receive up to $600 in savings on a trip of a lfetime. Book Now and tak
 	</div><!-- end #pageContent -->
 	<script type="text/javascript" src="http://dm.travelocity.com/js.ng/site=travelocity&cobrand=TRAVELOCITY&adsize=1x1&area=homepage&tile=106119156132734&transactionID=901011327342356&random=061190761327342"></script>
 </div><!-- end #pageID -->
-	
-	
+
+
 <!-- TRAVELOCITY_cobrand.lib FOOTER -->
 <div id="foofaUS">
 <!-- homepage -->
@@ -2138,10 +2134,10 @@ Hurry and receive up to $600 in savings on a trip of a lfetime. Book Now and tak
 	<div class="pre-footer-info">
 		<div id="pre-banner">
 		   </div>
-		
+
 		<div id="pre-cc">
 				<a href="http://www.barclaycardus.com/apply/Landing.action?campaignId=1458&cellNumber=3&prodidreq=CCAAE30993&referrerid=FRONTDOORS" target="_new">
-				<img alt="Get up to 10% back on your Travelocity Purchases. The Travelocity Rewards American Express&reg; Card" 
+				<img alt="Get up to 10% back on your Travelocity Purchases. The Travelocity Rewards American Express&reg; Card"
 				src="http://i.travelpn.com.edgesuite.net/images/graphics_prod/other/tvly_amex_card_3_191x62.gif" style="margin-bottom:5px;margin-top:-9px;"/></a>
 				<a href="http://leisure.travelocity.com/Promotions/0,,TRAVELOCITY|5531|mkt_main,00.html" target="_new">
 
@@ -2174,7 +2170,7 @@ Hurry and receive up to $600 in savings on a trip of a lfetime. Book Now and tak
 <li class="last"><a href="http://travel.travelocity.com/mystuff/ShowCreateAccount.do?Service=TRAVELOCITY" rel="nofollow" title="Subscribe">Subscribe</a></li>
 
 </ul>
-</div> 
+</div>
 <div class="intl-sites">
 <h3 id="international-sites">International Sites</h3>
 <ul>
@@ -2237,8 +2233,8 @@ Hurry and receive up to $600 in savings on a trip of a lfetime. Book Now and tak
 </ul>
 </div>
 <div class="legal-info">
-<p>&copy; 1996-2012 Travelocity.com LP. All rights reserved. Travelocity, the Stars Design, and The Roaming Gnome Design are trademarks of Travelocity.com LP. Use of this Web site constitutes acceptance of the Travelocity 
-<a href="http://www.travelocity.com/info/info_popup/0,,TRAVELOCITY:EN|TERMS_WINDOW,00.html" onclick="launchWindow('http://www.travelocity.com/info/info_popup/0,,TRAVELOCITY:EN|TERMS_WINDOW,00.html',400,255);return false;" title="User Agreement">User Agreement</a> 
+<p>&copy; 1996-2012 Travelocity.com LP. All rights reserved. Travelocity, the Stars Design, and The Roaming Gnome Design are trademarks of Travelocity.com LP. Use of this Web site constitutes acceptance of the Travelocity
+<a href="http://www.travelocity.com/info/info_popup/0,,TRAVELOCITY:EN|TERMS_WINDOW,00.html" onclick="launchWindow('http://www.travelocity.com/info/info_popup/0,,TRAVELOCITY:EN|TERMS_WINDOW,00.html',400,255);return false;" title="User Agreement">User Agreement</a>
 and <a href="http://www.travelocity.com/info/info_window/0,,TRAVELOCITY|PRIVACY_WINDOW,00.html" onclick="launchWindow('http://www.travelocity.com/info/info_window/0,,TRAVELOCITY|PRIVACY_WINDOW,00.html',400,255);return false;" title="Privacy Policy">Privacy Policy</a>. CST# 2056372-50</p>
 </div>
 
@@ -3068,23 +3064,23 @@ jQuery.cookie=function(name,value,options){if(typeof value!="undefined"){options
 	lscookie: "TotalTrip|DFW|LAS|02/17/2012|02/21/2012|US"
 };</script>
 
-<script type="text/javascript">	
+<script type="text/javascript">
 	jQuery(document).ready(function () {
-		
-		
-			jQuery("#tabs").css("display", "").tabs({ 
+
+
+			jQuery("#tabs").css("display", "").tabs({
 				spinner: '',
 				cache: true,
-				select : function(event, ui) {					
+				select : function(event, ui) {
 					var panel = $(ui.panel);
 					if (panel.is(":empty")) {
 						panel.append("<div id='tabs-spinner'></div>");
 					}
 				}
 			});
-		     
-			   
-			
+
+
+
 				(function(){ if(typeof(Subscriptions) !== "object"){Subscriptions={}} })(); Subscriptions.SignupConfig = { state:"HomePageWidget",serviceUrl:"http://www.travelocity.com/servicegateway/globaltrips-shopping-svcs/subscription-management-1.0/services/SubscriptionService/Subscribe",maxRetries:10,sVSTrackUrl:"http://travel.travelocity.com/___waseq.img",terms_link:{url:"http://www.travelocity.com/info/info_popup/0,,TRAVELOCITY:EN|TERMS_WINDOW,00.html",width:500,height:400},SID:"T000V00000X806241813008610115010671183",JSID:"",servicetag:"TRAVELOCITY"};Subscriptions.PopupConfig = {urls:{SignUpPopup:"http://www.travelocity.com/subscription-management/submgmt-popup"},height:450};   Subscriptions.SignupConfig.JSID = GetCookie("JSID"); Subscriptions.SignupConfig.oWidgetComponents = {
 					sSignupModule: "hp-email-submit",
 					sMultiMatchModule: "sm-div-thanks",
@@ -3098,18 +3094,18 @@ jQuery.cookie=function(name,value,options){if(typeof value!="undefined"){options
 				if (tvly.service.toUpperCase() == "TRAVELOCITY" || tvly.service.toUpperCase() == "CJUS" || tvly.service.toUpperCase() == "TCYCA" || tvly.service.toUpperCase() == "CJCA") {
 						Subscriptions.initSignupModule();
 				}
-			
-			  });	
+
+			  });
 </script> <script language="JavaScript" type="text/javascript" src="http://i.travelpn.com/js/calendar_datepicker.js"></script>
-	
+
 	<script type="text/javascript">
 		jQuery(function(){
 			new jQuery.tvly.Cannonball({
 				cruiseScript:"http://i.travelpn.com.edgesuite.net/js/jquery.cb.cruise-1.0.js"
-			});	
-			
+			});
+
 			jQuery("input#fh-from, input#fh-to, input#fo-from, input#fo-to, input#co-to").val("");
-			
+
 			var AutoCompleteOptions = {
 				numberOfResultsDisplay: 10,
 				locationType: ["ARP", "CTY"],
@@ -3175,25 +3171,25 @@ jQuery.cookie=function(name,value,options){if(typeof value!="undefined"){options
 					}
 				}
 			};
-			
+
 			jQuery._autocomplete(jQuery.extend({}, AutoCompleteOptions, {elementId: "ho-to"}));
 			jQuery._autocomplete(jQuery.extend({}, AutoCompleteOptions, {elementId: "hcx-to"}));
-			jQuery("#ho-to, #hcx-to").bind("autocompleteselect",false);		
+			jQuery("#ho-to, #hcx-to").bind("autocompleteselect",false);
 		});
 	</script>
 
-	
-	<script id="dealsTemplate" type="text/x-jquery-tmpl">  
+
+	<script id="dealsTemplate" type="text/x-jquery-tmpl">
 		<tr>
 			<td class="deal-type" scope="row">${Type}</td>
 			<td class="deal-description"><a href="http://vacations.travelocity.com/merchandising/offers/LandingPage.do?destinationId=${DestinationId}&hotelSortOrder=picks&airportCode=${AirportCode}&locLink=GLB_HOMEPAGE|DEALSWIDGET">${Description}</a></td>
 			<td class="deal-price"><a href="http://vacations.travelocity.com/merchandising/offers/LandingPage.do?destinationId=${DestinationId}&hotelSortOrder=picks&airportCode=${AirportCode}&locLink=GLB_HOMEPAGE|DEALSWIDGET"><span>${PriceDiscount}</span></a></td>
 			<td class="deal-price-type">${PriceDetail}</td>
-		</tr>	
+		</tr>
 	</script>
-	
+
 	<script language="JavaScript" type="text/javascript">
-	
+
 		var tDeals = ["http://i.travelpn.com.edgesuite.net/js/vacation.deals.js"]
 		jQuery.tvly.loadScript(tDeals, function(){
 			jQuery(document).bind('travelDeals:ready', function(){
@@ -3231,7 +3227,7 @@ jQuery.cookie=function(name,value,options){if(typeof value!="undefined"){options
 			jQuery().addPlacement(ads);
 		});
 	</script>
-	
+
 	<script type="text/javascript">
 if($.browser.msie && $.browser.version=="6.0") {
 	var modalID = "ie6-modal-container";
@@ -3257,7 +3253,7 @@ if($.browser.msie && $.browser.version=="6.0") {
 				});
 				document.body.scroll = "yes";
 				jQuery("#" + modalID ).remove();
-				jQuery("#" + messageID).remove();	
+				jQuery("#" + messageID).remove();
 			});
 	    });
 	  }

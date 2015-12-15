@@ -97,6 +97,17 @@
                     <a href="#execution">Execution</a>
                 </li>
                 <li>
+                    <a href="#unittest">Unit Tests</a>
+                    <ol>
+                        <li>
+                            <a href="#unittest_execution">Requirements and Execution</a>
+                        </li>
+                        <li>
+                            <a href="#unittest_details">Test Details</a>
+                        </li>
+                    </ol>
+                </li>
+                <li>
                     <a href="#environments">Environments</a>
                     <ol>
                         <li>
@@ -307,6 +318,19 @@
                         <code>&nbsp;&nbsp;&nbsp;&nbsp;output = prettydiff(args);</code>
                     </li>
                 </ul>
+            </div>
+        </div>
+        <div id="unittest">
+            <h2>Unit Tests</h2>
+            <div id="unittest_execution">
+                <h3>Requirements and Execution</h3>
+                <p>The Pretty Diff unit tests are defined in the file <a href="test/lint.js">test/lint.js</a> and require <a href="https://nodejs.org/">Node.js</a> and <a href="http://npmjs.com/">NPM</a> to execute.  To run the tests type this command on the command line from inside the prettydiff package directory:</p>
+                <code><strong>npm test</strong></code>
+            </div>
+            <div id="unittest_details">
+                <h3>Test Details</h3>
+                <p>Running the tests will check if the unit tests have run before the current day and if not will attempt to install the latest version of JSLint from NPM.  JSLint will then be run on all JavaScript files in the repo directories aside from a few exceptions. On the first file that produces JSLint warnings the warnings are reported to the command line and the process is halted as an error.</p>
+                <p>Once JSLint completes all the files are read from the directories: <a href="test/samples_raw">test/samples_raw</a> and <a href="test/samples_correct">test/samples_correct</a>. Each file from the raw directory is processed through Pretty Diff and then compared to the same named file in the correct directory. If every comparison is a match the unit tests exit cleanly. The first file to fail a comparison is output to the command line as a diff report using Pretty Diff with the <em>diffcli</em> option.</p>
             </div>
         </div>
         <div id="environments">
@@ -1647,6 +1671,23 @@
                             <li>
                                 <h5>As labeled in the HTML tool</h5>
                                 Sort child text/elements of each parent element</li>
+                        </ul>
+                    </li>
+                    <li id="ternaryline">
+                        <h4>ternaryline</h4>
+                        <ul>
+                            <li>
+                                <h5>Description</h5>
+                                By default Pretty Diff will indent on the <em>?</em> and <em>:</em> operators of ternary statements. Setting this option to true keep these operators on the same line of code.</li>
+                            <li>
+                                <h5>Type</h5>
+                                boolean</li>
+                            <li>
+                                <h5>Default</h5>
+                                false</li>
+                            <li>
+                                <h5>As labeled in the HTML tool</h5>
+                                Ternary Formatting</li>
                         </ul>
                     </li>
                     <li id="textpreserve">

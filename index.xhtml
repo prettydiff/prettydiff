@@ -179,7 +179,7 @@
         </p>
         <div id="reports">
             <h2>Reporting data which updates with each use of the tool</h2>
-            <div class="box" id="feedreport" role="dialog_nonmodal">
+            <div class="box" id="feedreport" role="dialog_nonmodal" style="display:none">
                 <h3 class="heading"
                     title="Grab this title element to open this dialogue or move it around around the screen.">
                     <button>Feedback</button>
@@ -382,6 +382,7 @@
                 </label>
                 <select id="language">
                     <option selected="selected" value="auto">Auto Detect</option>
+                    <option value="coldfusion">ColdFusion</option>
                     <option value="css">CSS</option>
                     <option value="csv">CSV</option>
                     <option value="dustjs">Dust.js</option>
@@ -411,6 +412,7 @@
                     <a class="apiname" href="documentation.xhtml#langdefault">(langdefault)</a>
                 </label>
                 <select id="lang-default">
+                    <option value="coldfusion">ColdFusion</option>
                     <option value="css">CSS</option>
                     <option value="csv">CSV</option>
                     <option value="dustjs">Dust.js</option>
@@ -713,7 +715,7 @@
                         </p>
                         <p>
                             <strong>Sort Child Items of Each Parent Element
-                                <a class="apiname" href="documentation.xhtml#tagsort">tagsort</a>
+                                <a class="apiname" href="documentation.xhtml#tagsort">(tagsort)</a>
                             </strong>
                             <span>
                                 <input checked="checked" id="dtagsort-no" name="dtagsort" type="radio"/>
@@ -829,6 +831,19 @@
                             <span>
                                 <input id="jsspaced-no" name="jsspaced" type="radio"/>
                                 <label for="jsspaced-no">Remove space following function</label>
+                            </span>
+                        </p>
+                        <p>
+                            <strong>Ternary Formatting
+                                <a class="apiname" href="documentation.xhtml#ternaryline">(ternaryline)</a>
+                            </strong>
+                            <span>
+                                <input checked="checked" id="dternaryline-no" name="dternaryline" type="radio"/>
+                                <label for="dternaryline-no">Indent ternary statements</label>
+                            </span>
+                            <span>
+                                <input id="dternaryline-yes" name="dternaryline" type="radio"/>
+                                <label for="dternaryline-yes">Keep ternary statements on one line</label>
                             </span>
                         </p>
                     </fieldset>
@@ -1312,6 +1327,19 @@
                             </select>
                             <span>Read about
                                 <a href="guide/styleguide.xhtml">style guide support</a>
+                            </span>
+                        </p>
+                        <p>
+                            <strong>Ternary Formatting
+                                <a class="apiname" href="documentation.xhtml#ternaryline">(ternaryline)</a>
+                            </strong>
+                            <span>
+                                <input checked="checked" id="bternaryline-no" name="bternaryline" type="radio"/>
+                                <label for="bternaryline-no">Indent ternary statements</label>
+                            </span>
+                            <span>
+                                <input id="bternaryline-yes" name="bternaryline" type="radio"/>
+                                <label for="bternaryline-yes">Keep ternary statements on one line</label>
                             </span>
                         </p>
                         <p>
