@@ -1681,7 +1681,7 @@ global.edition        = {
     markuppretty : 151214, //markuppretty lib
     prettydiff   : 151214, //this file
     safeSort     : 151130, //safeSort lib
-    version      : "1.16.1", //version number
+    version      : "1.16.2", //version number
     webtool      : 151214 //index.xhtml
 };
 global.edition.latest = (function edition_latest() {

@@ -1,0 +1,4 @@
+language: JavaScript
+script: node test/lint.js
+git:
+    depth: 3

@@ -41,5 +41,5 @@
         "prepublish": "node test/lint.js",
         "test"      : "node test/lint.js"
     },
-    "version"    : "1.16.1"
+    "version"    : "1.16.2"
 }
