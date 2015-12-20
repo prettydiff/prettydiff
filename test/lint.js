@@ -111,6 +111,7 @@
                             : correct.length,
                         a         = 0,
                         output    = "",
+                        filecount = 0,
                         report    = [],
                         diffFiles = function lintrunner_unitTest_compare_diffFiles() {
                             var aa     = 0,
@@ -119,6 +120,8 @@
                                 count  = [
                                     0, 0
                                 ],
+                                diffs  = 0,
+                                lcount = 0,
                                 colors = {
                                     del     : {
                                         charEnd  : "\x1B[22m",
@@ -147,6 +150,7 @@
                             //5 - index of options.context (not parallel)
                             //6 - total count of differences
                             if (report[0][0] < 2) {
+                                diffs += 1;
                                 console.log("");
                                 console.log(colors.filepath.start + correct[a][0]);
                                 console.log("Line: 1" + colors.filepath.end);
@@ -157,7 +161,9 @@
                                     if (count[1] === 51) {
                                         break;
                                     }
-                                    line = report[0][aa] + 2;
+                                    line   = report[0][aa] + 2;
+                                    lcount = 0;
+                                    diffs  += 1;
                                     console.log("");
                                     console.log(colors.filepath.start + correct[a][0]);
                                     console.log("Line: " + line + colors.filepath.end);
@@ -166,27 +172,32 @@
                                         console.log(report[3][aa + 1]);
                                     }
                                 }
-                                if (report[4][aa] === "delete") {
-                                    if (report[1][aa] === "") {
-                                        report[1][aa] = "(empty line)";
-                                    } else if (report[1][aa].replace(/\ +/g, "") === "") {
-                                        report[1][aa] = "(indentation)";
+                                if (lcount < 7) {
+                                    lcount += 1;
+                                    if (report[4][aa] === "delete") {
+                                        if (report[1][aa] === "") {
+                                            report[1][aa] = "(empty line)";
+                                        } else if (report[1][aa].replace(/\ +/g, "") === "") {
+                                            report[1][aa] = "(indentation)";
+                                        }
+                                        console.log(colors.del.lineStart + report[1][aa].replace(/\\x1B/g, "\\x1B").replace(/<p(d)>/g, colors.del.charStart).replace(/<\/pd>/g, colors.del.charEnd) + colors.del.lineEnd);
+                                    } else if (report[4][aa] === "insert") {
+                                        if (report[3][aa] === "") {
+                                            report[3][aa] = "(empty line)";
+                                        } else if (report[3][aa].replace(/\ +/g, "") === "") {
+                                            report[3][aa] = "(indentation)";
+                                        }
+                                        console.log(colors.ins.lineStart + report[3][aa].replace(/\\x1B/g, "\\x1B").replace(/<p(d)>/g, colors.ins.charStart).replace(/<\/pd>/g, colors.ins.charEnd) + colors.ins.lineEnd);
+                                    } else if (report[4][aa] === "equal" && aa > 1) {
+                                        console.log(report[3][aa]);
+                                    } else if (report[4][aa] === "replace") {
+                                        console.log(colors.del.lineStart + report[1][aa].replace(/\\x1B/g, "\\x1B").replace(/<p(d)>/g, colors.del.charStart).replace(/<\/pd>/g, colors.del.charEnd) + colors.del.lineEnd);
+                                        console.log(colors.ins.lineStart + report[3][aa].replace(/\\x1B/g, "\\x1B").replace(/<p(d)>/g, colors.ins.charStart).replace(/<\/pd>/g, colors.ins.charEnd) + colors.ins.lineEnd);
                                     }
-                                    console.log(colors.del.lineStart + report[1][aa].replace(/\\x1B/g, "\\x1B").replace(/<p(d)>/g, colors.del.charStart).replace(/<\/pd>/g, colors.del.charEnd) + colors.del.lineEnd);
-                                } else if (report[4][aa] === "insert") {
-                                    if (report[3][aa] === "") {
-                                        report[3][aa] = "(empty line)";
-                                    } else if (report[3][aa].replace(/\ +/g, "") === "") {
-                                        report[3][aa] = "(indentation)";
-                                    }
-                                    console.log(colors.ins.lineStart + report[3][aa].replace(/\\x1B/g, "\\x1B").replace(/<p(d)>/g, colors.ins.charStart).replace(/<\/pd>/g, colors.ins.charEnd) + colors.ins.lineEnd);
-                                } else if (report[4][aa] === "equal" && aa > 1) {
-                                    console.log(report[3][aa]);
-                                } else if (report[4][aa] === "replace") {
-                                    console.log(colors.del.lineStart + report[1][aa].replace(/\\x1B/g, "\\x1B").replace(/<p(d)>/g, colors.del.charStart).replace(/<\/pd>/g, colors.del.charEnd) + colors.del.lineEnd);
-                                    console.log(colors.ins.lineStart + report[3][aa].replace(/\\x1B/g, "\\x1B").replace(/<p(d)>/g, colors.ins.charStart).replace(/<\/pd>/g, colors.ins.charEnd) + colors.ins.lineEnd);
                                 }
                             }
+                            console.log("");
+                            console.log(diffs + colors.filepath.start + " differences counted." + colors.filepath.end);
                             errout("Pretty Diff " + colors.del.lineStart + "failed" + colors.del.lineEnd + " on file: " + colors.filepath.start + correct[a][0] + colors.filepath.end);
                         };
                     raw.sort(sort);
@@ -198,10 +209,10 @@
                     for (a = 0; a < len; a += 1) {
                         if (raw[a] === undefined || correct[a] === undefined) {
                             if (raw[a] === undefined) {
-                                console.log("\x1B[31mRaw samples directory is missing file:\x1B[39m " + correct[a][0]);
+                                console.log("\x1B[31msamples_raw directory is missing file:\x1B[39m " + correct[a][0]);
                                 correct.splice(a, 1);
                             } else {
-                                console.log("\x1B[31mCorrect samples directory is missing file:\x1B[39m " + raw[a][0]);
+                                console.log("\x1B[31msamples_correct directory is missing file:\x1B[39m " + raw[a][0]);
                                 raw.splice(a, 1);
                             }
                             len = (raw.length > correct.length)
@@ -218,7 +229,8 @@
                                 output = output + "\n";
                             }
                             if (output === correct[a][1]) {
-                                console.log("\x1B[32mPretty Diff is good with file:\x1B[39m " + correct[a][0]);
+                                filecount += 1;
+                                console.log("\x1B[32mPretty Diff is good with file " + filecount + ":\x1B[39m " + correct[a][0]);
                                 if (a === len - 1) {
                                     complete();
                                 }

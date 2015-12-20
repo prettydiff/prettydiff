@@ -1393,7 +1393,7 @@
     }
 
     Selection.prototype = {
-        contains: function (pos, end) {
+        contains         : function (pos, end) {
             if (!end) {
                 end = pos;
             }
@@ -1405,13 +1405,13 @@
             }
             return -1;
         },
-        deepCopy: function () {
+        deepCopy         : function () {
             for (var out = [], i = 0; i < this.ranges.length; i += 1) {
                 out[i] = new Range(copyPos(this.ranges[i].anchor), copyPos(this.ranges[i].head));
             }
             return new Selection(out, this.primIndex);
         },
-        equals: function (other) {
+        equals           : function (other) {
             if (other == this) {
                 return true;
             }
@@ -1688,7 +1688,7 @@
             curPos  = pos;
         var dir = bias || 1;
         doc.cantEdit = false;
-        search      : for (;;) {
+        search : for (;;) {
             var line = getLine(doc, curPos.line);
             if (line.markedSpans) {
                 for (var i = 0; i < line.markedSpans.length; i += 1) {
@@ -2784,21 +2784,22 @@
     var nextOpId = 0;
     // Start a new operation.
     function startOperation(cm) {
-        cm.curOp = { // Whether this reset should be careful to leave existing text (for compositing)changeObjs                                                                      : null,
-            cm: cm, // Set of handlers to fire cursorActivity on
-            cursorActivityCalled: 0, // Accumulated changes, for firing change events
+        cm.curOp = { // Whether this reset should be careful to leave existing text (for compositing)
+            changeObjs            : null,
+            cm                    : cm, // Set of handlers to fire cursorActivity on
+            cursorActivityCalled  : 0, // Accumulated changes, for firing change events
             cursorActivityHandlers: null, // Used to detect need to update scrollbar
-            forceUpdate: false, // Used to scroll to a specific position
-            id: ++nextOpId, // Set when the widest line needs to be determined anew
-            scrollLeft: null,
-            scrollTop: null, // Intermediate scroll position, not pushed to DOM yet
-            scrollToPos: null, // Tracks which cursorActivity handlers have been called already
-            selectionChanged: false, // Flag that indicates that lines might need to be redrawn
-            startHeight: cm.doc.height, // Whether to reset the input textarea
-            typing: false, // Used to force a redraw
-            updateInput: null, // Whether the selection needs to be redrawn
-            updateMaxLine: false,
-            viewChanged: false
+            forceUpdate           : false, // Used to scroll to a specific position
+            id                    : ++nextOpId, // Set when the widest line needs to be determined anew
+            scrollLeft            : null,
+            scrollTop             : null, // Intermediate scroll position, not pushed to DOM yet
+            scrollToPos           : null, // Tracks which cursorActivity handlers have been called already
+            selectionChanged      : false, // Flag that indicates that lines might need to be redrawn
+            startHeight           : cm.doc.height, // Whether to reset the input textarea
+            typing                : false, // Used to force a redraw
+            updateInput           : null, // Whether the selection needs to be redrawn
+            updateMaxLine         : false,
+            viewChanged           : false
         };
         if (operationGroup) {
             operationGroup
@@ -4340,7 +4341,7 @@
         // This hack (see related code in patchDisplay) makes sure the
         // element is kept around.
         if (dy && mac && webkit) {
-            outer: for (var cur = e.target, view = display.view; cur != scroll; cur = cur.parentNode) {
+            outer : for (var cur = e.target, view = display.view; cur != scroll; cur = cur.parentNode) {
                 for (var i = 0; i < view.length; i += 1) {
                     if (view[i].node == cur) {
                         cm.display.currentWheelTarget = cur;
@@ -5649,17 +5650,17 @@
     // convenience.
 
     codeMirror.prototype = {
-        addKeyMap: function (map, bottom) {
+        addKeyMap         : function (map, bottom) {
             this.state.keyMaps[bottom
                     ? "push"
                     : "unshift"](getKeyMap(map));
         },
 
-        addLineWidget: methodOp(function (handle, node, options) {
+        addLineWidget     : methodOp(function (handle, node, options) {
             return addLineWidget(this, handle, node, options);
         }),
 
-        addOverlay: methodOp(function (spec, options) {
+        addOverlay        : methodOp(function (spec, options) {
             var mode = spec.token
                 ? spec
                 : codeMirror.getMode(this.options, spec);
@@ -5678,7 +5679,7 @@
             regChange(this);
         }),
 
-        addWidget: function (pos, node, scroll, vert, horiz) {
+        addWidget         : function (pos, node, scroll, vert, horiz) {
             var display = this.display;
             pos = cursorCoords(this, clipPos(this.doc, pos));
             var top  = pos.bottom,
@@ -5722,11 +5723,11 @@
             }
         },
 
-        charCoords: function (pos, mode) {
+        charCoords        : function (pos, mode) {
             return charCoords(this, clipPos(this.doc, pos), mode || "page");
         },
 
-        clearGutter: methodOp(function (gutterID) {
+        clearGutter       : methodOp(function (gutterID) {
             var cm  = this,
                 doc = cm.doc,
                 i   = doc.first;
@@ -5742,14 +5743,14 @@
             });
         }),
 
-        constructor: codeMirror,
+        constructor       : codeMirror,
 
-        coordsChar: function (coords, mode) {
+        coordsChar        : function (coords, mode) {
             coords = fromCoordSystem(this, coords, mode || "page");
             return coordsChar(this, coords.left, coords.top);
         },
 
-        cursorCoords: function (start, mode) {
+        cursorCoords      : function (start, mode) {
             var pos,
                 range = this
                     .doc
@@ -5767,15 +5768,15 @@
             return cursorCoords(this, pos, mode || "page");
         },
 
-        defaultCharWidth: function () {
+        defaultCharWidth  : function () {
             return charWidth(this.display);
         },
 
-        defaultTextHeight: function () {
+        defaultTextHeight : function () {
             return textHeight(this.display);
         },
 
-        deleteH: methodOp(function (dir, unit) {
+        deleteH           : methodOp(function (dir, unit) {
             var sel = this.doc.sel,
                 doc = this.doc;
             if (sel.somethingSelected()) {
@@ -5796,13 +5797,13 @@
             }
         }),
 
-        execCommand: function (cmd) {
+        execCommand       : function (cmd) {
             if (commands.hasOwnProperty(cmd)) {
                 return commands[cmd](this);
             }
         },
 
-        findPosH: function (from, amount, unit, visually) {
+        findPosH          : function (from, amount, unit, visually) {
             var dir = 1;
             if (amount < 0) {
                 dir    = -1;
@@ -5817,7 +5818,7 @@
             return cur;
         },
 
-        findPosV: function (from, amount, unit, goalColumn) {
+        findPosV          : function (from, amount, unit, goalColumn) {
             var dir = 1,
                 x   = goalColumn;
             if (amount < 0) {
@@ -5840,7 +5841,7 @@
         },
 
         // Find the word at the given position (as returned by coordsChar).
-        findWordAt: function (pos) {
+        findWordAt        : function (pos) {
             var doc  = this.doc,
                 line = getLine(doc, pos.line).text;
             var start = pos.ch,
@@ -5874,25 +5875,25 @@
             return new Range(Pos(pos.line, start), Pos(pos.line, end));
         },
 
-        focus: function () {
+        focus             : function () {
             window.focus();
             focusInput(this);
             fastPoll(this);
         },
 
-        getDoc: function () {
+        getDoc            : function () {
             return this.doc;
         },
 
-        getGutterElement: function () {
+        getGutterElement  : function () {
             return this.display.gutters;
         },
 
-        getHelper: function (pos, type) {
+        getHelper         : function (pos, type) {
             return this.getHelpers(pos, type)[0];
         },
 
-        getHelpers: function (pos, type) {
+        getHelpers        : function (pos, type) {
             var found = [];
             if (!helpers.hasOwnProperty(type)) {
                 return helpers;
@@ -5924,15 +5925,15 @@
             return found;
         },
 
-        getInputField: function () {
+        getInputField     : function () {
             return this.display.input;
         },
 
-        getLineTokens: function (line, precise) {
+        getLineTokens     : function (line, precise) {
             return takeToken(this, Pos(line), precise, true);
         },
 
-        getModeAt: function (pos) {
+        getModeAt         : function (pos) {
             var mode = this.doc.mode;
             if (!mode.innerMode) {
                 return mode;
@@ -5942,13 +5943,13 @@
                 .mode;
         },
 
-        getOption: function (option) {
+        getOption         : function (option) {
             return this.options[option];
         },
         getScrollerElement: function () {
             return this.display.scroller;
         },
-        getScrollInfo: function () {
+        getScrollInfo     : function () {
             var scroller = this.display.scroller;
             return {
                 clientHeight: displayHeight(this),
@@ -5960,7 +5961,7 @@
             };
         },
 
-        getStateAfter: function (line, precise) {
+        getStateAfter     : function (line, precise) {
             var doc = this.doc;
             line = clipLine(doc, line == null
                 ? doc.first + doc.size - 1
@@ -5970,11 +5971,11 @@
 
         // Fetch the parser token for a given character. Useful for hacks
         // that want to inspect the mode state (say, for completion).
-        getTokenAt: function (pos, precise) {
+        getTokenAt        : function (pos, precise) {
             return takeToken(this, pos, precise);
         },
 
-        getTokenTypeAt: function (pos) {
+        getTokenTypeAt    : function (pos) {
             pos = clipPos(this.doc, pos);
             var styles = getLineStyles(this, getLine(this.doc, pos.line));
             var before = 0,
@@ -6008,18 +6009,18 @@
                     : type.slice(0, cut - 1);
         },
 
-        getViewport: function () {
+        getViewport       : function () {
             return {from: this.display.viewFrom, to: this.display.viewTo};
         },
 
-        getWrapperElement: function () {
+        getWrapperElement : function () {
             return this.display.wrapper;
         },
-        hasFocus: function () {
+        hasFocus          : function () {
             return activeElt() == this.display.input;
         },
 
-        heightAtLine: function (line, mode) {
+        heightAtLine      : function (line, mode) {
             var end  = false,
                 last = this.doc.first + this.doc.size - 1;
             if (line < this.doc.first) {
@@ -6037,7 +6038,7 @@
                 : 0);
         },
 
-        indentLine: methodOp(function (n, dir, aggressive) {
+        indentLine        : methodOp(function (n, dir, aggressive) {
             if (typeof dir != "string" && typeof dir != "number") {
                 if (dir == null) {
                     dir = this.options.smartIndent
@@ -6053,7 +6054,7 @@
                 indentLine(this, n, dir, aggressive);
             }
         }),
-        indentSelection: methodOp(function (how) {
+        indentSelection   : methodOp(function (how) {
             var ranges = this.doc.sel.ranges,
                 end    = -1;
             for (var i = 0; i < ranges.length; i += 1) {
@@ -6082,7 +6083,7 @@
             }
         }),
 
-        lineAtHeight: function (height, mode) {
+        lineAtHeight      : function (height, mode) {
             height = fromCoordSystem(this, {
                 left: 0,
                 top : height
@@ -6090,7 +6091,7 @@
             return lineAtHeight(this.doc, height + this.display.viewOffset);
         },
 
-        lineInfo: function (line) {
+        lineInfo          : function (line) {
             if (typeof line == "number") {
                 if (!isLine(this.doc, line)) {
                     return null;
@@ -6118,7 +6119,7 @@
             };
         },
 
-        moveH: methodOp(function (dir, unit) {
+        moveH             : methodOp(function (dir, unit) {
             var cm = this;
             cm.extendSelectionsBy(function (range) {
                 if (cm.display.shift || cm.doc.extend || range.empty()) {
@@ -6131,7 +6132,7 @@
             }, sel_move);
         }),
 
-        moveV: methodOp(function (dir, unit) {
+        moveV             : methodOp(function (dir, unit) {
             var cm    = this,
                 doc   = this.doc,
                 goals = [];
@@ -6162,11 +6163,11 @@
             }
         }),
 
-        operation: function (f) {
+        operation         : function (f) {
             return runInOp(this, f);
         },
 
-        refresh: methodOp(function () {
+        refresh           : methodOp(function () {
             var oldHeight = this.display.cachedTextHeight;
             regChange(this);
             this.curOp.forceUpdate = true;
@@ -6179,7 +6180,7 @@
             signal(this, "refresh", this);
         }),
 
-        removeKeyMap: function (map) {
+        removeKeyMap      : function (map) {
             var maps = this.state.keyMaps;
             for (var i = 0; i < maps.length; i += 1) {
                 if (maps[i] == map || maps[i].name == map) {
@@ -6189,11 +6190,11 @@
             }
         },
 
-        removeLineWidget: function (widget) {
+        removeLineWidget  : function (widget) {
             widget.clear();
         },
 
-        removeOverlay: methodOp(function (spec) {
+        removeOverlay     : methodOp(function (spec) {
             var overlays = this.state.overlays;
             for (var i = 0; i < overlays.length; i += 1) {
                 var cur = overlays[i].modeSpec;
@@ -6206,7 +6207,7 @@
             }
         }),
 
-        scrollIntoView : methodOp(function (range, margin) {
+        scrollIntoView    : methodOp(function (range, margin) {
             if (range == null) {
                 range = {
                     from: this
@@ -6244,7 +6245,7 @@
             }
         }),
 
-        scrollTo       : methodOp(function (x, y) {
+        scrollTo          : methodOp(function (x, y) {
             if (x != null || y != null) {
                 resolveScrollToPos(this);
             }
@@ -6256,7 +6257,7 @@
             }
         }),
 
-        setGutterMarker: methodOp(function (line, gutterID, value) {
+        setGutterMarker   : methodOp(function (line, gutterID, value) {
             return changeLine(this.doc, line, "gutter", function (line) {
                 var markers = line.gutterMarkers || (line.gutterMarkers = {});
                 markers[gutterID] = value;
@@ -6267,7 +6268,7 @@
             });
         }),
 
-        setOption      : function (option, value) {
+        setOption         : function (option, value) {
             var options = this.options,
                 old     = options[option];
             if (options[option] == value && option != "mode") {
@@ -6279,7 +6280,7 @@
             }
         },
 
-        setSize        : methodOp(function (width, height) {
+        setSize           : methodOp(function (width, height) {
             var cm = this;
             function interpret(val) {
                 return typeof val == "number" || /^\d+$/.test(String(val))
@@ -6313,7 +6314,7 @@
             signal(cm, "refresh", this);
         }),
 
-        swapDoc          : methodOp(function (doc) {
+        swapDoc           : methodOp(function (doc) {
             var old = this.doc;
             old.cm = null;
             attachDoc(this, doc);
@@ -6325,7 +6326,7 @@
             return old;
         }),
 
-        toggleOverwrite  : function (value) {
+        toggleOverwrite   : function (value) {
             if (value != null && value == this.state.overwrite) {
                 return;
             }
@@ -6338,9 +6339,9 @@
             signal(this, "overwriteToggle", this, this.state.overwrite);
         },
 
-        triggerOnKeyDown : methodOp(onKeyDown),
-        triggerOnKeyPress: methodOp(onKeyPress),
-        triggerOnKeyUp   : onKeyUp
+        triggerOnKeyDown  : methodOp(onKeyDown),
+        triggerOnKeyPress : methodOp(onKeyPress),
+        triggerOnKeyUp    : onKeyUp
     };
     eventMixin(codeMirror);
 
@@ -6691,20 +6692,20 @@
     // Commands are parameter-less actions that can be performed on an
     // editor, mostly used for keybindings.
     var commands = codeMirror.commands = {
-        defaultTab: function (cm) {
+        defaultTab         : function (cm) {
             if (cm.somethingSelected()) {
                 cm.indentSelection("add");
             } else {
                 cm.execCommand("insertTab");
             }
         },
-        delCharAfter: function (cm) {
+        delCharAfter       : function (cm) {
             cm.deleteH(1, "char");
         },
-        delCharBefore: function (cm) {
+        delCharBefore      : function (cm) {
             cm.deleteH(-1, "char");
         },
-        deleteLine: function (cm) {
+        deleteLine         : function (cm) {
             deleteNearSelection(cm, function (range) {
                 return {
                     from: Pos(range.from().line, 0),
@@ -6712,13 +6713,13 @@
                 };
             });
         },
-        delGroupAfter: function (cm) {
+        delGroupAfter      : function (cm) {
             cm.deleteH(1, "group");
         },
-        delGroupBefore: function (cm) {
+        delGroupBefore     : function (cm) {
             cm.deleteH(-1, "group");
         },
-        delLineLeft: function (cm) {
+        delLineLeft        : function (cm) {
             deleteNearSelection(cm, function (range) {
                 return {
                     from: Pos(range.from().line, 0),
@@ -6726,13 +6727,13 @@
                 };
             });
         },
-        delWordAfter: function (cm) {
+        delWordAfter       : function (cm) {
             cm.deleteH(1, "word");
         },
-        delWordBefore: function (cm) {
+        delWordBefore      : function (cm) {
             cm.deleteH(-1, "word");
         },
-        delWrappedLineLeft: function (cm) {
+        delWrappedLineLeft : function (cm) {
             deleteNearSelection(cm, function (range) {
                 var top = cm
                     .charCoords(range.head, "div")
@@ -6762,34 +6763,34 @@
                 };
             });
         },
-        goCharLeft: function (cm) {
+        goCharLeft         : function (cm) {
             cm.moveH(-1, "char");
         },
-        goCharRight: function (cm) {
+        goCharRight        : function (cm) {
             cm.moveH(1, "char");
         },
-        goColumnLeft: function (cm) {
+        goColumnLeft       : function (cm) {
             cm.moveH(-1, "column");
         },
-        goColumnRight: function (cm) {
+        goColumnRight      : function (cm) {
             cm.moveH(1, "column");
         },
-        goDocEnd: function (cm) {
+        goDocEnd           : function (cm) {
             cm.extendSelection(Pos(cm.lastLine()));
         },
-        goDocStart: function (cm) {
+        goDocStart         : function (cm) {
             cm.extendSelection(Pos(cm.firstLine(), 0));
         },
-        goGroupLeft: function (cm) {
+        goGroupLeft        : function (cm) {
             cm.moveH(-1, "group");
         },
-        goGroupRight: function (cm) {
+        goGroupRight       : function (cm) {
             cm.moveH(1, "group");
         },
-        goLineDown: function (cm) {
+        goLineDown         : function (cm) {
             cm.moveV(1, "line");
         },
-        goLineEnd: function (cm) {
+        goLineEnd          : function (cm) {
             cm
                 .extendSelectionsBy(function (range) {
                     return lineEnd(cm, range.head.line);
@@ -6798,7 +6799,7 @@
                     origin: "+move"
                 });
         },
-        goLineLeft: function (cm) {
+        goLineLeft         : function (cm) {
             cm
                 .extendSelectionsBy(function (range) {
                     var top = cm
@@ -6810,7 +6811,7 @@
                     }, "div");
                 }, sel_move);
         },
-        goLineLeftSmart: function (cm) {
+        goLineLeftSmart    : function (cm) {
             cm
                 .extendSelectionsBy(function (range) {
                     var top = cm
@@ -6826,7 +6827,7 @@
                     return pos;
                 }, sel_move);
         },
-        goLineRight: function (cm) {
+        goLineRight        : function (cm) {
             cm
                 .extendSelectionsBy(function (range) {
                     var top = cm
@@ -6838,7 +6839,7 @@
                     }, "div");
                 }, sel_move);
         },
-        goLineStart: function (cm) {
+        goLineStart        : function (cm) {
             cm
                 .extendSelectionsBy(function (range) {
                     return lineStart(cm, range.head.line);
@@ -6847,7 +6848,7 @@
                     origin: "+move"
                 });
         },
-        goLineStartSmart: function (cm) {
+        goLineStartSmart   : function (cm) {
             cm
                 .extendSelectionsBy(function (range) {
                     return lineStartSmart(cm, range.head);
@@ -6856,31 +6857,31 @@
                     origin: "+move"
                 });
         },
-        goLineUp: function (cm) {
+        goLineUp           : function (cm) {
             cm.moveV(-1, "line");
         },
-        goPageDown: function (cm) {
+        goPageDown         : function (cm) {
             cm.moveV(1, "page");
         },
-        goPageUp: function (cm) {
+        goPageUp           : function (cm) {
             cm.moveV(-1, "page");
         },
-        goWordLeft: function (cm) {
+        goWordLeft         : function (cm) {
             cm.moveH(-1, "word");
         },
-        goWordRight: function (cm) {
+        goWordRight        : function (cm) {
             cm.moveH(1, "word");
         },
-        indentAuto: function (cm) {
+        indentAuto         : function (cm) {
             cm.indentSelection("smart");
         },
-        indentLess: function (cm) {
+        indentLess         : function (cm) {
             cm.indentSelection("subtract");
         },
-        indentMore: function (cm) {
+        indentMore         : function (cm) {
             cm.indentSelection("add");
         },
-        insertSoftTab: function (cm) {
+        insertSoftTab      : function (cm) {
             var spaces  = [],
                 ranges  = cm.listSelections(),
                 tabSize = cm.options.tabSize;
@@ -6891,10 +6892,10 @@
             }
             cm.replaceSelections(spaces);
         },
-        insertTab       : function (cm) {
+        insertTab          : function (cm) {
             cm.replaceSelection("\t");
         },
-        killLine        : function (cm) {
+        killLine           : function (cm) {
             deleteNearSelection(cm, function (range) {
                 if (range.empty()) {
                     var len = getLine(cm.doc, range.head.line).text.length;
@@ -6917,7 +6918,7 @@
                 }
             });
         },
-        newlineAndIndent: function (cm) {
+        newlineAndIndent   : function (cm) {
             runInOp(cm, function () {
                 var len = cm
                     .listSelections()
@@ -6930,22 +6931,22 @@
                 }
             });
         },
-        redo           : function (cm) {
+        redo               : function (cm) {
             cm.redo();
         },
-        redoSelection  : function (cm) {
+        redoSelection      : function (cm) {
             cm.redoSelection();
         },
-        selectAll      : function (cm) {
+        selectAll          : function (cm) {
             cm.setSelection(Pos(cm.firstLine(), 0), Pos(cm.lastLine()), sel_dontScroll);
         },
-        singleSelection: function (cm) {
+        singleSelection    : function (cm) {
             cm.setSelection(cm.getCursor("anchor"), cm.getCursor("head"), sel_dontScroll);
         },
-        toggleOverwrite: function (cm) {
+        toggleOverwrite    : function (cm) {
             cm.toggleOverwrite();
         },
-        transposeChars : function (cm) {
+        transposeChars     : function (cm) {
             runInOp(cm, function () {
                 var ranges = cm.listSelections(),
                     newSel = [];
@@ -6971,10 +6972,10 @@
                 cm.setSelections(newSel);
             });
         },
-        undo         : function (cm) {
+        undo               : function (cm) {
             cm.undo();
         },
-        undoSelection: function (cm) {
+        undoSelection      : function (cm) {
             cm.undoSelection();
         }
     };
@@ -7467,7 +7468,7 @@
     eventMixin(TextMarker);
 
     // Clear the marker.
-    TextMarker.prototype.clear = function () {
+    TextMarker.prototype.clear      = function () {
         if (this.explicitlyCleared) {
             return;
         }
@@ -7541,7 +7542,7 @@
     // -- 0 (both), -1 (left), or 1 (right). When lineObj is true, the
     // Pos objects returned contain a line object, rather than a line
     // number (used to prevent looking up the same line twice).
-    TextMarker.prototype.find = function (side, lineObj) {
+    TextMarker.prototype.find       = function (side, lineObj) {
         if (side == null && this.type == "bookmark") {
             side = 1;
         }
@@ -7743,7 +7744,7 @@
     // A shared marker spans multiple linked documents. It is
     // implemented as a meta-marker-object controlling multiple normal
     // markers.
-    var SharedTextMarker                 = codeMirror.SharedTextMarker = function (markers, primary) {
+    var SharedTextMarker = codeMirror.SharedTextMarker = function (markers, primary) {
         this.markers = markers;
         this.primary = primary;
         for (var i = 0; i < markers.length; i += 1) {
@@ -7762,7 +7763,7 @@
         }
         signalLater(this, "clear");
     };
-    SharedTextMarker.prototype.find = function (side, lineObj) {
+    SharedTextMarker.prototype.find  = function (side, lineObj) {
         return this
             .primary
             .find(side, lineObj);
@@ -8046,7 +8047,7 @@
             var oldCur     = old[i],
                 stretchCur = stretched[i];
             if (oldCur && stretchCur) {
-                spans: for (var j = 0; j < stretchCur.length; j += 1) {
+                spans : for (var j = 0; j < stretchCur.length; j += 1) {
                     var span = stretchCur[j];
                     for (var k = 0; k < oldCur.length; k += 1) {
                         if (oldCur[k].marker == span.marker) {
@@ -8335,7 +8336,7 @@
         }
     }
 
-    LineWidget.prototype.clear = function () {
+    LineWidget.prototype.clear   = function () {
         var cm   = this.cm,
             ws   = this.line.widgets,
             line = this.line,
@@ -9141,11 +9142,11 @@
     }
 
     LeafChunk.prototype = {
-        chunkSize: function () {
+        chunkSize  : function () {
             return this.lines.length;
         },
         // Helper used to collapse a small branch into a single leaf.
-        collapse: function (lines) {
+        collapse   : function (lines) {
             lines
                 .push
                 .apply(lines, this.lines);
@@ -9164,7 +9165,7 @@
             }
         },
         // Used to iterate over a part of the tree.
-        iterN: function (at, n, op) {
+        iterN      : function (at, n, op) {
             for (var e = at + n; at < e; at += 1) {
                 if (op(this.lines[at])) {
                     return true;
@@ -9201,10 +9202,10 @@
     }
 
     BranchChunk.prototype = {
-        chunkSize: function () {
+        chunkSize  : function () {
             return this.size;
         },
-        collapse: function (lines) {
+        collapse   : function (lines) {
             for (var i = 0; i < this.children.length; i += 1) {
                 this
                     .children[i]
@@ -9238,7 +9239,7 @@
                 at -= sz;
             }
         },
-        iterN: function (at, n, op) {
+        iterN      : function (at, n, op) {
             for (var i = 0; i < this.children.length; i += 1) {
                 var child = this.children[i],
                     sz    = child.chunkSize();
@@ -9354,8 +9355,8 @@
         setSelection(this, simpleSelection(start), sel_dontScroll);
     };
 
-    Doc.prototype = createObj(BranchChunk.prototype, {
-        addLineClass: docMethodOp(function (handle, where, cls) {
+    Doc.prototype          = createObj(BranchChunk.prototype, {
+        addLineClass            : docMethodOp(function (handle, where, cls) {
             return changeLine(this, handle, where == "gutter"
                 ? "gutter"
                 : "class", function (line) {
@@ -9376,7 +9377,7 @@
                 return true;
             });
         }),
-        addSelection: docMethodOp(function (anchor, head, options) {
+        addSelection            : docMethodOp(function (anchor, head, options) {
             var ranges = this
                 .sel
                 .ranges
@@ -9385,23 +9386,23 @@
             setSelection(this, normalizeSelection(ranges, ranges.length - 1), options);
         }),
 
-        changeGeneration: function (forceSplit) {
+        changeGeneration        : function (forceSplit) {
             if (forceSplit) {
                 this.history.lastOp = this.history.lastSelOp = this.history.lastOrigin = null;
             }
             return this.history.generation;
         },
-        clearHistory: function () {
+        clearHistory            : function () {
             this.history = new History(this.history.maxGeneration);
         },
 
-        clipPos: function (pos) {
+        clipPos                 : function (pos) {
             return clipPos(this, pos);
         },
 
-        constructor: Doc,
+        constructor             : Doc,
 
-        copy: function (copyHistory) {
+        copy                    : function (copyHistory) {
             var doc = new Doc(getLines(this, this.first, this.first + this.size), this.modeOption, this.first);
             doc.scrollTop  = this.scrollTop;
             doc.scrollLeft = this.scrollLeft;
@@ -9414,16 +9415,16 @@
             return doc;
         },
 
-        extendSelection: docMethodOp(function (head, other, options) {
+        extendSelection         : docMethodOp(function (head, other, options) {
             extendSelection(this, clipPos(this, head), other && clipPos(this, other), options);
         }),
-        extendSelections: docMethodOp(function (heads, options) {
+        extendSelections        : docMethodOp(function (heads, options) {
             extendSelections(this, clipPosArray(this, heads, options));
         }),
-        extendSelectionsBy: docMethodOp(function (f, options) {
+        extendSelectionsBy      : docMethodOp(function (f, options) {
             extendSelections(this, map(this.sel.ranges, f), options);
         }),
-        findMarks: function (from, to, filter) {
+        findMarks               : function (from, to, filter) {
             from = clipPos(this, from);
             to   = clipPos(this, to);
             var found  = [],
@@ -9442,7 +9443,7 @@
             });
             return found;
         },
-        findMarksAt: function (pos) {
+        findMarksAt             : function (pos) {
             pos = clipPos(this, pos);
             var markers = [],
                 spans   = getLine(this, pos.line).markedSpans;
@@ -9456,10 +9457,10 @@
                 return markers;
             }
         },
-        firstLine: function () {
+        firstLine               : function () {
             return this.first;
         },
-        getAllMarks: function () {
+        getAllMarks             : function () {
             var markers = [];
             this.iter(function (line) {
                 var sps = line.markedSpans;
@@ -9474,7 +9475,7 @@
             return markers;
         },
 
-        getCursor: function (start) {
+        getCursor               : function (start) {
             var range = this
                     .sel
                     .primary(),
@@ -9490,26 +9491,26 @@
             }
             return pos;
         },
-        getEditor: function () {
+        getEditor               : function () {
             return this.cm;
         },
-        getExtending: function () {
+        getExtending            : function () {
             return this.extend;
         },
 
-        getHistory: function () {
+        getHistory              : function () {
             return {
                 done  : copyHistoryArray(this.history.done),
                 undone: copyHistoryArray(this.history.undone)
             };
         },
 
-        getLine: function (line) {
+        getLine                 : function (line) {
             var l = this.getLineHandle(line);
             return l && l.text;
         },
 
-        getLineHandle: function (line) {
+        getLineHandle           : function (line) {
             if (isLine(this, line)) {
                 return getLine(this, line);
             }
@@ -9522,14 +9523,14 @@
             return visualLine(line);
         },
 
-        getLineNumber: function (line) {
+        getLineNumber           : function (line) {
             return lineNo(line);
         },
 
-        getMode: function () {
+        getMode                 : function () {
             return this.mode;
         },
-        getRange: function (from, to, lineSep) {
+        getRange                : function (from, to, lineSep) {
             var lines = getBetween(this, clipPos(this, from), clipPos(this, to));
             if (lineSep === false) {
                 return lines;
@@ -9537,7 +9538,7 @@
             return lines.join(lineSep || "\n");
         },
 
-        getSelection: function (lineSep) {
+        getSelection            : function (lineSep) {
             var ranges = this.sel.ranges,
                 lines;
             for (var i = 0; i < ranges.length; i += 1) {
@@ -9552,7 +9553,7 @@
                 return lines.join(lineSep || "\n");
             }
         },
-        getSelections: function (lineSep) {
+        getSelections           : function (lineSep) {
             var parts  = [],
                 ranges = this.sel.ranges;
             for (var i = 0; i < ranges.length; i += 1) {
@@ -9568,7 +9569,7 @@
         // From here, the methods are part of the public interface. Most
         // are also available from CodeMirror (editor) instances.
 
-        getValue: function (lineSep) {
+        getValue                : function (lineSep) {
             var lines = getLines(this, this.first, this.first + this.size);
             if (lineSep === false) {
                 return lines;
@@ -9576,7 +9577,7 @@
             return lines.join(lineSep || "\n");
         },
 
-        historySize: function () {
+        historySize             : function () {
             var hist   = this.history,
                 done   = 0,
                 undone = 0;
@@ -9592,7 +9593,7 @@
             }
             return {redo: undone, undo: done};
         },
-        indexFromPos: function (coords) {
+        indexFromPos            : function (coords) {
             coords = clipPos(this, coords);
             var index = coords.ch;
             if (coords.line < this.first || coords.ch < 0) {
@@ -9606,14 +9607,14 @@
         },
 
         // Non-public interface for adding and removing lines.
-        insert: function (at, lines) {
+        insert                  : function (at, lines) {
             var height = 0;
             for (var i = 0; i < lines.length; i += 1) {
                 height += lines[i].height;
             }
             this.insertInner(at - this.first, lines, height);
         },
-        isClean: function (gen) {
+        isClean                 : function (gen) {
             return this.history.generation == (gen || this.cleanGeneration);
         },
 
@@ -9621,7 +9622,7 @@
         // argument, it calls that for each line in the document. With
         // three, it iterates over the range given by the first two (with
         // the second being non-inclusive).
-        iter: function (from, to, op) {
+        iter                    : function (from, to, op) {
             if (op) {
                 this.iterN(from - this.first, to - from, op);
             } else {
@@ -9629,19 +9630,19 @@
             }
         },
 
-        iterLinkedDocs: function (f) {
+        iterLinkedDocs          : function (f) {
             linkedDocs(this, f);
         },
 
-        lastLine: function () {
+        lastLine                : function () {
             return this.first + this.size - 1;
         },
 
-        lineCount: function () {
+        lineCount               : function () {
             return this.size;
         },
 
-        linkedDoc: function (options) {
+        linkedDoc               : function (options) {
             if (!options) {
                 options = {};
             }
@@ -9668,19 +9669,19 @@
             copySharedMarkers(copy, findSharedMarkers(this));
             return copy;
         },
-        listSelections: function () {
+        listSelections          : function () {
             return this.sel.ranges;
         },
 
-        markClean: function () {
+        markClean               : function () {
             this.cleanGeneration = this.changeGeneration(true);
         },
 
-        markText: function (from, to, options) {
+        markText                : function (from, to, options) {
             return markText(this, clipPos(this, from), clipPos(this, to), options, "range");
         },
 
-        posFromIndex: function (off) {
+        posFromIndex            : function (off) {
             var ch,
                 lineNo = this.first;
             this.iter(function (line) {
@@ -9694,18 +9695,18 @@
             });
             return clipPos(this, Pos(lineNo, ch));
         },
-        redo: docMethodOp(function () {
+        redo                    : docMethodOp(function () {
             makeChangeFromHistory(this, "redo");
         }),
-        redoSelection: docMethodOp(function () {
+        redoSelection           : docMethodOp(function () {
             makeChangeFromHistory(this, "redo", true);
         }),
 
-        remove: function (at, n) {
+        remove                  : function (at, n) {
             this.removeInner(at - this.first, n);
         },
 
-        removeLineClass: docMethodOp(function (handle, where, cls) {
+        removeLineClass         : docMethodOp(function (handle, where, cls) {
             return changeLine(this, handle, where == "gutter"
                 ? "gutter"
                 : "class", function (line) {
@@ -9735,21 +9736,21 @@
             });
         }),
 
-        replaceRange: function (code, from, to, origin) {
+        replaceRange            : function (code, from, to, origin) {
             from = clipPos(this, from);
             to   = to
                 ? clipPos(this, to)
                 : from;
             replaceRange(this, code, from, to, origin);
         },
-        replaceSelection: function (code, collapse, origin) {
+        replaceSelection        : function (code, collapse, origin) {
             var dup = [];
             for (var i = 0; i < this.sel.ranges.length; i += 1) {
                 dup[i] = code;
             }
             this.replaceSelections(dup, collapse, origin || "+input");
         },
-        replaceSelections: docMethodOp(function (code, collapse, origin) {
+        replaceSelections       : docMethodOp(function (code, collapse, origin) {
             var changes = [],
                 sel     = this.sel;
             for (var i = 0; i < sel.ranges.length; i += 1) {
@@ -9771,7 +9772,7 @@
                 ensureCursorVisible(this.cm);
             }
         }),
-        setBookmark: function (pos, options) {
+        setBookmark             : function (pos, options) {
             var realOpts = {
                 clearWhenEmpty: false,
                 insertLeft    : options && options.insertLeft,
@@ -9784,25 +9785,25 @@
             return markText(this, pos, pos, realOpts, "bookmark");
         },
 
-        setCursor: docMethodOp(function (line, ch, options) {
+        setCursor               : docMethodOp(function (line, ch, options) {
             setSimpleSelection(this, clipPos(this, typeof line == "number"
                 ? Pos(line, ch || 0)
                 : line), null, options);
         }),
 
-        setExtending: function (val) {
+        setExtending            : function (val) {
             this.extend = val;
         },
-        setHistory: function (histData) {
+        setHistory              : function (histData) {
             var hist = this.history = new History(this.history.maxGeneration);
             hist.done   = copyHistoryArray(histData.done.slice(0), null, true);
             hist.undone = copyHistoryArray(histData.undone.slice(0), null, true);
         },
 
-        setSelection: docMethodOp(function (anchor, head, options) {
+        setSelection            : docMethodOp(function (anchor, head, options) {
             setSimpleSelection(this, clipPos(this, anchor), clipPos(this, head || anchor), options);
         }),
-        setSelections: docMethodOp(function (ranges, primary, options) {
+        setSelections           : docMethodOp(function (ranges, primary, options) {
             if (!ranges.length) {
                 return;
             }
@@ -9814,7 +9815,7 @@
             }
             setSelection(this, normalizeSelection(out, primary), options);
         }),
-        setValue: docMethodOp(function (code) {
+        setValue                : docMethodOp(function (code) {
             var top  = Pos(this.first, 0),
                 last = this.first + this.size - 1;
             makeChange(this, {
@@ -9826,19 +9827,19 @@
             }, true);
             setSelection(this, simpleSelection(top));
         }),
-        somethingSelected: function () {
+        somethingSelected       : function () {
             return this
                 .sel
                 .somethingSelected();
         },
 
-        undo: docMethodOp(function () {
+        undo                    : docMethodOp(function () {
             makeChangeFromHistory(this, "undo");
         }),
-        undoSelection: docMethodOp(function () {
+        undoSelection           : docMethodOp(function () {
             makeChangeFromHistory(this, "undo", true);
         }),
-        unlinkDoc: function (other) {
+        unlinkDoc               : function (other) {
             if (other instanceof codeMirror) {
                 other = other.doc;
             }
@@ -10009,7 +10010,7 @@
     // information in the document tree.
     function lineAtHeight(chunk, h) {
         var n = chunk.first;
-        outer: do {
+        outer : do {
             for (var i = 0; i < chunk.children.length; i += 1) {
                 var child = chunk.children[i],
                     ch    = child.height;
@@ -11908,7 +11909,7 @@
             lastLine = cm.lastLine(),
             end,
             endCh;
-        outer: for (var i = line; i <= lastLine; i += 1) {
+        outer : for (var i = line; i <= lastLine; i += 1) {
             var text = cm.getLine(i),
                 pos  = i == line
                     ? startCh
@@ -12420,13 +12421,13 @@
     codeMirror.commands.toggleFold = function (cm) {
         cm.foldCode(cm.getCursor());
     };
-    codeMirror.commands.fold = function (cm) {
+    codeMirror.commands.fold       = function (cm) {
         cm.foldCode(cm.getCursor(), null, "fold");
     };
-    codeMirror.commands.unfold = function (cm) {
+    codeMirror.commands.unfold     = function (cm) {
         cm.foldCode(cm.getCursor(), null, "unfold");
     };
-    codeMirror.commands.foldAll = function (cm) {
+    codeMirror.commands.foldAll    = function (cm) {
         cm
             .operation(function () {
                 for (var i = cm.firstLine(), e = cm.lastLine(); i <= e; i += 1) {
@@ -12434,7 +12435,7 @@
                 }
             });
     };
-    codeMirror.commands.unfoldAll = function (cm) {
+    codeMirror.commands.unfoldAll  = function (cm) {
         cm
             .operation(function () {
                 for (var i = cm.firstLine(), e = cm.lastLine(); i <= e; i += 1) {
@@ -12602,7 +12603,7 @@
                 cm.removeOverlay("trailingspace");
             } else if (!prev && val) {
                 cm.addOverlay({
-                    name: "trailingspace",
+                    name : "trailingspace",
                     token: function (stream) {
                         for (var l = stream.string.length, i = l; i && /\s/.test(stream.string.charAt(i - 1)); i -= 1) {}
                         if (i > stream.pos) {
@@ -14932,7 +14933,7 @@
             cx.state.context   = cx.state.context.prev;
         }
         function pushlex(type, info) {
-            var result     = function () {
+            var result = function () {
                 var state  = cx.state,
                     indent = state.indented;
                 if (state.lexical.type == "stat") {
@@ -15532,12 +15533,12 @@
                 }
             },
 
-            jsonldMode : jsonldMode,
-            jsonMode   : jsonMode,
-            lineComment: jsonMode
+            jsonldMode       : jsonldMode,
+            jsonMode         : jsonMode,
+            lineComment      : jsonMode
                 ? null
                 : "//",
-            startState : function (basecolumn) {
+            startState       : function (basecolumn) {
                 var state = {
                     cc       : [],
                     context  : parserConfig.localVars && {
@@ -15555,7 +15556,7 @@
                 return state;
             },
 
-            token      : function (stream, state) {
+            token            : function (stream, state) {
                 if (stream.sol()) {
                     if (!state.lexical.hasOwnProperty("align")) {
                         state.lexical.align = false;
@@ -15724,8 +15725,8 @@
         return lineNo - dir == (dir > 0
             ? cm.lastLine()
             : cm.firstLine())
-                ? false
-                : null;
+            ? false
+            : null;
     }
 
     function matchBrackets(cm, autoclear, config) {

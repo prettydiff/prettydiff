@@ -543,6 +543,19 @@
                     <legend>Beautification Options</legend>
                     <fieldset>
                         <legend>Multiformat Options</legend>
+                        <p>
+                            <strong>Style of Indent, CSS / JavaScript
+                                <a class="apiname" href="documentation.xhtml#braces">(braces)</a>
+                            </strong>
+                            <span>
+                                <input checked="checked" id="jsindentd-knr" name="jsindentdiff" type="radio"/>
+                                <label for="jsindentd-knr">K&amp;R style</label>
+                            </span>
+                            <span>
+                                <input id="jsindentd-all" name="jsindentdiff" type="radio"/>
+                                <label for="jsindentd-all">Allman (ANSI) style &mdash; sets opening curly braces on a new line.</label>
+                            </span>
+                        </p>
                         <p id="difftypep">
                             <label class="label" for="diff-char">Indentation character
                                 <a class="apiname" href="documentation.xhtml#inchar">(inchar)</a>
@@ -586,6 +599,10 @@
                             <span>
                                 <input id="dobjsort-cssonly" name="dobjsort" type="radio"/>
                                 <label for="dobjsort-cssonly">Sort CSS properties</label>
+                            </span>
+                            <span>
+                                <input id="dobjsort-markuponly" name="dobjsort" type="radio"/>
+                                <label for="dobjsort-markuponly">Sort markup attributes</label>
                             </span>
                             <span>
                                 <input id="dobjsort-all" name="dobjsort" type="radio"/>
@@ -769,19 +786,6 @@
                             </span>
                         </p>
                         <p>
-                            <strong>Style of Indent
-                                <a class="apiname" href="documentation.xhtml#braces">(braces)</a>
-                            </strong>
-                            <span>
-                                <input checked="checked" id="jsindentd-knr" name="jsindentdiff" type="radio"/>
-                                <label for="jsindentd-knr">K&amp;R style</label>
-                            </span>
-                            <span>
-                                <input id="jsindentd-all" name="jsindentdiff" type="radio"/>
-                                <label for="jsindentd-all">Allman (ANSI) style &mdash; sets opening curly braces on a new line.</label>
-                            </span>
-                        </p>
-                        <p>
                             <strong>Else on New Line
                                 <a class="apiname" href="documentation.xhtml#elseline">(elseline)</a>
                             </strong>
@@ -799,12 +803,16 @@
                                 <a class="apiname" href="documentation.xhtml#methodchain">(methodchain)</a>
                             </strong>
                             <span>
-                                <input checked="checked" id="dmethodchain-no" name="dmethodchain" type="radio"/>
-                                <label for="dmethodchain-no">Indent a run of methods</label>
+                                <input checked="checked" id="dmethodchain-indent" name="dmethodchain" type="radio"/>
+                                <label for="dmethodchain-indent">Indent a run of methods</label>
                             </span>
                             <span>
-                                <input id="dmethodchain-yes" name="dmethodchain" type="radio"/>
-                                <label for="dmethodchain-yes">Chain methods onto a single line</label>
+                                <input id="dmethodchain-chain" name="dmethodchain" type="radio"/>
+                                <label for="dmethodchain-chain">Chain methods onto a line</label>
+                            </span>
+                            <span>
+                                <input id="dmethodchain-none" name="dmethodchain" type="radio"/>
+                                <label for="dmethodchain-none">Leave methods chains alone</label>
                             </span>
                         </p>
                         <p>
@@ -943,6 +951,19 @@
                     <fieldset>
                         <legend>Multiformat Options</legend>
                         <p>
+                            <strong>Style of Indent, CSS / JavaScript
+                                <a class="apiname" href="documentation.xhtml#braces">(braces)</a>
+                            </strong>
+                            <span>
+                                <input checked="checked" id="jsindent-knr" name="jsindent" type="radio"/>
+                                <label for="jsindent-knr">K&amp;R style</label>
+                            </span>
+                            <span>
+                                <input id="jsindent-all" name="jsindent" type="radio"/>
+                                <label for="jsindent-all">Allman (ANSI) style &mdash; sets opening curly braces on a new line.</label>
+                            </span>
+                        </p>
+                        <p>
                             <strong>Fix Sloppy Code, Markup / JavaScript
                                 <a class="apiname" href="documentation.xhtml#correct">(correct)</a>
                             </strong>
@@ -968,6 +989,10 @@
                             <span>
                                 <input id="bobjsort-cssonly" name="bobjsort" type="radio"/>
                                 <label for="bobjsort-cssonly">Sort CSS properties</label>
+                            </span>
+                            <span>
+                                <input id="bobjsort-markuponly" name="bobjsort" type="radio"/>
+                                <label for="bobjsort-markuponly">Sort markup attributes</label>
                             </span>
                             <span>
                                 <input id="bobjsort-all" name="bobjsort" type="radio"/>
@@ -1196,19 +1221,6 @@
                             </span>
                         </p>
                         <p>
-                            <strong>Style of Indent
-                                <a class="apiname" href="documentation.xhtml#braces">(braces)</a>
-                            </strong>
-                            <span>
-                                <input checked="checked" id="jsindent-knr" name="jsindent" type="radio"/>
-                                <label for="jsindent-knr">K&amp;R style</label>
-                            </span>
-                            <span>
-                                <input id="jsindent-all" name="jsindent" type="radio"/>
-                                <label for="jsindent-all">Allman (ANSI) style &mdash; sets opening curly braces on a new line.</label>
-                            </span>
-                        </p>
-                        <p>
                             <strong>Else on New Line
                                 <a class="apiname" href="documentation.xhtml#elseline">(elseline)</a>
                             </strong>
@@ -1261,12 +1273,16 @@
                                 <a class="apiname" href="documentation.xhtml#methodchain">(methodchain)</a>
                             </strong>
                             <span>
-                                <input checked="checked" id="bmethodchain-no" name="bmethodchain" type="radio"/>
-                                <label for="bmethodchain-no">Indent a run of methods</label>
+                                <input checked="checked" id="bmethodchain-indent" name="bmethodchain" type="radio"/>
+                                <label for="bmethodchain-indent">Indent a run of methods</label>
                             </span>
                             <span>
-                                <input id="bmethodchain-yes" name="bmethodchain" type="radio"/>
-                                <label for="bmethodchain-yes">Chain methods onto a single line</label>
+                                <input id="bmethodchain-chain" name="bmethodchain" type="radio"/>
+                                <label for="bmethodchain-chain">Chain methods onto a line</label>
+                            </span>
+                            <span>
+                                <input id="bmethodchain-none" name="bmethodchain" type="radio"/>
+                                <label for="bmethodchain-none">Leave method chains alone</label>
                             </span>
                         </p>
                         <p>
@@ -1378,6 +1394,10 @@
                         <span>
                             <input id="mobjsort-cssonly" name="mobjsort" type="radio"/>
                             <label for="mobjsort-cssonly">Sort CSS properties</label>
+                        </span>
+                        <span>
+                            <input id="mobjsort-markuponly" name="mobjsort" type="radio"/>
+                            <label for="mobjsort-markuponly">Sort markup attributes</label>
                         </span>
                         <span>
                             <input id="mobjsort-all" name="mobjsort" type="radio"/>
@@ -1517,6 +1537,10 @@
                         <span>
                             <input id="pobjsort-cssonly" name="pobjsort" type="radio"/>
                             <label for="pobjsort-cssonly">Sort CSS properties</label>
+                        </span>
+                        <span>
+                            <input id="pobjsort-markuponly" name="pobjsort" type="radio"/>
+                            <label for="pobjsort-markuponly">Sort markup attributes</label>
                         </span>
                         <span>
                             <input id="pobjsort-all" name="pobjsort" type="radio"/>

@@ -2566,7 +2566,7 @@
                     // for drop down - AJAX call
                     expNamespace("cx.exp.widgetlibrary.search.common.dropdown");
 
-                    cx.exp.widgetlibrary.search.common.dropdown.AjaxObject = {
+                    cx.exp.widgetlibrary.search.common.dropdown.AjaxObject                = {
                         handleFailure: function (response) {
                             var namespace = cx.exp.widgetlibrary.search.common.container;
                         },
@@ -2609,7 +2609,7 @@
                                 }
                             }
                         },
-                        startRequest: function (url) {
+                        startRequest : function (url) {
                             //set disable state to radio buttons before async call started
                             cx.exp.widgetlibrary.search.common.dropdown.Callback.argument = {
                                 wizardType: cx.exp.widgetlibrary.search.common.container.wizardType
@@ -2651,7 +2651,7 @@
 
                     };
 
-                    cx.exp.widgetlibrary.search.common.dropdown.changeSelectedOrigin = function (selectElement) {
+                    cx.exp.widgetlibrary.search.common.dropdown.changeSelectedOrigin      = function (selectElement) {
 
                         var namespace = cx.exp.widgetlibrary.search.common.container;
                         var index = selectElement.selectedIndex;
@@ -2695,7 +2695,7 @@
                         //cx.exp.widgetlibrary.search.common.dropdown.Callback , null);
                     };
 
-                    cx.exp.widgetlibrary.search.common.dropdown.Callback = {
+                    cx.exp.widgetlibrary.search.common.dropdown.Callback                  = {
                         argument: {
                             wizardType: ""
                         },
@@ -2706,7 +2706,7 @@
                     };
 
                     //enable/disable state of LOB selector radio buttons
-                    cx.exp.widgetlibrary.search.common.container.disableRadioButtons = function (state) {
+                    cx.exp.widgetlibrary.search.common.container.disableRadioButtons      = function (state) {
                         var radioButtons = cx.exp.widgetlibrary.search.common.container.radioButtons;
                         for (var i = 0; i < radioButtons.length; i += 1) {
                             if (state === true) { //disabling
@@ -2723,7 +2723,7 @@
                         }
                     };
 
-                    cx.exp.widgetlibrary.search.common.container.AjaxObject          = {
+                    cx.exp.widgetlibrary.search.common.container.AjaxObject               = {
                         handleFailure: function (response) {
                             var namespace = cx.exp.widgetlibrary.search.common.container;
                             if (namespace.timer) {
@@ -2822,7 +2822,7 @@
                         }
                     };
 
-                    cx.exp.widgetlibrary.search.common.container.Callback            = {
+                    cx.exp.widgetlibrary.search.common.container.Callback                 = {
                         argument: {
                             wizardType: ""
                         },
@@ -2832,7 +2832,7 @@
                         timeout : cx.exp.widgetlibrary.search.common.container.ajaxTimeout
                     };
 
-                    cx.exp.widgetlibrary.search.common.container.showSpinner         = function (show) {
+                    cx.exp.widgetlibrary.search.common.container.showSpinner              = function (show) {
                         var namespace = cx.exp.widgetlibrary.search.common.container;
                         if (show) {
                             YAHOO
@@ -2855,7 +2855,7 @@
                         }
                     };
 
-                    cx.exp.widgetlibrary.search.common.container.showError           = function (show) {
+                    cx.exp.widgetlibrary.search.common.container.showError                = function (show) {
                         var namespace = cx.exp.widgetlibrary.search.common.container;
                         if (show) {
                             YAHOO
@@ -2870,7 +2870,7 @@
                         }
                     };
 
-                    cx.exp.widgetlibrary.search.common.dropdown.hideOrShowCallCenter = function (wizardType) {
+                    cx.exp.widgetlibrary.search.common.dropdown.hideOrShowCallCenter      = function (wizardType) {
                         if (false) {
                             if ($("#cx_cs_small").length) {
                                 if (wizardType == "flightOnly") {
@@ -2882,7 +2882,7 @@
                         }
                     };
 
-                    cx.exp.widgetlibrary.search.common.dropdown.hideOrShowBPG        = function (wizardType) {
+                    cx.exp.widgetlibrary.search.common.dropdown.hideOrShowBPG             = function (wizardType) {
                         if ($("#lowerMerchContainer").length) {
                             if (wizardType == "flightOnly" && false) {
                                 $("#lowerMerchContainer").css("display", "none");
@@ -2900,7 +2900,7 @@
                         }
                     };
 
-                    cx.exp.widgetlibrary.search.common.container.changeWizardContent = function () {
+                    cx.exp.widgetlibrary.search.common.container.changeWizardContent      = function () {
 
                         var selectedLob = this.getAttribute("wizardType");
 
@@ -3034,7 +3034,7 @@
                             .startRequest(sUrl);
                     };
 
-                    cx.exp.widgetlibrary.search.common.container.subscribeAllEvents  = function () {
+                    cx.exp.widgetlibrary.search.common.container.subscribeAllEvents       = function () {
                         var namespace = cx.exp.widgetlibrary.search.common.container,
                             radioButton;
                         var content = new Object();

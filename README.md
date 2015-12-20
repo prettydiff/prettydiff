@@ -2,6 +2,7 @@ Try it online at [http://prettydiff.com/](http://prettydiff.com/).
 
 # ![Pretty Diff logo](http://prettydiff.com/images/pdlogoxs.svg) Pretty Diff
 
+[![Travis CI Build](https://travis-ci.org/prettydiff/prettydiff.svg)](https://travis-ci.org/prettydiff/prettydiff)
 [![Gitter](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/prettydiff/prettydiff?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
 [![npm version](https://badge.fury.io/js/prettydiff.svg)](https://www.npmjs.com/package/prettydiff)
 [![Dependency Status](https://david-dm.org/prettydiff/prettydiff.svg)](https://david-dm.org/prettydiff/prettydiff)
@@ -118,6 +119,11 @@ Pretty Diff would be executed using the following on CLI:
         output = prettydiff(args);
 
 ### Run Pretty Diff in [Atom](https://atom.io/) code editor with the [atom-beautify](https://atom.io/packages/atom-beautify) package.
+
+### Run the unit tests with NPM test Script
+
+    cd node_modules/prettydiff
+    npm test
 
 ## License:
 

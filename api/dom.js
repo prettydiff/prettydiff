@@ -1562,10 +1562,12 @@ var pd = {},
                         data = ["preserve", "js"];
                     } else if (id === "bjslines-none" || id === "djslines-none") {
                         data = ["preserve", "none"];
-                    } else if (id === "bmethodchain-no" || id === "dmethodchain-no") {
-                        data = ["methodchain", "false"];
-                    } else if (id === "bmethodchain-yes" || id === "dmethodchain-yes") {
-                        data = ["methodchain", "true"];
+                    } else if (id === "bmethodchain-chain" || id === "dmethodchain-chain") {
+                        data = ["methodchain", "chain"];
+                    } else if (id === "bmethodchain-indent" || id === "dmethodchain-indent") {
+                        data = ["methodchain", "indent"];
+                    } else if (id === "bmethodchain-none" || id === "dmethodchain-none") {
+                        data = ["methodchain", "none"];
                     } else if (id === "bnocaseindent-no" || id === "dnocaseindent-no") {
                         data = ["nocaseindent", "false"];
                     } else if (id === "bnocaseindent-yes" || id === "dnocaseindent-yes") {
@@ -1574,13 +1576,15 @@ var pd = {},
                         data = ["noleadzero", "false"];
                     } else if (id === "bnoleadzero-yes") {
                         data = ["noleadzero", "true"];
-                    } else if (id === "bobjsort-all" || id === "dobjsort-all" || id === "mobjsort-all") {
+                    } else if (id === "bobjsort-all" || id === "dobjsort-all" || id === "mobjsort-all" || id === "pobjsort-all") {
                         data = ["objsort", "all"];
-                    } else if (id === "bobjsort-css" || id === "dobjsort-css" || id === "mobjsort-css") {
+                    } else if (id === "bobjsort-cssonly" || id === "dobjsort-cssonly" || id === "mobjsort-cssonly" || id === "pobjsort-cssonly") {
                         data = ["objsort", "css"];
-                    } else if (id === "bobjsort-js" || id === "dobjsort-js" || id === "mobjsort-js") {
+                    } else if (id === "bobjsort-jsonly" || id === "dobjsort-jsonly" || id === "mobjsort-jsonly" || id === "pobjsort-jsonly") {
                         data = ["objsort", "js"];
-                    } else if (id === "bobjsort-none" || id === "dobjsort-none" || id === "mobjsort-none") {
+                    } else if (id === "bobjsort-markuponly" || id === "dobjsort-markuponly" || id === "mobjsort-markuponly" || id === "pobjsort-markuponly") {
+                        data = ["objsort", "markup"];
+                    } else if (id === "bobjsort-none" || id === "dobjsort-none" || id === "mobjsort-none" || id === "pobjsort-none") {
                         data = ["objsort", "none"];
                     } else if (id === "bquoteconvert-double" || id === "mquoteconvert-double") {
                         data = ["quoteConvert", "double"];
@@ -2213,13 +2217,13 @@ var pd = {},
         //tests if a key press is a short command
         keydown: function dom__event_keydown(e) {
             var event = e || window.event;
-            if (pd.test.keypress === true && (pd.test.keystore.length === 0 || event.keyCode !== pd.test.keystore[pd.test.keystore.length - 1]) && event.keyCode !== 17) {
+            if (pd.test.keypress === true && (pd.test.keystore.length === 0 || event.keyCode !== pd.test.keystore[pd.test.keystore.length - 1]) && event.keyCode !== 17 && event.keyCode !== 224) {
                 pd
                     .test
                     .keystore
                     .push(event.keyCode);
             }
-            if (event.keyCode === 17 || event.ctrlKey === true) {
+            if (event.keyCode === 17 || event.ctrlKey === true || event.keyCode === 224) {
                 pd.test.keypress = true;
             }
         },
@@ -4358,13 +4362,18 @@ var pd = {},
             if (pd.test.keypress === true) {
                 if (pd.test.keystore.length > 0) {
                     pd.test.keystore.pop();
-                    if (pd.test.keystore.length === 0) {
+                    if (event.keyCode === 17 || event.ctrlKey === true || event.keyCode === 224) {
                         pd.test.keypress = false;
+                        pd.test.keystore = [];
+                    } else {
+                        if (pd.test.keystore.length === 0) {
+                            pd.test.keypress = false;
+                        }
+                        return false;
                     }
-                    return false;
                 }
             }
-            if ((event.keyCode === 17 || event.ctrlKey === true) && pd.test.keypress === true && pd.test.keystore.length === 0) {
+            if ((event.keyCode === 17 || event.ctrlKey === true || event.keyCode === 224) && pd.test.keypress === true && pd.test.keystore.length === 0) {
                 pd.test.keypress = false;
                 return false;
             }
@@ -4409,13 +4418,16 @@ var pd = {},
                     jshtml = pd.id("jsscope-html"),
                     jslinesa = pd.id("bjslines-all"),
                     jsspace = pd.id("jsspace-no"),
-                    methodchain = pd.id("bmethodchain-yes"),
+                    methodchainc = pd.id("bmethodchain-chain"),
+                    methodchaini = pd.id("bmethodchain-indent"),
+                    methodchainn = pd.id("bmethodchain-none"),
                     neverflatten = pd.id("bneverflatten-yes"),
                     nocaseindent = pd.id("bnocaseindent-yes"),
                     noleadzero = pd.id("bnoleadzero-yes"),
                     objsorta = pd.id("bobjsort-all"),
                     objsortc = pd.id("bobjsort-cssonly"),
                     objsortj = pd.id("bobjsort-jsonly"),
+                    objsortm = pd.id("bobjsort-markuponly"),
                     offset = pd.id("inlevel"),
                     quantity = pd.id("beau-quan"),
                     quotecond = pd.id("bquoteconvert-double"),
@@ -4505,7 +4517,13 @@ var pd = {},
                 } else {
                     api.jsscope = "none";
                 }
-                api.methodchain = (methodchain !== null && methodchain.checked === true);
+                if (methodchainc !== null && methodchainc.checked === true) {
+                    api.methodchain = "chain";
+                } else if (methodchaini !== null && methodchaini.checked === true) {
+                    api.methodchain = "indent";
+                } else if (methodchainn !== null && methodchainn.checked === true) {
+                    api.methodchain = "none";
+                }
                 api.neverflatten = (neverflatten !== null && neverflatten.checked === true);
                 api.nocaseindent = (nocaseindent !== null && nocaseindent.checked === true);
                 api.noleadzero = (noleadzero !== null && noleadzero.checked === true);
@@ -4515,6 +4533,8 @@ var pd = {},
                     api.objsort = "css";
                 } else if (objsortj !== null && objsortj.checked === true) {
                     api.objsort = "js";
+                } else if (objsortm !== null && objsortm.checked === true) {
+                    api.objsort = "markup";
                 } else {
                     api.objsort = "none";
                 }
@@ -4575,6 +4595,7 @@ var pd = {},
                     objsorta = pd.id("mobjsort-all"),
                     objsortc = pd.id("mobjsort-cssonly"),
                     objsortj = pd.id("mobjsort-jsonly"),
+                    objsortm = pd.id("mobjsort-markuponly"),
                     quotecond = pd.id("mquoteconvert-double"),
                     quotecons = pd.id("mquoteconvert-single"),
                     tagmerge = pd.id("mtagmerge-yes"),
@@ -4605,6 +4626,8 @@ var pd = {},
                     api.objsort = "css";
                 } else if (objsortj !== null && objsortj.checked === true) {
                     api.objsort = "js";
+                } else if (objsortm !== null && objsortm.checked === true) {
+                    api.objsort = "markup";
                 } else {
                     api.objsort = "none";
                 }
@@ -4654,6 +4677,7 @@ var pd = {},
                     objsorta = pd.id("dobjsort-all"),
                     objsortc = pd.id("dobjsort-cssonly"),
                     objsortj = pd.id("dobjsort-jsonly"),
+                    objsortm = pd.id("dobjsort-markuponly"),
                     quantity = pd.id("diff-quan"),
                     quote = pd.id("diffquoten"),
                     selectorlist = pd.id("dselectorlist-yes"),
@@ -4711,6 +4735,8 @@ var pd = {},
                     api.objsort = "css";
                 } else if (objsortj !== null && objsortj.checked === true) {
                     api.objsort = "js";
+                } else if (objsortm !== null && objsortm.checked === true) {
+                    api.objsort = "markup";
                 } else {
                     api.objsort = "none";
                 }
@@ -4876,9 +4902,13 @@ var pd = {},
                 var dustjs = pd.id("pdustyes"),
                     html = pd.id("phtml-yes"),
                     jscorrect = pd.id("pjscorrect-yes"),
+                    methodchainc = pd.id("dmethodchain-chain"),
+                    methodchaini = pd.id("dmethodchain-indent"),
+                    methodchainn = pd.id("dmethodchain-none"),
                     objsorta = pd.id("pobjsort-all"),
                     objsortc = pd.id("pobjsort-cssonly"),
                     objsortj = pd.id("pobjsort-jsonly"),
+                    objsortm = pd.id("pobjsort-markuponly"),
                     quotecond = pd.id("pquoteconvert-double"),
                     quotecons = pd.id("pquoteconvert-single"),
                     tagmerge = pd.id("ptagmerge-yes"),
@@ -4899,12 +4929,21 @@ var pd = {},
                 api.tagmerge = (tagmerge !== null && tagmerge.checked === true);
                 api.tagsort = (tagsort !== null && tagsort.checked === true);
                 api.textpreserve = (textpreserve !== null && textpreserve.checked === true);
+                if (methodchainc !== null && methodchainc.checked === true) {
+                    api.methodchain = "chain";
+                } else if (methodchaini !== null && methodchaini.checked === true) {
+                    api.methodchain = "indent";
+                } else if (methodchainn !== null && methodchainn.checked === true) {
+                    api.methodchain = "none";
+                }
                 if (objsorta !== null && objsorta.checked === true) {
                     api.objsort = "all";
                 } else if (objsortc !== null && objsortc.checked === true) {
                     api.objsort = "css";
                 } else if (objsortj !== null && objsortj.checked === true) {
                     api.objsort = "js";
+                } else if (objsortm !== null && objsortm.checked === true) {
+                    api.objsort = "markup";
                 } else {
                     api.objsort = "none";
                 }

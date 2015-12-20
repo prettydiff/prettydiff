@@ -100,7 +100,8 @@
                             error.push("* langdefault    - string  - The fallback value if option lang is provided the value 'auto' and the language cannot be detected.");
                             error.push("                   Accepted values: markup, javascript, css, html, csv, text");
                             error.push("");
-                            error.push("* methodchain    - boolean - Whether consecutive JavaScript methods should be chained onto a single line of code instead of indented. Default is false.");
+                            error.push("* methodchain    - string  - Whether consecutive JavaScript methods should be chained onto a single line of code instead of indented. Default is 'indent.");
+                            error.push("                   Accepted values: chain, indent, none");
                             error.push("");
                             error.push("* miniwrap       - boolean - Whether minified JavaScript should wrap after a specified character width. This option requires a value from option 'wrap'.");
                             error.push("");
@@ -113,7 +114,7 @@
                             error.push("* noleadzero     - boolean - If in CSS values leading 0s immediately preceeding a decimal should be removed or prevented.");
                             error.push("");
                             error.push("* objsort        - string  - Sorts properties by key name in JavaScript and/or CSS. Defaults to 'js', which sorts JavaScript object properties.");
-                            error.push("                   Accepted values: all, css, js, none");
+                            error.push("                   Accepted values: all, css, js, markup, none");
                             error.push("");
                             error.push("* output         - string  - The location of the output file. If the file does not exist it will be created. If this argument is missing output will print to screen.");
                             error.push("");
@@ -340,13 +341,19 @@
                     args.jsscope = (WScript.Arguments.Named("jsscope") === "html" || WScript.Arguments.Named("jsscope") === "report") ? WScript.Arguments.Named("jsscope") : "none";
                     args.lang = WScript.Arguments.Named("lang") || "auto";
                     args.langdefault = (WScript.Arguments.Named("langdefault") === "markup" || WScript.Arguments.Named("langdefault") === "html" || WScript.Arguments.Named("langdefault") === "css" || WScript.Arguments.Named("langdefault") === "csv" || WScript.Arguments.Named("langdefault") === "javascript") ? WScript.Arguments.Named("langdefault") : "text";
-                    args.methodchain = (WScript.Arguments.Named("methodchain") === "true" || WScript.Arguments.Named("methodchain") === true);
+                    if (WScript.Arguments.Named("methodchain") === "true" || WScript.Arguments.Named("methodchain") === true || WScript.Arguments.Named("methodchain") === "chain") {
+                        args.methodchain = "chain";
+                    } else if (WScript.Arguments.Named("methodchain") === "none") {
+                        args.methodchain = "none";
+                    } else {
+                        args.methodchain = "indent";
+                    }
                     args.miniwrap = (WScript.Arguments.Named("miniwrap") === "true" || WScript.Arguments.Named("miniwrap") === true);
                     args.mode = (WScript.Arguments.Named("mode") || "diff");
                     args.neverflatten = (WScript.Arguments.Named("neverflatten") === "true" || WScript.Arguments.Named("neverflatten") === true);
                     args.nocaseindent = (WScript.Arguments.Named("nocaseindent") === "true" || WScript.Arguments.Named("nocaseindent") === true);
                     args.noleadzero = (WScript.Arguments.Named("noleadzero") === "true" || WScript.Arguments.Named("noleadzero") === true);
-                    args.objsort = (WScript.Arguments.Named("objsort") === "all" || WScript.Arguments.Named("objsort") === "css" || WScript.Arguments.Named("objsort") === "none") ? WScript.Arguments.Named("objsort") : "js";
+                    args.objsort = (WScript.Arguments.Named("objsort") === "all" || WScript.Arguments.Named("objsort") === "css" || WScript.Arguments.Named("objsort") === "markup" || WScript.Arguments.Named("objsort") === "none") ? WScript.Arguments.Named("objsort") : "js";
                     args.quote = (WScript.Arguments.Named("quote") === "true" || WScript.Arguments.Named("quote") === true);
                     args.quoteConvert = (WScript.Arguments.Named("quoteConvert") === "double" || WScript.Arguments.Named("quoteConvert") === "single") ? WScript.Arguments.Named("quoteConvert") : "none";
                     args.preserve = (WScript.Arguments.Named("preserve") === "none" || WScript.Arguments.Named("preserve") === "css" || WScript.Arguments.Named("preserve") === "js") ? WScript.Arguments.Named("preserve") : "all";

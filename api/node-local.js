@@ -135,7 +135,7 @@ Examples:
             jsscope       : "none",
             lang          : "auto",
             langdefault   : "text",
-            methodchain   : false,
+            methodchain   : "indent",
             miniwrap      : false,
             mode          : "diff",
             neverflatten  : false,
@@ -1103,9 +1103,10 @@ Examples:
             a.push("                           language cannot be detected.");
             a.push("                 Accepted values: markup, javascript, css, html, csv, text");
             a.push("");
-            a.push("* methodchain  - boolean - Whether consecutive JavaScript methods should be");
+            a.push("* methodchain  - string  - Whether consecutive JavaScript methods should be");
             a.push("                           chained onto a single line of code instead of");
-            a.push("                           indented. Default is false.");
+            a.push("                           indented. Default is 'indent'.");
+            a.push("                 Accepted values: chain, indent, none");
             a.push("");
             a.push("* miniwrap     - boolean - Whether minified JavaScript should wrap after a");
             a.push("                           specified character width. This option requires a");
@@ -1130,7 +1131,7 @@ Examples:
             a.push("");
             a.push("* objsort      - string  - Sorts properties by key name in JavaScript and/or");
             a.push("                           CSS. Defaults to 'js'.");
-            a.push("                 Accepted values: all, css, js, none");
+            a.push("                 Accepted values: all, css, js, markup, none");
             a.push("");
             a.push("* output       - string  - The path of the directory, if readmethod is value");
             a.push("                           'directory', or path and name of the file to write");
@@ -2018,8 +2019,14 @@ Examples:
                     }
                 } else if (d[b][0] === "langdefault" && (d[b][1] === "markup" || d[b][1] === "javascript" || d[b][1] === "css" || d[b][1] === "html" || d[b][1] === "csv")) {
                     options.langdefault = d[b][1];
-                } else if (d[b][0] === "methodchain" && d[b][1] === "true") {
-                    options.methodchain = true;
+                } else if (d[b][0] === "methodchain") {
+                    if (d[b][1] === "true" || d[b][1] === "chain") {
+                        options.methodchain = "chain";
+                    } else if (d[b][1] === "none") {
+                        options.methodchain = "none";
+                    } else {
+                        options.methodchain = "indent";
+                    }
                 } else if (d[b][0] === "miniwrap" && d[b][1] === "true") {
                     options.miniwrap = true;
                 } else if (d[b][0] === "mode" && (d[b][1] === "minify" || d[b][1] === "beautify" || d[b][1] === "parse")) {
@@ -2031,7 +2038,7 @@ Examples:
                 } else if (d[b][0] === "noleadzero" && d[b][1] === "true") {
                     options.noleadzero = true;
                 } else if (d[b][0] === "objsort") {
-                    if (d[b][1] === "all" || d[b][1] === "none" || d[b][1] === "css" || d[b][1] === "js") {
+                    if (d[b][1] === "all" || d[b][1] === "none" || d[b][1] === "css" || d[b][1] === "js" || d[b][1] === "markup") {
                         options.objsort = d[b][1];
                     } else if (d[b][1] === "true") {
                         options.objsort = "js";

@@ -214,7 +214,7 @@ var prettydiff = function prettydiff_(api) {
                     bracepadding  : (api.bracepadding === true || api.bracepadding === "true"),
                     //indent - should JSPretty format JavaScript in the normal KNR style or push
                     //curly braces onto a separate line like the "allman" style
-                    braces        : (api.braces === "allman")
+                    braces        : (api.braces === true || api.braces === "true" || api.braces === "allman")
                         ? "allman"
                         : "knr",
                     //comments - if comments should receive indentation or not
@@ -312,7 +312,9 @@ var prettydiff = function prettydiff_(api) {
                     lineendcrlf: (api.lineendcrlf === true || api.lineendcrlf === "true"),
                     //methodchain - if JavaScript method chains should be strung onto a single line
                     //instead of indented
-                    methodchain   : (api.methodchain === true || api.methodchain === "true"),
+                    methodchain   : (api.methodchain === "chain" || api.methodchain === "none")
+                        ? api.methodchain
+                        : "indent",
                     //miniwrap - when language is JavaScript and mode is 'minify' if option 'jwrap'
                     //should be applied to all code
                     miniwrap      : (api.miniwrap === true || api.miniwrap === "true"),
@@ -328,7 +330,9 @@ var prettydiff = function prettydiff_(api) {
                     //immediately before a value's decimal.
                     noleadzero    : (api.noleadzero === true || api.noleadzero === "true"),
                     //objsort will alphabetize object keys in JavaScript
-                    objsort       : (api.objsort === "all"),
+                    objsort       : (api.objsort === "all" || api.objsort === "js" || api.objsort === "css" || api.objsort === "css" || api.objsort === true || api.objsort === "true")
+                        ? api.objsort
+                        : "none",
                     //preserve - should empty lines be preserved in beautify operations of JSPretty?
                     preserve      : (api.preserve === "all"),
                     //quote - should all single quote characters be converted to double quote
@@ -790,16 +794,21 @@ var prettydiff = function prettydiff_(api) {
                 };
             pdcomment();
             if (api.preserve === true || api.preserve === "true") {
-                options.preserve = true;
+                options.preserve = "all";
             }
             if (api.alphasort === true || api.alphasort === "true" || api.objsort === true || api.objsort === "true") {
-                options.objsort = true;
+                options.objsort = "all";
             }
             if (api.indent === "allman") {
                 options.braces = "allman";
             }
+            if (api.methodchain === true || api.methodchain === "true") {
+                options.methodchain = "chain";
+            } else if (api.methodchain === false || api.methodchain === "false") {
+                options.methodchain = "indent";
+            }
             if (api.vertical === true || api.vertical === "true") {
-                options.vertical = true;
+                options.vertical = "all";
             }
             if (options.source === "") {
                 return ["Error: Source sample is missing.", ""];
@@ -839,28 +848,6 @@ var prettydiff = function prettydiff_(api) {
             } else if (options.lang === "tss" || options.lang === "titanium") {
                 options.titanium = true;
                 options.lang     = "javscript";
-            }
-            if (options.lang === "css") {
-                if (api.objsort === "css" || api.objsort === "cssonly") {
-                    options.objsort = true;
-                }
-                if (api.preserve === "css" || api.preserve === "cssonly") {
-                    options.preserve = true;
-                }
-                if (api.vertical === "css" || api.vertical === "cssonly") {
-                    options.vertical = true;
-                }
-            }
-            if (options.lang === "javascript" || options.lang === "js") {
-                if (api.objsort === "js" || api.objsort === "jsonly") {
-                    options.objsort = true;
-                }
-                if (api.preserve === "js" || api.preserve === "jsonly") {
-                    options.preserve = true;
-                }
-                if (api.vertical === "js" || api.vertical === "jsonly") {
-                    options.vertical = true;
-                }
             }
             if (options.mode === "minify") {
                 if (options.lang === "css") {

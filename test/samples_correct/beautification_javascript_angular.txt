@@ -1028,7 +1028,7 @@
                     return arguments.length
                         ? fn.apply(self, arguments)
                         : fn.call(self);
-            };
+                };
         } else {
             // in IE, native methods are not functions so they cannot be bound (note: they
             //don't need to be)
@@ -2507,7 +2507,7 @@
     }
 
     forEach({
-        attr: function (element, name, value) {
+        attr         : function (element, name, value) {
             var lowercasedName = lowercase(name);
             if (BOOLEAN_ATTR[lowercasedName]) {
                 if (isDefined(value)) {
@@ -2537,9 +2537,9 @@
             }
         },
 
-        controller: jqLiteController,
+        controller   : jqLiteController,
 
-        css: function (element, name, value) {
+        css          : function (element, name, value) {
             name = camelCase(name);
 
             if (isDefined(value)) {
@@ -2568,13 +2568,13 @@
             }
         },
 
-        data: jqLiteData,
+        data         : jqLiteData,
 
-        empty: jqLiteEmpty,
+        empty        : jqLiteEmpty,
 
-        hasClass: jqLiteHasClass,
+        hasClass     : jqLiteHasClass,
 
-        html: function (element, value) {
+        html         : function (element, value) {
             if (isUndefined(value)) {
                 return element.innerHTML;
             }
@@ -2586,16 +2586,16 @@
 
         inheritedData: jqLiteInheritedData,
 
-        injector: function (element) {
+        injector     : function (element) {
             return jqLiteInheritedData(element, "$injector");
         },
 
-        isolateScope: function (element) {
+        isolateScope : function (element) {
             // Can't use jqLiteData here directly so we stay compatible with jQuery!
             return jqLite(element).data("$isolateScope") || jqLite(element).data("$isolateScopeNoTemplate");
         },
 
-        prop: function (element, name, value) {
+        prop         : function (element, name, value) {
             if (isDefined(value)) {
                 element[name] = value;
             } else {
@@ -2603,16 +2603,16 @@
             }
         },
 
-        removeAttr: function (element, name) {
+        removeAttr   : function (element, name) {
             element.removeAttribute(name);
         },
 
-        scope: function (element) {
+        scope        : function (element) {
             // Can't use jqLiteData here directly so we stay compatible with jQuery!
             return jqLite(element).data("$scope") || jqLiteInheritedData(element.parentNode || element, ["$isolateScope", "$scope"]);
         },
 
-        text: (function () {
+        text         : (function () {
             var NODE_TYPE_TEXT_PROPERTY = [];
             if (msie < 9) {
                 NODE_TYPE_TEXT_PROPERTY[1] = "innerText";/** Element **/
@@ -2635,7 +2635,7 @@
             }
         })(),
 
-        val: function (element, value) {
+        val          : function (element, value) {
             if (isUndefined(value)) {
                 if (nodeName_(element) === "SELECT" && element.multiple) {
                     var result = [];
@@ -2860,19 +2860,20 @@
                                         ? a.documentElement
                                         : a,
                                     bup   = b && b.parentNode;
-                            return a === bup || !!(bup && bup.nodeType === 1 && (adown.contains
-                                ? adown.contains(bup)
-                                : a.compareDocumentPosition && a.compareDocumentPosition(bup) & 16));
-                        }: function (a, b) {
-                            if (b) {
-                                while ((b = b.parentNode)) {
-                                    if (b === a) {
-                                        return true;
+                                return a === bup || !!(bup && bup.nodeType === 1 && (adown.contains
+                                    ? adown.contains(bup)
+                                    : a.compareDocumentPosition && a.compareDocumentPosition(bup) & 16));
+                            }
+                            : function (a, b) {
+                                if (b) {
+                                    while ((b = b.parentNode)) {
+                                        if (b === a) {
+                                            return true;
+                                        }
                                     }
                                 }
-                            }
-                            return false;
-                        };
+                                return false;
+                            };
 
                         events[type] = [];
 
@@ -2997,7 +2998,7 @@
         /**
    * chaining functions
    */
-        JQLite.prototype[name] = function (arg1, arg2, arg3) {
+        JQLite.prototype[name]  = function (arg1, arg2, arg3) {
             var value;
             for (var i = 0; i < this.length; i += 1) {
                 if (isUndefined(value)) {
@@ -6987,7 +6988,7 @@
             tokens1 = str1.split(/\s+/),
             tokens2 = str2.split(/\s+/);
 
-        outer: for (var i = 0; i < tokens1.length; i += 1) {
+        outer : for (var i = 0; i < tokens1.length; i += 1) {
             var token = tokens1[i];
             for (var j = 0; j < tokens2.length; j += 1) {
                 if (token == tokens2[j]) {
@@ -7933,7 +7934,7 @@
 
                         // using for-in instead of forEach to avoid unecessary iteration after header
                         //has been found
-                        defaultHeadersIteration: for (defHeaderName in defHeaders) {
+                        defaultHeadersIteration : for (defHeaderName in defHeaders) {
                             lowercaseDefHeaderName = lowercase(defHeaderName);
 
                             for (reqHeaderName in reqHeaders) {
@@ -8354,12 +8355,12 @@
                     ? (response
                         ? 200
                         : 404)
-                        : status;
+                    : status;
 
-                    // normalize IE bug (http://bugs.jquery.com/ticket/1450)
-                    status    = status == 1223
-                        ? 204
-                        : status;
+                // normalize IE bug (http://bugs.jquery.com/ticket/1450)
+                status    = status == 1223
+                    ? 204
+                    : status;
 
                 callback(status, response, headersString);
                 $browser.$$completeOutstandingRequest(noop);
@@ -8581,7 +8582,7 @@
 
                     if (!mustHaveExpression || hasInterpolation) {
                         concat.length = length;
-                        fn = function (context) {
+                        fn            = function (context) {
                             try {
                                 for (var i = 0, ii = length, part; i < ii; i += 1) {
                                     if (typeof(part = parts[i]) == "function") {
@@ -8605,8 +8606,8 @@
                                 $exceptionHandler(newErr);
                             }
                         };
-                        fn.exp   = text;
-                        fn.parts = parts;
+                        fn.exp        = text;
+                        fn.parts      = parts;
                         return fn;
                     }
                 }
@@ -8853,27 +8854,28 @@
         this.$get = function () {
             return {
                 DATETIME_FORMATS: {
-                    MONTH     : "January,February,March,April,May,June,July,August,September,October,November,Dec" +
-                                "ember".split(","),
-                    SHORTMONTH: "Jan,Feb,Mar,Apr,May,Jun,Jul,Aug,Sep,Oct,Nov,Dec".split(","),
-                    DAY       : "Sunday,Monday,Tuesday,Wednesday,Thursday,Friday,Saturday".split(","),
-                    SHORTDAY  : "Sun,Mon,Tue,Wed,Thu,Fri,Sat".split(","),
                     AMPMS     : [
                         "AM", "PM"
                     ],
-                    medium    : "MMM d, y h:mm:ss a",
-                    short     : "M/d/yy h:mm a",
+                    DAY       : "Sunday,Monday,Tuesday,Wednesday,Thursday,Friday,Saturday".split(","),
                     fullDate  : "EEEE, MMMM d, y",
                     longDate  : "MMMM d, y",
+                    medium    : "MMM d, y h:mm:ss a",
                     mediumDate: "MMM d, y",
-                    shortDate : "M/d/yy",
                     mediumTime: "h:mm:ss a",
-                    shortTime : "h:mm a";
+                    MONTH     : "January,February,March,April,May,June,July,August,September,October,November,Dec" +
+                                    "ember".split(","),
+                    short     : "M/d/yy h:mm a",
+                    shortDate : "M/d/yy",
+                    SHORTDAY  : "Sun,Mon,Tue,Wed,Thu,Fri,Sat".split(","),
+                    SHORTMONTH: "Jan,Feb,Mar,Apr,May,Jun,Jul,Aug,Sep,Oct,Nov,Dec".split(","),
+                    shortTime : "h:mm a"
                 },
 
                 id              : "en-us",
 
                 NUMBER_FORMATS  : {
+                    CURRENCY_SYM: "$",
                     DECIMAL_SEP : ".",
                     GROUP_SEP   : ",",
                     PATTERNS    : [
@@ -8898,8 +8900,7 @@
                             posPre : "\u00A4",
                             posSuf : ""
                         }
-                    ],
-                    CURRENCY_SYM: "$";
+                    ]
                 },
 
                 pluralCat       : function (num) {
@@ -10314,7 +10315,7 @@
     };
 
     Parser.prototype = {
-        additive: function () {
+        additive        : function () {
             var left = this.multiplicative();
             var token;
             while ((token = this.expect("+", "-"))) {
@@ -10350,7 +10351,7 @@
             });
         },
 
-        assignment: function () {
+        assignment      : function () {
             var left = this.ternary();
             var right;
             var token;
@@ -10366,7 +10367,7 @@
             return left;
         },
 
-        binaryFn: function (left, fn, right) {
+        binaryFn        : function (left, fn, right) {
             return extend(function (self, locals) {
                 return fn(self, locals, left, right);
             }, {
@@ -10374,15 +10375,15 @@
             });
         },
 
-        constructor: Parser,
+        constructor     : Parser,
 
-        consume: function (e1) {
+        consume         : function (e1) {
             if (!this.expect(e1)) {
                 this.throwError("is unexpected, expecting [" + e1 + "]", this.peek());
             }
         },
 
-        equality: function () {
+        equality        : function () {
             var left = this.relational();
             var token;
             if ((token = this.expect("==", "!=", "===", "!=="))) {
@@ -10391,7 +10392,7 @@
             return left;
         },
 
-        expect: function (e1, e2, e3, e4) {
+        expect          : function (e1, e2, e3, e4) {
             var token = this.peek(e1, e2, e3, e4);
             if (token) {
                 if (this.json && !token.json) {
@@ -10405,11 +10406,11 @@
             return false;
         },
 
-        expression: function () {
+        expression      : function () {
             return this.assignment();
         },
 
-        fieldAccess: function (object) {
+        fieldAccess     : function (object) {
             var parser = this;
             var field = this
                 .expect()
@@ -10425,7 +10426,7 @@
             });
         },
 
-        filter: function () {
+        filter          : function () {
             var token = this.expect();
             var fn = this.$filter(token.text);
             var argsFn = [];
@@ -10447,7 +10448,7 @@
             }
         },
 
-        filterChain: function () {
+        filterChain     : function () {
             var left = this.expression();
             var token;
             while (true) {
@@ -10459,7 +10460,7 @@
             }
         },
 
-        functionCall: function (fn, contextGetter) {
+        functionCall    : function (fn, contextGetter) {
             var argsFn = [];
             if (this.peekToken().text !== ")") {
                 do {
@@ -10493,7 +10494,7 @@
             };
         },
 
-        logicalAND: function () {
+        logicalAND      : function () {
             var left = this.equality();
             var token;
             if ((token = this.expect("&&"))) {
@@ -10502,7 +10503,7 @@
             return left;
         },
 
-        logicalOR: function () {
+        logicalOR       : function () {
             var left = this.logicalAND();
             var token;
             while (true) {
@@ -10514,7 +10515,7 @@
             }
         },
 
-        multiplicative: function () {
+        multiplicative  : function () {
             var left = this.unary();
             var token;
             while ((token = this.expect("*", "/", "%"))) {
@@ -10523,7 +10524,7 @@
             return left;
         },
 
-        object: function () {
+        object          : function () {
             var keyValues = [];
             var allConstant = true;
             if (this.peekToken().text !== "}") {
@@ -10553,7 +10554,7 @@
             });
         },
 
-        objectIndex: function (obj) {
+        objectIndex     : function (obj) {
             var parser = this;
 
             var indexFn = this.expression();
@@ -10591,7 +10592,7 @@
             });
         },
 
-        parse: function (text, json) {
+        parse           : function (text, json) {
             this.text   = text;
 
             //TODO(i): strip all the obsolte json stuff from this file
@@ -10629,7 +10630,7 @@
             return value;
         },
 
-        peek: function (e1, e2, e3, e4) {
+        peek            : function (e1, e2, e3, e4) {
             if (this.tokens.length > 0) {
                 var token = this.tokens[0];
                 var t = token.text;
@@ -10640,14 +10641,14 @@
             return false;
         },
 
-        peekToken: function () {
+        peekToken       : function () {
             if (this.tokens.length === 0) {
                 throw $parseMinErr("ueoe", "Unexpected end of expression: {0}", this.text);
             }
             return this.tokens[0];
         },
 
-        primary: function () {
+        primary         : function () {
             var primary;
             if (this.expect("(")) {
                 primary = this.filterChain();
@@ -10687,7 +10688,7 @@
             return primary;
         },
 
-        relational: function () {
+        relational      : function () {
             var left = this.additive();
             var token;
             if ((token = this.expect("<", ">", "<=", ">="))) {
@@ -10696,7 +10697,7 @@
             return left;
         },
 
-        statements: function () {
+        statements      : function () {
             var statements = [];
             while (true) {
                 if (this.tokens.length > 0 && !this.peek("}", ")", ";", "]")) {
@@ -10721,7 +10722,7 @@
             }
         },
 
-        ternary   : function () {
+        ternary         : function () {
             var left = this.logicalOR();
             var middle;
             var token;
@@ -10737,7 +10738,7 @@
             }
         },
 
-        ternaryFn : function (left, middle, right) {
+        ternaryFn       : function (left, middle, right) {
             return extend(function (self, locals) {
                 return left(self, locals)
                     ? middle(self, locals)
@@ -10747,13 +10748,13 @@
             });
         },
 
-        throwError: function (msg, token) {
+        throwError      : function (msg, token) {
             throw $parseMinErr("syntax", "Syntax Error: Token \'{0}\' {1} at column {2} of the expression [{3}] starting a" +
                     "t [{4}].",
             token.text, msg, (token.index + 1), this.text, this.text.substring(token.index));
         },
 
-        unary     : function () {
+        unary           : function () {
             var token;
             if (this.expect("+")) {
                 return this.primary();
@@ -10766,7 +10767,7 @@
             }
         },
 
-        unaryFn   : function (fn, right) {
+        unaryFn         : function (fn, right) {
             return extend(function (self, locals) {
                 return fn(self, locals, right);
             }, {constant: right.constant});
@@ -10837,139 +10838,140 @@
                 }
                 pathVal = pathVal[key0];
 
-            if (!key1) {
-                return pathVal;
-            }
-            if (pathVal == null) {
-                return undefined;
-            }
-            pathVal = pathVal[key1];
-
-            if (!key2) {
-                return pathVal;
-            }
-            if (pathVal == null) {
-                return undefined;
-            }
-            pathVal = pathVal[key2];
-
-            if (!key3) {
-                return pathVal;
-            }
-            if (pathVal == null) {
-                return undefined;
-            }
-            pathVal = pathVal[key3];
-
-            if (!key4) {
-                return pathVal;
-            }
-            if (pathVal == null) {
-                return undefined;
-            }
-            pathVal = pathVal[key4];
-
-            return pathVal;
-        }: function cspSafePromiseEnabledGetter(scope, locals) {
-            var pathVal = (locals && locals.hasOwnProperty(key0))
-                    ? locals
-                    : scope,
-                promise;
-
-            if (pathVal == null) {
-                return pathVal;
-            }
-
-            pathVal = pathVal[key0];
-            if (pathVal && pathVal.then) {
-                promiseWarning(fullExp);
-                if (!("$$v" in pathVal)) {
-                    promise     = pathVal;
-                    promise.$$v = undefined;
-                    promise.then(function (val) {
-                        promise.$$v = val;
-                    });
+                if (!key1) {
+                    return pathVal;
                 }
-                pathVal = pathVal.$$v;
-            }
+                if (pathVal == null) {
+                    return undefined;
+                }
+                pathVal = pathVal[key1];
 
-            if (!key1) {
+                if (!key2) {
+                    return pathVal;
+                }
+                if (pathVal == null) {
+                    return undefined;
+                }
+                pathVal = pathVal[key2];
+
+                if (!key3) {
+                    return pathVal;
+                }
+                if (pathVal == null) {
+                    return undefined;
+                }
+                pathVal = pathVal[key3];
+
+                if (!key4) {
+                    return pathVal;
+                }
+                if (pathVal == null) {
+                    return undefined;
+                }
+                pathVal = pathVal[key4];
+
                 return pathVal;
             }
-            if (pathVal == null) {
-                return undefined;
-            }
-            pathVal = pathVal[key1];
-            if (pathVal && pathVal.then) {
-                promiseWarning(fullExp);
-                if (!("$$v" in pathVal)) {
-                    promise     = pathVal;
-                    promise.$$v = undefined;
-                    promise.then(function (val) {
-                        promise.$$v = val;
-                    });
-                }
-                pathVal = pathVal.$$v;
-            }
+            : function cspSafePromiseEnabledGetter(scope, locals) {
+                var pathVal = (locals && locals.hasOwnProperty(key0))
+                        ? locals
+                        : scope,
+                    promise;
 
-            if (!key2) {
-                return pathVal;
-            }
-            if (pathVal == null) {
-                return undefined;
-            }
-            pathVal = pathVal[key2];
-            if (pathVal && pathVal.then) {
-                promiseWarning(fullExp);
-                if (!("$$v" in pathVal)) {
-                    promise     = pathVal;
-                    promise.$$v = undefined;
-                    promise.then(function (val) {
-                        promise.$$v = val;
-                    });
+                if (pathVal == null) {
+                    return pathVal;
                 }
-                pathVal = pathVal.$$v;
-            }
 
-            if (!key3) {
-                return pathVal;
-            }
-            if (pathVal == null) {
-                return undefined;
-            }
-            pathVal = pathVal[key3];
-            if (pathVal && pathVal.then) {
-                promiseWarning(fullExp);
-                if (!("$$v" in pathVal)) {
-                    promise     = pathVal;
-                    promise.$$v = undefined;
-                    promise.then(function (val) {
-                        promise.$$v = val;
-                    });
+                pathVal = pathVal[key0];
+                if (pathVal && pathVal.then) {
+                    promiseWarning(fullExp);
+                    if (!("$$v" in pathVal)) {
+                        promise     = pathVal;
+                        promise.$$v = undefined;
+                        promise.then(function (val) {
+                            promise.$$v = val;
+                        });
+                    }
+                    pathVal = pathVal.$$v;
                 }
-                pathVal = pathVal.$$v;
-            }
 
-            if (!key4) {
-                return pathVal;
-            }
-            if (pathVal == null) {
-                return undefined;
-            }
-            pathVal = pathVal[key4];
-            if (pathVal && pathVal.then) {
-                promiseWarning(fullExp);
-                if (!("$$v" in pathVal)) {
-                    promise     = pathVal;
-                    promise.$$v = undefined;
-                    promise.then(function (val) {
-                        promise.$$v = val;
-                    });
+                if (!key1) {
+                    return pathVal;
                 }
-                pathVal = pathVal.$$v;
-            }
-            return pathVal;
-        };
+                if (pathVal == null) {
+                    return undefined;
+                }
+                pathVal = pathVal[key1];
+                if (pathVal && pathVal.then) {
+                    promiseWarning(fullExp);
+                    if (!("$$v" in pathVal)) {
+                        promise     = pathVal;
+                        promise.$$v = undefined;
+                        promise.then(function (val) {
+                            promise.$$v = val;
+                        });
+                    }
+                    pathVal = pathVal.$$v;
+                }
+
+                if (!key2) {
+                    return pathVal;
+                }
+                if (pathVal == null) {
+                    return undefined;
+                }
+                pathVal = pathVal[key2];
+                if (pathVal && pathVal.then) {
+                    promiseWarning(fullExp);
+                    if (!("$$v" in pathVal)) {
+                        promise     = pathVal;
+                        promise.$$v = undefined;
+                        promise.then(function (val) {
+                            promise.$$v = val;
+                        });
+                    }
+                    pathVal = pathVal.$$v;
+                }
+
+                if (!key3) {
+                    return pathVal;
+                }
+                if (pathVal == null) {
+                    return undefined;
+                }
+                pathVal = pathVal[key3];
+                if (pathVal && pathVal.then) {
+                    promiseWarning(fullExp);
+                    if (!("$$v" in pathVal)) {
+                        promise     = pathVal;
+                        promise.$$v = undefined;
+                        promise.then(function (val) {
+                            promise.$$v = val;
+                        });
+                    }
+                    pathVal = pathVal.$$v;
+                }
+
+                if (!key4) {
+                    return pathVal;
+                }
+                if (pathVal == null) {
+                    return undefined;
+                }
+                pathVal = pathVal[key4];
+                if (pathVal && pathVal.then) {
+                    promiseWarning(fullExp);
+                    if (!("$$v" in pathVal)) {
+                        promise     = pathVal;
+                        promise.$$v = undefined;
+                        promise.then(function (val) {
+                            promise.$$v = val;
+                        });
+                    }
+                    pathVal = pathVal.$$v;
+                }
+                return pathVal;
+            };
     }
 
     function simpleGetterFn1(key0, fullExp) {
@@ -11466,7 +11468,7 @@
 
             deferred = {
 
-                notify: function (progress) {
+                notify : function (progress) {
                     if (pending) {
                         var callbacks = pending;
 
@@ -11568,7 +11570,7 @@
                     }
                 },
 
-                reject: function (reason) {
+                reject : function (reason) {
                     deferred.resolve(reject(reason));
                 },
 
@@ -11939,7 +11941,7 @@
      */
 
                 Scope.prototype = {
-                    $$postDigest: function (fn) {
+                    $$postDigest    : function (fn) {
                         this
                             .$$postDigestQueue
                             .push(fn);
@@ -11991,7 +11993,7 @@
        *
        * @returns {*} The result of evaluating the expression.
        */
-                    $apply: function (expr) {
+                    $apply          : function (expr) {
                         try {
                             beginPhase("$apply");
                             return this.$eval(expr);
@@ -12030,7 +12032,7 @@
        * @param {...*} args Optional set of arguments which will be passed onto the event listeners.
        * @return {Object} Event object, see {@link ng.$rootScope.Scope#methods_$on}
        */
-                    $broadcast: function (name, args) {
+                    $broadcast      : function (name, args) {
                         var target       = this,
                             current      = target,
                             next         = target,
@@ -12118,7 +12120,7 @@
        * Note that, in AngularJS, there is also a `$destroy` jQuery event, which can be used to
        * clean up DOM bindings before an element is removed from the DOM.
        */
-                    $destroy: function () {
+                    $destroy        : function () {
                         // we can't destroy the root scope or a scope that has been already destroyed
                         if (this.$$destroyed) {
                             return;
@@ -12199,7 +12201,7 @@
        * </pre>
        *
        */
-                    $digest: function () {
+                    $digest         : function () {
                         var watch,
                             value,
                             last,
@@ -12238,7 +12240,7 @@
                                 lastDirtyWatch = null;
                             }
 
-                            traverseScopesLoop: do { // "traverse the scopes" loop
+                            traverseScopesLoop : do { // "traverse the scopes" loop
                                 if ((watchers = current.$$watchers)) {
                                     // process our watches
                                     length = watchers.length;
@@ -12340,7 +12342,7 @@
        * @param {...*} args Optional set of arguments which will be passed onto the event listeners.
        * @return {Object} Event object (see {@link ng.$rootScope.Scope#methods_$on}).
        */
-                    $emit: function (name, args) {
+                    $emit           : function (name, args) {
                         var empty           = [],
                             namedListeners,
                             scope           = this,
@@ -12419,7 +12421,7 @@
        * @param {(object)=} locals Local variables object, useful for overriding values in scope.
        * @returns {*} The result of evaluating the expression.
        */
-                    $eval: function (expr, locals) {
+                    $eval           : function (expr, locals) {
                         return $parse(expr)(this, locals);
                     },
 
@@ -12453,7 +12455,7 @@
        *    - `function(scope)`: execute the function with the current `scope` parameter.
        *
        */
-                    $evalAsync: function (expr) {
+                    $evalAsync      : function (expr) {
                         // if we are outside of an $digest loop and this is the first time we are
                         //scheduling async
                         // task also schedule async auto-flush
@@ -12496,7 +12498,7 @@
        * @returns {Object} The newly created child scope.
        *
        */
-                    $new: function (isolate) {
+                    $new            : function (isolate) {
                         var ChildScope,
                             child;
 
@@ -12557,7 +12559,7 @@
        * @param {function(event, args...)} listener Function to call when the event is emitted.
        * @returns {function()} Returns a deregistration function for this listener.
        */
-                    $on: function (name, listener) {
+                    $on             : function (name, listener) {
                         var namedListeners = this.$$listeners[name];
                         if (!namedListeners) {
                             this.$$listeners[name] = namedListeners = [];
@@ -12689,7 +12691,7 @@
        * @param {boolean=} objectEquality Compare object for equality rather than for reference.
        * @returns {function()} Returns a deregistration function for this listener.
        */
-                    $watch: function (watchExp, listener, objectEquality) {
+                    $watch          : function (watchExp, listener, objectEquality) {
                         var scope   = this,
                             get     = compileToFn(watchExp, "watch"),
                             array   = scope.$$watchers,
@@ -12873,7 +12875,7 @@
                         return this.$watch($watchCollectionWatch, $watchCollectionAction);
                     },
 
-                    constructor: Scope
+                    constructor     : Scope
                 };
 
                 var $rootScope = new Scope();
@@ -15166,7 +15168,7 @@
     function dateFilter($locale) {
 
         var R_ISO8601_STR = /^(\d{4})-?(\d\d)-?(\d\d)(?:T(\d\d)(?::?(\d\d)(?::?(\d\d)(?:\.(\d+))?)?)?(Z|([+-])(\d\d):?(\d\d))?)?$/;
-        // 1        2       3         4          5          6          7          8  9  
+        // 1        2       3         4          5          6          7          8  9
         //  10      11
         function jsonStringToDate(string) {
             var match;
@@ -15970,7 +15972,8 @@
     ], function (attrName) {
         var normalized = directiveNormalize("ng-" + attrName);
         ngAttributeAliasDirectives[normalized] = function () {
-            return { // it needs to run after the attributes are interpolatedlink                                                    : function (scope, element, attr) {
+            return { // it needs to run after the attributes are interpolated
+                link    : function (scope, element, attr) {
                     attr
                         .$observe(normalized, function (value) {
                             if (!value) {
@@ -20016,8 +20019,8 @@
             var NG_REMOVED = "$$NG_REMOVED";
             var ngRepeatMinErr = minErr("ngRepeat");
             return {
-                $$tlb: true,
-                link: function ($scope, $element, $attr, ctrl, $transclude) {
+                $$tlb     : true,
+                link      : function ($scope, $element, $attr, ctrl, $transclude) {
                     var expression = $attr.ngRepeat;
                     var match        = expression.match(/^\s*([\s\S]+?)\s+in\s+([\s\S]+?)(?:\s+track\s+by\s+([\s\S]+?))?\s*$/),
                         trackByExp,
@@ -20231,8 +20234,8 @@
                         lastBlockMap = nextBlockMap;
                     });
                 },
-                priority: 1000,
-                terminal: true,
+                priority  : 1000,
+                terminal  : true,
                 transclude: "element"
             };
 
@@ -20749,7 +20752,7 @@
                         this.cases = {};
                     }
                 ],
-                link: function (scope, element, attr, ngSwitchController) {
+                link      : function (scope, element, attr, ngSwitchController) {
                     var watchExpr      = attr.ngSwitch || attr.on,
                         selectedTranscludes,
                         selectedElements,
@@ -20779,9 +20782,9 @@
                         }
                     });
                 },
-                require: "ngSwitch",
+                require   : "ngSwitch",
 
-                restrict: "EA"
+                restrict  : "EA"
             };
         }
     ];
@@ -21151,7 +21154,7 @@
                     }
                 ],
 
-                link: function (scope, element, attr, ctrls) {
+                link      : function (scope, element, attr, ctrls) {
                     // if ngModel is not defined, we don't need to do anything
                     if (!ctrls[1]) {
                         return;
@@ -21593,10 +21596,10 @@
                         }
                     }
                 },
-                require: [
+                require   : [
                     "select", "?ngModel"
                 ],
-                restrict: "E"
+                restrict  : "E"
             };
         }
     ];
