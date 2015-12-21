@@ -24,7 +24,8 @@
     cscript prettydiff.wsf /source:"myFile.xml" /mode:"beautify"
 
  Execute from JavaScript:
-    var args   = {
+    var global = {},
+        args   = {
             source: "asdf",
             diff  : "asdd",
             lang  : "text"
@@ -90,9 +91,6 @@
  https://plus.google.com/105958105635636993368/posts
 
  */
-if (typeof global !== "object") {
-    var global = {};
-}
 if (typeof require === "function" && typeof ace !== "object") {
     (function glib_prettydiff() {
         "use strict";

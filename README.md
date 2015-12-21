@@ -111,7 +111,8 @@ Pretty Diff would be executed using the following on CLI:
 
 ### Execute with vanilla JS
 
-    var args   = {
+    var global = {},
+        args   = {
             source: "asdf",
             diff  : "asdd",
             lang  : "text"
