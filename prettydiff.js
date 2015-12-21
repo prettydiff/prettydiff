@@ -90,7 +90,9 @@
  https://plus.google.com/105958105635636993368/posts
 
  */
-
+if (typeof global !== "object") {
+    var global = {};
+}
 if (typeof require === "function" && typeof ace !== "object") {
     (function glib_prettydiff() {
         "use strict";
@@ -1668,7 +1670,7 @@ global.edition        = {
     markuppretty : 151220, //markuppretty lib
     prettydiff   : 151220, //this file
     safeSort     : 151130, //safeSort lib
-    version      : "1.16.4", //version number
+    version      : "1.16.5", //version number
     webtool      : 151220 //index.xhtml
 };
 global.edition.latest = (function edition_latest() {

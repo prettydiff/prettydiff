@@ -313,17 +313,20 @@
                 if (err !== null && err !== undefined) {
                     errout("Cannot read package.json");
                 }
-                options.source = data;
-                prettydata     = prettydiff(options)[0];
-                if (data !== prettydata) {
-                    console.log("");
-                    console.log(prettydata);
-                    errout("\x1B[31mPretty Diff corrupted package.json\x1B[36m");
+                if (data.indexOf("_requiredBy") > 0) {
+                    unitTest();
+                } else {
+                    options.source = data;
+                    prettydata     = prettydiff(options)[0];
+                    if (data !== prettydata) {
+                        console.log("");
+                        console.log(prettydata);
+                        errout("\x1B[31mPretty Diff corrupted package.json\x1B[36m");
+                    }
+                    console.log("\x1B[32mThe package.json file is beautified properly.\x1B[36m");
+                    unitTest();
                 }
-                console.log("\x1B[32mThe package.json file is beautified properly.\x1B[36m");
-                unitTest();
             });
-            options.correct = true;
         },
         prettylint      = function lintrunner_prettylint() {
             var lintit = function lintrunner_prettylint_lintit(val, ind, arr) {
@@ -378,34 +381,47 @@
         var dateobj = new Date(),
             date    = Number("" + dateobj.getFullYear() + (dateobj.getMonth() + 1) + dateobj.getDate()),
             today   = require("./today.js").date,
-            child   = require("child_process").exec;
+            child   = require("child_process").exec,
+            caller  = function lintrunner_install_caller() {
+                console.log("\x1B[36mInstalling JSLint...\x1B[36m");
+                child("npm install jslint", {
+                    timeout: 30000
+                }, function lintrunner_install_caller_callback(error, stdout, stderr) {
+                    if (error !== null) {
+                        return errout(error);
+                    }
+                    if (typeof stderr === "string" && stderr.length > 0) {
+                        return errout(stderr);
+                    }
+                    jslint = require("jslint").LintStream;
+                    console.log("\x1B[32mInstalled JSLint edition:\x1B[39m " + jslint({edition: "latest"}).JSlint.edition);
+                    flag.lint = true;
+                    if (flag.fs === true) {
+                        prettylint();
+                    }
+                    return stdout;
+                });
+                fs.writeFile("test/today.js", "var today=" + date + ";exports.date=today;");
+            };
         if (date > today) {
-            console.log("\x1B[36mInstalling JSLint...\x1B[36m");
-            child("npm install jslint", {
-                timeout: 30000
-            }, function lintrunner_install_callback(error, stdout, stderr) {
-                if (error !== null) {
-                    return errout(error);
-                }
-                if (typeof stderr === "string" && stderr.length > 0) {
-                    return errout(stderr);
-                }
-                jslint = require("jslint").LintStream;
-                console.log("\x1B[32mInstalled JSLint edition:\x1B[39m " + jslint({edition: "latest"}).JSlint.edition);
-                flag.lint = true;
-                if (flag.fs === true) {
-                    prettylint();
-                }
-                return stdout;
-            });
-            fs.writeFile("test/today.js", "var today=" + date + ";exports.date=today;");
+            caller();
         } else {
-            jslint = require("jslint").LintStream;
-            console.log("\x1B[36mJSLint edition:\x1B[39m " + jslint({edition: "latest"}).JSlint.edition);
-            flag.lint = true;
-            if (flag.fs === true) {
-                prettylint();
-            }
+            fs.stat("/node_modules/jslint", function lintrunner_install_stat(err) {
+                if (typeof err === "string") {
+                    if (err.indexOf("no such file or directory") > 0) {
+                        caller();
+                    } else {
+                        errout(err);
+                    }
+                } else {
+                    jslint = require("jslint").LintStream;
+                    console.log("\x1B[36mJSLint edition:\x1B[39m " + jslint({edition: "latest"}).JSlint.edition);
+                    flag.lint = true;
+                    if (flag.fs === true) {
+                        prettylint();
+                    }
+                }
+            });
         }
     }());
     (function lintrunner_getFiles() {
