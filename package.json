@@ -1,17 +1,20 @@
 {
-    "author"     : {
+    "author"         : {
         "email": "info@prettydiff.com",
         "name" : "Austin Cheney",
         "url"  : "http://prettydiff.com/"
     },
-    "bin"        : "./bin/prettydiff",
-    "bugs"       : {
+    "bin"            : "./bin/prettydiff",
+    "bugs"           : {
         "email": "info@prettydiff.com",
         "url"  : "https://github.com/prettydiff/prettydiff/issues"
     },
-    "description": "Language aware code comparison tool for several web based languages. It also beautifies, minifies, and a few other things.",
-    "homepage"   : "http://prettydiff.com/",
-    "keywords"   : [
+    "description"    : "Language aware code comparison tool for several web based languages. It also beautifies, minifies, and a few other things.",
+    "devDependencies": {
+        "jslint": "latest"
+    },
+    "homepage"       : "http://prettydiff.com/",
+    "keywords"       : [
         "diff",
         "prettydiff",
         "pretty diff",
@@ -24,22 +27,22 @@
         "css",
         "javascript"
     ],
-    "license"    : "SEE LICENSE IN license.txt",
-    "main"       : "prettydiff.js",
-    "maintainers": [
+    "license"        : "SEE LICENSE IN license.txt",
+    "main"           : "prettydiff.js",
+    "maintainers"    : [
         {
             "email": "info@prettydiff.com",
             "name" : "austincheney"
         }
     ],
-    "name"       : "prettydiff",
-    "repository" : {
+    "name"           : "prettydiff",
+    "repository"     : {
         "type": "git",
         "url" : "git://github.com/prettydiff/prettydiff.git"
     },
-    "scripts"    : {
+    "scripts"        : {
         "prepublish": "node test/lint.js",
         "test"      : "node test/lint.js"
     },
-    "version"    : "1.16.3"
+    "version"        : "1.16.4"
 }
