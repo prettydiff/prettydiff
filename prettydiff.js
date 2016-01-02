@@ -203,203 +203,206 @@ var prettydiff = function prettydiff_(api) {
                 options     = {
                     //determines api source as necessary to make a decision about whether to supply
                     //externally needed JS functions to reports
-                    accessibility : (api.accessibility === true || api.accessibility === "true"),
-                    api           : (api.api === undefined || api.api.length === 0)
+                    accessibility  : (api.accessibility === true || api.accessibility === "true"),
+                    api            : (api.api === undefined || api.api.length === 0)
                         ? ""
                         : api.api,
                     //braceline - should a new line pad the interior of blocks (curly braces) in
                     //JavaScript
-                    braceline     : (api.braceline === true || api.braceline === "true"),
+                    braceline      : (api.braceline === true || api.braceline === "true"),
                     //bracepadding - should curly braces be padded with a space in JavaScript?
-                    bracepadding  : (api.bracepadding === true || api.bracepadding === "true"),
+                    bracepadding   : (api.bracepadding === true || api.bracepadding === "true"),
                     //indent - should JSPretty format JavaScript in the normal KNR style or push
                     //curly braces onto a separate line like the "allman" style
-                    braces        : (api.braces === true || api.braces === "true" || api.braces === "allman")
+                    braces         : (api.braces === true || api.braces === "true" || api.braces === "allman")
                         ? "allman"
                         : "knr",
                     //comments - if comments should receive indentation or not
-                    comments      : (api.comments === "noindent")
+                    comments       : (api.comments === "noindent")
                         ? "noindent"
                         : ((api.comments === "nocomment")
                             ? "nocomment"
                             : "indent"),
                     //commline - If in markup a newline should be forced above comments
-                    commline      : (api.commline === true || api.commline === "true"),
+                    commline       : (api.commline === true || api.commline === "true"),
                     //conditional - should IE conditional comments be preserved during markup
                     //minification
-                    conditional   : (api.conditional === true || api.conditional === "true"),
+                    conditional    : (api.conditional === true || api.conditional === "true"),
                     //content - should content be normalized during a diff operation
-                    content       : (api.content === true || api.content === "true"),
+                    content        : (api.content === true || api.content === "true"),
                     //context - should the diff report only include the differences, if so then
                     //buffered by how many lines of code
-                    context       : (api.context === "" || (/^(\s+)$/).test(api.context) || isNaN(api.context))
+                    context        : (api.context === "" || (/^(\s+)$/).test(api.context) || isNaN(api.context))
                         ? ""
                         : Number(api.context),
                     //correct - should JSPretty make some corrections for sloppy JS
-                    correct       : (api.correct === true || api.correct === "true"),
+                    correct        : (api.correct === true || api.correct === "true"),
                     //crlf - if output should use \r\n (Windows compatible) for line termination
-                    crlf: (api.crlf === true || api.crlf === "true"),
+                    crlf           : (api.crlf === true || api.crlf === "true"),
                     //cssinsertlines = if a new line should be forced between each css block
-                    cssinsertlines: (api.cssinsertlines === true || api.cssinsertlines === "true"),
+                    cssinsertlines : (api.cssinsertlines === true || api.cssinsertlines === "true"),
                     //csvchar - what character should be used as a separator
-                    csvchar       : (typeof api.csvchar === "string" && api.csvchar.length > 0)
+                    csvchar        : (typeof api.csvchar === "string" && api.csvchar.length > 0)
                         ? api.csvchar
                         : ",",
                     //diff - source code to compare with
-                    diff          : (typeof api.diff === "string" && api.diff.length > 0 && (/^(\s+)$/).test(api.diff) === false)
+                    diff           : (typeof api.diff === "string" && api.diff.length > 0 && (/^(\s+)$/).test(api.diff) === false)
                         ? api.diff
                         : "",
                     //diffcli - if operating from Node.js and set to true diff output will be
                     //printed to stdout just like git diff
-                    diffcli       : (api.diffcli === true || api.diffcli === "true"),
+                    diffcli        : (api.diffcli === true || api.diffcli === "true"),
                     //diffcomments - should comments be included in the diff operation
-                    diffcomments  : (api.diffcomments === true || api.diffcomments === "true"),
+                    diffcomments   : (api.diffcomments === true || api.diffcomments === "true"),
                     //difflabel - a text label to describe the diff code
-                    difflabel     : (typeof api.difflabel === "string" && api.difflabel.length > 0)
+                    difflabel      : (typeof api.difflabel === "string" && api.difflabel.length > 0)
                         ? api.difflabel
                         : "new",
+                    //diffspaceignore - If white space differences should be ignored by the diff
+                    //tool
+                    diffspaceignore: (api.diffspaceignore === true || api.diffspaceignore === "true"),
                     //diffview - should the diff report be a single column showing both sources
                     //simultaneously "inline" or showing the sources in separate columns
                     //"sidebyside"
-                    diffview      : (api.diffview === "inline")
+                    diffview       : (api.diffview === "inline")
                         ? "inline"
                         : "sidebyside",
                     //dustjs - support for this specific templating scheme
-                    dustjs        : (api.dustjs === true || api.dustjs === "true"),
+                    dustjs         : (api.dustjs === true || api.dustjs === "true"),
                     //elseline - for the 'else' keyword onto a new line in JavaScript
-                    elseline      : (api.elseline === true || api.elseline === "true"),
+                    elseline       : (api.elseline === true || api.elseline === "true"),
                     //endcomma - if a trailing comma should be injected at the end of arrays and
                     //object literals in JavaScript
-                    endcomma      : (api.endcomma === true || api.endcomma === "true"),
+                    endcomma       : (api.endcomma === true || api.endcomma === "true"),
                     //force_indent - should markup beautification always force indentation even if
                     //disruptive
-                    force_indent  : (api.force_indent === true || api.force_indent === "true"),
+                    force_indent   : (api.force_indent === true || api.force_indent === "true"),
                     //html - should markup be presumed to be HTML with all the aloppiness HTML
                     //allows
-                    html          : (api.html === true || api.html === "true" || (typeof api.html === "string" && api.html === "html-yes")),
+                    html           : (api.html === true || api.html === "true" || (typeof api.html === "string" && api.html === "html-yes")),
                     //inchar - what character(s) should be used to create a single identation
-                    inchar        : (typeof api.inchar === "string" && api.inchar.length > 0)
+                    inchar         : (typeof api.inchar === "string" && api.inchar.length > 0)
                         ? api.inchar
                         : " ",
                     //inlevel - should indentation in JSPretty be buffered with additional
                     //indentation?  Useful when supplying code to sites accepting markdown
-                    inlevel       : (isNaN(api.inlevel) || Number(api.inlevel) < 1)
+                    inlevel        : (isNaN(api.inlevel) || Number(api.inlevel) < 1)
                         ? 0
                         : Number(api.inlevel),
                     //insize - how many characters from api.inchar should constitute a single
                     //indentation
-                    insize        : (isNaN(api.insize))
+                    insize         : (isNaN(api.insize))
                         ? 4
                         : Number(api.insize),
                     //jsscope - do you want to enable the jsscope feature of JSPretty?  This feature
                     //will output formatted HTML instead of text code showing which variables are
                     //declared at which functional depth
-                    jsscope       : (api.jsscope === true || api.jsscope === "true")
+                    jsscope        : (api.jsscope === true || api.jsscope === "true")
                         ? "report"
                         : (api.jsscope !== "html" && api.jsscope !== "report")
                             ? "none"
                             : api.jsscope,
                     //lang - which programming language will we be analyzing
-                    lang          : (typeof api.lang === "string" && api.lang !== "auto")
+                    lang           : (typeof api.lang === "string" && api.lang !== "auto")
                         ? setlangmode(api.lang.toLowerCase())
                         : "auto",
                     //langdefault - what language should lang value "auto" resort to when it cannot
                     //determine the language
-                    langdefault   : (typeof api.langdefault === "string")
+                    langdefault    : (typeof api.langdefault === "string")
                         ? setlangmode(api.langdefault.toLowerCase())
                         : "text",
                     //lineendcrlf - if the line terminator should be 'crlf' instead of 'lf'
-                    lineendcrlf: (api.lineendcrlf === true || api.lineendcrlf === "true"),
+                    lineendcrlf    : (api.lineendcrlf === true || api.lineendcrlf === "true"),
                     //methodchain - if JavaScript method chains should be strung onto a single line
                     //instead of indented
-                    methodchain   : (api.methodchain === "chain" || api.methodchain === "none")
+                    methodchain    : (api.methodchain === "chain" || api.methodchain === "none")
                         ? api.methodchain
                         : "indent",
                     //miniwrap - when language is JavaScript and mode is 'minify' if option 'jwrap'
                     //should be applied to all code
-                    miniwrap      : (api.miniwrap === true || api.miniwrap === "true"),
+                    miniwrap       : (api.miniwrap === true || api.miniwrap === "true"),
                     //mode - is this a minify, beautify, or diff operation
-                    mode          : (typeof api.mode === "string" && (api.mode === "minify" || api.mode === "beautify" || api.mode === "parse"))
+                    mode           : (typeof api.mode === "string" && (api.mode === "minify" || api.mode === "beautify" || api.mode === "parse"))
                         ? api.mode
                         : "diff",
                     //neverflatten - prevent flattening of destructured lists in JavaScript
-                    neverflatten: (api.neverflatten === true || api.neverflatten === "true"),
+                    neverflatten   : (api.neverflatten === true || api.neverflatten === "true"),
                     //nocaseindent - if a 'case' should be indented to its parent 'switch'
-                    nocaseindent: (api.nocaseindent === true || api.nocaseindent === "true"),
+                    nocaseindent   : (api.nocaseindent === true || api.nocaseindent === "true"),
                     //noleadzero - in CSS removes and prevents a run of 0s from appearing
                     //immediately before a value's decimal.
-                    noleadzero    : (api.noleadzero === true || api.noleadzero === "true"),
+                    noleadzero     : (api.noleadzero === true || api.noleadzero === "true"),
                     //objsort will alphabetize object keys in JavaScript
-                    objsort       : (api.objsort === "all" || api.objsort === "js" || api.objsort === "css" || api.objsort === "css" || api.objsort === true || api.objsort === "true")
+                    objsort        : (api.objsort === "all" || api.objsort === "js" || api.objsort === "css" || api.objsort === "css" || api.objsort === true || api.objsort === "true")
                         ? api.objsort
                         : "none",
                     //preserve - should empty lines be preserved in beautify operations of JSPretty?
-                    preserve      : (api.preserve === "all"),
+                    preserve       : (api.preserve === "all"),
                     //quote - should all single quote characters be converted to double quote
                     //characters during a diff operation to reduce the number of false positive
                     //comparisons
-                    quote         : (api.quote === true || api.quote === "true"),
+                    quote          : (api.quote === true || api.quote === "true"),
                     //quoteConvert - convert " to ' (or ' to ") of string literals or markup
                     //attributes
-                    quoteConvert  : (api.quoteConvert === "single" || api.quoteConvert === "double")
+                    quoteConvert   : (api.quoteConvert === "single" || api.quoteConvert === "double")
                         ? api.quoteConvert
                         : "none",
                     //selectorlist - should comma separated CSS selector lists be on one line
-                    selectorlist: (api.selectorlist === true || api.selectorlist === "true"),
+                    selectorlist   : (api.selectorlist === true || api.selectorlist === "true"),
                     //semicolon - should trailing semicolons be removed during a diff operation to
                     //reduce the number of false positive comparisons
-                    semicolon     : (api.semicolon === true || api.semicolon === "true"),
+                    semicolon      : (api.semicolon === true || api.semicolon === "true"),
                     //source - the source code in minify and beautify operations or "base" code in
                     //operations
-                    source        : (typeof api.source === "string" && api.source.length > 0 && (/^(\s+)$/).test(api.source) === false)
+                    source         : (typeof api.source === "string" && api.source.length > 0 && (/^(\s+)$/).test(api.source) === false)
                         ? api.source
                         : "",
                     //sourcelabel - a text label to describe the api.source code for the diff report
-                    sourcelabel   : (typeof api.sourcelabel === "string" && api.sourcelabel.length > 0)
+                    sourcelabel    : (typeof api.sourcelabel === "string" && api.sourcelabel.length > 0)
                         ? api.sourcelabel
                         : "base",
                     //space - should JSPretty include a space between a function keyword and the
                     //next adjacent opening parenthesis character in beautification operations
-                    space         : (api.space !== false && api.space !== "false"),
+                    space          : (api.space !== false && api.space !== "false"),
                     //spaceclose - If markup self-closing tags should end with " />" instead of "/>"
-                    spaceclose    : (api.spaceclose === true || api.spaceclose === "true"),
+                    spaceclose     : (api.spaceclose === true || api.spaceclose === "true"),
                     //style - should JavaScript and CSS code receive indentation if embedded inline
                     //in markup
-                    style         : (api.style === "noindent")
+                    style          : (api.style === "noindent")
                         ? "noindent"
                         : "indent",
                     //styleguide - preset of beautification options to bring a JavaScript sample
                     //closer to conformance of a given style guide
-                    styleguide    : (typeof api.styleguide === "string")
+                    styleguide     : (typeof api.styleguide === "string")
                         ? api.styleguide
                         : "",
                     //tagmerge - Allows combining immediately adjacent start and end tags of the
                     //same name into a single self-closing tag:  <a href="home"></a> into
                     //<a//href="home"/>
-                    tagmerge      : (api.tagmerge === true || api.tagmerge === "true"),
+                    tagmerge       : (api.tagmerge === true || api.tagmerge === "true"),
                     //sort markup child nodes alphabetically
-                    tagsort       : (api.tagsort === true || api.tagsort === "true"),
+                    tagsort        : (api.tagsort === true || api.tagsort === "true"),
                     //textpreserve - Force the markup beautifier to retain text (white space and
                     //all) exactly as provided.
-                    ternaryline   : (api.ternaryline === true || api.ternaryline === "true"),
-                    textpreserve  : (api.textpreserve === true || api.textpreserve === "true"),
+                    ternaryline    : (api.ternaryline === true || api.ternaryline === "true"),
+                    textpreserve   : (api.textpreserve === true || api.textpreserve === "true"),
                     //titanium - TSS document support via option, because this is a uniquely
                     //modified form of JSON
-                    titanium      : (api.titanium === true || api.titanium === "true"),
+                    titanium       : (api.titanium === true || api.titanium === "true"),
                     //topcoms - should comments at the top of a JavaScript or CSS source be
                     //preserved during minify operations
-                    topcoms       : (api.topcoms === true || api.topcoms === "true"),
+                    topcoms        : (api.topcoms === true || api.topcoms === "true"),
                     //varword - should consecutive variables be merged into a comma separated list
                     //or the opposite
-                    varword       : (api.varword === "each" || api.varword === "list")
+                    varword        : (api.varword === "each" || api.varword === "list")
                         ? api.varword
                         : "none",
                     //vertical - whether or not to vertically align lists of assigns in CSS and
                     //JavaScript
-                    vertical      : (api.vertical === "all"),
+                    vertical       : (api.vertical === "all"),
                     //wrap - in markup beautification should text content wrap after the first
                     //complete word up to a certain character length
-                    wrap          : (isNaN(api.wrap) === true)
+                    wrap           : (isNaN(api.wrap) === true)
                         ? 80
                         : Number(api.wrap)
                 },
@@ -414,7 +417,11 @@ var prettydiff = function prettydiff_(api) {
                         flagb  = false,
                         output = function core__langkey_auto_output(langname) {
                             if (langname === "unknown") {
-                                return [options.langdefault, setlangmode(options.langdefault), "unknown"];
+                                return [
+                                    options.langdefault,
+                                    setlangmode(options.langdefault),
+                                    "unknown"
+                                ];
                             }
                             if (langname === "xhtml") {
                                 return ["xml", "html", "XHTML"];
@@ -436,7 +443,8 @@ var prettydiff = function prettydiff_(api) {
                         }
                         return output("css");
                     }
-                    b = a.replace(/\[[a-zA-Z][\w\-]*\=("|')?[a-zA-Z][\w\-]*("|')?\]/g, "")
+                    b = a
+                        .replace(/\[[a-zA-Z][\w\-]*\=("|')?[a-zA-Z][\w\-]*("|')?\]/g, "")
                         .split("");
                     c = b.length;
                     if (((/^([\s\w\-]*<)/).test(a) === false || a.indexOf("<") < 0 || a.indexOf("function") < a.indexOf("<")) && (/(>[\s\w\-]*)$/).test(a) === false) {
@@ -613,16 +621,19 @@ var prettydiff = function prettydiff_(api) {
                         a          = 0,
                         b          = options.source.length,
                         str        = "/*prettydiff.com",
-                        c          = options.source
+                        c          = options
+                            .source
                             .indexOf(str) + 16,
                         build      = [],
                         comma      = -1,
                         g          = 0,
                         sourceChar = [],
                         quote      = "",
-                        sind       = options.source
+                        sind       = options
+                            .source
                             .indexOf(str),
-                        dind       = options.diff
+                        dind       = options
+                            .diff
                             .indexOf(str);
                     if (sind < 0) {
                         str  = "<!--prettydiff.com";
@@ -642,14 +653,16 @@ var prettydiff = function prettydiff_(api) {
                         return;
                     }
                     if (c === 15 && typeof options.diff === "string") {
-                        c        = options.diff
+                        c       = options
+                            .diff
                             .indexOf("/*prettydiff.com") + 16;
-                        comment  = options.diff;
+                        comment = options.diff;
                     } else if (c === 17 && typeof options.diff === "string") {
-                        str      = "<!--prettydiff.com";
-                        c        = options.diff
+                        str     = "<!--prettydiff.com";
+                        c       = options
+                            .diff
                             .indexOf(str) + 18;
-                        comment  = options.diff;
+                        comment = options.diff;
                     } else if (c === 17) {
                         return;
                     }
@@ -670,7 +683,8 @@ var prettydiff = function prettydiff_(api) {
                             quote = "";
                         }
                     }
-                    comment = sourceChar.join("")
+                    comment = sourceChar
+                        .join("")
                         .toLowerCase();
                     b       = comment.length;
                     for (c = 0; c < b; c += 1) {
@@ -831,9 +845,7 @@ var prettydiff = function prettydiff_(api) {
                     autostring = "<p>Code type set to <strong>auto</strong>. Presumed language is <em>" + autoval[2] + "</em>.</p>";
                 }
             } else if (options.api === "dom") {
-                autoval    = [
-                    options.lang, options.lang, options.lang
-                ];
+                autoval    = [options.lang, options.lang, options.lang];
                 autostring = "<p>Code type is set to <strong>" + options.lang + "</strong>.</p>";
             } else {
                 options.lang = setlangmode(options.lang);
@@ -914,9 +926,7 @@ var prettydiff = function prettydiff_(api) {
                         return output.join("");
                     };
                     if (global.jsxstatus === true) {
-                        autoval    = [
-                            "jsx", "javascript", "React JSX"
-                        ];
+                        autoval    = ["jsx", "javascript", "React JSX"];
                         autostring = "<p>Code type set to <strong>auto</strong>. Presumed language is <em>React JSX</e" +
                                          "m>.</p>";
                     }
@@ -1254,7 +1264,8 @@ var prettydiff = function prettydiff_(api) {
                                              "}());";
                     builder.scriptEnd  = "]]></script>";
                     return [
-                        builder.head + builder.cssCore + builder.cssColor + builder.cssExtra + builder.body + builder.bodyColor + builder.title + auto + proctime() + "</div>" + apidiffout + builder.scriptOpen + builder.scriptBody + builder.scriptEnd + "</body></html>", ""
+                        builder.head + builder.cssCore + builder.cssColor + builder.cssExtra + builder.body + builder.bodyColor + builder.title + auto + proctime() + "</div>" + apidiffout + builder.scriptOpen + builder.scriptBody + builder.scriptEnd + "</body></html>",
+                        ""
                     ];
                 }
                 return [
@@ -1280,10 +1291,12 @@ var prettydiff = function prettydiff_(api) {
                     apioutput  = global.csvpretty(options);
                     apidiffout = global.csvpretty(options);
                 } else if (options.lang === "markup") {
-                    apioutput      = global.markuppretty(options)
+                    apioutput      = global
+                        .markuppretty(options)
                         .replace(/\r?\n[\t]*\ \/>/g, "");
                     options.source = options.diff;
-                    apidiffout     = global.markuppretty(options)
+                    apidiffout     = global
+                        .markuppretty(options)
                         .replace(/\r?\n[\t]*\ \/>/g, "");
                 } else if (options.lang === "text") {
                     apioutput  = options.source;
@@ -1308,10 +1321,10 @@ var prettydiff = function prettydiff_(api) {
                     options.difflabel = "New Text";
                 }
                 return (function core__diff() {
-                    var a     = [],
-                        s     = "s",
-                        t     = "s";
-                    options.diff = apidiffout;
+                    var a = [],
+                        s = "s",
+                        t = "s";
+                    options.diff   = apidiffout;
                     options.source = apioutput;
                     if (options.diffcli === true) {
                         return global.diffview(options);
@@ -1321,7 +1334,8 @@ var prettydiff = function prettydiff_(api) {
                             "<p><strong>Error:</strong> Please try using the option labeled <em>Plain Text (d" +
                                     "iff only)</em>. <span style='display:block'>The input does not appear to be mark" +
                                     "up, CSS, or JavaScript.</span></p>",
-                            0, 0
+                            0,
+                            0
                         ];
                     } else {
                         if (options.lang === "text") {
@@ -1630,7 +1644,8 @@ var prettydiff = function prettydiff_(api) {
                                                     "e;document.onmousedown=null;};";
                         builder.scriptEnd     = "]]></script>";
                         return [
-                            builder.head + builder.cssCore + builder.cssColor + builder.cssExtra + builder.body + builder.bodyColor + builder.title + autostring + proctime() + a[0] + builder.accessibility + a[1][0] + builder.scriptOpen + builder.scriptBody + builder.scriptEnd + "</body></html>", ""
+                            builder.head + builder.cssCore + builder.cssColor + builder.cssExtra + builder.body + builder.bodyColor + builder.title + autostring + proctime() + a[0] + builder.accessibility + a[1][0] + builder.scriptOpen + builder.scriptBody + builder.scriptEnd + "</body></html>",
+                            ""
                         ];
                     }
                     if (options.mode === "diff") {
@@ -1654,22 +1669,22 @@ global.edition        = {
         ace: 150918
     },
     api          : {
-        dom      : 151220, //dom.js
-        nodeLocal: 151220, //node-local.js
-        wsh      : 151220 //prettydiff.wsf
+        dom      : 160101, //dom.js
+        nodeLocal: 160101, //node-local.js
+        wsh      : 160101
     },
     css          : 151109, //diffview.css file
     csspretty    : 151220, //csspretty lib
     csvpretty    : 151130, //csvpretty lib
-    diffview     : 151130, //diffview lib
-    documentation: 151220, //documentation.xhtml
-    jspretty     : 151220, //jspretty lib
+    diffview     : 160101, //diffview lib
+    documentation: 160101, //documentation.xhtml
+    jspretty     : 160101, //jspretty lib
     latest       : 0,
     markuppretty : 151220, //markuppretty lib
-    prettydiff   : 151220, //this file
+    prettydiff   : 160101, //this file
     safeSort     : 151130, //safeSort lib
-    version      : "1.16.5", //version number
-    webtool      : 151220 //index.xhtml
+    version      : "1.16.7", //version number
+    webtool      : 151220
 };
 global.edition.latest = (function edition_latest() {
     "use strict";

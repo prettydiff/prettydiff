@@ -26158,7 +26158,9 @@ if (typeof jQuery != "undefined" && typeof $.ui == "undefined") {
     }
     function cf_getSynchArr(s) {
         if (!is_array(s)) {
-            s = [[s]];
+            s = [
+                [s]
+            ];
         }
         if (!is_array(s[0])) {
             s = [s];

@@ -70,6 +70,8 @@
                             error.push("");
                             error.push("* difflabel      - string  - This allows for a descriptive label for the diff file code of the diff HTML output. Defaults to 'new'.");
                             error.push("");
+                            error.push("* diffspaceignore - boolean - If white space only differences should be ignored by the diff tool. Default is false.");
+                            error.push("");
                             error.push("* diffview       - string  - This determines whether the diff HTML output should display as a side-by-side comparison or if the differences should display in a single table column. Defaults to 'sidebyside'.");
                             error.push("                   Accepted values: sidebyside, inline");
                             error.push("");
@@ -329,6 +331,7 @@
                     args.csvchar = (WScript.Arguments.Named("csvchar") || ",");
                     args.diffcomments = (WScript.Arguments.Named("diffcomments") === "true" || WScript.Arguments.Named("diffcomments") === true);
                     args.difflabel = (WScript.Arguments.Named("difflabel") || "new");
+                    args.diffspaceignore = (WScript.Arguments.Named("diffspaceignore") === "true" || WScript.Arguments.Named("diffspaceignore") === true);
                     args.diffview = (WScript.Arguments.Named("diffview") === "inline") ? "inline" : "sidebyside";
                     args.dustjs = (WScript.Arguments.Named("dustjs") === "true" || WScript.Arguments.Named("dustjs") === true);
                     args.elseline = (WScript.Arguments.Named("elseline") === "true" || WScript.Arguments.Named("elseline") === true);

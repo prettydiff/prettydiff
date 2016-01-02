@@ -10,7 +10,7 @@
  http: //prettydiff.com/
 
  ***********************************************************************/
-var pd = {},
+var pd     = {},
     global = {};
 
 (function dom__init() {
@@ -18,14 +18,14 @@ var pd = {},
 
     if (location.href.indexOf("codemirror=") > 0) {
         (function dom__codemirror() {
-            var loc = location.href.split("codemirror="),
-                value = "",
+            var loc     = location.href.split("codemirror="),
+                value   = "",
                 address = "";
             if (loc[1].indexOf("&") > 0) {
-                value = loc[1].slice(0, loc[1].indexOf("&"));
+                value   = loc[1].slice(0, loc[1].indexOf("&"));
                 address = loc[0] + loc[1].slice(loc[1].indexOf("&") + 1);
             } else {
-                value = loc[1];
+                value   = loc[1];
                 address = loc[0];
             }
             if (address.indexOf("?ace=") > 0 || address.indexOf("&ace=") > 0) {
@@ -44,7 +44,7 @@ var pd = {},
         }());
     }
 
-    pd.id = function dom__id(x) {
+    pd.id   = function dom__id(x) {
         if (document.getElementById === undefined) {
             return;
         }
@@ -55,708 +55,658 @@ var pd = {},
     pd.test = {
         //accessibility analysis is locked behind a flag, this param will bypass the
         //flag
-        accessibility: (location.href.toLowerCase().indexOf("accessibility=true") > 0),
+        accessibility : (location.href.toLowerCase().indexOf("accessibility=true") > 0),
         //delect if Ace Code Editor is supported
-        ace: (location.href.toLowerCase().indexOf("ace=false") < 0 && typeof ace === "object"),
+        ace           : (location.href.toLowerCase().indexOf("ace=false") < 0 && typeof ace === "object"),
         //get the lowercase useragent string
-        agent: (typeof navigator === "object")
+        agent         : (typeof navigator === "object")
             ? navigator
                 .userAgent
                 .toLowerCase()
             : "",
         //test for standard web audio support
-        audio: ((typeof AudioContext === "function" || typeof AudioContext === "object") && AudioContext !== null)
+        audio         : ((typeof AudioContext === "function" || typeof AudioContext === "object") && AudioContext !== null)
             ? new AudioContext()
             : null,
+        //delays the toggling of pd.test.load to false for asynchronous code sources
+        delayExecution: false,
         //am I served from the Pretty Diff domain
-        domain: (location.href.indexOf("prettydiff.com") < 15 && location.href.indexOf("prettydiff.com") > -1),
+        domain        : (location.href.indexOf("prettydiff.com") < 15 && location.href.indexOf("prettydiff.com") > -1),
         //If the output is too large the report must open and minimize in a single step
-        filled: {
+        filled        : {
             code: false,
             feed: false,
             stat: false
         },
         //test for support of the file api
-        fs: (typeof FileReader === "function"),
+        fs            : (typeof FileReader === "function"),
         //check for native JSON support
-        json: (JSON !== undefined),
+        json          : (JSON !== undefined),
         //stores keypress state to avoid execution of pd.event.recycle from certain key
         //combinations
-        keypress: false,
-        keysequence: [],
+        keypress      : false,
+        keysequence   : [],
         //supplement to ensure keypress is returned to false only after other keys other
         //than ctrl are released
-        keystore: [],
+        keystore      : [],
         //some operations should not occur as the page is initially loading
-        load: true,
+        load          : true,
         //test for localStorage and assign the result of the test
-        ls: (typeof localStorage === "object" && localStorage !== null && typeof localStorage.getItem === "function" && typeof localStorage.hasOwnProperty === "function"),
+        ls            : (typeof localStorage === "object" && localStorage !== null && typeof localStorage.getItem === "function" && typeof localStorage.hasOwnProperty === "function"),
         //Ace will only render correctly if the parent container is visible, this
         //test solves for this problem
-        render: {
+        render        : {
             beau: false,
             diff: false,
             minn: false,
             pars: false
         },
         //supplies alternate keyboard navigation to editable text areas
-        tabesc: [],
+        tabesc        : [],
         //check of native AJAX support
-        xhr: (typeof XMLHttpRequest === "function" || typeof XMLHttpRequest === "object" || typeof ActiveXObject === "function")
+        xhr           : (typeof XMLHttpRequest === "function" || typeof XMLHttpRequest === "object" || typeof ActiveXObject === "function")
     };
     if (pd.test.agent.indexOf("msie 8.0;") > 0) {
         document.getElementsByTagName("body")[0].innerHTML = "<h1>Pretty Diff</h1> <p>Sorry, but Pretty Diff no longer supports IE8. <a href='" +
                 "http://www.microsoft.com/en-us/download/internet-explorer.aspx'>Please upgrade</";
         return;
     }
-    if (pd.test.xhr === true && pd.test.domain === true) {
-        pd.error = function dom__error(message, url, line, column) {
-            var xhr = (typeof XMLHttpRequest === "function" || typeof XMLHttpRequest === "object")
-                    ? new XMLHttpRequest()
-                    : new ActiveXObject("Microsoft.XMLHTTP"),
-                datapack = {
-                    addy: location.href,
-                    agent: pd.test.agent,
-                    column: column,
-                    diff: pd.data.diff,
-                    line: line,
-                    message: message,
-                    mode: pd.data.mode,
-                    options: pd.data.commentString,
-                    settings: pd.data.settings,
-                    source: pd.data.source,
-                    stat: pd.data.stat,
-                    url: url
-                },
-                words = message.toLowerCase(),
-                exceptions = [
-                    "quota exceeded", "unexpected number", "quotaexceedederror", "script error", "uncaught rangeerror:", "uncaught error: [$rootscope:infdig"
-                ],
-                a = 0;
-
-            //this for loop prevents sending errors I have no intention of fixing
-            for (a = exceptions.length - 1; a > -1; a -= 1) {
-                if (words.indexOf(exceptions[a]) > -1) {
-                    console.error("Line " + line + " at column " + column + " of " + url);
-                    console.log(message);
-                    console.log("Help a guy out and open a bug: https://github.com/prettydiff/prettydiff/issues\n" +
-                            "\n" + message);
-                    return true;
-                }
-            }
-            if (message.indexOf("innerHTML") > 0 || url.indexOf("prettydiff.com/pretty") > 0) {
-                datapack.source = pd.data.source;
-                if (datapack.mode === "diff") {
-                    datapack.diff = pd.data.diff;
-                }
-            }
-            xhr.withCredentials = true;
-            xhr.open("POST", "http://prettydiff.com:8000/error/", true);
-            xhr.setRequestHeader("Content-type", "application/json; charset=utf-8");
-            xhr.send(JSON.stringify(datapack));
-            console.error("Line " + line + " at column " + column + " of " + url);
-            console.log("Help a guy out and open a bug: https://github.com/prettydiff/prettydiff/issues\n" +
-                    "\n" + message);
-            return true;
-        };
-        window.onerror = pd.error;
-    }
     //namespace for data points and dom nodes
-    pd.data = {
-        announcetext: "",
-        audio: {},
-        color: "white", //for use with HTML themes
+    pd.data             = {
+        announcetext       : "",
+        audio              : {},
+        color              : "white", //for use with HTML themes
 
         colSliderProperties: [],
-        commentString: [],
-        css: {
-            core: "body#webtool,body#doc{font-family:'Lucida Sans Unicode','Helvetica','Arial', san" +
-                    "s-serif;font-size:10px;overflow-y:scroll}div#webtool{font-size:10px}#about_licen" +
-                    "se a{display:block}#webtool #announcement{color:#00c;font-weight:bold;height:aut" +
-                    "o;left:14em;margin:0;overflow:hidden;position:absolute;text-overflow:ellipsis;to" +
-                    "p:0.5em;white-space:nowrap;width:40%;z-index:5}#webtool #announcement strong.dup" +
-                    "licate{display:block}#webtool #announcement span{display:block}#apireturn textar" +
-                    "ea{font-size:1.2em;height:50em;width:100%}#apitest input,#apitest label,#apitest" +
-                    " select,#apitest textarea{float:left}#apitest input,#apitest select,#apitest tex" +
-                    "tarea{width:30em}#apitest label{width:20em}#apitest p{clear:both;padding-top:0.7" +
-                    "5em}#beau-other-span,#diff-other-span{left:-20em;position:absolute;width:0}#webt" +
-                    "ool #beauops p strong,#webtool #options p strong,#webtool #diffops p strong,#web" +
-                    "tool #miniops p strong,#webtool #parseops p strong,#webtool #options .label,#web" +
-                    "tool #diffops .label,#webtool #miniops .label,#webtool #beauops .label,#webtool " +
-                    "#parseops .label{display:block;float:none;font-size:1em;font-weight:bold;margin-" +
-                    "bottom:0.5em}#beauops span strong,#miniops span strong,#diffops span strong{disp" +
-                    "lay:inline;float:none;font-size:1em;width:auto}#feedreport{right:38.8em}#beautyi" +
-                    "nput,#minifyinput,#parseinput,#baseText,#newText,#beautyoutput,#minifyoutput,#pa" +
-                    "rseoutput{font-size:1em}#Beautify,#Minify,#Parse,#diffBase,#diffNew{border-radiu" +
-                    "s:0.4em;padding:1em 1.25em}#Beautify .input,#Minify .input,#Parse .input,#Beauti" +
-                    "fy .output,#Minify .output,#Parse .output{width:49%}#Beautify .input label,#Beau" +
-                    "tify .output label,#Minify .input label,#Minify .output label,#Parse .input labe" +
-                    "l,#Parse .output label{display:block;font-size:1.05em;font-weight:bold}#Beautify" +
-                    " p.file,#Minify p.file,#Parse p.file{clear:none;float:none}#Beautify textarea,#M" +
-                    "inify textarea,#Parse textarea{margin-bottom:0.75em}#checklist_option li{font-we" +
-                    "ight:bold}#checklist_option li li{font-weight:normal}#codeInput{margin-bottom:1e" +
-                    "m}#codeInput #diffBase p,#codeInput #diffNew p{clear:both;float:none}#codeInput " +
-                    ".input{clear:none;float:left}#codeInput .output{clear:none;float:right;margin-to" +
-                    "p:-2.4em}#cssreport.doc table{position:absolute}#css-size{left:24em}#css-uri{lef" +
-                    "t:40em}#css-uri td{text-align:left}#webtool #csvchar{width:11.8em}#webtool #dcol" +
-                    "orScheme,#doc #dcolorScheme{float:right;margin:-3em 0 0}#webtool #dcolorScheme l" +
-                    "abel,#doc #dcolorScheme label{display:inline-block;font-size:1em}#diff .addsourc" +
-                    "e{cursor:pointer;margin-bottom:1em;padding:0}#diff .addsource input{display:bloc" +
-                    "k;float:left;margin:0.5em 0.5em -1.5em}#diff .addsource label{cursor:pointer;dis" +
-                    "play:inline-block;font-size:1.2em;padding:0.5em 0.5em 0.5em 2em}#diffBase,#diffN" +
-                    "ew,#Beautify,#Minify,#Parse#doc div,#doc div div,#doc ol,#webtool #option_commen" +
-                    "t,#update,#thirdparties img,#diffoutput #thirdparties,.ace_editor,#webtool .box " +
-                    "h3.heading,#webtool .box .body,#webtool .options,.diff .replace em,.diff .delete" +
-                    " em,.diff .insert em,button,fieldset{border-style:solid;border-width:0.1em}#diff" +
-                    "Base,#diffNew{padding:1.25em 1%;width:47%}#diffBase textarea,#diffNew textarea{w" +
-                    "idth:99.5%}#diffBase{float:left;margin-right:1%}#diffNew{float:right}#diffoutput" +
-                    "{width:100%}#diffoutput #thirdparties li{display:inline-block;list-style-type:no" +
-                    "ne}#diffoutput li em,#diffoutput p em,.analysis .bad,.analysis .good{font-weight" +
-                    ":bold}#diffoutput ul{font-size:1.2em;margin-top:1em}#diffoutput ul li,#doc #pars" +
-                    "e ul li{display:list-item;list-style-type:disc}#doc_contents a{text-decoration:n" +
-                    "one}#doc_contents ol{padding-bottom:1em}#doc_contents ol ol li{font-size:0.75em;" +
-                    "list-style:lower-alpha;margin:0.5em 0 1em 3em}#doc #doc_contents ol ol{backgroun" +
-                    "d-color:inherit;border-style:none;margin:0.25em 0.3em 0 0;padding-bottom:0}#doc " +
-                    "div.beautify{border-style:none}#doc #execution h3{background:transparent;border-" +
-                    "style:none;font-size:1em;font-weight:bold}#doc code,.doc code{display:block;font" +
-                    "-family:'Courier New',Courier,'Lucida Console',monospace;font-size:1.1em}#doc di" +
-                    "v,.doc div{margin-bottom:2em;padding:0 0.5em 0.5em}#doc div div,.doc div div{cle" +
-                    "ar:both;margin-bottom:1em}#doc em,.doc em,#webtool .box .body em{font-style:norm" +
-                    "al;font-weight:bold}#doc div h2,.doc div h2{font-size:1.6em;margin:0.5em 0.5em 0" +
-                    ".5em 0}#doc div h3,.doc div h3{margin-bottom:0.5em;margin-top:0.5em}#doc ol,.doc" +
-                    " ol{clear:both;padding:0}#doc ol li span,.doc ol li span{display:block;margin-le" +
-                    "ft:2em}#doc ol ol,#doc ul ol,.doc ol ol,.doc ul ol{margin-right:0.5em}#doc td sp" +
-                    "an,.doc td span{display:block}#doc table,.doc table,#webtool .box .body table{bo" +
-                    "rder-collapse:collapse;border-style:solid;border-width:0.2em;clear:both}#doc tab" +
-                    "le,.doc table{font-size:1.2em}#doc td,#doc th,.doc td,.doc th{border-left-style:" +
-                    "solid;border-left-width:0.1em;border-top-style:solid;border-top-width:0.1em;padd" +
-                    "ing:0.5em}#doc th,.doc th{font-weight:bold}#doc ul,.doc ul{margin-top:1em}#doc u" +
-                    "l li,.doc ul li{font-size:1.2em}#feedemail{display:block;width:100%}#feedreportb" +
-                    "ody{text-align:center}#feedreportbody .radiogroup .feedlabel{display:block;font-" +
-                    "size:1.4em;margin:0 0 1em;width:auto}#feedreportbody .radiogroup span{display:in" +
-                    "line-block;margin:0 0 2em;width:5em}#feedreportbody .radiogroup input{position:a" +
-                    "bsolute;top:-2000em}#feedreportbody .radiogroup label{border-radius:50%;border-s" +
-                    "tyle:solid;border-width:0.1em;cursor:pointer;display:inline-block;height:1.5em;l" +
-                    "ine-height:1.5;text-align:center;width:1.5em}#feedreportbody .radiogroup span sp" +
-                    "an{display:block;font-size:0.8em;margin:0;width:auto}#feedsubmit{float:none;font" +
-                    "-family:inherit;height:3em;margin:2.5em auto 0;position:static;text-shadow:none;" +
-                    "width:50%}#doc #function_properties h4{float:none;font-size:1.2em}#doc #function" +
-                    "_properties li{padding:0 0 0 0.5em}#function_properties h4 strong{color:#c00}#fu" +
-                    "nction_properties h5{font-size:1em;margin:0 0 0 -2.5em}#function_properties ol{p" +
-                    "adding-right:1em}#webtool #functionGroup,#webtool #headline{border-radius:0.2em;" +
-                    "border-style:solid;border-width:0.1em;padding:0.7em 1.2em}#webtool #functionGrou" +
-                    "p input{cursor:pointer}#webtool #functionGroup label{cursor:pointer;font-size:1e" +
-                    "m}#webtool #functionGroup span{display:inline-block;margin-left:2em}#webtool #he" +
-                    "adline{margin: 0 0 1em;}#webtool #headline h2{background:transparent;border-styl" +
-                    "e:none;float:left;line-height:1;margin:0 0.25em 0 0;padding:0}#webtool #headline" +
-                    " p{clear:none;float:left;font-size: 1.8em;line-height:1;margin:0}#webtool #hideO" +
-                    "ptions{margin-left:5em}#webtool #infolinks{float:right;margin:0 0 -4em}#webtool " +
-                    "#infolinks li{display:inline-block;font-size:1.4em;list-style:none;margin:0.5em " +
-                    "1em 0}#jserror code{font-family:'Courier New',Courier,'Lucida Console',monospace" +
-                    "}#jserror span{display:block}#webtool #modalSave p{background:#eee;color:#333;fo" +
-                    "nt-size:2em;padding:1em;position:absolute;text-align:center;top:10em;width:25em;" +
-                    "z-index:9001}#modalSave p em{display:block;font-size:0.75em;margin-top:1em}#moda" +
-                    "lSave p strong{color:#c00;font-weight:bold}#modalSave span{background:#000;displ" +
-                    "ay:block;left:0;opacity:0.5;position:absolute;top:0;z-index:9000}#codereport{rig" +
-                    "ht:19.8em}#webtool #option_comment{font-size:1.2em;height:2.5em;width:100%}#webt" +
-                    "ool #option_commentClear{margin:-0.5em -0.25em 0 0}#options{margin:0 0 1em}#opti" +
-                    "ons #resetOptions{margin:0 0 -6em}#options p.apiname, #addOptions p.apiname{floa" +
-                    "t:left;font-size:1.2em;line-height:2.4;margin:0 -40em 0 15em;padding:0}#options " +
-                    "span.apiname, #addOptions span.apiname{display:inline-block;float:none;font-size" +
-                    ":1em;margin:0 0 0 1em;width:auto}#options .resetbutton{padding:0}#webtool #optio" +
-                    "ns button{float:right;height:2em;padding:0;width:15em}#options label{width:auto}" +
-                    "#options p,#addOptions p{clear:both;font-size:1em;margin:0;padding:1em 0 0}#webt" +
-                    "ool #options p span{height:2em;margin:0 0 0 1em}#pdsamples{list-style-position:i" +
-                    "nside;margin:0;padding:0;position:relative;z-index:10}#pdsamples li{border-radiu" +
-                    "s:1em;border-style:solid;border-width:0.1em;margin:0 0 3em;padding:1em}#pdsample" +
-                    "s li div{border-radius:1em;border-style:solid;border-width:0.1em;margin:0;paddin" +
-                    "g:1em}#pdsamples li p{display:inline-block;font-size:1em;margin:0}#pdsamples li " +
-                    "p a{display:block;margin:0 0 1em 2em}#pdsamples li ul{margin:0 0 0 2em}#reports{" +
-                    "height:4em}#webtool #reports h2{display:none}#samples #dcolorScheme{position:rel" +
-                    "ative;z-index:1000}#samples #pdsamples li li{background:none transparent;border-" +
-                    "style:none;display:list-item;list-style:disc outside;margin:0;padding:0.5em}#sam" +
-                    "ples h1{float:none}#samples h2{border-style:none;float:none;font-size:1.5em;marg" +
-                    "in:1em 0}#showOptionsCallOut{background:#fff;border:0.1em solid #000;box-shadow:" +
-                    "0.2em 0.2em 0.4em rgba(0,0,0,.15);left:28.6%;padding:0.5em;position:absolute;top" +
-                    ":4.6em;width:20%;z-index:1000}#showOptionsCallOut a{color:#66f;font-weight:bold}" +
-                    "#showOptionsCallOut em{color:#c00}#showOptionsCallOut strong{color:#090}#statrep" +
-                    "ort{right:0.8em}#statreport .body p,#statreport .body li,#statreport .body h3{fo" +
-                    "nt-size:1.2em}#statreport .body h3{margin-top:0}#statreport .body ul{margin-top:" +
-                    "1em}#textareaTabKey{border-style:solid;border-width:0.1em;left:51%;padding:0.5em" +
-                    ";position:absolute;width:28em}#textareaTabKey strong{text-decoration:underline}#" +
-                    "textareaTabKey em{font-weight:bold}#textreport{width:100%}#thirdparties a{border" +
-                    "-style:none;display:block;height:4em;text-decoration:none}#update{clear:left;flo" +
-                    "at:right;font-weight:bold;padding:0.25em;position:absolute;right:0;top:0;z-index" +
-                    ":2;}#update span{display:block}#update span span{display:inline-block;float:righ" +
-                    "t}#webtool .diff h3{border-style:none solid solid;border-width:0 0.1em 0.2em;box" +
-                    "-shadow:none;display:block;font-family:Verdana;font-size:1.2em;margin:0 0 0 -.1e" +
-                    "m;padding:0.2em 2em;text-align:left}#webtool .options input[type=text]{margin-ri" +
-                    "ght:1em;width:11.6em}#webtool .options input[type=text],#webtool div input,#webt" +
-                    "ool textarea{border-style:inset;border-width:0.1em}.analysis th{text-align:left}" +
-                    ".analysis .parseData td{font-family:'Courier New',Courier,'Lucida Console',monos" +
-                    "pace;text-align:left;white-space:pre}.analysis td{text-align:right}#webtool .bea" +
-                    "utify,#webtool .diff{border-style:solid;border-width:0.2em;display:inline-block;" +
-                    "font-family:'Courier New',Courier,'Lucida Console',monospace;margin:0 1em 1em 0;" +
-                    "position:relative}#webtool .beautify .count,#webtool .diff .count{border-style:s" +
-                    "olid;border-width:0 0.1em 0 0;font-weight:normal;padding:0;text-align:right}#web" +
-                    "tool .beautify .count li,#webtool .diff .count li{padding-left:2em}#webtool .bea" +
-                    "utify .count li{padding-top:0.5em}#webtool .beautify .count li.fold,#webtool .di" +
-                    "ff .count li.fold{color:#900;cursor:pointer;font-weight:bold;padding-left:0.5em}" +
-                    "#webtool .beautify .data,#webtool .diff .data{text-align:left;white-space:pre}#w" +
-                    "ebtool .beautify .data em{display:inline-block;font-style:normal;font-weight:bol" +
-                    "d;padding-top:0.5em}#webtool .beautify .data li,#webtool .diff .data li{padding-" +
-                    "left:0.5em;white-space:pre}#webtool .beautify li,#webtool .diff li{border-style:" +
-                    "none none solid;border-width:0 0 0.1em;display:block;line-height:1.2;list-style-" +
-                    "type:none;margin:0;padding-bottom:0;padding-right:0.5em}#webtool .beautify ol,#w" +
-                    "ebtool .diff ol{display:table-cell;margin:0;padding:0}#webtool .box{border-style" +
-                    ":solid;border-width:0;left:auto;margin:0;padding:0;position:absolute;z-index:10}" +
-                    "#webtool .box .buttons button{border-radius:0;border-style:solid;border-width:0." +
-                    "1em;display:block;float:right;font-family:'Lucida Console','Trebuchet MS','Arial" +
-                    "';height:1.75em;padding:0;position:absolute;right:0;text-align:center;top:0;widt" +
-                    "h:1.75em;z-index:7}#webtool .box .buttons button.resize{border-width:0.05em;curs" +
-                    "or:se-resize;font-size:1.667em;font-weight:normal;height:0.8em;line-height:0.5em" +
-                    ";margin:-.85em 0 0;position:absolute;right:0.05em;top:100%;width:0.85em}#webtool" +
-                    " .box .buttons button.minimize{margin:0.35em 4em 0 0}#webtool .box .buttons butt" +
-                    "on.maximize{margin:0.35em 1.75em 0 0}#webtool .box .buttons button.save{margin:0" +
-                    ".35em 6.25em 0 0}#webtool .box .buttons{float:right;margin:0}#webtool .box h3.he" +
-                    "ading{float:left;font-size:1em;height:3em;margin:0 0 -3.2em;padding:0;position:r" +
-                    "elative;width:17em;z-index:6}#webtool .box h3.heading button{background:transpar" +
-                    "ent;border-radius:0;border-style:none;box-shadow:none;cursor:pointer;display:blo" +
-                    "ck;font-size:1.8em;height:100%;margin:0;padding:0.25em 0 0 0.5em;text-align:left" +
-                    "}#webtool .box .heading button:hover{background:transparent;color:inherit;text-s" +
-                    "hadow:none}#webtool .box .body{clear:both;height:20em;margin-top:-.1em;overflow:" +
-                    "scroll;padding:4.25em 1em 1em;position:relative;right:0;top:0;width:75em;z-index" +
-                    ":5}#webtool .button{margin:1em 0;text-align:center}#webtool .button button{displ" +
-                    "ay:block;font-size:2em;height:1.5em;margin:0 auto;padding:0;width:50%}#webtool ." +
-                    "clear,#doc .clear{clear:both;display:block}.diff .skip{border-style:none none so" +
-                    "lid;border-width:0 0 0.1em}.diff .diff-left,.diff .diff-right{display:table-cell" +
-                    "}.diff .diff-left{border-style:none none none solid;border-width:0 0 0 0.1em}.di" +
-                    "ff .diff-right{border-style:none none none solid;border-width:0 0 0 0.1em;margin" +
-                    "-left:-.1em;min-width:16.5em;right:0;top:0}.diff-right .data ol{min-width:16.5em" +
-                    "}.diff-right .data{border-style:none solid none none;border-width:0 0.1em 0 0;wi" +
-                    "dth:100%}.diff-right .data li{min-width:16.5em}.diff li,.diff p,.diff h3,.beauti" +
-                    "fy li{font-size:1.1em}.diff li{padding-top:0.5em}.diff li em{font-style:normal;m" +
-                    "argin:0 -.09em;padding:0.05em 0}#webtool .diff p.author{border-style:solid;borde" +
-                    "r-width:0.2em 0.1em 0.1em;margin:0;overflow:hidden;padding:0.4em;text-align:righ" +
-                    "t}.difflabel{display:block;height:0}#webtool .file,#webtool .labeltext{font-size" +
-                    ":0.9em;font-weight:bold;margin-bottom:1em}#webtool .file input,#webtool .labelte" +
-                    "xt input{display:inline-block;margin:0 0.7em 0 0;width:16em}#webtool .input,#web" +
-                    "tool.output{margin:0}.metainfo{position:relative;}#webtool .options{border-radiu" +
-                    "s:0.4em;clear:both;margin-bottom:1em;padding:1em;width:auto}#webtool .options in" +
-                    "put,#webtool .options label{border-style:none;display:block;float:left}#webtool " +
-                    ".output label{text-align:right}#webtool .options p span label{font-size:1em}#web" +
-                    "tool .options p span{display:block;float:left;font-size:1em;min-width:16em;paddi" +
-                    "ng-bottom:0.5em}#webtool .options select,#webtool #csvchar{margin:0 0 0 1em}#web" +
-                    "tool .options fieldset select{float:left;margin:0 1em 0 0}#webtool .options span" +
-                    " label{margin-left:0.4em}body#doc{font-size:0.8em;margin:0 auto;max-width:80em}b" +
-                    "ody#doc #function_properties ul{margin:0}body#doc #function_properties ul li{fon" +
-                    "t-size:0.9em;margin:0.5em 0 0 4em}body#doc ul li,body#doc ol li{font-size:1.1em}" +
-                    "body#doc table{font-size:1em}#webtool button,#webtool a.button{border-radius:0.1" +
-                    "5em;display:block;font-weight:bold;padding:0.2em 0;width:100%}#webtool div .butt" +
-                    "on{text-align:center}#webtool div button,#webtool div a.button{display:inline-bl" +
-                    "ock;font-weight:bold;margin:1em 0;padding:1em 2em}#webtool button:hover,#webtool" +
-                    " a.button:hover{cursor:pointer}#webtool fieldset,#doc fieldset{border-radius:1em" +
-                    ";clear:both;margin:1em 0 0;padding:0 1em 1em}#webtool h1{float:left;font-size:2e" +
-                    "m;margin:0 0.5em 0.5em 0}#webtool h1{position:absolute;top:-200em;z-index:0;}#we" +
-                    "btool h1 svg,#doc h1 svg{border-style:solid;border-width:0.05em;float:left;heigh" +
-                    "t:1.5em;margin-right:0.5em;width:1.5em}#webtool h1 span,#doc h1 span{font-size:0" +
-                    ".5em}#webtool h2,#doc h2,#webtool h3,#doc h3{border-style:solid;border-width:0.0" +
-                    "75em;display:inline-block;font-size:1.8em;font-weight:bold;margin:0 0.5em 0.5em " +
-                    "0;padding:0 0.2em}#webtool h3,#doc h3{font-size:1.6em}#webtool h4,#doc h4{font-s" +
-                    "ize:1.4em}#webtool inputt[type='radio'],#doc input[type='radio']{margin:0 0.25em" +
-                    "}#webtool input[type='file']{box-shadow:none}#webtool label,#doc label{display:i" +
-                    "nline;font-size:1.4em}#webtool legend,#doc legend{border-radius:1em;border-style" +
-                    ":solid;border-width:0.1em;font-size:1.4em;font-weight:bold;margin-left:-0.25em;p" +
-                    "adding:0 0.5em}#webtool fieldset fieldset legend{font-size:1.2em}#webtool li,#do" +
-                    "c li{clear:both;margin:1em 0 1em 3em}#webtool li h4,#doc li h4{display:inline;fl" +
-                    "oat:left;margin:0.4em 0;text-align:left;width:14em}#webtool ol li{font-size:1.2e" +
-                    "m}#doc ol li{font-size:1.4em;list-style-type:decimal}#webtool ol li li,#doc ol l" +
-                    "i li{font-size:1em}#webtool p,#doc p{clear:both;font-size:1.2em;margin:0 0 1em}#" +
-                    "webtool select,#doc select{border-style:inset;border-width:0.1em;width:13.5em}#w" +
-                    "ebtool strong.new,#doc strong .new{background:#ff6;font-style:italic}#webtool st" +
-                    "rong label,#doc strong label{font-size:1em;width:inherit}#webtool textarea{displ" +
-                    "ay:inline-block;font-family:'Courier New',Courier,'Lucida Console',monospace;hei" +
-                    "ght:10em;margin:0 0 -.1em;width:100%}#webtool ul,#doc ul{margin:-1.4em 0 2em;pad" +
-                    "ding:0}#webtool ul li,#doc ul li{list-style-type:none}@media print{#webtool div," +
-                    "#doc div{width:100%}html td{font-size:0.8em;white-space:normal}#webtool p,#doc p" +
-                    ",#webtool .options,#Beautify,#Minify,#Parse,#diff,#webtool ul,#doc ul{display:no" +
-                    "ne}}@media screen and (-webkit-min-device-pixel-ratio:0){.beautify .count li{pad" +
-                    "ding-top:0.546em}.beautify .data li{line-height:1.3}}@media (max-width: 640px){#" +
-                    "codeInput label{display:none}#diffBase,#diffNew{width:46%}#doc #dcolorScheme{mar" +
-                    "gin:0 0 1em}#functionGroup,#headline{height:4em}#functionGroup span{margin-left:" +
-                    "0.5em;position:relative;z-index:10}#infolinks{margin:0}#reports{display:none}#up" +
-                    "date{margin-top:2.75em}#webtool .labeltext input,#webtool .file input{width:12em" +
-                    "}}",
+        commentString      : [],
+        css                : {
+            core   : "body#webtool,body#doc{font-family:'Lucida Sans Unicode','Helvetica','Arial', san" +
+                         "s-serif;font-size:10px;overflow-y:scroll}div#webtool{font-size:10px}#about_licen" +
+                         "se a{display:block}#webtool #announcement{color:#00c;font-weight:bold;height:aut" +
+                         "o;left:14em;margin:0;overflow:hidden;position:absolute;text-overflow:ellipsis;to" +
+                         "p:0.5em;white-space:nowrap;width:40%;z-index:5}#webtool #announcement strong.dup" +
+                         "licate{display:block}#webtool #announcement span{display:block}#apireturn textar" +
+                         "ea{font-size:1.2em;height:50em;width:100%}#apitest input,#apitest label,#apitest" +
+                         " select,#apitest textarea{float:left}#apitest input,#apitest select,#apitest tex" +
+                         "tarea{width:30em}#apitest label{width:20em}#apitest p{clear:both;padding-top:0.7" +
+                         "5em}#beau-other-span,#diff-other-span{left:-20em;position:absolute;width:0}#webt" +
+                         "ool #beauops p strong,#webtool #options p strong,#webtool #diffops p strong,#web" +
+                         "tool #miniops p strong,#webtool #parseops p strong,#webtool #options .label,#web" +
+                         "tool #diffops .label,#webtool #miniops .label,#webtool #beauops .label,#webtool " +
+                         "#parseops .label{display:block;float:none;font-size:1em;font-weight:bold;margin-" +
+                         "bottom:0.5em}#beauops span strong,#miniops span strong,#diffops span strong{disp" +
+                         "lay:inline;float:none;font-size:1em;width:auto}#feedreport{right:38.8em}#beautyi" +
+                         "nput,#minifyinput,#parseinput,#baseText,#newText,#beautyoutput,#minifyoutput,#pa" +
+                         "rseoutput{font-size:1em}#Beautify,#Minify,#Parse,#diffBase,#diffNew{border-radiu" +
+                         "s:0.4em;padding:1em 1.25em}#Beautify .input,#Minify .input,#Parse .input,#Beauti" +
+                         "fy .output,#Minify .output,#Parse .output{width:49%}#Beautify .input label,#Beau" +
+                         "tify .output label,#Minify .input label,#Minify .output label,#Parse .input labe" +
+                         "l,#Parse .output label{display:block;font-size:1.05em;font-weight:bold}#Beautify" +
+                         " p.file,#Minify p.file,#Parse p.file{clear:none;float:none}#Beautify textarea,#M" +
+                         "inify textarea,#Parse textarea{margin-bottom:0.75em}#checklist_option li{font-we" +
+                         "ight:bold}#checklist_option li li{font-weight:normal}#codeInput{margin-bottom:1e" +
+                         "m}#codeInput #diffBase p,#codeInput #diffNew p{clear:both;float:none}#codeInput " +
+                         ".input{clear:none;float:left}#codeInput .output{clear:none;float:right;margin-to" +
+                         "p:-2.4em}#cssreport.doc table{position:absolute}#css-size{left:24em}#css-uri{lef" +
+                         "t:40em}#css-uri td{text-align:left}#webtool #csvchar{width:11.8em}#webtool #dcol" +
+                         "orScheme,#doc #dcolorScheme{float:right;margin:-3em 0 0}#webtool #dcolorScheme l" +
+                         "abel,#doc #dcolorScheme label{display:inline-block;font-size:1em}#diff .addsourc" +
+                         "e{cursor:pointer;margin-bottom:1em;padding:0}#diff .addsource input{display:bloc" +
+                         "k;float:left;margin:0.5em 0.5em -1.5em}#diff .addsource label{cursor:pointer;dis" +
+                         "play:inline-block;font-size:1.2em;padding:0.5em 0.5em 0.5em 2em}#diffBase,#diffN" +
+                         "ew,#Beautify,#Minify,#Parse#doc div,#doc div div,#doc ol,#webtool #option_commen" +
+                         "t,#update,#thirdparties img,#diffoutput #thirdparties,.ace_editor,#webtool .box " +
+                         "h3.heading,#webtool .box .body,#webtool .options,.diff .replace em,.diff .delete" +
+                         " em,.diff .insert em,button,fieldset{border-style:solid;border-width:0.1em}#diff" +
+                         "Base,#diffNew{padding:1.25em 1%;width:47%}#diffBase textarea,#diffNew textarea{w" +
+                         "idth:99.5%}#diffBase{float:left;margin-right:1%}#diffNew{float:right}#diffoutput" +
+                         "{width:100%}#diffoutput #thirdparties li{display:inline-block;list-style-type:no" +
+                         "ne}#diffoutput li em,#diffoutput p em,.analysis .bad,.analysis .good{font-weight" +
+                         ":bold}#diffoutput ul{font-size:1.2em;margin-top:1em}#diffoutput ul li,#doc #pars" +
+                         "e ul li{display:list-item;list-style-type:disc}#doc_contents a{text-decoration:n" +
+                         "one}#doc_contents ol{padding-bottom:1em}#doc_contents ol ol li{font-size:0.75em;" +
+                         "list-style:lower-alpha;margin:0.5em 0 1em 3em}#doc #doc_contents ol ol{backgroun" +
+                         "d-color:inherit;border-style:none;margin:0.25em 0.3em 0 0;padding-bottom:0}#doc " +
+                         "div.beautify{border-style:none}#doc #execution h3{background:transparent;border-" +
+                         "style:none;font-size:1em;font-weight:bold}#doc code,.doc code{display:block;font" +
+                         "-family:'Courier New',Courier,'Lucida Console',monospace;font-size:1.1em}#doc di" +
+                         "v,.doc div{margin-bottom:2em;padding:0 0.5em 0.5em}#doc div div,.doc div div{cle" +
+                         "ar:both;margin-bottom:1em}#doc em,.doc em,#webtool .box .body em{font-style:norm" +
+                         "al;font-weight:bold}#doc div h2,.doc div h2{font-size:1.6em;margin:0.5em 0.5em 0" +
+                         ".5em 0}#doc div h3,.doc div h3{margin-bottom:0.5em;margin-top:0.5em}#doc ol,.doc" +
+                         " ol{clear:both;padding:0}#doc ol li span,.doc ol li span{display:block;margin-le" +
+                         "ft:2em}#doc ol ol,#doc ul ol,.doc ol ol,.doc ul ol{margin-right:0.5em}#doc td sp" +
+                         "an,.doc td span{display:block}#doc table,.doc table,#webtool .box .body table{bo" +
+                         "rder-collapse:collapse;border-style:solid;border-width:0.2em;clear:both}#doc tab" +
+                         "le,.doc table{font-size:1.2em}#doc td,#doc th,.doc td,.doc th{border-left-style:" +
+                         "solid;border-left-width:0.1em;border-top-style:solid;border-top-width:0.1em;padd" +
+                         "ing:0.5em}#doc th,.doc th{font-weight:bold}#doc ul,.doc ul{margin-top:1em}#doc u" +
+                         "l li,.doc ul li{font-size:1.2em}#feedemail{display:block;width:100%}#feedreportb" +
+                         "ody{text-align:center}#feedreportbody .radiogroup .feedlabel{display:block;font-" +
+                         "size:1.4em;margin:0 0 1em;width:auto}#feedreportbody .radiogroup span{display:in" +
+                         "line-block;margin:0 0 2em;width:5em}#feedreportbody .radiogroup input{position:a" +
+                         "bsolute;top:-2000em}#feedreportbody .radiogroup label{border-radius:50%;border-s" +
+                         "tyle:solid;border-width:0.1em;cursor:pointer;display:inline-block;height:1.5em;l" +
+                         "ine-height:1.5;text-align:center;width:1.5em}#feedreportbody .radiogroup span sp" +
+                         "an{display:block;font-size:0.8em;margin:0;width:auto}#feedsubmit{float:none;font" +
+                         "-family:inherit;height:3em;margin:2.5em auto 0;position:static;text-shadow:none;" +
+                         "width:50%}#doc #function_properties h4{float:none;font-size:1.2em}#doc #function" +
+                         "_properties li{padding:0 0 0 0.5em}#function_properties h4 strong{color:#c00}#fu" +
+                         "nction_properties h5{font-size:1em;margin:0 0 0 -2.5em}#function_properties ol{p" +
+                         "adding-right:1em}#webtool #functionGroup,#webtool #headline{border-radius:0.2em;" +
+                         "border-style:solid;border-width:0.1em;padding:0.7em 1.2em}#webtool #functionGrou" +
+                         "p input{cursor:pointer}#webtool #functionGroup label{cursor:pointer;font-size:1e" +
+                         "m}#webtool #functionGroup span{display:inline-block;margin-left:2em}#webtool #he" +
+                         "adline{margin: 0 0 1em;}#webtool #headline h2{background:transparent;border-styl" +
+                         "e:none;float:left;line-height:1;margin:0 0.25em 0 0;padding:0}#webtool #headline" +
+                         " p{clear:none;float:left;font-size: 1.8em;line-height:1;margin:0}#webtool #hideO" +
+                         "ptions{margin-left:5em}#webtool #infolinks{float:right;margin:0 0 -4em}#webtool " +
+                         "#infolinks li{display:inline-block;font-size:1.4em;list-style:none;margin:0.5em " +
+                         "1em 0}#jserror code{font-family:'Courier New',Courier,'Lucida Console',monospace" +
+                         "}#jserror span{display:block}#webtool #modalSave p{background:#eee;color:#333;fo" +
+                         "nt-size:2em;padding:1em;position:absolute;text-align:center;top:10em;width:25em;" +
+                         "z-index:9001}#modalSave p em{display:block;font-size:0.75em;margin-top:1em}#moda" +
+                         "lSave p strong{color:#c00;font-weight:bold}#modalSave span{background:#000;displ" +
+                         "ay:block;left:0;opacity:0.5;position:absolute;top:0;z-index:9000}#codereport{rig" +
+                         "ht:19.8em}#webtool #option_comment{font-size:1.2em;height:2.5em;width:100%}#webt" +
+                         "ool #option_commentClear{margin:-0.5em -0.25em 0 0}#options{margin:0 0 1em}#opti" +
+                         "ons #resetOptions{margin:0 0 -6em}#options p.apiname, #addOptions p.apiname{floa" +
+                         "t:left;font-size:1.2em;line-height:2.4;margin:0 -40em 0 15em;padding:0}#options " +
+                         "span.apiname, #addOptions span.apiname{display:inline-block;float:none;font-size" +
+                         ":1em;margin:0 0 0 1em;width:auto}#options .resetbutton{padding:0}#webtool #optio" +
+                         "ns button{float:right;height:2em;padding:0;width:15em}#options label{width:auto}" +
+                         "#options p,#addOptions p{clear:both;font-size:1em;margin:0;padding:1em 0 0}#webt" +
+                         "ool #options p span{height:2em;margin:0 0 0 1em}#pdsamples{list-style-position:i" +
+                         "nside;margin:0;padding:0;position:relative;z-index:10}#pdsamples li{border-radiu" +
+                         "s:1em;border-style:solid;border-width:0.1em;margin:0 0 3em;padding:1em}#pdsample" +
+                         "s li div{border-radius:1em;border-style:solid;border-width:0.1em;margin:0;paddin" +
+                         "g:1em}#pdsamples li p{display:inline-block;font-size:1em;margin:0}#pdsamples li " +
+                         "p a{display:block;margin:0 0 1em 2em}#pdsamples li ul{margin:0 0 0 2em}#reports{" +
+                         "height:4em}#webtool #reports h2{display:none}#samples #dcolorScheme{position:rel" +
+                         "ative;z-index:1000}#samples #pdsamples li li{background:none transparent;border-" +
+                         "style:none;display:list-item;list-style:disc outside;margin:0;padding:0.5em}#sam" +
+                         "ples h1{float:none}#samples h2{border-style:none;float:none;font-size:1.5em;marg" +
+                         "in:1em 0}#showOptionsCallOut{background:#fff;border:0.1em solid #000;box-shadow:" +
+                         "0.2em 0.2em 0.4em rgba(0,0,0,.15);left:28.6%;padding:0.5em;position:absolute;top" +
+                         ":4.6em;width:20%;z-index:1000}#showOptionsCallOut a{color:#66f;font-weight:bold}" +
+                         "#showOptionsCallOut em{color:#c00}#showOptionsCallOut strong{color:#090}#statrep" +
+                         "ort{right:0.8em}#statreport .body p,#statreport .body li,#statreport .body h3{fo" +
+                         "nt-size:1.2em}#statreport .body h3{margin-top:0}#statreport .body ul{margin-top:" +
+                         "1em}#textareaTabKey{border-style:solid;border-width:0.1em;left:51%;padding:0.5em" +
+                         ";position:absolute;width:28em}#textareaTabKey strong{text-decoration:underline}#" +
+                         "textareaTabKey em{font-weight:bold}#textreport{width:100%}#thirdparties a{border" +
+                         "-style:none;display:block;height:4em;text-decoration:none}#update{clear:left;flo" +
+                         "at:right;font-weight:bold;padding:0.25em;position:absolute;right:0;top:0;z-index" +
+                         ":2;}#update span{display:block}#update span span{display:inline-block;float:righ" +
+                         "t}#webtool .diff h3{border-style:none solid solid;border-width:0 0.1em 0.2em;box" +
+                         "-shadow:none;display:block;font-family:Verdana;font-size:1.2em;margin:0 0 0 -.1e" +
+                         "m;padding:0.2em 2em;text-align:left}#webtool .options input[type=text]{margin-ri" +
+                         "ght:1em;width:11.6em}#webtool .options input[type=text],#webtool div input,#webt" +
+                         "ool textarea{border-style:inset;border-width:0.1em}.analysis th{text-align:left}" +
+                         ".analysis .parseData td{font-family:'Courier New',Courier,'Lucida Console',monos" +
+                         "pace;text-align:left;white-space:pre}.analysis td{text-align:right}#webtool .bea" +
+                         "utify,#webtool .diff{border-style:solid;border-width:0.2em;display:inline-block;" +
+                         "font-family:'Courier New',Courier,'Lucida Console',monospace;margin:0 1em 1em 0;" +
+                         "position:relative}#webtool .beautify .count,#webtool .diff .count{border-style:s" +
+                         "olid;border-width:0 0.1em 0 0;font-weight:normal;padding:0;text-align:right}#web" +
+                         "tool .beautify .count li,#webtool .diff .count li{padding-left:2em}#webtool .bea" +
+                         "utify .count li{padding-top:0.5em}#webtool .beautify .count li.fold,#webtool .di" +
+                         "ff .count li.fold{color:#900;cursor:pointer;font-weight:bold;padding-left:0.5em}" +
+                         "#webtool .beautify .data,#webtool .diff .data{text-align:left;white-space:pre}#w" +
+                         "ebtool .beautify .data em{display:inline-block;font-style:normal;font-weight:bol" +
+                         "d;padding-top:0.5em}#webtool .beautify .data li,#webtool .diff .data li{padding-" +
+                         "left:0.5em;white-space:pre}#webtool .beautify li,#webtool .diff li{border-style:" +
+                         "none none solid;border-width:0 0 0.1em;display:block;line-height:1.2;list-style-" +
+                         "type:none;margin:0;padding-bottom:0;padding-right:0.5em}#webtool .beautify ol,#w" +
+                         "ebtool .diff ol{display:table-cell;margin:0;padding:0}#webtool .box{border-style" +
+                         ":solid;border-width:0;left:auto;margin:0;padding:0;position:absolute;z-index:10}" +
+                         "#webtool .box .buttons button{border-radius:0;border-style:solid;border-width:0." +
+                         "1em;display:block;float:right;font-family:'Lucida Console','Trebuchet MS','Arial" +
+                         "';height:1.75em;padding:0;position:absolute;right:0;text-align:center;top:0;widt" +
+                         "h:1.75em;z-index:7}#webtool .box .buttons button.resize{border-width:0.05em;curs" +
+                         "or:se-resize;font-size:1.667em;font-weight:normal;height:0.8em;line-height:0.5em" +
+                         ";margin:-.85em 0 0;position:absolute;right:0.05em;top:100%;width:0.85em}#webtool" +
+                         " .box .buttons button.minimize{margin:0.35em 4em 0 0}#webtool .box .buttons butt" +
+                         "on.maximize{margin:0.35em 1.75em 0 0}#webtool .box .buttons button.save{margin:0" +
+                         ".35em 6.25em 0 0}#webtool .box .buttons{float:right;margin:0}#webtool .box h3.he" +
+                         "ading{float:left;font-size:1em;height:3em;margin:0 0 -3.2em;padding:0;position:r" +
+                         "elative;width:17em;z-index:6}#webtool .box h3.heading button{background:transpar" +
+                         "ent;border-radius:0;border-style:none;box-shadow:none;cursor:pointer;display:blo" +
+                         "ck;font-size:1.8em;height:100%;margin:0;padding:0.25em 0 0 0.5em;text-align:left" +
+                         "}#webtool .box .heading button:hover{background:transparent;color:inherit;text-s" +
+                         "hadow:none}#webtool .box .body{clear:both;height:20em;margin-top:-.1em;overflow:" +
+                         "scroll;padding:4.25em 1em 1em;position:relative;right:0;top:0;width:75em;z-index" +
+                         ":5}#webtool .button{margin:1em 0;text-align:center}#webtool .button button{displ" +
+                         "ay:block;font-size:2em;height:1.5em;margin:0 auto;padding:0;width:50%}#webtool ." +
+                         "clear,#doc .clear{clear:both;display:block}.diff .skip{border-style:none none so" +
+                         "lid;border-width:0 0 0.1em}.diff .diff-left,.diff .diff-right{display:table-cell" +
+                         "}.diff .diff-left{border-style:none none none solid;border-width:0 0 0 0.1em}.di" +
+                         "ff .diff-right{border-style:none none none solid;border-width:0 0 0 0.1em;margin" +
+                         "-left:-.1em;min-width:16.5em;right:0;top:0}.diff-right .data ol{min-width:16.5em" +
+                         "}.diff-right .data{border-style:none solid none none;border-width:0 0.1em 0 0;wi" +
+                         "dth:100%}.diff-right .data li{min-width:16.5em}.diff li,.diff p,.diff h3,.beauti" +
+                         "fy li{font-size:1.1em}.diff li{padding-top:0.5em}.diff li em{font-style:normal;m" +
+                         "argin:0 -.09em;padding:0.05em 0}#webtool .diff p.author{border-style:solid;borde" +
+                         "r-width:0.2em 0.1em 0.1em;margin:0;overflow:hidden;padding:0.4em;text-align:righ" +
+                         "t}.difflabel{display:block;height:0}#webtool .file,#webtool .labeltext{font-size" +
+                         ":0.9em;font-weight:bold;margin-bottom:1em}#webtool .file input,#webtool .labelte" +
+                         "xt input{display:inline-block;margin:0 0.7em 0 0;width:16em}#webtool .input,#web" +
+                         "tool.output{margin:0}.metainfo{position:relative;}#webtool .options{border-radiu" +
+                         "s:0.4em;clear:both;margin-bottom:1em;padding:1em;width:auto}#webtool .options in" +
+                         "put,#webtool .options label{border-style:none;display:block;float:left}#webtool " +
+                         ".output label{text-align:right}#webtool .options p span label{font-size:1em}#web" +
+                         "tool .options p span{display:block;float:left;font-size:1em;min-width:16em;paddi" +
+                         "ng-bottom:0.5em}#webtool .options select,#webtool #csvchar{margin:0 0 0 1em}#web" +
+                         "tool .options fieldset select{float:left;margin:0 1em 0 0}#webtool .options span" +
+                         " label{margin-left:0.4em}body#doc{font-size:0.8em;margin:0 auto;max-width:80em}b" +
+                         "ody#doc #function_properties ul{margin:0}body#doc #function_properties ul li{fon" +
+                         "t-size:0.9em;margin:0.5em 0 0 4em}body#doc ul li,body#doc ol li{font-size:1.1em}" +
+                         "body#doc table{font-size:1em}#webtool button,#webtool a.button{border-radius:0.1" +
+                         "5em;display:block;font-weight:bold;padding:0.2em 0;width:100%}#webtool div .butt" +
+                         "on{text-align:center}#webtool div button,#webtool div a.button{display:inline-bl" +
+                         "ock;font-weight:bold;margin:1em 0;padding:1em 2em}#webtool button:hover,#webtool" +
+                         " a.button:hover{cursor:pointer}#webtool fieldset,#doc fieldset{border-radius:1em" +
+                         ";clear:both;margin:1em 0 0;padding:0 1em 1em}#webtool h1{float:left;font-size:2e" +
+                         "m;margin:0 0.5em 0.5em 0}#webtool h1{position:absolute;top:-200em;z-index:0;}#we" +
+                         "btool h1 svg,#doc h1 svg{border-style:solid;border-width:0.05em;float:left;heigh" +
+                         "t:1.5em;margin-right:0.5em;width:1.5em}#webtool h1 span,#doc h1 span{font-size:0" +
+                         ".5em}#webtool h2,#doc h2,#webtool h3,#doc h3{border-style:solid;border-width:0.0" +
+                         "75em;display:inline-block;font-size:1.8em;font-weight:bold;margin:0 0.5em 0.5em " +
+                         "0;padding:0 0.2em}#webtool h3,#doc h3{font-size:1.6em}#webtool h4,#doc h4{font-s" +
+                         "ize:1.4em}#webtool inputt[type='radio'],#doc input[type='radio']{margin:0 0.25em" +
+                         "}#webtool input[type='file']{box-shadow:none}#webtool label,#doc label{display:i" +
+                         "nline;font-size:1.4em}#webtool legend,#doc legend{border-radius:1em;border-style" +
+                         ":solid;border-width:0.1em;font-size:1.4em;font-weight:bold;margin-left:-0.25em;p" +
+                         "adding:0 0.5em}#webtool fieldset fieldset legend{font-size:1.2em}#webtool li,#do" +
+                         "c li{clear:both;margin:1em 0 1em 3em}#webtool li h4,#doc li h4{display:inline;fl" +
+                         "oat:left;margin:0.4em 0;text-align:left;width:14em}#webtool ol li{font-size:1.2e" +
+                         "m}#doc ol li{font-size:1.4em;list-style-type:decimal}#webtool ol li li,#doc ol l" +
+                         "i li{font-size:1em}#webtool p,#doc p{clear:both;font-size:1.2em;margin:0 0 1em}#" +
+                         "webtool select,#doc select{border-style:inset;border-width:0.1em;width:13.5em}#w" +
+                         "ebtool strong.new,#doc strong .new{background:#ff6;font-style:italic}#webtool st" +
+                         "rong label,#doc strong label{font-size:1em;width:inherit}#webtool textarea{displ" +
+                         "ay:inline-block;font-family:'Courier New',Courier,'Lucida Console',monospace;hei" +
+                         "ght:10em;margin:0 0 -.1em;width:100%}#webtool ul,#doc ul{margin:-1.4em 0 2em;pad" +
+                         "ding:0}#webtool ul li,#doc ul li{list-style-type:none}@media print{#webtool div," +
+                         "#doc div{width:100%}html td{font-size:0.8em;white-space:normal}#webtool p,#doc p" +
+                         ",#webtool .options,#Beautify,#Minify,#Parse,#diff,#webtool ul,#doc ul{display:no" +
+                         "ne}}@media screen and (-webkit-min-device-pixel-ratio:0){.beautify .count li{pad" +
+                         "ding-top:0.546em}.beautify .data li{line-height:1.3}}@media (max-width: 640px){#" +
+                         "codeInput label{display:none}#diffBase,#diffNew{width:46%}#doc #dcolorScheme{mar" +
+                         "gin:0 0 1em}#functionGroup,#headline{height:4em}#functionGroup span{margin-left:" +
+                         "0.5em;position:relative;z-index:10}#infolinks{margin:0}#reports{display:none}#up" +
+                         "date{margin-top:2.75em}#webtool .labeltext input,#webtool .file input{width:12em" +
+                         "}}",
             scanvas: "#doc.canvas{color:#444}#webtool.canvas input.unchecked{background:#ccc;color:#33" +
-                    "3}.canvas *:focus,.canvas .filefocus,.canvas #feedreportbody .focus,.canvas #fee" +
-                    "dreportbody .active-focus{outline:0.1em dashed #00f}.canvas #Beautify,.canvas #M" +
-                    "inify,.canvas #diffBase,.canvas #diffNew{background:#d8d8cf;border-color:#664;bo" +
-                    "x-shadow:0 0.2em 0.4em rgba(128,128,92,0.5);color:#444}.canvas #beautyoutput,.ca" +
-                    "nvas #minifyoutput{background:#ccc}.canvas #diffoutput #thirdparties{background:" +
-                    "#c8c8bf;border-color:#664}.canvas #diffoutput #thirdparties a{color:#664}.canvas" +
-                    " #diffoutput p em,.canvas #diffoutput li em{color:#050}.canvas #feedreportbody ." +
-                    "radiogroup label{background:#f8f8f8}.canvas #feedreportbody .feedradio1:hover,.c" +
-                    "anvas #feedreportbody .active .feedradio1{background:#f66}.canvas #feedreportbod" +
-                    "y .feedradio2:hover,.canvas #feedreportbody .active .feedradio2{background:#f96}" +
-                    ".canvas #feedreportbody .feedradio3:hover,.canvas #feedreportbody .active .feedr" +
-                    "adio3{background:#fc9}.canvas #feedreportbody .feedradio4:hover,.canvas #feedrep" +
-                    "ortbody .active .feedradio4{background:#ff9}.canvas #feedreportbody .feedradio5:" +
-                    "hover,.canvas #feedreportbody .active .feedradio5{background:#eea}.canvas #feedr" +
-                    "eportbody .feedradio6:hover,.canvas #feedreportbody .active .feedradio6{backgrou" +
-                    "nd:#cd9}.canvas #feedreportbody .feedradio7:hover,.canvas #feedreportbody .activ" +
-                    "e .feedradio7{background:#8d8}.canvas #functionGroup.append{background:#d8d8cf;b" +
-                    "order-color:#664;box-shadow:0 0.2em 0.4em rgba(128,128,92,0.5)}.canvas #option_c" +
-                    "omment{background:#e8e8e8;border-color:#664;color:#444}.canvas #pdsamples li{bac" +
-                    "kground:#d8d8cf;border-color:#664}.canvas #pdsamples li div{background:#e8e8e8;b" +
-                    "order-color:#664}.canvas #pdsamples li div a{color:#664}.canvas #pdsamples li p " +
-                    "a{color:#450}.canvas #textareaTabKey{background:#c8c8bf;border-color:#c33;color:" +
-                    "#555}.canvas #top em{color:#fcc}.canvas #update,.canvas #title_text{background:#" +
-                    "f8f8ee;box-shadow:0 0.1em 0.2em rgba(128,128,92,0.75);color:#464}.canvas .beauti" +
-                    "fy .data em.s0,#doc.canvas .beautify .data em.s0{color:#000}.canvas .beautify .d" +
-                    "ata em.s1,#doc.canvas .beautify .data em.s1{color:#f66}.canvas .beautify .data e" +
-                    "m.s2,#doc.canvas .beautify .data em.s2{color:#12f}.canvas .beautify .data em.s3," +
-                    "#doc.canvas .beautify .data em.s3{color:#090}.canvas .beautify .data em.s4,#doc." +
-                    "canvas .beautify .data em.s4{color:#d6d}.canvas .beautify .data em.s5,#doc.canva" +
-                    "s .beautify .data em.s5{color:#7cc}.canvas .beautify .data em.s6,#doc.canvas .be" +
-                    "autify .data em.s6{color:#c85}.canvas .beautify .data em.s7,#doc.canvas .beautif" +
-                    "y .data em.s7{color:#737}.canvas .beautify .data em.s8,#doc.canvas .beautify .da" +
-                    "ta em.s8{color:#6d0}.canvas .beautify .data em.s9,#doc.canvas .beautify .data em" +
-                    ".s9{color:#dd0s}.canvas .beautify .data em.s10,#doc.canvas .beautify .data em.s1" +
-                    "0{color:#893}.canvas .beautify .data em.s11,#doc.canvas .beautify .data em.s11{c" +
-                    "olor:#b97}.canvas .beautify .data em.s12,#doc.canvas .beautify .data em.s12{colo" +
-                    "r:#bbb}.canvas .beautify .data em.s13,#doc.canvas .beautify .data em.s13{color:#" +
-                    "cc3}.canvas .beautify .data em.s14,#doc.canvas .beautify .data em.s14{color:#333" +
-                    "}.canvas .beautify .data em.s15,#doc.canvas .beautify .data em.s15{color:#9d9}.c" +
-                    "anvas .beautify .data em.s16,#doc.canvas .beautify .data em.s16{color:#880}.canv" +
-                    "as .beautify .data .l0{background:#f8f8ef}.canvas .beautify .data .l1{background" +
-                    ":#fed}.canvas .beautify .data .l2{background:#def}.canvas .beautify .data .l3{ba" +
-                    "ckground:#efe}.canvas .beautify .data .l4{background:#fef}.canvas .beautify .dat" +
-                    "a .l5{background:#eef}.canvas .beautify .data .l6{background:#fff8cc}.canvas .be" +
-                    "autify .data .l7{background:#ede}.canvas .beautify .data .l8{background:#efc}.ca" +
-                    "nvas .beautify .data .l9{background:#ffd}.canvas .beautify .data .l10{background" +
-                    ":#edc}.canvas .beautify .data .l11{background:#fdb}.canvas .beautify .data .l12{" +
-                    "background:#f8f8f8}.canvas .beautify .data .l13{background:#ffb}.canvas .beautif" +
-                    "y .data .l14{background:#eec}.canvas .beautify .data .l15{background:#cfc}.canva" +
-                    "s .beautify .data .l16{background:#eea}.canvas .beautify .data .c0{background:#d" +
-                    "dd}.canvas .beautify .data li{color:#777}.canvas .analysis .bad{background-color" +
-                    ":#ecb;color:#744}.canvas .analysis .good{background-color:#cdb;color:#474}.canva" +
-                    "s .box{background:#ccc;border-color:#664}.canvas .box .body{background:#e8e8e8;b" +
-                    "order-color:#664;box-shadow:0 0.2em 0.4em rgba(128,128,92,0.75);color:#666}.canv" +
-                    "as .box button{box-shadow:0 0.1em 0.2em rgba(128,128,92,0.75)}.canvas .box butto" +
-                    "n.maximize{background:#cfd8cf;border-color:#464;color:#464}.canvas .box button.m" +
-                    "aximize:hover{background:#cfc;border-color:#282;color:#282}.canvas .box button.m" +
-                    "inimize{background:#cfcfd8;border-color:#446;color:#446}.canvas .box button.mini" +
-                    "mize:hover{background:#bbf;border-color:#228;color:#228}.canvas .box button.resi" +
-                    "ze{background:#cfcfd8;border-color:#446;color:#446}.canvas .box button.resize:ho" +
-                    "ver{background:#bbf;border-color:#228;color:#228}.canvas .box button.save{backgr" +
-                    "ound:#d8cfcf;border-color:#644;color:#644}.canvas .box button.save:hover{backgro" +
-                    "und:#fcc;border-color:#822;color:#822}.canvas .box h3.heading:hover{background:#" +
-                    "d8d8cf}.canvas .diff,.canvas .beautify,.canvas ol,.canvas .diff p.author,.canvas" +
-                    " .diff h3,.canvas .diff-right,.canvas .diff-left{border-color:#664}.canvas .diff" +
-                    " .count,.canvas .beautify .count{background:#c8c8bf}.canvas .diff .count .empty{" +
-                    "background:#c8c8bf;border-color:#664;color:#c8c8bf}.canvas .diff .data,.canvas ." +
-                    "beautify .data{background:#f8f8ef}.canvas .diff .data .delete em{background-colo" +
-                    "r:#fdc;border-color:#600;color:#933}.canvas .diff .data .insert em{background-co" +
-                    "lor:#efc;border-color:#060;color:#464}.canvas .diff .data .replace em{background" +
-                    "-color:#ffd;border-color:#664;color:#880}.canvas .diff .delete{background-color:" +
-                    "#da9;border-color:#c87;color:#600}.canvas .diff .equal,.canvas .beautify .data l" +
-                    "i{background-color:#f8f8ef;border-color:#ddd;color:#666}.canvas .diff .insert{ba" +
-                    "ckground-color:#bd9;border-color:#9c7;color:#040}.canvas .diff .replace{backgrou" +
-                    "nd-color:#dda;border-color:#cc8;color:#660}.canvas .diff .skip{background-color:" +
-                    "#eee;border-color:#ccc}.canvas .diff h3{background:#c8c8bf;color:#664}.canvas .d" +
-                    "iff p.author{background:#ddc;color:#666}.canvas #doc .analysis thead th,.canvas " +
-                    "#doc .analysis th[colspan],.canvas .doc .analysis thead th,.canvas .doc .analysi" +
-                    "s th[colspan]{background:#c8c8bf}.canvas #doc div,.canvas .doc div,#doc.canvas d" +
-                    "iv{background:#c8c8bf;border-color:#664}.canvas #doc div:hover,.canvas .doc div:" +
-                    "hover,#doc.canvas div:hover{background:#d8d8cf}.canvas #doc div div,.canvas .doc" +
-                    " div div,#doc.canvas div div{background:#e8e8e8;border-color:#664}.canvas #doc d" +
-                    "iv div:hover,.canvas .doc div div:hover,#doc.canvas div div:hover,#doc.canvas di" +
-                    "v ol:hover{background:#f8f8ef}.canvas #doc em,.canvas .doc em,.canvas .box .body" +
-                    " em,.canvas .box .body .doc em{color:#472}.canvas #doc ol,.canvas .doc ol,#doc.c" +
-                    "anvas ol{background:#e8e8e8;border-color:#664}.canvas #doc strong,.canvas .doc s" +
-                    "trong,.canvas .box .body strong{color:#933}.canvas #doc table,.canvas .doc table" +
-                    ",#doc.canvas table,.canvas .box .body table{background:#f8f8ef;border-color:#664" +
-                    ";color:#666}.canvas #doc td,.canvas .doc td,#doc.canvas td{border-color:#664}.ca" +
-                    "nvas #doc th,.canvas .doc th,#doc.canvas th{background:#c8c8bf;border-left-color" +
-                    ":#664;border-top-color:#664}.canvas #doc tr:hover,.canvas .doc tr:hover,#doc.can" +
-                    "vas tr:hover{background:#c8c8bf}.canvas .file input,.canvas .labeltext input,.ca" +
-                    "nvas .options input[type=text],.canvas .options select{background:#f8f8f8;border" +
-                    "-color:#664}.canvas .options{background:#d8d8cf;border-color:#664;box-shadow:0 0" +
-                    ".2em 0.4em rgba(128,128,92,0.5);color:#444}.canvas a{color:#450}.canvas a.button" +
-                    ",.canvas button{background:#d8d8cf;border-color:#664;box-shadow:0 0.1em 0.2em rg" +
-                    "ba(128,128,92,0.75);color:#664}.canvas a.button:hover,.canvas a.button:active,.c" +
-                    "anvas button:hover,.canvas button:active{background:#ffe}.canvas fieldset{backgr" +
-                    "ound:#e8e8e8;border-color:#664}.canvas h1 svg{border-color:#664;box-shadow:0 0.1" +
-                    "em 0.2em rgba(128,128,92,0.75)}.canvas h2,.canvas h3{background:#f8f8ef;border-c" +
-                    "olor:#664;box-shadow:0 0.1em 0.2em rgba(128,128,92,0.75);text-shadow:none}.canva" +
-                    "s input,.canvas select{box-shadow:0.1em 0.1em 0.2em #999}.canvas legend{backgrou" +
-                    "nd:#f8f8ef;border-color:#664}.canvas textarea{background:#f8f8ef;border-color:#6" +
-                    "64}.canvas textarea:hover{background:#e8e8e8}html .canvas,body.canvas{background" +
-                    ":#e8e8e8;color:#666}",
+                         "3}.canvas *:focus,.canvas .filefocus,.canvas #feedreportbody .focus,.canvas #fee" +
+                         "dreportbody .active-focus{outline:0.1em dashed #00f}.canvas #Beautify,.canvas #M" +
+                         "inify,.canvas #diffBase,.canvas #diffNew{background:#d8d8cf;border-color:#664;bo" +
+                         "x-shadow:0 0.2em 0.4em rgba(128,128,92,0.5);color:#444}.canvas #beautyoutput,.ca" +
+                         "nvas #minifyoutput{background:#ccc}.canvas #diffoutput #thirdparties{background:" +
+                         "#c8c8bf;border-color:#664}.canvas #diffoutput #thirdparties a{color:#664}.canvas" +
+                         " #diffoutput p em,.canvas #diffoutput li em{color:#050}.canvas #feedreportbody ." +
+                         "radiogroup label{background:#f8f8f8}.canvas #feedreportbody .feedradio1:hover,.c" +
+                         "anvas #feedreportbody .active .feedradio1{background:#f66}.canvas #feedreportbod" +
+                         "y .feedradio2:hover,.canvas #feedreportbody .active .feedradio2{background:#f96}" +
+                         ".canvas #feedreportbody .feedradio3:hover,.canvas #feedreportbody .active .feedr" +
+                         "adio3{background:#fc9}.canvas #feedreportbody .feedradio4:hover,.canvas #feedrep" +
+                         "ortbody .active .feedradio4{background:#ff9}.canvas #feedreportbody .feedradio5:" +
+                         "hover,.canvas #feedreportbody .active .feedradio5{background:#eea}.canvas #feedr" +
+                         "eportbody .feedradio6:hover,.canvas #feedreportbody .active .feedradio6{backgrou" +
+                         "nd:#cd9}.canvas #feedreportbody .feedradio7:hover,.canvas #feedreportbody .activ" +
+                         "e .feedradio7{background:#8d8}.canvas #functionGroup.append{background:#d8d8cf;b" +
+                         "order-color:#664;box-shadow:0 0.2em 0.4em rgba(128,128,92,0.5)}.canvas #option_c" +
+                         "omment{background:#e8e8e8;border-color:#664;color:#444}.canvas #pdsamples li{bac" +
+                         "kground:#d8d8cf;border-color:#664}.canvas #pdsamples li div{background:#e8e8e8;b" +
+                         "order-color:#664}.canvas #pdsamples li div a{color:#664}.canvas #pdsamples li p " +
+                         "a{color:#450}.canvas #textareaTabKey{background:#c8c8bf;border-color:#c33;color:" +
+                         "#555}.canvas #top em{color:#fcc}.canvas #update,.canvas #title_text{background:#" +
+                         "f8f8ee;box-shadow:0 0.1em 0.2em rgba(128,128,92,0.75);color:#464}.canvas .beauti" +
+                         "fy .data em.s0,#doc.canvas .beautify .data em.s0{color:#000}.canvas .beautify .d" +
+                         "ata em.s1,#doc.canvas .beautify .data em.s1{color:#f66}.canvas .beautify .data e" +
+                         "m.s2,#doc.canvas .beautify .data em.s2{color:#12f}.canvas .beautify .data em.s3," +
+                         "#doc.canvas .beautify .data em.s3{color:#090}.canvas .beautify .data em.s4,#doc." +
+                         "canvas .beautify .data em.s4{color:#d6d}.canvas .beautify .data em.s5,#doc.canva" +
+                         "s .beautify .data em.s5{color:#7cc}.canvas .beautify .data em.s6,#doc.canvas .be" +
+                         "autify .data em.s6{color:#c85}.canvas .beautify .data em.s7,#doc.canvas .beautif" +
+                         "y .data em.s7{color:#737}.canvas .beautify .data em.s8,#doc.canvas .beautify .da" +
+                         "ta em.s8{color:#6d0}.canvas .beautify .data em.s9,#doc.canvas .beautify .data em" +
+                         ".s9{color:#dd0s}.canvas .beautify .data em.s10,#doc.canvas .beautify .data em.s1" +
+                         "0{color:#893}.canvas .beautify .data em.s11,#doc.canvas .beautify .data em.s11{c" +
+                         "olor:#b97}.canvas .beautify .data em.s12,#doc.canvas .beautify .data em.s12{colo" +
+                         "r:#bbb}.canvas .beautify .data em.s13,#doc.canvas .beautify .data em.s13{color:#" +
+                         "cc3}.canvas .beautify .data em.s14,#doc.canvas .beautify .data em.s14{color:#333" +
+                         "}.canvas .beautify .data em.s15,#doc.canvas .beautify .data em.s15{color:#9d9}.c" +
+                         "anvas .beautify .data em.s16,#doc.canvas .beautify .data em.s16{color:#880}.canv" +
+                         "as .beautify .data .l0{background:#f8f8ef}.canvas .beautify .data .l1{background" +
+                         ":#fed}.canvas .beautify .data .l2{background:#def}.canvas .beautify .data .l3{ba" +
+                         "ckground:#efe}.canvas .beautify .data .l4{background:#fef}.canvas .beautify .dat" +
+                         "a .l5{background:#eef}.canvas .beautify .data .l6{background:#fff8cc}.canvas .be" +
+                         "autify .data .l7{background:#ede}.canvas .beautify .data .l8{background:#efc}.ca" +
+                         "nvas .beautify .data .l9{background:#ffd}.canvas .beautify .data .l10{background" +
+                         ":#edc}.canvas .beautify .data .l11{background:#fdb}.canvas .beautify .data .l12{" +
+                         "background:#f8f8f8}.canvas .beautify .data .l13{background:#ffb}.canvas .beautif" +
+                         "y .data .l14{background:#eec}.canvas .beautify .data .l15{background:#cfc}.canva" +
+                         "s .beautify .data .l16{background:#eea}.canvas .beautify .data .c0{background:#d" +
+                         "dd}.canvas .beautify .data li{color:#777}.canvas .analysis .bad{background-color" +
+                         ":#ecb;color:#744}.canvas .analysis .good{background-color:#cdb;color:#474}.canva" +
+                         "s .box{background:#ccc;border-color:#664}.canvas .box .body{background:#e8e8e8;b" +
+                         "order-color:#664;box-shadow:0 0.2em 0.4em rgba(128,128,92,0.75);color:#666}.canv" +
+                         "as .box button{box-shadow:0 0.1em 0.2em rgba(128,128,92,0.75)}.canvas .box butto" +
+                         "n.maximize{background:#cfd8cf;border-color:#464;color:#464}.canvas .box button.m" +
+                         "aximize:hover{background:#cfc;border-color:#282;color:#282}.canvas .box button.m" +
+                         "inimize{background:#cfcfd8;border-color:#446;color:#446}.canvas .box button.mini" +
+                         "mize:hover{background:#bbf;border-color:#228;color:#228}.canvas .box button.resi" +
+                         "ze{background:#cfcfd8;border-color:#446;color:#446}.canvas .box button.resize:ho" +
+                         "ver{background:#bbf;border-color:#228;color:#228}.canvas .box button.save{backgr" +
+                         "ound:#d8cfcf;border-color:#644;color:#644}.canvas .box button.save:hover{backgro" +
+                         "und:#fcc;border-color:#822;color:#822}.canvas .box h3.heading:hover{background:#" +
+                         "d8d8cf}.canvas .diff,.canvas .beautify,.canvas ol,.canvas .diff p.author,.canvas" +
+                         " .diff h3,.canvas .diff-right,.canvas .diff-left{border-color:#664}.canvas .diff" +
+                         " .count,.canvas .beautify .count{background:#c8c8bf}.canvas .diff .count .empty{" +
+                         "background:#c8c8bf;border-color:#664;color:#c8c8bf}.canvas .diff .data,.canvas ." +
+                         "beautify .data{background:#f8f8ef}.canvas .diff .data .delete em{background-colo" +
+                         "r:#fdc;border-color:#600;color:#933}.canvas .diff .data .insert em{background-co" +
+                         "lor:#efc;border-color:#060;color:#464}.canvas .diff .data .replace em{background" +
+                         "-color:#ffd;border-color:#664;color:#880}.canvas .diff .delete{background-color:" +
+                         "#da9;border-color:#c87;color:#600}.canvas .diff .equal,.canvas .beautify .data l" +
+                         "i{background-color:#f8f8ef;border-color:#ddd;color:#666}.canvas .diff .insert{ba" +
+                         "ckground-color:#bd9;border-color:#9c7;color:#040}.canvas .diff .replace{backgrou" +
+                         "nd-color:#dda;border-color:#cc8;color:#660}.canvas .diff .skip{background-color:" +
+                         "#eee;border-color:#ccc}.canvas .diff h3{background:#c8c8bf;color:#664}.canvas .d" +
+                         "iff p.author{background:#ddc;color:#666}.canvas #doc .analysis thead th,.canvas " +
+                         "#doc .analysis th[colspan],.canvas .doc .analysis thead th,.canvas .doc .analysi" +
+                         "s th[colspan]{background:#c8c8bf}.canvas #doc div,.canvas .doc div,#doc.canvas d" +
+                         "iv{background:#c8c8bf;border-color:#664}.canvas #doc div:hover,.canvas .doc div:" +
+                         "hover,#doc.canvas div:hover{background:#d8d8cf}.canvas #doc div div,.canvas .doc" +
+                         " div div,#doc.canvas div div{background:#e8e8e8;border-color:#664}.canvas #doc d" +
+                         "iv div:hover,.canvas .doc div div:hover,#doc.canvas div div:hover,#doc.canvas di" +
+                         "v ol:hover{background:#f8f8ef}.canvas #doc em,.canvas .doc em,.canvas .box .body" +
+                         " em,.canvas .box .body .doc em{color:#472}.canvas #doc ol,.canvas .doc ol,#doc.c" +
+                         "anvas ol{background:#e8e8e8;border-color:#664}.canvas #doc strong,.canvas .doc s" +
+                         "trong,.canvas .box .body strong{color:#933}.canvas #doc table,.canvas .doc table" +
+                         ",#doc.canvas table,.canvas .box .body table{background:#f8f8ef;border-color:#664" +
+                         ";color:#666}.canvas #doc td,.canvas .doc td,#doc.canvas td{border-color:#664}.ca" +
+                         "nvas #doc th,.canvas .doc th,#doc.canvas th{background:#c8c8bf;border-left-color" +
+                         ":#664;border-top-color:#664}.canvas #doc tr:hover,.canvas .doc tr:hover,#doc.can" +
+                         "vas tr:hover{background:#c8c8bf}.canvas .file input,.canvas .labeltext input,.ca" +
+                         "nvas .options input[type=text],.canvas .options select{background:#f8f8f8;border" +
+                         "-color:#664}.canvas .options{background:#d8d8cf;border-color:#664;box-shadow:0 0" +
+                         ".2em 0.4em rgba(128,128,92,0.5);color:#444}.canvas a{color:#450}.canvas a.button" +
+                         ",.canvas button{background:#d8d8cf;border-color:#664;box-shadow:0 0.1em 0.2em rg" +
+                         "ba(128,128,92,0.75);color:#664}.canvas a.button:hover,.canvas a.button:active,.c" +
+                         "anvas button:hover,.canvas button:active{background:#ffe}.canvas fieldset{backgr" +
+                         "ound:#e8e8e8;border-color:#664}.canvas h1 svg{border-color:#664;box-shadow:0 0.1" +
+                         "em 0.2em rgba(128,128,92,0.75)}.canvas h2,.canvas h3{background:#f8f8ef;border-c" +
+                         "olor:#664;box-shadow:0 0.1em 0.2em rgba(128,128,92,0.75);text-shadow:none}.canva" +
+                         "s input,.canvas select{box-shadow:0.1em 0.1em 0.2em #999}.canvas legend{backgrou" +
+                         "nd:#f8f8ef;border-color:#664}.canvas textarea{background:#f8f8ef;border-color:#6" +
+                         "64}.canvas textarea:hover{background:#e8e8e8}html .canvas,body.canvas{background" +
+                         ":#e8e8e8;color:#666}",
             sshadow: "#doc.shadow{color:#ddd}#doc.shadow h3 a{color:#f90}#webtool.shadow input.uncheck" +
-                    "ed{background:#666;color:#ddd}.shadow *:focus,.shadow .filefocus,.shadow #feedre" +
-                    "portbody .focus,.shadow #feedreportbody .active-focus{outline:0.1em dashed #00f}" +
-                    ".shadow #beautyoutput,.shadow #minifyoutput{background:#555;color:#eee}.shadow #" +
-                    "Beautify,.shadow #Minify,.shadow #diffBase,.shadow #diffNew{background:#666;bord" +
-                    "er-color:#999;color:#ddd}.shadow #Beautify label,.shadow #Minify label,.shadow #" +
-                    "diffBase label,.shadow #diffNew label{text-shadow:0.1em 0.1em 0.1em #333}.shadow" +
-                    " #diffoutput #thirdparties{background:#666;border-color:#999}.shadow #diffoutput" +
-                    " #thirdparties a{box-shadow:0 0.2em 0.4em rgba(0,0,0,1);color:#000}.shadow #doc " +
-                    "div,.shadow .doc div,#doc.shadow div{background:#666;border-color:#999}.shadow #" +
-                    "doc div:hover,.shadow .doc div:hover,#doc.shadow div:hover{background:#777}.shad" +
-                    "ow #doc div div,.shadow .doc div div,#doc.shadow div div{background:#333;border-" +
-                    "color:#999}.shadow #doc div div:hover,.shadow .doc div div:hover,#doc.shadow div" +
-                    " div:hover,#doc.shadow div ol:hover{background:#444}.shadow #doc em,.shadow .doc" +
-                    " em,.shadow .box .body em,.shadow .box .body .doc em,.shadow #diffoutput p em,.s" +
-                    "hadow #diffoutput li em{color:#684}.shadow #doc ol,.shadow .doc ol,#doc.shadow o" +
-                    "l{background:#333;border-color:#999}.shadow #doc strong,.shadow .doc strong,.sha" +
-                    "dow .box .body strong{color:#b33}.shadow #doc table,.shadow .doc table,#doc.shad" +
-                    "ow table,.shadow .diff,.shadow .beautify,.shadow .box .body table{background:#33" +
-                    "3;border-color:#999;color:#ddd}.shadow #doc th,.shadow .doc th,#doc.shadow th{ba" +
-                    "ckground:#bbb;border-left-color:#999;border-top-color:#999;color:#333}.shadow #d" +
-                    "oc tr:hover,.shadow .doc tr:hover,#doc.shadow tr:hover{background:#555}.shadow #" +
-                    "feedreportbody .radiogroup label{background:#000}.shadow #feedreportbody .feedra" +
-                    "dio1:hover,.shadow #feedreportbody .active .feedradio1{background:#700}.shadow #" +
-                    "feedreportbody .feedradio2:hover,.shadow #feedreportbody .active .feedradio2{bac" +
-                    "kground:#742}.shadow #feedreportbody .feedradio3:hover,.shadow #feedreportbody ." +
-                    "active .feedradio3{background:#763}.shadow #feedreportbody .feedradio4:hover,.sh" +
-                    "adow #feedreportbody .active .feedradio4{background:#880}.shadow #feedreportbody" +
-                    " .feedradio5:hover,.shadow #feedreportbody .active .feedradio5{background:#675}." +
-                    "shadow #feedreportbody .feedradio6:hover,.shadow #feedreportbody .active .feedra" +
-                    "dio6{background:#452}.shadow #feedreportbody .feedradio7:hover,.shadow #feedrepo" +
-                    "rtbody .active .feedradio7{background:#362}.shadow #functionGroup.append{backgro" +
-                    "und:#eee;border-color:#ccc;box-shadow:0 0.1em 0.2em rgba(64,64,64,0.15)}.shadow " +
-                    "#functionGroup.append{background:#666;border-color:#999}.shadow #option_comment{" +
-                    "background:#333;border-color:#999;color:#ddd}.shadow #option_comment,.shadow inp" +
-                    "ut,.shadow select{box-shadow:0.1em 0.1em 0.2em #000}.shadow #pdsamples li{backgr" +
-                    "ound:#666;border-color:#999}.shadow #pdsamples li div{background:#333;border-col" +
-                    "or:#999}.shadow #pdsamples li p a{color:#f90}.shadow #pdsamples li p a:hover{col" +
-                    "or:#fc0}.shadow #textreport{background:#222}.shadow #title_text{border-color:#22" +
-                    "2;color:#eee}.shadow #top em{color:#9c6}.shadow #update{background:#ddd;border-c" +
-                    "olor:#000;color:#222}.shadow .analysis .bad{background-color:#400;color:#c66}.sh" +
-                    "adow .analysis .good{background-color:#040;color:#6a6}.shadow .beautify .data em" +
-                    ".s0,#doc.shadow .beautify .data em.s0{color:#fff}.shadow .beautify .data em.s1,#" +
-                    "doc.shadow .beautify .data em.s1{color:#c44}.shadow .beautify .data em.s2,#doc.s" +
-                    "hadow .beautify .data em.s2{color:#69c}.shadow .beautify .data em.s3,#doc.shadow" +
-                    " .beautify .data em.s3{color:#0c0}.shadow .beautify .data em.s4,#doc.shadow .bea" +
-                    "utify .data em.s4{color:#c0c}.shadow .beautify .data em.s5,#doc.shadow .beautify" +
-                    " .data em.s5{color:#0cc}.shadow .beautify .data em.s6,#doc.shadow .beautify .dat" +
-                    "a em.s6{color:#981}.shadow .beautify .data em.s7,#doc.shadow .beautify .data em." +
-                    "s7{color:#a7a}.shadow .beautify .data em.s8,#doc.shadow .beautify .data em.s8{co" +
-                    "lor:#7a7}.shadow .beautify .data em.s9,#doc.shadow .beautify .data em.s9{color:#" +
-                    "ff6}.shadow .beautify .data em.s10,#doc.shadow .beautify .data em.s10{color:#33f" +
-                    "}.shadow .beautify .data em.s11,#doc.shadow .beautify .data em.s11{color:#933}.s" +
-                    "hadow .beautify .data em.s12,#doc.shadow .beautify .data em.s12{color:#990}.shad" +
-                    "ow .beautify .data em.s13,#doc.shadow .beautify .data em.s13{color:#987}.shadow " +
-                    ".beautify .data em.s14,#doc.shadow .beautify .data em.s14{color:#fc3}.shadow .be" +
-                    "autify .data em.s15,#doc.shadow .beautify .data em.s15{color:#897}.shadow .beaut" +
-                    "ify .data em.s16,#doc.shadow .beautify .data em.s16{color:#f30}.shadow .beautify" +
-                    " .data .l0{background:#333}.shadow .beautify .data .l1{background:#633}.shadow ." +
-                    "beautify .data .l2{background:#335}.shadow .beautify .data .l3{background:#353}." +
-                    "shadow .beautify .data .l4{background:#636}.shadow .beautify .data .l5{backgroun" +
-                    "d:#366}.shadow .beautify .data .l6{background:#640}.shadow .beautify .data .l7{b" +
-                    "ackground:#303}.shadow .beautify .data .l8{background:#030}.shadow .beautify .da" +
-                    "ta .l9{background:#660}.shadow .beautify .data .l10{background:#003}.shadow .bea" +
-                    "utify .data .l11{background:#300}.shadow .beautify .data .l12{background:#553}.s" +
-                    "hadow .beautify .data .l13{background:#432}.shadow .beautify .data .l14{backgrou" +
-                    "nd:#640}.shadow .beautify .data .l15{background:#562}.shadow .beautify .data .l1" +
-                    "6{background:#600}.shadow .beautify .data .c0{background:#666}.shadow .box{backg" +
-                    "round:#000;border-color:#999;box-shadow:0.6em 0.6em 0.8em rgba(0,0,0,.75)}.shado" +
-                    "w .box .body{background:#333;border-color:#999;color:#ddd}.shadow .box button{bo" +
-                    "x-shadow:0 0.1em 0.2em rgba(0,0,0,0.75);text-shadow:0.1em 0.1em 0.1em rgba(0,0,0" +
-                    ",.5)}.shadow .box button.maximize{background:#9c9;border-color:#030;color:#030}." +
-                    "shadow .box button.maximize:hover{background:#cfc;border-color:#060;color:#060}." +
-                    "shadow .box button.minimize{background:#bbf;border-color:#006;color:#006}.shadow" +
-                    " .box button.minimize:hover{background:#eef;border-color:#228;color:#228}.shadow" +
-                    " .box button.resize{background:#bbf;border-color:#446;color:#446}.shadow .box bu" +
-                    "tton.resize:hover{background:#ddf;border-color:#228;color:#228}.shadow .box butt" +
-                    "on.save{background:#d99;border-color:#300;color:#300}.shadow .box button.save:ho" +
-                    "ver{background:#fcc;border-color:#822;color:#822}.shadow .box h3{background:#ccc" +
-                    ";border-color:#333;box-shadow:0.2em 0.2em 0.8em #000;color:#222}.shadow .box h3." +
-                    "heading:hover{background:#222;border-color:#ddd;color:#ddd}.shadow .diff,.shadow" +
-                    " .beautify,.shadow .diff div,.shadow .diff p,.ahadow .diff ol,.shadow .beautify " +
-                    "ol,.shadow .diff li,.ahadow .beautify li,.shadow .diff .count li,.shadow .beauti" +
-                    "fy .count li,.shadow .diff-right .data{border-color:#999}.shadow .diff .count,.s" +
-                    "hadow .beautify .count,#doc.shadow .diff .count,#doc.shadow .beautify .count{bac" +
-                    "kground:#bbb;color:#333}.shadow .diff .count .empty{background:#bbb;color:#bbb}." +
-                    "shadow .diff .data,.shadow .beautify .data{background:#333;color:#ddd}.shadow .d" +
-                    "iff .data .delete em{background-color:#700;border-color:#c66;color:#f99}.shadow " +
-                    ".diff .data .insert em{background-color:#363;border-color:#6c0;color:#cfc}.shado" +
-                    "w .diff .data .replace em{background-color:#440;border-color:#220;color:#cc9}.sh" +
-                    "adow .diff .delete{background-color:#300;border-color:#400;color:#c66}.shadow .d" +
-                    "iff .diff-right{border-color:#999 #999 #999 #333}.shadow .diff .empty{background" +
-                    "-color:#999;border-color:#888}.shadow .diff .equal,.shadow .beautify .data li{ba" +
-                    "ckground-color:#333;border-color:#404040;color:#ddd}.shadow .diff .insert{backgr" +
-                    "ound-color:#040;border-color:#005000;color:#6c6}.shadow .diff .replace{backgroun" +
-                    "d-color:#664;border-color:#707050;color:#bb8}.shadow .diff .skip{background-colo" +
-                    "r:#000;border-color:#555}.shadow .diff h3,.shadow #doc .analysis th[colspan],.sh" +
-                    "adow #doc .analysis thead th,.shadow .doc .analysis th[colspan],.shadow .doc .an" +
-                    "alysis thead th{background:#555;border-color:#999;color:#ddd}.shadow .diff p.aut" +
-                    "hor{background:#555;border-color:#999;color:#ddd}.shadow .file input,.shadow .la" +
-                    "beltext input,.shadow .options input[type=text],.shadow .options select{backgrou" +
-                    "nd:#333;border-color:#999;color:#ddd}.shadow .options{background:#666;border-col" +
-                    "or:#999;color:#ddd;text-shadow:0.1em 0.1em 0.2em #333}.shadow .options fieldset " +
-                    "span input[type=text]{background:#222;border-color:#333}.shadow a{color:#f90}.sh" +
-                    "adow a:hover{color:#c30}.shadow a.button,.shadow button{background:#630;border-c" +
-                    "olor:#600;box-shadow:0 0.2em 0.4em rgba(0,0,0,1);color:#f90;text-shadow:0.1em 0." +
-                    "1em 0.1em #000}.shadow a.button:hover,.shadow a.button:active,.shadow button:hov" +
-                    "er,.shadow button:active{background:#300;border-color:#c00;color:#fc0;text-shado" +
-                    "w:0.1em 0.1em 0.1em rgba(0,0,0,.5)}.shadow h1 svg{border-color:#222;box-shadow:0" +
-                    ".2em 0.2em 0.4em #000}.shadow h2,.shadow h3{background-color:#666;border-color:#" +
-                    "666;box-shadow:none;color:#ddd;padding-left:0;text-shadow:none}.shadow textarea{" +
-                    "background:#333;border-color:#000;color:#ddd}.shadow textarea:hover{background:#" +
-                    "000}.shadow fieldset{background:#333;border-color:#999}.shadow input[disabled]{b" +
-                    "ox-shadow:none}.shadow legend{background:#eee;border-color:#333;box-shadow:0 0.1" +
-                    "em 0.2em rgba(0,0,0,0.75);color:#222;text-shadow:none}.shadow table td{border-co" +
-                    "lor:#999}html .shadow,body.shadow{background:#222;color:#eee}",
-            swhite: "#webtool.white input.unchecked{background:#ccc;color:#666}.white *:focus,.white " +
-                    ".filefocus,.white #feedreportbody .focus,.white #feedreportbody .active-focus{ou" +
-                    "tline:0.1em dashed #00f}.white #beautyoutput,.white #minifyoutput{background:#dd" +
-                    "d}.white #Beautify,.white #Minify,.white #diffBase,.white #diffNew{background:#e" +
-                    "ee;border-color:#ccc;box-shadow:0 0.2em 0.4em rgba(64,64,64,0.15)}.white #diffou" +
-                    "tput #thirdparties{background:#eee}.white #diffoutput p em,.white #diffoutput li" +
-                    " em{color:#c00}.white #doc .analysis thead th,.white #doc .analysis th[colspan]," +
-                    ".white .doc .analysis thead th,.white .doc .analysis th[colspan]{background:#eef" +
-                    "}.white #doc div,.white .doc div,#doc.white div{background:#ddd;border-color:#99" +
-                    "9}.white #doc div:hover,.white .doc div:hover,#doc.white div:hover{background:#c" +
-                    "cc}.white #doc div div,.white .doc div div,#doc.white div div{background:#eee;bo" +
-                    "rder-color:#999}.white #doc div div:hover,.white .doc div div:hover,#doc.white d" +
-                    "iv div:hover,#doc.white div ol:hover{background:#fff}.white #doc em,.white .doc " +
-                    "em,#doc.white em{color:#060}.white #doc ol,.white .doc ol,#doc.white ol{backgrou" +
-                    "nd:#f8f8f8;border-color:#999}.white #doc strong,.white .doc strong,.white .box ." +
-                    "body strong{color:#c00}#doc.white table,.white #doc table,.white .doc table,.whi" +
-                    "te .box .body table{background:#fff;border-color:#999}.white #doc th,.white .doc" +
-                    " th,#doc.white th{background:#ddd;border-left-color:#999;border-top-color:#999}." +
-                    "white #doc tr:hover,.white .doc tr:hover,#doc.white tr:hover{background:#ddd}.wh" +
-                    "ite #feedreportbody .radiogroup label{background:#f8f8f8}.white #feedreportbody " +
-                    ".feedradio1:hover,.white #feedreportbody .active .feedradio1,.white #feedreportb" +
-                    "ody .active-focus .feedradio1{background:#f66}.white #feedreportbody .feedradio2" +
-                    ":hover,.white #feedreportbody .active .feedradio2,.white #feedreportbody .active" +
-                    "-focus .feedradio2{background:#f96}.white #feedreportbody .feedradio3:hover,.whi" +
-                    "te #feedreportbody .active .feedradio3,.white #feedreportbody .active-focus .fee" +
-                    "dradio3{background:#fc9}.white #feedreportbody .feedradio4:hover,.white #feedrep" +
-                    "ortbody .active .feedradio4,.white #feedreportbody .active-focus .feedradio4{bac" +
-                    "kground:#ff9}.white #feedreportbody .feedradio5:hover,.white #feedreportbody .ac" +
-                    "tive .feedradio5,.white #feedreportbody .active-focus .feedradio5{background:#ee" +
-                    "a}.white #feedreportbody .feedradio6:hover,.white #feedreportbody .active .feedr" +
-                    "adio6,.white #feedreportbody .active-focus .feedradio6{background:#cd9}.white #f" +
-                    "eedreportbody .feedradio7:hover,.white #feedreportbody .active .feedradio7,.whit" +
-                    "e #feedreportbody .active-focus .feedradio7{background:#8d8}.white #functionGrou" +
-                    "p.append{background:#eee;border-color:#ccc;box-shadow:0 0.1em 0.2em rgba(64,64,6" +
-                    "4,0.15)}.white #introduction h2{border-color:#999;color:#333}.white #option_comm" +
-                    "ent{background:#ddd;border-color:#999}.white #pdsamples li{background:#eee;borde" +
-                    "r-color:#999}.white #pdsamples li div{background:#ddd;border-color:#999}.white #" +
-                    "pdsamples li div a{color:#47a}.white #pdsamples li p a{color:#009}.white #thirdp" +
-                    "arties img,.white #diffoutput #thirdparties{border-color:#999}.white #textareaTa" +
-                    "bKey{background:#fff;border-color:#ccf}.white #thirdparties img{box-shadow:0.2em" +
-                    " 0.2em 0.4em #999}.white #title_text{border-color:#fff;color:#333}.white #top em" +
-                    "{color:#00f}.white #update{background:#ddd;border-color:#999;box-shadow:0 0.1em " +
-                    "0.2em rgba(64,64,64,0.15)}.white .analysis .bad{background-color:#ebb;color:#400" +
-                    "}.white .analysis .good{background-color:#cec;color:#040}.white .beautify .data " +
-                    ".l0{background:#fff}.white .beautify .data .l1{background:#fed}.white .beautify " +
-                    ".data .l2{background:#def}.white .beautify .data .l3{background:#efe}.white .bea" +
-                    "utify .data .l4{background:#fef}.white .beautify .data .l5{background:#eef}.whit" +
-                    "e .beautify .data .l6{background:#fff8cc}.white .beautify .data .l7{background:#" +
-                    "ede}.white .beautify .data .l8{background:#efc}.white .beautify .data .l9{backgr" +
-                    "ound:#ffd}.white .beautify .data .l10{background:#edc}.white .beautify .data .l1" +
-                    "1{background:#fdb}.white .beautify .data .l12{background:#f8f8f8}.white .beautif" +
-                    "y .data .l13{background:#ffb}.white .beautify .data .l14{background:#eec}.white " +
-                    ".beautify .data .l15{background:#cfc}.white .beautify .data .l16{background:#eea" +
-                    "}.white .beautify .data .c0{background:#ddd}.white .beautify .data em.s0,#doc.wh" +
-                    "ite .beautify .data em.s0{color:#000}.white .beautify .data em.s1,#doc.white .be" +
-                    "autify .data em.s1{color:#f66}.white .beautify .data em.s2,#doc.white .beautify " +
-                    ".data em.s2{color:#12f}.white .beautify .data em.s3,#doc.white .beautify .data e" +
-                    "m.s3{color:#090}.white .beautify .data em.s4,#doc.white .beautify .data em.s4{co" +
-                    "lor:#d6d}.white .beautify .data em.s5,#doc.white .beautify .data em.s5{color:#7c" +
-                    "c}.white .beautify .data em.s6,#doc.white .beautify .data em.s6{color:#c85}.whit" +
-                    "e .beautify .data em.s7,#doc.white .beautify .data em.s7{color:#737}.white .beau" +
-                    "tify .data em.s8,#doc.white .beautify .data em.s8{color:#6d0}.white .beautify .d" +
-                    "ata em.s9,#doc.white .beautify .data em.s9{color:#dd0}.white .beautify .data em." +
-                    "s10,#doc.white .beautify .data em.s10{color:#893}.white .beautify .data em.s11,#" +
-                    "doc.white .beautify .data em.s11{color:#b97}.white .beautify .data em.s12,#doc.w" +
-                    "hite .beautify .data em.s12{color:#bbb}.white .beautify .data em.s13,#doc.white " +
-                    ".beautify .data em.s13{color:#cc3}.white .beautify .data em.s14,#doc.white .beau" +
-                    "tify .data em.s14{color:#333}.white .beautify .data em.s15,#doc.white .beautify " +
-                    ".data em.s15{color:#9d9}.white .beautify .data em.s16,#doc.white .beautify .data" +
-                    " em.s16{color:#880}.white .beautify .data li{color:#777}.white .box{background:#" +
-                    "666;border-color:#999;box-shadow:0 0.4em 0.8em rgba(64,64,64,0.25)}.white .box ." +
-                    "body{background:#eee;border-color:#888;box-shadow:0 0 0.4em rgba(64,64,64,0.75)}" +
-                    ".white .box .body em,.white .box .body .doc em{color:#090}.white .box button{box" +
-                    "-shadow:0 0.1em 0.2em rgba(0,0,0,0.25);text-shadow:0.1em 0.1em 0.1em rgba(0,0,0," +
-                    ".25)}.white .box button.maximize{background:#9c9;border-color:#030;color:#030}.w" +
-                    "hite .box button.maximize:hover{background:#cfc;border-color:#060;color:#060}.wh" +
-                    "ite .box button.minimize{background:#bbf;border-color:#006;color:#006}.white .bo" +
-                    "x button.minimize:hover{background:#eef;border-color:#228;color:#228}.white .box" +
-                    " button.resize{background:#bbf;border-color:#446;color:#446}.white .box button.r" +
-                    "esize:hover{background:#ddf;border-color:#228;color:#228}.white .box button.save" +
-                    "{background:#d99;border-color:#300;color:#300}.white .box button.save:hover{back" +
-                    "ground:#fcc;border-color:#822;color:#822}.white .box h3.heading{background:#ddd;" +
-                    "border-color:#888;box-shadow:0.2em 0.2em 0.4em #ccc}.white .box h3.heading:hover" +
-                    "{background:#333;color:#eee}.white .diff,.white .beautify,.white .diff ol,.white" +
-                    " .beautify ol,.white .diff .diff-left,.white .diff .diff-right,.white h3,.white " +
-                    "p.author{border-color:#999}.white .diff .count li,.white .beautify .count li{bac" +
-                    "kground:#eed;border-color:#bbc;color:#886}.white .diff .data .delete em{backgrou" +
-                    "nd-color:#fdd;border-color:#700;color:#600}.white .diff .data .insert em{backgro" +
-                    "und-color:#efc;border-color:#070;color:#050}.white .diff .data .replace em{backg" +
-                    "round-color:#ffd;border-color:#963;color:#630}.white .diff .delete{background-co" +
-                    "lor:#fbb;border-color:#eaa}.white .diff .equal,.white .beautify .data li{backgro" +
-                    "und-color:#fff;border-color:#eee}.white .diff .empty{background-color:#ddd;borde" +
-                    "r-color:#ccc}.white .diff .insert{background-color:#bfb;border-color:#aea}.white" +
-                    " .diff .replace{background-color:#fea;border-color:#dd8}.white .diff .skip{backg" +
-                    "round-color:#efefef;border-color:#ddd}.white .diff h3{background:#ddd;border-bot" +
-                    "tom-color:#bbc}.white .diff p.author{background:#efefef;border-top-color:#bbc}.w" +
-                    "hite .file input,.white .labeltext input{border-color:#fff}.white .options{backg" +
-                    "round:#eee;border-color:#ccc;box-shadow:0 0.2em 0.4em rgba(64,64,64,0.15);text-s" +
-                    "hadow:0.05em 0.05em 0.1em #ddd}.white .options input[type=text],.white .options " +
-                    "select{border-color:#999}.white .options h2,.white #Beautify h2,.white #Minify h" +
-                    "2,.white #diffBase h2,.white #diffNew h2{background:#eee;border-color:#eee;box-s" +
-                    "hadow:none;text-shadow:none}.white a{color:#009}.white a.button:hover,.white a.b" +
-                    "utton:active,.white button:hover,.white button:active{background:#fee;border-col" +
-                    "or:#cbb;color:#966;text-shadow:0.05em 0.05em 0.1em #f8e8e8}.white fieldset{backg" +
-                    "round:#ddd;border-color:#999}.white h1 svg{background:#eee;border-color:#999;box" +
-                    "-shadow:0 0.1em 0.2em rgba(150,150,150,0.5)}.white h2,.white h3{background:#fefe" +
-                    "fe;border-color:#999;box-shadow:none;text-shadow:none}.white legend{background:#" +
-                    "fff;border-color:#999;color:#333;text-shadow:none}.white div input{border-color:" +
-                    "#999}.white textarea{border-color:#ccc;border-style:solid}.white textarea:hover{" +
-                    "background:#eef8ff}body.white button,body.white a.button{background:#f8f8f8;bord" +
-                    "er-color:#bbb;box-shadow:0 0.1em 0.2em rgba(64,64,64,0.15);color:#666;text-shado" +
-                    "w:0.05em 0.05em 0.1em #e0e0e0}html .white,body.white{color:#333}#about_license a" +
-                    "{display:block}"
+                         "ed{background:#666;color:#ddd}.shadow *:focus,.shadow .filefocus,.shadow #feedre" +
+                         "portbody .focus,.shadow #feedreportbody .active-focus{outline:0.1em dashed #00f}" +
+                         ".shadow #beautyoutput,.shadow #minifyoutput{background:#555;color:#eee}.shadow #" +
+                         "Beautify,.shadow #Minify,.shadow #diffBase,.shadow #diffNew{background:#666;bord" +
+                         "er-color:#999;color:#ddd}.shadow #Beautify label,.shadow #Minify label,.shadow #" +
+                         "diffBase label,.shadow #diffNew label{text-shadow:0.1em 0.1em 0.1em #333}.shadow" +
+                         " #diffoutput #thirdparties{background:#666;border-color:#999}.shadow #diffoutput" +
+                         " #thirdparties a{box-shadow:0 0.2em 0.4em rgba(0,0,0,1);color:#000}.shadow #doc " +
+                         "div,.shadow .doc div,#doc.shadow div{background:#666;border-color:#999}.shadow #" +
+                         "doc div:hover,.shadow .doc div:hover,#doc.shadow div:hover{background:#777}.shad" +
+                         "ow #doc div div,.shadow .doc div div,#doc.shadow div div{background:#333;border-" +
+                         "color:#999}.shadow #doc div div:hover,.shadow .doc div div:hover,#doc.shadow div" +
+                         " div:hover,#doc.shadow div ol:hover{background:#444}.shadow #doc em,.shadow .doc" +
+                         " em,.shadow .box .body em,.shadow .box .body .doc em,.shadow #diffoutput p em,.s" +
+                         "hadow #diffoutput li em{color:#684}.shadow #doc ol,.shadow .doc ol,#doc.shadow o" +
+                         "l{background:#333;border-color:#999}.shadow #doc strong,.shadow .doc strong,.sha" +
+                         "dow .box .body strong{color:#b33}.shadow #doc table,.shadow .doc table,#doc.shad" +
+                         "ow table,.shadow .diff,.shadow .beautify,.shadow .box .body table{background:#33" +
+                         "3;border-color:#999;color:#ddd}.shadow #doc th,.shadow .doc th,#doc.shadow th{ba" +
+                         "ckground:#bbb;border-left-color:#999;border-top-color:#999;color:#333}.shadow #d" +
+                         "oc tr:hover,.shadow .doc tr:hover,#doc.shadow tr:hover{background:#555}.shadow #" +
+                         "feedreportbody .radiogroup label{background:#000}.shadow #feedreportbody .feedra" +
+                         "dio1:hover,.shadow #feedreportbody .active .feedradio1{background:#700}.shadow #" +
+                         "feedreportbody .feedradio2:hover,.shadow #feedreportbody .active .feedradio2{bac" +
+                         "kground:#742}.shadow #feedreportbody .feedradio3:hover,.shadow #feedreportbody ." +
+                         "active .feedradio3{background:#763}.shadow #feedreportbody .feedradio4:hover,.sh" +
+                         "adow #feedreportbody .active .feedradio4{background:#880}.shadow #feedreportbody" +
+                         " .feedradio5:hover,.shadow #feedreportbody .active .feedradio5{background:#675}." +
+                         "shadow #feedreportbody .feedradio6:hover,.shadow #feedreportbody .active .feedra" +
+                         "dio6{background:#452}.shadow #feedreportbody .feedradio7:hover,.shadow #feedrepo" +
+                         "rtbody .active .feedradio7{background:#362}.shadow #functionGroup.append{backgro" +
+                         "und:#eee;border-color:#ccc;box-shadow:0 0.1em 0.2em rgba(64,64,64,0.15)}.shadow " +
+                         "#functionGroup.append{background:#666;border-color:#999}.shadow #option_comment{" +
+                         "background:#333;border-color:#999;color:#ddd}.shadow #option_comment,.shadow inp" +
+                         "ut,.shadow select{box-shadow:0.1em 0.1em 0.2em #000}.shadow #pdsamples li{backgr" +
+                         "ound:#666;border-color:#999}.shadow #pdsamples li div{background:#333;border-col" +
+                         "or:#999}.shadow #pdsamples li p a{color:#f90}.shadow #pdsamples li p a:hover{col" +
+                         "or:#fc0}.shadow #textreport{background:#222}.shadow #title_text{border-color:#22" +
+                         "2;color:#eee}.shadow #top em{color:#9c6}.shadow #update{background:#ddd;border-c" +
+                         "olor:#000;color:#222}.shadow .analysis .bad{background-color:#400;color:#c66}.sh" +
+                         "adow .analysis .good{background-color:#040;color:#6a6}.shadow .beautify .data em" +
+                         ".s0,#doc.shadow .beautify .data em.s0{color:#fff}.shadow .beautify .data em.s1,#" +
+                         "doc.shadow .beautify .data em.s1{color:#c44}.shadow .beautify .data em.s2,#doc.s" +
+                         "hadow .beautify .data em.s2{color:#69c}.shadow .beautify .data em.s3,#doc.shadow" +
+                         " .beautify .data em.s3{color:#0c0}.shadow .beautify .data em.s4,#doc.shadow .bea" +
+                         "utify .data em.s4{color:#c0c}.shadow .beautify .data em.s5,#doc.shadow .beautify" +
+                         " .data em.s5{color:#0cc}.shadow .beautify .data em.s6,#doc.shadow .beautify .dat" +
+                         "a em.s6{color:#981}.shadow .beautify .data em.s7,#doc.shadow .beautify .data em." +
+                         "s7{color:#a7a}.shadow .beautify .data em.s8,#doc.shadow .beautify .data em.s8{co" +
+                         "lor:#7a7}.shadow .beautify .data em.s9,#doc.shadow .beautify .data em.s9{color:#" +
+                         "ff6}.shadow .beautify .data em.s10,#doc.shadow .beautify .data em.s10{color:#33f" +
+                         "}.shadow .beautify .data em.s11,#doc.shadow .beautify .data em.s11{color:#933}.s" +
+                         "hadow .beautify .data em.s12,#doc.shadow .beautify .data em.s12{color:#990}.shad" +
+                         "ow .beautify .data em.s13,#doc.shadow .beautify .data em.s13{color:#987}.shadow " +
+                         ".beautify .data em.s14,#doc.shadow .beautify .data em.s14{color:#fc3}.shadow .be" +
+                         "autify .data em.s15,#doc.shadow .beautify .data em.s15{color:#897}.shadow .beaut" +
+                         "ify .data em.s16,#doc.shadow .beautify .data em.s16{color:#f30}.shadow .beautify" +
+                         " .data .l0{background:#333}.shadow .beautify .data .l1{background:#633}.shadow ." +
+                         "beautify .data .l2{background:#335}.shadow .beautify .data .l3{background:#353}." +
+                         "shadow .beautify .data .l4{background:#636}.shadow .beautify .data .l5{backgroun" +
+                         "d:#366}.shadow .beautify .data .l6{background:#640}.shadow .beautify .data .l7{b" +
+                         "ackground:#303}.shadow .beautify .data .l8{background:#030}.shadow .beautify .da" +
+                         "ta .l9{background:#660}.shadow .beautify .data .l10{background:#003}.shadow .bea" +
+                         "utify .data .l11{background:#300}.shadow .beautify .data .l12{background:#553}.s" +
+                         "hadow .beautify .data .l13{background:#432}.shadow .beautify .data .l14{backgrou" +
+                         "nd:#640}.shadow .beautify .data .l15{background:#562}.shadow .beautify .data .l1" +
+                         "6{background:#600}.shadow .beautify .data .c0{background:#666}.shadow .box{backg" +
+                         "round:#000;border-color:#999;box-shadow:0.6em 0.6em 0.8em rgba(0,0,0,.75)}.shado" +
+                         "w .box .body{background:#333;border-color:#999;color:#ddd}.shadow .box button{bo" +
+                         "x-shadow:0 0.1em 0.2em rgba(0,0,0,0.75);text-shadow:0.1em 0.1em 0.1em rgba(0,0,0" +
+                         ",.5)}.shadow .box button.maximize{background:#9c9;border-color:#030;color:#030}." +
+                         "shadow .box button.maximize:hover{background:#cfc;border-color:#060;color:#060}." +
+                         "shadow .box button.minimize{background:#bbf;border-color:#006;color:#006}.shadow" +
+                         " .box button.minimize:hover{background:#eef;border-color:#228;color:#228}.shadow" +
+                         " .box button.resize{background:#bbf;border-color:#446;color:#446}.shadow .box bu" +
+                         "tton.resize:hover{background:#ddf;border-color:#228;color:#228}.shadow .box butt" +
+                         "on.save{background:#d99;border-color:#300;color:#300}.shadow .box button.save:ho" +
+                         "ver{background:#fcc;border-color:#822;color:#822}.shadow .box h3{background:#ccc" +
+                         ";border-color:#333;box-shadow:0.2em 0.2em 0.8em #000;color:#222}.shadow .box h3." +
+                         "heading:hover{background:#222;border-color:#ddd;color:#ddd}.shadow .diff,.shadow" +
+                         " .beautify,.shadow .diff div,.shadow .diff p,.ahadow .diff ol,.shadow .beautify " +
+                         "ol,.shadow .diff li,.ahadow .beautify li,.shadow .diff .count li,.shadow .beauti" +
+                         "fy .count li,.shadow .diff-right .data{border-color:#999}.shadow .diff .count,.s" +
+                         "hadow .beautify .count,#doc.shadow .diff .count,#doc.shadow .beautify .count{bac" +
+                         "kground:#bbb;color:#333}.shadow .diff .count .empty{background:#bbb;color:#bbb}." +
+                         "shadow .diff .data,.shadow .beautify .data{background:#333;color:#ddd}.shadow .d" +
+                         "iff .data .delete em{background-color:#700;border-color:#c66;color:#f99}.shadow " +
+                         ".diff .data .insert em{background-color:#363;border-color:#6c0;color:#cfc}.shado" +
+                         "w .diff .data .replace em{background-color:#440;border-color:#220;color:#cc9}.sh" +
+                         "adow .diff .delete{background-color:#300;border-color:#400;color:#c66}.shadow .d" +
+                         "iff .diff-right{border-color:#999 #999 #999 #333}.shadow .diff .empty{background" +
+                         "-color:#999;border-color:#888}.shadow .diff .equal,.shadow .beautify .data li{ba" +
+                         "ckground-color:#333;border-color:#404040;color:#ddd}.shadow .diff .insert{backgr" +
+                         "ound-color:#040;border-color:#005000;color:#6c6}.shadow .diff .replace{backgroun" +
+                         "d-color:#664;border-color:#707050;color:#bb8}.shadow .diff .skip{background-colo" +
+                         "r:#000;border-color:#555}.shadow .diff h3,.shadow #doc .analysis th[colspan],.sh" +
+                         "adow #doc .analysis thead th,.shadow .doc .analysis th[colspan],.shadow .doc .an" +
+                         "alysis thead th{background:#555;border-color:#999;color:#ddd}.shadow .diff p.aut" +
+                         "hor{background:#555;border-color:#999;color:#ddd}.shadow .file input,.shadow .la" +
+                         "beltext input,.shadow .options input[type=text],.shadow .options select{backgrou" +
+                         "nd:#333;border-color:#999;color:#ddd}.shadow .options{background:#666;border-col" +
+                         "or:#999;color:#ddd;text-shadow:0.1em 0.1em 0.2em #333}.shadow .options fieldset " +
+                         "span input[type=text]{background:#222;border-color:#333}.shadow a{color:#f90}.sh" +
+                         "adow a:hover{color:#c30}.shadow a.button,.shadow button{background:#630;border-c" +
+                         "olor:#600;box-shadow:0 0.2em 0.4em rgba(0,0,0,1);color:#f90;text-shadow:0.1em 0." +
+                         "1em 0.1em #000}.shadow a.button:hover,.shadow a.button:active,.shadow button:hov" +
+                         "er,.shadow button:active{background:#300;border-color:#c00;color:#fc0;text-shado" +
+                         "w:0.1em 0.1em 0.1em rgba(0,0,0,.5)}.shadow h1 svg{border-color:#222;box-shadow:0" +
+                         ".2em 0.2em 0.4em #000}.shadow h2,.shadow h3{background-color:#666;border-color:#" +
+                         "666;box-shadow:none;color:#ddd;padding-left:0;text-shadow:none}.shadow textarea{" +
+                         "background:#333;border-color:#000;color:#ddd}.shadow textarea:hover{background:#" +
+                         "000}.shadow fieldset{background:#333;border-color:#999}.shadow input[disabled]{b" +
+                         "ox-shadow:none}.shadow legend{background:#eee;border-color:#333;box-shadow:0 0.1" +
+                         "em 0.2em rgba(0,0,0,0.75);color:#222;text-shadow:none}.shadow table td{border-co" +
+                         "lor:#999}html .shadow,body.shadow{background:#222;color:#eee}",
+            swhite : "#webtool.white input.unchecked{background:#ccc;color:#666}.white *:focus,.white " +
+                         ".filefocus,.white #feedreportbody .focus,.white #feedreportbody .active-focus{ou" +
+                         "tline:0.1em dashed #00f}.white #beautyoutput,.white #minifyoutput{background:#dd" +
+                         "d}.white #Beautify,.white #Minify,.white #diffBase,.white #diffNew{background:#e" +
+                         "ee;border-color:#ccc;box-shadow:0 0.2em 0.4em rgba(64,64,64,0.15)}.white #diffou" +
+                         "tput #thirdparties{background:#eee}.white #diffoutput p em,.white #diffoutput li" +
+                         " em{color:#c00}.white #doc .analysis thead th,.white #doc .analysis th[colspan]," +
+                         ".white .doc .analysis thead th,.white .doc .analysis th[colspan]{background:#eef" +
+                         "}.white #doc div,.white .doc div,#doc.white div{background:#ddd;border-color:#99" +
+                         "9}.white #doc div:hover,.white .doc div:hover,#doc.white div:hover{background:#c" +
+                         "cc}.white #doc div div,.white .doc div div,#doc.white div div{background:#eee;bo" +
+                         "rder-color:#999}.white #doc div div:hover,.white .doc div div:hover,#doc.white d" +
+                         "iv div:hover,#doc.white div ol:hover{background:#fff}.white #doc em,.white .doc " +
+                         "em,#doc.white em{color:#060}.white #doc ol,.white .doc ol,#doc.white ol{backgrou" +
+                         "nd:#f8f8f8;border-color:#999}.white #doc strong,.white .doc strong,.white .box ." +
+                         "body strong{color:#c00}#doc.white table,.white #doc table,.white .doc table,.whi" +
+                         "te .box .body table{background:#fff;border-color:#999}.white #doc th,.white .doc" +
+                         " th,#doc.white th{background:#ddd;border-left-color:#999;border-top-color:#999}." +
+                         "white #doc tr:hover,.white .doc tr:hover,#doc.white tr:hover{background:#ddd}.wh" +
+                         "ite #feedreportbody .radiogroup label{background:#f8f8f8}.white #feedreportbody " +
+                         ".feedradio1:hover,.white #feedreportbody .active .feedradio1,.white #feedreportb" +
+                         "ody .active-focus .feedradio1{background:#f66}.white #feedreportbody .feedradio2" +
+                         ":hover,.white #feedreportbody .active .feedradio2,.white #feedreportbody .active" +
+                         "-focus .feedradio2{background:#f96}.white #feedreportbody .feedradio3:hover,.whi" +
+                         "te #feedreportbody .active .feedradio3,.white #feedreportbody .active-focus .fee" +
+                         "dradio3{background:#fc9}.white #feedreportbody .feedradio4:hover,.white #feedrep" +
+                         "ortbody .active .feedradio4,.white #feedreportbody .active-focus .feedradio4{bac" +
+                         "kground:#ff9}.white #feedreportbody .feedradio5:hover,.white #feedreportbody .ac" +
+                         "tive .feedradio5,.white #feedreportbody .active-focus .feedradio5{background:#ee" +
+                         "a}.white #feedreportbody .feedradio6:hover,.white #feedreportbody .active .feedr" +
+                         "adio6,.white #feedreportbody .active-focus .feedradio6{background:#cd9}.white #f" +
+                         "eedreportbody .feedradio7:hover,.white #feedreportbody .active .feedradio7,.whit" +
+                         "e #feedreportbody .active-focus .feedradio7{background:#8d8}.white #functionGrou" +
+                         "p.append{background:#eee;border-color:#ccc;box-shadow:0 0.1em 0.2em rgba(64,64,6" +
+                         "4,0.15)}.white #introduction h2{border-color:#999;color:#333}.white #option_comm" +
+                         "ent{background:#ddd;border-color:#999}.white #pdsamples li{background:#eee;borde" +
+                         "r-color:#999}.white #pdsamples li div{background:#ddd;border-color:#999}.white #" +
+                         "pdsamples li div a{color:#47a}.white #pdsamples li p a{color:#009}.white #thirdp" +
+                         "arties img,.white #diffoutput #thirdparties{border-color:#999}.white #textareaTa" +
+                         "bKey{background:#fff;border-color:#ccf}.white #thirdparties img{box-shadow:0.2em" +
+                         " 0.2em 0.4em #999}.white #title_text{border-color:#fff;color:#333}.white #top em" +
+                         "{color:#00f}.white #update{background:#ddd;border-color:#999;box-shadow:0 0.1em " +
+                         "0.2em rgba(64,64,64,0.15)}.white .analysis .bad{background-color:#ebb;color:#400" +
+                         "}.white .analysis .good{background-color:#cec;color:#040}.white .beautify .data " +
+                         ".l0{background:#fff}.white .beautify .data .l1{background:#fed}.white .beautify " +
+                         ".data .l2{background:#def}.white .beautify .data .l3{background:#efe}.white .bea" +
+                         "utify .data .l4{background:#fef}.white .beautify .data .l5{background:#eef}.whit" +
+                         "e .beautify .data .l6{background:#fff8cc}.white .beautify .data .l7{background:#" +
+                         "ede}.white .beautify .data .l8{background:#efc}.white .beautify .data .l9{backgr" +
+                         "ound:#ffd}.white .beautify .data .l10{background:#edc}.white .beautify .data .l1" +
+                         "1{background:#fdb}.white .beautify .data .l12{background:#f8f8f8}.white .beautif" +
+                         "y .data .l13{background:#ffb}.white .beautify .data .l14{background:#eec}.white " +
+                         ".beautify .data .l15{background:#cfc}.white .beautify .data .l16{background:#eea" +
+                         "}.white .beautify .data .c0{background:#ddd}.white .beautify .data em.s0,#doc.wh" +
+                         "ite .beautify .data em.s0{color:#000}.white .beautify .data em.s1,#doc.white .be" +
+                         "autify .data em.s1{color:#f66}.white .beautify .data em.s2,#doc.white .beautify " +
+                         ".data em.s2{color:#12f}.white .beautify .data em.s3,#doc.white .beautify .data e" +
+                         "m.s3{color:#090}.white .beautify .data em.s4,#doc.white .beautify .data em.s4{co" +
+                         "lor:#d6d}.white .beautify .data em.s5,#doc.white .beautify .data em.s5{color:#7c" +
+                         "c}.white .beautify .data em.s6,#doc.white .beautify .data em.s6{color:#c85}.whit" +
+                         "e .beautify .data em.s7,#doc.white .beautify .data em.s7{color:#737}.white .beau" +
+                         "tify .data em.s8,#doc.white .beautify .data em.s8{color:#6d0}.white .beautify .d" +
+                         "ata em.s9,#doc.white .beautify .data em.s9{color:#dd0}.white .beautify .data em." +
+                         "s10,#doc.white .beautify .data em.s10{color:#893}.white .beautify .data em.s11,#" +
+                         "doc.white .beautify .data em.s11{color:#b97}.white .beautify .data em.s12,#doc.w" +
+                         "hite .beautify .data em.s12{color:#bbb}.white .beautify .data em.s13,#doc.white " +
+                         ".beautify .data em.s13{color:#cc3}.white .beautify .data em.s14,#doc.white .beau" +
+                         "tify .data em.s14{color:#333}.white .beautify .data em.s15,#doc.white .beautify " +
+                         ".data em.s15{color:#9d9}.white .beautify .data em.s16,#doc.white .beautify .data" +
+                         " em.s16{color:#880}.white .beautify .data li{color:#777}.white .box{background:#" +
+                         "666;border-color:#999;box-shadow:0 0.4em 0.8em rgba(64,64,64,0.25)}.white .box ." +
+                         "body{background:#eee;border-color:#888;box-shadow:0 0 0.4em rgba(64,64,64,0.75)}" +
+                         ".white .box .body em,.white .box .body .doc em{color:#090}.white .box button{box" +
+                         "-shadow:0 0.1em 0.2em rgba(0,0,0,0.25);text-shadow:0.1em 0.1em 0.1em rgba(0,0,0," +
+                         ".25)}.white .box button.maximize{background:#9c9;border-color:#030;color:#030}.w" +
+                         "hite .box button.maximize:hover{background:#cfc;border-color:#060;color:#060}.wh" +
+                         "ite .box button.minimize{background:#bbf;border-color:#006;color:#006}.white .bo" +
+                         "x button.minimize:hover{background:#eef;border-color:#228;color:#228}.white .box" +
+                         " button.resize{background:#bbf;border-color:#446;color:#446}.white .box button.r" +
+                         "esize:hover{background:#ddf;border-color:#228;color:#228}.white .box button.save" +
+                         "{background:#d99;border-color:#300;color:#300}.white .box button.save:hover{back" +
+                         "ground:#fcc;border-color:#822;color:#822}.white .box h3.heading{background:#ddd;" +
+                         "border-color:#888;box-shadow:0.2em 0.2em 0.4em #ccc}.white .box h3.heading:hover" +
+                         "{background:#333;color:#eee}.white .diff,.white .beautify,.white .diff ol,.white" +
+                         " .beautify ol,.white .diff .diff-left,.white .diff .diff-right,.white h3,.white " +
+                         "p.author{border-color:#999}.white .diff .count li,.white .beautify .count li{bac" +
+                         "kground:#eed;border-color:#bbc;color:#886}.white .diff .data .delete em{backgrou" +
+                         "nd-color:#fdd;border-color:#700;color:#600}.white .diff .data .insert em{backgro" +
+                         "und-color:#efc;border-color:#070;color:#050}.white .diff .data .replace em{backg" +
+                         "round-color:#ffd;border-color:#963;color:#630}.white .diff .delete{background-co" +
+                         "lor:#fbb;border-color:#eaa}.white .diff .equal,.white .beautify .data li{backgro" +
+                         "und-color:#fff;border-color:#eee}.white .diff .empty{background-color:#ddd;borde" +
+                         "r-color:#ccc}.white .diff .insert{background-color:#bfb;border-color:#aea}.white" +
+                         " .diff .replace{background-color:#fea;border-color:#dd8}.white .diff .skip{backg" +
+                         "round-color:#efefef;border-color:#ddd}.white .diff h3{background:#ddd;border-bot" +
+                         "tom-color:#bbc}.white .diff p.author{background:#efefef;border-top-color:#bbc}.w" +
+                         "hite .file input,.white .labeltext input{border-color:#fff}.white .options{backg" +
+                         "round:#eee;border-color:#ccc;box-shadow:0 0.2em 0.4em rgba(64,64,64,0.15);text-s" +
+                         "hadow:0.05em 0.05em 0.1em #ddd}.white .options input[type=text],.white .options " +
+                         "select{border-color:#999}.white .options h2,.white #Beautify h2,.white #Minify h" +
+                         "2,.white #diffBase h2,.white #diffNew h2{background:#eee;border-color:#eee;box-s" +
+                         "hadow:none;text-shadow:none}.white a{color:#009}.white a.button:hover,.white a.b" +
+                         "utton:active,.white button:hover,.white button:active{background:#fee;border-col" +
+                         "or:#cbb;color:#966;text-shadow:0.05em 0.05em 0.1em #f8e8e8}.white fieldset{backg" +
+                         "round:#ddd;border-color:#999}.white h1 svg{background:#eee;border-color:#999;box" +
+                         "-shadow:0 0.1em 0.2em rgba(150,150,150,0.5)}.white h2,.white h3{background:#fefe" +
+                         "fe;border-color:#999;box-shadow:none;text-shadow:none}.white legend{background:#" +
+                         "fff;border-color:#999;color:#333;text-shadow:none}.white div input{border-color:" +
+                         "#999}.white textarea{border-color:#ccc;border-style:solid}.white textarea:hover{" +
+                         "background:#eef8ff}body.white button,body.white a.button{background:#f8f8f8;bord" +
+                         "er-color:#bbb;box-shadow:0 0.1em 0.2em rgba(64,64,64,0.15);color:#666;text-shado" +
+                         "w:0.05em 0.05em 0.1em #e0e0e0}html .white,body.white{color:#333}#about_license a" +
+                         "{display:block}"
         },
-        diff: "",
-        langvalue: [],
-        mode: "diff",
-        node: {
-            announce: pd.id("announcement"),
-            beau: pd.id("Beautify"),
-            beauOps: pd.id("beauops"),
-            codeBeauIn: pd.id("beautyinput"),
-            codeBeauOut: pd.id("beautyoutput"),
+        diff               : "",
+        langvalue          : [],
+        mode               : "diff",
+        node               : {
+            announce    : pd.id("announcement"),
+            beau        : pd.id("Beautify"),
+            beauOps     : pd.id("beauops"),
+            codeBeauIn  : pd.id("beautyinput"),
+            codeBeauOut : pd.id("beautyoutput"),
             codeDiffBase: pd.id("baseText"),
-            codeDiffNew: pd.id("newText"),
-            codeMinnIn: pd.id("minifyinput"),
-            codeMinnOut: pd.id("minifyoutput"),
-            codeParsIn: pd.id("parseinput"),
-            codeParsOut: pd.id("parseoutput"),
-            comment: pd.id("option_comment"),
-            diffBase: pd.id("diffBase"),
-            diffNew: pd.id("diffNew"),
-            diffOps: pd.id("diffops"),
-            headline: pd.id("headline"),
-            jsscope: pd.id("jsscope-yes"),
-            lang: pd.id("language"),
-            langdefault: pd.id("lang-default"),
-            maxInputs: pd.id("hideOptions"),
-            minn: pd.id("Minify"),
-            minnOps: pd.id("miniops"),
-            modeBeau: pd.id("modebeautify"),
-            modeDiff: pd.id("modediff"),
-            modeMinn: pd.id("modeminify"),
-            modePars: pd.id("modeparse"),
-            page: document.getElementsByTagName("body")[0],
-            pars: pd.id("Parse"),
-            parsOps: pd.id("parseops"),
-            report: {
+            codeDiffNew : pd.id("newText"),
+            codeMinnIn  : pd.id("minifyinput"),
+            codeMinnOut : pd.id("minifyoutput"),
+            codeParsIn  : pd.id("parseinput"),
+            codeParsOut : pd.id("parseoutput"),
+            comment     : pd.id("option_comment"),
+            diffBase    : pd.id("diffBase"),
+            diffNew     : pd.id("diffNew"),
+            diffOps     : pd.id("diffops"),
+            headline    : pd.id("headline"),
+            jsscope     : pd.id("jsscope-yes"),
+            lang        : pd.id("language"),
+            langdefault : pd.id("lang-default"),
+            maxInputs   : pd.id("hideOptions"),
+            minn        : pd.id("Minify"),
+            minnOps     : pd.id("miniops"),
+            modeBeau    : pd.id("modebeautify"),
+            modeDiff    : pd.id("modediff"),
+            modeMinn    : pd.id("modeminify"),
+            modePars    : pd.id("modeparse"),
+            page        : document.getElementsByTagName("body")[0],
+            pars        : pd.id("Parse"),
+            parsOps     : pd.id("parseops"),
+            report      : {
                 code: {
                     box: pd.id("codereport")
                 },
@@ -767,53 +717,53 @@ var pd = {},
                     box: pd.id("statreport")
                 }
             },
-            save: pd.id("diff-save")
+            save        : pd.id("diff-save")
         },
-        settings: {},
-        source: "",
-        sourceLength: {
-            beau: 0,
+        settings           : {},
+        source             : "",
+        sourceLength       : {
+            beau    : 0,
             diffBase: 0,
-            diffNew: 0,
-            minn: 0,
-            pars: 0
+            diffNew : 0,
+            minn    : 0,
+            pars    : 0
         },
-        stat: {
-            avday: 1,
-            beau: 0,
-            css: 0,
-            csv: 0,
-            diff: 0,
-            fdate: 0,
-            js: 0,
-            large: 0,
+        stat               : {
+            avday : 1,
+            beau  : 0,
+            css   : 0,
+            csv   : 0,
+            diff  : 0,
+            fdate : 0,
+            js    : 0,
+            large : 0,
             markup: 0,
-            minn: 0,
-            pars: 0,
-            pdate: "",
-            text: 0,
-            usage: 0,
+            minn  : 0,
+            pars  : 0,
+            pdate : "",
+            text  : 0,
+            usage : 0,
             useday: 0,
-            visit: 0
+            visit : 0
         },
-        tabtrue: false,
-        zIndex: 10
+        tabtrue            : false,
+        zIndex             : 10
     };
     //namespace for Ace editors
-    pd.ace = {};
+    pd.ace              = {};
     //namespace for internal functions
-    pd.app = {
+    pd.app              = {
         //builds the Ace editors
-        aceApply: function dom__app_aceApply(nodeName, className, maxWidth) {
-                var div = document.createElement("div"),
-                span = document.createElement("span"),
-                node = pd.data.node[nodeName],
-                parent = node.parentNode.parentNode,
+        aceApply : function dom__app_aceApply(nodeName, className, maxWidth) {
+            var div        = document.createElement("div"),
+                span       = document.createElement("span"),
+                node       = pd.data.node[nodeName],
+                parent     = node.parentNode.parentNode,
                 attributes = node.attributes,
-                len = attributes.length,
-                a = 0,
-                edit = {},
-                dollar = "$";
+                len        = attributes.length,
+                a          = 0,
+                edit       = {},
+                dollar     = "$";
             for (a = 0; a < len; a += 1) {
                 if (attributes[a].name !== "rows" && attributes[a].name !== "cols" && attributes[a].name !== "wrap") {
                     div.setAttribute(attributes[a].name, attributes[a].value);
@@ -829,9 +779,9 @@ var pd = {},
             if (maxWidth === true) {
                 div.style.width = "100%";
             }
-            div.style.fontSize = "1.25em";
-            edit = ace.edit(div);
-            pd.data.node[nodeName] = div.getElementsByTagName("textarea")[0];
+            div.style.fontSize              = "1.25em";
+            edit                            = ace.edit(div);
+            pd.data.node[nodeName]          = div.getElementsByTagName("textarea")[0];
             edit[dollar + "blockScrolling"] = Infinity;
             return edit;
         },
@@ -839,24 +789,24 @@ var pd = {},
         //interface, like screen resize
         fixHeight: function dom__app_fixHeight() {
             var baseText = pd.id("baseText"),
-                newText = pd.id("newText"),
-                beauIn = pd.id("beautyinput"),
-                beauOut = pd.id("beautyoutput"),
-                minnIn = pd.id("minifyinput"),
-                minnOut = pd.id("minifyoutput"),
-                parsIn = pd.id("parseinput"),
-                parsOut = pd.id("parseoutput"),
-                math = 0,
-                height = window.innerHeight || document.getElementsByTagName("body")[0].clientHeight,
+                newText  = pd.id("newText"),
+                beauIn   = pd.id("beautyinput"),
+                beauOut  = pd.id("beautyoutput"),
+                minnIn   = pd.id("minifyinput"),
+                minnOut  = pd.id("minifyoutput"),
+                parsIn   = pd.id("parseinput"),
+                parsOut  = pd.id("parseoutput"),
+                math     = 0,
+                height   = window.innerHeight || document.getElementsByTagName("body")[0].clientHeight,
                 headline = 0;
             if (pd.data.node.headline !== null && pd.data.node.headline.style.display === "block") {
                 headline = 3.8;
             }
             if (pd.test.ace === true) {
                 if (baseText !== null && newText !== null) {
-                    math = (height / 12.5) - (21.35 + headline);
+                    math                  = (height / 12.5) - (21.35 + headline);
                     baseText.style.height = math + "em";
-                    newText.style.height = math + "em";
+                    newText.style.height  = math + "em";
                     pd
                         .ace
                         .diffBase
@@ -943,9 +893,9 @@ var pd = {},
                 }
             } else {
                 if (baseText !== null && newText !== null) {
-                    math = (height / 12) - (24.35 + headline);
+                    math                  = (height / 12) - (24.35 + headline);
                     baseText.style.height = math + "em";
-                    newText.style.height = math + "em";
+                    newText.style.height  = math + "em";
                 }
                 math = (height / 12) - (22 + headline);
                 if (pd.data.node.codeBeauIn !== null) {
@@ -970,8 +920,8 @@ var pd = {},
             }
         },
         //sets indentation size in Ace editors
-        insize: function dom__app_insize() {
-            var that = this,
+        insize   : function dom__app_insize() {
+            var that  = this,
                 value = Number(that.value);
             if (that === pd.id("diff-quan")) {
                 if (pd.data.node.codeDiffBase !== null) {
@@ -1035,14 +985,14 @@ var pd = {},
                 }
             }
         },
-        //determine the specific language if auto or unknown all - change all language
-        //modes? comes from pd.codeops, which is fired on change of language select
-        //list
+        //determine the specific language if auto or unknown
+        //all - change all language modes? comes from pd.codeops, which is
+        //      fired on change of language select list
         //obj - the ace obj passed in. {} empty object if `all` is true
         //lang - a language passed in. "" empty string means auto detect
-        langkey: function dom__app_langkey(all, obj, lang) {
-            var value = [],
-                sample = "",
+        langkey  : function dom__app_langkey(all, obj, lang) {
+            var value       = [],
+                sample      = "",
                 setlangmode = function dom__app_langkey_setlangmode(input) {
                     if (input === "css" || input === "less" || input === "scss") {
                         return "css";
@@ -1064,7 +1014,7 @@ var pd = {},
                     }
                     return "javascript";
                 },
-                nameproper = function dom__app_langkey_nameproper(input) {
+                nameproper  = function dom__app_langkey_nameproper(input) {
                     if (input === "javascript") {
                         return "JavaScript";
                     }
@@ -1109,7 +1059,7 @@ var pd = {},
                     }
                     return input.toUpperCase();
                 },
-                defaultt = (pd.data.node.langdefault === null || pd.data.node.langdefault.nodeName.toLowerCase() !== "select")
+                defaultt    = (pd.data.node.langdefault === null || pd.data.node.langdefault.nodeName.toLowerCase() !== "select")
                     ? "javascript"
                     : setlangmode(pd.data.node.langdefault[pd.data.node.langdefault.selectedIndex].value),
                 //defaultt      = actual default lang value from the select list
@@ -1118,12 +1068,12 @@ var pd = {},
                 //[2]           = pretty formatting for text output to user
 
                 auto = function dom__app_langkey_auto(a) {
-                    var b = [],
-                        c = 0,
-                        d = 0,
-                        join = "",
-                        flaga = false,
-                        flagb = false,
+                    var b      = [],
+                        c      = 0,
+                        d      = 0,
+                        join   = "",
+                        flaga  = false,
+                        flagb  = false,
                         output = function dom__app_langkey_auto_output(langname) {
                             if (langname === "unknown") {
                                 return [defaultt, setlangmode(defaultt), "unknown"];
@@ -1157,17 +1107,17 @@ var pd = {},
                             if (flaga === false) {
                                 if (b[d] === "*" && b[d - 1] === "/") {
                                     b[d - 1] = "";
-                                    flaga = true;
+                                    flaga    = true;
                                 } else if (flagb === false && b[d] === "f" && d < c - 6 && b[d + 1] === "i" && b[d + 2] === "l" && b[d + 3] === "t" && b[d + 4] === "e" && b[d + 5] === "r" && b[d + 6] === ":") {
                                     flagb = true;
                                 }
                             } else if (flaga === true && b[d] === "*" && d !== c - 1 && b[d + 1] === "/") {
-                                flaga = false;
-                                b[d] = "";
+                                flaga    = false;
+                                b[d]     = "";
                                 b[d + 1] = "";
                             } else if (flagb === true && b[d] === ";") {
                                 flagb = false;
-                                b[d] = "";
+                                b[d]  = "";
                             }
                             if (flaga === true || flagb === true) {
                                 b[d] = "";
@@ -1281,7 +1231,7 @@ var pd = {},
                     }
                     return output("unknown");
                 };
-            if (obj !== undefined) {
+            if (obj !== undefined && obj !== null) {
                 if (pd.test.ace === true && obj.getValue !== undefined) {
                     sample = obj.getValue();
                 } else if (typeof obj.value === "string") {
@@ -1289,24 +1239,24 @@ var pd = {},
                 }
             }
             if (pd.data.node.lang !== null && pd.data.node.lang.selectedIndex > 0) {
-                all = true;
+                all  = true;
                 lang = pd.data.node.lang[pd.data.node.lang.selectedIndex].value;
             }
             if (lang === "csv") {
                 pd.data.langvalue = ["plain_text", "csv", "CSV"];
-                value = pd.data.langvalue;
+                value             = pd.data.langvalue;
             } else if (lang === "text") {
                 pd.data.langvalue = ["plain_text", "text", "Plain Text"];
-                value = pd.data.langvalue;
+                value             = pd.data.langvalue;
             } else if (lang !== "") {
                 pd.data.langvalue = [lang, setlangmode(lang), nameproper(lang)];
-                value = pd.data.langvalue;
+                value             = pd.data.langvalue;
             } else if (sample !== "" || pd.test.ace === false) {
                 pd.data.langvalue = auto(sample);
-                value = pd.data.langvalue;
+                value             = pd.data.langvalue;
             } else {
                 pd.data.langvalue = [defaultt, setlangmode(defaultt), nameproper(defaultt)];
-                value = pd.data.langvalue;
+                value             = pd.data.langvalue;
             }
             if (pd.test.ace === true) {
                 if (value[0] === "tss") {
@@ -1318,7 +1268,7 @@ var pd = {},
                 }
                 if (all === true || pd.data.mode === "beau") {
                     if (all === true && lang === "") {
-                        value = auto(pd.ace.beauIn.getValue());
+                        value             = auto(pd.ace.beauIn.getValue());
                         pd.data.langvalue = value;
                     }
                     if (pd.data.node.codeBeauIn !== null) {
@@ -1338,7 +1288,7 @@ var pd = {},
                 }
                 if (all === true || pd.data.mode === "minn") {
                     if (all === true && lang === "") {
-                        value = auto(pd.ace.minnIn.getValue());
+                        value             = auto(pd.ace.minnIn.getValue());
                         pd.data.langvalue = value;
                     }
                     if (pd.data.node.codeMinnIn !== null) {
@@ -1358,7 +1308,7 @@ var pd = {},
                 }
                 if (all === true || pd.data.mode === "pars") {
                     if (all === true && lang === "") {
-                        value = auto(pd.ace.parsIn.getValue());
+                        value             = auto(pd.ace.parsIn.getValue());
                         pd.data.langvalue = value;
                     }
                     if (pd.data.node.codeParsIn !== null) {
@@ -1378,7 +1328,7 @@ var pd = {},
                 }
                 if (all === true || pd.data.mode === "diff") {
                     if (all === true && lang === "") {
-                        value = auto(pd.ace.diffBase.getValue());
+                        value             = auto(pd.ace.diffBase.getValue());
                         pd.data.langvalue = value;
                     }
                     if (pd.data.node.codeDiffBase !== null) {
@@ -1428,15 +1378,15 @@ var pd = {},
             return pd.data.langvalue[1];
         },
         //store tool changes into localStorage to maintain state
-        options: function dom__app_options(x) {
-            var item = {},
-                node = "",
-                name = "",
-                type = "",
-                id = "",
+        options  : function dom__app_options(x) {
+            var item   = {},
+                node   = "",
+                name   = "",
+                type   = "",
+                id     = "",
                 classy = "",
-                h3 = {},
-                body = {};
+                h3     = {},
+                body   = {};
             if (x !== undefined && x.nodeType === 1) {
                 if (x.nodeName.toLowerCase() === "input" || x.nodeName.toLowerCase() === "select" || x.nodeName.toLowerCase() === "div") {
                     item = x;
@@ -1457,12 +1407,12 @@ var pd = {},
             if (item.nodeName.toLowerCase() !== "div" && pd.test.load === false && item !== pd.data.node.lang) {
                 item.focus();
             }
-            node = item
+            node   = item
                 .nodeName
                 .toLowerCase();
-            name = item.getAttribute("name");
-            type = item.getAttribute("type");
-            id = item.getAttribute("id");
+            name   = item.getAttribute("name");
+            type   = item.getAttribute("type");
+            id     = item.getAttribute("id");
             classy = item.getAttribute("class");
             if (pd.test.load === true) {
                 return;
@@ -1495,7 +1445,7 @@ var pd = {},
             } else if (node === "select") {
                 pd.data.settings[id] = item.selectedIndex;
             } else if (node === "div" && classy === "box") {
-                h3 = item.getElementsByTagName("h3")[0];
+                h3   = item.getElementsByTagName("h3")[0];
                 body = item.getElementsByTagName("div")[0];
                 if (pd.data.settings[id] === undefined) {
                     pd.data.settings[id] = {};
@@ -1504,14 +1454,14 @@ var pd = {},
                     pd.data.settings[id].min = true;
                     pd.data.settings[id].max = false;
                 } else if (pd.data.settings[id].max === false || pd.data.settings[id].max === undefined) {
-                    pd.data.settings[id].min = false;
+                    pd.data.settings[id].min  = false;
                     pd.data.settings[id].left = item.offsetLeft;
-                    pd.data.settings[id].top = item.offsetTop;
+                    pd.data.settings[id].top  = item.offsetTop;
                     if (pd.test.agent.indexOf("macintosh") > 0) {
-                        pd.data.settings[id].width = (body.clientWidth - 20);
+                        pd.data.settings[id].width  = (body.clientWidth - 20);
                         pd.data.settings[id].height = (body.clientHeight - 53);
                     } else {
-                        pd.data.settings[id].width = (body.clientWidth - 4);
+                        pd.data.settings[id].width  = (body.clientWidth - 4);
                         pd.data.settings[id].height = (body.clientHeight - 36);
                     }
                 }
@@ -1528,7 +1478,7 @@ var pd = {},
 
             if (pd.data.node.comment !== null && id !== null) {
                 (function dom__app_options_comment() {
-                    var a = 0,
+                    var a    = 0,
                         data = [];
                     if (id === "baselabel") {
                         data = ["sourcelabel", item.value];
@@ -1671,6 +1621,10 @@ var pd = {},
                         data = ["semicolon", "true"];
                     } else if (id === "diffscolony") {
                         data = ["semicolon", "false"];
+                    } else if (id === "diffspaceignoren") {
+                        data = ["diffspaceignore", "false"];
+                    } else if (id === "diffspaceignorey") {
+                        data = ["diffspaceignore", "true"];
                     } else if (id === "htmld-no" || id === "html-no" || id === "htmlm-no" || id === "phtml-no") {
                         data = ["html", "false"];
                     } else if (id === "htmld-yes" || id === "html-yes" || id === "htmlm-yes" || id === "phtml-yes") {
@@ -1709,6 +1663,11 @@ var pd = {},
                         data = ["jsspace", "false"];
                     } else if (id === "jsspaced-yes" || id === "jsspace-yes") {
                         data = ["jsspace", "true"];
+                    } else if (id === "language") {
+                        data = [
+                            "lang",
+                            item[item.selectedIndex].value
+                        ];
                     } else if (id === "lang-default") {
                         data = [
                             "langdefault",
@@ -1800,18 +1759,20 @@ var pd = {},
             }
         },
         //intelligently raise the z-index of the report windows
-        zTop: function dom__app_top(x) {
+        zTop     : function dom__app_top(x) {
             var indexListed = pd.data.zIndex,
-                indexes = [
+                indexes     = [
                     (pd.data.node.report.feed.box === null)
                         ? 0
-                        : Number(pd.data.node.report.feed.box.style.zIndex), (pd.data.node.report.code.box === null)
+                        : Number(pd.data.node.report.feed.box.style.zIndex),
+                    (pd.data.node.report.code.box === null)
                         ? 0
-                        : Number(pd.data.node.report.code.box.style.zIndex), (pd.data.node.report.stat.box === null)
+                        : Number(pd.data.node.report.code.box.style.zIndex),
+                    (pd.data.node.report.stat.box === null)
                         ? 0
                         : Number(pd.data.node.report.stat.box.style.zIndex)
                 ],
-                indexMax = Math.max(indexListed, indexes[0], indexes[1], indexes[2]) + 1;
+                indexMax    = Math.max(indexListed, indexes[0], indexes[1], indexes[2]) + 1;
             if (indexMax < 11) {
                 indexMax = 11;
             }
@@ -1822,9 +1783,9 @@ var pd = {},
         }
     };
     //namespace for event handlers
-    pd.event = {
+    pd.event            = {
         //fixing areaTabOut in the case of unintentional back tabs
-        areaShiftUp: function dom__event_areaShiftUp(e) {
+        areaShiftUp  : function dom__event_areaShiftUp(e) {
             var event = e || window.event;
             if (event.keyCode === 16 && pd.test.tabesc.length > 0) {
                 pd.test.tabesc = [];
@@ -1834,16 +1795,16 @@ var pd = {},
             }
         },
         //allows visual folding of function in the JSPretty jsscope HTML output
-        beaufold: function dom__event_beaufold() {
-            var self = this,
+        beaufold     : function dom__event_beaufold() {
+            var self  = this,
                 title = self
                     .getAttribute("title")
                     .split("line "),
-                min = Number(title[1].substr(0, title[1].indexOf(" "))),
-                max = Number(title[2]),
-                a = 0,
-                b = "",
-                list = [
+                min   = Number(title[1].substr(0, title[1].indexOf(" "))),
+                max   = Number(title[2]),
+                a     = 0,
+                b     = "",
+                list  = [
                     self
                         .parentNode
                         .getElementsByTagName("li"),
@@ -1876,34 +1837,34 @@ var pd = {},
             }
         },
         //clears the Pretty Diff comment string
-        clearComment: function dom__event_clearComment() {
+        clearComment : function dom__event_clearComment() {
             localStorage.commentString = "[]";
-            pd.data.commentString = [];
+            pd.data.commentString      = [];
             if (pd.data.node.comment !== null) {
                 pd.data.node.comment.innerHTML = "/*prettydiff.com */";
             }
         },
         //change the color scheme of the web UI
-        colorScheme: function dom__event_colorScheme(node) {
-            var x = (node !== undefined && node.nodeType === 1)
+        colorScheme  : function dom__event_colorScheme(node) {
+            var x         = (node !== undefined && node.nodeType === 1)
                     ? node
                     : this,
-                option = x.getElementsByTagName("option"),
+                option    = x.getElementsByTagName("option"),
                 optionLen = option.length,
-                index = (function dom__event_colorScheme_indexLen() {
+                index     = (function dom__event_colorScheme_indexLen() {
                     if (x.selectedIndex < 0 || x.selectedIndex > optionLen) {
                         x.selectedIndex = optionLen - 1;
                         return optionLen - 1;
                     }
                     return x.selectedIndex;
                 }()),
-                color = option[index]
+                color     = option[index]
                     .innerHTML
                     .toLowerCase()
                     .replace(/\s+/g, ""),
-                theme = "",
+                theme     = "",
                 logoColor = "",
-                logo = pd.id("pdlogo");
+                logo      = pd.id("pdlogo");
             pd
                 .data
                 .node
@@ -1969,37 +1930,37 @@ var pd = {},
         //allows grabbing and resizing columns (from the third column) in the diff
         //side-by-side report
         colSliderGrab: function dom__event_colSliderGrab(e) {
-            var event = e || window.event,
-                touch = (e !== null && e.type === "touchstart"),
-                node = this,
-                diffRight = node.parentNode,
-                diff = diffRight.parentNode,
-                subOffset = 0,
-                counter = pd.data.colSliderProperties[0],
-                data = pd.data.colSliderProperties[1],
-                width = pd.data.colSliderProperties[2],
-                total = pd.data.colSliderProperties[3],
-                offset = pd.data.colSliderProperties[4],
-                min = 0,
-                max = data - 1,
-                status = "ew",
-                minAdjust = min + 15,
-                maxAdjust = max - 15,
+            var event       = e || window.event,
+                touch       = (e !== null && e.type === "touchstart"),
+                node        = this,
+                diffRight   = node.parentNode,
+                diff        = diffRight.parentNode,
+                subOffset   = 0,
+                counter     = pd.data.colSliderProperties[0],
+                data        = pd.data.colSliderProperties[1],
+                width       = pd.data.colSliderProperties[2],
+                total       = pd.data.colSliderProperties[3],
+                offset      = pd.data.colSliderProperties[4],
+                min         = 0,
+                max         = data - 1,
+                status      = "ew",
+                minAdjust   = min + 15,
+                maxAdjust   = max - 15,
                 withinRange = false,
-                diffLeft = diffRight.previousSibling,
-                drop = function dom__event_colSliderGrab_drop(f) {
+                diffLeft    = diffRight.previousSibling,
+                drop        = function dom__event_colSliderGrab_drop(f) {
                     f = f || window.event;
                     f.preventDefault();
                     node.style.cursor = status + "-resize";
                     if (touch === true) {
                         document.ontouchmove = null;
-                        document.ontouchend = null;
+                        document.ontouchend  = null;
                     } else {
                         document.onmousemove = null;
-                        document.onmouseup = null;
+                        document.onmouseup   = null;
                     }
                 },
-                boxmove = function dom__event_colSliderGrab_boxmove(f) {
+                boxmove     = function dom__event_colSliderGrab_boxmove(f) {
                     f = f || window.event;
                     f.preventDefault();
                     if (touch === true) {
@@ -2012,13 +1973,13 @@ var pd = {},
                     }
                     if (withinRange === true && subOffset > maxAdjust) {
                         diffRight.style.width = ((total - counter - 2) / 10) + "em";
-                        status = "e";
+                        status                = "e";
                     } else if (withinRange === true && subOffset < minAdjust) {
                         diffRight.style.width = (width / 10) + "em";
-                        status = "w";
+                        status                = "w";
                     } else if (subOffset < max && subOffset > min) {
                         diffRight.style.width = ((width + subOffset) / 10) + "em";
-                        status = "ew";
+                        status                = "ew";
                     }
                     if (touch === true) {
                         document.ontouchend = drop;
@@ -2034,22 +1995,22 @@ var pd = {},
                 subOffset = (document.body.parentNode.scrollLeft > document.body.scrollLeft)
                     ? document.body.parentNode.scrollLeft
                     : document.body.scrollLeft;
-                offset -= subOffset;
+                offset    -= subOffset;
             }
-            offset += node.clientWidth;
-            node.style.cursor = "ew-resize";
-            diff.style.width = (total / 10) + "em";
+            offset             += node.clientWidth;
+            node.style.cursor  = "ew-resize";
+            diff.style.width   = (total / 10) + "em";
             diff.style.display = "inline-block";
             if (diffLeft.nodeType !== 1) {
                 do {
                     diffLeft = diffLeft.previousSibling;
                 } while (diffLeft.nodeType !== 1);
             }
-            diffLeft.style.display = "block";
-            diffRight.style.width = (diffRight.clientWidth / 10) + "em";
+            diffLeft.style.display   = "block";
+            diffRight.style.width    = (diffRight.clientWidth / 10) + "em";
             diffRight.style.position = "absolute";
             if (touch === true) {
-                document.ontouchmove = boxmove;
+                document.ontouchmove  = boxmove;
                 document.ontouchstart = false;
             } else {
                 document.onmousemove = boxmove;
@@ -2057,24 +2018,24 @@ var pd = {},
             }
         },
         //allows visual folding of consecutive equal lines in a diff report
-        difffold: function dom__event_difffold() {
-            var a = 0,
-                b = 0,
-                self = this,
-                title = self
+        difffold     : function dom__event_difffold() {
+            var a         = 0,
+                b         = 0,
+                self      = this,
+                title     = self
                     .getAttribute("title")
                     .split("line "),
-                min = Number(title[1].substr(0, title[1].indexOf(" "))),
-                max = Number(title[2]),
-                inner = self.innerHTML,
-                lists = [],
-                parent = self.parentNode.parentNode,
+                min       = Number(title[1].substr(0, title[1].indexOf(" "))),
+                max       = Number(title[2]),
+                inner     = self.innerHTML,
+                lists     = [],
+                parent    = self.parentNode.parentNode,
                 listnodes = (parent.getAttribute("class") === "diff")
                     ? parent.getElementsByTagName("ol")
                     : parent
                         .parentNode
                         .getElementsByTagName("ol"),
-                listLen = listnodes.length;
+                listLen   = listnodes.length;
             for (a = 0; a < listLen; a += 1) {
                 lists.push(listnodes[a].getElementsByTagName("li"));
             }
@@ -2106,25 +2067,25 @@ var pd = {},
             }
         },
         //submits the comment card
-        feedsubmit: function dom__event_feedsubmit(auto) {
-            var datapack = {},
+        feedsubmit   : function dom__event_feedsubmit(auto) {
+            var datapack  = {},
                 namecheck = (localStorage.settings !== undefined)
                     ? JSON.parse(localStorage.settings)
                     : {},
-                radios = [],
-                text = (pd.id("feedtextarea") === null)
+                radios    = [],
+                text      = (pd.id("feedtextarea") === null)
                     ? ""
                     : pd
                         .id("feedtextarea")
                         .value,
-                a = 0,
-                email = (pd.id("feedemail") === null)
+                a         = 0,
+                email     = (pd.id("feedemail") === null)
                     ? ""
                     : pd
                         .id("feedemail")
                         .value,
-                xhr = {},
-                sendit = function dom__event_feedsubmit_sendit() {
+                xhr       = {},
+                sendit    = function dom__event_feedsubmit_sendit() {
                     var node = pd.id("feedintro");
                     xhr.withCredentials = true;
                     xhr.open("POST", "http://prettydiff.com:8000/feedback/", true);
@@ -2151,10 +2112,10 @@ var pd = {},
                 : new ActiveXObject("Microsoft.XMLHTTP");
             if (auto === true) {
                 datapack = {
-                    name: pd.data.settings.knownname,
+                    name    : pd.data.settings.knownname,
                     settings: pd.data.settings,
-                    stats: pd.data.stat,
-                    type: "auto"
+                    stats   : pd.data.stat,
+                    type    : "auto"
                 };
                 sendit();
                 return;
@@ -2176,46 +2137,46 @@ var pd = {},
                 return;
             }
             datapack = {
-                comment: text,
-                email: email,
-                name: pd.data.settings.knownname,
-                rating: a + 1,
+                comment : text,
+                email   : email,
+                name    : pd.data.settings.knownname,
+                rating  : a + 1,
                 settings: pd.data.settings,
-                stats: pd.data.stat,
-                type: "feedback"
+                stats   : pd.data.stat,
+                type    : "feedback"
             };
             sendit();
         },
         //nullifies the current "file" event
-        filenull: function dom__event_filenull(e) {
+        filenull     : function dom__event_filenull(e) {
             var event = e || window.event;
             event.stopPropagation();
             event.preventDefault();
         },
         //this function allows typing of tab characters into textareas without the
         //textarea loosing focus
-        fixtabs: function dom__event_fixtabs(e, node) {
-            var x = node || this,
+        fixtabs      : function dom__event_fixtabs(e, node) {
+            var x     = node || this,
                 start = "",
-                end = "",
-                val = "",
-                sel = 0,
+                end   = "",
+                val   = "",
+                sel   = 0,
                 event = e || window.event;
             if (typeof event !== "object" || event === null || event.type !== "keydown" || event.keyCode !== 9 || typeof x.selectionStart !== "number" || typeof x.selectionEnd !== "number") {
                 return true;
             }
-            val = x.value;
-            sel = x.selectionStart;
-            start = val.substring(0, sel);
-            end = val.substring(sel, val.length);
-            x.value = start + "\t" + end;
+            val              = x.value;
+            sel              = x.selectionStart;
+            start            = val.substring(0, sel);
+            end              = val.substring(sel, val.length);
+            x.value          = start + "\t" + end;
             x.selectionStart = sel + 1;
-            x.selectionEnd = sel + 1;
+            x.selectionEnd   = sel + 1;
             event.preventDefault();
             return false;
         },
         //tests if a key press is a short command
-        keydown: function dom__event_keydown(e) {
+        keydown      : function dom__event_keydown(e) {
             var event = e || window.event;
             if (pd.test.keypress === true && (pd.test.keystore.length === 0 || event.keyCode !== pd.test.keystore[pd.test.keystore.length - 1]) && event.keyCode !== 17 && event.keyCode !== 224) {
                 pd
@@ -2228,22 +2189,22 @@ var pd = {},
             }
         },
         //alters available options depending upon language selection
-        langOps: function dom__event_langOps(node) {
-            var x = {},
+        langOps      : function dom__event_langOps(node) {
+            var x    = {},
                 lang = "",
-                xml = false,
-                dqp = pd.id("diffquanp"),
-                dqt = pd.id("difftypep"),
-                db = pd.id("diffbeautify"),
+                xml  = false,
+                dqp  = pd.id("diffquanp"),
+                dqt  = pd.id("difftypep"),
+                db   = pd.id("diffbeautify"),
                 csvp = pd.id("csvcharp"),
-                hd = pd.id("htmld-yes"),
-                he = pd.id("htmld-no"),
-                hm = pd.id("htmlm-yes"),
-                hn = pd.id("htmlm-no"),
-                hp = pd.id("phtml-yes"),
-                hq = pd.id("phtml-no"),
-                hy = pd.id("html-yes"),
-                hz = pd.id("html-no");
+                hd   = pd.id("htmld-yes"),
+                he   = pd.id("htmld-no"),
+                hm   = pd.id("htmlm-yes"),
+                hn   = pd.id("htmlm-no"),
+                hp   = pd.id("phtml-yes"),
+                hq   = pd.id("phtml-no"),
+                hy   = pd.id("html-yes"),
+                hz   = pd.id("html-no");
             if (node.nodeType === 1) {
                 if (node.nodeName.toLowerCase() === "input" || node.nodeName.toLowerCase() === "select") {
                     x = node;
@@ -2255,7 +2216,7 @@ var pd = {},
             } else {
                 x = this.getElementsByTagName("input")[0];
             }
-            xml = (x.getElementsByTagName("option")[x.selectedIndex].innerHTML === "XML" || x.getElementsByTagName("option")[x.selectedIndex].innerHTML === "JSTL");
+            xml  = (x.getElementsByTagName("option")[x.selectedIndex].innerHTML === "XML" || x.getElementsByTagName("option")[x.selectedIndex].innerHTML === "JSTL");
             lang = (pd.data.node.lang === null)
                 ? "javascript"
                 : (pd.data.node.lang.nodeName === "select")
@@ -2411,7 +2372,7 @@ var pd = {},
                 if (pd.data.node.langdefault !== null) {
                     if (lang === "auto") {
                         pd.data.node.langdefault.parentNode.style.display = "block";
-                        pd.data.node.langdefault.disabled = false;
+                        pd.data.node.langdefault.disabled                 = false;
                     } else {
                         pd.data.node.langdefault.parentNode.style.display = "none";
                     }
@@ -2430,6 +2391,9 @@ var pd = {},
                         .app
                         .hideOutput(x);
                 }
+                pd
+                    .app
+                    .options(x);
             } else {
                 pd
                     .app
@@ -2437,24 +2401,24 @@ var pd = {},
             }
         },
         //maximize report window to available browser window
-        maximize: function dom__event_maximize(node) {
-            var x = (node.nodeType === 1)
+        maximize     : function dom__event_maximize(node) {
+            var x       = (node.nodeType === 1)
                     ? node
                     : this,
-                parent = {},
-                save = false,
-                box = {},
-                id = "",
+                parent  = {},
+                save    = false,
+                box     = {},
+                id      = "",
                 heading = {},
-                body = {},
-                top = (document.body.parentNode.scrollTop > document.body.scrollTop)
+                body    = {},
+                top     = (document.body.parentNode.scrollTop > document.body.scrollTop)
                     ? document.body.parentNode.scrollTop
                     : document.body.scrollTop,
-                left = (document.body.parentNode.scrollLeft > document.body.scrollLeft)
+                left    = (document.body.parentNode.scrollLeft > document.body.scrollLeft)
                     ? document.body.parentNode.scrollLeft
                     : document.body.scrollLeft,
                 buttons = [],
-                resize = {};
+                resize  = {};
             pd
                 .app
                 .zTop(box);
@@ -2464,13 +2428,13 @@ var pd = {},
             buttons = x
                 .parentNode
                 .getElementsByTagName("button");
-            resize = buttons[buttons.length - 1];
-            parent = x.parentNode;
-            save = (parent.innerHTML.indexOf("save") > -1);
-            box = parent.parentNode;
-            id = box.getAttribute("id");
+            resize  = buttons[buttons.length - 1];
+            parent  = x.parentNode;
+            save    = (parent.innerHTML.indexOf("save") > -1);
+            box     = parent.parentNode;
+            id      = box.getAttribute("id");
             heading = box.getElementsByTagName("h3")[0];
-            body = box.getElementsByTagName("div")[0];
+            body    = box.getElementsByTagName("div")[0];
 
             //maximize
 
@@ -2482,13 +2446,13 @@ var pd = {},
                 if (pd.test.ls === true && pd.test.json === true) {
                     localStorage.settings = JSON.stringify(pd.data.settings);
                 }
-                pd.data.settings[id].top = box.offsetTop;
-                pd.data.settings[id].left = box.offsetLeft;
+                pd.data.settings[id].top    = box.offsetTop;
+                pd.data.settings[id].left   = box.offsetLeft;
                 pd.data.settings[id].height = body.clientHeight - 36;
-                pd.data.settings[id].width = body.clientWidth - 3;
+                pd.data.settings[id].width  = body.clientWidth - 3;
                 pd.data.settings[id].zindex = box.style.zIndex;
-                box.style.top = (top / 10) + "em";
-                box.style.left = (left / 10) + "em";
+                box.style.top               = (top / 10) + "em";
+                box.style.left              = (left / 10) + "em";
                 if (typeof window.innerHeight === "number") {
                     body.style.height = ((window.innerHeight / 10) - 5.5) + "em";
                     if (save === true) {
@@ -2504,18 +2468,18 @@ var pd = {},
 
             } else {
                 pd.data.settings[id].max = false;
-                x.innerHTML = "\u2191";
+                x.innerHTML              = "\u2191";
                 x.setAttribute("title", "Maximize this dialogue to the browser window.");
-                box.style.top = (pd.data.settings[id].top / 10) + "em";
+                box.style.top  = (pd.data.settings[id].top / 10) + "em";
                 box.style.left = (pd.data.settings[id].left / 10) + "em";
                 if (save === true) {
                     heading.style.width = ((pd.data.settings[id].width / 10) - 9.76) + "em";
                 } else {
                     heading.style.width = ((pd.data.settings[id].width / 10) - 6.76) + "em";
                 }
-                body.style.width = (pd.data.settings[id].width / 10) + "em";
-                body.style.height = (pd.data.settings[id].height / 10) + "em";
-                box.style.zIndex = pd.data.settings[id].zindex;
+                body.style.width     = (pd.data.settings[id].width / 10) + "em";
+                body.style.height    = (pd.data.settings[id].height / 10) + "em";
+                box.style.zIndex     = pd.data.settings[id].zindex;
                 resize.style.display = "block";
                 pd
                     .app
@@ -2523,64 +2487,64 @@ var pd = {},
             }
         },
         //minimize report windows to the default size and location
-        minimize: function dom__event_minimize(e, steps, node) {
-            var x = node || this,
-                parent = {},
-                box = {},
-                finale = 0,
-                id = "",
-                body = {},
-                heading = {},
-                buttons = [],
-                save = false,
+        minimize     : function dom__event_minimize(e, steps, node) {
+            var x         = node || this,
+                parent    = {},
+                box       = {},
+                finale    = 0,
+                id        = "",
+                body      = {},
+                heading   = {},
+                buttons   = [],
+                save      = false,
                 buttonMin = {},
                 buttonMax = {},
-                left = 0,
-                top = 0,
+                left      = 0,
+                top       = 0,
                 buttonRes = {},
-                step = (typeof steps !== "number")
+                step      = (typeof steps !== "number")
                     ? 50
                     : (steps < 1)
                         ? 1
                         : steps,
-                growth = function dom__event_minimize_growth() {
-                    var boxLocal = box,
-                        bodyLocal = body,
+                growth    = function dom__event_minimize_growth() {
+                    var boxLocal     = box,
+                        bodyLocal    = body,
                         headingLocal = heading,
-                        leftLocal = left,
-                        topLocal = (top > 1)
+                        leftLocal    = left,
+                        topLocal     = (top > 1)
                             ? top
                             : 1,
-                        width = 17,
-                        height = 3,
-                        leftTarget = 0,
-                        topTarget = 0,
-                        widthTarget = 0,
+                        width        = 17,
+                        height       = 3,
+                        leftTarget   = 0,
+                        topTarget    = 0,
+                        widthTarget  = 0,
                         heightTarget = 0,
-                        incW = 0,
-                        incH = 0,
-                        incL = 0,
-                        incT = 0,
-                        saveSpace = (save === true)
+                        incW         = 0,
+                        incH         = 0,
+                        incL         = 0,
+                        incT         = 0,
+                        saveSpace    = (save === true)
                             ? 9.45
                             : 6.45,
-                        grow = function dom__event_minimize_growth_grow() {
-                            width += incW;
-                            height += incH;
-                            leftLocal += incL;
-                            topLocal += incT;
-                            bodyLocal.style.width = width + "em";
-                            bodyLocal.style.height = height + "em";
+                        grow         = function dom__event_minimize_growth_grow() {
+                            width                    += incW;
+                            height                   += incH;
+                            leftLocal                += incL;
+                            topLocal                 += incT;
+                            bodyLocal.style.width    = width + "em";
+                            bodyLocal.style.height   = height + "em";
                             headingLocal.style.width = (width - saveSpace) + "em";
-                            boxLocal.style.left = leftLocal + "em";
-                            boxLocal.style.top = topLocal + "em";
+                            boxLocal.style.left      = leftLocal + "em";
+                            boxLocal.style.top       = topLocal + "em";
                             if (width + incW < widthTarget || height + incH < heightTarget) {
                                 setTimeout(dom__event_minimize_growth_grow, 1);
                             } else {
-                                boxLocal.style.left = leftTarget + "em";
-                                boxLocal.style.top = topTarget + "em";
-                                bodyLocal.style.width = widthTarget + "em";
-                                bodyLocal.style.height = heightTarget + "em";
+                                boxLocal.style.left      = leftTarget + "em";
+                                boxLocal.style.top       = topTarget + "em";
+                                bodyLocal.style.width    = widthTarget + "em";
+                                bodyLocal.style.height   = heightTarget + "em";
                                 headingLocal.style.width = (widthTarget - saveSpace) + "em";
                                 pd
                                     .app
@@ -2594,89 +2558,89 @@ var pd = {},
                             : 5;
                     }
                     if (typeof pd.data.settings[id].left === "number") {
-                        leftTarget = (pd.data.settings[id].left / 10);
-                        topTarget = (pd.data.settings[id].top / 10);
-                        widthTarget = (pd.data.settings[id].width / 10);
+                        leftTarget   = (pd.data.settings[id].left / 10);
+                        topTarget    = (pd.data.settings[id].top / 10);
+                        widthTarget  = (pd.data.settings[id].width / 10);
                         heightTarget = (pd.data.settings[id].height / 10);
                     } else {
-                        topLocal += 4;
-                        pd.data.settings[id].left = 200;
-                        pd.data.settings[id].top = (topLocal * 10);
-                        pd.data.settings[id].width = 550;
+                        topLocal                    += 4;
+                        pd.data.settings[id].left   = 200;
+                        pd.data.settings[id].top    = (topLocal * 10);
+                        pd.data.settings[id].width  = 550;
                         pd.data.settings[id].height = 450;
-                        leftTarget = 10;
-                        topTarget = 2;
-                        widthTarget = 55;
-                        heightTarget = 45;
+                        leftTarget                  = 10;
+                        topTarget                   = 2;
+                        widthTarget                 = 55;
+                        heightTarget                = 45;
                     }
-                    widthTarget = widthTarget - 0.3;
+                    widthTarget  = widthTarget - 0.3;
                     heightTarget = heightTarget - 3.55;
                     if (step === 1) {
-                        boxLocal.style.left = leftTarget + "em";
-                        boxLocal.style.top = ((window.innerHeight / 10) - 30) + "em";
-                        bodyLocal.style.width = widthTarget + "em";
+                        boxLocal.style.left    = leftTarget + "em";
+                        boxLocal.style.top     = ((window.innerHeight / 10) - 30) + "em";
+                        bodyLocal.style.width  = widthTarget + "em";
                         bodyLocal.style.height = heightTarget + "em";
-                        heading.style.width = (widthTarget - saveSpace) + "em";
+                        heading.style.width    = (widthTarget - saveSpace) + "em";
                         pd
                             .app
                             .options(boxLocal);
                         return false;
                     }
-                    incW = (widthTarget > width)
+                    incW                    = (widthTarget > width)
                         ? ((widthTarget - width) / step)
                         : ((width - widthTarget) / step);
-                    incH = (heightTarget > height)
+                    incH                    = (heightTarget > height)
                         ? ((heightTarget - height) / step)
                         : ((height - heightTarget) / step);
-                    incL = (leftTarget - leftLocal) / step;
-                    incT = (topTarget - topLocal) / step;
-                    boxLocal.style.right = "auto";
+                    incL                    = (leftTarget - leftLocal) / step;
+                    incT                    = (topTarget - topLocal) / step;
+                    boxLocal.style.right    = "auto";
                     bodyLocal.style.display = "block";
                     grow();
                     return false;
                 },
                 shrinkage = function dom__event_minimize_shrinkage() {
-                    var leftLocal = left,
-                        topLocal = top,
-                        boxLocal = box,
-                        bodyLocal = body,
+                    var leftLocal    = left,
+                        topLocal     = top,
+                        boxLocal     = box,
+                        bodyLocal    = body,
                         headingLocal = heading,
-                        finalLocal = finale,
-                        topmin = box.parentNode.offsetTop,
-                        width = bodyLocal.clientWidth / 10,
-                        height = bodyLocal.clientHeight / 10,
-                        incL = (((window.innerWidth / 10) - finalLocal - 17) - leftLocal) / step,
-                        incT = (((topmin / 10) - topLocal) / step),
-                        incW = (width === 17)
+                        finalLocal   = finale,
+                        topmin       = box.parentNode.offsetTop,
+                        width        = bodyLocal.clientWidth / 10,
+                        height       = bodyLocal.clientHeight / 10,
+                        incL         = (((window.innerWidth / 10) - finalLocal - 17) - leftLocal) / step,
+                        incT         = (((topmin / 10) - topLocal) / step),
+                        incW         = (width === 17)
                             ? 0
                             : (width > 17)
                                 ? ((width - 17) / step)
                                 : ((17 - width) / step),
-                        incH = height / step,
-                        shrink = function dom__event_minimize_shrinkage_shrink() {
-                            leftLocal += incL;
-                            topLocal += incT;
-                            width -= incW;
-                            height -= incH;
-                            bodyLocal.style.width = width + "em";
+                        incH         = height / step,
+                        shrink       = function dom__event_minimize_shrinkage_shrink() {
+                            leftLocal                += incL;
+                            topLocal                 += incT;
+                            width                    -= incW;
+                            height                   -= incH;
+                            bodyLocal.style.width    = width + "em";
                             headingLocal.style.width = width + "em";
-                            bodyLocal.style.height = height + "em";
-                            boxLocal.style.left = leftLocal + "em";
-                            boxLocal.style.top = topLocal + "em";
+                            bodyLocal.style.height   = height + "em";
+                            boxLocal.style.left      = leftLocal + "em";
+                            boxLocal.style.top       = topLocal + "em";
                             if (width - incW > 16.8) {
                                 setTimeout(dom__event_minimize_shrinkage_shrink, 1);
                             } else {
-                                boxLocal.style.left = "auto";
-                                boxLocal.style.top = "auto";
-                                boxLocal.style.right = finalLocal + "em";
-                                pd.data.settings[id].max = false;
-                                boxLocal.style.borderWidth = "0em";
-                                bodyLocal.style.display = "none";
+                                boxLocal.style.left                = "auto";
+                                boxLocal.style.top                 = "auto";
+                                boxLocal.style.right               = finalLocal + "em";
+                                pd.data.settings[id].max           = false;
+                                boxLocal.style.borderWidth         = "0em";
+                                bodyLocal.style.display            = "none";
                                 headingLocal.style.borderLeftStyle = "solid";
-                                headingLocal.style.borderTopStyle = "solid";
+                                headingLocal.style.borderTopStyle  = "solid";
                                 headingLocal.getElementsByTagName("button")[0].style.cursor = "pointer";
-                                headingLocal.style.margin = "0em 0em -3.2em 0.1em";
-                                box.style.zIndex = "2";
+                                headingLocal.style.margin                                   = "0em 0em -3.2em 0.1em";
+                                box.style.zIndex                                            = "2";
                                 pd
                                     .app
                                     .options(boxLocal);
@@ -2688,28 +2652,28 @@ var pd = {},
                 };
             if (x.parentNode.nodeName.toLowerCase() === "h3") {
                 heading = x.parentNode;
-                box = heading.parentNode;
-                parent = box.getElementsByTagName("p")[0];
+                box     = heading.parentNode;
+                parent  = box.getElementsByTagName("p")[0];
             } else {
-                parent = (x.parentNode.nodeName.toLowerCase() === "a")
+                parent  = (x.parentNode.nodeName.toLowerCase() === "a")
                     ? x.parentNode.parentNode
                     : x.parentNode;
-                box = parent.parentNode;
+                box     = parent.parentNode;
                 heading = box.getElementsByTagName("h3")[0];
             }
-            id = box.getAttribute("id");
-            body = box.getElementsByTagName("div")[0];
-            buttons = parent.getElementsByTagName("button");
-            save = (parent.innerHTML.indexOf("save") > -1);
-            buttonMin = (save === true)
+            id                      = box.getAttribute("id");
+            body                    = box.getElementsByTagName("div")[0];
+            buttons                 = parent.getElementsByTagName("button");
+            save                    = (parent.innerHTML.indexOf("save") > -1);
+            buttonMin               = (save === true)
                 ? buttons[1]
                 : buttons[0];
-            buttonMax = (save === true)
+            buttonMax               = (save === true)
                 ? buttons[2]
                 : buttons[1];
-            left = (box.offsetLeft / 10);
-            top = (box.offsetTop / 10);
-            buttonRes = (save === true)
+            left                    = (box.offsetLeft / 10);
+            top                     = (box.offsetTop / 10);
+            buttonRes               = (save === true)
                 ? buttons[3]
                 : buttons[2];
             buttonRes.style.display = "block";
@@ -2740,26 +2704,26 @@ var pd = {},
             if (buttonMin.innerHTML === "\u035f") {
                 if (buttonMax.innerHTML === "\u2191") {
                     if (pd.test.agent.indexOf("macintosh") > 0) {
-                        pd.data.settings[id].top = box.offsetTop;
-                        pd.data.settings[id].left = box.offsetLeft;
+                        pd.data.settings[id].top    = box.offsetTop;
+                        pd.data.settings[id].left   = box.offsetLeft;
                         pd.data.settings[id].height = body.clientHeight - 17;
-                        pd.data.settings[id].width = body.clientWidth - 17;
+                        pd.data.settings[id].width  = body.clientWidth - 17;
                     } else {
-                        pd.data.settings[id].top = box.offsetTop;
-                        pd.data.settings[id].left = box.offsetLeft;
+                        pd.data.settings[id].top    = box.offsetTop;
+                        pd.data.settings[id].left   = box.offsetLeft;
                         pd.data.settings[id].height = body.clientHeight;
-                        pd.data.settings[id].width = body.clientWidth;
+                        pd.data.settings[id].width  = body.clientWidth;
                     }
                     if (pd.data.zIndex > 2) {
-                        pd.data.zIndex -= 3;
+                        pd.data.zIndex      -= 3;
                         parent.style.zIndex = pd.data.zIndex;
                     }
                 } else {
-                    buttonMax.innerHTML = "\u2191";
-                    pd.data.settings[id].top += 1;
-                    pd.data.settings[id].left -= 7;
+                    buttonMax.innerHTML         = "\u2191";
+                    pd.data.settings[id].top    += 1;
+                    pd.data.settings[id].left   -= 7;
                     pd.data.settings[id].height += 35.5;
-                    pd.data.settings[id].width += 3;
+                    pd.data.settings[id].width  += 3;
                 }
                 parent.style.display = "none";
                 shrinkage();
@@ -2771,36 +2735,36 @@ var pd = {},
                 pd
                     .app
                     .zTop(box);
-                parent.style.display = "block";
+                parent.style.display  = "block";
                 box.style.borderWidth = ".1em";
-                box.style.right = "auto";
-                body.style.display = "block";
+                box.style.right       = "auto";
+                body.style.display    = "block";
                 heading.getElementsByTagName("button")[0].style.cursor = "move";
-                heading.style.borderLeftStyle = "none";
-                heading.style.borderTopStyle = "none";
-                heading.style.margin = "0.1em 1.7em -3.2em 0.1em";
+                heading.style.borderLeftStyle                          = "none";
+                heading.style.borderTopStyle                           = "none";
+                heading.style.margin                                   = "0.1em 1.7em -3.2em 0.1em";
                 growth();
                 buttonMin.innerHTML = "\u035f";
             }
             return false;
         },
         //toggles between modes
-        modeToggle: function dom__event_modeToggle(x) {
-            var a = {},
-                b = 0,
-                lang = (pd.data.node.lang === null)
+        modeToggle   : function dom__event_modeToggle(x) {
+            var a           = {},
+                b           = 0,
+                lang        = (pd.data.node.lang === null)
                     ? "javascript"
                     : ((pd.data.node.lang.nodeName === "select")
                         ? pd.data.node.lang[pd.data.node.lang.selectedIndex].value
                         : pd.data.node.lang.value),
-                langOps = [],
-                node = {},
-                storage = "",
-                db = pd.id("diffbeautify"),
-                csvp = pd.id("csvcharp"),
-                langtest = (pd.data.node.lang !== null && pd.data.node.lang.nodeName.toLowerCase() === "select"),
+                langOps     = [],
+                node        = {},
+                storage     = "",
+                db          = pd.id("diffbeautify"),
+                csvp        = pd.id("csvcharp"),
+                langtest    = (pd.data.node.lang !== null && pd.data.node.lang.nodeName.toLowerCase() === "select"),
                 optioncheck = function dom__event_modeToggle_optioncheck() {
-                    var c = 0,
+                    var c     = 0,
                         langs = [];
                     langs = pd
                         .data
@@ -2811,6 +2775,7 @@ var pd = {},
                         if (langs[c].value === "text") {
                             if (pd.data.node.lang.selectedIndex === c) {
                                 pd.data.node.lang.selectedIndex = 0;
+                                pd.app.langkey(true, null, "auto");
                             }
                             langs[c].disabled = true;
                         }
@@ -3255,20 +3220,20 @@ var pd = {},
             }
         },
         //reset tool to default configuration
-        reset: function dom__event_reset() {
+        reset        : function dom__event_reset() {
             var nametry = "",
-                name = "";
-            localStorage.codeBeautify = "";
-            localStorage.codeDiffBase = "";
-            localStorage.codeDiffNew = "";
-            localStorage.codeMinify = "";
-            localStorage.codeParse = "";
+                name    = "";
+            localStorage.codeBeautify  = "";
+            localStorage.codeDiffBase  = "";
+            localStorage.codeDiffNew   = "";
+            localStorage.codeMinify    = "";
+            localStorage.codeParse     = "";
             localStorage.commentString = "[]";
             if (pd.data.settings === undefined || pd.data.settings.knownname === undefined) {
                 if (pd.data.settings === undefined) {
                     pd.data.settings = {
                         feedback: {
-                            newb: false,
+                            newb   : false,
                             veteran: false
                         }
                     };
@@ -3289,7 +3254,7 @@ var pd = {},
             }
             if (pd.data.settings.feedback === undefined) {
                 pd.data.settings.feedback = {
-                    newb: false,
+                    newb   : false,
                     veteran: false
                 };
             }
@@ -3302,127 +3267,128 @@ var pd = {},
             location.reload();
         },
         //resize report window to custom width and height on drag
-        resize: function dom__event_resize(e, x) {
-            var parent = x.parentNode,
-                save = (parent.innerHTML.indexOf("save") > -1),
-                box = parent.parentNode,
-                body = box.getElementsByTagName("div")[0],
-                heading = box.getElementsByTagName("h3")[0],
-                bodyWidth = body.clientWidth,
+        resize       : function dom__event_resize(e, x) {
+            var parent     = x.parentNode,
+                save       = (parent.innerHTML.indexOf("save") > -1),
+                box        = parent.parentNode,
+                body       = box.getElementsByTagName("div")[0],
+                heading    = box.getElementsByTagName("h3")[0],
+                bodyWidth  = body.clientWidth,
                 bodyHeight = body.clientHeight,
-                mac = (pd.test.agent.indexOf("macintosh") > 0),
-                offsetw = (mac === true)
+                mac        = (pd.test.agent.indexOf("macintosh") > 0),
+                offsetw    = (mac === true)
                     ? 20
                     : 4,
-                offseth = (mac === true)
+                offseth    = (mac === true)
                     ? 54
                     : 36,
-                drop = function dom__event_resize_drop() {
+                drop       = function dom__event_resize_drop() {
                     document.onmousemove = null;
-                    bodyWidth = body.clientWidth;
-                    bodyHeight = body.clientHeight;
+                    bodyWidth            = body.clientWidth;
+                    bodyHeight           = body.clientHeight;
                     pd
                         .app
                         .options(box);
                     document.onmouseup = null;
                 },
-                boxsize = function dom__event_resize_boxsize(f) {
-                    f = f || window.event;
+                boxsize    = function dom__event_resize_boxsize(f) {
+                    f                = f || window.event;
                     body.style.width = ((bodyWidth + ((f.clientX - offsetw) - body.mouseX)) / 10) + "em";
                     if (save === true) {
                         heading.style.width = (((bodyWidth + (f.clientX - body.mouseX)) / 10) - 10.15) + "em";
                     } else {
                         heading.style.width = (((bodyWidth + (f.clientX - body.mouseX)) / 10) - 7.15) + "em";
                     }
-                    body.style.height = ((bodyHeight + ((f.clientY - offseth) - body.mouseY)) / 10) + "em";
+                    body.style.height  = ((bodyHeight + ((f.clientY - offseth) - body.mouseY)) / 10) + "em";
                     document.onmouseup = drop;
                 };
             pd
                 .app
                 .zTop(box);
-            e = e || window.event;
-            body.mouseX = e.clientX;
-            body.mouseY = e.clientY;
+            e                    = e || window.event;
+            body.mouseX          = e.clientX;
+            body.mouseY          = e.clientY;
             document.onmousemove = boxsize;
             document.onmousedown = null;
         },
         //toggle between parsed html diff report and raw text representation
-        save: function dom__event_save(x) {
-                var anchor = (x.nodeName.toLowerCase() === "a"),
-                top = (x.parentNode.parentNode.nodeName.toLowerCase() === "p")
+        save         : function dom__event_save(x) {
+            var anchor     = (x.nodeName.toLowerCase() === "a"),
+                top        = (x.parentNode.parentNode.nodeName.toLowerCase() === "p")
                     ? x.parentNode.parentNode.parentNode
                     : x.parentNode.parentNode,
-                button = (anchor === true)
+                button     = (anchor === true)
                     ? x.getElementsByTagName("button")[0]
                     : x,
-                body = top.getElementsByTagName("div")[0],
-                bodyInner = body
+                body       = top.getElementsByTagName("div")[0],
+                bodyInner  = body
                     .innerHTML
                     .replace(/\ xmlns\=("|')http:\/\/www\.w3\.org\/1999\/xhtml("|')/g, ""),
-                build = [],
+                build      = [],
                 classQuote = "",
-                content = [],
-                lastChild = {},
+                content    = [],
+                lastChild  = {},
                 pageHeight = 0,
-                ro = pd.id("savepref-report"),
+                ro         = pd.id("savepref-report"),
                 reportonly = (ro !== null && ro.checked === true),
-                css = pd.data.css.core + pd.data.css["s" + pd.data.color],
+                css        = pd.data.css.core + pd.data.css["s" + pd.data.color],
                 diffstring = "var pd={};pd.colSliderProperties=[];pd.difffold=function dom__difffold(){var a=0" +
-                        ",b=0,self=this,title=self.getAttribute(\"title\").split(\"line \"),min=Number(ti" +
-                        "tle[1].substr(0,title[1].indexOf(\" \"))),max=Number(title[2]),inner=self.innerH" +
-                        "TML,lists=[],parent=self.parentNode.parentNode,listnodes=(parent.getAttribute(\"" +
-                        "class\")===\"diff\")?parent.getElementsByTagName(\"ol\"):parent.parentNode.getEl" +
-                        "ementsByTagName(\"ol\"),listLen=listnodes.length;for(a=0;a<listLen;a+=1){lists.p" +
-                        "ush(listnodes[a].getElementsByTagName(\"li\"))}for(a=0;a<min;a+=1){if(lists[0][a" +
-                        "].getAttribute(\"class\")===\"empty\"){min+=1;max+=1}}max=(max>=lists[0].length)" +
-                        "?lists[0].length:max;if(inner.charAt(0)===\"-\"){self.innerHTML=\"+\"+inner.subs" +
-                        "tr(1);for(a=min;a<max;a+=1){for(b=0;b<listLen;b+=1){lists[b][a].style.display=\"" +
-                        "none\"}}}else{self.innerHTML=\"-\"+inner.substr(1);for(a=min;a<max;a+=1){for(b=0" +
-                        ";b<listLen;b+=1){lists[b][a].style.display=\"block\"}}}};pd.colSliderGrab=functi" +
-                        "on dom__colSliderGrab(e){var event=e||window.event,touch=(e!==null&&e.type===\"t" +
-                        "ouchstart\")?true:false,node=this,diffRight=node.parentNode,diff=diffRight.paren" +
-                        "tNode,subOffset=0,counter=pd.colSliderProperties[0],data=pd.colSliderProperties[" +
-                        "1],width=pd.colSliderProperties[2],total=pd.colSliderProperties[3],offset=pd.col" +
-                        "SliderProperties[4],min=0,max=data-1,status=\"ew\",minAdjust=min+15,maxAdjust=ma" +
-                        "x-15,withinRange=false,diffLeft=diffRight.previousSibling,drop=function dom__col" +
-                        "SliderGrab_drop(f){f=f||window.event;f.preventDefault();node.style.cursor=status" +
-                        "+\"-resize\";if(touch===true){document.ontouchmove=null;document.ontouchend=null" +
-                        "}else{document.onmousemove=null;document.onmouseup=null}},boxmove=function dom__" +
-                        "colSliderGrab_boxmove(f){f=f||window.event;f.preventDefault();if(touch===true){s" +
-                        "ubOffset=offset-f.touches[0].clientX}else{subOffset=offset-f.clientX}if(subOffse" +
-                        "t>minAdjust&&subOffset<maxAdjust){withinRange=true}if(withinRange===true&&subOff" +
-                        "set>maxAdjust){diffRight.style.width=((total-counter-2)/10)+\"em\";status=\"e\"}" +
-                        "else if(withinRange===true&&subOffset<minAdjust){diffRight.style.width=(width/10" +
-                        ")+\"em\";status=\"w\"}else if(subOffset<max&&subOffset>min){diffRight.style.widt" +
-                        "h=((width+subOffset)/10)+\"em\";status=\"ew\"}if(touch===true){document.ontouche" +
-                        "nd=drop}else{document.onmouseup=drop}};event.preventDefault();if(typeof pd.o===" + "\"object\"&&pd.o.report.code.box!==null){offset+=pd.o.report.code.box.offsetLeft" +
-                        ";offset-=pd.o.report.code.body.scrollLeft}else{subOffset=(document.body.parentNo" +
-                        "de.scrollLeft>document.body.scrollLeft)?document.body.parentNode.scrollLeft:docu" +
-                        "ment.body.scrollLeft;offset-=subOffset}offset+=node.clientWidth;node.style.curso" +
-                        "r=\"ew-resize\";diff.style.width=(total/10)+\"em\";diff.style.display=\"inline-b" +
-                        "lock\";if(diffLeft.nodeType!==1){do{diffLeft=diffLeft.previousSibling}while(diff" +
-                        "Left.nodeType!==1)}diffLeft.style.display=\"block\";diffRight.style.width=(diffR" +
-                        "ight.clientWidth/10)+\"em\";diffRight.style.position=\"absolute\";if(touch===tru" +
-                        "e){document.ontouchmove=boxmove;document.ontouchstart=false}else{document.onmous" +
-                        "emove=boxmove;document.onmousedown=null}};(function(){\"use strict\";var d=docum" +
-                        "ent.getElementsByTagName(\"ol\"),cells=d[0].getElementsByTagName(\"li\"),len=cel" +
-                        "ls.length,a=0;pd.colSliderProperties=[d[0].clientWidth,d[1].clientWidth,d[2].par" +
-                        "entNode.clientWidth,d[2].parentNode.parentNode.clientWidth,d[2].parentNode.offse" +
-                        "tLeft-d[2].parentNode.parentNode.offsetLeft];for(a=0;a<len;a+=1){if(cells[a].get" +
-                        "Attribute(\"class\")===\"fold\"){cells[a].onmousedown=pd.difffold}}if(d.length>3" +
-                        "){d[2].onmousedown=pd.colSliderGrab;d[2].ontouchstart=pd.colSliderGrab}}());",
+                            ",b=0,self=this,title=self.getAttribute(\"title\").split(\"line \"),min=Number(ti" +
+                            "tle[1].substr(0,title[1].indexOf(\" \"))),max=Number(title[2]),inner=self.innerH" +
+                            "TML,lists=[],parent=self.parentNode.parentNode,listnodes=(parent.getAttribute(\"" +
+                            "class\")===\"diff\")?parent.getElementsByTagName(\"ol\"):parent.parentNode.getEl" +
+                            "ementsByTagName(\"ol\"),listLen=listnodes.length;for(a=0;a<listLen;a+=1){lists.p" +
+                            "ush(listnodes[a].getElementsByTagName(\"li\"))}for(a=0;a<min;a+=1){if(lists[0][a" +
+                            "].getAttribute(\"class\")===\"empty\"){min+=1;max+=1}}max=(max>=lists[0].length)" +
+                            "?lists[0].length:max;if(inner.charAt(0)===\"-\"){self.innerHTML=\"+\"+inner.subs" +
+                            "tr(1);for(a=min;a<max;a+=1){for(b=0;b<listLen;b+=1){lists[b][a].style.display=\"" +
+                            "none\"}}}else{self.innerHTML=\"-\"+inner.substr(1);for(a=min;a<max;a+=1){for(b=0" +
+                            ";b<listLen;b+=1){lists[b][a].style.display=\"block\"}}}};pd.colSliderGrab=functi" +
+                            "on dom__colSliderGrab(e){var event=e||window.event,touch=(e!==null&&e.type===\"t" +
+                            "ouchstart\")?true:false,node=this,diffRight=node.parentNode,diff=diffRight.paren" +
+                            "tNode,subOffset=0,counter=pd.colSliderProperties[0],data=pd.colSliderProperties[" +
+                            "1],width=pd.colSliderProperties[2],total=pd.colSliderProperties[3],offset=pd.col" +
+                            "SliderProperties[4],min=0,max=data-1,status=\"ew\",minAdjust=min+15,maxAdjust=ma" +
+                            "x-15,withinRange=false,diffLeft=diffRight.previousSibling,drop=function dom__col" +
+                            "SliderGrab_drop(f){f=f||window.event;f.preventDefault();node.style.cursor=status" +
+                            "+\"-resize\";if(touch===true){document.ontouchmove=null;document.ontouchend=null" +
+                            "}else{document.onmousemove=null;document.onmouseup=null}},boxmove=function dom__" +
+                            "colSliderGrab_boxmove(f){f=f||window.event;f.preventDefault();if(touch===true){s" +
+                            "ubOffset=offset-f.touches[0].clientX}else{subOffset=offset-f.clientX}if(subOffse" +
+                            "t>minAdjust&&subOffset<maxAdjust){withinRange=true}if(withinRange===true&&subOff" +
+                            "set>maxAdjust){diffRight.style.width=((total-counter-2)/10)+\"em\";status=\"e\"}" +
+                            "else if(withinRange===true&&subOffset<minAdjust){diffRight.style.width=(width/10" +
+                            ")+\"em\";status=\"w\"}else if(subOffset<max&&subOffset>min){diffRight.style.widt" +
+                            "h=((width+subOffset)/10)+\"em\";status=\"ew\"}if(touch===true){document.ontouche" +
+                            "nd=drop}else{document.onmouseup=drop}};event.preventDefault();if(typeof pd.o===" +
+                            "\"object\"&&pd.o.report.code.box!==null){offset+=pd.o.report.code.box.offsetLeft" +
+                            ";offset-=pd.o.report.code.body.scrollLeft}else{subOffset=(document.body.parentNo" +
+                            "de.scrollLeft>document.body.scrollLeft)?document.body.parentNode.scrollLeft:docu" +
+                            "ment.body.scrollLeft;offset-=subOffset}offset+=node.clientWidth;node.style.curso" +
+                            "r=\"ew-resize\";diff.style.width=(total/10)+\"em\";diff.style.display=\"inline-b" +
+                            "lock\";if(diffLeft.nodeType!==1){do{diffLeft=diffLeft.previousSibling}while(diff" +
+                            "Left.nodeType!==1)}diffLeft.style.display=\"block\";diffRight.style.width=(diffR" +
+                            "ight.clientWidth/10)+\"em\";diffRight.style.position=\"absolute\";if(touch===tru" +
+                            "e){document.ontouchmove=boxmove;document.ontouchstart=false}else{document.onmous" +
+                            "emove=boxmove;document.onmousedown=null}};(function(){\"use strict\";var d=docum" +
+                            "ent.getElementsByTagName(\"ol\"),cells=d[0].getElementsByTagName(\"li\"),len=cel" +
+                            "ls.length,a=0;pd.colSliderProperties=[d[0].clientWidth,d[1].clientWidth,d[2].par" +
+                            "entNode.clientWidth,d[2].parentNode.parentNode.clientWidth,d[2].parentNode.offse" +
+                            "tLeft-d[2].parentNode.parentNode.offsetLeft];for(a=0;a<len;a+=1){if(cells[a].get" +
+                            "Attribute(\"class\")===\"fold\"){cells[a].onmousedown=pd.difffold}}if(d.length>3" +
+                            "){d[2].onmousedown=pd.colSliderGrab;d[2].ontouchstart=pd.colSliderGrab}}());",
                 beaustring = "pd.beaufold=function dom__beaufold(){var self=this,title=self.getAttribute('titl" +
-                        "e').split('line '),min=Number(title[1].substr(0,title[1].indexOf(' '))),max=Numb" +
-                        "er(title[2]),a=0,b='',list=[self.parentNode.getElementsByTagName('li'),self.pare" +
-                        "ntNode.nextSibling.getElementsByTagName('li')];if(self.innerHTML.charAt(0)==='-'" +
-                        "){for(a=min;a<max;a+=1){list[0][a].style.display='none';list[1][a].style.display" +
-                        "='none';}self.innerHTML='+'+self.innerHTML.substr(1);}else{for(a=min;a<max;a+=1)" +
-                        "{list[0][a].style.display='block';list[1][a].style.display='block';if(list[0][a]" +
-                        ".getAttribute('class')==='fold'&&list[0][a].innerHTML.charAt(0)==='+'){b=list[0]" +
-                        "[a].getAttribute('title');b=b.substring(b.indexOf('to line ')+1);a=Number(b)-1;}" +
-                        "}self.innerHTML='-'+self.innerHTML.substr(1);}};",
-                span = pd.id("inline"),
-                type = "application/javascript";
+                            "e').split('line '),min=Number(title[1].substr(0,title[1].indexOf(' '))),max=Numb" +
+                            "er(title[2]),a=0,b='',list=[self.parentNode.getElementsByTagName('li'),self.pare" +
+                            "ntNode.nextSibling.getElementsByTagName('li')];if(self.innerHTML.charAt(0)==='-'" +
+                            "){for(a=min;a<max;a+=1){list[0][a].style.display='none';list[1][a].style.display" +
+                            "='none';}self.innerHTML='+'+self.innerHTML.substr(1);}else{for(a=min;a<max;a+=1)" +
+                            "{list[0][a].style.display='block';list[1][a].style.display='block';if(list[0][a]" +
+                            ".getAttribute('class')==='fold'&&list[0][a].innerHTML.charAt(0)==='+'){b=list[0]" +
+                            "[a].getAttribute('title');b=b.substring(b.indexOf('to line ')+1);a=Number(b)-1;}" +
+                            "}self.innerHTML='-'+self.innerHTML.substr(1);}};",
+                span       = pd.id("inline"),
+                type       = "application/javascript";
             if (bodyInner.innerHTML === "") {
                 return;
             }
@@ -3501,16 +3467,16 @@ var pd = {},
                     } while (lastChild.nodeType > 1 || lastChild.nodeName.toLowerCase() === "script");
                 }
                 pageHeight = lastChild.offsetTop + lastChild.clientHeight + 20;
-                lastChild = document.createElement("div");
+                lastChild  = document.createElement("div");
                 lastChild.setAttribute("onmousedown", "this.parentNode.removeChild(this)");
                 lastChild.setAttribute("id", "modalSave");
-                span = document.createElement("span");
-                span.style.width = (pd.data.node.page.clientWidth + 10) + "px";
+                span              = document.createElement("span");
+                span.style.width  = (pd.data.node.page.clientWidth + 10) + "px";
                 span.style.height = pageHeight + "px";
                 lastChild.appendChild(span);
-                span = document.createElement("p");
+                span           = document.createElement("p");
                 span.innerHTML = "Just rename the file extension from '<strong>.part</strong>' to '<strong>.xhtml<" +
-                        "/strong>'. <em>Click anywhere to close this reminder.</em>";
+                                     "/strong>'. <em>Click anywhere to close this reminder.</em>";
                 lastChild.appendChild(span);
                 pd
                     .data
@@ -3546,10 +3512,10 @@ var pd = {},
                                 ? "<div class='beautify'"
                                 : "<div class=\"beautify\"";
                         }
-                        content = bodyInner.split(classQuote);
+                        content    = bodyInner.split(classQuote);
                         classQuote = classQuote + content[1];
-                        bodyInner = content[0];
-                        css = css
+                        bodyInner  = content[0];
+                        css        = css
                             .replace(/&/g, "&amp;")
                             .replace(/>/g, "&gt;")
                             .replace(/</g, "&lt;");
@@ -3651,7 +3617,7 @@ var pd = {},
                     classQuote = (bodyInner.indexOf("<div class='pdsavecontent'") > -1)
                         ? "<div class='pdsavecontent'>"
                         : "<div class=\"pdsavecontent\">";
-                    content = bodyInner.split(classQuote);
+                    content    = bodyInner.split(classQuote);
                     if (content[0].indexOf("</h1>") > -1) {
                         build.push(content[0].split("</h1>")[1]);
                     } else {
@@ -3670,14 +3636,14 @@ var pd = {},
             button.innerHTML = "S";
             button.setAttribute("title", "Convert report to text that can be saved.");
             body.innerHTML = build.join("");
-            content = body.getElementsByTagName("ol");
+            content        = body.getElementsByTagName("ol");
             if (content.length > 0) {
                 if (pd.data.mode === "diff") {
                     pd.data.colSliderProperties = [
                         content[0].clientWidth, content[1].clientWidth, content[2].parentNode.clientWidth, content[2].parentNode.parentNode.clientWidth, content[2].parentNode.offsetLeft - content[2].parentNode.parentNode.offsetLeft
                     ];
-                    content[2].onmousedown = pd.event.colSliderGrab;
-                    content[2].ontouchstart = pd.event.colSliderGrab;
+                    content[2].onmousedown      = pd.event.colSliderGrab;
+                    content[2].ontouchstart     = pd.event.colSliderGrab;
                 }
                 content = content[0].getElementsByTagName("li");
                 for (pageHeight = content.length - 1; pageHeight > -1; pageHeight -= 1) {
@@ -3696,11 +3662,11 @@ var pd = {},
             return false;
         },
         //analyzes combinations of consecutive key presses
-        sequence: function dom__event_sequence(e) {
-            var seq = pd.test.keysequence,
-                len = seq.length,
+        sequence     : function dom__event_sequence(e) {
+            var seq   = pd.test.keysequence,
+                len   = seq.length,
                 event = e || window.event,
-                key = event.keyCode;
+                key   = event.keyCode;
             if (len === 0 || len === 1) {
                 if (key === 38) {
                     pd
@@ -3778,9 +3744,9 @@ var pd = {},
                     //}());
 
                     (function dom__event_sequence_colorChange() {
-                        var color = pd.id("colorScheme"),
-                            ind = color.selectedIndex,
-                            max = color
+                        var color  = pd.id("colorScheme"),
+                            ind    = color.selectedIndex,
+                            max    = color
                                 .getElementsByTagName("option")
                                 .length - 1,
                             change = function dom__event_sequence_colorChange_change() {
@@ -3806,22 +3772,22 @@ var pd = {},
 
     //recycle bundles arguments in preparation for executing prettydiff
     //references events: beaufold, colSliderGrab, difffold, minimize, save
-    pd.event.recycle = function dom__event_recycle(e) {
-        var api = {},
-            output = [],
-            domain = (/^((https?:\/\/)|(file:\/\/\/))/),
-            event = e || window.event,
-            lang = "",
-            errortext = "",
-            node = pd.id("jsscope-html"),
-            requests = false,
-            requestd = false,
-            completes = false,
-            completed = false,
-            autotest = false,
-            crlf = pd.id("lterminator-crlf"),
-            textout = ((pd.data.node.jsscope === null || pd.data.node.jsscope.checked === false) && (node === null || node.checked === false)),
-            app = function dom__event_recycle_appInit() {
+    pd.event.recycle    = function dom__event_recycle(e) {
+        var api         = {},
+            output      = [],
+            domain      = (/^((https?:\/\/)|(file:\/\/\/))/),
+            event       = e || window.event,
+            lang        = "",
+            errortext   = "",
+            node        = pd.id("jsscope-html"),
+            requests    = false,
+            requestd    = false,
+            completes   = false,
+            completed   = false,
+            autotest    = false,
+            crlf        = pd.id("lterminator-crlf"),
+            textout     = ((pd.data.node.jsscope === null || pd.data.node.jsscope.checked === false) && (node === null || node.checked === false)),
+            app         = function dom__event_recycle_appInit() {
                 return;
             },
             application = function dom__event_recycle_application(lang) {
@@ -3835,7 +3801,7 @@ var pd = {},
                 if (typeof global.markuppretty === "function" && (lang === "markup" || lang === "html")) {
                     return function dom__event_recycle_application_markuppretty() {
                         var code = global.markupprettyy(api),
-                            sum = (global.report === undefined)
+                            sum  = (global.report === undefined)
                                 ? ""
                                 : global.report;
                         return [code, sum];
@@ -3847,7 +3813,7 @@ var pd = {},
                 if (typeof global.csspretty === "function" && lang === "css") {
                     return function dom__event_recycle_application_csspretty() {
                         var code = global.csspretty(api),
-                            sum = (global.report === undefined)
+                            sum  = (global.report === undefined)
                                 ? ""
                                 : global.report;
                         return [code, sum];
@@ -3856,20 +3822,20 @@ var pd = {},
                 if (typeof global.jspretty === "function") {
                     return function dom__event_recycle_application_jspretty() {
                         var code = global.jspretty(api),
-                            sum = (global.report === undefined)
+                            sum  = (global.report === undefined)
                                 ? ""
                                 : global.report;
                         return [code, sum];
                     };
                 }
             },
-            execOutput = function dom__event_recycle_execOutput() {
-                var diffList = [],
-                    button = {},
-                    buttons = {},
-                    pdlang = "",
+            execOutput  = function dom__event_recycle_execOutput() {
+                var diffList   = [],
+                    button     = {},
+                    buttons    = {},
+                    pdlang     = "",
                     chromeSave = false;
-                node = pd.id("showOptionsCallOut");
+                node           = pd.id("showOptionsCallOut");
                 pd.data.zIndex += 1;
                 if (autotest === true) {
                     if (pd.data.langvalue[1] === "javascript") {
@@ -3899,7 +3865,7 @@ var pd = {},
                 }
                 button = pd.data.node.report.code.box.getElementsByTagName("p")[0].getElementsByTagName("button")[0];
                 if (button.getAttribute("class") === "save" && button.innerHTML === "H") {
-                    chromeSave = true;
+                    chromeSave       = true;
                     button.innerHTML = "S";
                 }
                 if (api.mode === "parse" || (api.lang === "csv" && pd.data.mode !== "diff")) {
@@ -3920,17 +3886,17 @@ var pd = {},
                     if (pd.data.node.report.code.box !== null) {
                         if (api.lang === "csv") {
                             (function dom__event_recycle_execOutput_csvTable() {
-                                var a = 0,
-                                    b = output[0].length,
-                                    c = 0,
-                                    d = 0,
-                                    cells = 0,
+                                var a       = 0,
+                                    b       = output[0].length,
+                                    c       = 0,
+                                    d       = 0,
+                                    cells   = 0,
                                     heading = false,
-                                    tr = {},
-                                    table = {},
-                                    td = {},
-                                    body = {},
-                                    div = {};
+                                    tr      = {},
+                                    table   = {},
+                                    td      = {},
+                                    body    = {},
+                                    div     = {};
                                 for (a = 0; a < b; a += 1) {
                                     if (output[0][a].length > cells) {
                                         cells = output[0][a].length;
@@ -3961,17 +3927,17 @@ var pd = {},
                                         }
                                     }
                                 }
-                                div = document.createElement("div");
+                                div   = document.createElement("div");
                                 table = document.createElement("table");
                                 div.setAttribute("class", "doc");
                                 table.setAttribute("class", "analysis");
                                 table.setAttribute("summary", "CSV data");
                                 a = 0;
                                 if (heading === true) {
-                                    a = 1;
-                                    body = document.createElement("thead");
-                                    tr = document.createElement("tr");
-                                    td = document.createElement("th");
+                                    a            = 1;
+                                    body         = document.createElement("thead");
+                                    tr           = document.createElement("tr");
+                                    td           = document.createElement("th");
                                     td.innerHTML = "Index";
                                     tr.appendChild(td);
                                     for (c = 0; c < cells; c += 1) {
@@ -4010,19 +3976,19 @@ var pd = {},
                                 if (pd.test.ls === true) {
                                     if (pd.data.mode === "beau") {
                                         pd.data.stat.beau += 1;
-                                        node = pd.id("stbeau");
+                                        node              = pd.id("stbeau");
                                         if (node !== null) {
                                             node.innerHTML = pd.data.stat.beau;
                                         }
                                     } else if (pd.data.mode === "minn") {
                                         pd.data.stat.minn += 1;
-                                        node = pd.id("stminn");
+                                        node              = pd.id("stminn");
                                         if (node !== null) {
                                             node.innerHTML = pd.data.stat.minn;
                                         }
                                     } else if (pd.data.mode === "pars") {
                                         pd.data.stat.pars += 1;
-                                        node = pd.id("stpars");
+                                        node              = pd.id("stpars");
                                         if (node !== null) {
                                             node.innerHTML = pd.data.stat.pars;
                                         }
@@ -4034,8 +4000,8 @@ var pd = {},
                                 var table = [],
                                     token = output[0].token,
                                     types = output[0].types,
-                                    a = 0,
-                                    len = 0,
+                                    a     = 0,
+                                    len   = 0,
                                     build = "";
                                 if (token === undefined) {
                                     pd.data.node.report.code.body.innerHTML = output[1];
@@ -4071,7 +4037,7 @@ var pd = {},
                                 }
                                 if (pd.test.ls === true) {
                                     pd.data.stat.pars += 1;
-                                    node = pd.id("stpars");
+                                    node              = pd.id("stpars");
                                     if (node !== null) {
                                         node.innerHTML = pd.data.stat.pars;
                                     }
@@ -4083,7 +4049,7 @@ var pd = {},
                                 type: "onmousedown"
                             }, pd.data.node.report.code.box.getElementsByTagName("h3")[0]);
                         }
-                        pd.data.node.report.code.box.style.top = (pd.data.settings.codereport.top / 10) + "em";
+                        pd.data.node.report.code.box.style.top   = (pd.data.settings.codereport.top / 10) + "em";
                         pd.data.node.report.code.box.style.right = "auto";
                     }
                 } else if (api.mode === "beautify") {
@@ -4104,7 +4070,7 @@ var pd = {},
                                 }
                                 pd.data.node.report.code.body.firstChild.innerHTML = "Code type is set to <strong>auto</strong>. <span>Presumed language is <em>" + pd.data.langvalue[2] + "</em>.</span>";
                             }
-                            pd.data.node.report.code.box.style.zIndex = pd.data.zIndex;
+                            pd.data.node.report.code.box.style.zIndex  = pd.data.zIndex;
                             pd.data.node.report.code.box.style.display = "block";
                         }
                         if (output[1] !== undefined && output[1].length > 125000) {
@@ -4123,14 +4089,14 @@ var pd = {},
                                         type: "onmousedown"
                                     }, pd.data.node.report.code.box.getElementsByTagName("h3")[0]);
                                 }
-                                pd.data.node.report.code.box.style.top = (pd.data.settings.codereport.top / 10) + "em";
+                                pd.data.node.report.code.box.style.top   = (pd.data.settings.codereport.top / 10) + "em";
                                 pd.data.node.report.code.box.style.right = "auto";
-                                diffList = pd.data.node.report.code.body.getElementsByTagName("ol");
+                                diffList                                 = pd.data.node.report.code.body.getElementsByTagName("ol");
                                 if (diffList.length > 0) {
                                     (function dom__event_recycle_execOutput_beauList() {
-                                        var a = 0,
+                                        var a    = 0,
                                             list = diffList[0].getElementsByTagName("li"),
-                                            b = list.length;
+                                            b    = list.length;
                                         for (a = 0; a < b; a += 1) {
                                             if (list[a].getAttribute("class") === "fold") {
                                                 list[a].onmousedown = pd.event.beaufold;
@@ -4143,14 +4109,14 @@ var pd = {},
                     }
                     if (pd.test.ls === true) {
                         pd.data.stat.beau += 1;
-                        node = pd.id("stbeau");
+                        node              = pd.id("stbeau");
                         if (node !== null) {
                             node.innerHTML = pd.data.stat.beau;
                         }
                     }
                 } else if (api.mode === "diff" && pd.data.node.report.code.box !== null) {
                     buttons = pd.data.node.report.code.box.getElementsByTagName("p")[0].getElementsByTagName("button");
-                    if (output[0].length > 125000) {
+                    if (output.length > 0 && output[0].length > 125000) {
                         pd.test.filled.code = true;
                     } else {
                         pd.test.filled.code = false;
@@ -4172,8 +4138,8 @@ var pd = {},
                         if (diffList.length > 0) {
                             (function dom__event_recycle_execOutput_diffList() {
                                 var cells = diffList[0].getElementsByTagName("li"),
-                                    len = cells.length,
-                                    a = 0;
+                                    len   = cells.length,
+                                    a     = 0;
                                 for (a = 0; a < len; a += 1) {
                                     if (cells[a].getAttribute("class") === "fold") {
                                         cells[a].onmousedown = pd.event.difffold;
@@ -4188,14 +4154,14 @@ var pd = {},
                                 pd.data.colSliderProperties = [
                                     diffList[0].clientWidth, diffList[1].clientWidth, diffList[2].parentNode.clientWidth, diffList[2].parentNode.parentNode.clientWidth, diffList[2].parentNode.offsetLeft - diffList[2].parentNode.parentNode.offsetLeft
                                 ];
-                                diffList[2].onmousedown = pd.event.colSliderGrab;
-                                diffList[2].ontouchstart = pd.event.colSliderGrab;
+                                diffList[2].onmousedown     = pd.event.colSliderGrab;
+                                diffList[2].ontouchstart    = pd.event.colSliderGrab;
                             }
                         }
                     }
                     if (pd.test.ls === true) {
                         pd.data.stat.diff += 1;
-                        node = pd.id("stdiff");
+                        node              = pd.id("stdiff");
                         if (node !== null) {
                             node.innerHTML = pd.data.stat.diff;
                         }
@@ -4218,7 +4184,7 @@ var pd = {},
                         if (autotest === true) {
                             output[1] = output[1].replace("seconds </em></p>", "seconds </em></p> <p>Language is set to <strong>auto</strong>. Presumed language" +
                                     " is <em>" + pd.data.langvalue[2] + "</em>.</p>");
-                            api.lang = "auto";
+                            api.lang  = "auto";
                         }
                         pd.data.node.report.code.body.innerHTML = output[1];
                         if (autotest === true && pd.data.node.report.code.body.firstChild !== null) {
@@ -4227,12 +4193,12 @@ var pd = {},
                             }
                             pd.data.node.report.code.body.firstChild.innerHTML = "Code type is set to <strong>auto</strong>. <span>Presumed language is <em>" + pd.data.langvalue[2] + "</em>.</span>";
                         }
-                        pd.data.node.report.code.box.style.zIndex = pd.data.zIndex;
+                        pd.data.node.report.code.box.style.zIndex  = pd.data.zIndex;
                         pd.data.node.report.code.box.style.display = "block";
                     }
                     if (pd.test.ls === true) {
                         pd.data.stat.minn += 1;
-                        node = pd.id("stminn");
+                        node              = pd.id("stminn");
                         if (node !== null) {
                             node.innerHTML = pd.data.stat.minn;
                         }
@@ -4241,8 +4207,8 @@ var pd = {},
                 if (pd.data.node.announce !== null) {
                     if (pd.data.langvalue[1] === "markup" || pd.data.langvalue[1] === "html") {
                         errortext = (function dom__event_recycle_execOutput_errortext() {
-                            var a = 0,
-                                p = output[1].split("<p><strong"),
+                            var a      = 0,
+                                p      = output[1].split("<p><strong"),
                                 length = p.length;
                             for (a = 0; a < length; a += 1) {
                                 if (p[a].indexOf(" more ") > -1 && p[a].indexOf("start tag") > -1 && p[a].indexOf("end tag") > -1) {
@@ -4294,31 +4260,31 @@ var pd = {},
                         lang = lang.toLowerCase();
                         if (lang === "csv") {
                             pd.data.stat.csv += 1;
-                            node = pd.id("stcsv");
+                            node             = pd.id("stcsv");
                             if (node !== null) {
                                 node.innerHTML = pd.data.stat.csv;
                             }
                         } else if (lang === "plain text") {
                             pd.data.stat.text += 1;
-                            node = pd.id("sttext");
+                            node              = pd.id("sttext");
                             if (node !== null) {
                                 node.innerHTML = pd.data.stat.text;
                             }
                         } else if (lang === "javascript") {
                             pd.data.stat.js += 1;
-                            node = pd.id("stjs");
+                            node            = pd.id("stjs");
                             if (node !== null) {
                                 node.innerHTML = pd.data.stat.js;
                             }
                         } else if (lang === "markup" || lang === "html" || lang === "xml" || lang === "xhtml") {
                             pd.data.stat.markup += 1;
-                            node = pd.id("stmarkup");
+                            node                = pd.id("stmarkup");
                             if (node !== null) {
                                 node.innerHTML = pd.data.stat.markup;
                             }
                         } else if (lang === "css") {
                             pd.data.stat.css += 1;
-                            node = pd.id("stcss");
+                            node             = pd.id("stcss");
                             if (node !== null) {
                                 node.innerHTML = pd.data.stat.css;
                             }
@@ -4330,7 +4296,7 @@ var pd = {},
                         }
                         if (size > pd.data.stat.large) {
                             pd.data.stat.large = size;
-                            node = pd.id("stlarge");
+                            node               = pd.id("stlarge");
                             if (node !== null) {
                                 node.innerHTML = size;
                             }
@@ -4380,7 +4346,7 @@ var pd = {},
         }
 
         //gather updated dom nodes
-        api.lang = (pd.data.node.lang === null)
+        api.lang        = (pd.data.node.lang === null)
             ? "javascript"
             : (pd.data.node.lang.nodeName.toLowerCase() === "select")
                 ? pd.data.node.lang[pd.data.node.lang.selectedIndex].value.toLowerCase()
@@ -4388,13 +4354,13 @@ var pd = {},
         api.langdefault = (pd.data.node.langdefault !== null)
             ? pd.data.node.langdefault[pd.data.node.langdefault.selectedIndex].value
             : "javascript";
-        node = pd.id("csvchar");
-        api.csvchar = (node === null || node.value.length === 0)
+        node            = pd.id("csvchar");
+        api.csvchar     = (node === null || node.value.length === 0)
             ? ","
             : node.value;
-        node = pd.id("lterminator-crlf");
-        api.crlf = (node !== null && node.checked === true);
-        api.api = "dom";
+        node            = pd.id("lterminator-crlf");
+        api.crlf        = (node !== null && node.checked === true);
+        api.api         = "dom";
         if (api.lang === "auto") {
             autotest = true;
         }
@@ -4402,50 +4368,50 @@ var pd = {},
         //determine options based upon mode of operations
         if (pd.data.mode === "beau") {
             (function dom__event_recycle_beautify() {
-                var braceline = pd.id("bbraceline-no"),
+                var braceline    = pd.id("bbraceline-no"),
                     bracepadding = pd.id("bracepadding-no"),
-                    braces = pd.id("jsindent-all"),
-                    chars = pd.id("beau-space"),
-                    comments = pd.id("incomment-no"),
-                    commline = pd.id("bcommline-yes"),
-                    csslines = pd.id("cssinsertlines-yes"),
-                    dustjs = pd.id("bdustyes"),
-                    elseline = pd.id("jselseline-yes"),
-                    endcomma = pd.id("bendcomma-yes"),
-                    forceIndent = pd.id("bforce_indent-yes"),
-                    html = pd.id("html-yes"),
-                    jscorrect = pd.id("jscorrect-yes"),
-                    jshtml = pd.id("jsscope-html"),
-                    jslinesa = pd.id("bjslines-all"),
-                    jsspace = pd.id("jsspace-no"),
+                    braces       = pd.id("jsindent-all"),
+                    chars        = pd.id("beau-space"),
+                    comments     = pd.id("incomment-no"),
+                    commline     = pd.id("bcommline-yes"),
+                    csslines     = pd.id("cssinsertlines-yes"),
+                    dustjs       = pd.id("bdustyes"),
+                    elseline     = pd.id("jselseline-yes"),
+                    endcomma     = pd.id("bendcomma-yes"),
+                    forceIndent  = pd.id("bforce_indent-yes"),
+                    html         = pd.id("html-yes"),
+                    jscorrect    = pd.id("jscorrect-yes"),
+                    jshtml       = pd.id("jsscope-html"),
+                    jslinesa     = pd.id("bjslines-all"),
+                    jsspace      = pd.id("jsspace-no"),
                     methodchainc = pd.id("bmethodchain-chain"),
                     methodchaini = pd.id("bmethodchain-indent"),
                     methodchainn = pd.id("bmethodchain-none"),
                     neverflatten = pd.id("bneverflatten-yes"),
                     nocaseindent = pd.id("bnocaseindent-yes"),
-                    noleadzero = pd.id("bnoleadzero-yes"),
-                    objsorta = pd.id("bobjsort-all"),
-                    objsortc = pd.id("bobjsort-cssonly"),
-                    objsortj = pd.id("bobjsort-jsonly"),
-                    objsortm = pd.id("bobjsort-markuponly"),
-                    offset = pd.id("inlevel"),
-                    quantity = pd.id("beau-quan"),
-                    quotecond = pd.id("bquoteconvert-double"),
-                    quotecons = pd.id("bquoteconvert-single"),
+                    noleadzero   = pd.id("bnoleadzero-yes"),
+                    objsorta     = pd.id("bobjsort-all"),
+                    objsortc     = pd.id("bobjsort-cssonly"),
+                    objsortj     = pd.id("bobjsort-jsonly"),
+                    objsortm     = pd.id("bobjsort-markuponly"),
+                    offset       = pd.id("inlevel"),
+                    quantity     = pd.id("beau-quan"),
+                    quotecond    = pd.id("bquoteconvert-double"),
+                    quotecons    = pd.id("bquoteconvert-single"),
                     selectorlist = pd.id("bselectorlist-yes"),
-                    spaceclose = pd.id("bspaceclose-yes"),
-                    style = pd.id("inscript-no"),
-                    styleguide = pd.id("bstyleguide"),
-                    tagmerge = pd.id("btagmerge-yes"),
-                    tagsort = pd.id("btagsort-yes"),
-                    ternaryline = pd.id("bternaryline-yes"),
+                    spaceclose   = pd.id("bspaceclose-yes"),
+                    style        = pd.id("inscript-no"),
+                    styleguide   = pd.id("bstyleguide"),
+                    tagmerge     = pd.id("btagmerge-yes"),
+                    tagsort      = pd.id("btagsort-yes"),
+                    ternaryline  = pd.id("bternaryline-yes"),
                     textpreserve = pd.id("btextpreserveyes"),
-                    varworde = pd.id("bvarword-each"),
-                    varwordl = pd.id("bvarword-list"),
-                    verticala = pd.id("vertical-all"),
-                    verticalc = pd.id("vertical-cssonly"),
-                    verticalj = pd.id("vertical-jsonly"),
-                    wrap = pd.id("beau-wrap");
+                    varworde     = pd.id("bvarword-each"),
+                    varwordl     = pd.id("bvarword-list"),
+                    verticala    = pd.id("vertical-all"),
+                    verticalc    = pd.id("vertical-cssonly"),
+                    verticalj    = pd.id("vertical-jsonly"),
+                    wrap         = pd.id("beau-wrap");
                 if (pd.data.node.codeBeauIn !== null) {
                     if (api.lang === "auto" && pd.data.langvalue.length === 0) {
                         if (pd.test.ace === true) {
@@ -4462,9 +4428,9 @@ var pd = {},
                         api.source = pd.data.node.codeBeauIn.value;
                     }
                 }
-                api.braceline = (braceline === null || braceline.checked === false);
+                api.braceline    = (braceline === null || braceline.checked === false);
                 api.bracepadding = (bracepadding === null || bracepadding.checked === false);
-                api.braces = (braces === null || braces.checked === false)
+                api.braces       = (braces === null || braces.checked === false)
                     ? "knr"
                     : "allman";
                 if (chars === null || chars.checked === false) {
@@ -4492,22 +4458,22 @@ var pd = {},
                 } else {
                     api.inchar = " ";
                 }
-                api.comments = (comments !== null && comments.checked === true)
+                api.comments       = (comments !== null && comments.checked === true)
                     ? "noindent"
                     : "indent";
-                api.commline = (commline !== null && commline.checked === true);
-                api.correct = (jscorrect !== null && jscorrect.checked === true);
+                api.commline       = (commline !== null && commline.checked === true);
+                api.correct        = (jscorrect !== null && jscorrect.checked === true);
                 api.cssinsertlines = (csslines !== null && csslines.checked === true);
-                api.dustjs = (pd.data.langvalue[0] === "dustjs" || (dustjs !== null && dustjs.checked === true));
-                api.dustjs = (dustjs !== null && dustjs.checked === true);
-                api.elseline = (elseline !== null && elseline.checked === true);
-                api.endcomma = (endcomma !== null && endcomma.checked === true);
-                api.force_indent = (forceIndent !== null && forceIndent.checked === true);
-                api.html = (html !== null && html.checked === true);
-                api.inlevel = (offset === null || isNaN(offset.value) === true)
+                api.dustjs         = (pd.data.langvalue[0] === "dustjs" || (dustjs !== null && dustjs.checked === true));
+                api.dustjs         = (dustjs !== null && dustjs.checked === true);
+                api.elseline       = (elseline !== null && elseline.checked === true);
+                api.endcomma       = (endcomma !== null && endcomma.checked === true);
+                api.force_indent   = (forceIndent !== null && forceIndent.checked === true);
+                api.html           = (html !== null && html.checked === true);
+                api.inlevel        = (offset === null || isNaN(offset.value) === true)
                     ? 0
                     : Number(offset.value);
-                api.insize = (quantity === null || isNaN(quantity.value) === true)
+                api.insize         = (quantity === null || isNaN(quantity.value) === true)
                     ? 4
                     : Number(quantity.value);
                 if (pd.data.node.jsscope !== null && pd.data.node.jsscope.checked === true) {
@@ -4526,7 +4492,7 @@ var pd = {},
                 }
                 api.neverflatten = (neverflatten !== null && neverflatten.checked === true);
                 api.nocaseindent = (nocaseindent !== null && nocaseindent.checked === true);
-                api.noleadzero = (noleadzero !== null && noleadzero.checked === true);
+                api.noleadzero   = (noleadzero !== null && noleadzero.checked === true);
                 if (objsorta !== null && objsorta.checked === true) {
                     api.objsort = "all";
                 } else if (objsortc !== null && objsortc.checked === true) {
@@ -4551,17 +4517,17 @@ var pd = {},
                     api.quoteConvert = "none";
                 }
                 api.selectorlist = (selectorlist !== null && selectorlist.checked === true);
-                api.space = (jsspace === null || jsspace.checked === false);
-                api.spaceclose = (spaceclose !== null && spaceclose.checked === true);
-                api.style = (style === null || style.checked === false)
+                api.space        = (jsspace === null || jsspace.checked === false);
+                api.spaceclose   = (spaceclose !== null && spaceclose.checked === true);
+                api.style        = (style === null || style.checked === false)
                     ? "indent"
                     : "noindent";
-                api.styleguide = (styleguide !== null)
+                api.styleguide   = (styleguide !== null)
                     ? styleguide[styleguide.selectedIndex].value
                     : "";
-                api.tagmerge = (tagmerge !== null && tagmerge.checked === true);
-                api.tagsort = (tagsort !== null && tagsort.checked === true);
-                api.ternaryline = (ternaryline !== null && ternaryline.checked === true);
+                api.tagmerge     = (tagmerge !== null && tagmerge.checked === true);
+                api.tagsort      = (tagsort !== null && tagsort.checked === true);
+                api.ternaryline  = (ternaryline !== null && ternaryline.checked === true);
                 api.textpreserve = (textpreserve !== null && textpreserve.checked === true);
                 if (varworde !== null && varworde.checked === true) {
                     api.varword = "each";
@@ -4587,22 +4553,22 @@ var pd = {},
         }
         if (pd.data.mode === "minn") {
             (function dom__event_recycle_minify() {
-                var conditional = pd.id("conditionalm-yes"),
-                    dustjs = pd.id("mdustyes"),
-                    html = pd.id("htmlm-yes"),
-                    correct = pd.id("mjscorrect-yes"),
-                    miniwrap = pd.id("miniwrapm-yes"),
-                    objsorta = pd.id("mobjsort-all"),
-                    objsortc = pd.id("mobjsort-cssonly"),
-                    objsortj = pd.id("mobjsort-jsonly"),
-                    objsortm = pd.id("mobjsort-markuponly"),
-                    quotecond = pd.id("mquoteconvert-double"),
-                    quotecons = pd.id("mquoteconvert-single"),
-                    tagmerge = pd.id("mtagmerge-yes"),
-                    tagsort = pd.id("mtagsort-yes"),
+                var conditional  = pd.id("conditionalm-yes"),
+                    dustjs       = pd.id("mdustyes"),
+                    html         = pd.id("htmlm-yes"),
+                    correct      = pd.id("mjscorrect-yes"),
+                    miniwrap     = pd.id("miniwrapm-yes"),
+                    objsorta     = pd.id("mobjsort-all"),
+                    objsortc     = pd.id("mobjsort-cssonly"),
+                    objsortj     = pd.id("mobjsort-jsonly"),
+                    objsortm     = pd.id("mobjsort-markuponly"),
+                    quotecond    = pd.id("mquoteconvert-double"),
+                    quotecons    = pd.id("mquoteconvert-single"),
+                    tagmerge     = pd.id("mtagmerge-yes"),
+                    tagsort      = pd.id("mtagsort-yes"),
                     textpreserve = pd.id("mtextpreserveyes"),
-                    topcoms = pd.id("topcoms-yes"),
-                    wrap = pd.id("mini-wrap");
+                    topcoms      = pd.id("topcoms-yes"),
+                    wrap         = pd.id("mini-wrap");
                 if (pd.data.node.codeMinnIn !== null) {
                     if (api.lang === "auto" && pd.data.langvalue.length === 0) {
                         if (pd.test.ace === true) {
@@ -4638,16 +4604,16 @@ var pd = {},
                 } else {
                     api.quoteConvert = "none";
                 }
-                api.conditional = (conditional !== null && conditional.checked === true);
-                api.correct = (correct !== null && correct.checked === true);
-                api.dustjs = (dustjs !== null && dustjs.checked === true);
-                api.html = (html !== null && html.checked === true);
-                api.miniwrap = (miniwrap !== null && miniwrap.checked === true);
-                api.tagmerge = (tagmerge !== null && tagmerge.checked === true);
-                api.tagsort = (tagsort !== null && tagsort.checked === true);
+                api.conditional  = (conditional !== null && conditional.checked === true);
+                api.correct      = (correct !== null && correct.checked === true);
+                api.dustjs       = (dustjs !== null && dustjs.checked === true);
+                api.html         = (html !== null && html.checked === true);
+                api.miniwrap     = (miniwrap !== null && miniwrap.checked === true);
+                api.tagmerge     = (tagmerge !== null && tagmerge.checked === true);
+                api.tagsort      = (tagsort !== null && tagsort.checked === true);
                 api.textpreserve = (textpreserve !== null && textpreserve.checked === true);
-                api.topcoms = (topcoms !== null && topcoms.checked === true);
-                api.wrap = (wrap !== null && isNaN(wrap.value) === false)
+                api.topcoms      = (topcoms !== null && topcoms.checked === true);
+                api.wrap         = (wrap !== null && isNaN(wrap.value) === false)
                     ? wrap.value
                     : -1;
             }());
@@ -4656,41 +4622,42 @@ var pd = {},
         if (pd.data.mode === "diff") {
             api.jsscope = false;
             (function dom__event_recycle_diff() {
-                var braceline = pd.id("dbraceline-no"),
-                    bracepadding = pd.id("dbracepadding-no"),
-                    braces = pd.id("jsindentd-all"),
-                    baseLabel = pd.id("baselabel"),
-                    chars = pd.id("diff-space"),
-                    comments = pd.id("diffcommentsy"),
-                    conditional = pd.id("conditionald-yes"),
-                    content = pd.id("diffcontentn"),
-                    context = pd.id("contextSize"),
-                    dustjs = pd.id("ddustyes"),
-                    elseline = pd.id("jselselined-yes"),
-                    forceIndent = pd.id("dforce_indent-yes"),
-                    html = pd.id("htmld-yes"),
-                    inline = pd.id("inline"),
-                    jslinesa = pd.id("djslines-all"),
-                    methodchain = pd.id("dmethodchain-yes"),
-                    newLabel = pd.id("newlabel"),
-                    nocaseindent = pd.id("dnocaseindent-yes"),
-                    objsorta = pd.id("dobjsort-all"),
-                    objsortc = pd.id("dobjsort-cssonly"),
-                    objsortj = pd.id("dobjsort-jsonly"),
-                    objsortm = pd.id("dobjsort-markuponly"),
-                    quantity = pd.id("diff-quan"),
-                    quote = pd.id("diffquoten"),
-                    selectorlist = pd.id("dselectorlist-yes"),
-                    semicolon = pd.id("diffscolonn"),
-                    style = pd.id("inscriptd-no"),
-                    space = pd.id("jsspaced-no"),
-                    tagmerge = pd.id("dtagmerge-yes"),
-                    tagsort = pd.id("dtagsort-yes"),
-                    ternaryline = pd.id("dternaryline-yes"),
-                    textpreserve = pd.id("dtextpreserveyes"),
-                    wrap = pd.id("diff-wrap");
+                var braceline       = pd.id("dbraceline-no"),
+                    bracepadding    = pd.id("dbracepadding-no"),
+                    braces          = pd.id("jsindentd-all"),
+                    baseLabel       = pd.id("baselabel"),
+                    chars           = pd.id("diff-space"),
+                    comments        = pd.id("diffcommentsy"),
+                    conditional     = pd.id("conditionald-yes"),
+                    content         = pd.id("diffcontentn"),
+                    context         = pd.id("contextSize"),
+                    diffspaceignore = pd.id("diffspaceignorey"),
+                    dustjs          = pd.id("ddustyes"),
+                    elseline        = pd.id("jselselined-yes"),
+                    forceIndent     = pd.id("dforce_indent-yes"),
+                    html            = pd.id("htmld-yes"),
+                    inline          = pd.id("inline"),
+                    jslinesa        = pd.id("djslines-all"),
+                    methodchain     = pd.id("dmethodchain-yes"),
+                    newLabel        = pd.id("newlabel"),
+                    nocaseindent    = pd.id("dnocaseindent-yes"),
+                    objsorta        = pd.id("dobjsort-all"),
+                    objsortc        = pd.id("dobjsort-cssonly"),
+                    objsortj        = pd.id("dobjsort-jsonly"),
+                    objsortm        = pd.id("dobjsort-markuponly"),
+                    quantity        = pd.id("diff-quan"),
+                    quote           = pd.id("diffquoten"),
+                    selectorlist    = pd.id("dselectorlist-yes"),
+                    semicolon       = pd.id("diffscolonn"),
+                    style           = pd.id("inscriptd-no"),
+                    space           = pd.id("jsspaced-no"),
+                    tagmerge        = pd.id("dtagmerge-yes"),
+                    tagsort         = pd.id("dtagsort-yes"),
+                    ternaryline     = pd.id("dternaryline-yes"),
+                    textpreserve    = pd.id("dtextpreserveyes"),
+                    wrap            = pd.id("diff-wrap");
                 pd.data.node.codeDiffBase = pd.id("baseText");
-                pd.data.node.codeDiffNew = pd.id("newText");
+                pd.data.node.codeDiffNew  = pd.id("newText");
                 if (pd.data.node.codeDiffBase !== null && api.lang === "auto" && pd.data.langvalue.length === 0) {
                     if (pd.test.ace === true) {
                         pd.app.langkey(false, pd.ace.diffBase, "");
@@ -4700,35 +4667,36 @@ var pd = {},
                             .langkey(false, pd.data.node.codeDiffBase, "");
                     }
                 }
-                api.braceline = (braceline === null || braceline.checked === false);
+                api.braceline    = (braceline === null || braceline.checked === false);
                 api.bracepadding = (bracepadding === null || bracepadding.checked === false);
-                api.braces = (braces === null || braces.checked === false)
+                api.braces       = (braces === null || braces.checked === false)
                     ? "knr"
                     : "allman";
-                api.conditional = (conditional !== null && conditional.checked === true);
-                api.content = (content !== null && content.checked !== false);
-                api.context = (context !== null && context.value !== "" && isNaN(context.value) === false)
+                api.conditional  = (conditional !== null && conditional.checked === true);
+                api.content      = (content !== null && content.checked !== false);
+                api.context      = (context !== null && context.value !== "" && isNaN(context.value) === false)
                     ? Number(context.value)
                     : "";
                 api.diffcomments = (comments === null || comments.checked === true);
                 if (api.diffcomments === false) {
                     api.comments = "nocomment";
                 }
-                api.difflabel = (newLabel === null)
+                api.difflabel       = (newLabel === null)
                     ? "new"
                     : newLabel.value;
-                api.diffview = (inline === null || inline.checked === false)
+                api.diffspaceignore = (diffspaceignore !== null && diffspaceignore.checked === true);
+                api.diffview        = (inline === null || inline.checked === false)
                     ? "sidebyside"
                     : "inline";
-                api.dustjs = (dustjs !== null && dustjs.checked === true);
-                api.elseline = (elseline !== null && elseline.checked !== false);
-                api.force_indent = (forceIndent !== null && forceIndent.checked === true);
-                api.html = (html !== null && html.checked === true);
-                api.insize = (quantity === null || isNaN(quantity.value) === true)
+                api.dustjs          = (dustjs !== null && dustjs.checked === true);
+                api.elseline        = (elseline !== null && elseline.checked !== false);
+                api.force_indent    = (forceIndent !== null && forceIndent.checked === true);
+                api.html            = (html !== null && html.checked === true);
+                api.insize          = (quantity === null || isNaN(quantity.value) === true)
                     ? 4
                     : Number(quantity.value);
-                api.methodchain = (methodchain !== null && methodchain.checked === true);
-                api.nocaseindent = (nocaseindent !== null && nocaseindent.checked === true);
+                api.methodchain     = (methodchain !== null && methodchain.checked === true);
+                api.nocaseindent    = (nocaseindent !== null && nocaseindent.checked === true);
                 if (objsorta !== null && objsorta.checked === true) {
                     api.objsort = "all";
                 } else if (objsortc !== null && objsortc.checked === true) {
@@ -4745,21 +4713,21 @@ var pd = {},
                 } else {
                     api.preserve = "none";
                 }
-                api.quote = (quote !== null && quote.checked !== false);
+                api.quote        = (quote !== null && quote.checked !== false);
                 api.selectorlist = (selectorlist !== null && selectorlist.checked === true);
-                api.semicolon = (semicolon !== null && semicolon.checked !== false);
-                api.sourcelabel = (baseLabel === null)
+                api.semicolon    = (semicolon !== null && semicolon.checked !== false);
+                api.sourcelabel  = (baseLabel === null)
                     ? "base"
                     : baseLabel.value;
-                api.space = (space === null || space.checked === false);
-                api.style = (style === null || style.checked === false)
+                api.space        = (space === null || space.checked === false);
+                api.style        = (style === null || style.checked === false)
                     ? "indent"
                     : "noindent";
-                api.tagmerge = (tagmerge !== null && tagmerge.checked === true);
-                api.tagsort = (tagsort !== null && tagsort.checked === true);
-                api.ternaryline = (ternaryline !== null && ternaryline.checked === true);
+                api.tagmerge     = (tagmerge !== null && tagmerge.checked === true);
+                api.tagsort      = (tagsort !== null && tagsort.checked === true);
+                api.ternaryline  = (ternaryline !== null && ternaryline.checked === true);
                 api.textpreserve = (textpreserve !== null && textpreserve.checked === true);
-                api.wrap = (wrap === null || isNaN(wrap.value) === true)
+                api.wrap         = (wrap === null || isNaN(wrap.value) === true)
                     ? 72
                     : Number(wrap.value);
                 if (chars === null || chars.checked === false) {
@@ -4816,14 +4784,14 @@ var pd = {},
                 api.mode = "diff";
                 if (domain.test(api.diff) === true && pd.test.xhr === true) {
                     (function dom__event_recycle_xhrDiff() {
-                        var filetest = (api.diff.indexOf("file:///") === 0),
+                        var filetest       = (api.diff.indexOf("file:///") === 0),
                             protocolRemove = (filetest === true)
                                 ? api.diff.split(":///")[1]
                                 : api.diff.split("://")[1],
-                            slashIndex = (protocolRemove !== undefined)
+                            slashIndex     = (protocolRemove !== undefined)
                                 ? protocolRemove.indexOf("/")
                                 : 0,
-                            xhr = (typeof XMLHttpRequest === "function" || typeof XMLHttpRequest === "object")
+                            xhr            = (typeof XMLHttpRequest === "function" || typeof XMLHttpRequest === "object")
                                 ? new XMLHttpRequest()
                                 : new ActiveXObject("Microsoft.XMLHTTP");
                         if (typeof protocolRemove !== "string" || protocolRemove.length === 0) {
@@ -4832,6 +4800,15 @@ var pd = {},
                         requestd = true;
                         if (slashIndex > 0 || api.diff.indexOf("http") === 0) {
                             xhr.onreadystatechange = function dom__event_recycle_xhrDiff_stateChange() {
+                                var appDelay = function dom__event_recycle_xhrDiff_statechange_appDelay() {
+                                    var apptest = application(api.lang);
+                                    if (apptest === undefined) {
+                                        setTimeout(dom__event_recycle_xhrDiff_statechange_appDelay, 100);
+                                    } else {
+                                        output = apptest;
+                                        execOutput();
+                                    }
+                                };
                                 if (xhr.readyState === 4) {
                                     if (xhr.status === 200 || xhr.status === 0) {
                                         api.diff = xhr.responseText.replace(/\r\n/g, "\n");
@@ -4856,10 +4833,15 @@ var pd = {},
                                                 pd.data.diff = "";
                                             }
                                             app = application(api.lang);
-                                            if (app !== undefined) {
+                                            if (app === undefined) {
+                                                if (pd.test.delayExecution === true) {
+                                                    pd.test.delayExecution = false;
+                                                    setTimeout(appDelay, 100);
+                                                }
+                                            } else {
                                                 output = app(api);
+                                                execOutput();
                                             }
-                                            execOutput();
                                             return;
                                         }
                                         completed = true;
@@ -4899,23 +4881,23 @@ var pd = {},
                 }
             }
             (function dom__event_recycle_parse() {
-                var dustjs = pd.id("pdustyes"),
-                    html = pd.id("phtml-yes"),
-                    jscorrect = pd.id("pjscorrect-yes"),
+                var dustjs       = pd.id("pdustyes"),
+                    html         = pd.id("phtml-yes"),
+                    jscorrect    = pd.id("pjscorrect-yes"),
                     methodchainc = pd.id("dmethodchain-chain"),
                     methodchaini = pd.id("dmethodchain-indent"),
                     methodchainn = pd.id("dmethodchain-none"),
-                    objsorta = pd.id("pobjsort-all"),
-                    objsortc = pd.id("pobjsort-cssonly"),
-                    objsortj = pd.id("pobjsort-jsonly"),
-                    objsortm = pd.id("pobjsort-markuponly"),
-                    quotecond = pd.id("pquoteconvert-double"),
-                    quotecons = pd.id("pquoteconvert-single"),
-                    tagmerge = pd.id("ptagmerge-yes"),
-                    tagsort = pd.id("ptagsort-yes"),
+                    objsorta     = pd.id("pobjsort-all"),
+                    objsortc     = pd.id("pobjsort-cssonly"),
+                    objsortj     = pd.id("pobjsort-jsonly"),
+                    objsortm     = pd.id("pobjsort-markuponly"),
+                    quotecond    = pd.id("pquoteconvert-double"),
+                    quotecons    = pd.id("pquoteconvert-single"),
+                    tagmerge     = pd.id("ptagmerge-yes"),
+                    tagsort      = pd.id("ptagsort-yes"),
                     textpreserve = pd.id("ptextpreserveyes"),
-                    varworde = pd.id("pvarword-each"),
-                    varwordl = pd.id("pvarword-list");
+                    varworde     = pd.id("pvarword-each"),
+                    varwordl     = pd.id("pvarword-list");
                 if (pd.data.node.codeParsIn !== null) {
                     if (pd.test.ace === true) {
                         api.source = pd.ace.parsIn.getValue();
@@ -4923,11 +4905,11 @@ var pd = {},
                         api.source = pd.data.node.codeParsIn.value;
                     }
                 }
-                api.correct = (jscorrect !== null && jscorrect.checked === true);
-                api.dustjs = (dustjs !== null && dustjs.checked === true);
-                api.html = (html !== null && html.checked === true);
-                api.tagmerge = (tagmerge !== null && tagmerge.checked === true);
-                api.tagsort = (tagsort !== null && tagsort.checked === true);
+                api.correct      = (jscorrect !== null && jscorrect.checked === true);
+                api.dustjs       = (dustjs !== null && dustjs.checked === true);
+                api.html         = (html !== null && html.checked === true);
+                api.tagmerge     = (tagmerge !== null && tagmerge.checked === true);
+                api.tagsort      = (tagsort !== null && tagsort.checked === true);
                 api.textpreserve = (textpreserve !== null && textpreserve.checked === true);
                 if (methodchainc !== null && methodchainc.checked === true) {
                     api.methodchain = "chain";
@@ -4966,14 +4948,14 @@ var pd = {},
         }
         if (domain.test(api.source) === true && pd.test.xhr === true) {
             (function dom__event_recycle_xhrSource() {
-                var filetest = (api.source.indexOf("file:///") === 0),
+                var filetest       = (api.source.indexOf("file:///") === 0),
                     protocolRemove = (filetest === true)
                         ? api.source.split(":///")[1]
                         : api.source.split("://")[1],
-                    slashIndex = (protocolRemove !== undefined)
+                    slashIndex     = (protocolRemove !== undefined)
                         ? protocolRemove.indexOf("/")
                         : 0,
-                    xhr = (typeof XMLHttpRequest === "function" || typeof XMLHttpRequest === "object")
+                    xhr            = (typeof XMLHttpRequest === "function" || typeof XMLHttpRequest === "object")
                         ? new XMLHttpRequest()
                         : new ActiveXObject("Microsoft.XMLHTTP");
                 if (typeof protocolRemove !== "string" || protocolRemove.length === 0) {
@@ -4982,6 +4964,15 @@ var pd = {},
                 requests = true;
                 if (slashIndex > 0 || api.source.indexOf("http") === 0) {
                     xhr.onreadystatechange = function dom__event_recycle_xhrSource_statechange() {
+                        var appDelay = function dom__event_recycle_xhrSource_statechange_appDelay() {
+                            var apptest = application(api.lang);
+                            if (apptest === undefined) {
+                                setTimeout(dom__event_recycle_xhrSource_statechange_appDelay, 100);
+                            } else {
+                                output = apptest;
+                                execOutput();
+                            }
+                        };
                         if (xhr.readyState === 4) {
                             if (xhr.status === 200 || xhr.status === 0) {
                                 api.source = xhr.responseText.replace(/\r\n/g, "\n");
@@ -5012,10 +5003,15 @@ var pd = {},
                                         pd.data.diff = "";
                                     }
                                     app = application(api.lang);
-                                    if (app !== undefined) {
+                                    if (app === undefined) {
+                                        if (pd.test.delayExecution === true) {
+                                            pd.test.delayExecution = false;
+                                            setTimeout(appDelay, 100);
+                                        }
+                                    } else {
                                         output = app(api);
+                                        execOutput();
                                     }
-                                    execOutput();
                                     return;
                                 }
                                 completes = true;
@@ -5035,9 +5031,9 @@ var pd = {},
         }
         if (pd.test.ls === true) {
             if (pd.data.node.report.stat.box !== null) {
-                pd.data.stat.usage += 1;
+                pd.data.stat.usage  += 1;
                 pd.data.stat.useday = Math.round(pd.data.stat.usage / ((Date.now() - pd.data.stat.fdate) / 86400000));
-                node = pd.id("stusage");
+                node                = pd.id("stusage");
                 if (node !== null) {
                     node.innerHTML = pd.data.stat.usage;
                 }
@@ -5066,33 +5062,33 @@ var pd = {},
                 } else if (api.mode === "minify") {
                     codesize = api.source.length + pd.data.sourceLength.beau + pd.data.sourceLength.diffBase + pd.data.sourceLength.diffNew + pd.data.sourceLength.pars;
                     if (api.source.length < 2096000 && codesize < 4800000) {
-                        localStorage.codeMinify = api.source;
+                        localStorage.codeMinify   = api.source;
                         pd.data.sourceLength.minn = api.source.length;
                     } else {
-                        localStorage.codeMinify = "";
+                        localStorage.codeMinify   = "";
                         pd.data.sourceLength.minn = 0;
                     }
                 } else if (api.mode === "parse") {
                     codesize = api.source.length + pd.data.sourceLength.beau + pd.data.sourceLength.diffBase + pd.data.sourceLength.diffNew + pd.data.sourceLength.minn;
                     if (api.source.length < 2096000 && codesize < 4800000) {
-                        localStorage.codeParse = api.source;
+                        localStorage.codeParse    = api.source;
                         pd.data.sourceLength.pars = api.source.length;
                     } else {
-                        localStorage.codeParse = "";
+                        localStorage.codeParse    = "";
                         pd.data.sourceLength.pars = 0;
                     }
                 } else if (api.mode === "diff") {
                     codesize = pd.data.sourceLength.beau + pd.data.sourceLength.minn + api.source.length + api.diff.length;
                     if (api.source.length < 2096000 && api.diff.length < 2096000 && codesize < 4800000) {
-                        localStorage.codeDiffBase = api.source;
-                        localStorage.codeDiffNew = api.diff;
+                        localStorage.codeDiffBase     = api.source;
+                        localStorage.codeDiffNew      = api.diff;
                         pd.data.sourceLength.diffBase = api.source.length;
-                        pd.data.sourceLength.diffNew = api.diff.length;
+                        pd.data.sourceLength.diffNew  = api.diff.length;
                     } else {
-                        localStorage.codeDiffBase = "";
-                        localStorage.codeDiffNew = "";
+                        localStorage.codeDiffBase     = "";
+                        localStorage.codeDiffNew      = "";
                         pd.data.sourceLength.diffBase = 0;
-                        pd.data.sourceLength.diffNew = 0;
+                        pd.data.sourceLength.diffNew  = 0;
                     }
                 }
             }());
@@ -5105,13 +5101,13 @@ var pd = {},
             if (pd.test.ace === true && api.mode !== "diff") {
                 if (api.mode === "beautify") {
                     setTimeout(function dom__event_recycle_beautifyPromise() {
-                        api.source = pd.ace.beauIn.getValue();
-                        api.lang = (pd.data.langvalue[0] !== "plain_text")
+                        api.source     = pd.ace.beauIn.getValue();
+                        api.lang       = (pd.data.langvalue[0] !== "plain_text")
                             ? pd.app.langkey(false, pd.ace.beauIn, "")
                             : api.lang;
                         pd.data.source = api.source;
-                        pd.data.diff = "";
-                        app = application(api.lang);
+                        pd.data.diff   = "";
+                        app            = application(api.lang);
                         if (app !== undefined) {
                             output = app(api);
                         }
@@ -5120,13 +5116,13 @@ var pd = {},
                 }
                 if (api.mode === "minify") {
                     setTimeout(function dom__event_recycle_minifyPromise() {
-                        api.source = pd.ace.minnIn.getValue();
-                        api.lang = (pd.data.langvalue[0] !== "plain_text")
+                        api.source     = pd.ace.minnIn.getValue();
+                        api.lang       = (pd.data.langvalue[0] !== "plain_text")
                             ? pd.app.langkey(false, pd.ace.minnIn, "")
                             : api.lang;
                         pd.data.source = api.source;
-                        pd.data.diff = "";
-                        app = application(api.lang);
+                        pd.data.diff   = "";
+                        app            = application(api.lang);
                         if (app !== undefined) {
                             output = app(api);
                         }
@@ -5135,13 +5131,13 @@ var pd = {},
                 }
                 if (api.mode === "parse") {
                     setTimeout(function dom__event_recycle_parsePromise() {
-                        api.source = pd.ace.parsIn.getValue();
-                        api.lang = (pd.data.langvalue[0] !== "plain_text")
+                        api.source     = pd.ace.parsIn.getValue();
+                        api.lang       = (pd.data.langvalue[0] !== "plain_text")
                             ? pd.app.langkey(false, pd.ace.parsIn, "")
                             : api.lang;
                         pd.data.source = api.source;
-                        pd.data.diff = "";
-                        app = application(api.lang);
+                        pd.data.diff   = "";
+                        app            = application(api.lang);
                         if (app !== undefined) {
                             output = app(api);
                         }
@@ -5181,21 +5177,21 @@ var pd = {},
     //references apps: langkey, options
     //references events: recycle
 
-    pd.app.hideOutput = function dom__app_hideOutput(x) {
-        var node = {},
-            state = false,
+    pd.app.hideOutput   = function dom__app_hideOutput(x) {
+        var node      = {},
+            state     = false,
             targetOut = {},
-            targetIn = {},
-            inprop = "",
-            restore = function dom__app_hideOutput_restore() {
+            targetIn  = {},
+            inprop    = "",
+            restore   = function dom__app_hideOutput_restore() {
                 targetOut.parentNode.style.display = "block";
                 if (targetOut !== null) {
-                    node = targetIn.parentNode;
+                    node             = targetIn.parentNode;
                     node.style.width = "49%";
                     if (pd.test.ace === true) {
                         pd.ace[inprop].resize();
                     }
-                    targetIn.onkeyup = pd.event.recycle;
+                    targetIn.onkeyup   = pd.event.recycle;
                     targetIn.onkeydown = function dom_app_hideOutput_restore_bindTargetInDown(e) {
                         var event = e || window.event;
                         if (pd.test.ace === false) {
@@ -5210,7 +5206,7 @@ var pd = {},
                 }
                 pd.app.options(x);
             },
-            langval = (pd.data.node.lang === null)
+            langval   = (pd.data.node.lang === null)
                 ? "javascript"
                 : ((pd.data.node.lang.nodeName === "select")
                     ? pd.data.node.lang[pd.data.node.lang.selectedIndex].value
@@ -5221,16 +5217,16 @@ var pd = {},
         state = (x === pd.data.node.jsscope || langval === "csv");
         if (pd.data.mode === "minn") {
             targetOut = pd.data.node.codeMinnOut;
-            targetIn = pd.data.node.codeMinnIn;
-            inprop = "minnIn";
+            targetIn  = pd.data.node.codeMinnIn;
+            inprop    = "minnIn";
         } else if (pd.data.mode === "pars") {
             targetOut = pd.data.node.codeParsOut;
-            targetIn = pd.data.node.codeParsIn;
-            inprop = "parsIn";
+            targetIn  = pd.data.node.codeParsIn;
+            inprop    = "parsIn";
         } else {
             targetOut = pd.data.node.codeBeauOut;
-            targetIn = pd.data.node.codeBeauIn;
-            inprop = "beauIn";
+            targetIn  = pd.data.node.codeBeauIn;
+            inprop    = "beauIn";
         }
         if (targetOut === null || (state === true && targetOut.parentNode.style.display === "none") || (state === false && targetOut.parentNode.style.display === "block")) {
             if (pd.test.load === false) {
@@ -5245,7 +5241,7 @@ var pd = {},
             if (state === true) {
                 targetOut.parentNode.style.display = "none";
                 if (targetIn !== null) {
-                    node = targetIn.parentNode;
+                    node             = targetIn.parentNode;
                     node.style.width = "100%";
                     if (pd.test.ace === true) {
                         pd.ace[inprop].resize();
@@ -5281,11 +5277,11 @@ var pd = {},
     //appropriate accessibility response
     //references app: options
 
-    pd.app.indentchar = function dom__app_indentchar(x) {
-        var node = {},
-            quan = {},
-            beauChar = pd.id("beau-char"),
-            diffChar = pd.id("diff-char"),
+    pd.app.indentchar   = function dom__app_indentchar(x) {
+        var node      = {},
+            quan      = {},
+            beauChar  = pd.id("beau-char"),
+            diffChar  = pd.id("diff-char"),
             beauOther = pd.id("beau-other"),
             diffOther = pd.id("diff-other");
         if (x.nodeType === 1) {
@@ -5447,12 +5443,12 @@ var pd = {},
     //references events: sequence
 
     pd.event.areaTabOut = function dom__event_areaTabOut(e, node) {
-        var len = pd.test.tabesc.length,
-            esc = false,
-            key = 0,
+        var len   = pd.test.tabesc.length,
+            esc   = false,
+            key   = 0,
             event = e || window.event;
         node = node || this;
-        key = event.keyCode;
+        key  = event.keyCode;
         if (key === 17 || key === 224) {
             if (pd.data.tabtrue === false && (pd.test.tabesc[0] === 17 || pd.test.tabesc[0] === 224 || len > 1)) {
                 return;
@@ -5470,7 +5466,7 @@ var pd = {},
             }
         }
         if (esc === true) {
-            esc = false;
+            esc             = false;
             pd.data.tabtrue = false;
             if ((len === 1 && pd.test.tabesc[0] !== 16 && key !== pd.test.tabesc[0]) || (len === 2 && key !== pd.test.tabesc[1])) {
                 pd.test.tabesc = [];
@@ -5541,15 +5537,15 @@ var pd = {},
 
     //read from files if the W3C File API is supported
     //references events: recycle
-    pd.event.file = function dom__event_file() {
-        var a = 0,
-            input = this,
-            id = "",
-            files = [],
-            reader = {},
+    pd.event.file       = function dom__event_file() {
+        var a         = 0,
+            input     = this,
+            id        = "",
+            files     = [],
+            reader    = {},
             fileStore = [],
             fileCount = 0,
-            fileLoad = function dom__event_file_init1() {
+            fileLoad  = function dom__event_file_init1() {
                 return;
             },
             fileError = function dom__event_file_init2() {
@@ -5558,13 +5554,13 @@ var pd = {},
         if (input === null || typeof input !== "object" || input.nodeType > 1 || files === undefined || input.nodeType !== 1) {
             return;
         }
-        id = input.getAttribute("id");
+        id    = input.getAttribute("id");
         files = input.files;
         if (pd.test.fs === true && files[0] !== null && typeof files[0] === "object") {
             if (input.nodeName === "input") {
                 input = input.parentNode.parentNode.getElementsByTagName("textarea")[0];
             }
-            fileLoad = function dom__event_file_onload(e) {
+            fileLoad  = function dom__event_file_onload(e) {
                 var event = e || window.event;
                 fileStore.push(event.target.result);
                 if (a === fileCount) {
@@ -5601,12 +5597,12 @@ var pd = {},
             fileError = function dom__event_file_onerror(e) {
                 var event = e || window.event;
                 input.value = "Error reading file:\n\nThis is the browser's descriptiong: " + event.target.error.name;
-                fileCount = -1;
+                fileCount   = -1;
             };
             fileCount = files.length;
             for (a = 0; a < fileCount; a += 1) {
-                reader = new FileReader();
-                reader.onload = fileLoad;
+                reader         = new FileReader();
+                reader.onload  = fileLoad;
                 reader.onerror = fileError;
                 if (files[a] !== undefined) {
                     reader.readAsText(files[a], "UTF-8");
@@ -5621,7 +5617,7 @@ var pd = {},
     //callback for filedrop event
     //references events: file
 
-    pd.event.filedrop = function dom__event_filedrop(e) {
+    pd.event.filedrop   = function dom__event_filedrop(e) {
         var event = e || window.event;
         event.stopPropagation();
         event.preventDefault();
@@ -5631,42 +5627,42 @@ var pd = {},
     //basic drag and drop for the report windows
     //references events: minimize
 
-    pd.event.grab = function dom__event_grab(e, x) {
-        var box = (x.nodeName.toLowerCase() === "h3")
+    pd.event.grab       = function dom__event_grab(e, x) {
+        var box        = (x.nodeName.toLowerCase() === "h3")
                 ? x.parentNode
                 : x.parentNode.parentNode,
-            parent = box.getElementsByTagName("p")[0],
-            save = (parent.innerHTML.indexOf("save") > -1),
+            parent     = box.getElementsByTagName("p")[0],
+            save       = (parent.innerHTML.indexOf("save") > -1),
             minifyTest = (parent.style.display === "none"),
-            buttons = box.getElementsByTagName("p")[0].getElementsByTagName("button"),
-            minButton = (save === true)
+            buttons    = box.getElementsByTagName("p")[0].getElementsByTagName("button"),
+            minButton  = (save === true)
                 ? buttons[1]
                 : buttons[0],
-            resize = (save === true)
+            resize     = (save === true)
                 ? buttons[3]
                 : buttons[2],
-            body = box.getElementsByTagName("div")[0],
-            heading = (box.firstChild.nodeType > 1)
+            body       = box.getElementsByTagName("div")[0],
+            heading    = (box.firstChild.nodeType > 1)
                 ? box.firstChild.nextSibling
                 : box.firstChild,
-            boxLeft = box.offsetLeft,
-            boxTop = box.offsetTop,
-            touchXNow = 0,
-            touchYNow = 0,
-            event = e || window.event,
-            touch = (e !== null && e.type === "touchstart"),
-            filled = ((box === pd.data.node.report.stat.box && pd.test.filled.stat === true) || (box === pd.data.node.report.feed.box && pd.test.filled.feed === true) || (box === pd.data.node.report.code.box && pd.test.filled.code === true)),
-            max = document.getElementsByTagName("body")[0].clientHeight,
-            drop = function dom__event_grab_drop() {
+            boxLeft    = box.offsetLeft,
+            boxTop     = box.offsetTop,
+            touchXNow  = 0,
+            touchYNow  = 0,
+            event      = e || window.event,
+            touch      = (e !== null && e.type === "touchstart"),
+            filled     = ((box === pd.data.node.report.stat.box && pd.test.filled.stat === true) || (box === pd.data.node.report.feed.box && pd.test.filled.feed === true) || (box === pd.data.node.report.code.box && pd.test.filled.code === true)),
+            max        = document.getElementsByTagName("body")[0].clientHeight,
+            drop       = function dom__event_grab_drop() {
                 var headingWidth = box.getElementsByTagName("h3")[0].clientWidth;
                 boxLeft = box.offsetLeft;
-                boxTop = box.offsetTop;
+                boxTop  = box.offsetTop;
                 if (touch === true) {
                     document.ontouchmove = null;
-                    document.ontouchend = null;
+                    document.ontouchend  = null;
                 } else {
                     document.onmousemove = null;
-                    document.onmouseup = null;
+                    document.onmouseup   = null;
                 }
                 if (boxTop < 10) {
                     box.style.top = "1em";
@@ -5679,24 +5675,24 @@ var pd = {},
                     box.style.left = (((headingWidth * -1) + 40) / 10) + "em";
                 }
                 body.style.opacity = "1";
-                box.style.height = "auto";
-                heading.style.top = "100%";
-                resize.style.top = "100%";
+                box.style.height   = "auto";
+                heading.style.top  = "100%";
+                resize.style.top   = "100%";
                 pd.app.options(box);
                 event.preventDefault();
                 return false;
             },
-            boxmove = function dom__event_grab_boxmove(f) {
+            boxmove    = function dom__event_grab_boxmove(f) {
                 f = f || window.event;
                 f.preventDefault();
                 box.style.right = "auto";
                 if (touch === true) {
-                    box.style.left = ((boxLeft + (f.touches[0].clientX - touchXNow)) / 10) + "em";
-                    box.style.top = ((boxTop + (f.touches[0].clientY - touchYNow)) / 10) + "em";
+                    box.style.left      = ((boxLeft + (f.touches[0].clientX - touchXNow)) / 10) + "em";
+                    box.style.top       = ((boxTop + (f.touches[0].clientY - touchYNow)) / 10) + "em";
                     document.ontouchend = drop;
                 } else {
-                    box.style.left = ((boxLeft + (f.clientX - box.mouseX)) / 10) + "em";
-                    box.style.top = ((boxTop + (f.clientY - box.mouseY)) / 10) + "em";
+                    box.style.left     = ((boxLeft + (f.clientX - box.mouseX)) / 10) + "em";
+                    box.style.top      = ((boxTop + (f.clientY - box.mouseY)) / 10) + "em";
                     document.onmouseup = drop;
                 }
                 return false;
@@ -5732,15 +5728,15 @@ var pd = {},
             } while (heading.nodeType !== 1);
         }
         body.style.opacity = ".5";
-        heading.style.top = (box.clientHeight / 20) + "0em";
-        box.style.height = ".1em";
-        resize.style.top = ((Number(body.style.height.replace("em", "")) + 5.27) / 1.9925) + "em";
-        box.mouseX = e.clientX;
-        box.mouseY = e.clientY;
+        heading.style.top  = (box.clientHeight / 20) + "0em";
+        box.style.height   = ".1em";
+        resize.style.top   = ((Number(body.style.height.replace("em", "")) + 5.27) / 1.9925) + "em";
+        box.mouseX         = e.clientX;
+        box.mouseY         = e.clientY;
         if (touch === true) {
-            touchXNow = e.touches[0].clientX;
-            touchYNow = e.touches[0].clientY;
-            document.ontouchmove = boxmove;
+            touchXNow             = e.touches[0].clientX;
+            touchYNow             = e.touches[0].clientY;
+            document.ontouchmove  = boxmove;
             document.ontouchstart = null;
         } else {
             document.onmousemove = boxmove;
@@ -5753,42 +5749,42 @@ var pd = {},
     //alter tool on page load in reflection to saved state
 
     (function dom__load() {
-        var a = 0,
-            inputs = [],
-            inputsLen = 0,
-            id = "",
-            name = "",
-            type = "",
-            node = {},
-            buttons = {},
-            title = {},
-            statdump = [],
-            thirdparty = function dom__load_thirdparty() {
+        var a               = 0,
+            inputs          = [],
+            inputsLen       = 0,
+            id              = "",
+            name            = "",
+            type            = "",
+            node            = {},
+            buttons         = {},
+            title           = {},
+            statdump        = [],
+            page            = (pd.data.node.page === null)
+                ? ""
+                : pd.data.node.page.getAttribute("id"),
+            thirdparty      = function dom__load_thirdparty() {
                 var that = this,
                     href = that.getAttribute("href");
                 window.open(href, "thirdparty");
                 return false;
             },
-            resize = function dom__load_resize(e) {
+            resize          = function dom__load_resize(e) {
                 var that = this;
                 pd.event.resize(e, that);
             },
-            save = function dom__load_save() {
+            save            = function dom__load_save() {
                 var that = this;
                 pd.event.save(that);
             },
-            grab = function dom__load_grab(e) {
+            grab            = function dom__load_grab(e) {
                 var that = this;
                 pd.event.grab(e, that);
             },
-            top = function dom__load_top() {
+            top             = function dom__load_top() {
                 var that = this;
                 pd.app.zTop(that.parentNode);
             },
-            page = (pd.data.node.page === null)
-                ? ""
-                : pd.data.node.page.getAttribute("id"),
-            backspace = function dom__load_backspace(event) {
+            backspace       = function dom__load_backspace(event) {
                 var aa = event || window.event,
                     bb = aa.srcElement || aa.target;
                 if (aa.keyCode === 8) {
@@ -5801,19 +5797,19 @@ var pd = {},
                     pd.event.sequence(aa);
                 }
             },
-            acedisable = function dom__load_acedisable(x) {
-                var el = (typeof x === "object" && x.nodeType === 1)
+            acedisable      = function dom__load_acedisable(x) {
+                var el     = (typeof x === "object" && x.nodeType === 1)
                         ? x
                         : this,
-                    elId = el.getAttribute("id"),
-                    loc = location.href.indexOf("ace=false"),
-                    place = [],
+                    elId   = el.getAttribute("id"),
+                    loc    = location.href.indexOf("ace=false"),
+                    place  = [],
                     symbol = "?";
                 pd.app.options(el);
                 if (elId.indexOf("-yes") > 0 && loc > 0) {
                     place = location.href.split("ace=false");
                     if (place[1].indexOf("&") < 0 && place[1].indexOf("%26") < 0) {
-                        place[0] = place[0].slice(0, place[0].length - 1);
+                        place[0]      = place[0].slice(0, place[0].length - 1);
                         location.href = place.join("");
                     }
                 } else if (elId.indexOf("-no") > 0 && loc < 0) {
@@ -5823,15 +5819,15 @@ var pd = {},
                     location.href = location.href + symbol + "ace=false";
                 }
             },
-            hideOutput = function dom__load_hideOutput() {
+            hideOutput      = function dom__load_hideOutput() {
                 pd.app.hideOutput(this);
             },
-            feedradio = function dom__load_feedradio(e) {
-                var event = e || window.event,
-                    item = this.parentNode,
-                    radio = item.getElementsByTagName("input")[0],
+            feedradio       = function dom__load_feedradio(e) {
+                var event  = e || window.event,
+                    item   = this.parentNode,
+                    radio  = item.getElementsByTagName("input")[0],
                     radios = item.parentNode.getElementsByTagName("input"),
-                    aa = 0;
+                    aa     = 0;
                 for (aa = radios.length - 1; aa > -1; aa -= 1) {
                     radios[aa].parentNode.removeAttribute("class");
                     radios[aa].checked = false;
@@ -5842,13 +5838,13 @@ var pd = {},
                 event.preventDefault();
                 return false;
             },
-            feedblur = function dom__load_feedblur() {
+            feedblur        = function dom__load_feedblur() {
                 var label = this.parentNode;
                 label.setAttribute("class", "active");
             },
-            textareafocus = function dom__load_textareafocus() {
+            textareafocus   = function dom__load_textareafocus() {
                 var tabkey = pd.id("textareaTabKey"),
-                    aria = pd.id("arialive");
+                    aria   = pd.id("arialive");
                 if (tabkey === null) {
                     return;
                 }
@@ -5858,9 +5854,9 @@ var pd = {},
                 }
                 if (pd.data.mode === "diff") {
                     tabkey.style.right = "51%";
-                    tabkey.style.left = "auto";
+                    tabkey.style.left  = "auto";
                 } else {
-                    tabkey.style.left = "51%";
+                    tabkey.style.left  = "51%";
                     tabkey.style.right = "auto";
                 }
                 tabkey.style.display = "block";
@@ -5868,7 +5864,7 @@ var pd = {},
                     this.parentNode.setAttribute("class", this.parentNode.getAttribute("class") + " filefocus");
                 }
             },
-            textareablur = function dom__load_textareablur() {
+            textareablur    = function dom__load_textareablur() {
                 var tabkey = pd.id("textareaTabKey");
                 if (tabkey === null) {
                     return;
@@ -5878,13 +5874,13 @@ var pd = {},
                     this.parentNode.setAttribute("class", this.parentNode.getAttribute("class").replace(" filefocus", ""));
                 }
             },
-            filefocus = function dom__load_filefocus() {
+            filefocus       = function dom__load_filefocus() {
                 this.setAttribute("class", "filefocus");
             },
-            fileblur = function dom__load_fileblur() {
+            fileblur        = function dom__load_fileblur() {
                 this.removeAttribute("class");
             },
-            savecheck = function dom__load_savecheck() {
+            savecheck       = function dom__load_savecheck() {
                 var button = {};
                 if (pd.data.node.report.code.box === null) {
                     return;
@@ -5899,153 +5895,141 @@ var pd = {},
                     button.innerHTML = "S";
                 }
             },
-            headerfocus = function dom__load_headerfocus() {
+            headerfocus     = function dom__load_headerfocus() {
                 this.onclick = pd.event.minimize;
             },
-            headerblur = function dom__load_headerblur() {
+            headerblur      = function dom__load_headerblur() {
                 this.onclick = null;
             },
             checkForEdition = function dom__load_checkForEdition() {
-                var target = (page === "webtool")
+                var target     = (page === "webtool")
                         ? pd.id("update")
                         : pd.id("components"),
                     outputTool = function dom__load_checkForEdition_outputTool() {
-                        var str = String(global.edition.latest),
-                            list = [
-                                str.charAt(0) + str.charAt(1), Number(str.charAt(2) + str.charAt(3)), str.charAt(4) + str.charAt(5)
+                        var str   = String(global.edition.latest),
+                            list  = [
+                                str.charAt(0) + str.charAt(1),
+                                Number(str.charAt(2) + str.charAt(3)),
+                                str.charAt(4) + str.charAt(5)
                             ],
-                            month = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
+                            month = [
+                                "January",
+                                "February",
+                                "March",
+                                "April",
+                                "May",
+                                "June",
+                                "July",
+                                "August",
+                                "September",
+                                "October",
+                                "November",
+                                "December"
+                            ];
                         list[1] -= 1;
                         if (list[2].charAt(0) === "0") {
                             list[2] = list[2].substr(1);
                         }
                         return "Updated: " + list[2] + " " + month[list[1]] + " 20" + list[0] + "<span>Version: <span>" + global.edition.version + "</span></span>";
                     },
-                    outputDoc = function dom__load_checkForEdition_outputDoc() {
-                        var b = 0,
-                            date = 0,
-                            row = [],
-                            rowLen = 0,
-                            dateCell = {},
-                            dateList = [],
-                            lib = "",
-                            output = [],
+                    outputDoc  = function dom__load_checkForEdition_outputDoc() {
+                        var b          = 0,
+                            date       = 0,
+                            row        = [],
+                            rowLen     = 0,
+                            dateCell   = {},
+                            dateList   = [],
+                            lib        = "",
+                            output     = [],
                             conversion = function dom__load_checkForEdition_outputDoc_conversion(dateInstance) {
-                                var str = String(dateInstance),
-                                    list = [
-                                        str.charAt(0) + str.charAt(1), Number(str.charAt(2) + str.charAt(3)), str.charAt(4) + str.charAt(5)
+                                var str   = String(dateInstance),
+                                    list  = [
+                                        str.charAt(0) + str.charAt(1),
+                                        Number(str.charAt(2) + str.charAt(3)),
+                                        str.charAt(4) + str.charAt(5)
                                     ],
-                                    month = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+                                    month = [
+                                        "Jan",
+                                        "Feb",
+                                        "Mar",
+                                        "Apr",
+                                        "May",
+                                        "Jun",
+                                        "Jul",
+                                        "Aug",
+                                        "Sep",
+                                        "Oct",
+                                        "Nov",
+                                        "Dec"
+                                    ];
                                 list[1] -= 1;
                                 return list[2] + " " + month[list[1]] + " 20" + list[0];
                             };
                         target = target.getElementsByTagName("tbody")[0];
-                        row = target.getElementsByTagName("tr");
+                        row    = target.getElementsByTagName("tr");
                         rowLen = row.length;
                         for (b = 0; b < rowLen; b += 1) {
                             dateCell = row[b].getElementsByTagName("td")[3];
-                            lib = row[b].getElementsByTagName("a")[0].innerHTML;
+                            lib      = row[b].getElementsByTagName("a")[0].innerHTML;
                             if (lib === "csspretty.js") {
-                                date = global.edition.csspretty;
+                                date               = global.edition.csspretty;
                                 dateCell.innerHTML = conversion(date);
-                                dateList.push([
-                                    date,
-                                    row[b].innerHTML
-                                ]);
+                                dateList.push([date, row[b].innerHTML]);
                             } else if (lib === "csvpretty.js") {
-                                date = global.edition.csvpretty;
+                                date               = global.edition.csvpretty;
                                 dateCell.innerHTML = conversion(date);
-                                dateList.push([
-                                    date,
-                                    row[b].innerHTML
-                                ]);
+                                dateList.push([date, row[b].innerHTML]);
                             } else if (lib === "diffview.css") {
-                                date = global.edition.css;
+                                date               = global.edition.css;
                                 dateCell.innerHTML = conversion(date);
-                                dateList.push([
-                                    date,
-                                    row[b].innerHTML
-                                ]);
+                                dateList.push([date, row[b].innerHTML]);
                             } else if (lib === "diffview.js") {
-                                date = global.edition.diffview;
+                                date               = global.edition.diffview;
                                 dateCell.innerHTML = conversion(date);
-                                dateList.push([
-                                    date,
-                                    row[b].innerHTML
-                                ]);
+                                dateList.push([date, row[b].innerHTML]);
                             } else if (lib === "documentation.xhtml") {
-                                date = global.edition.documentation;
+                                date               = global.edition.documentation;
                                 dateCell.innerHTML = conversion(date);
-                                dateList.push([
-                                    date,
-                                    row[b].innerHTML
-                                ]);
+                                dateList.push([date, row[b].innerHTML]);
                             } else if (lib === "dom.js") {
-                                date = global.edition.api.dom;
+                                date               = global.edition.api.dom;
                                 dateCell.innerHTML = conversion(date);
-                                dateList.push([
-                                    date,
-                                    row[b].innerHTML
-                                ]);
+                                dateList.push([date, row[b].innerHTML]);
                             } else if (lib === "jspretty.js") {
-                                date = global.edition.jspretty;
+                                date               = global.edition.jspretty;
                                 dateCell.innerHTML = conversion(date);
-                                dateList.push([
-                                    date,
-                                    row[b].innerHTML
-                                ]);
+                                dateList.push([date, row[b].innerHTML]);
                             } else if (lib === "markuppretty.js") {
-                                date = global.edition.markuppretty;
+                                date               = global.edition.markuppretty;
                                 dateCell.innerHTML = conversion(date);
-                                dateList.push([
-                                    date,
-                                    row[b].innerHTML
-                                ]);
+                                dateList.push([date, row[b].innerHTML]);
                             } else if (lib === "node-local.js") {
-                                date = global.edition.api.nodeLocal;
+                                date               = global.edition.api.nodeLocal;
                                 dateCell.innerHTML = conversion(date);
-                                dateList.push([
-                                    date,
-                                    row[b].innerHTML
-                                ]);
+                                dateList.push([date, row[b].innerHTML]);
                             } else if (lib === "prettydiff.com.xhtml") {
-                                date = global.edition.webtool;
+                                date               = global.edition.webtool;
                                 dateCell.innerHTML = conversion(date);
-                                dateList.push([
-                                    date,
-                                    row[b].innerHTML
-                                ]);
+                                dateList.push([date, row[b].innerHTML]);
                             } else if (lib === "prettydiff.js") {
-                                date = global.edition.prettydiff;
+                                date               = global.edition.prettydiff;
                                 dateCell.innerHTML = conversion(date);
-                                dateList.push([
-                                    date,
-                                    row[b].innerHTML
-                                ]);
+                                dateList.push([date, row[b].innerHTML]);
                             } else if (lib === "prettydiff.wsf") {
-                                date = global.edition.api.wsh;
+                                date               = global.edition.api.wsh;
                                 dateCell.innerHTML = conversion(date);
-                                dateList.push([
-                                    date,
-                                    row[b].innerHTML
-                                ]);
+                                dateList.push([date, row[b].innerHTML]);
                             } else if (lib === "safeSort.js") {
-                                date = global.edition.safeSort;
+                                date               = global.edition.safeSort;
                                 dateCell.innerHTML = conversion(date);
-                                dateList.push([
-                                    date,
-                                    row[b].innerHTML
-                                ]);
+                                dateList.push([date, row[b].innerHTML]);
                             } else if (lib === "ace") {
-                                date = global.edition.addon.ace;
+                                date               = global.edition.addon.ace;
                                 dateCell.innerHTML = conversion(date);
-                                dateList.push([
-                                    date,
-                                    row[b].innerHTML
-                                ]);
+                                dateList.push([date, row[b].innerHTML]);
                             }
                         }
-                        rowLen = dateList.length;
+                        rowLen   = dateList.length;
                         dateList = dateList.sort(function dom__load_doc_sortForward(target, row) {
                             return target[1] === row[1];
                         }).reverse().sort(function dom__load_doc_sortReverse(target, row) {
@@ -6058,7 +6042,7 @@ var pd = {},
                         }
                         target.innerHTML = output.join("");
                     },
-                    delay = function dom__load_checkForEdition_delay() {
+                    delay      = function dom__load_checkForEdition_delay() {
                         if (global.edition === undefined) {
                             setTimeout(dom__load_checkForEdition_delay, 100);
                         } else {
@@ -6140,17 +6124,17 @@ var pd = {},
             if (pd.id("option_commentClear") !== null) {
                 pd.id("option_commentClear").onclick = pd.event.clearComment;
             }
-            pd.data.settings.feedreport = {};
-            pd.data.settings.codereport = {};
-            pd.data.settings.statreport = {};
-            pd.data.settings.feedback = {};
-            pd.data.settings.feedback.newb = false;
+            pd.data.settings.feedreport       = {};
+            pd.data.settings.codereport       = {};
+            pd.data.settings.statreport       = {};
+            pd.data.settings.feedback         = {};
+            pd.data.settings.feedback.newb    = false;
             pd.data.settings.feedback.veteran = false;
-            pd.data.settings.knownname = "\"" + Math.random().toString().slice(2) + Math.random().toString().slice(2) + "\"";
-            pd.keypress = {
-                date: {},
-                keys: [],
-                state: false,
+            pd.data.settings.knownname        = "\"" + Math.random().toString().slice(2) + Math.random().toString().slice(2) + "\"";
+            pd.keypress                       = {
+                date    : {},
+                keys    : [],
+                state   : false,
                 throttle: 0
             };
             if (pd.test.fs === false) {
@@ -6219,7 +6203,7 @@ var pd = {},
                         pd.data.settings = JSON.parse(localStorage.settings);
                         if (pd.data.settings.knownname === undefined || typeof pd.data.settings.knownname === "number") {
                             pd.data.settings.knownname = "\"" + Math.random().toString().slice(2) + Math.random().toString().slice(2) + "\"";
-                            localStorage.settings = JSON.stringify(pd.data.settings);
+                            localStorage.settings      = JSON.stringify(pd.data.settings);
                         }
                         if (pd.data.settings.diffreport !== undefined) {
                             delete pd.data.settings.diffreport;
@@ -6230,11 +6214,11 @@ var pd = {},
                         }
                     } else if (pd.data.settings.knownname === undefined || typeof pd.data.settings.knownname === "number") {
                         pd.data.settings.knownname = "\"" + Math.random().toString().slice(2) + Math.random().toString().slice(2) + "\"";
-                        localStorage.settings = JSON.stringify(pd.data.settings);
+                        localStorage.settings      = JSON.stringify(pd.data.settings);
                     }
                     if (localStorage.stat !== undefined) {
                         if (statdump.length === 0) {
-                            pd.data.stat = JSON.parse(localStorage.stat);
+                            pd.data.stat       = JSON.parse(localStorage.stat);
                             pd.data.stat.visit = Number(pd.data.stat.visit) + 1;
                             if (typeof pd.data.stat.fdate === "string") {
                                 pd.data.stat.fdate = Date.parse(pd.data.stat.fdate);
@@ -6246,7 +6230,7 @@ var pd = {},
                             if (a < 1) {
                                 a = 1;
                             }
-                            pd.data.stat.avday = Math.round(pd.data.stat.visit / a);
+                            pd.data.stat.avday  = Math.round(pd.data.stat.visit / a);
                             pd.data.stat.useday = Math.round(pd.data.stat.usage / a);
                         }
                         node = pd.id("stvisit");
@@ -6317,7 +6301,7 @@ var pd = {},
                 }
             }
             if (pd.test.agent.indexOf("webkit") > 0 || pd.test.agent.indexOf("blink") > 0) {
-                inputs = document.getElementsByTagName("textarea");
+                inputs    = document.getElementsByTagName("textarea");
                 inputsLen = inputs.length;
                 for (a = 0; a < inputsLen; a += 1) {
                     inputs[a].removeAttribute("wrap");
@@ -6327,23 +6311,23 @@ var pd = {},
                 pd.data.node.report.feed.box.style.display = "none";
             } else if (pd.data.node.report.feed.box !== null) {
                 if (pd.test.fs === true) {
-                    pd.data.node.report.feed.box.ondragover = pd.event.filenull;
+                    pd.data.node.report.feed.box.ondragover  = pd.event.filenull;
                     pd.data.node.report.feed.box.ondragleave = pd.event.filenull;
-                    pd.data.node.report.feed.box.ondrop = pd.event.filedrop;
+                    pd.data.node.report.feed.box.ondrop      = pd.event.filedrop;
                 }
                 pd.data.node.report.feed.body.onmousedown = top;
-                title = pd.data.node.report.feed.box.getElementsByTagName("h3")[0].getElementsByTagName("button")[0];
-                title.onmousedown = grab;
-                title.ontouchstart = grab;
-                title.onfocus = headerfocus;
-                title.onblur = headerblur;
+                title                                     = pd.data.node.report.feed.box.getElementsByTagName("h3")[0].getElementsByTagName("button")[0];
+                title.onmousedown                         = grab;
+                title.ontouchstart                        = grab;
+                title.onfocus                             = headerfocus;
+                title.onblur                              = headerblur;
                 if (pd.data.settings.feedreport === undefined) {
                     pd.data.settings.feedreport = {};
                 }
                 if (pd.data.settings.feedreport !== undefined && pd.data.settings.feedreport.min === false) {
-                    buttons = pd.data.node.report.feed.box.getElementsByTagName("p")[0];
+                    buttons               = pd.data.node.report.feed.box.getElementsByTagName("p")[0];
                     buttons.style.display = "block";
-                    title.style.cursor = "move";
+                    title.style.cursor    = "move";
                     if (buttons.innerHTML.indexOf("save") > 0) {
                         buttons.getElementsByTagName("button")[1].innerHTML = "\u035f";
                         if (pd.test.agent.indexOf("macintosh") > 0) {
@@ -6362,36 +6346,36 @@ var pd = {},
                     if (pd.data.settings.feedreport.top < 15) {
                         pd.data.settings.feedreport.top = 15;
                     }
-                    pd.data.node.report.feed.box.style.right = "auto";
-                    pd.data.node.report.feed.box.style.left = (pd.data.settings.feedreport.left / 10) + "em";
-                    pd.data.node.report.feed.box.style.top = (pd.data.settings.feedreport.top / 10) + "em";
-                    pd.data.node.report.feed.body.style.width = (pd.data.settings.feedreport.width / 10) + "em";
-                    pd.data.node.report.feed.body.style.height = (pd.data.settings.feedreport.height / 10) + "em";
+                    pd.data.node.report.feed.box.style.right    = "auto";
+                    pd.data.node.report.feed.box.style.left     = (pd.data.settings.feedreport.left / 10) + "em";
+                    pd.data.node.report.feed.box.style.top      = (pd.data.settings.feedreport.top / 10) + "em";
+                    pd.data.node.report.feed.body.style.width   = (pd.data.settings.feedreport.width / 10) + "em";
+                    pd.data.node.report.feed.body.style.height  = (pd.data.settings.feedreport.height / 10) + "em";
                     pd.data.node.report.feed.body.style.display = "block";
                 }
                 pd.id("feedsubmit").onclick = pd.event.feedsubmit;
             }
             if (pd.data.node.report.code.box !== null) {
                 if (pd.test.fs === true) {
-                    pd.data.node.report.code.box.ondragover = pd.event.filenull;
+                    pd.data.node.report.code.box.ondragover  = pd.event.filenull;
                     pd.data.node.report.code.box.ondragleave = pd.event.filenull;
-                    pd.data.node.report.code.box.ondrop = pd.event.filedrop;
+                    pd.data.node.report.code.box.ondrop      = pd.event.filedrop;
                 }
                 pd.data.node.report.code.body.onmousedown = top;
-                title = pd.data.node.report.code.box.getElementsByTagName("h3")[0].getElementsByTagName("button")[0];
-                title.onmousedown = grab;
-                title.ontouchstart = grab;
-                title.onfocus = headerfocus;
-                title.onblur = headerblur;
-                buttons = pd.data.node.report.code.box.getElementsByTagName("p")[0];
-                node = pd.id("jsscope-yes");
+                title                                     = pd.data.node.report.code.box.getElementsByTagName("h3")[0].getElementsByTagName("button")[0];
+                title.onmousedown                         = grab;
+                title.ontouchstart                        = grab;
+                title.onfocus                             = headerfocus;
+                title.onblur                              = headerblur;
+                buttons                                   = pd.data.node.report.code.box.getElementsByTagName("p")[0];
+                node                                      = pd.id("jsscope-yes");
                 if (node !== null && node.checked === true && buttons.innerHTML.indexOf("save") < 0) {
                     if (pd.test.agent.indexOf("firefox") > 0 || pd.test.agent.indexOf("presto") > 0) {
                         node = document.createElement("a");
                         node.setAttribute("href", "#");
-                        node.onclick = save;
+                        node.onclick   = save;
                         node.innerHTML = "<button class='save' title='Convert report to text that can be saved.' tabindex=" +
-                                "'-1'>S</button>";
+                                             "'-1'>S</button>";
                         buttons.insertBefore(node, buttons.firstChild);
                     } else {
                         node = document.createElement("button");
@@ -6403,7 +6387,7 @@ var pd = {},
                 }
                 if (pd.data.settings.codereport !== undefined && pd.data.settings.codereport.min === false) {
                     buttons.style.display = "block";
-                    title.style.cursor = "move";
+                    title.style.cursor    = "move";
                     if (buttons.innerHTML.indexOf("save") > 0) {
                         buttons.getElementsByTagName("button")[1].innerHTML = "\u035f";
                         if (pd.test.agent.indexOf("macintosh") > 0) {
@@ -6422,30 +6406,30 @@ var pd = {},
                     if (pd.data.settings.codereport.top < 15) {
                         pd.data.settings.codereport.top = 15;
                     }
-                    pd.data.node.report.code.box.style.right = "auto";
-                    pd.data.node.report.code.box.style.left = (pd.data.settings.codereport.left / 10) + "em";
-                    pd.data.node.report.code.box.style.top = (pd.data.settings.codereport.top / 10) + "em";
-                    pd.data.node.report.code.body.style.width = (pd.data.settings.codereport.width / 10) + "em";
-                    pd.data.node.report.code.body.style.height = (pd.data.settings.codereport.height / 10) + "em";
+                    pd.data.node.report.code.box.style.right    = "auto";
+                    pd.data.node.report.code.box.style.left     = (pd.data.settings.codereport.left / 10) + "em";
+                    pd.data.node.report.code.box.style.top      = (pd.data.settings.codereport.top / 10) + "em";
+                    pd.data.node.report.code.body.style.width   = (pd.data.settings.codereport.width / 10) + "em";
+                    pd.data.node.report.code.body.style.height  = (pd.data.settings.codereport.height / 10) + "em";
                     pd.data.node.report.code.body.style.display = "block";
                 }
             }
             if (pd.data.node.report.stat.box !== null) {
                 if (pd.test.fs === true) {
-                    pd.data.node.report.stat.box.ondragover = pd.event.filenull;
+                    pd.data.node.report.stat.box.ondragover  = pd.event.filenull;
                     pd.data.node.report.stat.box.ondragleave = pd.event.filenull;
-                    pd.data.node.report.stat.box.ondrop = pd.event.filedrop;
+                    pd.data.node.report.stat.box.ondrop      = pd.event.filedrop;
                 }
                 pd.data.node.report.stat.body.onmousedown = top;
-                title = pd.data.node.report.stat.box.getElementsByTagName("h3")[0].getElementsByTagName("button")[0];
-                title.onmousedown = grab;
-                title.ontouchstart = grab;
-                title.onfocus = headerfocus;
-                title.onblur = headerblur;
+                title                                     = pd.data.node.report.stat.box.getElementsByTagName("h3")[0].getElementsByTagName("button")[0];
+                title.onmousedown                         = grab;
+                title.ontouchstart                        = grab;
+                title.onfocus                             = headerfocus;
+                title.onblur                              = headerblur;
                 if (pd.data.settings.statreport !== undefined && pd.data.settings.statreport.min === false) {
-                    buttons = pd.data.node.report.stat.box.getElementsByTagName("p")[0];
+                    buttons               = pd.data.node.report.stat.box.getElementsByTagName("p")[0];
                     buttons.style.display = "block";
-                    title.style.cursor = "move";
+                    title.style.cursor    = "move";
                     if (buttons.innerHTML.indexOf("save") > 0) {
                         buttons.getElementsByTagName("button")[1].innerHTML = "\u035f";
                         if (pd.test.agent.indexOf("macintosh") > 0) {
@@ -6464,19 +6448,19 @@ var pd = {},
                     if (pd.data.settings.statreport.top < 15) {
                         pd.data.settings.statreport.top = 15;
                     }
-                    pd.data.node.report.stat.box.style.right = "auto";
-                    pd.data.node.report.stat.box.style.left = (pd.data.settings.statreport.left / 10) + "em";
-                    pd.data.node.report.stat.box.style.top = (pd.data.settings.statreport.top / 10) + "em";
-                    pd.data.node.report.stat.body.style.width = (pd.data.settings.statreport.width / 10) + "em";
-                    pd.data.node.report.stat.body.style.height = (pd.data.settings.statreport.height / 10) + "em";
+                    pd.data.node.report.stat.box.style.right    = "auto";
+                    pd.data.node.report.stat.box.style.left     = (pd.data.settings.statreport.left / 10) + "em";
+                    pd.data.node.report.stat.box.style.top      = (pd.data.settings.statreport.top / 10) + "em";
+                    pd.data.node.report.stat.body.style.width   = (pd.data.settings.statreport.width / 10) + "em";
+                    pd.data.node.report.stat.body.style.height  = (pd.data.settings.statreport.height / 10) + "em";
                     pd.data.node.report.stat.body.style.display = "block";
                 }
             }
-            inputs = document.getElementsByTagName("input");
+            inputs    = document.getElementsByTagName("input");
             inputsLen = inputs.length;
             for (a = 0; a < inputsLen; a += 1) {
                 type = inputs[a].getAttribute("type");
-                id = inputs[a].getAttribute("id");
+                id   = inputs[a].getAttribute("id");
                 if (type === "radio") {
                     name = inputs[a].getAttribute("name");
                     if (id === pd.data.settings[name]) {
@@ -6487,7 +6471,7 @@ var pd = {},
                     }
                     if (id.indexOf("feedradio") === 0) {
                         inputs[a].onfocus = feedradio;
-                        inputs[a].onblur = feedblur;
+                        inputs[a].onblur  = feedblur;
                         inputs[a].onclick = feedradio;
                         inputs[a].parentNode.getElementsByTagName("label")[0].onclick = feedradio;
                     }
@@ -6591,15 +6575,15 @@ var pd = {},
                     }
                 } else if (type === "file") {
                     inputs[a].onchange = pd.event.file;
-                    inputs[a].onfocus = filefocus;
-                    inputs[a].onblur = fileblur;
+                    inputs[a].onfocus  = filefocus;
+                    inputs[a].onblur   = fileblur;
                 }
             }
             node = pd.id("ace-no");
             if (pd.test.ace === false && node !== null && node.checked === false) {
                 node.checked = true;
             }
-            inputs = document.getElementsByTagName("select");
+            inputs    = document.getElementsByTagName("select");
             inputsLen = inputs.length;
             for (a = 0; a < inputsLen; a += 1) {
                 id = inputs[a].getAttribute("id");
@@ -6627,11 +6611,11 @@ var pd = {},
                     inputs[a].onchange = pd.app.options;
                 }
             }
-            inputs = document.getElementsByTagName("button");
+            inputs    = document.getElementsByTagName("button");
             inputsLen = inputs.length;
             for (a = 0; a < inputsLen; a += 1) {
                 name = inputs[a].getAttribute("class");
-                id = inputs[a].getAttribute("id");
+                id   = inputs[a].getAttribute("id");
                 if (name === null) {
                     if (inputs[a].value === "Execute") {
                         inputs[a].onclick = pd.event.recycle;
@@ -6658,11 +6642,11 @@ var pd = {},
                 } else if (name === "resize") {
                     inputs[a].onmousedown = resize;
                 } else if (name === "save") {
-                    node = inputs[a];
+                    node  = inputs[a];
                     title = inputs[a].parentNode;
                     if (title.nodeName.toLowerCase() === "a") {
                         if (pd.test.agent.indexOf("firefox") < 0 && pd.test.agent.indexOf("presto") < 0) {
-                            buttons = title.parentNode;
+                            buttons      = title.parentNode;
                             node.onclick = save;
                             title.removeChild(node);
                             buttons.removeChild(title);
@@ -6681,7 +6665,7 @@ var pd = {},
             }
             node = pd.id("thirdparties");
             if (node !== null) {
-                inputs = node.getElementsByTagName("a");
+                inputs    = node.getElementsByTagName("a");
                 inputsLen = inputs.length;
                 for (a = 0; a < inputsLen; a += 1) {
                     inputs[a].onclick = thirdparty;
@@ -6710,20 +6694,20 @@ var pd = {},
             }
             if (typeof location === "object" && typeof location.href === "string" && location.href.indexOf("?") > -1) {
                 (function dom__load_queryString() {
-                    var b = 0,
-                        c = 0,
-                        color = pd.id("colorScheme"),
-                        colors = (color !== null)
+                    var b        = 0,
+                        c        = 0,
+                        color    = pd.id("colorScheme"),
+                        colors   = (color !== null)
                             ? color.getElementsByTagName("option")
                             : [],
-                        options = (pd.data.node.lang !== null)
+                        options  = (pd.data.node.lang !== null)
                             ? pd.data.node.lang.getElementsByTagName("option")
                             : [],
-                        params = location.href.split("?")[1].split("&"),
+                        params   = location.href.split("?")[1].split("&"),
                         paramLen = params.length,
-                        value = "",
-                        source = "",
-                        diff = "";
+                        value    = "",
+                        source   = "",
+                        diff     = "";
                     for (b = 0; b < paramLen; b += 1) {
                         if (params[b].indexOf("m=") === 0) {
                             value = params[b].toLowerCase().substr(2);
@@ -6842,6 +6826,7 @@ var pd = {},
                                 pd.data.node.codeBeauIn.value = source;
                             }
                             pd.event.recycle();
+                            pd.test.delayExecution = true;
                         } else if (pd.data.node.codeMinnIn !== null && pd.data.mode === "minn") {
                             if (pd.test.ace === true) {
                                 pd.ace.minnIn.setValue(source);
@@ -6850,6 +6835,7 @@ var pd = {},
                                 pd.data.node.codeMinnIn.value = source;
                             }
                             pd.event.recycle();
+                            pd.test.delayExecution = true;
                         } else if (pd.data.node.codeParsIn !== null && pd.data.mode === "pars") {
                             if (pd.test.ace === true) {
                                 pd.ace.parsIn.setValue(source);
@@ -6858,6 +6844,7 @@ var pd = {},
                                 pd.data.node.codeParsIn.value = source;
                             }
                             pd.event.recycle();
+                            pd.test.delayExecution = true;
                         } else if (pd.data.node.codeDiffBase !== null && pd.data.mode === "diff") {
                             if (pd.test.ace === true) {
                                 pd.ace.diffBase.setValue(source);
@@ -6867,6 +6854,7 @@ var pd = {},
                             }
                             if (diff !== "") {
                                 pd.event.recycle();
+                                pd.test.delayExecution = true;
                             }
                         }
                     }
@@ -6884,13 +6872,13 @@ var pd = {},
             }
             if (pd.data.settings.feedback === undefined) {
                 pd.data.settings.feedback = {
-                    newb: false,
+                    newb   : false,
                     veteran: false
                 };
             }
             if (pd.data.settings.feedback.newb === false && pd.data.stat.usage > 2 && pd.data.stat.visit < 5 && pd.test.domain === true && pd.data.node.report.feed.box !== null) {
                 pd.data.settings.feedback.newb = true;
-                node = pd.id("feedintro");
+                node                           = pd.id("feedintro");
                 if (node !== null) {
                     node.innerHTML = "Thank you for trying Pretty Diff. Please let me know what you think of this tool" +
                             ".";
@@ -7796,18 +7784,18 @@ var pd = {},
                         "DBlKWuJ1LxagqaCG2jONlpTc1Ilwk/lXp0tyhcO4U33neZC3Bv2WvtT0VmNPrAEDvzKr9mzGnZeiB3Fh" +
                         "q3KbT6yiBpTZoH6XK2NzYaizgv406AYS4MAPM7NFDUja6zKBGdRN+aBymxq9LrJtK1qavVCozjOtabE5" +
                         "6wrRGLJCsIU5TEFNRTMuOTkgKGFscGhhKao=");
-                pd.data.audio.play = function dom__load_audio() {
-                    var source = pd.test.audio.createBufferSource(),
-                        buff = new ArrayBuffer(pd.data.audio.binary.length),
-                        bytes = new Uint8Array(buff),
-                        z = 0,
+                pd.data.audio.play   = function dom__load_audio() {
+                    var source  = pd.test.audio.createBufferSource(),
+                        buff    = new ArrayBuffer(pd.data.audio.binary.length),
+                        bytes   = new Uint8Array(buff),
+                        z       = 0,
                         bytelen = buff.byteLength;
                     for (z = 0; z < bytelen; z += 1) {
                         bytes[z] = pd.data.audio.binary.charCodeAt(z);
                     }
                     pd.test.audio.decodeAudioData(buff, function dom__load_audio_decode(buffer) {
                         source.buffer = buffer;
-                        source.loop = false;
+                        source.loop   = false;
                         source.connect(pd.test.audio.destination);
                         source.start(0, 0, 1.8);
                     });
@@ -7819,16 +7807,16 @@ var pd = {},
                     pd.event.recycle(event);
                 };
                 if (pd.test.ace === true) {
-                    pd.data.node.codeBeauIn.onfocus = textareafocus;
-                    pd.data.node.codeBeauIn.onblur = textareablur;
+                    pd.data.node.codeBeauIn.onfocus   = textareafocus;
+                    pd.data.node.codeBeauIn.onblur    = textareablur;
                     pd.data.node.codeBeauIn.onkeydown = function dom__load_bindBeauInDownCM(e) {
                         var event = e || window.event;
                         pd.event.areaTabOut(event, this);
                         pd.event.keydown(event);
                     };
                 } else {
-                    pd.data.node.codeBeauIn.onfocus = textareafocus;
-                    pd.data.node.codeBeauIn.onblur = textareablur;
+                    pd.data.node.codeBeauIn.onfocus   = textareafocus;
+                    pd.data.node.codeBeauIn.onblur    = textareablur;
                     pd.data.node.codeBeauIn.onkeydown = function dom__load_bindBeauInDown(e) {
                         var event = e || window.event;
                         pd.event.fixtabs(event, pd.data.node.codeBeauIn);
@@ -7838,8 +7826,8 @@ var pd = {},
                 }
             }
             if (pd.data.node.codeBeauOut !== null && pd.test.ace === true) {
-                pd.data.node.codeBeauOut.onfocus = textareafocus;
-                pd.data.node.codeBeauOut.onblur = textareablur;
+                pd.data.node.codeBeauOut.onfocus   = textareafocus;
+                pd.data.node.codeBeauOut.onblur    = textareablur;
                 pd.data.node.codeBeauOut.onkeydown = pd.event.areaTabOut;
             }
             if (pd.data.node.codeMinnIn !== null) {
@@ -7848,16 +7836,16 @@ var pd = {},
                     pd.event.recycle(event);
                 };
                 if (pd.test.ace === true) {
-                    pd.data.node.codeMinnIn.onfocus = textareafocus;
-                    pd.data.node.codeMinnIn.onblur = textareablur;
+                    pd.data.node.codeMinnIn.onfocus   = textareafocus;
+                    pd.data.node.codeMinnIn.onblur    = textareablur;
                     pd.data.node.codeMinnIn.onkeydown = function dom__load_bindMinnInDownCM(e) {
                         var event = e || window.event;
                         pd.event.areaTabOut(event, this);
                         pd.event.keydown(event);
                     };
                 } else {
-                    pd.data.node.codeMinnIn.onfocus = textareafocus;
-                    pd.data.node.codeMinnIn.onblur = textareablur;
+                    pd.data.node.codeMinnIn.onfocus   = textareafocus;
+                    pd.data.node.codeMinnIn.onblur    = textareablur;
                     pd.data.node.codeMinnIn.onkeydown = function dom__load_bindMinnInDown(e) {
                         var event = e || window.event;
                         pd.event.fixtabs(event, this);
@@ -7867,8 +7855,8 @@ var pd = {},
                 }
             }
             if (pd.data.node.codeMinnOut !== null && pd.test.ace === true) {
-                pd.data.node.codeMinnOut.onfocus = textareafocus;
-                pd.data.node.codeMinnOut.onblur = textareablur;
+                pd.data.node.codeMinnOut.onfocus   = textareafocus;
+                pd.data.node.codeMinnOut.onblur    = textareablur;
                 pd.data.node.codeMinnOut.onkeydown = pd.event.areaTabOut;
             }
             if (pd.data.node.codeParsIn !== null) {
@@ -7877,16 +7865,16 @@ var pd = {},
                     pd.event.recycle(event);
                 };
                 if (pd.test.ace === true) {
-                    pd.data.node.codeParsIn.onfocus = textareafocus;
-                    pd.data.node.codeParsIn.onblur = textareablur;
+                    pd.data.node.codeParsIn.onfocus   = textareafocus;
+                    pd.data.node.codeParsIn.onblur    = textareablur;
                     pd.data.node.codeParsIn.onkeydown = function dom__load_bindParsInDownCM(e) {
                         var event = e || window.event;
                         pd.event.areaTabOut(event, this);
                         pd.event.keydown(event);
                     };
                 } else {
-                    pd.data.node.codeParsIn.onfocus = textareafocus;
-                    pd.data.node.codeParsIn.onblur = textareablur;
+                    pd.data.node.codeParsIn.onfocus   = textareafocus;
+                    pd.data.node.codeParsIn.onblur    = textareablur;
                     pd.data.node.codeParsIn.onkeydown = function dom__load_bindParsInDown(e) {
                         var event = e || window.event;
                         pd.event.fixtabs(event, pd.data.node.codeParsIn);
@@ -7896,21 +7884,21 @@ var pd = {},
                 }
             }
             if (pd.data.node.codeParsOut !== null && pd.test.ace === true) {
-                pd.data.node.codeParsOut.onfocus = textareafocus;
-                pd.data.node.codeParsOut.onblur = textareablur;
+                pd.data.node.codeParsOut.onfocus   = textareafocus;
+                pd.data.node.codeParsOut.onblur    = textareablur;
                 pd.data.node.codeParsOut.onkeydown = pd.event.areaTabOut;
             }
             if (pd.data.node.codeDiffBase !== null) {
                 if (pd.test.ace === true) {
-                    pd.data.node.codeDiffBase.onkeyup = function dom__load_bindAutoDiffBase() {
+                    pd.data.node.codeDiffBase.onkeyup   = function dom__load_bindAutoDiffBase() {
                         pd.app.langkey(false, pd.ace.diffBase, "");
                     };
-                    pd.data.node.codeDiffBase.onfocus = textareafocus;
-                    pd.data.node.codeDiffBase.onblur = textareablur;
+                    pd.data.node.codeDiffBase.onfocus   = textareafocus;
+                    pd.data.node.codeDiffBase.onblur    = textareablur;
                     pd.data.node.codeDiffBase.onkeydown = pd.event.areaTabOut;
                 } else {
-                    pd.data.node.codeDiffBase.onfocus = textareafocus;
-                    pd.data.node.codeDiffBase.onblur = textareablur;
+                    pd.data.node.codeDiffBase.onfocus   = textareafocus;
+                    pd.data.node.codeDiffBase.onblur    = textareablur;
                     pd.data.node.codeDiffBase.onkeydown = function dom__load_bindDiffBaseDown(e) {
                         var event = e || window.event;
                         pd.event.fixtabs(event, this);
@@ -7920,33 +7908,33 @@ var pd = {},
             }
             if (pd.data.node.codeDiffNew !== null) {
                 if (pd.test.ace === true) {
-                    pd.data.node.codeDiffNew.onkeyup = function dom__load_bindAutoDiffNew() {
+                    pd.data.node.codeDiffNew.onkeyup   = function dom__load_bindAutoDiffNew() {
                         pd.app.langkey(false, pd.ace.diffNew, "");
                     };
-                    pd.data.node.codeDiffNew.onfocus = textareafocus;
-                    pd.data.node.codeDiffNew.onblur = textareablur;
+                    pd.data.node.codeDiffNew.onfocus   = textareafocus;
+                    pd.data.node.codeDiffNew.onblur    = textareablur;
                     pd.data.node.codeDiffNew.onkeydown = pd.event.areaTabOut;
                 } else {
-                    pd.data.node.codeDiffNew.onfocus = textareafocus;
-                    pd.data.node.codeDiffNew.onblur = textareablur;
+                    pd.data.node.codeDiffNew.onfocus   = textareafocus;
+                    pd.data.node.codeDiffNew.onblur    = textareablur;
                     pd.data.node.codeDiffNew.onkeydown = function dom__load_bindDiffNewDown(e) {
                         var event = e || window.event;
                         pd.event.fixtabs(event, this);
-                        pd.event.event.areaTabOut(event, this);
+                        pd.event.areaTabOut(event, this);
                     };
                 }
             }
-            window.onresize = pd.app.fixHeight;
-            window.onkeyup = pd.event.areaShiftUp;
+            window.onresize     = pd.app.fixHeight;
+            window.onkeyup      = pd.event.areaShiftUp;
             document.onkeypress = backspace;
-            document.onkeydown = backspace;
+            document.onkeydown  = backspace;
             checkForEdition();
         }
         if (page === "doc") {
             (function dom__load_doc() {
-                var b = 0,
-                    row = [],
-                    rowLen = 0,
+                var b          = 0,
+                    row        = [],
+                    rowLen     = 0,
                     colorParam = (typeof location === "object" && typeof location.href === "string" && location.href.indexOf("?") > -1)
                         ? location.href.toLowerCase().split("?")[1]
                         : "";
@@ -7964,8 +7952,8 @@ var pd = {},
                         }
                         colorParam = colorParam.split("&")[0];
                         colorParam = colorParam.substr(colorParam.indexOf("=") + 1);
-                        row = node.getElementsByTagName("option");
-                        rowLen = row.length;
+                        row        = node.getElementsByTagName("option");
+                        rowLen     = row.length;
                         for (b = 0; b < rowLen; b += 1) {
                             if (row[b].value.toLowerCase() === colorParam) {
                                 node.selectedIndex = b;
@@ -7980,18 +7968,18 @@ var pd = {},
                     node.onchange = pd.event.colorScheme;
                 }
                 (function dom__doc_foldSearch() {
-                    var div = document.getElementsByTagName("div"),
-                        len = div.length,
-                        inca = 0,
-                        incb = 0,
-                        ol = [],
-                        li = [],
+                    var div   = document.getElementsByTagName("div"),
+                        len   = div.length,
+                        inca  = 0,
+                        incb  = 0,
+                        ol    = [],
+                        li    = [],
                         lilen = 0;
                     for (inca = 0; inca < len; inca += 1) {
                         if (div[inca].getAttribute("class") === "beautify") {
                             ol = div[inca].getElementsByTagName("ol");
                             if (ol[0].getAttribute("class") === "count") {
-                                li = ol[0].getElementsByTagName("li");
+                                li    = ol[0].getElementsByTagName("li");
                                 lilen = li.length;
                                 for (incb = 0; incb < lilen; incb += 1) {
                                     if (li[incb].getAttribute("class") === "fold") {

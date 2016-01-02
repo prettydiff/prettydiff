@@ -50,6 +50,7 @@ Examples:
         prettydiff     = require(libs + "prettydiff.js"),
         fs             = require("fs"),
         http           = require("http"),
+        path           = require("path"),
         sfiledump      = [],
         dfiledump      = [],
         sState         = [],
@@ -105,68 +106,69 @@ Examples:
             0, 0
         ],
         options        = {
-            api           : "node",
-            braceline     : false,
-            bracepadding  : false,
-            braces        : "knr",
-            color         : "white",
-            comments      : "indent",
-            commline      : false,
-            conditional   : false,
-            content       : false,
-            context       : "",
-            correct       : false,
-            crlf          : false,
-            cssinsertlines: false,
-            csvchar       : ",",
-            diff          : "",
-            diffcli       : false,
-            diffcomments  : false,
-            difflabel     : "new",
-            diffview      : "sidebyside",
-            dustjs        : false,
-            elseline      : false,
-            endcomma      : false,
-            force_indent  : false,
-            html          : false,
-            inchar        : " ",
-            inlevel       : 0,
-            insize        : 4,
-            jsscope       : "none",
-            lang          : "auto",
-            langdefault   : "text",
-            methodchain   : "indent",
-            miniwrap      : false,
-            mode          : "diff",
-            neverflatten  : false,
-            nocaseindent  : false,
-            noleadzero    : false,
-            objsort       : "js",
-            output        : "",
-            preserve      : "all",
-            quote         : false,
-            quoteConvert  : "none",
-            readmethod    : "screen",
-            report        : true,
-            selectorlist  : false,
-            semicolon     : false,
-            source        : "",
-            sourcelabel   : "base",
-            space         : true,
-            spaceclose    : false,
-            style         : "indent",
-            styleguide    : "none",
-            summaryonly   : false,
-            tagmerge      : false,
-            tagsort       : false,
-            ternaryline   : false,
-            textpreserve  : false,
-            titanium      : false,
-            topcoms       : false,
-            varword       : "none",
-            version       : false,
-            vertical      : "js",
-            wrap          : 80
+            api            : "node",
+            braceline      : false,
+            bracepadding   : false,
+            braces         : "knr",
+            color          : "white",
+            comments       : "indent",
+            commline       : false,
+            conditional    : false,
+            content        : false,
+            context        : "",
+            correct        : false,
+            crlf           : false,
+            cssinsertlines : false,
+            csvchar        : ",",
+            diff           : "",
+            diffcli        : false,
+            diffcomments   : false,
+            difflabel      : "new",
+            diffspaceignore: false,
+            diffview       : "sidebyside",
+            dustjs         : false,
+            elseline       : false,
+            endcomma       : false,
+            force_indent   : false,
+            html           : false,
+            inchar         : " ",
+            inlevel        : 0,
+            insize         : 4,
+            jsscope        : "none",
+            lang           : "auto",
+            langdefault    : "text",
+            methodchain    : "indent",
+            miniwrap       : false,
+            mode           : "diff",
+            neverflatten   : false,
+            nocaseindent   : false,
+            noleadzero     : false,
+            objsort        : "js",
+            output         : "",
+            preserve       : "all",
+            quote          : false,
+            quoteConvert   : "none",
+            readmethod     : "screen",
+            report         : true,
+            selectorlist   : false,
+            semicolon      : false,
+            source         : "",
+            sourcelabel    : "base",
+            space          : true,
+            spaceclose     : false,
+            style          : "indent",
+            styleguide     : "none",
+            summaryonly    : false,
+            tagmerge       : false,
+            tagsort        : false,
+            ternaryline    : false,
+            textpreserve   : false,
+            titanium       : false,
+            topcoms        : false,
+            varword        : "none",
+            version        : false,
+            vertical       : "js",
+            wrap           : 80
         },
         colors         = {
             del     : {
@@ -218,8 +220,6 @@ Examples:
             //indexes of diffCount array
             //0 - total number of differences
             //1 - the number of files containing those differences
-            //2 - new files
-            //3 - deleted files
             //last - total file count (not counting (sub)directories)
             if ((method !== "directory" && method !== "subdirectory") || sfiledump.length === 1) {
                 diffCount[1] = 1;
@@ -938,15 +938,10 @@ Examples:
                         "t.onmousedown=null;}};");
                 a.push("]]></script>");
                 a.push("</body></html>");
-                return [
-                    a.join(""),
-                    ""
-                ];
+                return [a.join(""), ""];
             }
             a.push("</body></html>");
-            return [
-                result[0], a.join("")
-            ];
+            return [result[0], a.join("")];
         },
 
         //instructions
@@ -1047,6 +1042,9 @@ Examples:
             a.push("");
             a.push("* difflabel    - string  - This allows for a descriptive label for the diff");
             a.push("                           file code of the diff HTML output. Defaults to new'.");
+            a.push("");
+            a.push("* diffspaceignore - boolean - If white space only differences should be ignored");
+            a.push("                           by the diff tool.  Default is false.");
             a.push("");
             a.push("* diffview     - string  - This determines whether the diff HTML output should");
             a.push("                           display as a side-by-side comparison or if the");
@@ -1278,7 +1276,7 @@ Examples:
         fileWrite      = function pdNodeLocal__fileWrite(data) {
             var dirs      = data
                     .localpath
-                    .split("/"),
+                    .split(path.sep),
                 suffix    = (options.mode === "diff")
                     ? "-diff.html"
                     : "-report.html",
@@ -1288,17 +1286,20 @@ Examples:
                 report    = [
                     "", ""
                 ],
-                writing   = function pdNodeLocal__fileWrite_writing(ending, tot) {
+                writing   = function pdNodeLocal__fileWrite_writing(ending) {
                     if (data.binary === true) {
                         fs
                             .writeFile(finalpath, data.file, function pdNodeLocal__fileWrite_writing_writeFileBinary(err) {
                                 if (err !== null) {
-                                    console.log(lf + "Error writing report output." + lf);
+                                    console.log(lf + "Error writing binary output." + lf);
                                     console.log(err);
-                                } else {
-                                    console.log("Binary copied: " + address.oabspath + finalpath);
+                                }// else {
+                                    //console.log("Binary copied: " + address.oabspath + finalpath);
+                                //}
+                                total[1] += 1;
+                                if (options.report === true) {
+                                    total[0] -= 1;
                                 }
-                                total[1] += tot;
                                 if (total[1] === total[0]) {
                                     ender();
                                 }
@@ -1307,12 +1308,12 @@ Examples:
                         fs
                             .writeFile(finalpath + ending, "", function pdNodeLocal__fileWrite_writing_writeFileEmpty(err) {
                                 if (err !== null) {
-                                    console.log(lf + "Error writing report output." + lf);
+                                    console.log(lf + "Error writing empty output." + lf);
                                     console.log(err);
                                 } else if (method === "file") {
-                                    console.log(lf + "Report successfully written to file.");
+                                    console.log(lf + "Empty file successfully written to file.");
                                 }
-                                total[1] += tot;
+                                total[1] += 1;
                                 if (total[1] === total[0]) {
                                     ender();
                                 }
@@ -1326,7 +1327,7 @@ Examples:
                                 } else if (method === "file") {
                                     console.log(lf + "Report successfully written to file.");
                                 }
-                                total[1] += tot;
+                                total[1] += 1;
                                 if (total[1] === total[0]) {
                                     ender();
                                 }
@@ -1335,13 +1336,13 @@ Examples:
                         fs
                             .writeFile(finalpath + ending, report[0], function pdNodeLocal__fileWrite_writing_writeFileText(err) {
                                 if (err !== null) {
-                                    console.log(lf + "Error writing report output." + lf);
+                                    console.log(lf + "Error writing file output." + lf);
                                     console.log(err);
                                 } else if (method === "file") {
-                                    console.log(lf + "Report successfully written to file.");
+                                    console.log(lf + "File successfully written.");
                                 }
-                                total[1] += tot;
-                                if (total[1] === total[0]) {
+                                total[1] += 1;
+                                if (total[1] === total[0] || (method !== "directory" && method !== "subdirectory")) {
                                     ender();
                                 }
                             });
@@ -1349,19 +1350,19 @@ Examples:
                 },
                 files     = function pdNodeLocal__fileWrite_files() {
                     if (data.binary === true) {
-                        writing("", 1);
+                        writing("");
                     } else if (options.mode === "diff" || (options.mode === "beautify" && options.jsscope !== "none")) {
-                        writing(suffix, 1);
+                        writing(suffix);
                     } else {
                         if (options.report === true) {
-                            writing(suffix, 0);
+                            writing(suffix);
                         }
-                        writing("", 1);
+                        writing("");
                     }
                 },
                 newdir    = function pdNodeLocal__fileWrite_newdir() {
                     fs
-                        .mkdir(address.oabspath + dirs.slice(0, count).join("/"), function pdNodeLocal__fileWrite_newdir_callback() {
+                        .mkdir(address.oabspath + dirs.slice(0, dirs.length - 2).join(path.sep), function pdNodeLocal__fileWrite_newdir_callback() {
                             count += 1;
                             if (count < dirs.length + 1) {
                                 pdNodeLocal__fileWrite_newdir();
@@ -1370,16 +1371,15 @@ Examples:
                             }
                         });
                 };
-            dirs.pop();
             options.source = sfiledump[data.index];
             if (options.mode === "diff") {
-                finalpath    = "__" + dirs.join("__") + "__" + filename;
+                finalpath = address.oabspath + path.sep + dirs.join("__") + "__" + filename;
                 options.diff = dfiledump[data.index];
             } else {
-                finalpath = dirs.join("/") + "/" + filename;
+                finalpath = address.oabspath + dirs.join(path.sep);
             }
             if (data.binary === true) {
-                if (dirs.length > 0 && options.mode !== "diff") {
+                if (dirs.length > 1 && options.mode !== "diff") {
                     newdir();
                 } else {
                     files();
@@ -1399,7 +1399,7 @@ Examples:
                 }
                 return console.log(report[0]);
             }
-            if (dirs.length > 0 && options.mode !== "diff") {
+            if (dirs.length > 1 && options.mode !== "diff") {
                 newdir();
             } else {
                 files();
@@ -1407,14 +1407,14 @@ Examples:
         },
 
         //write output to terminal
-        cliWrite       = function pdNodeLocal__cliWrite(output, path, last) {
+        cliWrite       = function pdNodeLocal__cliWrite(output, itempath, last) {
             var a      = 0,
                 plural = "",
                 pdlen  = output[0].length;
             diffCount[0] += output[output.length - 1];
             diffCount[1] += 1;
             if (options.summaryonly === true) {
-                clidata[2].push(path);
+                clidata[2].push(itempath);
             } else {
                 if (diffCount[0] !== 1) {
                     plural = "s";
@@ -1422,14 +1422,14 @@ Examples:
                 if (options.readmethod === "screen") {
                     console.log(lf + "Screen input with " + diffCount[0] + " difference" + plural);
                 } else if (output[5].length === 0) {
-                    console.log(lf + colors.filepath.start + path + lf + "Line: " + output[0][a] + colors.filepath.end);
+                    console.log(lf + colors.filepath.start + itempath + lf + "Line: " + output[0][a] + colors.filepath.end);
                 }
                 for (a = 0; a < pdlen; a += 1) {
                     if (output[0][a + 1] !== undefined && output[0][a] === output[2][a + 1] && output[2][a] === output[0][a + 1] && output[0][a] !== output[2][a]) {
                         if (options.readmethod === "screen") {
                             console.log(lf + "Line: " + output[0][a] + colors.filepath.end);
                         } else {
-                            console.log(lf + colors.filepath.start + path + lf + "Line: " + output[0][a] + colors.filepath.end);
+                            console.log(lf + colors.filepath.start + itempath + lf + "Line: " + output[0][a] + colors.filepath.end);
                         }
                         if (output[3][a - 2] !== undefined) {
                             console.log(output[3][a - 2]);
@@ -1459,6 +1459,9 @@ Examples:
         //executed from fileComplete
         screenWrite    = function pdNodeLocal__screenWrite() {
             var report = [];
+            if (options.mode === "diff" && options.diffcli === true) {
+                return cliWrite(prettydiff.api(options), "", false);
+            }
             if (options.mode === "diff") {
                 return console.log(reports()[0]);
             }
@@ -1468,9 +1471,6 @@ Examples:
             report = prettydiff.api(options);
             if (options.mode === "parse") {
                 report[0] = JSON.stringify(report[0]);
-            }
-            if (options.mode === "diff" && options.diffcli === true) {
-                return cliWrite(report);
             }
             return console.log(report[0]);
         },
@@ -1512,7 +1512,15 @@ Examples:
             }
             if ((options.mode === "diff" && sState[data.index] === true && dState[data.index] === true) || (options.mode !== "diff" && sState[data.index] === true)) {
                 if (sfiledump[data.index] !== dfiledump[data.index]) {
-                    if (options.diffcli === true) {
+                    if (dfiledump[data.index] === "" || dfiledump[data.index] === "\n") {
+                        console.log("Diff file at " + data.localpath + " is \x1B[31mempty\x1B[39m but the source file is not.");
+                        diffCount[0] += 1;
+                        diffCount[0] += 1;
+                    } else if (sfiledump[data.index] === "" || sfiledump[data.index] === "\n") {
+                        console.log("Source file at " + data.localpath + " is \x1B[31mempty\x1B[39m but the diff file is not.");
+                        diffCount[0] += 1;
+                        diffCount[0] += 1;
+                    } else if (options.diffcli === true) {
                         cliFile(data);
                     } else if (method === "filescreen") {
                         if (data.type === "diff") {
@@ -1528,8 +1536,10 @@ Examples:
                     if (options.mode === "diff") {
                         dState[data.index] = false;
                     }
-                } else if (method === "screen" || method === "file" || method === "filescreen") {
+                } else if (method === "screen" || method === "filescreen") {
                     ender();
+                } else {
+                    return;
                 }
             } else if (data.last === true && data.type !== "diff" && options.diffcli === false && data.binary === false && total[0] === 0) {
                 ender();
@@ -1650,13 +1660,13 @@ Examples:
             var sfiles  = {
                     count      : 0,
                     directories: 1,
-                    path       : [],
+                    filepath   : [],
                     total      : 0
                 },
                 dfiles  = {
                     count      : 0,
                     directories: 1,
-                    path       : [],
+                    filepath   : [],
                     total      : 0
                 },
                 readDir = function pdNodeLocal__directory_readDir(start, listtype) {
@@ -1668,11 +1678,11 @@ Examples:
                                         itempath = itempath.replace(/\\/g, "/");
                                         if (listtype === "diff") {
                                             dfiles
-                                                .path
+                                                .filepath
                                                 .push(itempath.replace(address.dabspath + "/", ""));
                                         } else {
                                             sfiles
-                                                .path
+                                                .filepath
                                                 .push(itempath.replace(address.sabspath + "/", ""));
                                         }
                                         item.count += 1;
@@ -1681,8 +1691,8 @@ Examples:
                                         var preprocess = function pdNodeLocal__directory_readDir_stat_dirtest_stat_preprocess() {
                                             var b      = 0,
                                                 length = (options.mode === "diff")
-                                                    ? Math.min(sfiles.path.length, dfiles.path.length)
-                                                    : sfiles.path.length,
+                                                    ? Math.min(sfiles.filepath.length, dfiles.filepath.length)
+                                                    : sfiles.filepath.length,
                                                 end    = false,
                                                 sizer  = function pdNodeLocal__directory_readDir_stat_dirtest_stat_preprocess_sizer(index, type, filename, finalone) {
                                                     fs
@@ -1702,43 +1712,43 @@ Examples:
                                                         });
                                                 };
                                             sfiles
-                                                .path
+                                                .filepath
                                                 .sort();
                                             if (options.mode === "diff") {
                                                 dfiles
-                                                    .path
+                                                    .filepath
                                                     .sort();
                                                 for (b = 0; b < length; b += 1) {
                                                     dState.push(false);
                                                     sState.push(false);
                                                     sfiledump.push("");
                                                     dfiledump.push("");
-                                                    if (sfiles.path[b] === dfiles.path[b]) {
+                                                    if (sfiles.filepath[b] === dfiles.filepath[b]) {
                                                         if (b === length - 1) {
                                                             end = true;
                                                         }
-                                                        sizer(b, "diff", dfiles.path[b], end);
-                                                        sizer(b, "source", sfiles.path[b], end);
+                                                        sizer(b, "diff", dfiles.filepath[b], end);
+                                                        sizer(b, "source", sfiles.filepath[b], end);
                                                     } else {
-                                                        if (sfiles.path[b] < dfiles.path[b]) {
+                                                        if (sfiles.filepath[b] < dfiles.filepath[b]) {
                                                             if (options.diffcli === true) {
-                                                                clidata[0].push(sfiles.path[b]);
+                                                                clidata[0].push(sfiles.filepath[b]);
                                                             }
-                                                            if (length === dfiles.path.length) {
+                                                            if (length === dfiles.filepath.length) {
                                                                 length += 1;
                                                             }
                                                             dfiles
-                                                                .path
+                                                                .filepath
                                                                 .splice(b, 0, "");
-                                                        } else if (dfiles.path[b] < sfiles.path[b]) {
+                                                        } else if (dfiles.filepath[b] < sfiles.filepath[b]) {
                                                             if (options.diffcli === true) {
-                                                                clidata[1].push(dfiles.path[b]);
+                                                                clidata[1].push(dfiles.filepath[b]);
                                                             }
-                                                            if (length === sfiles.path.length) {
+                                                            if (length === sfiles.filepath.length) {
                                                                 length += 1;
                                                             }
                                                             sfiles
-                                                                .path
+                                                                .filepath
                                                                 .splice(b, 0, "");
                                                         }
                                                         if (b === length - 1) {
@@ -1749,14 +1759,17 @@ Examples:
                                             } else {
                                                 if (options.output !== "") {
                                                     total[0] = length;
+                                                    if (options.report === true) {
+                                                        total[0] += length;
+                                                    }
                                                     for (b = 0; b < length; b += 1) {
                                                         if (b === length - 1) {
                                                             end = true;
                                                         }
-                                                        if (sfiles.path[b] !== undefined) {
-                                                            sizer(b, "source", sfiles.path[b], end);
+                                                        if (sfiles.filepath[b] !== undefined) {
+                                                            sizer(b, "source", sfiles.filepath[b], end);
                                                         } else {
-                                                            total[0] -= 1;
+                                                            total[0] -= 2;
                                                         }
                                                     }
                                                 } else {
@@ -1850,27 +1863,43 @@ Examples:
             e         = [],
             f         = 0,
             alphasort = false,
+            outready  = false,
             pdrcpath  = __dirname.replace(/(api)$/, "") + ".prettydiffrc",
             pathslash = function pdNodeLocal__start_pathslash(name, x) {
                 var y        = x.indexOf("://"),
                     z        = "",
                     itempath = "",
                     ind      = "",
-                    path     = require("path"),
+                    odirs   = [],
+                    olen     = 0,
+                    basepath = "",
+                    makeout  = function pdNodeLocal__start_pathslash_makeout() {
+                        basepath = basepath + odirs[olen] + path.sep;
+                        fs.mkdir(basepath, function pdNodeLocal__start_pathslash_makeout_mkdir(err) {
+                            if (err !== undefined && err !== null && err.code !== "EEXIST") {
+                                console.log(err);
+                            } else if (olen < odirs.length) {
+                                olen += 1;
+                                pdNodeLocal__start_pathslash_makeout();
+                            } else {
+                                outready = true;
+                            }
+                        });
+                    },
                     abspath  = function pdNodeLocal__start_pathslash_abspath() {
-                        var tree  = cwd.split("/"),
+                        var tree  = cwd.split(path.sep),
                             ups   = [],
                             uplen = 0;
                         if (itempath.indexOf("..") === 0) {
-                            ups   = itempath.split("../");
+                            ups   = itempath.split(".." + path.sep);
                             uplen = ups.length;
                             do {
                                 uplen -= 1;
                                 tree.pop();
                             } while (uplen > 1);
-                            return tree.join("/") + "/" + ups[ups.length - 1];
+                            return tree.join(path.sep) + path.sep + ups[ups.length - 1];
                         }
-                        if ((/^([a-z]:(\\|\/))/).test(itempath) === true || itempath.indexOf("/") === 0) {
+                        if ((/^([a-z]:(\\|\/))/).test(itempath) === true || itempath.indexOf(path.sep) === 0) {
                             return itempath;
                         }
                         return path.join(cwd, itempath);
@@ -1905,8 +1934,14 @@ Examples:
                             dir[ind] = 1;
                         } else if (stat.isFile() === true) {
                             dir[ind] = 2;
+                            if (name === "output") {
+                                outready = true;
+                            }
                         } else {
                             dir[ind] = -1;
+                            if (name === "output") {
+                                outready = true;
+                            }
                         }
                     });
                 if (name === "diff") {
@@ -1915,13 +1950,13 @@ Examples:
                 }
                 if (name === "output") {
                     address.oabspath = abspath();
-                    if (address.oabspath.charAt(address.oabspath.length - 1) !== "/") {
-                        address.oabspath = address.oabspath + "/";
-                    }
                     address.oorgpath = itempath;
-                    fs.mkdir(address.oabspath, function pdNodeLocal__start_pathslash_mkdir() {
-                        return;
-                    });
+                    if (address.oabspath.charAt(address.oabspath.length - 1) !== path.sep) {
+                        address.oabspath = address.oabspath + path.sep;
+                    }
+                    basepath         = address.oabspath.replace(path.sep + address.oorgpath, "");
+                    odirs            = address.oorgpath.split(path.sep);
+                    makeout();
                 }
                 if (name === "source") {
                     address.sabspath = abspath();
@@ -1980,6 +2015,8 @@ Examples:
                     options.diffcomments = true;
                 } else if (d[b][0] === "difflabel" && d[b][1].length > 0) {
                     options.difflabel = d[b][1];
+                } else if (d[b][0] === "diffspaceignore" && d[b][1] === "true") {
+                    options.diffspaceignore = true;
                 } else if (d[b][0] === "diffview" && d[b][1] === "inline") {
                     options.diffview = "inline";
                 } else if (d[b][0] === "dustjs" && d[b][1] === "true") {
@@ -2128,183 +2165,192 @@ Examples:
             }
         }
 
+        if (options.output === "") {
+            outready = true;
+        }
+
         fs
             .stat(pdrcpath, function pdNodeLocal__start_stat(err, stats) {
                 var init = function pdNodeLocal__start_stat_init() {
-                        var state  = true,
-                            status = function pdNodeLocal__start_stat_init_status() {
-                                //status codes
-                                //-1 is not file or directory
-                                //0 is status pending
-                                //1 is directory
-                                //2 is file
-                                //3 is file via http/s
-                                //
-                                //dir[0] - diff
-                                //dir[1] - output
-                                //dir[2] - source
-                                if (dir[2] === 0) {
+                    var state  = true,
+                        status = function pdNodeLocal__start_stat_init_status() {
+                            //status codes
+                            //-1 is not file or directory
+                            //0 is status pending
+                            //1 is directory
+                            //2 is file
+                            //3 is file via http/s
+                            //
+                            //dir[0] - diff
+                            //dir[1] - output
+                            //dir[2] - source
+                            if (dir[2] === 0) {
+                                return;
+                            }
+                            if (method === "auto") {
+                                if (dir[2] === 1) {
+                                    method = "subdirectory";
+                                } else if (dir[2] > 1) {
+                                    if (options.output === "") {
+                                        method = "filescreen";
+                                    } else {
+                                        if (options.output === "" && options.mode !== "diff") {
+                                            console.log("");
+                                            console.log("\x1B[91mNo output option is specified, so no files written.\x1B[39m");
+                                            console.log("");
+                                        }
+                                        method = "file";
+                                        if (options.output === "") {
+                                            return console.log("Error: 'readmethod' is value 'file' and argument 'output' is empty");
+                                        }
+                                    }
+                                } else if (dir[2] < 0) {
+                                    method = "screen";
+                                }
+                            }
+                            if (dir[2] < 0) {
+                                state = false;
+                                if (options.readmethod === "screen" && options.mode !== "diff") {
+                                    return screenWrite();
+                                }
+                                if (options.readmethod !== "screen") {
+                                    return console.log("source is not a directory or file");
+                                }
+                            }
+                            if (dir[2] === 1 && method !== "directory" && method !== "subdirectory") {
+                                state = false;
+                                return console.log("source is a directory but readmethod option is not 'auto', 'directory', or 'subd" +
+                                        "irectory'");
+                            }
+                            if (dir[2] > 1) {
+                                if (method === "directory" || method === "subdirectory") {
+                                    state = false;
+                                    return console.log("source is a file but readmethod option is 'directory' or 'subdirectory'");
+                                }
+                                if (method === "screen") {
+                                    method = "filescreen";
+                                }
+                            }
+                            if (options.mode === "diff") {
+                                if (dir[0] === 0 || dir[2] === 0) {
                                     return;
                                 }
-                                if (method === "auto") {
-                                    if (dir[2] === 1) {
-                                        method = "subdirectory";
-                                    } else if (dir[2] > 1) {
-                                        if (options.output === "") {
-                                            method = "filescreen";
-                                        } else {
-                                            if (options.output === "" && options.mode !== "diff") {
-                                                console.log("\x1B[91m\nNo output option is specified, so no files written.\n\x1B[39m");
-                                            }
-                                            method = "file";
-                                            if (options.output === "") {
-                                                return console.log("Error: 'readmethod' is value 'file' and argument 'output' is empty");
-                                            }
-                                        }
-                                    } else if (dir[2] < 0) {
-                                        method = "screen";
-                                    }
-                                }
-                                if (dir[2] < 0) {
+                                if (dir[0] < 0) {
                                     state = false;
-                                    if (options.readmethod === "screen" && options.mode !== "diff") {
+                                    if (dir[2] < 0 && options.readmethod === "screen") {
+                                        if (options.diffcli === true) {
+                                            return cliWrite(prettydiff.api(options), "", false);
+                                        }
                                         return screenWrite();
                                     }
-                                    if (options.readmethod !== "screen") {
-                                        return console.log("source is not a directory or file");
-                                    }
+                                    return console.log("diff is not a directory or file");
                                 }
-                                if (dir[2] === 1 && method !== "directory" && method !== "subdirectory") {
+                                if (dir[0] === 1 && method !== "directory" && method !== "subdirectory") {
                                     state = false;
-                                    return console.log("source is a directory but readmethod option is not 'auto', 'directory', or 'subd" +
-                                            "irectory'");
+                                    return console.log("diff is a directory but readmethod option is not 'directory' or 'subdirectory'");
                                 }
-                                if (dir[2] > 1) {
-                                    if (method === "directory" || method === "subdirectory") {
-                                        state = false;
-                                        return console.log("source is a file but readmethod option is 'directory' or 'subdirectory'");
-                                    }
-                                    if (method === "screen") {
-                                        method = "filescreen";
-                                    }
+                                if (dir[0] > 2 && (method === "directory" || method === "subdirectory")) {
+                                    state = false;
+                                    return console.log("diff is a file but readmethod option is 'directory' or 'subdirectory'");
                                 }
-                                if (options.mode === "diff") {
-                                    if (dir[0] === 0 || dir[2] === 0) {
-                                        return;
-                                    }
-                                    if (dir[0] < 0) {
-                                        state = false;
-                                        if (dir[2] < 0 && options.readmethod === "screen") {
-                                            return screenWrite();
-                                        }
-                                        return console.log("diff is not a directory or file");
-                                    }
-                                    if (dir[0] === 1 && method !== "directory" && method !== "subdirectory") {
-                                        state = false;
-                                        return console.log("diff is a directory but readmethod option is not 'directory' or 'subdirectory'");
-                                    }
-                                    if (dir[0] > 2 && (method === "directory" || method === "subdirectory")) {
-                                        state = false;
-                                        return console.log("diff is a file but readmethod option is 'directory' or 'subdirectory'");
-                                    }
-                                    if (dir[0] > 1 && method === "screen") {
-                                        method = "filescreen";
-                                    }
-                                    if (dir[0] > 1 && dir[2] > 1 && (method === "file" || method === "filescreen")) {
-                                        state = false;
-                                        dState.push(false);
-                                        sState.push(false);
-                                        if (dir[0] === 3) {
-                                            readHttpFile({absolutepath: options.diff, index: 0, last: true, localpath: options.diff, type: "diff"});
-                                        } else {
-                                            readLocalFile({absolutepath: options.diff, index: 0, last: true, localpath: options.diff, type: "diff"});
-                                        }
-                                        if (dir[2] === 3) {
-                                            readHttpFile({absolutepath: options.source, index: 0, last: true, localpath: options.source, type: "source"});
-                                        } else {
-                                            readLocalFile({absolutepath: options.source, index: 0, last: true, localpath: options.source, type: "source"});
-                                        }
-                                        return;
-                                    }
-                                    if (dir[0] === 1 && dir[2] === 1 && (method === "directory" || method === "subdirectory")) {
-                                        state = false;
-                                        return directory();
-                                    }
-                                } else {
-                                    if (dir[2] > 1 && (method === "file" || method === "filescreen")) {
-                                        state = false;
-                                        sState.push(false);
-                                        if (dir[2] === 3) {
-                                            readHttpFile({absolutepath: options.source, index: 0, last: true, localpath: options.source, type: "source"});
-                                        } else {
-                                            readLocalFile({absolutepath: options.source, index: 0, last: true, localpath: options.source, type: "source"});
-                                        }
-                                        return;
-                                    }
-                                    if (dir[2] === 1 && (method === "directory" || method === "subdirectory")) {
-                                        state = false;
-                                        return directory();
-                                    }
+                                if (dir[0] > 1 && method === "screen") {
+                                    method = "filescreen";
                                 }
-                            },
-                            delay  = function pdNodeLocal__start_stat_init_delay() {
-                                if (state === true) {
-                                    status();
-                                    setTimeout(function pdNodeLocal__start_stat_init_delay_setTimeout() {
-                                        pdNodeLocal__start_stat_init_delay();
-                                    }, 50);
+                                if (dir[0] > 1 && dir[2] > 1 && (method === "file" || method === "filescreen")) {
+                                    state = false;
+                                    dState.push(false);
+                                    sState.push(false);
+                                    if (dir[0] === 3) {
+                                        readHttpFile({absolutepath: options.diff, index: 0, last: true, localpath: options.diff, type: "diff"});
+                                    } else {
+                                        readLocalFile({absolutepath: options.diff, index: 0, last: true, localpath: options.diff, type: "diff"});
+                                    }
+                                    if (dir[2] === 3) {
+                                        readHttpFile({absolutepath: options.source, index: 0, last: true, localpath: options.source, type: "source"});
+                                    } else {
+                                        readLocalFile({absolutepath: options.source, index: 0, last: true, localpath: options.source, type: "source"});
+                                    }
+                                    return;
                                 }
-                            };
-                        if (alphasort === true) {
-                            options.objsort = "all";
-                        }
-                        if (options.lang === "tss") {
-                            options.titanium = true;
-                            options.lang     = "javascript";
-                        }
-                        if (options.mode !== "diff") {
-                            options.diffcli     = false;
-                            options.summaryonly = false;
-                        }
-                        if (options.summaryonly === true) {
+                                if (dir[0] === 1 && dir[2] === 1 && (method === "directory" || method === "subdirectory")) {
+                                    state = false;
+                                    return directory();
+                                }
+                            } else {
+                                if (dir[2] > 1 && (method === "file" || method === "filescreen")) {
+                                    state = false;
+                                    sState.push(false);
+                                    if (dir[2] === 3) {
+                                        readHttpFile({absolutepath: options.source, index: 0, last: true, localpath: options.source, type: "source"});
+                                    } else {
+                                        readLocalFile({absolutepath: options.source, index: 0, last: true, localpath: options.source, type: "source"});
+                                    }
+                                    return;
+                                }
+                                if (dir[2] === 1 && (method === "directory" || method === "subdirectory")) {
+                                    state = false;
+                                    return directory();
+                                }
+                            }
+                        },
+                        delay  = function pdNodeLocal__start_stat_init_delay() {
+                            if (state === true || outready === false) {
+                                status();
+                                setTimeout(function pdNodeLocal__start_stat_init_delay_setTimeout() {
+                                    pdNodeLocal__start_stat_init_delay();
+                                }, 50);
+                            }
+                        };
+                    if (alphasort === true) {
+                        options.objsort = "all";
+                    }
+                    if (options.lang === "tss") {
+                        options.titanium = true;
+                        options.lang     = "javascript";
+                    }
+                    if (options.mode !== "diff") {
+                        options.diffcli     = false;
+                        options.summaryonly = false;
+                    }
+                    if (options.summaryonly === true) {
+                        options.diffcli = true;
+                    }
+
+                    if (help === true) {
+                        return console.log(error);
+                    }
+                    if (c === 1 && options.version === true) {
+                        return console.log(versionString);
+                    }
+                    if (options.source === "") {
+                        return console.log("Error: 'source' argument is empty");
+                    }
+                    if (options.mode === "diff" && options.diff === "") {
+                        return console.log("Error: 'diff' argument is empty");
+                    }
+                    if ((options.mode === "diff" && options.summaryonly === false) || (options.jsscope !== "none" && options.mode === "beautify")) {
+                        options.report = true;
+                    }
+                    if ((options.output === "" || options.summaryonly === true) && options.mode === "diff") {
+                        if (options.readmethod !== "screen") {
                             options.diffcli = true;
                         }
-
-                        if (help === true) {
-                            return console.log(error);
+                        if (process.argv.join(" ").indexOf(" context:") === -1) {
+                            options.context = 2;
                         }
-                        if (c === 1 && options.version === true) {
-                            return console.log(versionString);
-                        }
-                        if (options.source === "") {
-                            return console.log("Error: 'source' argument is empty");
-                        }
-                        if (options.mode === "diff" && options.diff === "") {
-                            return console.log("Error: 'diff' argument is empty");
-                        }
-                        if ((options.mode === "diff" && options.summaryonly === false) || (options.jsscope !== "none" && options.mode === "beautify")) {
-                            options.report = true;
-                        }
-                        if ((options.output === "" || options.summaryonly === true) && options.mode === "diff") {
-                            if (options.readmethod !== "screen") {
-                                options.diffcli = true;
-                            }
-                            if (process.argv.join(" ").indexOf(" context:") === -1) {
-                                options.context = 2;
-                            }
-                        }
-                        if (method === "file" && options.output === "" && options.summaryonly === false && options.diffcli === false) {
-                            return console.log("Error: 'readmethod' is value 'file' and argument 'output' is empty");
-                        }
-                        if (options.summaryonly === true) {
-                            options.report = false;
-                        }
-                        if (dir[2] === 0 || (options.mode === "diff" && dir[0] === 0)) {
-                            delay();
-                        } else {
-                            status();
-                        }
-                    };
+                    }
+                    if (method === "file" && options.output === "" && options.summaryonly === false && options.diffcli === false) {
+                        return console.log("Error: 'readmethod' is value 'file' and argument 'output' is empty");
+                    }
+                    if (options.summaryonly === true) {
+                        options.report = false;
+                    }
+                    if (dir[2] === 0 || outready === false || (options.mode === "diff" && dir[0] === 0)) {
+                        delay();
+                    } else {
+                        status();
+                    }
+                };
 
                 if (err !== null) {
                     if (c === 0) {
@@ -2338,9 +2384,9 @@ Examples:
                                 return init();
                             }
                             if ((/^(\s*\{)/).test(data) === true && (/(\}\s*)$/).test(data) === true) {
-                                pdrc    = JSON.parse(data);
-                                pdkeys  = Object.keys(pdrc);
-                                b       = 0;
+                                pdrc   = JSON.parse(data);
+                                pdkeys = Object.keys(pdrc);
+                                b      = 0;
                                 pdkeys.forEach(eachkey);
                                 if (b > 0 && h === false) {
                                     help = false;
