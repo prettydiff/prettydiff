@@ -1293,9 +1293,7 @@ Examples:
                                 if (err !== null) {
                                     console.log(lf + "Error writing binary output." + lf);
                                     console.log(err);
-                                }// else {
-                                    //console.log("Binary copied: " + address.oabspath + finalpath);
-                                //}
+                                }
                                 total[1] += 1;
                                 if (options.report === true) {
                                     total[0] -= 1;
@@ -1406,7 +1404,7 @@ Examples:
             }
         },
 
-        //write output to terminal
+        //write output to terminal for diffcli option
         cliWrite       = function pdNodeLocal__cliWrite(output, itempath, last) {
             var a      = 0,
                 plural = "",
@@ -1612,6 +1610,9 @@ Examples:
                 fs
                     .stat(data.absolutepath, function pdNodeLocal__readLocalFile_stat(errx, stat) {
                         if (errx !== null) {
+                            if ((typeof errx === "string" && errx.indexOf("no such file or directory") > 0) || (typeof errx === "object" && errx.code === "ENOENT")) {
+                                return console.log(errx);
+                            }
                             return pdNodeLocal__readLocalFile(data);
                         }
                         data.size = stat.size;
@@ -1619,6 +1620,7 @@ Examples:
                             open();
                         } else {
                             data.binary = false;
+                            data.file   = "";
                             fileComplete(data);
                         }
                     });
@@ -1675,15 +1677,14 @@ Examples:
                             var item    = {},
                                 dirtest = function pdNodeLocal__directory_readDir_stat_dirtest(itempath, lastitem) {
                                     var pusher = function pdNodeLocal__directory_readDir_stat_dirtest_pusher(itempath) {
-                                        itempath = itempath.replace(/\\/g, "/");
                                         if (listtype === "diff") {
                                             dfiles
                                                 .filepath
-                                                .push(itempath.replace(address.dabspath + "/", ""));
+                                                .push(itempath.replace(address.dabspath + path.sep, ""));
                                         } else {
                                             sfiles
                                                 .filepath
-                                                .push(itempath.replace(address.sabspath + "/", ""));
+                                                .push(itempath.replace(address.sabspath + path.sep, ""));
                                         }
                                         item.count += 1;
                                     };
@@ -1835,9 +1836,9 @@ Examples:
                                         for (x = 0; x < filetotal; x += 1) {
                                             if (x === filetotal - 1) {
                                                 item.directories -= 1;
-                                                dirtest(start + "/" + files[x], true);
+                                                dirtest(start + path.sep + files[x], true);
                                             } else {
-                                                dirtest(start + "/" + files[x], false);
+                                                dirtest(start + path.sep + files[x], false);
                                             }
                                         }
                                     });
@@ -1878,6 +1879,7 @@ Examples:
                         fs.mkdir(basepath, function pdNodeLocal__start_pathslash_makeout_mkdir(err) {
                             if (err !== undefined && err !== null && err.code !== "EEXIST") {
                                 console.log(err);
+                                outready = true;
                             } else if (olen < odirs.length) {
                                 olen += 1;
                                 pdNodeLocal__start_pathslash_makeout();
@@ -1891,7 +1893,7 @@ Examples:
                             ups   = [],
                             uplen = 0;
                         if (itempath.indexOf("..") === 0) {
-                            ups   = itempath.split(".." + path.sep);
+                            ups   = itempath.replace(/\.\.\//g, ".." + path.sep).split(".." + path.sep);
                             uplen = ups.length;
                             do {
                                 uplen -= 1;
@@ -1949,6 +1951,7 @@ Examples:
                     address.dorgpath = itempath;
                 }
                 if (name === "output") {
+                    itempath = itempath.replace(/\//g, path.sep);
                     address.oabspath = abspath();
                     address.oorgpath = itempath;
                     if (address.oabspath.charAt(address.oabspath.length - 1) !== path.sep) {
@@ -2174,6 +2177,7 @@ Examples:
                 var init = function pdNodeLocal__start_stat_init() {
                     var state  = true,
                         status = function pdNodeLocal__start_stat_init_status() {
+                            var tempaddy = "";
                             //status codes
                             //-1 is not file or directory
                             //0 is status pending
@@ -2263,12 +2267,14 @@ Examples:
                                     if (dir[0] === 3) {
                                         readHttpFile({absolutepath: options.diff, index: 0, last: true, localpath: options.diff, type: "diff"});
                                     } else {
-                                        readLocalFile({absolutepath: options.diff, index: 0, last: true, localpath: options.diff, type: "diff"});
+                                        tempaddy = options.diff.replace(/(\/|\\)/g, path.sep);
+                                        readLocalFile({absolutepath: tempaddy, index: 0, last: true, localpath: tempaddy, type: "diff"});
                                     }
                                     if (dir[2] === 3) {
                                         readHttpFile({absolutepath: options.source, index: 0, last: true, localpath: options.source, type: "source"});
                                     } else {
-                                        readLocalFile({absolutepath: options.source, index: 0, last: true, localpath: options.source, type: "source"});
+                                        tempaddy = options.source.replace(/(\/|\\)/g, path.sep);
+                                        readLocalFile({absolutepath: tempaddy, index: 0, last: true, localpath: tempaddy, type: "source"});
                                     }
                                     return;
                                 }

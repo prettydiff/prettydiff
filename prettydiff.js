@@ -1670,7 +1670,7 @@ global.edition        = {
     },
     api          : {
         dom      : 160101, //dom.js
-        nodeLocal: 160101, //node-local.js
+        nodeLocal: 160103, //node-local.js
         wsh      : 160101
     },
     css          : 151109, //diffview.css file
@@ -1683,7 +1683,7 @@ global.edition        = {
     markuppretty : 151220, //markuppretty lib
     prettydiff   : 160101, //this file
     safeSort     : 151130, //safeSort lib
-    version      : "1.16.7", //version number
+    version      : "1.16.8", //version number
     webtool      : 151220
 };
 global.edition.latest = (function edition_latest() {

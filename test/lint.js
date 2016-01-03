@@ -7,6 +7,7 @@
         ],
         startTime   = Date.now(),
         fs          = require("fs"),
+        path        = require("path"),
         humantime   = function taskrunner_humantime() {
             var minuteString = "",
                 hourString   = "",
@@ -108,7 +109,7 @@
             }
             finalTime = hourString + minuteString + secondString;
             console.log(finalMem + " of memory consumed");
-            console.log(finalTime + "total time");
+            console.log(finalTime + " total time");
             console.log("");
         },
         prettydiff  = require("../prettydiff.js").api,
@@ -313,8 +314,8 @@
                         }
                     },
                     readDir = function taskrunner_coreunits_readDir(type) {
-                        var path = __dirname + "/samples_" + type;
-                        fs.readdir(path, function taskrunner_coreunits_readDir_callback(err, list) {
+                        var dirpath = __dirname + "/samples_" + type;
+                        fs.readdir(dirpath, function taskrunner_coreunits_readDir_callback(err, list) {
                             var pusher = function taskrunner_coreunits_readDir_callback_pusher(val, ind, arr) {
                                 fs
                                     .readFile(__dirname + "/samples_" + type + "/" + val, "utf8", function taskrunner_coreunits_readDir_callback_pusher_readFile(erra, fileData) {
@@ -735,6 +736,33 @@
                         }
                         return -1;
                     },
+                    slashfix  = function taskrunner_simulations_slashfix(command) {
+                        var comchars = [],
+                            a        = 0,
+                            dirchar  = "\\",
+                            output   = "";
+                        if (path.sep === "/") {
+                            return command;
+                        }
+                        if (path.sep !== "\\") {
+                            dirchar = path.sep;
+                        }
+                        comchars = command.split("");
+                        for (a = comchars.length - 1; a > -1; a -= 1) {
+                            if (comchars[a] === "/" && comchars[a - 1] !== "<" && comchars[a + 1] !== ">") {
+                                comchars[a] = dirchar;
+                            }
+                        }
+                        output = comchars.join("");
+                        if (dirchar === "\\") {
+                            if (output.indexOf("node api/node-local.js") === 0) {
+                                output = output + " crlf:\"true\"";
+                            } else if (output.indexOf("rm ") === 0) {
+                                output = output.replace(/rm\ (-r?f?)?\ /, "rmdir /Q /S ");
+                            }
+                        }
+                        return output;
+                    },
                     shell     = function taskrunner_simulations_shell(testData) {
                         var childExec = require("child_process").exec,
                             tab       = (function taskrunner_simulations_shell_child_writeLine_tab() {
@@ -749,6 +777,7 @@
                                 return str;
                             }()),
                             child     = function taskrunner_simulations_shell_child(param) {
+                                param.check = slashfix(param.check);
                                 childExec(param.check, function taskrunner_simulations_shell_child_childExec(err, stdout, stderr) {
                                     var data      = [param.name],
                                         //what to do when a group concludes
@@ -862,6 +891,7 @@
                                                     var a    = 0,
                                                         len  = tasks.length,
                                                         task = function taskrunner_simulations_shell_child_writeLine_teardown_task() {
+                                                            tasks[a] = slashfix(tasks[a]);
                                                             console.log(tab + "  " + tasks[a]);
                                                             childExec(tasks[a], function taskrunner_simulations_shell_child_writeLine_teardown_task_exec(err, stdout, stderr) {
                                                                 a += 1;
@@ -944,9 +974,9 @@
                             buildup   = function taskrunner_simulations_shell_buildup(tasks) {
                                 var a    = 0,
                                     len  = tasks.length,
+                                    echo = [],
                                     task = function taskrunner_simulations_shell_buildup_task() {
-                                        console.log(tab + "  " + tasks[a]);
-                                        childExec(tasks[a], function taskrunner_simulations_shell_buildup_task_exec(err, stdout, stderr) {
+                                        var buildstep = function taskrunner_simulations_shell_buildup_task_buildstep(err, stdout, stderr) {
                                             a += 1;
                                             if (typeof err === "string") {
                                                 console.log("\x1B[31mError:\x1B[39m " + err);
@@ -973,7 +1003,19 @@
                                                     }
                                                 }
                                             }
-                                        });
+                                        };
+                                        tasks[a] = slashfix(tasks[a]);
+                                        console.log(tab + "  " + tasks[a]);
+                                        if (path.sep === "\\" && (/^(echo\s+("|'))/).test(tasks[a]) === true) {
+                                            //windows will write CLI strings to files including the containing quotes
+                                            options.source = tasks[a];
+                                            options.mode   = "parse";
+                                            options.lang   = "javascript";
+                                            echo           = prettydiff(options);
+                                            fs.writeFile(echo[0].token.slice(3).join(""), echo[0].token[1].slice(1, echo[0].token[1].length - 1), buildstep);
+                                        } else {
+                                            childExec(tasks[a], buildstep);
+                                        }
                                     };
                                 console.log("");
                                 console.log(tab + "\x1B[36mBuildup\x1B[39m for group: \x1B[33m" + testData.group + "\x1B[39m \x1B[36mstarted\x1B[39m.");
