@@ -74,7 +74,7 @@
                     return output;
                 },
                 plural       = function core__proctime_plural(x, y) {
-                    var a = "";
+                    var a = " ";
                     if (x !== 1) {
                         a = x + y + "s ";
                     } else {
@@ -87,8 +87,8 @@
                     minuteString = plural(minutes, " minute");
                     minutes      = elapsed - (minutes * 60);
                     secondString = (minutes === 1)
-                        ? "1 second"
-                        : minutes.toFixed(3) + " seconds";
+                        ? "1 second "
+                        : minutes.toFixed(3) + " seconds ";
                 };
             memory       = process.memoryUsage();
             finalMem     = prettybytes(memory.rss);
