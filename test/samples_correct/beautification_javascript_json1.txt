@@ -178,4 +178,4 @@ $(function () {
     sdf: sdf, {
         asd: thn
     }
-}
+};

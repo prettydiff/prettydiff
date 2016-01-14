@@ -3,7 +3,11 @@
 (function taskrunner() {
     "use strict";
     var order       = [
-            "simulations", "coreunits", "packagejson", "lint"
+            "lint", //        - run jslint on all unexcluded files in the repo
+            "packagejson", // - beautify the package.json file and compare it to itself
+            "coreunits", //   - run a variety of files through the application and compare the result to a known good file
+            "simulations" //  - simulate a variety of execution steps and options from the command line
+            //"simulations"
         ],
         startTime   = Date.now(),
         fs          = require("fs"),
@@ -74,7 +78,7 @@
                     return output;
                 },
                 plural       = function core__proctime_plural(x, y) {
-                    var a = " ";
+                    var a = "";
                     if (x !== 1) {
                         a = x + y + "s ";
                     } else {
@@ -87,8 +91,8 @@
                     minuteString = plural(minutes, " minute");
                     minutes      = elapsed - (minutes * 60);
                     secondString = (minutes === 1)
-                        ? "1 second "
-                        : minutes.toFixed(3) + " seconds ";
+                        ? "1 second"
+                        : minutes.toFixed(3) + " seconds";
                 };
             memory       = process.memoryUsage();
             finalMem     = prettybytes(memory.rss);
@@ -176,7 +180,7 @@
                                     };
                                 options.mode    = "diff";
                                 options.source  = output;
-                                options.diff    = correct[a][1 ];
+                                options.diff    = correct[a][1];
                                 options.diffcli = true;
                                 options.context = 2;
                                 options.lang    = "text";
@@ -191,56 +195,56 @@
                                 //4 - change
                                 //5 - index of options.context (not parallel)
                                 //6 - total count of differences
-                                if (report[0][0 ] < 2) {
+                                if (report[0][0] < 2) {
                                     diffs += 1;
                                     console.log("");
-                                    console.log(colors.filepath.start + correct[a][0 ]);
+                                    console.log(colors.filepath.start + correct[a][0]);
                                     console.log("Line: 1" + colors.filepath.end);
                                 }
                                 for (aa = 0; aa < pdlen; aa += 1) {
-                                    if (report[4][aa ] === "equal" && report[4][aa + 1] === "equal" && report[4][aa + 2] !== undefined && report[4][aa + 2] !== "equal") {
+                                    if (report[4][aa] === "equal" && report[4][aa + 1] === "equal" && report[4][aa + 2] !== undefined && report[4][aa + 2] !== "equal") {
                                         count[1] += 1;
                                         if (count[1] === 51) {
                                             break;
                                         }
-                                        line   = report[0][aa ] + 2;
+                                        line   = report[0][aa] + 2;
                                         lcount = 0;
                                         diffs  += 1;
                                         console.log("");
-                                        console.log(colors.filepath.start + correct[a][0 ]);
+                                        console.log(colors.filepath.start + correct[a][0]);
                                         console.log("Line: " + line + colors.filepath.end);
                                         if (aa === 0) {
-                                            console.log(report[3][aa ]);
+                                            console.log(report[3][aa]);
                                             console.log(report[3][aa + 1]);
                                         }
                                     }
                                     if (lcount < 7) {
                                         lcount += 1;
-                                        if (report[4][aa ] === "delete") {
-                                            if (report[1][aa ] === "") {
-                                                report[1][aa ] = "(empty line)";
-                                            } else if (report[1][aa ].replace(/\ +/g, "") === "") {
-                                                report[1][aa ] = "(indentation)";
+                                        if (report[4][aa] === "delete") {
+                                            if (report[1][aa] === "") {
+                                                report[1][aa] = "(empty line)";
+                                            } else if (report[1][aa].replace(/\ +/g, "") === "") {
+                                                report[1][aa] = "(indentation)";
                                             }
-                                            console.log(colors.del.lineStart + report[1][aa ].replace(/\\x1B/g, "\\x1B").replace(/<p(d)>/g, colors.del.charStart).replace(/<\/pd>/g, colors.del.charEnd) + colors.del.lineEnd);
-                                        } else if (report[4][aa ] === "insert") {
-                                            if (report[3][aa ] === "") {
-                                                report[3][aa ] = "(empty line)";
-                                            } else if (report[3][aa ].replace(/\ +/g, "") === "") {
-                                                report[3][aa ] = "(indentation)";
+                                            console.log(colors.del.lineStart + report[1][aa].replace(/\\x1B/g, "\\x1B").replace(/<p(d)>/g, colors.del.charStart).replace(/<\/pd>/g, colors.del.charEnd) + colors.del.lineEnd);
+                                        } else if (report[4][aa] === "insert") {
+                                            if (report[3][aa] === "") {
+                                                report[3][aa] = "(empty line)";
+                                            } else if (report[3][aa].replace(/\ +/g, "") === "") {
+                                                report[3][aa] = "(indentation)";
                                             }
-                                            console.log(colors.ins.lineStart + report[3][aa ].replace(/\\x1B/g, "\\x1B").replace(/<p(d)>/g, colors.ins.charStart).replace(/<\/pd>/g, colors.ins.charEnd) + colors.ins.lineEnd);
-                                        } else if (report[4][aa ] === "equal" && aa > 1) {
-                                            console.log(report[3][aa ]);
-                                        } else if (report[4][aa ] === "replace") {
-                                            console.log(colors.del.lineStart + report[1][aa ].replace(/\\x1B/g, "\\x1B").replace(/<p(d)>/g, colors.del.charStart).replace(/<\/pd>/g, colors.del.charEnd) + colors.del.lineEnd);
-                                            console.log(colors.ins.lineStart + report[3][aa ].replace(/\\x1B/g, "\\x1B").replace(/<p(d)>/g, colors.ins.charStart).replace(/<\/pd>/g, colors.ins.charEnd) + colors.ins.lineEnd);
+                                            console.log(colors.ins.lineStart + report[3][aa].replace(/\\x1B/g, "\\x1B").replace(/<p(d)>/g, colors.ins.charStart).replace(/<\/pd>/g, colors.ins.charEnd) + colors.ins.lineEnd);
+                                        } else if (report[4][aa] === "equal" && aa > 1) {
+                                            console.log(report[3][aa]);
+                                        } else if (report[4][aa] === "replace") {
+                                            console.log(colors.del.lineStart + report[1][aa].replace(/\\x1B/g, "\\x1B").replace(/<p(d)>/g, colors.del.charStart).replace(/<\/pd>/g, colors.del.charEnd) + colors.del.lineEnd);
+                                            console.log(colors.ins.lineStart + report[3][aa].replace(/\\x1B/g, "\\x1B").replace(/<p(d)>/g, colors.ins.charStart).replace(/<\/pd>/g, colors.ins.charEnd) + colors.ins.lineEnd);
                                         }
                                     }
                                 }
                                 console.log("");
                                 console.log(diffs + colors.filepath.start + " differences counted." + colors.filepath.end);
-                                errout("Pretty Diff " + colors.del.lineStart + "failed" + colors.del.lineEnd + " on file: " + colors.filepath.start + correct[a][0 ] + colors.filepath.end);
+                                errout("Pretty Diff " + colors.del.lineStart + "failed" + colors.del.lineEnd + " on file: " + colors.filepath.start + correct[a][0] + colors.filepath.end);
                             };
                         raw.sort(sort);
                         correct.sort(sort);
@@ -265,10 +269,10 @@
                         for (a = 0; a < len; a += 1) {
                             if (raw[a] === undefined || correct[a] === undefined) {
                                 if (raw[a] === undefined) {
-                                    console.log("\x1B[33msamples_raw directory is missing file:\x1B[39m " + correct[a][0 ]);
+                                    console.log("\x1B[33msamples_raw directory is missing file:\x1B[39m " + correct[a][0]);
                                     correct.splice(a, 1);
                                 } else {
-                                    console.log("\x1B[33msamples_correct directory is missing file:\x1B[39m " + raw[a][0 ]);
+                                    console.log("\x1B[33msamples_correct directory is missing file:\x1B[39m " + raw[a][0]);
                                     raw.splice(a, 1);
                                 }
                                 len = (raw.length > correct.length)
@@ -278,29 +282,29 @@
                                 if (a === len - 1) {
                                     console.log("");
                                     console.log("\x1B[32mCore Unit Testing Complete\x1B[39m");
-                                    next();
+                                    return next();
                                 }
-                            } else if (raw[a][0 ] === correct[a][0 ]) {
-                                options.source = raw[a][1 ];
-                                output         = prettydiff(options)[0 ];
+                            } else if (raw[a][0] === correct[a][0]) {
+                                options.source = raw[a][1];
+                                output         = prettydiff(options)[0];
                                 if (output.charAt(output.length - 1) !== "\n") {
                                     output = output + "\n";
                                 }
-                                if (output === correct[a][1 ]) {
+                                if (output === correct[a][1]) {
                                     filecount += 1;
-                                    console.log("\x1B[32mPretty Diff is good with file " + filecount + ":\x1B[39m " + correct[a][0 ]);
+                                    console.log("\x1B[32mPretty Diff is good with file " + filecount + ":\x1B[39m " + correct[a][0]);
                                     if (a === len - 1) {
-                                        next();
+                                        return next();
                                     }
                                 } else {
                                     diffFiles();
                                 }
                             } else {
-                                if (raw[a][0 ] < correct[a][0 ]) {
-                                    console.log("\x1B[33mCorrect samples directory is missing file:\x1B[39m " + raw[a][0 ]);
+                                if (raw[a][0] < correct[a][0]) {
+                                    console.log("\x1B[33mCorrect samples directory is missing file:\x1B[39m " + raw[a][0]);
                                     raw.splice(a, 1);
                                 } else {
-                                    console.log("\x1B[33mRaw samples directory is missing file:\x1B[39m " + correct[a][0 ]);
+                                    console.log("\x1B[33mRaw samples directory is missing file:\x1B[39m " + correct[a][0]);
                                     correct.splice(a, 1);
                                 }
                                 len = (raw.length > correct.length)
@@ -308,7 +312,7 @@
                                     : correct.length;
                                 a   -= 1;
                                 if (a === len - 1) {
-                                    next();
+                                    return next();
                                 }
                             }
                         }
@@ -323,7 +327,7 @@
                                             errout("Error reading file: " + __dirname + "/samples_" + type + "/" + val);
                                         }
                                         if (type === "raw") {
-                                            raw.push([val, fileData ]);
+                                            raw.push([val, fileData]);
                                             countr += 1;
                                             if (countr === arr.length) {
                                                 utflag.raw = true;
@@ -332,7 +336,7 @@
                                                 }
                                             }
                                         } else if (type === "correct") {
-                                            correct.push([val, fileData ]);
+                                            correct.push([val, fileData]);
                                             countc += 1;
                                             if (countc === arr.length) {
                                                 utflag.correct = true;
@@ -362,6 +366,7 @@
                         ".vscode",
                         "ace",
                         "bin",
+                        "coverage",
                         "ignore",
                         "node_modules",
                         "test/samples_correct",
@@ -415,7 +420,7 @@
                                     console.log("");
                                     console.log("\x1B[32mLint operation complete!\x1B[39m");
                                     console.log("");
-                                    next();
+                                    return next();
                                 }
                             });
                         };
@@ -444,7 +449,13 @@
                 console.log("");
                 (function taskrunner_lint_install() {
                     var dateobj = new Date(),
-                        date    = Number("" + dateobj.getFullYear() + (dateobj.getMonth() + 1) + dateobj.getDate()),
+                        day     = (dateobj.getDate() > 9)
+                            ? "" + dateobj.getDate()
+                            : "0" + dateobj.getDate(),
+                        month   = (dateobj.getMonth() > 9)
+                            ? "" + (dateobj.getMonth() + 1)
+                            : "0" + (dateobj.getMonth() + 1),
+                        date    = Number("" + dateobj.getFullYear() + month + day),
                         today   = require("./today.js").date,
                         child   = require("child_process").exec,
                         caller  = function taskrunner_lint_install_caller() {
@@ -571,26 +582,25 @@
                 }());
             },
             packagejson: function taskrunner_packagejson() {
-                console.log("");
-                console.log("\x1B[36mTesting package.json beautification...\x1B[39m");
                 fs.readFile("package.json", "utf8", function taskrunner_packagejson_readFile(err, data) {
                     var prettydata = "";
                     if (err !== null && err !== undefined) {
                         errout("Cannot read package.json");
                     }
                     if (data.indexOf("_requiredBy") > 0) {
-                        next();
-                    } else {
-                        options.source = data;
-                        prettydata     = prettydiff(options)[0 ];
-                        if (data !== prettydata) {
-                            console.log("");
-                            console.log(prettydata);
-                            errout("\x1B[31mPretty Diff corrupted package.json\x1B[36m");
-                        }
-                        console.log("\x1B[32mThe package.json file is beautified properly.\x1B[36m");
-                        next();
+                        return next();
                     }
+                    console.log("");
+                    console.log("\x1B[36mTesting package.json beautification...\x1B[39m");
+                    options.source = data;
+                    prettydata     = prettydiff(options)[0];
+                    if (data !== prettydata) {
+                        console.log("");
+                        console.log(prettydata);
+                        errout("\x1B[31mPretty Diff corrupted package.json\x1B[36m");
+                    }
+                    console.log("\x1B[32mThe package.json file is beautified properly.\x1B[36m");
+                    return next();
                 });
             },
             simulations: function taskrunner_simulations() {
@@ -690,7 +700,7 @@
                                         {
                                             check: "node api/node-local.js source:\"test/simulation/testa.txt\" readmethod:\"file\" output:\"test/simulation\" mode:\"diff\" diff:\"test/simulation/testa.txt\"",
                                             name: "Diff file and source file are same file, readmethod file",
-                                            verify: ""
+                                            verify: "\nPretty Diff found 0 differences. Executed in."
                                         },
                                         {
                                             check: "node api/node-local.js source:\"test/simulation/testa.txt\" readmethod:\"file\" output:\"test/simulation\" mode:\"diff\" diff:\"test/simulation/testc1.txt\"",
@@ -845,10 +855,10 @@
                                                         }
                                                         if (finished[depth] < grouplen[depth]) {
                                                             index[depth] += 1;
-                                                            if (units[depth][index ].group !== undefined) {
-                                                                taskrunner_simulations_shell(units[depth][index ]);
+                                                            if (units[depth][index].group !== undefined) {
+                                                                taskrunner_simulations_shell(units[depth][index]);
                                                             } else {
-                                                                taskrunner_simulations_shell_child(units[depth][index ]);
+                                                                taskrunner_simulations_shell_child(units[depth][index]);
                                                             }
                                                         }
                                                     } else {
@@ -871,8 +881,9 @@
                                                             console.log("\x1B[32mPassed all " + total + " test" + plural + " from all " + gcount + " groups.\x1B[39m");
                                                             console.log("");
                                                             console.log("\x1B[32mCLI simulation complete\x1B[39m");
-                                                            next();
-                                                        } else if (fails === total) {
+                                                            return next();
+                                                        }
+                                                        if (fails === total) {
                                                             errout("\x1B[31mFailed all " + total + " test" + plural + " from all " + gcount + " groups.\x1B[39m");
                                                         } else {
                                                             fgroup -= 1;
@@ -1066,18 +1077,17 @@
             }
         };
     next = function taskrunner_next() {
-        var a        = order.length - 1,
-            complete = function taskrunner_complete() {
+        var complete = function taskrunner_complete() {
                 console.log("");
                 console.log("All tasks complete... Exiting clean!");
                 humantime();
                 process.exit(0);
             };
-        if (a < 0) {
+        if (order.length < 1) {
             return complete();
         }
-        phases[order[a]]();
-        order.pop();
+        phases[order[0]]();
+        order.splice(0, 1);
     };
     next();
 }());

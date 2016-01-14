@@ -1508,7 +1508,7 @@ Examples:
             if (data.index !== sfiledump.length - 1) {
                 data.last = false;
             }
-            if ((options.mode === "diff" && sState[data.index] === true && dState[data.index] === true) || (options.mode !== "diff" && sState[data.index] === true)) {
+            if (sState[data.index] === true && ((options.mode === "diff" && dState[data.index] === true) || options.mode !== "diff")) {
                 if (sfiledump[data.index] !== dfiledump[data.index]) {
                     if (dfiledump[data.index] === "" || dfiledump[data.index] === "\n") {
                         console.log("Diff file at " + data.localpath + " is \x1B[31mempty\x1B[39m but the source file is not.");
@@ -1534,7 +1534,7 @@ Examples:
                     if (options.mode === "diff") {
                         dState[data.index] = false;
                     }
-                } else if (method === "screen" || method === "filescreen") {
+                } else if (method === "screen" || method === "filescreen" || method === "file" || data.last === true) {
                     ender();
                 } else {
                     return;

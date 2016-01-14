@@ -469,7 +469,7 @@ var prettydiff = function prettydiff_(api) {
                             }
                         }
                         join = b.join("");
-                        if ((/^(\s*(\{|\[))/).test(a) === true && (/((\]|\})\s*)$/).test(a) && a.indexOf(",") !== -1) {
+                        if ((/^(\s*(\{|\[)(?!%))/).test(a) === true && (/((\]|\})\s*)$/).test(a) && a.indexOf(",") !== -1) {
                             return output("json");
                         }
                         if ((/((\}?(\(\))?\)*;?\s*)|([a-z0-9]("|')?\)*);?(\s*\})*)$/i).test(a) === true && ((/((var)|(let)|(const))\s+(\w|\$)+[a-zA-Z0-9]*/).test(a) === true || (/console\.log\(/).test(a) === true || (/export\s+default\s+class\s+/).test(a) === true || (/document\.get/).test(a) === true || (/((\=|(\$\())\s*function)|(\s*function\s+(\w*\s+)?\()/).test(a) === true || a.indexOf("{") === -1 || (/^(\s*if\s+\()/).test(a) === true)) {
@@ -510,6 +510,9 @@ var prettydiff = function prettydiff_(api) {
                         }
                         if ((/"\s*:\s*\{/).test(a) === true) {
                             return output("tss");
+                        }
+                        if (a.indexOf("{%") > -1) {
+                            return output("twig");
                         }
                         return output("unknown");
                     }
@@ -1669,21 +1672,22 @@ global.edition        = {
         ace: 150918
     },
     api          : {
-        dom      : 160101, //dom.js
-        nodeLocal: 160103, //node-local.js
+        dom      : 160114, //dom.js
+        nodeLocal: 160114, //node-local.js
         wsh      : 160101
     },
     css          : 151109, //diffview.css file
     csspretty    : 151220, //csspretty lib
     csvpretty    : 151130, //csvpretty lib
     diffview     : 160101, //diffview lib
-    documentation: 160101, //documentation.xhtml
-    jspretty     : 160101, //jspretty lib
+    documentation: 160114, //documentation.xhtml
+    jspretty     : 160114, //jspretty lib
     latest       : 0,
-    markuppretty : 151220, //markuppretty lib
-    prettydiff   : 160101, //this file
+    lint         : 160114, //unit test and lint automation as test/lint.js
+    markuppretty : 160114, //markuppretty lib
+    prettydiff   : 160114, //this file
     safeSort     : 151130, //safeSort lib
-    version      : "1.16.8", //version number
+    version      : "1.16.9", //version number
     webtool      : 151220
 };
 global.edition.latest = (function edition_latest() {

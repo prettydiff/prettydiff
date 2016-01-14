@@ -15,10 +15,61 @@ var pd     = {},
 
 (function dom__init() {
     "use strict";
+    var load     = function dom__load_init() {
+            return;
+        },
+        loadPrep = function dom__loadPrep() {
+            pd.data.node = {
+                announce    : pd.id("announcement"),
+                beau        : pd.id("Beautify"),
+                beauOps     : pd.id("beauops"),
+                codeBeauIn  : pd.id("beautyinput"),
+                codeBeauOut : pd.id("beautyoutput"),
+                codeDiffBase: pd.id("baseText"),
+                codeDiffNew : pd.id("newText"),
+                codeMinnIn  : pd.id("minifyinput"),
+                codeMinnOut : pd.id("minifyoutput"),
+                codeParsIn  : pd.id("parseinput"),
+                codeParsOut : pd.id("parseoutput"),
+                comment     : pd.id("option_comment"),
+                diffBase    : pd.id("diffBase"),
+                diffNew     : pd.id("diffNew"),
+                diffOps     : pd.id("diffops"),
+                headline    : pd.id("headline"),
+                jsscope     : pd.id("jsscope-yes"),
+                lang        : pd.id("language"),
+                langdefault : pd.id("lang-default"),
+                maxInputs   : pd.id("hideOptions"),
+                minn        : pd.id("Minify"),
+                minnOps     : pd.id("miniops"),
+                modeBeau    : pd.id("modebeautify"),
+                modeDiff    : pd.id("modediff"),
+                modeMinn    : pd.id("modeminify"),
+                modePars    : pd.id("modeparse"),
+                page        : document.getElementsByTagName("body")[0],
+                pars        : pd.id("Parse"),
+                parsOps     : pd.id("parseops"),
+                report      : {
+                    code: {
+                        box: pd.id("codereport")
+                    },
+                    feed: {
+                        box: pd.id("feedreport")
+                    },
+                    stat: {
+                        box: pd.id("statreport")
+                    }
+                },
+                save        : pd.id("diff-save")
+            };
+            load();
+        };
 
     if (location.href.indexOf("codemirror=") > 0) {
         (function dom__codemirror() {
-            var loc     = location.href.split("codemirror="),
+            var loc     = location
+                    .href
+                    .split("codemirror="),
                 value   = "",
                 address = "";
             if (loc[1].indexOf("&") > 0) {
@@ -1124,7 +1175,7 @@ var pd     = {},
                             }
                         }
                         join = b.join("");
-                        if ((/^(\s*(\{|\[))/).test(a) === true && (/((\]|\})\s*)$/).test(a) && a.indexOf(",") !== -1) {
+                        if ((/^(\s*(\{|\[)(?!%))/).test(a) === true && (/((\]|\})\s*)$/).test(a) && a.indexOf(",") !== -1) {
                             return output("json");
                         }
                         if ((/((\}?(\(\))?\)*;?\s*)|([a-z0-9]("|')?\)*);?(\s*\})*)$/i).test(a) === true && ((/(((var)|(let)|(const))\s+(\w|\$)+[a-zA-Z0-9]*)/).test(a) === true || (/console\.log\(/).test(a) === true || (/export\s+default\s+class\s+/).test(a) === true || (/document\.get/).test(a) === true || (/((\=|(\$\())\s*function)|(\s*function\s+(\w*\s+)?\()/).test(a) === true || a.indexOf("{") === -1 || (/^(\s*if\s+\()/).test(a) === true)) {
@@ -1165,6 +1216,9 @@ var pd     = {},
                         }
                         if ((/"\s*:\s*\{/).test(a) === true) {
                             return output("tss");
+                        }
+                        if (a.indexOf("{%") > -1) {
+                            return output("twig");
                         }
                         return output("unknown");
                     }
@@ -2775,7 +2829,9 @@ var pd     = {},
                         if (langs[c].value === "text") {
                             if (pd.data.node.lang.selectedIndex === c) {
                                 pd.data.node.lang.selectedIndex = 0;
-                                pd.app.langkey(true, null, "auto");
+                                pd
+                                    .app
+                                    .langkey(true, null, "auto");
                             }
                             langs[c].disabled = true;
                         }
@@ -3842,17 +3898,33 @@ var pd     = {},
                         if (output[1] !== undefined && output[1].indexOf("React JSX") > 0 && ((api.jsscope === "report" && (/Code\ type\ is\ presumed\ to\ be\ React\ JSX/).test(output[1]) === false && (/Presumed\ language\ is\ &lt;em&gt;React\ JSX/).test(output[1]) === false) || api.jsscope !== "report")) {
                             if (pd.test.ace === true) {
                                 if (pd.data.mode === "beau") {
-                                    pd.app.langkey(false, pd.ace.beauIn, "jsx");
-                                    pd.app.langkey(false, pd.ace.beauOut, "jsx");
+                                    pd
+                                        .app
+                                        .langkey(false, pd.ace.beauIn, "jsx");
+                                    pd
+                                        .app
+                                        .langkey(false, pd.ace.beauOut, "jsx");
                                 } else if (pd.data.mode === "minn") {
-                                    pd.app.langkey(false, pd.ace.minnIn, "jsx");
-                                    pd.app.langkey(false, pd.ace.minnOut, "jsx");
+                                    pd
+                                        .app
+                                        .langkey(false, pd.ace.minnIn, "jsx");
+                                    pd
+                                        .app
+                                        .langkey(false, pd.ace.minnOut, "jsx");
                                 } else if (pd.data.mode === "pars") {
-                                    pd.app.langkey(false, pd.ace.parsIn, "jsx");
-                                    pd.app.langkey(false, pd.ace.parsOut, "jsx");
+                                    pd
+                                        .app
+                                        .langkey(false, pd.ace.parsIn, "jsx");
+                                    pd
+                                        .app
+                                        .langkey(false, pd.ace.parsOut, "jsx");
                                 } else if (pd.data.mode === "minn") {
-                                    pd.app.langkey(false, pd.ace.diffBase, "jsx");
-                                    pd.app.langkey(false, pd.ace.diffNew, "jsx");
+                                    pd
+                                        .app
+                                        .langkey(false, pd.ace.diffBase, "jsx");
+                                    pd
+                                        .app
+                                        .langkey(false, pd.ace.diffNew, "jsx");
                                 }
                             } else {
                                 pd.data.langvalue = ["jsx", "javascript", "React JSX"];
@@ -3863,7 +3935,14 @@ var pd     = {},
                 if (autotest === true) {
                     api.lang = "auto";
                 }
-                button = pd.data.node.report.code.box.getElementsByTagName("p")[0].getElementsByTagName("button")[0];
+                button = pd
+                    .data
+                    .node
+                    .report
+                    .code
+                    .box
+                    .getElementsByTagName("p")[0]
+                    .getElementsByTagName("button")[0];
                 if (button.getAttribute("class") === "save" && button.innerHTML === "H") {
                     chromeSave       = true;
                     button.innerHTML = "S";
@@ -3877,8 +3956,14 @@ var pd     = {},
                     }
                     if (pd.data.node.codeParsOut !== null && api.lang !== "csv") {
                         if (pd.test.ace === true) {
-                            pd.ace.parsOut.setValue(pdlang);
-                            pd.ace.parsOut.clearSelection();
+                            pd
+                                .ace
+                                .parsOut
+                                .setValue(pdlang);
+                            pd
+                                .ace
+                                .parsOut
+                                .clearSelection();
                         } else {
                             pd.data.node.codeParsOut.value = pdlang;
                         }
@@ -3972,7 +4057,13 @@ var pd     = {},
                                 table.appendChild(body);
                                 div.appendChild(table);
                                 pd.data.node.report.code.body.innerHTML = output[1];
-                                pd.data.node.report.code.body.appendChild(div);
+                                pd
+                                    .data
+                                    .node
+                                    .report
+                                    .code
+                                    .body
+                                    .appendChild(div);
                                 if (pd.test.ls === true) {
                                     if (pd.data.mode === "beau") {
                                         pd.data.stat.beau += 1;
@@ -4031,7 +4122,13 @@ var pd     = {},
                                 pd.data.node.report.code.body.innerHTML = output[1] + build;
                                 if (autotest === true && pd.data.node.report.code.body.firstChild !== null) {
                                     if (pd.data.node.report.code.body.firstChild.nodeType > 1) {
-                                        pd.data.node.report.code.body.removeChild(pd.data.node.report.code.body.firstChild);
+                                        pd
+                                            .data
+                                            .node
+                                            .report
+                                            .code
+                                            .body
+                                            .removeChild(pd.data.node.report.code.body.firstChild);
                                     }
                                     pd.data.node.report.code.body.firstChild.innerHTML = "Code type is set to <strong>auto</strong>. <span>Presumed language is <em>" + pd.data.langvalue[2] + "</em>.</span>";
                                 }
@@ -4045,9 +4142,11 @@ var pd     = {},
                             }());
                         }
                         if (pd.data.node.report.code.body.style.display === "none") {
-                            pd.event.grab({
-                                type: "onmousedown"
-                            }, pd.data.node.report.code.box.getElementsByTagName("h3")[0]);
+                            pd
+                                .event
+                                .grab({
+                                    type: "onmousedown"
+                                }, pd.data.node.report.code.box.getElementsByTagName("h3")[0]);
                         }
                         pd.data.node.report.code.box.style.top   = (pd.data.settings.codereport.top / 10) + "em";
                         pd.data.node.report.code.box.style.right = "auto";
@@ -4055,8 +4154,14 @@ var pd     = {},
                 } else if (api.mode === "beautify") {
                     if (pd.data.node.codeBeauOut !== null) {
                         if (pd.test.ace === true) {
-                            pd.ace.beauOut.setValue(output[0]);
-                            pd.ace.beauOut.clearSelection();
+                            pd
+                                .ace
+                                .beauOut
+                                .setValue(output[0]);
+                            pd
+                                .ace
+                                .beauOut
+                                .clearSelection();
                         } else {
                             pd.data.node.codeBeauOut.value = output[0];
                         }
@@ -4066,7 +4171,13 @@ var pd     = {},
                             pd.data.node.report.code.body.innerHTML = output[1];
                             if (autotest === true) {
                                 if (pd.data.node.report.code.body.firstChild.nodeType > 1) {
-                                    pd.data.node.report.code.body.removeChild(pd.data.node.report.code.body.firstChild);
+                                    pd
+                                        .data
+                                        .node
+                                        .report
+                                        .code
+                                        .body
+                                        .removeChild(pd.data.node.report.code.body.firstChild);
                                 }
                                 pd.data.node.report.code.body.firstChild.innerHTML = "Code type is set to <strong>auto</strong>. <span>Presumed language is <em>" + pd.data.langvalue[2] + "</em>.</span>";
                             }
@@ -4085,13 +4196,21 @@ var pd     = {},
                             }
                             if (pd.data.langvalue[1] === "javascript") {
                                 if (pd.data.node.report.code.body.style.display === "none") {
-                                    pd.event.grab({
-                                        type: "onmousedown"
-                                    }, pd.data.node.report.code.box.getElementsByTagName("h3")[0]);
+                                    pd
+                                        .event
+                                        .grab({
+                                            type: "onmousedown"
+                                        }, pd.data.node.report.code.box.getElementsByTagName("h3")[0]);
                                 }
                                 pd.data.node.report.code.box.style.top   = (pd.data.settings.codereport.top / 10) + "em";
                                 pd.data.node.report.code.box.style.right = "auto";
-                                diffList                                 = pd.data.node.report.code.body.getElementsByTagName("ol");
+                                diffList                                 = pd
+                                    .data
+                                    .node
+                                    .report
+                                    .code
+                                    .body
+                                    .getElementsByTagName("ol");
                                 if (diffList.length > 0) {
                                     (function dom__event_recycle_execOutput_beauList() {
                                         var a    = 0,
@@ -4115,7 +4234,14 @@ var pd     = {},
                         }
                     }
                 } else if (api.mode === "diff" && pd.data.node.report.code.box !== null) {
-                    buttons = pd.data.node.report.code.box.getElementsByTagName("p")[0].getElementsByTagName("button");
+                    buttons = pd
+                        .data
+                        .node
+                        .report
+                        .code
+                        .box
+                        .getElementsByTagName("p")[0]
+                        .getElementsByTagName("button");
                     if (output.length > 0 && output[0].length > 125000) {
                         pd.test.filled.code = true;
                     } else {
@@ -4128,13 +4254,25 @@ var pd     = {},
                         pd.data.node.report.code.body.innerHTML = output[1] + output[0];
                         if (autotest === true && pd.data.node.report.code.body.firstChild !== null) {
                             if (pd.data.node.report.code.body.firstChild.nodeType > 1) {
-                                pd.data.node.report.code.body.removeChild(pd.data.node.report.code.body.firstChild);
+                                pd
+                                    .data
+                                    .node
+                                    .report
+                                    .code
+                                    .body
+                                    .removeChild(pd.data.node.report.code.body.firstChild);
                             }
                             pd.data.node.report.code.body.firstChild.innerHTML = "Code type is set to <strong>auto</strong>. <span>Presumed language is <em>" + pd.data.langvalue[2] + "</em>.</span>";
                         }
                     }
                     if (pd.data.node.report.code.body.innerHTML.toLowerCase().indexOf("<textarea") === -1) {
-                        diffList = pd.data.node.report.code.body.getElementsByTagName("ol");
+                        diffList = pd
+                            .data
+                            .node
+                            .report
+                            .code
+                            .body
+                            .getElementsByTagName("ol");
                         if (diffList.length > 0) {
                             (function dom__event_recycle_execOutput_diffList() {
                                 var cells = diffList[0].getElementsByTagName("li"),
@@ -4174,8 +4312,14 @@ var pd     = {},
                     }
                     if (pd.data.node.codeMinnOut !== null) {
                         if (pd.test.ace === true) {
-                            pd.ace.minnOut.setValue(output[0]);
-                            pd.ace.minnOut.clearSelection();
+                            pd
+                                .ace
+                                .minnOut
+                                .setValue(output[0]);
+                            pd
+                                .ace
+                                .minnOut
+                                .clearSelection();
                         } else {
                             pd.data.node.codeMinnOut.value = output[0];
                         }
@@ -4189,7 +4333,13 @@ var pd     = {},
                         pd.data.node.report.code.body.innerHTML = output[1];
                         if (autotest === true && pd.data.node.report.code.body.firstChild !== null) {
                             if (pd.data.node.report.code.body.firstChild.nodeType > 1) {
-                                pd.data.node.report.code.body.removeChild(pd.data.node.report.code.body.firstChild);
+                                pd
+                                    .data
+                                    .node
+                                    .report
+                                    .code
+                                    .body
+                                    .removeChild(pd.data.node.report.code.body.firstChild);
                             }
                             pd.data.node.report.code.body.firstChild.innerHTML = "Code type is set to <strong>auto</strong>. <span>Presumed language is <em>" + pd.data.langvalue[2] + "</em>.</span>";
                         }
@@ -4225,26 +4375,52 @@ var pd     = {},
                         }());
                     }
                     if (errortext.indexOf("end tag") > 0 || errortext.indexOf("Duplicate id") > 0) {
-                        pd.data.node.announce.setAttribute("class", "error");
+                        pd
+                            .data
+                            .node
+                            .announce
+                            .setAttribute("class", "error");
                         pd.data.node.announce.innerHTML = errortext;
                     } else if (pd.id("jserror") !== null) {
-                        pd.data.node.announce.removeAttribute("class");
-                        pd.data.node.announce.innerHTML = "<strong>" + pd.id("jserror").getElementsByTagName("strong")[0].innerHTML + "</strong> <span>See 'Code Report' for details</span>";
+                        pd
+                            .data
+                            .node
+                            .announce
+                            .removeAttribute("class");
+                        pd.data.node.announce.innerHTML = "<strong>" + pd
+                            .id("jserror")
+                            .getElementsByTagName("strong")[0]
+                            .innerHTML + "</strong> <span>See 'Code Report' for details</span>";
                     } else {
                         if (autotest === true) {
-                            pd.data.node.announce.setAttribute("class", "alert");
+                            pd
+                                .data
+                                .node
+                                .announce
+                                .setAttribute("class", "alert");
                             pd.data.node.announce.innerHTML = "Code type is set to <strong>auto</strong>. <span>Presumed language is <em>" + pd.data.langvalue[2] + "</em>.</span>";
                         } else {
                             pd.data.node.announce.innerHTML = "Language set to <em>" + pd.data.langvalue[2] + "</em>.";
                         }
                     }
                 }
-                buttons = pd.data.node.report.code.box.getElementsByTagName("p")[0].getElementsByTagName("button");
+                buttons = pd
+                    .data
+                    .node
+                    .report
+                    .code
+                    .box
+                    .getElementsByTagName("p")[0]
+                    .getElementsByTagName("button");
                 if (chromeSave === true) {
-                    pd.event.save(buttons[0]);
+                    pd
+                        .event
+                        .save(buttons[0]);
                 } else if (pd.data.node.save !== null && pd.data.node.save.checked === true) {
                     if (buttons[0].parentNode.nodeName.toLowerCase() === "a") {
-                        pd.event.save(buttons[0].parentNode);
+                        pd
+                            .event
+                            .save(buttons[0].parentNode);
                     } else {
                         pd
                             .event
@@ -4252,7 +4428,9 @@ var pd     = {},
                     }
                 }
                 if (buttons[1].parentNode.style.display === "none" && (pd.data.mode === "diff" || (pd.data.mode === "beau" && api.jsscope === "report" && lang === "javascript"))) {
-                    pd.event.minimize(buttons[1].onclick, 1, buttons[1]);
+                    pd
+                        .event
+                        .minimize(buttons[1].onclick, 1, buttons[1]);
                 }
                 if (pd.test.ls === true) {
                     (function dom__event_recycle_stats() {
@@ -4310,7 +4488,9 @@ var pd     = {},
 
         node = pd.id("showOptionsCallOut");
         if (node !== null) {
-            node.parentNode.removeChild(node);
+            node
+                .parentNode
+                .removeChild(node);
         }
         if (pd.test.accessibility === true) {
             api.accessibility = true;
@@ -4327,7 +4507,10 @@ var pd     = {},
             }
             if (pd.test.keypress === true) {
                 if (pd.test.keystore.length > 0) {
-                    pd.test.keystore.pop();
+                    pd
+                        .test
+                        .keystore
+                        .pop();
                     if (event.keyCode === 17 || event.ctrlKey === true || event.keyCode === 224) {
                         pd.test.keypress = false;
                         pd.test.keystore = [];
@@ -4349,8 +4532,18 @@ var pd     = {},
         api.lang        = (pd.data.node.lang === null)
             ? "javascript"
             : (pd.data.node.lang.nodeName.toLowerCase() === "select")
-                ? pd.data.node.lang[pd.data.node.lang.selectedIndex].value.toLowerCase()
-                : pd.data.node.lang.value.toLowerCase();
+                ? pd
+                    .data
+                    .node
+                    .lang[pd.data.node.lang.selectedIndex]
+                    .value
+                    .toLowerCase()
+                : pd
+                    .data
+                    .node
+                    .lang
+                    .value
+                    .toLowerCase();
         api.langdefault = (pd.data.node.langdefault !== null)
             ? pd.data.node.langdefault[pd.data.node.langdefault.selectedIndex].value
             : "javascript";
@@ -4415,7 +4608,9 @@ var pd     = {},
                 if (pd.data.node.codeBeauIn !== null) {
                     if (api.lang === "auto" && pd.data.langvalue.length === 0) {
                         if (pd.test.ace === true) {
-                            pd.app.langkey(false, pd.ace.beauIn, "");
+                            pd
+                                .app
+                                .langkey(false, pd.ace.beauIn, "");
                         } else {
                             pd
                                 .app
@@ -4423,7 +4618,10 @@ var pd     = {},
                         }
                     }
                     if (pd.test.ace === true) {
-                        api.source = pd.ace.beauIn.getValue();
+                        api.source = pd
+                            .ace
+                            .beauIn
+                            .getValue();
                     } else {
                         api.source = pd.data.node.codeBeauIn.value;
                     }
@@ -4572,7 +4770,9 @@ var pd     = {},
                 if (pd.data.node.codeMinnIn !== null) {
                     if (api.lang === "auto" && pd.data.langvalue.length === 0) {
                         if (pd.test.ace === true) {
-                            pd.app.langkey(false, pd.ace.minnIn, "");
+                            pd
+                                .app
+                                .langkey(false, pd.ace.minnIn, "");
                         } else {
                             pd
                                 .app
@@ -4581,7 +4781,10 @@ var pd     = {},
                     }
                     pd.data.node.codeMinnIn = pd.id("minifyinput");
                     if (pd.test.ace === true) {
-                        api.source = pd.ace.minnIn.getValue();
+                        api.source = pd
+                            .ace
+                            .minnIn
+                            .getValue();
                     } else {
                         api.source = pd.data.node.codeMinnIn.value;
                     }
@@ -4660,7 +4863,9 @@ var pd     = {},
                 pd.data.node.codeDiffNew  = pd.id("newText");
                 if (pd.data.node.codeDiffBase !== null && api.lang === "auto" && pd.data.langvalue.length === 0) {
                     if (pd.test.ace === true) {
-                        pd.app.langkey(false, pd.ace.diffBase, "");
+                        pd
+                            .app
+                            .langkey(false, pd.ace.diffBase, "");
                     } else {
                         pd
                             .app
@@ -4765,7 +4970,10 @@ var pd     = {},
                 }
                 if (pd.data.node.codeDiffBase !== null) {
                     if (pd.test.ace === true) {
-                        api.source = pd.ace.diffBase.getValue();
+                        api.source = pd
+                            .ace
+                            .diffBase
+                            .getValue();
                     } else {
                         api.source = pd.data.node.codeDiffBase.value;
                     }
@@ -4774,7 +4982,10 @@ var pd     = {},
                 }
                 if (pd.data.node.codeDiffNew !== null) {
                     if (pd.test.ace === true) {
-                        api.diff = pd.ace.diffNew.getValue();
+                        api.diff = pd
+                            .ace
+                            .diffNew
+                            .getValue();
                     } else {
                         api.diff = pd.data.node.codeDiffNew.value;
                     }
@@ -4786,8 +4997,12 @@ var pd     = {},
                     (function dom__event_recycle_xhrDiff() {
                         var filetest       = (api.diff.indexOf("file:///") === 0),
                             protocolRemove = (filetest === true)
-                                ? api.diff.split(":///")[1]
-                                : api.diff.split("://")[1],
+                                ? api
+                                    .diff
+                                    .split(":///")[1]
+                                : api
+                                    .diff
+                                    .split("://")[1],
                             slashIndex     = (protocolRemove !== undefined)
                                 ? protocolRemove.indexOf("/")
                                 : 0,
@@ -4805,20 +5020,24 @@ var pd     = {},
                                     if (apptest === undefined) {
                                         setTimeout(dom__event_recycle_xhrDiff_statechange_appDelay, 100);
                                     } else {
-                                        output = apptest;
+                                        output = apptest(api);
                                         execOutput();
                                     }
                                 };
                                 if (xhr.readyState === 4) {
                                     if (xhr.status === 200 || xhr.status === 0) {
-                                        api.diff = xhr.responseText.replace(/\r\n/g, "\n");
+                                        api.diff = xhr
+                                            .responseText
+                                            .replace(/\r\n/g, "\n");
                                         if (completes === true) {
                                             pd.data.source = api.source;
                                             if (pd.data.langvalue[1] === "text") {
                                                 api.lang = "text";
                                             } else {
                                                 if (pd.test.ace === true) {
-                                                    api.lang = pd.app.langkey(false, pd.ace.diffBase, "");
+                                                    api.lang = pd
+                                                        .app
+                                                        .langkey(false, pd.ace.diffBase, "");
                                                 } else {
                                                     api.lang = pd
                                                         .app
@@ -4865,7 +5084,9 @@ var pd     = {},
             if (pd.data.node.codeParsIn !== null) {
                 if (api.lang === "auto" && pd.data.langvalue.length === 0) {
                     if (pd.test.ace === true) {
-                        pd.app.langkey(false, pd.ace.parsIn, "");
+                        pd
+                            .app
+                            .langkey(false, pd.ace.parsIn, "");
                     } else {
                         pd
                             .app
@@ -4873,7 +5094,10 @@ var pd     = {},
                     }
                 } else if (api.lang === "csv") {
                     if (pd.test.ace === true) {
-                        pd.ace.parsIn.setValue("CSV is not supported in 'Parse Only' mode.");
+                        pd
+                            .ace
+                            .parsIn
+                            .setValue("CSV is not supported in 'Parse Only' mode.");
                     } else {
                         pd.data.node.codeParsIn.value = "CSV is not supported in 'Parse Only' mode.";
                     }
@@ -4900,7 +5124,10 @@ var pd     = {},
                     varwordl     = pd.id("pvarword-list");
                 if (pd.data.node.codeParsIn !== null) {
                     if (pd.test.ace === true) {
-                        api.source = pd.ace.parsIn.getValue();
+                        api.source = pd
+                            .ace
+                            .parsIn
+                            .getValue();
                     } else {
                         api.source = pd.data.node.codeParsIn.value;
                     }
@@ -4950,8 +5177,12 @@ var pd     = {},
             (function dom__event_recycle_xhrSource() {
                 var filetest       = (api.source.indexOf("file:///") === 0),
                     protocolRemove = (filetest === true)
-                        ? api.source.split(":///")[1]
-                        : api.source.split("://")[1],
+                        ? api
+                            .source
+                            .split(":///")[1]
+                        : api
+                            .source
+                            .split("://")[1],
                     slashIndex     = (protocolRemove !== undefined)
                         ? protocolRemove.indexOf("/")
                         : 0,
@@ -4969,18 +5200,22 @@ var pd     = {},
                             if (apptest === undefined) {
                                 setTimeout(dom__event_recycle_xhrSource_statechange_appDelay, 100);
                             } else {
-                                output = apptest;
+                                output = apptest(api);
                                 execOutput();
                             }
                         };
                         if (xhr.readyState === 4) {
                             if (xhr.status === 200 || xhr.status === 0) {
-                                api.source = xhr.responseText.replace(/\r\n/g, "\n");
+                                api.source = xhr
+                                    .responseText
+                                    .replace(/\r\n/g, "\n");
                                 if (pd.data.mode !== "diff" || (requestd === true && completed === true)) {
                                     pd.data.source = api.source;
                                     if (pd.test.ace === true) {
                                         if (pd.data.mode !== "diff") {
-                                            api.lang = pd.app.langkey(false, pd.ace[pd.data.mode + "In"], "");
+                                            api.lang = pd
+                                                .app
+                                                .langkey(false, pd.ace[pd.data.mode + "In"], "");
                                         } else if (pd.data.langvalue[1] === "text") {
                                             api.lang = "text";
                                         } else {
@@ -5101,9 +5336,14 @@ var pd     = {},
             if (pd.test.ace === true && api.mode !== "diff") {
                 if (api.mode === "beautify") {
                     setTimeout(function dom__event_recycle_beautifyPromise() {
-                        api.source     = pd.ace.beauIn.getValue();
+                        api.source     = pd
+                            .ace
+                            .beauIn
+                            .getValue();
                         api.lang       = (pd.data.langvalue[0] !== "plain_text")
-                            ? pd.app.langkey(false, pd.ace.beauIn, "")
+                            ? pd
+                                .app
+                                .langkey(false, pd.ace.beauIn, "")
                             : api.lang;
                         pd.data.source = api.source;
                         pd.data.diff   = "";
@@ -5116,9 +5356,14 @@ var pd     = {},
                 }
                 if (api.mode === "minify") {
                     setTimeout(function dom__event_recycle_minifyPromise() {
-                        api.source     = pd.ace.minnIn.getValue();
+                        api.source     = pd
+                            .ace
+                            .minnIn
+                            .getValue();
                         api.lang       = (pd.data.langvalue[0] !== "plain_text")
-                            ? pd.app.langkey(false, pd.ace.minnIn, "")
+                            ? pd
+                                .app
+                                .langkey(false, pd.ace.minnIn, "")
                             : api.lang;
                         pd.data.source = api.source;
                         pd.data.diff   = "";
@@ -5131,9 +5376,14 @@ var pd     = {},
                 }
                 if (api.mode === "parse") {
                     setTimeout(function dom__event_recycle_parsePromise() {
-                        api.source     = pd.ace.parsIn.getValue();
+                        api.source     = pd
+                            .ace
+                            .parsIn
+                            .getValue();
                         api.lang       = (pd.data.langvalue[0] !== "plain_text")
-                            ? pd.app.langkey(false, pd.ace.parsIn, "")
+                            ? pd
+                                .app
+                                .langkey(false, pd.ace.parsIn, "")
                             : api.lang;
                         pd.data.source = api.source;
                         pd.data.diff   = "";
@@ -5151,7 +5401,9 @@ var pd     = {},
                 } else if (pd.data.langvalue[1] === "csv") {
                     api.lang = "csv";
                 } else if (pd.test.ace === true) {
-                    api.lang = pd.app.langkey(false, pd.ace.diffBase, "");
+                    api.lang = pd
+                        .app
+                        .langkey(false, pd.ace.diffBase, "");
                 } else {
                     api.lang = pd
                         .app
@@ -5189,22 +5441,32 @@ var pd     = {},
                     node             = targetIn.parentNode;
                     node.style.width = "49%";
                     if (pd.test.ace === true) {
-                        pd.ace[inprop].resize();
+                        pd
+                            .ace[inprop]
+                            .resize();
                     }
                     targetIn.onkeyup   = pd.event.recycle;
                     targetIn.onkeydown = function dom_app_hideOutput_restore_bindTargetInDown(e) {
                         var event = e || window.event;
                         if (pd.test.ace === false) {
-                            pd.event.fixtabs(event, targetIn);
+                            pd
+                                .event
+                                .fixtabs(event, targetIn);
                         }
-                        pd.event.keydown(event);
-                        pd.event.recycle(event);
+                        pd
+                            .event
+                            .keydown(event);
+                        pd
+                            .event
+                            .recycle(event);
                     };
                 }
                 if (x === undefined) {
                     return;
                 }
-                pd.app.options(x);
+                pd
+                    .app
+                    .options(x);
             },
             langval   = (pd.data.node.lang === null)
                 ? "javascript"
@@ -5230,7 +5492,9 @@ var pd     = {},
         }
         if (targetOut === null || (state === true && targetOut.parentNode.style.display === "none") || (state === false && targetOut.parentNode.style.display === "block")) {
             if (pd.test.load === false) {
-                pd.app.options(x);
+                pd
+                    .app
+                    .options(x);
             }
             return;
         }
@@ -5244,18 +5508,26 @@ var pd     = {},
                     node             = targetIn.parentNode;
                     node.style.width = "100%";
                     if (pd.test.ace === true) {
-                        pd.ace[inprop].resize();
+                        pd
+                            .ace[inprop]
+                            .resize();
                     }
                     if (pd.test.ace === true) {
                         targetIn.onkeyup = function dom__app_hideOutput_langkeyEditor(e) {
                             var event = e || window.event;
-                            pd.app.langkey(false, pd.ace[inprop], "");
-                            pd.event.recycle(event);
+                            pd
+                                .app
+                                .langkey(false, pd.ace[inprop], "");
+                            pd
+                                .event
+                                .recycle(event);
                         };
                     } else {
                         targetIn.onkeyup = function dom__app_hideOutput_langkeyTextarea(e) {
                             var event = e || window.event;
-                            pd.event.recycle(event);
+                            pd
+                                .event
+                                .recycle(event);
                         };
                     }
                 }
@@ -5263,7 +5535,9 @@ var pd     = {},
                     x = pd.data.node.lang;
                 }
                 if (pd.test.load === false) {
-                    pd.app.options(x);
+                    pd
+                        .app
+                        .options(x);
                 }
             } else {
                 restore();
@@ -5327,20 +5601,68 @@ var pd     = {},
         if (pd.test.ace === true) {
             if (pd.data.mode === "diff") {
                 if (node === pd.id("diff-space")) {
-                    pd.ace.diffBase.getSession().setUseSoftTabs(true);
-                    pd.ace.diffNew.getSession().setUseSoftTabs(true);
-                    pd.ace.minnIn.getSession().setUseSoftTabs(true);
-                    pd.ace.minnOut.getSession().setUseSoftTabs(true);
-                    pd.ace.parsIn.getSession().setUseSoftTabs(true);
-                    pd.ace.parsOut.getSession().setUseSoftTabs(true);
+                    pd
+                        .ace
+                        .diffBase
+                        .getSession()
+                        .setUseSoftTabs(true);
+                    pd
+                        .ace
+                        .diffNew
+                        .getSession()
+                        .setUseSoftTabs(true);
+                    pd
+                        .ace
+                        .minnIn
+                        .getSession()
+                        .setUseSoftTabs(true);
+                    pd
+                        .ace
+                        .minnOut
+                        .getSession()
+                        .setUseSoftTabs(true);
+                    pd
+                        .ace
+                        .parsIn
+                        .getSession()
+                        .setUseSoftTabs(true);
+                    pd
+                        .ace
+                        .parsOut
+                        .getSession()
+                        .setUseSoftTabs(true);
                     quan = pd.id("diff-quan");
                     if (quan !== null && isNaN(Number(quan.value)) === false) {
-                        pd.ace.diffBase.getSession().setTabSize(Number(node.value));
-                        pd.ace.diffNew.getSession().setTabSize(Number(node.value));
-                        pd.ace.minnIn.getSession().setTabSize(Number(node.value));
-                        pd.ace.minnOut.getSession().setTabSize(Number(node.value));
-                        pd.ace.parsIn.getSession().setTabSize(Number(node.value));
-                        pd.ace.parsOut.getSession().setTabSize(Number(node.value));
+                        pd
+                            .ace
+                            .diffBase
+                            .getSession()
+                            .setTabSize(Number(node.value));
+                        pd
+                            .ace
+                            .diffNew
+                            .getSession()
+                            .setTabSize(Number(node.value));
+                        pd
+                            .ace
+                            .minnIn
+                            .getSession()
+                            .setTabSize(Number(node.value));
+                        pd
+                            .ace
+                            .minnOut
+                            .getSession()
+                            .setTabSize(Number(node.value));
+                        pd
+                            .ace
+                            .parsIn
+                            .getSession()
+                            .setTabSize(Number(node.value));
+                        pd
+                            .ace
+                            .parsOut
+                            .getSession()
+                            .setTabSize(Number(node.value));
                     }
                 } else {
                     pd
@@ -5377,20 +5699,68 @@ var pd     = {},
             }
             if (pd.data.mode === "beau") {
                 if (node === pd.id("beau-space")) {
-                    pd.ace.beauIn.getSession().setUseSoftTabs(true);
-                    pd.ace.beauOut.getSession().setUseSoftTabs(true);
-                    pd.ace.minnIn.getSession().setUseSoftTabs(true);
-                    pd.ace.minnOut.getSession().setUseSoftTabs(true);
-                    pd.ace.parsIn.getSession().setUseSoftTabs(true);
-                    pd.ace.parsOut.getSession().setUseSoftTabs(true);
+                    pd
+                        .ace
+                        .beauIn
+                        .getSession()
+                        .setUseSoftTabs(true);
+                    pd
+                        .ace
+                        .beauOut
+                        .getSession()
+                        .setUseSoftTabs(true);
+                    pd
+                        .ace
+                        .minnIn
+                        .getSession()
+                        .setUseSoftTabs(true);
+                    pd
+                        .ace
+                        .minnOut
+                        .getSession()
+                        .setUseSoftTabs(true);
+                    pd
+                        .ace
+                        .parsIn
+                        .getSession()
+                        .setUseSoftTabs(true);
+                    pd
+                        .ace
+                        .parsOut
+                        .getSession()
+                        .setUseSoftTabs(true);
                     quan = pd.id("beau-quan");
                     if (quan !== null && isNaN(Number(quan.value)) === false) {
-                        pd.ace.beauIn.getSession().setTabSize(Number(node.value));
-                        pd.ace.beauOut.getSession().setTabSize(Number(node.value));
-                        pd.ace.minnIn.getSession().setTabSize(Number(node.value));
-                        pd.ace.minnOut.getSession().setTabSize(Number(node.value));
-                        pd.ace.parsIn.getSession().setTabSize(Number(node.value));
-                        pd.ace.parsOut.getSession().setTabSize(Number(node.value));
+                        pd
+                            .ace
+                            .beauIn
+                            .getSession()
+                            .setTabSize(Number(node.value));
+                        pd
+                            .ace
+                            .beauOut
+                            .getSession()
+                            .setTabSize(Number(node.value));
+                        pd
+                            .ace
+                            .minnIn
+                            .getSession()
+                            .setTabSize(Number(node.value));
+                        pd
+                            .ace
+                            .minnOut
+                            .getSession()
+                            .setTabSize(Number(node.value));
+                        pd
+                            .ace
+                            .parsIn
+                            .getSession()
+                            .setTabSize(Number(node.value));
+                        pd
+                            .ace
+                            .parsOut
+                            .getSession()
+                            .setTabSize(Number(node.value));
                     }
                 } else {
                     pd
@@ -5428,9 +5798,13 @@ var pd     = {},
         }
         if (pd.test.load === false) {
             if (node === beauChar) {
-                pd.app.options(beauChar);
+                pd
+                    .app
+                    .options(beauChar);
             } else if (node === diffChar) {
-                pd.app.options(diffChar);
+                pd
+                    .app
+                    .options(diffChar);
             } else {
                 pd
                     .app
@@ -5473,7 +5847,10 @@ var pd     = {},
                 return;
             }
             if (len === 0 && (key === 16 || key === 17 || key === 224)) {
-                return pd.test.tabesc.push(key);
+                return pd
+                    .test
+                    .tabesc
+                    .push(key);
             }
             if (len === 1 && (key === 17 || key === 224)) {
                 if (pd.test.tabesc[0] === 17 || pd.test.tabesc[0] === 224) {
@@ -5494,35 +5871,74 @@ var pd     = {},
                     //back tab
 
                     if (node === pd.data.node.codeDiffBase) {
-                        pd.id("diffbasefile").focus();
+                        pd
+                            .id("diffbasefile")
+                            .focus();
                     } else if (node === pd.data.node.codeDiffNew) {
-                        pd.id("diffnewfile").focus();
+                        pd
+                            .id("diffnewfile")
+                            .focus();
                     } else if (node === pd.data.node.codeBeauIn) {
-                        pd.id("beautyfile").focus();
+                        pd
+                            .id("beautyfile")
+                            .focus();
                     } else if (node === pd.data.node.codeBeauOut) {
-                        pd.data.node.codeBeauIn.focus();
+                        pd
+                            .data
+                            .node
+                            .codeBeauIn
+                            .focus();
                     } else if (node === pd.data.node.codeMinnIn) {
-                        pd.id("minifyfile").focus();
+                        pd
+                            .id("minifyfile")
+                            .focus();
                     } else if (node === pd.data.node.codeMinnOut) {
-                        pd.data.node.codeMinnIn.focus();
+                        pd
+                            .data
+                            .node
+                            .codeMinnIn
+                            .focus();
                     } else if (node === pd.data.node.codeParsIn) {
-                        pd.id("parsefile").focus();
+                        pd
+                            .id("parsefile")
+                            .focus();
                     } else if (node === pd.data.node.codeParsOut) {
-                        pd.data.node.codeParsIn.focus();
+                        pd
+                            .data
+                            .node
+                            .codeParsIn
+                            .focus();
                     }
                 } else {
                     //forward tab
 
                     if (node === pd.data.node.codeDiffBase) {
-                        pd.id("newlabel").focus();
+                        pd
+                            .id("newlabel")
+                            .focus();
                     } else if (node === pd.data.node.codeDiffNew || node === pd.data.node.codeBeauOut || node === pd.data.node.codeMinnOut) {
-                        pd.id("button-primary").getElementsByTagName("button")[0].focus();
+                        pd
+                            .id("button-primary")
+                            .getElementsByTagName("button")[0]
+                            .focus();
                     } else if (node === pd.data.node.codeBeauIn) {
-                        pd.data.node.codeBeauOut.focus();
+                        pd
+                            .data
+                            .node
+                            .codeBeauOut
+                            .focus();
                     } else if (node === pd.data.node.codeMinnIn) {
-                        pd.data.node.codeMinnOut.focus();
+                        pd
+                            .data
+                            .node
+                            .codeMinnOut
+                            .focus();
                     } else if (node === pd.data.node.codeParsIn) {
-                        pd.data.node.codeParsOut.focus();
+                        pd
+                            .data
+                            .node
+                            .codeParsOut
+                            .focus();
                     }
                 }
                 if (pd.test.tabesc[0] === 16) {
@@ -5532,7 +5948,9 @@ var pd     = {},
                 }
             }
         }
-        pd.event.sequence(event);
+        pd
+            .event
+            .sequence(event);
     };
 
     //read from files if the W3C File API is supported
@@ -5558,7 +5976,10 @@ var pd     = {},
         files = input.files;
         if (pd.test.fs === true && files[0] !== null && typeof files[0] === "object") {
             if (input.nodeName === "input") {
-                input = input.parentNode.parentNode.getElementsByTagName("textarea")[0];
+                input = input
+                    .parentNode
+                    .parentNode
+                    .getElementsByTagName("textarea")[0];
             }
             fileLoad  = function dom__event_file_onload(e) {
                 var event = e || window.event;
@@ -5566,17 +5987,41 @@ var pd     = {},
                 if (a === fileCount) {
                     if (pd.test.ace === true) {
                         if (id === "beautyfile") {
-                            pd.ace.beauIn.setValue(fileStore.join("\n\n"));
-                            pd.ace.beauIn.clearSelection();
+                            pd
+                                .ace
+                                .beauIn
+                                .setValue(fileStore.join("\n\n"));
+                            pd
+                                .ace
+                                .beauIn
+                                .clearSelection();
                         } else if (id === "minifyfile") {
-                            pd.ace.minnIn.setValue(fileStore.join("\n\n"));
-                            pd.ace.minnIn.clearSelection();
+                            pd
+                                .ace
+                                .minnIn
+                                .setValue(fileStore.join("\n\n"));
+                            pd
+                                .ace
+                                .minnIn
+                                .clearSelection();
                         } else if (id === "diffbasefile") {
-                            pd.ace.diffBase.setValue(fileStore.join("\n\n"));
-                            pd.ace.diffBase.clearSelection();
+                            pd
+                                .ace
+                                .diffBase
+                                .setValue(fileStore.join("\n\n"));
+                            pd
+                                .ace
+                                .diffBase
+                                .clearSelection();
                         } else if (id === "diffnewfile") {
-                            pd.ace.diffNew.setValue(fileStore.join("\n\n"));
-                            pd.ace.diffNew.clearSelection();
+                            pd
+                                .ace
+                                .diffNew
+                                .setValue(fileStore.join("\n\n"));
+                            pd
+                                .ace
+                                .diffNew
+                                .clearSelection();
                         }
                     } else {
                         if (id === "beautyfile") {
@@ -5590,7 +6035,9 @@ var pd     = {},
                         }
                     }
                     if (pd.data.mode !== "diff") {
-                        pd.event.recycle();
+                        pd
+                            .event
+                            .recycle();
                     }
                 }
             };
@@ -5609,7 +6056,9 @@ var pd     = {},
                 }
             }
             if (pd.data.mode !== "diff") {
-                pd.event.recycle();
+                pd
+                    .event
+                    .recycle();
             }
         }
     };
@@ -5621,7 +6070,9 @@ var pd     = {},
         var event = e || window.event;
         event.stopPropagation();
         event.preventDefault();
-        pd.event.file();
+        pd
+            .event
+            .file();
     };
 
     //basic drag and drop for the report windows
@@ -5634,7 +6085,9 @@ var pd     = {},
             parent     = box.getElementsByTagName("p")[0],
             save       = (parent.innerHTML.indexOf("save") > -1),
             minifyTest = (parent.style.display === "none"),
-            buttons    = box.getElementsByTagName("p")[0].getElementsByTagName("button"),
+            buttons    = box
+                .getElementsByTagName("p")[0]
+                .getElementsByTagName("button"),
             minButton  = (save === true)
                 ? buttons[1]
                 : buttons[0],
@@ -5678,7 +6131,9 @@ var pd     = {},
                 box.style.height   = "auto";
                 heading.style.top  = "100%";
                 resize.style.top   = "100%";
-                pd.app.options(box);
+                pd
+                    .app
+                    .options(box);
                 event.preventDefault();
                 return false;
             },
@@ -5704,10 +6159,14 @@ var pd     = {},
             } else {
                 box.style.left = "auto";
             }
-            pd.event.minimize(e, 50, minButton);
+            pd
+                .event
+                .minimize(e, 50, minButton);
             return false;
         }
-        pd.app.zTop(box);
+        pd
+            .app
+            .zTop(box);
         if (e.preventDefault !== undefined) {
             e.preventDefault();
         }
@@ -5742,26 +6201,32 @@ var pd     = {},
             document.onmousemove = boxmove;
             document.onmousedown = null;
         }
-        pd.app.options(box);
+        pd
+            .app
+            .options(box);
         return false;
     };
 
     //alter tool on page load in reflection to saved state
 
-    (function dom__load() {
+    load                = function dom__load() {
         var a               = 0,
             inputs          = [],
             inputsLen       = 0,
             id              = "",
             name            = "",
             type            = "",
+            page            = (pd.data.node.page === null || pd.data.node.page === undefined || pd.data.node.page.getAttribute("id") === null)
+                ? ""
+                : pd
+                    .data
+                    .node
+                    .page
+                    .getAttribute("id"),
             node            = {},
             buttons         = {},
             title           = {},
             statdump        = [],
-            page            = (pd.data.node.page === null)
-                ? ""
-                : pd.data.node.page.getAttribute("id"),
             thirdparty      = function dom__load_thirdparty() {
                 var that = this,
                     href = that.getAttribute("href");
@@ -5770,19 +6235,27 @@ var pd     = {},
             },
             resize          = function dom__load_resize(e) {
                 var that = this;
-                pd.event.resize(e, that);
+                pd
+                    .event
+                    .resize(e, that);
             },
             save            = function dom__load_save() {
                 var that = this;
-                pd.event.save(that);
+                pd
+                    .event
+                    .save(that);
             },
             grab            = function dom__load_grab(e) {
                 var that = this;
-                pd.event.grab(e, that);
+                pd
+                    .event
+                    .grab(e, that);
             },
             top             = function dom__load_top() {
                 var that = this;
-                pd.app.zTop(that.parentNode);
+                pd
+                    .app
+                    .zTop(that.parentNode);
             },
             backspace       = function dom__load_backspace(event) {
                 var aa = event || window.event,
@@ -5794,7 +6267,9 @@ var pd     = {},
                     return false;
                 }
                 if (aa.type === "keydown") {
-                    pd.event.sequence(aa);
+                    pd
+                        .event
+                        .sequence(aa);
                 }
             },
             acedisable      = function dom__load_acedisable(x) {
@@ -5802,12 +6277,18 @@ var pd     = {},
                         ? x
                         : this,
                     elId   = el.getAttribute("id"),
-                    loc    = location.href.indexOf("ace=false"),
+                    loc    = location
+                        .href
+                        .indexOf("ace=false"),
                     place  = [],
                     symbol = "?";
-                pd.app.options(el);
+                pd
+                    .app
+                    .options(el);
                 if (elId.indexOf("-yes") > 0 && loc > 0) {
-                    place = location.href.split("ace=false");
+                    place = location
+                        .href
+                        .split("ace=false");
                     if (place[1].indexOf("&") < 0 && place[1].indexOf("%26") < 0) {
                         place[0]      = place[0].slice(0, place[0].length - 1);
                         location.href = place.join("");
@@ -5820,16 +6301,22 @@ var pd     = {},
                 }
             },
             hideOutput      = function dom__load_hideOutput() {
-                pd.app.hideOutput(this);
+                pd
+                    .app
+                    .hideOutput(this);
             },
             feedradio       = function dom__load_feedradio(e) {
                 var event  = e || window.event,
                     item   = this.parentNode,
                     radio  = item.getElementsByTagName("input")[0],
-                    radios = item.parentNode.getElementsByTagName("input"),
+                    radios = item
+                        .parentNode
+                        .getElementsByTagName("input"),
                     aa     = 0;
                 for (aa = radios.length - 1; aa > -1; aa -= 1) {
-                    radios[aa].parentNode.removeAttribute("class");
+                    radios[aa]
+                        .parentNode
+                        .removeAttribute("class");
                     radios[aa].checked = false;
                 }
                 radio.checked = true;
@@ -5861,7 +6348,9 @@ var pd     = {},
                 }
                 tabkey.style.display = "block";
                 if (pd.test.ace === true) {
-                    this.parentNode.setAttribute("class", this.parentNode.getAttribute("class") + " filefocus");
+                    this
+                        .parentNode
+                        .setAttribute("class", this.parentNode.getAttribute("class") + " filefocus");
                 }
             },
             textareablur    = function dom__load_textareablur() {
@@ -5871,7 +6360,9 @@ var pd     = {},
                 }
                 tabkey.style.display = "none";
                 if (pd.test.ace === true) {
-                    this.parentNode.setAttribute("class", this.parentNode.getAttribute("class").replace(" filefocus", ""));
+                    this
+                        .parentNode
+                        .setAttribute("class", this.parentNode.getAttribute("class").replace(" filefocus", ""));
                 }
             },
             filefocus       = function dom__load_filefocus() {
@@ -5885,7 +6376,13 @@ var pd     = {},
                 if (pd.data.node.report.code.box === null) {
                     return;
                 }
-                button = pd.data.node.report.code.box.getElementsByTagName("button")[0];
+                button = pd
+                    .data
+                    .node
+                    .report
+                    .code
+                    .box
+                    .getElementsByTagName("button")[0];
                 if (button.getAttribute("class") !== "save") {
                     return;
                 }
@@ -5901,11 +6398,11 @@ var pd     = {},
             headerblur      = function dom__load_headerblur() {
                 this.onclick = null;
             },
-            checkForEdition = function dom__load_checkForEdition() {
+            checkForEdition = function dom__load_documentation_checkForEdition() {
                 var target     = (page === "webtool")
                         ? pd.id("update")
                         : pd.id("components"),
-                    outputTool = function dom__load_checkForEdition_outputTool() {
+                    outputTool = function dom__load_documentation_checkForEdition_outputTool() {
                         var str   = String(global.edition.latest),
                             list  = [
                                 str.charAt(0) + str.charAt(1),
@@ -5932,7 +6429,7 @@ var pd     = {},
                         }
                         return "Updated: " + list[2] + " " + month[list[1]] + " 20" + list[0] + "<span>Version: <span>" + global.edition.version + "</span></span>";
                     },
-                    outputDoc  = function dom__load_checkForEdition_outputDoc() {
+                    outputDoc  = function dom__load_documentation_checkForEdition_outputDoc() {
                         var b          = 0,
                             date       = 0,
                             row        = [],
@@ -5941,7 +6438,7 @@ var pd     = {},
                             dateList   = [],
                             lib        = "",
                             output     = [],
-                            conversion = function dom__load_checkForEdition_outputDoc_conversion(dateInstance) {
+                            conversion = function dom__load_documentation_checkForEdition_outputDoc_conversion(dateInstance) {
                                 var str   = String(dateInstance),
                                     list  = [
                                         str.charAt(0) + str.charAt(1),
@@ -5965,9 +6462,15 @@ var pd     = {},
                                 list[1] -= 1;
                                 return list[2] + " " + month[list[1]] + " 20" + list[0];
                             };
-                        target = target.getElementsByTagName("tbody")[0];
-                        row    = target.getElementsByTagName("tr");
-                        rowLen = row.length;
+                        dateList = target.getElementsByTagName("tfoot");
+                        if (dateList[0] !== undefined) {
+                            dateCell           = dateList[0].getElementsByTagName("td")[0];
+                            dateCell.innerHTML = global.edition.version;
+                        }
+                        target   = target.getElementsByTagName("tbody")[0];
+                        row      = target.getElementsByTagName("tr");
+                        rowLen   = row.length;
+                        dateList = [];
                         for (b = 0; b < rowLen; b += 1) {
                             dateCell = row[b].getElementsByTagName("td")[3];
                             lib      = row[b].getElementsByTagName("a")[0].innerHTML;
@@ -5997,6 +6500,10 @@ var pd     = {},
                                 dateList.push([date, row[b].innerHTML]);
                             } else if (lib === "jspretty.js") {
                                 date               = global.edition.jspretty;
+                                dateCell.innerHTML = conversion(date);
+                                dateList.push([date, row[b].innerHTML]);
+                            } else if (lib === "lint.js") {
+                                date               = global.edition.lint;
                                 dateCell.innerHTML = conversion(date);
                                 dateList.push([date, row[b].innerHTML]);
                             } else if (lib === "markuppretty.js") {
@@ -6030,11 +6537,13 @@ var pd     = {},
                             }
                         }
                         rowLen   = dateList.length;
-                        dateList = dateList.sort(function dom__load_doc_sortForward(target, row) {
+                        dateList = dateList.sort(function dom__load_documentation_sortForward(target, row) {
                             return target[1] === row[1];
-                        }).reverse().sort(function dom__load_doc_sortReverse(target, row) {
-                            return target[0] - row[0];
-                        });
+                        })
+                            .reverse()
+                            .sort(function dom__load_documentation_sortReverse(target, row) {
+                                return target[0] - row[0];
+                            });
                         for (b = dateList.length - 1; b > -1; b -= 1) {
                             output.push("<tr>");
                             output.push(dateList[b][1]);
@@ -6042,9 +6551,9 @@ var pd     = {},
                         }
                         target.innerHTML = output.join("");
                     },
-                    delay      = function dom__load_checkForEdition_delay() {
+                    delay      = function dom__load_documentation_checkForEdition_delay() {
                         if (global.edition === undefined) {
-                            setTimeout(dom__load_checkForEdition_delay, 100);
+                            setTimeout(dom__load_documentation_checkForEdition_delay, 100);
                         } else {
                             if (target !== null && typeof global.edition === "object") {
                                 if (page === "webtool") {
@@ -6078,51 +6587,98 @@ var pd     = {},
             }
             pd.data.node.report.feed.body = (pd.data.node.report.feed.box === null)
                 ? null
-                : pd.data.node.report.feed.box.getElementsByTagName("div")[0];
+                : pd
+                    .data
+                    .node
+                    .report
+                    .feed
+                    .box
+                    .getElementsByTagName("div")[0];
             pd.data.node.report.code.body = (pd.data.node.report.code.box === null)
                 ? null
-                : pd.data.node.report.code.box.getElementsByTagName("div")[0];
+                : pd
+                    .data
+                    .node
+                    .report
+                    .code
+                    .box
+                    .getElementsByTagName("div")[0];
             pd.data.node.report.stat.body = (pd.data.node.report.stat.box === null)
                 ? null
-                : pd.data.node.report.stat.box.getElementsByTagName("div")[0];
+                : pd
+                    .data
+                    .node
+                    .report
+                    .stat
+                    .box
+                    .getElementsByTagName("div")[0];
 
             if (pd.test.ace === true) {
                 if (pd.data.node.codeDiffBase !== null) {
-                    pd.ace.diffBase = pd.app.aceApply("codeDiffBase", "input", true);
+                    pd.ace.diffBase = pd
+                        .app
+                        .aceApply("codeDiffBase", "input", true);
                 }
                 if (pd.data.node.codeDiffNew !== null) {
-                    pd.ace.diffNew = pd.app.aceApply("codeDiffNew", "input", true);
+                    pd.ace.diffNew = pd
+                        .app
+                        .aceApply("codeDiffNew", "input", true);
                 }
                 if (pd.data.node.codeBeauIn !== null) {
-                    pd.ace.beauIn = pd.app.aceApply("codeBeauIn", "input", false);
+                    pd.ace.beauIn = pd
+                        .app
+                        .aceApply("codeBeauIn", "input", false);
                 }
                 if (pd.data.node.codeBeauOut !== null) {
-                    pd.ace.beauOut = pd.app.aceApply("codeBeauOut", "output", false);
-                    pd.ace.beauOut.setReadOnly(true);
+                    pd.ace.beauOut = pd
+                        .app
+                        .aceApply("codeBeauOut", "output", false);
+                    pd
+                        .ace
+                        .beauOut
+                        .setReadOnly(true);
                 }
                 if (pd.data.node.codeMinnIn !== null) {
-                    pd.ace.minnIn = pd.app.aceApply("codeMinnIn", "input", false);
+                    pd.ace.minnIn = pd
+                        .app
+                        .aceApply("codeMinnIn", "input", false);
                 }
                 if (pd.data.node.codeMinnOut !== null) {
-                    pd.ace.minnOut = pd.app.aceApply("codeMinnOut", "output", false);
-                    pd.ace.minnOut.setReadOnly(true);
+                    pd.ace.minnOut = pd
+                        .app
+                        .aceApply("codeMinnOut", "output", false);
+                    pd
+                        .ace
+                        .minnOut
+                        .setReadOnly(true);
                 }
                 if (pd.data.node.codeParsIn !== null) {
-                    pd.ace.parsIn = pd.app.aceApply("codeParsIn", "input", false);
+                    pd.ace.parsIn = pd
+                        .app
+                        .aceApply("codeParsIn", "input", false);
                 }
                 if (pd.data.node.codeParsOut !== null) {
-                    pd.ace.parsOut = pd.app.aceApply("codeParsOut", "output", false);
-                    pd.ace.parsOut.setReadOnly(true);
+                    pd.ace.parsOut = pd
+                        .app
+                        .aceApply("codeParsOut", "output", false);
+                    pd
+                        .ace
+                        .parsOut
+                        .setReadOnly(true);
                 }
             }
 
-            pd.app.fixHeight();
+            pd
+                .app
+                .fixHeight();
             if (pd.data.node.announce !== null) {
                 pd.data.announcetext = pd.data.node.announce.innerHTML;
             }
             node = pd.id("hideOptions");
             if (pd.id("option_commentClear") !== null) {
-                pd.id("option_commentClear").onclick = pd.event.clearComment;
+                pd
+                    .id("option_commentClear")
+                    .onclick = pd.event.clearComment;
             }
             pd.data.settings.feedreport       = {};
             pd.data.settings.codereport       = {};
@@ -6130,7 +6686,13 @@ var pd     = {},
             pd.data.settings.feedback         = {};
             pd.data.settings.feedback.newb    = false;
             pd.data.settings.feedback.veteran = false;
-            pd.data.settings.knownname        = "\"" + Math.random().toString().slice(2) + Math.random().toString().slice(2) + "\"";
+            pd.data.settings.knownname        = "\"" + Math
+                .random()
+                .toString()
+                .slice(2) + Math
+                .random()
+                .toString()
+                .slice(2) + "\"";
             pd.keypress                       = {
                 date    : {},
                 keys    : [],
@@ -6198,11 +6760,19 @@ var pd     = {},
                     }
                     if (localStorage.settings !== undefined && localStorage.settings !== null) {
                         if (localStorage.settings.indexOf(":undefined") > 0) {
-                            localStorage.settings = localStorage.settings.replace(/:undefined/g, ":false");
+                            localStorage.settings = localStorage
+                                .settings
+                                .replace(/:undefined/g, ":false");
                         }
                         pd.data.settings = JSON.parse(localStorage.settings);
                         if (pd.data.settings.knownname === undefined || typeof pd.data.settings.knownname === "number") {
-                            pd.data.settings.knownname = "\"" + Math.random().toString().slice(2) + Math.random().toString().slice(2) + "\"";
+                            pd.data.settings.knownname = "\"" + Math
+                                .random()
+                                .toString()
+                                .slice(2) + Math
+                                .random()
+                                .toString()
+                                .slice(2) + "\"";
                             localStorage.settings      = JSON.stringify(pd.data.settings);
                         }
                         if (pd.data.settings.diffreport !== undefined) {
@@ -6213,7 +6783,13 @@ var pd     = {},
                             pd.data.settings.codereport = {};
                         }
                     } else if (pd.data.settings.knownname === undefined || typeof pd.data.settings.knownname === "number") {
-                        pd.data.settings.knownname = "\"" + Math.random().toString().slice(2) + Math.random().toString().slice(2) + "\"";
+                        pd.data.settings.knownname = "\"" + Math
+                            .random()
+                            .toString()
+                            .slice(2) + Math
+                            .random()
+                            .toString()
+                            .slice(2) + "\"";
                         localStorage.settings      = JSON.stringify(pd.data.settings);
                     }
                     if (localStorage.stat !== undefined) {
@@ -6316,7 +6892,14 @@ var pd     = {},
                     pd.data.node.report.feed.box.ondrop      = pd.event.filedrop;
                 }
                 pd.data.node.report.feed.body.onmousedown = top;
-                title                                     = pd.data.node.report.feed.box.getElementsByTagName("h3")[0].getElementsByTagName("button")[0];
+                title                                     = pd
+                    .data
+                    .node
+                    .report
+                    .feed
+                    .box
+                    .getElementsByTagName("h3")[0]
+                    .getElementsByTagName("button")[0];
                 title.onmousedown                         = grab;
                 title.ontouchstart                        = grab;
                 title.onfocus                             = headerfocus;
@@ -6325,7 +6908,13 @@ var pd     = {},
                     pd.data.settings.feedreport = {};
                 }
                 if (pd.data.settings.feedreport !== undefined && pd.data.settings.feedreport.min === false) {
-                    buttons               = pd.data.node.report.feed.box.getElementsByTagName("p")[0];
+                    buttons               = pd
+                        .data
+                        .node
+                        .report
+                        .feed
+                        .box
+                        .getElementsByTagName("p")[0];
                     buttons.style.display = "block";
                     title.style.cursor    = "move";
                     if (buttons.innerHTML.indexOf("save") > 0) {
@@ -6353,7 +6942,9 @@ var pd     = {},
                     pd.data.node.report.feed.body.style.height  = (pd.data.settings.feedreport.height / 10) + "em";
                     pd.data.node.report.feed.body.style.display = "block";
                 }
-                pd.id("feedsubmit").onclick = pd.event.feedsubmit;
+                pd
+                    .id("feedsubmit")
+                    .onclick = pd.event.feedsubmit;
             }
             if (pd.data.node.report.code.box !== null) {
                 if (pd.test.fs === true) {
@@ -6362,12 +6953,25 @@ var pd     = {},
                     pd.data.node.report.code.box.ondrop      = pd.event.filedrop;
                 }
                 pd.data.node.report.code.body.onmousedown = top;
-                title                                     = pd.data.node.report.code.box.getElementsByTagName("h3")[0].getElementsByTagName("button")[0];
+                title                                     = pd
+                    .data
+                    .node
+                    .report
+                    .code
+                    .box
+                    .getElementsByTagName("h3")[0]
+                    .getElementsByTagName("button")[0];
                 title.onmousedown                         = grab;
                 title.ontouchstart                        = grab;
                 title.onfocus                             = headerfocus;
                 title.onblur                              = headerblur;
-                buttons                                   = pd.data.node.report.code.box.getElementsByTagName("p")[0];
+                buttons                                   = pd
+                    .data
+                    .node
+                    .report
+                    .code
+                    .box
+                    .getElementsByTagName("p")[0];
                 node                                      = pd.id("jsscope-yes");
                 if (node !== null && node.checked === true && buttons.innerHTML.indexOf("save") < 0) {
                     if (pd.test.agent.indexOf("firefox") > 0 || pd.test.agent.indexOf("presto") > 0) {
@@ -6421,13 +7025,26 @@ var pd     = {},
                     pd.data.node.report.stat.box.ondrop      = pd.event.filedrop;
                 }
                 pd.data.node.report.stat.body.onmousedown = top;
-                title                                     = pd.data.node.report.stat.box.getElementsByTagName("h3")[0].getElementsByTagName("button")[0];
+                title                                     = pd
+                    .data
+                    .node
+                    .report
+                    .stat
+                    .box
+                    .getElementsByTagName("h3")[0]
+                    .getElementsByTagName("button")[0];
                 title.onmousedown                         = grab;
                 title.ontouchstart                        = grab;
                 title.onfocus                             = headerfocus;
                 title.onblur                              = headerblur;
                 if (pd.data.settings.statreport !== undefined && pd.data.settings.statreport.min === false) {
-                    buttons               = pd.data.node.report.stat.box.getElementsByTagName("p")[0];
+                    buttons               = pd
+                        .data
+                        .node
+                        .report
+                        .stat
+                        .box
+                        .getElementsByTagName("p")[0];
                     buttons.style.display = "block";
                     title.style.cursor    = "move";
                     if (buttons.innerHTML.indexOf("save") > 0) {
@@ -6466,21 +7083,30 @@ var pd     = {},
                     if (id === pd.data.settings[name]) {
                         inputs[a].checked = true;
                         if (name === "beauchar" || name === "diffchar") {
-                            pd.app.indentchar(inputs[a]);
+                            pd
+                                .app
+                                .indentchar(inputs[a]);
                         }
                     }
                     if (id.indexOf("feedradio") === 0) {
                         inputs[a].onfocus = feedradio;
                         inputs[a].onblur  = feedblur;
                         inputs[a].onclick = feedradio;
-                        inputs[a].parentNode.getElementsByTagName("label")[0].onclick = feedradio;
+                        inputs[a]
+                            .parentNode
+                            .getElementsByTagName("label")[0]
+                            .onclick = feedradio;
                     }
                     if (name === "mode") {
                         inputs[a].onclick = pd.event.modeToggle;
                         if (pd.data.settings.mode === id) {
-                            pd.event.modeToggle(inputs[a]);
+                            pd
+                                .event
+                                .modeToggle(inputs[a]);
                         } else if (pd.data.settings.mode === undefined) {
-                            pd.event.modeToggle(pd.data.node.modeDiff);
+                            pd
+                                .event
+                                .modeToggle(pd.data.node.modeDiff);
                         }
                     } else if (name === "diffchar") {
                         inputs[a].onclick = pd.app.indentchar;
@@ -6517,14 +7143,18 @@ var pd     = {},
                     } else if (name === "jsscope") {
                         inputs[a].onclick = hideOutput;
                         if (id === "jsscope-yes" && inputs[a].checked === true) {
-                            pd.app.hideOutput(inputs[a]);
+                            pd
+                                .app
+                                .hideOutput(inputs[a]);
                         }
                     } else if (name === "ace-radio") {
                         if (id === "ace-no" && inputs[a].checked === true && pd.test.ace === true) {
                             acedisable(inputs[a]);
                         }
                         if (id === "ace-yes" && inputs[a].checked === true && pd.test.ace === false) {
-                            pd.id("ace-no").checked = true;
+                            pd
+                                .id("ace-no")
+                                .checked = true;
                         }
                         inputs[a].onclick = acedisable;
                     } else {
@@ -6536,31 +7166,63 @@ var pd     = {},
                         if (pd.data.settings[id] !== undefined && pd.data.settings[id] !== "4" && isNaN(pd.data.settings[id]) === false) {
                             if (id === "diff-quan") {
                                 if (pd.data.node.codeDiffBase !== null) {
-                                    pd.ace.diffBase.getSession().setTabSize(Number(pd.data.settings[id]));
+                                    pd
+                                        .ace
+                                        .diffBase
+                                        .getSession()
+                                        .setTabSize(Number(pd.data.settings[id]));
                                 }
                                 if (pd.data.node.codeDiffNew !== null) {
-                                    pd.ace.diffNew.getSession().setTabSize(Number(pd.data.settings[id]));
+                                    pd
+                                        .ace
+                                        .diffNew
+                                        .getSession()
+                                        .setTabSize(Number(pd.data.settings[id]));
                                 }
                             } else if (id === "beau-quan") {
                                 if (pd.data.node.codeBeauIn !== null) {
-                                    pd.ace.beauIn.getSession().setTabSize(Number(pd.data.settings[id]));
+                                    pd
+                                        .ace
+                                        .beauIn
+                                        .getSession()
+                                        .setTabSize(Number(pd.data.settings[id]));
                                 }
                                 if (pd.data.node.codeBeauOut !== null) {
-                                    pd.ace.beauOut.getSession().setTabSize(Number(pd.data.settings[id]));
+                                    pd
+                                        .ace
+                                        .beauOut
+                                        .getSession()
+                                        .setTabSize(Number(pd.data.settings[id]));
                                 }
                             } else if (id === "minn-quan") {
                                 if (pd.data.node.codeMinnIn !== null) {
-                                    pd.ace.minnIn.getSession().setTabSize(Number(pd.data.settings[id]));
+                                    pd
+                                        .ace
+                                        .minnIn
+                                        .getSession()
+                                        .setTabSize(Number(pd.data.settings[id]));
                                 }
                                 if (pd.data.node.codeMinnOut !== null) {
-                                    pd.ace.minnOut.getSession().setTabSize(Number(pd.data.settings[id]));
+                                    pd
+                                        .ace
+                                        .minnOut
+                                        .getSession()
+                                        .setTabSize(Number(pd.data.settings[id]));
                                 }
                             } else if (id === "pars-quan") {
                                 if (pd.data.node.codeParsIn !== null) {
-                                    pd.ace.parsIn.getSession().setTabSize(Number(pd.data.settings[id]));
+                                    pd
+                                        .ace
+                                        .parsIn
+                                        .getSession()
+                                        .setTabSize(Number(pd.data.settings[id]));
                                 }
                                 if (pd.data.node.codeParsOut !== null) {
-                                    pd.ace.parsOut.getSession().setTabSize(Number(pd.data.settings[id]));
+                                    pd
+                                        .ace
+                                        .parsOut
+                                        .getSession()
+                                        .setTabSize(Number(pd.data.settings[id]));
                                 }
                             }
                         }
@@ -6591,7 +7253,9 @@ var pd     = {},
                     inputs[a].onchange = pd.event.colorScheme;
                     if (pd.data.settings.colorScheme !== undefined) {
                         inputs[a].selectedIndex = Number(pd.data.settings.colorScheme);
-                        pd.event.colorScheme(inputs[a]);
+                        pd
+                            .event
+                            .colorScheme(inputs[a]);
                     }
                 } else if (id === "language") {
                     inputs[a].onchange = pd.event.langOps;
@@ -6601,7 +7265,9 @@ var pd     = {},
                             inputs[a].selectedIndex = 0;
                         }
                         if (pd.data.node.lang[pd.data.node.lang.selectedIndex].value === "csv" && pd.data.mode !== "diff") {
-                            pd.app.hideOutput(inputs[a]);
+                            pd
+                                .app
+                                .hideOutput(inputs[a]);
                         }
                     }
                 } else {
@@ -6675,7 +7341,10 @@ var pd     = {},
                 if (pd.data.commentString.length === 0) {
                     pd.data.node.comment.innerHTML = "/*prettydiff.com */";
                 } else if (pd.data.commentString.length === 1) {
-                    pd.data.node.comment.innerHTML = "/*prettydiff.com " + pd.data.commentString[0].replace("api.", "") + " */";
+                    pd.data.node.comment.innerHTML = "/*prettydiff.com " + pd
+                        .data
+                        .commentString[0]
+                        .replace("api.", "") + " */";
                 } else {
                     pd.data.node.comment.innerHTML = "/*prettydiff.com " + pd
                         .data
@@ -6701,27 +7370,44 @@ var pd     = {},
                             ? color.getElementsByTagName("option")
                             : [],
                         options  = (pd.data.node.lang !== null)
-                            ? pd.data.node.lang.getElementsByTagName("option")
+                            ? pd
+                                .data
+                                .node
+                                .lang
+                                .getElementsByTagName("option")
                             : [],
-                        params   = location.href.split("?")[1].split("&"),
+                        params   = location
+                            .href
+                            .split("?")[1]
+                            .split("&"),
                         paramLen = params.length,
                         value    = "",
                         source   = "",
                         diff     = "";
                     for (b = 0; b < paramLen; b += 1) {
                         if (params[b].indexOf("m=") === 0) {
-                            value = params[b].toLowerCase().substr(2);
+                            value = params[b]
+                                .toLowerCase()
+                                .substr(2);
                             if (value === "beautify" && pd.data.node.modeBeau !== null) {
-                                pd.event.modeToggle(pd.data.node.modeBeau);
+                                pd
+                                    .event
+                                    .modeToggle(pd.data.node.modeBeau);
                                 pd.data.node.modeBeau.checked = true;
                             } else if (value === "minify" && pd.data.node.modeMinn !== null) {
-                                pd.event.modeToggle(pd.data.node.modeMinn);
+                                pd
+                                    .event
+                                    .modeToggle(pd.data.node.modeMinn);
                                 pd.data.node.modeMinn.checked = true;
                             } else if (value === "diff" && pd.data.node.modeDiff !== null) {
-                                pd.event.modeToggle(pd.data.node.modeDiff);
+                                pd
+                                    .event
+                                    .modeToggle(pd.data.node.modeDiff);
                                 pd.data.node.modeDiff.checked = true;
                             } else if (value === "parse" && pd.data.node.modePars !== null) {
-                                pd.event.modeToggle(pd.data.node.modePars);
+                                pd
+                                    .event
+                                    .modeToggle(pd.data.node.modePars);
                                 pd.data.node.modePars.checked = true;
                             }
                         } else if (params[b].indexOf("s=") === 0) {
@@ -6730,17 +7416,27 @@ var pd     = {},
                             diff = params[b].substr(2);
                             if (pd.data.node.codeDiffNew !== null) {
                                 if (pd.test.ace === true) {
-                                    pd.ace.diffNew.setValue(diff);
-                                    pd.ace.diffNew.clearSelection();
+                                    pd
+                                        .ace
+                                        .diffNew
+                                        .setValue(diff);
+                                    pd
+                                        .ace
+                                        .diffNew
+                                        .clearSelection();
                                 } else {
                                     pd.data.node.codeDiffNew.value = diff;
                                 }
                             }
                         } else if (params[b].indexOf("l=") === 0 && pd.data.node.lang !== null) {
-                            value = params[b].toLowerCase().substr(2);
+                            value = params[b]
+                                .toLowerCase()
+                                .substr(2);
                             if (value === "text" || value === "plain" || value === "plaintext") {
                                 value = "text";
-                                pd.event.modeToggle(pd.data.node.modeDiff);
+                                pd
+                                    .event
+                                    .modeToggle(pd.data.node.modeDiff);
                             } else if (value === "js" || value === "") {
                                 value = "javascript";
                             } else if (value === "markup") {
@@ -6759,22 +7455,60 @@ var pd     = {},
                                 }
                             }
                             if (pd.test.ace === true && c > -1) {
-                                pd.ace.diffBase.getSession().setMode("ace/mode/" + value);
-                                pd.ace.diffNew.getSession().setMode("ace/mode/" + value);
-                                pd.ace.beauIn.getSession().setMode("ace/mode/" + value);
-                                pd.ace.beauOut.getSession().setMode("ace/mode/" + value);
-                                pd.ace.minnIn.getSession().setMode("ace/mode/" + value);
-                                pd.ace.minnOut.getSession().setMode("ace/mode/" + value);
-                                pd.ace.parsIn.getSession().setMode("ace/mode/" + value);
-                                pd.ace.parsOut.getSession().setMode("ace/mode/" + value);
+                                pd
+                                    .ace
+                                    .diffBase
+                                    .getSession()
+                                    .setMode("ace/mode/" + value);
+                                pd
+                                    .ace
+                                    .diffNew
+                                    .getSession()
+                                    .setMode("ace/mode/" + value);
+                                pd
+                                    .ace
+                                    .beauIn
+                                    .getSession()
+                                    .setMode("ace/mode/" + value);
+                                pd
+                                    .ace
+                                    .beauOut
+                                    .getSession()
+                                    .setMode("ace/mode/" + value);
+                                pd
+                                    .ace
+                                    .minnIn
+                                    .getSession()
+                                    .setMode("ace/mode/" + value);
+                                pd
+                                    .ace
+                                    .minnOut
+                                    .getSession()
+                                    .setMode("ace/mode/" + value);
+                                pd
+                                    .ace
+                                    .parsIn
+                                    .getSession()
+                                    .setMode("ace/mode/" + value);
+                                pd
+                                    .ace
+                                    .parsOut
+                                    .getSession()
+                                    .setMode("ace/mode/" + value);
                             }
-                            pd.event.langOps(pd.data.node.lang);
+                            pd
+                                .event
+                                .langOps(pd.data.node.lang);
                         } else if (params[b].indexOf("c=") === 0) {
-                            value = params[b].toLowerCase().substr(2);
+                            value = params[b]
+                                .toLowerCase()
+                                .substr(2);
                             for (c = colors.length - 1; c > -1; c -= 1) {
                                 if (colors[c].innerHTML.toLowerCase() === value) {
                                     color.selectedIndex = c;
-                                    pd.event.colorScheme(color);
+                                    pd
+                                        .event
+                                        .colorScheme(color);
                                     break;
                                 }
                             }
@@ -6782,8 +7516,10 @@ var pd     = {},
                             if (pd.data.node.jsscope !== null) {
                                 pd.data.node.jsscope.checked = true;
                             }
-                            pd.app.hideOutput(pd.data.node.jsscope);
-                        } else if (params[b].indexOf("jscorrect") === 0) {
+                            pd
+                                .app
+                                .hideOutput(pd.data.node.jsscope);
+                        } else if (params[b].indexOf("jscorrect") === 0 || params[b].indexOf("correct") === 0) {
                             node = pd.id("jscorrect-yes");
                             if (node !== null) {
                                 node.checked = true;
@@ -6791,69 +7527,141 @@ var pd     = {},
                         } else if (params[b].indexOf("html") === 0) {
                             node = pd.id("html-yes");
                             if (node !== null) {
-                                pd.app.options(node);
+                                pd
+                                    .app
+                                    .options(node);
                             }
                             node = pd.id("htmld-yes");
                             if (node !== null) {
-                                pd.app.options(node);
+                                pd
+                                    .app
+                                    .options(node);
                             }
-                            value = params[b].toLowerCase().substr(2);
+                            value = params[b]
+                                .toLowerCase()
+                                .substr(2);
                             for (c = options.length - 1; c > -1; c -= 1) {
                                 if (options[c].value === "html") {
                                     pd.data.node.lang.selectedIndex = c;
-                                    pd.event.langOps(pd.data.node.lang);
+                                    pd
+                                        .event
+                                        .langOps(pd.data.node.lang);
                                     break;
                                 }
                             }
                             if (pd.test.ace === true) {
-                                pd.ace.diffBase.getSession().setMode("ace/mode/html");
-                                pd.ace.diffNew.getSession().setMode("ace/mode/html");
-                                pd.ace.beauIn.getSession().setMode("ace/mode/html");
-                                pd.ace.beauOut.getSession().setMode("ace/mode/html");
-                                pd.ace.minnIn.getSession().setMode("ace/mode/html");
-                                pd.ace.minnOut.getSession().setMode("ace/mode/html");
-                                pd.ace.parsIn.getSession().setMode("ace/mode/html");
-                                pd.ace.parsOut.getSession().setMode("ace/mode/html");
+                                pd
+                                    .ace
+                                    .diffBase
+                                    .getSession()
+                                    .setMode("ace/mode/html");
+                                pd
+                                    .ace
+                                    .diffNew
+                                    .getSession()
+                                    .setMode("ace/mode/html");
+                                pd
+                                    .ace
+                                    .beauIn
+                                    .getSession()
+                                    .setMode("ace/mode/html");
+                                pd
+                                    .ace
+                                    .beauOut
+                                    .getSession()
+                                    .setMode("ace/mode/html");
+                                pd
+                                    .ace
+                                    .minnIn
+                                    .getSession()
+                                    .setMode("ace/mode/html");
+                                pd
+                                    .ace
+                                    .minnOut
+                                    .getSession()
+                                    .setMode("ace/mode/html");
+                                pd
+                                    .ace
+                                    .parsIn
+                                    .getSession()
+                                    .setMode("ace/mode/html");
+                                pd
+                                    .ace
+                                    .parsOut
+                                    .getSession()
+                                    .setMode("ace/mode/html");
                             }
                         }
                     }
                     if (source !== "") {
                         if (pd.data.node.codeBeauIn !== null && pd.data.mode === "beau") {
                             if (pd.test.ace === true) {
-                                pd.ace.beauIn.setValue(source);
-                                pd.ace.beauIn.clearSelection();
+                                pd
+                                    .ace
+                                    .beauIn
+                                    .setValue(source);
+                                pd
+                                    .ace
+                                    .beauIn
+                                    .clearSelection();
                             } else {
                                 pd.data.node.codeBeauIn.value = source;
                             }
-                            pd.event.recycle();
+                            pd
+                                .event
+                                .recycle();
                             pd.test.delayExecution = true;
                         } else if (pd.data.node.codeMinnIn !== null && pd.data.mode === "minn") {
                             if (pd.test.ace === true) {
-                                pd.ace.minnIn.setValue(source);
-                                pd.ace.minnIn.clearSelection();
+                                pd
+                                    .ace
+                                    .minnIn
+                                    .setValue(source);
+                                pd
+                                    .ace
+                                    .minnIn
+                                    .clearSelection();
                             } else {
                                 pd.data.node.codeMinnIn.value = source;
                             }
-                            pd.event.recycle();
+                            pd
+                                .event
+                                .recycle();
                             pd.test.delayExecution = true;
                         } else if (pd.data.node.codeParsIn !== null && pd.data.mode === "pars") {
                             if (pd.test.ace === true) {
-                                pd.ace.parsIn.setValue(source);
-                                pd.ace.parsIn.clearSelection();
+                                pd
+                                    .ace
+                                    .parsIn
+                                    .setValue(source);
+                                pd
+                                    .ace
+                                    .parsIn
+                                    .clearSelection();
                             } else {
                                 pd.data.node.codeParsIn.value = source;
                             }
-                            pd.event.recycle();
+                            pd
+                                .event
+                                .recycle();
                             pd.test.delayExecution = true;
                         } else if (pd.data.node.codeDiffBase !== null && pd.data.mode === "diff") {
                             if (pd.test.ace === true) {
-                                pd.ace.diffBase.setValue(source);
-                                pd.ace.diffBase.clearSelection();
+                                pd
+                                    .ace
+                                    .diffBase
+                                    .setValue(source);
+                                pd
+                                    .ace
+                                    .diffBase
+                                    .clearSelection();
                             } else {
                                 pd.data.node.codeDiffBase.value = source;
                             }
                             if (diff !== "") {
-                                pd.event.recycle();
+                                pd
+                                    .event
+                                    .recycle();
                                 pd.test.delayExecution = true;
                             }
                         }
@@ -6886,7 +7694,14 @@ var pd     = {},
                 if (pd.test.json === true && pd.test.ls === true) {
                     localStorage.settings = JSON.stringify(pd.data.settings);
                 }
-                pd.data.node.report.feed.box.getElementsByTagName("button")[0].click();
+                pd
+                    .data
+                    .node
+                    .report
+                    .feed
+                    .box
+                    .getElementsByTagName("button")[0]
+                    .click();
             }
             if (pd.data.settings.feedback.veteran === false && pd.data.stat.usage > 2500 && pd.test.domain === true && pd.data.node.report.feed.box !== null) {
                 pd.data.settings.feedback.veteran = true;
@@ -6897,7 +7712,14 @@ var pd     = {},
                 if (pd.test.json === true && pd.test.ls === true) {
                     localStorage.settings = JSON.stringify(pd.data.settings);
                 }
-                pd.data.node.report.feed.box.getElementsByTagName("button")[0].click();
+                pd
+                    .data
+                    .node
+                    .report
+                    .feed
+                    .box
+                    .getElementsByTagName("button")[0]
+                    .click();
             }
             if (pd.test.audio !== null) {
                 pd.data.audio.binary = window.atob("SUQzBAAAAAAAFlRFTkMAAAAMAAADTGF2ZjUyLjMxLjD/+9RkAA/wAABpAAAACAAADSAAAAEAAAGkAAAA" +
@@ -7785,43 +8607,65 @@ var pd     = {},
                         "q3KbT6yiBpTZoH6XK2NzYaizgv406AYS4MAPM7NFDUja6zKBGdRN+aBymxq9LrJtK1qavVCozjOtabE5" +
                         "6wrRGLJCsIU5TEFNRTMuOTkgKGFscGhhKao=");
                 pd.data.audio.play   = function dom__load_audio() {
-                    var source  = pd.test.audio.createBufferSource(),
+                    var source  = pd
+                            .test
+                            .audio
+                            .createBufferSource(),
                         buff    = new ArrayBuffer(pd.data.audio.binary.length),
                         bytes   = new Uint8Array(buff),
                         z       = 0,
                         bytelen = buff.byteLength;
                     for (z = 0; z < bytelen; z += 1) {
-                        bytes[z] = pd.data.audio.binary.charCodeAt(z);
+                        bytes[z] = pd
+                            .data
+                            .audio
+                            .binary
+                            .charCodeAt(z);
                     }
-                    pd.test.audio.decodeAudioData(buff, function dom__load_audio_decode(buffer) {
-                        source.buffer = buffer;
-                        source.loop   = false;
-                        source.connect(pd.test.audio.destination);
-                        source.start(0, 0, 1.8);
-                    });
+                    pd
+                        .test
+                        .audio
+                        .decodeAudioData(buff, function dom__load_audio_decode(buffer) {
+                            source.buffer = buffer;
+                            source.loop   = false;
+                            source.connect(pd.test.audio.destination);
+                            source.start(0, 0, 1.8);
+                        });
                 };
             }
             if (pd.data.node.codeBeauIn !== null) {
                 pd.data.node.codeBeauIn.onkeyup = function dom__load_bindBeauInUp(e) {
                     var event = e || window.event;
-                    pd.event.recycle(event);
+                    pd
+                        .event
+                        .recycle(event);
                 };
                 if (pd.test.ace === true) {
                     pd.data.node.codeBeauIn.onfocus   = textareafocus;
                     pd.data.node.codeBeauIn.onblur    = textareablur;
                     pd.data.node.codeBeauIn.onkeydown = function dom__load_bindBeauInDownCM(e) {
                         var event = e || window.event;
-                        pd.event.areaTabOut(event, this);
-                        pd.event.keydown(event);
+                        pd
+                            .event
+                            .areaTabOut(event, this);
+                        pd
+                            .event
+                            .keydown(event);
                     };
                 } else {
                     pd.data.node.codeBeauIn.onfocus   = textareafocus;
                     pd.data.node.codeBeauIn.onblur    = textareablur;
                     pd.data.node.codeBeauIn.onkeydown = function dom__load_bindBeauInDown(e) {
                         var event = e || window.event;
-                        pd.event.fixtabs(event, pd.data.node.codeBeauIn);
-                        pd.event.areaTabOut(event, this);
-                        pd.event.keydown(event);
+                        pd
+                            .event
+                            .fixtabs(event, pd.data.node.codeBeauIn);
+                        pd
+                            .event
+                            .areaTabOut(event, this);
+                        pd
+                            .event
+                            .keydown(event);
                     };
                 }
             }
@@ -7833,24 +8677,36 @@ var pd     = {},
             if (pd.data.node.codeMinnIn !== null) {
                 pd.data.node.codeMinnIn.onkeyup = function dom__load_bindMinnInUp(e) {
                     var event = e || window.event;
-                    pd.event.recycle(event);
+                    pd
+                        .event
+                        .recycle(event);
                 };
                 if (pd.test.ace === true) {
                     pd.data.node.codeMinnIn.onfocus   = textareafocus;
                     pd.data.node.codeMinnIn.onblur    = textareablur;
                     pd.data.node.codeMinnIn.onkeydown = function dom__load_bindMinnInDownCM(e) {
                         var event = e || window.event;
-                        pd.event.areaTabOut(event, this);
-                        pd.event.keydown(event);
+                        pd
+                            .event
+                            .areaTabOut(event, this);
+                        pd
+                            .event
+                            .keydown(event);
                     };
                 } else {
                     pd.data.node.codeMinnIn.onfocus   = textareafocus;
                     pd.data.node.codeMinnIn.onblur    = textareablur;
                     pd.data.node.codeMinnIn.onkeydown = function dom__load_bindMinnInDown(e) {
                         var event = e || window.event;
-                        pd.event.fixtabs(event, this);
-                        pd.event.areaTabOut(event, this);
-                        pd.event.keydown(event);
+                        pd
+                            .event
+                            .fixtabs(event, this);
+                        pd
+                            .event
+                            .areaTabOut(event, this);
+                        pd
+                            .event
+                            .keydown(event);
                     };
                 }
             }
@@ -7862,24 +8718,36 @@ var pd     = {},
             if (pd.data.node.codeParsIn !== null) {
                 pd.data.node.codeParsIn.onkeyup = function dom__load_bindParsInUp(e) {
                     var event = e || window.event;
-                    pd.event.recycle(event);
+                    pd
+                        .event
+                        .recycle(event);
                 };
                 if (pd.test.ace === true) {
                     pd.data.node.codeParsIn.onfocus   = textareafocus;
                     pd.data.node.codeParsIn.onblur    = textareablur;
                     pd.data.node.codeParsIn.onkeydown = function dom__load_bindParsInDownCM(e) {
                         var event = e || window.event;
-                        pd.event.areaTabOut(event, this);
-                        pd.event.keydown(event);
+                        pd
+                            .event
+                            .areaTabOut(event, this);
+                        pd
+                            .event
+                            .keydown(event);
                     };
                 } else {
                     pd.data.node.codeParsIn.onfocus   = textareafocus;
                     pd.data.node.codeParsIn.onblur    = textareablur;
                     pd.data.node.codeParsIn.onkeydown = function dom__load_bindParsInDown(e) {
                         var event = e || window.event;
-                        pd.event.fixtabs(event, pd.data.node.codeParsIn);
-                        pd.event.areaTabOut(event, this);
-                        pd.event.keydown(event);
+                        pd
+                            .event
+                            .fixtabs(event, pd.data.node.codeParsIn);
+                        pd
+                            .event
+                            .areaTabOut(event, this);
+                        pd
+                            .event
+                            .keydown(event);
                     };
                 }
             }
@@ -7891,7 +8759,9 @@ var pd     = {},
             if (pd.data.node.codeDiffBase !== null) {
                 if (pd.test.ace === true) {
                     pd.data.node.codeDiffBase.onkeyup   = function dom__load_bindAutoDiffBase() {
-                        pd.app.langkey(false, pd.ace.diffBase, "");
+                        pd
+                            .app
+                            .langkey(false, pd.ace.diffBase, "");
                     };
                     pd.data.node.codeDiffBase.onfocus   = textareafocus;
                     pd.data.node.codeDiffBase.onblur    = textareablur;
@@ -7901,15 +8771,21 @@ var pd     = {},
                     pd.data.node.codeDiffBase.onblur    = textareablur;
                     pd.data.node.codeDiffBase.onkeydown = function dom__load_bindDiffBaseDown(e) {
                         var event = e || window.event;
-                        pd.event.fixtabs(event, this);
-                        pd.event.areaTabOut(event, this);
+                        pd
+                            .event
+                            .fixtabs(event, this);
+                        pd
+                            .event
+                            .areaTabOut(event, this);
                     };
                 }
             }
             if (pd.data.node.codeDiffNew !== null) {
                 if (pd.test.ace === true) {
                     pd.data.node.codeDiffNew.onkeyup   = function dom__load_bindAutoDiffNew() {
-                        pd.app.langkey(false, pd.ace.diffNew, "");
+                        pd
+                            .app
+                            .langkey(false, pd.ace.diffNew, "");
                     };
                     pd.data.node.codeDiffNew.onfocus   = textareafocus;
                     pd.data.node.codeDiffNew.onblur    = textareablur;
@@ -7919,8 +8795,12 @@ var pd     = {},
                     pd.data.node.codeDiffNew.onblur    = textareablur;
                     pd.data.node.codeDiffNew.onkeydown = function dom__load_bindDiffNewDown(e) {
                         var event = e || window.event;
-                        pd.event.fixtabs(event, this);
-                        pd.event.areaTabOut(event, this);
+                        pd
+                            .event
+                            .fixtabs(event, this);
+                        pd
+                            .event
+                            .areaTabOut(event, this);
                     };
                 }
             }
@@ -7930,18 +8810,135 @@ var pd     = {},
             document.onkeydown  = backspace;
             checkForEdition();
         }
+        if (page === "documentation") {
+            (function dom__load_documentation() {
+                var b           = 0,
+                    docbuttons  = document.getElementsByTagName("button"),
+                    colorParam  = (typeof location === "object" && typeof location.href === "string" && location.href.indexOf("?") > -1)
+                        ? location
+                            .href
+                            .toLowerCase()
+                            .split("?")[1]
+                        : "",
+                    colorScheme = pd.id("colorScheme"),
+                    hashgo      = function dom__load_documentation_hashgo() {
+                        var hash     = "",
+                            test     = false,
+                            hashnode = {},
+                            parent   = {},
+                            body     = document.getElementsByTagName("body")[0];
+                        if (location.href.indexOf("#") > 0) {
+                            hash     = location
+                                .href
+                                .split("#")[1];
+                            hashnode = document.getElementById(hash);
+                            if (hashnode !== null) {
+                                parent = hashnode.parentNode;
+                                test   = (parent.nodeName.toLowerCase() === "h2" || parent.getAttribute("class") === "content-hide");
+                                if (test === true) {
+                                    parent
+                                        .parentNode
+                                        .getElementsByTagName("button")[0]
+                                        .click();
+                                } else {
+                                    do {
+                                        parent = parent.parentNode;
+                                        test   = (parent.nodeName.toLowerCase() === "h2" || parent.getAttribute("class") === "content-hide");
+                                    } while (test === false && parent.nodeName.toLowerCase() !== "body");
+                                    if (test === true) {
+                                        parent
+                                            .parentNode
+                                            .getElementsByTagName("button")[0]
+                                            .click();
+                                    }
+                                }
+                                document.documentElement.scrollTop = hashnode.offsetTop;
+                                body.scrollTop                     = hashnode.offsetTop;
+                            }
+                        }
+                    },
+                    showhide    = function dom__load_documentation_showhide() {
+                        var span   = this.getElementsByTagName("span")[0],
+                            target = this
+                                .parentNode
+                                .parentNode
+                                .getElementsByTagName("div")[0];
+                        if (target === undefined) {
+                            return;
+                        }
+                        if (span.innerHTML === "Show") {
+                            target.setAttribute("class", "content-show");
+                            span.innerHTML = "Hide";
+                        } else {
+                            target.setAttribute("class", "content-hide");
+                            span.innerHTML = "Show";
+                        }
+                    },
+                    colorChange = function dom__load_documentation_colorChange() {
+                        var options = colorScheme.getElementsByTagName("option"),
+                            olen    = options.length;
+                        if (localStorage !== null && localStorage.settings !== undefined && localStorage.settings !== null && localStorage.settings.indexOf(":undefined") > 0) {
+                            localStorage.settings = localStorage
+                                .settings
+                                .replace(/:undefined/g, ":false");
+                        }
+                        pd.data.settings = (pd.test.ls === true && pd.test.json === true && localStorage.settings !== undefined)
+                            ? JSON.parse(localStorage.settings)
+                            : {};
+                        if (colorParam.indexOf("c=") === 0 || colorParam.indexOf("&c=") > -1) {
+                            if (colorParam.indexOf("&c=") > -1) {
+                                colorParam.substr(colorParam.indexOf("&c=") + 1);
+                            }
+                            colorParam = colorParam.split("&")[0];
+                            colorParam = colorParam.substr(colorParam.indexOf("=") + 1);
+                            for (b = 0; b < olen; b += 1) {
+                                if (options[b].value.toLowerCase() === colorParam) {
+                                    node.selectedIndex = b;
+                                    break;
+                                }
+                            }
+                        }
+                        if (((olen > 0 && b !== olen) || olen === 0) && pd.data.settings.colorScheme !== undefined) {
+                            colorScheme.selectedIndex = pd.data.settings.colorScheme;
+                        }
+                        pd
+                            .event
+                            .colorScheme(colorScheme);
+                        colorScheme.onchange = pd.event.colorScheme;
+                    };
+                b = docbuttons.length;
+                for (a = 0; a < b; a += 1) {
+                    if (docbuttons[a].parentNode.nodeName.toLowerCase() === "h2") {
+                        docbuttons[a].onclick = showhide;
+                    }
+                }
+                if (colorScheme !== null) {
+                    colorChange();
+                }
+                checkForEdition();
+                window.onhashchange = hashgo;
+                hashgo();
+            }());
+        }
         if (page === "doc") {
             (function dom__load_doc() {
                 var b          = 0,
-                    row        = [],
-                    rowLen     = 0,
                     colorParam = (typeof location === "object" && typeof location.href === "string" && location.href.indexOf("?") > -1)
-                        ? location.href.toLowerCase().split("?")[1]
-                        : "";
-                node = pd.id("colorScheme");
+                        ? location
+                            .href
+                            .toLowerCase()
+                            .split("?")[1]
+                        : "",
+                    options    = [],
+                    olen       = 0;
+                node    = pd.id("colorScheme");
+                options = node.getElementsByTagName("option");
+                olen    = options.length;
                 if (node !== null) {
                     if (localStorage !== null && localStorage.settings !== undefined && localStorage.settings !== null && localStorage.settings.indexOf(":undefined") > 0) {
-                        localStorage.settings = localStorage.settings.replace(/:undefined/g, ":false");
+                        localStorage.settings = localStorage
+                            .settings
+                            .replace(/:undefined/g, ":false");
                     }
                     pd.data.settings = (pd.test.ls === true && pd.test.json === true && localStorage.settings !== undefined)
                         ? JSON.parse(localStorage.settings)
@@ -7952,19 +8949,19 @@ var pd     = {},
                         }
                         colorParam = colorParam.split("&")[0];
                         colorParam = colorParam.substr(colorParam.indexOf("=") + 1);
-                        row        = node.getElementsByTagName("option");
-                        rowLen     = row.length;
-                        for (b = 0; b < rowLen; b += 1) {
-                            if (row[b].value.toLowerCase() === colorParam) {
+                        for (b = 0; b < olen; b += 1) {
+                            if (options[b].value.toLowerCase() === colorParam) {
                                 node.selectedIndex = b;
                                 break;
                             }
                         }
                     }
-                    if (((rowLen > 0 && b !== rowLen) || rowLen === 0) && pd.data.settings.colorScheme !== undefined) {
+                    if (((olen > 0 && b !== olen) || olen === 0) && pd.data.settings.colorScheme !== undefined) {
                         node.selectedIndex = pd.data.settings.colorScheme;
                     }
-                    pd.event.colorScheme(node);
+                    pd
+                        .event
+                        .colorScheme(node);
                     node.onchange = pd.event.colorScheme;
                 }
                 (function dom__doc_foldSearch() {
@@ -7990,9 +8987,13 @@ var pd     = {},
                         }
                     }
                 }());
-                checkForEdition();
             }());
         }
         pd.test.load = false;
-    }());
+    };
+    if (pd.data.node.page === null || pd.data.node.page === undefined || pd.data.node.page.getAttribute("id") === null) {
+        window.onload = loadPrep;
+    } else {
+        load();
+    }
 }());
