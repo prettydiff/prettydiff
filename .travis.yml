@@ -65,5 +65,7 @@ matrix:
     - node_js: "iojs-v1.2"
     - node_js: "iojs-v1.1"
     - node_js: "iojs-v1.0"
+    - node_js: "0.12"
     - node_js: "0.11"
+    - node_js: "0.10"
     - node_js: "0.9"

@@ -1340,7 +1340,7 @@ Examples:
                                     console.log(lf + "File successfully written.");
                                 }
                                 total[1] += 1;
-                                if (total[1] === total[0] || (method !== "directory" && method !== "subdirectory")) {
+                                if (total[1] === total[0]) {
                                     ender();
                                 }
                             });
@@ -1539,7 +1539,7 @@ Examples:
                 } else {
                     return;
                 }
-            } else if (data.last === true && data.type !== "diff" && options.diffcli === false && data.binary === false && total[0] === 0) {
+            } else if (data.last === true && (data.type !== "diff" || (sState[data.index] === true && dState[data.index] === true)) && options.diffcli === false && data.binary === false && total[0] === 0) {
                 ender();
             }
         },
@@ -1568,6 +1568,13 @@ Examples:
         //read from a file and determine if text
         readLocalFile  = function pdNodeLocal__readLocalFile(data) {
             var open = function pdNodeLocal__readLocalFile_open() {
+                if (method === "file") {
+                    if (options.report === true && options.mode !== "diff" && (options.mode !== "beautify" || options.jsscope === "none")) {
+                        total[0] = 2;
+                    } else {
+                        total[0] = 1;
+                    }
+                }
                 fs
                     .open(data.absolutepath, "r", function pdNodeLocal__readLocalFile_open_callback(err, fd) {
                         var msize = (data.size < 100)
@@ -1638,6 +1645,13 @@ Examples:
         //executed from init
         readHttpFile   = function pdNodeLocal__readHttpFile(data) {
             var file = ["", 0];
+            if (method === "file") {
+                if (options.report === true && options.mode !== "diff" && (options.mode !== "beautify" || options.jsscope === "none")) {
+                    total[0] = 2;
+                } else {
+                    total[0] = 1;
+                }
+            }
             http.get(data.absolutepath, function pdNodeLocal__readHttpFile_get(res) {
                 file[1] = Number(res.headers["content-length"]);
                 res.setEncoding("utf8");
