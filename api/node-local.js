@@ -304,7 +304,7 @@ Examples:
         //extract errorcount from diff
         //report files for ender stats
         counter        = function pdNodeLocal__counter(x) {
-            var num = Number(x.substring(14, x.indexOf("</em>")));
+            var num = Number(x.substring(x.indexOf("<em>") + 4, x.indexOf("</em>")));
             if (num > 0) {
                 diffCount[0] += num;
                 diffCount[1] += 1;
@@ -1509,6 +1509,11 @@ Examples:
                 data.last = false;
             }
             if (sState[data.index] === true && ((options.mode === "diff" && dState[data.index] === true) || options.mode !== "diff")) {
+                if (options.report === true && options.mode !== "diff" && (options.mode !== "beautify" || options.jsscope === "none")) {
+                    total[0] += 2;
+                } else {
+                    total[0] += 1;
+                }
                 if (sfiledump[data.index] !== dfiledump[data.index]) {
                     if (dfiledump[data.index] === "" || dfiledump[data.index] === "\n") {
                         console.log("Diff file at " + data.localpath + " is \x1B[31mempty\x1B[39m but the source file is not.");
@@ -1568,13 +1573,6 @@ Examples:
         //read from a file and determine if text
         readLocalFile  = function pdNodeLocal__readLocalFile(data) {
             var open = function pdNodeLocal__readLocalFile_open() {
-                if (method === "file") {
-                    if (options.report === true && options.mode !== "diff" && (options.mode !== "beautify" || options.jsscope === "none")) {
-                        total[0] = 2;
-                    } else {
-                        total[0] = 1;
-                    }
-                }
                 fs
                     .open(data.absolutepath, "r", function pdNodeLocal__readLocalFile_open_callback(err, fd) {
                         var msize = (data.size < 100)
@@ -1645,13 +1643,6 @@ Examples:
         //executed from init
         readHttpFile   = function pdNodeLocal__readHttpFile(data) {
             var file = ["", 0];
-            if (method === "file") {
-                if (options.report === true && options.mode !== "diff" && (options.mode !== "beautify" || options.jsscope === "none")) {
-                    total[0] = 2;
-                } else {
-                    total[0] = 1;
-                }
-            }
             http.get(data.absolutepath, function pdNodeLocal__readHttpFile_get(res) {
                 file[1] = Number(res.headers["content-length"]);
                 res.setEncoding("utf8");
@@ -1659,7 +1650,11 @@ Examples:
                     file[0] += chunk;
                     if (file[0].length === file[1]) {
                         data.file      = file[0];
-                        options.source = file[0];
+                        if (data.type === "diff") {
+                            dfiledump[data.index] = file[0];
+                        } else {
+                            sfiledump[data.index] = file[0];
+                        }
                         fileComplete(data);
                     }
                 });
@@ -1773,18 +1768,12 @@ Examples:
                                                 }
                                             } else {
                                                 if (options.output !== "") {
-                                                    total[0] = length;
-                                                    if (options.report === true) {
-                                                        total[0] += length;
-                                                    }
                                                     for (b = 0; b < length; b += 1) {
                                                         if (b === length - 1) {
                                                             end = true;
                                                         }
                                                         if (sfiles.filepath[b] !== undefined) {
                                                             sizer(b, "source", sfiles.filepath[b], end);
-                                                        } else {
-                                                            total[0] -= 2;
                                                         }
                                                     }
                                                 } else {

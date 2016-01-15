@@ -1129,7 +1129,7 @@ var pd     = {},
                             if (langname === "unknown") {
                                 return [defaultt, setlangmode(defaultt), "unknown"];
                             }
-                            if (langname === "xhtml") {
+                            if (langname === "xhtml" || langname === "markup") {
                                 return ["xml", "html", "XHTML"];
                             }
                             if (langname === "tss") {
