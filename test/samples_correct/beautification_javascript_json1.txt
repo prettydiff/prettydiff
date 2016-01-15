@@ -128,9 +128,13 @@ $(function () {
         return false;
     });
 });
-{
+var x = {
     "carh" : "rabbit",
     "diklj": "pny",
+    "lkp"  : {
+        "asd": "thn"
+    },
+    "sdf"  : "sdf",
     "xyz"  : [
         {
             "asdf": "sdfd",
@@ -148,13 +152,9 @@ $(function () {
             "efs",
             "wef"
         ]
-    ],
-    "sdf"  : "sdf",
-    "lkp"  : {
-        "asd": "thn"
-    }
+    ]
 };
-{
+var x = {
     car: rabbit,
     dog: pny,
     sd : [

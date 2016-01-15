@@ -86,7 +86,7 @@ var treeData = [
       return false;
     });
   });
-{
+var x = {
     "carh": "rabbit",
     "diklj": "pny",
     "xyz": [
@@ -112,7 +112,7 @@ var treeData = [
         "asd": "thn"
     }
 }
-{car: rabbit,
+var x={car: rabbit,
 dog:pny,
 sd: [{sdf: fds,
 asdf:sdfd},{sdf:df,

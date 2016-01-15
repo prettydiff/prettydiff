@@ -1683,7 +1683,7 @@ global.edition        = {
     documentation: 160114, //documentation.xhtml
     jspretty     : 160115, //jspretty lib
     latest       : 0,
-    lint         : 160114, //unit test and lint automation as test/lint.js
+    lint         : 160115, //unit test and lint automation as test/lint.js
     markuppretty : 160115, //markuppretty lib
     prettydiff   : 160114, //this file
     safeSort     : 151130, //safeSort lib

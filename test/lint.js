@@ -7,7 +7,6 @@
             "packagejson", // - beautify the package.json file and compare it to itself
             "coreunits", //   - run a variety of files through the application and compare the result to a known good file
             "simulations" //  - simulate a variety of execution steps and options from the command line
-            //"simulations"
         ],
         startTime   = Date.now(),
         fs          = require("fs"),
@@ -705,7 +704,7 @@
                                         {
                                             check: "node api/node-local.js source:\"test/simulation/testa.txt\" readmethod:\"file\" output:\"test/simulation\" mode:\"diff\" diff:\"test/simulation/testc1.txt\"",
                                             name: "compare xml file to text file",
-                                            verify: "\nFile successfully written.\n\nPretty Diff found 0 differences. Executed in."
+                                            verify: "\nFile successfully written.\n\nPretty Diff found -10 differences. Executed in."
                                         }
                                     ]
                                 },
@@ -713,7 +712,7 @@
                                     group: "directory tests",
                                     units: [
                                         {
-                                            check: "node api/node-local.js source:\"../prettydiff\" mode:\"beautify\" readmethod:\"directory\" output:\"test/simulation/prettydiff\" correct:\"true\" crlf:\"false\" html:\"true\" inchar:\" \" insize:4 lang:auto methodchain:\"false\" nocaseindent:\"false\" objsort:\"all\" preserve:\"true\" quoteConvert:\"double\" spaceclose:\"true\" varword:\"none\" vertical:\"all\" wrap:80",
+                                            check: "node api/node-local.js source:\"../prettydiff\" mode:\"beautify\" readmethod:\"directory\" output:\"test/simulation/prettydiff\" correct:\"true\" crlf:\"false\" html:\"true\" inchar:\" \" insize:4 lang:\"auto\" methodchain:\"false\" nocaseindent:\"false\" objsort:\"all\" preserve:\"true\" quoteConvert:\"double\" spaceclose:\"true\" varword:\"none\" vertical:\"all\" wrap:80",
                                             name: "beautify Pretty Diff directory",
                                             verify: "\nPretty Diff beautified -10 files. Executed in."
                                         }
@@ -886,7 +885,6 @@
                                                         if (fails === total) {
                                                             errout("\x1B[31mFailed all " + total + " test" + plural + " from all " + gcount + " groups.\x1B[39m");
                                                         } else {
-                                                            fgroup -= 1;
                                                             if (fgroup === 1) {
                                                                 groupn = "";
                                                             }
@@ -964,6 +962,9 @@
                                     stdout = stdout.replace(/<strong>Execution\ time:<\/strong>\ <em>([0-9]+\ hours\ )?([0-9]+\ minutes\ )?[0-9]+(\.[0-9]+)?\ seconds\ <\/em>/g, "<strong>Execution time:</strong> <em>0</em>");
                                     stdout = stdout.replace(/Executed\ in\ ([0-9]+\ hours\ )?([0-9]+\ minutes\ )?[0-9]+(\.[0-9]+)?\ seconds/g, "Executed in");
                                     stdout = stdout.replace(/\ \d+\ files\./, " -10 files.");
+                                    if (stdout.indexOf("Pretty Diff found 0 differences.") < 0) {
+                                        stdout = stdout.replace(/Pretty\ Diff\ found\ \d+\ differences./, "Pretty Diff found -10 differences.");
+                                    }
                                     if (typeof err === "string") {
                                         data.push("fail");
                                         data.push(err);

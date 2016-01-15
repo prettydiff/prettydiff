@@ -3,7 +3,7 @@
                 var f = [{}, {}], c= "";
 }());
 
-{sd: [{sdf:df},[{
+var x={sd: [{sdf:df},[{
 sdf:"fds"},sdf]],sdf:sdf,{asd:thn}};
 HotelDetails.packageInfo = {
     "selectedHotelInfo": {
