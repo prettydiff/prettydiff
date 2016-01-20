@@ -460,8 +460,7 @@ define("ace/lib/es5-shim", [
                 }
             }
         }
-        while (!0) {;
-        }
+        while (!0) {};
         for (; s < i; s += 1) {
             s in r && (o = t.call(void 0, o, r[s], s, n));
         }
@@ -496,8 +495,7 @@ define("ace/lib/es5-shim", [
                 }
             }
         }
-        while (!0) {;
-        }
+        while (!0) {};
         do {
             o in this && (s = t.call(void 0, s, r[o], o, n));
         } while (o--);

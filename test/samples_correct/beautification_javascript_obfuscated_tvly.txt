@@ -5613,8 +5613,7 @@
                         j = h.length,
                         i = 0,
                         f;
-                    while (i < j && !(f = a.data(h[i++], "tmplItem"))) {;
-                    }
+                    while (i < j && !(f = a.data(h[i++], "tmplItem"))) {};
                     if (f && c) {
                         g[2] = function (b) {
                             a
@@ -5713,8 +5712,7 @@
             if (b instanceof a) {
                 b = b[0];
             }
-            while (b && b.nodeType === 1 && !(c = a.data(b, "tmplItem")) && (b = b.parentNode)) {;
-            }
+            while (b && b.nodeType === 1 && !(c = a.data(b, "tmplItem")) && (b = b.parentNode)) {};
             return c || p;
         }
     });
@@ -5903,8 +5901,7 @@
                 e,
                 m;
             if (m = j.getAttribute(d)) {
-                while (h.parentNode && (h = h.parentNode).nodeType === 1 && !(p = h.getAttribute(d))) {;
-                }
+                while (h.parentNode && (h = h.parentNode).nodeType === 1 && !(p = h.getAttribute(d))) {};
                 if (p !== m) {
                     h = h.parentNode
                         ? h.nodeType === 11
@@ -6051,9 +6048,9 @@ jQuery.cookie = function (name, value, options) {
             }
             expires = "; expires=" + date.toUTCString(); // use expires attribute, max-age is not supported by IE
         }
-        // CAUTION: Needed to parenthesize options.path and options.domain
-        // in the following expressions, otherwise they evaluate to undefined
-        // in the packed version for some reason...
+        // CAUTION: Needed to parenthesize options.path and options.domain in the
+        // following expressions, otherwise they evaluate to undefined in the packed
+        // version for some reason...
         var path = options.path
             ? "; path=" + (options.path)
             : "";
@@ -9095,11 +9092,7 @@ jQuery.cookie = function (name, value, options) {
         }
     });
 })(jQuery);
-// moment.js
-// version : 1.6.0
-// author : Tim Wood
-// license : MIT
-// momentjs.com
+// moment.js version : 1.6.0 author : Tim Wood license : MIT momentjs.com
 (function (a, b) {
     function D(a, b) {
         this._d     = a,

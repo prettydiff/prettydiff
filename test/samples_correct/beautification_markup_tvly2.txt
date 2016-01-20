@@ -2413,7 +2413,6 @@
                                                 .template
                                                 .flightWizardDTO({
                                                     addOptPnl                    : "uw_flight_add",
-
                                                     ageHTMLStyles                : ["xp-w-cell-xsmall"],
                                                     agetemplate                  : "flChildAgeEntryTemplate",
                                                     chldAgeCnt                   : "uw_flight_child_age_container",
@@ -2422,7 +2421,6 @@
                                                     chldAgePnlDiv                : "uw_flight_child_age_pnl",
                                                     chldOptPnlDiv                : "uw_flight_infants_container",
                                                     countChldSelect              : "uw_flight_children_input",
-
                                                     elmPrefix                    : "uw_flight_",
                                                     flightDestination            : "uw_flight_destination0",
                                                     flightTypeCheckboxes         : "uw_flight_type",
@@ -2636,7 +2634,7 @@
                     cx.exp.widgetlibrary.search.common.dropdown.updateDestinationByOrigin = function () {
 
                         // for dropdown, initial the destination based on the current origin/initial
-                        //origin to empty(default hint)
+                        // origin to empty(default hint)
                         var dropDownOriginId = document.getElementById("dropDown_originId");
                         if (dropDownOriginId != null) {
                             var originSelectElement = document.getElementById(dropDownOriginId.value);
@@ -2691,8 +2689,8 @@
                             .dropdown
                             .AjaxObject
                             .startRequest(sUrl);
-                        //YAHOO.util.Connect.asyncRequest('GET', url ,
-                        //cx.exp.widgetlibrary.search.common.dropdown.Callback , null);
+                        // YAHOO.util.Connect.asyncRequest('GET', url ,
+                        // cx.exp.widgetlibrary.search.common.dropdown.Callback , null);
                     };
 
                     cx.exp.widgetlibrary.search.common.dropdown.Callback                  = {
@@ -2745,7 +2743,7 @@
                                 var content = new Object();
 
                                 // update the html in the relevant elements to that returned from the web
-                                //service.
+                                // service.
                                 if (!(YAHOO.lang.isNull(namespace.titleDiv) || YAHOO.lang.isUndefined(namespace.titleDiv))) {
                                     var titleHTML = responseObject.title;
                                     if (YAHOO.lang.isUndefined(titleHTML)) {
@@ -2765,18 +2763,18 @@
                                 namespace.cacheWizardContent[response.argument.wizardType] = content;
 
                                 // Note: the wizard's JavaScript code needs to be parsed (note the naming
-                                //convention wizardType+'Js')
+                                // convention wizardType+'Js')
                                 var jsCode = document.getElementById(response.argument.wizardType + "Js");
                                 if (jsCode) {
                                     eval(jsCode.innerHTML);
                                 }
 
                                 // Let's start up the wizard by calling it's initializer function (note the
-                                //naming convention wizardType+'Fn')
+                                // naming convention wizardType+'Fn')
                                 eval("namespace.wizardObj = " + response.argument.wizardType + "Fn(namespace.historyObject);");
 
                                 // for dropdown, initial the destination based on the current origin/initial
-                                //origin to empty(default hint)
+                                // origin to empty(default hint)
                                 cx
                                     .exp
                                     .widgetlibrary
@@ -2785,8 +2783,8 @@
                                     .dropdown
                                     .updateDestinationByOrigin();
 
-                                //if the response was OK set the selectedRadioButton value to the new selected
-                                //wizardType
+                                // if the response was OK set the selectedRadioButton value to the new selected
+                                // wizardType
                                 namespace.selectedRadioButton = response.argument.wizardType;
                             } catch (e) {
                                 namespace.showError(true);
@@ -2995,12 +2993,11 @@
                                 namespace.wizardDiv.innerHTML = content.wizard;
                             }
                             // Note: the wizard's JavaScript code has been already parsed, no need to eval()
-                            //the script tag contents again  Let's start up the wizard by calling it's
-                            //initializer function (note the naming convention
-                            //wizardType+'Fn')
+                            // the script tag contents again Let's start up the wizard by calling it's
+                            // initializer function (note the naming convention wizardType+'Fn')
                             eval("namespace.wizardObj = " + namespace.wizardType + "Fn(namespace.historyObject);");
                             // for dropdown, initial the destination based on the current origin/initial
-                            //origin to empty(default hint)
+                            // origin to empty(default hint)
                             cx
                                 .exp
                                 .widgetlibrary
@@ -3050,17 +3047,16 @@
                         }
                         namespace.cacheWizardContent[defaultLob] = content;
 
-                        // Since this function is the entry point to wizard JS functionality,
-                        // let's whether we have a saved wizard state available (back button support)
+                        // Since this function is the entry point to wizard JS functionality, let's
+                        // whether we have a saved wizard state available (back button support)
                         var history = YAHOO
                             .util
                             .Dom
                             .get("uw_wizardstate")
                             .value;
                         // preloadNonDefault will contain the wizard type that should be initially on
-                        //the page IF it is other than the default wizard  otherwise (if we don't need
-                        //to change the default shown wizard) it can be
-                        //null.
+                        // the page IF it is other than the default wizard otherwise (if we don't need
+                        // to change the default shown wizard) it can be null.
                         var preloadNonDefault = null;
                         if (history) {
                             namespace.historyObject = new cx
@@ -3069,13 +3065,13 @@
                                 .common
                                 .model(YAHOO.lang.JSON.parse(history));
                             if (defaultLob == namespace.historyObject.lob) {
-                                // Default wizard needs to be shown - already rendered on the page  Let's start
-                                //up the wizard by calling it's initializer function (note the naming convention
-                                //wizardType+'Fn')
+                                // Default wizard needs to be shown - already rendered on the page Let's start
+                                // up the wizard by calling it's initializer function (note the naming convention
+                                // wizardType+'Fn')
                                 eval("namespace.wizardObj = " + namespace.historyObject.lob + "Fn(namespace.historyObject);");
 
                                 // for dropdown, initial the destination based on the current origin/initial
-                                //origin to empty(default hint)
+                                // origin to empty(default hint)
                                 cx
                                     .exp
                                     .widgetlibrary
@@ -3090,7 +3086,7 @@
                         } else {
                             // Previously saved wizard state not available. Default wizard will be shown.
                             // Let's start up the wizard by calling it's initializer function (note the
-                            //naming convention wizardType+'Fn')
+                            // naming convention wizardType+'Fn')
                             eval("namespace.wizardObj = flightOnlyFn(null);");
                         }
                         cx
@@ -3118,7 +3114,7 @@
                                     .addListener(radioButton, "click", namespace.changeWizardContent);
                                 if (preloadNonDefault === radioButton.getAttribute("wizardType")) {
                                     // If we need to activate a wizard other than the default one, let's manually
-                                    //call the LOB change handler
+                                    // call the LOB change handler
                                     namespace
                                         .changeWizardContent
                                         .call(radioButton);
@@ -4210,9 +4206,9 @@
 
             var s_account = "expedia80001";
 
-            //We only want to log s_BrandEAPID for a select group of tpid/eapid pairs.
-            //Enter the pair below and set the value to the logged eapid
-            //s_BrandEAPID table, lookup is 'expedia<Tpid>-<EAPID>'
+            // We only want to log s_BrandEAPID for a select group of tpid/eapid pairs. Enter
+            // the pair below and set the value to the logged eapid s_BrandEAPID table,
+            // lookup is 'expedia<Tpid>-<EAPID>'
             s_BrandEAPIDTable                     = new Object();
             s_BrandEAPIDTable["expedia30035-327"] = "327";
             s_BrandEAPIDTable["expedia30036-392"] = "392";
@@ -4229,8 +4225,8 @@
             //This returns empty string if not in test env
             var s_accountDevPostfix = "";
 
-            //If s_BrandEAPID is set then the OM code will append it to s_account
-            //So append the dev postfix to account if blank, but s_BrandEAPID otherwise
+            // If s_BrandEAPID is set then the OM code will append it to s_account So append
+            // the dev postfix to account if blank, but s_BrandEAPID otherwise
             if (s_BrandEAPID.length > 0) {
                 s_BrandEAPID += s_accountDevPostfix;
             } else {

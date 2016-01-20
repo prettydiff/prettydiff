@@ -1,5 +1,10 @@
 # Pretty Diff change log
 
+## v1.16.11
+
+ * Fixed #251
+ * Fixes numerous issues with JavaScript comment beautification
+
 ## v1.16.10
 
  * Added error messaging to markuppretty.js library for some cases where it receives code that is not markup
