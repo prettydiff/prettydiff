@@ -1,9 +1,41 @@
 {
-    "name"        : "prettydiff",
-    "version"     : "1.16.11",
-    "main"        : "./",
     "dependencies": {},
-    "ignore"      : [
-        ".git", "cgi-bin", "diffview", "testlocation", "beta", "domtest", "jsgui", "400.shtml", "401.shtml", "403.shtml", "404.shtml", "500.shtml", ".htaccess", "500.php", "index2.php", "robots.txt", "labels.rdf", "index.php", "header.php", "documentation.php", "prettydiff.html", "samples.php", "slideshowdemo.xhtml", "slideshow", "jsl.txt", "robots.txt", "training.xhtml", "markup_beauty.wsf", "difflib.old", "prettydiff.com.html", "styleguide.php", "prettydiff-min.js", "api/dom-min.js"
-    ]
+    "ignore": [
+        ".git",
+        "cgi-bin",
+        "diffview",
+        "testlocation",
+        "beta",
+        "domtest",
+        "jsgui",
+        "400.shtml",
+        "401.shtml",
+        "403.shtml",
+        "404.shtml",
+        "500.shtml",
+        ".htaccess",
+        "500.php",
+        "index2.php",
+        "robots.txt",
+        "labels.rdf",
+        "index.php",
+        "header.php",
+        "documentation.php",
+        "prettydiff.html",
+        "samples.php",
+        "slideshowdemo.xhtml",
+        "slideshow",
+        "jsl.txt",
+        "robots.txt",
+        "training.xhtml",
+        "markup_beauty.wsf",
+        "difflib.old",
+        "prettydiff.com.html",
+        "styleguide.php",
+        "prettydiff-min.js",
+        "api/dom-min.js"
+    ],
+    "main": "./",
+    "name": "prettydiff",
+    "version": "1.16.12"
 }

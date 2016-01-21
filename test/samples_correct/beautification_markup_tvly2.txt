@@ -346,8 +346,8 @@
                 float: left;
                 width: 205px;
             }
-
             /* End SEO widget */
+
             /* begin Travel Tools Widget */
             .toolTitles {
                 color          : #004E93;

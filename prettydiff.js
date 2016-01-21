@@ -1673,21 +1673,21 @@ global.edition        = {
     },
     api          : {
         dom      : 160114, //dom.js
-        nodeLocal: 160115, //node-local.js
+        nodeLocal: 160120, //node-local.js
         wsh      : 160101
     },
     css          : 160114, //diffview.css file
-    csspretty    : 151220, //csspretty lib
+    csspretty    : 160120, //csspretty lib
     csvpretty    : 151130, //csvpretty lib
     diffview     : 160101, //diffview lib
     documentation: 160114, //documentation.xhtml
-    jspretty     : 160119, //jspretty lib
+    jspretty     : 160120, //jspretty lib
     latest       : 0,
     lint         : 160115, //unit test and lint automation as test/lint.js
     markuppretty : 160119, //markuppretty lib
     prettydiff   : 160114, //this file
     safeSort     : 151130, //safeSort lib
-    version      : "1.16.11", //version number
+    version      : "1.16.12", //version number
     webtool      : 151220
 };
 global.edition.latest = (function edition_latest() {

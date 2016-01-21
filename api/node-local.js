@@ -148,7 +148,7 @@ Examples:
             preserve       : "all",
             quote          : false,
             quoteConvert   : "none",
-            readmethod     : "screen",
+            readmethod     : "auto",
             report         : true,
             selectorlist   : false,
             semicolon      : false,
@@ -1374,7 +1374,7 @@ Examples:
                 finalpath = address.oabspath + path.sep + dirs.join("__") + "__" + filename;
                 options.diff = dfiledump[data.index];
             } else {
-                finalpath = address.oabspath + dirs.join(path.sep);
+                finalpath = address.oabspath + path.sep + dirs.join(path.sep);
             }
             if (data.binary === true) {
                 if (dirs.length > 1 && options.mode !== "diff") {
@@ -1417,14 +1417,14 @@ Examples:
                 if (diffCount[0] !== 1) {
                     plural = "s";
                 }
-                if (options.readmethod === "screen") {
+                if (options.readmethod === "screen" || (options.readmethod === "auto" && method === "screen")) {
                     console.log(lf + "Screen input with " + diffCount[0] + " difference" + plural);
                 } else if (output[5].length === 0) {
                     console.log(lf + colors.filepath.start + itempath + lf + "Line: " + output[0][a] + colors.filepath.end);
                 }
                 for (a = 0; a < pdlen; a += 1) {
                     if (output[0][a + 1] !== undefined && output[0][a] === output[2][a + 1] && output[2][a] === output[0][a + 1] && output[0][a] !== output[2][a]) {
-                        if (options.readmethod === "screen") {
+                        if (options.readmethod === "screen" || (options.readmethod === "auto" && method === "screen")) {
                             console.log(lf + "Line: " + output[0][a] + colors.filepath.end);
                         } else {
                             console.log(lf + colors.filepath.start + itempath + lf + "Line: " + output[0][a] + colors.filepath.end);
@@ -1885,7 +1885,11 @@ Examples:
                                 outready = true;
                             } else if (olen < odirs.length) {
                                 olen += 1;
-                                pdNodeLocal__start_pathslash_makeout();
+                                if (olen < odirs.length) {
+                                    pdNodeLocal__start_pathslash_makeout();
+                                } else {
+                                    outready = true;
+                                }
                             } else {
                                 outready = true;
                             }
@@ -1954,15 +1958,21 @@ Examples:
                     address.dorgpath = itempath;
                 }
                 if (name === "output") {
-                    itempath = itempath.replace(/\//g, path.sep);
-                    address.oabspath = abspath();
-                    address.oorgpath = itempath;
-                    if (address.oabspath.charAt(address.oabspath.length - 1) !== path.sep) {
-                        address.oabspath = address.oabspath + path.sep;
+                    if (x === ".") {
+                        address.oabspath = cwd;
+                        address.oorgpath = cwd;
+                        outready = true;
+                    } else {
+                        itempath = itempath.replace(/\//g, path.sep);
+                        address.oabspath = abspath();
+                        address.oorgpath = itempath;
+                        if (address.oabspath.charAt(address.oabspath.length - 1) !== path.sep) {
+                            address.oabspath = address.oabspath + path.sep;
+                        }
+                        basepath         = address.oabspath.replace(path.sep + address.oorgpath, "");
+                        odirs            = address.oorgpath.split(path.sep);
+                        makeout();
                     }
-                    basepath         = address.oabspath.replace(path.sep + address.oorgpath, "");
-                    odirs            = address.oorgpath.split(path.sep);
-                    makeout();
                 }
                 if (name === "source") {
                     address.sabspath = abspath();
@@ -2178,8 +2188,9 @@ Examples:
         fs
             .stat(pdrcpath, function pdNodeLocal__start_stat(err, stats) {
                 var init = function pdNodeLocal__start_stat_init() {
-                    var state  = true,
-                        status = function pdNodeLocal__start_stat_init_status() {
+                    var state   = true,
+                        cliflag = false,
+                        status  = function pdNodeLocal__start_stat_init_status() {
                             var tempaddy = "";
                             //status codes
                             //-1 is not file or directory
@@ -2221,7 +2232,14 @@ Examples:
                                     return screenWrite();
                                 }
                                 if (options.readmethod !== "screen") {
-                                    return console.log("source is not a directory or file");
+                                    if (options.readmethod === "auto") {
+                                        method = "screen";
+                                        if (options.mode !== "diff") {
+                                            return screenWrite();
+                                        }
+                                    } else {
+                                        return console.log("source is not a directory or file");
+                                    }
                                 }
                             }
                             if (dir[2] === 1 && method !== "directory" && method !== "subdirectory") {
@@ -2244,7 +2262,10 @@ Examples:
                                 }
                                 if (dir[0] < 0) {
                                     state = false;
-                                    if (dir[2] < 0 && options.readmethod === "screen") {
+                                    if (options.readmethod === "auto" || (dir[2] < 0 && options.readmethod === "screen")) {
+                                        if (options.readmethod === "auto" && method === "screen" && cliflag === true && options.diffcli === false) {
+                                            options.diffcli = false;
+                                        }
                                         if (options.diffcli === true) {
                                             return cliWrite(prettydiff.api(options), "", false);
                                         }
@@ -2342,7 +2363,11 @@ Examples:
                     }
                     if ((options.output === "" || options.summaryonly === true) && options.mode === "diff") {
                         if (options.readmethod !== "screen") {
-                            options.diffcli = true;
+                            if (options.readmethod === "auto") {
+                                cliflag = true;
+                            } else {
+                                options.diffcli = true;
+                            }
                         }
                         if (process.argv.join(" ").indexOf(" context:") === -1) {
                             options.context = 2;

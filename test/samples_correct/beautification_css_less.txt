@@ -81,8 +81,8 @@
             @button-line-height          : (@font-size-xl + 3); // make everything work like firefox
             @ie-height                   : @input-height - (2 * @vertical-padding) - (2 * @button-border-width);
             @ie7-height                  : @input-height - @ie7-offset-horizontal-top - @ie7-offset-horizontal-bottom - @button-border-width;
-
             @ie7-offset-horizontal-bottom: 2px;
+
             // Copied from buttons.less to inline here
             // Workaround for GOF-704 IE9/IE10 mixed inline/external media query bug
             @ie7-offset-horizontal-top   : 5px;

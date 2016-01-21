@@ -1,5 +1,11 @@
 # Pretty Diff change log
 
+## v1.16.12
+
+ * Fixed #252
+ * Fixes a minor CSS empty line issue.
+ * PHP tags and ASP tags embedded in JavaScript string literals are now supported.
+
 ## v1.16.11
 
  * Fixed #251
